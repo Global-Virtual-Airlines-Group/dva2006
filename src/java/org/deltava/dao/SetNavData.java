@@ -89,20 +89,22 @@ public class SetNavData extends DAO {
 	 */
 	public void write(Airway a) throws DAOException {
 	   try {
-		   prepareStatement("INSERT INTO common.AIRWAYS (NAME, ID, SEQ, WAYPOINT, LATITUDE, LONGITUDE, HIGH, LOW) "
-				   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		   prepareStatement("INSERT INTO common.AIRWAYS (NAME, ID, SEQ, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, HIGH, LOW) "
+				   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setString(1, a.getCode());
 	      _ps.setInt(2, a.getSequence());
-	      _ps.setBoolean(7, a.isHighLevel());
-	      _ps.setBoolean(8, a.isLowLevel());
+	      _ps.setBoolean(8, a.isHighLevel());
+	      _ps.setBoolean(9, a.isLowLevel());
 	      
 	      // Write the waypoints
-	      for (Iterator<NavigationDataBean> i = a.getWaypoints().iterator(); i.hasNext(); ) {
-	    	  Airway.AirwayIntersection ai = (Airway.AirwayIntersection) i.next();
-	    	  _ps.setInt(3, ai.getSequence());
+	      List<NavigationDataBean> wps = a.getWaypoints();
+	      for (int x = 0; x < wps.size(); x++) {
+	    	  NavigationDataBean ai = wps.get(x);
+	    	  _ps.setInt(3, x + 1);
 	    	  _ps.setString(4, ai.getCode());
-	    	  _ps.setDouble(5, ai.getLatitude());
-	    	  _ps.setDouble(6, ai.getLongitude());
+	    	  _ps.setInt(5, ai.getType());
+	    	  _ps.setDouble(6, ai.getLatitude());
+	    	  _ps.setDouble(7, ai.getLongitude());
 	    	  _ps.addBatch();
 	      }
 
@@ -123,21 +125,23 @@ public class SetNavData extends DAO {
 	public void writeRoute(TerminalRoute tr) throws DAOException {
 	   try {
 	      prepareStatement("INSERT INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, SEQ, WAYPOINT, "
-	    		  + "LATITUDE, LONGITUDE, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	    		  + "WPTYPE, LATITUDE, LONGITUDE, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setString(1, tr.getICAO());
 	      _ps.setInt(2, tr.getType());
 	      _ps.setString(3, tr.getName());
 	      _ps.setString(4, tr.getTransition());
 	      _ps.setString(5, tr.getRunway());
-	      _ps.setBoolean(10, tr.getCanPurge());
+	      _ps.setBoolean(11, tr.getCanPurge());
 	      
 	      // Write the waypoints
-	      for (Iterator<NavigationDataBean> i = tr.getWaypoints().iterator(); i.hasNext(); ) {
-	    	  Airway.AirwayIntersection ai = (Airway.AirwayIntersection) i.next();
-	    	  _ps.setInt(6, ai.getSequence());
+	      List<NavigationDataBean> wps = tr.getWaypoints();
+	      for (int x = 0; x < wps.size(); x++) {
+	    	  NavigationDataBean ai = wps.get(x);
+	    	  _ps.setInt(6, x + 1);
 	    	  _ps.setString(7, ai.getCode());
-	    	  _ps.setDouble(8, ai.getLatitude());
-	    	  _ps.setDouble(9, ai.getLongitude());
+	    	  _ps.setInt(8, ai.getType());
+	    	  _ps.setDouble(9, ai.getLatitude());
+	    	  _ps.setDouble(10, ai.getLongitude());
 	    	  _ps.addBatch();
 	      }
 	      
@@ -147,6 +151,58 @@ public class SetNavData extends DAO {
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
+	}
+	
+	/**
+	 * Updates Airway waypoint types from the Navigation Data table.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void updateAirwayWaypoints() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE WHERE "
+					+ "(A.WAYPOINT=ND.CODE) AND (ABS(A.LATITUDE-ND.LATITUDE)<?) AND (ABS(A.LONGITUDE-ND.LONGITUDE)<?)");
+			_ps.setDouble(1, 0.0001);
+			_ps.setDouble(2, 0.0001);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates Terminal Route waypoint types from the Navigation Data table.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void updateTRWaypoints() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.SID_STAR TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE WHERE "
+					+ "(TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE)<?) AND (ABS(TR.LONGITUDE-ND.LONGITUDE)<?)");
+			_ps.setDouble(1, 0.0001);
+			_ps.setDouble(2, 0.0001);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes a Terminal Route from the database
+	 * @param tr the TerminalRoute bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(TerminalRoute tr) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM common.SID_STAR WHERE (ITEMTYPE=?) AND (ICAO=?) "
+					+ "AND (NAME=?) AND (TRANSITION=?) AND (RUNWAY=?)");
+			_ps.setInt(1, tr.getType());
+			_ps.setString(2, tr.getICAO());
+			_ps.setString(3, tr.getName());
+			_ps.setString(4, tr.getTransition());
+			_ps.setString(5, tr.getRunway());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/**
@@ -167,17 +223,24 @@ public class SetNavData extends DAO {
 
 	/**
 	 * Purges all entries from a Navigation Data table.
+	 * @param tableName the table name
+	 * @param checkPurgeable TRUE if unpurgeable entries should be kept, otherwise FALSE
 	 * @return the number of rows deleted
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purge(String tableName) throws DAOException {
+	public int purge(String tableName, boolean checkPurgeable) throws DAOException {
 	   
 	   // Validate the table name
 	   if (StringUtils.arrayIndexOf(TABLES, tableName) == -1)
 	      throw new DAOException("Invalid Table - " + tableName);	
 	   
 		try {
-			prepareStatementWithoutLimits("TRUNCATE common." + tableName);
+			if (checkPurgeable) {
+				prepareStatementWithoutLimits("DELETE FROM common." + tableName + " WHERE (CAN_PURGE=?)");
+				_ps.setBoolean(1, true);
+			} else
+				prepareStatementWithoutLimits("TRUNCATE common." + tableName);
+			
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

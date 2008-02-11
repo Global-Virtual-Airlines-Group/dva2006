@@ -3,6 +3,7 @@ package org.deltava.commands.navdata;
 
 import java.util.*;
 
+import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.comparators.AirportComparator;
 
@@ -45,6 +46,7 @@ public class TerminalRoutePlotCommand extends AbstractCommand {
 		// Save in request
 		ctx.setAttribute("airports", airports, REQUEST);
 		ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
+		ctx.setAttribute("trTypes", Arrays.asList(TerminalRoute.TYPES), REQUEST);
 		ctx.setAttribute("mapCenter", a, REQUEST);
 		
 		// Forward to the JSP

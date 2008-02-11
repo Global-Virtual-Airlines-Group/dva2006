@@ -62,7 +62,7 @@ public class GetNavData extends DAO implements CachingDAO {
 			return result;
 		
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (UPPER(CODE)=?)");
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (UPPER(CODE)=?) ORDER BY ITEMTYPE");
 			_ps.setString(1, code.toUpperCase());
 			NavigationDataMap ndmap = new NavigationDataMap(execute());
 			ndmap.setCacheKey(code);

@@ -34,17 +34,51 @@ if (!checkSubmit()) return false;
 if (!validateText(form.name, 5, 'Route Name')) return false;
 if (!validateText(form.transition, 3, 'Transition Name')) return false;
 if (!validateText(form.runway, 2, 'Runway Name')) return false;
-if (!validateText(form.route, 2, 'Route Waypoints')) return false;
 
-setSubmit();
+//setSubmit();
 disableButton('SaveButton');
-disableButton('ToggleButton');
+
+// Build the HTTP request
+var xreq = getXMLHttpRequest();
+xreq.open("POST", "troutesave.ws", true);
+var body = "name=" + form.name.value + "&transition=" + form.transition.value;
+body = body + "&runway=" + form.runway.value + "&waypoints=" + form.route.value;
+body = body + "&canPurge=" + form.canPurge.checked;
+
+// Set callback handler
+xreq.onreadystatechange = function() {
+	if(xreq.readyState != 4) return false;
+	if (http.status == 200) {
+		var f = document.forms[0];
+		f.name.value = '';
+		f.transition.value = '';
+		f.runway.value = '';
+		f.route.value = '';
+		f.canPurge.checked = false;
+		clearSubmit();
+		enableButton('SaveButton');
+		
+		// Send message and reload routes
+		alert('Terminal Route saved successfully.');
+		getRoutes(f.airport);
+	} else
+		alert('An error has occurred.');
+		
+	return true;
+} // function
+
+// Set headers
+xreq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xreq.setRequestHeader("Content-length", body.length);
+xreq.setRequestHeader("Connection", "close");
+xreq.send(body);
+
 return false;
 }
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body onload="void showObject(getElement('ToggleButton'), true)" onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -57,7 +91,7 @@ return false;
  <td colspan="2"><content:airline /> TERMINAL ROUTE PLOTTER</td>
 </tr>
 <tr>
- <td class="label">Departing from</td>
+ <td class="label">Airport</td>
  <td class="data"><el:combo name="airport" size="1" idx="*" options="${airports}" value="${mapCenter}" firstEntry="-" onChange="void getRoutes(this)" /></td>
 </tr>
 <tr>
@@ -76,6 +110,10 @@ return false;
  <td class="data"><el:text name="name" size="12" max="16" idx="*" value="" className="pri bld req" /></td>
 </tr>
 <tr class="doPlot" style="visibility:hidden;">
+ <td class="label">Route Type</td>
+ <td class="data"><el:check name="type" type="radio" width="60" options="${trTypes}" cols="2" /></td>
+</tr>
+<tr class="doPlot" style="visibility:hidden;">
  <td class="label">Transition</td>
  <td class="data"><el:text name="transition" size="5" max="5" idx="*" value="" className="bld req" /></td>
 </tr>
@@ -88,9 +126,13 @@ return false;
  <td class="data"><el:text name="route" size="128" max="192" value="" readOnly="true" /></td>
 </tr>
 <tr class="doPlot" style="visibility:hidden;">
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="canPurge" className="small" value="true" label="Purge Terminal Route on Import" /></td>
+</tr>
+<tr class="doPlot" style="visibility:hidden;">
  <td class="label">Find Navigation Aid</td>
- <td class="data"><el:text name="navaidCode" size="4" max="6" idx="*" value="" />
- <el:button ID="FindButton" className="BUTTON" onClick="void findNavaid(document.forms[0].navaidCode.value)" label="FIND" /></td>
+ <td class="data"><el:text name="navaidCode" size="6" max="6" idx="*" value="" />
+ <el:button ID="FindButton" className="BUTTON" onClick="void findMarker(document.forms[0].navaidCode.value)" label="FIND" /></td>
 </tr>
 <tr class="title doPlot">
  <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ROUTE" />
