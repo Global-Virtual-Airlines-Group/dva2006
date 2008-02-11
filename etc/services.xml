@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <services name="default">
 	<!-- RSS Feeds -->
 	<service id="cooler_rss" class="org.deltava.service.rss.CoolerSyndicationService" />
@@ -48,6 +48,7 @@
 
 	<!-- SID/STAR updating -->
 	<service id="apsidstar" class="org.deltava.service.navdata.AirportTerminalRouteService" />
+	<service id="trouteupdate" class="org.deltava.service.navdata.TerminalRouteUpdateService" />
 
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />

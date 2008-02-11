@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,8 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.navdata.TerminalRoute;
 
 import org.deltava.util.system.SystemData;
 
@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -312,8 +312,11 @@ public class GetACARSData extends DAO {
 			rs = _ps.executeQuery();
 			while (rs.next()) {
 				TerminalRoute tr = results.get(Integer.valueOf(rs.getInt(1)));
-				if (tr != null)
-					tr.addWaypoint(rs.getString(2), new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
+				if (tr != null) {
+					NavigationDataBean nd = NavigationDataBean.create(NavigationDataBean.INT, rs.getDouble(3), rs.getDouble(4));
+					nd.setCode(rs.getString(2));
+					tr.addWaypoint(nd);
+				}
 			}
 
 			// Clean up and return

@@ -35,8 +35,8 @@ public class GetNavRoute extends GetNavData {
 			_waypoints.addAll(waypoints);
 		}
 		
-		public void addWaypoint(String code, GeoLocation loc) {
-			_waypoints.add(new Intersection(code, loc.getLatitude(), loc.getLongitude()));
+		public void addWaypoint(NavigationDataBean nd) {
+			_waypoints.add(nd);
 		}
 
 		public LinkedList<NavigationDataBean> getWaypoints() {
@@ -230,8 +230,8 @@ public class GetNavRoute extends GetNavData {
 
 		results = new CacheableList<Airway>(name);
 		try {
-			prepareStatement("SELECT ID, WAYPOINT, LATITUDE, LONGITUDE, HIGH, LOW FROM common.AIRWAYS WHERE "
-					+ "(NAME=?) ORDER BY ID, SEQ");
+			prepareStatement("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, HIGH, LOW FROM common.AIRWAYS "
+					+ "WHERE (NAME=?) ORDER BY ID, SEQ");
 			_ps.setString(1, name.toUpperCase());
 
 			// Execute the query
@@ -242,12 +242,14 @@ public class GetNavRoute extends GetNavData {
 				if (id != lastID) {
 					lastID = id;
 					a = new Airway(name, id);
-					a.setHighLevel(rs.getBoolean(5));
-					a.setLowLevel(rs.getBoolean(6));
+					a.setHighLevel(rs.getBoolean(6));
+					a.setLowLevel(rs.getBoolean(7));
 					results.add(a);
 				}
 				
-				a.addWaypoint(rs.getString(2), new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
+				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
+				nd.setCode(rs.getString(2));
+				a.addWaypoint(nd);
 			}
 
 			// Clean up
@@ -282,12 +284,14 @@ public class GetNavRoute extends GetNavData {
 					lastID = id;
 					lastCode = code;
 					a = new Airway(code, id);
-					a.setHighLevel(rs.getBoolean(7));
-					a.setLowLevel(rs.getBoolean(8));
+					a.setHighLevel(rs.getBoolean(8));
+					a.setLowLevel(rs.getBoolean(9));
 					results.add(a);
 				}
-					
-				a.addWaypoint(rs.getString(4), new GeoPosition(rs.getDouble(5), rs.getDouble(6)));
+				
+				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(5), rs.getDouble(6), rs.getDouble(7));
+				nd.setCode(rs.getString(4));
+				a.addWaypoint(nd);
 			}
 			
 			// Clean up and return
@@ -341,7 +345,7 @@ public class GetNavRoute extends GetNavData {
 				
 				// Get the waypoints
 				String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
-				Collection<Intersection> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
+				Collection<NavigationDataBean> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
 				routePoints.addAll(awPoints);
 			} else {
 				NavigationDataMap navaids = get(wp);
@@ -390,15 +394,19 @@ public class GetNavRoute extends GetNavData {
 			TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
 			tr2.setTransition(rs.getString(4));
 			tr2.setRunway(rs.getString(5));
-			tr2.setCanPurge(rs.getBoolean(10));
+			if (columnCount > 10)
+				tr2.setCanPurge(rs.getBoolean(11));
 			if ((tr == null) || (tr2.hashCode() != tr.hashCode())) {
 				results.add(tr2);
 				tr = tr2;
 			}
 			
 			// Add the waypoint if present
-			if (columnCount > 8)
-				tr.addWaypoint(rs.getString(7), new GeoPosition(rs.getDouble(8), rs.getDouble(9)));
+			if (columnCount > 9) {
+				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(8), rs.getDouble(9), rs.getDouble(10));
+				nd.setCode(rs.getString(7));
+				tr.addWaypoint(nd);
+			}
 		}
 
 		// Clean up and return

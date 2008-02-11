@@ -1,15 +1,14 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.LinkedList;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.util.cache.Cacheable;
 
 /**
  * An interface to define the waypoints in a Route.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -17,10 +16,9 @@ public interface Route extends Cacheable {
 
 	/**
 	 * Adds a waypoint to this route.
-	 * @param code the waypoint code
-	 * @param loc the waypoint location 
+	 * @param nd the waypoint
 	 */
-	public void addWaypoint(String code, GeoLocation loc);
+	public void addWaypoint(NavigationDataBean nd);
 	
 	/**
 	 * Returns the waypoints for this Route.

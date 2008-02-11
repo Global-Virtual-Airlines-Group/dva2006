@@ -49,6 +49,12 @@ if (e) e.disabled = (!isEnabled);
 return true;
 }
 
+function showObject(e, isVisible)
+{
+if (e) e.style.visibility = isVisible ? 'visible' : 'hidden';
+return true;
+}
+
 function checkSubmit()
 {
 if (document.isSubmit) {

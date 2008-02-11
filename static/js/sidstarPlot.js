@@ -3,8 +3,9 @@ function getRoutes(combo)
 var icao = combo.options[combo.selectedIndex].value;
 
 // Build the XML Requester
+var d = new Date();
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "apsidstar.ws?airport=" + icao, true);
+xmlreq.open("GET", "apsidstar.ws?airport=" + icao + "&time=" + d.getTime(), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	mm.clearMarkers();
@@ -56,6 +57,7 @@ xmlreq.onreadystatechange = function() {
 				var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 				var mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
 				mrk.code = code;
+				GEvent.addListener(mrk, 'dblclick', toggleMarker);
 				waypoints[code] = mrk;
 
 				// Calculate the min zoom
@@ -108,6 +110,8 @@ xmlreq.onreadystatechange = function() {
 			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 			var mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
 			mrk.code = code;
+			GEvent.addListener(mrk, 'dblclick', toggleMarker);
+			waypoints[code] = mrk;
 
 			// Calculate the min zoom
 			mrk.minZoom = 5;
@@ -168,13 +172,47 @@ function toggleRows(show)
 {
 var rows = getElementsByClass('doPlot');
 for (var x = 0; x < rows.length; x++)
-	rows[x].style.visibility = show ? 'visible' : 'hidden';
+	showObject(rows[x], show);
+
+return true;
+}
+
+function findMarker(code)
+{
+if (code.length < 1) return false;
+var mrk = waypoints[code.toUpperCase()];
+if (mrk != null) {
+	mm.addMarker(mrk, 2);
+	mm.refresh();
+	GEvent.trigger(mrk, 'click');
+} else
+	alert('Cannot find ' + code);
 
 return true;
 }
 
 function toggleMarker()
 {
+var pnts = new Array();
+var route = document.forms[0].route;
 
+var isRemoved = false;
+var wps = route.value.split(' ');
+for (var x = 0; x < wps.length; x++) {
+	var wp = wps[x];
+	if (wp == this.code) {
+		wps[x] = null;
+		route.value = wps.join(' ');
+		isRemoved = true;
+	} else
+		pnts.push(waypoints[wp].getLatLng());
+}
+
+if (!isRemoved) {
+	wps.push(this.code);
+	route.value = wps.join(' ');
+}
+
+// Write new route line
 return true;
 }

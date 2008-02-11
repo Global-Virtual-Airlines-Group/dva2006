@@ -15,7 +15,7 @@ public class TerminalRoute extends Airway {
    public static final int SID = 0;
    public static final int STAR = 1;
    
-   private static final String[] TYPES = {"SID", "STAR"};
+   public static final String[] TYPES = {"SID", "STAR"};
    
    private String _airport;
    private int _type;
