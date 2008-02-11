@@ -62,8 +62,13 @@ our database.<br />
 This <content:airline /> Flight Assigment has been successfully saved in the database.<br />
 </c:otherwise>
 </c:choose>
+<c:if test="${isPreApprove}">
+<span class="bld">This Flight Assignment for ${assignPilot.name} contains a pre-approved flight leg outside the regular 
+<content:airline /> Flight Schedule.</span><br />
+</c:if>
 <br />
-To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" link="${pilot}">Click Here</el:cmd>.<br />
+<c:if test="${!empty pilot}">
+To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" link="${pilot}">Click Here</el:cmd>.<br /></c:if>
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />

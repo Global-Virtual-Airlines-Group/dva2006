@@ -985,26 +985,32 @@
 		<class>org.deltava.commands.assign.MyAssignmentsCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
 	<command id="assignreserve">
 		<name>Reserve Assignment</name>
 		<class>org.deltava.commands.assign.AssignmentReserveCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
 	<command id="assignrelease">
 		<name>Release Assignment</name>
 		<class>org.deltava.commands.assign.AssignmentReleaseCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
 	<command id="assigndelete">
 		<name>Delete Assignment</name>
 		<class>org.deltava.commands.assign.AssignmentDeleteCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
-	
+
+	<command id="preapprove">
+		<name>Pre-Approve Flight</name>
+		<class>org.deltava.commands.assign.FlightPreapproveCommand</class>
+		<roles>HR</roles>
+	</command>
+
+
 	<!-- HR-related commands -->
 	<command id="massmail">
 		<name>Mass E-Mail</name>

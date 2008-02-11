@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -12,19 +12,19 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class Airline implements java.io.Serializable, ComboAlias, Comparable, Cacheable {
+public class Airline implements java.io.Serializable, ComboAlias, Comparable<Airline>, Cacheable {
 
 	private String _code;
 	private String _name;
 	private String _color;
 	private boolean _active = true;
 	
-	private Collection<String> _apps = new TreeSet<String>();
-	private Collection<String> _codes = new HashSet<String>();
+	private final Collection<String> _apps = new TreeSet<String>();
+	private final Collection<String> _codes = new HashSet<String>();
 	
 	/**
 	 * Create a new Airline using a code.
@@ -210,15 +210,13 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	
 	/**
 	 * Airline object comparator - compare the codes.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		Airline a2 = (Airline) o2;
-		return _code.compareTo(a2.getCode());
+	public int compareTo(Airline a2) {
+		return _code.compareTo(a2._code);
 	}
 	
 	public final boolean equals(Object o2) {
-	    return (o2 instanceof Airline) ? (compareTo(o2) == 0) : false;
+	    return (o2 instanceof Airline) ? (compareTo((Airline) o2) == 0) : false;
 	}
 	
 	public int hashCode() {

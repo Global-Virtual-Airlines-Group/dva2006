@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 /**
  * A utility class for dealing with Collections and Lists.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -163,5 +163,17 @@ public class CollectionUtils {
 		}
 		
 		return results;
+	}
+	
+	/**
+	 * Sorts a Collection using a particular Comparator.
+	 * @param c the Collection to sort
+	 * @param cmp the Comparator
+	 * @return a sorted Collection
+	 */
+	public static <T> List<T> sort(Collection<T> c, Comparator<T> cmp) {
+		List<T> values = new ArrayList<T>(c);
+		Collections.sort(values, cmp);
+		return values;
 	}
 }

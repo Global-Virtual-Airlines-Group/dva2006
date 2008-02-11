@@ -27,7 +27,13 @@
 <view:table className="view" pad="default" space="default" cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
+<content:filter roles="HR">
+ <td colspan="4" class="caps left">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="2"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
+</content:filter>
+<content:filter roles="!HR">
  <td colspan="6" class="caps left">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+</content:filter>
 </tr>
 
 <!-- Sort/Filter Options -->
