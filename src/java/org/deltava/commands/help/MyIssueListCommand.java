@@ -61,6 +61,7 @@ public class MyIssueListCommand extends AbstractViewCommand {
 		HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
 		ac.validate();
 		ctx.setAttribute("access", ac, REQUEST);
+		ctx.setAttribute("cmdName", getID(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
