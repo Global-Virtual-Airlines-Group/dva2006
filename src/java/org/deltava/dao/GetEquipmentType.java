@@ -47,9 +47,11 @@ public class GetEquipmentType extends DAO {
 	public EquipmentType get(String eqType, String dbName) throws DAOException {
 		try {
 			if (dbName == null) {
-				prepareStatementWithoutLimits("SELECT AI.DBNAME FROM common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE "
-						+ "(EP.AIRLINE=AI.CODE) AND (EP.EQTYPE=?) LIMIT 1");
-				_ps.setString(1, eqType);
+				prepareStatementWithoutLimits("SELECT AI.DBNAME, CASE AI.DBNAME WHEN ? THEN 1 ELSE 0 END AS SRT FROM "
+						+ "common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE (EP.AIRLINE=AI.CODE) AND (EP.EQTYPE=?) "
+						+ "ORDER BY SRT DESC LIMIT 1");
+				_ps.setString(1, SystemData.get("airline.db"));
+				_ps.setString(2, eqType);
 			
 				// Execute the query
 				ResultSet rs = _ps.executeQuery();
