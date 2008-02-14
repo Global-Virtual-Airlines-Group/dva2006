@@ -66,7 +66,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			
 			// Get the current equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType currentEQ = eqdao.get(usr.getEquipmentType());
+			EquipmentType currentEQ = eqdao.get(usr.getEquipmentType(), ud.getDB());
 			
 			// Get the new ratings
 			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
