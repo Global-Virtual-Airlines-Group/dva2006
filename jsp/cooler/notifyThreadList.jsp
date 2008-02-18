@@ -27,17 +27,11 @@ return true;
 function validate(form)
 {
 if ((!form) || (!checkSubmit())) return false;
-var ids = form.threadID;
-for (var x = 0; x < ids.length; x++) {
-	if (ids[x].checked) {
-		setSubmit();
-		disableButton('UpdateButton');
-		return true;
-	}
-}
+if (!validateCheckBox(form.threadID, 1, 'Message Thread')) return false;
 
-alert('Please select at least one Message Thread to remove notifications from.');
-return false;
+setSubmit();
+disableButton('UpdateButton');
+return true;
 }
 </script>
 </head>
