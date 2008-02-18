@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -100,8 +100,6 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				int networkID = Event.NET_VATSIM;
 				if (pirep.hasAttribute(FlightReport.ATTR_IVAO))
 					networkID = Event.NET_IVAO;
-				else if (pirep.hasAttribute(FlightReport.ATTR_INTVAS))
-					networkID = Event.NET_INTVAS;
 				
 				// Load the event ID
 				GetEvent evdao = new GetEvent(con);

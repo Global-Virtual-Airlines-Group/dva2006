@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -145,10 +145,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				fr.setAttribute(FlightReport.ATTR_IVAO, true);
 			else if (OnlineNetwork.FPI.equals(net))
 				fr.setAttribute(FlightReport.ATTR_FPI, true);
-			else if (OnlineNetwork.INTVAS.equals(net))
-				fr.setAttribute(FlightReport.ATTR_INTVAS, true);
 			else {
-				fr.setAttribute(FlightReport.ATTR_INTVAS, false);
 				fr.setAttribute(FlightReport.ATTR_VATSIM, false);
 				fr.setAttribute(FlightReport.ATTR_IVAO, false);
 				fr.setAttribute(FlightReport.ATTR_FPI, false);

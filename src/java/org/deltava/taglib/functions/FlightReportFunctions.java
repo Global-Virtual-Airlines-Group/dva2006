@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -180,6 +180,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if in-flight refueling was detected.
+     * @param fr the Flight report
+     * @return TRUE if the REFUELWARN attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_REFUELWARN
+     */
+    public static boolean refuelWarn(FlightReport fr) {
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_REFUELWARN);
+    }
+    
+    /**
      * Returns if this Flight was operated using non-ETOPS-rated aircraft on an ETOPS route.
      * @param fr the Flight Report
      * @return TRUE if the ETOPSWARN attribute is present, otherwise FALSE
@@ -225,7 +235,6 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_VATSIM
      * @see FlightReport#ATTR_IVAO
      * @see FlightReport#ATTR_FPI
-     * @see FlightReport#ATTR_INTVAS
      */
     public static String network(FlightReport fr) {
     	if (fr == null)
@@ -236,8 +245,6 @@ public class FlightReportFunctions {
             return OnlineNetwork.IVAO;
         else if (fr.hasAttribute(FlightReport.ATTR_FPI))
             return OnlineNetwork.FPI;
-        else if (fr.hasAttribute(FlightReport.ATTR_INTVAS))
-        	return OnlineNetwork.INTVAS;
         
         return "Offline";
     }

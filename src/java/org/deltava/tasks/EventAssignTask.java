@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -133,10 +133,6 @@ public class EventAssignTask extends Task {
 								
 							case Event.NET_IVAO :
 								fr.setAttribute(FlightReport.ATTR_IVAO, true);
-								break;
-								
-							case Event.NET_INTVAS :
-								fr.setAttribute(FlightReport.ATTR_INTVAS, true);
 								break;
 						}
 						
