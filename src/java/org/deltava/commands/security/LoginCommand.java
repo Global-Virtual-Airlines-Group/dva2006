@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -146,6 +146,8 @@ public class LoginCommand extends AbstractCommand {
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			wdao.login(p.getID(), ctx.getRequest().getRemoteHost());
+			p.setLastLogin(new Date());
+			p.setLoginHost(ctx.getRequest().getRemoteHost());
 
 			// Save login hostname/IP address forever
 			SetSystemData sysdao = new SetSystemData(con);
