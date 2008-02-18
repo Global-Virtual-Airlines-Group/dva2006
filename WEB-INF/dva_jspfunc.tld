@@ -253,6 +253,13 @@
 		<function-signature>boolean etopsWarn(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for in-flight refueling warning flag -->
+	<function>
+		<name>refuelWarn</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean refuelWarn(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Check Ride -->
 	<function>
 		<name>isCheckRide</name>

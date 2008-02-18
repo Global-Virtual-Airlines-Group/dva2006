@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -57,11 +57,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	public static final int ATTR_FPI = 0x08;
 
 	/**
-	 * Flight flown on INTVAS network.
-	 */
-	public static final int ATTR_INTVAS = 0x1000;
-
-	/**
 	 * Flight logged using ACARS.
 	 */
 	public static final int ATTR_ACARS = 0x10;
@@ -102,6 +97,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	public static final int ATTR_RANGEWARN = 0x800;
 	
 	/**
+	 * Flight flown with ACARS refueling detected.
+	 */
+	public static final int ATTR_REFUELWARN = 0x1000;
+	
+	/**
 	 * Flight flown with non-ETOPS-rated aircraft.
 	 */
 	public static final int ATTR_ETOPSWARN = 0x2000;
@@ -114,7 +114,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
 	 */
-	public static final int ATTR_ONLINE_MASK = 0x100E;
+	public static final int ATTR_ONLINE_MASK = 0x0E;
 
 	public static final String DBID_PILOT = "$PILOT$";
 	public static final String DBID_DISPOSAL = "$DISPOSALPILOTID$";
