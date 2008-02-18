@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -186,8 +186,6 @@ public class FlightReportService extends WebService {
 			afr.setAttribute(FlightReport.ATTR_IVAO, true);
 		else if (OnlineNetwork.FPI.equals(network))
 			afr.setAttribute(FlightReport.ATTR_FPI, true);
-		else if (OnlineNetwork.INTVAS.equals(network))
-			afr.setAttribute(FlightReport.ATTR_INTVAS, true);
 
 		// Set the times
 		afr.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
