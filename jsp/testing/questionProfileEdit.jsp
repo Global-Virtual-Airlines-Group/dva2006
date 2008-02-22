@@ -147,7 +147,7 @@ return true;
 <c:if test="${empty question}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" onChange="void tooggleAnswerBox()" /></td>
+ <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" onChange="void toggleAnswerBox()" /></td>
 </tr>
 </c:if>
 <tr>
