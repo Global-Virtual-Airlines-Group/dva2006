@@ -169,7 +169,7 @@ return true;
 <div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
 <c:if test="${fn:refuelWarn(pirep)}">
-<div class="err bld caps">In-Flight Refueling Detected</div>
+<div class="error bld caps">In-Flight Refueling Detected</div>
 </c:if>
 <c:if test="${fn:isCharter(pirep)}">
 <div class="pri bld caps">Flight operated as a <content:airline /> Charter</div>
