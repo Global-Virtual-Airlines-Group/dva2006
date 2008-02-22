@@ -533,7 +533,7 @@
 		<inactive_days type="Integer">45</inactive_days>
 		<inactive_leave_days type="Integer">180</inactive_leave_days>
 		<inactive_new_days type="Integer">21</inactive_new_days>
-		<inactive_assign type="Integer">5</inactive_assign>
+		<inactive_assign type="Integer">10</inactive_assign>
 		<selcal>
 			<max type="Integer">3</max>
 			<reserve type="Integer">14</reserve>
