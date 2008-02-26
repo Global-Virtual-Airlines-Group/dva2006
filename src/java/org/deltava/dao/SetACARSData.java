@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate ACARS server
  * writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -109,7 +109,7 @@ public class SetACARSData extends DAO {
 				_ps.setDouble(13, re.getN2());
 				_ps.setDouble(14, re.getMach());
 				_ps.setInt(15, re.getFuelRemaining());
-				_ps.setInt(16, re.getPhase());
+				_ps.setInt(16, re.getPhase().getPhase());
 				_ps.setInt(17, re.getSimRate());
 				_ps.setInt(18, re.getFlags());
 				_ps.setInt(19, re.getFlaps());
