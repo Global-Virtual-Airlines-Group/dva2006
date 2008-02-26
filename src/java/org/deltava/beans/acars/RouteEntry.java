@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -21,7 +21,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, MapEnt
 
 	private Date _date;
 	private GeoPosition _gpos;
-	private int _phase;
+	private FlightPhase _phase;
 
 	private int _alt;
 	private int _radarAlt;
@@ -288,7 +288,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, MapEnt
 	 * @see RouteEntry#setPhase(int)
 	 * @see RouteEntry#setPhase(String)
 	 */
-	public int getPhase() {
+	public FlightPhase getPhase() {
 		return _phase;
 	}
 	
@@ -300,7 +300,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, MapEnt
 	 * @see RouteEntry#setPhase(String)
 	 */
 	public String getPhaseName() {
-		return PHASE_NAMES[_phase];
+		return PHASE_NAMES[_phase.getPhase()];
 	}
 
 	/**
@@ -531,7 +531,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, MapEnt
 		if ((phase < 0) || (phase >= PHASE_NAMES.length))
 			throw new IllegalArgumentException("Invalid Flight phase - " + phase);
 		
-		_phase = phase;
+		_phase = FlightPhase.values()[phase];
 	}
 
 	/**
@@ -618,6 +618,9 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, MapEnt
 			return true;
 
 		if (Math.abs(1 - _gForce) >= 0.25)
+			return true;
+		
+		if (_fuelRemaining == 0)
 			return true;
 
 		return (isFlagSet(FLAG_STALL) || isFlagSet(FLAG_OVERSPEED));

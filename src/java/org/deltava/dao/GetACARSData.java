@@ -88,13 +88,12 @@ public class GetACARSData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see GetACARSData#getRouteEntries(int, boolean)
 	 */
-	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived)
-			throws DAOException {
+	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, R_ALT, HEADING, "
 				+ "PITCH, BANK, ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUEL, FUELFLOW, "
-				+ "AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE FROM acars.");
+				+ "AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, PHASE FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
 
@@ -111,9 +110,9 @@ public class GetACARSData extends DAO {
 				entry.setFlags(rs.getInt(22));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
-				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround) {
+				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
 					results.add(new GeoPosition(entry));
-				} else {
+				else {
 					entry.setAltitude(rs.getInt(5));
 					entry.setRadarAltitude(rs.getInt(6));
 					entry.setHeading(rs.getInt(7));
@@ -133,6 +132,7 @@ public class GetACARSData extends DAO {
 					entry.setG(rs.getDouble(21));
 					entry.setFrameRate(rs.getInt(23));
 					entry.setSimRate(rs.getInt(24));
+					entry.setPhase(rs.getInt(25));
 					results.add(entry);
 				}
 			}
@@ -141,6 +141,47 @@ public class GetACARSData extends DAO {
 			rs.close();
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Checks if in-flight refueling was used on a Flight.
+	 * @param flightID the ACARS Flight ID
+	 * @param isArchived TRUE if the flight data is archived, otherwise FALSE
+	 * @return TRUE if refuelling is detected, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean checkRefuel(int flightID, boolean isArchived) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT FUEL FROM acars.");
+		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
+		sqlBuf.append(" WHERE (FLIGHT_ID=?) AND (PHASE>?) AND (PHASE<?) ORDER BY REPORT_TIME");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, flightID);
+			_ps.setInt(2, FlightPhase.PREFLIGHT.getPhase());
+			_ps.setInt(3, FlightPhase.COMPLETE.getPhase());
+			
+			// Execute the query
+			boolean isRefuel = false;
+			int fuelWeight = Integer.MAX_VALUE - 2000;
+			ResultSet rs = _ps.executeQuery();
+			while (!isRefuel && rs.next()) {
+				int fuelRemaining = rs.getInt(1);
+				if (fuelRemaining > (fuelWeight + 1250))
+					isRefuel = true;
+				else if (fuelWeight > fuelRemaining)
+					fuelWeight = fuelRemaining;
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return isRefuel;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -154,14 +195,12 @@ public class GetACARSData extends DAO {
 	 */
 	public String getRoute(int flightID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			String result = (rs.next()) ? rs.getString(1) : null;
-			setQueryMax(0);
+			String result = rs.next() ? rs.getString(1) : null;
 
 			// Clean up and return
 			rs.close();
