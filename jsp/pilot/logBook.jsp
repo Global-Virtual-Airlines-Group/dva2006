@@ -78,7 +78,7 @@
 </c:forEach>
 <tr class="title">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="100" labels="Draft,Submitted,Held,Approved,Rejected" classes="opt2,opt1,warn, ,err" /></td>
+<view:legend width="120" labels="Draft,Submitted,Held,Approved,Rejected,Check Ride,Flight Academy" classes="opt2,opt1,warn, ,err,opt3,opt4" /></td>
 </tr>
 </view:table>
 <el:text name="id" type="hidden" value="${pilot.hexID}" readOnly="true" />

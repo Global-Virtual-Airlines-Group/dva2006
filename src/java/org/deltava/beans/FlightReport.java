@@ -584,6 +584,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * @return the row CSS class name
 	 */
 	public String getRowClassName() {
-		return hasAttribute(ATTR_CHECKRIDE) ? "opt3" : ROW_CLASSES[_status];
+		if (hasAttribute(ATTR_CHECKRIDE))
+			return "opt3";
+		if (hasAttribute(ATTR_ACADEMY))
+			return "opt4";
+		
+		return ROW_CLASSES[_status];
 	}
 }
