@@ -108,18 +108,21 @@ public class GetFlightReportACARS extends GetFlightReports {
 		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) "
-				+ "AND (P.ID=?) AND (PR.DATE=CURDATE()) AND (PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) "
-				+ "AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.EQTYPE=?)");
+				+ "AND (P.ID=?) AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) "
+				+ "AND (PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) "
+				+ "AND (PR.EQTYPE=?)");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
-			_ps.setString(2, f.getAirline().getCode());
-			_ps.setInt(3, f.getFlightNumber());
-			_ps.setInt(4, f.getLeg());
-			_ps.setString(5, f.getAirportD().getIATA());
-			_ps.setString(6, f.getAirportA().getIATA());
-			_ps.setString(7, f.getEquipmentType());
+			_ps.setInt(2, 20);
+			_ps.setInt(3, FlightReport.SUBMITTED);
+			_ps.setString(4, f.getAirline().getCode());
+			_ps.setInt(5, f.getFlightNumber());
+			_ps.setInt(6, f.getLeg());
+			_ps.setString(7, f.getAirportD().getIATA());
+			_ps.setString(8, f.getAirportA().getIATA());
+			_ps.setString(9, f.getEquipmentType());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
