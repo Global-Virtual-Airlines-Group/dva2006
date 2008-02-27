@@ -78,7 +78,7 @@
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="7"><view:scrollbar force="${doScroll}"><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="100" labels="Draft,Submitted,Held,Approved,Rejected,Check Ride" classes="opt2,opt1,warn, ,err,opt3" /></td>
+<view:legend width="120" labels="Submitted,Held,Check Ride,Flight Academy" classes="opt1,warn,opt3,opt4" /></td>
 </tr>
 </view:table>
 <br />

@@ -51,6 +51,10 @@ TABLE.view *.opt3 {
 	background-color: #B0E0FF;
 }
 
+TABLE.view *.opt4 {
+	background-color: #C8C0FF;
+}
+
 TABLE.view *.warn {
 	background-color: #FFEFC0;
 }
