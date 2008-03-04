@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -133,7 +133,8 @@ public class EventCommand extends AbstractCommand {
 			}
 			
 			// Save the pilots and flight reports
-			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
+			pilots.putAll(pdao.get(udm));
+			ctx.setAttribute("pilots", pilots, REQUEST);
 			ctx.setAttribute("pireps", pireps, REQUEST);
 			ctx.setAttribute("certs", certs, REQUEST);
 
