@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A class to store information about a Flight Route for an Online Event.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -16,6 +16,11 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
 	private Airport _airportD;
 	private Airport _airportA;
 	private String _route;
+	private String _name;
+	
+	private int _signups;
+	private int _maxSignups = Integer.MAX_VALUE;
+	
 	private boolean _active = true;
 	
 	/**
@@ -51,6 +56,15 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
     }
     
     /**
+     * Returns the Route name.
+     *@return the name, or the airports if null
+     *@see Route#setName(String)
+     */
+    public String getName() {
+    	return (_name == null) ? toString() : _name;
+    }
+    
+    /**
      * Returns the flight plan for this route.
      * @return the flight plan
      * @see Route#setRoute(String)
@@ -65,6 +79,32 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      */
     public boolean getActive() {
     	return _active;
+    }
+    
+    /**
+     * Returns if there are still signup slots available for this route.
+     * @return TRUE if signups are less than maximum signups, otherwise FALSE
+     */
+    public boolean isAvailable() {
+    	return (_signups < _maxSignups);
+    }
+    
+    /**
+     * Returns the number of Pilots signed up for this Route. 
+     * @return the number of Pilots signed up
+     * @see Route#getSignups()
+     */
+    public int getSignups() {
+    	return _signups;
+    }
+    
+    /**
+     * Returns the maximum number of signups for this Route.
+     * @return the maximum number of Pilots signed up
+     * @see Route#setMaxSignups(int)
+     */
+    public int getMaxSignups() {
+    	return _maxSignups;
     }
 
     /**
@@ -105,8 +145,36 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
     		_route = route.replaceAll("[.]+", " ");
     }
     
+    /**
+     * Updates the route name.
+     * @param name the name
+     * @see Route#getName()
+     */
+    public void setName(String name) {
+    	if (name != null)
+    		_name = name.trim();
+    }
+    
+    /**
+     * Updates the number of Pilots signed up for this Route.
+     * @param count the number of signups
+     * @see Route#getSignups()
+     */
+    public void setSignups(int count) {
+    	_signups = Math.max(0, count);
+    }
+    
+    /**
+     * Updates the maximum number of Pilots who can be signed up for this Route.
+     * @param maxSignups the maximum number of signups
+     * @see Route#getMaxSignups()
+     */
+    public void setMaxSignups(int maxSignups) {
+    	_maxSignups = Math.max(1, maxSignups);
+    }
+    
     public String getComboName() {
-    	return toString();
+    	return getName();
     }
     
     public String getComboAlias() {
