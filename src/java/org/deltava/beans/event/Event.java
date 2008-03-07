@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -20,12 +20,11 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
 
     public static final int NET_VATSIM = 0;
     public static final int NET_IVAO = 1;
-    public static final int NET_INTVAS = 2;
     
     /**
      * Online Network names.
      */
-    public static final String[] NETWORKS = {OnlineNetwork.VATSIM, OnlineNetwork.IVAO, OnlineNetwork.INTVAS};
+    public static final String[] NETWORKS = {OnlineNetwork.VATSIM, OnlineNetwork.IVAO};
     
     public static final int OPEN = 0;
     public static final int CANCELED = 1;
@@ -112,15 +111,14 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
         if (_status == Event.CANCELED)
             return _status;
         
-        if (before(_signupDeadline)) {
+        if (before(_signupDeadline))
             return Event.OPEN;
-        } else if (before(_startTime)) {
+        else if (before(_startTime))
             return Event.CLOSED;
-        } else if (before(_endTime)) {
+        else if (before(_endTime))
             return Event.ACTIVE;
-        } else {
+        else
             return Event.COMPLETE;
-        }
     }
     
     /**
@@ -257,11 +255,25 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
      * Returns the Routes for this Online Event.
      * @return a Collection of Route beans
      * @see Event#addRoute(Route)
-     * @see Event#getRoute(String)
      * @see Event#getActiveRoutes()
      */
     public Collection<Route> getRoutes() {
     	return _routes;
+    }
+    
+    /**
+     * Retrieves a specifc route for this Online Event.
+     * @param routeID the Route ID
+     * @return a Route bean, or null if not found
+     */
+    public Route getRoute(int routeID) {
+    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = i.next();
+    		if (r.getRouteID() == routeID)
+    			return r;
+    	}
+    		
+    	return null;
     }
 
     /**
@@ -274,7 +286,7 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	Collection<Route> results = new LinkedHashSet<Route>();
     	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
     		Route r = i.next();
-    		if (r.getActive())
+    		if (r.getActive() && r.isAvailable())
     			results.add(r);
     	}
     	
@@ -295,23 +307,6 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	}
     	
     	return results;
-    }
-    
-    /**
-     * Returns a particular Route pair.
-     * @param routePair a hyphen-separated pair of IATA codes
-     * @return a Route bean, or null if route pair not found
-     * @see Event#getRoutes()
-     * @see Event#addRoute(Route)
-     */
-    public Route getRoute(String routePair) {
-    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = i.next();
-    		if (routePair.equals(r.getComboAlias()))
-    			return r;
-    	}
-    	
-    	return null;
     }
     
     /**
@@ -505,7 +500,6 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
      * Adds a Flight Route to this Online Event.
      * @param r a Route bean
      * @see Event#getRoutes()
-     * @see Event#getRoute(String)
      */
     public void addRoute(Route r) {
     	_routes.add(r);

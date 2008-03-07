@@ -1,3 +1,4 @@
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -21,7 +22,7 @@ import org.deltava.beans.system.VersionInfo;
 /**
  * A servlet to download Online Event flight plans.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -40,10 +41,10 @@ public class FlightPlanServlet extends GenericServlet {
     /**
      * Helper method to retrieve a flight plan from an Event bean.
      */
-    private FlightPlan getPlan(Event e, String fName) {
-    	for (Iterator i = e.getPlans().iterator(); i.hasNext(); ) {
-    		FlightPlan fp = (FlightPlan) i.next();
-    		if (fp.getFileName().equals(fName))
+    private FlightPlan getPlan(Event e, int routeID) {
+    	for (Iterator<FlightPlan> i = e.getPlans().iterator(); i.hasNext(); ) {
+    		FlightPlan fp = i.next();
+    		if (fp.getRouteID() == routeID)
     			return fp;
     	}
     	
@@ -88,7 +89,7 @@ public class FlightPlanServlet extends GenericServlet {
         }
         
         // Search through the flight plans
-        FlightPlan plan = getPlan(e, url.getFileName());
+        FlightPlan plan = getPlan(e, StringUtils.parse(url.getFileName(), 0));
         if (plan == null) {
         	log.error("Cannot find Flight Plan " + url.getFileName());
         	rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -108,10 +109,10 @@ public class FlightPlanServlet extends GenericServlet {
         	InputStream in = plan.getInputStream(); 
             OutputStream out = rsp.getOutputStream();
             byte[] buffer = new byte[8192];
-            int bytesRead = in.read(buffer, 0, 8192);
+            int bytesRead = in.read(buffer, 0, buffer.length);
             while (bytesRead != -1) {
             	out.write(buffer);
-            	bytesRead = in.read(buffer, 0, 8192);
+            	bytesRead = in.read(buffer, 0, buffer.length);
             }
 
             out.flush();

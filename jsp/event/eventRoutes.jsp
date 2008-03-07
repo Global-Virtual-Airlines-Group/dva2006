@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Flight Routes for Online Event - ${event.name}</title>
@@ -19,6 +18,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.route, 6, 'Flight Route')) return false;
+if (!validateText(form.routeName, 6, 'Flight Route Name')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Destination Airport')) return false;
 
@@ -42,16 +42,18 @@ return true;
 <tr class="title caps">
  <td colspan="4">FLIGHT ROUTES FOR ${event.name}</td>
 </tr>
-<c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="route" items="${event.routes}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="hasName" value="${!empty route.name}" scope="request" />
 <tr>
- <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
+ <td class="label" valign="top" rowspan="${hasName ? '3' : '2'}">Route #<fmt:int value="${route.routeID}" /></td>
+<c:if test="${hasName}">
+ <td class="data pri bld">${route.name}</td>
+</c:if>
  <td class="data" colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) 
 - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) 
-<el:cmdbutton url="eventroutes" op="save&isDelete=true&route=${route.airportD.IATA}-${route.airportA.IATA}" link="${event}" label="DELETE" />
+<el:cmdbutton url="eventroutes" op="save&isDelete=true&routeID=${route.routeID}" link="${event}" label="DELETE" />
 &nbsp;
-<el:cmdbutton url="eventroutes" op="save&isToggle=true&route=${route.airportD.IATA}-${route.airportA.IATA}" link="${event}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
+<el:cmdbutton url="eventroutes" op="save&isToggle=true&routeID=${route.routeID}" link="${event}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
 </tr>
 <tr>
  <td class="data" colspan="3">${route.route}</td>
@@ -61,6 +63,10 @@ return true;
 <!-- Add new Route -->
 <tr class="title caps">
  <td colspan="4">ADD NEW FLIGHT ROUTE</td>
+</tr>
+<tr>
+ <td class="label">Route Name</td>
+ <td class="data"><el:text name="routeName" idx="*" size="48" max="96" className="bld req" value="" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -73,6 +79,10 @@ return true;
 <tr>
  <td class="label">Flight Route</td>
  <td class="data" colspan="3"><el:text name="route" idx="*" size="110" max="640" value="" /></td>
+</tr>
+<tr>
+ <td class="label">Maximum Signups</td>
+ <td class="data"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
 </tr>
 </el:table>
 

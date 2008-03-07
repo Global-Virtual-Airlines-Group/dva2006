@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -61,16 +61,15 @@ public class SetEvent extends DAO {
 	 */
 	public void signup(Signup s) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO events.EVENT_SIGNUPS (ID, PILOT_ID, EQTYPE, AIRPORT_D, AIRPORT_A, REMARKS) "
-					+ "VALUES (?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, s.getEventID());
-			_ps.setInt(2, s.getPilotID());
-			_ps.setString(3, s.getEquipmentType());
-			_ps.setString(4, s.getAirportD().getIATA());
-			_ps.setString(5, s.getAirportA().getIATA());
-			_ps.setString(6, s.getRemarks());
-
-			// Update the database
+			prepareStatement("INSERT INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, AIRPORT_D, "
+					+ "AIRPORT_A, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, s.getID());
+			_ps.setInt(2, s.getRouteID());
+			_ps.setInt(3, s.getPilotID());
+			_ps.setString(4, s.getEquipmentType());
+			_ps.setString(5, s.getAirportD().getIATA());
+			_ps.setString(6, s.getAirportA().getIATA());
+			_ps.setString(7, s.getRemarks());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -104,15 +103,14 @@ public class SetEvent extends DAO {
 	 */
 	public void save(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO events.EVENT_PLANS (ID, PLANTYPE, AIRPORT_D, AIRPORT_A, PLANDATA) "
-					+ "VALUES (?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO events.EVENT_PLANS (ID, ROUTE_ID, PLANTYPE, AIRPORT_D, "
+					+ "AIRPORT_A, PLANDATA) VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, fp.getID());
-			_ps.setInt(2, fp.getType());
-			_ps.setString(3, fp.getAirportD().getIATA());
-			_ps.setString(4, fp.getAirportA().getIATA());
-			_ps.setBinaryStream(5, fp.getInputStream(), fp.getSize());
-
-			// Write the entry
+			_ps.setInt(2, fp.getRouteID());
+			_ps.setInt(3, fp.getType());
+			_ps.setString(4, fp.getAirportD().getIATA());
+			_ps.setString(5, fp.getAirportA().getIATA());
+			_ps.setBinaryStream(6, fp.getInputStream(), fp.getSize());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -127,7 +125,7 @@ public class SetEvent extends DAO {
 	public void delete(Signup s) throws DAOException {
 		try {
 			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
-			_ps.setInt(1, s.getEventID());
+			_ps.setInt(1, s.getID());
 			_ps.setInt(2, s.getPilotID());
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -142,12 +140,10 @@ public class SetEvent extends DAO {
 	 */
 	public void delete(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM events.EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (AIRPORT_D=?) "
-					+ "AND (AIRPORT_A=?)");
+			prepareStatement("DELETE FROM events.EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (ROUTE_ID=?)");
 			_ps.setInt(1, fp.getID());
 			_ps.setInt(2, fp.getType());
-			_ps.setString(3, fp.getAirportD().getIATA());
-			_ps.setString(4, fp.getAirportA().getIATA());
+			_ps.setInt(3, fp.getRouteID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -161,23 +157,10 @@ public class SetEvent extends DAO {
 	 */
 	public void delete(Route r) throws DAOException {
 		try {
-			startTransaction();
-
-			// Delete the route
-			prepareStatement("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
+			prepareStatement("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?) AND (ROUTE_ID=?)");
 			_ps.setInt(1, r.getID());
-			_ps.setString(2, r.getAirportD().getIATA());
-			_ps.setString(3, r.getAirportA().getIATA());
+			_ps.setInt(2, r.getRouteID());
 			executeUpdate(1);
-
-			// Delete the signups
-			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
-			_ps.setInt(1, r.getID());
-			_ps.setString(2, r.getAirportD().getIATA());
-			_ps.setString(3, r.getAirportA().getIATA());
-			executeUpdate(0);
-
-			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -278,25 +261,35 @@ public class SetEvent extends DAO {
 
 	private void writeRoutes(Event e) throws SQLException {
 
-		// Clear routes
-		prepareStatementWithoutLimits("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		executeUpdate(0);
+		// Get the routes in reverse order
+		Collection<Route> routes = new TreeSet<Route>(Collections.reverseOrder());
+		routes.addAll(e.getRoutes());
 
-		// Create the prepared statement
-		prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE) VALUES (?, ?, ?, ?)");
-		_ps.setInt(1, e.getID());
-		for (Iterator<Route> i = e.getRoutes().iterator(); i.hasNext();) {
+		// Write the routes, using INSERTs or UPDATEs as appropriate
+		int maxRouteID = 0;
+		for (Iterator<Route> i = routes.iterator(); i.hasNext();) {
 			Route r = i.next();
-			_ps.setString(2, r.getAirportD().getIATA());
-			_ps.setString(3, r.getAirportA().getIATA());
-			_ps.setString(4, r.getRoute());
-			_ps.addBatch();
+			if (r.getRouteID() != 0) {
+				maxRouteID = Math.max(maxRouteID, r.getRouteID());
+				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, "
+						+ "MAX_SIGNUPS=?, ACTIVE=?, NAME=?, ROUTE=? WHERE (ID=?) AND (ROUTE_ID=?)");
+			} else {
+				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, MAX_SIGNUPS, "
+						+ "ACTIVE, NAME, ROUTE, ID, ROUTE_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				maxRouteID++;
+				r.setRouteID(maxRouteID);
+			}
+			
+			_ps.setString(1, r.getAirportD().getIATA());
+			_ps.setString(2, r.getAirportA().getIATA());
+			_ps.setInt(3, r.getMaxSignups());
+			_ps.setBoolean(4, r.getActive());
+			_ps.setString(5, r.getName());
+			_ps.setString(6, r.getRoute());
+			_ps.setInt(7, e.getID());
+			_ps.setInt(8, r.getRouteID());
+			executeUpdate(1);
 		}
-
-		// Update the database and clean up
-		_ps.executeBatch();
-		_ps.close();
 	}
 
 	private void writeContactAddrs(Event e) throws SQLException {

@@ -1,22 +1,19 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
 
 import org.deltava.beans.event.*;
 import org.deltava.commands.*;
+import org.deltava.dao.*;
+import org.deltava.security.command.*;
 
-import org.deltava.dao.GetEvent;
-import org.deltava.dao.SetEvent;
-import org.deltava.dao.DAOException;
-
-import org.deltava.security.command.EventAccessControl;
-import org.deltava.security.command.SignupAccessControl;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to sign up Pilots for an Online Event.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -62,7 +59,7 @@ public class EventSignupCommand extends AbstractCommand {
 				throw securityException("Cannot sign up for Online Event " + e.getName());
 			
 			// Find the route
-			Route r = e.getRoute(ctx.getParameter("route"));
+			Route r = e.getRoute(StringUtils.parse(ctx.getParameter("route"), 0));
 			if (r == null)
 				throw notFoundException("Invalid Event Route - " + ctx.getParameter("route"));
 			
