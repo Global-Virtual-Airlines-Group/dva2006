@@ -13,6 +13,7 @@ import org.deltava.beans.schedule.Airport;
 
 public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
 	
+	private int _routeID;
 	private Airport _airportD;
 	private Airport _airportA;
 	private String _route;
@@ -61,7 +62,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      *@see Route#setName(String)
      */
     public String getName() {
-    	return (_name == null) ? toString() : _name;
+    	return _name;
     }
     
     /**
@@ -86,7 +87,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      * @return TRUE if signups are less than maximum signups, otherwise FALSE
      */
     public boolean isAvailable() {
-    	return (_signups < _maxSignups);
+    	return (_maxSignups > 0) && (_signups < _maxSignups);
     }
     
     /**
@@ -105,6 +106,15 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      */
     public int getMaxSignups() {
     	return _maxSignups;
+    }
+    
+    /**
+     * Returns the identifier for this Route.
+     * @return the Route identifier
+     * @see Route#setRouteID(int)
+     */
+    public int getRouteID() {
+    	return _routeID;
     }
 
     /**
@@ -173,23 +183,34 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
     	_maxSignups = Math.max(1, maxSignups);
     }
     
+    /**
+     * Updates the Route identifier. 
+     * @param id the identifier
+     * @throws IllegalArgumentException if id is zero or negative
+     */
+    public void setRouteID(int id) {
+    	validateID(_routeID, id);
+    	_routeID = id;
+    }
+    
     public String getComboName() {
     	return getName();
     }
     
     public String getComboAlias() {
-    	return _airportD.getIATA() + "-" + _airportA.getIATA();
+    	return String.valueOf(_routeID);
     }
     
     /**
-     * Compare two routes by comparing the names of the departure/arrival airports.
-     * @see Comparable#compareTo(Object)
+     * Compare two routes by comparing the event and route IDs.
      */
     public int compareTo(Object o) {
     	Route r2 = (Route) o;
-    	int tmpResult = _airportD.getName().compareTo(r2._airportD.getName());
+    	int tmpResult = super.compareTo(r2);
     	if (tmpResult == 0)
-    		tmpResult = _airportA.getName().compareTo(r2._airportA.getName());
+    		tmpResult = Integer.valueOf(_routeID).compareTo(Integer.valueOf(r2._routeID));
+    	if (tmpResult == 0)
+    		tmpResult = toString().compareTo(r2.toString());
     	
     	return tmpResult;
     }

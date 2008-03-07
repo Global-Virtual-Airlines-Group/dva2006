@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -12,8 +12,14 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.EventAccessControl;
 
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
+
+/**
+ * A Web Site Command to add a Flight Plan for an Online Event.
+ * @author Luke
+ * @version 2.1
+ * @since 1.0
+ */
 
 public class EventPlanCommand extends AbstractCommand {
 
@@ -75,13 +81,14 @@ public class EventPlanCommand extends AbstractCommand {
 			}
 			
 			// Validate the route
-			Route r = ev.getRoute(ctx.getParameter("route"));
+			Route r = ev.getRoute(StringUtils.parse(ctx.getParameter("route"), 0));
 			if (r == null)
 				throw notFoundException("Invalid Event Route - " + ctx.getParameter("route"));
 			
 			// Build the flight plan bean
 			FlightPlan fp = new FlightPlan(planType);
 			fp.setID(ev.getID());
+			fp.setRouteID(r.getRouteID());
 			fp.setAirportA(r.getAirportA());
 			fp.setAirportD(r.getAirportD());
 			fp.load(plan.getBuffer());

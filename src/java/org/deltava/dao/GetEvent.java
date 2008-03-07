@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -88,7 +88,6 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see Event#NET_VATSIM
 	 * @see Event#NET_IVAO
-	 * @see Event#NET_INTVAS
 	 */
 	public int getEvent(Airport airportD, Airport airportA, int network) throws DAOException {
 		try {
@@ -246,7 +245,8 @@ public class GetEvent extends DAO {
 			return;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM events.EVENT_AIRPORTS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EA.*, COUNT(ES.PILOT_ID) FROM events.EVENT_AIRPORTS EA "
+				+ "LEFT JOIN events.EVENT_SIGNUPS ES ON (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) WHERE (EA.ID IN (");
 		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -254,7 +254,7 @@ public class GetEvent extends DAO {
 				sqlBuf.append(',');
 		}
 
-		sqlBuf.append("))");
+		sqlBuf.append(")) GROUP BY EA.ROUTE_ID ORDER BY EA.ID");
 
 		// Init the prepared statement
 		prepareStatementWithoutLimits(sqlBuf.toString());
@@ -264,10 +264,14 @@ public class GetEvent extends DAO {
 		while (rs.next()) {
 			Event e = events.get(new Integer(rs.getInt(1)));
 			if (e != null) {
-				Route r = new Route(e.getID(), rs.getString(4));
-				r.setAirportD(SystemData.getAirport(rs.getString(2)));
-				r.setAirportA(SystemData.getAirport(rs.getString(3)));
-				r.setActive(rs.getBoolean(5));
+				Route r = new Route(e.getID(), rs.getString(5));
+				r.setRouteID(rs.getInt(2));
+				r.setAirportD(SystemData.getAirport(rs.getString(3)));
+				r.setAirportA(SystemData.getAirport(rs.getString(4)));
+				r.setActive(rs.getBoolean(6));
+				r.setMaxSignups(rs.getInt(7));
+				r.setName(rs.getString(8));
+				r.setSignups(rs.getInt(9));
 				e.addRoute(r);
 			}
 		}
@@ -331,13 +335,14 @@ public class GetEvent extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			Signup s = new Signup(rs.getInt(1), rs.getInt(2));
-			s.setEquipmentType(rs.getString(3));
-			s.setAirportD(SystemData.getAirport(rs.getString(4)));
-			s.setAirportA(SystemData.getAirport(rs.getString(5)));
-			s.setRemarks(rs.getString(6));
+			s.setRouteID(rs.getInt(3));
+			s.setEquipmentType(rs.getString(4));
+			s.setAirportD(SystemData.getAirport(rs.getString(5)));
+			s.setAirportA(SystemData.getAirport(rs.getString(6)));
+			s.setRemarks(rs.getString(7));
 
 			// Add to results
-			Event e = events.get(new Integer(s.getEventID()));
+			Event e = events.get(new Integer(s.getID()));
 			if (e != null)
 				e.addSignup(s);
 		}
@@ -357,11 +362,12 @@ public class GetEvent extends DAO {
 		// Execute the query and load the flight plans
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			FlightPlan fp = new FlightPlan(rs.getInt(2));
+			FlightPlan fp = new FlightPlan(rs.getInt(3));
 			fp.setID(e.getID());
-			fp.setAirportD(SystemData.getAirport(rs.getString(3)));
-			fp.setAirportA(SystemData.getAirport(rs.getString(4)));
-			fp.load(rs.getBytes(5));
+			fp.setRouteID(rs.getInt(2));
+			fp.setAirportD(SystemData.getAirport(rs.getString(4)));
+			fp.setAirportA(SystemData.getAirport(rs.getString(5)));
+			fp.load(rs.getBytes(6));
 
 			// Add to results
 			e.addPlan(fp);

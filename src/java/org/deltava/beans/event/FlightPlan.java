@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.DatabaseBlobBean;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A class to store information about a Flight Plan for an Online Event.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class FlightPlan extends DatabaseBlobBean {
     public static final String[] PLAN_TYPE = {"Flight Simulator", "FSBuild", "FSNavigator", "Squawkbox 3.x"};
     
     private int _type;
+    private int _routeID;
     
     private Airport _airportD;
     private Airport _airportA;
@@ -61,6 +62,15 @@ public class FlightPlan extends DatabaseBlobBean {
     public String getTypeName() {
     	return PLAN_TYPE[getType()];
     }
+    
+    /**
+     * Returns the identifier for this Route.
+     * @return the Route identifier
+     * @see FlightPlan#setRouteID(int)
+     */
+    public int getRouteID() {
+    	return _routeID;
+    }
 
     /**
      * Returns the arrival Airport for this Flight Plan.
@@ -83,7 +93,7 @@ public class FlightPlan extends DatabaseBlobBean {
     }
     
     /**
-     * Computes the name of the flight plan file. This is done by using the code of th departure and arrival airports,
+     * Computes the name of the flight plan file. This is done by using the code of the departure and arrival airports,
      * separated by a dash, with the proper extension of the flight plan type. Because we use getCode() the user
      * preferences can control IATA or ICAO code.
      * @return the flight plan filename
@@ -100,6 +110,16 @@ public class FlightPlan extends DatabaseBlobBean {
         return buf.toString();
     }
 
+    /**
+     * Updates the Route identifier. 
+     * @param id the identifier
+     * @throws IllegalArgumentException if id is zero or negative
+     */
+    public void setRouteID(int id) {
+    	validateID(_routeID, id);
+    	_routeID = id;
+    }
+    
     /**
      * Updates the Arrival airport.
      * @param a the new arrival Airport object
@@ -160,6 +180,8 @@ public class FlightPlan extends DatabaseBlobBean {
      */
     public int hashCode() {
     	StringBuilder buf = new StringBuilder(String.valueOf(getID()));
+    	buf.append('-');
+    	buf.append(String.valueOf(_routeID));
     	buf.append(getFileName());
     	return buf.toString().hashCode();
     }
