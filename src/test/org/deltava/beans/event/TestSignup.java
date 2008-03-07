@@ -29,11 +29,11 @@ public class TestSignup extends AbstractBeanTestCase {
         Airport atl = new Airport("ATL", "KATL", "Atlanta GA");
         Airport jfk = new Airport("JFK", "KJFK", "New York-Kennedy NY");
         
-        assertEquals(123, _s.getEventID());
+        assertEquals(123, _s.getID());
         assertEquals(1234, _s.getPilotID());
         checkProperty("remarks", "REMARKS");
         checkProperty("equipmentType", "B737-800");
-        checkProperty("eventID", new Integer(123));
+        checkProperty("ID", new Integer(123));
         checkProperty("airportD", atl);
         checkProperty("airportA", jfk);
     }

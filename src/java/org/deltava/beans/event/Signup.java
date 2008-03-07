@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.DatabaseBean;
@@ -7,13 +7,13 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A class to hold Online Event pilot signups. 
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class Signup implements java.io.Serializable {
+public class Signup extends DatabaseBean {
 
-    private int _eventID;
+    private int _routeID;
     private int _pilotID;
     private String _eqType;
     private String _remarks;
@@ -26,22 +26,21 @@ public class Signup implements java.io.Serializable {
      * @param eventID the Event database ID
      * @param pilotID the Pilot's database ID
      * @throws IllegalArgumentException if eventID or pilotID are zero or negative
-     * @see Signup#getEventID()
      * @see Signup#getPilotID()
      */
     public Signup(int eventID, int pilotID) {
        super();
-       setEventID(eventID);
+       setID(eventID);
        setPilotID(pilotID);
     }
     
     /**
-     * Returns the Event for this Signup.
-     * @return the Event database ID
-     * @see Signup#setEventID(int)
+     * Returns the Route for this Signup.
+     * @return the Route database ID
+     * @see Signup#setRouteID(int)
      */
-    public int getEventID() {
-        return _eventID;
+    public int getRouteID() {
+        return _routeID;
     }
     
     /**
@@ -92,14 +91,14 @@ public class Signup implements java.io.Serializable {
     }
     
     /**
-     * Updates the Event ID for this Signup.
-     * @param id the Event database ID
+     * Updates the Route ID for this Signup.
+     * @param id the Route database ID
      * @throws IllegalArgumentException if id is zero or negative
-     * @see Signup#getEventID()
+     * @see Signup#getRouteID()
      */
-    public void setEventID(int id) {
-        DatabaseBean.validateID(_eventID, id);
-        _eventID = id;
+    public void setRouteID(int id) {
+        validateID(_routeID, id);
+        _routeID = id;
     }
     
     /**
@@ -149,5 +148,19 @@ public class Signup implements java.io.Serializable {
      */
     public void setRemarks(String remarks) {
         _remarks = remarks;
+    }
+    
+    /**
+     * Compares two signups by comparing their event, route and pilot IDs.
+     */
+    public int compareTo(Object o) {
+    	Signup s2 = (Signup) o;
+    	int tmpResult = super.compareTo(s2);
+    	if (tmpResult == 0)
+    		tmpResult = Integer.valueOf(_routeID).compareTo(Integer.valueOf(s2._routeID));
+    	if (tmpResult == 0)
+    		tmpResult = new Integer(_pilotID).compareTo(new Integer(s2._pilotID));
+    	
+    	return tmpResult;
     }
 }

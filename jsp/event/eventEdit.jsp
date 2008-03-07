@@ -29,6 +29,8 @@ enableObject(f.airportA, f.canSignup.checked);
 enableObject(f.adCode, f.canSignup.checked);
 enableObject(f.aaCode, f.canSignup.checked);
 enableObject(f.route, f.canSignup.checked);
+enableObject(f.routeName, f.canSignup.checked);
+enableObject(f.maxSignups, f.canSignup.checked);
 
 // Get the calendar button
 enableElement('CloseCalendarButton', f.canSignup.checked);
@@ -124,6 +126,10 @@ to a specific set of equipment.</span><br />
 <c:if test="${empty event}">
 <!-- Initial Flight Route -->
 <tr>
+ <td class="label">Route Name</td>
+ <td class="data"><el:text name="routeName" idx="*" size="48" max="96" className="bld req" value="" /></td>
+</tr>
+<tr>
  <td class="label">Departure Airport</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;
 <el:text name="adCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
@@ -137,13 +143,19 @@ to a specific set of equipment.</span><br />
  <td class="label">Flight Routing</td>
  <td class="data"><el:text name="route" idx="*" size="110" max="640" value="" className="req" /></td>
 </tr>
+<tr>
+ <td class="label">Maximum Signups</td>
+ <td class="data"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
+</tr>
 </c:if>
 <c:if test="${!empty event}">
-<c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="route" items="${event.routes}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="hasName" value="${!empty route.name}" scope="request" />
 <view:row entry="${route}">
- <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
+ <td class="label" valign="top" rowspan="${hasName ? '3' : '2'}">Route #<fmt:int value="${route.routeID}" /></td>
+<c:if test="${hasName}">
+ <td class="data pri bld">${route.name}</td>
+</c:if>
  <td class="data">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
 </view:row>

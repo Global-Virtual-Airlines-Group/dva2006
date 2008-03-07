@@ -72,11 +72,9 @@ return true;
 <tr class="title caps">
  <td colspan="6" class="left">AVAILABLE FLIGHT ROUTES</td>
 </tr>
-<c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="route" items="${event.routes}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
 <view:row entry="${route}">
- <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
+ <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
  <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
 </view:row>
@@ -146,11 +144,10 @@ return true;
  <td>SIZE</td>
  <td>PLAN TYPE</td>
 </tr>
-
-<c:set var="hexEventID" value="${fn:hex(event.ID)}" scope="request" />
 <c:forEach var="plan" items="${event.plans}">
 <view:row entry="${plan}">
- <td colspan="4"><el:link url="/fplan/${hexEventID}/${plan.fileName}">${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
+ <td class="pri bld"><fmt:int value="${plan.routeID}" /></td>
+ <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}">${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
  <td class="sec"><fmt:int value="${plan.size}" /> bytes</td>
  <td class="pri bld">${plan.typeName}</td>
 </view:row>

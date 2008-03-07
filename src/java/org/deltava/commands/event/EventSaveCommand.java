@@ -79,6 +79,9 @@ public class EventSaveCommand extends AbstractCommand {
 				Route r = new Route(0, ctx.getParameter("route"));
 				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+				r.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups"), 0));
+				r.setName(ctx.getParameter("routeName"));
+				r.setRouteID(1);
 				r.setActive(true);
 				e.addRoute(r);
 				
