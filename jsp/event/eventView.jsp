@@ -147,7 +147,7 @@ return true;
 <c:forEach var="plan" items="${event.plans}">
 <view:row entry="${plan}">
  <td class="pri bld"><fmt:int value="${plan.routeID}" /></td>
- <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}">${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
+ <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}.${plan.extension}">${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
  <td class="sec"><fmt:int value="${plan.size}" /> bytes</td>
  <td class="pri bld">${plan.typeName}</td>
 </view:row>
