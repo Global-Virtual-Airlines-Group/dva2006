@@ -318,7 +318,8 @@ public class GetEvent extends DAO {
 			return;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM events.EVENT_SIGNUPS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ES.*, EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_SIGNUPS ES, "
+				+ "events.EVENT_AIRPORTS EA WHERE (EA.ID=ES.ID) AND (EA.ROUTE_ID=ES.ROUTE_ID) AND (ES.ID IN (");
 		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -334,12 +335,12 @@ public class GetEvent extends DAO {
 		// Execute the query and load the signups
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Signup s = new Signup(rs.getInt(1), rs.getInt(2));
-			s.setRouteID(rs.getInt(3));
+			Signup s = new Signup(rs.getInt(1), rs.getInt(3));
+			s.setRouteID(rs.getInt(2));
 			s.setEquipmentType(rs.getString(4));
-			s.setAirportD(SystemData.getAirport(rs.getString(5)));
-			s.setAirportA(SystemData.getAirport(rs.getString(6)));
-			s.setRemarks(rs.getString(7));
+			s.setRemarks(rs.getString(5));
+			s.setAirportD(SystemData.getAirport(rs.getString(6)));
+			s.setAirportA(SystemData.getAirport(rs.getString(7)));
 
 			// Add to results
 			Event e = events.get(new Integer(s.getID()));
@@ -356,7 +357,8 @@ public class GetEvent extends DAO {
 	 * Helper method to load flight plans for an event.
 	 */
 	private void loadFlightPlans(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT * FROM events.EVENT_PLANS WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT EP.*, EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_PLANS EP, "
+			+ "events.EVENT_AIRPORTS EA WHERE (EP.ID=?) AND (EP.ID=EA.ID) AND (EP.ROUTE_ID=EA.ROUTE_ID)");
 		_ps.setInt(1, e.getID());
 
 		// Execute the query and load the flight plans
@@ -365,11 +367,9 @@ public class GetEvent extends DAO {
 			FlightPlan fp = new FlightPlan(rs.getInt(3));
 			fp.setID(e.getID());
 			fp.setRouteID(rs.getInt(2));
-			fp.setAirportD(SystemData.getAirport(rs.getString(4)));
-			fp.setAirportA(SystemData.getAirport(rs.getString(5)));
-			fp.load(rs.getBytes(6));
-
-			// Add to results
+			fp.load(rs.getBytes(4));
+			fp.setAirportD(SystemData.getAirport(rs.getString(5)));
+			fp.setAirportA(SystemData.getAirport(rs.getString(6)));
 			e.addPlan(fp);
 		}
 

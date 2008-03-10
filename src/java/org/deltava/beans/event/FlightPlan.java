@@ -109,6 +109,14 @@ public class FlightPlan extends DatabaseBlobBean {
         buf.append(PLAN_EXT[_type]);
         return buf.toString();
     }
+    
+    /**
+     * Returns the flight plan file extension.
+     * @return the extension
+     */
+    public String getExtension() {
+    	return PLAN_EXT[_type];
+    }
 
     /**
      * Updates the Route identifier. 

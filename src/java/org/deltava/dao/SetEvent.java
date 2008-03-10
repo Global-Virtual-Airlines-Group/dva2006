@@ -61,15 +61,13 @@ public class SetEvent extends DAO {
 	 */
 	public void signup(Signup s) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, AIRPORT_D, "
-					+ "AIRPORT_A, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) "
+					+ "VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, s.getID());
 			_ps.setInt(2, s.getRouteID());
 			_ps.setInt(3, s.getPilotID());
 			_ps.setString(4, s.getEquipmentType());
-			_ps.setString(5, s.getAirportD().getIATA());
-			_ps.setString(6, s.getAirportA().getIATA());
-			_ps.setString(7, s.getRemarks());
+			_ps.setString(5, s.getRemarks());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -103,14 +101,11 @@ public class SetEvent extends DAO {
 	 */
 	public void save(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO events.EVENT_PLANS (ID, ROUTE_ID, PLANTYPE, AIRPORT_D, "
-					+ "AIRPORT_A, PLANDATA) VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO events.EVENT_PLANS (ID, ROUTE_ID, PLANTYPE, PLANDATA) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, fp.getID());
 			_ps.setInt(2, fp.getRouteID());
 			_ps.setInt(3, fp.getType());
-			_ps.setString(4, fp.getAirportD().getIATA());
-			_ps.setString(5, fp.getAirportA().getIATA());
-			_ps.setBinaryStream(6, fp.getInputStream(), fp.getSize());
+			_ps.setBinaryStream(4, fp.getInputStream(), fp.getSize());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -174,11 +169,9 @@ public class SetEvent extends DAO {
 	 */
 	public void toggle(Route r) throws DAOException {
 		try {
-			prepareStatement("UPDATE events.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (AIRPORT_D=?) "
-					+ "AND (AIRPORT_A=?)");
+			prepareStatement("UPDATE events.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (ROUTE_ID=?)");
 			_ps.setInt(1, r.getID());
-			_ps.setString(2, r.getAirportD().getIATA());
-			_ps.setString(3, r.getAirportA().getIATA());
+			_ps.setInt(2, r.getRouteID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

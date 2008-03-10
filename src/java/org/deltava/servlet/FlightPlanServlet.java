@@ -89,7 +89,7 @@ public class FlightPlanServlet extends GenericServlet {
         }
         
         // Search through the flight plans
-        FlightPlan plan = getPlan(e, StringUtils.parse(url.getFileName(), 0));
+        FlightPlan plan = getPlan(e, StringUtils.parse(url.getName(), 0));
         if (plan == null) {
         	log.error("Cannot find Flight Plan " + url.getFileName());
         	rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
