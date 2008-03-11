@@ -66,7 +66,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Route Name</td>
- <td class="data"><el:text name="routeName" idx="*" size="48" max="96" className="bld req" value="" /></td>
+ <td class="data" colspan="3"><el:text name="routeName" idx="*" size="48" max="96" className="bld req" value="" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -78,11 +78,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="3"><el:text name="route" idx="*" size="110" max="640" value="" /></td>
+ <td class="data" colspan="3"><el:text name="route" idx="*" size="160" max="640" value="" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Signups</td>
- <td class="data"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
+ <td class="data" colspan="3"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
 </tr>
 </el:table>
 
