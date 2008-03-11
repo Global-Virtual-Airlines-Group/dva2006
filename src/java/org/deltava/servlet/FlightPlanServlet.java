@@ -83,7 +83,7 @@ public class FlightPlanServlet extends GenericServlet {
         
         // Check if we got an event
         if (e == null) {
-        	log.error("Cannot find Online Event " + url.getLastPath());
+        	log.warn("Cannot find Online Event " + url.getLastPath());
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -91,7 +91,7 @@ public class FlightPlanServlet extends GenericServlet {
         // Search through the flight plans
         FlightPlan plan = getPlan(e, StringUtils.parse(url.getName(), 0));
         if (plan == null) {
-        	log.error("Cannot find Flight Plan " + url.getFileName());
+        	log.warn("Cannot find Flight Plan for Route " + url.getFileName() + ", Event " + e.getID());
         	rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -102,7 +102,7 @@ public class FlightPlanServlet extends GenericServlet {
         rsp.setBufferSize(8192);
         
         // Prompt the browser to save the file
-        rsp.setHeader("Content-disposition", "attachment; filename=" + url.getFileName());
+        rsp.setHeader("Content-disposition", "attachment; filename=" + plan.getFileName());
         
         // Dump the data to the output stream
         try {

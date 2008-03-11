@@ -87,7 +87,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      * @return TRUE if signups are less than maximum signups, otherwise FALSE
      */
     public boolean isAvailable() {
-    	return (_maxSignups > 0) && (_signups < _maxSignups);
+    	return (_maxSignups == 0) || (_signups < _maxSignups);
     }
     
     /**
@@ -180,7 +180,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      * @see Route#getMaxSignups()
      */
     public void setMaxSignups(int maxSignups) {
-    	_maxSignups = Math.max(1, maxSignups);
+    	_maxSignups = Math.max(0, maxSignups);
     }
     
     /**
@@ -194,7 +194,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
     }
     
     public String getComboName() {
-    	return getName();
+    	return (_name == null) ? toString() : _name;
     }
     
     public String getComboAlias() {

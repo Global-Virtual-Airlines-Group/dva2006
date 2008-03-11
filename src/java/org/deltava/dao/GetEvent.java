@@ -254,7 +254,7 @@ public class GetEvent extends DAO {
 				sqlBuf.append(',');
 		}
 
-		sqlBuf.append(")) GROUP BY EA.ROUTE_ID ORDER BY EA.ID");
+		sqlBuf.append(")) GROUP BY EA.ID, EA.ROUTE_ID ORDER BY EA.ID");
 
 		// Init the prepared statement
 		prepareStatementWithoutLimits(sqlBuf.toString());

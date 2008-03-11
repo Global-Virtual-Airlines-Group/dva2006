@@ -1,8 +1,6 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import java.util.*;
-
 import org.deltava.beans.Pilot;
 import org.deltava.beans.event.*;
 
@@ -56,11 +54,7 @@ public class EventAccessControl extends AccessControl {
 		boolean hasID = p.getNetworkIDs().containsKey(_ev.getNetworkName());
 
 		// Check if any routes stil have signups
-		boolean isRouteAvailable = false;
-		for (Iterator<Route> i = _ev.getActiveRoutes().iterator(); i.hasNext() && !isRouteAvailable;) {
-			Route r = i.next();
-			isRouteAvailable |= r.isAvailable();
-		}
+		boolean isRouteAvailable = !_ev.getActiveRoutes().isEmpty();
 
 		// Set access variables
 		boolean isEvent = _ctx.isUserInRole("Event");

@@ -79,6 +79,8 @@
 				<keyword>FS2002</keyword>
 				<keyword>FS2004</keyword>
 				<keyword>FS9</keyword>
+				<keyword>FSX</keyword>
+				<keyword>The Best get Better</keyword>
 				<keyword>microsoft flight simulator</keyword>
 				<keyword>flightsim</keyword>
 				<keyword>flight simulators</keyword>
@@ -223,10 +225,10 @@
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>false</useServerPrepStmts>
+			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 			<useLocalSessionState>true</useLocalSessionState>
-			<useCursorFetch>false</useCursorFetch>
+			<useCursorFetch>true</useCursorFetch>
 			<maintainTimeStats>false</maintainTimeStats>
 			<validationQuery>/* ping */</validationQuery>
 		</map>

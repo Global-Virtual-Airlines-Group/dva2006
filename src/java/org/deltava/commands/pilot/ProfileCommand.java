@@ -469,7 +469,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Save the Pilot profiles
 					ctx.setAttribute("userData", udm, REQUEST);
-					ctx.setAttribute("dupeResults", users, REQUEST);
+					ctx.setAttribute("dupeResults", users.values(), REQUEST);
 				}
 			}
 
