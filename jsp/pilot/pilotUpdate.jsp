@@ -81,7 +81,7 @@ matching <content:airline /> Pilots or Applicants with the same name or e-mail a
 <c:if test="${sigUpdated}">
 <!-- Removed Signature Image -->
 <li>The ${forumName} signature image for ${pilot.name} has been updated. It is displayed below:<br />
-<img alt="${pilot.name}" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
+<img alt="${pilot.name}" src="/sig/${db}/${pilot.hexID}" /></li>
 </c:if>
 <c:if test="${eMailUpdateDupe}">
 <!-- Duplicate E-Mail Address -->
