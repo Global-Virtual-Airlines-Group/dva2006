@@ -22,6 +22,7 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
 	private int _signups;
 	private int _maxSignups = Integer.MAX_VALUE;
 	
+	private boolean _isRNAV;
 	private boolean _active = true;
 	
 	/**
@@ -80,6 +81,14 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      */
     public boolean getActive() {
     	return _active;
+    }
+    
+    /**
+     * Returns whether this is an RNAV routing.
+     * @return TRUE if RNAV, otherwise FALSE
+     */
+    public boolean getIsRNAV() {
+    	return _isRNAV;
     }
     
     /**
@@ -143,6 +152,14 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      */
     public void setActive(boolean isActive) {
     	_active = isActive;
+    }
+    
+    /**
+     * Updates whether this is an RNAV route.
+     * @param isRNAV TRUE if RNAV, otherwise FALSE
+     */
+    public void setIsRNAV(boolean isRNAV) {
+    	_isRNAV = isRNAV;
     }
     
     /**
@@ -234,6 +251,9 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
     	buf.append(" (");
     	buf.append(_airportA.getIATA());
     	buf.append(')');
+    	if (_isRNAV)
+    		buf.append(" - RNAV");
+    	
     	return buf.toString();
     }
     

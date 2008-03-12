@@ -269,9 +269,10 @@ public class GetEvent extends DAO {
 				r.setAirportD(SystemData.getAirport(rs.getString(3)));
 				r.setAirportA(SystemData.getAirport(rs.getString(4)));
 				r.setActive(rs.getBoolean(6));
-				r.setMaxSignups(rs.getInt(7));
-				r.setName(rs.getString(8));
-				r.setSignups(rs.getInt(9));
+				r.setIsRNAV(rs.getBoolean(7));
+				r.setMaxSignups(rs.getInt(8));
+				r.setName(rs.getString(9));
+				r.setSignups(rs.getInt(10));
 				e.addRoute(r);
 			}
 		}

@@ -147,6 +147,10 @@ to a specific set of equipment.</span><br />
  <td class="label">Maximum Signups</td>
  <td class="data"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isRNAV" idx="*" value="true" label="This is an RNAV Route" checked="false" /></td>
+</tr>
 </c:if>
 <c:if test="${!empty event}">
 <c:forEach var="route" items="${event.routes}">
