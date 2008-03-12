@@ -81,13 +81,14 @@ public class SetEvent extends DAO {
 	 */
 	public void save(Route r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) VALUES "
-					+ "(?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, RNAV, ACTIVE) "
+					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getAirportD().getIATA());
 			_ps.setString(3, r.getAirportA().getIATA());
 			_ps.setString(4, r.getRoute());
-			_ps.setBoolean(5, r.getActive());
+			_ps.setBoolean(5, r.getIsRNAV());
+			_ps.setBoolean(6, r.getActive());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
