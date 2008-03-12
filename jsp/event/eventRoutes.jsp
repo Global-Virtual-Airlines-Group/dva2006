@@ -77,12 +77,14 @@ return true;
 <el:text name="aaCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 <tr>
- <td class="label">Flight Route</td>
- <td class="data" colspan="3"><el:text name="route" idx="*" size="160" max="640" value="" /></td>
+ <td class="label">Maximum Signups</td>
+ <td class="data"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isRNAV" idx="*" value="true" label="This is an RNAV Route" checked="false" /></td>
 </tr>
 <tr>
- <td class="label">Maximum Signups</td>
- <td class="data" colspan="3"><el:text name="maxSignups" idx="*" size="2" max="4" value="" /></td>
+ <td class="label">Flight Route</td>
+ <td class="data" colspan="3"><el:text name="route" idx="*" size="160" max="640" value="" /></td>
 </tr>
 </el:table>
 

@@ -76,7 +76,7 @@ return true;
 <view:row entry="${route}">
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
  <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
- (<fmt:airport airport="${route.airportA}" />)</td>
+ (<fmt:airport airport="${route.airportA}" />)<c:if test="${route.isRNAV}"> (RNAV</c:if></td>
 </view:row>
 <view:row entry="${route}">
  <td class="data" colspan="5">${route.route}</td>
@@ -178,7 +178,7 @@ return true;
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
- <td><el:cmdbutton url="eventrelease" link="${event}" op="${fn:hex(pilot.ID)}" label="RELEASE" /></td>
+ <td><el:cmdbutton url="eventrelease" link="${event}" op="${pilot.hexID}" label="RELEASE" /></td>
 </c:if>
 <c:if test="${!sa.canRelease}">
  <td class="pri bld">${pilot.pilotCode}</td>
