@@ -67,6 +67,9 @@ public class EventRoutesCommand extends AbstractFormCommand {
 				Route r = new Route(e.getID(), ctx.getParameter("route"));
 				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+				r.setName(ctx.getParameter("routeName"));
+				r.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups"), 0));
+				r.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV")).booleanValue());
 				r.setActive(true);
 				
 				// Make sure it doesn't already exist
