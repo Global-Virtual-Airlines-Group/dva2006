@@ -154,22 +154,22 @@ return true;
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div>
 </c:if>
 <c:if test="${!fn:isRated(pirep)}">
-<div class="warn bld caps">Flight Leg flown without Aircraft type rating</div>
+<div class="error bld caps">Flight Leg flown without Aircraft type rating</div>
 </c:if>
 <c:if test="${fn:routeWarn(pirep)}">
-<div class="warn bld caps">Flight Route not found in <content:airline /> schedule database</div>
+<div class="error bld caps">Flight Route not found in <content:airline /> schedule</div>
 </c:if>
 <c:if test="${fn:rangeWarn(pirep)}">
-<div class="warn bld caps">Flight Distance outside Aircraft Range</div>
+<div class="error bld caps">Flight Distance outside Aircraft Range</div>
 </c:if>
 <c:if test="${fn:etopsWarn(pirep)}">
-<div class="warn bld caps">Non-ETOPS Aircraft used on ETOPS route</div>
+<div class="error bld caps">Non-ETOPS Aircraft used on ETOPS route</div>
 </c:if>
 <c:if test="${fn:timeWarn(pirep)}">
 <div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
 <c:if test="${fn:refuelWarn(pirep)}">
-<div class="error bld caps">In-Flight Refueling Detected</div>
+<div class="warn bld caps">In-Flight Refueling Detected</div>
 </c:if>
 <c:if test="${fn:isCharter(pirep)}">
 <div class="pri bld caps">Flight operated as a <content:airline /> Charter</div>
@@ -205,7 +205,7 @@ return true;
 </c:if>
 <c:if test="${fn:isACARS(pirep)}">
 <c:set var="cspan" value="${1}" scope="request" />
-<%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
+<%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
 <tr>
 <c:if test="${googleMap}">
