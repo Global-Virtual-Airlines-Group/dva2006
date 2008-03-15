@@ -81,14 +81,17 @@ public class SetEvent extends DAO {
 	 */
 	public void save(Route r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, RNAV, ACTIVE) "
-					+ "VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, ROUTE_ID, AIRPORT_D, AIRPORT_A, ROUTE, "
+					+ "RNAV, ACTIVE, MAX_SIGNUPS, NAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
-			_ps.setString(2, r.getAirportD().getIATA());
-			_ps.setString(3, r.getAirportA().getIATA());
-			_ps.setString(4, r.getRoute());
-			_ps.setBoolean(5, r.getIsRNAV());
-			_ps.setBoolean(6, r.getActive());
+			_ps.setInt(2, r.getRouteID());
+			_ps.setString(3, r.getAirportD().getIATA());
+			_ps.setString(4, r.getAirportA().getIATA());
+			_ps.setString(5, r.getRoute());
+			_ps.setBoolean(6, r.getIsRNAV());
+			_ps.setBoolean(7, r.getActive());
+			_ps.setInt(8, r.getMaxSignups());
+			_ps.setString(9, r.getName());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -208,29 +211,30 @@ public class SetEvent extends DAO {
 
 	private void writeAirports(Event e) throws SQLException {
 
-		// Clear airports
-		prepareStatement("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
-		executeUpdate(0);
-
-		// Create the prepared statement
-		prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) "
-				+ "VALUES (?, ?, ?, ?, ?)");
-		_ps.setInt(1, e.getID());
-
 		// Add the airports
+		int maxRouteID = 0;
 		for (Iterator<Route> i = e.getRoutes().iterator(); i.hasNext();) {
 			Route r = i.next();
-			_ps.setString(2, r.getAirportD().getIATA());
-			_ps.setString(3, r.getAirportA().getIATA());
-			_ps.setString(4, r.getRoute());
-			_ps.setBoolean(5, r.getActive());
-			_ps.addBatch();
-		}
+			maxRouteID = Math.max(maxRouteID, r.getRouteID() + 1);
+			if (r.getRouteID() == 0) {
+				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, "
+						+ "ACTIVE=?, RNAV=?, MAX_SIGNUPS=?, NAME=? WHERE (ROUTE_ID=?) AND (ID=?)");
+				r.setRouteID(maxRouteID);
+			} else
+				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, "
+						+ "RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Update the database and clearn up
-		_ps.executeBatch();
-		_ps.close();
+			_ps.setString(1, r.getAirportD().getIATA());
+			_ps.setString(2, r.getAirportA().getIATA());
+			_ps.setString(3, r.getRoute());
+			_ps.setBoolean(4, r.getActive());
+			_ps.setBoolean(5, r.getIsRNAV());
+			_ps.setInt(6, r.getMaxSignups());
+			_ps.setString(7, r.getName());
+			_ps.setInt(8, r.getRouteID());
+			_ps.setInt(9, e.getID());
+			executeUpdate(1);
+		}
 	}
 
 	private void writeEQTypes(Event e) throws SQLException {

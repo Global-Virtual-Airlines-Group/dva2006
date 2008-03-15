@@ -70,6 +70,7 @@ public class EventSignupCommand extends AbstractCommand {
 			// Create the signup from the request
 			Signup s = new Signup(e.getID(), ctx.getUser().getID());
 			s.setEquipmentType(ctx.getParameter("eqType"));
+			s.setRouteID(r.getRouteID());
 			s.setAirportA(r.getAirportA());
 			s.setAirportD(r.getAirportD());
 			
