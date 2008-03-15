@@ -47,10 +47,11 @@ return true;
 <tr>
  <td class="label" valign="top" rowspan="${hasName ? '3' : '2'}">Route #<fmt:int value="${route.routeID}" /></td>
 <c:if test="${hasName}">
- <td class="data pri bld">${route.name}</td>
+ <td colspan="3" class="data pri bld">${route.name}</td>
+</tr>
 </c:if>
  <td class="data" colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) 
-- ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) 
+- ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)&nbsp;
 <el:cmdbutton url="eventroutes" op="save&isDelete=true&routeID=${route.routeID}" link="${event}" label="DELETE" />
 &nbsp;
 <el:cmdbutton url="eventroutes" op="save&isToggle=true&routeID=${route.routeID}" link="${event}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
