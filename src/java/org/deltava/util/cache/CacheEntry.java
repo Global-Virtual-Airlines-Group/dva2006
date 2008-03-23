@@ -1,14 +1,14 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * An abstract class to handle cache entries.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-abstract class CacheEntry<T extends Cacheable> implements Comparable {
+abstract class CacheEntry<T extends Cacheable> implements Comparable<CacheEntry> {
 	
 	private T _data;
 
