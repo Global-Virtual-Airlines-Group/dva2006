@@ -21,8 +21,10 @@ var elements = new Array();
 var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
 for (var x = 0; x < all.length; x++) {
 	var c = all[x].className;
-	if ((c.indexOf(' ' + cName) > -1) || (c.indexOf(cName + ' ') > -1) || (c == cName))
-		elements.push(all[x]);
+	if (c.indexOf) {
+		if ((c.indexOf(' ' + cName) > -1) || (c.indexOf(cName + ' ') > -1) || (c == cName))
+			elements.push(all[x]);
+	}
 }
 
 return elements;
