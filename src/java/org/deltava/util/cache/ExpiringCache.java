@@ -1,17 +1,19 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
+import java.util.concurrent.Semaphore;
 
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 
+	private final Semaphore _pLock = new Semaphore(1, true);
 	protected long _lastCreationTime;
 	protected int _expiry;
 
@@ -24,11 +26,10 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
-			if (entryData instanceof ExpiringCacheable) {
+			if (entryData instanceof ExpiringCacheable)
 				_expiryTime = ((ExpiringCacheable) entryData).getExpiryDate().getTime();
-			} else {
+			else
 				_expiryTime = createdOn + _expiry;
-			}
 		}
 
 		public boolean isExpired() {
@@ -39,9 +40,9 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			return _expiryTime;
 		}
 
-		public int compareTo(Object o2) {
-			ExpiringCacheEntry e2 = (ExpiringCacheEntry) o2;
-			return new Long(_expiryTime).compareTo(new Long(e2._expiryTime));
+		public int compareTo(CacheEntry e2) {
+			ExpiringCacheEntry ee2 = (ExpiringCacheEntry) e2;
+			return new Long(_expiryTime).compareTo(new Long(ee2._expiryTime));
 		}
 	}
 
@@ -85,7 +86,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @param key the cache key
 	 * @return TRUE if the cache contains the key, otherwise FALSE
 	 */
-	public synchronized boolean contains(Object key) {
+	public boolean contains(Object key) {
 		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		return (entry != null) && (!entry.isExpired());
 	}
@@ -98,7 +99,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @see ExpiringCache#get(Object)
 	 * @see ExpiringCache#isExpired(Object)
 	 */
-	public synchronized T get(Object key, boolean ifExpired) {
+	public T get(Object key, boolean ifExpired) {
 		request();
 		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		if (entry == null)
@@ -129,7 +130,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * with the earliest expiration date will be removed.
 	 * @param obj the entry to add to the cache
 	 */
-	public synchronized void add(T obj) {
+	public void add(T obj) {
 		if (obj == null)
 			return;
 
@@ -146,10 +147,16 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * Purges expired entries from the cache.
 	 */
 	private void purge() {
-		for (Iterator i = _cache.values().iterator(); i.hasNext();) {
-			ExpiringCacheEntry entry = (ExpiringCacheEntry) i.next();
-			if (entry.isExpired())
-				i.remove();
+		if (_pLock.tryAcquire()) {
+			try {
+				for (Iterator<CacheEntry<T>> i = _cache.values().iterator(); i.hasNext();) {
+					ExpiringCacheEntry entry = (ExpiringCacheEntry<T>) i.next();
+					if (entry.isExpired())
+						i.remove();
+				}
+			} finally {
+				_pLock.release();
+			}
 		}
 	}
 }
