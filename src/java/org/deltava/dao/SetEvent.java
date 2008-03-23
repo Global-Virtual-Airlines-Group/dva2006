@@ -43,7 +43,6 @@ public class SetEvent extends DAO {
 			writeAirports(e);
 			writeCharts(e);
 			writeEQTypes(e);
-			writeRoutes(e);
 			writeContactAddrs(e);
 
 			// Commit the transaction
@@ -217,12 +216,12 @@ public class SetEvent extends DAO {
 			Route r = i.next();
 			maxRouteID = Math.max(maxRouteID, r.getRouteID() + 1);
 			if (r.getRouteID() == 0) {
+				r.setRouteID(maxRouteID);
+				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, "
+						+ "RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			} else
 				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, "
 						+ "ACTIVE=?, RNAV=?, MAX_SIGNUPS=?, NAME=? WHERE (ROUTE_ID=?) AND (ID=?)");
-				r.setRouteID(maxRouteID);
-			} else
-				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE, "
-						+ "RNAV, MAX_SIGNUPS, NAME, ROUTE_ID, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
 			_ps.setString(1, r.getAirportD().getIATA());
 			_ps.setString(2, r.getAirportA().getIATA());
@@ -255,39 +254,6 @@ public class SetEvent extends DAO {
 		// Update the database and clearn up
 		_ps.executeBatch();
 		_ps.close();
-	}
-
-	private void writeRoutes(Event e) throws SQLException {
-
-		// Get the routes in reverse order
-		Collection<Route> routes = new TreeSet<Route>(Collections.reverseOrder());
-		routes.addAll(e.getRoutes());
-
-		// Write the routes, using INSERTs or UPDATEs as appropriate
-		int maxRouteID = 0;
-		for (Iterator<Route> i = routes.iterator(); i.hasNext();) {
-			Route r = i.next();
-			if (r.getRouteID() != 0) {
-				maxRouteID = Math.max(maxRouteID, r.getRouteID());
-				prepareStatement("UPDATE events.EVENT_AIRPORTS SET AIRPORT_D=?, AIRPORT_A=?, "
-						+ "MAX_SIGNUPS=?, ACTIVE=?, NAME=?, ROUTE=? WHERE (ID=?) AND (ROUTE_ID=?)");
-			} else {
-				prepareStatement("INSERT INTO events.EVENT_AIRPORTS (AIRPORT_D, AIRPORT_A, MAX_SIGNUPS, "
-						+ "ACTIVE, NAME, ROUTE, ID, ROUTE_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-				maxRouteID++;
-				r.setRouteID(maxRouteID);
-			}
-			
-			_ps.setString(1, r.getAirportD().getIATA());
-			_ps.setString(2, r.getAirportA().getIATA());
-			_ps.setInt(3, r.getMaxSignups());
-			_ps.setBoolean(4, r.getActive());
-			_ps.setString(5, r.getName());
-			_ps.setString(6, r.getRoute());
-			_ps.setInt(7, e.getID());
-			_ps.setInt(8, r.getRouteID());
-			executeUpdate(1);
-		}
 	}
 
 	private void writeContactAddrs(Event e) throws SQLException {
