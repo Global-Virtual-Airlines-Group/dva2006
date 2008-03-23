@@ -76,7 +76,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 		
 		// Build the leg
 		AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(ctx.getParameter("airline")),
-				StringUtils.parse(ctx.getParameter("flight"), 1), 1);
+				StringUtils.parse(ctx.getParameter("flight"), 1), StringUtils.parse(ctx.getParameter("leg"), 1));
 		leg.setEquipmentType(info.getEquipmentType());
 		leg.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		leg.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
