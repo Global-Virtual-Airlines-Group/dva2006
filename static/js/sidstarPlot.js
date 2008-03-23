@@ -1,11 +1,17 @@
-function getRoutes(combo)
+function getRoutes(combo, useCache)
 {
 var icao = combo.options[combo.selectedIndex].value;
 
+// Build the URL
+var url = "apsidstar.ws?airport=" + icao;
+if (!useCache) {
+	var d = new Date();
+	url += "&time=" + d.getTime();
+}
+
 // Build the XML Requester
-var d = new Date();
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "apsidstar.ws?airport=" + icao + "&time=" + d.getTime(), true);
+xmlreq.open("GET", url, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	mm.clearMarkers();
@@ -170,6 +176,8 @@ return true;
 
 function toggleRows(show)
 {
+mm.clearMarkers();
+removeMarkers(map, 'routeTrack');
 var rows = getElementsByClass('doPlot');
 for (var x = 0; x < rows.length; x++)
 	showObject(rows[x], show);
@@ -198,14 +206,16 @@ var route = document.forms[0].route;
 
 var isRemoved = false;
 var wps = route.value.split(' ');
+alert(wps.length);
 for (var x = 0; x < wps.length; x++) {
 	var wp = wps[x];
+	alert(wp);
 	if (wp == this.code) {
 		wps[x] = null;
 		route.value = wps.join(' ');
 		isRemoved = true;
 	} else
-		pnts.push(waypoints[wp].getLatLng());
+		pnts.push(waypoints[x].getLatLng());
 }
 
 if (!isRemoved) {

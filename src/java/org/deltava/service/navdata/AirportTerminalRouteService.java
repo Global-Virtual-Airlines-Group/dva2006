@@ -19,7 +19,7 @@ import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to display all Terminal Routes for an Airport. 
+ * A Web Service to display all Terminal Routes for an Airport.
  * @author Luke
  * @version 2.1
  * @since 2.1
@@ -34,7 +34,7 @@ public class AirportTerminalRouteService extends WebService {
 	 * @throws ServiceException if an error occurs
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
-		
+
 		// Get the airport
 		Airport a = SystemData.getAirport(ctx.getParameter("airport"));
 		if (a == null)
@@ -51,13 +51,13 @@ public class AirportTerminalRouteService extends WebService {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("routes");
 		re.setAttribute("icao", a.getICAO());
 		doc.setRootElement(re);
-		
+
 		// Generate the airport
 		Element ae = new Element("airport");
 		ae.setAttribute("icao", a.getICAO());
@@ -67,18 +67,24 @@ public class AirportTerminalRouteService extends WebService {
 		ae.setAttribute("color", a.getIconColor());
 		ae.addContent(new CDATA(a.getInfoBox()));
 		re.addContent(ae);
-		
+
 		// Format routes
-		for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext(); ) {
+		for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext();) {
 			TerminalRoute tr = i.next();
 			Element te = new Element("route");
 			te.setAttribute("type", tr.getTypeName());
-			te.setAttribute("id", tr.toString());
+			
+			// Build the ID
+			String id = tr.getName() + "." + tr.getTransition();
+			if (!"ALL".equals(tr.getRunway()))
+				id += "." + tr.getRunway();
+			
+			te.setAttribute("id", id);
 			te.addContent(XMLUtils.createElement("name", tr.getName()));
 			te.addContent(XMLUtils.createElement("transition", tr.getTransition()));
 			te.addContent(XMLUtils.createElement("runway", tr.getRunway()));
 			Element twe = new Element("waypoints");
-			for (Iterator<NavigationDataBean> wi = tr.getWaypoints().iterator(); wi.hasNext(); ) {
+			for (Iterator<NavigationDataBean> wi = tr.getWaypoints().iterator(); wi.hasNext();) {
 				NavigationDataBean nd = wi.next();
 				Element we = new Element("waypoint");
 				we.setAttribute("lat", df.format(nd.getLatitude()));
@@ -89,11 +95,11 @@ public class AirportTerminalRouteService extends WebService {
 				we.addContent(new CDATA(nd.getInfoBox()));
 				twe.addContent(we);
 			}
-			
+
 			te.addContent(twe);
 			re.addContent(te);
 		}
-		
+
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
@@ -103,7 +109,7 @@ public class AirportTerminalRouteService extends WebService {
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");
 		}
-		
+
 		// Return success code
 		return SC_OK;
 	}
@@ -112,7 +118,16 @@ public class AirportTerminalRouteService extends WebService {
 	 * Returns wether this web service requires authentication.
 	 * @return TRUE always
 	 */
-	public boolean isSecure() {
+	public final boolean isSecure() {
 		return true;
+	}
+
+	/**
+	 * Returns wether this web service calls are logged. High volume services like the Map/ServInfo route services will
+	 * not be logged.
+	 * @return TRUE if invocation logging should be performed by the servlet, otherwise FALSE
+	 */
+	public final boolean isLogged() {
+		return false;
 	}
 }

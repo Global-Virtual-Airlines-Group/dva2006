@@ -6,13 +6,13 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -48,13 +48,6 @@ public class TerminalRouteUpdateService extends WebService {
 		tr.setRunway(ctx.getParameter("runway"));
 		tr.setCanPurge(Boolean.valueOf(ctx.getParameter("canPurge")).booleanValue());
 		
-		// Add the waypoints
-		Collection<String> wpIDs = StringUtils.split(ctx.getParameter("waypoints"), " ");
-		for (String wp : wpIDs) {
-			NavigationDataBean nd = NavigationDataBean.create(wp);
-			tr.addWaypoint(nd);
-		}
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -62,14 +55,27 @@ public class TerminalRouteUpdateService extends WebService {
 			GetNavRoute dao = new GetNavRoute(con);
 			TerminalRoute otr = dao.getRoute(a, type, tr.getName());
 			
+			// Get the transition
+			NavigationDataBean tx = dao.get(tr.getTransition()).get(tr.getTransition(), a);
+			GeoLocation start = (tr.getType() == TerminalRoute.SID) ? a : tx;
+			if (tr.getType() == TerminalRoute.STAR)
+				tr.addWaypoint(tx);
+			
+			// Add the waypoints
+			Collection<NavigationDataBean> wps = dao.getRouteWaypoints(ctx.getParameter("waypoints"), start);
+			for (NavigationDataBean wp : wps)
+				tr.addWaypoint(wp);
+			
+			// Add the transition if a SID
+			if (tr.getType() == TerminalRoute.SID)
+				tr.addWaypoint(tx);
+			
 			// Start a transaction
 			ctx.startTX();
 			
 			// Delete the old SID and replace with the new
 			SetNavData wdao = new SetNavData(con);
-			if (otr != null)
-				wdao.delete(otr);
-			
+			wdao.delete(otr);
 			wdao.writeRoute(tr);
 			
 			// Commit

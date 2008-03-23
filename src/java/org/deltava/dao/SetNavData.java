@@ -186,11 +186,14 @@ public class SetNavData extends DAO {
 	}
 	
 	/**
-	 * Deletes a Terminal Route from the database
+	 * Deletes a Terminal Route from the database.
 	 * @param tr the TerminalRoute bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(TerminalRoute tr) throws DAOException {
+		if (tr == null)
+			return;
+		
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.SID_STAR WHERE (ITEMTYPE=?) AND (ICAO=?) "
 					+ "AND (NAME=?) AND (TRANSITION=?) AND (RUNWAY=?)");
