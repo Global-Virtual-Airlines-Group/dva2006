@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Comparator for Staff Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -69,6 +69,7 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	 * @throws ClassCastException if either object is not a Staff
 	 * @see java.util.Comparator#compare(Object, Object)
 	 */
+	@SuppressWarnings("fallthrough")
 	protected int compareImpl(Staff o1, Staff o2) {
 		switch (_comparisonType) {
 			case AREA:
