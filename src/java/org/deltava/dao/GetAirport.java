@@ -166,8 +166,11 @@ public class GetAirport extends DAO {
 			prepareStatementWithoutLimits("SELECT DISTINCT ICAO FROM common.SID_STAR");
 			Collection<Airport> results = new LinkedHashSet<Airport>();
 			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(SystemData.getAirport(rs.getString(1)));
+			while (rs.next()) {
+				Airport a = SystemData.getAirport(rs.getString(1));
+				if (a != null)
+					results.add(a);
+			}
 			
 			// Clean up and return
 			rs.close();
