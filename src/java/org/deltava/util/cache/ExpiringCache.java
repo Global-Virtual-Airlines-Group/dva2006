@@ -101,6 +101,9 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 */
 	public T get(Object key, boolean ifExpired) {
 		request();
+		if (key == null)
+			return null;
+		
 		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		if (entry == null)
 			return null;
