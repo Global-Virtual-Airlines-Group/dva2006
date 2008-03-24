@@ -69,6 +69,9 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	 */
 	public T get(Object key) {
 		request();
+		if (key == null)
+			return null;
+		
 		AgingCacheEntry<T> entry = (AgingCacheEntry<T>) _cache.get(key);
 		if (entry == null)
 			return null;
