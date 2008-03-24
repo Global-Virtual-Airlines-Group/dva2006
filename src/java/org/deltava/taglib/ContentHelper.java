@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,8 +8,9 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Helper class to check wether content has been aded into this request.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
+ * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
 
 public class ContentHelper {
@@ -30,9 +31,9 @@ public class ContentHelper {
 	public static void addContent(PageContext ctx, String contentType, String contentName) {
 
 		// Find the content name map
-		Set<String> content = (Set) ctx.findAttribute(CONTENT_MAP_ATTR);
+		Set content = (Set) ctx.findAttribute(CONTENT_MAP_ATTR);
 		if (content == null) {
-			content = new HashSet<String>();
+			content = new HashSet();
 			ctx.getRequest().setAttribute(CONTENT_MAP_ATTR, content);
 		}
 
@@ -52,10 +53,17 @@ public class ContentHelper {
 		return (content == null) ? false : content.contains(contentType + "$" + contentName);
 	}
 	
+	/**
+     * Detects if the browser is Microsoft Internet Explorer 8 or below.
+     * @return TRUE if the browser is Internet Explorer 8, otherwise FALSE
+     */
+	public static boolean isIE8(PageContext ctx) {
+		return (ctx.getRequest().getAttribute("browser$ie8") != null);
+	}
+	
     /**
      * Detects if the browser is Microsoft Internet Explorer 7 or below.
      * @return TRUE if the browser is Internet Explorer 7, otherwise FALSE
-     * @see org.deltava.servlet.filter.BrowserTypeFilter
      */
     public static boolean isIE7(PageContext ctx) {
     	return (ctx.getRequest().getAttribute("browser$ie7") != null);
@@ -64,7 +72,6 @@ public class ContentHelper {
     /**
      * Detects if the browser is Microsoft Internet Explorer 6 or below.
      * @return TRUE if the browser is Internet Explorer 5 or 6, otherwise FALSE
-     * @see org.deltava.servlet.filter.BrowserTypeFilter
      */
     public static boolean isIE6(PageContext ctx) {
     	return (ctx.getRequest().getAttribute("browser$ie") != null);
@@ -73,7 +80,6 @@ public class ContentHelper {
     /**
      * Detects if the browser is Mozilla Firefox.
      * @return TRUE if the browser is Firefox, otherwise FALSE
-     * @see org.deltava.servlet.filter.BrowserTypeFilter
      */
     public static boolean isFirefox(PageContext ctx) {
         return (ctx.getRequest().getAttribute("browser$mozilla") != null);
