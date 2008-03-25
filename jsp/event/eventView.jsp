@@ -76,7 +76,7 @@ return true;
 <view:row entry="${route}">
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
  <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
- (<fmt:airport airport="${route.airportA}" />)<c:if test="${route.isRNAV}"> (RNAV</c:if></td>
+ (<fmt:airport airport="${route.airportA}" />)<c:if test="${route.isRNAV}"> (RNAV)</c:if></td>
 </view:row>
 <view:row entry="${route}">
  <td class="data" colspan="5">${route.route}</td>

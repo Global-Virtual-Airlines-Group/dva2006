@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.crypt.MessageDigester;
 /**
  * A Data Access Object to write Approach Charts.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class SetChart extends DAO {
 			startTransaction();
 
 			// Write the metadata
-			prepareStatement("REPLACE INTO common.CHARTS (IATA, TYPE, IMGFORMAT, NAME, SIZE, HASH, ID) VALUES " +
+			prepareStatement("REPLACE INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, HASH, ID) VALUES " +
 					"(?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getAirport().getIATA());
 			_ps.setInt(2, c.getType());
@@ -78,7 +78,7 @@ public class SetChart extends DAO {
 	 */
 	public void update(Chart c) throws DAOException {
 		try {
-			prepareStatement("UPDATE common.CHARTS SET IATA=?, NAME=?, TYPE=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.CHARTS SET ICAO=?, NAME=?, TYPE=? WHERE (ID=?)");
 			_ps.setString(1, c.getAirport().getIATA());
 			_ps.setString(2, c.getName());
 			_ps.setInt(3, c.getType());
