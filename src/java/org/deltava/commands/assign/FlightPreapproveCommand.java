@@ -9,7 +9,6 @@ import org.deltava.beans.assign.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.commands.*;
-import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
@@ -38,8 +37,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 		if (ctx.getParameter("airportD") == null) {
 			ctx.setAttribute("pilotID", new Integer(ctx.getID()), REQUEST);
 			ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
-			ctx.setAttribute("airports", CollectionUtils.sort(new HashSet<Airport>(SystemData.getAirports().values()), 
-					new AirportComparator(AirportComparator.NAME)), REQUEST);
+			ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
 			
 			try {
 				Connection con = ctx.getConnection();
@@ -74,12 +72,20 @@ public class FlightPreapproveCommand extends AbstractCommand {
 		info.setPurgeable(true);
 		info.setRandom(true);
 		
+		// Get the airports
+		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
+		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
+		if (aD == null)
+			aD = SystemData.getAirport(ctx.getParameter("airportDCode"));
+		if (aA == null)
+			aA = SystemData.getAirport(ctx.getParameter("airportACode"));
+		
 		// Build the leg
 		AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(ctx.getParameter("airline")),
 				StringUtils.parse(ctx.getParameter("flight"), 1), StringUtils.parse(ctx.getParameter("leg"), 1));
 		leg.setEquipmentType(info.getEquipmentType());
-		leg.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-		leg.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+		leg.setAirportD(aD);
+		leg.setAirportA(aA);
 		info.addAssignment(leg);
 		
 		try {
