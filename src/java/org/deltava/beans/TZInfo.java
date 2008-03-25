@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.text.*;
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -25,6 +25,12 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	private TimeZone _tz;
 	private String _displayName;
 	private String _abbr;
+	
+	// Init default time zones
+	static {
+		_timeZones.put("UTC", UTC);
+		_timeZones.put("local", _local);
+	}
 	
 	private TZInfo(String tzName, String dName, String abbr) {
 		super();
