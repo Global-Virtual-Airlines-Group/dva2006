@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -93,11 +93,10 @@ public class AirportListService extends WebService {
 					ctx.release();
 				}
 			} else {
-				if ("all".equals(ctx.getParameter("airline"))) {
+				if ("all".equalsIgnoreCase(ctx.getParameter("airline")))
 					filter = new NonFilter();
-				} else {
+				else
 					filter = new AirlineFilter(a);
-				}
 			}
 		} else if (ctx.getParameter("code") != null) {
 			// Check if we are searching origin/departure
