@@ -49,7 +49,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" onChange="void changeAirline(this, false)" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Flight / Leg</td>
@@ -58,12 +58,12 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${airports}" firstEntry="-" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportD" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />
  <el:text name="airportDCode" size="4" max="4" idx="*" value="" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${airports}" firstEntry="-" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportA" size="1" idx="*" className="req" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />
  <el:text name="airportACode" size="4" max="4" idx="*" value="" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 </el:table>
