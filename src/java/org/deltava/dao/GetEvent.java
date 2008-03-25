@@ -34,10 +34,9 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getFutureEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM events.EVENTS WHERE (STARTTIME > ?) AND (STATUS != ?) "
+			prepareStatement("SELECT * FROM events.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?) "
 					+ "ORDER BY STARTTIME");
-			_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-			_ps.setInt(2, Event.CANCELED);
+			_ps.setInt(1, Event.CANCELED);
 			List<Event> results = execute();
 			
 			// Load the airports

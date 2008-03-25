@@ -72,7 +72,15 @@ public class EventRoutesCommand extends AbstractFormCommand {
 				r.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV")).booleanValue());
 				r.setActive(true);
 				
+				// Get the next Route ID
+				int maxRouteID = 1;
+				for (Iterator<Route> i = e.getRoutes().iterator(); i.hasNext(); ) {
+					Route rt = i.next();
+					maxRouteID = Math.max(maxRouteID, rt.getRouteID() + 1);
+				}
+				
 				// Save the route
+				r.setRouteID(maxRouteID);
 				wdao.save(r);
 			}
 		} catch (DAOException de) {

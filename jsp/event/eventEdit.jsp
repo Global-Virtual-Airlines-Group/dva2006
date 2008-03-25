@@ -156,12 +156,9 @@ to a specific set of equipment.</span><br />
 <c:forEach var="route" items="${event.routes}">
 <c:set var="hasName" value="${!empty route.name}" scope="request" />
 <view:row entry="${route}">
- <td class="label" valign="top" rowspan="${hasName ? '3' : '2'}">Route #<fmt:int value="${route.routeID}" /></td>
-<c:if test="${hasName}">
- <td class="data pri bld">${route.name}</td>
-</c:if>
- <td class="data">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
- (<fmt:airport airport="${route.airportA}" />)</td>
+ <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
+ <td class="data"><c:if test="${hasName}"><b>${route.name}</b> </c:if>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)
+ - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </view:row>
 <tr>
  <td class="data">${route.route}</td>

@@ -82,7 +82,6 @@ public class EventSaveCommand extends AbstractCommand {
 				r.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups"), 0));
 				r.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV")).booleanValue());
 				r.setName(ctx.getParameter("routeName"));
-				r.setRouteID(1);
 				r.setActive(true);
 				e.addRoute(r);
 				
