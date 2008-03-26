@@ -82,7 +82,7 @@ public class GetPerformance extends DAO {
 	public List<PerformanceMetrics> getExamGrading(int startDays, int endDays) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT E.");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(_categorySQL);
 		sqlBuf.append(" AS CATNAME, AVG(TIME_TO_SEC(TIMEDIFF(E.GRADED_ON, E.SUBMITTED_ON)) / 3600) AS AV, "
 				+ "MIN(TIME_TO_SEC(TIMEDIFF(E.GRADED_ON, E.SUBMITTED_ON)) / 3600) AS MN, "
@@ -113,7 +113,7 @@ public class GetPerformance extends DAO {
 	public List<PerformanceMetrics> getCheckRideGrading(int startDays, int endDays) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT CR.");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(_categorySQL);
 		sqlBuf.append(" AS CATNAME, AVG(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS AV, "
 				+ "MIN(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS MN, "
