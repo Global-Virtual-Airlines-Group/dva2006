@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -39,6 +40,7 @@ public class EventSaveCommand extends AbstractCommand {
 		// Initialize the messaging context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
+		String templateName = "EVENTCREATENS";
 
 		try {
 			Connection con = ctx.getConnection();
@@ -87,6 +89,7 @@ public class EventSaveCommand extends AbstractCommand {
 				
 				// Add to the message context
 				mctxt.addData("route", r);
+				templateName = "EVENTCREATE";
 			}
 
 			// Parse the equipment types
@@ -129,7 +132,7 @@ public class EventSaveCommand extends AbstractCommand {
 			if (isNew) {
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
-				mctxt.setTemplate(mtdao.get("EVENTCREATE"));
+				mctxt.setTemplate(mtdao.get(templateName));
 				mctxt.addData("event", e);
 				mctxt.setSubject("Online Event - " + e.getName());
 
