@@ -78,9 +78,10 @@ public class AirportListService extends WebService {
 
 		// Figure out what kind of search we are doing
 		AirportFilter filter = null;
-		if (ctx.getParameter("airline") != null) {
+		String al = ctx.getParameter("airline");
+		if (al != null) {
 			boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
-			Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+			Airline a = SystemData.getAirline(al);
 
 			// Either search the schedule or return the SystemData list
 			if (useSched) {
@@ -93,9 +94,18 @@ public class AirportListService extends WebService {
 					ctx.release();
 				}
 			} else {
-				if ("all".equalsIgnoreCase(ctx.getParameter("airline")))
+				if ("all".equalsIgnoreCase(al))
 					filter = new NonFilter();
-				else
+				else if ("charts".equalsIgnoreCase(al)) {
+					try {
+						GetChart dao = new GetChart(ctx.getConnection());
+						filter = new AirportListFilter(dao.getAirports());
+					} catch (DAOException de) {
+						throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+					} finally {
+						ctx.release();	
+					}
+				} else
 					filter = new AirlineFilter(a);
 			}
 		} else if (ctx.getParameter("code") != null) {
@@ -141,7 +151,8 @@ public class AirportListService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");
