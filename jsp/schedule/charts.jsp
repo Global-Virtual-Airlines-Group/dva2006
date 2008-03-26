@@ -12,6 +12,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:js name="airportRefresh" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
@@ -20,19 +21,10 @@ function updateAirport(combo)
 document.forms[0].submit();
 return true;
 }
-
-function setAirportCode(code)
-{
-var f = document.forms[0];
-if (setAirport(f.airport, code))
-	updateAirport(f.airport);
-
-return true;
-}
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void updateAirports(document.forms[0].airport, 'airline=charts', false, '${airport.ICAO}')">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -54,8 +46,8 @@ return true;
 <tr class="title">
  <td colspan="2">CHART NAME</td>
  <td width="25%">CHART TYPE</td>
- <td class="right" width="40%">AIRPORT <el:combo name="airport" onChange="void updateAirport(this)" size="1" idx="1" options="${airports}" value="${airport}" />
- <el:text name="airportDCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="void setAirportCode(this.value)" /></td>
+ <td class="right" width="40%">AIRPORT <el:combo name="airport" onChange="void updateAirport(this)" size="1" idx="*" options="${emptyList}" value="${airport}" />
+ <el:text name="airportDCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].airport, this.value); updateAirport(document.forms[0].airport);" /></td>
 </tr>
 
 <!-- Table Pilot Data -->

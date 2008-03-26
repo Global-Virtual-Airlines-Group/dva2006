@@ -24,8 +24,8 @@ public class ChartLoader extends TestCase {
 	private static Logger log;
 	
 	private static final String JDBC_URL ="jdbc:mysql://localhost/common";
-	private static final String XML = "/home/luke/charts/MyAirplane_IFR/d-tpp/xml/d-TPP_Metafile.xml";
-	private static final String PDF_ROOT = "/home/luke/charts/MyAirplane_IFR/d-tpp/published_pdfs";
+	private static final String XML = "/home/luke/charts/charts.xml";
+	private static final String PDF_ROOT = "/home/luke/charts/published_pdfs";
 	
 	private static final String[] TYPES = {"???", "IAP", "IAP", "STAR", "DP", "APD"};
 	
@@ -153,7 +153,7 @@ public class ChartLoader extends TestCase {
 	
 	private Collection<MD5Chart> loadCharts() throws SQLException {
 		Collection<MD5Chart> results = new ArrayList<MD5Chart>();
-		PreparedStatement ps = _c.prepareStatement("SELECT ID, IATA, TYPE, IMGFORMAT, NAME, SIZE, HASH "
+		PreparedStatement ps = _c.prepareStatement("SELECT ID, ICAO, TYPE, IMGFORMAT, NAME, SIZE, HASH "
 				+ "FROM common.CHARTS ORDER BY ID");
 		ps.setFetchSize(100);
 		ResultSet rs = ps.executeQuery();

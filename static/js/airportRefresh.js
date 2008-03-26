@@ -1,8 +1,7 @@
 function updateAirports(combo, cmdURL, doICAO, oldCode)
 {
-var d = new Date();
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "airports.ws?" + cmdURL + "&time=" + d.getTime(), true);
+xmlreq.open("GET", "airports.ws?" + cmdURL, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
