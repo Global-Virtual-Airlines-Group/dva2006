@@ -32,7 +32,9 @@ public class ChartsCommand extends AbstractCommand {
     	
         // Get airport code to display and save it into the request
         String aCode = ctx.getParameter("airport");
-        Airport a = SystemData.getAirport((aCode == null) ? ctx.getUser().getHomeAirport() : aCode);
+        if ((aCode == null) || (aCode.length() < 3))
+        	aCode = ctx.getUser().getHomeAirport();
+        Airport a = SystemData.getAirport(aCode);
         ctx.setAttribute("airport", a, REQUEST);
         
         // Get our access level

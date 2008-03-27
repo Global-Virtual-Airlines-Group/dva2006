@@ -21,6 +21,12 @@ function updateAirport(combo)
 document.forms[0].submit();
 return true;
 }
+
+function validate(form)
+{
+var f = document.forms[0];
+return (f.airport.selectedIndex > 0);
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -31,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="charts.do" method="post" validate="return true">
+<el:form action="charts.do" method="post" validate="return validate(this)">
 <view:table className="view" pad="default" space="default" cmd="charts">
 
 <!-- Table Header/Filter Bars-->
