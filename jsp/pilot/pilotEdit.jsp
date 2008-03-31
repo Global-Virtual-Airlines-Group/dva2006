@@ -306,8 +306,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Site Logins</td>
- <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />
-<c:if test="${pilot.loginCount > 0}">, last on <fmt:date date="${pilot.lastLogin}" /></c:if></td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" /><c:if test="${pilot.loginCount > 0}">, last
+ on <fmt:date date="${pilot.lastLogin}" /></c:if></td>
 </tr>
 <c:if test="${!empty pilot.lastLogoff}">
 <tr>
@@ -317,13 +317,11 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </c:if>
 <tr>
  <td class="label">Flights</td>
- <td colspan="${cspan}" class="data"><fmt:int value="${pilot.legs}" /> legs, 
-<fmt:dec value="${pilot.hours}" /> hours</td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
 </tr>
 <tr>
  <td class="label">Online Flights</td>
- <td colspan="${cspan}" class="data pri"><fmt:int value="${pilot.onlineLegs}" /> legs, 
-<fmt:dec value="${pilot.onlineHours}" /> hours</td>
+ <td colspan="${cspan}" class="data pri"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
 </tr>
 <c:if test="${access.canChangeStatus || (pilot.legacyHours > 0)}">
 <tr>
