@@ -55,17 +55,23 @@ function clickLine(latlng)
 {
 var newLine;
 var aw_points = mrks_aw[this.AirwayID];
+var oldLine = airways[this.AirwayID];
 if (this.isSelected) {
 	if (map.getZoom() <= 7)
 		return;
 	newLine = new GPolyline(aw_points, "#8090A0", 1.5, 0.45, {geodesic:false});
+	mm_aw.clearMarkers();
 } else {
 	newLine = new GPolyline(aw_points, "#A0C0FF", 2.25, 0.8, {geodesic:false});
 	newLine.isSelected = true;
+	for (var x = 0; x < oldLine.markers.length; x++)
+		mm_aw.addMarker(oldLine.markers[x], 7);
 }
 
+// Add the airway line
 newLine.AirwayID = this.AirwayID;
 newLine.infoShow = clickLine;
+newLine.markers = oldLine.markers;
 map.removeOverlay(this);
 map.addOverlay(newLine);
 airways[this.AirwayID] = newLine;
@@ -150,6 +156,7 @@ var findMrk;
 var mm_vor = new MarkerManager(map);
 var mm_ndb = new MarkerManager(map);
 var mm_int = new MarkerManager(map);
+var mm_aw = new MarkerManager(map, {maxZoom:14, borderPadding:32});
 
 // Navaid marker arrays
 var airways = new Array();
