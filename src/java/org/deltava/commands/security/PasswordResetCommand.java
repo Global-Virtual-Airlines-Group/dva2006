@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -79,12 +79,6 @@ public class PasswordResetCommand extends AbstractCommand {
 			return;
 		} finally {
 			ctx.release();
-		}
-
-		// Check to make sure the user exists in the database
-		if (usr == null) {
-			ctx.setMessage("User " + fName + " " + lName + " not found in database");
-			return;
 		}
 
 		// Check user status
