@@ -142,7 +142,8 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * Sets multiple JDBC connection properties at once.
 	 * @param props the properties to set
 	 */
-	public void setProperties(Map<? extends Object, ? extends Object> props) {
+	@SuppressWarnings("unchecked")
+	public void setProperties(Map props) {
 		_props.putAll(props);
 	}
 
