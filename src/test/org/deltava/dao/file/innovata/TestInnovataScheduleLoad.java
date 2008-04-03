@@ -112,7 +112,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		}
 	}
 	
-	public void testLoadSingleFlight() throws DAOException {
+	public void testLoadSingleFlight() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5037.csv", "04/04/2006"));
 		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
@@ -121,7 +121,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testMultiLegStartsInFuture() throws DAOException {
+	public void testMultiLegStartsInFuture() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl110.csv", "04/04/2006"));
 		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
@@ -130,7 +130,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testLegsInPast() throws DAOException {
+	public void testLegsInPast() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl263.csv", "04/04/2006"));
 		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
@@ -139,7 +139,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testDuplicatePair() throws DAOException {
+	public void testDuplicatePair() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5597.csv", "04/04/2006"));
 		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
@@ -148,7 +148,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testMultiStageMultiDay() throws DAOException {
+	public void testMultiStageMultiDay() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5029.csv", "04/04/2006"));
 		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();

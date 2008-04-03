@@ -39,9 +39,8 @@ public abstract class DAO {
     /**
      * Returns a reader suitable for text reads on the HTTP connection.
      * @return a BufferedReader
-     * @throws IOException if a network error occurs
      */
-    protected LineNumberReader getReader() throws IOException {
+    protected LineNumberReader getReader() {
         return new LineNumberReader(new InputStreamReader(_is), _size);
     }
 }
