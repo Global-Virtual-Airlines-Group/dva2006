@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -67,7 +67,7 @@ public class FTPCache {
 	 * @throws FTPClientException if an error occurs
 	 * @see FTPConnection#getNewest(String)
 	 */
-	public String getNewest(String dirName) throws FTPClientException {
+	public String getNewest(String dirName) {
 
 		// Init the FTPConnection object
 		FTPConnection con = new FTPConnection(_host);

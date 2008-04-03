@@ -18,7 +18,7 @@ public class GetPACOTs extends DAO implements TrackDAO {
 	 * Initializes the DAO with a particular stream.
 	 * @param is the stream
 	 */
-	public GetPACOTs(InputStream is) throws DAOException {
+	public GetPACOTs(InputStream is) {
 		super(is);
 	}
 

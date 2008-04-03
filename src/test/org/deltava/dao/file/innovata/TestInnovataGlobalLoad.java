@@ -31,6 +31,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
+	@SuppressWarnings("unchecked")
 	protected void setUp() throws Exception {
 		PropertyConfigurator.configure("data/log4j.test.properties");
 		log = Logger.getLogger(TestInnovataGlobalLoad.class);
@@ -51,7 +52,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Load JDBC properties
 		Properties p = new Properties();
-		p.putAll((Map<? extends Object, ? extends Object>) SystemData.getObject("jdbc.connectProperties"));
+		p.putAll((Map) SystemData.getObject("jdbc.connectProperties"));
 		p.setProperty("user", SystemData.get("jdbc.user"));
 		p.setProperty("password", SystemData.get("jdbc.pwd"));
 
@@ -83,7 +84,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	 * Rules for adding a flight: 1. Range contains today. 2. Airline code is AF or DL and the codeshare field is blank.
 	 * 3. Airline code is a codeshare (ie. NOT AF or DL) and the codeshare info field contains AF or DL.
 	 */
-	public void testLoadCSV() throws IOException, SQLException, ParseException {
+	public void testLoadCSV() throws IOException, ParseException {
 
 		// Build the file name
 		java.util.Date d = new java.util.Date();
