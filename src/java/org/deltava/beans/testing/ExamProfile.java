@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -30,6 +30,8 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     
     private AirlineInformation _owner;
     private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
+    private final Collection<Integer> _graderIDs = new HashSet<Integer>();
+    private final Collection<ExamSubPool> _subPools = new LinkedHashSet<ExamSubPool>();
     
     /**
      * Creates a new Examination profile.
@@ -139,6 +141,25 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
      */
     public Collection<AirlineInformation> getAirlines() {
     	return _airlines;
+    }
+    
+    /**
+     * Returns this Examination's sub-pools.
+     * @return a Collection of ExamSubPool beans
+     * @see ExamProfile#addPool(ExamSubPool)
+     * @see ExamProfile#setPools(Collection)
+     */
+    public Collection<ExamSubPool> getPools() {
+    	return _subPools;
+    }
+    
+    /**
+     * Returns the database IDs of all users who can grade this Examination.
+     * @return a Collection of database IDs
+     * @see ExamProfile#addScorerID(int)
+     */
+    public Collection<Integer> getScorerIDs() {
+    	return _graderIDs;
     }
 
     /**
@@ -275,6 +296,44 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     }
     
     /**
+     * Adds a user who can grade this Examination.
+     * @param id the user's database ID
+     * @see ExamProfile#getScorerIDs()
+     */
+    public void addScorerID(int id) {
+    	if (id > 0)
+    		_graderIDs.add(new Integer(id));
+    }
+
+    /**
+     * Overwrites the Question sub-pools for this Examination.
+     * @param pools a Collection of ExamSubPool beans
+     * @see ExamProfile#addPool(ExamSubPool)
+     * @see ExamProfile#getPools()
+     * @throws IllegalArgumentException if any subpool is for a different Examination
+     */
+    public void setPools(Collection<ExamSubPool> pools) {
+    	_subPools.clear();
+    	for (Iterator<ExamSubPool> i = pools.iterator(); i.hasNext(); )
+    		addPool(i.next());
+    }
+    
+    /**
+     * Adds a sub-pool to this Examination.
+     * @param esp an ExamSubPool
+     * @throws NullPointerException if esp is null
+     * @throws IllegalArgumentException if the subpool is for a different Examination
+     * @see ExamProfile#setPools(Collection)
+     * @see ExamProfile#getPools()
+     */
+    public void addPool(ExamSubPool esp) {
+    	if (!_name.equals(esp.getExamName()))
+    		throw new IllegalArgumentException("Attempting to add subpool for " + esp.getExamName() + " to " + _name);
+    	
+    	_subPools.add(esp);
+    }
+    
+    /**
      * Compares two examinations by comparing their stage and name.
      */
     public int compareTo(ExamProfile e2) {
@@ -287,7 +346,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
      * @return the Examination name
      */
     public Object cacheKey() {
-        return getName();
+        return _name;
     }
     
     public int hashCode() {

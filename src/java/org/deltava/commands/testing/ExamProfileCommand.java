@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.testing.ExamProfile;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -66,6 +67,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
          ep.setTime(StringUtils.parse(ctx.getParameter("time"), 15));
          ep.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
        	 ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
+       	 
+       	 // Update airlines
        	 Collection<String> airlines = ctx.getParameters("airlines");
        	 if (airlines != null) {
        		 Collection<AirlineInformation> ai = new ArrayList<AirlineInformation>();
@@ -74,7 +77,17 @@ public class ExamProfileCommand extends AbstractFormCommand {
        		 
        		 ep.setAirlines(ai);
        	 }
-
+       	 
+       	 // Update scorers
+       	Collection<String> scorerIDs = ctx.getParameters("scorerID");
+       	if (scorerIDs != null) {
+       		ep.getScorerIDs().clear();
+       		for (Iterator<String> i = scorerIDs.iterator(); i.hasNext(); ) {
+       			int id = StringUtils.parseHex(i.next());
+       			ep.addScorerID(id);
+       		}
+       	}
+       	
          // Get the write DAO and save the profile
          SetExamProfile wdao = new SetExamProfile(con);
          if (examName == null)
@@ -129,6 +142,11 @@ public class ExamProfileCommand extends AbstractFormCommand {
          // Get Equipment Type programs
          GetEquipmentType eqdao = new GetEquipmentType(con);
          ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
+         
+         // Get scorers
+         String dbName = (ep == null) ? SystemData.get("airline.db") : ep.getOwner().getDB();
+         GetPilotDirectory pdao = new GetPilotDirectory(con);
+         ctx.setAttribute("scorers", pdao.getByRole("Examiner", dbName), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
@@ -163,6 +181,12 @@ public class ExamProfileCommand extends AbstractFormCommand {
          access.validate();
          if (!access.getCanRead())
             throw securityException("Cannot view Examination Profile");
+         
+         // Load the scorers
+         GetUserData uddao = new GetUserData(con);
+         GetPilot pdao = new GetPilot(con);
+         UserDataMap udm = uddao.get(ep.getScorerIDs());
+         ctx.setAttribute("scorers", pdao.get(udm).values(), REQUEST);
 
          // Save the profile in the request
          ctx.setAttribute("eProfile", ep, REQUEST);

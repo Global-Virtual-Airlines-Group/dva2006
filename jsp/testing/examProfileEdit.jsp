@@ -72,7 +72,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Testing Time</td>
- <td class="data"><el:text name="time" idx="*" size="2" max="2" className="req" value="${eProfile.time}" /> minutes</td>
+ <td class="data"><el:text name="time" idx="*" size="3" max="4" className="req" value="${eProfile.time}" /> minutes</td>
 </tr>
 <tr>
  <td class="label">Owner Airline</td>

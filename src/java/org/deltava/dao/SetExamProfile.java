@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object for writing Examination/Question Profiles and Check Ride scripts.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -36,7 +36,12 @@ public class SetExamProfile extends DAO {
 
 			// Clean out the airlines
 			prepareStatementWithoutLimits("DELETE from exams.EXAM_AIRLINES WHERE (NAME=?)");
-			_ps.setString(1, ep.getName());
+			_ps.setString(1, examName);
+			executeUpdate(0);
+			
+			// Clean out the scorers
+			prepareStatementWithoutLimits("DELETE from exams.EXAMSCORERS WHERE (NAME=?)");
+			_ps.setString(1, examName);
 			executeUpdate(0);
 
 			// Write the profile
@@ -57,13 +62,26 @@ public class SetExamProfile extends DAO {
 
 			// Write the new airlines
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAM_AIRLINES (NAME, AIRLINE) VALUES (?, ?)");
-			_ps.setString(1, examName);
+			_ps.setString(1, ep.getName());
 			for (Iterator<AirlineInformation> i = ep.getAirlines().iterator(); i.hasNext();) {
 				AirlineInformation ai = i.next();
 				_ps.setString(2, ai.getCode());
 				_ps.addBatch();
 			}
 
+			// Execute the update
+			_ps.executeBatch();
+			_ps.close();
+			
+			// Write the new scorers 
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMSCORERS (NAME, PILOT_ID) VALUES (?, ?)");
+			_ps.setString(1, ep.getName());
+			for (Iterator<Integer> i = ep.getScorerIDs().iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				_ps.setInt(2, id.intValue());
+				_ps.addBatch();
+			}
+			
 			// Execute the update and commit
 			_ps.executeBatch();
 			_ps.close();
@@ -97,6 +115,12 @@ public class SetExamProfile extends DAO {
 			_ps.setBoolean(9, ep.getAcademy());
 			_ps.setString(10, ep.getOwner().getCode());
 			executeUpdate(1);
+			
+			// Write the default subpool
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAM_QPOOLS (NAME, ID, SUBPOOL, SIZE) VALUES (?, 1, ?, 0)");
+			_ps.setString(1, ep.getName());
+			_ps.setString(2, "ALL");
+			executeUpdate(1);
 
 			// Write the airlines
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAM_AIRLINES (NAME, AIRLINE) VALUES (?, ?)");
@@ -107,6 +131,19 @@ public class SetExamProfile extends DAO {
 				_ps.addBatch();
 			}
 
+			// Execute the update
+			_ps.executeBatch();
+			_ps.close();
+			
+			// Write the scorers
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMSCORERS (NAME, PILOT_ID) VALUES (?, ?)");
+			_ps.setString(1, ep.getName());
+			for (Iterator<Integer> i = ep.getScorerIDs().iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				_ps.setInt(2, id.intValue());
+				_ps.addBatch();
+			}
+			
 			// Execute the update and commit
 			_ps.executeBatch();
 			_ps.close();
@@ -162,11 +199,12 @@ public class SetExamProfile extends DAO {
 			}
 
 			// Write the exam names
-			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME, SUBPOOL_ID) VALUES (?, ?, ?)");
 			_ps.setInt(1, qp.getID());
-			for (Iterator<String> i = qp.getExamNames().iterator(); i.hasNext();) {
-				String examName = i.next();
-				_ps.setString(2, examName);
+			for (Iterator<ExamSubPool> i = qp.getPools().iterator(); i.hasNext();) {
+				ExamSubPool esp = i.next();
+				_ps.setString(2, esp.getExamName());
+				_ps.setInt(3, esp.getID()); 
 				_ps.addBatch();
 			}
 
@@ -275,6 +313,32 @@ public class SetExamProfile extends DAO {
 	}
 
 	/**
+	 * Writes an Examination sub-pool to the database. This can handle both INSERT and UPDATE operations.
+	 * @param esp the ExamSubPool bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(ExamSubPool esp) throws DAOException {
+		try {
+			if (esp.getID() > 0) {
+				prepareStatement("UPDATE exams.EXAM_QPOOLS SET SUBPOOL=?, SIZE=? WHERE (NAME=?) AND (ID=?)");
+				_ps.setInt(4, esp.getID());
+			} else
+				prepareStatement("INSERT INTO exams.EXAM_QPOOLS (SUBPOOL, SIZE, NAME) VALUES (?, ?, ?)");
+			
+			_ps.setString(1, esp.getName());
+			_ps.setInt(2, esp.getSize());
+			_ps.setString(3, esp.getExamName());
+			executeUpdate(1);
+			
+			// Set ID if new
+			if (esp.getID() == 0)
+				esp.setID(getNewID());
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
 	 * Writes a Question Profile image resource to the database.
 	 * @param qp the QuestionProfile bean
 	 * @throws DAOException if a JDBC error occurs
@@ -315,11 +379,12 @@ public class SetExamProfile extends DAO {
 			executeUpdate(0);
 			
 			// Write the exam names
-			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.QE_INFO (QUESTION_ID, EXAM_NAME, SUBPOOL) VALUES (?, ?, ?)");
 			_ps.setInt(1, qp.getID());
-			for (Iterator<String> i = qp.getExamNames().iterator(); i.hasNext();) {
-				String examName = i.next();
-				_ps.setString(2, examName);
+			for (Iterator<ExamSubPool> i = qp.getPools().iterator(); i.hasNext();) {
+				ExamSubPool esp = i.next();
+				_ps.setString(2, esp.getExamName());
+				_ps.setString(3, "ALL".equals(esp.getName()) ? null : esp.getName());
 				_ps.addBatch();
 			}
 

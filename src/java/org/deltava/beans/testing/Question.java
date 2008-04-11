@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.ImageBean;
@@ -6,11 +6,11 @@ import org.deltava.beans.ImageBean;
 /**
  * A class to store examination question information.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class Question extends ImageBean implements Comparable {
+public class Question extends ImageBean {
 
 	/**
 	 * The question text.

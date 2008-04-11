@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Date;
@@ -12,12 +12,13 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class ExamAccessControl extends AccessControl {
 
+	private ExamProfile _ep;
     private Test _t;
     private UserData _user;
     
@@ -32,9 +33,10 @@ public class ExamAccessControl extends AccessControl {
      * Initialize the Access controller.
      * @param ctx the command context
      * @param t the Examination/CheckRide to validate against
+     * @param ud the UserData bean for the user taking the test
      */
-    public ExamAccessControl(SecurityContext ctx, Test t) {
-    	this (ctx, t, null);
+    public ExamAccessControl(SecurityContext ctx, Test t, UserData ud) {
+    	this(ctx, t, ud, null);
     }
     
     /**
@@ -42,11 +44,13 @@ public class ExamAccessControl extends AccessControl {
      * @param ctx the command context
      * @param t the Examination/CheckRide to validate against
      * @param ud the UserData bean for the user taking the test
+     * @param ep the ExamProfile bean for the Exam
      */
-    public ExamAccessControl(SecurityContext ctx, Test t, UserData ud) {
+    public ExamAccessControl(SecurityContext ctx, Test t, UserData ud, ExamProfile ep) {
         super(ctx);
         _t = t;
         _user = ud;
+        _ep = ep;
     }
 
     /**
@@ -77,13 +81,17 @@ public class ExamAccessControl extends AccessControl {
         	Examination ex = (Examination) _t;
         	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().before(new Date())));
         }
+        
+        // Check if we're able to score
+        boolean inScoreList = isExam && (_ep != null) && (_ep.getScorerIDs().isEmpty() ||
+        		_ep.getScorerIDs().contains(new Integer(_ctx.getUser().getID())));
 
         // Set access
         _canRead = isOurs || isExam || isHR || _ctx.isUserInRole("Instructor");
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && isOurAirline && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin") && (isOurAirline || isOurUser);
-        _canScore = _canEdit || (isSubmitted && isExam);
+        _canScore = _canEdit || (isSubmitted && inScoreList);
         _canViewAnswers = isScored && (isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
         
         // Throw an exception if we cannot view

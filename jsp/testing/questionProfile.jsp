@@ -53,7 +53,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
- <td class="data small"><fmt:list value="${question.examNames}" delim=", " /></td>
+ <td class="data small"><fmt:list value="${question.pools}" delim=", " /></td>
 </tr>
 <tr>
  <td class="label">Statistics</td>

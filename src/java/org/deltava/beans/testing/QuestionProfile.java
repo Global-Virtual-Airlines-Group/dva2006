@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Exam Question profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	private int _totalAnswers;
 	private int _correctAnswers;
 	private boolean _active;
-	private final Collection<String> _exams = new TreeSet<String>();
+	private final Collection<ExamSubPool> _exams = new TreeSet<ExamSubPool>();
 
 	private AirlineInformation _owner;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -33,12 +33,12 @@ public class QuestionProfile extends Question implements ViewEntry {
 	}
 
 	/**
-	 * Returns the Examinations associated with this Question.
-	 * @return a Collection of Examination names
-	 * @see QuestionProfile#addExam(String)
-	 * @see QuestionProfile#setExams(Collection)
+	 * Returns the Examination Pools associated with this Question.
+	 * @return a Collection of ExamSubPool beans
+	 * @see QuestionProfile#addPool(ExamSubPool)
+	 * @see QuestionProfile#setPools(Collection)
 	 */
-	public Collection<String> getExamNames() {
+	public Collection<ExamSubPool> getPools() {
 		return _exams;
 	}
 
@@ -108,25 +108,23 @@ public class QuestionProfile extends Question implements ViewEntry {
 
 	/**
 	 * Links this Question to an Examination.
-	 * @param examName the examination name
-	 * @throws NullPointerException if examName is null
-	 * @see QuestionProfile#setExams(Collection)
-	 * @see QuestionProfile#getExamNames()
+	 * @param esp the Examination pool
+	 * @see QuestionProfile#setPools(Collection)
+	 * @see QuestionProfile#getPools()
 	 */
-	public void addExam(String examName) {
-		_exams.add(examName.trim());
+	public void addPool(ExamSubPool esp) {
+		_exams.add(esp);
 	}
 
 	/**
 	 * Links this Question to a number of Examinations.
-	 * @param exams a Collection of Examination names
-	 * @see QuestionProfile#addExam(String)
-	 * @see QuestionProfile#getExamNames()
+	 * @param pools a Collection of ExamSubPool beans
+	 * @see QuestionProfile#addPool(ExamSubPool)
+	 * @see QuestionProfile#getPools()
 	 */
-	public void setExams(Collection<String> exams) {
+	public void setPools(Collection<ExamSubPool> pools) {
 		_exams.clear();
-		for (Iterator<String> i = exams.iterator(); i.hasNext();)
-			addExam(i.next());
+		_exams.addAll(pools);
 	}
 
 	/**
