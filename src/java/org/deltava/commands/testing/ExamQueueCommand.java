@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.*;
 /**
  * A Web Site Command to display Pilot Examinations awaiting scoring.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			for (Iterator<? extends Test> i = results.iterator(); i.hasNext();) {
 				Test t = i.next();
-				ExamAccessControl access = new ExamAccessControl(ctx, t);
+				ExamAccessControl access = new ExamAccessControl(ctx, t, null);
 				try {
 					access.validate();
 					pilotIDs.add(new Integer(t.getPilotID()));

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.QuestionProfileAccessControl;
 /**
  * A Web Site Command to delete an Examination Question profile.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class QuestionDeleteCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the Examination profile
-			GetExamProfiles rdao = new GetExamProfiles(con);
+			GetExamQuestions rdao = new GetExamQuestions(con);
 			QuestionProfile qp = rdao.getQuestionProfile(ctx.getID());
 			if (qp == null)
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());

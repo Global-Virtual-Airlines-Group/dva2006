@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Get the DAO and load the existing question profile, or create a new one
 			QuestionProfile qp = null;
 			if (ctx.getID() != 0) {
-				GetExamProfiles rdao = new GetExamProfiles(con);
+				GetExamQuestions rdao = new GetExamQuestions(con);
 				qp = rdao.getQuestionProfile(ctx.getID());
 				if (qp == null)
 					throw notFoundException("Invalid Question Profile - " + ctx.getID());
@@ -73,8 +73,24 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 			// Load the fields from the request
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			Collection<String> examNames = ctx.getParameters("examNames");
-			qp.setExams((examNames != null) ? examNames : new HashSet<String>());
+			Collection<String> examPools = ctx.getParameters("examNames");
+			if (examPools != null) {
+				Collection<ExamSubPool> pools = new LinkedHashSet<ExamSubPool>();
+				for (Iterator<String> i = examPools.iterator(); i.hasNext(); ) {
+					String poolName = i.next();
+					int pos = poolName.lastIndexOf('-');
+					if (pos == -1)
+						pools.add(new ExamSubPool(poolName, ""));
+					else {
+						ExamSubPool esp = new ExamSubPool(poolName.substring(0, pos), "");
+						esp.setID(StringUtils.parse(poolName.substring(pos + 1), 0));
+						pools.add(esp);
+					}
+				}
+				
+				qp.setPools(pools);
+			} else
+				qp.setPools(new HashSet<ExamSubPool>());
 
 			// Start a transaction
 			ctx.startTX();
@@ -121,14 +137,13 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		
 		boolean doEdit = false;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and load the question profile
-			GetExamProfiles dao = new GetExamProfiles(con);
-			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
+			GetExamQuestions eqdao = new GetExamQuestions(con);
+			QuestionProfile qp = eqdao.getQuestionProfile(ctx.getID());
 			if ((qp == null) && (ctx.getID() != 0))
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());
 
@@ -142,10 +157,11 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			doEdit = access.getCanEdit();
 
 			// Get exam names
+			GetExamProfiles epdao = new GetExamProfiles(con);
 			if (doEdit)
-				ctx.setAttribute("examNames", dao.getAllExamProfiles(), REQUEST);
+				ctx.setAttribute("examNames", epdao.getAllSubPools(), REQUEST);
 			else
-				ctx.setAttribute("examNames", dao.getExamProfiles(), REQUEST);
+				ctx.setAttribute("examNames", epdao.getSubPools(), REQUEST);
 
 			// Save the profile in the request
 			ctx.setAttribute("question", qp, REQUEST);
@@ -175,7 +191,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and load the question profile
-			GetExamProfiles dao = new GetExamProfiles(con);
+			GetExamQuestions dao = new GetExamQuestions(con);
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if (qp == null)
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());

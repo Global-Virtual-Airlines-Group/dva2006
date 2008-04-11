@@ -446,7 +446,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (cr != null) {
 					ExamAccessControl crAccess = null;
 					try {
-						crAccess = new ExamAccessControl(ctx, cr);
+						crAccess = new ExamAccessControl(ctx, cr, null);
 						crAccess.validate();
 
 						// Save the access controller

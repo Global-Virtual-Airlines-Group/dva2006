@@ -59,7 +59,7 @@ public class ExamAnswerService extends WebService {
 			Examination ex = dao.getExam(examID);
 			if (ex == null)
 				throw new ServiceException(SC_NOT_FOUND, "Unknown Exam ID - " + examID, false);
-
+			
 			// Check our access to it, and stop if we cannot access it
 			ExamAccessControl access = new ExamAccessControl(ctx, ex, null);
 			try {
