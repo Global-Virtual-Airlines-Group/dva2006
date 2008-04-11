@@ -241,6 +241,7 @@ public class RegisterCommand extends AbstractCommand {
 				throw notFoundException("Invalid Examination - " + examName);
 
 			// Load the question pool for the questionnaire
+			ep.setPools(epdao.getSubPools(ep.getName()));
 			GetExamQuestions eqdao = new GetExamQuestions(con);
 			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
 			if (qPool.isEmpty())
