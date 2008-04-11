@@ -64,7 +64,6 @@ public class FTPCache {
 	 * Returns the newest file on the remote server.
 	 * @param dirName the directory on the server
 	 * @return the file name, or null if no files found
-	 * @throws FTPClientException if an error occurs
 	 * @see FTPConnection#getNewest(String)
 	 */
 	public String getNewest(String dirName) {
