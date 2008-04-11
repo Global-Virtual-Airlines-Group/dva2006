@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new Pilot Examination.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -101,13 +101,11 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			ex.setExpiryDate(cld.getTime());
 
 			// Load the question pool for this examination
-			epdao.setQueryMax(ep.getSize());
-			Collection<QuestionProfile> qPool = epdao.getQuestionPool(examName, true, true);
-			if (qPool.isEmpty()) {
-				CommandException ce = new CommandException("Empty Question Pool for " + examName);
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			ep.setPools(epdao.getSubPools(ep.getName()));
+			GetExamQuestions eqdao = new GetExamQuestions(con);
+			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
+			if (qPool.isEmpty())
+				throw new CommandException("Empty Question Pool for " + examName, false);
 
 			// Add the questions to the exam
 			int qNum = 0;

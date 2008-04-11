@@ -108,9 +108,10 @@ return true;
 <tr>
 <c:choose>
 <c:when test="${examActive > 0}">
- <td class="left" colspan="6">You currently are in the process of taking a Pilot Examination.
- Until this examination has been submitted and scored, you cannot take any new examinations.</td>
- <td><el:cmdbutton url="exam" linkID="${fn:hex(examActive)}" label="ACTIVE EXAM" /></td>
+ <td class="left" colspan="7">You currently are in the process of taking a Pilot Examination.
+ Until it has been submitted and scored, you cannot take any new examinations.
+ <el:cmd url="exam" linkID="${fn:hex(examActive)}" className="sec bld">Click Here</el:cmd> to
+ return to the Examination.</td>
 </c:when>
 <c:when test="${!empty txreq}">
  <td class="left" colspan="7">You currently are in the process of transferring between Equipment

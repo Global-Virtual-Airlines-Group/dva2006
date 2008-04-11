@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -12,12 +12,13 @@ import org.deltava.dao.*;
 import org.deltava.security.command.QuestionProfileAccessControl;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to update the Examinations a Question appears in, if the current web
  * application is not the owner of the Question.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -33,7 +34,7 @@ public class QuestionIncludeCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the question profile
-			GetExamProfiles rdao = new GetExamProfiles(con);
+			GetExamQuestions rdao = new GetExamQuestions(con);
 			QuestionProfile qp = rdao.getQuestionProfile(ctx.getID());
 			if (qp == null)
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());
@@ -44,25 +45,35 @@ public class QuestionIncludeCommand extends AbstractCommand {
 			if (!access.getCanInclude())
 				throw securityException("Cannot modify Question Profile examination list");
 			
-			// Load the exams from the request
-			Collection<String> examNames = ctx.getParameters("examNames");
-			qp.setExams((examNames != null) ? examNames : new HashSet<String>());
-			
-			// Get our airline's exam names
-			Collection<String> ourExams = new LinkedHashSet<String>(); 
-			for (Iterator<ExamProfile> i = rdao.getExamProfiles().iterator(); i.hasNext(); ) {
-				ExamProfile ep = i.next();
-				ourExams.add(ep.getName());
+			// Load the exam pools from the request
+			Collection<String> examPools = ctx.getParameters("examNames");
+			Collection<ExamSubPool> pools = new LinkedHashSet<ExamSubPool>();
+			if (examPools != null) {
+				for (Iterator<String> i = examPools.iterator(); i.hasNext(); ) {
+					String poolName = i.next();
+					int pos = poolName.lastIndexOf('-');
+					if (pos == -1)
+						pools.add(new ExamSubPool(poolName, ""));
+					else {
+						ExamSubPool esp = new ExamSubPool(poolName.substring(0, pos), "");
+						esp.setID(StringUtils.parse(poolName.substring(pos + 1), 0));
+						pools.add(esp);
+					}
+				}
 			}
 			
+			// Get our airline's exam subpool names
+			GetExamProfiles epdao = new GetExamProfiles(con);
+			Collection<ExamSubPool> ourExams = epdao.getSubPools(); 
+			
 			// Ensure that we have only selected exams in our airline
-			examNames.removeAll(CollectionUtils.getDelta(examNames, ourExams));
+			pools.removeAll(CollectionUtils.getDelta(pools, ourExams));
 			
 			// Update the exams - remove all from our airline, then re-add what we have left
-			Collection<String> exams = qp.getExamNames();
+			Collection<ExamSubPool> exams = qp.getPools();
 			exams.removeAll(ourExams);
-			exams.addAll(examNames);
-			qp.setExams(exams);
+			exams.addAll(pools);
+			qp.setPools(exams);
 			
 			// Save the question profile
 			SetExamProfile wdao = new SetExamProfile(con);

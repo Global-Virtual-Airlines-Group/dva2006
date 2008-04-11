@@ -63,11 +63,10 @@ Examination is part of the <content:airline /> Flight Academy</c:if></td>
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
+ <td>
 <c:if test="${access.canEdit}">
- <td><el:cmdbutton url="eprofile" linkID="${eProfile.name}" op="edit" label="EDIT EXAMINATION PROFILE" /></td>
-</c:if>
-<c:if test="${!access.canEdit}">
- <td>&nbsp;</td>
+<el:cmdbutton url="eprofile" linkID="${eProfile.name}" op="edit" label="EDIT EXAMINATION PROFILE" />
+ <el:cmdbutton url="epools" linkID="${eProfile.name}" label="VIEW QUESTION POOLS" /></td>
 </c:if>
 </tr>
 </el:table>

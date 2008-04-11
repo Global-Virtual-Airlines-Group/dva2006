@@ -22,7 +22,7 @@ if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return fa
 if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
 if (!validateCombo(form.owner, 'Owner')) return false;
 if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
-if ((f.isMultiChoice) && (f.isMultiChoice.checked)) {
+if ((form.isMultiChoice) && (form.isMultiChoice.checked)) {
 	if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
 }
 
@@ -108,7 +108,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
- <td class="data"><el:check name="examNames" idx="*" cols="5" width="160" newLine="true" className="small" checked="${question.examNames}" options="${examNames}" /></td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="190" newLine="true" className="small" checked="${question.pools}" options="${examNames}" /></td>
 </tr>
 <c:if test="${!empty question}">
 <tr>

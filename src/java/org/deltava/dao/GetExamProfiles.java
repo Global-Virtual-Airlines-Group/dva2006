@@ -1,48 +1,22 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.testing.*;
 
 import org.deltava.util.CollectionUtils;
-
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class GetExamProfiles extends DAO implements CachingDAO {
-
-	private static final Cache<ExamResults> _rCache = new ExpiringCache<ExamResults>(120, 7200);
-
-	private class ExamResults extends DatabaseBean {
-
-		private int _total;
-		private int _correct;
-
-		ExamResults(int id, int total, int correct) {
-			super();
-			setID(id);
-			_total = total;
-			_correct = correct;
-		}
-
-		public int getTotal() {
-			return _total;
-		}
-
-		public int getCorrect() {
-			return _correct;
-		}
-	}
+public class GetExamProfiles extends DAO {
 
 	/**
 	 * Initialize the Data Access Object.
@@ -50,22 +24,6 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 	 */
 	public GetExamProfiles(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _rCache.getRequests();
-	}
-
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _rCache.getHits();
 	}
 
 	/**
@@ -82,6 +40,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			// Execute the query - return null if not found
 			List<ExamProfile> results = execute();
 			loadAirlines(results);
+			loadScorers(results);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -98,6 +57,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			prepareStatement("SELECT * FROM exams.EXAMINFO ORDER BY STAGE, NAME");
 			List<ExamProfile> results = execute();
 			loadAirlines(results);
+			loadScorers(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -116,6 +76,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			_ps.setString(1, SystemData.get("airline.code"));
 			List<ExamProfile> results = execute();
 			loadAirlines(results);
+			loadScorers(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -136,221 +97,106 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			_ps.setString(2, SystemData.get("airline.code"));
 			List<ExamProfile> results = execute();
 			loadAirlines(results);
+			loadScorers(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Loads a Question Profile.
-	 * @param id the Question ID
-	 * @return the Question profile
+	 * Returns the sub-pools for a particular Examination.
+	 * @param examName the Examination name
+	 * @return a List of ExamSubPool beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public QuestionProfile getQuestionProfile(int id) throws DAOException {
+	public List<ExamSubPool> getSubPools(String examName) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM exams.QUESTIONINFO Q "
-					+ "LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON "
-					+ "(MQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1");
-			_ps.setInt(1, id);
-
-			// Execute the Query
+			prepareStatementWithoutLimits("SELECT ESP.ID, ESP.SUBPOOL, IF(ESP.SIZE=0, E.QUESTIONS, ESP.SIZE) "
+					+ "AS QNUM, COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO E LEFT JOIN exams.EXAM_QPOOLS ESP "
+					+ "ON (E.NAME=ESP.NAME) LEFT JOIN exams.QE_INFO QE ON (ESP.ID=QE.SUBPOOL_ID) AND "
+					+ "(ESP.NAME=QE.EXAM_NAME) WHERE (E.NAME=?) GROUP BY ESP.ID");
+			_ps.setString(1, examName);
+			
+			// Execute the query
+			List<ExamSubPool> results = new ArrayList<ExamSubPool>();
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				_ps.close();
-				return null;
+			while (rs.next()) {
+				ExamSubPool sp = new ExamSubPool(examName, rs.getString(2));
+				sp.setID(rs.getInt(1));
+				sp.setSize(rs.getInt(3));
+				sp.setPoolSize(rs.getInt(4));
+				results.add(sp);
 			}
 			
-			// Check if we are multiple choice
-			boolean isMultiChoice = (rs.getInt(6) > 0);
-
-			// Populate the Question Profile
-			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(
-					rs.getString(2));
-			qp.setID(rs.getInt(1));
-			qp.setCorrectAnswer(rs.getString(3));
-			qp.setActive(rs.getBoolean(4));
-			qp.setOwner(SystemData.getApp(rs.getString(5)));
-
-			// Load image data
-			if (rs.getInt(8) > 0) {
-				qp.setType(rs.getInt(7));
-				qp.setSize(rs.getInt(8));
-				qp.setWidth(rs.getInt(9));
-				qp.setHeight(rs.getInt(10));
-			}
-
-			// Clean up
-			rs.close();
-			_ps.close();
-			
-			// Load airlines
-			prepareStatementWithoutLimits("SELECT AIRLINE FROM exams.QUESTIONAIRLINES WHERE (ID=?)");
-			_ps.setInt(1, qp.getID());
-			rs = _ps.executeQuery();
-			while (rs.next())
-				qp.addAirline(SystemData.getApp(rs.getString(1)));
-			
-			// Clean up
-			rs.close();
-			_ps.close();
-
-			// Load correct answer copunts
-			loadResults(Collections.singleton(qp), true);
-
-			// Get multiple choice choices
-			if (isMultiChoice) {
-				MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
-				prepareStatementWithoutLimits("SELECT ANSWER FROM exams.QUESTIONMINFO WHERE (ID=?) ORDER BY SEQ");
-				_ps.setInt(1, qp.getID());
-
-				// Execute the Query
-				rs = _ps.executeQuery();
-				while (rs.next())
-					mqp.addChoice(rs.getString(1));
-
-				// Clean up
-				rs.close();
-				_ps.close();
-			}
-
-			// Get the exams for this question
-			prepareStatementWithoutLimits("SELECT EXAM_NAME FROM exams.QE_INFO WHERE (QUESTION_ID=?)");
-			_ps.setInt(1, id);
-
-			// Populate the exam names
-			rs = _ps.executeQuery();
-			while (rs.next())
-				qp.addExam(rs.getString(1));
-
 			// Clean up and return
 			rs.close();
 			_ps.close();
-			return qp;
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Loads all Questions linked to a particular Pilot Examination.
-	 * @param examName the Examination name
-	 * @param isRandom randomly order Questions
-	 * @param isActive only include active Questions
-	 * @return a List of QuestionProfiles
+	 * Returns Examination sub-pools for the current Airline.
+	 * @return a Collection of ExamSubPool beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<QuestionProfile> getQuestionPool(String examName, boolean isRandom, boolean isActive)
-			throws DAOException {
-
-		// Check if we're displaying all questions
-		boolean showAll = "ALL".equalsIgnoreCase(examName);
-		isActive |= showAll;
-
-		// Build conditions
-		Collection<String> conditions = new ArrayList<String>();
-		if (isActive)
-			conditions.add("(Q.ACTIVE=?)");
-		if (!showAll)
-			conditions.add("(QE.EXAM_NAME=?)");
-
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM exams.QUESTIONINFO Q "
-						+ "LEFT JOIN exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) "
-						+ "LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) ");
-
-		// Append conditions
-		if (!conditions.isEmpty())
-			sqlBuf.append("WHERE ");
-		for (Iterator<String> i = conditions.iterator(); i.hasNext();) {
-			sqlBuf.append(i.next());
-			if (i.hasNext())
-				sqlBuf.append(" AND ");
-		}
-
-		// Add GROUP/ORDER BY
-		sqlBuf.append(" GROUP BY Q.ID");
-		if (isRandom)
-			sqlBuf.append(" ORDER BY RAND()");
-
+	public Collection<ExamSubPool> getSubPools() throws DAOException {
 		try {
-			prepareStatement(sqlBuf.toString());
-
-			// Set the parameters
-			int pNum = 0;
-			if (isActive)
-				_ps.setBoolean(++pNum, isActive);
-			if (!showAll)
-				_ps.setString(++pNum, examName);
+			prepareStatementWithoutLimits("SELECT E.NAME, ESP.SUBPOOL, ESP.ID, IF(ESP.SIZE=0, E.QUESTIONS, ESP.SIZE) AS QNUM, "
+					+ "COUNT(QE.QUESTION_ID) FROM exams.EXAM_AIRLINE EA, exams.EXAMINFO E LEFT JOIN exams.EXAM_QPOOLS ESP "
+					+ "ON (E.NAME=ESP.NAME) LEFT JOIN exams.QE_INFO QE ON (ESP.NAME=QE.EXAM_NAME) AND (ESP.ID=QE.SUBPOOL_ID) "
+					+ "WHERE (E.NAME=EA.NAME) AND (EA.AIRLINE=?) GROUP BY E.NAME, ESP.ID ORDER BY E.STAGE, E.NAME, ESP.ID");
+			_ps.setString(1, SystemData.get("airline.code"));
 
 			// Execute the Query
-			boolean hasMultiChoice = false;
-			List<QuestionProfile> results = new ArrayList<QuestionProfile>();
+			List<ExamSubPool> results = new ArrayList<ExamSubPool>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				// Check if we are multiple choice
-				boolean isMultiChoice = (rs.getInt(6) > 0);
-				hasMultiChoice |= isMultiChoice;
-
-				// Populate the Question Profile
-				QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2))
-						: new QuestionProfile(rs.getString(2));
-				qp.setID(rs.getInt(1));
-				qp.setCorrectAnswer(rs.getString(3));
-				qp.setActive(rs.getBoolean(4));
-				qp.setOwner(SystemData.getApp(rs.getString(5)));
-
-				// Load image metadata
-				if (rs.getInt(8) > 0) {
-					qp.setType(rs.getInt(7));
-					qp.setSize(rs.getInt(8));
-					qp.setWidth(rs.getInt(9));
-					qp.setHeight(rs.getInt(10));
-				}
-
-				// Add to results
-				results.add(qp);
+				ExamSubPool sp = new ExamSubPool(rs.getString(1), rs.getString(2));
+				sp.setID(rs.getInt(3));
+				sp.setSize(rs.getInt(4));
+				sp.setPoolSize(rs.getInt(5));
+				results.add(sp);
 			}
 
-			// Clean up
+			// Clean up and return
 			rs.close();
 			_ps.close();
-
-			// Load the correct answer counts
-			loadResults(results, false);
-
-			// Convert to a map so we can load multiple choices
-			if (hasMultiChoice) {
-				Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(results, "ID");
-
-				// Build the SQL statement
-				sqlBuf = new StringBuilder("SELECT MQ.* FROM exams.QUESTIONMINFO MQ, exams.QUESTIONINFO Q, "
-						+ "exams.QE_INFO QE WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID)");
-				if (!showAll)
-					sqlBuf.append(" AND (QE.EXAM_NAME=?)");
-				sqlBuf.append(" ORDER BY MQ.ID, MQ.SEQ");
-
-				// Prepare the query
-				prepareStatementWithoutLimits(sqlBuf.toString());
-				if (!showAll)
-					_ps.setString(1, examName);
-
-				// Execute the query
-				rs = _ps.executeQuery();
-				while (rs.next()) {
-					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) resultMap.get(new Integer(rs.getInt(1)));
-					if (mqp != null)
-						mqp.addChoice(rs.getString(3));
-				}
-
-				// Clean up
-				rs.close();
-				_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns Examination sub-pools for all Airlines.
+	 * @return a Collection of ExamSubPool beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ExamSubPool> getAllSubPools() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT E.NAME, ESP.SUBPOOL, ESP.ID, IF(ESP.SIZE=0, E.QUESTIONS, ESP.SIZE) AS QNUM, "
+					+ "COUNT(QE.QUESTION_ID) FROM exams.EXAMINFO E LEFT JOIN exams.EXAM_QPOOLS ESP ON (E.NAME=ESP.NAME) "
+					+ "LEFT JOIN exams.QE_INFO QE ON (ESP.NAME=QE.EXAM_NAME) AND (ESP.ID=QE.SUBPOOL_ID) GROUP BY E.NAME, "
+					+ "ESP.ID ORDER BY E.STAGE, E.NAME, ESP.ID");
+			
+			// Execute the Query
+			List<ExamSubPool> results = new ArrayList<ExamSubPool>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				ExamSubPool sp = new ExamSubPool(rs.getString(1), rs.getString(2));
+				sp.setID(rs.getInt(3));
+				sp.setSize(rs.getInt(4));
+				sp.setPoolSize(rs.getInt(5));
+				results.add(sp);
 			}
 
-			// Return results
+			// Clean up and return
+			rs.close();
+			_ps.close();
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -449,6 +295,8 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 	 */
 	private void loadAirlines(Collection<ExamProfile> eProfiles) throws SQLException {
 		Map<String, ExamProfile> exams = CollectionUtils.createMap(eProfiles, "name");
+		if (eProfiles.isEmpty())
+			return;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, AIRLINE FROM exams.EXAM_AIRLINES WHERE NAME IN (");
@@ -476,61 +324,38 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 		rs.close();
 		_ps.close();
 	}
-
+	
 	/**
-	 * Helper method to populate correct/incorrect answer statistics.
+	 * Helper method to load scorers for Exams.
 	 */
-	private void loadResults(Collection<QuestionProfile> qs, boolean loadAll) throws SQLException {
-
-		// Determine what question IDs to load
-		Collection<Integer> IDs = new HashSet<Integer>();
-		for (Iterator<QuestionProfile> i = qs.iterator(); i.hasNext();) {
-			QuestionProfile qp = i.next();
-			Integer id = new Integer(qp.getID());
-			ExamResults er = _rCache.get(id);
-			if (er == null)
-				IDs.add(id);
-			else {
-				qp.setTotalAnswers(er.getTotal());
-				qp.setCorrectAnswers(er.getCorrect());
-			}
-		}
-
-		// Do nothing if empty collection
-		if (IDs.isEmpty())
+	private void loadScorers(Collection<ExamProfile> eProfiles) throws SQLException {
+		Map<String, ExamProfile> exams = CollectionUtils.createMap(eProfiles, "name");
+		if (eProfiles.isEmpty())
 			return;
-
-		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.QUESTION_ID, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
-				+ "exams.EXAMQUESTIONS EQ, exams.EXAMS E WHERE (EQ.EXAM_ID=E.ID) AND (E.CREATED_ON >= "
-				+ "DATE_SUB(NOW(), INTERVAL ? DAY)) AND (E.ISEMPTY=?) AND (EQ.QUESTION_ID IN (");
-		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
-			sqlBuf.append(i.next().toString());
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, PILOT_ID FROM exams.EXAMSCORERS WHERE NAME IN (");
+		for (Iterator<ExamProfile> i = eProfiles.iterator(); i.hasNext();) {
+			ExamProfile ep = i.next();
+			sqlBuf.append('\'');
+			sqlBuf.append(ep.getName());
+			sqlBuf.append('\'');
 			if (i.hasNext())
 				sqlBuf.append(',');
 		}
-
-		sqlBuf.append(")) GROUP BY EQ.QUESTION_ID");
-
-		// Prepare the statement
+		
+		sqlBuf.append(')');
+		
+		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		_ps.setInt(1, loadAll ? Short.MAX_VALUE : SystemData.getInt("testing.correct_ratio_age", 90));
-		_ps.setBoolean(2, false);
-
-		// Execute the query and populate the cache and question profiles
 		ResultSet rs = _ps.executeQuery();
-		Map<Integer, QuestionProfile> questions = CollectionUtils.createMap(qs, "ID");
 		while (rs.next()) {
-			ExamResults er = new ExamResults(rs.getInt(1), rs.getInt(2), rs.getInt(3));
-			_rCache.add(er);
-			QuestionProfile qp = questions.get(er.cacheKey());
-			if (qp != null) {
-				qp.setTotalAnswers(er.getTotal());
-				qp.setCorrectAnswers(er.getCorrect());
-			}
+			ExamProfile ep = exams.get(rs.getString(1));
+			if (ep != null)
+				ep.addScorerID(rs.getInt(2));
 		}
-
-		// Clean up after ourselves
+		
+		// Clean up
 		rs.close();
 		_ps.close();
 	}

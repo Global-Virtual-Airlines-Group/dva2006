@@ -1196,6 +1196,12 @@
 		<roles>HR,Examination,Instructor,TestAdmin</roles>
 	</command>
 
+	<command id="epools">
+		<name>Examination Question Sub-Pools</name>
+		<class>org.deltava.commands.testing.ExamPoolsCommand</class>
+		<roles>HR,Examination,TestAdmin</roles>
+	</command>
+
 	<command id="qprofiles">
 		<name>Question Profiles</name>
 		<class>org.deltava.commands.testing.QuestionProfilesCommand</class>

@@ -1,13 +1,13 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.commands.*;
+import org.deltava.beans.testing.ExamProfile;
 
-import org.deltava.dao.GetExamProfiles;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionProfileAccessControl;
 
@@ -16,7 +16,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to display Examination Question Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -42,18 +42,20 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
       try {
          Connection con = ctx.getConnection();
          
-         // Get the DAO
-         GetExamProfiles dao = new GetExamProfiles(con);
+         // Get the examination profile
+         GetExamProfiles epdao = new GetExamProfiles(con);
+         ExamProfile ep = epdao.getExamProfile(examName);
          
          // Get all exam names and save
-         List<Object> examNames = new ArrayList<Object>(dao.getExamProfiles());
+         List<Object> examNames = new ArrayList<Object>(epdao.getExamProfiles());
          examNames.add(0, ComboUtils.fromString("All Examinations", "ALL"));
          ctx.setAttribute("examNames", examNames, REQUEST);
          
          // Get the question list and save
-         dao.setQueryStart(vc.getStart());
-         dao.setQueryMax(vc.getCount());
-         vc.setResults(dao.getQuestionPool(examName, false, false));
+         GetExamQuestions eqdao = new GetExamQuestions(con);
+         eqdao.setQueryStart(vc.getStart());
+         eqdao.setQueryMax(vc.getCount());
+         vc.setResults(eqdao.getQuestions(ep));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
