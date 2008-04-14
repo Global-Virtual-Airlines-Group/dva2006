@@ -309,7 +309,6 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 
 			// Commit the transaction
 			commitTransaction();
-			_tCache.add(mt);
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
