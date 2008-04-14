@@ -28,4 +28,15 @@ abstract class CacheEntry<T extends Cacheable> implements Comparable<CacheEntry>
 	public T getData() {
 		return _data;
 	}
+	
+	/**
+	 * Returns the string representation of the cache key.
+	 */
+	public String toString() {
+		return _data.cacheKey().toString();
+	}
+	
+	public int hashCode() {
+		return _data.cacheKey().hashCode();
+	}
 }
