@@ -280,7 +280,8 @@ public class GetExamProfiles extends DAO {
 			ep.setTime(rs.getInt(7));
 			ep.setActive(rs.getBoolean(8));
 			ep.setAcademy(rs.getBoolean(9));
-			ep.setOwner(SystemData.getApp(rs.getString(10)));
+			ep.setNotify(rs.getBoolean(10));
+			ep.setOwner(SystemData.getApp(rs.getString(11)));
 			results.add(ep);
 		}
 
