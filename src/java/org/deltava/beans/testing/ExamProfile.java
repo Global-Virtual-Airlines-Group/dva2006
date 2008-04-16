@@ -27,6 +27,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     
     private boolean _active;
     private boolean _flightAcademy;
+    private boolean _notify;
     
     private AirlineInformation _owner;
     private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -107,7 +108,7 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     }
     
     /**
-     * Returns wether this Examination is avialable to be taken.
+     * Returns whether this Examination is avialable to be taken.
      * @return TRUE if the Examination is active, otherwise FALSE
      * @see ExamProfile#setActive(boolean)
      */
@@ -116,12 +117,21 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     }
     
     /**
-     * Returns wther this examination is part of the Flight Academy.
+     * Returns whether this Examination is part of the Flight Academy.
      * @return TRUE if the Examination is part of the Academy, otherwise FALSE
      * @see ExamProfile#setAcademy(boolean) 
      */
     public boolean getAcademy() {
     	return _flightAcademy;
+    }
+    
+    /**
+     * Returns whether a notification message should be sent on submission.
+     * @return TRUE if a message should be sent, otherwise FALSE
+     * @see ExamProfile#setNotify(boolean)
+     */
+    public boolean getNotify() {
+    	return _notify;
     }
     
     /**
@@ -262,6 +272,15 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
      */
     public void setAcademy(boolean academy) {
     	_flightAcademy = academy;
+    }
+    
+    /**
+     * Sets a notification on Examination submission.
+     * @param doNotify TRUE if a notification should be sent, otherwise FALSE
+     * @see ExamProfile#getNotify()
+     */
+    public void setNotify(boolean doNotify) {
+    	_notify = doNotify;
     }
     
     /**
