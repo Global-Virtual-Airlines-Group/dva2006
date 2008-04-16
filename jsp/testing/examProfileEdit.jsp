@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -17,6 +16,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.examName, 10, 'Examination Name')) return false;
+<%@ page contentType="text/html; charset=UTF-8" %>
 if (!validateNumber(form.stage, 1, 'Examination Stage')) return false;
 if (!validateNumber(form.minStage, 0, 'Examination Minimum Stage')) return false;
 if (!validateNumber(form.questions, 1, 'Examination Size')) return false;
@@ -81,6 +81,11 @@ return true;
 <tr>
  <td class="label">Airlines</td>
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${eProfile.airlines}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Allowed Scorers</td>
+ <td class="data"><span class="small"><i>Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</i></span><br /> 
+<el:check name="scorerIDs" width="180" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
