@@ -69,9 +69,12 @@ public class MailerDaemon implements Runnable {
 		try {
 			Multipart mp = new MimeMultipart();
 
+			// Get the encoding type
+			String enc = env.getContentType().substring(env.getContentType().lastIndexOf('/') + 1);
+			
 			// Add message body
 			MimeBodyPart body = new MimeBodyPart();
-			body.setContent(env.getBody(), env.getContentType());
+			body.setText(env.getBody(), "UTF-8", enc);
 			mp.addBodyPart(body);
 
 			// If we have an attachment, add it
