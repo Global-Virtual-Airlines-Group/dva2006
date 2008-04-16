@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -9,13 +9,14 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.ExamAccessControl;
 
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -73,6 +74,7 @@ public class ExamSubmitCommand extends AbstractCommand {
 			ex.setSubmittedOn(cld.getTime());
 
 			// If we're entirely multiple choice, then mark the examination scored
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			if (allMC) {
 				ex.setScoredOn(cld.getTime());
 				ex.setStatus(Test.SCORED);
@@ -89,12 +91,37 @@ public class ExamSubmitCommand extends AbstractCommand {
 				ex.setPassFail(score >= ep.getPassScore());
 
 				// Get the Pilot profile
-				GetPilot pdao = new GetPilot(con);
+
 				Pilot usr = pdao.get(ex.getPilotID());
 				ctx.setAttribute("pilot", usr, REQUEST);
 			} else {
 				ex.setStatus(Test.SUBMITTED);
 				ctx.setAttribute("isSubmit", Boolean.TRUE, REQUEST);
+				
+				// Check if we need to notify anyone
+				if (ep.getNotify()) {
+					Collection<? extends EMailAddress> scorers = null;
+					if (ep.getScorerIDs().isEmpty())
+						scorers = pdao.getByRole("Examination", ep.getOwner().getDB());						
+					else {
+						UserDataMap udm = uddao.get(ep.getScorerIDs());
+						scorers = pdao.get(udm).values();
+					}
+					
+					// Build the message context
+					MessageContext mctxt = new MessageContext();
+					mctxt.addData("user", ctx.getUser());
+					mctxt.addData("exam", ex);
+					
+					// Get the template
+					GetMessageTemplate mtdao = new GetMessageTemplate(con);
+					mctxt.setTemplate(mtdao.get("EXAMSUBMIT"));
+					
+					// Send the message
+					Mailer mailer = new Mailer(ctx.getUser());
+					mailer.setContext(mctxt);
+					mailer.send(scorers);
+				}
 			}
 
 			// Write the examination to the database

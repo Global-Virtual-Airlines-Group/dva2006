@@ -46,7 +46,7 @@ public class SetExamProfile extends DAO {
 
 			// Write the profile
 			prepareStatement("UPDATE exams.EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "
-					+ "ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=?, NAME=?, AIRLINE=? WHERE (NAME=?)");
+					+ "ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=?, NOTIFY=?, NAME=?, AIRLINE=? WHERE (NAME=?)");
 			_ps.setInt(1, ep.getStage());
 			_ps.setInt(2, ep.getSize());
 			_ps.setInt(3, ep.getPassScore());
@@ -55,9 +55,10 @@ public class SetExamProfile extends DAO {
 			_ps.setString(6, ep.getEquipmentType());
 			_ps.setInt(7, ep.getMinStage());
 			_ps.setBoolean(8, ep.getAcademy());
-			_ps.setString(9, ep.getName());
-			_ps.setString(10, ep.getOwner().getCode());
-			_ps.setString(11, examName);
+			_ps.setBoolean(9, ep.getNotify());
+			_ps.setString(10, ep.getName());
+			_ps.setString(11, ep.getOwner().getCode());
+			_ps.setString(12, examName);
 			executeUpdate(1);
 
 			// Write the new airlines
@@ -103,7 +104,7 @@ public class SetExamProfile extends DAO {
 
 			// Write the exam profile
 			prepareStatement("INSERT INTO exams.EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, "
-					+ "EQTYPE, MIN_STAGE, ACADEMY, AIRLINE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "EQTYPE, MIN_STAGE, ACADEMY, NOTIFY, AIRLINE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ep.getName());
 			_ps.setInt(2, ep.getStage());
 			_ps.setInt(3, ep.getSize());
@@ -113,7 +114,8 @@ public class SetExamProfile extends DAO {
 			_ps.setString(7, ep.getEquipmentType());
 			_ps.setInt(8, ep.getMinStage());
 			_ps.setBoolean(9, ep.getAcademy());
-			_ps.setString(10, ep.getOwner().getCode());
+			_ps.setBoolean(10, ep.getNotify());
+			_ps.setString(11, ep.getOwner().getCode());
 			executeUpdate(1);
 			
 			// Write the default subpool
