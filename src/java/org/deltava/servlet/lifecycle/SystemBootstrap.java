@@ -48,9 +48,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		SystemBootstrap.log = Logger.getLogger(SystemBootstrap.class);
 		log.info("Initialized log4j");
 
-		// Force headless AWT operation and default character set
+		// Force headless AWT operation
 		System.setProperty("java.awt.headless", "true");
-		System.setProperty("mail.mime.charset", "UTF-8");
 	}
 
 	/**
