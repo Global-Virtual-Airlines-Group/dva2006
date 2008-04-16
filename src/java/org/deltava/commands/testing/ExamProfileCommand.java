@@ -32,7 +32,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
     */
    protected void execSave(CommandContext ctx) throws CommandException {
 
-      String examName = (String) ctx.getCmdParameter(Command.ID, null);
+      String examName = (String) ctx.getCmdParameter(ID, null);
       try {
          Connection con = ctx.getConnection();
 
@@ -79,7 +79,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
        	 }
        	 
        	 // Update scorers
-       	Collection<String> scorerIDs = ctx.getParameters("scorerID");
+       	Collection<String> scorerIDs = ctx.getParameters("scorerIDs");
        	if (scorerIDs != null) {
        		ep.getScorerIDs().clear();
        		for (Iterator<String> i = scorerIDs.iterator(); i.hasNext(); ) {
