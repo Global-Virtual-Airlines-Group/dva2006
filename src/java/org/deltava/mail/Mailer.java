@@ -56,12 +56,10 @@ public class Mailer {
 	 */
 	public Mailer(EMailAddress from) {
 		super();
-		if (from == null) {
-			_env = new SMTPEnvelope(new EMailSender(SystemData.get("airline.mail.webmaster"), SystemData
-					.get("airline.name")));
-		} else {
-			_env = new SMTPEnvelope(from);
-		}
+		if (from == null)
+			from = new EMailSender(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name"));
+			
+		_env = new SMTPEnvelope(from);
 	}
 
 	/**

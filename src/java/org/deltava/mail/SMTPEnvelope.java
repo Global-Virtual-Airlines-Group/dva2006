@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -13,11 +13,11 @@ import org.deltava.beans.EMailAddress;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable {
+class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEnvelope> {
 
 	private EMailAddress _msgFrom;
 	private final Collection<Address> _msgTo = new LinkedHashSet<Address>();
@@ -245,11 +245,10 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable {
 	}
 	
 	/**
-	 * Compares two envelopes by comparing their creation date/times.
-	 * @see Comparable#compareTo(Object)
+	 * Compares two envelopes by comparing their creation date/times and recipients.
 	 */
-	public int compareTo(Object o) {
-		SMTPEnvelope e2 = (SMTPEnvelope) o;
-		return _createdOn.compareTo(e2._createdOn);
+	public int compareTo(SMTPEnvelope e2) {
+		int tmpResult = _createdOn.compareTo(e2._createdOn);
+		return (tmpResult == 0) ? toString().compareTo(e2.toString()) : tmpResult;
 	}
 }
