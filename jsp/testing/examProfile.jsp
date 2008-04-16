@@ -50,6 +50,12 @@
  <td class="label">Testing Time</td>
  <td class="data"><fmt:int value="${eProfile.time}" /> minutes</td>
 </tr>
+<c:if test="${!empty eProfile.scorerIDs}">
+<tr>
+ <td class="label" valign="top">Allowed Scorers</td>
+ <td class="data"><c:forEach var="scorer" items="${scorers}">${scorer.name} (${scorer.pilotCode})<br /></c:forEach></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data bld caps">
