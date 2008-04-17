@@ -13,8 +13,14 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="cooler" />
 <content:css name="form" />
+<content:sysdata var="ourDomain" name="airline.domain" />
 <c:forEach var="domain" items="${userDomains}">
-<content:css host="www.${domain}" name="signature" browserSpecific="true" ie7suffix="ie7" />
+<c:if test="${domain == ourDomain}">
+<content:css name="signature" browserSpecific="true" ie7suffix="ie7" />
+</c:if>
+<c:if test="${domain != ourDomain}">
+<content:css host="www.${domain}" name="signature" browserSpecific="true" ie7suffix="ie7" scheme="legacy" />
+</c:if>
 </c:forEach>
 <content:pics />
 <content:js name="common" />
@@ -230,8 +236,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
+<c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : ('www' + pilotLoc.domain)}" scope="request" />
 <el:table className="${pilotLoc.airlineCode}_defaultSig" pad="0"><tr>
- <td valign="bottom" class="sig" style="background-image: url(http://www.${pilotLoc.domain}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
+ <td valign="bottom" class="sig" style="background-image: url(http://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
  </td>
 </tr></el:table>
