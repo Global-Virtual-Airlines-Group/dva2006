@@ -84,12 +84,13 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Allowed Scorers</td>
- <td class="data"><span class="small"><i>Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</i></span><br /> 
-<el:check name="scorerIDs" width="180" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
+ <td class="data"><i>Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</i><br /> 
+<el:check name="scorerIDs" width="170" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" value="true" label="Examination is Active" checked="${eProfile.active}" /><br />
+<el:box name="doNotify" idx="*" value="true" label="Notify Scorers when Submitted" checked="${eProfile.notify}" /><br />
 <el:box name="isAcademy" className="sec" idx="*" value="true" label="This is a Fleet Academy Examination" checked="${eProfile.academy}" /></td>
 </tr>
 </el:table>

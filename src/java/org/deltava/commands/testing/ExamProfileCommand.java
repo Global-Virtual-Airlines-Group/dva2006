@@ -4,10 +4,11 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.ExamProfile;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -67,6 +68,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
          ep.setTime(StringUtils.parse(ctx.getParameter("time"), 15));
          ep.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
        	 ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
+       	 ep.setNotify(Boolean.valueOf(ctx.getParameter("doNotify")).booleanValue());
        	 
        	 // Update airlines
        	 Collection<String> airlines = ctx.getParameters("airlines");
@@ -144,9 +146,12 @@ public class ExamProfileCommand extends AbstractFormCommand {
          ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
          
          // Get scorers
+         Collection<Pilot> scorers = new TreeSet<Pilot>(new PilotComparator(PersonComparator.LASTNAME));
          String dbName = (ep == null) ? SystemData.get("airline.db") : ep.getOwner().getDB();
          GetPilotDirectory pdao = new GetPilotDirectory(con);
-         ctx.setAttribute("scorers", pdao.getByRole("Examiner", dbName), REQUEST);
+         scorers.addAll(pdao.getByRole("Examiner", dbName));
+         scorers.addAll(pdao.getByRole("Examination", dbName));
+         ctx.setAttribute("scorers", scorers, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
