@@ -61,6 +61,8 @@
  <td class="data bld caps">
 <c:if test="${eProfile.active}"><span class="ter">Examination is Available</span></c:if>
 <c:if test="${!eProfile.active}"><span class="error">Examination is Not Available</span></c:if>
+<c:if test="${eProfile.notify}"><br />
+<span class="bld">Notify Scorers when Examination is Submitted</span></c:if>
 <c:if test="${eProfile.academy}"><br />
 Examination is part of the <content:airline /> Flight Academy</c:if></td>
 </tr>
