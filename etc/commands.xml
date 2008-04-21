@@ -1041,7 +1041,13 @@
 		<class>org.deltava.commands.admin.TransferProcessCommand</class>
 		<roles>HR,PIREP,Examination</roles>
 	</command>
-	
+
+	<command id="txreqtoggle">
+		<name>Toggle Transfer Request</name>
+		<class>org.deltava.commands.admin.TransferConvertCommand</class>
+		<roles>HR,PIREP,Examination</roles>
+	</command>
+
 	<command id="transfer">
 		<name>Approve Transfer Request</name>
 		<class>org.deltava.commands.admin.TransferApproveCommand</class>

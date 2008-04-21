@@ -157,16 +157,20 @@ return true;
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" />
 <c:if test="${access.canAssignRide}">
-<el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" />
+ <el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${access.canApprove}">
-<el:button ID="ApproveButton" type="submit" className="BUTTON" label="APPROVE TRANSFER" />
+ <el:button ID="ApproveButton" type="submit" className="BUTTON" label="APPROVE TRANSFER" />
 </c:if>
 <c:if test="${access.canReject}">
-<el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />
+ <el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />
+</c:if>
+<c:if test="${access.canAssignRide || access.canApprove || access.canDelete}">
+<c:set var="tgLabel" value="${txReq.ratingOnly ? 'CONVERT TO PROGRAM CHANGE' : 'CONVERT TO RATINGS ONLY'}" scope="request" />
+ <el:cmdbutton ID="ToggleButton" url="txreqtoggle" link="${txReq}" label="${tgLabel}" /> 
 </c:if>
 <c:if test="${access.canDelete}">
-<el:cmdbutton ID="DeleteButton" url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" />
+ <el:cmdbutton ID="DeleteButton" url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" />
 </c:if>
  </td>
 </tr>
