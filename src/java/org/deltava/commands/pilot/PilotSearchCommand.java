@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search for Pilots.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -41,7 +41,7 @@ public class PilotSearchCommand extends AbstractCommand {
 		// Check if we're doing a GET
 		if (ctx.getParameter("firstName") == null) {
 			ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
-			ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
+			ctx.setAttribute("maxResults", Integer.valueOf(DEFAULT_RESULTS), REQUEST);
 			result.setURL("/jsp/roster/pilotSearch.jsp");
 			result.setSuccess(true);
 			return;
@@ -146,7 +146,7 @@ public class PilotSearchCommand extends AbstractCommand {
 		// Save the results and access level in the request
 		ctx.setAttribute("results", results, REQUEST);
 		ctx.setAttribute("accessMap", accessMap, REQUEST);
-		ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
+		ctx.setAttribute("maxResults", Integer.valueOf(maxResults), REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/roster/pilotSearch.jsp");
