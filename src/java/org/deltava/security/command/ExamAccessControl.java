@@ -82,9 +82,10 @@ public class ExamAccessControl extends AccessControl {
         	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().before(new Date())));
         }
         
-        // Check if we're able to score
+        // Check if we're able to score - everyone can score a check ride
         boolean inScoreList = isExam && (_ep != null) && (_ep.getScorerIDs().isEmpty() ||
         		_ep.getScorerIDs().contains(new Integer(_ctx.getUser().getID())));
+        inScoreList |= (isCR && isExam);
 
         // Set access
         _canRead = isOurs || isExam || isHR || _ctx.isUserInRole("Instructor");
