@@ -165,7 +165,7 @@ return true;
 <c:if test="${access.canReject}">
  <el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />
 </c:if>
-<c:if test="${access.canAssignRide || access.canApprove || access.canDelete}">
+<c:if test="${access.canToggleRatings}">
 <c:set var="tgLabel" value="${txReq.ratingOnly ? 'CONVERT TO PROGRAM CHANGE' : 'CONVERT TO RATINGS ONLY'}" scope="request" />
  <el:cmdbutton ID="ToggleButton" url="txreqtoggle" link="${txReq}" label="${tgLabel}" /> 
 </c:if>

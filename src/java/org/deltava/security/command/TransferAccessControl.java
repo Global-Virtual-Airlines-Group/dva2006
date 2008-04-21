@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.TransferRequest;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for equipment program Transfer Requests.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -17,6 +17,7 @@ public class TransferAccessControl extends AccessControl {
    private TransferRequest _treq;
    
    private boolean _canAssignRide;
+   private boolean _canToggleRatings;
    private boolean _canApprove;
    private boolean _canReject;
    private boolean _canDelete;
@@ -47,6 +48,7 @@ public class TransferAccessControl extends AccessControl {
 
       // Set access rights
       int status = _treq.getStatus();
+      _canToggleRatings = (isMine || hrExam || hrPIREP);
       _canApprove = (status == TransferRequest.OK) && hrPIREP;
       _canAssignRide = (status == TransferRequest.PENDING) && hrExam;
       _canReject = hrPIREP || hrExam;
@@ -75,6 +77,14 @@ public class TransferAccessControl extends AccessControl {
     */
    public boolean getCanAssignRide() {
       return _canAssignRide;
+   }
+   
+   /**
+    * Returns if the user can toggle the Ratings only flag.
+    * @return TRUE if the ratings flag can be changed, otherwise FALSE
+    */
+   public boolean getCanToggleRatings() {
+	   return _canToggleRatings;
    }
    
    /**
