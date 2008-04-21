@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A DAO to get Pilot object(s) from the database, for use in roster operations.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -321,7 +321,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) WHERE ");
+		sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) WHERE (F.STATUS=?) AND ");
 
 		// Add parameters if they are non-null
 		List<String> searchTerms = new ArrayList<String>();
@@ -337,8 +337,8 @@ public class GetPilot extends PilotReadDAO {
            return Collections.emptyList();
         
         // Aggregate the search terms
-		for (Iterator i = searchTerms.iterator(); i.hasNext();) {
-			String srchTerm = (String) i.next();
+		for (Iterator<String> i = searchTerms.iterator(); i.hasNext();) {
+			String srchTerm = i.next();
 			sqlBuf.append(srchTerm);
 			if (i.hasNext())
 				sqlBuf.append(" AND ");
@@ -350,9 +350,10 @@ public class GetPilot extends PilotReadDAO {
 		List<Pilot> results = null;
 		try {
 			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, FlightReport.OK);
 
 			// Init the statements
-			int idx = 0;
+			int idx = 1;
 			if (fName != null)
 				_ps.setString(++idx, fName);
 			if (lName != null)
