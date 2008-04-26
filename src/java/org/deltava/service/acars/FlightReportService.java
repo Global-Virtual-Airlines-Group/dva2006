@@ -16,6 +16,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.navdata.TerminalRoute;
 
 import org.deltava.crypt.MessageDigester;
 
@@ -214,7 +215,7 @@ public class FlightReportService extends WebService {
 		} catch (NumberFormatException nfe) {
 			throw new IllegalArgumentException("Invalid N1 - " + nfe.getMessage());
 		} catch (IllegalArgumentException iae) {
-
+			// empty
 		}
 
 		// Load the 0X/1X/2X/4X times
@@ -230,6 +231,11 @@ public class FlightReportService extends WebService {
 			GetPilot pdao = new GetPilot(con);
 			GetPilot.invalidateID(ctx.getUser().getID());
 			Pilot p = pdao.get(ctx.getUser().getID());
+			
+			// Get the SID/STAR data
+			GetNavRoute nvdao = new GetNavRoute(con);
+			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.SID, ie.getChildTextTrim("sid")));
+			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, ie.getChildTextTrim("star")));
 
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
@@ -290,6 +296,8 @@ public class FlightReportService extends WebService {
 			SetACARSData awdao = new SetACARSData(con);
 			awdao.createConnection(ce);
 			awdao.createFlight(inf);
+			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
+			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
 
 			// Dump the positions
