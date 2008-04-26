@@ -252,6 +252,8 @@ public class ThreadCommand extends AbstractCommand {
 				cutoff = (Date) ctx.getSession().getAttribute(CommandContext.THREADREADOV_ATTR_NAME);
 			if (cutoff == null)
 				cutoff = p.getLastLogoff();
+			if (cutoff == null)
+				cutoff = p.getLastLogin();
 			
 			// Save unread list
 			List<Boolean> unRead = new ArrayList<Boolean>(mt.getPostCount());
