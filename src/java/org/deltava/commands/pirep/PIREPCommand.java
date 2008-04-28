@@ -410,6 +410,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			if (fr instanceof ACARSFlightReport) {
 				mapType = Pilot.MAP_GOOGLE;
+				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 				ACARSFlightReport afr = (ACARSFlightReport) fr;
 				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
 
