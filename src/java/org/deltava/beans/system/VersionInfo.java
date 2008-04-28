@@ -13,7 +13,7 @@ public interface VersionInfo {
     public static final int MAJOR = 2;
     public static final int MINOR = 2;
     
-    public static final int BUILD = 181;
+    public static final int BUILD = 182;
     // public static final int RELEASE_CANDIDATE = 1;
     public static final boolean FINAL = false;
     
@@ -21,6 +21,5 @@ public interface VersionInfo {
     public static final String HTML_COPYRIGHT = "Copyright &copy; 2004-2008 <a rel=\"external\" class=\"small\" href=\"http://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
     
     public static final String APPNAME = "(Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
-    public static final String USERAGENT = "Golgotha/" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + 
-    	"-b" + String.valueOf(BUILD);
+    public static final String USERAGENT = "Golgotha/" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + "-b" + String.valueOf(BUILD);
 }
