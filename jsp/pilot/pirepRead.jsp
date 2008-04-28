@@ -31,7 +31,7 @@ disableButton('CRButton');
 return true;
 }
 </script></c:if>
-<c:if test="${fn:isACARS(pirep)}">
+<c:if test="${isACARS}">
 <content:sysdata var="imgPath" name="path.img" />
 <content:js name="acarsFlightMap" />
 </c:if>
@@ -55,7 +55,7 @@ return true;
 <c:when test="${access.canDispose}">
 <form method="post" action="pirep.do?id=${pirep.hexID}">
 </c:when>
-<c:when test="${fn:isACARS(pirep)}">
+<c:when test="${isACARS}">
 <form method="get" action="pirep.do?id=${pirep.hexID}" onsubmit="return false">
 </c:when>
 </c:choose>
@@ -105,7 +105,7 @@ return true;
  <td class="label">Departed from</td>
  <td class="data">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />)</td>
 </tr>
-<c:if test="${fn:isACARS(pirep) && (!empty flightInfo.SID)}">
+<c:if test="${isACARS && (!empty flightInfo.SID)}">
 <tr>
  <td class="label">Departure Route</td>
  <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}</td>
@@ -115,13 +115,13 @@ return true;
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
 </tr>
-<c:if test="${fn:isACARS(pirep) && (!empty flightInfo.STAR)}">
+<c:if test="${isACARS && (!empty flightInfo.STAR)}">
 <tr>
  <td class="label">Arrival Route</td>
  <td class="data">${flightInfo.STAR.name}.${flightInfo.STAR.transition}</td>
 </tr>
 </c:if>
-<c:if test="${fn:isACARS(pirep) && (!empty flightInfo.airportL)}">
+<c:if test="${isACARS && (!empty flightInfo.airportL)}">
 <tr>
  <td class="label">Alternate</td>
  <td class="data">${flightInfo.airportL.name} (<fmt:airport airport="${flightInfo.airportL}" />)</td>
@@ -147,7 +147,7 @@ return true;
 <tr>
  <td class="label" valign="top">Other Information</td>
  <td class="data"><c:if test="${fn:isOnline(pirep)}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
-<c:if test="${fn:isACARS(pirep)}">
+<c:if test="${isACARS}">
 <div class="sec bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
 </c:if>
 <c:if test="${fn:isDispatch(pirep)}">
@@ -203,15 +203,15 @@ return true;
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
-<c:if test="${fn:isACARS(pirep)}">
+<c:if test="${isACARS}">
 <c:set var="cspan" value="${1}" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
 <tr>
 <c:if test="${googleMap}">
  <td class="label">Route Map Data</td>
- <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!fn:isACARS(pirep)}" />
-<c:if test="${fn:isACARS(pirep)}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
+ <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" />
+<c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span>
 <span id="routeProgress" class="small"></span></td>
@@ -257,7 +257,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
-<c:if test="${fn:isACARS(pirep) && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR,PIREP">
+<c:if test="${isACARS && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR,PIREP">
  <el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" />
 </content:filter></c:if>
 </c:if>
@@ -270,7 +270,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton url="pirepdelete" link="${pirep}" label="DELETE REPORT" />
-<c:if test="${fn:isACARS(pirep)}">
+<c:if test="${isACARS}">
  <el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" />
 </c:if> 
 </c:if>
@@ -281,7 +281,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
-<c:if test="${scoreCR || fn:isACARS(pirep) || access.canDispose}"></form><br /></c:if>
+<c:if test="${scoreCR || isACARS || access.canDispose}"></form><br /></c:if>
 <content:copyright />
 </content:region>
 </content:page>
@@ -293,7 +293,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <map:points var="routePoints" items="${mapRoute}" />
 <map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.75" geodesic="true" />
 </c:if>
-<c:if test="${empty mapRoute && fn:isACARS(pirep)}">
+<c:if test="${empty mapRoute && isACARS}">
 var gRoute;
 var routePoints = new Array();
 var routeMarkers = new Array();
