@@ -346,6 +346,10 @@
 		<hash>
 			<salt>hash!!salt</salt>
 			<algorithm>SHA-1</algorithm>
+			<acars>
+				<salt>ha$h-Salt-ACARS-Value</salt>
+				<algorithm>SHA-256</algorithm>
+			</acars>
 		</hash>
 
 		<!-- Password settings -->

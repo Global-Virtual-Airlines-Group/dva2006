@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private boolean _inUse = false;
 	private boolean _systemOwned = false;
 	private boolean _dynamic = false;
+	private boolean _connected = false;
 	private boolean _autoCommit = true;
 
 	private long _totalTime;
@@ -58,6 +59,15 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	public boolean inUse() {
 		return _inUse;
 	}
+	
+	/**
+	 * Returns whether the Connection is active. Inactivte entries are retained for
+	 * statistics purposes.
+	 * @return TRUE if there is a connection, otherwise FALSE
+	 */
+	boolean isActive() {
+		return (_c != null);
+	}
 
 	/**
 	 * Returns if this connection is used by the system.
@@ -76,6 +86,18 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	public boolean isDynamic() {
 		return _dynamic;
 	}
+	
+	/**
+	 * Returns if the entry is connected to the database. Ordinarily one could check if there was a
+	 * Connection object in this class, but since Connections are not {@link Serializable}, this method
+	 * would not be valid across web applications. 
+	 * @return TRUE if connected, otherwise FALSE
+	 * @see ConnectionPoolEntry#connect()
+	 * @see ConnectionPoolEntry#close()
+	 */
+	public boolean isConnected() {
+		return ((_c != null) || _connected);
+	}
 
 	/**
 	 * Connects this entry to the JDBC data source.
@@ -89,9 +111,10 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 		// Create the connection
 		Connection c = DriverManager.getConnection(_props.getProperty("url"), _props);
 		c.setAutoCommit(_autoCommit);
-		c.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+		c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		_c = new ConnectionWrapper(_id, c);
 		_lastUsed = System.currentTimeMillis();
+		_connected = true;
 	}
 
 	/**
@@ -103,6 +126,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 		} catch (Exception e) {
 			// empty
 		} finally {
+			_connected = false;
 			_c = null;
 		}
 	}
@@ -197,14 +221,25 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 	/**
 	 * Reserve this Connection pool entry, and get the underlyig JDBC connection. This method is package private since
-	 * it only should be called by the ConnectionPool object
+	 * it only should be called by the ConnectionPool object. If the connection has been disconnected, then an attempt to
+	 * reconnect will be made.
 	 * @param logStack wether the current thread's stack state should be preserved
 	 * @return the JDBC Connection object
+	 * @throws ConnectionPoolException if we cannot reconnect 
 	 * @throws IllegalStateException if the connection is already reserved
 	 */
-	Connection reserve(boolean logStack) {
+	Connection reserve(boolean logStack) throws ConnectionPoolException {
 		if (inUse())
 			throw new IllegalStateException("Connection " + toString() + " already in use");
+		
+		// If we're not connected, reconnect
+		if (!isActive()) {
+			try {
+				connect();
+			} catch (SQLException se) {
+				throw new ConnectionPoolException(se);
+			}
+		}
 		
 		// Generate a dummy stack trace if necessary, trimming out entries from this package
 		if (logStack) {
