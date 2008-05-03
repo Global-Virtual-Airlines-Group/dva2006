@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -46,11 +46,8 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
 			
 			// Make sure we are a First Officer
-			if (!Ranks.RANK_FO.equals(usr.getRank())) {
-				CommandException ce = new CommandException(usr.getName() + " is not a First Officer");
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			if (!Ranks.RANK_FO.equals(usr.getRank()))
+				throw new CommandException(usr.getName() + " is not a First Officer", false);
 			
 			// Make sure we have passed the examination
 			EquipmentType eq = testHistory.getEquipmentType();
