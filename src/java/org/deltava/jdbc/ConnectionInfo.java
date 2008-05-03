@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import org.deltava.beans.ViewEntry;
@@ -6,14 +6,16 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store information about a JDBC connection pool entry.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class ConnectionInfo implements java.io.Serializable, Comparable<ConnectionInfo>, ViewEntry {
    
    private int _id;
+   private boolean _isDynamic;
    private boolean _isSystem;
+   private boolean _isConnected;
    private boolean _inUse;
    private int _useCount;
    private long _totalUse;
@@ -28,6 +30,8 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
       super();
       _id = entry.getID();
       _isSystem = entry.isSystemConnection();
+      _isDynamic = entry.isDynamic();
+      _isConnected = entry.isConnected();
       _inUse = entry.inUse();
       _useCount = entry.getUseCount();
       _totalUse = entry.getTotalUseTime();
@@ -70,6 +74,22 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
    }
    
    /**
+    * Returns if the Connection is currently active.
+    * @return TRUE if connected, otherwise FALSE
+    */
+   public boolean getConnected() {
+	   return _isConnected;
+   }
+   
+   /**
+    * Returns if the Connection is a Dynamic connection.
+    * @return TRUE if dynamic, otherwise FALSE
+    */
+   public boolean getDynamic() {
+	   return _isDynamic;
+   }
+   
+   /**
     * Returns the number of times the Connection has been used. 
     * @return the number of times the Connection was reserved
     */
@@ -97,8 +117,12 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
     * Compares two ConnectionInfo objects by comparing their IDs and usage counts.
     */
    public int compareTo(ConnectionInfo ci2) {
-      int tmpResult = new Integer(_id).compareTo(new Integer(ci2._id));
+      int tmpResult = Integer.valueOf(_id).compareTo(Integer.valueOf(ci2._id));
       return (tmpResult == 0) ? new Integer(_useCount).compareTo(new Integer(ci2._useCount)) : tmpResult;
+   }
+   
+   public int hashCode() {
+	   return Integer.valueOf(_id).hashCode();
    }
    
    /**

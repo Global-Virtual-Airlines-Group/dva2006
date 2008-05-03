@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A user-configurable JDBC Connection Pool.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  * @see ConnectionPoolEntry
  * @see ConnectionMonitor
@@ -218,6 +218,8 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
 				if (log.isDebugEnabled())
 					log.debug("Reserving JDBC Connection " + cpe);
+				if (!cpe.isActive())
+					_expandCount++;
 
 				_totalRequests++;
 				return cpe.reserve(_logStack);
@@ -280,49 +282,35 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 		// Find the connection pool entry and free it
 		ConnectionWrapper cw = (ConnectionWrapper) c;
 		ConnectionPoolEntry cpe = _cons.get(cw.getID());
-		if (cpe != null) {
-			cpe.free();
-
-			// If this is a dynamic connection, such it down
-			if (cpe.isDynamic()) {
-				_monitor.removeConnection(cpe);
-				cpe.close();
-				_cons.remove(cw.getID());
-
-				// If it's stale, log the stack dump
-				if (cpe.getUseCount() < MAX_USE_TIME)
-					log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-				else
-					log.error("Closed stale dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms", cpe
-							.getStackInfo());
-			} else {
-				if (log.isDebugEnabled())
-					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-
-				// Check if we need to restart
-				if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
-					log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount() + " reservations");
-					_monitor.removeConnection(cpe);
-					cpe.close();
-					_cons.remove(Integer.valueOf(cpe.getID()));
-
-					// Create the new Connection
-					try {
-						cpe = createConnection(cpe.isSystemConnection(), cpe.getID());
-						_monitor.addConnection(cpe);
-						_cons.put(Integer.valueOf(cpe.getID()), cpe);
-					} catch (SQLException se) {
-						log.error("Cannot reconnect JDBC Connection " + cpe, se);
-					}
-				}
-			}
-
-			return cpe.getUseTime();
+		if (cpe == null) {
+			log.warn("Invalid JDBC Connection returned - " + cw.getID());
+			return 0;
 		}
 
-		// If we got this far, the connection was not part of the pool.
-		log.warn("Invalid JDBC Connection returned - " + cw.getID());
-		return 0;
+		// Free the connection
+		cpe.free();
+
+		// If this is a stale dynamic connection, such it down
+		if (cpe.isDynamic() && (cpe.getUseCount() > MAX_USE_TIME)) {
+			log.error("Closed stale dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms", cpe.getStackInfo());
+			cpe.close();
+		} else if (!cpe.isDynamic()) {
+			if (log.isDebugEnabled())
+				log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+
+			// Check if we need to restart
+			if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
+				log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount() + " reservations");
+				cpe.close();
+				try {
+					cpe.connect();
+				} catch (SQLException se) {
+					log.error("Cannot reconnect JDBC Connection " + cpe, se);
+				}
+			}
+		}
+
+		return cpe.getUseTime();
 	}
 
 	/**
@@ -365,24 +353,22 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			return;
 
 		// Disconnect the regular connections
-		synchronized (_cons) {
-			for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
-				ConnectionPoolEntry cpe = i.next();
-				if (cpe.inUse())
-					log.warn("Forcibly closing JDBC Connection " + cpe);
+		for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
+			ConnectionPoolEntry cpe = i.next();
+			if (cpe.inUse())
+				log.warn("Forcibly closing JDBC Connection " + cpe);
 
-				try {
-					cpe.getConnection().close();
-				} catch (SQLException se) {
-					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
-				} finally {
-					_monitor.removeConnection(cpe);
-					log.info("Closed JDBC Connection " + cpe);
-				}
+			try {
+				cpe.getConnection().close();
+			} catch (SQLException se) {
+				log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
+			} finally {
+				_monitor.removeConnection(cpe);
+				log.info("Closed JDBC Connection " + cpe);
 			}
-
-			_cons = null;
 		}
+
+		_cons = null;
 	}
 
 	/**

@@ -221,6 +221,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		log.warn("Shutting Down");
 
 		// Shut down the extra threads
+		_daemons.clear();
 		_daemonGroup.interrupt();
 		
 		// If ACARS is enabled, then clean out the active flags

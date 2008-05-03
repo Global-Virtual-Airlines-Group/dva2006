@@ -36,7 +36,7 @@ public class TestConnectionPoolEntry extends TestCase {
         super.tearDown();
     }
 
-    public void testProperties() throws InterruptedException {
+    public void testProperties() throws Exception {
         assertFalse(_cpe.inUse());
         assertEquals(1, _cpe.getID());
         assertEquals(_c.hashCode(), _cpe.hashCode());
@@ -100,7 +100,7 @@ public class TestConnectionPoolEntry extends TestCase {
        assertEquals(1, l.indexOf(cpe2));
     }
     
-    public void testValidation() {
+    public void testValidation() throws Exception {
         _cpe.reserve(false);
         try {
             _cpe.reserve(false);
