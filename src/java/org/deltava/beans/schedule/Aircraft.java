@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -14,11 +14,11 @@ import org.deltava.util.cache.Cacheable;
  * secondary and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank
  * types.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class Aircraft implements Comparable, Cacheable, ViewEntry {
+public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 
 	public static final int CENTER = 0;
 	public static final int LEFT_MAIN = 1;
@@ -52,6 +52,10 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	private int _fuelFlow;
 	private int _baseFuel;
 	private int _taxiFuel;
+	
+	private int _maxWeight;
+	private int _maxTakeoffWeight;
+	private int _maxLandingWeight;
 
 	// Fuel Tank loading codes and percentages
 	private int[] _tankCodes = { 0, 0, 0 };
@@ -274,6 +278,33 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	}
 
 	/**
+	 * Returns the maximum weight of the Aircraft.
+	 * @return the weight in pounds
+	 * @see Aircraft#setMaxWeight(int)
+	 */
+	public int getMaxWeight() {
+		return _maxWeight;
+	}
+	
+	/**
+	 * Returns the maximum takeoff weight of the Aircraft.
+	 * @return the weight in pounds
+	 * @see Aircraft#setMaxTakeoffWeight(int)
+	 */
+	public int getMaxTakeoffWeight() {
+		return _maxTakeoffWeight;
+	}
+	
+	/**
+	 * Returns the maximum landing weight of the Aircraft.
+	 * @return the weight in pounds
+	 * @see Aircraft#setMaxLandingWeight(int)
+	 */
+	public int getMaxLandingWeight() {
+		return _maxLandingWeight;
+	}
+	
+	/**
 	 * Marks this aircraft type as used by a particular web application.
 	 * @param ai the AirlineInformation bean
 	 * @see Aircraft#isUsed(String)
@@ -339,6 +370,33 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	 */
 	public void setETOPS(boolean isETOPS) {
 		_etops = isETOPS;
+	}
+	
+	/**
+	 * Updates the maximum weight of the Aircraft.
+	 * @param weight the weight in pounds
+	 * @see Aircraft#getMaxWeight()
+	 */
+	public void setMaxWeight(int weight) {
+		_maxWeight = Math.max(0, weight);
+	}
+
+	/**
+	 * Updates the maximum takeoff weight of the Aircraft.
+	 * @param weight the weight in pounds
+	 * @see Aircraft#getMaxTakeoffWeight()
+	 */
+	public void setMaxTakeoffWeight(int weight) {
+		_maxTakeoffWeight = Math.min(_maxWeight, Math.max(0, weight));
+	}
+	
+	/**
+	 * Updates the maximum landing weight of the Aircraft.
+	 * @param weight the weight in pounds
+	 * @see Aircraft#setMaxLandingWeight(int)
+	 */
+	public void setMaxLandingWeight(int weight) {
+		_maxLandingWeight = Math.min(_maxWeight, Math.max(0, weight));
 	}
 
 	/**
@@ -494,15 +552,13 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 
 	/**
 	 * Compares two aircraft by comparing their names.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o) {
-		Aircraft a2 = (Aircraft) o;
+	public int compareTo(Aircraft a2) {
 		return _name.compareTo(a2._name);
 	}
 
 	public boolean equals(Object o) {
-		return (o instanceof Aircraft) ? (compareTo(o) == 0) : false;
+		return (o instanceof Aircraft) ? (compareTo((Aircraft) o) == 0) : false;
 	}
 
 	/**
