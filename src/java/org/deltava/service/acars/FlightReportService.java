@@ -60,8 +60,8 @@ public class FlightReportService extends WebService {
 			throw error(SC_BAD_REQUEST, "No Flight Information");
 
 		// Validate the SHA
-		MessageDigester md = new MessageDigester("SHA-256");
-		md.salt("***REMOVED***");
+		MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
+		md.salt(SystemData.get("security.hash.acars.salt"));
 		String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
 		if (!calcHash.equals(sha)) {
 			log.warn("ACARS Hash mismatch - expected " + sha + ", calculated " + calcHash);
@@ -245,6 +245,9 @@ public class FlightReportService extends WebService {
 				afr.setID(fr.getID());
 				afr.setDatabaseID(FlightReport.DBID_ASSIGN, fr.getDatabaseID(FlightReport.DBID_ASSIGN));
 				afr.setDatabaseID(FlightReport.DBID_EVENT, fr.getDatabaseID(FlightReport.DBID_EVENT));
+				afr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
+				afr.setComments(fr.getComments());
+				afr.setRemarks(fr.getRemarks());
 			}
 
 			// Check if this Flight Report counts for promotion
@@ -266,11 +269,17 @@ public class FlightReportService extends WebService {
 				log.warn("Invalid equipment type from " + p.getName() + " - " + afr.getEquipmentType());
 				afr.setRemarks(afr.getRemarks() + " (Invalid equipment: " + afr.getEquipmentType());
 				afr.setEquipmentType(p.getEquipmentType());
+			} else {
+				// Check for excessive distance
+				if (afr.getDistance() > a.getRange())
+					afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
+				
+				// Check for excessive weight
+				if ((a.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > a.getMaxTakeoffWeight())) 
+					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+				else if ((a.getMaxLandingWeight()  != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
+					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 			}
-
-			// Check for excessive distance
-			if ((a != null) && (afr.getDistance() > a.getRange()))
-				afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
 
 			// Check if it's a Flight Academy flight
 			GetSchedule sdao = new GetSchedule(con);

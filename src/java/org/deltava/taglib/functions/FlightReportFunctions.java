@@ -200,6 +200,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if excessive takeoff or landing weight was detected.
+     * @param fr the Flight Report
+     * @return TRUE if the WEIGHTWARN attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_WEIGHTWARN
+     */
+    public static boolean weightWarn(FlightReport fr) {
+    	return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_WEIGHTWARN));
+    }
+    
+    /**
      * Returns if this Flight counts towards promotion to Captain.
      * @param fr the Flight Report
      * @return TRUE if the Leg counts towards promotion, otherwise FALSE
