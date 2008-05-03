@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A daemon to monitor JDBC connections.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -80,14 +80,20 @@ class ConnectionMonitor implements Runnable {
 		Collection<ConnectionPoolEntry> entries = new ArrayList<ConnectionPoolEntry>(_entries);
 		for (Iterator<ConnectionPoolEntry> i = entries.iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = i.next();
+			boolean isStale = (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME);
 
 			// Check if the entry has timed out
-			if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
+			if (!cpe.isActive()) {
+				_entries.remove(cpe);
+				if (log.isDebugEnabled())
+					log.debug("Skipping inactive connection " + cpe);
+			} else if (cpe.inUse() && isStale) {
 				log.error("Releasing stale Connection " + cpe, cpe.getStackInfo());
 				_pool.release(cpe.getConnection());
 			} else if (cpe.isDynamic() && !cpe.inUse()) {
-				log.error("Releasing stale dyanmic Connection " + cpe, cpe.getStackInfo());
-				_pool.release(cpe.getConnection());
+				log.info("Releasing dynamic Connection " + cpe, isStale ? cpe.getStackInfo() : null);
+				cpe.close();
+				removeConnection(cpe);
 			} else if (!cpe.inUse() && !cpe.checkConnection()) {
 				log.warn("Reconnecting Connection " + cpe);
 				cpe.close();
@@ -118,16 +124,14 @@ class ConnectionMonitor implements Runnable {
 	 */
 	public void run() {
 		log.info("Starting");
-
-		// Check loop
 		while (!Thread.currentThread().isInterrupted()) {
 			checkPool();
-			try {
-				synchronized (this) {
+			synchronized (this) {
+				try {
 					wait(_sleepTime);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
 				}
-			} catch (InterruptedException ie) {
-				Thread.currentThread().interrupt();
 			}
 		}
 

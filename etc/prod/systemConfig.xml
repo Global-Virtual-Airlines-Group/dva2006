@@ -346,6 +346,10 @@
 		<hash>
 			<salt>***REMOVED***</salt>
 			<algorithm>SHA-1</algorithm>
+			<acars>
+				<salt>***REMOVED***</salt>
+				<algorithm>SHA-256</algorithm>
+			</acars>
 		</hash>
 
 		<!-- Password settings -->
