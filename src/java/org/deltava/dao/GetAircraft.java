@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -113,6 +113,9 @@ public class GetAircraft extends DAO {
 			a.setTanks(Aircraft.SECONDARY, rs.getInt(15));
 			a.setPct(Aircraft.SECONDARY, rs.getInt(16));
 			a.setTanks(Aircraft.OTHER, rs.getInt(17));
+			a.setMaxWeight(rs.getInt(18));
+			a.setMaxTakeoffWeight(rs.getInt(19));
+			a.setMaxLandingWeight(rs.getInt(20));
 			results.put(a.getName(), a);
 		}
 

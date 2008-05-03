@@ -168,6 +168,9 @@ return true;
 <c:if test="${fn:timeWarn(pirep)}">
 <div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
+<c:if test="${fn:weightWarn(pirep)}">
+<div class="warn bld caps">Excesive Aircraft Weight Detected</div>
+</c:if>
 <c:if test="${fn:refuelWarn(pirep)}">
 <div class="warn bld caps">In-Flight Refueling Detected</div>
 </c:if>

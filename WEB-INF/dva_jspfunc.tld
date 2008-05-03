@@ -253,6 +253,13 @@
 		<function-signature>boolean etopsWarn(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for excessive weight flag -->
+	<function>
+		<name>weightWarn</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean weightWarn(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for in-flight refueling warning flag -->
 	<function>
 		<name>refuelWarn</name>

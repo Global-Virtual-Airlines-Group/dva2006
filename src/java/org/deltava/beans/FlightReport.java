@@ -110,6 +110,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight flown using a Dispatcher-generated flight plan.
 	 */
 	public static final int ATTR_DISPATCH = 0x4000;
+	
+	/**
+	 * Flight flown with excessive weights for Aircraft.
+	 */
+	public static final int ATTR_WEIGHTWARN = 0x8000;
 
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.

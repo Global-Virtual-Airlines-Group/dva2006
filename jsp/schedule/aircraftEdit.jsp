@@ -19,6 +19,9 @@ if (!checkSubmit()) return false;
 if (!validateText(form.name, 3, 'Aircraft Name')) return false;
 if (!validateText(form.fullName, 5, 'Aircraft Full Name')) return false;
 if (!validateNumber(form.range, 1, 'Aircraft Range')) return false;
+if (!validateNumber(form.maxWeight, 1, 'Maximum Weight')) return false;
+if (!validateNumber(form.maxTWeight, 1, 'Maximum Takeoff Weight')) return false;
+if (!validateNumber(form.maxLWeight, 1, 'Maximum Landing Weight')) return false;
 if (!validateNumber(form.engineCount, 1, 'Engine Count')) return false;
 if (!validateText(form.engineType, 4, 'Engine Count')) return false;
 if (!validateNumber(form.cruiseSpeed, 40, 'Cruise Speed')) return false;
@@ -71,6 +74,21 @@ return true;
 <tr>
  <td class="label" valign="top">Web Applications</td>
  <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${aircraft.apps}" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">AIRCRAFT WEIGHTS</td>
+</tr>
+<tr>
+ <td class="label">Maximum Weight</td>
+ <td class="data"><el:text name="maxWeight" idx="*" size="6" max="7" value="${aircraft.maxWeight}" className="req" /></td>
+</tr>
+<tr>
+ <td class="label">Maximum Takeoff Weight</td>
+ <td class="data"><el:text name="maxTWeight" idx="*" size="6" max="7" value="${aircraft.maxTakeoffWeight}" className="req" /></td>
+</tr>
+<tr>
+ <td class="label">Maximum Landing Weight</td>
+ <td class="data"><el:text name="maxLWeight" idx="*" size="6" max="7" value="${aircraft.maxLandingWeight}" className="req" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">ACARS FUEL PROFILE</td>

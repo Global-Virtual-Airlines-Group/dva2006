@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -302,7 +302,8 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, RANGE, IATA, HISTORIC, ETOPS, ENGINES, "
 					+ "ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
-					+ "SEC_PCT, OTHER_TANKS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+					+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
 			_ps.setInt(3, a.getRange());
@@ -320,6 +321,9 @@ public class SetSchedule extends DAO {
 			_ps.setInt(15, a.getTanks(Aircraft.SECONDARY));
 			_ps.setInt(16, a.getPct(Aircraft.SECONDARY));
 			_ps.setInt(17, a.getTanks(Aircraft.OTHER));
+			_ps.setInt(18, a.getMaxWeight());
+			_ps.setInt(19, a.getMaxTakeoffWeight());
+			_ps.setInt(20, a.getMaxLandingWeight());
 			executeUpdate(1);
 			
 			// Add the webapps
@@ -351,7 +355,8 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 					+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
-					+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, FULLNAME=? WHERE (NAME=?)");
+					+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, FULLNAME=? "
+					+ "WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
@@ -367,8 +372,11 @@ public class SetSchedule extends DAO {
 			_ps.setInt(13, a.getPct(Aircraft.SECONDARY));
 			_ps.setInt(14, a.getTanks(Aircraft.OTHER));
 			_ps.setBoolean(15, a.getETOPS());
-			_ps.setString(16, a.getFullName());
-			_ps.setString(17, a.getName());
+			_ps.setInt(16, a.getMaxWeight());
+			_ps.setInt(17, a.getMaxTakeoffWeight());
+			_ps.setInt(18, a.getMaxLandingWeight());
+			_ps.setString(19, a.getFullName());
+			_ps.setString(20, a.getName());
 			executeUpdate(1);
 
 			// Clean out the webapps

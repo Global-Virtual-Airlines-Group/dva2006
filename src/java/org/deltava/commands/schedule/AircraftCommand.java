@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -51,6 +51,9 @@ public class AircraftCommand extends AbstractFormCommand {
 			// Update the aircraft from the request
 			a.setFullName(ctx.getParameter("fullName"));
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
+			a.setMaxWeight(StringUtils.parse(ctx.getParameter("maxWeight"), 0));
+			a.setMaxTakeoffWeight(StringUtils.parse(ctx.getParameter("maxTWeight"), 0));
+			a.setMaxLandingWeight(StringUtils.parse(ctx.getParameter("maxLWeight"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
