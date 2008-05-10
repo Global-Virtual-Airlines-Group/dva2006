@@ -9,7 +9,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Flight Academy Help Desk - ${issue.subject}</title>
+<title><content:airline /> Help Desk - ${issue.subject}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
