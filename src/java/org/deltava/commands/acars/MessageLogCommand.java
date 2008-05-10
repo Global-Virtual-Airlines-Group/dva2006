@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to view the ACARS Text Message log.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -41,6 +41,12 @@ public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
 			LogSearchCriteria criteria = getSearchCriteria(ctx, con);
+			
+			// Save the date criteria
+			if ((criteria.getStartDate() != null) && (criteria.getEndDate() != null)) {
+				ctx.setAttribute("rangeStart", StringUtils.format(criteria.getStartDate(), "MM/dd/yyyy HH:mm"), REQUEST);
+				ctx.setAttribute("rangeEnd", StringUtils.format(criteria.getEndDate(), "MM/dd/yyyy HH:mm"), REQUEST);
+			}
 
 			// Get the DAO and set start/count parameters
 			GetACARSLog dao = new GetACARSLog(con);
