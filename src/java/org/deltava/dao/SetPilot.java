@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -22,6 +22,15 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public SetPilot(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Public method to expose cache invalidation.
+	 * @param userID the Plot's database ID
+	 * @see PilotDAO#invalidate(int)
+	 */
+	public static void invalidate(int userID) {
+		PilotDAO.invalidate(userID);
 	}
 
 	/**
@@ -69,7 +78,7 @@ public class SetPilot extends PilotWriteDAO {
 				+ "MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
 
 		// Invalidate the cache entry
-		invalidate(p);
+		invalidate(p.getID());
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -166,7 +175,7 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void assignID(Pilot p, String db) throws DAOException {
-		invalidate(p);
+		invalidate(p.getID());
 		try {
 			startTransaction();
 			
@@ -198,7 +207,7 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void addRatings(Pilot p, Collection<String> ratings) throws DAOException {
-		invalidate(p);
+		invalidate(p.getID());
 		try {
 			writeRatings(p.getID(), ratings, SystemData.get("airline.db"), false);
 		} catch (SQLException se) {
