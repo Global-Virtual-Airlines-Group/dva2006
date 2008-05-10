@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -12,11 +12,11 @@ import org.deltava.util.CollectionUtils;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 2.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class FlightInfo extends DatabaseBean implements ViewEntry {
+public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry {
 
 	private long _conID;
 	private int _pilotID;
@@ -554,16 +554,6 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	 */
 	public void setPlanData(Collection<NavigationDataBean> entries) {
 		_planData = entries;
-	}
-
-	/**
-	 * Compares two flights by comparing their start date/times.
-	 * @see Comparable#compareTo(Object)
-	 */
-	public int compareTo(Object o2) {
-		FlightInfo i2 = (FlightInfo) o2;
-		int tmpResult = _startTime.compareTo(i2.getStartTime());
-		return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(i2.getID())) : tmpResult;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store saved ACARS text messages.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class TextMessage implements AuthoredBean, ACARSLogEntry {
+public class TextMessage implements AuthoredBean, ACARSLogEntry, Comparable<TextMessage> {
 
    private Date _date;
    private String _msg;
@@ -116,7 +116,7 @@ public class TextMessage implements AuthoredBean, ACARSLogEntry {
    /**
     * Compares two messages by comparing their dates.
     */
-   public int compareTo(ACARSLogEntry e2) {
-      return _date.compareTo(e2.getStartTime());
+   public int compareTo(TextMessage m2) {
+      return _date.compareTo(m2.getStartTime());
    }
 }

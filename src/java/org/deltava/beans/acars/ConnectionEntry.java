@@ -9,11 +9,11 @@ import org.deltava.beans.Pilot;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
-public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
+public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Comparable<ConnectionEntry> {
 
    private long _id;
    private int _pilotID;
@@ -33,13 +33,13 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    private int _msgsIn;
    private int _msgsOut;
    private long _bytesIn;
-   private long _bytesOut;
    private int _bufferReads;
    private int _bufferWrites;
    
    private FlightInfo _fInfo;
    private boolean _isDispatch;
    private boolean _isHidden;
+   private long _bytesOut;
    
    /**
     * Creates a new ACARS Connection entry.
@@ -428,7 +428,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    /**
     * Compares two connections by comparing their date/times.
     */
-   public int compareTo(ACARSLogEntry e2) {
-      return _dt.compareTo(e2.getStartTime());
+   public int compareTo(ConnectionEntry c2) {
+      return _dt.compareTo(c2.getStartTime());
    }
 }
