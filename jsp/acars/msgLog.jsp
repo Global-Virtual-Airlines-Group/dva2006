@@ -55,6 +55,11 @@
  <td colspan="4">${system_message}</td>
 </tr>
 </c:if>
+<content:filter roles="HR"><c:if test="${doSearch && (!empty rangeStart)}">
+<tr class="mid">
+ <td colspan="4">To view all ACARS Message Log entries in Microsoft Excel, <el:link url="acars_chat_log.ws?start=${rangeStart}&end=${rangeEnd}" className="sec bld">Click Here</el:link>.</td>
+</tr>
+</c:if></content:filter>
 </el:table>
 
 <!-- Button Bar -->
