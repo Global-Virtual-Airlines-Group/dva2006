@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.Pilot;
 /**
  * A Data Access Object to write Signature Images.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class SetSignatureImage extends DAO {
 	 * @see Pilot#getHasSignature()
 	 */
 	public void write(Pilot p, int x, int y, String ext) throws DAOException {
-		PilotDAO.invalidate(p);
+		PilotDAO.invalidate(p.getID());
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG, X, Y, EXT) VALUES (?, ?, ?, ?, LCASE(?))");
 			_ps.setInt(1, p.getID());
