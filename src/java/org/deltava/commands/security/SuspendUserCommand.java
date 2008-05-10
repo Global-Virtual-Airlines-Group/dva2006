@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to lock out a user.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -95,7 +95,7 @@ public class SuspendUserCommand extends AbstractCommand {
 		log.warn(ctx.getUser().getName() + " suspended user " + usr.getName());
 		
 		// Notify other web applications
-		EventDispatcher.send(SystemEvent.USER_SUSPEND);
+		EventDispatcher.send(UserEvent.UserSuspend(usr.getID()));
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

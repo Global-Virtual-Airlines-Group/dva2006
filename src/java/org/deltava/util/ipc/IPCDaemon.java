@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ipc;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.gvagroup.common.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -47,16 +47,23 @@ public class IPCDaemon implements Runnable {
 				try {
 					for (Iterator<SystemEvent> i = events.iterator(); i.hasNext(); ) {
 						SystemEvent event = i.next();
-						if (event == SystemEvent.AIRLINE_RELOAD) {
-							log.warn(SystemData.get("airline.code") + " Reloading Airlines");
-							con = cPool.getConnection(true);
-							GetAirline adao = new GetAirline(con);
-							SystemData.add("airlines", adao.getAll());
-						} else if (event == SystemEvent.AIRPORT_RELOAD) {
-							log.warn(SystemData.get("airline.code") + " Reloading Airports");
-							con = cPool.getConnection(true);
-							GetAirport adao = new GetAirport(con);
-							SystemData.add("airports", adao.getAll());
+						switch (event.getCode()) {
+							case SystemEvent.AIRLINE_RELOAD:
+								log.warn(SystemData.get("airline.code") + " Reloading Airlines");
+								con = cPool.getConnection(true);
+								GetAirline aldao = new GetAirline(con);
+								SystemData.add("airlines", aldao.getAll());
+								break;
+								
+							case SystemEvent.AIRPORT_RELOAD:
+								log.warn(SystemData.get("airline.code") + " Reloading Airports");
+								con = cPool.getConnection(true);
+								GetAirport apdao = new GetAirport(con);
+								SystemData.add("airports", apdao.getAll());
+								break;
+								
+							default:
+								break;
 						}
 					}
 				} catch (DAOException de) {
