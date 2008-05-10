@@ -23,10 +23,12 @@ import org.deltava.security.command.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -576,7 +578,10 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Commit the transaction
 			ctx.commitTX();
-
+			
+			// Invalidate the Pilot cache across applications
+			EventDispatcher.send(UserEvent.UserInvalidate(p.getID()));
+			
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 		} catch (DAOException de) {
@@ -585,7 +590,7 @@ public class ProfileCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
