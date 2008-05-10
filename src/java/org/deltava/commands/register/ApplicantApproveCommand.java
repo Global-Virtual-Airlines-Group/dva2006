@@ -178,13 +178,17 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			} else
 				auth.add(a, a.getPassword());
 			
+			// Get the Pilot and optionally set ACARS-only PIREP flag
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(a.getPilotID());
+			if (SystemData.getBoolean("users.pirep.acars_only")) {
+				p.setACARSRestriction(Pilot.ACARS_ONLY);
+				pwdao.write(p);
+			}
+			
 			// Commit the transactions
 			ctx.commitTX();
 			
-			// Get the Pilot
-			GetPilot pdao = new GetPilot(con);
-			Pilot p = pdao.get(a.getPilotID());
-
 			// Get the authenticator and chcek
 			if (auth instanceof SQLAuthenticator) {
 				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
