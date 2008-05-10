@@ -551,6 +551,7 @@
 			<minDays type="Integer">7</minDays>
 			<pad_hours type="Double">0.5</pad_hours>
 			<draft_purge type="Integer">30</draft_purge>
+			<acars_only type="Boolean">false</acars_only>
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
