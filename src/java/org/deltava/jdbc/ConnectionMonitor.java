@@ -23,18 +23,18 @@ class ConnectionMonitor implements Runnable {
 
 	private ConnectionPool _pool;
 	private final Collection<ConnectionPoolEntry> _entries = new TreeSet<ConnectionPoolEntry>();
-	private long _sleepTime = 60000; // 1 minute default
+	private long _sleepTime = 30000; // 30 second default
 	private long _poolCheckCount;
 
 	/**
 	 * Creates a new Connection Monitor.
-	 * @param interval the sleep time <i>in minutes</i>
+	 * @param interval the sleep time <i>in seconds</i>
 	 * @param pool the ConnectionPool to monitor
 	 */
 	ConnectionMonitor(int interval, ConnectionPool pool) {
 		super();
 		_pool = pool;
-		_sleepTime = interval * 60000; // Convert minutes into ms
+		_sleepTime = interval * 1000; // Convert seconds into ms
 	}
 
 	/**
@@ -43,6 +43,14 @@ class ConnectionMonitor implements Runnable {
 	 */
 	public int size() {
 		return _entries.size();
+	}
+	
+	/**
+	 * Returns the number of times the connection pool has been validated.
+	 * @return the number of validation runs
+	 */
+	public long getCheckCount() {
+		return _poolCheckCount;
 	}
 
 	/**
@@ -64,7 +72,7 @@ class ConnectionMonitor implements Runnable {
 	/**
 	 * Alerts the thread to immediately check the connection pool. 
 	 */
-	public synchronized void execute() {
+	synchronized void execute() {
 		notify();
 	}
 
@@ -91,7 +99,11 @@ class ConnectionMonitor implements Runnable {
 				log.error("Releasing stale Connection " + cpe, cpe.getStackInfo());
 				_pool.release(cpe.getConnection());
 			} else if (cpe.isDynamic() && !cpe.inUse()) {
-				log.info("Releasing dynamic Connection " + cpe, isStale ? cpe.getStackInfo() : null);
+				if (isStale)
+					log.warn("Releasing dynamic Connection " + cpe, cpe.getStackInfo());
+				else if (log.isDebugEnabled())
+					log.debug("Releasing dynamic Connection " + cpe);
+				
 				cpe.close();
 				removeConnection(cpe);
 			} else if (!cpe.inUse() && !cpe.checkConnection()) {
