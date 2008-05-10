@@ -110,12 +110,12 @@ return true;
  <td colspan="2"><el:cmdbutton url="doclibrary" label="DOCUMENT LIBRARY" /></td>
 </tr>
 
-<!-- Flight Academy Help Desk -->
+<!-- Help Desk -->
 <tr class="title caps">
  <td class="left" colspan="5">HELP DESK</td>
 </tr>
 <tr>
- <td class="left" colspan="3">The <content:airline /> Flight Academy Help Desk lets pilots and Flight Academy
+ <td class="left" colspan="3">The <content:airline /> Help Desk lets pilots and Flight Academy
  students communicate with our Instructors and Staff to quickly and easily resolve any issues, or
  answer questions about the Flight Academy.</td>
  <td colspan="2"><el:cmdbutton url="myhdissues" label="HELP DESK" /></td>
