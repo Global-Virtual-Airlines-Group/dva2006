@@ -11,20 +11,22 @@ import org.deltava.util.system.SystemData;
 /**
  * A daemon to monitor JDBC connections.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
-class ConnectionMonitor implements Runnable {
+class ConnectionMonitor implements java.io.Serializable, Runnable {
 
-	private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
+	private static transient final Logger log = Logger.getLogger(ConnectionMonitor.class);
 
 	private static final Collection<String> _sqlStatus = Arrays.asList("08003", "08S01");
 
-	private ConnectionPool _pool;
-	private final Collection<ConnectionPoolEntry> _entries = new TreeSet<ConnectionPoolEntry>();
-	private long _sleepTime = 30000; // 30 second default
+	private transient ConnectionPool _pool;
+	private transient final Collection<ConnectionPoolEntry> _entries = new TreeSet<ConnectionPoolEntry>();
+	private long _sleepTime;
+	
 	private long _poolCheckCount;
+	private long _lastPoolCheck;
 
 	/**
 	 * Creates a new Connection Monitor.
@@ -34,7 +36,7 @@ class ConnectionMonitor implements Runnable {
 	ConnectionMonitor(int interval, ConnectionPool pool) {
 		super();
 		_pool = pool;
-		_sleepTime = interval * 1000; // Convert seconds into ms
+		_sleepTime = Math.min(10, interval) * 1000; // Convert seconds into ms
 	}
 
 	/**
@@ -52,12 +54,20 @@ class ConnectionMonitor implements Runnable {
 	public long getCheckCount() {
 		return _poolCheckCount;
 	}
+	
+	/**
+	 * Returns the last time the connection pool was validated.
+	 * @return the date/time of the last validation run, or null if never
+	 */
+	public java.util.Date getLastCheck() {
+		return (_lastPoolCheck == 0) ? null : new java.util.Date(_lastPoolCheck);
+	}
 
 	/**
 	 * Adds a JDBC connection to monitor.
 	 * @param cpe a ConnectionPoolEntry object
 	 */
-	public synchronized void addConnection(ConnectionPoolEntry cpe) {
+	synchronized void addConnection(ConnectionPoolEntry cpe) {
 		_entries.add(cpe);
 	}
 
@@ -65,7 +75,7 @@ class ConnectionMonitor implements Runnable {
 	 * Removes a JDBC connection from the monitor.
 	 * @param cpe a ConnectionPoolEntry object
 	 */
-	public synchronized void removeConnection(ConnectionPoolEntry cpe) {
+	synchronized void removeConnection(ConnectionPoolEntry cpe) {
 		_entries.remove(cpe);
 	}
 	
@@ -81,6 +91,7 @@ class ConnectionMonitor implements Runnable {
 	 */
 	protected synchronized void checkPool() {
 		_poolCheckCount++;
+		_lastPoolCheck = System.currentTimeMillis();
 		if (log.isDebugEnabled())
 			log.debug("Checking Connection Pool");
 
