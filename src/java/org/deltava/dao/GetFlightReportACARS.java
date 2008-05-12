@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -94,7 +94,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @return a List of FlightReport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport>  checkDupes(String dbName, Flight f, int pilotID) throws DAOException {
+	public List<FlightReport> checkDupes(String dbName, Flight f, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -113,7 +113,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 				+ "AND (PR.EQTYPE=?)");
 		
 		try {
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, 20);
 			_ps.setInt(3, FlightReport.SUBMITTED);
@@ -123,6 +123,38 @@ public class GetFlightReportACARS extends GetFlightReports {
 			_ps.setString(7, f.getAirportD().getIATA());
 			_ps.setString(8, f.getAirportA().getIATA());
 			_ps.setString(9, f.getEquipmentType());
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Checks for duplicate ACARS flight submisions.
+	 * @param dbName the database name
+	 * @param acarsID the ACARS flight ID
+	 * @return a List of FlightReport beans 
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> checkDupes(String dbName, int acarsID) throws DAOException {
+		
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, "
+			+ "APR.* FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS PR, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) "
+				+ "AND (APR.ACARS_ID=?)");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, acarsID);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
