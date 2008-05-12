@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -14,10 +14,12 @@ import org.deltava.security.command.PilotAccessControl;
 import org.deltava.util.PasswordGenerator;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -150,6 +152,9 @@ public class PilotActivationCommand extends AbstractCommand {
 				sqlAuth.clearConnection();
 			} else
 				auth.authenticate(p, p.getPassword());
+			
+			// Invalidate the Pilot cache across applications
+			EventDispatcher.send(UserEvent.UserInvalidate(p.getID()));
 
 			// Set JSP result
 			result.setType(CommandResult.REQREDIRECT);
