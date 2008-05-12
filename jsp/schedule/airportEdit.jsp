@@ -109,15 +109,6 @@ return true;
  <td colspan="2"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </c:if>
-<c:if test="${isNew && (!empty param.id)}">
-<c:set var="apCode" value="${empty airport ? param.id : airport.ICAO}" scope="request" />
-<tr class="title caps">
- <td colspan="2">AIRPORT INFORMATION</td>
-</tr>
-<tr>
- <td colspan="2" class="mid"><iframe id="airportLookup" width="97%" height="280" scrolling="auto" src="http://www.airrouting.com/scripts/airportLoc.asp?RequestLocation=${apCode}"></iframe></td>
-</tr>
-</c:if>
 </c:if>
 </el:table>
 
