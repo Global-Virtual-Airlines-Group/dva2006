@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A user-configurable JDBC Connection Pool.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  * @see ConnectionPoolEntry
  * @see ConnectionMonitor
@@ -33,7 +33,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	private int _fullCount;
 	private boolean _logStack;
 
-	private transient ConnectionMonitor _monitor;
+	private ConnectionMonitor _monitor;
 	private SortedMap<Integer, ConnectionPoolEntry> _cons;
 	private transient Thread _monitorThread;
 
@@ -53,9 +53,9 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 */
 	public ConnectionPool(int maxSize) {
 		super();
-		DriverManager.setLoginTimeout(3);
+		DriverManager.setLoginTimeout(5);
 		_poolMaxSize = maxSize;
-		_monitor = new ConnectionMonitor(2, this);
+		_monitor = new ConnectionMonitor(30, this);
 	}
 
 	/**
@@ -90,6 +90,24 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 */
 	public int getMaxSize() {
 		return _poolMaxSize;
+	}
+	
+	/**
+	 * Returns the number of times the connection pool has been validated.
+	 * @return the number of validation runs
+	 * @see ConnectionMonitor#getCheckCount()
+	 */
+	public long getValidations() {
+		return _monitor.getCheckCount();
+	}
+	
+	/**
+	 * Returns the last time the connection pool was validated.
+	 * @return the date/time of the last validation run
+	 * @see ConnectionMonitor#getLastCheck()
+	 */
+	public java.util.Date getLastValidation() {
+		return _monitor.getLastCheck();
 	}
 
 	/**

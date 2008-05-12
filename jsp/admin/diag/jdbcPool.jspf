@@ -27,10 +27,16 @@
  <td colspan="7" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS, 
 <fmt:int value="${pool.expandCount}" /> EXPANSIONS, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</td>
 </tr>
+<c:if test="${!empty pool.lastValidation}">
+<tr>
+ <td colspan="7" class="left"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last
+ on <fmt:date date="${pool.lastValidation}" /></td>
+</tr>
+</c:if>
 <c:forEach var="con" items="${pool.poolInfo}">
 <view:row entry="${con}">
  <td class="pri bld"><fmt:int value="${con.ID}" /></td>
- <td class="sec">${con.system ? 'System' : 'User'}</td>
+ <td class="sec"><c:if test="${con.dynamic}">Dynamic </c:if>${con.system ? 'System' : 'User'}</td>
  <td class="bld"><c:choose><c:when test="${con.inUse}">In Use</c:when>
 <c:when test="${con.dynamic && !con.connected}">Inactive</c:when>
 <c:otherwise>Available</c:otherwise></c:choose></td>
@@ -39,7 +45,7 @@
  <td><fmt:int value="${con.totalUse}" /> ms</td>
  <td><fmt:int value="${con.currentUse}" /> ms</td>
 </view:row>
-<c:if test="${jdbcStackLog && (con.inUse || (con.currentUse > 1500))}">
+<c:if test="${jdbcStackLog && con.connected && (con.inUse || (con.currentUse > 1500))}">
 <view:row entry="${con}">
  <td class="left small" colspan="7"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
