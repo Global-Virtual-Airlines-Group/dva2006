@@ -36,7 +36,7 @@
 <c:forEach var="con" items="${pool.poolInfo}">
 <view:row entry="${con}">
  <td class="pri bld"><fmt:int value="${con.ID}" /></td>
- <td class="sec"><c:if test="${con.dynamic}">Dynamic </c:if>${con.system ? 'System' : 'User'}</td>
+ <td class="sec">${con.typeName}</td>
  <td class="bld"><c:choose><c:when test="${con.inUse}">In Use</c:when>
 <c:when test="${con.dynamic && !con.connected}">Inactive</c:when>
 <c:otherwise>Available</c:otherwise></c:choose></td>

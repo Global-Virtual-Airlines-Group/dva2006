@@ -18,11 +18,9 @@ import org.deltava.util.system.SystemData;
 class ConnectionMonitor implements java.io.Serializable, Runnable {
 
 	private static transient final Logger log = Logger.getLogger(ConnectionMonitor.class);
-
 	private static final Collection<String> _sqlStatus = Arrays.asList("08003", "08S01");
 
 	private transient ConnectionPool _pool;
-	private transient final Collection<ConnectionPoolEntry> _entries = new TreeSet<ConnectionPoolEntry>();
 	private long _sleepTime;
 	
 	private long _poolCheckCount;
@@ -36,7 +34,7 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 	ConnectionMonitor(int interval, ConnectionPool pool) {
 		super();
 		_pool = pool;
-		_sleepTime = Math.min(10, interval) * 1000; // Convert seconds into ms
+		_sleepTime = Math.min(3600, Math.max(10, interval)) * 1000; // Convert seconds into ms
 	}
 
 	/**
@@ -44,7 +42,7 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 	 * @return the size of the pool
 	 */
 	public int size() {
-		return _entries.size();
+		return _pool.getSize();
 	}
 	
 	/**
@@ -64,22 +62,6 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 	}
 
 	/**
-	 * Adds a JDBC connection to monitor.
-	 * @param cpe a ConnectionPoolEntry object
-	 */
-	synchronized void addConnection(ConnectionPoolEntry cpe) {
-		_entries.add(cpe);
-	}
-
-	/**
-	 * Removes a JDBC connection from the monitor.
-	 * @param cpe a ConnectionPoolEntry object
-	 */
-	synchronized void removeConnection(ConnectionPoolEntry cpe) {
-		_entries.remove(cpe);
-	}
-	
-	/**
 	 * Alerts the thread to immediately check the connection pool. 
 	 */
 	synchronized void execute() {
@@ -96,14 +78,12 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 			log.debug("Checking Connection Pool");
 
 		// Loop through the entries
-		Collection<ConnectionPoolEntry> entries = new ArrayList<ConnectionPoolEntry>(_entries);
-		for (Iterator<ConnectionPoolEntry> i = entries.iterator(); i.hasNext();) {
+		for (Iterator<ConnectionPoolEntry> i = _pool.getEntries().iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = i.next();
 			boolean isStale = (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME);
 
 			// Check if the entry has timed out
 			if (!cpe.isActive()) {
-				_entries.remove(cpe);
 				if (log.isDebugEnabled())
 					log.debug("Skipping inactive connection " + cpe);
 			} else if (cpe.inUse() && isStale) {
@@ -116,7 +96,6 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 					log.debug("Releasing dynamic Connection " + cpe);
 				
 				cpe.close();
-				removeConnection(cpe);
 			} else if (!cpe.inUse() && !cpe.checkConnection()) {
 				log.warn("Reconnecting Connection " + cpe);
 				cpe.close();

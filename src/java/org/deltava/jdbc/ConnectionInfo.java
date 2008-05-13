@@ -6,7 +6,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store information about a JDBC connection pool entry.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -111,6 +111,18 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
     */
    public long getCurrentUse() {
       return _currentUse;
+   }
+   
+   /**
+    * Returns the connection type for rendering in a JSP.
+    * @return the connection type
+    */
+   public String getTypeName() {
+	   StringBuilder buf = new StringBuilder();
+	   if (_isDynamic)
+		   buf.append("Dynamic ");
+	   
+	   return buf.append(_isSystem ? "System" : "User").toString();
    }
 
    /**

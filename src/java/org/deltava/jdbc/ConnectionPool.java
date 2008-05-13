@@ -254,7 +254,6 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 		try {
 			ConnectionPoolEntry cpe = createConnection(isSystem, getNextID());
 			cpe.setDynamic(true);
-			_monitor.addConnection(cpe);
 			_cons.put(Integer.valueOf(cpe.getID()), cpe);
 
 			// Return back the new connection
@@ -346,13 +345,11 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 		try {
 			for (int x = 0; x < initialSize; x++) {
 				ConnectionPoolEntry cpe = createConnection(false, x + 1);
-				_monitor.addConnection(cpe);
 				_cons.put(Integer.valueOf(cpe.getID()), cpe);
 			}
 
 			// Create a system connection
 			ConnectionPoolEntry sysc = createConnection(true, getNextID());
-			_monitor.addConnection(sysc);
 			_cons.put(Integer.valueOf(sysc.getID()), sysc);
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
@@ -380,9 +377,6 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 				cpe.getConnection().close();
 			} catch (SQLException se) {
 				log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
-			} finally {
-				_monitor.removeConnection(cpe);
-				log.info("Closed JDBC Connection " + cpe);
 			}
 		}
 
@@ -401,6 +395,15 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 		}
 
 		return results;
+	}
+	
+	/**
+	 * Returns all connection pool entries, for use by the {@link ConnectionMonitor}.
+	 * @return a Collection of ConnectionPoolEntry beans
+	 * @see ConnectionMonitor
+	 */
+	synchronized Collection<ConnectionPoolEntry> getEntries() {
+		return new ArrayList<ConnectionPoolEntry>(_cons.values());
 	}
 
 	/**
