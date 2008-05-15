@@ -1,6 +1,7 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -14,7 +15,7 @@ import org.deltava.security.command.DispatchAccessControl;
 /**
  * A Web Site Command to view saved dispatch routes.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -51,8 +52,15 @@ public class RouteCommand extends AbstractCommand {
 			ctx.setAttribute("distance", new Integer(rp.getAirportD().getPosition().distanceTo(rp.getAirportA())), REQUEST);
 			ctx.setAttribute("mapCenter", rp.getAirportD().getPosition().midPoint(rp.getAirportA()), REQUEST);
 			
+			// Save the waypoints including the airports
+			Collection<MapEntry> wpts = new LinkedHashSet<MapEntry>();
+			wpts.add(rp.getAirportD());
+			wpts.addAll(rp.getWaypoints());
+			wpts.add(rp.getAirportA());
+			
 			// Save in the request
 			ctx.setAttribute("route", rp, REQUEST);
+			ctx.setAttribute("waypoints", wpts, REQUEST);
 			ctx.setAttribute("author", p, REQUEST);
 			ctx.setAttribute("authorLoc", ud, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
