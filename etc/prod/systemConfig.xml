@@ -229,7 +229,7 @@
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
 			<connectTimeout>1000</connectTimeout>
-			<autoReconnect>false</autoReconnect>
+			<autoReconnect>true</autoReconnect>
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
@@ -241,8 +241,8 @@
 			<validationQuery>/* ping */</validationQuery>
 		</map>
 		
-		<pool_size type="Integer">5</pool_size>
-		<pool_max_size type="Integer">12</pool_max_size>
+		<pool_size type="Integer">3</pool_size>
+		<pool_max_size type="Integer">16</pool_max_size>
 		<max_reqs type="Integer">0</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 		<log_stack type="Boolean">true</log_stack>
@@ -498,7 +498,8 @@
 		<show type="Boolean">true</show>
 		<list name="versions" attr="version" sorted="true">
 			<version>1.0</version>
-			<version>2.0</version>
+			<version>2.1</version>
+			<version>2.2</version>
 		</list>
 		
 		<assignto type="Integer">043</assignto>
