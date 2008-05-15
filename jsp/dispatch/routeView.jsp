@@ -67,10 +67,12 @@
  <td class="label" valign="top">Flight Route</td>
  <td class="data" colspan="3">${route.route}</td>
 </tr>
+<c:if test="${fn:sizeof(waypoints) > 0}">
 <tr>
  <td class="label" valign="top">Route Map</td>
  <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="500" /></td>
 </tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -82,12 +84,12 @@
 <content:copyright />
 </content:region>
 </content:page>
-<c:if test="${fn:sizeof(route.waypoints) > 0}">
+<c:if test="${fn:sizeof(waypoints) > 0}">
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
-<map:points var="pnts" items="${route.waypoints}" />
-<map:markers var="mrks" items="${route.waypoints}" />
+<map:points var="pnts" items="${waypoints}" />
+<map:markers var="mrks" items="${waypoints}" />
 <map:line var="route" src="pnts" color="#4080AF" width="2" transparency="0.7" geodesic="true" />
 
 // Build the map
