@@ -230,6 +230,10 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 				log.error("Releasing stale JDBC Connection " + cpe, cpe.getStackInfo());
 				cpe.free();
 			}
+			
+			// If it's an inactive system connection and we want a user connection, make it one
+			if (!cpe.isActive() && cpe.isSystemConnection() && !isSystem)
+				cpe.setSystemConnection(false);
 
 			// If the connection pool entry is not in use, reserve it - system connections can use idle regular
 			// connections
