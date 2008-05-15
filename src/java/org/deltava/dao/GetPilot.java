@@ -321,7 +321,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) WHERE (F.STATUS=?) AND ");
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE ");
 
 		// Add parameters if they are non-null
 		List<String> searchTerms = new ArrayList<String>();
