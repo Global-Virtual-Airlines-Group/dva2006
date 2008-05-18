@@ -12,10 +12,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.*;
 
+import org.deltava.util.CollectionUtils;
+
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -142,6 +144,9 @@ public class EventCommand extends AbstractCommand {
 			ctx.setAttribute("event", e, REQUEST);
 			ctx.setAttribute("access", eAccess, REQUEST);
 			ctx.setAttribute("saAccess", sAccessMap, REQUEST);
+			
+			// Save the routes in a map, keyed by ID
+			ctx.setAttribute("routes", CollectionUtils.createMap(e.getRoutes(), "routeID"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

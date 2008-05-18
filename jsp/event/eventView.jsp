@@ -145,9 +145,11 @@ return true;
  <td>PLAN TYPE</td>
 </tr>
 <c:forEach var="plan" items="${event.plans}">
+<c:set var="rt" value="${routes[plan.routeID]}" scope="request" />
 <view:row entry="${plan}">
  <td class="pri bld"><fmt:int value="${plan.routeID}" /></td>
- <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}.${plan.extension}">${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
+ <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}.${plan.extension}"><c:if test="${!empty rt.name}"><span class="bld">(${rt.name})</span> </c:if>
+${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
  <td class="sec"><fmt:int value="${plan.size}" /> bytes</td>
  <td class="pri bld">${plan.typeName}</td>
 </view:row>
