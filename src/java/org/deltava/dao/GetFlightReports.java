@@ -393,11 +393,13 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?) AND (PR.STATUS=?)");
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
 		if ((airportD != null) && (airportA != null))
