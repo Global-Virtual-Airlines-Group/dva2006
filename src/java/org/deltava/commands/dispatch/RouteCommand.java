@@ -10,7 +10,7 @@ import org.deltava.beans.acars.RoutePlan;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.DispatchAccessControl;
+import org.deltava.security.command.DispatchRouteAccessControl;
 
 /**
  * A Web Site Command to view saved dispatch routes.
@@ -37,7 +37,7 @@ public class RouteCommand extends AbstractCommand {
 				throw notFoundException("Unknown Route ID - " + ctx.getID());
 			
 			// Check our access
-			DispatchAccessControl ac = new DispatchAccessControl(ctx);
+			DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx);
 			ac.validate();
 			if (!ac.getCanView())
 				throw securityException("Cannot view Dispatcher route");

@@ -10,7 +10,7 @@ import org.deltava.security.SecurityContext;
  * @since 2.1
  */
 
-public class DispatchAccessControl extends AccessControl {
+public class DispatchRouteAccessControl extends AccessControl {
 	
 	private boolean _canView;
 	private boolean _canDelete;
@@ -19,7 +19,7 @@ public class DispatchAccessControl extends AccessControl {
 	 * Initializes the Access Controller.
 	 * @param ctx the Security context
 	 */
-	public DispatchAccessControl(SecurityContext ctx) {
+	public DispatchRouteAccessControl(SecurityContext ctx) {
 		super(ctx);
 	}
 

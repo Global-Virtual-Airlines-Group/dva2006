@@ -8,7 +8,7 @@ import org.deltava.beans.acars.RoutePlan;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.DispatchAccessControl;
+import org.deltava.security.command.DispatchRouteAccessControl;
 
 /**
  * A Web Site Command to delete dispatcher routes.
@@ -35,7 +35,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 				throw notFoundException("Unknown Route ID - " + ctx.getID());
 			
 			// Check our access
-			DispatchAccessControl ac = new DispatchAccessControl(ctx);
+			DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx);
 			ac.validate();
 			if (!ac.getCanDelete())
 				throw securityException("Cannot delete Dispatcher route");
