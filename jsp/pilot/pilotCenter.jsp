@@ -663,6 +663,10 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
  <td class="mid"><el:cmd className="bld" url="dsproutes">Dispatcher Routes</el:cmd></td>
  <td class="data">You can view or delete flight routes previously created by <content:airline /> dispatchers.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dsprsearch">Dispatch Route Search</el:cmd></td>
+ <td class="data">You can search <content:airline /> dispatcher routes by Origin and Destination airport.</td>
+</tr>
 </content:filter>
 <content:filter roles="HR,Developer">
 <!-- ACARS Logging Section -->
