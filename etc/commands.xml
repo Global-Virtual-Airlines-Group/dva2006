@@ -1694,6 +1694,24 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="dspcalendar">
+		<name>Dispatch Service Calendar</name>
+		<class>org.deltava.commands.dispatch.ServiceCalendarCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="dspentry">
+		<name>Dispatch Service Entry</name>
+		<class>org.deltava.commands.dispatch.ServiceEntryCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="dspentrydelete">
+		<name>Dispatch Service Entry Delete</name>
+		<class>org.deltava.commands.dispatch.ServiceEntryDeleteCommand</class>
+		<roles>HR,Dispatch</roles>
+	</command>
+
 
 	<!-- Flight Academy Commands -->
 	<command id="academy">
