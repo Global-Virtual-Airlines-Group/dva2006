@@ -38,7 +38,7 @@
 
 <!-- Sort/Filter Options -->
 <tr class="title">
- <td colspan="2">AIRCRAFT <el:combo name="eqype" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></td>
+ <td colspan="2">AIRCRAFT <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></td>
  <td colspan="4" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
  <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" /> SORT BY
  <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
