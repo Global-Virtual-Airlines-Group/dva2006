@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.0
  */
 
@@ -96,6 +96,32 @@ public class GetACARSRoute extends DAO {
 	}
 	
 	/**
+	 * Loads Airports from all saved routes in the database.
+	 * @return a Collection of Airport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getAirports() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM acars.ROUTES");
+			
+			// Execute the query
+			Collection<Airport> results = new HashSet<Airport>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				results.add(SystemData.getAirport(rs.getString(1)));
+				results.add(SystemData.getAirport(rs.getString(2)));
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Loads all saved routes from a particular Dispatcher.
 	 * @param authorID the Dispatcher database ID
 	 * @return a Collection of RoutePlan beans
@@ -124,7 +150,7 @@ public class GetACARSRoute extends DAO {
 	 */
 	public Collection<RoutePlan> getRoutes(Airport aD, Airport aA) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM acars.ROUTES WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
+			prepareStatement("SELECT * FROM acars.ROUTES WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) ORDER BY USED DESC");
 			_ps.setString(1, aD.getIATA());
 			_ps.setString(2, aA.getIATA());
 			

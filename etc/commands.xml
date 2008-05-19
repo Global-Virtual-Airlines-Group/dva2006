@@ -1670,6 +1670,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="dsprsearch">
+		<name>Dispatch Route Search</name>
+		<class>org.deltava.commands.dispatch.RouteSearchCommand</class>
+		<roles>HR,Dispatch</roles>
+	</command>
+
 	<command id="dsproutes">
 		<name>Dispatch Route List</name>
 		<class>org.deltava.commands.dispatch.RouteListCommand</class>
