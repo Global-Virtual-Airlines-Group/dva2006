@@ -657,7 +657,7 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
 <content:filter roles="HR,Dispatch">
 <!-- ACARS Dispatch Section -->
 <tr class="title caps">
- <td colspan="2">ACARS DISPATCH ROUTES</td>
+ <td colspan="2">ACARS DISPATCH OPERATIONS</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="dsproutes">Dispatcher Routes</el:cmd></td>
@@ -666,6 +666,9 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
 <tr>
  <td class="mid"><el:cmd className="bld" url="dsprsearch">Dispatch Route Search</el:cmd></td>
  <td class="data">You can search <content:airline /> dispatcher routes by Origin and Destination airport.</td>
+</tr>
+<tr>
+
 </tr>
 </content:filter>
 <content:filter roles="HR,Developer">
