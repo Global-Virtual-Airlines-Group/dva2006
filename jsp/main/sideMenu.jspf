@@ -125,6 +125,9 @@
  <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="dspcalendar">DISPATCH SCHEDULE</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:link url="/acars_map_earth.ws">GOOGLE EARTH</el:link></td>
 </tr>
 </c:if>
