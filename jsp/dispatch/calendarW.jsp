@@ -23,6 +23,20 @@ var cType = combo.options[combo.selectedIndex].value;
 self.location = '/dspcalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
 return true;
 }
+
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!form.comments) return false;
+
+if (!validateCombo(form.startDate, 'Service Start Date')) return false;
+if (!validateCombo(form.startTime, 'Service Start Time')) return false;
+if (!validateCombo(form.endDate, 'Service End Date')) return false;
+if (!validateCombo(form.endTime, 'Service End Time')) return false;
+setSubmit();
+disableButton('SaveButton');
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -33,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dspcalendar.do" method="get" validate="return false">
+<el:form action="dspentry.do" op="save" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
  <td width="80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" tzName="local" /></td>
@@ -44,13 +58,19 @@ return true;
 <calendar:week date="cDate" startDate="${startDate}" entries="${entries}" topBarClass="dayHdr" 
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="dspcalendar">
 <calendar:entry name="entry">
-
-
+<c:set var="dispatcher" value="${pilots[entry.authorID]}" scope="request" />
+<c:set var="eAccess" value="${accessMap[entry]}" scope="request" />
+<div class="small"><span class="pri">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
+<fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" /></div>
+<c:if test="${eAccess.canEdit}"><el:cmd url="dspentry" link="${entry}" op="edit" className="small sec bld">EDIT ENTRY</el:cmd></c:if>
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
 </calendar:week>
 </div>
+<c:if test="${access.canCreate}">
+<%@ include file="/jsp/dispatch/addServiceTime.jspf" %>
+</c:if>
 </el:form>
 <br />
 <content:copyright />
