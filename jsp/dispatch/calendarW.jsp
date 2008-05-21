@@ -61,8 +61,9 @@ return true;
 <c:set var="dispatcher" value="${pilots[entry.authorID]}" scope="request" />
 <c:set var="eAccess" value="${accessMap[entry]}" scope="request" />
 <div class="small"><span class="pri">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
-<fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" /></div>
-<c:if test="${eAccess.canEdit}"><el:cmd url="dspentry" link="${entry}" op="edit" className="small sec bld">EDIT ENTRY</el:cmd></c:if>
+<fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" />
+<c:if test="${eAccess.canEdit}"><br /><el:cmd url="dspentry" link="${entry}" op="edit" className="small sec bld">EDIT ENTRY</el:cmd></c:if>
+<c:if test="${!empty entry.comments}"><br />${entry.comments}</c:if></div>
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
