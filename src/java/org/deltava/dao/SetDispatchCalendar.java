@@ -30,7 +30,7 @@ public class SetDispatchCalendar extends DAO {
 	public void write(DispatchScheduleEntry dse) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO acars.DSP_SCHEDULE (ID, DISPATCHER, STARTTIME, ENDTIME, "
-					+ "REMARKS) VALUES (?, ?, ?, ?)");
+					+ "REMARKS) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, dse.getID());
 			_ps.setInt(2, dse.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(dse.getStartTime()));
