@@ -3,13 +3,14 @@ package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
 
-import org.deltava.beans.UserData;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.DispatchScheduleEntry;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.DispatchScheduleAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle ACARS Dispatcher schedule entries.
@@ -38,6 +39,13 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 				dse = dao.get(ctx.getID());
 				if (dse == null)
 					throw notFoundException("Invalid Dispatch Schedule entry - " + ctx.getID());
+				
+				// Get the user's local time zone
+				TZInfo tz = ctx.getUser().getTZ();
+				
+				// Convert the dates to local time for the input fields
+				ctx.setAttribute("startTime", DateTime.convert(dse.getStartTime(), tz), REQUEST);
+				ctx.setAttribute("endTime", DateTime.convert(dse.getEndTime(), tz), REQUEST);
 				
 				// Get the Dispatcher
 				GetPilot pdao = new GetPilot(con);
@@ -72,33 +80,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the entry
-			GetDispatchCalendar dao = new GetDispatchCalendar(con);
-			DispatchScheduleEntry dse = dao.get(ctx.getID());
-			if (dse == null)
-				throw notFoundException("Invalid Dispatch Schedule entry - " + ctx.getID());
-			
-			// Save the entry
-			ctx.setAttribute("entry", dse, REQUEST);
-			
-			// Load the Dispatcher
-			GetPilot pdao = new GetPilot(con);
-			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(dse.getAuthorID());
-			ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
-		}
-		
-		// Forward to the JSP
-		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/dispatch/schedEntry.jsp");
-		result.setSuccess(true);
+		execEdit(ctx);
 	}
 
 	/**
@@ -123,8 +105,8 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 			}
 			
 			// Update common parameters
-			dse.setStartTime(parseDateTime(ctx, "start"));
-			dse.setEndTime(parseDateTime(ctx, "end"));
+			dse.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
+			dse.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			dse.setComments(ctx.getParameter("comments"));
 			
 			// Check our access

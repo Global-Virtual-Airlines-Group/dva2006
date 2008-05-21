@@ -51,7 +51,7 @@ public class GetDispatchCalendar extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.DSP_SCHEDULE ");
-		if ((sd != null) && (dispatcherID != 0))
+		if ((sd != null) || (dispatcherID != 0))
 			sqlBuf.append("WHERE ");
 		if (sd != null) {
 			sqlBuf.append("(STARTTIME >=?) AND (STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
