@@ -71,7 +71,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
        	 ep.setNotify(Boolean.valueOf(ctx.getParameter("doNotify")).booleanValue());
        	 
        	 // Update airlines
-       	 Collection<String> airlines = ctx.getParameters("airlines");
+       	 Collection<String> airlines = ctx.getParameters("airline");
        	 if (airlines != null) {
        		 Collection<AirlineInformation> ai = new ArrayList<AirlineInformation>();
        		 for (Iterator<String> i = airlines.iterator(); i.hasNext(); )
