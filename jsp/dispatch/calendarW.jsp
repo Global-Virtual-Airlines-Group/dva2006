@@ -42,8 +42,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/academy/header.jspf" %> 
-<%@ include file="/jsp/academy/sideMenu.jspf" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -60,7 +60,7 @@ return true;
 <calendar:entry name="entry">
 <c:set var="dispatcher" value="${pilots[entry.authorID]}" scope="request" />
 <c:set var="eAccess" value="${accessMap[entry]}" scope="request" />
-<div class="small"><span class="pri">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
+<div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
 <fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" />
 <c:if test="${eAccess.canEdit}"><br /><el:cmd url="dspentry" link="${entry}" op="edit" className="small sec bld">EDIT ENTRY</el:cmd></c:if>
 <c:if test="${!empty entry.comments}"><br />${entry.comments}</c:if></div>
