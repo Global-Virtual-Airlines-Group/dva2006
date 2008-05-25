@@ -795,4 +795,11 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public void setAirportCodeType(String codeName) {
 		setAirportCodeType(StringUtils.arrayIndexOf(Airport.CODETYPES, codeName, 0));
 	}
+	
+	/**
+	 * Returns the person's full name.
+	 */
+	public String toString() {
+		return getName();
+	}
 }
