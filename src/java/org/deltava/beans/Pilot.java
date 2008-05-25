@@ -901,13 +901,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Tests equality by comparing the pilot ID. <i>This is used by the GetPilot DAO for cache lookups.</i>
-	 */
-	public Object cacheKey() {
-		return new Integer(getID());
-	}
-
-	/**
 	 * Selects a table row class based upon the Pilot's status.
 	 * @return the row CSS class name
 	 */
