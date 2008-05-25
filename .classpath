@@ -17,6 +17,6 @@
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.21.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
