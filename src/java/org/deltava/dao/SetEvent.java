@@ -34,9 +34,10 @@ public class SetEvent extends DAO {
 			startTransaction();
 
 			// Determine if we are doing an insert or an update
-			if (e.getID() == 0)
+			if (e.getID() == 0) {
 				insert(e);
-			else
+				writeBanner(e);
+			} else
 				update(e);
 
 			// Write the child rows
@@ -166,6 +167,40 @@ public class SetEvent extends DAO {
 	}
 	
 	/**
+	 * Deletes an Online Event banner image from the database.
+	 * @param id the Event database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteBanner(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM events.BANNERS WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates an Online Event banner image.
+	 * @param e the Event bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeBanner(Event e) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO events.BANNERS (ID, IMG, X, Y, EXT) VALUES (?, ?, ?, ?, LCASE(?))");
+			_ps.setInt(1, e.getID());
+			_ps.setBinaryStream(2, e.getInputStream(), e.getSize());
+			_ps.setInt(3, e.getWidth());
+			_ps.setInt(4, e.getHeight());
+			_ps.setString(5, e.getTypeName());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Toggles the availability of an Event flight route. 
 	 * @param r the Route bean
 	 * @throws DAOException if a JDBC error occurs
@@ -180,7 +215,7 @@ public class SetEvent extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	private void writeCharts(Event e) throws SQLException {
 
 		// Clear airports
@@ -300,7 +335,6 @@ public class SetEvent extends DAO {
 	 * Updates an existing Online Event in the database.
 	 */
 	private void update(Event e) throws SQLException {
-		// Prepare the statement
 		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
 				+ "BRIEFING=?, CAN_SIGNUP=?, STATUS=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
@@ -312,8 +346,6 @@ public class SetEvent extends DAO {
 		_ps.setBoolean(7, e.getCanSignup());
 		_ps.setInt(8, e.getStatus());
 		_ps.setInt(9, e.getID());
-
-		// Execute the Update
 		executeUpdate(1);
 	}
 }

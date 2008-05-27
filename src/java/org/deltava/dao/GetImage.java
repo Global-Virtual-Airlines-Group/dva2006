@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.sql.*;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ public class GetImage extends DAO {
      */
     public GetImage(Connection c) {
         super(c);
+        setQueryMax(1);
     }
     
     /**
@@ -64,6 +65,16 @@ public class GetImage extends DAO {
     	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".SIGNATURES WHERE (ID=?)");
         return execute(id, sqlBuf.toString());
+    }
+    
+    /**
+     * Returns an Online Event banner image.
+     * @param id the Event database ID
+     * @return the banner image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getEventBanner(int id) throws DAOException {
+    	return execute(id, "SELECT IMG FROM events.BANNERS WHERE (ID=?)");
     }
     
     /**
