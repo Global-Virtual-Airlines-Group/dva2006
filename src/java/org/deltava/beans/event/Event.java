@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
+public class Event extends ImageBean implements ComboAlias, CalendarEntry {
 
     public static final int NET_VATSIM = 0;
     public static final int NET_IVAO = 1;
