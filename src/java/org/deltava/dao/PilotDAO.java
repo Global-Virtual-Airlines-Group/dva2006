@@ -33,7 +33,6 @@ abstract class PilotDAO extends DAO implements CachingDAO {
 	/**
 	 * Removes an entry from the pilot cache.
 	 * @param id the database ID
-	 * @see PilotDAO#invalidate(Cacheable)
 	 */
 	static void invalidate(int id) {
 		_cache.remove(new Integer(id));
