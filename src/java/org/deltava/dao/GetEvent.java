@@ -209,13 +209,12 @@ public class GetEvent extends DAO {
 	 */
 	public Event get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM events.EVENTS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT E.*, EB.EXT FROM events.EVENTS E LEFT JOIN events.BANNERS EB "
+					+ "ON (E.ID=EB.ID) WHERE (E.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the query and return null if nothing found
 			List<Event> results = execute();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 
@@ -289,6 +288,7 @@ public class GetEvent extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasBanner = (rs.getMetaData().getColumnCount() > 9);
 		while (rs.next()) {
 			Event e = new Event(rs.getString(2));
 			e.setID(rs.getInt(1));
@@ -299,6 +299,8 @@ public class GetEvent extends DAO {
 			e.setSignupDeadline(rs.getTimestamp(7));
 			e.setBriefing(rs.getString(8));
 			e.setCanSignup(rs.getBoolean(9));
+			if (hasBanner)
+				e.setBannerExtension(rs.getString(10));
 
 			// Add to results
 			results.add(e);

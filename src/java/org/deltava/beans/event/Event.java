@@ -42,6 +42,7 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     private Date _startTime;
     private Date _endTime;
     private Date _signupDeadline;
+    private String _bannerExt;
     
     private int _status;
     private int _network;
@@ -336,6 +337,15 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
         return _assignments;
     }
     
+	/**
+	 * Queries if the Online Event has a banner image.
+	 * @return TRUE if the event has an image, otherwise FALSE
+	 * @see Event#setBannerExtension(String)
+	 */
+	public boolean getHasBanner() {
+		return (_bannerExt != null);
+	}
+    
     /**
      * Returns wether a Pilot is signed up for this Online Event.
      * @param pilotID the Pilot's database ID
@@ -475,6 +485,16 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     public void setCanSignup(boolean doSignup) {
     	_canSignup = doSignup;
     }
+    
+	/**
+	 * Sets if this Eventhas a banner image available.
+	 * @param ext the banner extension, or null
+	 * @see Event#getHasBanner()
+	 */
+	public void setBannerExtension(String ext) {
+		_bannerExt = StringUtils.isEmpty(ext) ? null : ext.toLowerCase();
+	}
+
     
     /**
      * Adds a Flight Plan to this Online Event.
