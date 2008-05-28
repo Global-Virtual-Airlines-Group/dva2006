@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -89,8 +89,8 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	
 	/**
 	 * Returns if the entry is connected to the database. Ordinarily one could check if there was a
-	 * Connection object in this class, but since Connections are not {@link Serializable}, this method
-	 * would not be valid across web applications. 
+	 * Connection object in this class, but since Connections are not {@link java.io.Serializable}, this
+	 * method would not be valid across web applications. 
 	 * @return TRUE if connected, otherwise FALSE
 	 * @see ConnectionPoolEntry#connect()
 	 * @see ConnectionPoolEntry#close()
