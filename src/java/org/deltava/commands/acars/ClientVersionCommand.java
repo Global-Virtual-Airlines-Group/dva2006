@@ -56,6 +56,7 @@ public class ClientVersionCommand extends AbstractCommand {
 			ctx.setAttribute("versionInfo", versionMap, REQUEST);
 			ctx.setAttribute("betaInfo", betaMap, REQUEST);
 			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
+			ctx.setAttribute("latestDispatch", Integer.valueOf(cInfo.getMinimumDispatchBuild()), REQUEST);
 			
 			// Redirect to the JSP
 			result.setURL("/jsp/acars/clientVersion.jsp");
@@ -65,6 +66,7 @@ public class ClientVersionCommand extends AbstractCommand {
 		
 		// Get the minimum/latest client builds
 		cInfo.setLatest(StringUtils.parse(ctx.getParameter("latestBuild"), cInfo.getLatest()));
+		cInfo.setMinimumDispatchBuild(StringUtils.parse(ctx.getParameter("latestDispatch"), cInfo.getMinimumDispatchBuild()));
 		for (Iterator<String> i = versions.iterator(); i.hasNext(); ) {
 			String ver = i.next();
 			String paramName = "min_" + ver.replace('.', '_') + "_build";
