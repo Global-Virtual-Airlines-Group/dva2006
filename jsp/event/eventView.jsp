@@ -58,6 +58,11 @@ return true;
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
  <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
 </tr>
+<c:if test="${event.hasBanner}">
+<tr>
+ <td colspan="6" class="mid"><img alt="${event.name} Banner" src="/event/${event.hexID}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Online Network</td>
  <td colspan="5" class="data sec bld">${event.networkName}</td>

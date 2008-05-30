@@ -195,7 +195,12 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<servlet-name>dbImage</servlet-name>
 		<url-pattern>/sig/*</url-pattern>
     </servlet-mapping>
-    
+
+    <servlet-mapping>
+    	<servlet-name>dbImage</servlet-name>
+    	<url-pattern>/event/*</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/fleet/*</url-pattern>
