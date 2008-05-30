@@ -45,6 +45,7 @@ if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Destination Airport')) return false;
 if (!validateText(form.route, 5, 'Default Route')) return false;
 if (!validateText(form.briefing, 15, 'Flight Briefing')) return false;
+if (!validateFile(form.bannerImg, 'jpg,png,gif', 'Banner Image')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -59,11 +60,14 @@ return true;
 <%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
 <content:sysdata var="defaultNetwork" name="online.default_network" />
+<content:sysdata var="sigX" name="online.banner_max.x" />
+<content:sysdata var="sigY" name="online.banner_max.y" />
+<content:sysdata var="sigSize" name="online.banner_max.size" />
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eventsave.do" method="post" linkID="${!empty eventID ? eventID : ''}" validate="return validate(this)">
+<el:form action="eventsave.do" method="post" link="${event}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
 <c:if test="${empty event}">
@@ -105,6 +109,20 @@ return true;
  at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
 &nbsp;<el:button ID="CloseCalendarButton" className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
+</tr>
+<c:if test="${event.hasBanner}">
+<tr>
+ <td class="label">Banner Image</td>
+ <td class="data"><el:img caption="${event.name} Banner" src="/event/${event.hexID}" /><br />
+<el:box name="removeBannerImg" value="true" label="Remove Event Banner Image" /></td>
+</tr>
+</c:if>
+<tr>
+ <td class="label">Upload Banner Image</td>
+ <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><br />
+<span class="small sec">The maximum size for a banner image is <fmt:int value="${bannerX}" />x<fmt:int value="${bannerY}" /> 
+pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</span>
+<c:if test="${!empty system_message}"><br /><span class="bld error">${system_message}</span></c:if></td>
 </tr>
 <tr>
  <td class="label" valign="top">ATC Contact Addresses</td>
