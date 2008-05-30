@@ -319,6 +319,13 @@
 			<code>DL</code>
 		</list>
 
+		<!-- Event banner maximum size -->
+		<banner_max>
+			<x type="Integer">800</x>
+			<y type="Integer">256</y>
+			<size type="Integer">131072</size>
+		</banner_max>
+
 		<vatsim>
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
 			<validation_url>http://cert.vatsim.net/vatsimnet/status.php</validation_url>

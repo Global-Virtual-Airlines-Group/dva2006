@@ -124,9 +124,61 @@ public class EventSaveCommand extends AbstractCommand {
 			// Save the event in the request
 			ctx.setAttribute("event", e, REQUEST);
 			
+			// Check for a banner image
+			boolean removeImg = Boolean.valueOf(ctx.getParameter("removeBannerImg")).booleanValue();
+			FileUpload imgData = ctx.getFile("bannerImg");
+			if (imgData != null) {
+				// Check the image
+				ImageInfo info = new ImageInfo(imgData.getBuffer());
+				boolean imgOK = info.check();
+
+				// Check the image dimensions
+				int maxX = SystemData.getInt("online.banner_max.x");
+				int maxY = SystemData.getInt("online.banner_max.y");
+				if (imgOK && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
+					imgOK = false;
+					ctx.setMessage("Your Banner Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
+							+ info.getWidth() + "x" + info.getHeight());
+				}
+				
+				// Check the image size
+				int maxSize = SystemData.getInt("online.banner_max.size");
+				if (imgOK && (imgData.getSize() > maxSize)) {
+					imgOK = false;
+					ctx.setMessage("Your Banner Image is too large. (Max = " + maxSize + "bytes, Yours =" + imgData.getSize() + " bytes");
+				}
+				
+				// Return back to the JSP if banner invalid
+				if (!imgOK) {
+					ctx.release();
+					
+					// Go to page
+					CommandResult result = ctx.getResult();
+					result.setURL("/jsp/event/eventEdit.jsp");
+					result.setSuccess(true);
+					return;
+				}
+				
+				// Load the banner data
+				e.load(imgData.getBuffer());
+				ctx.setAttribute("bannerUpdated", Boolean.TRUE, REQUEST);
+			}
+			
+			// Start a transaction
+			ctx.startTX();
+			
 			// Write the event
 			SetEvent wdao = new SetEvent(con);
 			wdao.write(e);
+			
+			// Delete or update the banner image
+			if (removeImg)
+				wdao.deleteBanner(e.getID());
+			else if (e.isLoaded() && !isNew)
+				wdao.writeBanner(e);
+			
+			// Commit
+			ctx.commitTX();
 
 			// Get the DAO and save the event if we're not refreshing
 			if (isNew) {
@@ -154,6 +206,7 @@ public class EventSaveCommand extends AbstractCommand {
 				}
 			}
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
