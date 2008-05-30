@@ -182,6 +182,7 @@ public class GetACARSRoute extends DAO {
 			rp.setSTAR(rs.getString(10));
 			rp.setCruiseAltitude(rs.getString(11));
 			rp.setComments(rs.getString(12));
+			rp.setRoute(rs.getString(13));
 			results.add(rp);
 		}
 		

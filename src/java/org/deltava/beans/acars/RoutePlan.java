@@ -26,6 +26,7 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	private String _star;
 	private String _altitude;
 	private String _comments;
+	private String _routeText;
 	private int _useCount;
 	
 	private final Map<NavigationDataBean, String> _route = new LinkedHashMap<NavigationDataBean, String>(); 
@@ -125,9 +126,12 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	
 	/**
 	 * Returns the route.
-	 * @return a space-separated list of waypoints
+	 * @return a space-separated list of waypoints and airways
 	 */
 	public String getRoute() {
+		if (_routeText != null)
+			return _routeText;
+		
 		StringBuilder buf = new StringBuilder();
 		for (Iterator<NavigationDataBean> i = _route.keySet().iterator(); i.hasNext(); ) {
 			NavigationDataBean nd = i.next();
@@ -248,5 +252,13 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public void setComments(String comments) {
 		_comments = comments;
+	}
+	
+	/**
+	 * Sets the route text.
+	 * @param routeText the route text
+	 */
+	public void setRoute(String routeText) {
+		_routeText = routeText;
 	}
 }
