@@ -17,6 +17,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateNumber(form.latestBuild, 1, 'Latest Build')) return false;
+if (!validateNumber(form.latestDispatch, 1, 'Latest Dispatch Build')) return false;
 <c:forEach var="ver" items="${fn:keys(versionInfo)}">
 <c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
 if (!validateNumber(form.min_${versionCode}_Build, 1, 'Minimum ${ver} Build')) return false;
@@ -54,6 +55,10 @@ return true;
 <tr>
  <td class="label">Latest Build</td>
  <td class="data"><el:text className="req" name="latestBuild" idx="*" size="3" max="4" value="${latestBuild}" /></td>
+</tr>
+<tr>
+ <td class="label">Minimum Dispatch Build</td>
+ <td class="data"><el:text className="req" name="latestDispatch" idx="*" size="3" max="4" value="${latestDispatch}" /></td>
 </tr>
 <c:if test="${!empty betaInfo}">
 <tr class="title caps">
