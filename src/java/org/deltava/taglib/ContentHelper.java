@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Helper class to check wether content has been aded into this request.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -83,5 +83,29 @@ public class ContentHelper {
      */
     public static boolean isFirefox(PageContext ctx) {
         return (ctx.getRequest().getAttribute("browser$mozilla") != null);
+    }
+    
+    /**
+     * Detects if the browser is running on Microsoft Windows.
+     * @return TRUE if running on Windows, otherwise FALSE
+     */
+    public static boolean isWindows(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("os$windows") != null);
+    }
+    
+    /**
+     * Detects if the browser is running on Mac OS.
+     * @return TRUE if running on Mac OS, otherwise FALSE
+     */
+    public static boolean isMac(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("os$mac") != null);
+    }
+    
+    /**
+     * Detects if the browser is running on Linux.
+     * @return TRUE if running on Linux, otherwise FALSE
+     */
+    public static boolean isLinux(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("os$linux") != null);
     }
 }
