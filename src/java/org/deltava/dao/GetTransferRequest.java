@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.system.TransferRequest;
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -161,8 +161,8 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getAll(String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM (TXREQUESTS TX, common.PILOTNAMES P) "
-				+ "LEFT JOIN exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN exams.CHECKRIDES CR "
+				+ "ON (TX.CHECKRIDE_ID=CR.ID) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
@@ -183,9 +183,8 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getByEQ(String eqType, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM (TXREQUESTS TX, common.PILOTNAMES P) "
-				+ "LEFT JOIN exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) AND (TX.EQTYPE=?) "
-				+ "ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN exams.CHECKRIDES CR "
+				+ "ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.EQTYPE=?) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
