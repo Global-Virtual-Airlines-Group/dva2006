@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
@@ -9,8 +9,9 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to filter content based on the browser type.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
+ * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
 
 public class BrowserFilterTag extends TagSupport {
@@ -59,12 +60,11 @@ public class BrowserFilterTag extends TagSupport {
 	/**
 	 * Determines wether the enclosed content should be rendered to the JSP output stream.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
-	 * @throws JspException never
 	 */
-	public int doStartTag() throws JspException {
+	public int doStartTag() {
 		if (ContentHelper.isIE6(pageContext) && _showIE6)
 			return EVAL_BODY_INCLUDE;
-		if (ContentHelper.isIE7(pageContext) && _showIE7)
+		else if (ContentHelper.isIE7(pageContext) && _showIE7)
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
 			return EVAL_BODY_INCLUDE;

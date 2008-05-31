@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -30,6 +30,11 @@ public class BrowserTypeFilter implements Filter {
     private static final String[] MSIE8_IDENT = { "MSIE 8.0" };
     private static final String[] MSIE7_IDENT = { "MSIE 7.0" };
     private static final String[] MSIE_IDENT = { "MSIE" };
+    
+    private static final int WINDOWS = 1;
+    private static final int MAC = 2;
+    private static final int LINUX = 3;
+    private static final String[] LINUX_IDENT = {"Linux", "SunOS", "BSD"};
     
     /**
      * Called by the servlet container when the filter is started. Logs a message.
@@ -51,9 +56,14 @@ public class BrowserTypeFilter implements Filter {
     @SuppressWarnings("fallthrough")
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
-        // Set request attributes based on the browser type
+    	// Get the user agent
         HttpServletRequest hreq = (HttpServletRequest) req;
-        switch (getBrowserType(hreq.getHeader("User-Agent"))) {
+        String userAgent = hreq.getHeader("User-Agent");
+        if ((userAgent == null) && (_defaultCode != null))
+            userAgent = _defaultCode;
+    	
+        // Set request attributes based on the browser type
+        switch (getBrowserType(userAgent)) {
             case MOZILLA:
                 req.setAttribute("browser$mozilla", Boolean.TRUE);
                 break;
@@ -67,6 +77,21 @@ public class BrowserTypeFilter implements Filter {
             case MSIE6:
             default:
                 req.setAttribute("browser$ie", Boolean.TRUE);
+        }
+        
+        // Set request attributes based on the operating system
+        switch (getOS(userAgent)) {
+        	case MAC:
+        		req.setAttribute("os$mac", Boolean.TRUE);
+        		break;
+        		
+        	case LINUX:
+        		req.setAttribute("os$linux", Boolean.TRUE);
+        		break;
+        		
+        	case WINDOWS:
+        	default:
+        		req.setAttribute("os$windows", Boolean.TRUE);
         }
 
         // Execute the next filter in the chain
@@ -84,8 +109,6 @@ public class BrowserTypeFilter implements Filter {
      * Helper method to search the ident strings and return the browser type.
      */
     private int getBrowserType(String userAgent) {
-       if ((userAgent == null) && (_defaultCode != null))
-          userAgent = _defaultCode;
 
        // Check for Gecko/Firefox
        for (int x = 0; x < MOZILLA_IDENT.length; x++) {
@@ -112,5 +135,22 @@ public class BrowserTypeFilter implements Filter {
        }
 
        return UNKNOWN;
+    }
+    
+    /**
+     * Helper method to search the ident stirngs and return the operating system.
+     */
+    private int getOS(String userAgent) {
+
+    	if (userAgent.indexOf("Windows") != -1)
+    		return WINDOWS;
+    	if (userAgent.indexOf("MAC OS") != -1)
+    		return MAC;
+    	for (int x = 0; x < LINUX_IDENT.length; x++) {
+    		if (userAgent.indexOf(LINUX_IDENT[x]) != -1)
+    			return LINUX;
+    	}
+    	
+    	return UNKNOWN;
     }
 }
