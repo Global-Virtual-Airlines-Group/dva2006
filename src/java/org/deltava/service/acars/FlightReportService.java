@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle posting of offline ACARS Flight Reports.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -247,7 +247,6 @@ public class FlightReportService extends WebService {
 				afr.setDatabaseID(FlightReport.DBID_EVENT, fr.getDatabaseID(FlightReport.DBID_EVENT));
 				afr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
 				afr.setComments(fr.getComments());
-				afr.setRemarks(fr.getRemarks());
 			}
 
 			// Check if this Flight Report counts for promotion
