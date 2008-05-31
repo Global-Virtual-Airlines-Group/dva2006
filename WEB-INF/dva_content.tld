@@ -126,7 +126,32 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
+	<!-- OS Filter Tag, for filtering content based on client operating system -->
+	<tag>
+		<name>os</name>
+		<tag-class>org.deltava.taglib.content.OSFilterTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>windows</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>linux</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>mac</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
 	<!-- Browser Filter Tag, for filtering content based on IE/Mozilla -->
 	<tag>
 		<name>browserFilter</name>
