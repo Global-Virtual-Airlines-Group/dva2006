@@ -72,7 +72,7 @@ return false;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data sec small"><el:box name="exactMatch" idx="*" value="true" label="Exact Matches only" checked="${param.exactMatch == '1'}" />
-<content:filter roles="Admin"><br />
+<content:filter roles="HR"><br />
 <el:box name="allAirlines" idx="*" value="true" label="Search all Airlines" /></content:filter></td>
 </tr>
 </el:table>

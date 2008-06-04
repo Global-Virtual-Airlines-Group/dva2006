@@ -85,7 +85,7 @@ public class PilotSearchCommand extends AbstractCommand {
 				boolean isCrossSearch = !SystemData.get("airline.code").equals(id.getAirlineCode());
 				
 				// Load the profile
-				if ((app != null) && isCrossSearch && ctx.isUserInRole("Admin")) {
+				if ((app != null) && isCrossSearch && ctx.isUserInRole("HR")) {
 					sizes.put(app.getCode(), new Integer(stdao.getActivePilots(app.getDB())));
 					Pilot p = dao.getPilotByCode(id.getUserID(), app.getDB());
 					if (p != null)
@@ -97,7 +97,7 @@ public class PilotSearchCommand extends AbstractCommand {
 						results.add(p);
 				}
 			} else {
-				boolean isCrossSearch = crossAirlineSearch && ctx.isUserInRole("Admin");
+				boolean isCrossSearch = crossAirlineSearch && ctx.isUserInRole("HR");
 				if (isCrossSearch) {
 					for (Iterator<AirlineInformation> i = apps.values().iterator(); i.hasNext(); ) {
 						AirlineInformation app = i.next();
