@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 2.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -36,10 +36,15 @@ public class LogBookCommand extends AbstractViewCommand {
      */
     public void execute(CommandContext ctx) throws CommandException {
        
-        // Get/set start/count parameters and pilot ID
+        // Get/set start/count parameters
         ViewContext vc = initView(ctx);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
   		   	vc.setSortType(SORT_CODE[0]);
+       
+        // Determine who to display
+        int id = ctx.getID();
+        if ((id == 0) && ctx.isAuthenticated())
+        	id = ctx.getUser().getID();
         
         // Determine if we display comments or not
         boolean showComments = "log".equals(ctx.getCmdParameter(Command.OPERATION, "log"));
@@ -59,7 +64,7 @@ public class LogBookCommand extends AbstractViewCommand {
             
             // Get the pilot profile
             GetPilot dao = new GetPilot(con);
-            ctx.setAttribute("pilot", dao.get(ctx.getID()), REQUEST);
+            ctx.setAttribute("pilot", dao.get(id), REQUEST);
 
             // Get the DAO and set the parameters
             GetFlightReports dao2 = new GetFlightReports(con);
@@ -67,7 +72,7 @@ public class LogBookCommand extends AbstractViewCommand {
             dao2.setQueryMax(vc.getCount());
             
             // Get the PIREP beans and load the promotion eligibility
-            Collection<FlightReport> pireps = dao2.getByPilot(ctx.getID(), criteria);
+            Collection<FlightReport> pireps = dao2.getByPilot(id, criteria);
             dao2.getCaptEQType(pireps);
             vc.setResults(pireps);
             
