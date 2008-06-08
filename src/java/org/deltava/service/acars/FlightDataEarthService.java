@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -155,7 +155,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 			// Create the ZIP output stream
 			ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
 			zout.putNextEntry(new ZipEntry("acarsFlights.kml"));
-			zout.write(XMLUtils.format(doc, "ISO-8859-1").getBytes("ISO-8859-1"));
+			zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
 			zout.closeEntry();
 			zout.close();
 
