@@ -12,17 +12,22 @@ import org.deltava.beans.system.TransferRequest;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
 public class ProgramRosterCommand extends AbstractViewCommand {
+	
+	private static final String[] SORT_CODE = {"P.LASTNAME, P.FIRSTNAME", "P.CREATED", "P.LOGINS",
+		"P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
+	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date",
+			"Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
 
 	/**
 	 * Executes the command.
@@ -31,8 +36,17 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Init the view context and equipment type
+		// Init the view context
 		ViewContext vc = initView(ctx);
+		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+			   vc.setSortType(SORT_CODE[0]);
+		
+		// Check if doing a descending sort
+		boolean isDesc = Boolean.valueOf(ctx.getParameter("isDesc")).booleanValue();
+		if (isDesc)
+			vc.setSortType(vc.getSortType() + " DESC");
+		
+		// Get the equipment type
 		String eqType = ctx.getParameter("eqType");
 		if (eqType == null)
 			eqType = ctx.getUser().getEquipmentType();
@@ -44,7 +58,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vc.getStart());
 			pdao.setQueryMax(vc.getCount());
-			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, true), "ID");
+			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, vc.getSortType(), true), "ID");
 			
 			// Load Online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
@@ -109,6 +123,9 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save sort options
+		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

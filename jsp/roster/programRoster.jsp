@@ -15,15 +15,6 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
-function refresh(combo)
-{
-enableElement(combo, false);
-var eqType = combo.options[combo.selectedIndex].text;
-self.location = '/prgroster.do?eqType=' + eqType;
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -33,16 +24,15 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="prgroster.do" method="get" validate="return false">
+<el:form action="prgroster.do" method="post" validate="return true">
 <view:table className="view" space="default" pad="default" cmd="prgroster">
 <tr class="title">
+ <td colspan="3" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
+ <td colspan="4" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${param.sortType}" />
 <content:filter roles="HR">
- <td colspan="4" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
- <td colspan="3" class="right">PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" onChange="void refresh(this)" /></td>
-</content:filter>
-<content:filter roles="!HR">
- <td colspan="7" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
-</content:filter>
+ PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" /></content:filter>
+ <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" />
+ <el:button type="submit" className="BUTTON" label="UPDATE" /></td>
 </tr>
 
 <!-- Table Header Bar -->
