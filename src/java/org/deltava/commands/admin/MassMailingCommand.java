@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to send group e-mail messages.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -86,7 +86,7 @@ public class MassMailingCommand extends AbstractCommand {
 			   ctx.setAttribute("eqType", eqType, REQUEST);
 			} else if (eqType != null) {
 			   GetPilot dao = new GetPilot(con);
-				pilots = dao.getPilotsByEQ(eqType, true);
+				pilots = dao.getPilotsByEQ(eqType, null, true);
 				ctx.setAttribute("eqType", eqType, REQUEST);
 			}
 		} catch (DAOException de) {

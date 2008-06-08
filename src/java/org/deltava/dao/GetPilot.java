@@ -8,9 +8,9 @@ import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 /**
- * A DAO to get Pilot object(s) from the database, for use in roster operations.
+ * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -175,19 +175,22 @@ public class GetPilot extends PilotReadDAO {
 	/**
 	 * Returns all active pilots within an equipment type program.
 	 * @param eqType the equipment type
+	 * @param sortBy an optional sort SQL snippet
+	 * @param showActive TRUE if only active pilots should be displayed, otherwise FALSE
 	 * @return a List of Pilots in a particular equipment type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilotsByEQ(String eqType, boolean showActive) throws DAOException {
+	public List<Pilot> getPilotsByEQ(String eqType, String sortBy, boolean showActive) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) "
-				+ "AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P LEFT JOIN PIREPS F "
+				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 				
-		sqlBuf.append("GROUP BY P.ID ORDER BY P.LASTNAME, P.FIRSTNAME");
+		sqlBuf.append("GROUP BY P.ID ORDER BY ");
+		sqlBuf.append((sortBy == null) ? "P.LASTNAME, P.FIRSTNAME" : sortBy);
 		
 		try {
 			prepareStatement(sqlBuf.toString());	

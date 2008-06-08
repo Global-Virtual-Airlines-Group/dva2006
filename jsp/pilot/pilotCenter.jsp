@@ -528,14 +528,10 @@ Academy students.</td>
 </content:filter>
 </c:if>
 
-<content:filter roles="HR,PIREP,Examination">
+<content:filter roles="HR,PIREP">
 <!-- Human Resources Admin Section -->
 <tr class="title caps">
  <td colspan="2">HUMAN RESOURCES</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="eqroster" linkID="${pilot.equipmentType}">Pilot Roster</el:cmd></td>
- <td class="data">You can view the Pilot Roster divided by Equipment Program.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR,PIREP">
