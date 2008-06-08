@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Service to render the ACARS Map in Google Earth.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -36,8 +36,8 @@ public class EarthMapService extends GoogleEarthService {
 	
 	private static final Logger log = Logger.getLogger(EarthMapService.class);
 	
-	private final Cache<CacheableList<RouteEntry>> _cache = new ExpiringCache<CacheableList<RouteEntry>>(1, 4);
-	private final Cache<CacheableSet<Integer>> _idCache = new ExpiringCache<CacheableSet<Integer>>(1, 4);
+	private final Cache<CacheableList<RouteEntry>> _cache = new ExpiringCache<CacheableList<RouteEntry>>(1, 5);
+	private final Cache<CacheableSet<Integer>> _idCache = new ExpiringCache<CacheableSet<Integer>>(1, 5);
 
 	/**
 	 * Executes the Web Service, writing ACARS flight data in KML format.
@@ -164,17 +164,24 @@ public class EarthMapService extends GoogleEarthService {
 			de.addContent(fe);
 		}
 		
-		// Write the XML in ZIP format
+		// Determine if we compress the KML or not
+		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
 		try {
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kmz");
-			ctx.getResponse().setContentType("application/vnd.google-earth.kmz kmz");
+			if (noCompress) {
+				ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
+				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kml");
+				ctx.print(XMLUtils.format(doc, "UTF-8"));
+			} else {
+				ctx.getResponse().setContentType("application/vnd.google-earth.kmz");
+				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kmz");
 
-			// Create the ZIP output stream
-			ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
-			zout.putNextEntry(new ZipEntry("acarsMap.kml"));
-			zout.write(XMLUtils.format(doc, "ISO-8859-1").getBytes("ISO-8859-1"));
-			zout.closeEntry();
-			zout.close();
+				// Create the ZIP output stream
+				ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
+				zout.putNextEntry(new ZipEntry("acarsMap.kml"));
+				zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
+				zout.closeEntry();
+				zout.close();
+			}
 
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();
