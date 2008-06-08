@@ -51,6 +51,7 @@ return ${access.canComment};
 <%@ include file="/jsp/help/header.jspf" %> 
 <%@ include file="/jsp/help/sideMenu.jspf" %>
 <c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -63,11 +64,11 @@ return ${access.canComment};
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><el:cmd url="profile" link="${author}" className="bld plain">${author.name}</el:cmd> <b>(${author.pilotCode})</b> on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Assigned To</td>
- <td class="data bld">${pilots[issue.assignedTo].name} (${pilots[issue.assignedTo].pilotCode})</td>
+ <td class="data bld"><el:cmd url="profile" link="${assignee}" className="plain">${assignee.name}</el:cmd> (${assignee.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Issue Status</td>

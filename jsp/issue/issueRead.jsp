@@ -40,6 +40,9 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="versions" name="issue_track.versions" />
 <c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
+<c:set var="authorLoc" value="${userData[issue.authorID]}" scope="request" />
+<c:set var="assigneeLoc" value="${userData[issue.assignedTo]}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -53,11 +56,11 @@ return true;
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><el:profile location="${authorLoc}" className="bld plain">${author.name}</el:profile> <b>(${author.pilotCode})</b> on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Assigned To</td>
- <td class="data bld">${pilots[issue.assignedTo].name} (${pilots[issue.assignedTo].pilotCode})</td>
+ <td class="data bld"><el:profile location="${assigneeLoc}" className="plain">${assignee.name}</el:profile> (${assignee.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Issue Status</td>

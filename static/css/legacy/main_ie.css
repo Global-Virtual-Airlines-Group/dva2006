@@ -204,8 +204,13 @@ a:hover {
 	visibility: visible;
 }
 
-*.small A {
+*.small a {
 	font-size: 8pt;
+}
+
+a.plain {
+	color: inherit;
+	text-decoration: none;
 }
 
 /* This is an IE-only hack for required SELECT elements */
