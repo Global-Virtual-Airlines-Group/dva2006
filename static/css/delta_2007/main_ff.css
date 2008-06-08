@@ -212,6 +212,11 @@ a:hover {
 	visibility: visible;
 }
 
-*.small A {
+*.small a {
 	font-size: 8pt;
+}
+
+a.plain {
+	color: inherit;
+	text-decoration: none;
 }
