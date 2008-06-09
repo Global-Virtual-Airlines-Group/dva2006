@@ -1,13 +1,14 @@
 #!/bin/bash
 # SCP database backup script
-# Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+# Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 #
 # To get automated SSH working, create an SSH key for the user and then copy id_rsa.pub to the
 # remote user's home directory ~/.ssh/authorized_keys
 #
 
 # Back up base files
-scp /home/backup/cfg/*.tar.gz gva@$1:
-scp /home/backup/db/create_tables.tar.bz2 gva@$1:
-scp /home/backup/db/*.sql.bz2 gva@$1:
+scp /home/backup/cfg/*.tar.gz dva@$1:~/cfg
+scp /home/backup/db/create_tables.tar.bz2 dva@$1:~/db
+scp /home/backup/db/*.sql.bz2 dva@$1:~/db
+scp /home/backup/svn/*.bz2 dva@$1:~/svn
 exit 1
