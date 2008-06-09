@@ -1,9 +1,11 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
+
+import static org.deltava.beans.navdata.NavigationDataBean.*;
 
 import java.util.*;
 
-import org.jdom.Element;
+import org.jdom.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
@@ -20,7 +22,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -40,17 +42,19 @@ public abstract class GoogleEarthService extends WebService {
 		
 		// Create the elemnet
 		Element ade = new Element("Placemark");
-		ade.addContent(XMLUtils.createElement("description", desc));
 		ade.addContent(XMLUtils.createElement("name", a.getName() + " (" + a.getICAO() + ")"));
 		ade.addContent(XMLUtils.createElement("visibility", "1"));
+		ade.addContent(XMLUtils.createElement("description", desc));
+		ade.addContent(KMLUtils.createLookAt(a, a.getAltitude() + 3500, 1, 10));
 		Element ads = new Element("Style");
-		ads.addContent(KMLUtils.createIcon(2, 0, 1)); // airplane icon
-		ads.addContent(XMLUtils.createElement("scale", "0.55"));
+		Element ais = new Element("IconStyle");
+		ais.addContent(XMLUtils.createElement("scale", "0.55"));
+		ais.addContent(KMLUtils.createIcon(2, 48)); // airplane icon
+		ads.addContent(ais);
 		ade.addContent(ads);
 		Element adp = new Element("Point");
 		adp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(a)));
 		ade.addContent(adp);
-		ade.addContent(KMLUtils.createLookAt(a, a.getAltitude() + 3500, 1, 10));
 		return ade;
 	}
 	
@@ -64,35 +68,36 @@ public abstract class GoogleEarthService extends WebService {
 		
 		// Create the elemnet
 		Element ae = new Element("Placemark");
-		ae.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
 		ae.addContent(XMLUtils.createElement("name", name));
 		ae.addContent(XMLUtils.createElement("visibility", "1"));
-		ae.addContent(KMLUtils.createLookAt(entry, entry.getAltitude() * 2 + 2000, entry.getHeading() - 140, 15));
 		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getAltitude(), "#,##0"));
 		buf.append(" ft, ");
 		buf.append(StringUtils.format(entry.getGroundSpeed(), "#,##0"));
 		buf.append(" kts");
 		ae.addContent(XMLUtils.createElement("Snippet", buf.toString()));
+		ae.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
+		ae.addContent(KMLUtils.createLookAt(entry, entry.getAltitude() * 2 + 2000, entry.getHeading() - 140, 15));
 		
 		// Build the icon
 		Element ads = new Element("Style");
-		Element ais = KMLUtils.createIcon(2, 0, 0); // airplane icon
+		Element ais = new Element("IconStyle");
 		ais.addContent(XMLUtils.createElement("scale", "0.60"));
 		ais.addContent(XMLUtils.createElement("heading", StringUtils.format(entry.getHeading(), "##0.00")));
+		ais.addContent(KMLUtils.createIcon(2, 56)); // airplane icon
 		ads.addContent(ais);
 		ae.addContent(ads);
 
 		// Create the actual point
 		Element pe = new Element("Point");
 		if (entry.isFlagSet(FLAG_ONGROUND)) {
+			pe.addContent(XMLUtils.createElement("altitudeMode", "clampToGround"));
 			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
-			pe.addContent(XMLUtils.createElement("altitudeMode", "clampedToGround"));
 		} else if (entry.getRadarAltitude() < 1000) {
-			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry.getRadarAltitude())));
 			pe.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
+			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry.getRadarAltitude())));
 		} else {
-			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry.getAltitude())));
 			pe.addContent(XMLUtils.createElement("altitudeMode", "absolute"));
+			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry.getAltitude())));
 		}
 		
 		// Add the point and return
@@ -111,8 +116,8 @@ public abstract class GoogleEarthService extends WebService {
 		// Set the placemark options
 		Element le = new Element("Placemark");
 		le.addContent(XMLUtils.createElement("name", "Flight Route"));
-		le.addContent(XMLUtils.createElement("description", String.valueOf(positions.size()) + " Position Records"));
 		le.addContent(XMLUtils.createElement("visibility", "1"));
+		le.addContent(XMLUtils.createElement("description", String.valueOf(positions.size()) + " Position Records"));
 		Element ls = new Element("Style");
 		Element lce = XMLUtils.createElement("LineStyle", "color", routeColor.toString());
 		lce.addContent(XMLUtils.createElement("width", "3"));
@@ -122,7 +127,6 @@ public abstract class GoogleEarthService extends WebService {
 		Element lse = new Element("LineString");
 		lse.addContent(XMLUtils.createElement("extrude", "1"));
 		lse.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
-		lse.addContent(XMLUtils.createElement("tessellate", "1"));
 
 		// Format all of the coordinates
 		StringBuilder buf = new StringBuilder();
@@ -157,20 +161,21 @@ public abstract class GoogleEarthService extends WebService {
 			RouteEntry entry = i.next();
 			Element pe = new Element("Placemark");
 			pe.addContent(XMLUtils.createElement("name", "Route Point #" + String.valueOf(++pos)));
-			pe.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
 			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 			pe.addContent(XMLUtils.createElement("Snippet", StringUtils.format(entry, false, GeoLocation.ALL)));
+			pe.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
 			pe.addContent(KMLUtils.createLookAt(entry, entry.getAltitude() * 2 + 2000, entry.getHeading() - 140, 15));
 			Element ps = new Element("Style");
-			Element pis = KMLUtils.createIcon(2, 0, 0); // info icon
-			pis.addContent(XMLUtils.createElement("scale", "0.70"));
+			Element pis = new Element("IconStyle");
+			pis.addContent(XMLUtils.createElement("scale", "0.45"));
 			pis.addContent(XMLUtils.createElement("heading", StringUtils.format(entry.getHeading(), "##0.00")));
+			pis.addContent(KMLUtils.createIcon(2, 56)); // info icon
 			ps.addContent(pis);
 			pe.addContent(ps);
 			Element pp = new Element("Point");
 			if (entry.isFlagSet(FLAG_ONGROUND)) {
 				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
-				pp.addContent(XMLUtils.createElement("altitudeMode", "clampedToGround"));
+				pp.addContent(XMLUtils.createElement("altitudeMode", "clampToGround"));
 			} else if (entry.getRadarAltitude() < 1000) {
 				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry
 						.getRadarAltitude())));
@@ -206,6 +211,7 @@ public abstract class GoogleEarthService extends WebService {
 		Element rle = new Element("Placemark");
 		rle.addContent(XMLUtils.createElement("name", "Flight Route"));
 		rle.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
+		
 		Element rls = new Element("Style");
 		Element rlce = XMLUtils.createElement("LineStyle", "color", new GoogleEarthColor(224, 192, 192, 48).toString());
 		rlce.addContent(XMLUtils.createElement("width", "2"));
@@ -223,16 +229,18 @@ public abstract class GoogleEarthService extends WebService {
 		for (Iterator<NavigationDataBean> i = waypoints.iterator(); i.hasNext(); ) {
 			NavigationDataBean wp = i.next();
 			routeText.add(wp.getCode());
+			if ((wp.getType() != NDB) && (wp.getType() != VOR) && (wp.getType() != INT))
+				continue;
 			
 			Element pe = new Element("Placemark");
-			pe.addContent(XMLUtils.createElement("name", wp.getCode()));
+			pe.addContent(XMLUtils.createElement("name", (wp.getType() == INT) ? wp.getCode() : wp.getName()));
+			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 			pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
 			pe.addContent(XMLUtils.createElement("Snippet", wp.getTypeName()));
-			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 			pe.addContent(KMLUtils.createLookAt(new GeoPosition(wp), 4500, rnd.nextInt(360), 10));
 			Element pp = new Element("Point");
-			pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 10)));
 			pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
+			pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 10)));
 			pe.addContent(pp);
 			
 			// Format route point
@@ -241,34 +249,35 @@ public abstract class GoogleEarthService extends WebService {
 
 			// Add icon
 			Element ps = new Element("Style");
-			Element pis = null;
+			Element pis = new Element("IconStyle");
+			ps.addContent(pis);
 			switch (wp.getType()) {
-				case NavigationDataBean.NDB:
-				case NavigationDataBean.VOR:
-					pis = KMLUtils.createIcon(4, 0, 1);
+				case NavigationDataBean.NDB: // 4,57
 					pis.addContent(XMLUtils.createElement("scale", "0.60"));
-					ps.addContent(pis);
-					pe.addContent(ps);
+					pis.addContent(KMLUtils.createIcon(4, 57));
 					break;
 					
-				case NavigationDataBean.INT:
-					pis = KMLUtils.createIcon(4, 4, 0); // info icon
+				case NavigationDataBean.VOR: //4,48
+					pis.addContent(XMLUtils.createElement("scale", "0.60"));
+					pis.addContent(KMLUtils.createIcon(4, 48));
+					break;
+					
+				case NavigationDataBean.INT: // 4,60
 					pis.addContent(XMLUtils.createElement("scale", "0.50"));
-					ps.addContent(pis);
-					pe.addContent(ps);
+					pis.addContent(KMLUtils.createIcon(4, 60));
 					break;
 			}
 
-			if (pis != null)
-				fe.addContent(pe);
+			pe.addContent(ps);
+			fe.addContent(pe);
 		}
-		
-		// Save the route text
-		rle.addContent(XMLUtils.createElement("description", StringUtils.listConcat(routeText, " "), true));
 		
 		// Save the coordinates
 		rlse.addContent(XMLUtils.createElement("coordinates", pbuf.toString()));
 		rle.addContent(rlse);
+		
+		// Save the route text after the description
+		rle.addContent(XMLUtils.createElement("description", StringUtils.listConcat(routeText, " "), true));
 		
 		// Return the element
 		return fe;

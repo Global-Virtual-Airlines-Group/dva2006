@@ -1,14 +1,17 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
-import org.jdom.Element;
+import java.util.*;
+
+import org.jdom.*;
+import org.jdom.filter.ElementFilter;
 
 import org.deltava.beans.GeospaceLocation;
 
 /**
  * A utility class for performing Google Earth KML operations.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -17,6 +20,33 @@ public class KMLUtils extends XMLUtils {
 	// Singleton constructor
 	private KMLUtils() {
 		super();
+	}
+	
+	/**
+	 * Creates a KML root element with the proper namespace and schema definitions.
+	 * @return a KML kml element
+	 */
+	public static Document createKMLRoot() {
+		Document doc = new Document();
+		Element re = new Element("kml", Namespace.getNamespace("http://earth.google.com/kml/2.1"));
+		re.setAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		re.setAttribute("schemaLocation", "http://earth.google.com/kml/2.1 http://code.google.com/apis/kml/schema/kml21.xsd");
+		doc.setRootElement(re);
+		return doc;
+	}
+	
+	/**
+	 * Updates the namespace of all elements in a KML document to match the parent namespace. This
+	 * is a bit of a hack since we should probably set the namespace correctly when we create the document. 
+	 * @param doc the KML document
+	 */
+	public static void copyNamespace(Document doc) {
+		Element re = doc.getRootElement();
+		for (Iterator i = re.getDescendants(new ElementFilter()); i.hasNext(); ) {
+			Element e = (Element) i.next();
+			if (e.getNamespace() != re.getNamespace())
+				e.setNamespace(re.getNamespace());
+		}
 	}
 
 	/**
@@ -31,20 +61,13 @@ public class KMLUtils extends XMLUtils {
 	/**
 	 * Generates a KML icon element.
 	 * @param palette the Google Earth pallete
-	 * @param pX the icon x-offset in the palette
-	 * @param pY the icon y-offset in the palette
-	 * @return a KML IconStyle element
+	 * @param iconCode the icon code
+	 * @return a KML Icon element
 	 */
-	public static Element createIcon(int palette, int pX, int pY) {
-		Element re = new Element("IconStyle");
+	public static Element createIcon(int palette, int iconCode) {
 		Element e = new Element("Icon");
-		e.addContent(createElement("href", "root://icons/palette-" + palette + ".png", true));
-		e.addContent(createElement("x", String.valueOf(pX * 32)));
-		e.addContent(createElement("y", String.valueOf(pY * 32)));
-		e.addContent(createElement("w", "32"));
-		e.addContent(createElement("h", "32"));
-		re.addContent(e);
-		return re;
+		e.addContent(createElement("href", "http://maps.google.com/mapfiles/kml/pal" + palette + "/icon" + iconCode + ".png", true));
+		return e;
 	}
 
 	/**
@@ -57,11 +80,11 @@ public class KMLUtils extends XMLUtils {
 	 */
 	public static Element createLookAt(GeospaceLocation loc, int altitude, int heading, int tilt) {
 		Element e = new Element("LookAt");
-		e.addContent(XMLUtils.createElement("longitude", StringUtils.format(loc.getLongitude(), "##0.0000")));
-		e.addContent(XMLUtils.createElement("latitude", StringUtils.format(loc.getLatitude(), "##0.0000")));
-		e.addContent(XMLUtils.createElement("range", StringUtils.format(0.3048d * altitude, "##0.000")));
-		e.addContent(XMLUtils.createElement("heading", StringUtils.format(heading, "##0.00")));
-		e.addContent(XMLUtils.createElement("tilt", StringUtils.format(tilt, "##0.00")));
+		e.addContent(createElement("longitude", StringUtils.format(loc.getLongitude(), "##0.0000")));
+		e.addContent(createElement("latitude", StringUtils.format(loc.getLatitude(), "##0.0000")));
+		e.addContent(createElement("range", StringUtils.format(0.3048d * altitude, "##0.000")));
+		e.addContent(createElement("heading", StringUtils.format(heading, "##0.00")));
+		e.addContent(createElement("tilt", StringUtils.format(tilt, "##0.00")));
 		return e;
 	}
 }
