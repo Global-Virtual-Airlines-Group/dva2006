@@ -1,10 +1,12 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
 
+import java.util.*;
+
 /**
- * A bean to store airline statistics entries.
+ * A bean to store Flight statistics entries.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -18,6 +20,8 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	private int _historicLegs;
 	private double _hours;
 	private int _miles;
+
+	private final Map<Long, Integer> _verLegs = new TreeMap<Long, Integer>();
 	
 	/**
 	 * Creates a new statistics entry.
@@ -121,6 +125,28 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 */
 	public double getACARSPercent() {
 		return (_legs == 0) ? 0 : _acarsLegs * 1.0 / _legs;
+	}
+	
+	/**
+	 * Returns the Map displaying flight legs by Flight Simulator verison.
+	 * @return a Map of legs, keyed by version
+	 */
+	public Map<Long, Integer> getVersionLegs() {
+		return _verLegs;
+	}
+	
+	/**
+	 * Sets the legs for a specific Flight Simulator version. Version should be set to
+	 * 7 through 10 for FS2000 through FSX, and 0 for other.
+	 * @param version the version code
+	 * @param legs the number of legs
+	 */
+	public void setFSVersionLegs(int version, int legs) {
+		_verLegs.put(Long.valueOf(version), Integer.valueOf(legs));
+	}
+	
+	public void setVersionLegs(Map<Long, Integer> legs) {
+		_verLegs.putAll(legs);
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Flight Report statistics to an Amline Flash chart.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -39,7 +39,7 @@ public class AllFlightsService extends WebService {
 		// Get the Flight Report statistics - remove the last entry
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 		try {
-			GetStatistics stdao = new GetStatistics(ctx.getConnection());
+			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
 			results.addAll(stdao.getPIREPStatistics(0, MONTH_SQL, "F.DATE", false));
 			if (!results.isEmpty())
 				results.remove(results.size() - 1);

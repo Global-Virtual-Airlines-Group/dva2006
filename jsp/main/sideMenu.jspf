@@ -110,6 +110,9 @@
  <td><el:cmd url="landings">GREASED LANDINGS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="simversionstats">SIMULATOR VERSIONS</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="lroster">VIEW LOGBOOKS</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>ACARS</td></tr>

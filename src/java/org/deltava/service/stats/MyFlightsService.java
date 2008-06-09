@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to an Ampie Flash chart.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -45,7 +45,7 @@ public class MyFlightsService extends WebService {
 		// Get the Flight Report statistics
 		Collection<FlightStatsEntry> results = null;
 		try {
-			GetStatistics stdao = new GetStatistics(ctx.getConnection());
+			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
 			results = stdao.getPIREPStatistics(ctx.getUser().getID(), labelType, sortType, true);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);

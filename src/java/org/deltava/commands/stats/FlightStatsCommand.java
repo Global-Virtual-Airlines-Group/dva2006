@@ -1,7 +1,5 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
-
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -11,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -37,10 +35,7 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 			labelType = MONTH_SQL;
 		
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO
-			GetStatistics dao = new GetStatistics(con);
+			GetFlightReportStatistics dao = new GetFlightReportStatistics(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 
