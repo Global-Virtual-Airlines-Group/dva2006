@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.jdom.*;
@@ -8,7 +8,7 @@ import org.jdom.output.XMLOutputter;
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -80,24 +80,11 @@ public class XMLUtils {
 	}
 	
 	/**
-	 * Converts an XML element into text using UTF-8.
-	 * @param el the element
-	 * @return the formatted XML document
-	 * @see XMLUtils#format(Document)
-	 * @see XMLUtils#format(Document, String)
-	 */
-	public static String format(Element el) {
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("UTF-8"));
-		return xmlOut.outputString(el);
-	}
-	
-	/**
 	 * Converts an XML document into text using a specific character set.
 	 * @param doc the document
 	 * @param encoding the string encoding
 	 * @return the formatted XML document
 	 * @see XMLUtils#format(Document)
-	 * @see XMLUtils#format(Element)
 	 */
 	public static String format(Document doc, String encoding) {
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding(encoding));
@@ -108,7 +95,6 @@ public class XMLUtils {
 	 * Converts an XML document into text using UTF-8.
 	 * @param doc the document
 	 * @return the formatted XML document
-	 * @see XMLUtils#format(Element)
 	 * @see XMLUtils#format(Document, String)
 	 */
 	public static String format(Document doc) {
