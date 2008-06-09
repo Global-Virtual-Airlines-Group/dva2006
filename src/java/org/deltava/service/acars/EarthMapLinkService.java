@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.IOException;
@@ -8,12 +8,12 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.service.*;
-import org.deltava.util.XMLUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to generate a link to the Google Earth live ACARS map.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -28,11 +28,9 @@ public class EarthMapLinkService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Build the XML document
-		Document doc = new Document();
-		Element ke = new Element("kml");
-		doc.setRootElement(ke);
+		Document doc = KMLUtils.createKMLRoot();
 		Element de = XMLUtils.createElement("Document", "visibility", "1");
-		ke.addContent(de);
+		doc.getRootElement().addContent(de);
 
 		// Format the URL
 		StringBuilder buf = new StringBuilder(ctx.getRequest().getRequestURL());
@@ -52,11 +50,14 @@ public class EarthMapLinkService extends WebService {
 		de.addContent(createLink("FIR Boundaries", buf.toString() + "servinfo/firs.kmz", 86400, false));
 		de.addContent(createLink("DAFIF Data", buf.toString() + "servinfo/dafif.kmz", 0, false));
 
+		// Fix namespaces
+		KMLUtils.copyNamespace(doc);
+		
 		// Write the XML
 		try {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMapLink.kml");
 			ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");
@@ -72,9 +73,9 @@ public class EarthMapLinkService extends WebService {
 	private Element createLink(String name, String url, int refreshSeconds, boolean isVisible) {
 		Element le = new Element("NetworkLink");
 		le.addContent(XMLUtils.createElement("name", name));
-		Element e = new Element("Url");
+		KMLUtils.setVisibility(le, isVisible);
+		Element e = new Element("Link");
 		e.addContent(XMLUtils.createElement("href", url));
-		e.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 		if (refreshSeconds > 0) {
 			e.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
 			e.addContent(XMLUtils.createElement("refreshInterval", String.valueOf(refreshSeconds)));
