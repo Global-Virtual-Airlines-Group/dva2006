@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -49,10 +49,11 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	/**
 	 * Valid route mapping types.
 	 */
-	public static final String[] MAP_TYPES = { "Google Maps", "Falling Rain" };
+	public static final String[] MAP_TYPES = {"Google Maps", "Falling Rain", "Google Earth"};
 
 	public static final int MAP_GOOGLE = 0;
 	public static final int MAP_FALLINGRAIN = 1;
+	public static final int MAP_GEARTH = 2;
 
 	private static final String[] ROW_CLASSES = { null, "opt2", "opt3", "opt1", "err", "warn" };
 

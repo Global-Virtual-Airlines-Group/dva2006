@@ -1,6 +1,14 @@
 var displayedMarkers = new Array();
 var mapTextElements = new Array();
 
+var ge;
+var kmlProgress = null;
+function getEarthInstanceCB(object)
+{
+ge = object;
+return true;
+}
+
 function googleMarker(imgPath, color, point, label)
 {
 if (color == 'null')
