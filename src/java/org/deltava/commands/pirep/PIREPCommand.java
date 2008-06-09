@@ -23,15 +23,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class PIREPCommand extends AbstractFormCommand {
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
-	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
-			FlightReport.FSVERSION.length);
+	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
 
 	// Month combolist values
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
@@ -408,8 +407,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.setAttribute("access", ac, REQUEST);
 
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
-			if (fr instanceof ACARSFlightReport) {
-				mapType = Pilot.MAP_GOOGLE;
+			boolean isACARS = (fr instanceof ACARSFlightReport);
+			if (isACARS) {
+				if (mapType == Pilot.MAP_FALLINGRAIN)
+					mapType = Pilot.MAP_GOOGLE;
+				
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 				ACARSFlightReport afr = (ACARSFlightReport) fr;
 				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
@@ -467,15 +469,18 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("checkRide", cr, REQUEST);
 				}
 			}
+			
+			// Display route for non-ACARS flights in Google Maps
+			if (!isACARS && (mapType == Pilot.MAP_FALLINGRAIN))
+				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
 
 			// If we're set to use Google Maps, calculate the route
 			if (mapType == Pilot.MAP_GOOGLE) {
-				// If this isnt't an ACARS PRIEP, calculate the GC route
-				if (!(fr instanceof ACARSFlightReport))
-					ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST); 
-
-				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
+			} else if (mapType == Pilot.MAP_GEARTH) {
+				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("googleEarth", Boolean.valueOf(isACARS), REQUEST);
 				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 			}
 
