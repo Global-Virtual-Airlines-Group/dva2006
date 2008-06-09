@@ -19,6 +19,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
+import org.deltava.util.XMLUtils;
 
 /**
  * A Web Service to format ACARS flight data for Google Earth.
@@ -72,15 +73,18 @@ public class FlightDataEarthService extends GoogleEarthService {
 				if (info != null) {
 					Collection<RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived());
 					info.setRouteData(routeData);
-					
 					if (showRoute) {
 						List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
 						NavigationDataMap navaids = navdao.getByID(routeEntries);
 						GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
 						int distance = lastWaypoint.distanceTo(info.getAirportA());
+						Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
+						
+						// Load the SID waypoints if we have one
+						if (info.getSID() != null)
+							routeInfo.addAll(info.getSID().getWaypoints());
 						
 						// Filter out navaids and put them in the correct order
-						Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
 						for (Iterator<String> ri = routeEntries.iterator(); ri.hasNext();) {
 							String navCode = ri.next();
 							NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
@@ -92,6 +96,10 @@ public class FlightDataEarthService extends GoogleEarthService {
 								}
 							}
 						}
+						
+						// Load the STAR waypoints if we have one
+						if (info.getSTAR() != null)
+							routeInfo.addAll(info.getSTAR().getWaypoints());
 
 						info.setPlanData(routeInfo);
 					}
@@ -108,11 +116,9 @@ public class FlightDataEarthService extends GoogleEarthService {
 		}
 
 		// Build the XML document
-		Document doc = new Document();
-		Element ke = new Element("kml");
-		doc.setRootElement(ke);
+		Document doc = KMLUtils.createKMLRoot();
 		Element de = new Element("Document");
-		ke.addContent(de);
+		doc.getRootElement().addContent(de);
 		
 		// Add the ACARS data
 		int colorOfs = -1;
@@ -138,7 +144,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 			if (info.hasRouteData()) {
 				fe = new Element("Folder");
 				fe.addContent(XMLUtils.createElement("name", "Flight " + info.getID()));
-				fe.addContent(XMLUtils.createElement("visibility", "1"));
+				KMLUtils.setVisibility(fe, true);
 				de.addContent(fe);
 			}
 			
@@ -146,18 +152,36 @@ public class FlightDataEarthService extends GoogleEarthService {
 			for (Iterator<Element> ci = results.iterator(); ci.hasNext(); )
 				fe.addContent(ci.next());
 		}
+		
+		// Clean up the namespace
+		KMLUtils.copyNamespace(doc);
+		
+		// Determine the filename prefix
+		String prefix = "acarsFlights";
+		if (IDs.size() == 1) {
+			Integer id = IDs.iterator().next();
+			prefix = "acarsFlight" + id.toString();
+		}
 
-		// Write the XML
+		// Determine if we compress the KML or not
+		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
 		try {
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsFlights.kmz");
-			ctx.getResponse().setContentType("application/vnd.google-earth.kmz kmz");
+			if (noCompress) {
+				ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
+				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + prefix + ".kml");
+				ctx.print(XMLUtils.format(doc, "UTF-8"));
+				ctx.commit();
+			} else {
+				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + prefix + ".kmz");
+				ctx.getResponse().setContentType("application/vnd.google-earth.kmz kmz");
 			
-			// Create the ZIP output stream
-			ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
-			zout.putNextEntry(new ZipEntry("acarsFlights.kml"));
-			zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
-			zout.closeEntry();
-			zout.close();
+				// Create the ZIP output stream
+				ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
+				zout.putNextEntry(new ZipEntry("acarsFlights.kml"));
+				zout.write(XMLUtils.format(doc, "UTF-8").getBytes("UTF-8"));
+				zout.closeEntry();
+				zout.close();
+			}
 
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();

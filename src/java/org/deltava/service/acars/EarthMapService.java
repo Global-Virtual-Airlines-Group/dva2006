@@ -152,17 +152,18 @@ public class EarthMapService extends GoogleEarthService {
 		}
 		
 		// Build the XML document
-		Document doc = new Document();
-		Element ke = new Element("kml");
-		doc.setRootElement(ke);
+		Document doc = KMLUtils.createKMLRoot();
 		Element de = new Element("Document");
-		ke.addContent(de);
+		doc.getRootElement().addContent(de);
 		
 		// Add the folders to the document
 		for (Iterator<Element> i = folders.values().iterator(); i.hasNext(); ) {
 			Element fe = i.next();
 			de.addContent(fe);
 		}
+		
+		// Clean up the namespace
+		KMLUtils.copyNamespace(doc);
 		
 		// Determine if we compress the KML or not
 		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
@@ -171,6 +172,7 @@ public class EarthMapService extends GoogleEarthService {
 				ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
 				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kml");
 				ctx.print(XMLUtils.format(doc, "UTF-8"));
+				ctx.commit();
 			} else {
 				ctx.getResponse().setContentType("application/vnd.google-earth.kmz");
 				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kmz");

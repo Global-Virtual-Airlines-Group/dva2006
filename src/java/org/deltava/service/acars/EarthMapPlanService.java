@@ -99,11 +99,9 @@ public class EarthMapPlanService extends GoogleEarthService {
 		}
 		
 		// Build the XML document
-		Document doc = new Document();
-		Element ke = new Element("kml");
-		doc.setRootElement(ke);
+		Document doc = KMLUtils.createKMLRoot();
 		Element de = new Element("Document");
-		ke.addContent(de);
+		doc.getRootElement().addContent(de);
 
 		// Convert the flight plan data to KML
 		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
@@ -114,6 +112,9 @@ public class EarthMapPlanService extends GoogleEarthService {
 				de.addContent(fre);
 			}
 		}
+		
+		// Clean up the namespace
+		KMLUtils.copyNamespace(doc);
 		
 		// Write the XML
 		try {
