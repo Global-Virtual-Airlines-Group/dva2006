@@ -15,6 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <c:if test="${googleMap}">
+<content:os windows="true"><c:set var="showGEarth" value="${googleEarth}" scope="request" /></content:os>
 <content:js name="googleMaps" />
 <map:api version="2" />
 <map:vml-ie />
@@ -305,7 +306,7 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.65" geodesic="true" />
+<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.5" geodesic="true" />
 </c:if>
 // Build the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -330,6 +331,12 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
+<c:if test="${showGEarth}">
+// Google Earth plugin support
+map.addMapType(G_SATELLITE_3D_MAP);
+map.getEarthInstance(getEarthInstanceCB);
+map.setMapType(G_SATELLITE_3D_MAP);
+</c:if>
 </c:if>
 </script>
 </c:if>
