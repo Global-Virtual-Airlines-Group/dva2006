@@ -471,7 +471,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Display route for non-ACARS flights in Google Maps
-			if (!isACARS && (mapType == Pilot.MAP_FALLINGRAIN))
+			if (!isACARS && (mapType != Pilot.MAP_FALLINGRAIN))
 				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
 
 			// If we're set to use Google Maps, calculate the route
