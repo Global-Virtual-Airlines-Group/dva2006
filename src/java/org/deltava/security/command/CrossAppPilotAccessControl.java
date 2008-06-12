@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -11,12 +11,13 @@ import org.deltava.beans.Pilot;
  * airline. This is designed to allow HR staffs in one airline to review the status of
  * a Pilot before a Transfer..
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public final class CrossAppPilotAccessControl extends PilotAccessControl {
 
+	private boolean _canViewExams;
 	private boolean _canViewEmail;
 
 	/**
@@ -36,6 +37,7 @@ public final class CrossAppPilotAccessControl extends PilotAccessControl {
 		if (_p == null)
 			return;
 
+		_canViewExams = _ctx.isUserInRole("HR");
 		_canViewEmail = _ctx.isAuthenticated() ? _ctx.isUserInRole("HR") : (_p.getEmailAccess() == Person.SHOW_EMAIL);
 	}
 
@@ -76,7 +78,7 @@ public final class CrossAppPilotAccessControl extends PilotAccessControl {
 	 * @return FALSE
 	 */
 	public boolean getCanViewExams() {
-		return false;
+		return _canViewExams;
 	}
 
 	/**

@@ -761,10 +761,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Get Academy Certifications
-			if (!crossDB) {
-				GetAcademyCourses fadao = new GetAcademyCourses(con);
-				ctx.setAttribute("courses", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
-			}
+			GetAcademyCourses fadao = new GetAcademyCourses(con);
+			ctx.setAttribute("courses", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
