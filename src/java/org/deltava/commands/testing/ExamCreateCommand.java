@@ -4,6 +4,8 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.TransferRequest;
 
@@ -15,11 +17,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new Pilot Examination.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class ExamCreateCommand extends AbstractTestHistoryCommand {
+	
+	private static final Logger log = Logger.getLogger(ExamCreateCommand.class);
 
 	/**
 	 * Executes the command.
@@ -103,9 +107,16 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			// Load the question pool for this examination
 			ep.setPools(epdao.getSubPools(ep.getName()));
 			GetExamQuestions eqdao = new GetExamQuestions(con);
-			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
+			List<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
 			if (qPool.isEmpty())
 				throw new CommandException("Empty Question Pool for " + examName, false);
+			
+			// Do a sanity check on the question pool size
+			if (qPool.size() > ep.getSize()) {
+				log.warn(ep.getName() + " size=" + ep.getSize() + ", pool=" + qPool.size());
+				Collections.shuffle(qPool);
+				qPool = qPool.subList(0, ep.getSize());
+			}
 
 			// Add the questions to the exam
 			int qNum = 0;
