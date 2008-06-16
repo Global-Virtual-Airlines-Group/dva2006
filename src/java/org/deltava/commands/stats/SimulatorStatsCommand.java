@@ -42,7 +42,7 @@ public class SimulatorStatsCommand extends AbstractViewCommand {
 		// Get grouping type
 		String labelType = ctx.getParameter("groupType");
 		if (StringUtils.arrayIndexOf(GROUP_CODE, labelType) == -1)
-			labelType = GROUP_CODE[0];
+			labelType = AbstractStatsCommand.MONTH_SQL;
 		else if (GROUP_CODE[0].equals(labelType))
 			labelType = AbstractStatsCommand.MONTH_SQL;
 
