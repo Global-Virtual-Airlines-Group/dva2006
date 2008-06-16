@@ -50,7 +50,7 @@ return true;
 <el:form action="dspentry.do" op="save" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
- <td width="80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
+ <td width="80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
 </tr>
 </el:table>
