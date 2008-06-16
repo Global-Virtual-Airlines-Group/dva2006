@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <!-- ACARS PIREP Data -->
 <tr class="title">
  <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS DATA</td>
