@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -35,6 +35,9 @@ public class ACARSFlightReport extends FlightReport {
     
     private int _gateWeight;
     private int _gateFuel;
+    
+    private String _fde;
+    private String _code;
     
     /**
      * Creates a new ACARS Flight Report object with a given flight.
@@ -302,6 +305,24 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Returns the FDE used for this flight.
+     * @return the AIR file name, or null
+     * @see ACARSFlightReport#setFDE(String)
+     */
+    public String getFDE() {
+    	return _fde;
+    }
+    
+    /**
+     * Returns the aircraft code used for this flight.
+     * @return the aircraft code
+     * @see ACARSFlightReport#setAircraftCode(String)
+     */
+    public String getAircraftCode() {
+    	return _code;
+    }
+    
+    /**
      * Updates the start time of the flight.
      * @param dt the date/time the flight started
      * @see ACARSFlightReport#getEndTime()
@@ -322,27 +343,19 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the weight of the aircraft at pushback.
      * @param w the weight in pounds
-     * @throws IllegalArgumentException if w is zero or negative
      * @see ACARSFlightReport#getTaxiWeight()
      */
     public void setTaxiWeight(int w) {
-        if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be negative");
-        
-        _taxiWeight = w;
+        _taxiWeight = Math.max(0, w);
     }
     
     /**
      * Updates the fuel amount at pushback.
      * @param f the amount of fuel in pounds
-     * @throws IllegalArgumentException if f is negative
      * @see ACARSFlightReport#getTaxiFuel()
      */
     public void setTaxiFuel(int f) {
-        if (f < 0)
-            throw new IllegalArgumentException("Fuel cannot be negative");
-        
-        _taxiFuel = f;
+        _taxiFuel = Math.max(0, f);
     }
     
     /**
@@ -360,10 +373,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTakeoffDistance()
      */
     public void setTakeoffDistance(int d) {
-        if (d < 0)
-            throw new IllegalArgumentException("Takeoff Distance cannot be negative");
-        
-        _takeoffDistance = d;
+        _takeoffDistance = Math.max(0, d);
     }
     
     /**
@@ -372,10 +382,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTakeoffSpeed()
      */
     public void setTakeoffSpeed(int s) {
-        if (s < 0)
-            throw new IllegalArgumentException("Speed cannot be negative");
-        
-        _takeoffSpeed = s;
+        _takeoffSpeed = Math.max(0, s);
     }
     
     /**
@@ -394,27 +401,19 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the aircraft weight at takeoff.
      * @param w the weight in pounds
-     * @throws IllegalArgumentException if w is zero or negative
      * @see ACARSFlightReport#getTakeoffWeight()
      */
     public void setTakeoffWeight(int w) {
-        if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be negative - " + w);
-        
-        _takeoffWeight = w;
+        _takeoffWeight = Math.max(0, w);
     }
     
     /**
      * Updates the amount of fuel at takeoff. 
      * @param f the amount of fuel in pounds
-     * @throws IllegalArgumentException if f is negative
      * @see ACARSFlightReport#getTakeoffFuel()
      */
     public void setTakeoffFuel(int f) {
-        if (f < 0)
-            throw new IllegalArgumentException("Fuel cannot be negative");
-        
-        _takeoffFuel = f;
+        _takeoffFuel = Math.max(0, f);
     }
 
     /**
@@ -429,27 +428,19 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the distance from the destination airport where touchdown occured.
      * @param d the distance in miles
-     * @throws IllegalArgumentException if d is negative
      * @see ACARSFlightReport#getLandingDistance()
      */
     public void setLandingDistance(int d) {
-        if (d < 0)
-            throw new IllegalArgumentException("Landing Distance cannot be negative");
-        
-        _landingDistance = d;
+        _landingDistance = Math.max(0, d);
     }
     
     /**
      * Updates the airspeed at touchdown.
      * @param s the airpseed in knots
-     * @throws IllegalArgumentException if s is negative
      * @see ACARSFlightReport#getLandingSpeed()
      */
     public void setLandingSpeed(int s) {
-        if (s < 0)
-            throw new IllegalArgumentException("Speed cannot be negative");
-        
-        _landingSpeed = s;
+        _landingSpeed = Math.max(0, s);
     }
 
     /**
@@ -464,40 +455,28 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the average N1 speed of the engines at touchdown.
      * @param n1 the average N1 speed, multiplied by 100
-     * @throws IllegalArgumentException if n1 &lt; 0 or n1 &gt; 140
      * @see ACARSFlightReport#getLandingN1()
      */
     public void setLandingN1(double n1) {
-        if ((n1 < 0) || (n1 > 140))
-            throw new IllegalArgumentException("Landing N1% cannot be negative");
-        
-        _landingN1 = n1;
+        _landingN1 = Math.min(140, Math.max(0, n1));
     }
     
     /**
      * Updates the weight of the aircraft at touchdown.
      * @param w the weight in pounds
-     * @throws IllegalArgumentException if w is zero or negative
      * @see ACARSFlightReport#getLandingWeight()
      */
     public void setLandingWeight(int w) {
-        if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be negative - " + w);
-        
-        _landingWeight = w;
+        _landingWeight = Math.max(0, w);
     }
     
     /**
      * Updates the amount of fuel at touchdown.
      * @param f the amount of fuel in pounds
-     * @throws IllegalArgumentException if f is negative
      * @see ACARSFlightReport#getLandingFuel()
      */
     public void setLandingFuel(int f) {
-        if (f < 0)
-            throw new IllegalArgumentException("Fuel cannot be negative");
-        
-        _landingFuel = f;
+        _landingFuel = Math.max(0, f);
     }
     
     /**
@@ -512,27 +491,19 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the weight of the aircraft at the end of the flight. 
      * @param w the weight in pounds
-     * @throws IllegalArgumentException if w is negative
      * @see ACARSFlightReport#getGateWeight()
      */
     public void setGateWeight(int w) {
-        if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be negative");
-        
-        _gateWeight = w;
+        _gateWeight = Math.max(0, w);
     }
     
     /**
      * Updates the amount of fuel at the end of the flight.
      * @param f the amount of fuel in pounds
-     * @throws IllegalArgumentException if f is negative
      * @see ACARSFlightReport#getGateFuel()
      */
     public void setGateFuel(int f) {
-        if (f < 0)
-            throw new IllegalArgumentException("Fuel cannot be negative");
-        
-        _gateFuel = f;
+        _gateFuel = Math.max(0, f);
     }
     
     /**
@@ -543,11 +514,27 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTime(int)
      */
     public void setTime(int rate, int secs) {
-    	if (secs < 0)
-    		secs = 0;
-    	else if ((rate < 0) || (rate == 3) || (rate > 4))
+    	if ((rate < 0) || (rate == 3) || (rate > 4))
     		throw new IllegalArgumentException("Rate must be 0, 1 2 or 4 - " + rate);
     	
-    	_time.put(new Long(rate), new Integer(secs));
+    	_time.put(Long.valueOf(rate), Integer.valueOf(Math.max(0, secs)));
     }
-}
+    
+    /**
+     * Updates the FDE used for this flight.
+     * @param airFile the AIR file name, or null if unknown
+     * @see ACARSFlightReport#getFDE()
+     */
+    public void setFDE(String airFile) {
+    	_fde = airFile;
+    }
+    
+    /**
+     * Updates the aircraft code used for this flight.
+     * @param code the aircraft code
+     * @see ACARSFlightReport#getAircraftCode()
+     */
+    public void setAircraftCode(String code) {
+    	_code = code;
+    }
+} 

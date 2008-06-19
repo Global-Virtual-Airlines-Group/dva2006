@@ -175,6 +175,8 @@ public class FlightReportService extends WebService {
 		afr.setRemarks("OFFLINE PIREP: " + inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
+		afr.setFDE(ie.getChildTextTrim("fde"));
+		afr.setAircraftCode(ie.getChildTextTrim("code"));
 
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());
