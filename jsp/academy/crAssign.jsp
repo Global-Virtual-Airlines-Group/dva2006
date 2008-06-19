@@ -15,7 +15,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.crType, 'Aircraft Type')) return false;
-if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+if (!validateText(form.comments, 6, 'Check Ride Comments')) return false;
 
 setSubmit();
 disableButton('CourseButton');

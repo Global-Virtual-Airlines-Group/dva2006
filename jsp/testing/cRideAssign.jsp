@@ -20,7 +20,7 @@ if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
 // Validate comments
 var hasScript = ((form.doScript) && (form.doScript.value == 'true'));
 if (!hasScript) {
-	if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+	if (!validateText(form.comments, 6, 'Check Ride Comments')) return false;
 }
 
 setSubmit();
