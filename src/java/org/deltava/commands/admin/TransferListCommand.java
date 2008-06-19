@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to list pending equipment program Transfer Requests.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -29,7 +29,9 @@ public class TransferListCommand extends AbstractViewCommand {
       // Initialize the view context
       ViewContext vc = initView(ctx);
       String eqType = ctx.getParameter("eqType");
-      boolean allEQ = (eqType == null) || ("-".equals(eqType));
+      if (eqType == null)
+    	  eqType = ctx.isUserInRole("HR") ? "-" : ctx.getUser().getEquipmentType();
+      boolean allEQ = "-".equals(eqType);
       
       try {
          Connection con = ctx.getConnection();
