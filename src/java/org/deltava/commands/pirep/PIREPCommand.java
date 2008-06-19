@@ -478,10 +478,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (mapType == Pilot.MAP_GOOGLE) {
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
-			} else if (mapType == Pilot.MAP_GEARTH) {
-				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("googleEarth", Boolean.valueOf(isACARS), REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 			}
 
 			// Get the pilot/PIREP beans in the request
