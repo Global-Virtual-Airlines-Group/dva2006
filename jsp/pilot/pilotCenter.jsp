@@ -399,7 +399,7 @@ equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c
 <c:if test="${isFO && !captPromote}">
 <br />
 <i>You will not be eligible for equipment type transfers or additional ratings in higher stage equipment type 
-programs until you beome eligible for promotion to Captain in the ${eqType.name} program.</i><br />
+programs until you become eligible for promotion to Captain in the ${eqType.name} program.</i><br />
 </c:if>
 <c:if test="${promoteLegs < (fn:promoLegs(eqType, 'Captain') / 2)}">
 <br />
