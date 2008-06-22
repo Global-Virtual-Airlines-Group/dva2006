@@ -17,7 +17,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * @since 1.0
  */
 
-public class RouteEntry extends DatabaseBean implements GeospaceLocation, MapEntry {
+public class RouteEntry extends DatabaseBean implements GeospaceLocation, MarkerMapEntry {
 
 	private Date _date;
 	private GeoPosition _gpos;

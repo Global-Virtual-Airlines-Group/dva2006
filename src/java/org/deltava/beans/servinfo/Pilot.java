@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import org.deltava.util.*;
 /**
  * A bean to store online pilot information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class Pilot extends NetworkUser implements MapEntry {
+public class Pilot extends NetworkUser {
 
 	private int _altitude;
 	private int _gSpeed;
@@ -150,11 +150,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * @see Pilot#getAltitude()
 	 */
 	public void setAltitude(String alt) {
-		try {
-			setAltitude(Integer.parseInt(alt));
-		} catch (NumberFormatException nfe) {
-			setAltitude(0);
-		}
+		setAltitude(StringUtils.parse(alt, 0));
 	}
 
 	/**
@@ -214,11 +210,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * @see Pilot#getGroundSpeed()
 	 */
 	public void setGroundSpeed(String gSpeed) {
-		try {
-			setGroundSpeed(Integer.parseInt(gSpeed));
-		} catch (NumberFormatException nfe) {
-			setGroundSpeed(0);
-		}
+		setGroundSpeed(StringUtils.parse(gSpeed, 0));
 	}
 	
 	/**
@@ -272,13 +264,12 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * @see Pilot#isHighlighted()
 	 */
 	public String getIconColor() {
-		if (_isHighlighted && (getPilotID() != 0)) {
+		if (_isHighlighted && (getPilotID() != 0))
 			return BLUE;
-		} else if (getPilotID() != 0) {
+		else if (getPilotID() != 0)
 			return GREEN;
-		} else if (_isHighlighted) {
+		else if (_isHighlighted)
 			return YELLOW;
-		}
 		
 		return WHITE;
 	}

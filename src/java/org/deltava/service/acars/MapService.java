@@ -20,7 +20,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -60,13 +60,22 @@ public class MapService extends WebService {
 		doc.setRootElement(re);
 
 		// Add the items
-		for (Iterator<RouteEntry> i = entries.iterator(); i.hasNext();) {
+		for (Iterator<? extends RouteEntry> i = entries.iterator(); i.hasNext();) {
 			RouteEntry entry = i.next();
 			Element e = new Element("aircraft");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("flight_id", String.valueOf(entry.getID()));
 			e.setAttribute("color", entry.getIconColor());
+			
+			// Display icons as required
+			if (entry instanceof IconMapEntry) {
+				IconMapEntry ime = (IconMapEntry) entry;
+				e.setAttribute("pal", String.valueOf(ime.getPaletteCode()));
+				e.setAttribute("icon", String.valueOf(ime.getIconCode()));
+			}
+			
+			// Add tabs
 			if (entry instanceof TabbedMapEntry) {
 				TabbedMapEntry tme = (TabbedMapEntry) entry;
 				e.setAttribute("tabs", String.valueOf(tme.getTabNames().size()));
@@ -80,7 +89,7 @@ public class MapService extends WebService {
 				e.setAttribute("tabs", "0");
 				e.addContent(new CDATA(entry.getInfoBox()));
 			}
-
+			
 			re.addContent(e);
 		}
 

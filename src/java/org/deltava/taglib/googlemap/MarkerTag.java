@@ -1,10 +1,9 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
+import org.deltava.beans.*;
 
 import org.deltava.taglib.ContentHelper;
 
@@ -13,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps v2 Marker.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -45,7 +44,7 @@ public class MarkerTag extends GoogleMapEntryTag {
    /**
     * Sets the icon color for this marker. This overrides any color provided by the point.
     * @param color the icon color
-    * @see MapEntry#getIconColor()
+    * @see MarkerMapEntry#getIconColor()
     */
    public void setColor(String color) {
       _color = color;
@@ -80,8 +79,9 @@ public class MarkerTag extends GoogleMapEntryTag {
       // Calculate if color or label need to be overridden
       if (_entry instanceof MapEntry) {
          MapEntry mapInfo = (MapEntry) _entry;
-         if (_color == null) _color = mapInfo.getIconColor();
          if (_label == null) _label = mapInfo.getInfoBox();
+         if ((_color == null) && (_entry instanceof MarkerMapEntry))
+        	 _color = ((MarkerMapEntry) mapInfo).getIconColor();
       }
       
       JspWriter out = pageContext.getOut();
@@ -94,7 +94,12 @@ public class MarkerTag extends GoogleMapEntryTag {
          }
          
          // Call the googleMarker function
-         out.print(generateMarker(_entry, _color, _label));
+         if (_entry instanceof IconMapEntry) {
+        	 IconMapEntry mapInfo = (IconMapEntry) _entry;
+        	 out.print(generateIconMarker(_entry, mapInfo.getPaletteCode(), mapInfo.getIconCode(), _label));
+         } else
+        	 out.print(generateMarker(_entry, _color, _label));
+         
          out.print(';');
          
          // Write the point variable
