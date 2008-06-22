@@ -1,3 +1,6 @@
+// This stores the raw KML in case the plugin hasn't loaded yet
+var kml;
+
 function getACARSData(pirepID, imgPath)
 {
 // Disable checkboxes
@@ -16,23 +19,82 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var label = a.firstChild;
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		if (a.getAttribute("color")) {
+		if (a.getAttribute("icon")) {
+			var mrk = googleIconMarker(a.getAttribute("pal"), a.getAttribute("icon"), p, label.data);
+			routeMarkers.push(mrk);
+		} else if (a.getAttribute("color")) {
 			var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
 			routeMarkers.push(mrk);
 		}
-		
+
 		routePoints.push(p);
 	} // for
-	
+
 	// Create line
 	gRoute = new GPolyline(routePoints,'#4080AF',3,0.85)
-	
+
 	// Enable checkboxes
-	f.showFDR.disabled = false;
-	f.showRoute.disabled = false;
+	var isEarth = (map.getCurrentMapType() == G_SATELLITE_3D_MAP);
+	f.showFDR.disabled = isEarth;
+	f.showRoute.disabled = isEarth;
 	return true;
 } // function
 
 xmlreq.send(null);
+return true;
+}
+
+function displayKML()
+{
+if ((ge == null) || (kmlProgress != null))
+	return false;
+
+kmlProgress = ge.parseKml(kml);
+ge.getFeatures().appendChild(kmlProgress);
+return true;
+}
+
+function generateKMLRequest(pirepID, showRoute)
+{
+if (kml != null)
+	return displayKML();
+
+// Build the XML Requester
+var xmlreq = GXmlHttp.create();
+xmlreq.open("GET", "acars_earth.ws?id=" + pirepID + "&noCompress=true&showRoute=" + showRoute, true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var xml = xmlreq.responseText;
+	if (!xml) return false;
+	kml = xml;
+	displayKML();
+	return true;
+} // function
+
+xmlreq.send(null);
+return true;
+}
+
+function earthToggle()
+{
+var f = document.forms[0];
+var isEarth = (map.getCurrentMapType() == G_SATELLITE_3D_MAP);
+f.showFDR.disabled = isEarth;
+f.showRoute.disabled = isEarth;
+f.showFPlan.disabled = isEarth;
+f.showFPMarkers.disabled = isEarth;
+if (isEarth) {
+	removeMarkers(map, 'gRoute');
+	removeMarkers(map, 'routeMarkers');
+	removeMarkers(map, 'gfRoute');
+	removeMarkers(map, 'filedMarkers');
+	displayKML();
+} else {
+	if (f.showRoute.checked) addMarkers(map, 'gRoute');
+	if (f.showFDR.checked) addMarkers(map, 'routeMarkers');
+	if (f.showFPlan.checked) addMarkers(map, 'gfRoute');
+	if (f.showFPMarkers.checked) addMarkers(map, 'filedMarkers');
+}
+
 return true;
 }
