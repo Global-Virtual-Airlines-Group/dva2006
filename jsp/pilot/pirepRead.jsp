@@ -15,7 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <c:if test="${googleMap}">
-<content:os windows="true"><c:set var="showGEarth" value="${googleEarth}" scope="request" /></content:os>
+<content:os windows="true"><c:set var="showGEarth" value="${false}" scope="request" /></content:os>
 <content:js name="googleMaps" />
 <map:api version="2" />
 <map:vml-ie />
@@ -331,12 +331,13 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
+</c:if>
 <c:if test="${showGEarth}">
 // Google Earth plugin support
+GEvent.addListener(map, 'maptypechanged', earthToggle);
 map.addMapType(G_SATELLITE_3D_MAP);
 map.getEarthInstance(getEarthInstanceCB);
-map.setMapType(G_SATELLITE_3D_MAP);
-</c:if>
+generateKMLRequest(${fn:ACARS_ID(pirep)}, true);
 </c:if>
 </script>
 </c:if>
