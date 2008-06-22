@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
@@ -10,5 +10,9 @@ package org.deltava.beans;
 
 public interface GeospaceLocation extends GeoLocation {
 
+	/**
+	 * Returns the altitude of the location above MSL.
+	 * @return the altitude in feet
+	 */
 	public int getAltitude();
 }

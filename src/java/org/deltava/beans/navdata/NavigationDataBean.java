@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Comparable<NavigationDataBean>, GeoLocation, MapEntry {
+public abstract class NavigationDataBean implements Comparable<NavigationDataBean>, GeoLocation, MarkerMapEntry, IconMapEntry {
 
 	/**
 	 * Object type names.

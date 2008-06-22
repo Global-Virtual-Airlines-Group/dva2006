@@ -1,10 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store VOR information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -26,4 +26,20 @@ public class VOR extends NavigationFrequencyBean {
    public String getIconColor() {
       return BLUE;
    }
+   
+	/**
+	 * Returns the Google Earth palette code.
+	 * @return 4
+	 */
+	public int getPaletteCode() {
+		return 4;
+	}
+	
+	/**
+	 * Returns the Google Earth icon code.
+	 * @return 48
+	 */
+	public int getIconCode() {
+		return 48;
+	}
 }

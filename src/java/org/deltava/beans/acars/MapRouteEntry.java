@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,7 +10,14 @@ import org.deltava.util.StringUtils;
 
 import org.gvagroup.acars.ACARSFlags;
 
-public class NamedRouteEntry extends RouteEntry implements TabbedMapEntry {
+/**
+ * A bean to store a snapshot of an ACARS-logged flight.
+ * @author Luke
+ * @version 2.2
+ * @since 1.0
+ */
+
+public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntry {
 	
 	private static final List<String> TAB_NAMES = Arrays.asList("Pilot", "Flight Data");
 
@@ -23,7 +30,7 @@ public class NamedRouteEntry extends RouteEntry implements TabbedMapEntry {
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
 
-	public NamedRouteEntry(Date dt, GeoLocation gl, Pilot usr, String eqType) {
+	public MapRouteEntry(Date dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl.getLatitude(), gl.getLongitude());
 		_usr = usr;
 		_eqType = eqType;

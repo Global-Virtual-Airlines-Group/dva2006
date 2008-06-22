@@ -1,3 +1,4 @@
+var defaultIconSize = 24;
 var displayedMarkers = new Array();
 var mapTextElements = new Array();
 
@@ -24,7 +25,28 @@ icon.infoWindowAnchor = new GPoint(5, 1);
 var marker = new GMarker(point, icon);
 if (label != null)
 	GEvent.addListener(marker, 'click', function() { marker.openInfoWindowHtml(label); });
-	
+
+return marker;
+}
+
+function googleIconMarker(palCode, iconCode, point, label)
+{
+var imgBase = null; var icon = new GIcon();
+if (palCode > 0)
+	imgBase = 'http://maps.google.com/mapfiles/kml/pal' + palCode + '/icon' + iconCode;
+else
+	imgBase = '/' + document.imgPath + '/maps/pal' + palCode + '/icon' + iconCode;
+
+icon.image = imgBase + '.png';
+icon.shadow = imgBase + 's.png';
+icon.iconSize = new GSize(defaultIconSize, defaultIconSize);
+icon.shadowSize = new GSize(defaultIconSize * (59 / 32), defaultIconSize);
+icon.iconAnchor = new GPoint(defaultIconSize / 2, defaultIconSize / 2);
+icon.infoWindowAnchor = new GPoint(defaultIconSize * 0.75, defaultIconSize * 0.25);
+var marker = new GMarker(point, icon);
+if (label != null)
+	GEvent.addListener(marker, 'click', function() { marker.openInfoWindowHtml(label); });
+
 return marker;
 }
 

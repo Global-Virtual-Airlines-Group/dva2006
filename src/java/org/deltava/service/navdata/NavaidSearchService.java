@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to search for navigation aids in a particular area.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -44,7 +44,7 @@ public class NavaidSearchService extends WebService {
 		Map<String, NavigationDataBean> results = new HashMap<String, NavigationDataBean>();
 		try {
 			GetNavData dao = new GetNavData(ctx.getConnection());
-			dao.setQueryMax(500);
+			dao.setQueryMax(650);
           	results.putAll(dao.getObjects(loc, range));
           	results.putAll(dao.getIntersections(loc, range / 2));
 		} catch (DAOException de) {
@@ -68,6 +68,8 @@ public class NavaidSearchService extends WebService {
 				we.setAttribute("lng", df.format(nd.getLongitude()));
 				we.setAttribute("code", nd.getCode());
 				we.setAttribute("color", nd.getIconColor());
+				we.setAttribute("pal", String.valueOf(nd.getPaletteCode()));
+				we.setAttribute("icon", String.valueOf(nd.getIconCode()));
 				we.setAttribute("type", nd.getTypeName());
 				we.addContent(new CDATA(nd.getInfoBox()));
 				re.addContent(we);

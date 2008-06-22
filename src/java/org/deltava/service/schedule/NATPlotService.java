@@ -26,30 +26,6 @@ import org.deltava.util.*;
 
 public class NATPlotService extends WebService {
 
-	private static final Collection<ConcordeNAT> CONC_ROUTES = Arrays.asList(new ConcordeNAT("M",
-			"5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("N", "45/50,47/40,49/30,49/20,49/15"), 
-			new ConcordeNAT("O", "48/15,48/20,48/30,46/40,44/50,42/60"));
-
-	private static class ConcordeNAT extends OceanicWaypoints {
-
-		ConcordeNAT(String track, String route) {
-			super(NAT, new Date());
-			setTrack(track);
-			for (Iterator<String> i = StringUtils.split(route, ",").iterator(); i.hasNext();) {
-				String wp = i.next();
-				addWaypoint(Intersection.parseNAT(wp));
-			}
-		}
-
-		public String getTrack() {
-			return "S" + super.getTrack();
-		}
-
-		public boolean isFixed() {
-			return true;
-		}
-	}
-
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -89,7 +65,7 @@ public class NATPlotService extends WebService {
 
 		// Build the track data
 		final NumberFormat nf = new DecimalFormat("##0.0000");
-		tracks.addAll(CONC_ROUTES);
+		tracks.addAll(OceanicWaypoints.CONC_ROUTES);
 		for (Iterator<OceanicWaypoints> i = tracks.iterator(); i.hasNext();) {
 			OceanicWaypoints ow = i.next();
 			boolean isEast = (ow.getDirection() == OceanicWaypoints.EAST);

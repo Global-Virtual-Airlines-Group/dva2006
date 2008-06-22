@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.*;
@@ -9,11 +9,11 @@ import org.deltava.util.*;
 /**
  * A bean to store network user information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public abstract class NetworkUser implements java.io.Serializable, Comparable, ViewEntry, MapEntry {
+public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry, MarkerMapEntry {
 
     public static final int PILOT = 0;
     public static final int ATC = 1;
@@ -198,11 +198,9 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable, V
     
     /**
      * Compares this user to another network user by comparing the Network IDs.
-     * @see Comparable#compareTo(Object)
      */
-    public int compareTo(Object o2) {
-        NetworkUser usr2 = (NetworkUser) o2;
-        return _callSign.compareTo(usr2.getCallsign());
+    public int compareTo(NetworkUser usr2) {
+        return _callSign.compareTo(usr2._callSign);
     }
     
     /**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.GeospaceLocation;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -47,10 +47,26 @@ public class AirportLocation extends NavigationDataBean implements GeospaceLocat
 
 	/**
 	 * Return the default Google Maps icon color.
-	 * @return org.deltava.beans.MapEntry.GREEN
+	 * @return MapEntry.GREEN
 	 */
 	public String getIconColor() {
 		return GREEN;
+	}
+	
+	/**
+	 * Returns the Google Earth palette code.
+	 * @return 2
+	 */
+	public int getPaletteCode() {
+		return 2;
+	}
+	
+	/**
+	 * Returns the Google Earth icon code.
+	 * @return 48
+	 */
+	public int getIconCode() {
+		return 48;
 	}
 
 	/**

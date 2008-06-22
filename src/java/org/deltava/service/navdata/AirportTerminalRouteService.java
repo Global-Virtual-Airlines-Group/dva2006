@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display all Terminal Routes for an Airport.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -64,6 +64,8 @@ public class AirportTerminalRouteService extends WebService {
 		ae.setAttribute("iata", a.getIATA());
 		ae.setAttribute("lat", df.format(a.getLatitude()));
 		ae.setAttribute("lng", df.format(a.getLongitude()));
+		ae.setAttribute("pal", String.valueOf(a.getPaletteCode()));
+		ae.setAttribute("icon", String.valueOf(a.getIconCode()));
 		ae.setAttribute("color", a.getIconColor());
 		ae.addContent(new CDATA(a.getInfoBox()));
 		re.addContent(ae);
@@ -91,6 +93,8 @@ public class AirportTerminalRouteService extends WebService {
 				we.setAttribute("lng", df.format(nd.getLongitude()));
 				we.setAttribute("code", nd.getCode());
 				we.setAttribute("color", nd.getIconColor());
+				we.setAttribute("pal", String.valueOf(nd.getPaletteCode()));
+				we.setAttribute("icon", String.valueOf(nd.getIconCode()));
 				we.setAttribute("id", nd.toString());
 				we.addContent(new CDATA(nd.getInfoBox()));
 				twe.addContent(we);

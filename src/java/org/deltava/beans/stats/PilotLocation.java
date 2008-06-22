@@ -1,20 +1,18 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
+import org.deltava.beans.*;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class PilotLocation implements MapEntry {
+public class PilotLocation implements MarkerMapEntry {
 	
 	private Pilot _usr;
 	private GeoLocation _position;

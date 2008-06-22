@@ -61,10 +61,15 @@ public class MapFlightDataService extends WebService {
 		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext(); ) {
 			GeoLocation entry = i.next();
 			Element e = null;
-			if (entry instanceof MapEntry) {
-				MapEntry me = (MapEntry) entry;
+			if (entry instanceof MarkerMapEntry) {
+				MarkerMapEntry me = (MarkerMapEntry) entry;
 				e = XMLUtils.createElement("pos", me.getInfoBox(), true);
 				e.setAttribute("color", me.getIconColor());
+			} else if (entry instanceof IconMapEntry) {
+				IconMapEntry me = (IconMapEntry) entry;
+				e = XMLUtils.createElement("pos", me.getInfoBox(), true);
+				e.setAttribute("pal", String.valueOf(me.getPaletteCode()));
+				e.setAttribute("icon", String.valueOf(me.getIconCode()));
 			} else
 				e = new Element("pos");
 			
