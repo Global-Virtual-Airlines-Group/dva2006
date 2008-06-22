@@ -23,9 +23,13 @@ xmlreq.onreadystatechange = function() {
 	document.dispatchOnline = (xe.getAttribute("dispatch") == "true");
 	var ac = xe.getElementsByTagName("aircraft");
 	for (var i = 0; i < ac.length; i++) {
-		var a = ac[i];
+		var a = ac[i]; var mrk = null;
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		var mrk = googleMarker(document.imgPath, a.getAttribute("color"), p, null);
+		if (a.getAttribute("pal"))
+			mrk = googleIconMarker(a.getAttribute("pal"), a.getAttribute("icon"), p, null);
+		else if (a.getAttribute("color"))
+			mrk = googleMarker(document.imgPath, a.getAttribute("color"), p, null);
+
 		mrk.flight_id = a.getAttribute("flight_id");
 		var tabs = parseInt(a.getAttribute("tabs"));
 		mrk.infoShow = clickIcon;
