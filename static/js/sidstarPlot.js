@@ -32,7 +32,11 @@ xmlreq.onreadystatechange = function() {
 	if (airports[icao] == null) {
 		var ap = xe.getElementsByTagName("airport")[0];
 		var apLoc = new GLatLng(parseFloat(ap.getAttribute('lat')), parseFloat(ap.getAttribute('lng')));
-		map.apMarker = googleMarker(document.imgPath, ap.getAttribute("color"), apLoc, ap.firstChild.data);
+		if (ap.getAttribute("pal"))
+			map.apMarker = googleIconMarker(ap.getAttribute("pal"), ap.getAttribute("icon"), apLoc, ap.firstChild.data);
+		else
+			map.apMarker = googleMarker(document.imgPath, ap.getAttribute("color"), apLoc, ap.firstChild.data);
+
 		map.setCenter(apLoc, map.getZoom());
 		airports[icao] = map.apMarker;
 		map.currentAirport = icao;
@@ -60,8 +64,13 @@ xmlreq.onreadystatechange = function() {
 			var wp = wps[j];
 			var code = wp.getAttribute("code");
 			if (waypoints[code] == null) {
+				var mrk = null;
 				var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-				var mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+				if (wp.getAttribute("pal"))
+					mrk = googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, wp.firstChild.data);
+				else
+					mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+
 				mrk.code = code;
 				GEvent.addListener(mrk, 'dblclick', toggleMarker);
 				waypoints[code] = mrk;
@@ -113,8 +122,13 @@ xmlreq.onreadystatechange = function() {
 		var wp = wps[i];
 		var code = wp.getAttribute("code");
 		if (waypoints[code] == null) {
+			var mrk = null;
 			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-			var mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+			if (wp.getAttribute("pal"))
+				mrk = googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, wp.firstChild.data);
+			else
+				mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+
 			mrk.code = code;
 			GEvent.addListener(mrk, 'dblclick', toggleMarker);
 			waypoints[code] = mrk;

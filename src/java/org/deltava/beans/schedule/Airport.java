@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class Airport implements java.io.Serializable, Comparable, ComboAlias, GeospaceLocation, MapEntry {
+public class Airport implements Comparable<Airport>, ComboAlias, GeospaceLocation, MarkerMapEntry, IconMapEntry {
 
 	public static final int IATA = 0;
 	public static final int ICAO = 1;
@@ -187,9 +187,8 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	/**
 	 * Sort the airports by comparing their IATA codes.
 	 */
-	public int compareTo(Object o2) {
-		Airport a2 = (Airport) o2;
-		return getIATA().compareTo(a2.getIATA());
+	public int compareTo(Airport a2) {
+		return _iata.compareTo(a2._iata);
 	}
 
 	public String getComboAlias() {
@@ -277,6 +276,22 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
       return GREEN;
    }
    
+	/**
+	 * Returns the Google Earth palette code.
+	 * @return 2
+	 */
+	public int getPaletteCode() {
+		return 2;
+	}
+	
+	/**
+	 * Returns the Google Earth icon code.
+	 * @return 48
+	 */
+	public int getIconCode() {
+		return 48;
+	}
+   
    /**
     * Returns the default Google Maps infobox text.
     * @return an HTML String
@@ -303,7 +318,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	public boolean equals(Object o2) {
 		if (o2 instanceof Airport) {
 			Airport a2 = (Airport) o2;
-			return (_iata.equals(a2.getIATA()) && _icao.equals(a2.getICAO()));
+			return (_iata.equals(a2._iata) && _icao.equals(a2._icao));
 		} else if (o2 instanceof String) {
 			return _iata.equals(o2) || _icao.equals(o2);
 		} else {

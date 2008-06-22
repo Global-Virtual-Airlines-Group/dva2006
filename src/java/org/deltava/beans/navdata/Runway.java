@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store runway information.
  * @author Luke
- * @version 2.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -76,6 +76,22 @@ public class Runway extends NavigationFrequencyBean {
 	 */
 	public String getIconColor() {
 		return YELLOW;
+	}
+	
+	/**
+	 * Returns the Google Earth palette code.
+	 * @return 3
+	 */
+	public int getPaletteCode() {
+		return 3;
+	}
+	
+	/**
+	 * Returns the Google Earth icon code.
+	 * @return 60
+	 */
+	public int getIconCode() {
+		return 60;
 	}
 
 	/**

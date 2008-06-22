@@ -1,18 +1,43 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
 import org.deltava.beans.navdata.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A bean to store waypoint information for an oceanic route.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class OceanicWaypoints extends OceanicRoute implements Comparable<OceanicWaypoints> {
+	
+	public static final Collection<? extends OceanicWaypoints> CONC_ROUTES = Arrays.asList(new ConcordeNAT("M",
+		"5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("N", "45/50,47/40,49/30,49/20,49/15"), 
+		new ConcordeNAT("O", "48/15,48/20,48/30,46/40,44/50,42/60"));
+
+	private static class ConcordeNAT extends OceanicWaypoints {
+
+		ConcordeNAT(String track, String route) {
+			super(NAT, new Date());
+			setTrack(track);
+			for (Iterator<String> i = StringUtils.split(route, ",").iterator(); i.hasNext();) {
+				String wp = i.next();
+				addWaypoint(Intersection.parseNAT(wp));
+			}
+		}
+
+		public String getTrack() {
+			return "S" + super.getTrack();
+		}
+		
+		public boolean isFixed() {
+			return true;
+		}
+	}
 	
 	/**
 	 * Direction code for an Easterly track.

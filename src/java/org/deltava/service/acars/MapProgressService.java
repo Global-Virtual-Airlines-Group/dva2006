@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class MapProgressService extends WebService {
 		// Get the DAO and the route data
 		FlightInfo info = null;
 		Collection<GeoLocation> routePoints = null;
-		Collection<MapEntry> routeWaypoints = new LinkedHashSet<MapEntry>();
+		Collection<MarkerMapEntry> routeWaypoints = new LinkedHashSet<MarkerMapEntry>();
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSData dao = new GetACARSData(con);
@@ -88,7 +88,14 @@ public class MapProgressService extends WebService {
 			Element e = XMLUtils.createElement("route", entry.getInfoBox(), true);
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			e.setAttribute("color", entry.getIconColor());
+			if (entry instanceof MarkerMapEntry)
+				e.setAttribute("color", ((MarkerMapEntry) entry).getIconColor());
+			else {
+				IconMapEntry ime = (IconMapEntry) entry;
+				e.setAttribute("pal", String.valueOf(ime.getPaletteCode()));
+				e.setAttribute("icon", String.valueOf(ime.getIconCode()));
+			}
+			
 			re.addContent(e);
 		}
 

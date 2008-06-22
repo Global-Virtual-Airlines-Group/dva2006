@@ -1,31 +1,29 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
 
 import javax.servlet.jsp.*;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
-
+import org.deltava.beans.*;
 import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps v2 GMarkers.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class MarkerArrayTag extends GoogleMapEntryTag {
 
-	private Collection _entries;
+	private Collection<GeoLocation> _entries;
 	private String _color;
 
 	/**
 	 * Sets the icon color for these markers. This overrides any color provided by the points.
 	 * @param color the icon color
-	 * @see MapEntry#getIconColor()
+	 * @see MarkerMapEntry#getIconColor()
 	 */
 	public void setColor(String color) {
 		_color = color;
@@ -35,7 +33,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	 * Sets the points used to generate the array.
 	 * @param points a Collection of GeoLocations
 	 */
-	public void setItems(Collection points) {
+	public void setItems(Collection<GeoLocation> points) {
 		_entries = points;
 	}
 	
@@ -63,17 +61,23 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 			out.println(" = new Array();");
 
 			// Create the markers
-			for (Iterator i = _entries.iterator(); i.hasNext();) {
-				GeoLocation entry = (GeoLocation) i.next();
+			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
+				GeoLocation entry = i.next();
+				StringBuilder buf = new StringBuilder(_jsVarName);
+				buf.append(".push(");
+				
 				if (entry instanceof MapEntry) {
-					MapEntry me = (MapEntry) entry;
-					String entryColor = (_color == null) ? me.getIconColor() : _color; 
-
-					// Generate the google marker and push it into the array
-					out.print(_jsVarName);
-					out.print(".push(");
-					out.print(generateMarker(entry, entryColor, me.getInfoBox()));
-					out.println(");");
+					if (entry instanceof IconMapEntry) {
+						IconMapEntry me = (IconMapEntry) entry;
+						buf.append(generateIconMarker(entry, me.getPaletteCode(), me.getIconCode(), me.getInfoBox()));
+					} else if (entry instanceof MarkerMapEntry) {
+						MarkerMapEntry me = (MarkerMapEntry) entry;
+						String entryColor = (_color == null) ? me.getIconColor() : _color; 
+						buf.append(generateMarker(entry, entryColor, me.getInfoBox()));
+					}
+					
+					buf.append(");");
+					out.println(buf.toString());
 				}
 			}
 			

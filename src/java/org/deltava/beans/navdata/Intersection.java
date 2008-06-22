@@ -1,10 +1,10 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 2.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -43,6 +43,22 @@ public class Intersection extends NavigationDataBean {
 	 */
 	public String getIconColor() {
 		return WHITE;
+	}
+	
+	/**
+	 * Returns the Google Earth palette code.
+	 * @return 3
+	 */
+	public int getPaletteCode() {
+		return 3;
+	}
+	
+	/**
+	 * Returns the Google Earth icon code.
+	 * @return 56
+	 */
+	public int getIconCode() {
+		return 61;
 	}
 
 	/**

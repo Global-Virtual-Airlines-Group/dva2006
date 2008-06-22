@@ -15,11 +15,13 @@
 <content:js name="markermanager" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script>
+<c:if test="${!empty tileHost}">
+<script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 document.tileHost = '${tileHost}';
+defaultIconSize = 16;
 <c:if test="${isDispatch}">
 function addWaypoint(code)
 {
@@ -103,6 +105,15 @@ mrk.infoShow = clickIcon;
 GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
 return mrk;
 }
+
+function externalIconMarker(palCode, iconCode, point, id)
+{
+var mrk = googleIconMarker(palCode, iconCode, point, null);
+mrk.uniqueID = id;
+mrk.infoShow = clickIcon;
+GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
+return mrk;
+}
 </script>
 </head>
 <body onunload="GUnload()">
@@ -119,8 +130,8 @@ map.setMapType(G_SATELLITE_MAP);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 map.enableScrollWheelZoom();
-GEvent.addListener(map, 'maptypechanged', updateMapText);
 
+<c:if test="${!empty tileHost}">
 // Build the layer controls
 var xPos = 70;
 var rC = new WXOverlayControl(getTileOverlay("radar", 0.5), "Radar", new GSize(70, 3));
@@ -141,8 +152,9 @@ var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 8)
 cpos.apply(cp);
 mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
+GEvent.addListener(map, 'maptypechanged', updateMapText);
 GEvent.trigger(map, 'maptypechanged');
-
+</c:if>
 // Initialize arrays and collection
 var route = new Array();
 var routePoints = new Array();

@@ -36,7 +36,7 @@ public class EarthMapService extends GoogleEarthService {
 	
 	private static final Logger log = Logger.getLogger(EarthMapService.class);
 	
-	private final Cache<CacheableList<RouteEntry>> _cache = new ExpiringCache<CacheableList<RouteEntry>>(1, 5);
+	private final Cache<CacheableList<MapRouteEntry>> _cache = new ExpiringCache<CacheableList<MapRouteEntry>>(1, 5);
 	private final Cache<CacheableSet<Integer>> _idCache = new ExpiringCache<CacheableSet<Integer>>(1, 5);
 
 	/**
@@ -49,11 +49,11 @@ public class EarthMapService extends GoogleEarthService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the ACARS connection data
-		CacheableList<RouteEntry> entries = _cache.get(MapService.class);
+		CacheableList<MapRouteEntry> entries = _cache.get(MapService.class);
 		CacheableSet<Integer> ids = _idCache.get(MapService.class);
 		synchronized (_cache) {
 			if ((entries == null) || (ids == null)) {
-				entries = new CacheableList<RouteEntry>(MapService.class);
+				entries = new CacheableList<MapRouteEntry>(MapService.class);
 				ids = new CacheableSet<Integer>(MapService.class);
 			
 				// Get the pool
