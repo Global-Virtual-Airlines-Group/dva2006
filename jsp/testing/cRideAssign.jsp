@@ -57,7 +57,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="useScript" idx="*" value="true" label="Append Check Ride script to comments" /></td>
+ <td class="data"><el:box name="useScript" idx="*" value="true" checked="true" label="Append Check Ride script to comments" /></td>
 </tr>
 </el:table>
 
