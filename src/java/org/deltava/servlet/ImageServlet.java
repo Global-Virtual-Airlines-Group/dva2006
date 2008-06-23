@@ -190,8 +190,8 @@ public class ImageServlet extends BasicAuthServlet {
 		}
 
 		// Check for PDF
-		boolean isPDF = true;
-		for (int x = 0; x < Chart.PDF_MAGIC.length(); x++)
+		boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
+		for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
 			isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
 
 		// Get the image type
@@ -209,7 +209,7 @@ public class ImageServlet extends BasicAuthServlet {
 		// Set the content-type and content length
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength(imgBuffer.length);
-		rsp.setBufferSize((imgBuffer.length > 65520) ? 65520 : imgBuffer.length);
+		rsp.setBufferSize(Math.min(65536, imgBuffer.length));
 
 		// Dump the data to the output stream
 		try {
