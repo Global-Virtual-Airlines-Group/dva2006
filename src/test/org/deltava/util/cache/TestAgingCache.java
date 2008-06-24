@@ -1,5 +1,8 @@
 package org.deltava.util.cache;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.hansel.CoverageDecorator;
 
 import junit.framework.Test;
@@ -27,8 +30,8 @@ public class TestAgingCache extends TestCase {
    }
    
    public void testCacheEntry() throws Exception {
-      Cacheable e1 = new MockCacheable(1);
-      Cacheable e2 = new MockCacheable(2);
+	  Cacheable e1 = new CacheableInteger(Integer.valueOf(1), 1);
+	  Cacheable e2 = new CacheableInteger(Integer.valueOf(2), 2);
       _entry = _cache.new AgingCacheEntry<Cacheable>(e1);
       assertSame(e1, _entry.getData());
       Thread.sleep(20);
@@ -37,12 +40,12 @@ public class TestAgingCache extends TestCase {
    }
    
    public void testClone() throws Exception {
-      Cacheable o1 = new MockCloneableCacheable(1);
+      Cacheable o1 = new CacheableInteger(Integer.valueOf(1), 1);
       _cache.add(o1);
       assertEquals(1, _cache.size());
       Cacheable o2 = _cache.get(new Integer(1));
       assertNotNull(o2);
-      assertNotSame(o1, o2);
+      assertSame(o1, o2);
    }
 
    public void testCache() {
@@ -63,10 +66,18 @@ public class TestAgingCache extends TestCase {
       assertSame(dva, _cache.get("DVA"));
    }
    
-   public void testValidation() {
-      try {
-         _cache.setMaxSize(0);
-         fail("IllegalArgumentException expected");
-      } catch (IllegalArgumentException iae) { }
+   public void testLargeCache() {
+	   Collection<Cacheable> entries = new ArrayList<Cacheable>();
+	   for (int x = 0; x < 8192; x++)
+		   entries.add(new CacheableInteger(Integer.valueOf(x), x));
+	   
+	   assertEquals(8192, entries.size());
+	   _cache.setMaxSize(entries.size());
+	   assertEquals(entries.size(), _cache.getMaxSize());
+	   
+	   long start = System.currentTimeMillis();
+	   _cache.addAll(entries);
+	   assertTrue((System.currentTimeMillis() - start) < 500);
+	   assertEquals(entries.size(), _cache.size());
    }
 }
