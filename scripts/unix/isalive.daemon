@@ -1,6 +1,6 @@
 #!/bin/bash
 # System daemon checking script
-# (c) 2005-2007 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2008 Global Virtual Airlines Group. All Rights Reserved.
 
 # Start loop
 echo `date +%H:%M:%S`" Starting"
@@ -35,17 +35,17 @@ do
 			if [ ! -d "/proc/`cat /var/run/mysql5.pid`" ]
 			then
 				echo `date +%H:%M:%S`" mySQL 5 (Database Server) is DOWN" >> /var/cache/isalive.txt
-				/etc/init.d/mysqld start
+				/etc/init.d/mysql start
 			fi
 		else
  			echo `date +%H:%M:%S`" mySQL 5 (Database Server) is DOWN - no pid" >> /var/cache/isalive.txt
- 			/etc/init.d/mysqld start
+ 			/etc/init.d/mysql start
 		fi
 
 		# Check Tomcat
-		if [ -f "/var/run/tomcat55.pid" ]
+		if [ -f "/var/run/tomcat.pid" ]
 		then
-			if [ ! -d "/proc/`cat /var/run/tomcat55.pid`" ]
+			if [ ! -d "/proc/`cat /var/run/tomcat.pid`" ]
 			then
 				echo `date +%H:%M:%S`" Tomcat (Application Server) is DOWN" >> /var/cache/isalive.txt
 				/etc/init.d/tomcat start
@@ -170,14 +170,14 @@ do
 		fi
 
 		# Check FSD Multiplayer FS Server
-		if [ -f "/var/run/fsd.pid" ]
-		then
-			if [ ! -d "/proc/`cat /var/run/fsd.pid`" ]
-			then
-				echo `date +%H:%M:%S`" FSD (FS Multiplayer Server) is DOWN" >> /var/cache/isalive.txt
-				/etc/init.d/fsd start
-			fi
-		fi
+		#if [ -f "/var/run/fsd.pid" ]
+		#then
+		#	if [ ! -d "/proc/`cat /var/run/fsd.pid`" ]
+		#	then
+		#		echo `date +%H:%M:%S`" FSD (FS Multiplayer Server) is DOWN" >> /var/cache/isalive.txt
+		#		/etc/init.d/fsd start
+		#	fi
+		#fi
 	
 		# If we have something, warn us
 		if [ -f "/var/cache/isalive.txt" ]
