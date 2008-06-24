@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -170,18 +170,24 @@ public class RegisterCommand extends AbstractCommand {
 			// Check the blacklist
 			int regAddr = NetworkUtils.pack(a.getRegisterAddress());
 			for (Iterator<RegistrationBlock> i = regBList.iterator(); i.hasNext(); ) {
-				boolean doBlock = false;
 				RegistrationBlock rb = i.next();
+				boolean doBlock = false;
+				boolean fnMatch = ((rb.getFirstName() != null) && (a.getFirstName().equalsIgnoreCase(rb.getFirstName())));
+				boolean lnMatch = ((rb.getLastName() != null) && (a.getLastName().equalsIgnoreCase(rb.getLastName())));
+				
 				if (((regAddr & rb.getNetMask()) == rb.getAddress()) && (rb.getAddress() != 0)) {
 					doBlock = true;
 					log.warn("Blocking " + a.getRegisterAddress() + ", matches " + NetworkUtils.format(NetworkUtils.convertIP(rb.getAddress()))
 							+ "/" + NetworkUtils.format(NetworkUtils.convertIP(rb.getNetMask())));
-				} else if (a.getFirstName().equalsIgnoreCase(rb.getFirstName())) {
+				} else if (fnMatch && (rb.getLastName() == null)) {
 					doBlock = true;
 					log.warn("Blocking " + a.getName() + ", matches fName=" + rb.getFirstName());
-				} else if (a.getLastName().equalsIgnoreCase(rb.getLastName())) {
+				} else if (lnMatch && (rb.getFirstName() == null)) {
 					doBlock = true;
 					log.warn("Blocking " + a.getName() + ", matches lName=" + rb.getLastName());
+				} else if (fnMatch && lnMatch) {
+					doBlock = true;
+					log.warn("Blocking " + a.getName() + ", matches fName= " + rb.getFirstName() + ", lName=" + rb.getLastName());
 				} else if ((rb.getHostName() != null) && (a.getRegisterHostName().endsWith(rb.getHostName()))) {
 					doBlock = true;
 					log.warn("Blocking " + a.getRegisterHostName() + ", matches host=" + rb.getHostName());
