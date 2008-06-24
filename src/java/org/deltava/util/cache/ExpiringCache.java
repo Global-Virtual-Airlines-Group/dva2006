@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -87,7 +87,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @return TRUE if the cache contains the key, otherwise FALSE
 	 */
 	public boolean contains(Object key) {
-		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
+		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
 		return (entry != null) && (!entry.isExpired());
 	}
 
@@ -123,7 +123,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @param key the cache key
 	 * @return TRUE if the object is present and expired, otherwise FALSE
 	 */
-	public synchronized boolean isExpired(Object key) {
+	public boolean isExpired(Object key) {
 		ExpiringCacheEntry entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		return (entry == null) ? false : entry.isExpired();
 	}
@@ -133,23 +133,20 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * with the earliest expiration date will be removed.
 	 * @param obj the entry to add to the cache
 	 */
-	public void add(T obj) {
+	public void addEntry(T obj) {
 		if (obj == null)
 			return;
 
 		// Create the cache entry
 		ExpiringCacheEntry<T> e = new ExpiringCacheEntry<T>(obj);
 		_cache.put(obj.cacheKey(), e);
-
-		// Check for overflow and purge
-		purge();
-		checkOverflow();
 	}
 
 	/**
 	 * Purges expired entries from the cache.
 	 */
-	private void purge() {
+	@Override
+	protected void checkOverflow() {
 		if (_pLock.tryAcquire()) {
 			try {
 				for (Iterator<CacheEntry<T>> i = _cache.values().iterator(); i.hasNext();) {
@@ -161,5 +158,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 				_pLock.release();
 			}
 		}
+		
+		super.checkOverflow();
 	}
 }
