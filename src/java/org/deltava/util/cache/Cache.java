@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.*;
 /**
  * An an abstract class to store common cache operations.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -38,7 +38,9 @@ public abstract class Cache<T extends Cacheable> {
 	 */
 	public void addAll(Collection<? extends T> entries) {
 		for (Iterator<? extends T> i = entries.iterator(); i.hasNext();)
-			add(i.next());
+			addEntry(i.next());
+		
+		checkOverflow();
 	}
 
 	/**
@@ -84,13 +86,9 @@ public abstract class Cache<T extends Cacheable> {
 	/**
 	 * Sets the maximum size of the cache.
 	 * @param size the maximum number of entries
-	 * @throws IllegalArgumentException if size is zero or negative
 	 */
 	public final void setMaxSize(int size) {
-		if (size < 1)
-			throw new IllegalArgumentException("Invalid size - " + size);
-
-		_maxSize = size;
+		_maxSize = Math.max(1, size);
 	}
 
 	/**
@@ -146,12 +144,21 @@ public abstract class Cache<T extends Cacheable> {
 	public final int getRequests() {
 		return _gets.intValue();
 	}
+	
+	/**
+	 * Adds an entry to the cache.
+	 * @param entry
+	 */
+	protected abstract void addEntry(T entry);
 
 	/**
 	 * Adds an entry to the cache.
 	 * @param entry the entry to add
 	 */
-	public abstract void add(T entry);
+	public final void add(T entry) {
+		addEntry(entry);
+		checkOverflow();
+	}
 
 	/**
 	 * Retrieves an entry from the cache.
