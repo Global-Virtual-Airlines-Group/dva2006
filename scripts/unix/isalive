@@ -1,6 +1,6 @@
 #!/bin/sh
 # System daemon checking script
-# (c) 2005-2007 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2008 Global Virtual Airlines Group. All Rights Reserved.
 
 if [ -f "/var/run/siteDown.flag" ]
 then
@@ -15,11 +15,11 @@ then
    echo "BIND (DNS Server) is alive"
   else
    echo "BIND (DNS Server) is DOWN"
-   /usr/local/sbin/namedctl start
+   /etc/init.d/named start
   fi
 else
  echo "BIND (DNS Server) is DOWN - no pid"
- /usr/local/sbin/namedctl start
+ /etc/init.d/named start
 fi
 
 if [ -f "/var/run/mysql5.pid" ]
@@ -29,25 +29,25 @@ then
    echo "mySQL 5 (Database Server) is alive"
   else
    echo "mySQL 5 (Database Server) is DOWN"
-   /usr/local/sbin/mysql5ctl start
+   /etc/init.d/mysql start
   fi
 else
  echo "mySQL 5 (Database Server) is DOWN - no pid"
- /usr/local/sbin/mysql5ctl start
+ /etc/init.d/mysql start
 fi
 
-if [ -f "/var/run/tomcat55.pid" ]
+if [ -f "/var/run/tomcat.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/tomcat55.pid`" ]
+  if [ -d "/proc/`cat /var/run/tomcat.pid`" ]
   then
    echo "Tomcat (Application Server) is alive"
   else
    echo "Tomcat (Application Server) is DOWN"
-   /usr/local/sbin/tomcatctl start
+   /etc/init.d/tomcat start
   fi
 else
   echo "Tomcat (Application Server) is DOWN - no pid"
-  /usr/local/sbin/tomcatctl start
+  /etc/init.d/tomcat start
 fi
 
 if [ -f "/var/run/httpd.pid" ]
@@ -57,11 +57,11 @@ then
    echo "Apache (Web Server) is alive"
   else
    echo "Apache (Web Server) is DOWN"
-   /usr/local/sbin/apachectl start
+   /etc/init.d/httpd start
   fi
 else
   echo "Apache (Web Server) is DOWN - no pid"
-  /usr/local/sbin/apachectl start
+  /etc/init.d/httpd start
 fi
 
 #if [ -f "/var/run/slapd.pid" ]
@@ -71,11 +71,11 @@ fi
 #   echo "OpenLDAP (Authentication Server) is alive"
 #  else
 #   echo "OpenLDAP (Authentication Server) is DOWN"
-#   /usr/local/sbin/ldapctl start
+#   /etc/init.d//ldapctl start
 #  fi
 #else
 #  echo "OpenLDAP (Authentication Server) is DOWN - no pid"
-#  /usr/local/sbin/ldapctl start
+#  /etc/init.d//ldapctl start
 #fi
 
 if [ -f "/var/run/postfix-master.pid" ]
@@ -99,11 +99,11 @@ then
    echo "SpamAssassin (Spam Filtering Server) is alive"
   else
    echo "SpamAssassin (Spam Filtering Server) is DOWN"
-   spamdctl start
+   /etc/init.d/spamd start
   fi
 else
  echo "SpamAssassin (Spam Filtering Server) is DOWN - no pid"
- spamdctl start
+ /etc/init.d/spamd start
 fi
 
 if [ -f "/var/run/authdaemon.pid" ]
@@ -113,11 +113,11 @@ then
    echo "IMAP Authentication Server is alive"
   else
    echo "IMAP Authentication Server is DOWN"
-   authdaemond start
+   /etc/init.d/authdaemond start
   fi
 else
  echo "IMAP Authentication Server is DOWN - no pid"
- authdaemond start
+ /etc/init.d/authdaemond start
 fi
 
 if [ -f "/var/run/imapd.pid" ]
@@ -127,11 +127,11 @@ then
    echo "Courier (IMAP Server) is alive"
   else
    echo "Courier (IMAP Server) is DOWN"
-   /usr/local/sbin/imapctl start
+   /etc/init.d/imapd start
   fi
 else
  echo "Courier (IMAP Server) is DOWN - no pid"
- /usr/local/sbin/imapctl start
+ /etc/init.d/imapd start
 fi
 
 if [ -f "/var/run/ts2.pid" ]
@@ -141,23 +141,23 @@ then
     echo "TeamSpeak (Voice Server) is alive"
   else
     echo "TeamSpeak (Voice Server) is DOWN"
-    /usr/local/sbin/ts2ctl start
+    /etc/init.d/ts2 start
   fi
 else
  echo "TeamSpeak (Voice Server) is DOWN - no pid"
- /usr/local/sbin/ts2ctl start
+ /etc/init.d/ts2 start
 fi
 
-if [ -f "/var/run/fsd.pid" ]
-then
-  if [ -d "/proc/`cat /var/run/fsd.pid`" ]
-  then
-    echo "FSD (FS Multiplayer Server) is alive"
-  else
-    echo "FSD (FS Multiplayer Server) is DOWN"
-    /usr/local/sbin/fsdctl start
-  fi
-else
-  echo "FSD (FS Multiplayer Server) is DOWN - no pid"
-  /usr/local/sbin/fsdctl start
-fi
+# if [ -f "/var/run/fsd.pid" ]
+# then
+#   if [ -d "/proc/`cat /var/run/fsd.pid`" ]
+#   then
+#     echo "FSD (FS Multiplayer Server) is alive"
+#   else
+#     echo "FSD (FS Multiplayer Server) is DOWN"
+#     /etc/init.d/fsd start
+#   fi
+# else
+#   echo "FSD (FS Multiplayer Server) is DOWN - no pid"
+#   /etc/init.d/fsd start
+# fi
