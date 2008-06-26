@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A comparator to sort geographic locations by their distance from a fixed point.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -45,6 +45,6 @@ public class GeoComparator implements Comparator<GeoLocation> {
       int d2 = _point.distanceTo(l2);
       
       // Compare the distances
-      return new Integer(d1).compareTo(new Integer(d2));
+      return Integer.valueOf(d1).compareTo(Integer.valueOf(d2));
    }
 }
