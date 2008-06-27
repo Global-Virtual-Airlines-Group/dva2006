@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -74,6 +74,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 				case RESTARTED:
 					upd.setDescription("Requested return to " + c.getName());
 					ctx.setAttribute("isRestarted", Boolean.TRUE, REQUEST);
+					c.setStartDate(new Date());
 					canExec = access.getCanRestart();
 					break;
 					
@@ -122,7 +123,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// Get the DAO and update the course 
 			SetAcademy wdao = new SetAcademy(con);
-			wdao.setStatus(c.getID(), opCode);
+			wdao.setStatus(c.getID(), opCode, c.getStartDate());
 			
 			// If we're canceling, cancel all Instruction Sessions
 			if (opCode == Course.ABANDONED) {

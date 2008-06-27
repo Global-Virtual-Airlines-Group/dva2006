@@ -227,13 +227,15 @@ public class SetAcademy extends DAO {
 	 * Updates a Flight Academy Course's status.
 	 * @param courseID the database ID of the course
 	 * @param status the status code
+	 * @param sd the updated course start date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void setStatus(int courseID, int status) throws DAOException {
+	public void setStatus(int courseID, int status, java.util.Date sd) throws DAOException {
 		try {
-			prepareStatement("UPDATE exams.COURSES SET STATUS=? WHERE (ID=?)");
+			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=? WHERE (ID=?)");
 			_ps.setInt(1, status);
-			_ps.setInt(2, courseID);
+			_ps.setTimestamp(2, createTimestamp(sd));
+			_ps.setInt(3, courseID);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
