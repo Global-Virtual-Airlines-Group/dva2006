@@ -26,7 +26,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.title, 6, 'Installer Title')) return false;
-if (!validateNumber(form.majorVersion, 1, 'Major Version Number')) return false;
+if (!validateNumber(form.majorVersion, 0, 'Major Version Number')) return false;
 if (!validateNumber(form.minorVersion, 0, 'Minor Version Number')) return false;
 if (!validateNumber(form.subVersion, 0, 'Sub-Version Number')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
