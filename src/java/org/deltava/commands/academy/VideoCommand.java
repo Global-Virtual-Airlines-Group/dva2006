@@ -207,7 +207,7 @@ public class VideoCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/academy/videoEdit.jsp");
+		result.setURL("/jsp/fleet/videoEdit.jsp");
 		result.setSuccess(true);
 	}
 

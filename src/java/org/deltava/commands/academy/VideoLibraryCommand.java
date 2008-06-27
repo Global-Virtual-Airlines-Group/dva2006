@@ -93,7 +93,7 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/academy/videoLibrary.jsp");
+		result.setURL("/jsp/fleet/videoLibrary.jsp");
 		result.setSuccess(true);
 	}
 }
