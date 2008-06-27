@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,19 +6,18 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.academy.*;
+import org.deltava.beans.UserDataMap;
+import org.deltava.beans.fleet.Video;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to display Fleet Academy training videos.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -41,31 +40,33 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 		access.validate();
 		ctx.setAttribute("access", access, REQUEST);
 
-		TrainingVideoAccessControl vAccess = null;
-		Collection<TrainingVideo> results = null;
+		VideoAccessControl vAccess = null;
+		Collection<Video> results = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the library
-			GetAcademyVideos dao = new GetAcademyVideos(con);
+			GetVideos dao = new GetVideos(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(Math.round(vc.getCount() * 1.5f));
 			results = dao.getVideos();
 
 			// Get the authors
-			Set<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<TrainingVideo> i = results.iterator(); i.hasNext();) {
-				TrainingVideo e = i.next();
-				IDs.add(new Integer(e.getAuthorID()));
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<Video> i = results.iterator(); i.hasNext();) {
+				Video v = i.next();
+				IDs.add(new Integer(v.getAuthorID()));
 			}
 
 			// Get the author data
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("authors", pdao.getByID(IDs, SystemData.get("airline.db") + " .PILOTS"), REQUEST);
+			GetUserData uddao = new GetUserData(con);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
 
 			// Populate flight academy courses
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
-			vAccess = new TrainingVideoAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
+			vAccess = new VideoAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -73,18 +74,18 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 		}
 
 		// Validate our access to the results
-		for (Iterator<TrainingVideo> i = results.iterator(); i.hasNext();) {
-			TrainingVideo video = i.next();
+		for (Iterator<Video> i = results.iterator(); i.hasNext();) {
+			Video video = i.next();
 			vAccess.updateContext(video);
 			vAccess.validate();
+			
 			// Check that the resource exists
 			if (video.getSize() == 0) {
 				log.warn(video.getFullName() + " not found in file system!");
 				if (!access.getCanEditVideo())
 					i.remove();
-			} else if (!vAccess.getCanRead()) {
+			} else if (!vAccess.getCanRead())
 				i.remove();
-			}
 		}
 
 		// Save the results in the view context

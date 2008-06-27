@@ -259,6 +259,12 @@ contributions from our community that will enhance your flight simulation experi
  all manner of flight planning and other ways.</td>
 </tr>
 </c:if>
+<c:if test="${videoEnabled}">
+<tr>
+ <td class="mid"><el:cmd url="tvideolibrary" className="bld">Video Library</el:cmd></td>
+ <td class="data">The <content:airline /> Video Library contains videos created by <content:airline /> staff.</td>
+</tr>
+</c:if>
 <content:filter roles="Fleet">
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary" op="admin">Fleet Library Administration</el:cmd></td>
@@ -518,16 +524,8 @@ Academy.</td>
 training session with a Flight Academy student.</td>
 </tr>
 </c:if>
-<c:if test="${videoEnabled}">
-<tr>
- <td class="mid"><el:cmd url="tvideolibrary" className="bld">Video Library</el:cmd></td>
- <td class="data">The <content:airline /> Flight Academy Video Library contains videos for use by Flight 
-Academy students.</td>
-</tr>
-</c:if>
 </content:filter>
 </c:if>
-
 <content:filter roles="HR,PIREP">
 <!-- Human Resources Admin Section -->
 <tr class="title caps">
