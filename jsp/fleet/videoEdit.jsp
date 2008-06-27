@@ -11,10 +11,10 @@
 <head>
 <c:choose>
 <c:when test="${!empty video}">
-<title><content:airline /> Flight Academy Video Library - ${video.name}</title>
+<title><content:airline /> Video Library - ${video.name}</title>
 </c:when>
 <c:otherwise>
-<title>New <content:airline /> Flight Academy Video Library Entry</title>
+<title>New <content:airline /> Video Library Entry</title>
 </c:otherwise>
 </c:choose>
 <content:css name="main" browserSpecific="true" />
@@ -41,8 +41,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/academy/header.jspf" %> 
-<%@ include file="/jsp/academy/sideMenu.jspf" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="cats" name="airline.video.categories" />
 
 <!-- Main Body Frame -->

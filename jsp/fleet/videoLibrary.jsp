@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Flight Academy Video Library</title>
+<title><content:airline /> Video Library</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:pics />
@@ -17,8 +17,8 @@
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/academy/header.jspf" %> 
-<%@ include file="/jsp/academy/sideMenu.jspf" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">

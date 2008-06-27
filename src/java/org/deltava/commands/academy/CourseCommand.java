@@ -77,7 +77,7 @@ public class CourseCommand extends AbstractCommand {
 				ctx.setAttribute("docs", ddao.getByCertification(c.getName()), REQUEST);
 				
 				// Get videos
-				GetAcademyVideos vdao = new GetAcademyVideos(con);
+				GetVideos vdao = new GetVideos(con);
 				ctx.setAttribute("videos", vdao.getVideos(c.getName()), REQUEST);
 				
 				// Show exam status

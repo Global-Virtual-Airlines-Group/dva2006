@@ -72,7 +72,7 @@ public class VideoCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the Training Video
-			GetAcademyVideos dao = new GetAcademyVideos(con);
+			GetVideos dao = new GetVideos(con);
 			Video v = dao.getVideo(fName);
 
 			// Check if we're uploading to ensure that the file does not already exist
@@ -180,7 +180,7 @@ public class VideoCommand extends AbstractFormCommand {
 			
 			// Get the DAO and the library entry
 			if (!isNew) {
-				GetAcademyVideos dao = new GetAcademyVideos(con);
+				GetVideos dao = new GetVideos(con);
 				Video v = dao.getVideo(fName);
 				if (v == null)
 					throw notFoundException("Invalid video filename - " + fName);
