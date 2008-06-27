@@ -1,27 +1,30 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.fleet.Video;
 import org.deltava.beans.academy.TrainingVideo;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Videos.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class GetAcademyVideos extends GetLibrary {
+public class GetVideos extends GetLibrary {
 
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
-	public GetAcademyVideos(Connection c) {
+	public GetVideos(Connection c) {
 		super(c);
 	}
 	
@@ -30,9 +33,10 @@ public class GetAcademyVideos extends GetLibrary {
 	 * @return a List of TrainingVideo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<TrainingVideo> getVideos() throws DAOException {
+	public Collection<Video> getVideos() throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, 0 FROM exams.VIDEOS V ORDER BY V.NAME");
+			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERTNAME) FROM exams.VIDEOS V LEFT JOIN "
+					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) GROUP BY V.NAME");
 			return loadVideos();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -45,10 +49,11 @@ public class GetAcademyVideos extends GetLibrary {
 	 * @return a List of TrainingVideo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<TrainingVideo> getVideos(String certName) throws DAOException {
+	public Collection<Video> getVideos(String certName) throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, 0 FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON "
-					+ "(V.FILENAME=VC.FILENAME) WHERE (VC.CERTNAME=?) GROUP BY V.NAME ORDER BY V.NAME");
+			prepareStatement("SELECT V.*, GROUP_CONCAT(VC.CERTNAME) FROM exams.VIDEOS V LEFT JOIN "
+					+ "exams.CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) WHERE (VC.CERTNAME=?) GROUP BY "
+					+ "V.NAME");
 			_ps.setString(1, certName);
 			return loadVideos();
 		} catch (SQLException se) {
@@ -59,43 +64,37 @@ public class GetAcademyVideos extends GetLibrary {
 	/**
 	 * Helper method to parse result sets.
 	 */
-	private List<TrainingVideo> loadVideos() throws SQLException {
+	private List<Video> loadVideos() throws SQLException {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		
 		// Iterate through the results
 		String path = SystemData.get("path.video");
-		Map<String, TrainingVideo> results = new LinkedHashMap<String, TrainingVideo>();
+		List<Video> results = new ArrayList<Video>();
 		while (rs.next()) {
-			File f = new File(path, rs.getString(1));
-			TrainingVideo entry = new TrainingVideo(f.getPath());
+			Video entry = null;
+			File f = new File(path, rs.getString(1)); 
+			Collection<String> certs = StringUtils.split(rs.getString(8), ",");
+			if (!CollectionUtils.isEmpty(certs)) {
+				TrainingVideo tv = new TrainingVideo(f.getPath());
+				tv.setCertifications(certs);
+				entry = tv;
+			} else
+				entry = new Video(f.getPath());
+			
 			entry.setName(rs.getString(2));
 			entry.setCategory(rs.getString(3));
 			entry.setSecurity(rs.getInt(5));
 			entry.setAuthorID(rs.getInt(6));
 			entry.setDescription(rs.getString(7));
-			entry.setDownloadCount(rs.getInt(8));
-			results.put(f.getName(), entry);
+			results.add(entry);
 		}
 			
 		// Clean up
 		rs.close();
 		_ps.close();
-		
-		// Lload certification data
-		prepareStatementWithoutLimits("SELECT * FROM exams.CERTVIDEOS");
-		rs = _ps.executeQuery();
-		while (rs.next()) {
-			TrainingVideo v = results.get(rs.getString(2));
-			if (v != null)
-				v.addCertification(rs.getString(1));
-		}
-		
-		// Clean up and return
-		rs.close();
-		_ps.close();
-		return new ArrayList<TrainingVideo>(results.values());
+		return results;
 	}
 	
 	/**

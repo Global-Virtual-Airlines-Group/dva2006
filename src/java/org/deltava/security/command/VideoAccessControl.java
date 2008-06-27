@@ -1,8 +1,9 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
 
+import org.deltava.beans.fleet.Video;
 import org.deltava.beans.academy.*;
 
 import org.deltava.security.SecurityContext;
@@ -10,14 +11,14 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy training videos.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class TrainingVideoAccessControl extends AccessControl {
+public class VideoAccessControl extends AccessControl {
 
 	private Collection<Course> _courses;
-	private TrainingVideo _video;
+	private Video _video;
 	
 	private boolean _canRead;
 	
@@ -26,12 +27,16 @@ public class TrainingVideoAccessControl extends AccessControl {
 	 * @param ctx the security context
 	 * @param courses the student's currently enrollled courses 
 	 */
-	public TrainingVideoAccessControl(SecurityContext ctx, Collection<Course> courses) {
+	public VideoAccessControl(SecurityContext ctx, Collection<Course> courses) {
 		super(ctx);
 		_courses = courses;
 	}
 	
-	public void updateContext(TrainingVideo video) {
+	/**
+	 * Updates the video to validate access for.
+	 * @param video the Video to check
+	 */
+	public void updateContext(Video video) {
 		_video = video;
 	}
 
@@ -39,17 +44,19 @@ public class TrainingVideoAccessControl extends AccessControl {
      * Calculates access rights.
      */
 	public void validate() {
-		_canRead = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Instructor");
-		if (!_canRead) {
+		boolean isTV = (_video instanceof TrainingVideo);
+		_canRead = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Instructor") || !isTV;
+		if (!_canRead && isTV) {
+			TrainingVideo tv = (TrainingVideo) _video;
 			for (Iterator<Course> i = _courses.iterator(); !_canRead && i.hasNext(); ) {
 				Course c = i.next();
-				_canRead = _canRead || _video.getCertifications().contains(c.getName());
+				_canRead |= tv.getCertifications().contains(c.getName());
 			}
 		}
 	}
 
 	/**
-	 * Returns wether the user can read this Training Video.
+	 * Returns whether the user can view this Video.
 	 * @return TRUE if the video can be read, otherwise FALSE
 	 */
 	public boolean getCanRead() {
