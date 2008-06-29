@@ -1,15 +1,14 @@
+// Copyright 2004, 2008 Global Virtual Airlines Grouup. All Rights Reserved.
 package org.deltava.crypt;
 
 import java.security.spec.KeySpec;
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
+
+import javax.crypto.*;
 
 /**
  * A class to support encrypting/decrypting data using a symetric secret key. 
- * 
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -91,8 +90,10 @@ public abstract class SecretKeyEncryptor {
         try {
             _cipher.init(Cipher.DECRYPT_MODE, _key);
             return _cipher.doFinal(data);
+        } catch (IllegalBlockSizeException ibse) {
+        	throw new CryptoException("Cannot decrypt [" + new String(data) + "]", ibse);
         } catch (Exception e) {
-            throw new CryptoException("Cannot encrypt data", e);
+            throw new CryptoException("Cannot decrypt data", e);
         }
     }
 }
