@@ -135,6 +135,8 @@ public class RegisterCommand extends AbstractCommand {
 		a.setNumberFormat(ctx.getParameter("nf"));
 		a.setSimVersion(ctx.getParameter("fsVersion"));
 		a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0));
+		if (a.getTZ() == null)
+			a.setTZ(TZInfo.UTC);
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
