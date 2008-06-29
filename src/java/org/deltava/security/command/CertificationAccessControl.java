@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,7 +6,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy certification profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class CertificationAccessControl extends AccessControl {
 		boolean isHR = _ctx.isUserInRole("HR");
 		boolean isAcademyAdmin = _ctx.isUserInRole("AcademyAdmin");
 		if (!isHR && !_ctx.isUserInRole("Instructor") && !isAcademyAdmin)
-			throw new AccessControlException("Not Authorized");
+			return;
 		
 		_canCreate = isHR || isAcademyAdmin;
 		_canCreateVideo = isHR || isAcademyAdmin;
