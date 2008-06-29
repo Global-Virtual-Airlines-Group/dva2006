@@ -88,11 +88,11 @@ xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; char
 
 // Save the answer
 if ((txtbox.length == 1) && (txtbox[0].value.length > 1))
-	xmlreq.send('answer=' + txtbox[0].value);
+	xmlreq.send('answer=' + escape(txtbox[0].value));
 else if (txtbox.length > 1) {
 	for (var x = 0; x < txtbox.length; x++) {
 		if (txtbox[x].checked) {
-			xmlreq.send('answer=' + txtbox[x].value);
+			xmlreq.send('answer=' + escape(txtbox[x].value));
 			break;
 		}	
 	}
