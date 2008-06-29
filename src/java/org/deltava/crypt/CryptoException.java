@@ -1,8 +1,8 @@
+// Copyright 2004 Global Virtual Airlines Grouup. All Rights Reserved.
 package org.deltava.crypt;
 
 /**
  * An internal Cryptographic exception.
- * 
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -25,7 +25,7 @@ public class CryptoException extends RuntimeException {
      * @see Throwable#getCause()
      */
     CryptoException(String msg, Throwable t) {
-        super(msg + " - " + t.getClass().getName(),t );
+        super(msg + " - " + t.getClass().getName(), t);
         setStackTrace(t.getStackTrace());
     }
 }

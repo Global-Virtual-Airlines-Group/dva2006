@@ -1,3 +1,4 @@
+// Copyright 2004, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -44,8 +45,6 @@ public final class SecurityCookieGenerator {
 		
 		// Decode the Base64 data
 		byte[] encData = Base64.decode(cookieText);
-		
-		// Decrypt the token
 		String rawToken = new String(_encryptor.decrypt(encData));
 		
 		// Check that it decrypted properly
@@ -123,9 +122,9 @@ public final class SecurityCookieGenerator {
 		buf.append("@expiry:");
 		buf.append(Long.toHexString(scData.getExpiryDate()));
 		buf.append("@x:");
-		buf.append(Long.toHexString(scData.getScreenX()));
+		buf.append(Integer.toHexString(scData.getScreenX()));
 		buf.append("@y:");
-		buf.append(Long.toHexString(scData.getScreenY()));
+		buf.append(Integer.toHexString(scData.getScreenY()));
 		
 		// Get the message digest for the token
 		MessageDigester md = new MessageDigester("MD5");
