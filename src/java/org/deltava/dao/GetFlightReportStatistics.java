@@ -311,9 +311,10 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(1, FlightReport.ATTR_ACARS);
 			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 			_ps.setInt(3, FlightReport.ATTR_HISTORIC);
-			_ps.setInt(4, FlightReport.OK);
+			_ps.setInt(4, FlightReport.ATTR_DISPATCH);
+			_ps.setInt(5, FlightReport.OK);
 			if (pilotID != 0)
-				_ps.setInt(5, pilotID);
+				_ps.setInt(6, pilotID);
 
 			// Execute the query
 			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
@@ -323,6 +324,7 @@ public class GetFlightReportStatistics extends DAO {
 				entry.setACARSLegs(rs.getInt(7));
 				entry.setOnlineLegs(rs.getInt(8));
 				entry.setHistoricLegs(rs.getInt(9));
+				entry.setDispatchLegs(rs.getInt(10));
 				results.add(entry);
 			}
 
@@ -341,8 +343,8 @@ public class GetFlightReportStatistics extends DAO {
 	private String getSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
 				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
-				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM "
-				+ "PIREPS F WHERE (F.STATUS=?) ";
+				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS,"
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS FROM PIREPS F WHERE (F.STATUS=?) ";
 	}
 
 	/**
@@ -352,8 +354,8 @@ public class GetFlightReportStatistics extends DAO {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND "
-			+ "(F.STATUS=?) ";
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS FROM PILOTS P, "
+			+ "PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
 	}
 	
 	/**
@@ -363,8 +365,8 @@ public class GetFlightReportStatistics extends DAO {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM common.AIRLINES AL, PIREPS F WHERE (AL.CODE=F.AIRLINE) "
-				+ "AND (F.STATUS=?) ";
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS FROM "
+				+ "common.AIRLINES AL, PIREPS F WHERE (AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
 	}
 
 	/**
@@ -374,7 +376,7 @@ public class GetFlightReportStatistics extends DAO {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA="
-				+ apColumn + ") AND (F.STATUS=?) ";
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS FROM "
+				+ "common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
 	}
 }
