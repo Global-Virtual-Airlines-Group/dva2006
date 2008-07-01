@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Staff Roster</title>
@@ -23,12 +24,13 @@
 <content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="staff">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> STAFF ROSTER</td>
+ <td colspan="5" class="left caps"><content:airline /> STAFF ROSTER</td>
 </tr>
 
 <!-- Table Pilot Data -->
 <c:set var="areaName" value="" scope="request" />
 <c:forEach var="staff" items="${staffRoster}">
+<c:set var="hasBlog" value="${fn:contains(blogIDs, staff.ID)}" scope="request" />
 <c:if test="${(hasAreas && (areaName != staff.area))}">
 <c:set var="areaName" value="${staff.area}" scope="request" />
 <tr class="title">
@@ -36,16 +38,22 @@
 </tr>
 </c:if>
 <tr>
- <td class="pri bld" width="15%">${staff.firstName} ${staff.lastName}</td>
- <td class="sec bld" width="15%"><fmt:text value="${staff.title}" /></td>
- <td width="20%"><el:link className="small" url="mailto:${staff.EMail}">${staff.EMail}</el:link></td>
+ <td class="bld" width="25%"><span class="pri">${staff.name}</span><br />
+<span class="sec small"><fmt:text value="${staff.title}" /></span></td>
+ <td width="15%"><el:link className="small" url="mailto:${staff.email}">${staff.email}</el:link></td>
+<c:if test="${hasBlog}">
+ <td><el:cmd url="blog" link="${staff}" className="ter bld small">BLOG</el:cmd></td>
  <td class="small left"><fmt:text value="${staff.body}" /></td>
+</c:if>
+<c:if test="${!hasBlog}">
+ <td colspan="2" class="small left"><fmt:text value="${staff.body}" /></td>
+</c:if>
 </tr>
 </c:forEach>
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;</td>
+ <td colspan="5">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Staff Roster.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -39,6 +39,10 @@ public class StaffRosterCommand extends AbstractCommand {
             // Get the roster and stuff in the request
             GetStaff dao = new GetStaff(con);
             results.addAll(dao.getStaff());
+            
+            // Load staff members with blogs
+            GetBlog bdao = new GetBlog(con);
+            ctx.setAttribute("blogIDs", bdao.getAuthors(ctx.isUserInRole("HR")), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
