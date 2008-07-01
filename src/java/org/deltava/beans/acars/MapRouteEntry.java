@@ -23,6 +23,7 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 
 	private Pilot _usr;
 	private int _clientBuild;
+	private int _betaBuild;
 	private String _eqType;
 	private String _flightNumber;
 	private Airport _airportD;
@@ -36,8 +37,9 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 		_eqType = eqType;
 	}
 
-	public void setClientBuild(int buildNumber) {
+	public void setClientBuild(int buildNumber, int beta) {
 		_clientBuild = buildNumber;
+		_betaBuild = beta;
 	}
 	
 	public void setCheckRide(boolean isCR) {
@@ -86,7 +88,12 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 
 		buf.append(_eqType);
 		buf.append("</span> (Build ");
-		buf.append(String.valueOf(_clientBuild));
+		buf.append(_clientBuild);
+		if (_betaBuild > 0) {
+			buf.append("Beta ");
+			buf.append(_betaBuild);
+		}
+		
 		buf.append(")<br />From: ");
 		buf.append(_airportD.getName());
 		buf.append(" (");
