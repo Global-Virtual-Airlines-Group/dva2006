@@ -1,22 +1,18 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * A class for storing Staff Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class Staff extends DatabaseBean {
+public class Staff extends Pilot {
 
-    private String _firstName;
-    private String _lastName;
-    
     private String _title;
     private String _area;
     private String _body;
-    private String _eMail;
     
     private int _sortOrder;
     
@@ -27,33 +23,7 @@ public class Staff extends DatabaseBean {
      * @throws NullPointerException if either fName or lName are null
      */
     public Staff(String fName, String lName) {
-        super();
-        _firstName = fName.trim();
-        _lastName = lName.trim();
-    }
-    
-    /**
-     * Returns the Staff Member's first (given) name. 
-     * @return the member's first name
-     */
-    public String getFirstName() {
-        return _firstName;
-    }
-    
-    /**
-     * Returns the Staff Member's last (family) name.
-     * @return the member's last name
-     */
-    public String getLastName() {
-        return _lastName;
-    }
-    
-    /**
-     * Returns the Staff Member's e-mail address.
-     * @return the member's e-mail address
-     */
-    public String getEMail() {
-        return _eMail;
+        super(fName, lName);
     }
     
     /**
@@ -105,14 +75,6 @@ public class Staff extends DatabaseBean {
     }
     
     /**
-     * Updates the Staff Member's e-mail addres.
-     * @param eMail the new e-mail address
-     */
-    public void setEMail(String eMail) {
-        _eMail = eMail;
-    }
-    
-    /**
      * Sets the Staff Member's biography.
      * @param body the new biography
      */
@@ -123,13 +85,9 @@ public class Staff extends DatabaseBean {
     /**
      * Sets the new sort order for this Staff Member profile.
      * @param sortOrder the new sort order
-     * @throws IllegalArgumentException if the sort Order is zero or negative
      */
     public void setSortOrder(int sortOrder) {
-        if (sortOrder <= 0)
-            throw new IllegalArgumentException("Sort Order cannot be zero or negative");
-        
-        _sortOrder = sortOrder;
+        _sortOrder = Math.max(1, sortOrder);
     }
     
     /**
@@ -139,7 +97,7 @@ public class Staff extends DatabaseBean {
      */
     public int compareTo(Object o2) {
         Staff s2 = (Staff) o2;
-        int tmpResult = new Integer(_sortOrder).compareTo(new Integer(s2.getSortOrder()));
-        return (tmpResult == 0) ? _lastName.compareTo(s2.getLastName()) : tmpResult; 
+        int tmpResult = Integer.valueOf(_sortOrder).compareTo(Integer.valueOf(s2.getSortOrder()));
+        return (tmpResult == 0) ? getLastName().compareTo(s2.getLastName()) : tmpResult; 
     }
 }
