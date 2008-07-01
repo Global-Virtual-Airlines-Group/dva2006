@@ -18,6 +18,7 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	private int _acarsLegs;
 	private int _onlineLegs;
 	private int _historicLegs;
+	private int _dispatchLegs;
 	private double _hours;
 	private int _miles;
 
@@ -61,6 +62,15 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 */
 	public int getACARSLegs() {
 		return _acarsLegs;
+	}
+	
+	/**
+	 * Returns the number of Dispatch legs linked to this entry.
+	 * @return the number of legs using ACARS Dispatch
+	 * @see FlightStatsEntry#setDispatchLegs(int)
+	 */
+	public int getDispatchLegs() {
+		return _dispatchLegs;
 	}
 	
 	/**
@@ -156,6 +166,15 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 */
 	public void setACARSLegs(int legs) {
 		_acarsLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of Dispatch legs linked to this entry.
+	 * @param legs the number of legs logged using ACARS Dispatch
+	 * @see FlightStatsEntry#getDispatchLegs()
+	 */
+	public void setDispatchLegs(int legs) {
+		_dispatchLegs = legs;
 	}
 	
 	/**

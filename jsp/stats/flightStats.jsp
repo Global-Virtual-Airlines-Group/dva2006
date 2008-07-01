@@ -33,14 +33,10 @@ return true;
 <view:table className="view" pad="default" space="default" cmd="flightstats">
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS</td>
- <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
+ <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" /></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
-<!-- Table Footer Bar -->
-<tr class="title">
- <td colspan="9"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
-</tr>
 </view:table>
 </el:form>
 <br />
