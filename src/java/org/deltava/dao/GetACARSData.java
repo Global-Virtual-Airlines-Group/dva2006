@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -301,15 +301,14 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-					+ "C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(P.REPORT_TIME) FROM acars.CONS C LEFT JOIN acars.FLIGHTS F "
-					+ "ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) WHERE (C.ID=?) GROUP BY C.ID");
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
+					+ "C.CLIENT_BUILD, C.BETA_BUILD, COUNT(DISTINCT F.ID), COUNT(P.REPORT_TIME) FROM acars.CONS C "
+					+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) "
+					+ "WHERE (C.ID=?) GROUP BY C.ID LIMIT 1");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
 			List<ConnectionEntry> results = executeConnectionInfo();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -414,8 +413,7 @@ public class GetACARSData extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		ResultSetMetaData md = rs.getMetaData();
-		boolean hasMessageCounts = (md.getColumnCount() > 7);
+		boolean hasMessageCounts = (rs.getMetaData().getColumnCount() > 8);
 
 		// Iterate through the results
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
@@ -426,9 +424,10 @@ public class GetACARSData extends DAO {
 			entry.setRemoteAddr(rs.getString(4));
 			entry.setRemoteHost(rs.getString(5));
 			entry.setClientBuild(rs.getInt(6));
+			entry.setBeta(rs.getInt(7));
 			if (hasMessageCounts) {
-				entry.setFlightInfoCount(rs.getInt(7));
-				entry.setPositionCount(rs.getInt(8));
+				entry.setFlightInfoCount(rs.getInt(8));
+				entry.setPositionCount(rs.getInt(9));
 			}
 
 			// Add to results

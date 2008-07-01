@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -92,8 +92,9 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(P.FLIGHT_ID) FROM acars.CONS C "
-				+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID)");
+				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, COUNT(DISTINCT F.ID), COUNT(P.FLIGHT_ID) "
+				+ "FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P "
+				+ "ON (F.ID=P.FLIGHT_ID)");
 
 		// Add the terms
 		if (!terms.isEmpty()) {
@@ -135,10 +136,10 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	public List<ConnectionEntry> getUnusedConnections(int cutoff) throws DAOException {
 		try {
 			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-					+ "C.CLIENT_BUILD, COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM acars.CONS C "
-					+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) "
-					+ "WHERE (C.DATE < DATE_SUB(NOW(), INTERVAL ? HOUR)) GROUP BY C.ID HAVING (FC=0) AND (PC=0) "
-					+ "ORDER BY C.DATE");
+					+ "C.CLIENT_BUILD, C.BETA_BUILD, COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM "
+					+ "acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON "
+					+ "(F.ID=P.FLIGHT_ID) WHERE (C.DATE < DATE_SUB(NOW(), INTERVAL ? HOUR)) GROUP BY C.ID "
+					+ "HAVING (FC=0) AND (PC=0) ORDER BY C.DATE");
 			_ps.setInt(1, cutoff);
 			return executeConnectionInfo();
 		} catch (SQLException se) {
