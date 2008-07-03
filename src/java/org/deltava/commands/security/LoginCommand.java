@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -130,11 +130,13 @@ public class LoginCommand extends AbstractCommand {
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
 			cData.setPassword(ctx.getParameter("pwd"));
 			cData.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-			ctx.getResponse().addCookie(SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, cData));
-
-			// Save screen resolution
-			cData.setScreenSize(StringUtils.parse(ctx.getParameter("screenX"), 1024), StringUtils.parse(ctx
-					.getParameter("screenY"), 768));
+			cData.setScreenSize(StringUtils.parse(ctx.getParameter("screenX"), 1024), StringUtils.parse(ctx.getParameter("screenY"), 768));
+			
+			// Encode the encrypted data via Base64
+			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
+			c.setMaxAge(-1);
+			c.setPath("/");
+			ctx.getResponse().addCookie(c);
 
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
@@ -247,7 +249,7 @@ public class LoginCommand extends AbstractCommand {
 			lnc.setMaxAge(0);
 			ctx.getResponse().addCookie(lnc);
 		}
-
+		
 		// Mark us as complete
 		result.setURL("cookieCheck.do");
 		result.setType(CommandResult.REDIRECT);

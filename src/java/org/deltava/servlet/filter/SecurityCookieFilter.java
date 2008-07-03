@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -18,12 +18,13 @@ import org.deltava.dao.*;
 import org.deltava.jdbc.ConnectionPool;
 
 import org.deltava.security.*;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -32,7 +33,7 @@ import org.deltava.util.system.SystemData;
 public class SecurityCookieFilter implements Filter {
 
 	private static final Logger log = Logger.getLogger(SecurityCookieFilter.class);
-
+	
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message and saves the servlet context.
 	 * @param cfg the Filter Configuration
@@ -70,7 +71,7 @@ public class SecurityCookieFilter implements Filter {
 	/**
 	 * Helper method to load a Person from the database.
 	 */
-	private Person loadPersonFromDatabase(String dN) {
+	private Pilot loadPersonFromDatabase(String dN) {
 
 		// Get the connection pool
 		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
@@ -84,8 +85,11 @@ public class SecurityCookieFilter implements Filter {
 			p = dao.getFromDirectory(dN);
 			
 			// Populate online/ACARS legs
-			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			if (p != null) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			} else
+				log.error("Unknown Pilot - " + dN);
 		} catch (DAOException de) {
 			log.error("Error loading " + dN + " - " + de.getMessage(), de);
 		} finally {
@@ -111,7 +115,7 @@ public class SecurityCookieFilter implements Filter {
 
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, CommandContext.AUTH_COOKIE_NAME);
-		if ((authCookie == null) || (authCookie.length() < 10)) {
+		if (StringUtils.isEmpty(authCookie)) {
 			fc.doFilter(req, rsp);
 			return;
 		}
@@ -127,7 +131,7 @@ public class SecurityCookieFilter implements Filter {
 
 		// Get the user attribute
 		HttpSession s = hreq.getSession(true);
-		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+		Pilot p = (Pilot) s.getAttribute(CommandContext.USER_ATTR_NAME);
 		if (UserPool.isBlocked(p))
 			p = null;
 
@@ -139,8 +143,9 @@ public class SecurityCookieFilter implements Filter {
 
 			// Make sure that the pilot is still active
 			if (p != null) {
-				if ((p instanceof Pilot) && (p.getStatus() == Pilot.ACTIVE)) {
+				if (p.getStatus() == Pilot.ACTIVE) {
 					s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+					log.info("Restored " + p.getName() + " from Security Cookie");
 
 					// Check if we are a superUser impersonating someone
 					Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
