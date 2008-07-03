@@ -33,10 +33,16 @@ public class MockPageContext extends PageContext {
         throw new UnsupportedOperationException();
     }
     
+    public javax.el.ELContext getELContext() {
+    	throw new UnsupportedOperationException();
+    }
+    
+    @Deprecated
     public VariableResolver getVariableResolver() {
         throw new UnsupportedOperationException();
     }
     
+    @Deprecated
     public ExpressionEvaluator getExpressionEvaluator() {
         throw new UnsupportedOperationException();
     }
@@ -73,7 +79,7 @@ public class MockPageContext extends PageContext {
         throw new UnsupportedOperationException();
     }
 
-    public Enumeration getAttributeNamesInScope(int arg0) {
+    public Enumeration<String> getAttributeNamesInScope(int arg0) {
         throw new UnsupportedOperationException();
     }
 
