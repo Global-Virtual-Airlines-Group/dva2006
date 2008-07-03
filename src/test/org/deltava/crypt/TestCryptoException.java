@@ -10,14 +10,6 @@ public class TestCryptoException extends TestCase {
         return new CoverageDecorator(TestCryptoException.class, new Class[] { CryptoException.class } );
     }    
     
-    public void testMessage() {
-        try {
-            throw new CryptoException("MSG");
-        } catch (CryptoException ce) {
-            assertEquals("MSG", ce.getMessage());
-        }
-    }
-    
     public void testCause() {
         Exception e = new NullPointerException();
         

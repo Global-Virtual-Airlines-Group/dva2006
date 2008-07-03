@@ -50,7 +50,12 @@ public final class SecurityCookieGenerator {
 		String rawToken = null;
 		try {
 			byte[] encData = Base64.decode(cookieText);
-			rawToken = new String(_encryptor.decrypt(encData), "UTF-8");
+			try {
+				rawToken = new String(_encryptor.decrypt(encData), "UTF-8");
+			} catch (CryptoException ce) {
+				if (ce.getPayload() instanceof byte[])
+					throw new SecurityException("Cannot decode " + new String((byte[]) ce.getPayload(), "UTF-8"), ce.getCause());
+			}
 		} catch (UnsupportedEncodingException uee) {
 			throw new SecurityException("UTF-8 not available");
 		}
