@@ -28,7 +28,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 	    d1.setRemoteAddr("127.0.0.1");
 	    d1.setExpiryDate(now);
 	    
-	    Cookie c = SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, d1);
+	    Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(d1));
 		assertEquals(CommandContext.AUTH_COOKIE_NAME, c.getName());
 		assertNotNull(c.getValue());
 		assertEquals(1, c.getVersion());
@@ -51,7 +51,7 @@ public class TestSecurityCookieGenerator extends TestCase {
 	    d1.setRemoteAddr("127.0.0.1");
 	    d1.setExpiryDate(now);
 	    
-	    Cookie c = SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, d1);
+	    Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(d1));
 		assertEquals(CommandContext.AUTH_COOKIE_NAME, c.getName());
 		assertNotNull(c.getValue());
 
