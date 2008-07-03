@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app id="dva2006" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="dva2006" version="2.5" xmlns="http://java.sun.com/xml/ns/j2ee" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
 	<display-name>Delta Virtual Airlines 2006</display-name>
 	<description>Delta Virtual Airlines web site</description>
 
@@ -19,7 +19,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<filter-class>org.deltava.servlet.filter.BrowserTypeFilter</filter-class>
 		<init-param>
 			<param-name>default</param-name>
-			<param-value>MSIE 6.0</param-value>
+			<param-value>MSIE 7.0</param-value>
 		</init-param>
 	</filter>
 
@@ -76,7 +76,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<servlet>
 		<servlet-name>flightPlan</servlet-name>
 		<servlet-class>org.deltava.servlet.FlightPlanServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
+		<load-on-startup>4</load-on-startup>
 	</servlet>
 	
 	<!-- Library Donwload servlet -->
