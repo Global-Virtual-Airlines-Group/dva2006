@@ -90,10 +90,8 @@ public abstract class SecretKeyEncryptor {
         try {
             _cipher.init(Cipher.DECRYPT_MODE, _key);
             return _cipher.doFinal(data);
-        } catch (IllegalBlockSizeException ibse) {
-        	throw new CryptoException("Cannot decrypt [" + new String(data) + "]", ibse);
         } catch (Exception e) {
-            throw new CryptoException("Cannot decrypt data", e);
+            throw new CryptoException("Cannot decrypt data", e, data);
         }
     }
 }
