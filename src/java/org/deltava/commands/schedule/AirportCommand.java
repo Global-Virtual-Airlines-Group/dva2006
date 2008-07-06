@@ -201,11 +201,10 @@ public class AirportCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the Airport. <i>NOT IMPLEMENTED </i>
+	 * Callback method called when reading the Airport. <i>NOT IMPLEMENTED - Edits the Airport</i>
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }
