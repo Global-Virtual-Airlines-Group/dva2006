@@ -112,7 +112,12 @@
 <c:set var="pilot" value="${pilots[ride.pilotID]}" scope="request" />
 <tr>
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
- <td><el:cmdbutton url="crview" linkID="${ride.hexID}" label="SCORE" /></td>
+<c:if test="${ride.flightID > 0}">
+ <td><el:cmd url="crview" link="${ride}" className="pri small bld">SCORE</el:cmd></td>
+</c:if>
+<c:if test="${ride.flightID == 0}">
+ <td class="small">INCOMPLETE</td>
+</c:if>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
  <td class="sec">${ride.aircraftType}</td>
  <td class="small left">${ride.comments}</td>
