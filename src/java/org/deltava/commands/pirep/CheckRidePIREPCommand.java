@@ -50,7 +50,7 @@ public class CheckRidePIREPCommand extends AbstractCommand {
          // Get the DAO and the ACARS Flight Report
          GetFlightReports dao = new GetFlightReports(con);
          ACARSFlightReport afr = dao.getACARS(ud.getDB(), cr.getFlightID());
-         if (afr == null)
+         if ((afr == null) || (cr.getFlightID() == 0))
             throw notFoundException("Invalid ACARS Flight ID - " + cr.getFlightID());
          
          // Save the flight ID - we'll pass this to the PIREP command
