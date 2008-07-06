@@ -11,13 +11,13 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.crypt.*;
+import org.deltava.security.*;
 
 import org.deltava.commands.CommandContext;
 
 import org.deltava.dao.*;
 import org.deltava.jdbc.ConnectionPool;
 
-import org.deltava.security.*;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -34,6 +34,8 @@ public class SecurityCookieFilter implements Filter {
 
 	private static final Logger log = Logger.getLogger(SecurityCookieFilter.class);
 	
+	private ConnectionPool _jdbcPool;
+	
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message and saves the servlet context.
 	 * @param cfg the Filter Configuration
@@ -47,7 +49,9 @@ public class SecurityCookieFilter implements Filter {
 		} catch (CryptoException ce) {
 			throw new ServletException("Error Initializing Security Cookie key", ce);
 		}
-
+		
+		// Initialize the JDBC Connection pool
+		_jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		log.info("Started");
 	}
 
@@ -73,12 +77,10 @@ public class SecurityCookieFilter implements Filter {
 	 */
 	private Pilot loadPersonFromDatabase(String dN) {
 
-		// Get the connection pool
-		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		Connection con = null;
 		Pilot p = null;
 		try {
-			con = pool.getConnection(true);
+			con = _jdbcPool.getConnection(true);
 
 			// Get the person
 			GetPilotDirectory dao = new GetPilotDirectory(con);
@@ -93,13 +95,40 @@ public class SecurityCookieFilter implements Filter {
 		} catch (DAOException de) {
 			log.error("Error loading " + dN + " - " + de.getMessage(), de);
 		} finally {
-			pool.release(con);
+			_jdbcPool.release(con);
 		}
 
 		// Return the person
 		return p;
 	}
-
+	
+	/**
+	 * Helper method to revalidate a user's credentials.
+	 */
+	private boolean authenticate(Pilot p, String pwd) {
+		
+		// Get the authenticator and validate the password
+		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+		Connection con = null; boolean isOK = false;
+		try {
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				sqlAuth.authenticate(p, pwd);
+				sqlAuth.clearConnection();
+			} else
+				auth.authenticate(p, pwd);
+			
+			isOK = true;
+		} catch (SecurityException se) {
+			log.error("Cannot reauthenticate " + p.getName());
+		} finally {
+			_jdbcPool.release(con);
+		}
+		
+		return isOK;
+	}
+	
 	/**
 	 * Called by the servlet container on each request. Repopulates the session if a cookie is found.
 	 * @param req the Servlet Request
@@ -110,8 +139,9 @@ public class SecurityCookieFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
-		// Cast the request since we are doing stuff with it
+		// Cast the request/response since we are doing stuff with them
 		HttpServletRequest hreq = (HttpServletRequest) req;
+		HttpServletResponse hrsp = (HttpServletResponse) rsp;
 
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, CommandContext.AUTH_COOKIE_NAME);
@@ -125,15 +155,22 @@ public class SecurityCookieFilter implements Filter {
 		try {
 			cData = SecurityCookieGenerator.readCookie(authCookie);
 		} catch (Exception e) {
-			log.error("Error decrypting security cookie - " + e.getMessage(), e);
-			((HttpServletResponse) rsp).addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " - " + e.getMessage());
+			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 		}
 
-		// Get the user attribute
+		// Get the user attribute and/ or reauthenticate the user
 		HttpSession s = hreq.getSession(true);
 		Pilot p = (Pilot) s.getAttribute(CommandContext.USER_ATTR_NAME);
-		if (UserPool.isBlocked(p))
+		if (UserPool.isBlocked(p)) {
+			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 			p = null;
+		} else if (hreq.isRequestedSessionIdFromURL()) {
+			log.warn(req.getRemoteHost() + " attempting to create HTTP session via URL");
+			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+			s.invalidate();
+			p = null;
+		}
 
 		// Load the user
 		if ((p == null) && (cData != null)) {
@@ -144,15 +181,20 @@ public class SecurityCookieFilter implements Filter {
 			// Make sure that the pilot is still active
 			if (p != null) {
 				if (p.getStatus() == Pilot.ACTIVE) {
-					s.setAttribute(CommandContext.USER_ATTR_NAME, p);
-					log.info("Restored " + p.getName() + " from Security Cookie");
-
-					// Check if we are a superUser impersonating someone
-					Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
-					UserPool.add((su != null) ? su : p, s.getId());
+					if (authenticate(p, cData.getPassword())) {
+						s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+						log.info("Restored " + p.getName() + " from Security Cookie");
+						
+						// Check if we are a superUser impersonating someone
+						Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
+						UserPool.add((su != null) ? su : p, s.getId());
+					} else {
+						log.error("Cannot re-authenticate " + p.getName());
+						hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+					}
 				} else {
 					log.warn(p.getName() + " status = " + p.getStatusName());
-					((HttpServletResponse) rsp).addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+					hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 					s.invalidate();
 				}
 			}
