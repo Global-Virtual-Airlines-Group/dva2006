@@ -39,9 +39,8 @@ public final class SecurityCookieGenerator {
 	 * Parses a supplied security cookie value into its component parts. 
 	 * @param cookieText the Security Cookie value
 	 * @throws SecurityException if the cookie contains invalid data
-	 * @throws CryptoException if the decryption failed
 	 */
-	public static SecurityCookieData readCookie(String cookieText) {
+	public static SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
 		// Decode the Base64 data
 		if (!cookieText.endsWith("="))
@@ -57,7 +56,7 @@ public final class SecurityCookieGenerator {
 					throw new SecurityException("Cannot decode " + new String((byte[]) ce.getPayload(), "UTF-8"), ce.getCause());
 			}
 		} catch (UnsupportedEncodingException uee) {
-			throw new SecurityException("UTF-8 not available");
+			throw new SecurityException("UTF-8 not available", uee);
 		}
 		
 		// Check that it decrypted properly
