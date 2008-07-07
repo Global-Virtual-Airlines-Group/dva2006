@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import javax.servlet.http.*;
@@ -13,7 +13,7 @@ import org.deltava.security.UserPool;
 /**
  * An HTTP session listener to track serialization of User sessions.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 				return;
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId());
+			UserPool.add(p, s.getId(), "Unknown");
 		} catch (IllegalStateException ise) {
 			System.out.println("Attempting to restore invalid Session");
 		}

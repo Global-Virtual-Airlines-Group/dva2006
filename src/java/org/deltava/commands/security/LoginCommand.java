@@ -192,7 +192,7 @@ public class LoginCommand extends AbstractCommand {
 				s.setAttribute("next_url", "home.do");
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId());
+			UserPool.add(p, s.getId(), ctx.getRequest().getHeader("user-agent"));
 
 			// Commit the transaction
 			ctx.commitTX();
