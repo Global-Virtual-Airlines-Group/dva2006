@@ -1,20 +1,22 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.deltava.beans.*;
 
 /**
  * A singleton class for tracking connected and blocked users.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class UserPool {
 
-	private static final Map<Integer, UserSessionWrapper> _users = new TreeMap<Integer, UserSessionWrapper>();
+	private static final ConcurrentMap<Integer, UserSession> _users = 
+		new ConcurrentHashMap<Integer, UserSession>();
 	private static final Collection<Integer> _blockedUsers = Collections.synchronizedSet(new HashSet<Integer>());
 	
 	private static int _maxSize;
@@ -24,15 +26,17 @@ public class UserPool {
 	private UserPool() {
 	}
 
-	private static class UserSessionWrapper {
+	private static class UserSession implements Comparable<UserSession> {
 
 		private String _sessionID;
+		private String _userAgent;
 		private Person _p;
 
-		public UserSessionWrapper(Person p, String sessionID) {
+		public UserSession(Person p, String sessionID, String userAgent) {
 			super();
 			_p = p;
 			_sessionID = sessionID;
+			_userAgent = userAgent;
 		}
 
 		public Person getPerson() {
@@ -42,6 +46,22 @@ public class UserPool {
 		public String getSessionID() {
 			return _sessionID;
 		}
+		
+		public String getUserAgent() {
+			return _userAgent;
+		}
+		
+		public int hashCode() {
+			return _p.hashCode();
+		}
+		
+		public String toString() {
+			return _p.getName();
+		}
+		
+		public int compareTo(UserSession usr2) {
+			return _p.compareTo(usr2._p);
+		}
 	}
 
 	/**
@@ -49,11 +69,12 @@ public class UserPool {
 	 * explanation of why we add the session ID.
 	 * @param p the Person to add
 	 * @param sessionID the session ID
+	 * @param userAgent the User-Agent header
 	 * @see UserPool#remove(Person, String)
 	 */
-	public synchronized static void add(Person p, String sessionID) {
+	public static void add(Person p, String sessionID, String userAgent) {
 		if ((p != null) && (!isBlocked(p))) {
-			UserSessionWrapper uw = new UserSessionWrapper(p, sessionID);
+			UserSession uw = new UserSession(p, sessionID, userAgent);
 			_users.put(new Integer(p.getID()), uw);
 			if (_users.size() >= _maxSize) {
 				_maxSize = _users.size();
@@ -80,8 +101,8 @@ public class UserPool {
 	 * @param sessionID the session ID to match
 	 * @see UserPool#add(Person, String)
 	 */
-	public synchronized static void remove(Person p, String sessionID) {
-		UserSessionWrapper uw = _users.get(p.cacheKey());
+	public static void remove(Person p, String sessionID) {
+		UserSession uw = _users.get(p.cacheKey());
 		if ((uw != null) && (sessionID.equals(uw.getSessionID())))
 			_users.remove(p.cacheKey());
 	}
@@ -93,7 +114,7 @@ public class UserPool {
 	 * @see Pilot#getID()
 	 * @see UserPool#isBlocked(Person)
 	 */
-	public synchronized static boolean contains(int userID) {
+	public static boolean contains(int userID) {
 		return _users.containsKey(new Integer(userID));
 	}
 	
@@ -110,15 +131,15 @@ public class UserPool {
 	}
 
 	/**
-	 * Returns all logged in Pilots.
-	 * @return a Collection of Pilots
+	 * Returns all logged in Pilots and their browser types.
+	 * @return a Map of user agents, keyed by Pilot
 	 */
-	public static synchronized Collection<Pilot> getPilots() {
-		Collection<Pilot> results = new LinkedHashSet<Pilot>();
-		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
-			UserSessionWrapper uw = i.next();
+	public static Map<Pilot, String> getPilots() {
+		Map<Pilot, String> results = new TreeMap<Pilot, String>();
+		for (Iterator<UserSession> i = _users.values().iterator(); i.hasNext();) {
+			UserSession uw = i.next();
 			if (uw.getPerson() instanceof Pilot)
-				results.add((Pilot) uw.getPerson());
+				results.put((Pilot) uw.getPerson(), uw.getUserAgent());
 		}
 
 		return results;
@@ -128,7 +149,7 @@ public class UserPool {
 	 * Returns the number of logged-in users.
 	 * @return the number of concurrent users
 	 */
-	public static synchronized int getSize() {
+	public static int getSize() {
 		return _users.size();
 	}
 	

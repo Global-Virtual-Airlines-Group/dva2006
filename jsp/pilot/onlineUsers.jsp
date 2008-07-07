@@ -33,9 +33,9 @@ return true;
 <el:form action="users.do" method="get" validate="return false">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td colspan="5" class="left caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
+ <td colspan="5" class="left caps"><fmt:int value="${fn:sizeof(fn:keys(pilots))}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
- <td colspan="2" class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void sortBy(this)" /></td>
+ <td class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void sortBy(this)" /></td>
 </tr>
 
 <!-- Pilot Title Bar -->
@@ -49,7 +49,8 @@ return true;
 </tr>
 
 <!-- Pilot Data Bar -->
-<c:forEach var="pilot" items="${pilots}">
+<c:forEach var="pilot" items="${fn:keys(pilots)}">
+<c:set var="userAgent" value="${pilots[pilot]}" scope="request" />
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
@@ -58,19 +59,20 @@ return true;
  <td>${pilot.location}</td>
  <td class="small"><fmt:date date="${pilot.createdOn}" fmt="d" d="EEEE MMMM dd, yyyy" /></td>
 </tr>
-<content:filter roles="Admin,HR">
+<content:filter roles="HR">
 <tr>
- <td colspan="6">Logged in since <fmt:date date="${pilot.lastLogin}" />, from ${pilot.loginHost}.</td>
+ <td colspan="6">Logged in since <fmt:date date="${pilot.lastLogin}" />, from <b>${pilot.loginHost}</b><br />
+<span class="small">${userAgent}</span></td>
 </tr>
 </content:filter>
 </c:forEach>
 <c:if test="${empty pilots}">
 <tr>
- <td colspan="7" class="pri bld">NO CURRENTLY LOGGED IN WEB SITE USERS</td>
+ <td colspan="6" class="pri bld">NO CURRENTLY LOGGED IN WEB SITE USERS</td>
 </tr>
 </c:if>
 <tr class="title">
- <td colspan="7">&nbsp;</td>
+ <td colspan="6">&nbsp;</td>
 </tr>
 </el:table>
 </el:form>
