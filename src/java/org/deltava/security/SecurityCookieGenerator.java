@@ -43,7 +43,7 @@ public final class SecurityCookieGenerator {
 	public static SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
 		// Decode the Base64 data
-		if (!cookieText.endsWith("="))
+		while ((cookieText.length() & 0x3) > 0)
 			cookieText += "=";
 			
 		String rawToken = null;
@@ -52,8 +52,7 @@ public final class SecurityCookieGenerator {
 			try {
 				rawToken = new String(_encryptor.decrypt(encData), "UTF-8");
 			} catch (CryptoException ce) {
-				if (ce.getPayload() instanceof byte[])
-					throw new SecurityException("Cannot decode " + new String((byte[]) ce.getPayload()), ce.getCause());
+				throw new SecurityException("Cannot decode Security Cookie (size=" + encData.length + ")", ce.getCause());
 			}
 		} catch (UnsupportedEncodingException uee) {
 			throw new SecurityException("UTF-8 not available", uee);
