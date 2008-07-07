@@ -155,7 +155,8 @@ public class SecurityCookieFilter implements Filter {
 		try {
 			cData = SecurityCookieGenerator.readCookie(authCookie);
 		} catch (Exception e) {
-			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " - " + e.getMessage());
+			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " 
+					+ hreq.getHeader("user-agent") + " - " + e.getMessage());
 			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 		}
 
@@ -187,7 +188,7 @@ public class SecurityCookieFilter implements Filter {
 						
 						// Check if we are a superUser impersonating someone
 						Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
-						UserPool.add((su != null) ? su : p, s.getId());
+						UserPool.add((su != null) ? su : p, s.getId(), hreq.getHeader("user-agent"));
 					} else {
 						log.error("Cannot re-authenticate " + p.getName());
 						hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
