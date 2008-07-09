@@ -99,7 +99,7 @@ public class UserPool {
 	 * remove the user from the pool.
 	 * @param p the Person to remove
 	 * @param sessionID the session ID to match
-	 * @see UserPool#add(Person, String)
+	 * @see UserPool#add(Person, String, String)
 	 */
 	public static void remove(Person p, String sessionID) {
 		UserSession uw = _users.get(p.cacheKey());
