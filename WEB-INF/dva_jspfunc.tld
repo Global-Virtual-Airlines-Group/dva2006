@@ -441,4 +441,25 @@
 		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
 		<function-signature>boolean isEMailValid(java.lang.String)</function-signature>
 	</function>
+
+	<!-- Check if a Person is an Applicant -->
+	<function>
+		<name>isApplicant</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>boolean isApplicant(org.deltava.beans.Person)</function-signature>
+	</function>
+
+	<!-- Check if a Person is a Pilot -->
+	<function>
+		<name>isPilot</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>boolean isPilot(org.deltava.beans.Person)</function-signature>
+	</function>
+
+	<!-- Check if a Person is a Suspended Pilot -->
+	<function>
+		<name>isSuspended</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>boolean isSuspended(org.deltava.beans.Person)</function-signature>
+	</function>
 </taglib>
