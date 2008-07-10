@@ -16,16 +16,20 @@ import org.deltava.dao.*;
 import org.deltava.security.command.ApplicantAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class ApplicantCommand extends AbstractFormCommand {
+	
+	private static final Cache<CacheableMap<Integer, UserData>> _cache = 
+		new ExpiringCache<CacheableMap<Integer,UserData>>(12, 3600);
 
 	/**
 	 * Callback method called when saving the profile.
@@ -65,6 +69,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 			a.setLegacyURL(ctx.getParameter("legacyURL"));
 			a.setLegacyVerified("1".equals(ctx.getParameter("legacyOK")));
+			a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0d));
 			a.setHomeAirport(ctx.getParameter("homeAirport"));
 			a.setEmailAccess(Person.AUTH_EMAIL);
 			a.setDateFormat(ctx.getParameter("df"));
@@ -78,13 +83,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Save hire fields
 			a.setEquipmentType(ctx.getParameter("eqType"));
 			a.setRank(ctx.getParameter("rank"));
-
-			// Parse legacy hours
-			try {
-				a.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
-			} catch (NumberFormatException nfe) {
-				a.setLegacyHours(0.0);
-			}
 
 			// Set Notification Options
 			Collection<String> notifyOptions = ctx.getParameters("notifyOption");
@@ -219,8 +217,13 @@ public class ApplicantCommand extends AbstractFormCommand {
 			ctx.setAttribute("eMailValid", Boolean.valueOf(avdao.isValid(a.getID())), REQUEST);
 
 			// Do a soundex and netmask check on the applicant
-			UserDataMap udmap = soundexCheck(a, con, ctx);
-			udmap.putAll(netmaskCheck(a, con, ctx));
+			CacheableMap<Integer, UserData> udmap = _cache.get(Integer.valueOf(a.getID()));
+			if (udmap == null) {
+				udmap = new CacheableMap<Integer, UserData>(Integer.valueOf(a.getID())); 
+				udmap.putAll(soundexCheck(a, con, ctx));
+				udmap.putAll(netmaskCheck(a, con, ctx));
+				_cache.add(udmap);
+			}
 			ctx.setAttribute("userData", udmap, REQUEST);
 
 			// Get the questionnaire
@@ -260,9 +263,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		String netMask = "255.255.255.0";
 		try {
 			InetAddress addr = InetAddress.getByName(a.getRegisterAddress());
-			if (addr.getAddress()[0] < 128)
-				netMask = "255.192.0.0";
-			else if (addr.getAddress()[0] < 192)
+			if (addr.getAddress()[0] < 192)
 				netMask = "255.255.0.0";
 			
 			// Apply the netmask
@@ -310,8 +311,9 @@ public class ApplicantCommand extends AbstractFormCommand {
 		// Save the persons in the request
 		List<Person> users = new ArrayList<Person>(persons.values());
 		Collections.sort(users, new PersonComparator<Person>(PersonComparator.CREATED));
-		if (users.size() > 25)
-			users.subList(0, users.size() - 25).clear();
+		Collections.reverse(users);
+		if (users.size() > 55)
+			users.subList(0, users.size() - 55).clear();
 		
 		ctx.setAttribute("netmaskUsers", users, REQUEST);
 		return udmap;
@@ -359,13 +361,15 @@ public class ApplicantCommand extends AbstractFormCommand {
 			Person p = i.next();
 			if (p instanceof Applicant) {
 				Applicant ap = (Applicant) p;
-				if (persons.keySet().contains(new Integer(ap.getPilotID())))
+				if (persons.containsKey(new Integer(ap.getPilotID())))
 					i.remove();
 			}
 		}
 
 		// Save the persons in the request
-		Collection<Person> users = new TreeSet<Person>(new PersonComparator<Person>(PersonComparator.CREATED));
+		AbstractComparator<Person> cmp = new PersonComparator<Person>(PersonComparator.CREATED);
+		cmp.setReverseSort(true);
+		Collection<Person> users = new TreeSet<Person>(cmp);
 		users.addAll(persons.values());
 		ctx.setAttribute("soundexUsers", users, REQUEST);
 		return udmap;

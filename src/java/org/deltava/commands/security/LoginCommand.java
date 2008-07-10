@@ -118,7 +118,15 @@ public class LoginCommand extends AbstractCommand {
 				returnToActive = true;
 				p.setStatus(Pilot.ACTIVE);
 			} else if (p.getStatus() != Pilot.ACTIVE) {
-				log.warn(p.getName() + " status = " + p.getStatusName());
+				if (p.getStatus() == Pilot.SUSPENDED) {
+					log.warn(p.getName() + " status = Suspended, setting cookie");
+					Cookie wc = new Cookie("dvaAuthStatus", StringUtils.formatHex(p.getID()));
+					wc.setPath("/");
+					wc.setMaxAge(86400);
+					ctx.getResponse().addCookie(wc);
+				} else
+					log.warn(p.getName() + " status = " + p.getStatusName());
+				
 				throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
 			}
 
@@ -246,6 +254,14 @@ public class LoginCommand extends AbstractCommand {
 			Cookie lnc = new Cookie("dva_lname", "");
 			lnc.setMaxAge(0);
 			ctx.getResponse().addCookie(lnc);
+		}
+		
+		// Clear warning cookie if valid
+		if (ctx.getCookie("dvaAuthStatus") != null) {
+			log.info("Resetting Suspended warning cookie");
+			Cookie wc = new Cookie("dvaAuthStatus", "");
+			wc.setMaxAge(0);
+			ctx.getResponse().addCookie(wc);
 		}
 		
 		// Mark us as complete

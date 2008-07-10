@@ -1,25 +1,52 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
-import org.deltava.beans.EMailAddress;
+import org.deltava.beans.*;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class PersonFunctions {
 
 	/**
-	 * Returns wether the supplied e-mail address is valid.
+	 * Returns whether the supplied e-mail address is valid.
 	 * @param addr the e-mail address
 	 * @return TRUE if the address is valid, otherwise FALSE
 	 */
 	public static boolean isEMailValid(String addr) {
 		return (!StringUtils.isEmpty(addr)) && (!EMailAddress.INVALID_ADDR.equals(addr));
+	}
+	
+	/**
+	 * Returns wheter the Person is an Applicant.
+	 * @param usr the Person
+	 * @return TRUE if an Applicant, otherwise FALSE 
+	 */
+	public static boolean isApplicant(Person usr) {
+		return ((usr != null) && (usr instanceof Applicant));
+	}
+	
+	/**
+	 * Returns wheter the Person is a Pilot.
+	 * @param usr the Person
+	 * @return TRUE if a Pilot, otherwise FALSE 
+	 */
+	public static boolean isPilot(Person usr) {
+		return ((usr != null) && (usr instanceof Pilot));
+	}
+	
+	/**
+	 * Returns wheter the Person is a Suspended Pilot.
+	 * @param usr the Person
+	 * @return TRUE if a Supended Pilot, otherwise FALSE
+	 */
+	public static boolean isSuspended(Person usr) {
+		return isPilot(usr) && (usr.getStatus() == Pilot.SUSPENDED);
 	}
 }
