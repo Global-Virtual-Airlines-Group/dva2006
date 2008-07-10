@@ -1,16 +1,18 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
 /**
- * A servlet filter to wrap HTTP servlet requests with a custom wrapper.
+ * A servlet filter to wrap HTTP servlet requests with a custom wrapper. This filter will
+ * also extract cookies into servlet request attributes.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -35,11 +37,23 @@ public class RequestWrapperFilter implements Filter {
      * @throws ServletException if a general error occurs
      */
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
-        // Invoke the next filter in the chain
-        if (req instanceof CustomRequestWrapper) {
+
+        if (req instanceof CustomRequestWrapper)
             fc.doFilter(req, rsp);
-        } else {
-            ServletRequest newReq = new CustomRequestWrapper((HttpServletRequest) req);
+        else {
+        	HttpServletRequest hreq = (HttpServletRequest) req;
+        	
+        	// Get cookies
+        	Cookie[] cookies = hreq.getCookies();
+        	if (cookies != null) {
+        		for (int x = 0; x < cookies.length; x++) {
+        			Cookie c = cookies[x];
+        			hreq.setAttribute("COOKIE$" + c.getName(), c);
+        		}
+        	}
+        	
+        	// Roll the request wrapper
+            ServletRequest newReq = new CustomRequestWrapper(hreq);
             fc.doFilter(newReq, rsp);
         }
     }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.SecurityContext;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  * @see Command
  */
@@ -249,12 +249,21 @@ public class CommandContext extends ConnectionContext implements SecurityContext
 	}
 
 	/**
-	 * Returns the value of an uploaded file object. The
-	 * @param fName the file name
+	 * Returns the value of an uploaded file object.
+	 * @param name the file name
 	 * @return the file data, or null if not found
 	 */
-	public FileUpload getFile(String fName) {
-		return (FileUpload) _req.getAttribute("FILE$" + fName);
+	public FileUpload getFile(String name) {
+		return (FileUpload) _req.getAttribute("FILE$" + name);
+	}
+	
+	/**
+	 * Returns an HTTP cookie.
+	 * @param name the cookie name
+	 * @return the cookie, or null if not found
+	 */
+	public Cookie getCookie(String name) {
+		return (Cookie) _req.getAttribute("COOKIE$" + name);
 	}
 
 	/**
