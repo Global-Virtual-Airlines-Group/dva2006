@@ -365,6 +365,21 @@
 		<name>googleAnalytics</name>
 		<tag-class>org.deltava.taglib.content.GoogleAnalyticsTag</tag-class>
 		<body-content>empty</body-content>
+		<attribute>
+			<name>url</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>custom</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
 
 	<!-- Page Layout Tag, for displaying regions as DIVs or TABLEs -->
