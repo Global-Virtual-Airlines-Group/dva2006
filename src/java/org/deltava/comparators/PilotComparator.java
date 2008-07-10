@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.Pilot;
@@ -6,10 +7,10 @@ import org.deltava.beans.Ranks;
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
- * @see PersonComparator
  */
+
 @SuppressWarnings("hiding")
 public class PilotComparator extends PersonComparator<Pilot> {
 
@@ -56,20 +57,17 @@ public class PilotComparator extends PersonComparator<Pilot> {
     
     private int comparePilotCodes(int pc1, int pc2) {
         // Handle the fact that unassinged pilots appear later in the list
-        if ((pc1 == 0) && (pc2 > 0)) {
+        if ((pc1 == 0) && (pc2 > 0))
             return 1;
-        } else if ((pc2 == 0) && (pc1 > 0)) {
+        else if ((pc2 == 0) && (pc1 > 0))
             return -1;
-        }
         
         // Do a regular comparison
-        return new Integer(pc1).compareTo(new Integer(pc2));
+        return Integer.valueOf(pc1).compareTo(Integer.valueOf(pc2));
     }
 
     /**
      * Compares two pilot objects by the designated criteria.
-     * @throws ClassCastException if either object is not a Pilot
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
     protected int compareImpl(Pilot p1, Pilot p2) {
         
@@ -77,25 +75,32 @@ public class PilotComparator extends PersonComparator<Pilot> {
         if (_comparisonType < PilotComparator.PILOTCODE)
             return super.compareImpl(p1, p2);
 
+        int tmpResult = 0;
         switch (_comparisonType) {
         		case PILOTCODE :
         		    return comparePilotCodes(p1.getPilotNumber(), p2.getPilotNumber());
         		    
         		case EQTYPE :
-        		    return p1.getEquipmentType().compareTo(p2.getEquipmentType());
+        		    tmpResult = p1.getEquipmentType().compareTo(p2.getEquipmentType());
+        		    break;
         		    
         		case RANK :
-        		    return new Integer(getRankValue(p1.getRank())).compareTo(new Integer(getRankValue(p2.getRank())));
+        		    tmpResult = Integer.valueOf(getRankValue(p1.getRank())).compareTo(Integer.valueOf(getRankValue(p2.getRank())));
+        		    break;
         		    
         		case LEGS :
-        		    return new Integer(p1.getLegs()).compareTo(new Integer(p2.getLegs()));
+        		    tmpResult = Integer.valueOf(p1.getLegs()).compareTo(Integer.valueOf(p2.getLegs()));
+        		    break;
         		    
         		case STATUS :
-        		    return new Integer(p1.getStatus()).compareTo(new Integer(p2.getStatus()));
+        		    tmpResult = Integer.valueOf(p1.getStatus()).compareTo(Integer.valueOf(p2.getStatus()));
+        		    break;
         		    
         		default :   
         		case HOURS :
         		    return new Double(p1.getHours()).compareTo(new Double(p2.getHours()));
         }
+        
+        return (tmpResult == 0) ? Integer.valueOf(p1.getID()).compareTo(Integer.valueOf(p2.getID())) : tmpResult;
     }
 }
