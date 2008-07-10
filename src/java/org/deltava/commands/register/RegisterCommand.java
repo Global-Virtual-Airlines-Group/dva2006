@@ -4,6 +4,8 @@ package org.deltava.commands.register;
 import java.util.*;
 import java.sql.Connection;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
@@ -142,7 +144,7 @@ public class RegisterCommand extends AbstractCommand {
 		String hostName = ctx.getRequest().getRemoteHost();
 		a.setRegisterAddress(ctx.getRequest().getRemoteAddr());
 		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? a.getRegisterAddress() : hostName);
-
+		
 		// Set Notification Options
 		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
 		if (notifyOptions != null) {
@@ -164,6 +166,36 @@ public class RegisterCommand extends AbstractCommand {
 		Pilot eMailFrom = null;
 		try {
 			Connection con = ctx.getConnection();
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			
+			// Check for Suspended User
+			StringBuilder buf = new StringBuilder();
+			Cookie wc = ctx.getCookie("dvaAuthStatus");
+			Cookie fn = ctx.getCookie("dva_fname");
+			if (wc != null) {
+				buf.append("Suspended Pilot: ");
+				try {
+					Pilot sp = pdao.get(StringUtils.parseHex(wc.getValue()));
+					buf.append(sp.getName());
+				} catch (Exception e) {
+					buf.append(wc.getValue());
+				} finally {
+					buf.append("\n");
+				}
+			}
+			if (fn != null) {
+				buf.append("PC used to login as: ");
+				buf.append(fn.getValue());
+				Cookie ln = ctx.getCookie("dva_lname");
+				if (ln != null) {
+					buf.append(' ');
+					buf.append(fn.getValue());
+				}
+			}
+			
+			// Add HR comments
+			if (buf.length() > 0)
+				a.setHRComments(buf.toString());
 
 			// Load the Registration blacklist
 			GetSystemData sysdao = new GetSystemData(con);
@@ -205,7 +237,6 @@ public class RegisterCommand extends AbstractCommand {
 			}
 
 			// Do address uniqueness check
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			if (checkAddr) {
 				GetUserData uddao = new GetUserData(con);
 				Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
