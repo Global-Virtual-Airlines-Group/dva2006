@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.util.CollectionUtils;
  * A class to support a map of {@link UserData} beans. This class implements Map to allow it to be accessed
  * directly via JSP Expression Language.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class UserDataMap implements Map {
+public class UserDataMap implements Map<Integer, UserData> {
 
 	private final Map<Integer, UserData> _entries = new HashMap<Integer, UserData>();
 
@@ -40,8 +40,8 @@ public class UserDataMap implements Map {
 	 * @param usr the UserData object
 	 * @return the entry
 	 */
-	public UserData put(Object id, Object usr) {
-		return _entries.put(new Integer(((UserData) usr).getID()), (UserData) usr);
+	public UserData put(Integer id, UserData usr) {
+		return _entries.put(new Integer(usr.getID()), usr);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class UserDataMap implements Map {
 	 * Removes an entry from the Map.
 	 * @return the removed UserData entry 
 	 */
-	public Object remove(Object obj) {
+	public UserData remove(Object obj) {
 		return _entries.remove(obj);
 	}
 	
