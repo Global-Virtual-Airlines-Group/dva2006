@@ -368,6 +368,8 @@ public class GetNavRoute extends GetNavData {
 				GeoLocation gl = i.next();
 				if (GeoUtils.distance(lastP, gl) > distance)
 					i.remove();
+				else
+					lastP = gl;
 			}
 		}
 
