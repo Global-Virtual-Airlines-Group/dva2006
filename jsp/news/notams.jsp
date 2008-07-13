@@ -33,10 +33,16 @@
 
 <!-- Table NOTAM Data -->
 <c:forEach var="notam" items="${viewContext.results}">
+<c:set var="ac" value="${accessMap[notam.ID]}" scope="request" />
 <view:row entry="${notam}">
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
  <td class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
+<c:if test="${ac.canEdit}">
  <td><el:cmd url="notamedit" link="${notam}"><fmt:text value="${notam.subject}" /></el:cmd></td>
+</c:if>
+<c:if test="${!ac.canEdit}"> 
+ <td><fmt:text value="${notam.subject}" /></td>
+</c:if>
 </view:row>
 <view:row entry="${notam}">
 <c:if test="${notam.isHTML}">

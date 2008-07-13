@@ -1,18 +1,20 @@
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.commands.*;
+import org.deltava.beans.Notice;
 
-import org.deltava.dao.GetNews;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.NewsAccessControl;
 
 /**
  * A Web Site Command to display Notices to Airmen (NOTAMs).
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -27,7 +29,7 @@ public class NOTAMCommand extends AbstractViewCommand {
 
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
-        boolean doActive = !"all".equals(ctx.getCmdParameter(Command.OPERATION, null));
+        boolean doActive = !"all".equals(ctx.getCmdParameter(OPERATION, null));
 
         try {
             Connection con = ctx.getConnection();
@@ -45,10 +47,20 @@ public class NOTAMCommand extends AbstractViewCommand {
             ctx.release();
         }
         
+        // Calculate access rights
+        Map<Integer, NewsAccessControl> accessMap = new HashMap<Integer, NewsAccessControl>();
+        for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
+        	Notice n = (Notice) i.next();
+        	NewsAccessControl access = new NewsAccessControl(ctx, n);
+        	access.validate();
+        	accessMap.put(new Integer(n.getID()), access);
+        }
+        
         // Save our access
         NewsAccessControl access = new NewsAccessControl(ctx, null);
         access.validate();
         ctx.setAttribute("access", access, REQUEST);
+        ctx.setAttribute("accessMap", accessMap, REQUEST);
         
         // Set the result page and return
         CommandResult result = ctx.getResult();

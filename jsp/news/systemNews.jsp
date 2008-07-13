@@ -31,9 +31,15 @@
 
 <!-- Table Pilot Data -->
 <c:forEach var="news" items="${viewContext.results}">
+<c:set var="ac" value="${accessMap[news.ID]}" scope="request" />
 <tr>
  <td class="priB"><fmt:date fmt="d" date="${news.date}" /></td>
+<c:if test="${ac.canEdit}">
  <td class="pri bld"><el:cmd url="newsedit" link="${news}">${news.subject}</el:cmd></td>
+</c:if>
+<c:if test="${!ac.canEdit}">
+ <td class="pri bld">${news.subject}</td>
+</c:if>
  <td class="secB">${news.authorName}</td>
 </tr>
 <tr>
