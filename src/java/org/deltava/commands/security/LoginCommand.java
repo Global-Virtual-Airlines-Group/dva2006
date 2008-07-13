@@ -239,12 +239,10 @@ public class LoginCommand extends AbstractCommand {
 
 			Cookie fnc = new Cookie("dva_fname", p.getFirstName());
 			fnc.setMaxAge(cookieAge);
-			fnc.setPath(ctx.getRequest().getRequestURI());
 			ctx.getResponse().addCookie(fnc);
 
 			Cookie lnc = new Cookie("dva_lname", p.getLastName());
 			lnc.setMaxAge(cookieAge);
-			lnc.setPath(ctx.getRequest().getRequestURI());
 			ctx.getResponse().addCookie(lnc);
 		} else {
 			Cookie fnc = new Cookie("dva_fname", "");
@@ -258,7 +256,7 @@ public class LoginCommand extends AbstractCommand {
 		
 		// Clear warning cookie if valid
 		if (ctx.getCookie("dvaAuthStatus") != null) {
-			log.info("Resetting Suspended warning cookie");
+			log.warn("Resetting Suspended warning cookie for " + p.getName());
 			Cookie wc = new Cookie("dvaAuthStatus", "");
 			wc.setMaxAge(0);
 			ctx.getResponse().addCookie(wc);
