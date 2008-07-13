@@ -1,9 +1,7 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
-
-import javax.servlet.http.*;
 
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -15,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a live ACARS Map.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -28,17 +26,15 @@ public class MapCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Check if we have a map center cookie set
-		String lat = getCookie(ctx.getRequest(), "acarsMapLat");
-		String lng = getCookie(ctx.getRequest(), "acarsMapLng");
-		
 		// Calcualte the settings cookie expiry date
 		Date expiryDate = CalendarUtils.adjust(new Date(), 180);
-		ctx.setAttribute("cookieExpiry", StringUtils.format(expiryDate, "yyyy, MM, dd"), REQUEST);
+		ctx.setAttribute("cookieExpiry", StringUtils.format(expiryDate, "yyyy, M, d"), REQUEST);
 
 		// Create the map center
 		GeoPosition gp = null;
 		try {
+			String lat = ctx.getCookie("acarsMapLat").getValue();
+			String lng = ctx.getCookie("acarsMapLng").getValue();
 			gp = new GeoPosition(Double.parseDouble(lat), Double.parseDouble(lng));
 		} catch (Exception e) {
 			gp = new GeoPosition(SystemData.getDouble("acars.livemap.lat", 40), SystemData.getDouble("acars.livemap.lng", -85));
@@ -58,22 +54,5 @@ public class MapCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL(isACARSClient ? "/jsp/acars/acarsClientMap.jsp" : "/jsp/acars/acarsMap.jsp");
 		result.setSuccess(true);
-	}
-
-	/**
-	 * Helper method to return the value of a particular cookie.
-	 */
-	private String getCookie(HttpServletRequest req, String name) {
-		Cookie[] cookies = req.getCookies();
-		if (cookies == null)
-			return null;
-
-		for (int x = 0; x < cookies.length; x++) {
-			Cookie c = cookies[x];
-			if (c.getName().equals(name))
-				return c.getValue();
-		}
-
-		return null;
 	}
 }
