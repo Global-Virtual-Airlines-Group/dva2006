@@ -54,6 +54,7 @@ should not be approved. The validation message may be resent from the Applicant 
 <br />
 To return to the Applicant questionnaire queue, <el:cmd url="questionnaires" className="sec bld">Click Here</el:cmd>.<br />
 To review this Applicant's profile, <el:cmd url="applicant" link="${applicant}" className="sec bld">Click Here</el:cmd>.<br />
+To return to the Applicant queue, <el:cmd url="applicants" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
