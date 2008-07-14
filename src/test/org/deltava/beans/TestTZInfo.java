@@ -1,6 +1,6 @@
 package org.deltava.beans;
 
-import java.util.TimeZone;
+import java.util.*;
 
 import org.hansel.CoverageDecorator;
 
@@ -93,5 +93,14 @@ public class TestTZInfo extends TestCase {
 		assertFalse(_wrapper.equals(w2));
 		assertFalse(_wrapper.equals(new Object()));
 		assertFalse(_wrapper.equals(null));
+	}
+	
+	public void testAvailableZones() {
+		Collection<String> IDs = Arrays.asList(TimeZone.getAvailableIDs());
+		for (Iterator<String> i = IDs.iterator(); i.hasNext(); ) {
+			String id = i.next();
+			TimeZone tz = TimeZone.getTimeZone(id);
+			System.out.println(id + " DST = " + (tz.getDSTSavings() > 0));
+		}
 	}
 }
