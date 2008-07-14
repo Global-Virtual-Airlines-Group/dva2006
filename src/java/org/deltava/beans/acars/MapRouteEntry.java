@@ -90,7 +90,7 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 		buf.append("</span> (Build ");
 		buf.append(_clientBuild);
 		if (_betaBuild > 0) {
-			buf.append("Beta ");
+			buf.append(" Beta ");
 			buf.append(_betaBuild);
 		}
 		
