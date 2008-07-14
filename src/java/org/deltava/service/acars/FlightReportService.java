@@ -77,8 +77,14 @@ public class FlightReportService extends WebService {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 
-		// Parse out the XML
+		// Parse out the XML and get the build
 		Element re = doc.getRootElement();
+		int clientBuild = StringUtils.parse(re.getAttributeValue("build"), 76);
+		
+		// Get aircraft information
+		Element ae = re.getChild("aircraft");
+		if ((ae == null) && (clientBuild > 92))
+			throw error(SC_BAD_REQUEST, "No Aircraft Information");
 
 		// Get the flight information
 		Element ie = re.getChild("info");
@@ -96,7 +102,8 @@ public class FlightReportService extends WebService {
 		ce.setStartTime(new Date());
 		ce.setRemoteHost(ctx.getRequest().getRemoteHost());
 		ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-		ce.setClientBuild(StringUtils.parse(re.getAttributeValue("build"), 76));
+		ce.setClientBuild(clientBuild);
+		ce.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 
 		// Build a flight data entry
 		FlightInfo inf = new FlightInfo(ce.getID());
@@ -175,8 +182,9 @@ public class FlightReportService extends WebService {
 		afr.setRemarks("OFFLINE PIREP: " + inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
-		afr.setFDE(ie.getChildTextTrim("fde"));
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
+		if (ae != null)
+			afr.setFDE(ae.getChildTextTrim("fde"));
 
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());
