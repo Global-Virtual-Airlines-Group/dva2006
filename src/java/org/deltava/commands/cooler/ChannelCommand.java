@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Collection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to maintain Discussion Forum channel profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -63,6 +63,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			// Update the channel from the request
 			c.setDescription(ctx.getParameter("desc"));
 			c.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			c.setAllowNewPosts(Boolean.valueOf(ctx.getParameter("allowNew")).booleanValue());
 			
 			// Get the DAO and write the channel
 			SetCoolerChannel wdao = new SetCoolerChannel(con);

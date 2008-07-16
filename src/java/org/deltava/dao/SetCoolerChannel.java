@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.Channel;
 /**
  * A Data Access Object to write Water Cooler Channel Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -33,10 +33,12 @@ public class SetCoolerChannel extends DAO {
 			startTransaction();
 			
 			// Write the channel profile
-			prepareStatement("INSERT INTO common.COOLER_CHANNELS (CHANNEL, DESCRIPTION, ACTIVE) VALUES (?, ?, ?)");
+			prepareStatement("INSERT INTO common.COOLER_CHANNELS (CHANNEL, DESCRIPTION, ACTIVE, ALLOW_NEW) "
+					+ "VALUES (?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getDescription());
 			_ps.setBoolean(3, c.getActive());
+			_ps.setBoolean(4, c.getAllowNewPosts());
 			executeUpdate(1);
 			
 			// Write the channel data
@@ -104,11 +106,13 @@ public class SetCoolerChannel extends DAO {
 			_ps.executeBatch();
 			
 			// Update the channel profile
-			prepareStatement("UPDATE common.COOLER_CHANNELS SET CHANNEL=?, DESCRIPTION=?, ACTIVE=? WHERE (CHANNEL=?)");
+			prepareStatement("UPDATE common.COOLER_CHANNELS SET CHANNEL=?, DESCRIPTION=?, ACTIVE=?, "
+					+ "ALLOW_NEW=? WHERE (CHANNEL=?)");
 			_ps.setString(1, newName);
 			_ps.setString(2, c.getDescription());
 			_ps.setBoolean(3, c.getActive());
-			_ps.setString(4, c.getName());
+			_ps.setBoolean(4, c.getAllowNewPosts());
+			_ps.setString(5, c.getName());
 			
 			// Execute the update and commit - this may take a moment since it'll take a while for the key change to cascade
 			executeUpdate(1);
