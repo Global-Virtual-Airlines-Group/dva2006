@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Water Cooler channels.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -59,11 +59,12 @@ public class CoolerChannelAccessControl extends AccessControl {
         
         // Check if we're locked out
         boolean isLocked = ((usr != null) && usr.getNoCooler());
+        boolean isClosed = (_c != null) && !_c.getAllowNewPosts() && !_ctx.isUserInRole("Admin");
         
         // Set state objects
-        _canPost = !isLocked && _canAccess && _ctx.isAuthenticated();
+        _canPost = !isLocked && !isClosed && _canAccess && _ctx.isAuthenticated();
         _canEdit = _ctx.isUserInRole("Admin");
-        _canRead = (_c != null) && _canEdit;
+        _canRead = (_c != null) && _ctx.isUserInRole("HR");
     }
     
     /**

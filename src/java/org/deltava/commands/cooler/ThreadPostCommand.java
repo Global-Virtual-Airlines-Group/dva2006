@@ -86,8 +86,19 @@ public class ThreadPostCommand extends AbstractCommand {
 			List<Channel> channels = dao.getChannels(airline, ctx.getRoles());
 			Channel ch = dao.get(cName);
 			ctx.release();
+			
+			// Remove channels we cannot post to
 			channels.remove(Channel.ALL);
 			channels.remove(Channel.SHOTS);
+			if (!ctx.isUserInRole("Modeator")) {
+				for (Iterator<Channel> i = channels.iterator(); i.hasNext(); ) {
+					Channel c = i.next();
+					if (!c.getAllowNewPosts())
+						i.remove();
+				}
+			}
+			
+			// Save channels
 			ctx.setAttribute("channel", ch, REQUEST);
 			ctx.setAttribute("channels", channels, REQUEST);
 
