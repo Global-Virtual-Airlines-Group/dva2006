@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Water Cooler Threads.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -81,6 +81,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         // Validate our channel access
         _cac.validate(); 
         boolean channelAccess = _cac.getCanAccess();
+        boolean channelClosed = !_c.getAllowNewPosts() && !_ctx.isUserInRole("Admin");
         
         // Get the user
         Pilot usr = (Pilot) _ctx.getUser();
@@ -89,7 +90,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         // Get the roles and role state - we assume it's OK if channel is null
         boolean isOurs = _ctx.isAuthenticated() && (_mt.getAuthorID() == _ctx.getUser().getID());
         boolean isModerator = _ctx.isUserInRole("Moderator");
-        boolean isClosed = _mt.getLocked() || _mt.getHidden() || isLockedOut;
+        boolean isClosed = _mt.getLocked() || _mt.getHidden() || isLockedOut || channelClosed;
         boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
         
         // Validate if we can read the thread

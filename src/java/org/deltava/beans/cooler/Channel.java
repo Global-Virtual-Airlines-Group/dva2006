@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -23,9 +23,10 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     
     private String _name;
     private String _desc;
-    private boolean _active;
-    private Set<String> _roles;
-    private Set<String> _airlines;
+    private boolean _active = true;
+    private boolean _allowNewPosts = true;
+    private final Collection<String> _roles = new TreeSet<String>();
+    private final Collection<String> _airlines = new TreeSet<String>();
     
     private int _threadCount;
     private int _postCount;
@@ -36,7 +37,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     
     static class AllChannel extends Channel {
     	
-    	private static Collection<String> ROLES = Arrays.asList("*");
+    	private static final Collection<String> ROLES = Arrays.asList("*");
     	
     	private String _myName;
     	private boolean _topOfList;
@@ -73,8 +74,6 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     public Channel(String name) {
         super();
         _name = name.trim();
-        _airlines = new TreeSet<String>();
-        _roles = new TreeSet<String>();
     }
     
     /**
@@ -175,6 +174,15 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     }
     
     /**
+     * Queries if new Threads or Replies are allowed.
+     * @return TRUE if new threads/replies are allowed, otherwise FALSE
+     * @see Channel#setAllowNewPosts(boolean)
+     */
+    public boolean getAllowNewPosts() {
+    	return _allowNewPosts;
+    }
+    
+    /**
      * Queries if the Channel supports a particular airline.
      * @param aCode the Airline Code
      * @return TRUE if the Channel is supported by an airline, FALSE otherwisse
@@ -238,8 +246,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      */
     public void setRoles(Collection<String> roles) {
     	_roles.clear();
-    	for (Iterator<String> i = roles.iterator(); i.hasNext(); )
-    	   addRole(i.next());
+    	_roles.addAll(roles);
     }
     
     /**
@@ -258,6 +265,15 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      */
     public void setActive(boolean active) {
         _active = active;
+    }
+    
+    /**
+     * Updates whether new Threads or Replies are allowed.
+     * @param allow TRUE if new posts allowed, otherwise FALSE
+     * @see Channel#getAllowNewPosts()
+     */
+    public void setAllowNewPosts(boolean allow) {
+    	_allowNewPosts = allow;
     }
     
     /**
@@ -286,40 +302,28 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     /**
      * Updates the number of Message Threads in this Channel.
      * @param count the number of threads
-     * @throws IllegalArgumentException if count is negative
      * @see Channel#getThreadCount()
      */
     public void setThreadCount(int count) {
-        if (count < 0)
-            throw new IllegalArgumentException("Invalid Thread Count - " + count);
-            
-        _threadCount = count;
+        _threadCount = Math.max(0, count);
     }
     
     /**
      * Updates the number of posts in this Channel.
      * @param count the number of posts
-     * @throws IllegalArgumentException if count is negative
      * @see Channel#getPostCount()
      */
     public void setPostCount(int count) {
-        if (count < 0)
-            throw new IllegalArgumentException("Invalid Post Count - " + count);
-        
-        _postCount = count;
+        _postCount = Math.max(0, count);
     }
     
     /**
      * Updates the number of times all Threads in this Channel have been viewed.
      * @param count the number of thread views
-     * @throws IllegalArgumentException if count is negative
      * @see Channel#getThreadCount()
      */
     public void setViewCount(int count) {
-        if (count < 0)
-            throw new IllegalArgumentException("Invalid Thread View Count - " + count);
-        
-        _viewCount = count;
+        _viewCount = Math.max(0, count);
     }
     
     /**
@@ -344,11 +348,10 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * @return TRUE if o2 is a channel with the same name, or a String with the same name
      */
     public boolean equals(Object o2) {
-        if (o2 instanceof Channel) {
-            return _name.equals(((Channel) o2).getName());
-        } else if (o2 instanceof String) {
+        if (o2 instanceof Channel)
+            return _name.equals(((Channel) o2)._name);
+        else if (o2 instanceof String)
             return _name.equals(o2);
-        } 
            
         return false;
     }
@@ -373,6 +376,9 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * @return the CSS class name
      */
     public String getRowClassName() {
+    	if (!_allowNewPosts)
+    		return "opt2";
+    
     	return _active ? null : "warn"; 
     }
 }

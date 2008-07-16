@@ -15,13 +15,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class GetCoolerChannels extends DAO implements CachingDAO {
 
-	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(15, 3600);
+	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(16, 1800);
 
 	/**
 	 * Create this DAO using a JDBC connection.
@@ -103,6 +103,7 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			c = new Channel(channelName);
 			c.setDescription(rs.getString(2));
 			c.setActive(rs.getBoolean(3));
+			c.setAllowNewPosts(rs.getBoolean(4));
 
 			// Clean up the first set of JDBC resources
 			rs.close();
@@ -122,7 +123,7 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 	/**
 	 * Retrieves all Channels for a particular airline.
 	 * @param al the Airline
-	 * @param showHidden wether hidden threads should be returned in the last post
+	 * @param showHidden TRUE if hidden threads should be returned in the last post
 	 * @return a List of channels
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -152,10 +153,11 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 				Channel c = new Channel(rs.getString(1));
 				c.setDescription(rs.getString(2));
 				c.setActive(rs.getBoolean(3));
-				c.setLastThreadID(rs.getInt(4));
-				c.setPostCount(rs.getInt(5));
-				c.setThreadCount(rs.getInt(6));
-				c.setViewCount(rs.getInt(7));
+				c.setAllowNewPosts(rs.getBoolean(4));
+				c.setLastThreadID(rs.getInt(5));
+				c.setPostCount(rs.getInt(6));
+				c.setThreadCount(rs.getInt(7));
+				c.setViewCount(rs.getInt(8));
 
 				// Add to the results with the channel name as the key
 				results.put(c.getName(), c);
