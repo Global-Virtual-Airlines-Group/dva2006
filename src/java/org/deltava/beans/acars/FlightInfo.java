@@ -45,12 +45,13 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	private boolean _dispatchPlan;
 	private boolean _hasPIREP;
 	private boolean _archived;
+	private boolean _isMP;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
 	private Collection<NavigationDataBean> _planData;
 
-	private int[] FSUIPC_FS_VERSIONS = { 95, 98, 2000, 1002, 1001, 2002, 2004, 2006 };
+	private static final int[] FSUIPC_FS_VERSIONS = { 95, 98, 2000, 1002, 1001, 2002, 2004, 2006 };
 
 	/**
 	 * Creates an empty Flight Information record.
@@ -223,6 +224,15 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	public boolean getOffline() {
 		return _offline;
 	}
+	
+	/**
+	 * Returns if this flight was flown using ACARS multi-player.
+	 * @return TRUE if multi-player, otherwise FALSE
+	 * @see FlightInfo#setIsMP(boolean)
+	 */
+	public boolean getIsMP() {
+		return _isMP;
+	}
 
 	/**
 	 * Returns if this flight has an associated Flight Report.
@@ -345,12 +355,21 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	}
 
 	/**
-	 * Updates wether this flight was flown disconnected from the ACARS server.
+	 * Updates whether this flight was flown disconnected from the ACARS server.
 	 * @param offline TRUE if the flight was flown offline, otherwise FALSE
 	 * @see FlightInfo#getOffline()
 	 */
 	public void setOffline(boolean offline) {
 		_offline = offline;
+	}
+	
+	/**
+	 * Updates whether this flight was flown using ACARS multi-player.
+	 * @param isMP TRUE if multi-player, otherwise FALSE
+	 * @see FlightInfo#getIsMP()
+	 */
+	public void setIsMP(boolean isMP) {
+		_isMP = isMP;
 	}
 
 	/**
