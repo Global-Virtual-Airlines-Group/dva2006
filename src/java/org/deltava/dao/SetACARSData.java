@@ -214,4 +214,38 @@ public class SetACARSData extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Updates an ACARS multi-player livery profile.
+	 * @param l the Livery bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Livery l) throws DAOException {
+		try {
+			startTransaction();
+			
+			// Write the livery
+			prepareStatement("REPLACE INTO acars.LIVERIES (AIRLINE, CODE, NAME, ISDEFAULT) VALUES (?, ?, ?, ?)");
+			_ps.setString(1, l.getAirline().getCode());
+			_ps.setString(2, l.getCode());
+			_ps.setString(3, l.getDescription());
+			_ps.setBoolean(4, l.getDefault());
+			executeUpdate(1);
+			
+			// If we are now the default livery, update the others
+			if (l.getDefault()) {
+				prepareStatementWithoutLimits("UPDATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) "
+						+ "AND (CODE<>?)");
+				_ps.setBoolean(1, false);
+				_ps.setString(2, l.getAirline().getCode());
+				_ps.setString(3, l.getCode());
+				executeUpdate(0);
+			}
+			
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
 }
