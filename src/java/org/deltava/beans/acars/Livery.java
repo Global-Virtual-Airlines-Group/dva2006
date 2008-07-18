@@ -82,8 +82,12 @@ public class Livery implements Comparable<Livery>, java.io.Serializable, ViewEnt
 		_isDefault = isDefault;
 	}
 	
+	public String toString() {
+		return (_a == null) ? "" : (_a.getCode() + "-" + _code);
+	}
+	
 	public int hashCode() {
-		return (_a.getCode() + ":" + _code).hashCode();
+		return toString().hashCode();
 	}
 	
 	/**

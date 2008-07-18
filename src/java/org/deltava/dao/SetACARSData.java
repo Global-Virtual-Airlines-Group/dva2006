@@ -225,7 +225,7 @@ public class SetACARSData extends DAO {
 			startTransaction();
 			
 			// Write the livery
-			prepareStatement("REPLACE INTO acars.LIVERIES (AIRLINE, CODE, NAME, ISDEFAULT) VALUES (?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO acars.LIVERIES (AIRLINE, LIVERY, NAME, ISDEFAULT) VALUES (?, ?, ?, ?)");
 			_ps.setString(1, l.getAirline().getCode());
 			_ps.setString(2, l.getCode());
 			_ps.setString(3, l.getDescription());
@@ -235,13 +235,40 @@ public class SetACARSData extends DAO {
 			// If we are now the default livery, update the others
 			if (l.getDefault()) {
 				prepareStatementWithoutLimits("UPDATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) "
-						+ "AND (CODE<>?)");
+						+ "AND (LIVERY<>?)");
 				_ps.setBoolean(1, false);
 				_ps.setString(2, l.getAirline().getCode());
 				_ps.setString(3, l.getCode());
 				executeUpdate(0);
 			}
 			
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes an ACARS mutli-player livery profile.
+	 * @param aCode the Airline code
+	 * @param code the Livery code
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteLivery(String aCode, String code) throws DAOException {
+		try {
+			startTransaction();
+			
+			// Delete the livery
+			prepareStatement("DELETE FROM acars.LIVERIES WHERE (AIRLINE=?) AND (LIVERY=?)");
+			_ps.setString(1, aCode);
+			_ps.setString(2, code);
+			executeUpdate(0);
+			
+			// Restore the default livery
+			prepareStatementWithoutLimits("UDPATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) "
+					+ "ORDER BY ISDEFAULT DESC, LIVERY LIMIT 1");
+			executeUpdate(0);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

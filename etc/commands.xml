@@ -1662,6 +1662,24 @@
 		<roles>HR,Developer</roles>
 	</command>
 
+	<command id="liveries">
+		<name>ACARS Multi-Player Liveries</name>
+		<class>org.deltava.commands.acars.LiveryListCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
+	<command id="livery">
+		<name>ACARS Multi-Player Livery</name>
+		<class>org.deltava.commands.acars.LiveryCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
+	<command id="liverydelete">
+		<name>ACARS Livery Delete</name>
+		<class>org.deltava.commands.acars.LiveryDeleteCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
 
 	<!-- Dispatch Commands -->
 	<command id="dispatchmap">

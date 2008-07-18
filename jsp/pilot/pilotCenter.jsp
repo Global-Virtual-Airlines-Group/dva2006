@@ -715,6 +715,12 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
  <td class="data">You can view and edit <content:airline /> Online Help entries.</td>
 </tr>
 </content:filter>
+<c:if test="${acarsEnabled}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="liveries">ACARS Multi-Player Liveries</el:cmd></td>
+ <td class="data">You can update multi-player liveries for the <content:airline /> ACARS server.</td>
+</tr>
+</c:if>
 <content:filter roles="HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
