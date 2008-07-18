@@ -1,18 +1,18 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.Iterator;
 
-import org.deltava.beans.EquipmentType;
-import org.deltava.beans.Ranks;
+import org.deltava.beans.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -52,6 +52,7 @@ public class SetEquipmentType extends DAO {
 			// Write the exams/ratings and commit
 			writeExams(eq);
 			writeRatings(eq);
+			writeAirlines(eq);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -85,6 +86,7 @@ public class SetEquipmentType extends DAO {
 			// Write the exams/ratings and commit
 			writeExams(eq);
 			writeRatings(eq);
+			writeAirlines(eq);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -147,6 +149,30 @@ public class SetEquipmentType extends DAO {
 		_ps.setInt(2, EquipmentType.SECONDARY_RATING);
 		for (Iterator i = eq.getSecondaryRatings().iterator(); i.hasNext(); ) {
 			_ps.setString(3, (String) i.next());
+			_ps.addBatch();
+		}
+		
+		// Execute the batch update
+		_ps.executeBatch();
+		_ps.close();
+	}
+
+	/**
+	 * Helper method to write airline records for an equipment profile.
+	 */
+	private void writeAirlines(EquipmentType eq) throws SQLException {
+		
+		// Clean out airlines
+		prepareStatementWithoutLimits("DELETE FROM EQAIRLINES WHERE (EQTYPE=?)");
+		_ps.setString(1, eq.getName());
+		executeUpdate(0);
+		
+		// Prepare the statement and add the airlines
+		prepareStatementWithoutLimits("INSERT INTO EQAIRLINES (EQTYPE, AIRLINE) VALUES (?, ?)");
+		_ps.setString(1, eq.getName());
+		for (Iterator<AirlineInformation> i = eq.getAirlines().iterator(); i.hasNext(); ) {
+			AirlineInformation ai = i.next();
+			_ps.setString(2, ai.getCode());
 			_ps.addBatch();
 		}
 		
