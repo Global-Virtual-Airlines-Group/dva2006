@@ -394,7 +394,8 @@ public class GetACARSData extends DAO {
 			info.setArchived(rs.getBoolean(16));
 			info.setScheduleValidated(rs.getBoolean(17));
 			info.setDispatchPlan(rs.getBoolean(18));
-			info.setPilotID(rs.getInt(19));
+			info.setIsMP(rs.getBoolean(19));
+			info.setPilotID(rs.getInt(20));
 
 			// Add to results
 			results.add(info);
