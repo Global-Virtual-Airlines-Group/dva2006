@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.locks.*;
+import java.util.concurrent.*;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +14,7 @@ import org.deltava.beans.system.AirlineInformation;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -29,12 +29,8 @@ public final class SystemData implements Serializable {
 	public static final String CFG_NAME = "$CONFIGNAME$";
 	public static final String LOADER_NAME = "$LOADERCLASS$";
 
-	private static final Map<String, Object> _properties = new HashMap<String, Object>();
+	private static final ConcurrentMap<String, Object> _properties = new ConcurrentHashMap<String, Object>();
 	
-    private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
-    private static final Lock r = rwl.readLock();
-    private static final Lock w = rwl.writeLock();
-
 	// This is a singleton
 	private SystemData() {
 		super();
@@ -59,7 +55,6 @@ public final class SystemData implements Serializable {
 		}
 		
 		// Reset the properties
-		w.lock();
 		if (clearData)
 			_properties.clear();
 
@@ -73,8 +68,6 @@ public final class SystemData implements Serializable {
 				log.error("Error loading System Data - " + ce.getMessage());
 		} finally {
 			_properties.put(SystemData.LOADER_NAME, loader.getClass().getName());
-			while (rwl.isWriteLockedByCurrentThread())
-				w.unlock();
 		}
 	}
 
@@ -91,12 +84,7 @@ public final class SystemData implements Serializable {
 	 * @return a Collection of names
 	 */
 	public static Collection<String> getNames() {
-		r.lock();
-		try {
-			return Collections.unmodifiableCollection(_properties.keySet());
-		} finally {
-			r.unlock();
-		}
+		return Collections.unmodifiableCollection(_properties.keySet());
 	}
 
 	/**
@@ -105,12 +93,7 @@ public final class SystemData implements Serializable {
 	 * @return the property
 	 */
 	public static Object getObject(String propertyName) {
-		r.lock();
-		try {
-			return _properties.get(propertyName);
-		} finally {
-			r.unlock();
-		}
+		return _properties.get(propertyName);
 	}
 
 	/**
@@ -181,14 +164,10 @@ public final class SystemData implements Serializable {
 	 * @param value the property value
 	 */
 	public static void add(String pName, Object value) {
-		log.debug("Adding value " + pName);
-		w.lock();
-		try {
-			_properties.put(pName, value);
-		} finally {
-			while (rwl.isWriteLockedByCurrentThread())
-				w.unlock();
-		}
+		if (log.isDebugEnabled())
+			log.debug("Adding value " + pName);
+
+		_properties.put(pName, value);
 	}
 
 	/**
@@ -229,8 +208,7 @@ public final class SystemData implements Serializable {
 	public static Airline getAirline(String airlineCode) {
 		if (airlineCode == null)
 			return null;
-
-		if (!_properties.containsKey("airlines"))
+		else if (!_properties.containsKey("airlines"))
 			throw new IllegalStateException("Airlines not Loaded");
 
 		// Search based on primary code
