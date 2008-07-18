@@ -48,6 +48,7 @@ public class ExamScoreCommand extends AbstractCommand {
          GetPilot pdao = new GetPilot(con);
          UserData ud = uddao.get(ex.getPilotID());
          usr = pdao.get(ud);
+         ctx.setAttribute("usrLoc", ud, REQUEST);
          ctx.setAttribute("pilot", usr, REQUEST);
          mctxt.addData("pilot", usr);
          
