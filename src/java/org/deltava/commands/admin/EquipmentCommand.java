@@ -1,10 +1,12 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -16,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -99,13 +101,26 @@ public class EquipmentCommand extends AbstractFormCommand {
 			EquipmentType eq = isNew ? new EquipmentType(ctx.getParameter("eqType")) : rdao.get(eqType, SystemData.get("airline.db"));
 			
 			// Update the equipment type profile from the request
-			eq.setCPID(Integer.parseInt(ctx.getParameter("cp")));
+			eq.setCPID(StringUtils.parse(ctx.getParameter("cp"), 0));
 			eq.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
 			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
-
+			
+			// Update airlines
+			Collection<String> aCodes = ctx.getParameters("airline");
+			if (aCodes != null) {
+				Collection<AirlineInformation> airlines = new HashSet<AirlineInformation>();
+				for (Iterator<String> i = aCodes.iterator(); i.hasNext(); ) {
+					AirlineInformation ai = SystemData.getApp(i.next());
+					if (ai != null)
+						airlines.add(ai);
+				}
+				
+				eq.setAirlines(airlines);
+			}
+			
 			// Update examination names
 			eq.setExamNames(Ranks.RANK_FO, ctx.getParameters("examFO"));
 			eq.setExamNames(Ranks.RANK_C, ctx.getParameters("examC"));
