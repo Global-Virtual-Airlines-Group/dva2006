@@ -37,7 +37,7 @@ public class GetACARSLivery extends DAO {
 	public Livery get(Airline a, String code) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT NAME, ISDEFAULT FROM acars.LIVERIES WHERE (AIRLINE=?) "
-					+ "AND (CODE=?) LIMIT 1");
+					+ "AND (LIVERY=?) LIMIT 1");
 			_ps.setString(1, a.getCode());
 			_ps.setString(2, code);
 			
@@ -71,7 +71,7 @@ public class GetACARSLivery extends DAO {
 		StringBuilder buf = new StringBuilder("SELECT * FROM acars.LIVERIES ");
 		if (a != null)
 			buf.append("WHERE (AIRLINE=?) ");
-		buf.append("ORDER BY AIRLINE, ISDEFAULT DESC, CODE");
+		buf.append("ORDER BY AIRLINE, ISDEFAULT DESC, LIVERY");
 		
 		try {
 			prepareStatement(buf.toString());

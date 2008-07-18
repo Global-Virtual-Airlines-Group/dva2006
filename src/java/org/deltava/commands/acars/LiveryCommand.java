@@ -87,10 +87,8 @@ public class LiveryCommand extends AbstractFormCommand {
 				l = dao.get(a, tkns.nextToken());
 				if (l == null)
 					throw notFoundException("Unknown Livery - " + id);
-			} else {
-				
-				
-			}
+			} else 
+				l = new Livery(SystemData.getAirline(ctx.getParameter("airline")), ctx.getParameter("code"));
 			
 			// Save other fields
 			l.setDescription(ctx.getParameter("desc"));
@@ -98,7 +96,7 @@ public class LiveryCommand extends AbstractFormCommand {
 			
 			// Save the livery
 			SetACARSData wdao = new SetACARSData(con);
-			
+			wdao.write(l);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
