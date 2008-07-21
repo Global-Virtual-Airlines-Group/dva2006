@@ -1,0 +1,14 @@
+#!/bin/sh
+# CLAMD database backup script
+# (c) 2008 Global Virtual Airlines Group. All Rights Reserved.
+
+# Tell the watchdog to hang loose
+touch /var/run/siteDown.flag
+
+# Shut down CLAMD, update the database and restart
+/etc/init.d/clamd stop
+freshclam
+/etc/init.d/clamd start
+
+# Clear the watch flag
+rm /var/run/siteDown.flag
