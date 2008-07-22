@@ -95,7 +95,7 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.public}" /><br />
-<el:box name="sendIssue" idx="*" value="true" label="Send Notification to Assignee" /></td>
+<el:box name="sendIssue" idx="*" value="true" checked="${true}" label="Send Notification to Assignee" /></td>
 </tr>
 <tr class="title">
  <td colspan="2" class="left caps">CONVERT TO DEVELOPMENT ISSUE</td>
