@@ -101,7 +101,7 @@ return true;
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data"><fmt:int value="${checkRide.flightID}" />
- <el:cmdbutton ID="PIREPButton" url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
+ <el:cmdbutton ID="PIREPButton" url="crview" link="${pirep}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 </c:if>
