@@ -721,7 +721,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// If it's in a different database check our role
 			boolean crossDB = !SystemData.get("airline.db").equalsIgnoreCase(usrInfo.getDB());
-			if (crossDB && !ctx.isUserInRole("Admin"))
+			if (crossDB && !ctx.isUserInRole("HR"))
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// Get the DAO and load the pilot profile

@@ -146,15 +146,14 @@ public class GetEquipmentType extends DAO {
 				buf.append(db);
 				buf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
 				buf.append(db);
-				buf.append(".PILOTS P, ");
-				buf.append(db);
-				buf.append(".EQAIRLINES EA WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) AND "
-						+ "(EA.AIRLINE=AI.CODE) AND (EP.AIRLINE=AI.CODE) AND (AI.DBNAME=LOWER(?)) AND (EA.EQTYPE=EQ.EQTYPE)");
+				buf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) AND "
+						+ "(EP.AIRLINE=AI.CODE) AND (AI.DBNAME=LOWER(?)) AND (EP.EQTYPE=EQ.EQTYPE) AND (LOCATE(?, EP.AIRLINES) > 0)");
 				
 				// Prepare the statement and execute
 				prepareStatementWithoutLimits(buf.toString());
 				_ps.setBoolean(1, true);
 				_ps.setString(2, db.toLowerCase());
+				_ps.setString(3, aCode);
 				Collection<EquipmentType> exams = execute();
 				
 				// Load child rows and add
