@@ -100,6 +100,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 				ctx.setAttribute("filedRoute", navdao.getRouteWaypoints(StringUtils.listConcat(wps, " "), info.getAirportD()), REQUEST);
 				ctx.setAttribute("flightInfo", info, REQUEST);
 				ctx.setAttribute("conInfo", ardao.getConnection(info.getConnectionID()), REQUEST);
+				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 			}
 			
 			// Save the route and map center for the Google Map
