@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to export Airway data to ACARS dispatch clients.
  * @author Luke
- * @version 2.0
+ * @version 2.2
  * @since 2.0
  */
 
@@ -63,7 +63,9 @@ public class AirwayService extends WebService {
 				ctx.print(",");
 				ctx.print(df.format(ai.getLatitude()));
 				ctx.print(",");
-				ctx.println(df.format(ai.getLongitude()));
+				ctx.print(df.format(ai.getLongitude()));
+				ctx.print(",");
+				ctx.println(String.valueOf(ai.getType()));
 			}
 			
 			ctx.println("");
