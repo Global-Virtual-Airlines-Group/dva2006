@@ -191,7 +191,7 @@ this e-mail address.</div></c:if>
 </tr>
 <tr>
  <td class="label" rowspan="2" valign="top">Comments</td>
- <td class="data" colspan="${cspan}"><span class="small">Plase provide any comments or additional information that you feel would assist
+ <td class="data" colspan="${cspan}"><span class="small">Please provide any comments or additional information that you feel would assist
 in processing your application.</span></td>
 </tr>
 <tr>
