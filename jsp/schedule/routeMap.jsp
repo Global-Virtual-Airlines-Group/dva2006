@@ -17,15 +17,16 @@
 <content:js name="routeMap" />
 <map:api version="2" />
 <map:vml-ie />
-<content:sysdata var="aCode" name="airline.code" />
-<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
-<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
+<content:sysdata var="aCode" name="airline.code" />
+
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="routemap.do" method="post" validate="return false">
@@ -54,19 +55,20 @@
 document.imgPath = '${imgPath}';
 
 // Create the map
-var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
+var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
-map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 
-// Routes placeholder
+// Routes/airports placeholder
 var routes;
-
-// Save airports in JS array
 var airports = new Array();
+
+// Load airports
+updateAirports(document.forms[0].airlineCode);
 </script>
 <content:googleAnalytics />
 </body>

@@ -292,13 +292,11 @@ Installer log entries.</td>
  <td class="data">You are able to browse the <content:airline /> Flight Schedule, which contains 
 <fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
 </tr>
-<content:filter roles="Schedule">
 <tr>
  <td class="mid"><el:cmd className="bld" url="routemap">Route Map</el:cmd></td>
  <td class="data">You can view a map of all the destinations that <content:airline /> and its codeshare 
 partners currently serve.</td>
 </tr>
-</content:filter>
 
 <!-- Flight Planning Section -->
 <tr class="title caps">
