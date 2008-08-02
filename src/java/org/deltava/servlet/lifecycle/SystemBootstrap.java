@@ -27,7 +27,7 @@ import org.gvagroup.common.SharedData;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -260,6 +260,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		}
 
 		// Close the Log4J manager
+		log.error("Shut down " + SystemData.get("airline.code"));
 		LogManager.shutdown();
 	}
 
