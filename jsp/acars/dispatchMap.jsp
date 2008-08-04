@@ -21,7 +21,6 @@
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 document.tileHost = '${tileHost}';
-defaultIconSize = 16;
 <c:if test="${isDispatch}">
 function addWaypoint(code)
 {
