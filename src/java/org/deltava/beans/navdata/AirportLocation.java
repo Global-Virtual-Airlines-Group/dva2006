@@ -2,6 +2,7 @@
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.GeospaceLocation;
+import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.StringUtils;
 
@@ -18,11 +19,22 @@ public class AirportLocation extends NavigationDataBean implements GeospaceLocat
 
 	/**
 	 * Creates a new Airport location object.
-	 * @param lat
-	 * @param lon
+	 * @param lat the latitude in degrees
+	 * @param lon the longitude in degrees
 	 */
 	public AirportLocation(double lat, double lon) {
 		super(AIRPORT, lat, lon);
+	}
+	
+	/**
+	 * Creates a Airport location from an Airport bean.
+	 * @param a the Airport bean
+	 */
+	public AirportLocation(Airport a) {
+		super(AIRPORT, a.getLatitude(), a.getLongitude());
+		_altitude = a.getAltitude();
+		setCode(a.getICAO());
+		setName(a.getName());
 	}
 
 	/**
