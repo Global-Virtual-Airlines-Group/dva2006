@@ -40,34 +40,43 @@ return true;
 <!-- Table Header Bar -->
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> ACARS DISPATCHER ROUTES<c:if test="${!empty author}"> - ${author.name}</c:if></td>
+ <td><el:cmd url="dsprsearch">SEARCH</el:cmd></td>
  <td colspan="2" class="right">DISPATCHER <el:combo name="id" idx="*" size="1" options="${authorNames}" firstEntry="-" value="${author}" onChange="update(this)" /></td>
 </tr>
 <tr class="title caps">
  <td width="5%">ID</td>
- <td width="15%">DEPARTING FROM</td>
- <td width="15%">ARRIVING AT</td>
+ <td>ROUTE</td>
+ <td width="5%">USED</td> 
 <c:if test="${empty author}"><td width="20%">CREATED BY</td></c:if>
 <c:if test="${!empty author}"><td width="8%">CREATED ON</td></c:if>
- <td width="5%">USED</td>
- <td class="left">WAYPOINTS</td>
+ <td width="8%">LAST USED</td>
+ <td width="15%">SID</td>
+ <td width="15%">STAR</td>
 </tr>
 
 <!-- Routes -->
 <c:forEach var="route" items="${viewContext.results}">
-<c:set var="author" value="${authors[route.authorID]}" scope="request" />
+<c:set var="rAuthor" value="${authors[route.authorID]}" scope="request" />
 <tr>
  <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
- <td class="small">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)</td>
- <td class="small">${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
- <td class="small"><c:if test="${!empty author}"><el:cmd url="dsproutes" link="${author}" className="pri bld">${author.name}</el:cmd> (${author.pilotCode}) on </c:if><fmt:date date="${route.createdOn}" fmt="d" /></td>
+ <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br />
+${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
  <td class="sec bld"><fmt:int value="${route.useCount}" /></td>
- <td class="left small">${route.route}</td>
+ <td class="small"><c:if test="${empty author}"><el:cmd url="dsproutes" link="${rAuthor}" className="pri bld">${rAuthor.name}</el:cmd> (${rAuthor.pilotCode}) on </c:if><fmt:date date="${route.createdOn}" fmt="d" /></td>
+ <td class="small sec"><fmt:date date="${route.lastUsed}" fmt="d" default="N/A" /></td>
+ <td class="small">${route.SID}</td>
+ <td class="small">${route.STAR}</td>
 </tr>
+<c:if test="${!empty route.route}">
+<tr>
+ <td class="left small" colspan="7">${route.route}</td>
+</tr>
+</c:if>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

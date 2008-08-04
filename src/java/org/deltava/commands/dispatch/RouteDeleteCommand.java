@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.DispatchRouteAccessControl;
 /**
  * A Web Site Command to delete dispatcher routes.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -44,8 +44,8 @@ public class RouteDeleteCommand extends AbstractCommand {
 			ctx.setAttribute("route", rp, REQUEST);
 			
 			// Delete the route
-			SetACARSData wdao = new SetACARSData(con);
-			wdao.deleteRoute(rp.getID());
+			SetACARSRoute wdao = new SetACARSRoute(con);
+			wdao.delete(rp.getID());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
