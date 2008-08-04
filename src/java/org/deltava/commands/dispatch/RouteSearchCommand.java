@@ -4,9 +4,10 @@ package org.deltava.commands.dispatch;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 
+import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -32,40 +33,34 @@ public class RouteSearchCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Load airports
+			Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 			GetACARSRoute dao = new GetACARSRoute(con);
-			ctx.setAttribute("airport", dao.getAirports(), REQUEST);
+			airports.addAll(dao.getAirports());
+			ctx.setAttribute("airports", airports, REQUEST);
 			
-			// If no airport specified, go to the JSP
-			if (ctx.getParameter("airportD") == null) {
-				ctx.release();
+			// If airports specified, do the search
+			if (ctx.getParameter("airportD") != null) {
+				Airport airportD = SystemData.getAirport(ctx.getParameter("airportD"));
+				Airport airportA = SystemData.getAirport(ctx.getParameter("airportA"));
+				ctx.setAttribute("results", dao.getRoutes(airportD, airportA), REQUEST);
 				
-				CommandResult result = ctx.getResult();
-				result.setURL("/jsp/dispatch/routeSearch.jsp");
-				result.setSuccess(true);
-				return;
+				// Get dispatcher IDs
+				Collection<Integer> IDs = dao.getAuthorIDs();
+				
+				// Load Authors
+				GetPilot pdao = new GetPilot(con);
+				GetUserData uddao = new GetUserData(con);
+				UserDataMap udm = uddao.get(IDs);
+
+				// Set search attribute and authors
+				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("authors", pdao.get(udm), REQUEST);
 			}
-			
-			// Get the airports and do the search
-			Airport airportD = SystemData.getAirport(ctx.getParameter("airportD"));
-			Airport airportA = SystemData.getAirport(ctx.getParameter("airportA"));
-			ctx.setAttribute("results", dao.getRoutes(airportD, airportA), REQUEST);
-			
-			// Load Author IDs
-			Collection<Integer> IDs = dao.getAuthorIDs();
-			
-			// Load Authors
-			GetPilot pdao = new GetPilot(con);
-			GetUserData uddao = new GetUserData(con);
-			UserDataMap udm = uddao.get(IDs);
-			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
-		// Set search attribute
-		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

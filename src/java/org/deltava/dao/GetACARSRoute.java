@@ -149,10 +149,25 @@ public class GetACARSRoute extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<RoutePlan> getRoutes(Airport aD, Airport aA) throws DAOException {
+		
+		// Build SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.ROUTES WHERE ");
+		if (aD != null) {
+			sqlBuf.append("(AIRPORT_D=?)");
+			if (aA != null)
+				sqlBuf.append(" AND ");
+		}
+		if (aA != null) 
+			sqlBuf.append("(AIRPORT_A=?)");
+		sqlBuf.append(" ORDER BY USED DESC");
+		
 		try {
-			prepareStatement("SELECT * FROM acars.ROUTES WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) ORDER BY USED DESC");
-			_ps.setString(1, aD.getIATA());
-			_ps.setString(2, aA.getIATA());
+			int param = 0;
+			prepareStatement(sqlBuf.toString());
+			if (aD != null)
+				_ps.setString(++param, aD.getIATA());
+			if (aA != null)
+				_ps.setString(++param, aA.getIATA());
 			
 			// Execute the Query and load routes
 			Collection<RoutePlan> results = execute();
@@ -177,12 +192,14 @@ public class GetACARSRoute extends DAO {
 			rp.setAirportA(SystemData.getAirport(rs.getString(5)));
 			rp.setAirportL(SystemData.getAirport(rs.getString(6)));
 			rp.setCreatedOn(rs.getTimestamp(7));
-			rp.setUseCount(rs.getInt(8));
-			rp.setSID(rs.getString(9));
-			rp.setSTAR(rs.getString(10));
-			rp.setCruiseAltitude(rs.getString(11));
-			rp.setComments(rs.getString(12));
-			rp.setRoute(rs.getString(13));
+			rp.setLastUsed(rs.getTimestamp(8));
+			rp.setUseCount(rs.getInt(9));
+			rp.setSID(rs.getString(10));
+			rp.setSTAR(rs.getString(11));
+			rp.setCruiseAltitude(rs.getString(12));
+			rp.setDispatchBuild(rs.getInt(13));
+			rp.setComments(rs.getString(14));
+			rp.setRoute(rs.getString(15));
 			results.add(rp);
 		}
 		

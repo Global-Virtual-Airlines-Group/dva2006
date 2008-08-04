@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store saved ACARS dispatch routes.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.0
  */
 
@@ -18,6 +18,8 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	
 	private int _authorID;
 	private Date _createdOn;
+	private Date _lastUsed;
+	
 	private Airline _a;
 	private Airport _airportD;
 	private Airport _airportA;
@@ -28,6 +30,7 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	private String _comments;
 	private String _routeText;
 	private int _useCount;
+	private int _dspBuild;
 	
 	private final Map<NavigationDataBean, String> _route = new LinkedHashMap<NavigationDataBean, String>(); 
 
@@ -58,6 +61,22 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public Date getCreatedOn() {
 		return _createdOn;
+	}
+	
+	/**
+	 * Returns the last use date of this route.
+	 * @return the last use date/time
+	 */
+	public Date getLastUsed() {
+		return _lastUsed;
+	}
+	
+	/**
+	 * Returns the build number of the dispatch client used to create this route.
+	 * @return the build number, or zero if via web application
+	 */
+	public int getDispatchBuild() {
+		return _dspBuild;
 	}
 	
 	/**
@@ -175,6 +194,22 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public void setCreatedOn(Date dt) {
 		_createdOn = dt;
+	}
+	
+	/**
+	 * Updates the last use date of this route.
+	 * @param dt the last use date/time
+	 */
+	public void setLastUsed(Date dt) {
+		_lastUsed = dt;
+	}
+	
+	/**
+	 * Sets the build number of the dispatch client used to create this route.
+	 * @param build the build number, or zero if via web application
+	 */
+	public void setDispatchBuild(int build) {
+		_dspBuild = Math.max(0, build);
 	}
 	
 	/**

@@ -19,8 +19,13 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
+var hasAD = (form.airportD.selectedIndex > 0);
+var hasAA = (form.airportA.selectedIndex > 0);
+if (!hasAD && !hasAA) {
+	alert('Please select a Departure or Arrival Airport.');
+	form.airportD.focus();
+	return false;
+}
 
 setSubmit();
 disableButton('SearchButton');
@@ -44,28 +49,35 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" className="req" firstEntry="-" value="${param.airportD}" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${param.airportD}" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" className="req" firstEntry="-" value="${param.airportA}" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${param.airportA}" /></td>
 </tr>
+</el:table>
 
 <!-- Button Bar -->
+<el:table className="bar" pad="default" space="default">
 <tr class="title">
- <td colspan="4"><el:button ID="SearchButton" type="submit" className="button" label="SEARCH DISPATCHER ROUTES" /></td>
+ <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH DISPATCHER ROUTES" /></td>
 </tr>
 </el:table>
 <c:if test="${doSearch}">
 <br />
 <view:table className="view" space="default" pad="default" cmd="dspsearch">
+<tr class="title caps">
+ <td colspan="8" class="left">DISPATCH ROUTE SEARCH RESULTS</td>
+</tr>
 <c:if test="${fn:sizeof(results) > 0}">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="5%">ID</td>
- <td width="15%">DEPARTING FROM</td>
- <td width="15%">ARRIVING AT</td>
- <td width="20%">CREATED BY</td>
+ <td>ROUTE</td>
  <td width="5%">USED</td>
- <td class="left">WAYPOINTS</td>
+ <td width="20%">DISPATCHER NAME</td>
+ <td width="8%">CREATED</td>
+ <td width="8%">LAST USED</td>
+ <td width="15%">SID</td>
+ <td width="15%">STAR</td>
 </tr>
 
 <!-- Routes -->
@@ -73,22 +85,30 @@ return true;
 <c:set var="author" value="${authors[route.authorID]}" scope="request" />
 <tr>
  <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
- <td class="small">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)</td>
- <td class="small">${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
- <td><el:cmd url="dsproutes" link="${author}" className="pri bld">${author.name}</el:cmd> (${author.pilotCode}) on <fmt:date date="${route.createdOn}" fmt="d" /></td>
+ <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br />
+${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
  <td class="sec bld"><fmt:int value="${route.useCount}" /></td>
- <td class="left small">${route.route}</td>
+ <td><el:cmd url="dsproutes" link="${author}" className="pri bld">${author.name}</el:cmd> (${author.pilotCode})</td>
+ <td class="small bld"><fmt:date date="${route.createdOn}" fmt="d" /></td>
+ <td class="small sec"><fmt:date date="${route.lastUsed}" fmt="d" default="N/A" /></td>
+ <td class="small">${route.SID}</td>
+ <td class="small">${route.STAR}</td>
 </tr>
+<c:if test="${!empty route.route}">
+<tr>
+ <td colspan="8" class="left small">${route.route}</td>
+</tr>
+</c:if>
 </c:forEach>
 </c:if>
 <c:if test="${fn:sizeof(results) == 0}">
 <tr>
- <td colspan="6" class="pri bld">No Dispatcher Routes between these Airports were found.</td>
+ <td colspan="8" class="pri bld">No ACARS Dispatcher Routes between these Airports were found.</td>
 </tr>
 </c:if>
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="8">&nbsp;</td>
 </tr>
 </view:table>
 </c:if>

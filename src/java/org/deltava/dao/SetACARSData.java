@@ -134,21 +134,6 @@ public class SetACARSData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
-	/**
-	 * Deletes a saved route from the database.
-	 * @param id the route ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void deleteRoute(int id) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM acars.ROUTES WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 	
 	/**
 	 * Deletes a Flight's SID/STAR data from the datbase.
