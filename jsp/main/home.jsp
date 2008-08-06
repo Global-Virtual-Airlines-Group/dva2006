@@ -35,7 +35,7 @@
 <content:region id="main">
 Welcome to <content:airline />' web site. We are a group of flight simulation enthusiasts who fly Delta Air
 Lines and its alliance partners' routes using Microsoft's Flight Simulator 2002, 2004 or Flight 
-Simulator X, and Laminar Research X-Plane. We are in no way affiliated with Delta Air Lines.<br />
+Simulator X. We are in no way affiliated with Delta Air Lines.<br />
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received 
 <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over
