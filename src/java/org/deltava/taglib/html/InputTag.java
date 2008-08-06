@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -7,9 +7,8 @@ import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to generate HTML text field elements.
- * 
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -86,6 +85,14 @@ public class InputTag extends FormElementTag {
      */
     public void setMax(int maxLen) {
         setNumericAttr("maxlength", maxLen, 1);
+    }
+
+    /**
+     * Disables or enables autocomplete support for this field.
+     * @param isAutoComplete TRUE if AutoComplete enabled, otherwise FASE
+     */
+    public void setAutoComplete(boolean isAutoComplete) {
+    	_data.setAttribute("autocomplete", isAutoComplete ? "on" : "off");
     }
     
     /**
