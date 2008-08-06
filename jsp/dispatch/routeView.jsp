@@ -53,9 +53,12 @@
 </c:if>
 <tr>
  <td class="label">Dispatcher Name</td>
- <td class="data">${author.name} (${author.pilotCode})</td>
+ <td class="data"><span class="pri bld">${author.name}</span> (${author.pilotCode}) <span class="small">using
+<c:if test="${route.dispatchBuild > 0}"> ACARS Dispatch Build <fmt:int value="${route.dispatchBuild}" /></c:if>
+<c:if test="${route.dispatchBuild == 0}"> Web Application</c:if></span></td>
  <td class="label">Created on</td>
- <td class="data bld"><fmt:date date="${route.createdOn}" /> (used <fmt:int value="${route.useCount}" /> times)</td>
+ <td class="data"><span class="bld"><fmt:date date="${route.createdOn}" d="MM/dd/yyyy" fmt="d" /></span> (used
+ <fmt:int value="${route.useCount}" /> times, last on <fmt:date date="${route.lastUsed}" t="HH:mm" />)</td>
 </tr>
 <c:if test="${!empty route.comments}">
 <tr>
