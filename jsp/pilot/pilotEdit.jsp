@@ -55,14 +55,16 @@ if ((form.pwd1) && (form.pwd2)) {
 }
 <content:filter roles="!HR">
 // Validate e-mail domain
-var eMail = form.email.value;
-var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
-var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
-for (var x = 0; x < invalidDomains.length; x++) {
-	if (usrDomain == invalidDomains[x]) {
-		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
-		form.email.focus();
-		return false;
+if (form.email) {
+	var eMail = form.email.value;
+	var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+	var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
+	for (var x = 0; x < invalidDomains.length; x++) {
+		if (usrDomain == invalidDomains[x]) {
+			alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
+			form.email.focus();
+			return false;
+		}
 	}
 }
 </content:filter>
@@ -127,9 +129,9 @@ return true;
 <el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
 </tr>
 </c:if>
+<c:if test="${access.canChangeStatus}">
 <tr>
  <td class="label" valign="top">Pilot Status</td>
-<c:if test="${access.canChangeStatus}">
  <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${pilot.statusName}" /><br />
 <el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
@@ -138,16 +140,13 @@ return true;
 <tr>
  <td class="label">ACARS Capabilities</td>
  <td colspan="${cspan}" class="data"><el:combo name="ACARSrestrict" size="1" idx="*" options="${acarsRest}" value="${pilot.ACARSRestrictionName}" /></td>
-</c:if>  
-<c:if test="${!access.canChangeStatus}">
- <td colspan="${cspan}" class="data sec bld">${status}</td>
-</c:if>
 </tr>
+</c:if>
 <c:if test="${pilot.ID == pageContext.request.userPrincipal.ID}">
 <tr>
  <td class="label">Password</td>
- <td colspan="${cspan}" class="data"><el:text type="password" name="pwd1" idx="*" size="16" max="32" value="" />, retype:
-<el:text type="password" name="pwd2" idx="*" size="16" max="32" value="" /></td>
+ <td colspan="${cspan}" class="data"><el:text type="password" autoComplete="false" name="pwd1" idx="*" size="16" max="32" value="" />, retype:
+<el:text type="password" autoComplete="false" name="pwd2" idx="*" size="16" max="32" value="" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canChangeRoles}">
