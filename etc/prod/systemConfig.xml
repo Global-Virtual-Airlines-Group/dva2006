@@ -69,7 +69,7 @@
 
 		<!-- Home Page Meta Tags -->
 		<meta>
-			<desc>Delta Virtual Airlines is a virtual airline based on Delta Air Lines.</desc>
+			<desc>Delta Virtual Airlines is the world's largest virtual airline, based on Delta Air Lines.</desc>
 			<list name="keywords" attr="keyword">
 				<keyword>Delta Virtual Airlines</keyword>
 				<keyword>Delta</keyword>
@@ -84,11 +84,11 @@
 				<keyword>FSX</keyword>
 				<keyword>flight simulator X</keyword>
 				<keyword>microsoft flight simulator</keyword>
-				<keyword>flightsim</keyword>
 				<keyword>flight simulators</keyword>
 				<keyword>flightsims</keyword>
 				<keyword>Delta Connection</keyword>
 				<keyword>Delta Shuttle</keyword>
+				<keyword>Delta Express</keyword>
 				<keyword>Song</keyword>
 				<keyword>ACA</keyword>
 				<keyword>ASA</keyword>
@@ -99,6 +99,8 @@
 				<keyword>Boeing</keyword>
 				<keyword>McDonnell-Douglas</keyword>
 				<keyword>Embraer</keyword>
+				<keyword>Convair</keyword>
+				<keyword>Bombardier</keyword>
 				<keyword>Air France Virtual</keyword>
 				<keyword>Aviation Français Virtuel</keyword>
 			</list>
@@ -506,7 +508,7 @@
 		<list name="versions" attr="version" sorted="true">
 			<version>1.0</version>
 			<version>2.1</version>
-			<version>2.2</version>
+			<version>3.0</version>
 		</list>
 		
 		<assignto type="Integer">043</assignto>
