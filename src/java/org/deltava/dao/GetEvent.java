@@ -90,16 +90,14 @@ public class GetEvent extends DAO {
 	 */
 	public int getEvent(Airport airportD, Airport airportA, int network) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
-					+ "AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (E.STARTTIME < NOW()) AND "
-					+ "(NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID");
+			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE "
+					+ "(E.ID=EA.ID) AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND "
+					+ "(E.STARTTIME < NOW()) AND (NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID LIMIT 1");
 			_ps.setString(1, airportD.getIATA());
 			_ps.setString(2, airportA.getIATA());
 			_ps.setInt(3, network);
 			
 			// Execute the Query
-			setQueryMax(0);
 			ResultSet rs = _ps.executeQuery();
 			int eventID = rs.next() ? rs.getInt(1) : 0;
 			
@@ -148,7 +146,8 @@ public class GetEvent extends DAO {
 	 */
 	public boolean hasFutureEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM events.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?)");
+			prepareStatementWithoutLimits("SELECT ID FROM events.EVENTS WHERE (STARTTIME > NOW()) AND "
+					+ "(STATUS != ?) LIMIT 1");
 			_ps.setInt(1, Event.CANCELED);
 			
 			// Execute the query
