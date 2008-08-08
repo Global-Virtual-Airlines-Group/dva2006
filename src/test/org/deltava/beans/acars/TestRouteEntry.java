@@ -1,4 +1,3 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -7,6 +6,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
+import org.deltava.beans.schedule.GeoPosition;
 
 public class TestRouteEntry extends AbstractBeanTestCase {
    
@@ -20,7 +20,7 @@ public class TestRouteEntry extends AbstractBeanTestCase {
    protected void setUp() throws Exception {
       super.setUp();
       _dt = new Date();
-      _entry = new RouteEntry(_dt, 45.6789, -112.2334);
+      _entry = new RouteEntry(_dt, new GeoPosition(45.6789, -112.2334));
       setBean(_entry);
    }
 
@@ -32,9 +32,9 @@ public class TestRouteEntry extends AbstractBeanTestCase {
 
    public void testProperties() {
       assertEquals(_dt, _entry.getDate());
-      assertNotNull(_entry.getPosition());
-      assertEquals(45.6789, _entry.getPosition().getLatitude(), 0.0001);
-      assertEquals(-112.2334, _entry.getPosition().getLongitude(), 0.0001);
+      assertNotNull(_entry.getLocation());
+      assertEquals(45.6789, _entry.getLocation().getLatitude(), 0.0001);
+      assertEquals(-112.2334, _entry.getLocation().getLongitude(), 0.0001);
       checkProperty("altitude", new Integer(30045));
       checkProperty("heading", new Integer(241));
       checkProperty("airSpeed", new Integer(251));
@@ -62,7 +62,7 @@ public class TestRouteEntry extends AbstractBeanTestCase {
    }
    
    public void testComparator() {
-      RouteEntry e2 = new RouteEntry(new Date(_dt.getTime() + 5), 1, 1);
+      RouteEntry e2 = new RouteEntry(new Date(_dt.getTime() + 5), new GeoPosition(1, 1));
       assertTrue(e2.getDate().getTime() > _entry.getDate().getTime());
       assertTrue(e2.compareTo(_entry) > 0);
    }
