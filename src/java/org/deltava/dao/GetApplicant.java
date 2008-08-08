@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -313,7 +313,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	}
 
 	/**
-	 * Searches for Applicants registering from the same TCP/IP network.
+	 * Searches for Applicants registering from the same TCP/IP network. If the Applicant has
+	 * been hired, this will return the Pilot database ID, instead of the Applicant database ID.
 	 * @param addr the network Address
 	 * @param maskAddr the network Mask
 	 * @param dbName the database name
@@ -325,17 +326,16 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			return Collections.emptyList();
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT IF(PILOT_ID, PILOT_ID, ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS A WHERE (A.STATUS<>?) AND ((INET_ATON(?) & INET_ATON(?)) = "
+		sqlBuf.append(".APPLICANTS A WHERE ((INET_ATON(?) & INET_ATON(?)) = "
 				+ "(REGADDR & INET_ATON(?)))");
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Applicant.REJECTED);
-			_ps.setString(2, addr);
+			_ps.setString(1, addr);
+			_ps.setString(2, maskAddr);
 			_ps.setString(3, maskAddr);
-			_ps.setString(4, maskAddr);
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
