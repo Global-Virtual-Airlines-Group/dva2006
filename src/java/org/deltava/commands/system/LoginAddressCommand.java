@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.Collection;
@@ -12,9 +12,9 @@ import org.deltava.dao.*;
 import org.deltava.util.*;
 
 /**
- * A Web Site Command to display all the users logging in via a particular IP address.
+ * A Web Site Command to display all the users logging in via a particular IP address or host name.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -68,6 +68,9 @@ public class LoginAddressCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set search attribute
+		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
 		result.setURL("/jsp/admin/loginAddresses.jsp");

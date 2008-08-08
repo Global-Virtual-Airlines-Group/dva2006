@@ -562,6 +562,11 @@ training session with a Flight Academy student.</td>
  <td class="data">Applicants can be prevented from registering based on first and last name, IP address,
  network and/pr host name. This is used to lock out troublemakers and spambots.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="loginaddrs">Login Addresses</el:cmd></td>
+ <td class="data">You can search the system logs to determine which user accounts have been access from
+ a particular IP address, host name or address range.</td> 
+</tr>
 </content:filter> 
 <content:filter roles="HR,Examination,TestAdmin">
 <tr class="title caps">
