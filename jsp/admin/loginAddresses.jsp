@@ -64,12 +64,17 @@ cause the provided host name to be translated into an IP address before searchin
 </el:table>
 </el:form>
 
-<c:if test="${!empty addrs}">
+<c:if test="${doSearch}">
 <view:table className="view" pad="default" space="default" cmd="loginaddrs">
 <tr class="title caps">
- <td colspan="6" class="left">SEARCH RESULTS <fmt:int value="${fn:sizeof(addrs)}" /> RESULTS</td>
+ <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${fn:sizeof(addrs)}" /> RESULTS</c:if></td>
 </tr>
-
+<c:if test="${empty addrs}">
+<tr>
+ <td colspan="6" class="pri bld caps">NO MATCHING <content:airline /> PILOTS WERE FOUND.</td>
+</tr>
+</c:if>
+<c:if test="${!empty addrs}">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="10%">CODE</td>
@@ -92,9 +97,10 @@ cause the provided host name to be translated into an IP address before searchin
  <td><fmt:date fmt="d" default="-" date="${pilot.lastLogin}" /></td>
 </view:row>
 </c:forEach>
-<tr class="title caps">
- <td colspan="6">&nbsp;</td>
+<tr class="title">
+ <td colspan="6"><view:legend width="110" labels="Active,Inactive,Retired,On Leave,Suspended" classes=" ,opt2,opt3,warn,error" /></td>
 </tr>
+</c:if>
 </view:table>
 </c:if>
 <br />
