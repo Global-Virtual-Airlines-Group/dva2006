@@ -14,13 +14,14 @@ xmlreq.onreadystatechange = function() {
 	removeMarkers(map, 'routeData');
 	removeMarkers(map, 'routeWaypoints');
 	removeMarkers(map, 'acPositions');
+	removeMarkers(map, 'dcPositions');
 	acPositions.length = 0;
+	dcPositions.length = 0;
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
 	if (!xml) return false;
 	var xe = xml.documentElement;
-	document.dispatchOnline = (xe.getAttribute("dispatch") == "true");
 	var ac = xe.getElementsByTagName("aircraft");
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i]; var mrk = null;
@@ -31,8 +32,8 @@ xmlreq.onreadystatechange = function() {
 			mrk = googleMarker(document.imgPath, a.getAttribute("color"), p, null);
 
 		mrk.flight_id = a.getAttribute("flight_id");
+		mrk.isBusy = (d.getAttribute("busy") == 'true');
 		var tabs = parseInt(a.getAttribute("tabs"));
-		mrk.infoShow = clickIcon;
 		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; removeMarkers(map, 'routeData'); removeMarkers(map, 'routeWaypoints'); });
 		if (tabs == 0) {
 			var label = a.firstChild;
@@ -48,8 +49,40 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handler
-		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
+		GEvent.bind(mrk, 'click', mrk, clickAircraft);
 		acPositions.push(mrk);
+		map.addOverlay(mrk);
+	} // for
+
+	var dc = xe.getElementsByTagName("dispatch");
+	for (var i = 0; i < dc.length; i++) {
+		var d = dc[i]; var mrk = null;
+		var p = new GLatLng(parseFloat(d.getAttribute("lat")), parseFloat(d.getAttribute("lng")));
+		if (d.getAttribute("pal"))
+			mrk = googleIconMarker(d.getAttribute("pal"), d.getAttribute("icon"), p, null);
+		else if (d.getAttribute("color"))
+			mrk = googleMarker(document.imgPath, d.getAttribute("color"), p, null);
+
+		var tabs = parseInt(d.getAttribute("tabs"));
+		mrk.range = parseInt(d.getAttribute("range"));
+		mrk.isBusy = (d.getAttribute("busy") == 'true');
+		GEvent.bind(mrk, 'infowindowclose', mrk, function() { document.pauseRefresh = false; if (this.rangeCircle) this.rangeCircle.hide(); });
+		if (tabs == 0) {
+			var label = d.firstChild;
+			mrk.infoLabel = label.data;
+		} else {
+			mrk.tabs = new Array();
+			var tbs = d.getElementsByTagName("tab");
+			for (var x = 0; x < tbs.length; x++) {
+				var tab = tbs[x];
+				var label = tab.firstChild;
+				mrk.tabs.push(new GInfoWindowTab(tab.getAttribute("name"), label.data));
+			}
+		}
+
+		// Set the the click handler
+		GEvent.bind(mrk, 'click', mrk, clickDispatch);
+		dcPositions.push(mrk);
 		map.addOverlay(mrk);
 	} // for
 
@@ -58,11 +91,11 @@ xmlreq.onreadystatechange = function() {
 
 	// Display dispatch status
 	var de = getElement('dispatchStatus');
-	if (document.dispatchOnline) {
+	if ((de) && (dc.length > 0)) {
 		de.className = 'ter bld caps';
 		de.innerHTML = 'Dispatcher Currently Online';
 	} else if (de) {
-		de.className = 'err bld caps';	
+		de.className = 'bld caps';	
 		de.innerHTML = 'Dispatcher Currently Offline';
 	}
 
@@ -76,7 +109,7 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 }
 
-function clickIcon()
+function clickAircraft()
 {
 // Check what info we display
 var f = document.forms[0];
@@ -96,6 +129,30 @@ if (isProgress || isRoute) {
 	removeMarkers(map, 'routeWaypoints');
 	showFlightProgress(this, isProgress, isRoute);
 }
+
+document.pauseRefresh = true;
+return true;
+}
+
+function clickDispatch()
+{
+// Check what info we display
+var f = document.forms[0];
+var isInfo = f.showInfo.checked;
+
+//Display the info
+if (isInfo && (this.tabs))
+	this.openInfoWindowTabsHtml(this.tabs)
+else if (isInfo)
+	this.openInfoWindowHtml(this.infoLabel);
+
+//Display flight progress / route
+if (!this.rangeCircle) {
+	this.rangeCircle = getServiceRange(this, this.range);
+	if (this.rangeCircle)
+		map.addOverlay(this.rangeCircle);
+} else
+	this.rangeCircle.show();
 
 document.pauseRefresh = true;
 return true;
@@ -148,4 +205,28 @@ xreq.onreadystatechange = function() {
 
 xreq.send(null);
 return true;
+}
+
+function getServiceRange(marker, range)
+{
+if (range == 0) return null;
+var p = map.getCurrentMapType().getProjection();
+var l2 = new GLatLng(marker.getLatLng().lat() + (range / 69.16), marker.getLatLng().lng());
+var centerPt = p.fromLatLngToPixel(marker.getLatLng(), map.getZoom()); 
+var radiusPt = p.fromLatLngToPixel(l2, map.getZoom());
+
+// Build the circle
+var pts = new Array();
+var radius = Math.floor(Math.sqrt(Math.pow((centerPt.x-radiusPt.x),2) + Math.pow((centerPt.y-radiusPt.y),2))); 
+for (var a = 0 ; a < 361 ; a+=5 ) {
+    var aRad = (Math.PI / 180) * a;
+    var y = centerPt.y + radius * Math.sin(aRad);
+    var x = centerPt.x + radius * Math.cos(aRad);
+    pts.push(p.fromPixelToLatLng(new GPoint(x,y), map.getZoom()));
+} 
+
+// Set border/fill colors
+var bColor = marker.isBusy ? '#C02020' : '#20C060';
+var fColor = marker.isBusy ? '#802020' : '#208040';
+return new GPolygon(pts, bColor, 1, 0.65, fColor, marker.isBusy ? 0.1 : 0.2); 
 }

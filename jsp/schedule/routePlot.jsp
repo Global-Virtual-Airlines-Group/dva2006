@@ -20,14 +20,8 @@
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
-function plotMap()
+function getAJAXParams()
 {
-// Set map as loading
-var isLoading = getElement("isLoading");
-if (isLoading)
-	isLoading.innerHTML = " - LOADING...";
-	
-// Build the POST data
 var f = document.forms[0];
 var params = new Array();
 if (f.airportD.selectedIndex > 0) {
@@ -49,10 +43,22 @@ if (f.star.selectedIndex > 0)
 if (f.route.value.length > 0)
 	params.push('route=' + f.route.value);
 
+// Save simulator version
+params.push('sim=' + f.simVersion.options[f.simVersion.selectedIndex].value);
+return params;
+}
+
+function plotMap()
+{
+// Set map as loading
+var isLoading = getElement("isLoading");
+if (isLoading)
+	isLoading.innerHTML = " - LOADING...";
+	
 // Generate an XMLHTTP request
 var xmlreq = GXmlHttp.create();
 xmlreq.open("POST", "routeplot.ws", true);
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
 // Build the update handler	
 xmlreq.onreadystatechange = function() {
@@ -101,6 +107,7 @@ xmlreq.onreadystatechange = function() {
 	return true;
 }
 
+var params = getAJAXParams();
 xmlreq.send(params.join('&'));
 return true;
 }
@@ -122,6 +129,19 @@ for (var i = 0; i < elements.length; i++) {
 		combo.selectedIndex = (i+1);
 } // for
 
+return true;
+}
+
+function requestFlightPlan()
+{
+// Generate an XMLHTTP request
+var xmlreq = GXmlHttp.create();
+xmlreq.open("POST", "routeplan.ws", true);
+
+
+
+var params = getAJAXParams();
+xmlreq.send(params.join('&'));
 return true;
 }
 </script>
@@ -169,6 +189,10 @@ return true;
  <td class="label">Flight Route</td>
  <td class="data"><el:text name="routeCodes" size="144" max="320" readOnly="true" value="" /></td>
 </tr>
+<tr>
+ <td class="label">Simulator Version</td>
+ <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" firstEntry="-" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
@@ -189,11 +213,11 @@ updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
 updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportD));
 
 // Create the map
-var map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
+var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(38.88, -93.25), 4);
-map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 </script>
 <content:googleAnalytics />
 </body>

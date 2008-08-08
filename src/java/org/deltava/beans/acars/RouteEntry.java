@@ -4,7 +4,6 @@ package org.deltava.beans.acars;
 import java.util.Date;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
 
@@ -13,14 +12,13 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
-public class RouteEntry extends DatabaseBean implements GeospaceLocation, MarkerMapEntry {
+public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 
 	private Date _date;
-	private GeoPosition _gpos;
 	private FlightPhase _phase;
 
 	private int _alt;
@@ -54,15 +52,20 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, Marker
 	/**
 	 * Creates a new ACARS Route Entry bean.
 	 * @param dt the date/time of this entry
-	 * @param lat the aircraft's latitude
-	 * @param lon the aircraft's longitude
+	 * @param loc the aircraft's location
 	 * @see RouteEntry#getDate()
-	 * @see RouteEntry#getPosition()
+	 * @see RouteEntry#getLocation()
 	 */
-	public RouteEntry(Date dt, double lat, double lon) {
-		super();
+	public RouteEntry(Date dt, GeoLocation loc) {
+		super(loc);
 		_date = dt;
-		_gpos = new GeoPosition(lat, lon);
+	}
+	
+	/**
+	 * Returns if this entry is a Dispatcher.
+	 */
+	public final boolean isDispatch() {
+		return false;
 	}
 
 	/**
@@ -150,7 +153,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, Marker
 	/**
 	 * Returns the date/time of this entry.
 	 * @return the date/time of this entry
-	 * @see RouteEntry#RouteEntry(Date, double, double)
+	 * @see RouteEntry#RouteEntry(Date, GeoLocation)
 	 */
 	public Date getDate() {
 		return _date;
@@ -176,14 +179,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, Marker
 		return _flags;
 	}
 
-	/**
-	 * Returns the aircraft's position.
-	 * @return the position
-	 * @see RouteEntry#RouteEntry(Date, double, double)
-	 */
-	public GeoPosition getPosition() {
-		return _gpos;
-	}
+
 
 	/**
 	 * Returns the aircraft's Mach number.
@@ -192,14 +188,6 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, Marker
 	 */
 	public double getMach() {
 		return _mach;
-	}
-
-	public final double getLatitude() {
-		return _gpos.getLatitude();
-	}
-
-	public final double getLongitude() {
-		return _gpos.getLongitude();
 	}
 
 	/**
@@ -655,7 +643,7 @@ public class RouteEntry extends DatabaseBean implements GeospaceLocation, Marker
 	 */
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">Position: <b>");
-		buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
+		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</b><br /> Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
 		buf.append(" feet");
