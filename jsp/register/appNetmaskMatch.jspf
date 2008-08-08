@@ -7,12 +7,18 @@
  <td colspan="2"><fmt:int value="${fn:sizeof(netmaskUsers)}" /> USERS REGISTERED FROM ${netmaskAddr}</td>
 </tr>
 <c:forEach var="person" items="${netmaskUsers}">
-<c:set var="personLoc" value="${userData[person.ID]}" scope="request" />
-<c:set var="rowColor" value="${fn:isSuspended(person) ? ' err' : ''}" scope="request" />
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data${rowColor}"><el:profile location="${personLoc}">${person.name}</el:profile> 
-<a href="mailto:${person.email}" class="small">${person.email}</a>, registered on <fmt:date fmt="d" date="${person.createdOn}" /> 
-from ${person.registerAddress} (${person.registerHostName})</td>
+<c:if test="${fn:isPilot(person)}">
+<c:set var="rowColor" value="${fn:isSuspended(person) ? ' error' : ''}" scope="request" />
+ <td class="data"><c:if test="${fn:isSuspended(person)}"><span class="error bld">SUSPENDED USER </span></c:if>
+<el:cmd url="profile" link="${person}">${person.name}</el:cmd> <a href="mailto:${person.email}" class="small">${person.email}</a>,
+ <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /></span></td>
+</c:if>
+<c:if test="${!fn:isPilot(person)}">
+ <td class="data"><el:cmd url="applicant" link="${person}">${person.name}</el:cmd>
+ <a href="mailto:${person.email}" class="small">${person.email}</a>, <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /> 
+from ${person.registerAddress} (${person.registerHostName})</span></td>
+</c:if>
 </tr>
 </c:forEach>
