@@ -32,7 +32,7 @@ xmlreq.onreadystatechange = function() {
 			mrk = googleMarker(document.imgPath, a.getAttribute("color"), p, null);
 
 		mrk.flight_id = a.getAttribute("flight_id");
-		mrk.isBusy = (d.getAttribute("busy") == 'true');
+		mrk.isBusy = (a.getAttribute("busy") == 'true');
 		var tabs = parseInt(a.getAttribute("tabs"));
 		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; removeMarkers(map, 'routeData'); removeMarkers(map, 'routeWaypoints'); });
 		if (tabs == 0) {
