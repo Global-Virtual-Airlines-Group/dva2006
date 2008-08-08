@@ -16,7 +16,6 @@ import org.deltava.dao.*;
 import org.deltava.security.command.ApplicantAccessControl;
 
 import org.deltava.util.*;
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -28,9 +27,6 @@ import org.deltava.util.system.SystemData;
 
 public class ApplicantCommand extends AbstractFormCommand {
 	
-	private static final Cache<CacheableMap<Integer, UserData>> _cache = 
-		new ExpiringCache<CacheableMap<Integer,UserData>>(12, 3600);
-
 	/**
 	 * Callback method called when saving the profile.
 	 * @param ctx the Command context
@@ -217,14 +213,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 			ctx.setAttribute("eMailValid", Boolean.valueOf(avdao.isValid(a.getID())), REQUEST);
 
 			// Do a soundex and netmask check on the applicant
-			CacheableMap<Integer, UserData> udmap = _cache.get(Integer.valueOf(a.getID()));
-			if (udmap == null) {
-				udmap = new CacheableMap<Integer, UserData>(Integer.valueOf(a.getID())); 
-				udmap.putAll(soundexCheck(a, con, ctx));
-				udmap.putAll(netmaskCheck(a, con, ctx));
-				_cache.add(udmap);
-			}
-			ctx.setAttribute("userData", udmap, REQUEST);
+			soundexCheck(a, con, ctx);
+			netmaskCheck(a, con, ctx);
 
 			// Get the questionnaire
 			GetQuestionnaire exdao = new GetQuestionnaire(con);
@@ -257,7 +247,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 	/**
 	 * Helper method to perform the netmask check.
 	 */
-	private UserDataMap netmaskCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
+	private void netmaskCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
 		
 		// Generate the netmask
 		String netMask = "255.255.255.0";
@@ -275,7 +265,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 					buf.append('.');
 			}
 
-			ctx.setAttribute("netmaskAddr", buf.toString().replace('0', 'X'), REQUEST);
+			ctx.setAttribute("netmaskAddr", buf.toString().replace(".0", ".X"), REQUEST);
 		} catch (UnknownHostException uhe) {
 			String mask = a.getRegisterAddress().substring(0, a.getRegisterAddress().lastIndexOf('.')) + ".X";
 			ctx.setAttribute("netmaskAddr", mask, REQUEST);
@@ -292,37 +282,36 @@ public class ApplicantCommand extends AbstractFormCommand {
 			netmaskIDs.addAll(dao.checkAddress(a.getRegisterAddress(), netMask, info.getDB()));
 		}
 		
-		// If nothing found, stop
-		if (netmaskIDs.isEmpty())
-			return new UserDataMap();
-
 		// Load the locations of all these matches
 		GetUserData uddao = new GetUserData(c);
 		UserDataMap udmap = uddao.get(netmaskIDs);
 
 		// Load the users objects
+		GetPilot pdao = new GetPilot(c);
 		Map<Integer, Person> persons = new HashMap<Integer, Person>();
 		for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext();) {
 			String tableName = i.next();
 			Collection<UserData> IDs = udmap.getByTable(tableName);
-			persons.putAll(dao.getByID(IDs, tableName));
+			if (UserDataMap.isPilotTable(tableName))
+				persons.putAll(pdao.getByID(IDs, tableName));
+			else
+				persons.putAll(dao.getByID(IDs, tableName));
 		}
 		
 		// Save the persons in the request
 		List<Person> users = new ArrayList<Person>(persons.values());
 		Collections.sort(users, new PersonComparator<Person>(PersonComparator.CREATED));
 		Collections.reverse(users);
-		if (users.size() > 55)
-			users.subList(0, users.size() - 55).clear();
+		if (users.size() > 65)
+			users.subList(0, users.size() - 65).clear();
 		
 		ctx.setAttribute("netmaskUsers", users, REQUEST);
-		return udmap;
 	}
 
 	/**
 	 * Helper method to perform the soundex check.
 	 */
-	private UserDataMap soundexCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
+	private void soundexCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
 
 		// Initialize the DAOs
 		GetApplicant dao = new GetApplicant(c);
@@ -336,10 +325,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 			soundexIDs.addAll(dao.checkSoundex(a, info.getDB()));
 			soundexIDs.addAll(pdao.checkSoundex(a, info.getDB()));
 		}
-
-		// If nothing found, stop
-		if (soundexIDs.isEmpty())
-			return new UserDataMap();
+		
+		// If we have too many, abort
+		if (soundexIDs.size() > 1500)
+			soundexIDs.clear();
 
 		// Load the locations of all these matches
 		GetUserData uddao = new GetUserData(c);
@@ -372,6 +361,5 @@ public class ApplicantCommand extends AbstractFormCommand {
 		Collection<Person> users = new TreeSet<Person>(cmp);
 		users.addAll(persons.values());
 		ctx.setAttribute("soundexUsers", users, REQUEST);
-		return udmap;
 	}
 }
