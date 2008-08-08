@@ -48,8 +48,9 @@ public class GetLoginData extends DAO {
 	public Collection<LoginAddress> getLoginUsers(String host) throws DAOException {
 		try {
 			prepareStatement("SELECT ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
-					+ "WHERE (REMOTE_HOST LIKE ?)");
+					+ "WHERE (REMOTE_HOST LIKE ?) OR (INET_NTOA(REMOTE_ADDR) LIKE ?)");
 			_ps.setString(1, host);
+			_ps.setString(2, host);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
