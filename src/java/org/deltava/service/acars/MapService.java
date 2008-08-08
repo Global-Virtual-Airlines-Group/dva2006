@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 
 public class MapService extends WebService {
 	
-	private final Cache<CacheableList<RouteEntry>> _cache = new ExpiringCache<CacheableList<RouteEntry>>(1, 4); 
+	private final Cache<CacheableCollection<ACARSMapEntry>> _cache = new ExpiringCache<CacheableCollection<ACARSMapEntry>>(1, 5); 
 
 	/**
 	 * Executes the Web Service.
@@ -38,16 +38,16 @@ public class MapService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the pool
-		ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		ACARSAdminInfo<ACARSMapEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
 		if (acarsPool == null)
 			return SC_NOT_FOUND;
 		
 		// Get the ACARS connection data
-		CacheableList<RouteEntry> entries = null;
+		CacheableCollection<ACARSMapEntry> entries = null;
 		synchronized (_cache) {
 			entries = _cache.get(MapService.class);
 			if (entries == null) {
-				entries = new CacheableList<RouteEntry>(MapService.class);
+				entries = new CacheableList<ACARSMapEntry>(MapService.class);
 				entries.addAll(IPCUtils.deserialize(acarsPool));
 				_cache.add(entries);
 			}
@@ -56,17 +56,21 @@ public class MapService extends WebService {
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
-		re.setAttribute("dispatch", String.valueOf(acarsPool.isDispatchOnline()));
 		doc.setRootElement(re);
 
 		// Add the items
-		for (Iterator<? extends RouteEntry> i = entries.iterator(); i.hasNext();) {
-			RouteEntry entry = i.next();
-			Element e = new Element("aircraft");
+		for (Iterator<ACARSMapEntry> i = entries.iterator(); i.hasNext();) {
+			ACARSMapEntry entry = i.next();
+			Element e = new Element(entry.isDispatch() ? "dispatch" : "aircraft");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			e.setAttribute("flight_id", String.valueOf(entry.getID()));
 			e.setAttribute("color", entry.getIconColor());
+			e.setAttribute("busy", String.valueOf(entry.isBusy()));
+			if (entry.isDispatch()) {
+				DispatchMapEntry dme = (DispatchMapEntry) entry;
+				e.setAttribute("range", String.valueOf((dme.getRange() > 5000) ? 0 : dme.getRange()));
+			} else
+				e.setAttribute("flight_id", String.valueOf(entry.getID()));
 			
 			// Display icons as required
 			if (entry instanceof IconMapEntry) {

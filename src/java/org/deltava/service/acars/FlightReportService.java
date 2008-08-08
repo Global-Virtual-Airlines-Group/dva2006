@@ -131,8 +131,8 @@ public class FlightReportService extends WebService {
 
 				// Build a position entry
 				try {
-					RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), 
-							parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
+					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
+					RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), loc);
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));

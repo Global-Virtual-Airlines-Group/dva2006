@@ -104,27 +104,29 @@ return true;
 <el:form action="acarsMap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2"><content:airline /> LIVE ACARS MAP<span id="isLoading" /></td>
+ <td colspan="4"><content:airline /> LIVE ACARS MAP<span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="label">Map Options</td>
- <td class="data"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
+ <td class="data" colspan="3"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
 <el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" />&nbsp;
 <el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" />&nbsp;
 <el:box name="showRoute" idx="*" value="1" label="Show Flight Plan" checked="false" /></span></td>
 </tr>
 <tr>
- <td class="label">Map Legend</td>
+ <td class="label">Aircraft Legend</td>
  <td class="data"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
+ <td class="label">Dispatcher Legend</td>
+ <td class="data"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
 </tr>
 <tr>
  <td class="label">Dispatch Service</td>
- <td class="data"><span id="dispatchStatus" class="err bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
+ <td class="data" colspan="3"><span id="dispatchStatus" class="bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Live Flight Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld"></div></td>
+ <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="545" /><div id="copyright" class="bld"></div></td>
 </tr>
 </el:table>
 
@@ -172,6 +174,7 @@ GEvent.addListener(map, 'maptypechanged', updateMapText);
 var routeData;
 var routeWaypoints;
 var acPositions = new Array();
+var dcPositions = new Array();
 
 // Reload ACARS data
 document.dispatchOnline = false;

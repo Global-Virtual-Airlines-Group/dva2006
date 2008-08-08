@@ -17,13 +17,10 @@ import org.gvagroup.acars.ACARSFlags;
  * @since 1.0
  */
 
-public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntry {
+public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	
 	private static final List<String> TAB_NAMES = Arrays.asList("Pilot", "Flight Data");
 
-	private Pilot _usr;
-	private int _clientBuild;
-	private int _betaBuild;
 	private String _eqType;
 	private String _flightNumber;
 	private Airport _airportD;
@@ -32,7 +29,7 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 	private boolean _dispatchRoute;
 
 	public MapRouteEntry(Date dt, GeoLocation gl, Pilot usr, String eqType) {
-		super(dt, gl.getLatitude(), gl.getLongitude());
+		super(dt, gl);
 		_usr = usr;
 		_eqType = eqType;
 	}
@@ -138,6 +135,11 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 		buf.append(_eqType);
 		buf.append("</span> (Build ");
 		buf.append(String.valueOf(_clientBuild));
+		if (_betaBuild > 0) {
+			buf.append(" Beta ");
+			buf.append(_betaBuild);
+		}
+		
 		buf.append(")<br />From: ");
 		buf.append(_airportD.getName());
 		buf.append(" (");
@@ -149,14 +151,11 @@ public class MapRouteEntry extends RouteEntry implements MapEntry, TabbedMapEntr
 		buf.append(")<br /><br />ACARS Flight <b>");
 		buf.append(StringUtils.format(getID(), "#,##0"));
 		buf.append("</b>");
-		if (_checkRide || _dispatchRoute) {
+		if (_checkRide || _dispatchRoute || _busy) {
 			buf.append("<br />");
-			if (_checkRide)
-				buf.append("<span class=\"pri bld\">CHECK RIDE</span>");
-			if (_checkRide && _dispatchRoute)
-				buf.append(' ');
-			if (_dispatchRoute)
-				buf.append("<span class=\"sec bld\">USING DISPATCH</span>");
+			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
+			if (_dispatchRoute) buf.append("<span class=\"sec bld\">USING DISPATCH</span> ");
+			if (_busy) buf.append("<span class=\"error bld\">BUSY</span>");
 		}
 		
 		buf.append("</div>");

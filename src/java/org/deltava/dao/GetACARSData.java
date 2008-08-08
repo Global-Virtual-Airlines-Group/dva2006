@@ -106,7 +106,7 @@ public class GetACARSData extends DAO {
 			List<GeoLocation> results = new ArrayList<GeoLocation>();
 			while (rs.next()) {
 				java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
-				RouteEntry entry = new RouteEntry(dt, rs.getDouble(3), rs.getDouble(4));
+				RouteEntry entry = new RouteEntry(dt, new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
 				entry.setFlags(rs.getInt(22));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
