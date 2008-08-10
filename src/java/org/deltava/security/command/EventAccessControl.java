@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class EventAccessControl extends AccessControl {
 	private boolean _canAddPlan;
 	private boolean _canAssignFlights;
 	private boolean _canCancel;
+	private boolean _canDelete;
 
 	/**
 	 * Initializes the Access Controller.
@@ -66,6 +67,7 @@ public class EventAccessControl extends AccessControl {
 		_canAssignFlights = ((_ev.getStatus() == Event.CLOSED) || (_ev.getStatus() == Event.ACTIVE)) && hasSignups
 				&& isEvent;
 		_canCancel = _canEdit;
+		_canDelete = isEvent && !hasSignups && (_ev.getStartTime().getTime() > System.currentTimeMillis());
 	}
 
 	/**
@@ -114,5 +116,13 @@ public class EventAccessControl extends AccessControl {
 	 */
 	public boolean getCanCancel() {
 		return _canCancel;
+	}
+	
+	/**
+	 * Returns if this Online Event can be deleted.
+	 * @return TRUE if the Online Event can be deleted, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
 	}
 }

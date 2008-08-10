@@ -643,7 +643,13 @@
 		<class>org.deltava.commands.event.EventCancelCommand</class>
 		<roles>Event</roles>
 	</command>
-	
+
+	<command id="eventdelete">
+		<name>Event Delete</name>
+		<class>org.deltava.commands.event.EventDeleteCommand</class>
+		<roles>Event</roles>
+	</command>
+
 	<command id="eventedit">
 		<name>Edit Event</name>
 		<class>org.deltava.commands.event.EventEditCommand</class>
