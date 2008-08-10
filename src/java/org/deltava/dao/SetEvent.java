@@ -36,7 +36,8 @@ public class SetEvent extends DAO {
 			// Determine if we are doing an insert or an update
 			if (e.getID() == 0) {
 				insert(e);
-				writeBanner(e);
+				if (e.isLoaded())
+					writeBanner(e);
 			} else
 				update(e);
 
@@ -116,6 +117,21 @@ public class SetEvent extends DAO {
 		}
 	}
 
+	/**
+	 * Deletes an Online Event.
+	 * @param e the Event bean 
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(Event e) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM events.EVENTS WHERE (ID=?)");
+			_ps.setInt(1, e.getID());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Deletes an Online Event pilot signup.
 	 * @param s the Signup bean
