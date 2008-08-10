@@ -43,13 +43,16 @@ for (x = zoom; x > 0; x--) {
 return this.myBaseURL + url + '.png';
 }
 
-return new GTileLayerOverlay(newLayer);
+var ovLayer = new GTileLayerOverlay(newLayer);
+ovLayer.layerName = name;
+document.wxLayers[name] = ovLayer;
+return ovLayer;
 }
 
-function WXOverlayControl(tileLayer, name, padding) {
-	this.layerName = name;
+function WXOverlayControl(title, names, padding) {
+	this.buttonTitle = title;
+	this.layerNames = names;
 	this.padding = padding;
-	document.wxLayers[name] = tileLayer;
 }
 
 WXOverlayControl.prototype = new GControl();
@@ -58,8 +61,8 @@ WXOverlayControl.prototype.initialize = function(map) {
 	var btn = document.createElement("div");
 	this.setButtonStyle(btn);
 	container.appendChild(btn);
-	btn.appendChild(document.createTextNode(this.layerName));
-	btn.layerName = this.layerName;
+	btn.appendChild(document.createTextNode(this.buttonTitle));
+	btn.layerNames = this.layerNames;
 	GEvent.addDomListener(btn, "click", this.updateMap);
 	map.getContainer().appendChild(container);
 	return container;
@@ -70,11 +73,20 @@ WXOverlayControl.prototype.getDefaultPosition = function() {
 }
 
 WXOverlayControl.prototype.updateMap = function() {
-	if (map.wxData)
-		map.removeOverlay(map.wxData);
+	clearWX();
 
-	map.wxData = document.wxLayers[this.layerName];
-	map.addOverlay(map.wxData);
+	var multiLayers = (this.layerNames instanceof Array);
+	if (multiLayers) {
+		map.wxData = new Array();
+		for (var x = 0; x < this.layerNames.length; x++) {
+			map.wxData.push(document.wxLayers[this.layerNames[x]]);
+			map.addOverlay(document.wxLayers[this.layerNames[x]]);
+		}
+	} else { 
+		map.wxData = document.wxLayers[this.layerNames];
+		map.addOverlay(map.wxData);
+	}
+
 	return true;
 }
 
@@ -92,7 +104,6 @@ WXOverlayControl.prototype.setButtonStyle = function(button) {
 }
 
 function WXClearControl(padding) {
-	this.layerName = 'None';
 	this.padding = padding;
 }
 
@@ -103,9 +114,9 @@ WXClearControl.prototype.initialize = function(map) {
 	var btn = document.createElement("div");
 	this.setButtonStyle(btn);
 	container.appendChild(btn);
-	btn.appendChild(document.createTextNode(this.layerName));
+	btn.appendChild(document.createTextNode("None"));
 	btn.layerName = this.layerName;
-	GEvent.addDomListener(btn, "click", this.clearWX);
+	GEvent.addDomListener(btn, "click", clearWX);
 	map.getContainer().appendChild(container);
 	return container;
 }
@@ -114,11 +125,16 @@ WXClearControl.prototype.getDefaultPosition = function() {
 	return new GControlPosition(G_ANCHOR_BOTTOM_LEFT, this.padding);
 }
 
-WXClearControl.prototype.clearWX = function() {
-	if (map.wxData) {
-		map.removeOverlay(map.wxData);
-		delete map.wxData;
-	}
-		
-	return true;
+function clearWX()
+{
+if (!map.wxData) return false;
+var multiLayers = (map.wxData instanceof Array);
+if (multiLayers) {
+	for (var x = 0; x < map.wxData.length; x++)
+		map.removeOverlay(map.wxData[x]);
+} else
+	map.removeOverlay(map.wxData);
+
+delete map.wxData;	
+return true;
 }
