@@ -30,6 +30,7 @@ disableButton('EditButton');
 disableButton('RouteButton');
 disableButton('PlanButton');
 disableButton('CancelButton');
+disableButton('DeleteButton');
 disableButton('AssignButton');
 return true;
 }
@@ -284,6 +285,9 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 </c:if>
 <c:if test="${access.canCancel}">
  <el:cmdbutton ID="CancelButton" url="eventcancel" link="${event}" label="CANCEL EVENT" />
+</c:if>
+<c:if test="${access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" url="eventdelete" link="${event}" label="DELETE EVENT" />
 </c:if>
  </td>
 </tr>

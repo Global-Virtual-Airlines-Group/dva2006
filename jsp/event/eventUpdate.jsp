@@ -19,14 +19,29 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<div class="updateHdr">Online Event ${isNew ? 'Created' : 'Updated'}</div>
+<c:choose>
+<c:when test="${isNew}">
+<div class="updateHdr">Online Event Created</div>
 <br />
-The <span class="pri bld">${event.name}</span> Online Event has been successfully ${isNew ? 'created' : 'updated'}.<br />
+The <span class="pri bld">${event.name}</span> Online Event has been successfully created.<br />
+</c:when>
+<c:when test="${isDelete}">
+<div class="updateHdr">Online Event Deleted</div>
 <br />
-To view this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br />
+The <span class="pri bld">${event.name}</span> Online Event has been deleted from the database.<br />
+</c:when>
+<c:otherwise>
+<div class="updateHdr">Online Event Updated</div>
+<br />
+The <span class="pri bld">${event.name}</span> Online Event has been successfully updated.<br />
+</c:otherwise>
+</c:choose>
+<br />
+<c:if test="${!isDelete}">
+To view this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br /></c:if>
 <c:if test="${isNew}">
-To add additional routes to this Online Event, <el:cmd className="sec bld" url="eventroutes" link="${event}">Click Here</el:cmd>.<br />
-</c:if>
+To add additional routes to this Online Event, <el:cmd className="sec bld" url="eventroutes" link="${event}">Click Here</el:cmd>.<br /></c:if>
+To view the <content:airline /> Online Event Calendar, <el:cmd className="sec bld" url="eventcalendar">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
