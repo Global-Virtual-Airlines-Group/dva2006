@@ -2,6 +2,8 @@
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.Airport;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -57,7 +59,12 @@ public class DispatchMapEntry extends ACARSMapEntry {
 			buf.append("<span class=\"sec bld\">Dispatch services restricted to Pilots within<br />");
 			buf.append(_range);
 			buf.append(" miles of ");
-			buf.append(StringUtils.format(getLocation(), true, GeoLocation.ALL));
+			GeoLocation loc = getLocation();
+			if (loc instanceof Airport)
+				buf.append(loc);
+			else
+				buf.append(StringUtils.format(getLocation(), true, GeoLocation.ALL));
+			
 			buf.append("</span>");
 		}
 			
