@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -82,6 +82,26 @@ public class CheckRideFlagCommand extends AbstractCommand {
 						
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setSubmittedOn(fr.getSubmittedOn());
+			} else if ((cr.getStatus() == Test.SCORED) && !cr.getPassFail()) {
+				newCR = true;
+				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
+				cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
+				cr.setAircraftType(fr.getEquipmentType());
+				cr.setDate(fr.getDate());
+				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setStatus(Test.SUBMITTED);
+				cr.setSubmittedOn(fr.getSubmittedOn());
+				cr.setScorerID(ctx.getUser().getID());
+				cr.setPilotID(fr.getDatabaseID(FlightReport.DBID_PILOT));
+				
+				// Determine the equipment type based on the primary type
+				GetEquipmentType eqdao = new GetEquipmentType(con);
+				Collection<String> eqTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
+				if (eqTypes.isEmpty())
+					throw notFoundException("No Equipment Type for " + fr.getEquipmentType());
+				
+				// Set the equipment type
+				cr.setEquipmentType(eqTypes.iterator().next());
 			} else
 				throw securityException("Cannot update " + cr.getStatusName() + " Check Ride");
 			
