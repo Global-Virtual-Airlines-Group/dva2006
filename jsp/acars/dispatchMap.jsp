@@ -116,7 +116,7 @@ return mrk;
 </script>
 </head>
 <body onunload="GUnload()">
-<map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="bld"></div>
+<map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="small"></div>
 <script language="JavaScript" type="text/javascript">
 // Load the map
 map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -125,20 +125,23 @@ map.addControl(new GMapTypeControl());
 
 // Display the map
 map.setCenter(new GLatLng(36.44, -100.14), 6);
-map.setMapType(G_SATELLITE_MAP);
-map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 map.enableScrollWheelZoom();
+<map:type map="map" type="${gMapType}" default="G_SATELLITE_MAP" />
 
 <c:if test="${!empty tileHost}">
+//Load the tile overlays
+getTileOverlay("radar", 0.45);
+getTileOverlay("eurorad", 0.45);
+getTileOverlay("sat", 0.35);
+getTileOverlay("temp", 0.25);
+
 // Build the layer controls
 var xPos = 70;
-var rC = new WXOverlayControl(getTileOverlay("radar", 0.5), "Radar", new GSize(70, 3));
-var srC = new WXOverlayControl(getTileOverlay("satrad", 0.4), "Sat/Rad", new GSize((xPos += 72), 3));
-var sC = new WXOverlayControl(getTileOverlay("sat", 0.4), "Infrared", new GSize((xPos += 72), 3));
-var tC = new WXOverlayControl(getTileOverlay("temp", 0.3), "Temparture", new GSize((xPos += 72), 3));
+var rC = new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(70, 7));
+var sC = new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7));
+var tC = new WXOverlayControl("Temparture", "temp", new GSize((xPos += 72), 7));
 map.addControl(rC);
-map.addControl(srC);
 map.addControl(sC);
 map.addControl(tC);
 map.addControl(new WXClearControl(new GSize((xPos += 72), 3)));
@@ -147,7 +150,7 @@ map.addControl(new WXClearControl(new GSize((xPos += 72), 3)));
 var d = new Date();
 var cp = document.getElementById("copyright");
 cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 8));
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
 cpos.apply(cp);
 mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
