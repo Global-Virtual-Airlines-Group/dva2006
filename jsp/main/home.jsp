@@ -108,15 +108,20 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:if test="${!con.userHidden || isHR}">
 <tr>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
-<c:if test="${!empty con.flightInfo.flightCode}">
+<c:choose>
+<c:when test="${!empty con.flightInfo.flightCode}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
  <td class="small bld">${con.flightInfo.equipmentType}</td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
 - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
-</c:if>
-<c:if test="${empty con.flightInfo.flightCode}">
+</c:when>
+<c:when test="${con.dispatch}">
+ <td colspan="3" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
+</c:when>
+<c:otherwise>
  <td colspan="3" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
-</c:if>
+</c:otherwise>
+</c:choose>
 </tr>
 </c:if>
 </c:forEach>
