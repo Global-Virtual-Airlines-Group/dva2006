@@ -1,21 +1,6 @@
 #!/bin/sh
 # IMAP Mailbox directory creation script
-# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 
-# Check for existing mailbox
-if [ -d "$2/$1" ]
-then
-  echo "Mailbox folder $2/$1 already exists!"
-  exit 2
-fi
-
-# Create the mailbox
-mkdir $2/$1
-mkdir $2/$1/cur
-mkdir $2/$1/new
-mkdir $2/$1/tmp
-chown -R postfix:postfix $2/$1
-
-# Log success
-echo "Mailbox $2/$1 succesfully created"
-exit 1
+# This script merely calls mb_create as root since www cannot write to the directory
+sudo mb_create $1 $2

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.io.*;
@@ -19,14 +19,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new IMAP mailbox profile.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class IMAPMailboxCommand extends AbstractCommand {
 
-	//private class 
-	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -46,11 +44,8 @@ public class IMAPMailboxCommand extends AbstractCommand {
 			
 			// Get the Mailbox profile
 			EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
-			if (emailCfg != null) {
-				CommandException ce = new CommandException(usr.getName() + " already has an IMAP mailbox");
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			if (emailCfg != null)
+				throw new CommandException(usr.getName() + " already has an IMAP mailbox", false);
             
             // Check our access
             PilotAccessControl access = new PilotAccessControl(ctx, usr);
@@ -60,9 +55,10 @@ public class IMAPMailboxCommand extends AbstractCommand {
             
 			// Pre-populate the mailbox address
             String fName = usr.getFirstName().toLowerCase(); 
-            String mbAddr = fName + "@" + SystemData.get("airline.domain");
+            String lName = usr.getLastName().toLowerCase();
+            String mbAddr = fName.substring(0, 1) + lName + "@" + SystemData.get("airline.domain");
             if (!edao.isAvailable(mbAddr))
-               mbAddr = fName + usr.getLastName().substring(0, 1).toLowerCase() + "@" + SystemData.get("airline.domain");
+               mbAddr = fName + "_" + lName + "@" + SystemData.get("airline.domain");
             
             // Start a transaction
             ctx.startTX();
@@ -83,7 +79,7 @@ public class IMAPMailboxCommand extends AbstractCommand {
             	
             	// Wait for the process to complete
             	int runTime = 0;
-            	while (runTime < 5000) {
+            	while (runTime < 3500) {
             		ThreadUtils.sleep(250);
             		try {
             			if (p.exitValue() != 1)
