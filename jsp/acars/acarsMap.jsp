@@ -19,7 +19,10 @@
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="2" />
 <map:vml-ie />
-<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
+<c:if test="${!empty tileHost}">
+<content:js name="acarsMapWX" />
+<content:js name="acarsMapFF" />
+</c:if>
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
@@ -139,6 +142,8 @@ return true;
 <el:button ID="EarthButton" className="BUTTON" onClick="void showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
+<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small">Select Time</span>
+ <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" /></div>
 </el:form>
 <br />
 <content:copyright />
@@ -155,15 +160,24 @@ getTileOverlay("eurorad", 0.45);
 getTileOverlay("sat", 0.35);
 getTileOverlay("temp", 0.25);
 
+// Load the ff tile overlays
+var ffLayers = ["future_radar_ff"];
+document.ffOptions = new Array();
+for (var i = 0; i < ffLayers.length; i++) {
+	var layerName = ffLayers[i];
+	var dates = getFFSlices(layerName);
+	document.ffOptions[layerName] = getFFComboOptions(dates);
+	for (var x = 0; x < dates.length; x++)
+		getFFOverlay(layerName, 0.4, dates[x]);
+}
+
 // Build the layer controls
 var xPos = 70;
-var rC = new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(70, 7));
-var sC = new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7));
-var tC = new WXOverlayControl("Temparture", "temp", new GSize((xPos += 72), 7));
-map.addControl(rC);
-map.addControl(sC);
-map.addControl(tC);
-map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
+map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
+map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
+map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
+map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 72), 7)));
+map.addControl(new WXClearControl(new GSize((xPos += 92), 7)));
 </c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
@@ -193,6 +207,16 @@ var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
 cpos.apply(cp);
 mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
+
+// Initialize FastForward elements
+var ffs = document.getElementById("ffSlices");
+var ffpos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(8, 30));
+ffpos.apply(ffs);
+map.getContainer().appendChild(ffs);
+var ffl = document.getElementById("ffLabel");
+mapTextElements.push(ffl);
+
+// Update text color
 GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
 <content:googleAnalytics />
