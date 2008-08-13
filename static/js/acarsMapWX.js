@@ -10,8 +10,10 @@ for (var x = 0; x < sdata.seriesNames.length; x++)
 	var series = sdata.seriesNames[x];
 	document.maxZoom[series] = eval('sdata.seriesInfo.' + series + '.maxZoom');
 	document.seriesDate[series] = eval('sdata.seriesInfo.' + series + '.series[0].unixDate');
+	sdata.seriesInfo[series].isFF = (series.substr(series.length - 3) == '_ff');
 }
 
+document.seriesData = sdata.seriesInfo;
 return true;
 }
 
@@ -87,6 +89,7 @@ WXOverlayControl.prototype.updateMap = function() {
 		map.addOverlay(map.wxData);
 	}
 
+	delete map.ffLayer;
 	return true;
 }
 
@@ -99,7 +102,7 @@ WXOverlayControl.prototype.setButtonStyle = function(button) {
 	button.style.padding = "2px";
 	button.style.marginBottom = "3px";
 	button.style.textAlign = "center";
-	button.style.width = "6em";
+	button.style.width = ((this.buttonTitle) && (this.buttonTitle.length > 11)) ? "8em" : "6em";
 	button.style.cursor = "pointer";
 }
 
@@ -127,6 +130,9 @@ WXClearControl.prototype.getDefaultPosition = function() {
 
 function clearWX()
 {
+var ffs = document.getElementById("ffSlices");
+if (ffs) ffs.style.visibility = 'hidden';
+	
 if (!map.wxData) return false;
 var multiLayers = (map.wxData instanceof Array);
 if (multiLayers) {
@@ -135,6 +141,7 @@ if (multiLayers) {
 } else
 	map.removeOverlay(map.wxData);
 
-delete map.wxData;	
+delete map.wxData;
+delete map.ffLayer;
 return true;
 }

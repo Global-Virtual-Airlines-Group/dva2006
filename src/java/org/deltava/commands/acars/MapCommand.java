@@ -42,6 +42,7 @@ public class MapCommand extends AbstractCommand {
 
 		// Save the map center
 		ctx.setAttribute("mapCenter", gp, REQUEST);
+		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 
 		// Set the cache
 		ctx.getCache().setMaxAge(120);
