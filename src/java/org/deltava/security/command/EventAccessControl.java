@@ -67,7 +67,7 @@ public class EventAccessControl extends AccessControl {
 		_canAssignFlights = ((_ev.getStatus() == Event.CLOSED) || (_ev.getStatus() == Event.ACTIVE)) && hasSignups
 				&& isEvent;
 		_canCancel = _canEdit;
-		_canDelete = isEvent && !hasSignups && (_ev.getStartTime().getTime() > System.currentTimeMillis());
+		_canDelete = isEvent && !hasSignups && (_ev.getStartTime() != null) && (_ev.getStartTime().getTime() > System.currentTimeMillis());
 	}
 
 	/**
