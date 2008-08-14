@@ -1,42 +1,46 @@
+// Combobox Options and Timeslices for FF layers
+document.ffOptions = new Array();
+document.ffSlices = new Array();
+var animateSlices = new Array();
+
 function getFFSlices(seriesName)
 {
-// Calculate GMT offset
-var d = new Date();
-var offset = d.getTimezoneOffset() * -60000;
-
+var now = new Date();
 var dates = new Array();
 var slices = document.seriesData[seriesName].series[0].ff;
 for (var x = 0; x < slices.length; x++) {
 	var d = slices[x];
-	dates.push(new Date(parseInt(d.unixDate) + offset));
+	var dt = new Date(parseInt(d.unixDate)); 
+	if ((dt.getTime() - GMTOffset) > now.getTime())
+		dates.push(dt);
 }
-	
+
 return dates;
 }
 
 function getFFComboOptions(dates)
 {
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 var results = new Array();
 results.push(new Option("< SELECT >", ""));
 for (var x = 0; x < dates.length; x++) {
-	var d = dates[x];
-	var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-	results.push(new Option(d.toLocaleTimeString(), utc));
+	var utc = dates[x];
+	var d = new Date(utc.getTime() - GMTOffset);
+	var dt = d.getDate() + "-" + months[d.getMonth()] + "-" + d.getFullYear() + "  " 
+		+ d.getHours() + ":" + ((d.getMinutes() < 10) ? "0" + d.getMinutes() : d.getMinutes()); 
+	results.push(new Option(dt, utc.getTime()));
 }
 
 return results;
 }
 
-function getFFOverlay(name, opacity, date)
+function getFFOverlay(name, tx, date)
 {
 var cpc = new GCopyrightCollection("Weather Imagery");
 var cp = new GCopyright(111, new GLatLngBounds(new GLatLng(-90, -180), new GLatLng(90, 180)), 0, "The Weather Channel")
 cpc.addCopyright(cp);
 
-var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name]);
-newLayer.tx = opacity;
-newLayer.getOpacity = function() { return this.tx; }
-newLayer.isPng = function() { return true; }
+var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name], {isPng:true, opacity:tx});
 newLayer.myBaseURL = 'http://' + document.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
 newLayer.getTileUrl = function(pnt, zoom) {
 var url = '';
@@ -95,6 +99,113 @@ if (map.wxData)
 	
 var utc = combo.options[combo.selectedIndex].value;
 map.wxData = document.wxLayers[map.ffLayer + '!' + utc];
-map.addOverlay(map.wxData);
+if (map.wxData)
+	map.addOverlay(map.wxData);
+
+return true;
+}
+
+function getVisibleTiles()
+{
+if (!map.visibleTiles)
+	map.visibleTiles = new Array();
+
+var bnds = map.getBounds();
+var p = map.getCurrentMapType().getProjection();
+var maxX = p.getWrapWidth(map.getZoom()) >> 8;
+var nw = new GLatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
+var se = new GLatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
+
+// Get the pixel points of the tiles
+var nwp = p.fromLatLngToPixel(nw, map.getZoom());
+var sep = p.fromLatLngToPixel(se, map.getZoom());
+var nwAddr = new GPoint((nwp.x >> 8), (nwp.y >> 8));
+var seAddr = new GPoint((sep.x >> 8), (sep.y >> 8));
+
+// Load the tile addresses
+map.visibleTiles.length = 0;
+for (var x = nwAddr.x; x <= seAddr.x; x++) {
+	for (var y = nwAddr.y; y <= seAddr.y; y++)
+		map.visibleTiles.push(new GPoint(((x > maxX) ? (x - maxX) : x), y));
+}
+
+map.isPreloaded = false;
+return true;
+}
+
+function preloadImages(layerName, dates)
+{
+if (!map.isAnimating) return false;
+for (var x = 0; ((x < dates.length) && (map.isAnimating)); x++) {
+	var dt = dates[x];
+	var ov = document.wxLayers[layerName + '!' + dt.getTime()];
+	animateSlices.push(ov);
+	map.addOverlay(ov);
+}
+
+window.setTimeout('map.isPreloaded = true', (map.visibleTiles.length * 1500));
+return true;	
+}
+
+function animateFF()
+{
+var f = document.forms[0];
+var btn = getElement('AnimateButton');
+if (map.isAnimating) {
+	// clear animateSlices
+	for (var x = 0; x < animateSlices.length; x++)
+		map.removeOverlay(animateSlices[x]);
+
+	animateSlices.length = 0;
+	btn.value = 'ANIMATE';
+	enableObject(f.ffSlice, true);
+	delete map.lastSlice;
+	delete map.isAnimating;
+} else {
+	enableObject(f.ffSlice, false);
+
+	// Preload the tiles for each tile layer
+	map.isAnimating = true;
+	btn.value = 'LOADING';
+	preloadImages(map.ffLayer, document.ffSlices[map.ffLayer]);
+	btn.value = 'STOP';
+
+	// Set the start offset and fire the timer at 5 seconds
+	var startOfs = Math.max(0, f.ffSlice.selectedIndex - 1);
+	window.setTimeout('showSliceLayer(' + startOfs + ')', (map.visibleTiles.length * 1250));
+}
+
+return true;
+}
+
+function showSliceLayer(ofs)
+{
+if (!map.isAnimating) return false;
+if (!map.isPreloaded) {
+	window.setTimeout('showSliceLayer(' + ofs + ')', 1000);
+	return false;
+}
+
+// Hide any visible slices
+hideAllSlices();
+
+// Get the overlay
+var ov = animateSlices[ofs];
+ov.show();
+
+// Fire off the next timer in 1.5 seconds
+var newOfs = (ofs >= (dates.length - 1)) ? 0 : (ofs + 1);
+window.setTimeout('showSliceLayer(' + newOfs + ')', (newOfs == 0) ? 1150 : 525);
+return true;
+}
+
+function hideAllSlices()
+{
+if (!map.isAnimating) return false;
+for (var x = 0; x < animateSlices.length; x++) {
+	var ov = animateSlices[x];
+	ov.hide();
+}
+	
 return true;
 }
