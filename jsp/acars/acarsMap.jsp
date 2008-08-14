@@ -92,7 +92,7 @@ self.location = '/acars_map_earth.ws';
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,future_radar_ff" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -142,8 +142,9 @@ return true;
 <el:button ID="EarthButton" className="BUTTON" onClick="void showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
-<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small">Select Time</span>
- <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" /></div>
+<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small bld">Select Time</span>
+ <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
+ <el:button ID="AnimateButton" className="BUTTON" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
 <br />
 <content:copyright />
@@ -162,13 +163,13 @@ getTileOverlay("temp", 0.25);
 
 // Load the ff tile overlays
 var ffLayers = ["future_radar_ff"];
-document.ffOptions = new Array();
 for (var i = 0; i < ffLayers.length; i++) {
 	var layerName = ffLayers[i];
 	var dates = getFFSlices(layerName);
+	document.ffSlices[layerName] = dates;
 	document.ffOptions[layerName] = getFFComboOptions(dates);
 	for (var x = 0; x < dates.length; x++)
-		getFFOverlay(layerName, 0.4, dates[x]);
+		getFFOverlay(layerName, 0.45, dates[x]);
 }
 
 // Build the layer controls
@@ -176,17 +177,19 @@ var xPos = 70;
 map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
 map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
 map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
-map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 72), 7)));
-map.addControl(new WXClearControl(new GSize((xPos += 92), 7)));
+map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 81), 7)));
+map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
 </c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.enableDoubleClickZoom();
-map.enableContinuousZoom();
+// map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'maptypechanged', updateMapText);
+GEvent.addListener(map, 'moveend', getVisibleTiles);
+GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 
 // Placeholder for route
 var routeData;
@@ -218,6 +221,7 @@ mapTextElements.push(ffl);
 
 // Update text color
 GEvent.trigger(map, 'maptypechanged');
+GEvent.trigger(map, 'moveend');
 </c:if></script>
 <content:googleAnalytics />
 </body>

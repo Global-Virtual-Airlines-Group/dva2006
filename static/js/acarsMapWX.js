@@ -3,6 +3,9 @@ document.maxZoom = new Array();
 document.wxLayers = new Array();
 document.seriesDate = new Array();
 
+// Calculate GMT offset in seconds from local
+var GMTOffset = new Date().getTimezoneOffset() * 60000;
+
 function loadSeries(id, sdata)
 {
 for (var x = 0; x < sdata.seriesNames.length; x++)
@@ -17,16 +20,13 @@ document.seriesData = sdata.seriesInfo;
 return true;
 }
 
-function getTileOverlay(name, opacity)
+function getTileOverlay(name, tx)
 {
 var cpc = new GCopyrightCollection("Weather Imagery");
 var cp = new GCopyright(111, new GLatLngBounds(new GLatLng(-90, -180), new GLatLng(90, 180)), 0, "The Weather Channel")
 cpc.addCopyright(cp);
 
-var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name]);
-newLayer.tx = opacity;
-newLayer.getOpacity = function() { return this.tx; }
-newLayer.isPng = function() { return true; }
+var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name], {isPng:true, opacity:tx});
 newLayer.myBaseURL = 'http://' + document.tileHost + '/TileServer/imgs/' + name + '/u' + document.seriesDate[name] + '/';
 newLayer.getTileUrl = function(pnt, zoom) {
 var url = '';
@@ -102,8 +102,15 @@ WXOverlayControl.prototype.setButtonStyle = function(button) {
 	button.style.padding = "2px";
 	button.style.marginBottom = "3px";
 	button.style.textAlign = "center";
-	button.style.width = ((this.buttonTitle) && (this.buttonTitle.length > 11)) ? "8em" : "6em";
 	button.style.cursor = "pointer";
+	if (!this.buttonTitle)
+		button.style.width = "6em";
+	else if (this.buttonTitle.length > 11)
+		button.style.width = "8em";
+	else if (this.buttonTitle.length > 9)
+		button.style.width = "7em";
+	else
+		button.style.width = "6em";
 }
 
 function WXClearControl(padding) {
