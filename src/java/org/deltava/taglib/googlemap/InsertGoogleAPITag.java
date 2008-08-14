@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -22,9 +22,10 @@ public class InsertGoogleAPITag extends TagSupport {
 	public static final String USAGE_ATTR_NAME = "$googleMapUsage$";
 	private static int USAGE_COUNT = 0;
 
-	private int _majorVersion = 1;
+	private int _majorVersion = 2;
 	private String _minorVersion;
 	private boolean _doCurrent = false;
+	private boolean _doStable = false;
 
 	/**
 	 * Sets the Google API version to pull down.
@@ -43,11 +44,19 @@ public class InsertGoogleAPITag extends TagSupport {
 	}
 
 	/**
-	 * Controls wether the pre-release API version should be used.
+	 * Controls whether the pre-release API version should be used.
 	 * @param doCurrent TRUE if the pre-release API should be used, otherwise FALSE
 	 */
 	public void setCurrent(boolean doCurrent) {
 		_doCurrent = doCurrent;
+	}
+	
+	/**
+	 * Controls whether the stable API version should be used.
+	 * @param doStable TRUE if the stable API should be used, otherwise FALSE
+	 */
+	public void setStable(boolean doStable) {
+		_doStable = doStable;
 	}
 
 	/**
@@ -99,7 +108,9 @@ public class InsertGoogleAPITag extends TagSupport {
 		try {
 			out.print("<script language=\"JavaScript\" src=\"http://maps.google.com/maps?file=api&amp;v=");
 			out.print(String.valueOf(_majorVersion));
-			if (_doCurrent)
+			if (_doStable)
+				out.print(".s");
+			else if (_doCurrent)
 				out.print(".x");
 			else if (_minorVersion != null)
 				out.print(_minorVersion);
