@@ -188,7 +188,6 @@ map.enableDoubleClickZoom();
 // map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'maptypechanged', updateMapText);
-GEvent.addListener(map, 'moveend', getVisibleTiles);
 GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 
 // Placeholder for route
@@ -221,7 +220,6 @@ mapTextElements.push(ffl);
 
 // Update text color
 GEvent.trigger(map, 'maptypechanged');
-GEvent.trigger(map, 'moveend');
 </c:if></script>
 <content:googleAnalytics />
 </body>

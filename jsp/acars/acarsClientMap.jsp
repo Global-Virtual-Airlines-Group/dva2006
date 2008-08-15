@@ -46,7 +46,7 @@ if (doRefresh && isAuto)
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,future_radar_ff" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -89,7 +89,6 @@ getTileOverlay("temp", 0.25);
 
 // Load the ff tile overlays
 var ffLayers = ["future_radar_ff"];
-document.ffOptions = new Array();
 for (var i = 0; i < ffLayers.length; i++) {
 	var layerName = ffLayers[i];
 	var dates = getFFSlices(layerName);
@@ -103,17 +102,18 @@ var xPos = 70;
 map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
 map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
 map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
-map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 72), 7)));
-map.addControl(new WXClearControl(new GSize((xPos += 92), 7)));
+map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 82), 7)));
+map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
 </c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.enableDoubleClickZoom();
-map.enableContinuousZoom();
+// map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'maptypechanged', updateMapText);
+GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 
 // Placeholder for route
 var routeData;
