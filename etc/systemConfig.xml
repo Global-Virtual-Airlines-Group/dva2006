@@ -381,9 +381,8 @@
 			<role>TestAdmin</role>
 		</list>
 
-		<auth>org.deltava.security.MirrorAuthenticator</auth>
+		<auth>org.deltava.security.ApacheSQLAuthenticator</auth>
 		<baseDN>ou=dva,o=sce</baseDN>
-		<auth_alias type="Boolean">false</auth_alias>
 	</security>
 
 	<!-- Innovata schedule link data -->
