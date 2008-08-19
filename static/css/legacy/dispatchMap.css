@@ -1,7 +1,7 @@
-/* Dispatch Map Cascading Style Sheet (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+/* Dispatch Map Cascading Style Sheet (C) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. */
 
-/* Google Maps infobox font */
 .mapInfoBox {
+	font-family: Tahoma, Verdana, sans-serif;
 	font-size: 8pt;
 }
 
@@ -11,6 +11,16 @@ BODY {
 	margin-top:1px;
 	font-family: Tahoma, Verdana, sans-serif;
 	font-size: 9pt;
+}
+
+.BUTTON {
+	background-color: #000080;
+	color: #FFFFFF;
+	font-family: Tahoma, Verdana;
+	font-size: 8pt;
+	text-transform: uppercase;
+	border: 2px outset #CFCFFF;
+	font-weight: normal;
 }
 
 a, a:visited {
