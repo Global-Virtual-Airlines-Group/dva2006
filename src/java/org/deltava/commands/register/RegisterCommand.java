@@ -137,13 +137,19 @@ public class RegisterCommand extends AbstractCommand {
 		a.setNumberFormat(ctx.getParameter("nf"));
 		a.setSimVersion(ctx.getParameter("fsVersion"));
 		a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0));
-		if (a.getTZ() == null)
-			a.setTZ(TZInfo.UTC);
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
 		a.setRegisterAddress(ctx.getRequest().getRemoteAddr());
 		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? a.getRegisterAddress() : hostName);
+		
+		// Check for null UI scheme
+		if (a.getUIScheme() == null) {
+			log.warn("Detected robot from " + hostName);
+			result.setURL("/jsp/register/blackList.jsp");
+			result.setSuccess(true);
+			return;
+		}
 		
 		// Set Notification Options
 		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
