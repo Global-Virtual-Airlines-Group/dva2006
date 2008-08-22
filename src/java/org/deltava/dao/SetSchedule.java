@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -353,7 +353,7 @@ public class SetSchedule extends DAO {
 	public void update(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
+			prepareStatement("UPDATE common.AIRCRAFT A SET A.RANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 					+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
 					+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, FULLNAME=? "
 					+ "WHERE (NAME=?)");
