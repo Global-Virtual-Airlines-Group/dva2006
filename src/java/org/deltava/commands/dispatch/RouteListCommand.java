@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display saved dispatch routes.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -42,7 +42,7 @@ public class RouteListCommand extends AbstractViewCommand {
 			// Get the routes
 			rdao.setQueryStart(vc.getStart());
 			rdao.setQueryMax(vc.getCount());
-			Collection<RoutePlan> plans = (authorID == 0) ? rdao.getAll() : rdao.getByAuthor(authorID);
+			Collection<RoutePlan> plans = (authorID == 0) ? rdao.getAll(true) : rdao.getByAuthor(authorID);
 			vc.setResults(plans);
 			
 			// Get the user data

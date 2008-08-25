@@ -79,10 +79,11 @@ public class GetACARSRoute extends DAO {
 	
 	/**
 	 * Loads all saved routes from the database.
+	 * @param loadWP TRUE if waypoints should be loaded, otherwise FALSE
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RoutePlan> getAll() throws DAOException {
+	public Collection<RoutePlan> getAll(boolean loadWP) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM acars.ROUTES ORDER BY CREATEDON");
 
