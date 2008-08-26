@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
  */
 
 class ConnectionPoolEntry implements java.io.Serializable, Comparable<ConnectionPoolEntry> {
-	
+
 	private static transient final Logger log = Logger.getLogger(ConnectionPoolEntry.class);
 
 	private transient Connection _c;
@@ -35,7 +35,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private long _startTime;
 	private long _lastUsed;
 	private int _useCount;
-	
+
 	/**
 	 * Create a new Connection Pool entry.
 	 * @param id the connection pool entry ID
@@ -48,7 +48,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 			_validationQuery = props.getProperty("validationQuery");
 			props.remove("validationQuery");
 		}
-		
+
 		_props.putAll(props);
 	}
 
@@ -59,10 +59,9 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	public boolean inUse() {
 		return _inUse;
 	}
-	
+
 	/**
-	 * Returns whether the Connection is active. Inactivte entries are retained for
-	 * statistics purposes.
+	 * Returns whether the Connection is active. Inactivte entries are retained for statistics purposes.
 	 * @return TRUE if there is a connection, otherwise FALSE
 	 */
 	boolean isActive() {
@@ -86,11 +85,11 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	public boolean isDynamic() {
 		return _dynamic;
 	}
-	
+
 	/**
-	 * Returns if the entry is connected to the database. Ordinarily one could check if there was a
-	 * Connection object in this class, but since Connections are not {@link java.io.Serializable}, this
-	 * method would not be valid across web applications. 
+	 * Returns if the entry is connected to the database. Ordinarily one could check if there was a Connection object in
+	 * this class, but since Connections are not {@link java.io.Serializable}, this method would not be valid across web
+	 * applications.
 	 * @return TRUE if connected, otherwise FALSE
 	 * @see ConnectionPoolEntry#connect()
 	 * @see ConnectionPoolEntry#close()
@@ -144,8 +143,9 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 				log.info("Resetting autoCommit to " + String.valueOf(_autoCommit));
 				
 			_c.setAutoCommit(_autoCommit);
+			_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		} catch (Exception e) {
-			log.error("Error resetting autoCommit - " + e.getMessage());
+			log.error("Error resetting autoCommit/isolation - " + e.getMessage());
 		}
 
 		// Add the usage time to the total for this connection
@@ -221,17 +221,17 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 	/**
 	 * Reserve this Connection pool entry, and get the underlyig JDBC connection. This method is package private since
-	 * it only should be called by the ConnectionPool object. If the connection has been disconnected, then an attempt to
-	 * reconnect will be made.
+	 * it only should be called by the ConnectionPool object. If the connection has been disconnected, then an attempt
+	 * to reconnect will be made.
 	 * @param logStack wether the current thread's stack state should be preserved
 	 * @return the JDBC Connection object
-	 * @throws ConnectionPoolException if we cannot reconnect 
+	 * @throws ConnectionPoolException if we cannot reconnect
 	 * @throws IllegalStateException if the connection is already reserved
 	 */
 	Connection reserve(boolean logStack) throws ConnectionPoolException {
 		if (inUse())
 			throw new IllegalStateException("Connection " + toString() + " already in use");
-		
+
 		// If we're not connected, reconnect
 		if (!isActive()) {
 			try {
@@ -240,7 +240,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 				throw new ConnectionPoolException(se);
 			}
 		}
-		
+
 		// Generate a dummy stack trace if necessary, trimming out entries from this package
 		if (logStack) {
 			_stackInfo = new StackTrace();
@@ -251,7 +251,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 				el.remove(0);
 				ste = el.get(0);
 			}
-			
+
 			// Save the stack trace
 			if (el.size() > 1)
 				_stackInfo.setStackTrace(el.toArray(new StackTraceElement[0]));
@@ -280,7 +280,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	public int getUseCount() {
 		return _useCount;
 	}
-	
+
 	/**
 	 * Returns the timestamp of this Connection's last use.
 	 * @return the connection's last use timestamp
@@ -296,7 +296,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	public long getTotalUseTime() {
 		return _totalTime;
 	}
-	
+
 	/**
 	 * Returns this connection's stack trace data, from the last thread to reserve the Connection.
 	 * @return a Throwable whose StackTrace is the thread data
