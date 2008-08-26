@@ -3,6 +3,7 @@ package org.deltava.jdbc;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import org.apache.log4j.Logger;
 
@@ -20,17 +21,23 @@ import org.deltava.util.*;
 public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExceptionHandler {
 
 	private static transient final Logger log = Logger.getLogger(ConnectionPool.class);
+	
+	// Thread lock for system connections
+	private transient final Boolean SYS_LOCK = new Boolean(true);
+	
+	// Thread lock for non-system connections
+	private transient final Boolean CON_LOCK = new Boolean(false);
 
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
 	static final int MAX_USE_TIME = 150 * 1000;
-	private static final int MAX_SYS_CONS = 3;
 
 	private int _poolMaxSize = 1;
 	private int _maxRequests;
-	private long _totalRequests;
-	private int _expandCount;
-	private int _fullCount;
+	private final AtomicLong _totalRequests = new AtomicLong();
+	private final AtomicInteger _expandCount = new AtomicInteger();
+	private final AtomicInteger _waitCount = new AtomicInteger();
+	private final AtomicInteger _fullCount = new AtomicInteger();
 	private boolean _logStack;
 
 	private ConnectionMonitor _monitor;
@@ -41,7 +48,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	private boolean _autoCommit = true;
 
 	public class ConnectionPoolFullException extends ConnectionPoolException {
-		public ConnectionPoolFullException() {
+		ConnectionPoolFullException() {
 			super("Connection Pool Full", false);
 			setForwardURL("/jsp/error/poolFull.jsp");
 		}
@@ -205,25 +212,17 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	public Connection getConnection() throws ConnectionPoolException {
 		return getConnection(false);
 	}
-
-	/**
-	 * Gets a JDBC connection from the connection pool. The size of the connection pool will be increased if the pool is
-	 * full but maxSize has not been reached.
-	 * @param isSystem TRUE if a system connection is requested, otherwise FALSE
-	 * @return the JDBC connection
-	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
-	 * @throws ConnectionPoolException if the connection pool is entirely in use
+	
+	/*
+	 * This actually loads the connection from the pool. It is defined as a private method
+	 * to allow {@link getConnection(boolean)} to call it multiple times after waiting for
+	 * another thread to release a connection.
 	 */
-	public synchronized Connection getConnection(boolean isSystem) throws ConnectionPoolException {
-		if (_cons == null)
-			throw new IllegalStateException("Pool not connected");
-
+	private Connection getFromPool(boolean isSystem) throws ConnectionPoolException {
+		
 		// Loop through the connection pool, if we find one not in use then get it
-		int sysConSize = 0;
 		for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = i.next();
-			if (cpe.isSystemConnection())
-				sysConSize++;
 
 			// If the connection pool entry is stale, release it
 			if (cpe.getUseTime() > MAX_USE_TIME) {
@@ -238,38 +237,73 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			// If the connection pool entry is not in use, reserve it - system connections can use idle regular
 			// connections
 			if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
-				if (log.isDebugEnabled())
-					log.debug("Reserving JDBC Connection " + cpe);
+				Connection c = cpe.reserve(_logStack);
+				//if (log.isDebugEnabled())
+					log.info("Reserving JDBC Connection " + cpe);
 				if (!cpe.isActive())
-					_expandCount++;
+					_expandCount.incrementAndGet();
 
-				_totalRequests++;
-				return cpe.reserve(_logStack);
+				_totalRequests.incrementAndGet();
+				return c;
+			}
+		}
+		
+		// If we made it this far, the pool is full
+		return null;
+	}
+
+	/**
+	 * Gets a JDBC connection from the connection pool. The size of the connection pool will be increased if the pool is
+	 * full but maxSize has not been reached.
+	 * @param isSystem TRUE if a system connection is requested, otherwise FALSE
+	 * @return the JDBC connection
+	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
+	 * @throws ConnectionPoolException if the connection pool is entirely in use
+	 */
+	public Connection getConnection(boolean isSystem) throws ConnectionPoolException {
+		if (_cons == null)
+			throw new IllegalStateException("Pool not connected");
+
+		// Try and get a connection from the pool
+		Connection c = getFromPool(isSystem);
+		if (c != null)
+			return c;
+
+		// Is the pool at its max size? If not, then create a new connection and add it to the pool
+		synchronized (_cons) {
+			if (_cons.size() < _poolMaxSize) {
+				try {
+					ConnectionPoolEntry cpe = createConnection(isSystem, getNextID());
+					cpe.setDynamic(true);
+					c = cpe.reserve(_logStack);
+					_cons.put(Integer.valueOf(cpe.getID()), cpe);
+
+					// Return back the new connection
+					_totalRequests.incrementAndGet();
+					_expandCount.incrementAndGet();
+					return c;
+				} catch (SQLException se) {
+					throw new ConnectionPoolException(se);
+				}
 			}
 		}
 
-		// Check if we are not going to add a new connection and if so, wait for another thread to offer us a connection
-		if ((isSystem && (sysConSize >= MAX_SYS_CONS)) || (_cons.size() >= _poolMaxSize)) {
-			_fullCount++;
-			throw new ConnectionPoolFullException();
-		}
-
-		// Get a new connection and add it to the pool
+		// Wait for a new connection to become available
+		Object lock = isSystem ? SYS_LOCK : CON_LOCK;
 		try {
-			ConnectionPoolEntry cpe = createConnection(isSystem, getNextID());
-			cpe.setDynamic(true);
-			_cons.put(Integer.valueOf(cpe.getID()), cpe);
-
-			// Return back the new connection
-			_totalRequests++;
-			_expandCount++;
-			if (log.isDebugEnabled())
-				log.debug("Reserving dynamic JDBC Connection " + cpe);
-
-			return cpe.reserve(_logStack);
-		} catch (SQLException se) {
-			throw new ConnectionPoolException(se);
+			synchronized (lock) {
+				lock.wait(1000);
+				c = getFromPool(isSystem);
+			}
+		} catch (InterruptedException ie) {
+			log.warn("Interrupted waiting for Connection");
+		} finally {
+			if (c == null)
+				throw new ConnectionPoolFullException();
 		}
+		
+		_waitCount.incrementAndGet();
+		return c;
 	}
 
 	/**
@@ -279,7 +313,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @param c the JDBC connection to return
 	 * @return the number of milliseconds the connection was used for
 	 */
-	public synchronized long release(Connection c) {
+	public long release(Connection c) {
 		if ((c == null) || (_cons == null))
 			return 0;
 
@@ -310,6 +344,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 
 		// Free the connection
 		cpe.free();
+		long useTime = cpe.getUseTime();
 
 		// If this is a stale dynamic connection, such it down
 		if (cpe.isDynamic() && (cpe.getUseCount() > MAX_USE_TIME)) {
@@ -331,7 +366,16 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			}
 		}
 
-		return cpe.getUseTime();
+		// If we're still open, notify a waiting thread
+		if (cpe.isConnected()) {
+			Object lock = cpe.isSystemConnection() ? SYS_LOCK : CON_LOCK;
+			synchronized (lock) {
+				lock.notify();
+			}
+		}
+		
+		// Return usage time
+		return useTime;
 	}
 
 	/**
@@ -340,7 +384,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @throws IllegalArgumentException if initialSize is negative or greater than getMaxSize()
 	 * @throws ConnectionPoolException if a JDBC error occurs
 	 */
-	public synchronized void connect(int initialSize) throws ConnectionPoolException {
+	public void connect(int initialSize) throws ConnectionPoolException {
 		if ((initialSize < 0) || (initialSize > _poolMaxSize))
 			throw new IllegalArgumentException("Invalid pool size - " + initialSize);
 
@@ -365,7 +409,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	/**
 	 * Disconnects the Connection pool from the JDBC data source.
 	 */
-	public synchronized void close() {
+	public void close() {
 		// Shut down the monitor
 		ThreadUtils.kill(_monitorThread, 500);
 		if (_cons == null)
@@ -391,9 +435,9 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * Returns information about the connection pool.
 	 * @return a Collection of ConnectionInfo entries
 	 */
-	public synchronized Collection<ConnectionInfo> getPoolInfo() {
+	public Collection<ConnectionInfo> getPoolInfo() {
 		Collection<ConnectionInfo> results = new ArrayList<ConnectionInfo>(_cons.size());
-		for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
+		for (Iterator<ConnectionPoolEntry> i = new ArrayList<ConnectionPoolEntry>(_cons.values()).iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = i.next();
 			results.add(new ConnectionInfo(cpe));
 		}
@@ -406,7 +450,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @return a Collection of ConnectionPoolEntry beans
 	 * @see ConnectionMonitor
 	 */
-	synchronized Collection<ConnectionPoolEntry> getEntries() {
+	Collection<ConnectionPoolEntry> getEntries() {
 		return new ArrayList<ConnectionPoolEntry>(_cons.values());
 	}
 
@@ -415,7 +459,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @return the number of connection reservations
 	 */
 	public long getTotalRequests() {
-		return _totalRequests;
+		return _totalRequests.longValue();
 	}
 
 	/**
@@ -423,7 +467,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @return the number of ConnectionPoolFullExceptions thrown
 	 */
 	public int getFullCount() {
-		return _fullCount;
+		return _fullCount.intValue();
 	}
 
 	/**
@@ -431,7 +475,15 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @return the number of times the Connection Pool was expanded
 	 */
 	public int getExpandCount() {
-		return _expandCount;
+		return _expandCount.intValue();
+	}
+	
+	/**
+	 * Returns the number of times that a thread has waited for a connection to become available.
+	 * @return the number of times a thread has waited
+	 */
+	public int getWaitCount() {
+		return _waitCount.intValue();
 	}
 
 	/**

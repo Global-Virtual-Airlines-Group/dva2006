@@ -25,7 +25,8 @@
 <c:set var="pool" value="${jdbcPools[appName]}" scope="request" />
 <tr class="title caps">
  <td colspan="7" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS, 
-<fmt:int value="${pool.expandCount}" /> EXPANSIONS, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</td>
+ <fmt:int value="${pool.expandCount}" /> EXPANSIONS, <fmt:int value="${pool.waitCount}" /> WAITS, 
+ <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</td>
 </tr>
 <c:if test="${!empty pool.lastValidation}">
 <tr>
