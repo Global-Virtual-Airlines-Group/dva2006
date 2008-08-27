@@ -238,8 +238,8 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			// connections
 			if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
 				Connection c = cpe.reserve(_logStack);
-				//if (log.isDebugEnabled())
-					log.info("Reserving JDBC Connection " + cpe);
+				if (log.isDebugEnabled())
+					log.debug("Reserving JDBC Connection " + cpe);
 				if (!cpe.isActive())
 					_expandCount.incrementAndGet();
 
