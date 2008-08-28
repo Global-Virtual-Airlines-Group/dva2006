@@ -55,6 +55,7 @@ public class ClientVersionCommand extends AbstractCommand {
 			// Save in the request
 			ctx.setAttribute("versionInfo", versionMap, REQUEST);
 			ctx.setAttribute("betaInfo", betaMap, REQUEST);
+			ctx.setAttribute("noDispatch", cInfo.getNoDispatchBuilds(), REQUEST);
 			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
 			ctx.setAttribute("latestDispatch", Integer.valueOf(cInfo.getMinimumDispatchBuild()), REQUEST);
 			
@@ -79,6 +80,12 @@ public class ClientVersionCommand extends AbstractCommand {
 			String paramName = "min_" + build.toString() + "_beta";
 			cInfo.setMinimumBetaBuild(build.intValue(), StringUtils.parse(ctx.getParameter(paramName), 0));
 		}
+		
+		// Get the ACARS client versions that cannot request dispatch
+		List<String> noDsp = StringUtils.split(ctx.getParameter("noDispatch"), ",");
+		cInfo.setNoDispatchBuilds(new HashSet<Integer>());
+		for (Iterator<String> i = noDsp.iterator(); i.hasNext(); )
+			cInfo.addNoDispatchBuild(StringUtils.parse(i.next(), 0));
 		
 		// Return to success page
 		result.setType(CommandResult.REDIRECT);
