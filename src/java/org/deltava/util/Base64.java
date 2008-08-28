@@ -384,6 +384,10 @@ public class Base64 {
      * @since 1.4
      */
     public static String decodeString(String s) {
+		
+    	while ((s.length() & 0x3) > 0)
+			s += "=";
+    	
         return new String(decode(s));
     }
 

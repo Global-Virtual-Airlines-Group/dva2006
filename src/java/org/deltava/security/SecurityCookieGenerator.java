@@ -42,10 +42,6 @@ public final class SecurityCookieGenerator {
 	 */
 	public static SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
-		// Decode the Base64 data
-		while ((cookieText.length() & 0x3) > 0)
-			cookieText += "=";
-			
 		String rawToken = null;
 		try {
 			byte[] encData = Base64.decode(cookieText);
