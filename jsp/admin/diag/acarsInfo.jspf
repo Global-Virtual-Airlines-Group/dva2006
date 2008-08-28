@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty acarsBW}">
 <content:sysdata var="swfPath" name="path.swf" />
 <el:table className="form" pad="default" space="default">
@@ -130,36 +131,6 @@ writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.
  <td><fmt:int value="${worker.executionCount}" /></td>
  <td class="left">${worker.message}</td>
 </view:row>
-</c:forEach>
-</el:table>
-</c:if>
-<c:if test="${!empty acarsCmdStats}">
-<!-- ACARS Server Command Statistics -->
-<el:table className="view" pad="default" space="default">
-<tr class="title">
- <td class="left caps" colspan="6">ACARS SERVER STATISTICS</td>
-</tr>
-
-<!-- Command Statistics Header -->
-<tr class="title">
- <td width="30%">COMMAND NAME</td>
- <td width="10%">INVOCATIONS</td>
- <td width="15%">AVERAGE TIME</td>
- <td width="15%">TOTAL TIME</td>
- <td width="15%">MAXIMUM TIME</td>
- <td>MINIMUM TIME</td>
-</tr>
-
-<!-- Command Statistics Data -->
-<c:forEach var="cmdStat" items="${acarsCmdStats}">
-<tr>
- <td class="pri bld">${cmdStat.name}</td>
- <td><fmt:int value="${cmdStat.count}" /></td>
- <td class="bld"><fmt:int value="${cmdStat.totalTime / cmdStat.count}" /> ms</td>
- <td><fmt:int value="${cmdStat.totalTime}" /> ms</td>
- <td><fmt:int value="${cmdStat.maxTime}" /> ms</td>
- <td><fmt:int value="${cmdStat.minTime}" /> ms</td>
-</tr>
 </c:forEach>
 </el:table>
 </c:if>

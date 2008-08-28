@@ -82,12 +82,10 @@ public class DiagnosticCommand extends AbstractCommand {
 			// Save the ACARS statistics in the request
 			try {
 				Connection con = ctx.getConnection();
-				GetACARSLog addao = new GetACARSLog(con);
-				ctx.setAttribute("acarsCmdStats", addao.getCommandStats(), REQUEST);
 				GetACARSBandwidth bwdao = new GetACARSBandwidth(con);
 				ctx.setAttribute("acarsBW", bwdao.getLatest(), REQUEST);
 			} catch (DAOException de) {
-				log.error("Error loading ACARS command statistics - " + de.getMessage(), de);
+				log.error("Error loading ACARS bandwidth - " + de.getMessage(), de);
 			} finally {
 				ctx.release();
 			}

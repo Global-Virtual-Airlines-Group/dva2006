@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS bandwidth statistics to an Amline Flash chart.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -24,6 +24,8 @@ public class BandwidthInfoService extends WebService {
 	
 	private static final String[] TITLES = {"Connections", "Messages In (1000)", "Messages Out (1000)", 
 		"Bytes In (MB)", "Bytes Out (MB)", "Max Connections", "Max Messages (1000)", "Max Bytes (MB)"};
+	private static final String[] UNITS = {" connections", " messages", " messages", " bytes", " bytes",
+		" connections", " messages", " bytes"	};
 
 	/**
 	 * Executes the Web Service.
@@ -39,19 +41,22 @@ public class BandwidthInfoService extends WebService {
 		int maxCols = isRaw ? 5 : 8;
 		
 		// Get stats
-		Collection<Bandwidth> stats = new ArrayList<Bandwidth>();
+		List<Bandwidth> stats = new ArrayList<Bandwidth>();
 		try {
 			GetACARSBandwidth bwdao = new GetACARSBandwidth(ctx.getConnection());
 			if (!isRaw) {
 				bwdao.setQueryMax(isDaily ? 30 : 24);
-				stats = isDaily ? bwdao.getDaily() : bwdao.getHourly();
+				stats.addAll(isDaily ? bwdao.getDaily() : bwdao.getHourly());
 			} else
-				stats = bwdao.getRaw();
+				stats.addAll(bwdao.getRaw());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Sort backwards
+		Collections.reverse(stats);
 		
 		// Generate the XML document
 		Document doc = new Document();
@@ -70,7 +75,7 @@ public class BandwidthInfoService extends WebService {
 			Element e = new Element("graph");
 			e.setAttribute("gid", String.valueOf(x));
 			e.setAttribute("title", TITLES[x - 1]);
-			e.setAttribute("unit", " flights");
+			e.setAttribute("unit", UNITS[x - 1]);
 			axes[x - 1] = e;
 			ae.addContent(e);
 		}

@@ -1668,6 +1668,12 @@
 		<roles>HR,Developer</roles>
 	</command>
 
+	<command id="acarscmdstats">
+		<name>ACARS Command Log Statistics</name>
+		<class>org.deltava.commands.acars.LogStatisticsCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="liveries">
 		<name>ACARS Multi-Player Liveries</name>
 		<class>org.deltava.commands.acars.LiveryListCommand</class>

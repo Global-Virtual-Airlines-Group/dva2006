@@ -9,7 +9,7 @@ import org.deltava.beans.acars.Bandwidth;
 /**
  * A Data Access Object to load ACARS bandwidth statistics. 
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
@@ -45,7 +45,7 @@ public class GetACARSBandwidth extends DAO {
 	 * @return a Collection of Bandwidth beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Bandwidth> getRaw() throws DAOException {
+	public List<Bandwidth> getRaw() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY "
 					+ "PERIOD DESC");
@@ -61,7 +61,7 @@ public class GetACARSBandwidth extends DAO {
 	 * @return a Collection of Bandwidth beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Bandwidth> getHourly() throws DAOException {
+	public List<Bandwidth> getHourly() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY "
 					+ "PERIOD DESC");
@@ -77,7 +77,7 @@ public class GetACARSBandwidth extends DAO {
 	 * @return a Collection of Bandwidth beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Bandwidth> getDaily() throws DAOException {
+	public List<Bandwidth> getDaily() throws DAOException {
 		try {
 			prepareStatement("SELECT DATE(PERIOD) AS DT, 1440, AVG(CONS), SUM(BYTES_IN), "
 					+ "SUM(BYTES_OUT), SUM(MSGS_IN), SUM(MSGS_OUT), MAX(PEAK_CONS), MAX(PEAK_BYTES), "

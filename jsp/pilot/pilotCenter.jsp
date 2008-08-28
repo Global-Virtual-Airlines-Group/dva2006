@@ -700,6 +700,11 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
 connect to the ACARS Server, as well as inform users of a new ACARS Client version. <i>The latest ACARS 
 build is Build <fmt:int value="${latestBuild}" />.</i></td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarscmdstats">ACARS Command Log Statistics</el:cmd></td>
+ <td class="data">You can view statistics about the commands executed by the <content:airline /> ACARS 
+server.</td>
+</tr>
 </content:filter>
 </content:filter>
 </c:if>
