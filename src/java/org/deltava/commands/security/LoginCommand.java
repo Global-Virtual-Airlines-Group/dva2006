@@ -20,6 +20,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.SetProperties;
 import org.deltava.security.*;
 
+import org.deltava.util.Base64;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -67,6 +68,22 @@ public class LoginCommand extends AbstractCommand {
 		// Get the names
 		String fName = ctx.getParameter("firstName");
 		String lName = ctx.getParameter("lastName");
+		
+		// Get pre-loaded names
+		Cookie fnc = ctx.getCookie("dva_fname64");
+		Cookie lnc = ctx.getCookie("dva_lname64");
+		
+		// Save first name
+		if (fName != null)
+			ctx.setAttribute("fname", fName, REQUEST);
+		else if (fnc != null)
+			ctx.setAttribute("fname", Base64.decodeString(fnc.getValue()), REQUEST);
+		
+		// Save last name
+		if (lName != null)
+			ctx.setAttribute("lname", lName, REQUEST);
+		else if (lnc != null)
+			ctx.setAttribute("lname", Base64.decodeString(lnc.getValue()), REQUEST);
 
 		// If we've got no firstName parameter, redirect to the login JSP
 		if (fName == null) {
@@ -237,19 +254,19 @@ public class LoginCommand extends AbstractCommand {
 		if (saveName) {
 			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;
 
-			Cookie fnc = new Cookie("dva_fname", p.getFirstName());
+			fnc = new Cookie("dva_fname64", Base64.encode(p.getFirstName()));
 			fnc.setMaxAge(cookieAge);
 			ctx.getResponse().addCookie(fnc);
 
-			Cookie lnc = new Cookie("dva_lname", p.getLastName());
+			lnc = new Cookie("dva_lname64", Base64.encode(p.getLastName()));
 			lnc.setMaxAge(cookieAge);
 			ctx.getResponse().addCookie(lnc);
 		} else {
-			Cookie fnc = new Cookie("dva_fname", "");
+			fnc = new Cookie("dva_fname64", "");
 			fnc.setMaxAge(0);
 			ctx.getResponse().addCookie(fnc);
 
-			Cookie lnc = new Cookie("dva_lname", "");
+			lnc = new Cookie("dva_lname64", "");
 			lnc.setMaxAge(0);
 			ctx.getResponse().addCookie(lnc);
 		}

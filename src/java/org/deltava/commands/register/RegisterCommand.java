@@ -177,7 +177,7 @@ public class RegisterCommand extends AbstractCommand {
 			// Check for Suspended User
 			StringBuilder buf = new StringBuilder();
 			Cookie wc = ctx.getCookie("dvaAuthStatus");
-			Cookie fn = ctx.getCookie("dva_fname");
+			Cookie fn = ctx.getCookie("dva_fname64");
 			if (wc != null) {
 				buf.append("Suspended Pilot: ");
 				try {
@@ -191,11 +191,11 @@ public class RegisterCommand extends AbstractCommand {
 			}
 			if (fn != null) {
 				buf.append("PC used to login as: ");
-				buf.append(fn.getValue());
-				Cookie ln = ctx.getCookie("dva_lname");
+				buf.append(Base64.decodeString(fn.getValue()));
+				Cookie ln = ctx.getCookie("dva_lname64");
 				if (ln != null) {
 					buf.append(' ');
-					buf.append(fn.getValue());
+					buf.append(Base64.decodeString(fn.getValue()));
 				}
 			}
 			
