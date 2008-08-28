@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
@@ -8,9 +8,9 @@ import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to render page layouts in a browser-specific way. On Mozilla, absolutely positioned DIV elements will be
- * used, while tables will be used for Internet Explorer.
+ * used, while tables will be used for Internet Explorer 6.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -51,7 +51,7 @@ public class PageTag extends TagSupport {
 	 */
 	public int doStartTag() throws JspException {
 		// Do nothing for non-IE6
-		if (!ContentHelper.isIE6(pageContext) && !ContentHelper.isIE7(pageContext))
+		if (!ContentHelper.isIE6(pageContext))
 			return EVAL_BODY_INCLUDE;
 
 		// Render a table for IE
@@ -72,7 +72,7 @@ public class PageTag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
-		if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext)) {
+		if (ContentHelper.isIE6(pageContext)) {
 			JspWriter out = pageContext.getOut();
 			try {
 				if (_rowOpen)
