@@ -8,7 +8,7 @@ import org.deltava.commands.ViewContext;
 /**
  * A JSP tag to selectively display view table scroll tags.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -78,16 +78,23 @@ public class ScrollBarTag extends TagSupport {
 		_vctx = (ViewContext) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
 
 		// Check if we force display, otherwise display only if at start or end, or neither
-		int result = EVAL_BODY_INCLUDE;
 		if (_forceDisplay)
-			result = EVAL_BODY_INCLUDE;
+			return EVAL_BODY_INCLUDE;
 		else if (_vctx == null)
-			result = SKIP_BODY;
+			return SKIP_BODY;
 		else if (isViewStart() && isViewEnd())
-			result = SKIP_BODY;
+			return  SKIP_BODY;
 
+		return EVAL_BODY_INCLUDE;
+	}
+	
+	/**
+	 * Completes the tag by releasing the state variables.
+	 * @return TagSupport.EVAL_PAGE always
+	 */
+	public int doEndTag() {
 		release();
-		return result;
+		return EVAL_PAGE; 
 	}
 
 	/**
