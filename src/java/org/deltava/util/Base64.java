@@ -371,6 +371,9 @@ public class Base64 {
      * @since 1.4
      */
     public static byte[] decode(String s) {
+    	while ((s.length() & 0x3) > 0)
+			s += "=";
+    	
         byte[] bytes = s.getBytes();
         return decode(bytes, 0, bytes.length);
     }
@@ -384,10 +387,6 @@ public class Base64 {
      * @since 1.4
      */
     public static String decodeString(String s) {
-		
-    	while ((s.length() & 0x3) > 0)
-			s += "=";
-    	
         return new String(decode(s));
     }
 
