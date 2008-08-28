@@ -6,10 +6,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import org.hansel.CoverageDecorator;
 
-import javax.servlet.ServletContext;
-
-import com.kizna.servletunit.*;
-
 public class TestCommand extends TestCase {
     
     private AbstractCommand _cmd;
@@ -25,10 +21,6 @@ public class TestCommand extends TestCase {
         }
         
         public void execute(CommandContext ctxt) {
-        }
-        
-        public ServletContext getContext() {
-            return _ctx;
         }
     }
 
@@ -51,12 +43,6 @@ public class TestCommand extends TestCase {
         _cmd.setRoles(roles);
         assertEquals(0, _cmd.getRoles().size());
         assertEquals(roles, _cmd.getRoles());
-    }
-    
-    public void testServletContext() {
-        ServletContext ctx = new ServletContextSimulator();
-        _cmd.setContext(ctx);
-        assertEquals(ctx, ((MockCommand) _cmd).getContext());
     }
     
     public void testErrorHandling() throws Exception {

@@ -1,15 +1,14 @@
-// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
 
-import javax.servlet.ServletContext;
 import javax.servlet.jsp.PageContext;
 
 /**
  * A Web Command.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -46,13 +45,6 @@ public interface Command {
      * @throws IllegalStateException if the command has already been initialized
      */
     public void init(String id, String cmdName) throws CommandException;
-
-    /**
-     * Set this Command's servlet context. This is used by commands to get access to shared data that is
-     * stored as attributes within the servlet context.
-     * @param ctx the servlet context
-     */
-    public void setContext(ServletContext ctx);
 
     /**
      * Execute the web Command.
