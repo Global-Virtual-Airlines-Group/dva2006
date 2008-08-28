@@ -48,8 +48,6 @@ return true;
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
-<content:getCookie name="dva_fname" default="${param.firstName}" var="fname" />
-<content:getCookie name="dva_lname" default="${param.lastName}" var="lname" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
