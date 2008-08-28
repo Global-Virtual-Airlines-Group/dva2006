@@ -131,19 +131,6 @@ for (var i = 0; i < elements.length; i++) {
 
 return true;
 }
-
-function requestFlightPlan()
-{
-// Generate an XMLHTTP request
-var xmlreq = GXmlHttp.create();
-xmlreq.open("POST", "routeplan.ws", true);
-
-
-
-var params = getAJAXParams();
-xmlreq.send(params.join('&'));
-return true;
-}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -191,7 +178,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Simulator Version</td>
- <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" firstEntry="-" /></td>
+ <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" /></td>
 </tr>
 </el:table>
 

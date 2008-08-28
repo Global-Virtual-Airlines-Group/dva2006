@@ -1,0 +1,202 @@
+<!-- Value between [] brackets, for example [#FFFFFF] shows default value which is used if this parameter is not set -->
+<!-- This means, that if you are happy with this value, you can delete this line at all and reduce file size -->
+<!-- value or explanation between () brackets shows the range or type of values you should use for this parameter -->
+<settings> 
+	<width />
+	<height />
+	<data_file_name>/bwstats.ws</data_file_name>
+	<data_type>xml</data_type>
+	<font>Tahoma</font>
+	<text_size>9</text_size>
+	<text_color>#000000</text_color>
+	<decimals_separator>.</decimals_separator>
+	<thousands_separator>,</thousands_separator>
+	<hide_bullets_count>18</hide_bullets_count>
+
+	<background>
+		<color>#FFFFFF</color>
+		<alpha>100</alpha>
+		<border_color>#000000</border_color>
+		<border_alpha>0</border_alpha>
+	</background>
+
+	<plot_area>
+		<color>#FFFFFF</color>
+		<alpha>100</alpha>
+		<margins>
+			<left>50</left>
+			<top>70</top>
+			<right>20</right>
+			<bottom>100</bottom>
+		</margins>
+	</plot_area>
+
+	<grid>
+		<x>
+			<color>#000000</color>
+    		<alpha>10</alpha>
+			<dashed>true</dashed>
+			<dash_length>5</dash_length>
+			<approx_count>12</approx_count>
+		</x>
+		<y_left>
+			<color>#000000</color>
+			<alpha>10</alpha>
+			<dashed>false</dashed>
+			<dash_length>5</dash_length>
+			<approx_count>10</approx_count>
+		</y_left>
+		<y_right>
+			<color>#000000</color>
+			<alpha>0</alpha>
+			<dashed>true</dashed>
+			<dash_length>5</dash_length>
+			<approx_count>10</approx_count>
+		</y_right>        
+	</grid>
+
+	<values>
+		<x>
+			<enabled>true</enabled>
+			<frequency>12</frequency>                                <!-- [1] (Number) how often values should be placed, 1 - near every gridline, 2 - near every second gridline... -->
+			<skip_first>true</skip_first>                          <!-- [false] (true / false) to skip or not first value -->
+			<skip_last>false</skip_last>
+			<color>#000000</color>
+			<text_size>9</text_size>
+		</x>
+		<y_left>
+			<enabled>true</enabled>
+			<min>0</min>
+			<max />
+			<frequency>1</frequency>
+			<skip_first>true</skip_first>
+			<skip_last>false</skip_last>
+			<color />
+			<text_size />
+		</y_left>
+		<y_right>
+			<enabled>true</enabled>
+			<min>0</min>
+			<max />
+			<frequency>1</frequency>
+			<skip_first>true</skip_first>
+			<skip_last>false</skip_last>
+			<color />
+			<text_size />
+		</y_right>
+	</values>
+
+	<axes>
+		<x>
+			<color>#0D8ECF</color>
+			<alpha>100</alpha>
+			<width>1</width>                                        <!-- [2] (Number) line width, 0 for hairline -->
+			<tick_length>7</tick_length>
+		</x>
+		<y_left>
+			<color>#0D8ECF</color>
+			<alpha>100</alpha>
+			<width>1</width>
+			<tick_length>7</tick_length>
+		</y_left>
+		<y_right>
+			<color>#000000</color>
+			<alpha>100</alpha>
+			<width>2</width>
+			<tick_length>7</tick_length>
+		</y_right>
+	</axes>  
+
+	<indicator>
+		<enabled>true</enabled>
+		<zoomable>true</zoomable>
+		<color>#0D8ECF</color>
+		<line_alpha>50</line_alpha>
+		<selection_color>#0D8ECF</selection_color>
+		<selection_alpha>20</selection_alpha>
+		<x_balloon_enabled>true</x_balloon_enabled>
+		<x_balloon_text_color>#FFFFFF</x_balloon_text_color>
+		<y_balloon_on_off>true</y_balloon_on_off>
+	</indicator>
+
+	<legend>
+		<enabled>true</enabled>
+		<x />
+		<y />
+		<width />
+		<color>#FFFFFF</color>
+		<alpha>0</alpha>
+		<border_color>#000000</border_color>
+		<border_alpha>0</border_alpha>
+		<text_color></text_color>
+		<text_color_hover>#000000</text_color_hover>
+		<text_size>11</text_size>
+		<spacing>10</spacing>
+		<margins>0</margins>
+		<graph_on_off>true</graph_on_off>                         <!-- [true] (true / false) if true, color box gains "checkbox" function - it is possible to make graphs visible/invisible by clicking on this checkbox -->
+	    <key>
+			<size>16</size>
+			<border_color />
+			<key_mark_color>#FFFFFF</key_mark_color>
+		</key>
+		<values>
+			<enabled>true</enabled>
+			<width>60</width>
+			<align>left</align>
+			<unit />
+			<unit_position>right</unit_position>
+		</values>        
+	</legend>  
+  
+	<zoom_out_button>
+    	<x />
+		<y />
+		<color>#BBBB00</color>
+		<alpha>30</alpha>
+		<text_color>#000000</text_color>
+		<text_color_hover>#80FF0F</text_color_hover>
+		<text_size />
+		<text>Show All</text>
+	</zoom_out_button> 
+
+	<help>
+		<button>
+			<x />
+			<y />
+			<color>#0000A1</color>
+			<alpha>100</alpha>
+			<text_color>#efefef</text_color>
+			<text_color_hover>#80FF0F</text_color_hover>
+			<text_size></text_size>
+			<text>?</text>
+		</button>    
+		<balloon>
+			<color>#0000A1</color>
+			<alpha>100</alpha>
+			<width>300</width>
+			<text_color>#efefef</text_color>
+			<text_size></text_size>
+			<text>
+				<![CDATA[Click on the graph to turn on/off value baloon <br/><br/>Click on legend key to show/hide graph<br/><br/>Mark the area you wish to enlarge]]>
+			</text>                               
+		</balloon>    
+	</help> 
+
+	<strings>
+    	<no_data>No data for selected period</no_data>
+	</strings>
+
+	<labels>
+		<label>
+			<x>0</x>
+			<y>25</y>
+			<width></width>                                         <!-- [] (Number) if empty, will be equal to flashWidth - x  -->
+			<align>center</align>
+			<text_color>#0000A1</text_color>
+			<text_size>14</text_size>
+			<text>
+				<![CDATA[<b>Delta Virtual Airlines ACARS Bandwidth</b>]]>
+			</text>        
+		</label>
+	</labels>
+</settings>
