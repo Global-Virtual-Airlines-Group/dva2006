@@ -17,7 +17,6 @@ import org.deltava.dao.file.*;
 import org.deltava.jdbc.*;
 
 import org.deltava.taskman.TaskScheduler;
-import org.deltava.taglib.googlemap.InsertGoogleAPITag;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -29,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -153,20 +152,11 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("timeZone", tz, REQUEST);
 		ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
 
-		// Get Servlet context properties
-		Date startDate = (Date) _ctx.getAttribute("startedOn");
-		ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
-		ctx.setAttribute("serverStart", startDate, REQUEST);
-		ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
-		ctx.setAttribute("majorServletAPI", Integer.valueOf(_ctx.getMajorVersion()), REQUEST);
-		ctx.setAttribute("minorServletAPI", Integer.valueOf(_ctx.getMinorVersion()), REQUEST);
+		// Get current time
+		ctx.setAttribute("systemTime", new Long(System.currentTimeMillis()), REQUEST);
 		
 		// Calculate DAO usage count
-		ctx.setAttribute("execTime", new Long((System.currentTimeMillis() - startDate.getTime()) / 1000), REQUEST);
 		ctx.setAttribute("daoUsageCount", new Long(org.deltava.dao.DAO.getQueryCount()), REQUEST);
-
-		// Get the Google Maps API usage count
-		ctx.setAttribute("mapsAPIUsage", _ctx.getAttribute(InsertGoogleAPITag.USAGE_ATTR_NAME), REQUEST);
 
 		// Get System properties
 		ctx.setAttribute("sys", System.getProperties(), REQUEST);

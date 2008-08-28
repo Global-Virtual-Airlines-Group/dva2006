@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -100,12 +100,12 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	/**
 	 * Initializes the servlet. This loads the command map.
 	 * @throws ServletException if an error occurs
-	 * @see CommandFactory#load(String, ServletContext)
+	 * @see CommandFactory#load(String)
 	 */
 	public void init() throws ServletException {
 		log.info("Initializing");
 		try {
-			Map<String, Command> cmds = CommandFactory.load(SystemData.get("config.commands"), getServletContext());
+			Map<String, Command> cmds = CommandFactory.load(SystemData.get("config.commands"));
 			_cmds.putAll(cmds);
 
 			// Initialize the default command
@@ -119,7 +119,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		// Initialize the redirection command
 		try {
 			Command cmd = new RedirectCommand();
-			cmd.setContext(getServletContext());
 			cmd.init("$redirect", "Request Redirection");
 			cmd.setRoles(Collections.singleton("*"));
 			_cmds.put(cmd.getID(), cmd);

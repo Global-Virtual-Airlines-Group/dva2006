@@ -5,6 +5,8 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_diag.tld" prefix="diag" %>
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -23,6 +25,9 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<map:usage var="mapsAPIUsage" />
+<c:set var="startedOn" value="${applicationScope.startedOn}" scope="request" />
+<c:set var="execTime" value="${(systemTime - startedOn.time) / 1000}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -54,11 +59,11 @@
 </c:if>
 <tr>
  <td class="label">Server Information</td>
- <td class="data">${serverInfo}</td>
+ <td class="data">${pageContext.servletContext.serverInfo}</td>
 </tr>
 <tr>
  <td class="label">Application Name</td>
- <td class="data">${servletContextName}</td>
+ <td class="data">${pageContext.servletContext.servletContextName}</td>
 </tr>
 <tr>
  <td class="label">Application Started on</td>
@@ -72,7 +77,11 @@
 </c:if>
 <tr>
  <td class="label">Servlet API</td>
- <td class="data">Version ${majorServletAPI}.${minorServletAPI}</td>
+ <td class="data">Version <diag:servlet_api /></td>
+</tr>
+<tr>
+ <td class="label">JSP API</td>
+ <td class="data">Version <diag:jsp_api /></td>
 </tr>
 <tr>
  <td class="label">CPU Count</td>

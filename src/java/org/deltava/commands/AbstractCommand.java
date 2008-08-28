@@ -1,13 +1,10 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
 import java.text.*;
 
-import javax.servlet.ServletContext;
-
-import org.deltava.beans.DateTime;
-import org.deltava.beans.TZInfo;
+import org.deltava.beans.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -15,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support Web Site Commands.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -23,12 +20,7 @@ public abstract class AbstractCommand implements Command {
 
 	private String _id;
 	private String _name;
-	private Collection<String> _roles;
-
-	/**
-	 * Reference to the current servlet context.
-	 */
-	protected ServletContext _ctx;
+	private final Collection<String> _roles = new HashSet<String>();
 
 	/**
 	 * Initializes this command.
@@ -70,14 +62,6 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	/**
-	 * Update the servlet context.
-	 * @param ctx the servlet context
-	 */
-	public final void setContext(ServletContext ctx) {
-		_ctx = ctx;
-	}
-
-	/**
 	 * Returns the Command name.
 	 * @return the name of the command
 	 */
@@ -115,10 +99,10 @@ public abstract class AbstractCommand implements Command {
 	 * @see AbstractCommand#getRoles()
 	 */
 	public final void setRoles(Collection<String> roles) {
-		if (_roles != null)
+		if (!_roles.isEmpty())
 			throw new IllegalStateException("Roles for " + getName() + " already set");
 
-		_roles = new HashSet<String>(roles);
+		_roles.addAll(roles);
 	}
 
 	/**

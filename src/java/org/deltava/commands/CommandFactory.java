@@ -1,10 +1,8 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
 import java.util.*;
-
-import javax.servlet.*;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -46,7 +44,7 @@ public class CommandFactory {
 	 * @throws IOException if an I/O error occurs
 	 * @see Command#init(String, String)
 	 */
-	public static Map<String, Command> load(String configXML, ServletContext sc) throws IOException {
+	public static Map<String, Command> load(String configXML) throws IOException {
 		// Gracefully fail if no commands found
 		if (configXML == null) {
 			log.warn("No Commands loaded");
@@ -91,7 +89,6 @@ public class CommandFactory {
 					log.debug("Loaded command " + cmdID);
 
 					// init the command
-					cmd.setContext(sc);
 					cmd.init(cmdID, e.getChildTextTrim("name"));
 					cmd.setRoles(getRoles(e.getChildText("roles")));
 
