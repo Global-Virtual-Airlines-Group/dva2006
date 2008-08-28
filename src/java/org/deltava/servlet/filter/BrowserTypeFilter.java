@@ -53,7 +53,6 @@ public class BrowserTypeFilter implements Filter {
      * @throws IOException if an I/O error occurs
      * @throws ServletException if a general error occurs
      */
-    @SuppressWarnings("fallthrough")
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
     	// Get the user agent
@@ -70,9 +69,11 @@ public class BrowserTypeFilter implements Filter {
                 
             case MSIE8:
             	req.setAttribute("browser$ie8", Boolean.TRUE);
+            	break;
 
             case MSIE7:
             	req.setAttribute("browser$ie7", Boolean.TRUE);
+            	break;
                 
             case MSIE6:
             default:
