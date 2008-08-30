@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -9,12 +9,14 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class GeoUtils {
-
+	
+	private static final char DEGREE = (char) 176;
+	
 	// Singleton constructor
 	private GeoUtils() {
 	}
@@ -96,6 +98,55 @@ public class GeoUtils {
 		buf.append(',');
 		buf.append(StringUtils.format(loc.getAltitude() * 0.3048, "#####0"));
 		return buf.toString();
+	}
+	
+	/**
+	 * Formats a location into a format suitable for inclusion in a Microsoft Flight Simulator 2004
+	 * flight plan. 
+	 * @param loc the location
+	 * @return a formatted location
+	 */
+	public static String formatFS9(GeoLocation loc) {
+		StringBuilder buf = new StringBuilder();
+		buf.append((loc.getLatitude() >= 0) ? 'N' : 'S');
+		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLatitude())), "#0"));
+		buf.append("* ");
+		buf.append(StringUtils.format(Math.abs((loc.getLatitude() - GeoPosition.getDegrees(loc.getLatitude())) * 60), "#0.00"));
+        buf.append("', ");
+        buf.append((loc.getLongitude() >= 0) ? 'E' : 'W');
+        buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLongitude())), "##0"));
+        buf.append("* ");
+        buf.append(StringUtils.format(Math.abs((loc.getLongitude() - GeoPosition.getDegrees(loc.getLongitude())) * 60), "#0.00"));
+        buf.append('\'');
+        return buf.toString();
+	}
+	
+	/**
+	 * Formats a location into a format suitable for inclusion in a Microsoft Flight Simulator X
+	 * flight plan. Since this has a Windows-specific character in it, the resulting string should
+	 * be formatted as CP1252.
+	 * @param loc the location
+	 * @return a formatted location
+	 */
+	public static String formatFSX(GeoLocation loc) {
+		StringBuilder buf = new StringBuilder();
+		buf.append((loc.getLatitude() >= 0) ? 'N' : 'S');
+		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLatitude())), "#0"));
+		buf.append(DEGREE); // Win32 degree character
+		buf.append(' ');
+        buf.append(GeoPosition.getMinutes(loc.getLatitude()));
+        buf.append("' ");
+        buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLatitude()), "#.00"));
+        buf.append("\",");
+        buf.append((loc.getLongitude() >= 0) ? 'E' : 'W');
+        buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLongitude())), "##0"));
+        buf.append(DEGREE); // Win32 degree character
+		buf.append(' ');
+        buf.append(GeoPosition.getMinutes(loc.getLongitude()));
+        buf.append("' ");
+        buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLongitude()), "#.00"));
+        buf.append("\"");
+        return buf.toString();
 	}
 	
 	/**

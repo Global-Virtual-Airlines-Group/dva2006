@@ -1,4 +1,3 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -39,5 +38,13 @@ public class TestGeoUtils extends TestCase {
 		assertEquals(GeoLocation.DEGREE_MILES, GeoUtils.distance(l1, l2), 0.5);
 		GeoLocation l3 = GeoUtils.bearingPoint(l1, 15, -40);
 		assertEquals(15, GeoUtils.distance(l1, l3), 0.5);
+	}
+	
+	public void testDegreeCharacter() throws Exception {
+		String s = new String("°".getBytes(), "CP1252");
+		int cp = s.codePointAt(0);
+		assertEquals(176, cp);
+		char c = s.charAt(0);
+		assertEquals(176, c);
 	}
 }

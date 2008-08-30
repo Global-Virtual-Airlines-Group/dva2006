@@ -178,13 +178,16 @@ public class AirportCommand extends AbstractFormCommand {
 
 				// Convert the geoPosition into degrees, minutes, seconds
 				GeoPosition gp = a.getPosition();
-				ctx.setAttribute("latD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
-				ctx.setAttribute("latM", new Integer(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
-				ctx.setAttribute("latS", new Integer(GeoPosition.getSeconds(gp.getLatitude())), REQUEST);
+				int latS = new Double(GeoPosition.getSeconds(gp.getLatitude())).intValue();
+				int lngS = new Double(GeoPosition.getSeconds(gp.getLongitude())).intValue();
+				
+				ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
+				ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
+				ctx.setAttribute("latS", Integer.valueOf(latS), REQUEST);
 				ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
-				ctx.setAttribute("lonD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
-				ctx.setAttribute("lonM", new Integer(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
-				ctx.setAttribute("lonS", new Integer(GeoPosition.getSeconds(gp.getLongitude())), REQUEST);
+				ctx.setAttribute("lonD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
+				ctx.setAttribute("lonM", Integer.valueOf(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
+				ctx.setAttribute("lonS", Integer.valueOf(lngS), REQUEST);
 				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
 			}
 		}

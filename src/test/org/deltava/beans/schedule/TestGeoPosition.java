@@ -48,26 +48,26 @@ public class TestGeoPosition extends AbstractBeanTestCase {
         _gp.setLatitude(10, 15, 20);
         assertEquals(10, GeoPosition.getDegrees(_gp.getLatitude()));
         assertEquals(15, GeoPosition.getMinutes(_gp.getLatitude()));
-        assertEquals(20, GeoPosition.getSeconds(_gp.getLatitude()));
+        assertEquals(20.0, GeoPosition.getSeconds(_gp.getLatitude()), 0.001);
 
         // Ensure m/s are always positive even if the entire number isn't
         _gp.setLatitude(-10, 15, 20);
         assertTrue((_gp.getLatitude() < 0));
         assertEquals(-10, GeoPosition.getDegrees(_gp.getLatitude()));
         assertEquals(15, GeoPosition.getMinutes(_gp.getLatitude()));
-        assertEquals(20, GeoPosition.getSeconds(_gp.getLatitude()));
+        assertEquals(20.0, GeoPosition.getSeconds(_gp.getLatitude()), 0.001);
         
         _gp.setLongitude(10, 15, 20);
         assertEquals(10, GeoPosition.getDegrees(_gp.getLongitude()));
         assertEquals(15, GeoPosition.getMinutes(_gp.getLongitude()));
-        assertEquals(20, GeoPosition.getSeconds(_gp.getLongitude()));
+        assertEquals(20, GeoPosition.getSeconds(_gp.getLongitude()), 0.001);
         
         // Ensure m/s are always positive even if the entire number isn't
         _gp.setLongitude(-10, 15, 20);
         assertTrue((_gp.getLongitude() < 0));
         assertEquals(-10, GeoPosition.getDegrees(_gp.getLongitude()));
         assertEquals(15, GeoPosition.getMinutes(_gp.getLongitude()));
-        assertEquals(20, GeoPosition.getSeconds(_gp.getLongitude()));
+        assertEquals(20, GeoPosition.getSeconds(_gp.getLongitude()), 0.001);
     }
     
     public void testMidPoint() {
@@ -86,8 +86,6 @@ public class TestGeoPosition extends AbstractBeanTestCase {
     public void testValidation() {
        validateInput("latitude", new Double(-90.0001), IllegalArgumentException.class);
        validateInput("latitude", new Double(90.0001), IllegalArgumentException.class);
-       validateInput("longitude", new Double(-180.0001), IllegalArgumentException.class);
-       validateInput("longitude", new Double(180.0001), IllegalArgumentException.class);
         
         try {
             _gp.setLatitude(90, 0, 1);
@@ -98,15 +96,5 @@ public class TestGeoPosition extends AbstractBeanTestCase {
             _gp.setLatitude(-90, 0, 1);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException iae) { }
-        
-        try {
-           _gp.setLongitude(180, 0, 1);
-           fail("IllegalArgumentException expected");
-       } catch (IllegalArgumentException iae) { }
-
-       try {
-           _gp.setLongitude(-180, 0, 1);
-           fail("IllegalArgumentException expected");
-       } catch (IllegalArgumentException iae) { }
     }
 }
