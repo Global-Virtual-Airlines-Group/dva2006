@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -91,13 +91,15 @@ public class PilotLocationCommand extends AbstractCommand {
 			   result.setURL("/jsp/pilot/geoLocateUpdate.jsp");
 			} else {
 				// Convert the geoPosition into degrees, minutes, seconds
-				ctx.setAttribute("latD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
-				ctx.setAttribute("latM", new Integer(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
-				ctx.setAttribute("latS", new Integer(GeoPosition.getSeconds(gp.getLatitude())), REQUEST);
+				int latS = new Double(GeoPosition.getSeconds(gp.getLatitude())).intValue();
+				int lngS = new Double(GeoPosition.getSeconds(gp.getLongitude())).intValue();
+				ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
+				ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
+				ctx.setAttribute("latS", Integer.valueOf(latS), REQUEST);
 				ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
-				ctx.setAttribute("lonD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
-				ctx.setAttribute("lonM", new Integer(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
-				ctx.setAttribute("lonS", new Integer(GeoPosition.getSeconds(gp.getLongitude())), REQUEST);
+				ctx.setAttribute("lonD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
+				ctx.setAttribute("lonM", Integer.valueOf(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
+				ctx.setAttribute("lonS", Integer.valueOf(lngS), REQUEST);
 				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
 				
 				// Save the direction names
