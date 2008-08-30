@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.GeoLocation;
@@ -65,14 +65,13 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Helper method to return back the minutes component of a latitude or longitude.
+	 * Helper method to return back the degrees component of a latitude or longitude.
 	 * @param latlon The latitude or longitude
 	 * @return The degrees component of the position
 	 */
 	public static int getDegrees(double latlon) {
 		int deg = new Double(StrictMath.floor(latlon)).intValue();
-		return (deg < 0) ? ++deg : deg; // Increment by 1 if we're below 0 since Math.floor(-11.0001) ==
-													  // -12.00
+		return (deg < 0) ? ++deg : deg; // Increment by 1 if we're below 0 since Math.floor(-11.0001) == -12.00
 	}
 
 	/**
@@ -91,14 +90,14 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @param latlon The latitude or longitude
 	 * @return The seconds component of the position
 	 */
-	public static int getSeconds(double latlon) {
+	public static double getSeconds(double latlon) {
 		latlon = Math.abs(latlon); // Strip out sign since seconds are always positive
 		latlon -= StrictMath.floor(latlon); // Strip out degrees
 		latlon *= 60; // multiply by 60 so we get minutes
 		latlon -= StrictMath.floor(latlon); // Strip out minutes
 		return new Double(latlon * 60).intValue();
 	}
-
+	
 	/**
 	 * Get the latitude of this position.
 	 * @return the latitude in degrees (and some fraction thereof) (values < 0 are South of the Equator)
@@ -149,13 +148,12 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @param lng The longitude to set in degrees (values < 0 are West of the Greenwich Meridian)
 	 */
 	public void setLongitude(double lng) {
-		if (lng > 180) {
+		if (lng > 180)
 			_lon = -180 + (lng - 180.0);
-		} else if (lng < -180) {
+		else if (lng < -180)
 			_lon = 180 + (lng + 180.0);
-		} else {
+		else
 			_lon = lng;
-		}
 	}
 
 	/**
