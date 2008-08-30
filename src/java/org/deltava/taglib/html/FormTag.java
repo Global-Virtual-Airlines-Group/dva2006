@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +11,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -165,6 +165,14 @@ public class FormTag extends ElementTag {
      */
     public void setValidate(String jsFunc) {
         _data.setAttribute("onsubmit", jsFunc);
+    }
+    
+    /**
+     * Sets the form target.
+     * @param target the target frame name
+     */
+    public void setTarget(String target) {
+    	_data.setAttribute("target", target);
     }
     
     /**
