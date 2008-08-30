@@ -1,12 +1,13 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
+import java.io.*;
 import java.util.*;
 
 /**
  * A utility class to mark and filter out profanity within strings.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -22,9 +23,27 @@ public class ProfanityFilter {
 	 * Initializes the filter with a set of words or phrases.
 	 * @param words a Collection of words or phrases
 	 */
-	public static synchronized void init(Collection<String> words) {
+	public static void init(Collection<String> words) {
 		for (Iterator<String> i = words.iterator(); i.hasNext(); )
 			_badWords.add(i.next().toUpperCase());
+	}
+	
+	/**
+	 * Initializes the filter with words or phrases loaded from a stream, one per line.
+	 * @param is the Stream to load
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static void init(InputStream is) throws IOException {
+		if (is == null) return;
+		LineNumberReader lr = new LineNumberReader(new InputStreamReader(is), 20480);
+		
+		// Load the content
+		Collection<String> words = new ArrayList<String>();
+		while (lr.ready())
+			words.add(lr.readLine().toUpperCase());
+
+		lr.close();
+		_badWords.addAll(words);
 	}
 	
 	/**

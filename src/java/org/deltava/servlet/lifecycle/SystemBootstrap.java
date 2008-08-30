@@ -67,19 +67,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Load the profanity filter
 		try {
-			InputStream is = ConfigLoader.getStream("/etc/profanity.txt");
-			LineNumberReader lr = new LineNumberReader(new InputStreamReader(is));
-
-			// Load the content
-			Collection<String> words = new LinkedHashSet<String>();
-			while (lr.ready())
-				words.add(lr.readLine());
-
-			lr.close();
-
-			// Init the profanity filter
 			log.info("Initializing Content Filter");
-			ProfanityFilter.init(words);
+			ProfanityFilter.init(ConfigLoader.getStream("/etc/profanity.txt"));
 		} catch (IOException ie) {
 			log.warn("Cannot load Profanity Filter - " + ie.getMessage());
 		}
