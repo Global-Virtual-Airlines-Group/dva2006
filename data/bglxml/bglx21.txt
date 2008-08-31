@@ -1,0 +1,17 @@
+BGLXML 2.1, by Alessandro G. Antonini (C)2004-2007
+this is an utility which disassembles BGL files
+into FSX format and produces an XML
+file to be compiled with Microsoft BGLCOMP
+(from FSC SDK). Besides disassembling
+all BGL records, it is also able to extract
+.MDL files from ModelData sections.
+This utility is freeware and open-source,
+licensed under GNU-GPL to help developers
+understand the FSX BGL structures
+(contributors are welcome) - please read
+inside documentation for important infos.
+Also includes XMLSHELL, a GUI program for
+controlling bglxml from Windows Explorer.
+The old version for FS2004 (1.8) is still
+available on avsim.com flightsim.com and
+cpinf.com
