@@ -62,7 +62,7 @@ public class GetNavData extends DAO implements CachingDAO {
 			return result;
 		
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (UPPER(CODE)=?) ORDER BY ITEMTYPE");
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE");
 			_ps.setString(1, code.toUpperCase());
 			NavigationDataMap ndmap = new NavigationDataMap(execute());
 			ndmap.setCacheKey(code);
@@ -120,8 +120,7 @@ public class GetNavData extends DAO implements CachingDAO {
 	 */
 	public Runway getRunway(String airportCode, String rwyCode) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (UPPER(CODE)=?) "
-					+ "AND (UPPER(NAME)=?)");
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?) AND (NAME=?)");
 			_ps.setInt(1, NavigationDataBean.RUNWAY);
 			_ps.setString(2, airportCode.toUpperCase());
 			_ps.setString(3, rwyCode.toUpperCase());

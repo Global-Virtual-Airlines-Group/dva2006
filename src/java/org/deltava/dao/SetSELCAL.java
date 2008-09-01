@@ -82,7 +82,7 @@ public class SetSELCAL extends DAO {
 	 */
 	public void delete(String code) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM SELCAL WHERE (UPPER(CODE)=?)");
+			prepareStatement("DELETE FROM SELCAL WHERE (CODE=?)");
 			_ps.setString(1, code.toUpperCase());
 			executeUpdate(1);
 		} catch (SQLException se) {
