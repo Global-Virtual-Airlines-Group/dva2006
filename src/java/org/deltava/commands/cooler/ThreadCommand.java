@@ -2,7 +2,6 @@
 package org.deltava.commands.cooler;
 
 import java.util.*;
-import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -219,12 +218,6 @@ public class ThreadCommand extends AbstractCommand {
 				ctx.setAttribute("channels", channels, REQUEST);
 			}
 			
-			// Save the sticky date
-			if (ctx.isUserInRole("Moderator") && (mt.getStickyUntil() != null)) {
-				DateFormat df = new SimpleDateFormat(ctx.getUser().getDateFormat());
-				ctx.setAttribute("stickyDate", df.format(mt.getStickyUntil()), REQUEST);
-			}
-
 			// Save the thread, pilots and access controller in the request
 			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
@@ -279,6 +272,17 @@ public class ThreadCommand extends AbstractCommand {
 			
 			// Add thread and save
 			threadIDs.put(new Integer(ctx.getID()), new Date());
+		}
+		
+		// If the sticky date is in the past, clear it
+		if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().getTime() < System.currentTimeMillis()))
+			mt.setStickyUntil(null);
+		
+		// Save the sticky date in the user's time zone
+		if (ctx.isUserInRole("Moderator") && (mt.getStickyUntil() != null)) {
+			DateTime sdt = new DateTime(mt.getStickyUntil());
+			sdt.convertTo(ctx.getUser().getTZ());
+			ctx.setAttribute("stickyDate", sdt.getDate(), REQUEST);
 		}
 
 		// Save scores choices and if we are editing

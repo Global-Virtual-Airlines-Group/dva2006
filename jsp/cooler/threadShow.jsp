@@ -98,11 +98,12 @@ return true;
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
 <tr class="title caps">
- <td colspan="3" class="mid">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
+ <td colspan="3" class="mid">This Discussion Thread is Stuck until <fmt:date t="HH:mm" date="${thread.stickyUntil}" /></td>
 </tr>
 </c:if>
 <%@ include file="/jsp/cooler/threadImg.jspf" %>
 <%@ include file="/jsp/cooler/threadPoll.jspf" %>
+<content:sysdata var="dateFmt" name="time.date_format" />
 
 <!-- Thread Posts -->
 <c:set var="postIdx" value="${0}" scope="request" />
@@ -292,14 +293,20 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <content:filter roles="Moderator">
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
  <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" link="${thread}" />
- STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
-<c:if test="${user.dateFormat == 'MM/dd/yyyy'}">
+</content:filter></td>
+</tr>
+<content:filter roles="Moderator">
+<tr>
+<td class="pri mid bld" colspan="3">MARK THIS THREAD STICKY UNTIL
+&nbsp;<el:text name="stickyDate" idx="*" size="10" max="10" value="${fn:dateFmt(stickyDate, dateFmt)}" />
+ at <el:text name="stickyTime" idx="*" size="4" max="5" value="${fn:dateFmt(stickyDate, 'HH:mm')}" />
+<c:if test="${dateFmt == 'MM/dd/yyyy'}">
  <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
 </c:if>
- <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" link="${thread}" />
-</content:filter>
- </td>
+&nbsp;<el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" link="${thread}" />
+&nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
 </tr>
+</content:filter>
 </c:if>
 <content:filter roles="Pilot">
 <!-- Message Thread Update notification -->
