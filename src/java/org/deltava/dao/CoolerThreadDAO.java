@@ -92,11 +92,11 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 		}
 		
 		// Build the SQL query
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
-				+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
-				+ "IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T "
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(T.STICKY < NOW(), "
+				+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
+				+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T "
 				+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I "
-				+ "ON (T.ID=I.ID) WHERE T.ID IN (");
+				+ "ON (T.ID=I.ID) AND (I.SEQ=1) WHERE T.ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -151,7 +151,7 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 			t.setID(rs.getInt(1));
 			t.setChannel(rs.getString(3));
 			t.setImage(rs.getInt(hasImgCount ? 17 : 4));
-			t.setStickyUntil(expandDate(rs.getDate(5)));
+			t.setStickyUntil(rs.getTimestamp(5));
 			t.setHidden(rs.getBoolean(6));
 			t.setLocked(rs.getBoolean(7));
 			t.setStickyInChannelOnly(rs.getBoolean(8));

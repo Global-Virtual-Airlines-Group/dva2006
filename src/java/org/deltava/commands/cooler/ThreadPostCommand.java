@@ -1,8 +1,6 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.awt.Dimension;
-
 import java.util.*;
 import java.net.*;
 import java.io.IOException;
@@ -27,19 +25,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class ThreadPostCommand extends AbstractCommand {
 
 	private Collection _imgMimeTypes;
-
-	/* private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
-	 * private static final String[] IMG_ALIASES = { "0", "1" };
-	 * private static final int IMG_REJECT = 0; 
-	 * private static final int IMG_RESIZE = 1;
-	 */
 
 	/**
 	 * Initializes this command.
@@ -68,7 +60,6 @@ public class ThreadPostCommand extends AbstractCommand {
 		// Get the default airline and channel name
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 		String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
-		//ctx.setAttribute("imgOpts", ComboUtils.fromArray(IMG_OPTIONS, IMG_ALIASES), REQUEST);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -189,8 +180,7 @@ public class ThreadPostCommand extends AbstractCommand {
 						|| (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
 
 				// If the image is too big, figure out what to do
-				/* int imgOpt = Integer.parseInt(ctx.getParameter("imgOption")); */
-				if (!imgOK || badSize || (badDim /* && (imgOpt == IMG_REJECT ) */)) {
+				if (!imgOK || badSize || badDim) {
 					ctx.setAttribute("imgInvalid", Boolean.valueOf(!imgOK), REQUEST);
 					ctx.setAttribute("imgBadSize", Boolean.valueOf(badSize), REQUEST);
 					ctx.setAttribute("imgBadDim", Boolean.valueOf(badDim), REQUEST);
@@ -200,15 +190,6 @@ public class ThreadPostCommand extends AbstractCommand {
 					result.setSuccess(true);
 					return;
 				}
-
-				// Resize the image - DISABLED
-				/*
-				 * if (badDim) { ImageScaler scaler = new ImageScaler(img.getBuffer());
-				 * scaler.setImageSize(getNewImageSize(imgInfo.getWidth(), imgInfo.getHeight())); // Replace the
-				 * FileUpload data try { img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
-				 * ctx.setAttribute("imgResized", Boolean.TRUE, REQUEST); } catch (IOException ie) { log.warn("Error
-				 * scaling image - " + ie.getMessage(), ie); img = null; } }
-				 */
 			}
 
 			// If we have no subject, redirect back
@@ -226,7 +207,10 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Parse the sticky date
 			if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) {
 				try {
-					mt.setStickyUntil(StringUtils.parseDate(ctx.getParameter("stickyDate"), "MM/dd/yyyy"));
+					Date sd = StringUtils.parseDate(ctx.getParameter("stickyDate"), "MM/dd/yyyy");
+					DateTime dt = new DateTime(sd, p.getTZ());
+					dt.convertTo(TZInfo.local());
+					mt.setStickyUntil(dt.getDate());
 				} catch (IllegalArgumentException iae) {
 					throw new CommandException(iae.getMessage(), false);
 				}
@@ -322,19 +306,5 @@ public class ThreadPostCommand extends AbstractCommand {
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/cooler/threadUpdate.jsp");
 		result.setSuccess(true);
-	}
-
-	/**
-	 * Helper method to calculate the new image size for a rescaled image
-	 */
-	public Dimension getNewImageSize(int imgX, int imgY) {
-
-		// Figure out the scaling required to bring each dimension into compliance, and get the smallest one
-		double scaleX = (imgX / SystemData.getInt("cooler.img_max.x"));
-		double scaleY = (imgY / SystemData.getInt("cooler.img_max.y"));
-		double scale = Math.min(scaleX, scaleY);
-
-		// Generate the new dimensions
-		return new Dimension((int) Math.round(imgX * scale) - 1, (int) Math.round(imgY * scale) - 1);
 	}
 }
