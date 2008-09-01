@@ -37,6 +37,7 @@
 </tr>
 
 <!-- Sort/Filter Options -->
+<c:if test="${!empty viewContext.results}">
 <tr class="title">
  <td colspan="2">AIRCRAFT <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></td>
  <td colspan="4" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
@@ -44,6 +45,7 @@
  <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
  <el:button type="submit" className="BUTTON" label="FILTER" /></td>
 </tr>
+</c:if>
 
 <!-- Table Header Bar-->
 <tr class="title">
