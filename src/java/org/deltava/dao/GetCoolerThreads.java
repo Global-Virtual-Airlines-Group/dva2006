@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -35,12 +35,11 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	public List<MessageThread> getByChannel(String channelName, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-				+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM "
-				+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
+				+ "T.LASTUPDATE) AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
+				+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1)");
 		if (channelName != null)
 			sqlBuf.append(" WHERE (T.CHANNEL=?)");
-		sqlBuf.append(" GROUP BY T.ID");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
@@ -63,10 +62,9 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	 */
 	public List<MessageThread> getScreenShots() throws DAOException {
 		try {
-			prepareStatement("SELECT T.ID, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
-					+ "T.STICKY), T.LASTUPDATE) AS SD, IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM "
-					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) GROUP BY T.ID HAVING "
-					+ "(IMGID > 0) ORDER BY SD DESC");
+			prepareStatement("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, "
+					+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I "
+					+ "ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (IMGID > 0) ORDER BY SD DESC");
 			return getByID(executeIDs());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -83,9 +81,9 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	public List<MessageThread> getByAuthor(int userID, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-				+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM "
-				+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (T.AUTHOR=?) GROUP BY T.ID");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) "
+				+ "AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON "
+				+ "(T.ID=I.ID) AND (ID.SEQ=1) WHERE (T.AUTHOR=?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
@@ -107,9 +105,9 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	 */
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
 		try {
-			prepareStatement("SELECT T.ID, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
-					+ "T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T WHERE "
-					+ "(N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY SD DESC");
+			prepareStatement("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD "
+					+ "FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) "
+					+ "ORDER BY SD DESC");
 			_ps.setInt(1, userID);
 			return getByID(executeIDs());
 		} catch (SQLException se) {
@@ -129,9 +127,9 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			return getByChannel(null, showImgs);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-				+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM "
-				+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) GROUP BY T.ID HAVING (SD > ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
+				+ "T.LASTUPDATE) AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
+				+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (SD > ?)");
 		if (showImgs)
 			sqlBuf.append(" AND (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
