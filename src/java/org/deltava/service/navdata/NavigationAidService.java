@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to export the navigation data database to ACARS dispatch clients.
  * @author Luke
- * @version 2.0
+ * @version 2.2
  * @since 2.0
  */
 
@@ -58,18 +58,21 @@ public class NavigationAidService extends WebService {
 			switch (nb.getType()) {
 			case NavigationDataBean.VOR:
 				ctx.print("," + nb.getName() + ",");
-				ctx.println(((VOR) nb).getFrequency());
+				ctx.print(((VOR) nb).getFrequency());
 				break;
 
 			case NavigationDataBean.NDB:
 				ctx.print("," + nb.getName() + ",");
-				ctx.println(((NDB) nb).getFrequency());
+				ctx.print(((NDB) nb).getFrequency());
 				break;
-
-			default:
-				ctx.println("");
 			}
 			
+			ctx.print(",");
+			if (nb.getRegion() != null)
+				ctx.println(nb.getRegion());
+			else
+				ctx.println("");
+				
 			i.remove();
 		}
 

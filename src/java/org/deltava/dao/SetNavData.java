@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -154,15 +154,15 @@ public class SetNavData extends DAO {
 	}
 	
 	/**
-	 * Updates Airway waypoint types from the Navigation Data table.
+	 * Updates Airway waypoint types from the Navigation Data table. This will also load
+	 * the ICAO region codes.
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void updateAirwayWaypoints() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE WHERE "
-					+ "(A.WAYPOINT=ND.CODE) AND (ABS(A.LATITUDE-ND.LATITUDE)<?) AND (ABS(A.LONGITUDE-ND.LONGITUDE)<?)");
-			_ps.setDouble(1, 0.0001);
-			_ps.setDouble(2, 0.0001);
+			prepareStatementWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE, "
+					+ "A.REGION=ND.REGION WHERE (A.WAYPOINT=ND.CODE) AND (ABS(A.LATITUDE-ND.LATITUDE)<0.0001) AND "
+					+ "(ABS(A.LONGITUDE-ND.LONGITUDE)<0.0001)");
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -170,16 +170,33 @@ public class SetNavData extends DAO {
 	}
 	
 	/**
-	 * Updates Terminal Route waypoint types from the Navigation Data table.
+	 * Updates Terminal Route waypoint types from the Navigation Data table. This will also load
+	 * the ICAO region codes.
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void updateTRWaypoints() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.SID_STAR TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE WHERE "
-					+ "(TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE)<?) AND (ABS(TR.LONGITUDE-ND.LONGITUDE)<?)");
-			_ps.setDouble(1, 0.0001);
-			_ps.setDouble(2, 0.0001);
+			prepareStatementWithoutLimits("UPDATE common.SID_STAR TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE, "
+					+ "TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE)<0.0001) AND "
+					+ "(ABS(TR.LONGITUDE-ND.LONGITUDE)<0.0001)");
 			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Updates the ICAO Region code for navigation data entries.
+	 * @param navaidType the navigation aid type
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int updateRegions(int navaidType) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.NAVDATA ND, common.NAVREGIONS NR SET ND.REGION=NR.REGION WHERE "
+					+ "(ROUND(ND.LATITUDE,1)=NR.LATITUDE) AND (ROUND(ND.LONGITUDE,1)=NR.LONGITUDE) AND (ND.REGION IS NULL) "
+					+ "AND (ND.ITEMTYPE=?)");
+			_ps.setInt(1, navaidType);
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -191,9 +208,7 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(TerminalRoute tr) throws DAOException {
-		if (tr == null)
-			return;
-		
+		if (tr == null) return;
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.SID_STAR WHERE (ITEMTYPE=?) AND (ICAO=?) "
 					+ "AND (NAME=?) AND (TRANSITION=?) AND (RUNWAY=?)");

@@ -21,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -65,7 +65,7 @@ public class AIRACImportCommand extends AbstractCommand {
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
 		List<String> errors = new ArrayList<String>();
-		int entryCount = 0;
+		int entryCount = 0; int regionCount = 0;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
@@ -158,7 +158,10 @@ public class AIRACImportCommand extends AbstractCommand {
 				}
 			}
 			
-			// Commit and Close down the stream
+			// Update the regions
+			regionCount = dao.updateRegions(NAVAID_TYPES[navaidType]);
+			
+			// Commit and close down the stream
 			ctx.commitTX();
 			is.close();
 		} catch (IOException ie) {
@@ -173,6 +176,7 @@ public class AIRACImportCommand extends AbstractCommand {
 
 		// Set status attributes
 		ctx.setAttribute("entryCount", new Integer(entryCount), REQUEST);
+		ctx.setAttribute("regionCount", new Integer(regionCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
 		

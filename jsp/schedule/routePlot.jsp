@@ -43,8 +43,6 @@ if (f.star.selectedIndex > 0)
 if (f.route.value.length > 0)
 	params.push('route=' + f.route.value);
 
-// Save simulator version
-params.push('sim=' + f.simVersion.options[f.simVersion.selectedIndex].value);
 return params;
 }
 
@@ -131,6 +129,14 @@ for (var i = 0; i < elements.length; i++) {
 
 return true;
 }
+
+function validate(form)
+{
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
+if (!validateText(form.route, 3, 'Flight Route')) return false;
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -141,7 +147,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="routeplot.do" method="get" validate="return false">
+<el:form action="routeplan.ws" method="post" target="_new" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER<span id="isLoading" /></td>
@@ -166,7 +172,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="80" max="192" idx="*" value="" /></td>
+ <td class="data"><el:text name="route" size="80" max="224" idx="*" value="" onBlur="void plotMap()" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
@@ -180,12 +186,17 @@ return true;
  <td class="label">Simulator Version</td>
  <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" /></td>
 </tr>
+<tr>
+ <td class="label">Cruising Altitude</td>
+ <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" /></td>
+ <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
+ <el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE FLIGHT PLAN" /></td>
 </tr>
 </el:table>
 </el:form>

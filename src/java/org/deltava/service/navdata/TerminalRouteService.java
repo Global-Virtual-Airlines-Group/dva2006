@@ -15,7 +15,7 @@ import org.deltava.service.*;
 /**
  * A Web Service to display Terminal Route data to ACARS dispatch clients.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.0
  */
 
@@ -59,7 +59,9 @@ public class TerminalRouteService extends WebService {
 				ctx.print(",");
 				ctx.print(df.format(ai.getLongitude()));
 				ctx.print(",");
-				ctx.println(String.valueOf(ai.getType()));
+				ctx.print(String.valueOf(ai.getType()));
+				ctx.print(",");
+				ctx.println((ai.getRegion() == null) ? "" : ai.getRegion());
 			}
 			
 			ctx.println("");
