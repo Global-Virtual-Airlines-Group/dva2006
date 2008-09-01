@@ -13,8 +13,6 @@ import org.jdom.*;
 import org.jdom.input.*;
 import org.jdom.filter.ElementFilter;
 
-import org.deltava.beans.navdata.NavigationDataBean;
-
 public class NavRegionLoader extends TestCase {
 	
 	private static Logger log;
@@ -38,7 +36,7 @@ public class NavRegionLoader extends TestCase {
 	final class SceneryFilter implements FileFilter {
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
-			return (f.isFile() && (fn.startsWith("at") || fn.startsWith("nv")) && fn.endsWith(".bgl") 
+			return (f.isFile() && (fn.startsWith("at") || fn.startsWith("nv")) && fn.endsWith(".bgl")
 					&& !fn.equals("athens.bgl") && !fn.equals("atlanta.bgl"));
 		}
 	}
@@ -85,7 +83,7 @@ public class NavRegionLoader extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "password");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 	}
@@ -149,11 +147,11 @@ public class NavRegionLoader extends TestCase {
 		
 		// Clear the table
 		Statement s = _c.createStatement();
-		s.execute("TRUNCATE common.NAVREGIONS");
+		s.execute("TRUNCATE common.NAVREG");
 		s.close();
 		
 		// Init the prepared statement
-		PreparedStatement ps = _c.prepareStatement("INSERT INTO common.NAVREGIONS VALUES (?, ?, ?, ?, ?)");
+		PreparedStatement ps = _c.prepareStatement("REPLACE INTO common.NAVREG VALUES (ROUND(?,1), ROUND(?,1), ?)");
 		
 		// Load the XML files
 		File[] xmls = rt.listFiles(new XMLFilter());
@@ -173,21 +171,11 @@ public class NavRegionLoader extends TestCase {
 					double lat = Double.parseDouble(e.getAttributeValue("lat"));
 					double lng = Double.parseDouble(e.getAttributeValue("lon"));
 					String region = e.getAttributeValue(isWP ? "waypointRegion" : "region");
-					String code = e.getAttributeValue(isWP ? "waypointIdent" : "ident");
-					
-					// Save the entry
-					int type = NavigationDataBean.INT;
-					if (e.getName().equals("Vor"))
-						type = NavigationDataBean.VOR;
-					else if (e.getName().equals("Ndb"))
-						type = NavigationDataBean.NDB;
 					
 					// Save the data
-					ps.setInt(1, type);
-					ps.setString(2, code);
-					ps.setDouble(3, lat);
-					ps.setDouble(4, lng);
-					ps.setString(5, region);
+					ps.setDouble(1, lat);
+					ps.setDouble(2, lng);
+					ps.setString(3, region);
 					ps.addBatch();
 				}
 			}
