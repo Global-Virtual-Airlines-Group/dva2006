@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Date;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update the sticky date of a Water Cooler thread.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -32,17 +32,15 @@ public class ThreadStickCommand extends AbstractCommand {
 		// Get the sticky date
 		Date stickyDate = null;
 		try {
-			stickyDate = StringUtils.parseDate(ctx.getParameter("stickyDate"), ctx.getUser().getDateFormat());
+			stickyDate = parseDateTime(ctx, "sticky", SystemData.get("time.date_format"), "HH:mm");
 		} catch (IllegalArgumentException iae) {
-			try {
-				stickyDate = StringUtils.parseDate(ctx.getParameter("stickyDate"), SystemData.get("time.date_format"));
-			} catch (IllegalArgumentException iae2) {
-				CommandException ce = new CommandException(iae);
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			CommandException ce = new CommandException(iae);
+			ce.setLogStackDump(false);
+			throw ce;
 		}
-
+		
+		// Get sticky in channel
+		boolean stickChannel = Boolean.valueOf(ctx.getParameter("stickyChannel")).booleanValue();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -68,14 +66,15 @@ public class ThreadStickCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Message Thread stuck until " + StringUtils.format(stickyDate, "MMMM dd, yyyy"));
+			upd.setMessage("Message Thread stuck until " + StringUtils.format(stickyDate, "MMMM dd, yyyy HH:mm"));
+			mt.setStickyUntil(stickyDate);
 
 			// Start a transaction
 			ctx.startTX();
 
 			// Restick the thread, or if the date is in the past then unstick it
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
-			wdao.restickThread(mt.getID(), stickyDate);
+			wdao.restickThread(mt.getID(), stickyDate, stickChannel);
 			wdao.write(upd);
 
 			// Commit the transaction
@@ -89,6 +88,7 @@ public class ThreadStickCommand extends AbstractCommand {
 
 		// Forward back to the thread
 		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REDIRECT);
 		result.setURL("thread", null, ctx.getID());
 		result.setSuccess(true);
 	}

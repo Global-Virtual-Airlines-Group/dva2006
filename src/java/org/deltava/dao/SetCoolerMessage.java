@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -163,7 +163,8 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	 */
 	public void viewThread(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET VIEWS=VIEWS+1 WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
+					+ "VIEWS=VIEWS+1 WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -337,18 +338,20 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	 * is null or in the past.
 	 * @param id the Message Thread's database ID
 	 * @param sDate the new sticky date
+	 * @param stickyChannel TRUE if sticky in channel only, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 * @see SetCoolerMessage#unstickThread(int)
 	 */
-	public void restickThread(int id, java.util.Date sDate) throws DAOException {
+	public void restickThread(int id, java.util.Date sDate, boolean stickyChannel) throws DAOException {
 		if ((sDate == null) || (sDate.before(new java.util.Date())))
 			unstickThread(id);
 		
 		invalidate(id);
 		try {
-			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=?, STICKY_CHANNEL=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(sDate));
-			_ps.setInt(2, id);
+			_ps.setBoolean(2, stickyChannel);
+			_ps.setInt(3, id);
 			executeUpdate(0);
 		} catch(SQLException se) {
 			throw new DAOException(se);

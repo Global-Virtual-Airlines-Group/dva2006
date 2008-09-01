@@ -83,7 +83,7 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) "
 				+ "AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON "
-				+ "(T.ID=I.ID) AND (ID.SEQ=1) WHERE (T.AUTHOR=?)");
+				+ "(T.ID=I.ID) AND (I.SEQ=1) WHERE (T.AUTHOR=?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
