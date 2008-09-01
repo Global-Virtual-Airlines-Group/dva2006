@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -230,8 +230,8 @@ public class GetNavRoute extends GetNavData {
 
 		results = new CacheableList<Airway>(name);
 		try {
-			prepareStatement("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, HIGH, LOW FROM common.AIRWAYS "
-					+ "WHERE (NAME=?) ORDER BY ID, SEQ");
+			prepareStatement("SELECT ID, WAYPOINT, WPTYPE, LATITUDE, LONGITUDE, REGION, HIGH, LOW "
+					+ "FROM common.AIRWAYS WHERE (NAME=?) ORDER BY ID, SEQ");
 			_ps.setString(1, name.toUpperCase());
 
 			// Execute the query
@@ -242,13 +242,14 @@ public class GetNavRoute extends GetNavData {
 				if (id != lastID) {
 					lastID = id;
 					a = new Airway(name, id);
-					a.setHighLevel(rs.getBoolean(6));
-					a.setLowLevel(rs.getBoolean(7));
+					a.setHighLevel(rs.getBoolean(7));
+					a.setLowLevel(rs.getBoolean(8));
 					results.add(a);
 				}
 				
 				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
 				nd.setCode(rs.getString(2));
+				nd.setRegion(rs.getString(6));
 				a.addWaypoint(nd);
 			}
 
@@ -284,13 +285,14 @@ public class GetNavRoute extends GetNavData {
 					lastID = id;
 					lastCode = code;
 					a = new Airway(code, id);
-					a.setHighLevel(rs.getBoolean(8));
-					a.setLowLevel(rs.getBoolean(9));
+					a.setHighLevel(rs.getBoolean(9));
+					a.setLowLevel(rs.getBoolean(10));
 					results.add(a);
 				}
 				
 				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(5), rs.getDouble(6), rs.getDouble(7));
 				nd.setCode(rs.getString(4));
+				nd.setRegion(rs.getString(8));
 				a.addWaypoint(nd);
 			}
 			
@@ -404,9 +406,10 @@ public class GetNavRoute extends GetNavData {
 			}
 			
 			// Add the waypoint if present
-			if (columnCount > 9) {
+			if (columnCount > 10) {
 				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(8), rs.getDouble(9), rs.getDouble(10));
 				nd.setCode(rs.getString(7));
+				nd.setRegion(rs.getString(11));
 				tr.addWaypoint(nd);
 			}
 		}

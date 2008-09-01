@@ -65,7 +65,9 @@ public class AirwayService extends WebService {
 				ctx.print(",");
 				ctx.print(df.format(ai.getLongitude()));
 				ctx.print(",");
-				ctx.println(String.valueOf(ai.getType()));
+				ctx.print(String.valueOf(ai.getType()));
+				ctx.print(",");
+				ctx.println((ai.getRegion() == null) ? "" : ai.getRegion());
 			}
 			
 			ctx.println("");

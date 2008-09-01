@@ -245,11 +245,13 @@ public class GetNavData extends DAO implements CachingDAO {
 					a.setCode(rs.getString(2));
 					a.setAltitude(rs.getInt(6));
 					a.setName(rs.getString(7));
+					a.setRegion(rs.getString(9));
 					obj = a;
 					break;
 
 				case NavigationDataBean.INT:
 					obj = new Intersection(rs.getString(2), rs.getDouble(3), rs.getDouble(4));
+					obj.setRegion(rs.getString(9));
 					break;
 
 				case NavigationDataBean.VOR:
@@ -257,6 +259,7 @@ public class GetNavData extends DAO implements CachingDAO {
 					vor.setCode(rs.getString(2));
 					vor.setFrequency(rs.getString(5));
 					vor.setName(rs.getString(7));
+					vor.setRegion(rs.getString(9));
 					obj = vor;
 					break;
 
@@ -265,6 +268,7 @@ public class GetNavData extends DAO implements CachingDAO {
 					ndb.setCode(rs.getString(2));
 					ndb.setFrequency(rs.getString(5));
 					ndb.setName(rs.getString(7));
+					ndb.setRegion(rs.getString(9));
 					obj = ndb;
 					break;
 
@@ -275,6 +279,7 @@ public class GetNavData extends DAO implements CachingDAO {
 					rwy.setLength(rs.getInt(6));
 					rwy.setName(rs.getString(7));
 					rwy.setHeading(rs.getInt(8));
+					rwy.setRegion(rs.getString(9));
 					obj = rwy;
 					break;
 
