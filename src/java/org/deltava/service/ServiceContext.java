@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -24,30 +24,25 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
    
    // List of roles for anonymous users
    private static final Collection<String> ANONYMOUS_ROLES = Collections.singleton("Anonymous");
-
+   
    private Person _usr;
    
    private ServletContext _sc;
    private HttpServletRequest _req;
    private HttpServletResponse _rsp;
-   private OutputBuffer _buf;
+   private final OutputBuffer _buf = new OutputBuffer();
    
-   private class OutputBuffer {
+   protected class OutputBuffer {
       
-      private StringBuilder _buffer;
-      
-      protected OutputBuffer() {
-         super();
-         _buffer = new StringBuilder(256);
-      }
+      private final StringBuilder _buffer = new StringBuilder(256);
       
       public void print(CharSequence value) {
          _buffer.append(value);
       }
       
       public void println(CharSequence value) {
-         print(value);
-         _buffer.append("\n");
+    	 _buffer.append(value);
+         _buffer.append("\r\n");
       }
       
       public int length() {
@@ -71,7 +66,6 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
       _sc = sc;
       _req = req;
       _rsp = rsp;
-      _buf = new OutputBuffer();
    }
 
    /**
