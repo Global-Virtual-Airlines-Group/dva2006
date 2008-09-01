@@ -32,7 +32,7 @@ public class GetSELCAL extends DAO {
 	 */
 	public SelectCall get(String code) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM SELCAL WHERE (UPPER(CODE)=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM SELCAL WHERE (CODE=?) LIMIT 1");
 			_ps.setString(1, code.toUpperCase());
 			
 			// Return result or null if empty
