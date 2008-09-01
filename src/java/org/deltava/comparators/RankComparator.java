@@ -1,26 +1,26 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
 
 /**
  * A Comparator to compare pilot rank/equipment program changes. This isn't a true comparator since it
- * doesn't implement {@link java.util.Comparator}, but it retunrs
+ * doesn't implement {@link java.util.Comparator}, but it returns similar values.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class RankComparator {
 
-   private List<String> _ranks;
+   private final List<String> _ranks = new ArrayList<String>();
    
    private RankStage _rs1;
    private RankStage _rs2;
    
    public RankComparator(Collection<String> ranks) {
       super();
-      _ranks = new ArrayList<String>(ranks);
+      _ranks.addAll(ranks); 
    }
    
    protected class RankStage implements Comparable<RankStage> {
@@ -54,7 +54,7 @@ public class RankComparator {
       
       int ofs1 = _ranks.indexOf(r1);
       int ofs2 = _ranks.indexOf(r2);
-      return new Integer(ofs1).compareTo(new Integer(ofs2));
+      return Integer.valueOf(ofs1).compareTo(Integer.valueOf(ofs2));
    }
    
    /**
