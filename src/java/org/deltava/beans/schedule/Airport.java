@@ -38,6 +38,8 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private String _icao;
 	private String _name;
 	private int _alt;
+	private String _region;
+	
 	private final GeoPosition _position = new GeoPosition(0f, 0f);
 	private TZInfo _tz = TZInfo.local();
 	private final Collection<String> _aCodes = new TreeSet<String>();
@@ -109,6 +111,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	public void setICAO(String code) {
 		_icao = code.trim().toUpperCase();
 	}
+	
+	/**
+	 * Sets this airport's ICAO region.
+	 * @param code the region code
+	 * @see Airport#getRegion()
+	 */
+	public void setRegion(String code) {
+		_region = (code == null) ? null : code.toUpperCase();
+	}
 
 	/**
 	 * Sets this Airport's altitude.
@@ -149,6 +160,14 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public int getAltitude() {
 	   return _alt;
+	}
+	
+	/**
+	 * Returns the ICAO region containing this Airport.
+	 * @return the region code
+	 */
+	public String getRegion() {
+		return _region;
 	}
 	
 	/**

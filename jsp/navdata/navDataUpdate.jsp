@@ -22,7 +22,8 @@
 <c:if test="${isImport}">
 <div class="updateHdr">Navigation Data Imported</div>
 <br />
-<fmt:int value="${entryCount}" /> records loaded.<br />
+<fmt:int value="${entryCount}" /> records loaded. <fmt:int value="${regionCount}" /> records have had the proper 
+ICAO region code set after import.<br />
 <br />
 <c:choose>
 <c:when test="${navData}">

@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 
 	private String _code;
 	private String _name;
+	private String _region;
 	private int _type;
 
 	private GeoPosition _gp;
@@ -124,6 +125,15 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	public final String getTypeName() {
 		return NAVTYPE_NAMES[getType()];
 	}
+	
+	/**
+	 * Returns the ICAO region code for this entry.
+	 * @return the region code
+	 * @see NavigationDataBean#setRegion(String)
+	 */
+	public final String getRegion() {
+		return _region;
+	}
 
 	/**
 	 * Updates the object's code.
@@ -143,6 +153,15 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	 */
 	public void setName(String name) {
 		_name = name.trim();
+	}
+	
+	/**
+	 * Updates the ICAO region code for this entry.
+	 * @param rCode the ICAO region code
+	 * @see NavigationDataBean#getRegion()
+	 */
+	public void setRegion(String rCode) {
+		_region = (rCode == null) ? null : rCode.toUpperCase();
 	}
 
 	/**
@@ -186,7 +205,14 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 		buf.append(getCode());
 		buf.append("</b> (");
 		buf.append(getTypeName());
-		buf.append(")<br /><br />");
+		buf.append(")<br />");
+		if (_region != null) {
+			buf.append("Region: ");
+			buf.append(_region);
+			buf.append("<br />");
+		}
+		
+		buf.append("<br />");
 		return buf.toString();
 	}
 

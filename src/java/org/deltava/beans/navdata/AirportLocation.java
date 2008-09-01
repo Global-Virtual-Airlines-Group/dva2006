@@ -35,6 +35,8 @@ public class AirportLocation extends NavigationDataBean implements GeospaceLocat
 		_altitude = a.getAltitude();
 		setCode(a.getICAO());
 		setName(a.getName());
+		setAltitude(a.getAltitude());
+		setRegion(a.getRegion());
 	}
 
 	/**
