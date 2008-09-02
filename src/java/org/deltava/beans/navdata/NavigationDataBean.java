@@ -152,7 +152,7 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	 * @see NavigationDataBean#setName(String)
 	 */
 	public void setName(String name) {
-		_name = name.trim();
+		_name = name.replace(',', ' ').trim();
 	}
 	
 	/**
@@ -305,8 +305,7 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 
 		default:
 			return null;
-	}
-		
+		}
 	}
 	
 	/**
@@ -319,6 +318,9 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 		String code = tkns.nextToken();
 		NavigationDataBean nd = create(StringUtils.parse(tkns.nextToken(), INT), StringUtils.parse(tkns.nextToken(), 0.0), StringUtils.parse(tkns.nextToken(), 0.0));
 		nd.setCode(code);
+		if (tkns.hasMoreTokens())
+			nd.setRegion(tkns.nextToken());
+			
 		return nd;
 	}
 }
