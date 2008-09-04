@@ -30,7 +30,7 @@ has been successfully removed from the database.<br />
 <!-- Approach Chart Created -->
 <div class="updateHdr">Approach Chart Created</div>
 <br />
-The Approach Chart <span class="pri bld caps">${chart.name}</span> for <fmt:airport airport="${chart.airport}" /> 
+The Approach Chart <span class="pri bld caps">${chart.name}</span> for ${chart.airport.name} (<fmt:airport airport="${chart.airport}" />) 
 has been successfully added to the database.<br />
 <br />
 To view this Approach Chart, <el:cmd url="chart" link="${chart}">Click Here</el:cmd>.<br />
@@ -41,7 +41,7 @@ To view all Approach Charts for ${chart.airport.name}, <el:cmd url="charts" link
 <!-- Approach Chart Updated -->
 <div class="updateHdr">Approach Chart Updated</div>
 <br />
-The Approach Chart <span class="pri bld caps">${chart.name}</span> for <fmt:airport airport="${chart.airport}" /> 
+The Approach Chart <span class="pri bld caps">${chart.name}</span> for ${chart.airport.name} (<fmt:airport airport="${chart.airport}" />) 
 has been successfully updated.<br />
 <br />
 To view this Approach Chart, <el:cmd url="chart" link="${chart}">Click Here</el:cmd>.<br />
