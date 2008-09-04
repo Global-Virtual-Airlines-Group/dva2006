@@ -323,6 +323,8 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
       buf.append(_iata);
       buf.append("<br />ICAO Code: ");
       buf.append(_icao);
+      buf.append("<br />ICAO Region: ");
+      buf.append(_region);
       buf.append("<br /><br />Latitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LATITUDE));
       buf.append("<br />Longitude: ");
@@ -339,18 +341,17 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		if (o2 instanceof Airport) {
 			Airport a2 = (Airport) o2;
 			return (_iata.equals(a2._iata) && _icao.equals(a2._icao));
-		} else if (o2 instanceof String) {
+		} else if (o2 instanceof String)
 			return _iata.equals(o2) || _icao.equals(o2);
-		} else {
+		else
 			return false;
-		}
 	}
 
 	/**
 	 * Retrurns the hashcode of the IATA/ICAO values.
 	 */
 	public final int hashCode() {
-		return (_iata + _icao).hashCode();
+		return toString().hashCode();
 	}
 
 	/**
