@@ -47,7 +47,7 @@ public class CoolerChannelAccessControl extends AccessControl {
         // Validate that we can access the channel
         _canAccess = true;
         if (_c != null) {
-        	_canAccess = RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles());
+        	_canAccess = RoleUtils.hasAccess(_ctx.getRoles(), _c.getReadRoles()) || RoleUtils.hasAccess(_ctx.getRoles(), _c.getWriteRoles());
         	if (!_ctx.isAuthenticated())
         		return;
         	
@@ -62,9 +62,12 @@ public class CoolerChannelAccessControl extends AccessControl {
         boolean isClosed = (_c != null) && !_c.getAllowNewPosts() && !_ctx.isUserInRole("Admin");
         
         // Set state objects
-        _canPost = !isLocked && !isClosed && _canAccess && _ctx.isAuthenticated();
         _canEdit = _ctx.isUserInRole("Admin");
-        _canRead = (_c != null) && _ctx.isUserInRole("HR");
+        if (_c != null) {
+        	_canRead = _ctx.isUserInRole("HR");
+        	_canPost = !isLocked && !isClosed && _canAccess && RoleUtils.hasAccess(_ctx.getRoles(), _c.getWriteRoles());
+        } else
+        	_canPost = _ctx.isAuthenticated();
     }
     
     /**

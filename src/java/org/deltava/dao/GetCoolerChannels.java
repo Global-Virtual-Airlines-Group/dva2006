@@ -124,10 +124,11 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 	 * Retrieves all Channels for a particular airline.
 	 * @param al the Airline
 	 * @param showHidden TRUE if hidden threads should be returned in the last post
-	 * @return a List of channels
+	 * @param showInactive TRUE if inactive channels should be returned, otherwise FALSE 
+	 * @return a List of Channel beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Channel> getChannels(AirlineInformation al, boolean showHidden) throws DAOException {
+	public List<Channel> getChannels(AirlineInformation al, boolean showHidden, boolean showInactive) throws DAOException {
 
 		// Build the SQL statement optionally showing locked threads
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
@@ -135,17 +136,19 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			sqlBuf.append("(T.HIDDEN=?) AND ");
 		sqlBuf.append("(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), "
 				+ "COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN common.COOLER_THREADS T "
-				+ "ON (T.CHANNEL=C.CHANNEL) WHERE (C.ACTIVE=?) GROUP BY C.CHANNEL");
+				+ "ON (T.CHANNEL=C.CHANNEL) ");
+		if (!showInactive)
+			sqlBuf.append("WHERE (C.ACTIVE=?) ");
+		sqlBuf.append("GROUP BY C.CHANNEL");
 
 		Map<String, Channel> results = new TreeMap<String, Channel>();
 		try {
+			int pos = 0;
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			if (showHidden)
-				_ps.setBoolean(1, true);
-			else {
-				_ps.setBoolean(1, false);
-				_ps.setBoolean(2, true);
-			}
+			if (!showHidden)
+				_ps.setBoolean(++pos, false);
+			if (!showInactive)
+				_ps.setBoolean(++pos, true);
 
 			// Execute the query - we store results in a map for now
 			ResultSet rs = _ps.executeQuery();
@@ -175,10 +178,12 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 
 		// Parse through the results and strip out from the airline - since it's cheaper to do it here than in the query
 		Collection<Channel> channels = new TreeSet<Channel>(results.values());
-		for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
-			Channel c = i.next();
-			if (!c.hasAirline(al.getCode()))
-				i.remove();
+		if (al != null) {
+			for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
+				Channel c = i.next();
+				if (!c.hasAirline(al.getCode()))
+					i.remove();
+			}
 		}
 
 		// Add to cache
@@ -202,13 +207,13 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 
 		// Check if we are querying for the admin role; in this case return everything
 		if (roles.contains("Admin"))
-			return getChannels(al, true);
+			return getChannels(null, true, true);
 
 		// Check if we can display locked threads
-		List<Channel> channels = getChannels(al, roles.contains("Moderator"));
+		List<Channel> channels = getChannels(al, roles.contains("Moderator"), false);
 		for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
 			Channel c = i.next();
-			if (!RoleUtils.hasAccess(roles, c.getRoles()))
+			if (!RoleUtils.hasAccess(roles, c.getReadRoles()))
 				i.remove();
 		}
 
@@ -235,8 +240,12 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			Channel c = channels.get(rs.getString(1));
 			if (c != null) {
 				switch (rs.getInt(2)) {
-					case Channel.INFOTYPE_ROLE:
-						c.addRole(rs.getString(3));
+					case Channel.INFOTYPE_WROLE:
+						c.addRole(true, rs.getString(3));
+						break;
+						
+					case Channel.INFOTYPE_RROLE:
+						c.addRole(false, rs.getString(3));
 						break;
 
 					case Channel.INFOTYPE_AIRLINE:

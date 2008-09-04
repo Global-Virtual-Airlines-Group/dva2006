@@ -81,7 +81,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         // Validate our channel access
         _cac.validate(); 
         boolean channelAccess = _cac.getCanAccess();
-        boolean channelClosed = !_c.getAllowNewPosts() && !_ctx.isUserInRole("Admin");
+        boolean channelClosed = (_c != null) && !_c.getAllowNewPosts() && !_ctx.isUserInRole("Admin");
         
         // Get the user
         Pilot usr = (Pilot) _ctx.getUser();

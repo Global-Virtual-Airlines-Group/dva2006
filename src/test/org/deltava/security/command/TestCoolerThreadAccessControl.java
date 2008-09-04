@@ -1,8 +1,6 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.cooler.Channel;
-import org.deltava.beans.cooler.MessageThread;
+import org.deltava.beans.cooler.*;
 
 public class TestCoolerThreadAccessControl extends AccessControlTestCase {
 
@@ -15,7 +13,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       super.setUp();
       _c = new Channel("Channel");
       _c.addAirline("DVA");
-      _c.addRole("Dummy");
+      _c.addRole(false, "Dummy");
       _mt = new MessageThread("Thread Subject");
       _ac = new CoolerThreadAccessControl(_ctxt);
    }
@@ -36,7 +34,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanLock());
       assertFalse(_ac.getCanUnlock());
       
-      _c.addRole("*");
+      _c.addRole(false, "*");
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -47,7 +45,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    
    public void testAnonymousAccess() throws Exception {
       _ctxt.logoff();
-      _c.addRole("*");
+      _c.addRole(false, "*");
       _ac.updateContext(_mt, _c);
       _ac.validate();
       
@@ -58,7 +56,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    }
    
    public void testLockingAccess() throws Exception {
-      _c.addRole("*");
+      _c.addRole(false, "*");
       _user.addRole("Moderator");
       _ac.updateContext(_mt, _c);
       _ac.validate();
@@ -78,7 +76,8 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    }
    
    public void testLockedAccess() throws Exception {
-      _c.addRole("*");
+      _c.addRole(false, "*");
+      _c.addRole(true, "*");
       _mt.setHidden(true);
       _ac.updateContext(_mt, _c);
       _ac.validate();

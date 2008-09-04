@@ -50,26 +50,31 @@ public class TestChannel extends AbstractBeanTestCase {
     }
     
     public void testRoles() {
-        assertNotNull(_c.getRoles());
-        assertEquals(0, _c.getRoles().size());
-        _c.addRole("Role1");
-        assertEquals(1, _c.getRoles().size());
-        assertTrue(_c.hasRole("Role1"));
-        _c.addRole("Role2");
-        assertEquals(2, _c.getRoles().size());
-        assertTrue(_c.hasRole("Role2"));
-        _c.addRole("Role1");
-        assertEquals(2, _c.getRoles().size());
-        assertFalse(_c.hasRole(null));
+        assertNotNull(_c.getReadRoles());
+        assertEquals(1, _c.getReadRoles().size());
+        assertTrue(_c.getReadRoles().contains("*"));
+        
+        assertNotNull(_c.getWriteRoles());
+        assertEquals(1, _c.getWriteRoles().size());
+        assertTrue(_c.getWriteRoles().contains("*"));
+        
+        _c.addRole(false, "Role1");
+        assertEquals(1, _c.getReadRoles().size());
+        assertTrue(_c.getReadRoles().contains("Role1"));
+        _c.addRole(false, "Role2");
+        assertEquals(2, _c.getReadRoles().size());
+        assertTrue(_c.getReadRoles().contains("Role2"));
+        _c.addRole(false, "Role1");
+        assertEquals(1, _c.getReadRoles().size());
         
         Set<String> rNames = new HashSet<String>();
         rNames.add("Role3");
         rNames.add("Role4");
-        _c.setRoles(rNames);
+        _c.setRoles(true, rNames);
         
-        assertEquals(2, _c.getRoles().size());
-        assertTrue(_c.hasRole("Role3"));
-        assertTrue(_c.hasRole("Role4"));
+        assertEquals(2, _c.getWriteRoles().size());
+        assertTrue(_c.getWriteRoles().contains("Role3"));
+        assertTrue(_c.getWriteRoles().contains("Role4"));
     }
     
     public void testAirlines() {
