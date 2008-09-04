@@ -47,6 +47,7 @@ return true;
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
+<content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -730,6 +731,12 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 </c:if>
 </content:filter>
 <content:filter roles="HR">
+<c:if test="${hasIMAP}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="imaplist">IMAP Mailbox Profiles</el:cmd></td>
+ <td class="data">You can view and update profiles for hosted IMAP mailboxes.</td>
+</tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
  <td class="data">You can view performance metrics on Flight Report approval, Pilot Examination and Check Ride

@@ -66,11 +66,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			if (!p_access.getCanEdit())
 				throw securityException("Cannot edit Pilot " + p.getName());
 
-			// Check our access level to the Staff/Email profiles
+			// Check our access level to the Staff profile
 			StaffAccessControl s_access = new StaffAccessControl(ctx, s);
 			s_access.validate();
-			MailboxAccessControl m_access = new MailboxAccessControl(ctx, emailCfg);
-			m_access.validate();
 
 			// Update the profile with data from the request
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
@@ -350,25 +348,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				sigdao.delete(p.getID());
 				ctx.setAttribute("sigRemoved", Boolean.TRUE, REQUEST);
 				log.info("Signature Removed");
-			}
-
-			// Update the e-mail configuration if necessary
-			boolean isDelete = Boolean.valueOf(ctx.getParameter("IMAPDelete")).booleanValue();
-			if (isDelete && m_access.getCanDelete()) {
-				SetPilotEMail ewdao = new SetPilotEMail(con);
-				ewdao.delete(p.getID());
-				ctx.setAttribute("imapDelete", Boolean.TRUE, REQUEST);
-				emailCfg = null;
-			} else if (m_access.getCanEdit()) {
-				emailCfg.setAddress(ctx.getParameter("IMAPAddr"));
-				emailCfg.setMailDirectory(ctx.getParameter("IMAPPath"));
-				emailCfg.setQuota(Integer.parseInt(ctx.getParameter("IMAPQuota")));
-				emailCfg.setActive(Boolean.valueOf(ctx.getParameter("IMAPActive")).booleanValue());
-				emailCfg.setAliases(StringUtils.split(ctx.getParameter("IMAPAliases"), ","));
-
-				// Save the profile
-				SetPilotEMail ewdao = new SetPilotEMail(con);
-				ewdao.update(emailCfg, p.getName());
 			}
 
 			// If we have access to the Staff profile, update it
@@ -784,6 +763,14 @@ public class ProfileCommand extends AbstractFormCommand {
 			if (p.getACARSLegs() < 0) {
 				GetFlightReports prdao = new GetFlightReports(con);
 				prdao.getOnlineTotals(p, usrInfo.getDB());
+			}
+			
+			// If we're a moderator, get the water cooler post stats
+			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Moderator")) {
+				GetStatistics stdao = new GetStatistics(con);
+				Map<Integer, Integer> wcStats = stdao.getCoolerStatistics(Collections.singleton(new Integer(p.getID())));
+				if (!wcStats.isEmpty())
+					ctx.setAttribute("wcPosts", wcStats.get(new Integer(p.getID())), REQUEST);
 			}
 
 			// Get TeamSpeak2 data

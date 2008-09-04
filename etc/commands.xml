@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <commands>
 
 	<!-- Main Commmands -->
@@ -412,6 +412,12 @@
 		<name>Approach Chart</name>
 		<class>org.deltava.commands.schedule.ChartCommand</class>
 		<roles>Pilot</roles>
+	</command>
+
+	<command id="chartdelete">
+		<name>Approach Chart Delete</name>
+		<class>org.deltava.commands.schedule.ChartDeleteCommand</class>
+		<roles>Admin</roles>
 	</command>
 
 	<command id="routemap">
@@ -870,10 +876,22 @@
 		<roles>HR</roles>
 	</command>
 
-	<command id="newmailbox">
-		<name>Create IMAP Mailbox</name>
-		<class>org.deltava.commands.pilot.IMAPMailboxCommand</class>
-		<roles>Admin</roles>
+	<command id="imap">
+		<name>IMAP Mailbox Profile</name>
+		<class>org.deltava.commands.mail.IMAPMailboxCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="imaplist">
+		<name>IMAP Profile List</name>	
+		<class>org.deltava.commands.mail.MailboxListCommand</class>
+		<roles>HR</roles>	
+	</command>
+
+	<command id="imapdelete">
+		<name>IMAP Profile Delete</name>	
+		<class>org.deltava.commands.mail.IMAPDeleteCommand</class>
+		<roles>Admin</roles>	
 	</command>
 
 	<command id="logbook">

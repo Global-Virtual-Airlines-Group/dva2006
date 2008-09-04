@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store IMAP mailbox data. 
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -99,10 +99,9 @@ public class EMailConfiguration extends DatabaseBean implements ViewEntry {
      * @see EMailConfiguration#addAlias(String)
      * @see EMailConfiguration#getAliases()
      */
-    public void setAliases(Collection aliases) {
+    public void setAliases(Collection<String> aliases) {
        _aliases.clear();
-       for (Iterator i = aliases.iterator(); i.hasNext(); )
-          addAlias((String) i.next());
+       _aliases.addAll(aliases);
     }
 	
     /**
@@ -118,14 +117,10 @@ public class EMailConfiguration extends DatabaseBean implements ViewEntry {
     /**
      * Updates the size quota for this mailbox.
      * @param quota the quota in bytes
-     * @throws IllegalArgumentException if quota is negative
      * @see EMailConfiguration#getQuota()
      */
 	public void setQuota(int quota) {
-		if (quota < 0)
-			throw new IllegalArgumentException("Invalid Mailbox quota - " + quota);
-		
-		_quota = quota;
+		_quota = Math.max(0, quota);
 	}
 	
     /**

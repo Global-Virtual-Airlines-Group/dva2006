@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.EMailConfiguration;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for mailbox profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -39,8 +39,8 @@ public class MailboxAccessControl extends AccessControl {
 			return;
 
 		// Calculate access properties
-		_canDelete = _ctx.isUserInRole("Admin");
-		_canEdit = _ctx.isUserInRole("Admin");
+		_canDelete = _ctx.isUserInRole("HR");
+		_canEdit = _ctx.isUserInRole("HR");
 	}
 
 	/**
