@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web site Command to display Approach Charts.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class ChartsCommand extends AbstractCommand {
     public void execute(CommandContext ctx) throws CommandException {
     	
         // Get airport code to display and save it into the request
-        String aCode = ctx.getParameter("airport");
+        String aCode = ctx.getParameter("id");
         if ((aCode == null) || (aCode.length() < 3))
         	aCode = ctx.getUser().getHomeAirport();
         Airport a = SystemData.getAirport(aCode);
