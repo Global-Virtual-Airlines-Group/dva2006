@@ -35,19 +35,19 @@
  <td width="10%">POSTS</td>
  <td width="10%">AIRLINES</td>
  <td width="10%"><el:cmdbutton url="chprofile" op="edit" label="ADD CHANNEL" /></td>
- <td>ROLES</td>
+ <td>READ ACCESS ROLES</td>
 </tr>
 
 <!-- Table Channel Data -->
 <c:forEach var="channel" items="${channels}">
 <view:row entry="${channel}">
  <td class="left">
- <el:cmd url="chprofile" linkID="${channel.name}" op="edit" className="bld">${channel.name}</el:cmd><br />
+ <el:cmd url="chprofile" linkID="${channel.name}" op="edit" className="pri bld">${channel.name}</el:cmd><br />
  <span class="small">${channel.description}</span></td>
  <td><fmt:int value="${channel.threadCount}" /></td>
  <td><fmt:int value="${channel.postCount}" /></td>
  <td class="sec bld"><fmt:list value="${channel.airlines}" delim=", " /></td>
- <td class="bld right" colspan="2"><fmt:list value="${channel.roles}" delim=", " /></td>
+ <td class="bld right" colspan="2"><fmt:list value="${channel.readRoles}" delim=", " /></td>
 </view:row>
 </c:forEach>
 

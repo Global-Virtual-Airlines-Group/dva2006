@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.util.Collection;
+import java.util.Iterator;
 import java.sql.Connection;
 
 import org.deltava.beans.cooler.Channel;
@@ -44,15 +44,17 @@ public class ChannelCommand extends AbstractFormCommand {
 				c = dao.get(channel);
 				if (c == null)
 					throw notFoundException("Invalid " + forumName + " Channel - " + channel);
-			} else {
+			} else
 				c = new Channel(ctx.getParameter("newName"));
-			}
 			
-			// Load roles and airlines
+			// Load roles and airlines - make sure write access can read
 			c.setAirlines(ctx.getParameters("airline"));
-			Collection<String> roles = ctx.getParameters("securityRoles");
-			if (roles != null)
-				c.setRoles(roles);
+			c.setRoles(false, ctx.getParameters("readRoles"));
+			c.setRoles(true, ctx.getParameters("writeRoles"));
+			if (!c.getReadRoles().contains("*")) {
+				for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); )
+					c.addRole(false, i.next());
+			}
 			
 			// Check our access
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);
@@ -142,11 +144,10 @@ public class ChannelCommand extends AbstractFormCommand {
 	}
 
 	/**
-     * Callback method called when reading the Channel. <i>NOT IMPLEMENTED</i>
+     * Callback method called when reading the Channel.
      * @param ctx the Command context
-     * @throws UnsupportedOperationException always
      */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

@@ -4,8 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -39,6 +37,8 @@ updated in the database.<br />
 This ${forumName} Channel has been renamed to <span class="pri bld">${newName}</span>.<br />
 </c:if>
 </c:if>
+<br />
+To return to the list of ${forumName} channels, <el:cmd url="channeladmin" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>

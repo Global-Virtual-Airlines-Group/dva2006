@@ -212,7 +212,8 @@ public class ThreadCommand extends AbstractCommand {
 			// Save all channels in the thread for the move combobox
 			if (ctx.isUserInRole("Moderator")) {
 				ctx.setAttribute("channel", c, REQUEST);
-				Collection<Channel> channels = cdao.getChannels(airline, ctx.isUserInRole("Admin"));
+				boolean isAdmin = ctx.isUserInRole("Admin");
+				Collection<Channel> channels = cdao.getChannels(isAdmin ? null : airline, isAdmin, isAdmin);
 				channels.remove(Channel.ALL);
 				channels.remove(Channel.SHOTS);
 				ctx.setAttribute("channels", channels, REQUEST);
