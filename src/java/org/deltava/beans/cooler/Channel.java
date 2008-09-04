@@ -247,6 +247,8 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     public void setRoles(Collection<String> roles) {
     	_roles.clear();
     	_roles.addAll(roles);
+    	if (roles.isEmpty())
+    		_roles.add("*");
     }
     
     /**
