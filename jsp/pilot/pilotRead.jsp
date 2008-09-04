@@ -37,6 +37,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
+<content:sysdata var="forumName" name="airline.forum" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -210,6 +211,12 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
  <td colspan="${cspan}" class="data">${pilot.legacyHours} hours</td>
 </tr>
 </c:if>
+<content:filter roles="HR,Moderator"><c:if test="${wcPosts > 0}">
+<tr>
+ <td class="label">${forumName} Posts</td>
+ <td class="data">${wcPosts} total ${forumName} posts</td>
+</tr>
+</c:if></content:filter>
 <c:if test="${!empty applicant}">
 <tr>
  <td class="label">Applicant Profile</td>

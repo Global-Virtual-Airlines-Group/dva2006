@@ -34,7 +34,6 @@ if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
 if (!validateCombo(form.staffArea, 'Department Name')) return false;
 if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
 if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
-if (!validateEMail(form.email, 'E-Mail Address')) return false;
 
 // Validate password
 if ((form.pwd1) && (form.pwd2)) {

@@ -1,51 +1,24 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
 <content:sysdata var="IMAPServer" name="smtp.imap.server" />
-<c:if test="${hasIMAP && (!empty emailCfg)}">
-<!-- Edit E-Mail Configuration -->
+<c:if test="${hasIMAP && m_access.canEdit}">
 <tr class="title caps">
  <td colspan="${cspan + 1}">IMAP MAILBOX SETTINGS AT ${IMAPServer}</td>
 </tr>
-<tr>
- <td class="label">E-Mail Address</td>
-<c:if test="${m_access.canEdit}">
- <td colspan="${cspan}" class="data"><el:text name="IMAPAddr" idx="*" className="bld" size="22" max="32" value="${emailCfg.address}" /></td> 
-</c:if>
-<c:if test="${!m_access.canEdit}">
- <td colspan="${cspan}" class="data"><a href="mailto:${emailCfg.address}">${emailCfg.address}</a></td> 
-</c:if>
-</tr>
-<c:if test="${m_access.canEdit}">
-<tr>
- <td class="label">Mailbox Quota</td>
- <td colspan="${cspan}" class="data"><el:text name="IMAPQuota" idx="*" size="8" max="10" value="${emailCfg.quota}" /> bytes</td>
-</tr>
-<tr>
- <td class="label">Mailbox Directory</td>
- <td colspan="${cspan}" class="data"><el:text name="IMAPPath" idx="*" size="36" max="64" value="${emailCfg.mailDirectory}" /></td>
-</tr>
-<tr>
- <td class="label">Mailbox Aliases</td>
- <td colspan="${cspan}" class="data"><el:text name="IMAPAliases" idx="*" size="80" max="144" value="${fn:splice(emailCfg.aliases, ', ')}" /></td>
-</tr>
-<tr>
- <td class="label">&nbsp;</td>
- <td colspan="${cspan}" class="data"><el:box name="IMAPActive" idx="*" value="true" checked="${emailCfg.active}" label="Mailbox is Active" />
-<c:if test="${m_access.canDelete}"><br />
-<el:box name="IMAPDelete" idx="*" value="true" label="Deactivate IMAP mailbox" /></c:if></td>
-</tr>
-</c:if>
-</c:if>
-<c:if test="${hasIMAP && (empty emailCfg) && access.canChangeRoles}">
-<tr class="title caps">
- <td colspan="${cspan + 1}">IMAP MAILBOX SETTINGS AT ${IMAPServer}</td>
-</tr>
+<c:if test="${(empty emailCfg)}">
 <tr>
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data">${pilot.name} does not currently have a hosted IMAP mailbox. 
-<el:cmd url="newmailbox" link="${pilot}" className="bld">Click Here</el:cmd> to create a new IMAP mailbox Profile.</td>
+<el:cmd url="imap" link="${pilot}" className="sec bld">Click Here</el:cmd> to create a new IMAP mailbox profile.</td>
 </tr>
+</c:if>
+<c:if test="${(!empty emailCfg)}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td colspan="${cspan}" class="data">${pilot.name} has a hosted IMAP mailbox at ${emailCfg.address}. 
+<el:cmd url="imap" link="${pilot}" className="sec bld">Click Here</el:cmd> to edit the IMAP mailbox profile.</td>
+</tr>
+</c:if>
 </c:if>
