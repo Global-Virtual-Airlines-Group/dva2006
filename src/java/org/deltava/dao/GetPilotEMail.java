@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.EMailConfiguration;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -24,30 +24,6 @@ public class GetPilotEMail extends DAO {
    }
    
    /**
-    * Returns if a particular SMTP mailbox address is available.
-    * @param addr the proposed e-mail address
-    * @return TRUE if the address is available, otherwise FALSE
-    * @throws DAOException if a JDBC error occurs
-    */
-   public boolean isAvailable(String addr) throws DAOException {
-      try {
-         prepareStatement("SELECT COUNT(*) FROM postfix.mailbox WHERE (username=?)");
-         _ps.setString(1, addr);
-         
-         // Execute the query and get result
-         ResultSet rs = _ps.executeQuery();
-         boolean result = rs.next() ? (rs.getInt(1) == 0) : true;
-         
-         // Clean up and return
-         rs.close();
-         _ps.close();
-         return result;
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-   }
-
-   /**
     * Retrieves IMAP e-mail data about a particular user.
     * @param id the Pilot's database ID
     * @return the EMailConfiguration bean, or null if not found
@@ -55,8 +31,8 @@ public class GetPilotEMail extends DAO {
     */
    public EMailConfiguration getEMailInfo(int id) throws DAOException {
        try {
-           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE "
-        		   + "(ID=?) LIMIT 1");
+           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox "
+        		   + "WHERE (ID=?) LIMIT 1");
            _ps.setInt(1, id);
            
            // Execute the query, return null if not found
@@ -74,7 +50,8 @@ public class GetPilotEMail extends DAO {
     */
    public Collection<EMailConfiguration> getAll() throws DAOException {
       try {
-         prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox");
+         prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox "
+        		 + "WHERE (ID>0)");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se); 

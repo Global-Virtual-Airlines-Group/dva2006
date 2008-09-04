@@ -34,6 +34,7 @@ ${outData}<br />
 </c:if>
 To make changes to this address or to update ${pilot.name}'s mailbox aliases, you may edit his or her Pilot profile. 
 To do so, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
+To view all IMAP mailbox profiles, <el:cmd url="imaplist" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
