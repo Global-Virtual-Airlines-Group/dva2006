@@ -12,23 +12,31 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.airport, 'Airport')) return false;
-if (!validateText(form.name, 5, 'Chart Name')) return false;
+if (!validateText(form.name, 4, 'Chart Name')) return false;
 if (!validateCombo(form.chartType, 'Chart Type')) return false;
-if (!validateFile(form.img, 'gif,jpg,png', 'Chart Image')) return false;
+if (!validateFile(form.img, 'gif,jpg,png,pdf', 'Chart Image')) return false;
 
 setSubmit();
 disableButton('SaveButton');
 return true;
 }
+
+function loadAirports()
+{
+var f = document.forms[0];
+updateAirports(f.airport, 'airline=all', ${doICAO}, getValue(f.airport));
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void loadAirports()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -36,7 +44,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="chart.do" method="post" link="${chart}" op="save" validate="return validate(this)">
+<el:form action="chart.do" method="post" link="${chart}" op="save" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
 <c:if test="${!empty chart}">
@@ -48,7 +56,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport</td>
- <td class="data"><el:combo className="bld req" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${airports}" value="${chart.airport}" /></td>
+ <td class="data"><el:combo className="req" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${airports}" value="${chart.airport}" />
+ <el:text name="airportCode" idx="*" size="3" max="4" value="${chart.airport.ICAO}" onBlur="void setAirport(document.forms[0].airport, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Chart Name</td>
@@ -64,18 +73,19 @@ return true;
  <td class="data sec">${chart.imgTypeName} image, <fmt:int value="${chart.size}" /> bytes</td>
 </tr>
 </c:if>
-<c:if test="${empty chart}">
 <tr>
  <td class="label">Upload File</td>
- <td class="data"><el:file name="img" idx="*" className="small" size="80" max="144" /></td>
+ <td class="data"><el:file name="img" idx="*" className="small" size="96" max="192" /></td>
 </tr>
-</c:if>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE APPROACH CHART" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHART" />
+<c:if test="${access.canDelete && (!empty chart)}">
+ <el:cmdbutton ID="DeleteButton" url="chartdelete" link="${chart}" label="DELETE CHART" />
+</c:if></td>
 </tr>
 </el:table>
 </el:form>
