@@ -381,6 +381,7 @@
 			<role>AcademyAdmin</role>
 			<role>Admin</role>
 			<role>Blog</role>
+			<role>Charts</role>
 			<role>Developer</role>
 			<role>Dispatch</role>
 			<role>Examination</role>
