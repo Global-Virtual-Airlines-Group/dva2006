@@ -6,7 +6,7 @@
 if [ -d "$2/$1" ]
 then
   echo "Mailbox folder $2/$1 already exists!"
-  exit 2
+  exit 1
 fi
 
 # Create the mailbox
