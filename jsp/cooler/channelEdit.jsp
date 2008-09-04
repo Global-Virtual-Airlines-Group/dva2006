@@ -45,7 +45,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Channel Name</td>
- <td class="data"><el:text name="newName" idx="*" className="pri bld req" size="20" max="64" value="${channel.name}" /></td>
+ <td class="data"><el:text name="newName" idx="*" className="pri bld req" size="36" max="64" value="${channel.name}" /></td>
 </tr>
 <tr>
  <td class="label">Description</td>
@@ -56,8 +56,12 @@ return true;
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${channel.airlines}" /></td>
 </tr>
 <tr>
- <td class="label">Authorized Roles</td>
- <td class="data"><el:check name="securityRoles" width="115" cols="6" newLine="true" checked="${channel.roles}" options="${roles}" /></td>
+ <td class="label" valign="top">Read-Access Roles</td>
+ <td class="data"><el:check name="readRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.readRoles}" options="${roles}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Post-Access Roles</td>
+ <td class="data"><el:check name="writeRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.writeRoles}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

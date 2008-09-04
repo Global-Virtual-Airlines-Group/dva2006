@@ -45,17 +45,24 @@ public class SetCoolerChannel extends DAO {
 			prepareStatement("INSERT INTO common.COOLER_CHANNELINFO (CHANNEL, INFOTYPE, INFODATA) VALUES (?, ?, ?)");
 			_ps.setString(1, c.getName());
 			
-			// Dump roles
-			_ps.setInt(2, Channel.INFOTYPE_ROLE);
-			for (Iterator i = c.getRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, (String) i.next());
+			// Dump read roles
+			_ps.setInt(2, Channel.INFOTYPE_RROLE);
+			for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
+				_ps.addBatch();
+			}
+			
+			// Dump write roles
+			_ps.setInt(2, Channel.INFOTYPE_WROLE);
+			for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
 				_ps.addBatch();
 			}
 			
 			// Dump airlines
 			_ps.setInt(2, Channel.INFOTYPE_AIRLINE);
-			for (Iterator i = c.getAirlines().iterator(); i.hasNext(); ) {
-				_ps.setString(3, (String) i.next());
+			for (Iterator<String> i = c.getAirlines().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
 				_ps.addBatch();
 			}
 			
@@ -89,16 +96,23 @@ public class SetCoolerChannel extends DAO {
 			_ps.setString(1, c.getName());
 			
 			// Dump roles
-			_ps.setInt(2, Channel.INFOTYPE_ROLE);
-			for (Iterator i = c.getRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, (String) i.next());
+			_ps.setInt(2, Channel.INFOTYPE_RROLE);
+			for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
+				_ps.addBatch();
+			}
+			
+			// Dump write roles
+			_ps.setInt(2, Channel.INFOTYPE_WROLE);
+			for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
 				_ps.addBatch();
 			}
 			
 			// Dump airlines
 			_ps.setInt(2, Channel.INFOTYPE_AIRLINE);
-			for (Iterator i = c.getAirlines().iterator(); i.hasNext(); ) {
-				_ps.setString(3, (String) i.next());
+			for (Iterator<String> i = c.getAirlines().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
 				_ps.addBatch();
 			}
 
