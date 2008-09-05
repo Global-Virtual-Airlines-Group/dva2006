@@ -263,6 +263,11 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 		buf.append(_gp.getLatitude());
 		buf.append('!');
 		buf.append(_gp.getLongitude());
+		if (_region != null) {
+			buf.append('!');
+			buf.append(_region);
+		}
+		
 		return buf.toString();
 	}
 
