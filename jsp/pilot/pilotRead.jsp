@@ -214,7 +214,7 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 <content:filter roles="HR,Moderator"><c:if test="${wcPosts > 0}">
 <tr>
  <td class="label">${forumName} Posts</td>
- <td class="data">${wcPosts} total ${forumName} posts</td>
+ <td colspan="${cspan}" class="data">${wcPosts} total ${forumName} posts</td>
 </tr>
 </c:if></content:filter>
 <c:if test="${!empty applicant}">
