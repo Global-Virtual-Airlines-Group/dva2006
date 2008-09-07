@@ -16,8 +16,8 @@ import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to read/write Water Cooler threads.
- * @author luke
- * @version 2.1
+ * @author Luke
+ * @version 2.2
  * @since 2.1
  */
 
@@ -123,7 +123,7 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 	/**
 	 * Helper method to load thread IDs.
 	 */
-	protected List<Integer> executeIDs() throws SQLException {
+	protected Collection<Integer> executeIDs() throws SQLException {
 		Collection<Integer> IDs = new LinkedHashSet<Integer>();
 		
 		// Execute the query
@@ -134,7 +134,7 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 		// Clean up and return
 		rs.close();
 		_ps.close();
-		return new ArrayList<Integer>(IDs);
+		return IDs;
 	}
 	
 	/**
@@ -145,12 +145,12 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasImgCount = (rs.getMetaData().getColumnCount() > 16);
+		boolean hasImgCount = (rs.getMetaData().getColumnCount() > 17);
 		while (rs.next()) {
 			MessageThread t = new MessageThread(rs.getString(2));
 			t.setID(rs.getInt(1));
 			t.setChannel(rs.getString(3));
-			t.setImage(rs.getInt(hasImgCount ? 17 : 4));
+			t.setImage(rs.getInt(hasImgCount ? 18 : 4));
 			t.setStickyUntil(rs.getTimestamp(5));
 			t.setHidden(rs.getBoolean(6));
 			t.setLocked(rs.getBoolean(7));
