@@ -243,18 +243,22 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 		// Generate a dummy stack trace if necessary, trimming out entries from this package
 		if (logStack) {
-			_stackInfo = new StackTrace();
-			_stackInfo.fillInStackTrace();
-			List<StackTraceElement> el = new ArrayList<StackTraceElement>(Arrays.asList(_stackInfo.getStackTrace()));
-			StackTraceElement ste = el.get(0);
-			while (ste.getClassName().startsWith(ConnectionPoolEntry.class.getPackage().getName()) && (el.size() > 1)) {
-				el.remove(0);
-				ste = el.get(0);
-			}
+			try {
+				_stackInfo = new StackTrace();
+				_stackInfo.fillInStackTrace();
+				List<StackTraceElement> el = new ArrayList<StackTraceElement>(Arrays.asList(_stackInfo.getStackTrace()));
+				StackTraceElement ste = el.get(0);
+				while (ste.getClassName().startsWith(ConnectionPoolEntry.class.getPackage().getName()) && (el.size() > 1)) {
+					el.remove(0);
+					ste = el.get(0);
+				}
 
-			// Save the stack trace
-			if (el.size() > 1)
-				_stackInfo.setStackTrace(el.toArray(new StackTraceElement[0]));
+				// Save the stack trace
+				if (el.size() > 1)
+					_stackInfo.setStackTrace(el.toArray(new StackTraceElement[0]));
+			} catch (Exception e) {
+				log.warn("Cannot fetch stack trace - " + e.getMessage());
+			}
 		}
 
 		// Mark the connection as in use, and return the SQL connection
