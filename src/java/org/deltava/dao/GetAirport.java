@@ -91,8 +91,8 @@ public class GetAirport extends DAO {
 	 */
 	public Collection<Airport> getByAirline(Airline al) throws DAOException {
 		try {
-			prepareStatement("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORTS A, "
-					+ "common.AIRPORT_AIRLINE AA LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND "
+			prepareStatement("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORT_AIRLINE AA, "
+					+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND "
 					+ "(ND.ITEMTYPE=?) WHERE (A.IATA=AA.IATA) AND (AA.CODE=?) AND (AA.APPCODE=?) "
 					+ "ORDER BY A.IATA");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
