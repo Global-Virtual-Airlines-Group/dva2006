@@ -85,7 +85,8 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			startTransaction();
 
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_THREADS (ID, SUBJECT, CHANNEL, IMAGE_ID, STICKY, "
-					+ "STICKY_CHANNEL, POSTS, AUTHOR, LASTUPDATE, LASTPOSTER, VIEWS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
+					+ "STICKY_CHANNEL, POSTS, AUTHOR, LASTUPDATE, LASTPOSTER, VIEWS, SORTDATE) VALUES "
+					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, IFNULL(?, ?))");
 			_ps.setInt(1, t.getID());
 			_ps.setString(2, t.getSubject());
 			_ps.setString(3, t.getChannel());
@@ -96,6 +97,8 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			_ps.setInt(8, msg.getAuthorID());
 			_ps.setTimestamp(9, createTimestamp(msg.getCreatedOn()));
 			_ps.setInt(10, msg.getAuthorID());
+			_ps.setTimestamp(11, createTimestamp(t.getStickyUntil()));
+			_ps.setTimestamp(12, createTimestamp(msg.getCreatedOn()));
 
 			// Write the thread to the database and get the new ID
 			executeUpdate(1);
@@ -164,7 +167,7 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public void viewThread(int id) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
-					+ "VIEWS=VIEWS+1 WHERE (ID=?) LIMIT 1");
+					+ "VIEWS=VIEWS+1, SORTDATE=IFNULL(STICKY, LASTUPDATE) WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -298,14 +301,26 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			mt.setLastUpdatedOn(rs.getTimestamp(4));
 			rs.close();
 			_ps.close();
+			
+			// Clear out the sticky date
+			if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().getTime() < System.currentTimeMillis()))
+				mt.setStickyUntil(null);
 
 			// Update the thread entry
-			prepareStatement("UPDATE common.COOLER_THREADS SET POSTS=?, AUTHOR=?, LASTPOSTER=?, LASTUPDATE=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.COOLER_THREADS SET POSTS=?, AUTHOR=?, LASTPOSTER=?, "
+					+ "LASTUPDATE=?, STICKY=? WHERE (ID=?)");
 			_ps.setInt(1, mt.getPostCount());
 			_ps.setInt(2, mt.getAuthorID());
 			_ps.setInt(3, mt.getLastUpdateID());
 			_ps.setTimestamp(4, createTimestamp(mt.getLastUpdatedOn()));
-			_ps.setInt(5, mt.getID());
+			_ps.setTimestamp(5, createTimestamp(mt.getStickyUntil()));
+			_ps.setInt(6, mt.getID());
+			executeUpdate(1);
+			
+			// Update the sort date
+			prepareStatement("UPDATE common.COOLER_THREADS SET SORTDATE=IFNULL(STICKY, LASTUPDATE) "
+					+ "WHERE (ID=?)");
+			_ps.setInt(1, mt.getID());
 			executeUpdate(1);
 
 			// Commit the transaction
@@ -324,7 +339,8 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public void unstickThread(int id) throws DAOException {
 		invalidate(id);
 		try {
-			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=NULL, STICKY_CHANNEL=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=NULL, STICKY_CHANNEL=?, "
+					+ "SORTDATE=LASTUPDATE WHERE (ID=?)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, id);
 			executeUpdate(0);
@@ -343,15 +359,19 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	 * @see SetCoolerMessage#unstickThread(int)
 	 */
 	public void restickThread(int id, java.util.Date sDate, boolean stickyChannel) throws DAOException {
-		if ((sDate == null) || (sDate.before(new java.util.Date())))
+		if ((sDate == null) || (sDate.before(new java.util.Date()))) {
 			unstickThread(id);
+			return;
+		}
 		
 		invalidate(id);
 		try {
-			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=?, STICKY_CHANNEL=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=?, STICKY_CHANNEL=?, "
+					+ "SORTDATE=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(sDate));
 			_ps.setBoolean(2, stickyChannel);
-			_ps.setInt(3, id);
+			_ps.setTimestamp(3, createTimestamp(sDate));
+			_ps.setInt(4, id);
 			executeUpdate(0);
 		} catch(SQLException se) {
 			throw new DAOException(se);

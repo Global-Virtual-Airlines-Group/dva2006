@@ -35,14 +35,13 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	public List<MessageThread> getByChannel(String channelName, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
-				+ "T.LASTUPDATE) AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
-				+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM "
+				+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1)");
 		if (channelName != null)
 			sqlBuf.append(" WHERE (T.CHANNEL=?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
-		sqlBuf.append(" ORDER BY SD DESC");
+		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -62,9 +61,8 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	 */
 	public List<MessageThread> getScreenShots() throws DAOException {
 		try {
-			prepareStatement("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, "
-					+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I "
-					+ "ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (IMGID > 0) ORDER BY SD DESC");
+			prepareStatement("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
+				+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (IMGID > 0) ORDER BY T.SORTDATE DESC");
 			return getByID(executeIDs());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -81,12 +79,11 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	public List<MessageThread> getByAuthor(int userID, boolean showImgs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) "
-				+ "AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON "
-				+ "(T.ID=I.ID) AND (I.SEQ=1) WHERE (T.AUTHOR=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T "
+				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) WHERE (T.AUTHOR=?)");
 		if (!showImgs)
 			sqlBuf.append(" HAVING (IMGID=0)");
-		sqlBuf.append(" ORDER BY SD DESC");
+		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -105,9 +102,8 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	 */
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
 		try {
-			prepareStatement("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD "
-					+ "FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) "
-					+ "ORDER BY SD DESC");
+			prepareStatement("SELECT T.ID FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T "
+					+ "WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY T.SORTDATE DESC");
 			_ps.setInt(1, userID);
 			return getByID(executeIDs());
 		} catch (SQLException se) {
@@ -127,12 +123,12 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			return getByChannel(null, showImgs);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
-				+ "T.LASTUPDATE) AS SD, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
-				+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) HAVING (SD > ?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT T.ID, IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM "
+			+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) AND (I.SEQ=1) "
+			+ "WHERE (T.SORTDATE > ?)");
 		if (showImgs)
-			sqlBuf.append(" AND (IMGID=0)");
-		sqlBuf.append(" ORDER BY SD DESC");
+			sqlBuf.append(" HAVING (IMGID=0)");
+		sqlBuf.append(" ORDER BY T.SORTDATE DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());

@@ -160,12 +160,11 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 			t.setAuthorID(rs.getInt(11));
 			t.setLastUpdatedOn(rs.getTimestamp(12));
 			t.setLastUpdateID(rs.getInt(13));
-			t.setReportCount(rs.getInt(14));
-			t.setPoll(rs.getInt(16) > 0);
+			t.setReportCount(rs.getInt(15));
+			t.setPoll(rs.getInt(17) > 0);
 
 			// Clean out sticky if less than SD column
-			java.util.Date sd = rs.getTimestamp(15);
-			if ((t.getStickyUntil() != null) && (sd.after(t.getStickyUntil())))
+			if ((t.getStickyUntil() != null) && (t.getLastUpdatedOn().after(t.getStickyUntil())))
 				t.setStickyUntil(null);
 
 			// Add to results
