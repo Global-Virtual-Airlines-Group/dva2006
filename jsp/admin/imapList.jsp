@@ -44,9 +44,9 @@
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td><el:cmd url="imap" link="${mb}" className="plain">${mb.address}</el:cmd></td>
- <td class="small"><fmt:int value="${mb.quota}" />K</td>
+ <td class="small"><fmt:int value="${mb.quota / 1024}" />K</td>
 <c:if test="${!empty mb.aliases}">
- <td class="left">${fn:splice(mb.aliases, ', ')}</td>
+ <td class="left small">${fn:splice(mb.aliases, ', ')}</td>
 </c:if>
 <c:if test="${empty mb.aliases}"><td class="left">-</td></c:if>
 </view:row>
