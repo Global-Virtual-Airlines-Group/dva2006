@@ -16,6 +16,7 @@ public class MailboxAccessControl extends AccessControl {
 
 	private EMailConfiguration _cfg;
 
+	private boolean _canCreate;
 	private boolean _canEdit;
 	private boolean _canDelete;
 
@@ -34,13 +35,22 @@ public class MailboxAccessControl extends AccessControl {
 	 */
 	public void validate() {
 		validateContext();
+		_canCreate = _ctx.isUserInRole("HR");
 
 		if ((_cfg == null) || !_ctx.isAuthenticated())
 			return;
 
 		// Calculate access properties
-		_canDelete = _ctx.isUserInRole("HR");
+		_canDelete = _ctx.isUserInRole("Admin");
 		_canEdit = _ctx.isUserInRole("HR");
+	}
+	
+	/**
+	 * Returns if the user can create a new mailbox profile.
+	 * @return TRUE if a profile can be created, otherwise FALSE
+	 */
+	public boolean getCanCreate() {
+		return _canCreate;
 	}
 
 	/**
