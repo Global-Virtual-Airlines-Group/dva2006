@@ -1766,6 +1766,12 @@
 		<roles>HR,Dispatch</roles>
 	</command>
 
+	<command id="poproutes">
+		<name>Popular Route List</name>
+		<class>org.deltava.commands.dispatch.PopularRouteListCommand</class>
+		<roles>HR,Dispatch</roles>
+	</command>
+
 
 	<!-- Flight Academy Commands -->
 	<command id="academy">
