@@ -73,7 +73,10 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="SAVE CHANNEL PROFILE" /></td>
+ <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="SAVE CHANNEL PROFILE" />
+<c:if test="${(!empty channel) && access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" url="chdelete" linkID="${channel.name}" label="DELETE CHANNEL" />
+</c:if></td>
 </tr>
 </el:table>
 </el:form>

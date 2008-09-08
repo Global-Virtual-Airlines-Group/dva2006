@@ -24,6 +24,7 @@ public class CoolerChannelAccessControl extends AccessControl {
     private boolean _canRead;
     private boolean _canEdit;
     private boolean _canPost;
+    private boolean _canDelete;
     
     /**
      * Initializes the Access Controller.
@@ -66,6 +67,7 @@ public class CoolerChannelAccessControl extends AccessControl {
         if (_c != null) {
         	_canRead = _ctx.isUserInRole("HR");
         	_canPost = !isLocked && !isClosed && _canAccess && RoleUtils.hasAccess(_ctx.getRoles(), _c.getWriteRoles());
+        	_canDelete = _ctx.isUserInRole("Admin") && (_c.getPostCount() == 0);
         } else
         	_canPost = _ctx.isAuthenticated();
     }
@@ -100,5 +102,13 @@ public class CoolerChannelAccessControl extends AccessControl {
      */
     public boolean getCanPost() {
         return _canPost;
+    }
+    
+    /**
+     * Returns if this Channel can be deleted.
+     * @return TRUE if it can be deleted, otherwise FALSE
+     */
+    public boolean getCanDelete() {
+    	return _canDelete;
     }
 }

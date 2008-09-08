@@ -841,16 +841,22 @@
 	<command id="channeladmin">
 		<name>Water Cooler Channel Admin List</name>
 		<class>org.deltava.commands.cooler.ChannelAdminCommand</class>
-		<roles>Admin</roles>
+		<roles>HR</roles>
 	</command>
 
 	<command id="chprofile">
 		<name>Water Cooler Channel Admin</name>
 		<class>org.deltava.commands.cooler.ChannelCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="chdelete">
+		<name>Water Cooler Channel Delete</name>
+		<class>org.deltava.commands.cooler.ChannelDeleteCommand</class>
 		<roles>Admin</roles>
 	</command>
 
-	
+
 	<!-- Pilot/PIREP Commands -->
 	<command id="pilotcenter">
 		<name>Pilot Center</name>

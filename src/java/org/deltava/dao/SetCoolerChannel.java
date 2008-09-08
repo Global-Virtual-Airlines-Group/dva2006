@@ -136,4 +136,19 @@ public class SetCoolerChannel extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Deletes a Water Cooler channel profile.
+	 * @param c the Channel bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(Channel c) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM common.COOLER_CHANNELS WHERE (CHANNEL=?)");
+			_ps.setString(1, c.getName());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
