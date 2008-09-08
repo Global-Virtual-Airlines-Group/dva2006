@@ -53,7 +53,7 @@
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="90" labels="Active,Inactive" classes=" ,warn" /></td>
+ <td colspan="6"><view:legend width="110" labels="Active,Inactive,No New Posts" classes=" ,warn,opt2" /></td>
 </tr>
 </view:table>
 <content:copyright />
