@@ -360,14 +360,14 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Get the DAOs and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
-			GetPilot dao2 = new GetPilot(con);
+			GetPilot pdao = new GetPilot(con);
 			FlightReport fr = dao.get(ctx.getID());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
-			Pilot dPilot = (disposalID != 0) ? dao2.get(disposalID) : null;
+			Pilot dPilot = (disposalID != 0) ? pdao.get(disposalID) : null;
 			if (dPilot != null) {
 				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getName();
 				ctx.setAttribute("statusMsg", msg, REQUEST);
@@ -422,6 +422,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					ctx.setAttribute("conInfo", ardao.getConnection(info.getConnectionID()), REQUEST);
+					
+					// Load the dispatcher if there is one
+					if (info.getDispatcherID() != 0) {
+						GetUserData uddao = new GetUserData(con);
+						UserData ud = uddao.get(info.getDispatcherID());
+						if (ud != null)
+							ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
+					}
 
 					// Build the route
 					GetNavRoute navdao = new GetNavRoute(con);
@@ -481,7 +489,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Get the pilot/PIREP beans in the request
-			ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
+			ctx.setAttribute("pilot", pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

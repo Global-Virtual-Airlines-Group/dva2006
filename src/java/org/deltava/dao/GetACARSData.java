@@ -373,8 +373,6 @@ public class GetACARSData extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<FlightInfo> results = new ArrayList<FlightInfo>();
 		while (rs.next()) {
 			FlightInfo info = new FlightInfo(rs.getInt(1), rs.getLong(2));
@@ -395,7 +393,8 @@ public class GetACARSData extends DAO {
 			info.setScheduleValidated(rs.getBoolean(17));
 			info.setDispatchPlan(rs.getBoolean(18));
 			info.setIsMP(rs.getBoolean(19));
-			info.setPilotID(rs.getInt(20));
+			info.setDispatcherID(rs.getInt(20));
+			info.setPilotID(rs.getInt(21));
 
 			// Add to results
 			results.add(info);

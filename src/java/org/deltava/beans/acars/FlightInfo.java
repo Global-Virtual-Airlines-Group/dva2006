@@ -46,6 +46,8 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	private boolean _hasPIREP;
 	private boolean _archived;
 	private boolean _isMP;
+	
+	private int _dispatcherID;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
@@ -87,10 +89,21 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	 * Returns the flight's pilot ID.
 	 * @return the database ID of the pilot flying this flight
 	 * @see FlightInfo#setPilotID(int)
+	 * @see FlightInfo#getDispatcherID()
 	 * @see FlightInfo#getConnectionID()
 	 */
 	public int getPilotID() {
 		return _pilotID;
+	}
+	
+	/**
+	 * Returns the flight's dispatcher ID.
+	 * @return the database ID of the dispatcher, or zero if none
+	 * @see FlightInfo#getPilotID()
+	 * @see FlightInfo#getConnectionID()
+	 */
+	public int getDispatcherID() {
+		return _dispatcherID;
 	}
 
 	/**
@@ -331,27 +344,28 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	/**
 	 * Updates the ACARS Connection ID used for this flight.
 	 * @param id the connection ID
-	 * @throws IllegalArgumentException if id is zero or negative
 	 * @see FlightInfo#getConnectionID()
 	 */
 	public void setConnectionID(long id) {
-		if (id < 0)
-			throw new IllegalArgumentException("Invalid connection ID - " + id);
-
-		_conID = id;
+		_conID = Math.max(0, id);
 	}
 
 	/**
 	 * Updates the Pilot ID for the flight.
 	 * @param id the database ID of the pilot flying this flight
-	 * @throws IllegalArgumentException if id is negative
 	 * @see FlightInfo#getPilotID()
 	 */
 	public void setPilotID(int id) {
-		if (id < 0)
-			throw new IllegalArgumentException("Invalid pilot ID - " + id);
-
-		_pilotID = id;
+		_pilotID = Math.max(0, id);
+	}
+	
+	/**
+	 * Updates the Disaptcher ID for the flight.
+	 * @param id the database ID of the dispatcher plotting the route
+	 * @see FlightInfo#getDispatcherID()
+	 */
+	public void setDispatcherID(int id) {
+		_dispatcherID = Math.max(0, id);
 	}
 
 	/**
