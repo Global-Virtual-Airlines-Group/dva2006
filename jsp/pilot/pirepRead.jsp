@@ -149,7 +149,7 @@ return true;
  <td class="label" valign="top">Other Information</td>
  <td class="data"><c:if test="${fn:isOnline(pirep)}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
 <c:if test="${isACARS}">
-<div class="sec bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
+<div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
 </c:if>
 <c:if test="${fn:isDispatch(pirep)}">
 <div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div>
