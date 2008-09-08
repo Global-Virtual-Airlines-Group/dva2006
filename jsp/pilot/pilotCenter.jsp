@@ -670,6 +670,11 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
  <td class="data">This calendar allows <content:airline /> ACARS Dispatchers to announce the times they will be
  providing Dispatch services.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="poproutes">Popular Flight Routes</el:cmd></td>
+ <td class="data">You can sort route pairs based on popularity, to determine popular routes not covered by routes
+ in the <content:airline /> ACARS Dispatch database.</td>
+</tr>
 </content:filter>
 <content:filter roles="HR,Developer">
 <!-- ACARS Logging Section -->

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store route pair information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -17,6 +17,9 @@ public class RoutePair implements Comparable<RoutePair> {
 
 	private Airline _a;
 	private final Map<String, Airport> _airports = new HashMap<String, Airport>();
+	
+	private int _flights;
+	private int _routes;
 	
 	/**
 	 * Creates a new Route Pair.
@@ -66,7 +69,56 @@ public class RoutePair implements Comparable<RoutePair> {
 	public Collection<Airport> getAirports() {
 		return _airports.values();
 	}
+	
+	/**
+	 * Returns the number of flights between these two airports.
+	 * @return the number of flights
+	 * @see RoutePair#setFlights(int)
+	 * @see RoutePair#getRoutes()
+	 */
+	public int getFlights() {
+		return _flights;
+	}
 
+	/**
+	 * Returns the number of Dispatch rotues between these two airports.
+	 * @return the number of routes
+	 * @see RoutePair#setRoutes(int)
+	 * @see RoutePair#getFlights()
+	 */
+	public int getRoutes() {
+		return _routes;
+	}
+	
+	/**
+	 * Returns the distance between the airports.
+	 * @return the distance in miles
+	 */
+	public int getDistance() {
+		GeoPosition gp = new GeoPosition(getAirportD());
+		return gp.distanceTo(getAirportA());
+	}
+
+	/**
+	 * Updates the number of flights between these two airports. 
+	 * @param count  the number of flights
+	 * @see RoutePair#getFlights()
+	 * @see RoutePair#setRoutes(int)
+	 */
+	public void setFlights(int count) {
+		_flights = Math.max(0, count);
+	}
+	
+	/**
+	 * Updates the number of Dispatch routes between these two airports.
+	 * @param count the number of routes
+	 * @see RoutePair#getRoutes()
+	 * @see RoutePair#setFlights(int)
+	 */
+	public void setRoutes(int count) {
+		_routes = Math.max(0, count);
+	}
+	
 	/**
 	 * Compares two route pairs by comparing their sorted airport codes.
 	 * @see RoutePair#toString()

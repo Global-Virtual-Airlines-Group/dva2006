@@ -5,7 +5,10 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.FlightReport;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve Flight Report statistics.
@@ -36,39 +39,53 @@ public class GetFlightReportStatistics extends DAO {
 	public void setDayFilter(int days) {
 		_dayFilter = Math.max(0, days);
 	}
-	
+
 	/**
-	 * Determines the ratio of in-schedule to out-of-schedule flight legs. This counts all non-draft and non-rejected
-	 * Flight Reports when calculating the ratio.
-	 * @param pilotID the Pilot's database ID
-	 * @return the ratio of scheduled to non-scheduled flights, or zero if no flights flown
+	 * Returns the most popular route pairs filed by Pilots.
+	 * @param noRoutes TRUE to include pairs without dispatch routes only, otherwise FALSE
+	 * @param allFlights TRUE to include Flight Reports without ACARS, otherwise FALSE
+	 * @return a Collection of RoutePair beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public double getScheduledRatio(int pilotID) throws DAOException {
+	public Collection<RoutePair> getPopularRoutes(boolean noRoutes, boolean allFlights) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(P.ID) AS CNT, "
+				+ "COUNT(R.ID) AS RCNT FROM PIREPS P LEFT JOIN acars.ROUTES R ON (P.AIRPORT_D=R.AIRPORT_D) "
+				+ "AND (P.AIRPORT_A=R.AIRPORT_A) WHERE (P.STATUS=?)");
+		if (!allFlights)
+			buf.append(" AND ((P.ATTR & ?) > 0)");
+		if (_dayFilter > 0)
+			buf.append(" AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		buf.append("GROUP BY P.AIRPORT_D, P.AIRPORT_A");
+		if (noRoutes)
+			buf.append("HAVING (RCNT=0) ");
+		buf.append("ORDER BY CNT DESC");
+		
 		try {
-			prepareStatement("SELECT COUNT(ID), SUM(IF((ATTR & ?) > 0, 1, 0)) FROM PIREPS WHERE (PILOT_ID=?) AND "
-					+ "(STATUS <> ?) AND (STATUS <> ?)");
-			_ps.setInt(1, FlightReport.ATTR_ROUTEWARN);
-			_ps.setInt(2, pilotID);
-			_ps.setInt(3, FlightReport.REJECTED);
-			_ps.setInt(4, FlightReport.DRAFT);
-
-			// Execute the query - return zero if no flights flown
+			int pos = 0;
+			prepareStatement(buf.toString());
+			_ps.setInt(++pos, FlightReport.OK);
+			if (!allFlights)
+				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
+			if (_dayFilter > 0)
+				_ps.setInt(++pos, _dayFilter);	
+			
+			// Execute the query
+			Airline a = SystemData.getAirline(SystemData.get("airline.code"));
+			Collection<RoutePair> results = new ArrayList<RoutePair>();
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				_ps.close();
-				return 0;
+			while (rs.next()) {
+				RoutePair rp = new RoutePair(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+				rp.setFlights(rs.getInt(3));
+				rp.setRoutes(rs.getInt(4));
+				results.add(rp);
 			}
-
-			// Calculate the numbers
-			int totalFlights = rs.getInt(1);
-			int invalidFlights = rs.getInt(2);
-
-			// Clean up and return ratio
+			
+			// Clean up
 			rs.close();
 			_ps.close();
-			return (totalFlights - invalidFlights) * 1.0 / invalidFlights;
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
