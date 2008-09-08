@@ -3,22 +3,22 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
 <content:sysdata var="IMAPServer" name="smtp.imap.server" />
-<c:if test="${hasIMAP && m_access.canEdit}">
+<c:if test="${hasIMAP && (m_access.canEdit || m_access.canCreate)}">
 <tr class="title caps">
  <td colspan="${cspan + 1}">IMAP MAILBOX SETTINGS AT ${IMAPServer}</td>
 </tr>
 <c:if test="${(empty emailCfg)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td colspan="${cspan}" class="data">${pilot.name} does not currently have a hosted IMAP mailbox. 
-<el:cmd url="imap" link="${pilot}" className="sec bld">Click Here</el:cmd> to create a new IMAP mailbox profile.</td>
+ <td colspan="${cspan}" class="data">${pilot.name} does not currently have a hosted IMAP mailbox.<c:if test="${m_access.canCreate}"> 
+<el:cmd url="imap" link="${pilot}" className="sec bld">Click Here</el:cmd> to create a new IMAP mailbox profile.</c:if></td>
 </tr>
 </c:if>
 <c:if test="${(!empty emailCfg)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td colspan="${cspan}" class="data">${pilot.name} has a hosted IMAP mailbox at ${emailCfg.address}. 
-<el:cmd url="imap" link="${pilot}" className="sec bld">Click Here</el:cmd> to edit the IMAP mailbox profile.</td>
+ <td colspan="${cspan}" class="data">${pilot.name} has a hosted IMAP mailbox at ${emailCfg.address}.<c:if test="${m_access.canEdit}"> 
+<el:cmd url="imap" link="${pilot}" className="sec bld">Click Here</el:cmd> to edit the IMAP mailbox profile.</c:if></td>
 </tr>
 </c:if>
 </c:if>
