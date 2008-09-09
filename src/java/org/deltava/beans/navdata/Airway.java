@@ -149,10 +149,10 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 			Collections.reverse(wp2);
 			return wp2;
 		}
-
+		
 		return new ArrayList<NavigationDataBean>(_waypoints.subList(st, ed));
 	}
-
+	
 	/**
 	 * Returns the Airway route.
 	 * @return a space-delimited list of waypoint codes
@@ -175,6 +175,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	 */
 	public void addWaypoint(NavigationDataBean nd) {
 		_waypoints.add(nd);
+		nd.setAirway(_code);
 		_pos = null;
 	}
 	
