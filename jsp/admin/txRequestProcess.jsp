@@ -19,9 +19,9 @@ if (!checkSubmit()) return false;
 
 // Validate response
 var act = form.action;
-if (act.indexOf('txreqdelete.do') != -1) {
+if (act.indexOf('txreqdelete.do') != -1)
 	if (!validateText(form.rejectComments, 1, 'Rejection Comments')) return false;
-} else {
+else {
 	if (!validateCombo(form.crType, 'Aircraft Type')) return false;
 	if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
 	if (!validateCombo(form.rank, 'Rank in the new Equipment Program')) return false;
@@ -30,6 +30,7 @@ if (act.indexOf('txreqdelete.do') != -1) {
 
 setSubmit();
 disableButton('ProfileButton');
+disableButton('CheckRideButton');
 disableButton('PIREPButton');
 disableButton('AssignButton');
 disableButton('ApproveButton');
@@ -156,6 +157,9 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" />
+<c:if test="${!empty checkRide}">
+ <el:cmdbutton ID="CheckRideButton" url="checkride" link="${checkRide}" label="VIEW CHECK RIDE" />
+</c:if>
 <c:if test="${access.canAssignRide}">
  <el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" />
 </c:if>
