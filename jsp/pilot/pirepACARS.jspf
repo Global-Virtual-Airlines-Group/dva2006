@@ -64,7 +64,7 @@
 <c:if test="${!empty flightInfo.altitude}">
 <tr>
  <td class="label">Cruise Altitude</td>
- <td class="data">${flightInfo.altitude}</td>
+ <td class="data" colspan="${cspan}">${flightInfo.altitude}</td>
 </tr>
 </c:if>
 <tr>
