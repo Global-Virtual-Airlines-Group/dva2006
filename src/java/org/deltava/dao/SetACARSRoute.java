@@ -56,7 +56,7 @@ public class SetACARSRoute extends DAO {
 			// Save the waypoints
 			int seq = -1;
 			prepareStatementWithoutLimits("INSERT INTO acars.ROUTE_WP (ID, SEQ, CODE, ITEMTYPE, LATITUDE, "
-					+ "LONGITUDE) VALUES (?, ?, ?, ?, ?, ?)");
+					+ "LONGITUDE, AIRWAY, REGION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, rp.getID());
 			for (Iterator<NavigationDataBean> i = rp.getWaypoints().iterator(); i.hasNext(); ) {
 				NavigationDataBean nd = i.next();
@@ -65,6 +65,8 @@ public class SetACARSRoute extends DAO {
 				_ps.setInt(4, nd.getType());
 				_ps.setDouble(5, nd.getLatitude());
 				_ps.setDouble(6, nd.getLongitude());
+				_ps.setString(7, nd.getAirway());
+				_ps.setString(8, nd.getRegion());
 				_ps.addBatch();
 			}
 

@@ -28,18 +28,19 @@ if (f.airportD.selectedIndex > 0) {
 	params.push('airportD=' + f.airportD.options[f.airportD.selectedIndex].value);
 	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
 }
-	
 if (f.airportA.selectedIndex > 0) {
-	params.push('airportA=' + f.airportD.options[f.airportA.selectedIndex].value);
+	params.push('airportA=' + f.airportA.options[f.airportA.selectedIndex].value);
 	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
+}
+if (f.airportL.selectedIndex > 0) {
+	params.push('airportL=' + f.airportL.options[f.airportL.selectedIndex].value);
+	f.airportLCode.value = f.airportL.options[f.airportL.selectedIndex].value;
 }
 	
 if (f.sid.selectedIndex > 0)
 	params.push('sid=' + f.sid.options[f.sid.selectedIndex].value);
-	
 if (f.star.selectedIndex > 0)
 	params.push('star=' + f.star.options[f.star.selectedIndex].value);
-	
 if (f.route.value.length > 0)
 	params.push('route=' + f.route.value);
 
@@ -137,6 +138,18 @@ if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
 if (!validateText(form.route, 3, 'Flight Route')) return false;
 return true;
 }
+<c:if test="${access.canCreate}">
+function saveRoute()
+{
+var f = document.forms[0];
+if (!validate(f)) return false;
+if (!validateCombo(form.airline, 'Airline')) return false;
+if (!validateText(form.cruiseAlt, 4, 'Cruising Altitude')) return false;
+f.action = 'dsproutesave.do';
+f.submit();
+return true;
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -144,6 +157,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="aCode" name="airline.code" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -152,15 +166,26 @@ return true;
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER<span id="isLoading" /></td>
 </tr>
+<c:if test="${access.canCreate}">
+<tr>
+ <td class="label">Airline</td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="-" value="${aCode}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
- <el:text name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" /></td>
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
- <el:text name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); plotMap()" /></td>
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); plotMap()" /></td>
+</tr>
+<tr>
+ <td class="label">Alternate</td>
+ <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
+ <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportL, this.value); plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Standard Departure (SID)</td>
@@ -196,7 +221,11 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
- <el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE FLIGHT PLAN" /></td>
+ <el:button ID="SaveButton" type="submit" className="BUTTON" label="DOWNLOAD FLIGHT PLAN" />
+<c:if test="${access.canCreate}">
+ <el:button ID="RouteSaveButton" className="BUTTON" onClick="void saveRoute()" label="SAVE DISPATCH ROUTE" />
+</c:if>
+</td>
 </tr>
 </el:table>
 </el:form>
@@ -207,8 +236,19 @@ return true;
 <script language="JavaScript" type="text/javascript">
 // Load the airports
 var f = document.forms[0];
+<c:choose>
+<c:when test="${access.canCreate && (!empty airportD) && (!empty airportA)}">
+updateAirports(f.airportD, 'airline=all', ${!useIATA}, '${airportD.ICAO}');
+updateAirports(f.airportA, 'airline=all', ${!useIATA}, '${airportA.ICAO}');
+updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
+window.setTimeout('void plotMap()', 3250);
+</c:when>
+<c:otherwise>
 updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
-updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportD));
+updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA));
+updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
+</c:otherwise>
+</c:choose>
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});

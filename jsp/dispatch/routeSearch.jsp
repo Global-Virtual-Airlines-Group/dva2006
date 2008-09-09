@@ -49,9 +49,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${param.airportD}" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportD}" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${param.airportA}" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportA}" /></td>
 </tr>
 </el:table>
 

@@ -14,6 +14,28 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function search(aD, aA)
+{
+var f = document.forms[0];
+f.airportD.value = aD;
+f.airportA.value = aA;
+f.action = '/dsprsearch.do';
+f.submit();
+return true;	
+}
+<c:if test="${access.canCreate}">
+function plot(aD, aA)
+{
+var f = document.forms[0];
+f.airportD.value = aD;
+f.airportA.value = aA;
+f.action = '/routeplot.do';
+f.submit();
+return true;	
+}
+</c:if>
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -27,40 +49,59 @@
 <view:table className="view" space="default" pad="default" cmd="poproutes">
 <!-- Table Header Bar -->
 <tr class="title">
- <td colspan="2" class="left caps"><content:airline /> Flight Route Popularity</td> 
+ <td colspan="3" class="left caps"><content:airline /> Flight Route Popularity</td> 
  <td colspan="4" class="right"><el:box name="noRoutes" idx="*" value="true" label="Show Pairs without Dispatch Routes" checked="${param.noRoutes}" />
  <el:box name="allFlights" idx="*" value="true" label="Inlcude non-ACARS Flights" checked="${param.allFlights}" />
- IN THE PAST <el:text name="days" idx="*" className="bld" value="${param.days}" /> DAYS 
+ IN THE PAST <el:text name="days" idx="*" size="3" max="4" className="bld" value="${dayFilter}" /> DAYS 
  <el:button ID="UpdateButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 <tr class="title caps">
  <td width="5%">#</td>
- <td width="30%">DEPARTING FROM</td>
+ <td width="10%">&nbsp;</td>
+ <td width="20%">DEPARTING FROM</td>
  <td width="30%">ARRIVING AT</td>
  <td width="10%">DISTANCE</td>
- <td width="10%">FLIGHTS</td>
+ <td width="12%">FLIGHTS</td>
  <td>ROUTES</td>
 </tr>
  
  <!-- Table Route Data -->
- <c:set var="entryNumber" value="${viewStart}" scope="request" />
- <c:forEach var="route" items="${viewContext.results}">
- <tr>
-  <td class="pri bld"><fmt:int value="${entryNumber}" /></td>
-  <td colspan="2">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name}
-  (<fmt:airport airport="${route.airportA}" />)</td>
-  <td><fmt:int value="${route.distance}" /> miles</td>
-  <td class="bld"><fmt:int value="${route.flights}" /> flights</td>
-  <td class="pri bld"><fmt:int value="${route.routes}" /> routes</td>
- </tr>
- </c:forEach>
+<c:set var="entryNumber" value="${viewStart}" scope="request" />
+<c:forEach var="route" items="${viewContext.results}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<view:row entry="${route}">
+ <td class="pri bld"><fmt:int value="${entryNumber}" /></td>
+<c:choose>
+<c:when test="${access.canCreate && (route.routes == 0)}">
+ <td><el:button onClick="javascript:void plot('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="BUTTON" label="PLOT ROUTE" /></td>
+ <td colspan="2">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name}
+ (<fmt:airport airport="${route.airportA}" />)</td>
+</c:when>
+<c:otherwise>
+ <td colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name}
+ (<fmt:airport airport="${route.airportA}" />)</td>
+</c:otherwise>
+</c:choose>
+ <td><fmt:int value="${route.distance}" /> miles</td>
+ <td class="bld"><fmt:int value="${route.flights}" /> flights</td>
+<c:if test="${route.routes > 0}">
+ <td><el:link url="javascript:void search('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="sec bld"><fmt:int value="${route.routes}" /> routes</el:link></td>
+</c:if>
+<c:if test="${route.routes == 0}">
+ <td class="sec bld">NO ROUTES</td>
+</c:if>
+</view:row>
+</c:forEach>
  
  <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="145" classes="opt1, " labels="No Dispatch Routes,Dispatch Routes" /></td>
 </tr>
- </view:table>
- </el:form>
+</view:table>
+<el:text type="hidden" name="airportD" value="" readOnly="true" />
+<el:text type="hidden" name="airportA" value="" readOnly="true" />
+</el:form>
 <br />
 <content:copyright />
 </content:region>

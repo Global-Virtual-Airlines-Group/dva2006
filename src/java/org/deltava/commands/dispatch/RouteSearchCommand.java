@@ -43,6 +43,8 @@ public class RouteSearchCommand extends AbstractCommand {
 				Airport airportD = SystemData.getAirport(ctx.getParameter("airportD"));
 				Airport airportA = SystemData.getAirport(ctx.getParameter("airportA"));
 				ctx.setAttribute("results", dao.getRoutes(airportD, airportA), REQUEST);
+				ctx.setAttribute("airportD", airportD, REQUEST);
+				ctx.setAttribute("airportA", airportA, REQUEST);
 				
 				// Get dispatcher IDs
 				Collection<Integer> IDs = dao.getAuthorIDs();

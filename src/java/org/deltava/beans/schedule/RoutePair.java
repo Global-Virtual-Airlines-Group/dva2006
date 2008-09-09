@@ -3,6 +3,8 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 
+import org.deltava.beans.ViewEntry;
+
 /**
  * A bean to store route pair information.
  * @author Luke
@@ -10,7 +12,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class RoutePair implements Comparable<RoutePair> {
+public class RoutePair implements Comparable<RoutePair>, ViewEntry {
 	
 	private static final String DEP = "$D";
 	private static final String ARR = "$A";
@@ -117,6 +119,10 @@ public class RoutePair implements Comparable<RoutePair> {
 	 */
 	public void setRoutes(int count) {
 		_routes = Math.max(0, count);
+	}
+	
+	public String getRowClassName() {
+		return (_routes == 0) ? "opt1" : null;
 	}
 	
 	/**

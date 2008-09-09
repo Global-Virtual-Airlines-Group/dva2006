@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -224,6 +224,37 @@ public class GetSchedule extends DAO {
 	 */
 	public ScheduleEntry get(String aCode, int flightNumber, int leg) throws DAOException {
 		return get(new ScheduleEntry(new Airline(aCode), flightNumber, leg), SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Returns the Airlines that provide service on a particular route.
+	 * @param airportD the origin Airport
+	 * @param airportA the destination Airport
+	 * @return a Collection of Airline beans
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if airportD or airportA are null
+	 */
+	public Collection<Airline> getAirlines(Airport airportD, Airport airportA) throws DAOException {
+		try {
+			prepareStatement("SELECT DISTINCT AIRLINE FROM SCHEDULE WHERE (AIRPORT_D=?) AND "
+					+ "(AIRPORT_A=?) AND (ACADEMY=?)");
+			_ps.setString(1, airportD.getIATA());
+			_ps.setString(2, airportA.getIATA());
+			_ps.setBoolean(3, false);
+			
+			// Execute the query
+			Collection<Airline> results = new TreeSet<Airline>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(SystemData.getAirline(rs.getString(1)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
