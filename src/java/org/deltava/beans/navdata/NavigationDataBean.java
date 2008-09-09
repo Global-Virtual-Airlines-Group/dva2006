@@ -32,6 +32,7 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	private String _name;
 	private String _region;
 	private int _type;
+	private String _airway;
 
 	private GeoPosition _gp;
 
@@ -134,6 +135,22 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	public final String getRegion() {
 		return _region;
 	}
+	
+	/**
+	 * Returns if this waypoint is on an Airway. 
+	 * @return the airway code
+	 */
+	public String getAirway() {
+		return _airway;
+	}
+	
+	/**
+	 * Returns whether this waypoint is part of a terminal route.
+	 * @return TRUE if part of a Terminal Route, otherwise FALSE
+	 */
+	public boolean isInTerminalRoute() {
+		return (_airway != null) && _airway.contains(".");
+	}
 
 	/**
 	 * Updates the object's code.
@@ -162,6 +179,14 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	 */
 	public void setRegion(String rCode) {
 		_region = (rCode == null) ? null : rCode.toUpperCase();
+	}
+	
+	/**
+	 * Updates if this entry is on an airway.
+	 * @param code the airway code, or null if none
+	 */
+	public void setAirway(String code) {
+		_airway = (code == null) ? null : code.toUpperCase();
 	}
 
 	/**
@@ -209,6 +234,11 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 		if (_region != null) {
 			buf.append("Region: ");
 			buf.append(_region);
+			buf.append("<br />");
+		}
+		if (_airway != null) {
+			buf.append("Airway: ");
+			buf.append(_airway);
 			buf.append("<br />");
 		}
 		
