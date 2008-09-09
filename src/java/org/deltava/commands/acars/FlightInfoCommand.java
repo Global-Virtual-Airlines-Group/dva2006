@@ -58,6 +58,18 @@ public class FlightInfoCommand extends AbstractCommand {
 			Pilot usr = pdao.get(pilotID);
 			if (usr == null)
 				throw notFoundException("Invalid Pilot ID - " + pilotID);
+			
+			// Load the dispatcher
+			if (info.getDispatcherID() != 0) {
+				UserData dud = uddao.get(info.getDispatcherID());
+				ctx.setAttribute("dispatcher", pdao.get(dud), REQUEST);
+			}
+			
+			// Load the route
+			if (info.getRouteID() != 0) {
+				GetACARSRoute ardao = new GetACARSRoute(con);
+				ctx.setAttribute("route", ardao.getRoute(info.getRouteID()), REQUEST);
+			}
 
 			// Save the data we have loaded
 			ctx.setAttribute("pilot", usr, REQUEST);
