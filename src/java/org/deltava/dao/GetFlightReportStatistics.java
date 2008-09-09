@@ -51,13 +51,13 @@ public class GetFlightReportStatistics extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(P.ID) AS CNT, "
-				+ "COUNT(R.ID) AS RCNT FROM PIREPS P LEFT JOIN acars.ROUTES R ON (P.AIRPORT_D=R.AIRPORT_D) "
-				+ "AND (P.AIRPORT_A=R.AIRPORT_A) WHERE (P.STATUS=?)");
+				+ "COUNT(DISTINCT R.ID) AS RCNT FROM PIREPS P LEFT JOIN acars.ROUTES R ON "
+				+ "(P.AIRPORT_D=R.AIRPORT_D) AND (P.AIRPORT_A=R.AIRPORT_A) WHERE (P.STATUS=?) ");
 		if (!allFlights)
-			buf.append(" AND ((P.ATTR & ?) > 0)");
+			buf.append("AND ((P.ATTR & ?) > 0) ");
 		if (_dayFilter > 0)
-			buf.append(" AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		buf.append("GROUP BY P.AIRPORT_D, P.AIRPORT_A");
+			buf.append("AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
+		buf.append("GROUP BY P.AIRPORT_D, P.AIRPORT_A ");
 		if (noRoutes)
 			buf.append("HAVING (RCNT=0) ");
 		buf.append("ORDER BY CNT DESC");
