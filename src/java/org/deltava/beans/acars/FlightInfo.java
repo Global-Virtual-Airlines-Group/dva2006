@@ -48,6 +48,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	private boolean _isMP;
 	
 	private int _dispatcherID;
+	private int _routeID;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
@@ -104,6 +105,14 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	 */
 	public int getDispatcherID() {
 		return _dispatcherID;
+	}
+	
+	/**
+	 * Returns the database ID of the Dispatch route used.
+	 * @return the route database ID
+	 */
+	public int getRouteID() {
+		return _routeID;
 	}
 
 	/**
@@ -361,11 +370,20 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	
 	/**
 	 * Updates the Disaptcher ID for the flight.
-	 * @param id the database ID of the dispatcher plotting the route
+	 * @param id the database ID of the dispatcher, or zero if none
 	 * @see FlightInfo#getDispatcherID()
 	 */
 	public void setDispatcherID(int id) {
 		_dispatcherID = Math.max(0, id);
+	}
+	
+	/**
+	 * Updates the Dispatch Route ID used in this flight.
+	 * @param id the database ID of the route, or zero if none
+	 * @see FlightInfo#getRouteID()
+	 */
+	public void setRouteID(int id) {
+		_routeID = Math.max(0, id);
 	}
 
 	/**

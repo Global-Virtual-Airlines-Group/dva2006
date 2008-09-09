@@ -219,7 +219,8 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, C.PILOT_ID FROM acars.CONS C, acars.FLIGHTS F "
+		StringBuilder buf = new StringBuilder("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID "
+				+ "FROM acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
 				+ "WHERE (C.ID=F.CON_ID) ");
 		if (!terms.isEmpty()) {
 			buf.append("AND");
@@ -259,7 +260,8 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	 */
 	public List<FlightInfo> getUnreportedFlights(int cutoff) throws DAOException {
 		try {
-			prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
+			prepareStatement("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM acars.FLIGHTS F "
+					+ "LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
 					+ "WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) "
 					+ "ORDER BY F.CREATED");
 			_ps.setBoolean(1, false);
