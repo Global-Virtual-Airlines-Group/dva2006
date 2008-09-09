@@ -58,6 +58,14 @@ public class AirportLocation extends NavigationDataBean implements GeospaceLocat
 
 		_altitude = alt;
 	}
+	
+	/**
+	 * Returns the airway code.
+	 */
+	@Override
+	public final String getAirway() {
+		return null;
+	}
 
 	/**
 	 * Return the default Google Maps icon color.
