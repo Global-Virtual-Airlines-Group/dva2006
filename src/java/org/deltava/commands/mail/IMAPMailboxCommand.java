@@ -141,9 +141,11 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			
 			// Save the profile
 			SetPilotEMail ewdao = new SetPilotEMail(con);
-			ewdao.update(cfg, usr.getName());
-			if (isNew)
+			if (isNew) {
+				ewdao.write(cfg, usr.getName());
 				ewdao.updatePassword(cfg.getID(), SystemData.get("smtp.imap.default_pwd"));
+			} else
+				ewdao.update(cfg, usr.getName());
 			
 			// Commit
 			ctx.commitTX();
