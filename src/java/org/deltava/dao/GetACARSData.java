@@ -219,8 +219,9 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C "
-					+ "WHERE (F.CON_ID=C.ID) AND (F.ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
+					+ "acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) WHERE  "
+					+ "(F.CON_ID=C.ID) AND (F.ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 
 			// Get the first entry, or null
@@ -260,14 +261,13 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(long conID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
-					+ "AND (C.ID=?) ORDER BY F.CREATED DESC");
+			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
+					+ "acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+					+ "WHERE (F.CON_ID=C.ID) AND (C.ID=?) ORDER BY F.CREATED DESC LIMIT 1");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
 			List<FlightInfo> results = executeFlightInfo();
-			setQueryMax(0);
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
 
 			// Get the terminal routes
@@ -393,8 +393,9 @@ public class GetACARSData extends DAO {
 			info.setScheduleValidated(rs.getBoolean(17));
 			info.setDispatchPlan(rs.getBoolean(18));
 			info.setIsMP(rs.getBoolean(19));
-			info.setDispatcherID(rs.getInt(20));
-			info.setPilotID(rs.getInt(21));
+			info.setRouteID(rs.getInt(20));
+			info.setDispatcherID(rs.getInt(21));
+			info.setPilotID(rs.getInt(22));
 
 			// Add to results
 			results.add(info);

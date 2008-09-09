@@ -67,7 +67,23 @@
  <td class="label">Pilot Remarks</td>
  <td class="data" colspan="3">${info.remarks}</td>
 </tr>
-
+<c:if test="${(!empty dispatcher) || (!empty route)}">
+<c:set var="cspan" value="${(!empty dispatcher) && (!empty route) ? 1 : 3}" scope="request" />
+<!-- ACARS Dispatch Information -->
+<tr class="title caps">
+ <td colspan="4">ACARS DISPATCH DATA</td>
+</tr>
+<c:if test="${!empty dispatcher}">
+<tr>
+ <td class="label">Dispatcher</td>
+ <td class="data" colspan="${cspan}">${dispatcher.name} <span class="pri bld">(${dispatcher.pilotCode})</span></td>
+</tr>
+</c:if>
+<c:if test="${!empty route}">
+ <td class="label">Route</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${route.ID}" />, used <fmt:int value="${route.useCount}" /> times</td>
+</c:if>
+</c:if>
 <c:if test="${!empty conInfo}">
 <!-- ACARS Connection Information -->
 <tr class="title caps">

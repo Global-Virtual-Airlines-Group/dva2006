@@ -186,7 +186,8 @@ public class GetACARSRoute extends DAO {
 		List<RoutePlan> results = new ArrayList<RoutePlan>();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			RoutePlan rp = new RoutePlan(rs.getInt(1));
+			RoutePlan rp = new RoutePlan();
+			rp.setID(rs.getInt(1));
 			rp.setAuthorID(rs.getInt(2));
 			rp.setAirline(SystemData.getAirline(rs.getString(3)));
 			rp.setAirportD(SystemData.getAirport(rs.getString(4)));
@@ -239,6 +240,7 @@ public class GetACARSRoute extends DAO {
 				String type = NavigationDataBean.NAVTYPE_NAMES[rs.getInt(4)];
 				NavigationDataBean nd = NavigationDataBean.create(type, lat, lng);
 				nd.setCode(rs.getString(3));
+				nd.setRegion(rs.getString(8));
 				rp.addWaypoint(nd, rs.getString(7));
 			}
 		}

@@ -36,11 +36,9 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 
 	/**
 	 * Creates the route bean.
-	 * @param id the database ID
 	 */
-	public RoutePlan(int id) {
+	public RoutePlan() {
 		super();
-		setID(id);
 	}
 
 	public int getAuthorID() {
