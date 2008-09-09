@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,12 +6,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access controller for dispatch data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 2.1
  */
 
 public class DispatchRouteAccessControl extends AccessControl {
 	
+	private boolean _canCreate;
 	private boolean _canView;
 	private boolean _canDelete;
 
@@ -31,7 +32,16 @@ public class DispatchRouteAccessControl extends AccessControl {
 
 		// Check access
 		_canDelete = _ctx.isUserInRole("HR");
-		_canView = _ctx.isUserInRole("Dispatch") || _canDelete;
+		_canCreate = _ctx.isUserInRole("Dispatch");
+		_canView = _canCreate || _canDelete;
+	}
+	
+	/**
+	 * Returns whether new Dispatch routes can be created.
+	 * @return TRUE if new routes can be created, otherwise FALSE
+	 */
+	public boolean getCanCreate() {
+		return _canCreate;
 	}
 	
 	/**

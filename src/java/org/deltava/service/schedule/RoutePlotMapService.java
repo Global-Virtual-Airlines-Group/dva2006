@@ -42,10 +42,12 @@ public class RoutePlotMapService extends RouteMapService {
 			// Translate IATA to ICAO codes
 			String airportDCode = txIATA(ctx.getParameter("airportD"));
 			String airportACode = txIATA(ctx.getParameter("airportA"));
+			String airportLCode = txIATA(ctx.getParameter("airportL"));
 
 			// Get the departure/arrival airports
 			AirportLocation aD = dao.getAirport(airportDCode);
 			AirportLocation aA = dao.getAirport(airportACode);
+			AirportLocation aL = dao.getAirport(airportLCode);
 
 			// Add the departure airport
 			if (aD != null) {
@@ -80,6 +82,10 @@ public class RoutePlotMapService extends RouteMapService {
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
 				tRoutes.addAll(stars);
 			}
+			
+			// Add the alternate
+			if (aL != null)
+				routePoints.add(aL);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {

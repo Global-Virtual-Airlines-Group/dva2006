@@ -18,14 +18,25 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<c:if test="${isDelete}">
+<c:choose>
+<c:when test="${isDelete}">
 <!-- Route Deleted Message -->
 <div class="updateHdr">ACARS Dispatcher Route Deleted</div>
 <br />
-This <content:airline /> ACARS Dispatcher route has been deleted from the database, and is no 
-longer available for use by a Dispatcher.<br />
-</c:if>
+This <content:airline /> ACARS Dispatcher route has been deleted from the database, and is no longer available 
+for use by Dispatchers or Pilots.<br />
 <br />
+</c:when>
+<c:when test="${isCreate}">
+<div class="updateHdr">ACARS Dispatcher Route Created</div>
+<br />
+This <content:airline /> ACARS Dispatcher route has been added to the database, and is now avialable for use by 
+Dispatchers and Pilots.<br />
+<br />
+To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br />
+To plot another route, <el:cmd url="routeplot" className="sec bld">Click Here</el:cmd>.<br />
+</c:when>
+</c:choose>
 To return to the list of ACARS Dispatcher routes, <el:cmd url="dsproutes" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
