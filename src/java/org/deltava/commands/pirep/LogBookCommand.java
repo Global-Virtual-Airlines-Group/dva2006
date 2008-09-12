@@ -83,7 +83,7 @@ public class LogBookCommand extends AbstractViewCommand {
             // Load the airport options
             Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
             GetAirport adao = new GetAirport(con);
-            airports.addAll(adao.getByPilot(ctx.getID())); 
+            airports.addAll(adao.getByPilot(id)); 
             ctx.setAttribute("airports", airports, REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
