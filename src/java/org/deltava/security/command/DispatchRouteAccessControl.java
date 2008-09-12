@@ -31,9 +31,9 @@ public class DispatchRouteAccessControl extends AccessControl {
 		validateContext();
 
 		// Check access
-		_canDelete = _ctx.isUserInRole("HR");
-		_canCreate = _ctx.isUserInRole("Dispatch") || _canDelete;
-		_canView = _canCreate || _canDelete;
+		_canDelete = _ctx.isUserInRole("Admin");
+		_canCreate = _ctx.isUserInRole("Route") || _canDelete;
+		_canView = _ctx.isUserInRole("Dispatch")|| _canCreate;
 	}
 	
 	/**

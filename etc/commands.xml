@@ -1727,31 +1727,31 @@
 	<command id="dsprsearch">
 		<name>Dispatch Route Search</name>
 		<class>org.deltava.commands.dispatch.RouteSearchCommand</class>
-		<roles>HR,Dispatch</roles>
+		<roles>HR,Route,Dispatch</roles>
 	</command>
 
 	<command id="dsproutes">
 		<name>Dispatch Route List</name>
 		<class>org.deltava.commands.dispatch.RouteListCommand</class>
-		<roles>HR,Dispatch</roles>
+		<roles>HR,Route,Dispatch</roles>
 	</command>
 
 	<command id="dsproute">
 		<name>Dispatch Route</name>
 		<class>org.deltava.commands.dispatch.RouteCommand</class>
-		<roles>HR,Dispatch</roles>
+		<roles>HR,Route,Dispatch</roles>
 	</command>
 
 	<command id="dsproutesave">
 		<name>Dispatch Route Save</name>	
 		<class>org.deltava.commands.dispatch.RouteSaveCommand</class>
-		<roles>HR,Dispatch</roles>
+		<roles>HR,Route</roles>
 	</command>
 
 	<command id="dsproutedelete">
 		<name>Dispatch Route List</name>
 		<class>org.deltava.commands.dispatch.RouteDeleteCommand</class>
-		<roles>HR</roles>
+		<roles>Admin</roles>
 	</command>
 
 	<command id="dspcalendar">
@@ -1775,7 +1775,7 @@
 	<command id="poproutes">
 		<name>Popular Route List</name>
 		<class>org.deltava.commands.dispatch.PopularRouteListCommand</class>
-		<roles>HR,Dispatch</roles>
+		<roles>HR,Route,Dispatch</roles>
 	</command>
 
 
