@@ -32,7 +32,7 @@ public class DispatchRouteAccessControl extends AccessControl {
 
 		// Check access
 		_canDelete = _ctx.isUserInRole("HR");
-		_canCreate = _ctx.isUserInRole("Dispatch");
+		_canCreate = _ctx.isUserInRole("Dispatch") || _canDelete;
 		_canView = _canCreate || _canDelete;
 	}
 	

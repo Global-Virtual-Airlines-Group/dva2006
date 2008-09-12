@@ -75,7 +75,10 @@ xmlreq.onreadystatechange = function() {
 		var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 		positions.push(p);
 		codes.push(wp.getAttribute("code"));
-		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
+		if (wp.getAttribute("pal"))
+			map.addOverlay(googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, label.data));
+		else
+			map.addOverlay(googleMarker(document.imgPath, wp.getAttribute("color"), p, label.data));
 	} // for
 	
 	// Draw the route
@@ -143,9 +146,10 @@ function saveRoute()
 {
 var f = document.forms[0];
 if (!validate(f)) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateText(form.cruiseAlt, 4, 'Cruising Altitude')) return false;
+if (!validateCombo(f.airline, 'Airline')) return false;
+if (!validateText(f.cruiseAlt, 4, 'Cruising Altitude')) return false;
 f.action = 'dsproutesave.do';
+f.target = '_self';
 f.submit();
 return true;
 }
