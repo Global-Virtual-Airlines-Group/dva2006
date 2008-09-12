@@ -22,16 +22,14 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> ROUTE HISTORY FOR ${pilot.name}</td>
-</tr>
-<tr>
- <td class="label">Map Legend</td>
- <td class="data"><map:legend color="blue" legend="Airports" /> <map:legend color="white" legend="My Home Airport" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
@@ -49,12 +47,14 @@
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 3);
+map.setCenter(mapC, ${zoomLevel});
 map.setMapType(G_SATELLITE_TYPE);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-<map:marker var="airportH" point="${home}" label="${home.name}" color="white" />
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+<map:marker var="airportH" point="${home}" color="white" marker="true" />
 map.addOverlay(airportH);
+defaultIconSize = 16;
 
 // Create the routes
 var routes = new Array();
@@ -72,7 +72,9 @@ var airports = new Array();
 airports.push(airport);
 </c:forEach>
 addMarkers(map, 'routes');
-addMarkers(map, 'airports');
+var mm = new GMarkerManager(map);
+mm.addMarkers(airports, 4);
+mm.refresh();
 </script>
 <content:googleAnalytics />
 </body>
