@@ -36,7 +36,7 @@ public class SetACARSRoute extends DAO {
 			// Create the route
 			prepareStatementWithoutLimits("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, "
 					+ "AIRPORT_A, AIRPORT_L, CREATEDON, USED, ALTITUDE, SID, STAR, BUILD, REMARKS, "
-					+ "ROUTE) VALUES (?, ?, ?, ?, ?, NOW(), 1, ?, ?, ?, 0, ?, ?)");
+					+ "ROUTE) VALUES (?, ?, ?, ?, ?, NOW(), 0, ?, ?, ?, 0, ?, ?)");
 			_ps.setInt(1, rp.getAuthorID());
 			_ps.setString(2, rp.getAirline().getCode());
 			_ps.setString(3, rp.getAirportD().getIATA());
@@ -65,7 +65,7 @@ public class SetACARSRoute extends DAO {
 				_ps.setInt(4, nd.getType());
 				_ps.setDouble(5, nd.getLatitude());
 				_ps.setDouble(6, nd.getLongitude());
-				_ps.setString(7, nd.getAirway());
+				_ps.setString(7, nd.isInTerminalRoute() ? null : nd.getAirway());
 				_ps.setString(8, nd.getRegion());
 				_ps.addBatch();
 			}
