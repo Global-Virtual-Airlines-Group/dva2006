@@ -652,7 +652,7 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
 </tr>
 </content:filter>
 <c:if test="${acarsEnabled}">
-<content:filter roles="HR,Dispatch">
+<content:filter roles="HR,Route,Dispatch">
 <!-- ACARS Dispatch Section -->
 <tr class="title caps">
  <td colspan="2">ACARS DISPATCH OPERATIONS</td>
