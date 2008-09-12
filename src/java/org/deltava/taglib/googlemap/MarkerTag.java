@@ -23,6 +23,7 @@ public class MarkerTag extends GoogleMapEntryTag {
    private String _label;
    private String _color;
    private GeoLocation _entry;
+   private boolean _useMarker;
    
    /**
     * Sets the location of the marker.
@@ -31,6 +32,14 @@ public class MarkerTag extends GoogleMapEntryTag {
    public void setPoint(GeoLocation loc) {
       _entry = loc;
    }
+   
+	/**
+	 * Forces the marker to be rendered using a marker image instead of a Google Earth icon.
+	 * @param useMarker TRUE if a marker must be used, otherwise FALSE
+	 */
+	public void setMarker(boolean useMarker) {
+		_useMarker = useMarker;
+	}
    
    /**
     * Sets the label for this marker. This overrides any label provided by the point.
@@ -66,6 +75,7 @@ public class MarkerTag extends GoogleMapEntryTag {
       _jsPointVarName = null;
       _label = null;
       _color = null;
+      _useMarker = false;
       super.release();
    }
    
@@ -94,7 +104,7 @@ public class MarkerTag extends GoogleMapEntryTag {
          }
          
          // Call the googleMarker function
-         if (_entry instanceof IconMapEntry) {
+         if ((_entry instanceof IconMapEntry) && !_useMarker) { 
         	 IconMapEntry mapInfo = (IconMapEntry) _entry;
         	 out.print(generateIconMarker(_entry, mapInfo.getPaletteCode(), mapInfo.getIconCode(), _label));
          } else

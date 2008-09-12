@@ -19,6 +19,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 
 	private Collection<GeoLocation> _entries;
 	private String _color;
+	private boolean _useMarker;
 
 	/**
 	 * Sets the icon color for these markers. This overrides any color provided by the points.
@@ -27,6 +28,14 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	 */
 	public void setColor(String color) {
 		_color = color;
+	}
+	
+	/**
+	 * Forces the marker to be rendered using a marker image instead of a Google Earth icon.
+	 * @param useMarker TRUE if a marker must be used, otherwise FALSE
+	 */
+	public void setMarker(boolean useMarker) {
+		_useMarker = useMarker;
 	}
 
 	/**
@@ -42,6 +51,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 	 */
 	public void release() {
 		_color = null;
+		_useMarker = false;
 		super.release();
 	}
 
@@ -63,14 +73,14 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 			// Create the markers
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
 				GeoLocation entry = i.next();
-				StringBuilder buf = new StringBuilder(_jsVarName);
-				buf.append(".push(");
-				
 				if (entry instanceof MapEntry) {
-					if (entry instanceof IconMapEntry) {
+					StringBuilder buf = new StringBuilder(_jsVarName);
+					buf.append(".push(");
+					
+					if ((entry instanceof IconMapEntry) && !_useMarker) {
 						IconMapEntry me = (IconMapEntry) entry;
 						buf.append(generateIconMarker(entry, me.getPaletteCode(), me.getIconCode(), me.getInfoBox()));
-					} else if (entry instanceof MarkerMapEntry) {
+					} else {
 						MarkerMapEntry me = (MarkerMapEntry) entry;
 						String entryColor = (_color == null) ? me.getIconColor() : _color; 
 						buf.append(generateMarker(entry, entryColor, me.getInfoBox()));
