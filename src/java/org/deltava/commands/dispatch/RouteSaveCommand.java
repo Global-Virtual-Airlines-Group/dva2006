@@ -32,9 +32,12 @@ public class RouteSaveCommand extends AbstractCommand {
 		// Get the airports
 		RoutePlan rp = new RoutePlan();
 		rp.setAuthorID(ctx.getUser().getID());
-		rp.setAirportD(SystemData.getAirport("airportD"));
-		rp.setAirportA(SystemData.getAirport("airportA"));
-		rp.setAirportL(SystemData.getAirport("airportL"));
+		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
+		rp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+		rp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+		rp.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
+		rp.setCruiseAltitude(ctx.getParameter("cruiseAlt"));
+		rp.setRoute(ctx.getParameter("route"));
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
