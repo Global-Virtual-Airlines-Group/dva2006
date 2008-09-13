@@ -61,6 +61,10 @@ return true;
  <td class="label">Mailbox Aliases</td>
  <td class="data"><el:text name="IMAPAliases" idx="*" size="80" max="255" value="${fn:splice(mb.aliases, ', ')}" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="IMAPActive" idx="*" value="true" checked="${mb.active}" label="Mailbox is Active" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->

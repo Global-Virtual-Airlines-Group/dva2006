@@ -44,6 +44,7 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			if (cfg == null) {
 				cfg = new EMailConfiguration(p.getID(), "");
 				cfg.setMailDirectory(String.valueOf(p.getID()) + "/");
+				cfg.setActive(true);
 			}
 			
 			// Save in the request
