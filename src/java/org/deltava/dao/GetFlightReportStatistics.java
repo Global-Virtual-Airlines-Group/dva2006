@@ -50,7 +50,7 @@ public class GetFlightReportStatistics extends DAO {
 	public Collection<RoutePair> getPopularRoutes(boolean noRoutes, boolean allFlights) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(P.ID) AS CNT, "
+		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(DISTINCT P.ID) AS CNT, "
 				+ "COUNT(DISTINCT R.ID) AS RCNT FROM PIREPS P LEFT JOIN acars.ROUTES R ON "
 				+ "(P.AIRPORT_D=R.AIRPORT_D) AND (P.AIRPORT_A=R.AIRPORT_A) WHERE (P.STATUS=?) ");
 		if (!allFlights)
