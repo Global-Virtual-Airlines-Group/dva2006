@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.IOException;
@@ -8,7 +8,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -43,12 +43,13 @@ public class RouteMapService extends WebService {
 		}
 
 		// Convert to an XML document
-		Document doc = formatPoints(routePoints);
+		Document doc = formatPoints(routePoints, false);
 
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");
@@ -61,9 +62,10 @@ public class RouteMapService extends WebService {
 	/**
 	 * Helper method to convert route points into an XML document.
 	 * @param points a List of MapEntry beans
+	 * @param doIcons render markers as icons if supported
 	 * @return a JDOM XML document
 	 */
-	protected Document formatPoints(List<NavigationDataBean> points) {
+	protected Document formatPoints(List<NavigationDataBean> points, boolean doIcons) {
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -77,9 +79,8 @@ public class RouteMapService extends WebService {
 			NavigationDataBean ndf = points.get(0);
 			mp = ndf.getPosition().midPoint(points.get(points.size() - 1));
 			distance = ndf.getPosition().distanceTo(points.get(points.size() - 1));
-		} else if (points.size() == 1) {
+		} else if (points.size() == 1)
 			mp = points.get(0);
-		}
 
 		// Save the midpoint
 		if (mp != null) {
@@ -98,6 +99,11 @@ public class RouteMapService extends WebService {
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
+			if (doIcons) {
+				e.setAttribute("pal", String.valueOf(entry.getPaletteCode()));
+				e.setAttribute("icon", String.valueOf(entry.getIconCode()));
+			}
+			
 			re.addContent(e);
 		}
 

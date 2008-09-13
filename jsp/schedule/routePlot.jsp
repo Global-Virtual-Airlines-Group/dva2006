@@ -78,7 +78,7 @@ xmlreq.onreadystatechange = function() {
 		if (wp.getAttribute("pal"))
 			map.addOverlay(googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, label.data));
 		else
-			map.addOverlay(googleMarker(document.imgPath, wp.getAttribute("color"), p, label.data));
+			map.addOverlay(googleMarker('${imgPath}', wp.getAttribute("color"), p, label.data));
 	} // for
 	
 	// Draw the route

@@ -28,7 +28,6 @@ public class RouteSearchCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
 		try {
 			Connection con = ctx.getConnection();
 			

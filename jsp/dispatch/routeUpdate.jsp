@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> ACARS Dispatcher Route Updated</title>
@@ -30,14 +31,18 @@ for use by Dispatchers or Pilots.<br />
 <c:when test="${isCreate}">
 <div class="updateHdr">ACARS Dispatcher Route Created</div>
 <br />
-This <content:airline /> ACARS Dispatcher route has been added to the database, and is now avialable for use by 
-Dispatchers and Pilots.<br />
+This <content:airline /> ACARS Dispatcher route has been added to the database as Route #<fmt:int value="${route.ID}" />, and 
+is now avialable for use by Dispatchers and Pilots.<br />
 <br />
 To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br />
 To plot another route, <el:cmd url="routeplot" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 </c:choose>
 To return to the list of ACARS Dispatcher routes, <el:cmd url="dsproutes" className="sec bld">Click Here</el:cmd>.<br />
+To return to the list of ACARS routes between ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) and 
+${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) 
+<el:link url="/dsprsearch.do?airportD=${route.airportD.ICAO}&airportA=${route.airportA.ICAO}" className="sec bld">Click Here</el:link>.<br />
+To view the list of popular ACARS routes, <el:cmd url="poproutes" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
