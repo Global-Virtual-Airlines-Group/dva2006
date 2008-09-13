@@ -96,7 +96,7 @@ public class RoutePlotMapService extends RouteMapService {
 		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
 
 		// Convert points to an XML document
-		Document doc = formatPoints(points);
+		Document doc = formatPoints(points, true);
 		Element re = doc.getRootElement();
 
 		// Add SID/STAR names to XML document
