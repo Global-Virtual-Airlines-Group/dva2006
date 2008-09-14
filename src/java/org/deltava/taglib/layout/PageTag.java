@@ -16,6 +16,7 @@ import org.deltava.taglib.ContentHelper;
 
 public class PageTag extends TagSupport {
 	
+	private boolean _renderTable;
 	private boolean _rowOpen;
 
 	/**
@@ -37,9 +38,18 @@ public class PageTag extends TagSupport {
 	}
 	
 	/**
+	 * Tells a child tag whether we are rendering TABLE or DIV elements.
+	 * @return TRUE if rendering TABLEs, otherwise FALSE
+	 */
+	boolean renderTable() {
+		return _renderTable;
+	}
+	
+	/**
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
+		_renderTable = false;
 		_rowOpen = false;
 		super.release();
 	}
@@ -55,6 +65,7 @@ public class PageTag extends TagSupport {
 			return EVAL_BODY_INCLUDE;
 
 		// Render a table for IE
+		_renderTable = true;
 		try {
 			pageContext.getOut().print("<table id=\"ieLayout\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");
 		} catch (Exception e) {
@@ -72,7 +83,7 @@ public class PageTag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
-		if (ContentHelper.isIE6(pageContext)) {
+		if (_renderTable) {
 			JspWriter out = pageContext.getOut();
 			try {
 				if (_rowOpen)

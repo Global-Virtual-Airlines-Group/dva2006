@@ -6,8 +6,6 @@ import java.util.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
-import org.deltava.taglib.ContentHelper;
-
 /**
  * A JSP tag to render page layouts in a browser-specific way. On Mozilla, absolutely positioned DIV elements will be
  * used, while tables will be used for Internet Explorer.
@@ -18,7 +16,8 @@ import org.deltava.taglib.ContentHelper;
 
 public class RegionTag extends TagSupport {
 
-	private Map<String, String> _attrs = new HashMap<String, String>();
+	private final Map<String, String> _attrs = new HashMap<String, String>();
+	private final Map<String, String> _tableAttrs = new HashMap<String, String>(); 
 	
 	private PageTag _parent;
 	private boolean _closeRow;
@@ -58,8 +57,8 @@ public class RegionTag extends TagSupport {
 	public void setRows(int rowCount) {
 		if (rowCount < 0)
 			throw new IllegalArgumentException("Invalid row count - " + rowCount);
-		else if (ContentHelper.isIE6(pageContext))
-			_attrs.put("rowspan", String.valueOf(rowCount));
+
+		_tableAttrs.put("rowspan", String.valueOf(rowCount));
 	}
 
 	/**
@@ -71,8 +70,8 @@ public class RegionTag extends TagSupport {
 	public void setCols(int colCount) {
 		if (colCount < 0)
 			throw new IllegalArgumentException("Invalid column count - " + colCount);
-		else if (ContentHelper.isIE6(pageContext))
-			_attrs.put("colspan", String.valueOf(colCount));
+
+		_tableAttrs.put("colspan", String.valueOf(colCount));
 	}
 
 	/**
@@ -80,6 +79,7 @@ public class RegionTag extends TagSupport {
 	 */
 	public void release() {
 		_attrs.clear();
+		_tableAttrs.clear();
 		_parent = null;
 		_closeRow = false;
 		super.release();
@@ -99,7 +99,8 @@ public class RegionTag extends TagSupport {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			if (ContentHelper.isIE6(pageContext)) {
+			if (_parent.renderTable()) {
+				_attrs.putAll(_tableAttrs);
 				if (!_parent.isRowOpen()) {
 					out.print("<tr>");
 					_parent.setRowOpen(true);
@@ -137,7 +138,7 @@ public class RegionTag extends TagSupport {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			if (ContentHelper.isIE6(pageContext)) {
+			if (_parent.renderTable()) {
 				out.print("</td>");
 				if (_closeRow) {
 					out.print("</tr>");
