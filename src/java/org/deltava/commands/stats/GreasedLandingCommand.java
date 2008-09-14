@@ -1,9 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -12,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the smoothest landings.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -47,6 +48,17 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 				vc.setResults(dao.getStaffReports());
 			else
 				vc.setResults(dao.getGreasedLandings(eqType));
+			
+			// Get the Pilot IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
+				FlightReport fr = (FlightReport) i.next();
+				IDs.add(new Integer(fr.getDatabaseID(FlightReport.DBID_PILOT)));
+			}
+			
+			// Load the Pilots
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 
 			// Save equipment choices
 			List<Object> eqTypes = new ArrayList<Object>();
