@@ -52,15 +52,13 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR) LEFT JOIN ");
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?) LIMIT 1");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.ID=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -91,16 +89,13 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM (");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".ACARS_PIREPS APR) LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) "
-				+ "AND (APR.ACARS_ID=?) LIMIT 1");
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (APR.ACARS_ID=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -129,9 +124,9 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<Integer> status) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* "
-				+ "FROM (PILOTS P, PIREPS PR) LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN "
-				+ "ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR "
+				+ "LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
+				+ "(PR.ID=APR.ID) WHERE (");
 		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
 			Integer st = i.next();
 			sqlBuf.append("(PR.STATUS=");
@@ -186,15 +181,13 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR) LEFT JOIN ");
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ASSIGN_ID=?)");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.ASSIGN_ID=?)");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -216,37 +209,17 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR) LEFT JOIN ");
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.EVENT_ID=?)");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
-			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns all Flight Reports flown on a certain date.
-	 * @param dt the date
-	 * @return a List of FlightReports
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
-		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
-					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.DATE=DATE(?))");
-			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -263,9 +236,9 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria) throws DAOException {
 
 		// Build the statement
-		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
-				+ "PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
-				+ "ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?)");
+		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
+				+ "PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
+				+ "WHERE (PR.PILOT_ID=?)");
 		if (criteria != null) {
 			if (criteria.getEquipmentType() != null)
 				buf.append(" AND (PR.EQTYPE=?)");
@@ -393,13 +366,11 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?) AND (PR.STATUS=?)");
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
 		if ((airportD != null) && (airportA != null))
@@ -486,73 +457,71 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 25);
-		boolean hasComments = (md.getColumnCount() >= 24);
+		boolean hasACARS = (md.getColumnCount() >= 24);
+		boolean hasComments = (md.getColumnCount() >= 21);
 
 		// Iterate throught the results
 		while (rs.next()) {
-			boolean isACARS = (hasACARS) && (rs.getInt(25) != 0);
+			boolean isACARS = (hasACARS) && (rs.getInt(23) != 0);
 
 			// Build the PIREP as a standard one, or an ACARS pirep
-			Airline a = SystemData.getAirline(rs.getString(8));
-			FlightReport p = (isACARS) ? new ACARSFlightReport(a, rs.getInt(9), rs.getInt(10)) : new FlightReport(a, rs
-					.getInt(9), rs.getInt(10));
+			Airline a = SystemData.getAirline(rs.getString(6));
+			FlightReport p = (isACARS) ? new ACARSFlightReport(a, rs.getInt(7), rs.getInt(8)) : new FlightReport(a, rs
+					.getInt(7), rs.getInt(8));
 
 			// Populate the data
-			p.setFirstName(rs.getString(1));
-			p.setLastName(rs.getString(2));
-			p.setID(rs.getInt(3));
-			p.setDatabaseID(FlightReport.DBID_PILOT, rs.getInt(4));
-			p.setRank(rs.getString(5));
-			p.setStatus(rs.getInt(6));
-			p.setDate(expandDate(rs.getDate(7)));
-			p.setAirportD(SystemData.getAirport(rs.getString(11)));
-			p.setAirportA(SystemData.getAirport(rs.getString(12)));
-			p.setEquipmentType(rs.getString(13));
-			p.setFSVersion(rs.getInt(14));
-			p.setAttributes(rs.getInt(15));
-			// Skip column #16 - we calculate this in the flight report
-			p.setLength(Math.round(rs.getFloat(17) * 10));
-			p.setRemarks(rs.getString(18));
-			p.setDatabaseID(FlightReport.DBID_DISPOSAL, rs.getInt(19));
-			p.setSubmittedOn(rs.getTimestamp(20));
-			p.setDisposedOn(rs.getTimestamp(21));
-			p.setDatabaseID(FlightReport.DBID_EVENT, rs.getInt(22));
-			p.setDatabaseID(FlightReport.DBID_ASSIGN, rs.getInt(23));
+			p.setID(rs.getInt(1));
+			p.setDatabaseID(FlightReport.DBID_PILOT, rs.getInt(2));
+			p.setRank(rs.getString(3));
+			p.setStatus(rs.getInt(4));
+			p.setDate(expandDate(rs.getDate(5)));
+			p.setAirportD(SystemData.getAirport(rs.getString(9)));
+			p.setAirportA(SystemData.getAirport(rs.getString(10)));
+			p.setEquipmentType(rs.getString(11));
+			p.setFSVersion(rs.getInt(12));
+			p.setAttributes(rs.getInt(13));
+			// Skip column #14 - we calculate this in the flight report
+			p.setLength(Math.round(rs.getFloat(15) * 10));
+			p.setRemarks(rs.getString(16));
+			p.setDatabaseID(FlightReport.DBID_DISPOSAL, rs.getInt(17));
+			p.setSubmittedOn(rs.getTimestamp(18));
+			p.setDisposedOn(rs.getTimestamp(19));
+			p.setDatabaseID(FlightReport.DBID_EVENT, rs.getInt(20));
+			p.setDatabaseID(FlightReport.DBID_ASSIGN, rs.getInt(21));
 			if (hasComments)
-				p.setComments(rs.getString(24));
+				p.setComments(rs.getString(22));
 
 			// Load ACARS pirep data
 			if (isACARS) {
 				ACARSFlightReport ap = (ACARSFlightReport) p;
 				ap.setAttribute(FlightReport.ATTR_ACARS, true);
-				ap.setDatabaseID(FlightReport.DBID_ACARS, rs.getInt(26));
-				ap.setStartTime(rs.getTimestamp(27));
-				ap.setTaxiTime(rs.getTimestamp(28));
-				ap.setTaxiWeight(rs.getInt(29));
-				ap.setTaxiFuel(rs.getInt(30));
-				ap.setTakeoffTime(rs.getTimestamp(31));
-				ap.setTakeoffDistance(rs.getInt(32));
-				ap.setTakeoffSpeed(rs.getInt(33));
-				ap.setTakeoffN1(rs.getDouble(34));
-				ap.setTakeoffWeight(rs.getInt(35));
-				ap.setTakeoffFuel(rs.getInt(36));
-				ap.setLandingTime(rs.getTimestamp(37));
-				ap.setLandingDistance(rs.getInt(38));
-				ap.setLandingSpeed(rs.getInt(39));
-				ap.setLandingVSpeed(rs.getInt(40));
-				ap.setLandingN1(rs.getDouble(41));
-				ap.setLandingWeight(rs.getInt(42));
-				ap.setLandingFuel(rs.getInt(43));
-				ap.setEndTime(rs.getTimestamp(44));
-				ap.setGateWeight(rs.getInt(45));
-				ap.setGateFuel(rs.getInt(46));
-				ap.setTime(0, rs.getInt(47));
-				ap.setTime(1, rs.getInt(48));
-				ap.setTime(2, rs.getInt(49));
-				ap.setTime(4, rs.getInt(50));
-				ap.setFDE(rs.getString(51));
-				ap.setAircraftCode(rs.getString(52));
+				ap.setDatabaseID(FlightReport.DBID_ACARS, rs.getInt(24));
+				ap.setStartTime(rs.getTimestamp(25));
+				ap.setTaxiTime(rs.getTimestamp(26));
+				ap.setTaxiWeight(rs.getInt(27));
+				ap.setTaxiFuel(rs.getInt(28));
+				ap.setTakeoffTime(rs.getTimestamp(29));
+				ap.setTakeoffDistance(rs.getInt(30));
+				ap.setTakeoffSpeed(rs.getInt(31));
+				ap.setTakeoffN1(rs.getDouble(32));
+				ap.setTakeoffWeight(rs.getInt(33));
+				ap.setTakeoffFuel(rs.getInt(34));
+				ap.setLandingTime(rs.getTimestamp(35));
+				ap.setLandingDistance(rs.getInt(36));
+				ap.setLandingSpeed(rs.getInt(37));
+				ap.setLandingVSpeed(rs.getInt(38));
+				ap.setLandingN1(rs.getDouble(39));
+				ap.setLandingWeight(rs.getInt(40));
+				ap.setLandingFuel(rs.getInt(41));
+				ap.setEndTime(rs.getTimestamp(42));
+				ap.setGateWeight(rs.getInt(43));
+				ap.setGateFuel(rs.getInt(44));
+				ap.setTime(0, rs.getInt(45));
+				ap.setTime(1, rs.getInt(46));
+				ap.setTime(2, rs.getInt(47));
+				ap.setTime(4, rs.getInt(48));
+				ap.setFDE(rs.getString(49));
+				ap.setAircraftCode(rs.getString(50));
 			}
 
 			// Add the flight report to the results
