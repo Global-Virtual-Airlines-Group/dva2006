@@ -37,7 +37,7 @@
  <td class="data" colspan="${cspan}"><span class="bld">${dispatcher.name}</span> ${dispatcher.pilotCode}</td>
 </c:if>
 <c:if test="${empty dispatcher}">
- <td class="data ter caps" colspan="${cspan}">Flight plotted using <content:airline /> Auto-Dispatch</td>
+ <td class="data" colspan="${cspan}"><span class="ter caps">Flight plotted using <content:airline /> Auto-Dispatch</span></td>
 </c:if>
 </tr>
 </c:if>
