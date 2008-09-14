@@ -46,9 +46,9 @@ public class RouteSaveCommand extends AbstractCommand {
 			if (!StringUtils.isEmpty(ctx.getParameter("sid"))) {
 				TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
 				if (sid != null) {
-					rp.setSID(sid.toString());
+					rp.setSID(sid.getCode());
 					for (NavigationDataBean nd : sid.getWaypoints())
-						rp.addWaypoint(nd, "");
+						rp.addWaypoint(nd, sid.getCode());
 				}
 			}
 			
@@ -63,9 +63,9 @@ public class RouteSaveCommand extends AbstractCommand {
 			if (!StringUtils.isEmpty(ctx.getParameter("star"))) {
 				TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
 				if (star != null) {
-					rp.setSTAR(star.toString());
+					rp.setSTAR(star.getCode());
 					for (NavigationDataBean nd : star.getWaypoints())
-						rp.addWaypoint(nd, "");
+						rp.addWaypoint(nd, star.getCode());
 				}
 			}
 			
