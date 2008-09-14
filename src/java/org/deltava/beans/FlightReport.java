@@ -136,10 +136,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	private int _attr;
 	private String _remarks;
 	private String _comments; // made on disposition
-
-	private String _firstName;
-	private String _lastName;
-	private String _rank;
+	private String _rank; // at time of flight
 
 	private final Collection<String> _captEQType = new TreeSet<String>();
 
@@ -171,24 +168,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 		setEquipmentType(f.getEquipmentType());
 		setAirportD(f.getAirportD());
 		setAirportA(f.getAirportA());
-	}
-
-	/**
-	 * Return's the Pilot's First (given) name. <i>This is not guaranteed to be set. </i>
-	 * @return the Pilot's first name
-	 * @see FlightReport#setFirstName(String)
-	 */
-	public String getFirstName() {
-		return _firstName;
-	}
-
-	/**
-	 * Returns the Pilot's Last (family) name. <i>This is not guaranteed to be set. </i>
-	 * @return the Pilot's last name
-	 * @see FlightReport#setLastName(String)
-	 */
-	public String getLastName() {
-		return _lastName;
 	}
 
 	/**
@@ -346,26 +325,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 */
 	public boolean hasAttribute(int attrMask) {
 		return ((getAttributes() & attrMask) != 0);
-	}
-
-	/**
-	 * Updates the first name of the Pilot filing this report.
-	 * @param fn the first Name
-	 * @see FlightReport#getFirstName()
-	 * @see Person#getFirstName()
-	 */
-	public void setFirstName(String fn) {
-		_firstName = fn;
-	}
-
-	/**
-	 * Updates the last name of the Pilot filing this report.
-	 * @param ln the last name
-	 * @see FlightReport#getLastName()
-	 * @see Person#getLastName()
-	 */
-	public void setLastName(String ln) {
-		_lastName = ln;
 	}
 
 	/**

@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Greased Landing Club</title>
@@ -68,10 +69,11 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 <!-- Table Flight Report Data -->
 <c:set var="entryNumber" value="0" scope="request" />
 <c:forEach var="pirep" items="${viewContext.results}">
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
 <tr>
  <td class="sec bld">${entryNumber}</td>
- <td>${pirep.firstName} ${pirep.lastName}</td>
+ <td>${pilot.name}</td>
  <td class="pri bld"><fmt:date fmt="d" date="${pirep.date}" /></td>
  <td><el:cmd className="small bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="sec">${pirep.equipmentType}</td>

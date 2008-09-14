@@ -31,9 +31,8 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 */
 	public List<FlightReport> getByEvent(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-					+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE "
-					+ "(PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
+			prepareStatement("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN "
+					+ "PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.EVENT_ID=?)");
 			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {
@@ -49,9 +48,8 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 */
 	public List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-				+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) "
-				+ "AND (PR.PILOT_ID=P.ID) AND (PR.DATE=DATE(?))");
+			prepareStatement("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN "
+					+ "PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.DATE=DATE(?))");
 			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
@@ -69,9 +67,8 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public List<FlightReport> getByPilot(int id, String orderBy) throws DAOException {
 
 		// Build the statement
-		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
-				+ "PILOTS P, PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE "
-				+ "(PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) AND (P.ID=?)");
+		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR, ACARS_PIREPS APR "
+				+ "LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?)");
 		if (orderBy != null) {
 			buf.append(" ORDER BY PR.");
 			buf.append(orderBy);
@@ -98,18 +95,15 @@ public class GetFlightReportACARS extends GetFlightReports {
 		
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, "
-			+ "APR.* FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) "
-				+ "AND (P.ID=?) AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) "
-				+ "AND (PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) "
+		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=?) "
+				+ "AND (PR.SUBMITTED > DATE_SUB(NOW(), INTERVAL ? MINUTE)) AND (PR.STATUS=?) AND "
+				+ "(PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) "
 				+ "AND (PR.EQTYPE=?)");
 		
 		try {
@@ -140,17 +134,13 @@ public class GetFlightReportACARS extends GetFlightReports {
 		
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, "
-			+ "APR.* FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) "
-				+ "AND (APR.ACARS_ID=?)");
+		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (APR.ACARS_ID=?)");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
