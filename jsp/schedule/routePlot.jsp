@@ -124,9 +124,8 @@ combo.options.length = elements.length + 1;
 combo.options[0] = new Option("-", "");
 for (var i = 0; i < elements.length; i++) {
 	var e = elements[i];
-	var name = e.getAttribute("name") + "." + e.getAttribute("transition");
 	var rCode = e.getAttribute("code");
-	combo.options[i+1] = new Option(name, rCode);
+	combo.options[i+1] = new Option(rCode, rCode);
 	if (oldCode == rCode)
 		combo.selectedIndex = (i+1);
 } // for
