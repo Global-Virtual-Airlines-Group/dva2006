@@ -263,7 +263,9 @@ public class GetRoute extends DAO {
     			}
     			
     			// Add the waypoint
-    			wp.addWaypoint(new Intersection(rs.getString(5), rs.getDouble(6), rs.getDouble(7)));
+    			Intersection i = new Intersection(rs.getString(5), rs.getDouble(6), rs.getDouble(7));
+    			i.setAirway(OceanicRoute.TYPES[routeType] + wp.getTrack());
+    			wp.addWaypoint(i);
     		}
     		
     		// Clean up and return
