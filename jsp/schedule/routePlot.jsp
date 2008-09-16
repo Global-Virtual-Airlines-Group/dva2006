@@ -17,9 +17,12 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
+<content:sysdata var="tileHost" name="weather.tileHost" />
+<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 function getAJAXParams()
 {
 var f = document.forms[0];
@@ -154,6 +157,7 @@ return true;
 }
 </c:if>
 </script>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -204,7 +208,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="580" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="580" /><div id="copyright" class="small"></div></td>
 </tr>
 <tr>
  <td class="label">Flight Route</td>
@@ -255,11 +259,33 @@ updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+<c:if test="${!empty tileHost}">
+//Build the sat layer control
+getTileOverlay("sat", 0.35);
+map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
+map.addControl(new WXClearControl(new GSize(142, 7)));
+</c:if>
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-</script>
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+GEvent.addListener(map, 'maptypechanged', updateMapText);
+
+<c:if test="${!empty tileHost}">
+//Display the copyright notice
+var d = new Date();
+var cp = document.getElementById('copyright');
+cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
+cpos.apply(cp);
+mapTextElements.push(cp);
+map.getContainer().appendChild(cp);
+
+//Update text color
+GEvent.trigger(map, 'maptypechanged');
+</c:if></script>
 <content:googleAnalytics />
 </body>
 </map:xhtml>

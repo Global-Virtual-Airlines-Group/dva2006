@@ -20,8 +20,7 @@
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
-</c:if>
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 function showTrackInfo(marker)
 {
 var label = getElement("trackLabel");
@@ -187,7 +186,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld" style="color:#fefefe;"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="small"></div></td>
 </tr>
 </el:table>
 </el:form>
@@ -197,11 +196,11 @@ return true;
 </content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap2(getElement('googleMap'), {mapTypes:[G_SATELLITE_MAP]});
+var map = new GMap2(getElement('googleMap'), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty tileHost}">
 // Build the sat layer control
-var sC = new WXOverlayControl(getTileOverlay("sat", 0.4), "Infrared", new GSize(70, 7));
-map.addControl(sC);
+getTileOverlay("sat", 0.35);
+map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
 map.addControl(new WXClearControl(new GSize(142, 7)));
 </c:if>
 // Add map controls
@@ -211,6 +210,7 @@ map.setCenter(new GLatLng(52.0, -35.0), 4);
 map.setMapType(G_SATELLITE_MAP);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+GEvent.addListener(map, 'maptypechanged', updateMapText);
 
 // Create the tracks/waypoints
 var tracks = new Array();
@@ -221,9 +221,13 @@ resetTracks();
 var d = new Date();
 var cp = document.getElementById('copyright');
 cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(215, 12));
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
 cpos.apply(cp);
+mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
+
+//Update text color
+GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
 <content:googleAnalytics />
 </body>
