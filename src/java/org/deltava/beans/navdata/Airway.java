@@ -208,7 +208,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	 * Compares two airways by comparing their names and sequence numbers.
 	 */
 	public int compareTo(Airway a2) {
-		int tmpResult = _code.compareTo(a2._code);
+		int tmpResult = getCode().compareTo(a2.getCode());
 		return (tmpResult == 0) ? Integer.valueOf(_awseq).compareTo(Integer.valueOf(_awseq)) : tmpResult;
 	}
 	
