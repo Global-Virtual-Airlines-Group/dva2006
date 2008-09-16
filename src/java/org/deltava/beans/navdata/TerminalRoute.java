@@ -108,6 +108,22 @@ public class TerminalRoute extends Airway {
    }
    
    /**
+    * Returns the SID/STAR code.
+    */
+   @Override
+   public String getCode() {
+	   StringBuilder buf = new StringBuilder(_name);
+	   buf.append('.');
+	   buf.append(_transition);
+	   if (!"ALL".equals(_runway)) {
+		   buf.append('.');
+		   buf.append(_runway);
+	   }
+
+	   return buf.toString();
+   }
+   
+   /**
     * Updates the Route name.
     * @param name the name
     * @throws NullPointerException if name is null
@@ -139,7 +155,6 @@ public class TerminalRoute extends Airway {
     */
    public void setTransition(String waypoint) {
 	   _transition = waypoint.trim().toUpperCase();
-	   setCode(_name + "." + _transition);
    }
    
    /**

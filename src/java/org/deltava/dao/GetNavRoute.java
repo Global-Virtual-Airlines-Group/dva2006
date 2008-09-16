@@ -95,13 +95,21 @@ public class GetNavRoute extends GetNavData {
 
 		// Split the name
 		StringTokenizer tkns = new StringTokenizer(name, ".");
-		if (tkns.countTokens() != 2)
+		int tkCount = tkns.countTokens();
+		if ((tkCount != 2) && (tkCount != 3))
 			return null;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
+		if (tkCount == 3)
+			sqlBuf.append(" AND (RUNWAY=?)");
 
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?) ORDER BY SEQ");
+			prepareStatementWithoutLimits(" ORDER BY SEQ");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
+			if (tkns.hasMoreTokens())
+				_ps.setString(3, tkns.nextToken().toUpperCase());
 
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
