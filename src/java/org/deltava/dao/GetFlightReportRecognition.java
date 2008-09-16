@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.FlightReport;
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -44,16 +44,12 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	public List<FlightReport> getGreasedLandings() throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
-				+ "PILOTS P LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN PIREP_COMMENT PC ON (PC.ID=PR.ID) "
-				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) "
-				+ "LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND "
-				+ "(APR.LANDING_VSPEED < 0)");
-
-		// Append number of days
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
+				+ "PIREP_COMMENT PC ON (PC.ID=PR.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN "
+				+ "acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE "
+				+ "(C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
 
 		try {
@@ -77,16 +73,12 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	public List<FlightReport> getStaffReports() throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
-				+ "(PILOTS P, STAFF S) LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN PIREP_COMMENT PC ON "
-				+ "(PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON "
-				+ "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (P.ID=S.ID) AND "
-				+ "(C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
-
-		// Append number of days
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM STAFF S LEFT JOIN PIREPS PR "
+				+ "ON (PR.PILOT_ID=S.ID) LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
+				+ "ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON "
+				+ "(C.ID=F.CON_ID) WHERE (C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
 
 		try {
@@ -111,16 +103,12 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	public List<FlightReport> getGreasedLandings(String eqType) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
-				+ "PILOTS P LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) "
-				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) "
-				+ "LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (PR.EQTYPE=?) AND (C.CLIENT_BUILD >= ?) AND "
-				+ "(PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
-
-		// Append number of days
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
+				+ "PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
+				+ "LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
+				+ "WHERE (PR.EQTYPE=?) AND (C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
 		
 		try {
@@ -149,11 +137,8 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		StringBuilder buf = new StringBuilder("SELECT P.EQTYPE, COUNT(P.ID) AS CNT FROM PIREPS P, ACARS_PIREPS APR "
 				+ "LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) LEFT JOIN acars.CONS C ON (F.CON_ID=C.ID) WHERE "
 				+ "(P.ID=APR.ID) AND (P.STATUS=?) AND (C.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0)");
-
-		// Append number of days
 		if (_dayFilter > 0)
 			buf.append(" AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		
 		buf.append(" GROUP BY P.EQTYPE HAVING (CNT >= ?) ORDER BY CNT DESC");
 		
 		try {
