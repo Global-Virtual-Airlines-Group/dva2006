@@ -25,8 +25,10 @@ public class OceanicWaypoints extends OceanicRoute implements Comparable<Oceanic
 			super(NAT, new Date());
 			setTrack(track);
 			for (Iterator<String> i = StringUtils.split(route, ",").iterator(); i.hasNext();) {
-				String wp = i.next();
-				addWaypoint(Intersection.parseNAT(wp));
+				String wpCode = i.next();
+				Intersection wp = Intersection.parseNAT(wpCode);
+				wp.setAirway("NAT" + getTrack());
+				addWaypoint(wp);
 			}
 		}
 
