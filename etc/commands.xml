@@ -459,7 +459,7 @@
 	<command id="routeplot">
 		<name>Flight Route Plotter</name>
 		<class>org.deltava.commands.schedule.RoutePlotCommand</class>
-		<roles>*</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="natplot">
