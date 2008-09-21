@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -106,9 +106,9 @@ public class InsertCSSTag extends InsertContentTag {
 			buf.append('_');
 			if (ContentHelper.isFirefox(pageContext))
 				buf.append("ff");
-			else if (ContentHelper.isIE7(pageContext) && (_ie7suffix != null))
+			else if ((ContentHelper.isIE7(pageContext) || ContentHelper.isIE8(pageContext)) && (_ie7suffix != null))
 				buf.append(_ie7suffix);
-			else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext))
+			else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext) || ContentHelper.isIE8(pageContext))
 				buf.append("ie");
 		}
 
