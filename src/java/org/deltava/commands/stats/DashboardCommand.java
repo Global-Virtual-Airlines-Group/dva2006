@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display performance metrics.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class DashboardCommand extends AbstractCommand {
 		
 		// Get the sort type
 		String sortType = ctx.getParameter("sortType");
-		if (sortType == null)
+		if (StringUtils.isEmpty(sortType))
 			sortType = "Category";
 
 		// Create the comparator and the result map
@@ -147,8 +147,8 @@ public class DashboardCommand extends AbstractCommand {
 		ctx.setAttribute("coolerGroupOptions", ComboUtils.fromArray(COOLER_GROUP_NAMES), REQUEST);
 		
 		// Save start/end dates
-		ctx.setAttribute("startDays", new Integer(startDays), REQUEST);
-		ctx.setAttribute("endDays", new Integer(endDays), REQUEST);
+		ctx.setAttribute("startDays", Integer.valueOf(startDays), REQUEST);
+		ctx.setAttribute("endDays", Integer.valueOf(endDays), REQUEST);
 		
 		// Save results
 		ctx.setAttribute("results", results, REQUEST);

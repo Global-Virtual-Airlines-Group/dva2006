@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -38,8 +38,12 @@ public class GetPerformance extends DAO {
 		_categorySQL = sql;
 	}
 	
+	/**
+	 * Returns whether we are grouping by a database ID.
+	 * @return TRUE if grouping by a database ID, otherwise FALSE
+	 */
 	public boolean isPilotID() {
-		return "GRADED_BY".equals(_categorySQL) || _categorySQL.contains("_ID");
+		return _categorySQL.contains("_BY") || _categorySQL.contains("_ID");
 	}
 
 	/**
