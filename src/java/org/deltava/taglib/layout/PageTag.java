@@ -61,7 +61,7 @@ public class PageTag extends TagSupport {
 	 */
 	public int doStartTag() throws JspException {
 		// Do nothing for non-IE6
-		if (!ContentHelper.isIE6(pageContext))
+		if (!ContentHelper.isIE6(pageContext) && !ContentHelper.isIE7(pageContext) && !ContentHelper.isIE8(pageContext))
 			return EVAL_BODY_INCLUDE;
 
 		// Render a table for IE
