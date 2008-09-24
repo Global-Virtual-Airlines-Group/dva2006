@@ -299,17 +299,17 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td>&nbsp;
+<c:if test="${access.canApprove}">
+ <el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE APPLICANT" />
+</c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton ID="EditButton" url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" />
-</c:if>
-<c:if test="${access.canApprove}">
- <el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE" />
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton ID="RejectButton" url="appreject" link="${applicant}" label="REJECT" />
 </c:if>
 <c:if test="${!empty questionnaire}">
- <el:cmdbutton ID="QuestionnaireButton" url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" />
+ <el:cmdbutton ID="QuestionnaireButton" url="questionnaire" link="${questionnaire}" label="QUESTIONNAIRE" />
 </c:if>
 <c:if test="${access.canNotify}">
  <el:cmdbutton ID="ResendButton" url="welcome" link="${applicant}" label="RESEND WELCOME MESSAGE" />
