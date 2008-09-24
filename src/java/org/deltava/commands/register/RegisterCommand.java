@@ -4,7 +4,7 @@ package org.deltava.commands.register;
 import java.util.*;
 import java.sql.Connection;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
@@ -102,6 +102,10 @@ public class RegisterCommand extends AbstractCommand {
 				ctx.release();
 			}
 			
+			// Check for an HTTP session
+			HttpSession s = ctx.getSession();
+			boolean isSession = (s != null) && (s.getAttribute("newSession") != null);
+			
 			// Save FS Versions
 			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
 			
@@ -109,7 +113,10 @@ public class RegisterCommand extends AbstractCommand {
 			result.setSuccess(true);
 			if (isDupeAddr)
 				result.setURL("/jsp/register/dupeAddress.jsp");
-			else
+			else if (!isSession) {
+				ctx.setAttribute("newSession", Boolean.TRUE, SESSION);
+				result.setURL("/jsp/register/initSession.jsp");
+			} else
 				result.setURL("/jsp/register/" + ((ignoreFull || (!isFull)) ? "register.jsp" : "regFullWarn.jsp"));
 			
 			return;
