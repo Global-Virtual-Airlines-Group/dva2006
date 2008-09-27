@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -13,8 +13,8 @@ import org.deltava.util.*;
 /**
  * A JSP tag to generate a monthly calendar table.
  * @author Luke
- * @version 1.0
- * @since v1.0
+ * @version 2.2
+ * @since 1.0
  */
 
 public class MonthlyCalendarTag extends CalendarTag {
@@ -30,6 +30,24 @@ public class MonthlyCalendarTag extends CalendarTag {
 		cld.set(Calendar.DAY_OF_MONTH, 1);
 		_startDate = cld.getTime();
 		calculateEndDate(Calendar.MONTH, 1);
+	}
+	
+	/**
+	 * Returns the label for the scroll backwards link.
+	 */
+	protected String getBackLabel() {
+		Calendar cld = CalendarUtils.getInstance(_startDate, true);
+		cld.add(_intervalType, _intervalLength * -1);
+		return StringUtils.format(cld.getTime(), "MMMM yyyy");
+	}
+	
+	/**
+	 * Returns the label for the scroll forwards link.
+	 */
+	protected String getForwardLabel() {
+		Calendar cld = CalendarUtils.getInstance(_startDate, true);
+		cld.add(_intervalType, _intervalLength);
+		return StringUtils.format(cld.getTime(), "MMMM yyyy");
 	}
 	
 	/**

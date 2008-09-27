@@ -905,7 +905,13 @@
 		<class>org.deltava.commands.pirep.LogBookCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+	<command id="logcalendar">
+		<name>Pilot Logbook Calendar</name>
+		<class>org.deltava.commands.pirep.LogCalendarCommand</class>
+		<roles>*</roles>	
+	</command>
+
 	<command id="pirep">
 		<name>PIREP</name>
 		<class>org.deltava.commands.pirep.PIREPCommand</class>
