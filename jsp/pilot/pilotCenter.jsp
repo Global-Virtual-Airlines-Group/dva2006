@@ -150,7 +150,8 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="logbook" op="nolog" link="${pilot}">Flight Reports</el:cmd>&nbsp;
- <el:cmd className="bld" url="logbook" op="log" link="${pilot}">Log Book</el:cmd>
+<el:cmd className="bld" url="logbook" op="log" link="${pilot}">Log Book</el:cmd>&nbsp;
+<el:cmd className="bld" url="logcalendar" link="${pilot}">Calendar</el:cmd>
 <c:if test="${manualPIREP}"><br />
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
  <td class="data">You have flown <fmt:quantity value="${pilot.legs}" single="flight" />, for a total of

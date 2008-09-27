@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -56,10 +56,28 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	protected int _cellPad = SystemData.getInt("html.table.spacing", 0);
 	protected int _cellSpace = SystemData.getInt("html.table.padding", 0);
 	
-	private int _intervalType = Calendar.DATE;
-	private int _intervalLength = 7;
+	protected int _intervalType = Calendar.DATE;
+	protected int _intervalLength = 7;
 
+	/**
+	 * Sets the start date of the data range.
+	 * @param dt the start date/time
+	 */
 	public abstract void setStartDate(Date dt);
+	
+	/**
+	 * Returns the label for the scroll backwards link.
+	 * @return the link label
+	 * @see CalendarTag#getForwardLabel()
+	 */
+	protected abstract String getBackLabel();
+	
+	/**
+	 * Returns the label for the scroll forwards link
+	 * @return the link label
+	 * @see CalendarTag#getBackLabel()
+	 */
+	protected abstract String getForwardLabel();
 	
 	/**
 	 * Calculcates the end date based on the start date and a particular interval amount. <i>This must be called
@@ -128,6 +146,10 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		_scrollRowClass = cName;
 	}
 	
+	/**
+	 * Sets the command name to use when scrolling the view.
+	 * @param cmdName the command name
+	 */
 	public void setCmd(String cmdName) {
 		_cmdName = cmdName;
 	}
@@ -308,7 +330,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 			return EVAL_PAGE;
 		
     	// Get the URL parameters
-        Map params = new HashMap<String, Object>(pageContext.getRequest().getParameterMap());
+        Map params = new HashMap(pageContext.getRequest().getParameterMap());
         params.keySet().removeAll(RESERVED_PARAMS);
         
         // Calculate the next page startDate
@@ -341,7 +363,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
         	sBackCell.setAttribute("colspan", "3");
         	_out.print(sBackCell.open(true));
         	_out.print(backURL.open(true));
-        	_out.print("GO BACK");
+        	_out.print(getBackLabel());
         	_out.print(backURL.close());
         	_out.print(sBackCell.close());
         	
@@ -354,7 +376,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
         	sFwdCell.setAttribute("colspan", "3");
         	_out.print(sFwdCell.open(true));
         	_out.print(fwdURL.open(true));
-        	_out.print("GO FORWARD");
+        	_out.print(getForwardLabel());
         	_out.print(fwdURL.close());
         	_out.print(sFwdCell.close());
 
