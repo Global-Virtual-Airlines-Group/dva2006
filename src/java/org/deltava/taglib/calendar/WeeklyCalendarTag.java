@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -9,11 +9,12 @@ import javax.servlet.jsp.*;
 
 import org.deltava.taglib.XMLRenderer;
 import org.deltava.util.CalendarUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to generate a weekly Calendar.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -30,6 +31,24 @@ public class WeeklyCalendarTag extends CalendarTag {
 		cld.add(Calendar.DATE, 1 - cld.get(Calendar.DAY_OF_WEEK));
 		_startDate = cld.getTime();
 		calculateEndDate(Calendar.DATE, 7);
+	}
+	
+	/**
+	 * Returns the label for the scroll backwards link.
+	 */
+	protected String getBackLabel() {
+		Calendar cld = CalendarUtils.getInstance(_startDate, true);
+		cld.add(_intervalType, _intervalLength * -1);
+		return "WEEK OF " + StringUtils.format(cld.getTime(), "MMM dd yyyy");
+	}
+	
+	/**
+	 * Returns the label for the scroll forwards link.
+	 */
+	protected String getForwardLabel() {
+		Calendar cld = CalendarUtils.getInstance(_startDate, true);
+		cld.add(_intervalType, _intervalLength);
+		return "WEEK OF " + StringUtils.format(cld.getTime(), "MMM dd yyyy");
 	}
 
 	/**
