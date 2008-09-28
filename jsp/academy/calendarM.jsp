@@ -63,7 +63,7 @@ return true;
 </el:table>
 <div class="mid">
 <calendar:month date="cDate" startDate="${startDate}" entries="${sessions}" topBarClass="dayHdr"
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="academycalendar">
+	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="academycalendar">
 <calendar:entry name="session">
 <c:if test="${fn:isBusyTime(session)}">
 <c:set var="ins" value="${pilots[session.ID]}" scope="request" />

@@ -56,7 +56,7 @@ return true;
 </el:table>
 <div class="mid">
 <calendar:month date="cDate" startDate="${startDate}" entries="${entries}" topBarClass="dayHdr"
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="dspcalendar">
+	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="dspcalendar">
 <calendar:entry name="entry">
 <c:set var="dispatcher" value="${pilots[entry.authorID]}" scope="request" />
 <c:set var="eAccess" value="${accessMap[entry]}" scope="request" />
