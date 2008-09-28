@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.DAOException;
@@ -24,28 +25,28 @@ public class ServInfoLoader implements Runnable {
 
 	private static final Logger log = Logger.getLogger(ServInfoLoader.class);
 
-	private static final Map<String, LoaderThread> LOADERS = new LinkedHashMap<String, LoaderThread>();
+	private static final Map<OnlineNetwork, LoaderThread> LOADERS = new LinkedHashMap<OnlineNetwork, LoaderThread>();
 
-	private String _network;
+	private OnlineNetwork _network;
 	private NetworkInfo _info;
 
 	/**
 	 * Determines if a particular network's data is being loaded.
-	 * @param network the network name
+	 * @param net the network
 	 * @return TRUE if the network data is being loaded, otherwise FALSE
 	 * @throws NullPointerException if network is null
 	 */
-	public static synchronized final boolean isLoading(String network) {
-		LoaderThread loader = LOADERS.get(network.toUpperCase());
+	public static synchronized final boolean isLoading(OnlineNetwork net) {
+		LoaderThread loader = LOADERS.get(net);
 		boolean isLoading = (loader != null) && ThreadUtils.isAlive(loader.getThread());
 
 		// Check the threads and kill the ones that are misbehaving
-		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext();) {
-			String networkName = i.next();
-			LoaderThread lt = LOADERS.get(networkName);
+		for (Iterator<OnlineNetwork> i = LOADERS.keySet().iterator(); i.hasNext();) {
+			OnlineNetwork network = i.next();
+			LoaderThread lt = LOADERS.get(network);
 			Thread t = lt.getThread();
 			if (ThreadUtils.isAlive(t) && (lt.getRunTime() > 25000)) {
-				log.warn("Killing ServInfo loader thread for " + networkName);
+				log.warn("Killing ServInfo loader thread for " + network.toString());
 				t.interrupt();
 				ThreadUtils.kill(t, 1500);
 				i.remove();
@@ -59,32 +60,32 @@ public class ServInfoLoader implements Runnable {
 	/**
 	 * Adds a network information loader thread. The loader thread will be started automatically if it is not already
 	 * running.
-	 * @param network the network name
+	 * @param network the network
 	 * @param loaderThread the loader thread
 	 * @throws NullPointerException if network or loaderThread are null
 	 */
-	public static final synchronized void addLoader(String network, Thread loaderThread) {
+	public static final synchronized void addLoader(OnlineNetwork network, Thread loaderThread) {
 		if (isLoading(network))
 			throw new IllegalArgumentException(network + " data already being loaded!");
 
 		// Get the current thread stack
 		LoaderThread lt = new LoaderThread(loaderThread);
 		lt.setStack(Thread.currentThread().getStackTrace());
-		LOADERS.put(network.toUpperCase(), lt);
+		LOADERS.put(network, lt);
 		if (!loaderThread.isAlive())
 			loaderThread.start();
 	}
 
 	/**
 	 * Returns all running ServInfo loader threads.
-	 * @return a Map of Threads, keyed by network name
+	 * @return a Map of Threads, keyed by network
 	 */
-	public static final synchronized Map<String, Thread> getLoaders() {
-		Map<String, Thread> results = new LinkedHashMap<String, Thread>();
-		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext();) {
-			String networkName = i.next();
-			LoaderThread lt = LOADERS.get(networkName);
-			results.put(networkName, lt.getThread());
+	public static final synchronized Map<OnlineNetwork, Thread> getLoaders() {
+		Map<OnlineNetwork, Thread> results = new LinkedHashMap<OnlineNetwork, Thread>();
+		for (Iterator<OnlineNetwork> i = LOADERS.keySet().iterator(); i.hasNext();) {
+			OnlineNetwork network = i.next();
+			LoaderThread lt = LOADERS.get(network);
+			results.put(network, lt.getThread());
 		}
 
 		return results;
@@ -92,11 +93,11 @@ public class ServInfoLoader implements Runnable {
 
 	/**
 	 * Initializes the worker.
-	 * @param networkName the network name
+	 * @param network the network
 	 */
-	public ServInfoLoader(String networkName) {
+	public ServInfoLoader(OnlineNetwork network) {
 		super();
-		_network = networkName;
+		_network = network;
 	}
 
 	/**
@@ -115,7 +116,7 @@ public class ServInfoLoader implements Runnable {
 		NetworkStatus status = null;
 		try {
 			// Get a connection to the network info
-			InputStream is = ConnectionFactory.getStatus(_network);
+			InputStream is = ConnectionFactory.getStatus(_network.toString());
 
 			// Load the data
 			GetServInfo sdao = new GetServInfo(is);
@@ -124,9 +125,9 @@ public class ServInfoLoader implements Runnable {
 			if (status.getCached())
 				log.info("Using cached " + _network + " network status");
 		} catch (IOException ie) {
-			log.error("Error loading " + _network.toUpperCase() + " status - " + ie.getMessage());
+			log.error("Error loading " + _network.toString() + " status - " + ie.getMessage());
 		} catch (DAOException de) {
-			log.error("Error loading " + _network.toUpperCase() + " status - " + de.getMessage(),
+			log.error("Error loading " + _network.toString() + " status - " + de.getMessage(),
 					de.getLogStackDump() ? de : null);
 		}
 
@@ -146,7 +147,7 @@ public class ServInfoLoader implements Runnable {
 		} catch (IOException ie) {
 			
 		} catch (DAOException de) {
-			log.error("Error loading " + _network.toUpperCase() + " info - " + de.getMessage(), de);
+			log.error("Error loading " + _network.toString() + " info - " + de.getMessage(), de);
 		}
 
 		// Log status info

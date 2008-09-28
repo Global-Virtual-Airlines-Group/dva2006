@@ -2,7 +2,9 @@ package org.deltava.dao.file;
 
 import java.util.*;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.NetworkInfo;
+
 import org.deltava.dao.file.GetServInfo;
 import org.deltava.util.system.SystemData;
 
@@ -23,7 +25,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 	}
 
 	public void testRead() throws Exception {
-		NetworkInfo info = _dao.getInfo("VATSIM");
+		NetworkInfo info = _dao.getInfo(OnlineNetwork.VATSIM);
 		Collection p = info.getPilots();
 		assertTrue(p.size() > 58);
 	}

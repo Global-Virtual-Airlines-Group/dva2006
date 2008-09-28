@@ -7,8 +7,10 @@ import java.text.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.DateTime;
 import org.deltava.beans.TZInfo;
+
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -28,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -110,11 +112,11 @@ public class GetServInfo extends DAO {
 	
 	/**
 	 * Returns cached network status data, if present.
-	 * @param netName the network name
+	 * @param net the network
 	 * @return a NetworkStatus bean, or null if not cached
 	 */
-	public static synchronized NetworkStatus getCachedStatus(String netName) {
-		NetworkStatus status =  _netCache.get(netName);
+	public static synchronized NetworkStatus getCachedStatus(OnlineNetwork net) {
+		NetworkStatus status =  _netCache.get(net);
 		if (status != null)
 			status.setCached();
 		
@@ -123,14 +125,14 @@ public class GetServInfo extends DAO {
 	
 	/**
 	 * Returns cached network information data, if present.
-	 * @param netName the network name
+	 * @param net the network
 	 * @return a NetworkInfo bean, or null if not cached
 	 */
-	public static synchronized NetworkInfo getCachedInfo(String netName) {
-		NetworkInfo info = _infoCache.get(netName, true);
+	public static synchronized NetworkInfo getCachedInfo(OnlineNetwork net) {
+		NetworkInfo info = _infoCache.get(net, true);
 		if (info != null) {
 			info.setCached();
-			if (_infoCache.isExpired(netName) && !info.getExpired())
+			if (_infoCache.isExpired(net) && !info.getExpired())
 				info.setExpired();
 		}
 		
@@ -139,14 +141,14 @@ public class GetServInfo extends DAO {
 
 	/**
 	 * Loads network data URLs.
-	 * @param netName the network name
+	 * @param net the network
 	 * @return a Network Status bean
 	 * @throws DAOException if an HTTP error occurs
 	 */
-	public NetworkStatus getStatus(String netName) throws DAOException {
+	public NetworkStatus getStatus(OnlineNetwork net) throws DAOException {
 
 		// Get from the cache if possible
-		NetworkStatus status = _netCache.get(netName);
+		NetworkStatus status = _netCache.get(net);
 		if ((status != null) && (_useCache)) {
 			status.setCached();
 			return status;
@@ -154,7 +156,7 @@ public class GetServInfo extends DAO {
 
 		try {
 			BufferedReader br = getReader();
-			status = new NetworkStatus(netName, SystemData.get("online." + netName.toLowerCase() + ".local.info"));
+			status = new NetworkStatus(net, SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
 			String sData = br.readLine();
 			while ((sData != null) && (!Thread.currentThread().isInterrupted())) {
 				StringTokenizer tk = new StringTokenizer(sData, "=");
@@ -179,14 +181,14 @@ public class GetServInfo extends DAO {
 
 	/**
 	 * Loads network data.
-	 * @param networkName the network name
+	 * @param network the network
 	 * @return a NetworkInfo bean
 	 * @throws DAOException if an HTTP error occurs
 	 */
-	public NetworkInfo getInfo(String networkName) throws DAOException {
+	public NetworkInfo getInfo(OnlineNetwork network) throws DAOException {
 
 		// Get from the cache if possible
-		NetworkInfo info = _infoCache.get(networkName);
+		NetworkInfo info = _infoCache.get(network);
 		if ((info != null) && (_useCache)) {
 			info.setCached();
 			return info;
@@ -194,7 +196,7 @@ public class GetServInfo extends DAO {
 		
 		try {
 			LineNumberReader br = getReader();
-			info = new NetworkInfo(networkName);
+			info = new NetworkInfo(network);
 
 			// Initialize date formatter
 			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
