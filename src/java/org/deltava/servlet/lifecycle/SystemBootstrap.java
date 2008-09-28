@@ -8,6 +8,7 @@ import javax.servlet.*;
 
 import org.apache.log4j.*;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 import org.deltava.jdbc.*;
@@ -186,7 +187,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Get online network information
 		List networks = (List) SystemData.getObject("online.networks");
 		for (Iterator i = networks.iterator(); i.hasNext();) {
-			String network = (String) i.next();
+			OnlineNetwork network = OnlineNetwork.valueOf((String) i.next());
 			log.info("Loading " + network + " data");
 
 			// Load the data

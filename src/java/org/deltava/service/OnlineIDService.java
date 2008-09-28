@@ -1,23 +1,22 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
-import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to download
+ * A Web Service to download network IDs.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -44,13 +43,13 @@ public class OnlineIDService extends WebService {
 		} else
 			network = SystemData.get("online.default_network");
 		
+		// Get the network
+		OnlineNetwork net = OnlineNetwork.valueOf(network.toUpperCase());
+		
 		Collection<Pilot> pilots = null;
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Load the pilots
-			GetPilotOnline pdao = new GetPilotOnline(con);
-			pilots = pdao.getPilots(network);
+			GetPilotOnline pdao = new GetPilotOnline(ctx.getConnection());
+			pilots = pdao.getPilots(net);
 		} catch (DAOException de) {
 			ServiceException se = error(500, de.getMessage(), de);
 			se.setLogStackDump(false);

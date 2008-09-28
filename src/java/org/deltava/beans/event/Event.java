@@ -12,20 +12,12 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class Event extends ImageBean implements ComboAlias, CalendarEntry {
 
-    public static final int NET_VATSIM = 0;
-    public static final int NET_IVAO = 1;
-    
-    /**
-     * Online Network names.
-     */
-    public static final String[] NETWORKS = {OnlineNetwork.VATSIM, OnlineNetwork.IVAO};
-    
     public static final int OPEN = 0;
     public static final int CANCELED = 1;
     public static final int CLOSED = 2;
@@ -45,8 +37,10 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     private String _bannerExt;
     
     private int _status;
-    private int _network;
+    private OnlineNetwork _network;
+    
     private boolean _canSignup;
+    private String _signupURL;
     
     private final Collection<Chart> _charts = new TreeSet<Chart>();
     private final Collection<FlightPlan> _plans = new ArrayList<FlightPlan>();
@@ -133,13 +127,12 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     }
     
     /**
-     * Returns the Online Network code for this Event.
+     * Returns the Online Network for this Event.
      * @return the network code
      * @see Event#getNetworkName()
-     * @see Event#setNetwork(int)
-     * @see Event#setNetwork(String)
+     * @see Event#setNetwork(OnlineNetwork)
      */
-    public int getNetwork() {
+    public OnlineNetwork getNetwork() {
         return _network;
     }
     
@@ -147,11 +140,10 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
      * Returns the Online Network name for this Event.
      * @return the network name
      * @see Event#getNetwork()
-     * @see Event#setNetwork(int)
-     * @see Event#setNetwork(String)
+     * @see Event#setNetwork(OnlineNetwork)
      */
     public String getNetworkName() {
-    	return NETWORKS[getNetwork()];
+    	return _network.toString();
     }
     
     /**
@@ -203,6 +195,15 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
      */
     public boolean getCanSignup() {
     	return _canSignup;
+    }
+    
+    /**
+     * Returns the external URL used to sign up at.
+     * @return the signup URL
+     * @see Event#setSignupURL(String)
+     */
+    public String getSignupURL() {
+    	return _signupURL;
     }
 
     /**
@@ -440,31 +441,15 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     
     /**
      * Updates the Network used for this Online Event.
-     * @param id the network id code
+     * @param net the network
      * @throws IllegalArgumentException if id is negative or invalid
-     * @see Event#setNetwork(String)
      * @see Event#getNetwork()
      * @see Event#getNetworkName()
      */
-    public void setNetwork(int id) {
-        if ((id < 0) || (id >= NETWORKS.length))
-            throw new IllegalArgumentException("Invalid Network ID - " + id);
-        
-        _network = id;
+    public void setNetwork(OnlineNetwork net) {
+        _network = net;
     }
     
-    /**
-     * Updates the Network used for this Online Event.
-     * @param networkName the network name
-     * @throws IllegalArgumentException if networkName is invalid
-     * @see Event#setNetwork(int)
-     * @see Event#getNetworkName()
-     * @see Event#getNetwork()
-     */
-    public void setNetwork(String networkName) {
-    	setNetwork(StringUtils.arrayIndexOf(NETWORKS, networkName));
-    }
-
     /**
      * Updates the status of this Online Event.
      * @param status the status code, if not CANCELED then OPEN
@@ -484,6 +469,15 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
      */
     public void setCanSignup(boolean doSignup) {
     	_canSignup = doSignup;
+    }
+    
+    /**
+     * Updates the external URL used to sign up for this Online Event.
+     * @param url the signup URL
+     * @see Event#getSignupURL()
+     */
+    public void setSignupURL(String url) {
+    	_signupURL = url;
     }
     
 	/**

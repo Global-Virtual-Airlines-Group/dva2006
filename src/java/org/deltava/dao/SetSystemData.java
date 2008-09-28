@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -47,8 +47,8 @@ public class SetSystemData extends DAO {
 				_ps.setString(4, log.getRemoteHost());
 				_ps.setString(5, log.getName());
 				_ps.setString(6, log.getResult());
-				_ps.setInt(7, log.getTime());
-				_ps.setInt(8, log.getBackEndTime());
+				_ps.setLong(7, log.getTime());
+				_ps.setLong(8, log.getBackEndTime());
 				_ps.setBoolean(9, log.getSuccess());
 				_ps.setTimestamp(10, createTimestamp(log.getDate()));
 				_ps.addBatch();

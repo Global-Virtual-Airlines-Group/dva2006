@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -126,15 +126,10 @@ public class EventAssignTask extends Task {
 						fr.setDatabaseID(FlightReport.DBID_ASSIGN, ai.getID());
 						fr.setDatabaseID(FlightReport.DBID_EVENT, e.getID());
 						fr.setDate(e.getStartTime());
-						switch (e.getNetwork()) {
-							case Event.NET_VATSIM :
-								fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-								break;
-								
-							case Event.NET_IVAO :
-								fr.setAttribute(FlightReport.ATTR_IVAO, true);
-								break;
-						}
+						if (e.getNetwork() == OnlineNetwork.VATSIM)
+							fr.setAttribute(FlightReport.ATTR_VATSIM, true);
+						else if (e.getNetwork() == OnlineNetwork.IVAO)
+							fr.setAttribute(FlightReport.ATTR_IVAO, true);
 						
 						// Write the Flight Report to the proper database
 						fwdao.write(fr, usrData.getDB());

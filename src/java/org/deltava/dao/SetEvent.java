@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -332,15 +332,16 @@ public class SetEvent extends DAO {
 	 */
 	private void insert(Event e) throws SQLException {
 		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
-				+ "BRIEFING, CAN_SIGNUP) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "BRIEFING, CAN_SIGNUP, SIGNUP_URL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
-		_ps.setInt(2, e.getNetwork());
+		_ps.setInt(2, e.getNetwork().getValue());
 		_ps.setInt(3, e.getStatus());
 		_ps.setTimestamp(4, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(5, createTimestamp(e.getEndTime()));
 		_ps.setTimestamp(6, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
 		_ps.setString(7, e.getBriefing());
 		_ps.setBoolean(8, e.getCanSignup());
+		_ps.setString(9, e.getSignupURL());
 
 		// Execute the update and get the Event ID
 		executeUpdate(1);
@@ -352,16 +353,17 @@ public class SetEvent extends DAO {
 	 */
 	private void update(Event e) throws SQLException {
 		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
-				+ "BRIEFING=?, CAN_SIGNUP=?, STATUS=? WHERE (ID=?)");
+				+ "BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
-		_ps.setInt(2, e.getNetwork());
+		_ps.setInt(2, e.getNetwork().getValue());
 		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(4, createTimestamp(e.getEndTime()));
 		_ps.setTimestamp(5, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
 		_ps.setString(6, e.getBriefing());
 		_ps.setBoolean(7, e.getCanSignup());
-		_ps.setInt(8, e.getStatus());
-		_ps.setInt(9, e.getID());
+		_ps.setString(8, e.getSignupURL());
+		_ps.setInt(9, e.getStatus());
+		_ps.setInt(10, e.getID());
 		executeUpdate(1);
 	}
 }

@@ -3,18 +3,19 @@ package org.deltava.beans.servinfo;
 
 import java.util.*;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store VATSIM/IVAO-specific ServInfo properties.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
 public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 
-	private String _networkName;
+	private OnlineNetwork _network;
 	private final List<NetworkDataURL> _dataURLs = new ArrayList<NetworkDataURL>();
 	private NetworkDataURL _local;
 	private String _msg;
@@ -22,27 +23,25 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 
 	/**
 	 * Initializes the bean.
-	 * @param networkName the network name
+	 * @param network the network
 	 * @param localInfo the local information file or null
-	 * @throws NullPointerException if network name is null
-	 * @see NetworkStatus#NetworkStatus(String)
-	 * @see NetworkStatus#getName()
+	 * @see NetworkStatus#NetworkStatus(OnlineNetwork)
+	 * @see NetworkStatus#getNetwork()
 	 * @see NetworkStatus#getLocal()
 	 */
-	public NetworkStatus(String networkName, String localInfo) {
+	public NetworkStatus(OnlineNetwork network, String localInfo) {
 		super();
-		_networkName = networkName.trim();
+		_network = network;
 		_local = (localInfo == null) ? null : new NetworkDataURL(localInfo);
 	}
 	
 	/**
 	 * Initializes the bean.
-	 * @param networkName the network name
-	 * @throws NullPointerException if network name is null
-	 * @see NetworkStatus#NetworkStatus(String, String)
+	 * @param network the network
+	 * @see NetworkStatus#NetworkStatus(OnlineNetwork, String)
 	 */
-	public NetworkStatus(String networkName) {
-		this(networkName, null);
+	public NetworkStatus(OnlineNetwork network) {
+		this(network, null);
 	}
 
 	/**
@@ -54,13 +53,13 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	}
 
 	/**
-	 * Returns the network name.
-	 * @return the network name
-	 * @see NetworkStatus#NetworkStatus(String)
-	 * @see NetworkStatus#NetworkStatus(String, String)
+	 * Returns the network.
+	 * @return the network
+	 * @see NetworkStatus#NetworkStatus(OnlineNetwork)
+	 * @see NetworkStatus#NetworkStatus(OnlineNetwork, String)
 	 */
-	public String getName() {
-		return _networkName;
+	public OnlineNetwork getNetwork() {
+		return _network;
 	}
 	
 	/**
@@ -148,21 +147,21 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	 * Compares two networks by comparing their network names.
 	 */
 	public int compareTo(NetworkStatus ns2) {
-		return _networkName.compareTo(ns2.getName());
+		return _network.toString().compareTo(ns2._network.toString());
 	}
 	
 	/**
 	 * Returns the network name's hash code.
 	 */
 	public int hashCode() {
-		return _networkName.hashCode();
+		return _network.hashCode();
 	}
 
 	/**
 	 * Returns the cache key for this object.
-	 * @return the network name
+	 * @return the network
 	 */
 	public Object cacheKey() {
-		return _networkName;
+		return _network;
 	}
 }

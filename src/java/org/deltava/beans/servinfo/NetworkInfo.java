@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.util.cache.Cacheable;
 
 import org.deltava.util.GeoUtils;
@@ -11,13 +11,13 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class NetworkInfo implements java.io.Serializable, Cacheable {
 
-    private String _name;
+    private OnlineNetwork _net;
     private int _version;
     private Date _validDate;
     
@@ -28,14 +28,13 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     private final Map<String, Controller> _controllers = new TreeMap<String, Controller>();
     
     /**
-     * Initializes this bean for a particular network name.
-     * @param name the network name (IVAO/VATSIM)
-     * @throws NullPointerException if name is null
-     * @see NetworkInfo#getName()
+     * Initializes this bean for a particular network.
+     * @param net the network
+     * @see NetworkInfo#getNetwork()
      */
-    public NetworkInfo(String name) {
+    public NetworkInfo(OnlineNetwork net) {
         super();
-        _name = name.toUpperCase();
+        _net = net;
     }
     
     /**
@@ -66,11 +65,11 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     }
     
     /**
-     * Returns the network name.
-     * @return the network name (IVAO/VATSIM)
+     * Returns the network.
+     * @return the network
      */
-    public String getName() {
-        return _name;
+    public OnlineNetwork getNetwork() {
+        return _net;
     }
     
     /**
@@ -278,7 +277,7 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * Returns the network's hash code.
      */
     public int hashCode() {
-       return _name.hashCode();
+       return _net.hashCode();
     }
   
     /**
@@ -286,6 +285,6 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * @return the network name
      */
     public Object cacheKey() {
-       return getName();
+       return _net;
     }
 }
