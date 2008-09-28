@@ -45,7 +45,7 @@ public class CommandStatsPurgeCommand extends AbstractCommand {
       
       // Forward to the Command statistics
       CommandResult result = ctx.getResult();
-      result.setType(CommandResult.REDIRECT);
+      result.setType(ResultType.REDIRECT);
       result.setURL("cmdstats", null, null);
       result.setSuccess(true);
    }

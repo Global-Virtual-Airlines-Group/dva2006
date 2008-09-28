@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.Date;
@@ -10,11 +10,11 @@ import org.deltava.commands.CommandResult;
 /**
  * A bean to log Web Site Command invocations.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public class CommandLog implements Serializable, Comparable, ViewEntry {
+public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEntry {
 
 	private Date _d;
 	private String _cmdName;
@@ -24,8 +24,8 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
 
 	private int _pilotID;
 	private boolean _success;
-	private int _totalTime;
-	private int _backEndTime;
+	private long _totalTime;
+	private long _backEndTime;
 
 	/**
 	 * Creates a new Command log entry.
@@ -120,20 +120,20 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
 	/**
 	 * Returns the amount of time the database was in use.
 	 * @return the time in milliseconds
-	 * @see CommandLog#setBackEndTime(int)
+	 * @see CommandLog#setBackEndTime(long)
 	 * @see CommandLog#getTime()
 	 */
-	public int getBackEndTime() {
+	public long getBackEndTime() {
 		return _backEndTime;
 	}
 
 	/**
 	 * Returns the execution time.
 	 * @return the time of milliseconds
-	 * @see CommandLog#setTime(int)
+	 * @see CommandLog#setTime(long)
 	 * @see CommandLog#getBackEndTime()
 	 */
-	public int getTime() {
+	public long getTime() {
 		return _totalTime;
 	}
 
@@ -198,9 +198,9 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
 	 * Updates the time spent accessing the database.
 	 * @param time the time in milliseconds
 	 * @see CommandLog#getBackEndTime()
-	 * @see CommandLog#setTime(int)
+	 * @see CommandLog#setTime(long)
 	 */
-	public void setBackEndTime(int time) {
+	public void setBackEndTime(long time) {
 		_backEndTime = time;
 	}
 
@@ -208,19 +208,17 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
 	 * Updates the total execution time.
 	 * @param time the time in milliseconds
 	 * @see CommandLog#getTime()
-	 * @see CommandLog#setBackEndTime(int)
+	 * @see CommandLog#setBackEndTime(long)
 	 */
-	public void setTime(int time) {
+	public void setTime(long time) {
 		_totalTime = time;
 	}
 
 	/**
 	 * Compares two log entries by comparing their dates.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		CommandLog cl2 = (CommandLog) o2;
-		return _d.compareTo(cl2.getDate());
+	public int compareTo(CommandLog cl2) {
+		return _d.compareTo(cl2._d);
 	}
 
 	/**

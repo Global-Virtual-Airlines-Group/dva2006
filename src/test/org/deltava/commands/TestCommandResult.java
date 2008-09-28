@@ -49,7 +49,6 @@ public class TestCommandResult extends AbstractBeanTestCase {
         validateInput("time", new Integer(-1), IllegalArgumentException.class);
         validateInput("backEndTime", new Long(-1), IllegalArgumentException.class);
         validateInput("result", new Integer(-1), IllegalArgumentException.class);
-        validateInput("result", new Integer(CommandResult.RESULT.length), IllegalArgumentException.class);
         validateInput("httpCode", new Integer(302), IllegalStateException.class);
     }
 }

@@ -60,7 +60,7 @@ public class CertificationDeleteCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/academy/certUpdate.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

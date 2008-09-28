@@ -188,7 +188,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 		
 		// Redirect to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/eqUpdate.jsp");
 		result.setSuccess(true);
 	}

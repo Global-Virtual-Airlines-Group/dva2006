@@ -127,7 +127,7 @@ public class ContentReportCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 		if (isLocked && (!ctx.isUserInRole("Moderator")))
 			result.setURL("channel", null, mt.getChannel());

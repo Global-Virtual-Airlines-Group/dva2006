@@ -86,7 +86,7 @@ public class CourseAssignCommand extends AbstractCommand {
 		
 		// Forward back to the Course
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("course", null, c.getID());
 		result.setSuccess(true);
 	}

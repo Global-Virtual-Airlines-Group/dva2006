@@ -65,7 +65,7 @@ public class LogPurgeCommand extends AbstractCommand {
 		}
 
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/logPurge.jsp");
 		result.setSuccess(true);
 	}

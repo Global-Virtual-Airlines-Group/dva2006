@@ -57,7 +57,7 @@ public class PIREPReleaseCommand extends AbstractCommand {
 		// Forward back to the Flight Report
 		CommandResult result = ctx.getResult();
 		result.setURL("pirep", null, ctx.getID());
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

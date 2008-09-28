@@ -85,7 +85,7 @@ public class EventSignupCommand extends AbstractCommand {
 
 		// Forward to the JSP - show the event
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("event", null, ctx.getID());
 		result.setSuccess(true);
 	}

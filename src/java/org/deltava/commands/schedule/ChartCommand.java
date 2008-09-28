@@ -109,7 +109,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/schedule/chartUpdate.jsp");
 		result.setSuccess(true);
 	}
@@ -204,7 +204,7 @@ public class ChartCommand extends AbstractFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
 		if (c.getImgType() == Chart.PDF) {
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setURL("/charts/" + c.getHexID() + ".pdf");
 		} else {
 			// Determine if we're displaying the printer-friendly page

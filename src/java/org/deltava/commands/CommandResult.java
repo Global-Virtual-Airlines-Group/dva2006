@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -8,43 +8,18 @@ import java.util.*;
  * execute() method, and based on the data contained within this class the controller servlet will perform further
  * processing.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  * @see Command#execute(CommandContext)
  */
 
 public class CommandResult implements java.io.Serializable {
-
-	/**
-	 * Command result code types.
-	 */
-	public static final String[] RESULT = { "Forward", "Redirect", "HTTP Code", "Safe Redirect" };
-
-	/**
-	 * Forward the result URL to another servlet.
-	 */
-	public static final int FORWARD = 0;
-
-	/**
-	 * Redirect the result using an HTTP 302 result code.
-	 */
-	public static final int REDIRECT = 1;
-
-	/**
-	 * Return back a specific HTTP result code to the browser. Convert the URL to an int to get the code.
-	 */
-	public static final int HTTPCODE = 2;
-
-	/**
-	 * Redirect while preserving servlet request state.
-	 */
-	public static final int REQREDIRECT = 3;
-
+	
 	private String _resultURL;
 	private boolean _success;
-	private int _executeTime;
+	private long _executeTime;
 	private long _backEndTime;
-	private int _resultCode = FORWARD;
+	private ResultType _resultCode = ResultType.FORWARD;
 	private int _httpCode;
 	private long _startTime;
 
@@ -70,9 +45,9 @@ public class CommandResult implements java.io.Serializable {
 	/**
 	 * Return the execution time of the last command.
 	 * @return the time the last command took to execute, in milliseconds
-	 * @see CommandResult#setTime(int)
+	 * @see CommandResult#setTime(long)
 	 */
-	public int getTime() {
+	public long getTime() {
 		return _executeTime;
 	}
 
@@ -107,17 +82,17 @@ public class CommandResult implements java.io.Serializable {
 	 * The type of action the controller should perform next.
 	 * @return the action type for the controller
 	 */
-	public int getResult() {
+	public ResultType getType() {
 		return _resultCode;
 	}
 
 	/**
 	 * A helper method to "stop the clock" for execution and setTime().
-	 * @see CommandResult#setTime(int)
+	 * @see CommandResult#setTime(long)
 	 * @see CommandResult#getTime()
 	 */
 	public void complete() {
-		setTime((int) (System.currentTimeMillis() - _startTime));
+		setTime(System.currentTimeMillis() - _startTime);
 	}
 
 	/**
@@ -134,10 +109,8 @@ public class CommandResult implements java.io.Serializable {
 	 * @see CommandResult#getTime()
 	 * @see CommandResult#complete()
 	 */
-	public void setTime(int time) {
-		if (time < 0) throw new IllegalArgumentException("Execution time cannot be negative");
-
-		_executeTime = time;
+	public void setTime(long time) {
+		_executeTime = Math.max(0, time);
 	}
 
 	/**
@@ -146,9 +119,7 @@ public class CommandResult implements java.io.Serializable {
 	 * @see CommandResult#getBackEndTime()
 	 */
 	public void setBackEndTime(long time) {
-		if (time < 0) throw new IllegalArgumentException("Back-End Execution time cannot be negative");
-
-		_backEndTime = time;
+		_backEndTime = Math.max(0, time);
 	}
 
 	/**
@@ -158,8 +129,8 @@ public class CommandResult implements java.io.Serializable {
 	 * @see CommandResult#getHttpCode()
 	 */
 	public void setHttpCode(int code) {
-		if (_resultCode != CommandResult.HTTPCODE)
-				throw new IllegalStateException("Command Result must set HTTP code");
+		if (_resultCode != ResultType.HTTPCODE)
+			throw new IllegalStateException("Command Result must set HTTP code");
 
 		_httpCode = code;
 	}
@@ -218,15 +189,12 @@ public class CommandResult implements java.io.Serializable {
 	/**
 	 * Sets the result type of this command. This tells the controller servlet what kind of action to perform next on
 	 * the URL.
-	 * @param resultType the result type code
+	 * @param type the result type
 	 * @throws IllegalArgumentException if resultCode is negative or not listed in RESULT
-	 * @see CommandResult#RESULT
-	 * @see CommandResult#getResult()
+	 * @see ResultType
+	 * @see CommandResult#getType()
 	 */
-	public void setType(int resultType) {
-		if ((resultType < 0) || (resultType >= RESULT.length))
-				throw new IllegalArgumentException("Invalid Command Result type - " + resultType);
-
-		_resultCode = resultType;
+	public void setType(ResultType type) {
+		_resultCode = type;
 	}
 }

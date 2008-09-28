@@ -149,7 +149,7 @@ public class VideoCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/fleet/libraryUpdate.jsp");
 		result.setSuccess(true);
 	}

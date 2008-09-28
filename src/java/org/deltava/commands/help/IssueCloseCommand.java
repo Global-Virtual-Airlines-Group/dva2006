@@ -54,7 +54,7 @@ public class IssueCloseCommand extends AbstractCommand {
 		
 		// Forward to the Issue
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("hdissue", null, ctx.getID());
 		result.setSuccess(true);
 	}

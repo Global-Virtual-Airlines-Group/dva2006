@@ -93,7 +93,7 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/pilot/pilotUpdate.jsp");
 		result.setSuccess(true);
 	}

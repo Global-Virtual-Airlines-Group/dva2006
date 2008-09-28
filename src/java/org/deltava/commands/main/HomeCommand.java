@@ -55,7 +55,7 @@ public class HomeCommand extends AbstractCommand {
 		
 		// Check that the hostname is correct
 		if (!ctx.getRequest().getServerName().equals(myHost)) {
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setURL("http://" + myHost + "/");
 			result.setSuccess(true);
 			return;

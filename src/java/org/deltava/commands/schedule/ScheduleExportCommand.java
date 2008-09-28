@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site command to export Flight Schedule data in CSV format.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -108,7 +108,7 @@ public class ScheduleExportCommand extends AbstractCommand {
 
       // Set the result code
       CommandResult result = ctx.getResult();
-      result.setType(CommandResult.HTTPCODE);
+      result.setType(ResultType.HTTPCODE);
       result.setHttpCode(HttpServletResponse.SC_OK);
       result.setSuccess(true);
    }

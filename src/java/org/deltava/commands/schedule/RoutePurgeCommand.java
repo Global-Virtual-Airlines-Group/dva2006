@@ -69,7 +69,7 @@ public class RoutePurgeCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/schedule/routeUpdate.jsp");
 		result.setSuccess(true);
 	}

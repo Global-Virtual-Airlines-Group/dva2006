@@ -51,7 +51,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
 		
 		// Forward to the channel list
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("channeladmin.do");
 		result.setSuccess(true);
 	}

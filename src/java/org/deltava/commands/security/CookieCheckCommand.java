@@ -43,9 +43,9 @@ public class CookieCheckCommand extends AbstractCommand {
 		if (s.getAttribute("addr") != null) {
 			ctx.setAttribute("addr", s.getAttribute("addr"), REQUEST);
 			s.removeAttribute("addr");
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 		} else
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 
 		// Redirect to the next URL
 		result.setURL(nextURL);

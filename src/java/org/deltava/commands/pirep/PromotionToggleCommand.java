@@ -60,7 +60,7 @@ public class PromotionToggleCommand extends AbstractCommand {
 
 		// Forward back to the PIREP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("pirep", null, ctx.getID());
 		result.setSuccess(true);
 	}

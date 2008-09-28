@@ -75,7 +75,7 @@ public class BlogEntryCommand extends AbstractFormCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("blog", null, e.getAuthorID());
 		result.setSuccess(true);
 	}

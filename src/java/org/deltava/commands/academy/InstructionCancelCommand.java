@@ -92,7 +92,7 @@ public class InstructionCancelCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/academy/courseUpdate.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

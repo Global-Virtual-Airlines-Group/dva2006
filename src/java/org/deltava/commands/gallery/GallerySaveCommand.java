@@ -98,7 +98,7 @@ public class GallerySaveCommand extends AbstractCommand {
 		// Forward to the new image
 		CommandResult result = ctx.getResult();
 		result.setURL("image", null, img.getID());
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

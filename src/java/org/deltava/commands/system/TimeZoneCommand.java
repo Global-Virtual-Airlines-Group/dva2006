@@ -83,7 +83,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("tzones.do");
 		result.setSuccess(true);
 	}

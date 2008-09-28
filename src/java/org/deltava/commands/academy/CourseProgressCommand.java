@@ -76,7 +76,7 @@ public class CourseProgressCommand extends AbstractCommand {
 		// Forward to the course
 		CommandResult result = ctx.getResult();
 		result.setURL("course", null, ctx.getID());
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

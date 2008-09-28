@@ -58,7 +58,7 @@ public class QuestionDeleteCommand extends AbstractCommand {
 
 		// Foward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/testing/profileUpdate.jsp");
 		result.setSuccess(true);
 	}

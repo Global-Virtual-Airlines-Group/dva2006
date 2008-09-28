@@ -97,11 +97,11 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 		result.setSuccess(true);
 		if (c.getStatus() == Course.STARTED) {
 			result.setURL("course", null, c.getID());
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 		} else {
 			ctx.setAttribute("isPending", Boolean.TRUE, REQUEST);
 			result.setURL("/jsp/academy/courseUpdate.jsp");
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 		}
 	}
 }

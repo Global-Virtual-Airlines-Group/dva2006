@@ -148,7 +148,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		result.setURL("/jsp/schedule/flightSave.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

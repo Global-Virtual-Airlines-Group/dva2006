@@ -41,7 +41,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 		
 		// Get command results
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 
 		Examination ex = null;
 		try {

@@ -72,7 +72,7 @@ public class ThreadSubjectEditCommand extends AbstractCommand {
 
 		// Forward back to the thread
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("thread", null, ctx.getID());
 		result.setSuccess(true);
 	}

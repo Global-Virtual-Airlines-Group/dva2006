@@ -124,7 +124,7 @@ public class AirwayImportCommand extends AbstractCommand {
 		ctx.setAttribute("airway", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/navdata/navDataUpdate.jsp");
 		result.setSuccess(true);
 	}

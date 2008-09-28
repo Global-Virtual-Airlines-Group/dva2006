@@ -135,7 +135,7 @@ public class MassMailingCommand extends AbstractCommand {
 		ctx.setAttribute("msgSent", new Integer(pilots.size()), REQUEST);
 		
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/massMailComplete.jsp");
 		result.setSuccess(true);
 	}

@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.FlightReport;
 import org.deltava.beans.UserData;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -104,15 +105,10 @@ public class EventAssignCommand extends AbstractCommand {
 				fr.setDatabaseID(FlightReport.DBID_ASSIGN, ai.getID());
 				fr.setDatabaseID(FlightReport.DBID_EVENT, e.getID());
 				fr.setDate(e.getStartTime());
-				switch (e.getNetwork()) {
-					case Event.NET_VATSIM :
-						fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-						break;
-						
-					case Event.NET_IVAO :
-						fr.setAttribute(FlightReport.ATTR_IVAO, true);
-						break;
-				}
+				if (e.getNetwork() == OnlineNetwork.VATSIM)
+					fr.setAttribute(FlightReport.ATTR_VATSIM, true);
+				else if (e.getNetwork() == OnlineNetwork.IVAO)
+					fr.setAttribute(FlightReport.ATTR_IVAO, true);
 				
 				// Write the Flight Report to the proper database
 				fwdao.write(fr, usrData.getDB());

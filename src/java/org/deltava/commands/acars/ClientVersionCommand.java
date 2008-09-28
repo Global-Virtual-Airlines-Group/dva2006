@@ -88,7 +88,7 @@ public class ClientVersionCommand extends AbstractCommand {
 			cInfo.addNoDispatchBuild(StringUtils.parse(i.next(), 0));
 		
 		// Return to success page
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("acarsversion.do");
 		result.setSuccess(true);
 	}

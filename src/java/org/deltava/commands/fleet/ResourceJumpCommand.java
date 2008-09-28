@@ -49,7 +49,7 @@ public class ResourceJumpCommand extends AbstractCommand {
 		}
 
 		// Redirect
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

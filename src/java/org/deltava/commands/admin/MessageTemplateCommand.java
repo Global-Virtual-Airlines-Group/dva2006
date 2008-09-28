@@ -129,7 +129,7 @@ public class MessageTemplateCommand extends AbstractFormCommand {
 		
 		// Forward to the Message Templates
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("msgtemplates", null, null);
 		result.setSuccess(true);
 	}	

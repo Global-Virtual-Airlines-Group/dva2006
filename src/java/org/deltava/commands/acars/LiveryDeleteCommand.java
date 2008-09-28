@@ -50,7 +50,7 @@ public class LiveryDeleteCommand extends AbstractCommand {
 		// Forward to the view
 		CommandResult result = ctx.getResult();
 		result.setURL("liveries.do");
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }
