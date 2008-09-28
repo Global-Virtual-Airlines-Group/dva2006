@@ -227,7 +227,7 @@
 			<continueBatchOnError>true</continueBatchOnError>
 			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
-			<useLocalSessionState>true</useLocalSessionState>
+			<useLocalSessionState>false</useLocalSessionState>
 			<useCursorFetch>true</useCursorFetch>
 			<maintainTimeStats>false</maintainTimeStats>
 			<validationQuery>/* ping */</validationQuery>
@@ -394,7 +394,7 @@
 			<popup>
 				<height type="Integer">600</height>
 				<width type="Integer">600</width>
-				<url>http://quicktrip.innosked.com/</url>
+				<url>http://www.quicktrip.com/</url>
 			</popup>
 
 			<!-- Primary codes on import -->
