@@ -34,7 +34,7 @@ return true;
 <el:form action="flightboard.do" method="POST" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="flightboard">
 <tr class="title">
- <td colspan="4" class="left">ONLINE PILOTS - ${netInfo.name} - VALID AS OF 
+ <td colspan="4" class="left">ONLINE PILOTS - ${netInfo.network} - VALID AS OF 
  <fmt:date date="${netInfo.validDate}" /></td>
  <td><el:cmd url="flightboard" op="map" linkID="${network}">FLIGHT MAP</el:cmd></td>
  <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
@@ -43,7 +43,7 @@ return true;
 <!-- Pilot Title Bar -->
 <tr class="title caps">
  <td width="10%">CALLSIGN</td>
- <td width="10%">${netInfo.name} ID</td>
+ <td width="10%">${netInfo.network} ID</td>
  <td width="20%">PILOT NAME</td>
  <td width="25%">CURRENTLY FLYING</td>
  <td width="10%">EQUIPMENT</td>
@@ -64,7 +64,7 @@ return true;
 </view:row>
 </c:forEach>
 <tr class="title left caps">
- <td colspan="7">ONLINE CONTROLLERS - ${netInfo.name}</td>
+ <td colspan="7">ONLINE CONTROLLERS - ${netInfo.network}</td>
 </tr>
 
 <!-- Table Controller Data -->
