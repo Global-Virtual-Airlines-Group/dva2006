@@ -992,6 +992,7 @@
 		<roles>Pilot</roles>
 	</command>	
 
+	<!-- Flight Assignment Commands -->
 	<command id="buildassign">
 		<name>Build Flight Assignment</name>
 		<class>org.deltava.commands.assign.BuildAssignmentCommand</class>
@@ -1044,6 +1045,18 @@
 		<name>Pre-Approve Flight</name>
 		<class>org.deltava.commands.assign.FlightPreapproveCommand</class>
 		<roles>HR</roles>
+	</command>
+	
+	<command id="singleassign">
+		<name>Single Flight Assignment</name>
+		<class>org.deltava.commands.assign.SingleAssignmentSearchCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="singlebuild">
+		<name>Single Assignment Build</name>
+		<class>org.deltava.commands.assign.SingleAssignmentBuildCommand</class>
+		<roles>Pilot</roles>
 	</command>
 
 

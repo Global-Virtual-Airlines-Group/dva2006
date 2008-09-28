@@ -309,6 +309,14 @@ partners currently serve.</td>
  <td class="data">You can use our Google Maps tool to visually display a flight route between two airports, 
 including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
 </tr>
+<c:if test="${!empty lastFlight}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="singleassign">Random Flight</el:cmd></td>
+ <td class="data">You can select a Flight departing from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) 
+from the <content:airline /> Flight Schedule. This flight is selected at random, and depending on the airport, there may not be flights 
+departing today.</td>
+</tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="myassign">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 

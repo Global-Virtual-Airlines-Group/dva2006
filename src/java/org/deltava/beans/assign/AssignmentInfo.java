@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.util.*;
@@ -7,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -34,8 +35,8 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     private boolean _repeating;
     private boolean _purge;
     
-    private Set<AssignmentLeg> _assignments;
-    private Set<FlightReport> _flights;
+    private final Collection<AssignmentLeg> _assignments = new LinkedHashSet<AssignmentLeg>();
+    private final Collection<FlightReport> _flights = new LinkedHashSet<FlightReport>();
     
     /**
      * Creates a new Flight Assignment for a particular Equipment Type.
@@ -45,8 +46,6 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     public AssignmentInfo(String eqType) {
         super();
         _eqType = eqType.trim();
-        _assignments = new HashSet<AssignmentLeg>();
-        _flights = new HashSet<FlightReport>();
     }
     
     /**
