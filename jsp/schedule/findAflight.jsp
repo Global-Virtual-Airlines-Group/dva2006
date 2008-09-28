@@ -22,9 +22,9 @@ function validate(form)
 if (!checkSubmit()) return false;
 
 // Check that at least one option was selected
-eqOK = (form.eqType.selectedIndex > 0);
-adOK = (form.airportD.selectedIndex > 0);
-aaOK = (form.airportA.selectedIndex > 0);
+var eqOK = (form.eqType.selectedIndex > 0);
+var adOK = (form.airportD.selectedIndex > 0);
+var aaOK = (form.airportA.selectedIndex > 0);
 
 if (eqOK || adOK || aaOK) {
 	setSubmit();
@@ -86,7 +86,7 @@ return true;
 <el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="4"><content:airline /> SCHEDULE SEARCH<span id="isLoading" /></td>
+ <td colspan="4"><content:airline /> SCHEDULE SEARCH</td>
 </tr>
 <tr>
  <td class="label">Airline</td>
