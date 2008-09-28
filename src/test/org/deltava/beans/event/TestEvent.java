@@ -6,6 +6,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.Chart;
@@ -40,11 +41,11 @@ public class TestEvent extends AbstractBeanTestCase {
         checkProperty("airportA", new Airport("ATL", "KATL", "Atlanta GA"));
         checkProperty("network", new Integer(1));
         assertEquals(Event.COMPLETE, _e.getStatus());
-        _e.setNetwork(Event.NET_VATSIM);
-        assertEquals(_e.getNetwork(), Event.NET_VATSIM);
+        _e.setNetwork(OnlineNetwork.VATSIM);
+        assertEquals(_e.getNetwork(), OnlineNetwork.VATSIM);
         assertEquals("VATSIM", _e.getNetworkName());
-        _e.setNetwork("IVAO");
-        assertEquals(_e.getNetwork(), Event.NET_IVAO);
+        _e.setNetwork(OnlineNetwork.valueOf("IVAO"));
+        assertEquals(_e.getNetwork(), OnlineNetwork.IVAO);
         assertEquals("IVAO", _e.getNetworkName());
         _e.setStatus(Event.CANCELED);
         assertEquals(Event.CANCELED, _e.getStatus());
