@@ -61,7 +61,7 @@ public class CheckRidePIREPCommand extends AbstractCommand {
 
       // Forward to the PIREP command - its read method does a lot of work we do not want to duplicate
       CommandResult result = ctx.getResult();
-      result.setType(CommandResult.REDIRECT);
+      result.setType(ResultType.REDIRECT);
       result.setURL(crossDB ? "extpirep" : "pirep", null, pirepID);
       result.setSuccess(true);
    }

@@ -43,7 +43,7 @@ public class RegistrationBlockDeleteCommand extends AbstractCommand {
 
 		// Forward to the view
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("regblocks.do");
 		result.setSuccess(true);
 	}

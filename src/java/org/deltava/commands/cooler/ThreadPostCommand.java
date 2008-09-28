@@ -303,7 +303,7 @@ public class ThreadPostCommand extends AbstractCommand {
 		ctx.getRequest().getSession().removeAttribute("imageURLs");
 
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/cooler/threadUpdate.jsp");
 		result.setSuccess(true);
 	}

@@ -73,7 +73,7 @@ public class NotificationToggleCommand extends AbstractCommand {
       
       // Forward to the Thread
       CommandResult result = ctx.getResult();
-      result.setType(CommandResult.REQREDIRECT);
+      result.setType(ResultType.REQREDIRECT);
       result.setURL("thread", null, id);
       result.setSuccess(true);
    }

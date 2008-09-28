@@ -106,7 +106,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 
 		// Forward to the JSP
 		result.setURL("/jsp/admin/txRequestUpdate.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

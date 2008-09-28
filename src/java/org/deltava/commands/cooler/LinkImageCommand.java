@@ -125,7 +125,7 @@ public class LinkImageCommand extends AbstractCommand {
 			if (img == null) {
 				ctx.release();
 				result.setURL("thread", null, ctx.getID());
-				result.setType(CommandResult.REDIRECT);
+				result.setType(ResultType.REDIRECT);
 				result.setSuccess(true);
 				return;
 			}
@@ -157,7 +157,7 @@ public class LinkImageCommand extends AbstractCommand {
 
 		// Forward back to the thread
 		result.setURL("thread", null, ctx.getID());
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

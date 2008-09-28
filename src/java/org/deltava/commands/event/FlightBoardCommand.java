@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.servinfo.*;
 import org.deltava.commands.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -36,8 +37,9 @@ public class FlightBoardCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the network name and wether we display a map
-		String network = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
+		String networkName = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
 		boolean showMap = "map".equals(ctx.getCmdParameter(OPERATION, "false"));
+		OnlineNetwork network = OnlineNetwork.valueOf(networkName.toUpperCase());
 		
 		// Get the network info from the cache
 		NetworkInfo info = GetServInfo.getCachedInfo(network);

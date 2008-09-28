@@ -84,10 +84,10 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 		if (addMore) {
 			result.setURL("certreqs", "edit", name);
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 		} else {
 			result.setURL("/jsp/academy/certUpdate.jsp");
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 		}
 	}
 

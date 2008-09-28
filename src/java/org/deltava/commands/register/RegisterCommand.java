@@ -47,7 +47,7 @@ public class RegisterCommand extends AbstractCommand {
 		// If we're authenticated, redirect to the home page
 		if (ctx.isAuthenticated()) {
 			result.setURL("home.do");
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
 		}

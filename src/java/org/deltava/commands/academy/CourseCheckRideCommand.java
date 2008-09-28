@@ -144,7 +144,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 		ctx.setAttribute("isAssign", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/academy/courseUpdate.jsp");
 		result.setSuccess(true);
 	}

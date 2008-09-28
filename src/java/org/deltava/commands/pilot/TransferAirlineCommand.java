@@ -219,7 +219,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 		mailer.setCC(ctx.getUser());
 
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/pilot/pilotTransferred.jsp");
 		result.setSuccess(true);
 	}

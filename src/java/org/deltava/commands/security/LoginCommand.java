@@ -48,7 +48,7 @@ public class LoginCommand extends AbstractCommand {
 		// If we're already logged in, just redirect to home
 		if (ctx.isAuthenticated()) {
 			result.setURL("home.do");
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
 		}
@@ -281,7 +281,7 @@ public class LoginCommand extends AbstractCommand {
 		
 		// Mark us as complete
 		result.setURL("cookieCheck.do");
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

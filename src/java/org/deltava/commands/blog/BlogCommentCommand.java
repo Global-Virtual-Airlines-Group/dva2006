@@ -62,7 +62,7 @@ public class BlogCommentCommand extends AbstractCommand {
 
 		// Forward back to the entry
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("blogentry", "read", e.getID());
 		result.setSuccess(true);
 	}

@@ -49,7 +49,7 @@ public class UnreadClearCommand extends AbstractCommand {
 		}
 		
 		// Return to the previous page
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

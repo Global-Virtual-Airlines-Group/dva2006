@@ -54,7 +54,7 @@ public class TransferConvertCommand extends AbstractCommand {
 		
 		// Forward back to the transfer request
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("txreqview", null, ctx.getID());
 		result.setSuccess(true);
 	}

@@ -48,7 +48,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			AddressValidation av = avdao.get(ctx.getUser().getID());
 			if (av != null) {
 				ctx.release();
-				result.setType(CommandResult.REDIRECT);
+				result.setType(ResultType.REDIRECT);
 				result.setURL("validate.do");
 				result.setSuccess(true);
 				return;	

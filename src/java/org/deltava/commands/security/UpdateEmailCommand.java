@@ -105,7 +105,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 		ctx.setAttribute("addrUpdate", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/pilot/eMailInvalidate.jsp");
 		result.setSuccess(true);
 	}

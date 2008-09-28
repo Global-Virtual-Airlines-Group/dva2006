@@ -51,7 +51,7 @@ public class ServiceEntryDeleteCommand extends AbstractCommand {
 		// Forward back to the calendar
 		CommandResult result = ctx.getResult();
 		result.setURL("dspcalendar.do");
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

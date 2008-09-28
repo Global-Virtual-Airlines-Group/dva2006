@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.servlet.ServletScoreboard;
 
@@ -111,8 +112,8 @@ public class DiagnosticCommand extends AbstractCommand {
 		if (!CollectionUtils.isEmpty(networks)) {
 			Collection<NetworkStatus> netInfo = new TreeSet<NetworkStatus>();
 			for (Iterator i = networks.iterator(); i.hasNext(); ) {
-				String networkName = (String) i.next();
-				NetworkStatus status = GetServInfo.getCachedStatus(networkName);
+				OnlineNetwork net = OnlineNetwork.valueOf((String) i.next());
+				NetworkStatus status = GetServInfo.getCachedStatus(net);
 				if (status != null)
 					netInfo.add(status);
 			}
@@ -120,7 +121,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("servInfoStatus", netInfo, REQUEST);
 			
 			// Dump the Servinfo thread map after cleaning up
-			ServInfoLoader.isLoading("?");
+			ServInfoLoader.isLoading(null);
 			ctx.setAttribute("servInfoLoaders", ServInfoLoader.getLoaders(), REQUEST);
 		}
 		

@@ -111,10 +111,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
 		if (doHire) {
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setURL("apphire", null, ctx.getID());
 		} else {
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 			result.setURL("/jsp/register/applicantUpdate.jsp");
 		}
 	}

@@ -88,7 +88,7 @@ public class UnlinkImageCommand extends AbstractCommand {
 		// Forward back to the thread
 		CommandResult result = ctx.getResult();
 		result.setURL("thread", null, ctx.getID());
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

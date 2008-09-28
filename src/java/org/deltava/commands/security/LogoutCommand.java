@@ -45,7 +45,7 @@ public class LogoutCommand extends AbstractCommand {
         // Mark the command complete
         CommandResult result = ctx.getResult();
         result.setURL("home.do");
-        result.setType(CommandResult.REDIRECT);
+        result.setType(ResultType.REDIRECT);
         result.setSuccess(true);
     }
 }

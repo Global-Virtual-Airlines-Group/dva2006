@@ -67,7 +67,7 @@ public class EventSaveCommand extends AbstractCommand {
 				throw securityException("Cannot edit Online Event");
 
 			// Populate fields from the request
-			e.setNetwork(ctx.getParameter("network"));
+			e.setNetwork(OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase()));
 			e.setBriefing(ctx.getParameter("briefing"));
 			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
 
@@ -214,7 +214,7 @@ public class EventSaveCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/event/eventUpdate.jsp");
 		result.setSuccess(true);
 	}

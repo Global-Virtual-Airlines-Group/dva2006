@@ -38,7 +38,7 @@ public class ErrorLogDeleteCommand extends AbstractCommand {
 
 		// Forward to the error list
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/acars/logEntryDelete.jsp");
 		result.setSuccess(true);
 	}

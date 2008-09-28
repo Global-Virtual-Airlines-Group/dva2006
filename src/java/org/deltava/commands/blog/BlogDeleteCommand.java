@@ -78,7 +78,7 @@ public class BlogDeleteCommand extends AbstractCommand {
 
 		// Forward to the blog entries
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 		if (StringUtils.isEmpty(commentID)) {
 			result.setURL("blog", null, e.getAuthorID());

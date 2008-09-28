@@ -57,7 +57,7 @@ public class ContentOverrideCommand extends AbstractCommand {
 		
 		// Forward to the thread
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("thread", null, ctx.getID());
 		result.setSuccess(true);
 	}

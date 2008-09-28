@@ -83,7 +83,7 @@ public class ResendValidationCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		result.setURL("/jsp/pilot/eMailValidate.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

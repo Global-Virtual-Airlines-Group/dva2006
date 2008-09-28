@@ -127,7 +127,7 @@ public class AirportCommand extends AbstractFormCommand {
 		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");
 		result.setSuccess(true);
 	}
