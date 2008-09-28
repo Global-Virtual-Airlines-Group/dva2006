@@ -27,7 +27,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
@@ -51,7 +51,12 @@ return true;
 <c:forEach var="route" items="${event.routes}"><div class="small">${route.airportD.name} - ${route.airportA.name}</div></c:forEach>
 <c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="request" />
 <c:if test="${!event.canSignup}">
+<c:if test="${!empty event.signupURL}">
+<el:link external="true" url="${event.signupURL}" className="bld small">SIGNUP</el:link>
+</c:if>
+<c:if test="${empty event.signupURL}">
 <span class="small warn bld">SIGNUPS NOT AVAILABLE</span>
+</c:if>
 </c:if>
 <c:if test="${(eventSize == 0) && event.canSignup}">
 <span class="small bld">NO SIGNUPS YET</span>

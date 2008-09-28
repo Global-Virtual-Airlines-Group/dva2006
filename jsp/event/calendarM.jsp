@@ -27,7 +27,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
@@ -43,7 +43,7 @@ return true;
 </el:table>
 <div class="mid">
 <calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
+	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentM" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.networkName}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
@@ -51,7 +51,12 @@ return true;
 <c:forEach var="route" items="${event.routes}"><div class="small">${route.airportD.name} - ${route.airportA.name}</div></c:forEach>
 <c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="request" />
 <c:if test="${!event.canSignup}">
+<c:if test="${!empty event.signupURL}">
+<el:link external="true" url="${event.signupURL}" className="bld small">SIGNUP</el:link>
+</c:if>
+<c:if test="${empty event.signupURL}">
 <span class="small warn bld">SIGNUPS NOT AVAILABLE</span>
+</c:if>
 </c:if>
 <c:if test="${(eventSize == 0) && event.canSignup}">
 <span class="small bld">NO SIGNUPS YET</span>
