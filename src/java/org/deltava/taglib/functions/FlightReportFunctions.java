@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -250,11 +250,11 @@ public class FlightReportFunctions {
     	if (fr == null)
     		return "Offline";
     	else if (fr.hasAttribute(FlightReport.ATTR_VATSIM))
-            return OnlineNetwork.VATSIM;
+            return OnlineNetwork.VATSIM.toString();
         else if (fr.hasAttribute(FlightReport.ATTR_IVAO))
-            return OnlineNetwork.IVAO;
+            return OnlineNetwork.IVAO.toString();
         else if (fr.hasAttribute(FlightReport.ATTR_FPI))
-            return OnlineNetwork.FPI;
+            return OnlineNetwork.FPI.toString();
         
         return "Offline";
     }
