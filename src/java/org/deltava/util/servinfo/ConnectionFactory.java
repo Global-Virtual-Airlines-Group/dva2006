@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Connection Factory for local/remote ServInfo data feeds.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -90,7 +90,7 @@ class ConnectionFactory {
 		hc.getParams().setParameter("http.socket.timeout", new Integer(2500));
 		hc.getParams().setParameter("http.connection.timeout", new Integer(1500));
 		hc.getParams().setParameter("http.protocol.allow-circular-redirects", Boolean.FALSE);
-		log.warn("Fetching " + status.getName() + " data from " + remote.getURL());
+		log.warn("Fetching " + status.getNetwork().toString() + " data from " + remote.getURL());
 		
 		// Open the connection
 		GetMethod gm = new GetMethod(remote.getURL());

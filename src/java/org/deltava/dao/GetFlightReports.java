@@ -225,6 +225,29 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Loads all Flight Reports for a Pilot for a particular date range.
+	 * @param id the Pilot database ID
+	 * @param startDate the start date
+	 * @param days the number of days forward to include
+	 * @return a List of FlightReports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getLogbookCalendar(int id, java.util.Date startDate, int days) throws DAOException {
+		try {
+			prepareStatement("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN PIREP_COMMENT PC "
+				+ "ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?) AND "
+				+ "(PR.DATE >= ?) AND (PR.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY PR.DATE, PR.ID");
+			_ps.setInt(1, id);
+			_ps.setTimestamp(2, createTimestamp(startDate));
+			_ps.setTimestamp(3, createTimestamp(startDate));
+			_ps.setInt(4, days);
+			return execute();
+		} catch (SQLException se) { 
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all Flight Reports for a particular Pilot, using a sort column.

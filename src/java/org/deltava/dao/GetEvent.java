@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -85,17 +86,15 @@ public class GetEvent extends DAO {
 	 * @param network the online network code
 	 * @return the Online Event database ID, or zero if none found
 	 * @throws DAOException if a JDBC error occurs
-	 * @see Event#NET_VATSIM
-	 * @see Event#NET_IVAO
 	 */
-	public int getEvent(Airport airportD, Airport airportA, int network) throws DAOException {
+	public int getEvent(Airport airportD, Airport airportA, OnlineNetwork network) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE "
 					+ "(E.ID=EA.ID) AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND "
 					+ "(E.STARTTIME < NOW()) AND (NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID LIMIT 1");
 			_ps.setString(1, airportD.getIATA());
 			_ps.setString(2, airportA.getIATA());
-			_ps.setInt(3, network);
+			_ps.setInt(3, network.getValue());
 			
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
@@ -287,19 +286,20 @@ public class GetEvent extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasBanner = (rs.getMetaData().getColumnCount() > 9);
+		boolean hasBanner = (rs.getMetaData().getColumnCount() > 10);
 		while (rs.next()) {
 			Event e = new Event(rs.getString(2));
 			e.setID(rs.getInt(1));
 			e.setStatus(rs.getInt(3));
-			e.setNetwork(rs.getInt(4));
+			e.setNetwork(OnlineNetwork.values()[rs.getInt(4)]);
 			e.setStartTime(rs.getTimestamp(5));
 			e.setEndTime(rs.getTimestamp(6));
 			e.setSignupDeadline(rs.getTimestamp(7));
 			e.setBriefing(rs.getString(8));
 			e.setCanSignup(rs.getBoolean(9));
+			e.setSignupURL(rs.getString(10));
 			if (hasBanner)
-				e.setBannerExtension(rs.getString(10));
+				e.setBannerExtension(rs.getString(11));
 
 			// Add to results
 			results.add(e);

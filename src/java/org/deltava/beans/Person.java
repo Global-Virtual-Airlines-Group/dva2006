@@ -87,7 +87,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private int _loginCount;
 	private String _loginHost;
 
-	protected final Map<String, String> _networkIDs = new HashMap<String, String>();
+	protected final Map<OnlineNetwork, String> _networkIDs = new HashMap<OnlineNetwork, String>();
 	protected final Map<String, Boolean> _notifyOptions = new HashMap<String, Boolean>();
 
 	private double _legacyHours;
@@ -315,10 +315,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	/**
 	 * Retun the Person's online network IDs.
 	 * @return the network user IDs
-	 * @see Person#setNetworkID(String, String)
+	 * @see Person#setNetworkID(OnlineNetwork, String)
 	 */
-	public Map<String, String> getNetworkIDs() {
-		return new HashMap<String, String>(_networkIDs);
+	public Map<OnlineNetwork, String> getNetworkIDs() {
+		return new HashMap<OnlineNetwork, String>(_networkIDs);
 	}
 
 	/**
@@ -487,12 +487,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Update the Person's network ID for a given online network.
-	 * @param network the network name
+	 * @param network the network
 	 * @param id the network ID
 	 * @throws NullPointerException if the network name is null
 	 * @see Person#getNetworkIDs()
 	 */
-	public void setNetworkID(String network, String id) {
+	public void setNetworkID(OnlineNetwork network, String id) {
 		if (network == null)
 			throw new NullPointerException("Network ID cannot be null");
 

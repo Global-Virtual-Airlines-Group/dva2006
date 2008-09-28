@@ -1,17 +1,24 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An interface to store Online Network constants.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
-public interface OnlineNetwork {
+public enum OnlineNetwork {
+	
+	VATSIM(0), IVAO(1), FPI(2), INTVAS(3);
 
-	public static final String VATSIM = "VATSIM";
-	public static final String IVAO = "IVAO";
-	public static final String FPI = "FPI";
-	public static final String INTVAS = "INTVAS";
+	private final int _value;
+	
+	OnlineNetwork(int value) {
+		_value = value;
+	}
+	
+	public int getValue() {
+		return _value;
+	}
 }

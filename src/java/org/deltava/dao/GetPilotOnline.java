@@ -1,25 +1,20 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.Pilot;
-import static org.deltava.beans.OnlineNetwork.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.beans.*;
 
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
 public class GetPilotOnline extends PilotReadDAO {
 	
-	private static final String[] NETWORKS = { VATSIM, IVAO };
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -31,19 +26,19 @@ public class GetPilotOnline extends PilotReadDAO {
 	/**
 	 * Returns the network IDs for all Active/On leave pilots. This will return a Map with the network ID as the key, and
 	 * the <i>database ID</i> of the Pilot as the value, allowing easy lookups of Pilots based on network ID.
-	 * @param network the network name (VATSIM or IVAO)
+	 * @param network the network
 	 * @return a Map of network ID/database ID pairs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<String, Integer> getIDs(String network) throws DAOException {
+	public Map<String, Integer> getIDs(OnlineNetwork network) throws DAOException {
 		
 		// This only supports VATSIM/IVAO
-		if (StringUtils.arrayIndexOf(NETWORKS, network) == -1)
+		if ((network != OnlineNetwork.VATSIM) && (network != OnlineNetwork.IVAO))
 			return Collections.emptyMap();
 		
 		try {
 			// Prepare the statement
-			String colName = network.toUpperCase() + "_ID";
+			String colName = network.toString() + "_ID";
 			prepareStatement("SELECT ID, " + colName + " FROM PILOTS WHERE (STATUS IN (?, ?)) AND (" +
 					colName + " IS NOT NULL)");
 			_ps.setInt(1, Pilot.ACTIVE);
@@ -66,17 +61,17 @@ public class GetPilotOnline extends PilotReadDAO {
 	
 	/**
 	 * Returns all Pilots registered with an ID in a particular online network. <i>Flight Totals will not be populated</i>.
-	 * @param networkName the online network name
+	 * @param network the online network
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilots(String networkName) throws DAOException {
-		if (StringUtils.arrayIndexOf(NETWORKS, networkName) == -1)
+	public List<Pilot> getPilots(OnlineNetwork network) throws DAOException {
+		if ((network != OnlineNetwork.VATSIM) && (network != OnlineNetwork.IVAO))
 			return Collections.emptyList();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.* FROM PILOTS P WHERE ((P.STATUS=?) OR (P.STATUS=?)) AND (LENGTH(");
-		sqlBuf.append(networkName);
+		sqlBuf.append(network.toString());
 		sqlBuf.append("_ID) > 0)");
 		
 		try {
