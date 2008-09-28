@@ -143,7 +143,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("pirep", "read", ctx.getID());
 		result.setSuccess(true);
 	}

@@ -32,7 +32,7 @@ public class IMAPDeleteCommand extends AbstractCommand {
 		// Forwad to the view
 		CommandResult result = ctx.getResult();
 		result.setURL("imaplist.do");
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

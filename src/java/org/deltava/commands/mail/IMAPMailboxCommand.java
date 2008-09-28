@@ -161,10 +161,10 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);	
 		if (isNew) {
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 			result.setURL("/jsp/admin/imapCreated.jsp");
 		} else {
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setURL("imaplist.do");
 		}
 	}

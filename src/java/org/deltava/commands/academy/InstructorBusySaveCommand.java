@@ -60,7 +60,7 @@ public class InstructorBusySaveCommand extends AbstractCommand {
 		
 		// Forward to the busy time calendar
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("busycalendar", null, ctx.getUser().getID());
 		result.setSuccess(true);
 	}

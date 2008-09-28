@@ -128,7 +128,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		}
 
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");
 		result.setSuccess(true);
 	}

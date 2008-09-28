@@ -106,7 +106,7 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		result.setURL("/jsp/assign/assignUpdate.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

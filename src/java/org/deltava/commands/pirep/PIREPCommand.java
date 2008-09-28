@@ -197,7 +197,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			result.setURL("submit", null, fr.getID());
 		else {
 			ctx.setAttribute("isSaved", Boolean.TRUE, REQUEST);
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 			result.setURL("/jsp/pilot/pirepUpdate.jsp");
 		}
 	}

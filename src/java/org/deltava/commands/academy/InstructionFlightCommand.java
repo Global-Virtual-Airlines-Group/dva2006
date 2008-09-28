@@ -94,7 +94,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/academy/courseUpdate.jsp");
 		result.setSuccess(true);
 	}

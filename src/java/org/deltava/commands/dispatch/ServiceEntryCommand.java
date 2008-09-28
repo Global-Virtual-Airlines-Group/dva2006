@@ -128,7 +128,7 @@ public class ServiceEntryCommand extends AbstractFormCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("dspcalendar.do");
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 }

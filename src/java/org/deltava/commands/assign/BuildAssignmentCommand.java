@@ -42,7 +42,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
 			ctx.getSession().removeAttribute("fafResults");
 
 			// Redirect back to the find-a-flight command
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setURL("findflight.do");
 			result.setSuccess(true);
 			return;

@@ -220,37 +220,29 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			}
 
 			// Redirect/forward/send status code
-			switch (result.getResult()) {
-			case CommandResult.REQREDIRECT:
+			ResultType rt = result.getType();
+			if (rt == ResultType.REQREDIRECT) {
 				if (log.isDebugEnabled())
 					log.debug("Preserving servlet request state");
 
 				RequestStateHelper.save(req, result.getURL());
 				rsp.sendRedirect("$redirect.do");
-				break;
-
-			case CommandResult.REDIRECT:
+			} else if (rt == ResultType.REDIRECT) {
 				if (log.isDebugEnabled())
 					log.debug("Redirecting to " + result.getURL());
 
 				rsp.sendRedirect(result.getURL());
-				break;
-
-			case CommandResult.HTTPCODE:
+			} else if (rt == ResultType.HTTPCODE) {
 				if (log.isDebugEnabled())
 					log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
 
 				rsp.setStatus(result.getHttpCode());
-				break;
-
-			default:
-			case CommandResult.FORWARD:
+			} else {
 				if (log.isDebugEnabled())
 					log.debug("Forwarding to " + result.getURL());
 
 				RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
 				rd.forward(req, rsp);
-				break;
 			}
 		} catch (Exception e) {
 			String errPage = ERR_PAGE;

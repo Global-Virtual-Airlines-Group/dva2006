@@ -91,7 +91,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 
 		// Forward to the Command
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("eventroutes", "edit", ctx.getID());
 	}
 

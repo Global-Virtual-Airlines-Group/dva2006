@@ -37,7 +37,7 @@ public class ScheduleSaveCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		if (entries == null) {
 			result.setURL("schedimport", null, null);
-			result.setType(CommandResult.REDIRECT);
+			result.setType(ResultType.REDIRECT);
 			result.setSuccess(true);
 			return;
 		}

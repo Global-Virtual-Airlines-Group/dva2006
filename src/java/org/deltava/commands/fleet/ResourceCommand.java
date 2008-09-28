@@ -73,7 +73,7 @@ public class ResourceCommand extends AbstractFormCommand {
 		// Forword to the Command
 		CommandResult result = ctx.getResult();
 		result.setURL("resources.do");
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setSuccess(true);
 	}
 

@@ -185,7 +185,7 @@ public class AIRACImportCommand extends AbstractCommand {
 			ctx.setAttribute("errors", errors, REQUEST);
 		
 		// Forward to the JSP
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/navdata/navDataUpdate.jsp");
 		result.setSuccess(true);
 	}

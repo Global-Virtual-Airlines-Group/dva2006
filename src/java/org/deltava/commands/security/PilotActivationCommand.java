@@ -157,7 +157,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			EventDispatcher.send(UserEvent.UserInvalidate(p.getID()));
 
 			// Set JSP result
-			result.setType(CommandResult.REQREDIRECT);
+			result.setType(ResultType.REQREDIRECT);
 			result.setURL("/jsp/admin/activatePilotComplete.jsp");
 		} catch (SecurityException se) {
 			ctx.rollbackTX();

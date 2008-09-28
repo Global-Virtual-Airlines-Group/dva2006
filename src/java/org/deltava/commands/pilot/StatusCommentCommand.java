@@ -91,7 +91,7 @@ public class StatusCommentCommand extends AbstractCommand {
 		}
 		
 		// Forward back to the Profile
-		result.setType(CommandResult.REDIRECT);
+		result.setType(ResultType.REDIRECT);
 		result.setURL("profile", null, usr.getID());
 		result.setSuccess(true);
 	}

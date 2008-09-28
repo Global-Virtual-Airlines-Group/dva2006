@@ -21,72 +21,72 @@ import org.deltava.util.system.SystemData;
 
 public class AssignmentSaveCommand extends AbstractCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an error (typically database) occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
-	   
-	   // Get command results
-	   CommandResult result = ctx.getResult();
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error (typically database) occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-      // Check for the flight assignment
-      AssignmentInfo info = (AssignmentInfo) ctx.getSession().getAttribute("buildAssign");
-      if (info == null) {
-    	  ctx.setMessage("Flight Assignment data not found - Session Timeout?");
-    	  result.setURL("/jsp/schedule/findAflight.jsp");
-          result.setType(CommandResult.REQREDIRECT);
-          result.setSuccess(true);
-          return;
-      }
+		// Get command results
+		CommandResult result = ctx.getResult();
 
-      try {
-          Connection con = ctx.getConnection();
-          
-          // Start the transaction
-          ctx.startTX();
+		// Check for the flight assignment
+		AssignmentInfo info = (AssignmentInfo) ctx.getSession().getAttribute("buildAssign");
+		if (info == null) {
+			ctx.setMessage("Flight Assignment data not found - Session Timeout?");
+			result.setURL("/jsp/schedule/findAflight.jsp");
+			result.setType(ResultType.REQREDIRECT);
+			result.setSuccess(true);
+			return;
+		}
 
-          // Create the Flight Assignment
-          SetAssignment awdao = new SetAssignment(con);
-          awdao.write(info, SystemData.get("airline.db"));
+		try {
+			Connection con = ctx.getConnection();
 
-          // If the assignment has a pilot linked with it, write the draft PIREPs
-          if ((info.getStatus() == AssignmentInfo.RESERVED) && (info.getPilotID() != 0)) {
-             Date now = new Date();
-             info.setAssignDate(now);
-             awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
-             
-             // Write the PIREPs to the database
-             ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);
-              SetFlightReport pwdao = new SetFlightReport(con);
-              for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
-                  FlightReport fr = i.next();
-                  fr.setDate(now);
-                  fr.setRank(ctx.getUser().getRank());
-                  pwdao.write(fr);
-              }
-          }
-          
-          // Commit the transaction
-          ctx.commitTX();
-      } catch (DAOException de) {
-         ctx.rollbackTX();
-          throw new CommandException(de);
-      } finally {
-          ctx.release();
-      }
-      
-      // Set attributes and clean up session
-      ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-      ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
-      ctx.setAttribute("assign", info, REQUEST);
-      ctx.getSession().removeAttribute("buildAssign");
-      ctx.getSession().removeAttribute("fafCriteria");
+			// Start the transaction
+			ctx.startTX();
 
-      // Redirect to the update page
-      result.setURL("/jsp/assign/assignUpdate.jsp");
-      result.setType(CommandResult.REQREDIRECT);
-      result.setSuccess(true);
-   }
+			// Create the Flight Assignment
+			SetAssignment awdao = new SetAssignment(con);
+			awdao.write(info, SystemData.get("airline.db"));
+
+			// If the assignment has a pilot linked with it, write the draft PIREPs
+			if ((info.getStatus() == AssignmentInfo.RESERVED) && (info.getPilotID() != 0)) {
+				Date now = new Date();
+				info.setAssignDate(now);
+				awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
+
+				// Write the PIREPs to the database
+				ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);
+				SetFlightReport pwdao = new SetFlightReport(con);
+				for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
+					FlightReport fr = i.next();
+					fr.setDate(now);
+					fr.setRank(ctx.getUser().getRank());
+					pwdao.write(fr);
+				}
+			}
+
+			// Commit the transaction
+			ctx.commitTX();
+		} catch (DAOException de) {
+			ctx.rollbackTX();
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Set attributes and clean up session
+		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
+		ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("assign", info, REQUEST);
+		ctx.getSession().removeAttribute("buildAssign");
+		ctx.getSession().removeAttribute("fafCriteria");
+
+		// Redirect to the update page
+		result.setURL("/jsp/assign/assignUpdate.jsp");
+		result.setType(ResultType.REQREDIRECT);
+		result.setSuccess(true);
+	}
 }

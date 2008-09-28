@@ -107,7 +107,7 @@ public class EventPlanCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		result.setURL("/jsp/event/planUpdate.jsp");
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
 }

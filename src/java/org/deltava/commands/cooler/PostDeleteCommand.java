@@ -84,7 +84,7 @@ public class PostDeleteCommand extends AbstractCommand {
 	        	 wdao.delete(threadID, postID);
 	        	 wdao.synchThread(thread);
 	        	 result.setURL("thread", null, threadID);
-	        	 result.setType(CommandResult.REDIRECT);
+	        	 result.setType(ResultType.REDIRECT);
 	         }
 	         
 	         // Commit the transaction

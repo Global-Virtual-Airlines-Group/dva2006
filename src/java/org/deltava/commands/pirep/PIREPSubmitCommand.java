@@ -7,7 +7,6 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.event.Event;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -97,13 +96,13 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Check if it's an Online Event flight
 			if ((pirep.getDatabaseID(FlightReport.DBID_EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				int networkID = Event.NET_VATSIM;
+				OnlineNetwork net = OnlineNetwork.VATSIM;
 				if (pirep.hasAttribute(FlightReport.ATTR_IVAO))
-					networkID = Event.NET_IVAO;
+					net = OnlineNetwork.IVAO;
 				
 				// Load the event ID
 				GetEvent evdao = new GetEvent(con);
-				pirep.setDatabaseID(FlightReport.DBID_EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), networkID));
+				pirep.setDatabaseID(FlightReport.DBID_EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), net));
 			}
 
 			// Update the status of the PIREP
@@ -152,7 +151,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REQREDIRECT);
+		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/pilot/pirepUpdate.jsp");
 		result.setSuccess(true);
 	}

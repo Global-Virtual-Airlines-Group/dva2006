@@ -93,7 +93,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
             ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
 
             // Forward to the update JSP
-            result.setType(CommandResult.REQREDIRECT);
+            result.setType(ResultType.REQREDIRECT);
             result.setURL("/jsp/pilot/pilotUpdate.jsp");
          }
          
