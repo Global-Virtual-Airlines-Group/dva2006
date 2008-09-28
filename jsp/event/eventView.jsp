@@ -107,6 +107,12 @@ return true;
 </tr>
 </c:if></content:filter>
 <content:filter roles="Pilot">
+<c:if test="${!empty event.signupURL}">
+<tr>
+ <td class="label">Signup URL</td>
+ <td colspan="5" class="data"><el:link url="${event.signupURL}" external="true">${event.signupURL}</el:link></td>
+</tr>
+</c:if>
 <c:if test="${!empty event.charts}">
 <!-- Chart Section -->
 <tr class="title caps">
