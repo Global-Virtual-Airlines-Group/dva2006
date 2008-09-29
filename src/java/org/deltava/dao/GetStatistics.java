@@ -220,7 +220,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 				// Execute the Query
 				rs = _ps.executeQuery();
 				if (rs.next())
-					results.put(new Integer(Math.round(key)), rs.getDate(1));
+					results.put(Integer.valueOf(Math.round(key)), rs.getDate(1));
 				
 				// Clean up
 				setQueryMax(0);
@@ -310,7 +310,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
-				results.put(new Integer(rs.getInt(1)), new Integer(rs.getInt(2)));
+				results.put(new Integer(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
 			
 			// Clean up and return
 			rs.close();
@@ -366,23 +366,21 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @return the number of posts in the specified interval
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getCoolerStatistics(int days) throws DAOException {
+	public synchronized int getCoolerStatistics(int days) throws DAOException {
 
 		// Check the cache
-		CacheableInteger result = _cache.get(new Integer(days));
+		CacheableInteger result = _cache.get(Integer.valueOf(days));
 		if (result != null)
 			return result.getValue();
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE "
-					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
+			prepareStatementWithoutLimits("SELECT COUNT(*) FROM common.COOLER_POSTS "
+					+ "WHERE (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)) LIMIT 1");
 			_ps.setInt(1, days);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			result = new CacheableInteger(new Integer(days), rs.next() ? rs.getInt(1) : 0);
-			setQueryMax(0);
+			result = new CacheableInteger(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
 
 			// Clean up
 			rs.close();
