@@ -87,7 +87,7 @@ public class RoutePlotMapService extends RouteMapService {
 			if (aL != null)
 				routePoints.add(aL);
 		} catch (DAOException de) {
-			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
