@@ -37,7 +37,7 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     private String _bannerExt;
     
     private int _status;
-    private OnlineNetwork _network;
+    private OnlineNetwork _network = OnlineNetwork.VATSIM;
     
     private boolean _canSignup;
     private String _signupURL;
