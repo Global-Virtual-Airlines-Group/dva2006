@@ -21,9 +21,9 @@
 </tr>
 
 <c:forEach var="netStatus" items="${servInfoStatus}">
-<!-- ${netStatus.name} -->
+<!-- ${netStatus} -->
 <tr class="title caps">
- <td colspan="7" class="left">${netStatus.name} - ${fn:sizeof(netStatus.URLs)} SOURCES</td>
+ <td colspan="7" class="left">${netStatus.network} - ${fn:sizeof(netStatus.URLs)} SOURCES</td>
 </tr>
 <c:forEach var="source" items="${netStatus.URLs}">
 <tr>
@@ -51,10 +51,10 @@
  <td class="left">LOADER STACK TRACE</td>
 </tr>
 
-<c:forEach var="netName" items="${fn:keys(servInfoLoaders)}">
-<c:set var="loader" value="${servInfoLoaders[netName]}" scope="request" />
+<c:forEach var="net" items="${fn:keys(servInfoLoaders)}">
+<c:set var="loader" value="${servInfoLoaders[net]}" scope="request" />
 <tr>
- <td class="pri bld">${fn:upper(netName)}</td>
+ <td class="pri bld">${net}</td>
  <td><fmt:int value="${loader.runTime}" />ms</td>
  <td rowspan="2" class="left small"><pre><fmt:stack exception="${loader.loaderStackInfo}" /></pre></td>
 </tr>
