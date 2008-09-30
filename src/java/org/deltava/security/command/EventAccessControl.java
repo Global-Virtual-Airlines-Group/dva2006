@@ -52,7 +52,7 @@ public class EventAccessControl extends AccessControl {
 
 		// Check if we have a network address
 		Pilot p = (Pilot) _ctx.getUser();
-		boolean hasID = p.getNetworkIDs().containsKey(_ev.getNetwork());
+		boolean hasID = p.hasNetworkID(_ev.getNetwork());
 
 		// Check if any routes stil have signups
 		boolean isRouteAvailable = !_ev.getActiveRoutes().isEmpty();

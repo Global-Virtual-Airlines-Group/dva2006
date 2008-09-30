@@ -88,8 +88,8 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(2, p.getLocation());
 			_ps.setDouble(3, p.getLegacyHours());
 			_ps.setString(4, p.getHomeAirport());
-			_ps.setString(5, p.getNetworkIDs().get(OnlineNetwork.VATSIM));
-			_ps.setString(6, p.getNetworkIDs().get(OnlineNetwork.IVAO));
+			_ps.setString(5, p.getNetworkID(OnlineNetwork.VATSIM));
+			_ps.setString(6, p.getNetworkID(OnlineNetwork.IVAO));
 			_ps.setString(7, p.getTZ().getID());
 			_ps.setBoolean(8, p.getNotifyOption(Person.FLEET));
 			_ps.setBoolean(9, p.getNotifyOption(Person.EVENT));

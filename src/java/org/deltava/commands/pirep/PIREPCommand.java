@@ -81,6 +81,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			doSubmit &= ac.getCanSubmitIfEdit(); // If we cannot submit just turn that off
 			if (!hasAccess)
 				throw securityException("Not Authorized");
+			
+			// Get the Pilot
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = doCreate ? (Pilot) ctx.getUser() : pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Get the airline/airports - don't allow updates if an assignment
 			Airline a = isAssignment ? fr.getAirline() : SystemData.getAirline(ctx.getParameter("airline"));
@@ -133,21 +137,25 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Figure out what network the flight was flown on and ensure we have an ID
 			String net = ctx.getParameter("network");
 			if (!StringUtils.isEmpty(net)) {
-				if (!ctx.getUser().getNetworkIDs().keySet().contains(net))
+				try {
+					OnlineNetwork network = OnlineNetwork.valueOf(net.toUpperCase());
+					if (!p.hasNetworkID(network))
+						net = "";
+				} catch (Exception e) {
 					net = "";
+				}
 			}
 			
 			// Set network attribute
-			if (OnlineNetwork.VATSIM.equals(net))
+			if (OnlineNetwork.VATSIM.toString().equals(net)) {
 				fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-			else if (OnlineNetwork.IVAO.equals(net))
+				fr.setAttribute(FlightReport.ATTR_IVAO, false);
+			} else if (OnlineNetwork.IVAO.toString().equals(net)) {
 				fr.setAttribute(FlightReport.ATTR_IVAO, true);
-			else if (OnlineNetwork.FPI.equals(net))
-				fr.setAttribute(FlightReport.ATTR_FPI, true);
-			else {
+				fr.setAttribute(FlightReport.ATTR_VATSIM, false);
+			} else {
 				fr.setAttribute(FlightReport.ATTR_VATSIM, false);
 				fr.setAttribute(FlightReport.ATTR_IVAO, false);
-				fr.setAttribute(FlightReport.ATTR_FPI, false);
 			}
 
 			// Get the flight time
@@ -332,7 +340,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("fsVersions", _fsVersions, REQUEST);
 
 		// Set basic lists for the JSP
-		ctx.setAttribute("networks", ctx.getUser().getNetworkIDs().keySet(), REQUEST);
+		ctx.setAttribute("networks", ctx.getUser().getNetworks(), REQUEST);
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 		ctx.setAttribute("months", months, REQUEST);

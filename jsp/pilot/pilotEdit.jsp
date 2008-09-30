@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Edit Profile - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
@@ -184,11 +185,11 @@ return true;
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
- <td colspan="${cspan}" class="data"><el:text name="VATSIM_ID" idx="*" value="${pilot.networkIDs['VATSIM']}" size="10" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:networkID(pilot, 'VATSIM')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">IVAO ID#</td>
- <td colspan="${cspan}" class="data"><el:text name="IVAO_ID" idx="*" value="${pilot.networkIDs['IVAO']}" size="10" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(pilot, 'IVAO')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>

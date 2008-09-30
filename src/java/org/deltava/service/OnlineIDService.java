@@ -73,11 +73,11 @@ public class OnlineIDService extends WebService {
 			Pilot p = i.next();
 			if (isXML) {
 				Element pe = new Element("pilot");
-				pe.setAttribute("id", p.getNetworkIDs().get(network));
+				pe.setAttribute("id", p.getNetworkID(net));
 				pe.setAttribute("name", p.getName());
 				re.addContent(pe);
 			} else {
-				ctx.print(p.getNetworkIDs().get(network));
+				ctx.print(p.getNetworkID(net));
 				ctx.print(" ");
 				ctx.println(p.getName());
 			}
