@@ -120,7 +120,7 @@ return true;
  <td class="label">Location</td>
  <td class="data">${applicant.location}</td>
 </tr>
-<c:set var="VATSIM_ID" value="${applicant.networkIDs['VATSIM']}" scope="request" />
+<c:set var="VATSIM_ID" value="${fn:networkID(applicant, 'VATSIM')}" scope="request" />
 <c:if test="${!empty VATSIM_ID}">
 <tr>
  <td class="label">VATSIM ID#</td>
@@ -129,10 +129,11 @@ return true;
  </td>
 </tr>
 </c:if>
-<c:if test="${!empty applicant.networkIDs['IVAO']}">
+<c:set var="IVAO_ID" value="${fn:networkID(applicant, 'IVAO')}" scope="request" />
+<c:if test="${!empty IVAO_ID}">
 <tr>
  <td class="label">IVAO ID#</td>
- <td class="data">${applicant.networkIDs['IVAO']}</td>
+ <td class="data">${IVAO_ID}</td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant.IMHandle['AOL']}">

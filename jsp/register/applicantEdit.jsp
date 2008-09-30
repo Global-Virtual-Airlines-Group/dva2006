@@ -77,11 +77,11 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
- <td class="data"><el:text name="VATSIM_ID" idx="*" value="${applicant.networkIDs['VATSIM']}" size="10" max="9" /></td>
+ <td class="data"><el:text name="VATSIM_ID" idx="*" value="${fn:networkID(applicant, 'VATSIM')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">IVAO ID#</td>
- <td class="data"><el:text name="IVAO_ID" idx="*" value="${applicant.networkIDs['IVAO']}" size="10" max="9" /></td>
+ <td class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(applicant, 'IVAO')}" size="10" max="9" /></td>
 </tr>
 <tr>
  <td class="label">AOL Instant Messenger</td>

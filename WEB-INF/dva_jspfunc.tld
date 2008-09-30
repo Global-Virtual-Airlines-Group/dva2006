@@ -462,4 +462,12 @@
 		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
 		<function-signature>boolean isSuspended(org.deltava.beans.Person)</function-signature>
 	</function>
+	
+	<!-- Display an Online Network ID -->
+	<function>
+		<name>networkID</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>java.lang.String getNetworkID(org.deltava.beans.Person, 
+			java.lang.String)</function-signature>
+	</function>
 </taglib>

@@ -952,7 +952,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 		p2._totalLegs = _totalLegs;
 		p2.setShowSignatures(getShowSignatures());
 		p2.setShowSSThreads(getShowSSThreads());
-		p2._networkIDs.putAll(getNetworkIDs());
+		p2._networkIDs.putAll(_networkIDs);
 		if (!StringUtils.isEmpty(getPilotCode()))
 			p2.setPilotCode(getPilotCode());
 

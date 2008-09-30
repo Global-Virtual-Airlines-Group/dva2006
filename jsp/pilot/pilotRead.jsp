@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
@@ -86,16 +87,18 @@ return true;
  <td class="label">Home Airport</td>
  <td colspan="${cspan}" class="data">${airport.name} (<fmt:airport airport="${airport}" />)</td>
 </tr>
-<c:if test="${!empty pilot.networkIDs['VATSIM']}">
+<c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="request" />
+<c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID#</td>
- <td colspan="${cspan}" class="data">${pilot.networkIDs['VATSIM']}</td>
+ <td colspan="${cspan}" class="data">${vatsimID}</td>
 </tr>
 </c:if>
-<c:if test="${!empty pilot.networkIDs['IVAO']}">
+<c:set var="ivaoID" value="${fn:networkID(pilot, 'IVAO')}" scope="request" />
+<c:if test="${!empty ivaoID}">
 <tr>
  <td class="label">IVAO ID#</td>
- <td colspan="${cspan}" class="data">${pilot.networkIDs['IVAO']}</td>
+ <td colspan="${cspan}" class="data">${ivaoID}</td>
 </tr>
 </c:if>
 <tr>

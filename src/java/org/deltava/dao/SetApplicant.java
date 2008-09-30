@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -89,8 +89,8 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(5, a.getLocation());
 			_ps.setString(6, a.getIMHandle(InstantMessage.AIM));
 			_ps.setString(7, a.getIMHandle(InstantMessage.MSN));
-			_ps.setString(8, a.getNetworkIDs().get(OnlineNetwork.VATSIM));
-			_ps.setString(9, a.getNetworkIDs().get(OnlineNetwork.IVAO));
+			_ps.setString(8, a.getNetworkID(OnlineNetwork.VATSIM));
+			_ps.setString(9, a.getNetworkID(OnlineNetwork.IVAO));
 			_ps.setDouble(10, a.getLegacyHours());
 			_ps.setString(11, a.getLegacyURL());
 			_ps.setBoolean(12, a.getLegacyVerified());
