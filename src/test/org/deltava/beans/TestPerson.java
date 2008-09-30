@@ -107,10 +107,10 @@ public class TestPerson extends AbstractBeanTestCase {
     }
     
     public void testNetworkIDs() {
-        assertNull(_p.getNetworkIDs().get(OnlineNetwork.VATSIM));
+        assertFalse(_p.hasNetworkID(OnlineNetwork.VATSIM));
         _p.setNetworkID(OnlineNetwork.VATSIM, "12345");
-        assertNotNull(_p.getNetworkIDs().get(OnlineNetwork.VATSIM));
-        assertEquals("12345", _p.getNetworkIDs().get(OnlineNetwork.VATSIM));
+        assertNotNull(_p.getNetworkID(OnlineNetwork.VATSIM));
+        assertEquals("12345", _p.getNetworkID(OnlineNetwork.VATSIM));
         try {
             _p.setNetworkID(null, "ID");
             fail("NullPointerException expected");

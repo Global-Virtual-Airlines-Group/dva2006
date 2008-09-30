@@ -75,7 +75,7 @@ return true;
 <el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
- <td width="40%" class="left">ONLINE PILOTS - ${netInfo.name} - VALID AS OF 
+ <td width="40%" class="left">ONLINE PILOTS - ${netInfo.network} - VALID AS OF 
  <fmt:date date="${netInfo.validDate}" t="HH:mm" /></td>
  <td width="25%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
  <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
@@ -84,7 +84,7 @@ return true;
  <td colspan="3"><span class="pri bld">LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
  <map:legend color="yellow" className="small" legend="Our Airline" />
  <map:legend color="green" className="small" legend="Member Pilot" />
- <map:legend color="white" className="small" legend="${netInfo.name} Pilot" /></td>
+ <map:legend color="white" className="small" legend="${netInfo.network} Pilot" /></td>
 </tr>
 <tr>
  <td colspan="3"><map:div ID="googleMap" x="100%" y="600" /></td>

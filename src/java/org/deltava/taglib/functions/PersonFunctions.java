@@ -49,4 +49,21 @@ public class PersonFunctions {
 	public static boolean isSuspended(Person usr) {
 		return isPilot(usr) && (usr.getStatus() == Pilot.SUSPENDED);
 	}
+	
+	/**
+	 * Returns a Person's online network ID.
+	 * @param usr the Person
+	 * @param name the network name
+	 * @return the network ID, or null 
+	 */
+	public static String getNetworkID(Person usr, String name) {
+		try {
+			OnlineNetwork net = OnlineNetwork.valueOf(name.toUpperCase());
+			return (usr == null) ? null : usr.getNetworkID(net);
+		} catch (Exception e) {
+			// empty
+		}
+		
+		return null;
+	}
 }

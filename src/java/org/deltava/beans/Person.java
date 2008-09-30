@@ -313,12 +313,30 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	}
 
 	/**
-	 * Retun the Person's online network IDs.
+	 * Returns the Online Networks this used has provided an ID for.
+	 * @return the networks
+	 */
+	public Collection<OnlineNetwork> getNetworks() {
+		return _networkIDs.keySet();
+	}
+	
+	/**
+	 * Retuns if this Person is a memebr of an online network.
 	 * @return the network user IDs
 	 * @see Person#setNetworkID(OnlineNetwork, String)
 	 */
-	public Map<OnlineNetwork, String> getNetworkIDs() {
-		return new HashMap<OnlineNetwork, String>(_networkIDs);
+	public boolean hasNetworkID(OnlineNetwork net) {
+		return _networkIDs.containsKey(net);
+	}
+	
+	/**
+	 * Returns this Person's online network ID
+	 * @param net the OnlineNetwork
+	 * @return the network ID
+	 * @see Person#setNetworkID(OnlineNetwork, String)
+	 */
+	public String getNetworkID(OnlineNetwork net) {
+		return _networkIDs.get(net);
 	}
 
 	/**
@@ -489,13 +507,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Update the Person's network ID for a given online network.
 	 * @param network the network
 	 * @param id the network ID
-	 * @throws NullPointerException if the network name is null
-	 * @see Person#getNetworkIDs()
+	 * @see Person#getNetworks()
+	 * @see Person#getNetworkID(OnlineNetwork)
 	 */
 	public void setNetworkID(OnlineNetwork network, String id) {
-		if (network == null)
-			throw new NullPointerException("Network ID cannot be null");
-
 		if (!StringUtils.isEmpty(id)) {
 			StringBuilder buf = new StringBuilder();
 			for (int x = 0; x < id.length(); x++) {
@@ -506,7 +521,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 			
 			if (buf.length() > 5)
 				_networkIDs.put(network, buf.toString());
-		}
+		} else
+			_networkIDs.remove(network);
 	}
 
 	/**
@@ -581,7 +597,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @see Person#getTZ()
 	 */
 	public void setTZ(TZInfo tz) {
-		_tz = tz;
+		_tz = (tz == null) ? TZInfo.local() : tz;
 	}
 
 	/**

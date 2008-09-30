@@ -200,7 +200,7 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
 <c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim="," /></span></c:if></td>
  <td class="sec bld">${signup.equipmentType}</td>
- <td class="pri bld">${pilot.networkIDs[event.networkName]}</td>
+ <td class="pri bld">${fn:networkID(pilot, event.networkName)}</td>
  <td colspan="2" class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
  (<fmt:airport airport="${signup.airportA}" />)</td>
 </tr>
