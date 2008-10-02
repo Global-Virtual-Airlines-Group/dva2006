@@ -29,6 +29,7 @@ public class CommandContext extends ConnectionContext implements SecurityContext
 
 	public static final String AUTH_COOKIE_NAME = "authToken";
 	public static final String USER_ATTR_NAME = "authUser";
+	public static final String ADDR_ATTR_NAME = "authRemoteAddr";
 	public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
 	public static final String SU_ATTR_NAME = "superUser";
 	public static final String SCREENX_ATTR_NAME = "screenXSize";
