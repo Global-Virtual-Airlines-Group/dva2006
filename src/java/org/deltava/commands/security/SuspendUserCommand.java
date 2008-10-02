@@ -33,6 +33,10 @@ public class SuspendUserCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occrurs.
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the result
+		CommandResult result = ctx.getResult();
+		
 		Pilot usr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -47,15 +51,26 @@ public class SuspendUserCommand extends AbstractCommand {
 			PilotAccessControl access = new PilotAccessControl(ctx, usr);
 			access.validate();
 			if (!access.getCanSuspend())
-				throw securityException("Cannot suspend Pilot");
+				throw securityException("Cannot Suspend Pilot");
+			
+			// Save the pilot in the request
+			ctx.setAttribute("pilot", usr, REQUEST);
+			
+			// If no comment, redirect to the form
+			if (ctx.getParameter("comment") == null) {
+				ctx.release();
+				result.setURL("/jsp/admin/userSuspend.jsp");
+				result.setSuccess(true);
+				return;
+			}
 				
 			// Update the pilot status
 			usr.setStatus(Pilot.SUSPENDED);
 			
 			// Log the change
-			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.STATUS_CHANGE);
+			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.SUSPENDED);
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setDescription("User Account Suspended");
+			upd.setDescription(ctx.getParameter("comment"));
 			
 			// Start the transaction
 			ctx.startTX();
@@ -87,9 +102,6 @@ public class SuspendUserCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Save the pilot in the request
-		ctx.setAttribute("pilot", usr, REQUEST);
-		
 		// Block the user
 		UserPool.block(usr);
 		log.warn(ctx.getUser().getName() + " suspended user " + usr.getName());
@@ -98,7 +110,6 @@ public class SuspendUserCommand extends AbstractCommand {
 		EventDispatcher.send(UserEvent.UserSuspend(usr.getID()));
 		
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/pilot/pilotUpdate.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
