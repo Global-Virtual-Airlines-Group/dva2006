@@ -142,6 +142,7 @@ public class SecurityCookieFilter implements Filter {
 		// Cast the request/response since we are doing stuff with them
 		HttpServletRequest hreq = (HttpServletRequest) req;
 		HttpServletResponse hrsp = (HttpServletResponse) rsp;
+		String remoteAddr = req.getRemoteAddr();
 
 		// Check for the authentication cookie
 		String authCookie = getCookie(hreq, CommandContext.AUTH_COOKIE_NAME);
@@ -154,25 +155,35 @@ public class SecurityCookieFilter implements Filter {
 		SecurityCookieData cData = null;
 		try {
 			cData = SecurityCookieGenerator.readCookie(authCookie);
+			if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
+				throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
 		} catch (Exception e) {
-			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " 
-					+ hreq.getHeader("user-agent") + " - " + e.getMessage());
+			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + hreq.getHeader("user-agent") + " - " + e.getMessage());
 			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+			cData = null;
 		}
 
-		// Get the user attribute and/ or reauthenticate the user
+		// Validate the session/cookie data
 		HttpSession s = hreq.getSession(true);
 		Pilot p = (Pilot) s.getAttribute(CommandContext.USER_ATTR_NAME);
-		if (UserPool.isBlocked(p)) {
-			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
-			p = null;
-		} else if (hreq.isRequestedSessionIdFromURL()) {
-			log.warn(req.getRemoteHost() + " attempting to create HTTP session via URL");
+		try {
+			String savedAddr = (String) s.getAttribute(CommandContext.ADDR_ATTR_NAME);
+			if (UserPool.isBlocked(p))
+				throw new SecurityException(p.getName() + " is blocked");
+			else if (hreq.isRequestedSessionIdFromURL())
+				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
+			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr))
+				throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
+			else if (savedAddr == null)
+				s.setAttribute(CommandContext.ADDR_ATTR_NAME, remoteAddr);
+		} catch (SecurityException se) {
+			log.warn(se.getMessage());
 			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 			s.invalidate();
 			p = null;
+			cData = null;
 		}
-
+			
 		// Load the user
 		if ((p == null) && (cData != null)) {
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
@@ -181,20 +192,21 @@ public class SecurityCookieFilter implements Filter {
 
 			// Make sure that the pilot is still active
 			if (p != null) {
-				if (p.getStatus() == Pilot.ACTIVE) {
-					if (authenticate(p, cData.getPassword())) {
-						s.setAttribute(CommandContext.USER_ATTR_NAME, p);
-						log.info("Restored " + p.getName() + " from Security Cookie");
+				try {
+					if (p.getStatus() == Pilot.ACTIVE) {
+						if (authenticate(p, cData.getPassword())) {
+							s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+							log.info("Restored " + p.getName() + " from Security Cookie");
 						
-						// Check if we are a superUser impersonating someone
-						Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
-						UserPool.add((su != null) ? su : p, s.getId(), hreq.getHeader("user-agent"));
-					} else {
-						log.error("Cannot re-authenticate " + p.getName());
-						hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
-					}
-				} else {
-					log.warn(p.getName() + " status = " + p.getStatusName());
+							// Check if we are a superUser impersonating someone
+							Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
+							UserPool.add((su != null) ? su : p, s.getId(), hreq.getHeader("user-agent"));
+						} else 
+							throw new SecurityException("Cannot re-authenticate " + p.getName());
+					} else
+						throw new SecurityException(p.getName() + " status = " + p.getStatusName());
+				} catch (SecurityException se) {
+					log.error(se.getMessage());
 					hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 					s.invalidate();
 				}

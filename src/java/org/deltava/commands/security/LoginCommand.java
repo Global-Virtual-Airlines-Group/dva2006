@@ -203,9 +203,10 @@ public class LoginCommand extends AbstractCommand {
 			// Create the session and stuff in the pilot data
 			HttpSession s = ctx.getRequest().getSession(true);
 			s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+			s.setAttribute(CommandContext.ADDR_ATTR_NAME, cData.getRemoteAddr());
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
-
+			
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
 				log.info("Invalidated e-mail address for " + p.getName());
