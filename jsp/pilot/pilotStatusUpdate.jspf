@@ -20,10 +20,17 @@
 <!-- Pilot Status History Data -->
 <c:forEach var="update" items="${statusUpdates}">
 <c:set var="author" value="${authors[update.authorID]}" scope="request" />
-<c:if test="${(update.type != 0) || isHR}">
+<c:set var="isPrivate" value="${(update.type == 0)}" scope="request" />
+<c:set var="isSuspended" value="${(update.type == 15)}" scope="request" />
+<c:if test="${!isPrivate || isHR}">
 <tr class="mid">
  <td class="pri bld"><fmt:date fmt="d" date="${update.createdOn}" /></td>
+<c:if test="${!isSuspended || isHR}">
  <td colspan="2">${update.description}</td>
+</c:if>
+<c:if test="${isSuspended && !isHR}">
+ <td colspan="2">User Account Suspended</td>
+</c:if>
  <td class="pri" colspan="2">${author.name}</td> 
  <td class="sec" colspan="2">${update.typeName}</td>
 </tr>
