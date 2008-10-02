@@ -108,6 +108,7 @@ public class SuspendUserCommand extends AbstractCommand {
 		
 		// Notify other web applications
 		EventDispatcher.send(UserEvent.UserSuspend(usr.getID()));
+		ctx.setAttribute("isBlocked", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
 		result.setURL("/jsp/pilot/pilotUpdate.jsp");
