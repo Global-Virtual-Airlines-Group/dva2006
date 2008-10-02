@@ -87,9 +87,15 @@
 	</command>
 
 	<command id="suspend">
-		<name>Pilot Block</name>
+		<name>Suspend Pilot</name>
 		<class>org.deltava.commands.security.SuspendUserCommand</class>
 		<roles>HR</roles>
+	</command>
+
+	<command id="suspendedusers">
+		<name>Suspended Pilots</name>
+		<class>org.deltava.commands.admin.SuspendedUserListCommand</class>
+		<roles>HR</roles>	
 	</command>
 
 	<command id="statuscomment">

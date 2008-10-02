@@ -259,7 +259,6 @@ public class GetPilot extends PilotReadDAO {
 		if (!Character.isLetter(letter.charAt(0)))
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
-		// Init the prepared statement
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
@@ -281,7 +280,7 @@ public class GetPilot extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-					+ "(P.STATUS=?) GROUP BY P.ID");
+					+ "(P.STATUS=?) GROUP BY P.ID ORDER BY P.CREATED");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, status);
 			return execute();

@@ -568,6 +568,11 @@ training session with a Flight Academy student.</td>
  Pilot profile.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="suspendedusers">Suspended Pilots</el:cmd></td>
+ <td class="data">You can view all suspended <content:airline /> pilots and the lengths of their membership
+ suspensions.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="regblocks">Registration Blocks</el:cmd></td>
  <td class="data">Applicants can be prevented from registering based on first and last name, IP address,
  network and/pr host name. This is used to lock out troublemakers and spambots.</td>
