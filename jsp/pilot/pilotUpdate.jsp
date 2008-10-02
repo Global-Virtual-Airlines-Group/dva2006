@@ -19,7 +19,6 @@
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="db" name="airline.db" />
 <content:sysdata var="forumName" name="airline.forum" />
-<content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -99,9 +98,7 @@ address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.<br />
 <c:if test="${isBlocked}">
 <!-- User Suspended -->
 <br />
-The user account for ${pilot.name} has been suspended.<c:if test="${acarsEnabled}"> Please note that 
-if this user is currently logged into the ACARS server, you will need terminate the connection using 
-an ACARS client.</c:if><br />
+The user account for ${pilot.name} has been Suspended.<br />
 </c:if>
 </ul>
 <br />
