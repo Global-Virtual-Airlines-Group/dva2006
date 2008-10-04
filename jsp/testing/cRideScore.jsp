@@ -92,7 +92,7 @@ return true;
  <el:cmdbutton ID="DeleteButton" url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
 </c:if>
 <c:if test="${access.canScore}">
- <el:button ID="SubmitButton" type="submit" className="BUTTON" label="EVALUATE CHECK RIDE" />
+ <el:button ID="SubmitButton" type="submit" className="BUTTON" label="SCORE CHECK RIDE" />
 </c:if>
  </td>
 </tr>
