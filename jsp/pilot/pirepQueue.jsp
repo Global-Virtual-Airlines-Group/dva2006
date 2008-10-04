@@ -20,6 +20,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<c:set var="subLists" value="${(!empty myHeld) || (!empty myEQType)}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -37,7 +38,7 @@
 <c:if test="${!empty myHeld}">
 <!-- Flight Reports held by ${user.name} -->
 <tr class="title">
- <td colspan="7" class="left caps">FLIGHT REPORTS HELD BY ${user.name}</td>
+ <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(myHeld)}" /> FLIGHT REPORTS HELD BY ${user.name}</td>
 </tr>
 <c:forEach var="pirep" items="${myHeld}">
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
@@ -55,8 +56,32 @@
  <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>
+</c:if>
+<c:if test="${!empty myEQType}">
+<!-- Flight Reports in the ${myEQ.name} program -->
 <tr class="title">
- <td colspan="7">&nbsp;</td>
+ <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(myEQType)}" /> FLIGHT REPORTS FOR THE ${myEQ.name} PROGRAM</td>
+</tr>
+<c:forEach var="pirep" items="${myEQType}">
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
+<view:row entry="${pirep}">
+ <td><fmt:date fmt="d" date="${pirep.date}" /></td>
+ <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
+<c:if test="${fn:isACARS(pirep)}"><el:img src="acars.png" caption="ACARS Logged" /></c:if> 
+<c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if> 
+<c:if test="${fn:isOnline(pirep)}"><el:img src="network/online.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
+<c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
+ <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
+ <td class="small">${pilot.name}</td>
+ <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>
+ <td class="sec">${pirep.equipmentType}</td>
+ <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+</view:row>
+</c:forEach>
+</c:if>
+<c:if test="${subLists}">
+<tr class="title">
+ <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(viewContext.results)}" /> PENDING FLIGHT REPORTS</td>
 </tr>
 </c:if>
 <!-- Table Flight Report Data -->
