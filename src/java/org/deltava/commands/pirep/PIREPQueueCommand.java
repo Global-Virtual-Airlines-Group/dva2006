@@ -4,7 +4,7 @@ package org.deltava.commands.pirep;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -53,16 +53,25 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
+			// Load my equipment type
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			EquipmentType myEQ = eqdao.get(ctx.getUser().getEquipmentType());
+			ctx.setAttribute("myEQ", myEQ, REQUEST);
+			
 			// Check if we display the scroll bar
 			ctx.setAttribute("doScroll", Boolean.valueOf(pireps.size() >= vc.getCount()), REQUEST);
 			
-			// Split into my held PIREPs
+			// Split into my held PIREPs and my equipment PIREPs
 			int id = ctx.getUser().getID();
+			Collection<FlightReport> myEQType = new ArrayList<FlightReport>();
 			Collection<FlightReport> myHeld = new ArrayList<FlightReport>();
 			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(FlightReport.DBID_DISPOSAL) == id)) {
 					myHeld.add(fr);
+					i.remove();
+				} else if (myEQ.getPrimaryRatings().contains(fr.getEquipmentType())) {
+					myEQType.add(fr);
 					i.remove();
 				}
 			}
@@ -70,6 +79,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			// Save in request
 			vc.setResults(pireps);
 			ctx.setAttribute("myHeld", myHeld, REQUEST);
+			ctx.setAttribute("myEQType", myEQType, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
