@@ -108,6 +108,9 @@ return true;
 </c:if></content:filter>
 <content:filter roles="Pilot">
 <c:if test="${!empty event.signupURL}">
+<tr class="title caps">
+ <td colspan="6" class="left">SIGN UP FOR THIS ONLINE EVENT</td>
+</tr>
 <tr>
  <td class="label">Signup URL</td>
  <td colspan="5" class="data"><el:link url="${event.signupURL}" external="true">${event.signupURL}</el:link></td>

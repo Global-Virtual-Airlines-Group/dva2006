@@ -70,6 +70,10 @@ public class EventSaveCommand extends AbstractCommand {
 			e.setNetwork(OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase()));
 			e.setBriefing(ctx.getParameter("briefing"));
 			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
+			if (!e.getCanSignup() && !StringUtils.isEmpty(ctx.getParameter("signupURL")))
+				e.setSignupURL(ctx.getParameter("signupURL"));
+			else
+				e.setSignupURL(null);
 
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
