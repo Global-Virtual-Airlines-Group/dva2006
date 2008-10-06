@@ -326,7 +326,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (imgOK && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
 					imgOK = false;
 					ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
-							+ info.getWidth() + "x" + info.getHeight());
+							+ info.getWidth() + "x" + info.getHeight() + ")");
 				}
 
 				// Check the image size
@@ -334,7 +334,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (imgOK && (imgData.getSize() > maxSize)) {
 					imgOK = false;
 					ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours ="
-							+ imgData.getSize() + " bytes");
+							+ imgData.getSize() + " bytes)");
 				}
 
 				// Update the image if it's OK
