@@ -26,6 +26,9 @@
 <br />
 The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.<br />
 <br />
+<c:if test="${!empty system_message}">
+<div class="error bld">${system_message}</div><br />
+</c:if>
 <ul>
 <c:if test="${ratingsUpdated}">
 <!-- Updated Equipment Ratings -->
