@@ -151,8 +151,8 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </tr>
 <c:if test="${heldPIREPCount >= maxHeld}">
 <tr>
- <td colspan="2" class="mid error">You currently have held <fmt:int value="${heldPIREPCount}" /> Flight Reports.
- You will not be able to file any new Flight Reports until the currently held Flights are approved or rejected.</td>
+ <td colspan="2" class="mid error bld">You currently have held <fmt:int value="${heldPIREPCount}" /> Flight Reports.
+ All future submitted Flight Reports will be automatically Held until the currently held Flights are approved or rejected.</td>
 </tr>
 </c:if>
 <tr>
