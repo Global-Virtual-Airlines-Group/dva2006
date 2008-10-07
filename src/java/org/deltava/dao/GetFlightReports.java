@@ -148,15 +148,46 @@ public class GetFlightReports extends DAO {
 
 	/**
 	 * Returns the number of Flight Reports awaiting disposition.
-	 * @return the number Flight Reports in SUBMITTED or HOLD status
+	 * @return the number Flight Reports in SUBMITTED status
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getDisposalQueueSize() throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?) OR (STATUS=?)");
+			prepareStatement("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?)");
 			_ps.setInt(1, FlightReport.SUBMITTED);
-			_ps.setInt(2, FlightReport.HOLD);
 
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int results = rs.next() ? rs.getInt(1) : 0;
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of held Flight Reports for a particular Pilot.
+	 * @param pilotID the Pilot's database ID
+	 * @param dbName the database name
+	 * @return the number of Flight Reports in HOLD status
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getHeld(int pilotID, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder  buf = new StringBuilder("SELECT COUNT(*) FROM ");
+		buf.append(formatDBName(dbName));
+		buf.append(".PIREPS WHERE (STATUS=?) AND (PILOT_ID=?)");
+		
+		try {
+			prepareStatement(buf.toString());
+			_ps.setInt(1, FlightReport.HOLD);
+			_ps.setInt(2, pilotID);
+			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			int results = rs.next() ? rs.getInt(1) : 0;

@@ -539,6 +539,7 @@
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
 			<minDays type="Integer">45</minDays>
+			<maxHeld type="Integer">3</maxHeld>
 			<pad_hours type="Double">0.5</pad_hours>
 			<draft_purge type="Integer">30</draft_purge>
 		</pirep>

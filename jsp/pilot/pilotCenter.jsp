@@ -32,6 +32,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="maxHeld" name="users.pirep.maxHeld" default="5" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="fileLibEnabled" name="airline.files.enabled" />
 <content:sysdata var="ts2enabled" name="airline.voice.ts2.enabled" />
@@ -148,6 +149,12 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <tr class="title caps">
  <td colspan="2">FLIGHT REPORTS</td>
 </tr>
+<c:if test="${heldPIREPCount >= maxHeld}">
+<tr>
+ <td colspan="2" class="mid error">You currently have held <fmt:int value="${heldPIREPCount}" /> Flight Reports.
+ You will not be able to file any new Flight Reports until the currently held Flights are approved or rejected.</td>
+</tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="logbook" op="nolog" link="${pilot}">Flight Reports</el:cmd>&nbsp;
 <el:cmd className="bld" url="logbook" op="log" link="${pilot}">Log Book</el:cmd>&nbsp;
