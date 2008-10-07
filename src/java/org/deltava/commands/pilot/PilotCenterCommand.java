@@ -79,7 +79,14 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Stuff the pilot profile in the request and the session
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute(CommandContext.USER_ATTR_NAME, p, SESSION);
-			ctx.setAttribute("manualPIREP", Boolean.valueOf(p.getACARSRestriction() != Pilot.ACARS_ONLY), REQUEST);
+			
+			// Check for manual PIREP ability
+			GetFlightReports frdao = new GetFlightReports(con);
+			int heldPIREPs = frdao.getHeld(p.getID(), SystemData.get("airline.db"));
+			boolean manualPIREP = (p.getACARSRestriction() != Pilot.ACARS_ONLY);
+			manualPIREP &= (heldPIREPs < SystemData.getInt("users.pirep.maxHeld", 5));
+			ctx.setAttribute("manualPIREP", Boolean.valueOf(manualPIREP), REQUEST);
+			ctx.setAttribute("heldPIREPCount", Integer.valueOf(heldPIREPs), REQUEST);
 
 			// Save the pilot location
 			ctx.setAttribute("geoLocation", pdao.getLocation(p.getID()), REQUEST);
@@ -90,7 +97,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("access", access, REQUEST);
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
-			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.setQueryMax(10);
 			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("DATE DESC"));
 			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
