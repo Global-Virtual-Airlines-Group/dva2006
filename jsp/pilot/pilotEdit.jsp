@@ -30,6 +30,7 @@ if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
+if (!validateNumber(form.viewCount, 20, 'View Size')) return false;
 if (!validateFile(form.coolerImg, 'jpg,png,gif', '${forumName} Cooler Signature Image')) return false;
 if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
 if (!validateCombo(form.staffArea, 'Department Name')) return false;
@@ -278,6 +279,10 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label">Number Format</td>
  <td colspan="${cspan}" class="data"><el:text name="nf" value="${pilot.numberFormat}" className="req" size="12" max="15" /></td>
+</tr>
+<tr>
+ <td class="label">View Size</td>
+ <td colspan="${cspan}" class="data"><el:text name="viewCount" value="${pilot.viewCount}" className="req" size="3" max="3" /></td>
 </tr>
 <tr>
  <td class="label">Airport Codes</td>

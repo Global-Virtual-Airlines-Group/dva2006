@@ -83,6 +83,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setAirportCodeType(ctx.getParameter("airportCodeType"));
 			p.setMapType(ctx.getParameter("mapType"));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
+			p.setViewCount(StringUtils.parse(ctx.getParameter("viewCount"), SystemData.getInt("html.table.viewSize")));
 			p.setDateFormat(ctx.getParameter("df"));
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));

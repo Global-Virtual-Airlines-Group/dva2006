@@ -1,7 +1,5 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
-
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -9,7 +7,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to view all Registration Block entries.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -23,12 +21,9 @@ public class RegistrationBlocksCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the start/view/count
-		ViewContext vc = initView(ctx, 60);
+		ViewContext vc = initView(ctx);
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO
-			GetSystemData dao = new GetSystemData(con);
+			GetSystemData dao = new GetSystemData(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			vc.setResults(dao.getBlocks());

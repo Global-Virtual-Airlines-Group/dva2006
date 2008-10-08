@@ -97,6 +97,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _tFormat = "hh:mm:ss";
 	private int _airportCodeType;
 	private String _uiScheme;
+	private int _viewCount;
 
 	/**
 	 * Creates a Person object with a given first and last name, converted to "proper case".
@@ -453,6 +454,15 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public String getUIScheme() {
 		return _uiScheme;
 	}
+	
+	/**
+	 * Returns the Person's preferred view window size.
+	 * @return the view size in rows
+	 * @see Person#setViewCount(int)
+	 */
+	public int getViewCount() {
+		return _viewCount;
+	}
 
 	/**
 	 * Returns the Person's preferred airport code type (IATA/ICAO).
@@ -664,14 +674,10 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	/**
 	 * Update this person's login count
 	 * @param count the new login count.
-	 * @throws IllegalArgumentException if the new login count is negative.
 	 * @see Person#setLoginCount(int)
 	 */
 	public void setLoginCount(int count) {
-		if (count < 0)
-			throw new IllegalArgumentException("LoginCount cannot be negative");
-
-		_loginCount = count;
+		_loginCount = Math.max(0, count);
 	}
 
 	/**
@@ -693,14 +699,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public void setLastLogin(Date lld) {
 		if (lld == null)
 			return;
-
-		if (lld.getTime() > System.currentTimeMillis()) {
+		else if (lld.getTime() > System.currentTimeMillis())
 			throw new IllegalArgumentException("Last Login Date cannot be in the future");
-		} else if (lld.before(getCreatedOn())) {
+		else if (lld.before(getCreatedOn()))
 			throw new IllegalStateException("Last Login Date cannot be < Created Date");
-		} else {
+		else
 			_lastLogin = lld;
-		}
 	}
 
 	/**
@@ -713,14 +717,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public void setLastLogoff(Date lld) {
 		if (lld == null)
 			return;
-
-		if (lld.getTime() > System.currentTimeMillis()) {
+		else if (lld.getTime() > System.currentTimeMillis())
 			throw new IllegalArgumentException("Last Logoff Date cannot be in the future");
-		} else if (lld.before(getCreatedOn())) {
+		else if (lld.before(getCreatedOn()))
 			throw new IllegalStateException("Last Logoff Date cannot be < Created Date");
-		} else {
+		else
 			_lastLogoff = lld;
-		}
 	}
 
 	/**
@@ -785,6 +787,15 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public void setUIScheme(String schemeName) {
 		_uiScheme = schemeName;
+	}
+	
+	/**
+	 * Sets the size of the Person's preferred view window.
+	 * @param size the size in rows
+	 * @see Person#getViewCount()
+	 */
+	public void setViewCount(int size) {
+		_viewCount = Math.max(20, size);
 	}
 
 	/**
