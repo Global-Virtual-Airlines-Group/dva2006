@@ -6,7 +6,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support web site commands for pageable table views.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -40,6 +40,9 @@ public abstract class AbstractViewCommand extends AbstractCommand {
      * @return the View context
      */
     protected ViewContext initView(CommandContext ctx) {
-    	return initView(ctx, SystemData.getInt("html.table.viewSize"));
+    	
+    	// Get the default view size for the user if authenticated
+    	int defaultSize = ctx.isAuthenticated() ? ctx.getUser().getViewCount() : SystemData.getInt("html.table.viewSize"); 
+    	return initView(ctx, defaultSize);
     }
 }
