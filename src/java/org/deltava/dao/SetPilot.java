@@ -73,9 +73,9 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, "
-				+ "DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, "
-				+ "RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, UID=?, "
-				+ "MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
+				+ "VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, "
+				+ "MSNHANDLE=?, RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, "
+				+ "UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
 
 		// Invalidate the cache entry
 		invalidate(p.getID());
@@ -101,25 +101,26 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setBoolean(15, p.getHasDefaultSignature());
 			_ps.setBoolean(16, p.getShowNewPosts());
 			_ps.setString(17, p.getUIScheme());
-			_ps.setString(18, p.getDateFormat());
-			_ps.setString(19, p.getTimeFormat());
-			_ps.setString(20, p.getNumberFormat());
-			_ps.setInt(21, p.getAirportCodeType());
-			_ps.setInt(22, p.getMapType());
-			_ps.setString(23, p.getIMHandle(InstantMessage.AIM));
-			_ps.setString(24, p.getIMHandle(InstantMessage.MSN));
-			_ps.setString(25, p.getRank());
-			_ps.setString(26, p.getEquipmentType());
-			_ps.setInt(27, p.getStatus());
-			_ps.setBoolean(28, p.getNoExams());
-			_ps.setBoolean(29, p.getNoVoice());
-			_ps.setBoolean(30, p.getNoCooler());
-			_ps.setInt(31, p.getACARSRestriction());
-			_ps.setString(32, p.getLDAPName());
-			_ps.setString(33, p.getMotto());
-			_ps.setString(34, p.getFirstName());
-			_ps.setString(35, p.getLastName());
-			_ps.setInt(36, p.getID());
+			_ps.setInt(18, p.getViewCount());
+			_ps.setString(19, p.getDateFormat());
+			_ps.setString(20, p.getTimeFormat());
+			_ps.setString(21, p.getNumberFormat());
+			_ps.setInt(22, p.getAirportCodeType());
+			_ps.setInt(23, p.getMapType());
+			_ps.setString(24, p.getIMHandle(InstantMessage.AIM));
+			_ps.setString(25, p.getIMHandle(InstantMessage.MSN));
+			_ps.setString(26, p.getRank());
+			_ps.setString(27, p.getEquipmentType());
+			_ps.setInt(28, p.getStatus());
+			_ps.setBoolean(29, p.getNoExams());
+			_ps.setBoolean(30, p.getNoVoice());
+			_ps.setBoolean(31, p.getNoCooler());
+			_ps.setInt(32, p.getACARSRestriction());
+			_ps.setString(33, p.getLDAPName());
+			_ps.setString(34, p.getMotto());
+			_ps.setString(35, p.getFirstName());
+			_ps.setString(36, p.getLastName());
+			_ps.setInt(37, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings

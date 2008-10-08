@@ -103,6 +103,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Save the new database ID and status
 			a.setStatus(Applicant.APPROVED);
 			a.setPilotID(uloc.getID());
+			a.setViewCount(SystemData.getInt("html.table.viewSize"));
 			
 			// Write the new Pilot object
 			SetPilotTransfer pwdao = new SetPilotTransfer(con);
