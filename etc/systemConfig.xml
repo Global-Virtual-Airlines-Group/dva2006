@@ -424,6 +424,15 @@
 			<!-- downloaded file cache -->
 			<cache>/var/cache/innovata/sched_cache</cache>
 		</innovata>
+		
+		<!-- FlightAware download data -->
+		<flightaware>
+			<enabled type="Boolean">true</enabled>
+			<download>
+				<user>gvagroup</user>			
+				<pwd>gva@ware</pwd>			
+			</download>
+		</flightaware>
 	</schedule>
 
 	<cache>
