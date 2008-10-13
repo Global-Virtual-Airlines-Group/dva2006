@@ -21,6 +21,8 @@
 	<service id="rmap_airports" class="org.deltava.service.schedule.ServicedAirportService" />
 	<service id="rmap_routes" class="org.deltava.service.schedule.RouteService" />
 	<service id="routeplan" class="org.deltava.service.schedule.RoutePlanService" />
+	<service id="dsproutes" class="org.deltava.service.schedule.DispatchRouteListService" />
+	<service id="dsproute" class="org.deltava.service.schedule.DispatchRouteMapService" />
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
