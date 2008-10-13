@@ -26,8 +26,10 @@ import org.deltava.util.system.SystemData;
  * @author Luke
  * @version 1.0
  * @since 1.0
+ * @deprecated
  */
 
+@Deprecated
 public class RouteImportCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(RouteImportCommand.class);

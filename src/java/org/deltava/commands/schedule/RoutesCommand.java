@@ -17,8 +17,10 @@ import org.deltava.util.StringUtils;
  * @author Luke
  * @version 1.0
  * @since 1.0
+ * @deprecated
  */
 
+@Deprecated
 public class RoutesCommand extends AbstractViewCommand {
 
     /**

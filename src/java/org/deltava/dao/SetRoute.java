@@ -82,7 +82,9 @@ public class SetRoute extends DAO {
 	 * Writes a domestic Preferred Route into the database.
 	 * @param pr the PreferredRoute bean
 	 * @throws DAOException if a JDBC error occurs
+	 * @deprecated
 	 */
+	@Deprecated
 	public void write(PreferredRoute pr) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO ROUTES (AIRPORT_D, AIRPORT_A, ARTCC, ROUTE) VALUES (?, ?, ?, ?)");
