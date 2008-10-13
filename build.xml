@@ -17,7 +17,7 @@
         	<link href="http://www.servlets.com/cos/javadoc" />
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2008 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
    		<!-- Load the SCP server properties -->
@@ -222,6 +222,42 @@
 				</modified>
 			</fileset>
 		</scp>
+	</target>
+	
+	<!-- Generate classes based on FlightAware WSDL -->
+	<target name="fa_wsdl">
+		<taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
+			<classpath id="wsdl.classpath"> 
+				<fileset dir="./lib">
+					<include name="axis-ant-*.jar" />
+					<include name="deploy/axis-*.jar" />
+					<include name="wsdl4j-*.jar" />
+					<include name="deploy/jaxrpc-*.jar" />
+					<include name="deploy/commons-logging-*.jar" />
+					<include name="commons-discovery-*.jar" />
+					<include name="deploy/javamail-*.jar" />
+				</fileset>
+			</classpath> 
+	  	</taskdef>
+
+		<!-- Build the Java source files -->
+		<mkdir dir="${java.io.tmpdir}/src/wsdl" />
+		<wsdl2java debug="false" output="${java.io.tmpdir}/src/wsdl" url="data/flightaware.wsdl" />
+		
+		<!-- Compile the Java source files -->
+		<mkdir dir="${java.io.tmpdir}/build/wsdl" />
+		<javac srcdir="${java.io.tmpdir}/src/wsdl" destdir="${java.io.tmpdir}/build/wsdl"
+			debug="on" debuglevel="source" optimize="on" target="1.6" source="1.6">
+			<classpath refid="wsdl.classpath" />
+			<compilerarg value="-Xlint:deprecated,finally" />
+		</javac>
+
+		<!-- Compress the Java classes into a single JAR file -->
+		<jar basedir="${java.io.tmpdir}/build/wsdl" compress="true" index="true"
+		 	destfile="lib/deploy/flightaware.jar" />
+		
+		<!-- Archive the source -->
+		<zip destfile="lib/src/flightaware.zip" basedir="${java.io.tmpdir}/src/wsdl" includes="**/*.java" />
 	</target>
 	
 	<!-- Clean out compiled data -->
