@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.RoutePlan;
+import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
@@ -42,7 +42,7 @@ public class RouteListCommand extends AbstractViewCommand {
 			// Get the routes
 			rdao.setQueryStart(vc.getStart());
 			rdao.setQueryMax(vc.getCount());
-			Collection<RoutePlan> plans = (authorID == 0) ? rdao.getAll(true) : rdao.getByAuthor(authorID);
+			Collection<DispatchRoute> plans = (authorID == 0) ? rdao.getAll(true) : rdao.getByAuthor(authorID);
 			vc.setResults(plans);
 			
 			// Get the user data

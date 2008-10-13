@@ -4,7 +4,7 @@ package org.deltava.commands.dispatch;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.acars.RoutePlan;
+import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.commands.*;
@@ -30,7 +30,7 @@ public class RouteSaveCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the airports
-		RoutePlan rp = new RoutePlan();
+		DispatchRoute rp = new DispatchRoute();
 		rp.setAuthorID(ctx.getUser().getID());
 		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		rp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));

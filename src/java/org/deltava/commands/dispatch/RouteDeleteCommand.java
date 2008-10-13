@@ -3,7 +3,7 @@ package org.deltava.commands.dispatch;
 
 import java.sql.Connection;
 
-import org.deltava.beans.acars.RoutePlan;
+import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -30,7 +30,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 			
 			// Get the route
 			GetACARSRoute rdao = new GetACARSRoute(con);
-			RoutePlan rp = rdao.getRoute(ctx.getID());
+			DispatchRoute rp = rdao.getRoute(ctx.getID());
 			if (rp == null)
 				throw notFoundException("Unknown Route ID - " + ctx.getID());
 			

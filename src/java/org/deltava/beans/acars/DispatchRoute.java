@@ -14,21 +14,16 @@ import org.deltava.beans.schedule.*;
  * @since 2.0
  */
 
-public class RoutePlan extends DatabaseBean implements AuthoredBean {
+public class DispatchRoute extends FlightRoute implements AuthoredBean {
 	
 	private int _authorID;
-	private Date _createdOn;
 	private Date _lastUsed;
 	
 	private Airline _a;
-	private Airport _airportD;
-	private Airport _airportA;
 	private Airport _airportL;
 	private String _sid;
 	private String _star;
-	private String _altitude;
-	private String _comments;
-	private String _routeText;
+
 	private int _useCount;
 	private int _dspBuild;
 	
@@ -37,7 +32,7 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	/**
 	 * Creates the route bean.
 	 */
-	public RoutePlan() {
+	public DispatchRoute() {
 		super();
 	}
 
@@ -51,14 +46,6 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public int getUseCount() {
 		return _useCount;
-	}
-	
-	/**
-	 * Returns the creation date of this route.
-	 * @return the creation date/time
-	 */
-	public Date getCreatedOn() {
-		return _createdOn;
 	}
 	
 	/**
@@ -86,22 +73,6 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	}
 	
 	/**
-	 * Returns the departure Airport.
-	 * @return the Airport
-	 */
-	public Airport getAirportD() {
-		return _airportD;
-	}
-	
-	/**
-	 * Returns the arrival Airport.
-	 * @return the Airport
-	 */
-	public Airport getAirportA() {
-		return _airportA;
-	}
-	
-	/**
 	 * Returns the alternate Airport.
 	 * @return the Airport, or null if none
 	 */
@@ -125,29 +96,17 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 		return _star;
 	}
 	
-	/**
-	 * Returns the Cruise Altitude.
-	 * @return the altitude
-	 */
-	public String getCruiseAltitude() {
-		return _altitude;
-	}
 	
-	/**
-	 * Returns the dispatcher comments.
-	 * @return the comments
-	 */
-	public String getComments() {
-		return _comments;
-	}
+
 	
 	/**
 	 * Returns the route.
 	 * @return a space-separated list of waypoints and airways
 	 */
 	public String getRoute() {
-		if (_routeText != null)
-			return _routeText;
+		String rt = super.getRoute();
+		if (rt != null)
+			return rt;
 		
 		StringBuilder buf = new StringBuilder();
 		for (Iterator<NavigationDataBean> i = _route.keySet().iterator(); i.hasNext(); ) {
@@ -187,14 +146,6 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	}
 
 	/**
-	 * Updates the creation date of this route.
-	 * @param dt the creation date/time
-	 */
-	public void setCreatedOn(Date dt) {
-		_createdOn = dt;
-	}
-	
-	/**
 	 * Updates the last use date of this route.
 	 * @param dt the last use date/time
 	 */
@@ -227,22 +178,6 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	}
 	
 	/**
-	 * Updates the departure Airport.
-	 * @param a the Airport
-	 */
-	public void setAirportD(Airport a) {
-		_airportD = a;	
-	}
-	
-	/**
-	 * Updates the arrival Airport.
-	 * @param a the Airport
-	 */
-	public void setAirportA(Airport a) {
-		_airportA = a;
-	}
-
-	/**
 	 * Updates the alternate Airport.
 	 * @param a the Airport
 	 */
@@ -269,29 +204,5 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public void setSTAR(String star) {
 		_star = star;
-	}
-	
-	/**
-	 * Updates the cruise altitude for this route.
-	 * @param alt the cruise altitude
-	 */
-	public void setCruiseAltitude(String alt) {
-		_altitude = alt;
-	}
-	
-	/**
-	 * Updates the dispatcher comments.
-	 * @param comments the comments
-	 */
-	public void setComments(String comments) {
-		_comments = comments;
-	}
-	
-	/**
-	 * Sets the route text.
-	 * @param routeText the route text
-	 */
-	public void setRoute(String routeText) {
-		_routeText = routeText;
 	}
 }
