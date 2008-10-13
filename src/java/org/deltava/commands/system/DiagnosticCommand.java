@@ -15,6 +15,7 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
+import org.deltava.dao.wsdl.*;
 import org.deltava.jdbc.*;
 
 import org.deltava.taskman.TaskScheduler;
@@ -138,6 +139,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetUserData(null));
 		daoCaches.add(new GetPilot(null));
 		daoCaches.add(new GetACARSLog(null));
+		daoCaches.add(new GetFlightAware());
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
 		// Get Virtual Machine properties
