@@ -33,7 +33,9 @@ public class GetRoute extends DAO {
      * @param dstAirport the destination airport IATA code, or null
      * @return a List of Preferred routes
      * @throws DAOException if a JDBC error occurs
+     * @deprecated
      */
+    @Deprecated
     public List<PreferredRoute> getRoutes(String srcAirport, String dstAirport) throws DAOException {
         
        // Build the SQL statement
