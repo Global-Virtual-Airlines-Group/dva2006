@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.acars.RoutePlan;
+import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.NavigationDataBean;
 
 /**
@@ -29,7 +29,7 @@ public class SetACARSRoute extends DAO {
 	 * @param rp the RoutePlan bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(RoutePlan rp) throws DAOException {
+	public void write(DispatchRoute rp) throws DAOException {
 		try {
 			startTransaction();
 			

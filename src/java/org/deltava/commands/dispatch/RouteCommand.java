@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.RoutePlan;
+import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -32,7 +32,7 @@ public class RouteCommand extends AbstractCommand {
 			
 			// Load the route
 			GetACARSRoute rdao = new GetACARSRoute(con);
-			RoutePlan rp = rdao.getRoute(ctx.getID());
+			DispatchRoute rp = rdao.getRoute(ctx.getID());
 			if (rp == null)
 				throw notFoundException("Unknown Route ID - " + ctx.getID());
 			

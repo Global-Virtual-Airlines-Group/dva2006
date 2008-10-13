@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.acars.RoutePlan;
+import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.beans.navdata.NavigationDataBean;
 import org.deltava.beans.schedule.Airport;
@@ -35,13 +35,13 @@ public class GetACARSRoute extends DAO {
 	 * @return a RoutePlan bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public RoutePlan getRoute(int id) throws DAOException {
+	public DispatchRoute getRoute(int id) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM acars.ROUTES WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Execute the query
-			List<RoutePlan> results = execute();
+			List<DispatchRoute> results = execute();
 			if (results.isEmpty())
 				return null;
 			
@@ -83,12 +83,12 @@ public class GetACARSRoute extends DAO {
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RoutePlan> getAll(boolean loadWP) throws DAOException {
+	public Collection<DispatchRoute> getAll(boolean loadWP) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM acars.ROUTES ORDER BY CREATEDON");
 
 			// Execute the Query and load routes
-			Collection<RoutePlan> results = execute();
+			Collection<DispatchRoute> results = execute();
 			loadRoutes(results);
 			return results;
 		} catch (SQLException se) {
@@ -128,13 +128,13 @@ public class GetACARSRoute extends DAO {
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RoutePlan> getByAuthor(int authorID) throws DAOException {
+	public Collection<DispatchRoute> getByAuthor(int authorID) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM acars.ROUTES WHERE (AUTHOR=?) ORDER BY CREATEDON");
 			_ps.setInt(1, authorID);
 			
 			// Execute the Query and load routes
-			Collection<RoutePlan> results = execute();
+			Collection<DispatchRoute> results = execute();
 			loadRoutes(results);
 			return results;
 		} catch (SQLException se) {
@@ -149,7 +149,7 @@ public class GetACARSRoute extends DAO {
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RoutePlan> getRoutes(Airport aD, Airport aA) throws DAOException {
+	public Collection<DispatchRoute> getRoutes(Airport aD, Airport aA) throws DAOException {
 		
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.ROUTES WHERE ");
@@ -171,7 +171,7 @@ public class GetACARSRoute extends DAO {
 				_ps.setString(++param, aA.getIATA());
 			
 			// Execute the Query and load routes
-			Collection<RoutePlan> results = execute();
+			Collection<DispatchRoute> results = execute();
 			loadRoutes(results);
 			return results;
 		} catch (SQLException se) {
@@ -182,11 +182,11 @@ public class GetACARSRoute extends DAO {
 	/**
 	 * Helper method to parse result sets.
 	 */
-	private List<RoutePlan> execute() throws SQLException {
-		List<RoutePlan> results = new ArrayList<RoutePlan>();
+	private List<DispatchRoute> execute() throws SQLException {
+		List<DispatchRoute> results = new ArrayList<DispatchRoute>();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			RoutePlan rp = new RoutePlan();
+			DispatchRoute rp = new DispatchRoute();
 			rp.setID(rs.getInt(1));
 			rp.setAuthorID(rs.getInt(2));
 			rp.setAirline(SystemData.getAirline(rs.getString(3)));
@@ -214,13 +214,13 @@ public class GetACARSRoute extends DAO {
 	/**
 	 * Helper method to load route waypoints.
 	 */
-	private void loadRoutes(Collection<RoutePlan> routes) throws SQLException {
+	private void loadRoutes(Collection<DispatchRoute> routes) throws SQLException {
 		if (routes.isEmpty())
 			return;
 		
 		StringBuilder buf = new StringBuilder("SELECT * FROM acars.ROUTE_WP WHERE ID IN (");
-		for (Iterator<RoutePlan> i = routes.iterator(); i.hasNext(); ) {
-			RoutePlan rp = i.next();
+		for (Iterator<DispatchRoute> i = routes.iterator(); i.hasNext(); ) {
+			DispatchRoute rp = i.next();
 			buf.append(String.valueOf(rp.getID()));
 			if (i.hasNext())
 				buf.append(',');
@@ -230,10 +230,10 @@ public class GetACARSRoute extends DAO {
 		prepareStatementWithoutLimits(buf.toString());
 		
 		// Execute the query
-		Map<Integer, RoutePlan> data = CollectionUtils.createMap(routes, "ID");
+		Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, "ID");
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			RoutePlan rp = data.get(new Integer(rs.getInt(1)));
+			DispatchRoute rp = data.get(new Integer(rs.getInt(1)));
 			if (rp != null) {
 				double lat = rs.getDouble(5);
 				double lng = rs.getDouble(6);
