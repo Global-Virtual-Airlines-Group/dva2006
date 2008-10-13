@@ -5,6 +5,7 @@ import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
 
+@Deprecated
 public class TestPreferredRoute extends AbstractBeanTestCase {
 
     private PreferredRoute _pr;
