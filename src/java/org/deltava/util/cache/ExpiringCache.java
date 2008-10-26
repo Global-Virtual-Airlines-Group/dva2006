@@ -62,13 +62,9 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	/**
 	 * Sets the cache's expiration interval.
 	 * @param expiry the expiration interval in seconds
-	 * @throws IllegalArgumentException if expiry is zero or negative
 	 */
 	public void setExpiration(int expiry) {
-		if (expiry < 1)
-			throw new IllegalArgumentException("Invalid expiration interval - " + expiry);
-
-		_expiry = expiry * 1000;
+		_expiry = Math.max(1, expiry) * 1000;
 	}
 
 	/**

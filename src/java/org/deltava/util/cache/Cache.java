@@ -24,7 +24,6 @@ public abstract class Cache<T extends Cacheable> {
 	/**
 	 * Initializes the cache.
 	 * @param maxSize the maximum size of the cache
-	 * @throws IllegalArgumentException if maxSize is zero or negative
 	 */
 	protected Cache(int maxSize) {
 		super();
