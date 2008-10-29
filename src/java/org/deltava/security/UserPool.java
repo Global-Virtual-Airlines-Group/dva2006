@@ -91,6 +91,14 @@ public class UserPool {
 	public static void block(Person p) {
 		_blockedUsers.add(new Integer(p.getID()));
 	}
+	
+	/**
+	 * Unlocks a user from the application.
+	 * @param p the Person to block
+	 */
+	public static void unblock(Person p) {
+		_blockedUsers.remove(new Integer(p.getID()));
+	}
 
 	/**
 	 * Removes a person from the user pool, provided that the supplied Session ID matches. This additional check is

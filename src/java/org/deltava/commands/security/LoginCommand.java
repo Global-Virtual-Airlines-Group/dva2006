@@ -166,6 +166,9 @@ public class LoginCommand extends AbstractCommand {
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation av = avdao.get(p.getID());
+			
+			// Unblock the user if blocked
+			UserPool.unblock(p);
 
 			// Start the transaction
 			ctx.startTX();
