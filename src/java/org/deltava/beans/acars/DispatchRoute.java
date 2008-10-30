@@ -21,20 +21,11 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean {
 	
 	private Airline _a;
 	private Airport _airportL;
-	private String _sid;
-	private String _star;
 
 	private int _useCount;
 	private int _dspBuild;
 	
 	private final Map<NavigationDataBean, String> _route = new LinkedHashMap<NavigationDataBean, String>(); 
-
-	/**
-	 * Creates the route bean.
-	 */
-	public DispatchRoute() {
-		super();
-	}
 
 	public int getAuthorID() {
 		return _authorID;
@@ -79,25 +70,6 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean {
 	public Airport getAirportL() {
 		return _airportL;
 	}
-	
-	/**
-	 * Returns the Standard Instrument Departure ID.
-	 * @return the ID in NAME.TRANSITION.RUNWAY format
-	 */
-	public String getSID() {
-		return _sid;
-	}
-	
-	/**
-	 * Returns the Standard Terminal Arrival Route ID.
-	 * @return the ID in NAME.TRANSITION.RUNWAY format
-	 */
-	public String getSTAR() {
-		return _star;
-	}
-	
-	
-
 	
 	/**
 	 * Returns the route.
@@ -190,19 +162,11 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean {
 		_authorID = id;
 	}
 	
-	/**
-	 * Updates the Standard Instrument Departure ID.
-	 * @param sid the SID ID
-	 */
-	public void setSID(String sid) {
-		_sid = sid;
+	public String getComboName() {
+		return getRoute();
 	}
 	
-	/**
-	 * Updates the Standard Terminal Arrival Route ID.
-	 * @param star the STAR ID
-	 */
-	public void setSTAR(String star) {
-		_star = star;
+	public String getComboAlias() {
+		return getHexID();
 	}
 }

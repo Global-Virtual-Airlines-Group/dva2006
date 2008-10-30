@@ -57,6 +57,21 @@ if (e) e.style.visibility = isVisible ? 'visible' : 'hidden';
 return true;
 }
 
+function setCombo(combo, entryValue)
+{
+if (!combo) return false;
+for (var x = 0; x < combo.options.length; x++) {
+	var opt = combo.options[x];
+	if ((opt.value == entryValue) || (opt.text == entryValue)) {
+		combo.selectedIndex = x;
+		return true;
+	}
+}
+
+combo.selectedIndex = -1;
+return false;
+}
+
 function checkSubmit()
 {
 if (document.isSubmit) {

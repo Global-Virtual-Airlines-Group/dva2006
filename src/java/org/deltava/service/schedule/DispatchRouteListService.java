@@ -8,13 +8,14 @@ import java.io.IOException;
 
 import org.jdom.*;
 
-import org.deltava.beans.AuthoredBean;
+import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.wsdl.*;
 import org.deltava.service.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
@@ -42,12 +43,20 @@ public class DispatchRouteListService extends WebService {
 		// Check if loading from FlightAware
 		boolean doFW = Boolean.valueOf(ctx.getParameter("external")).booleanValue();
 		doFW &= ctx.isUserInRole("Route") && SystemData.getBoolean("schedule.flightaware.enabled");
+		boolean doRoute = Boolean.valueOf(ctx.getParameter("fullRoute")).booleanValue();
+		
+		// Check for default runway
+		String rwy = ctx.getParameter("runway");
+		if ((rwy == null) || !rwy.startsWith("RW"))
+			rwy = "ALL";
 		
 		// Get the Data
 		Collection<FlightRoute> routes = new ArrayList<FlightRoute>();
 		try {
 			if (doFW) {
-				GetFlightAware fwdao = new GetFlightAware();
+				GetFARoutes fwdao = new GetFARoutes();
+				fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
+				fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
 				routes.addAll(fwdao.getRouteData(aD, aA));
 			}
 			
@@ -70,12 +79,52 @@ public class DispatchRouteListService extends WebService {
 		// Save the routes
 		for (Iterator<? extends FlightRoute> i = routes.iterator(); i.hasNext(); ) {
 			FlightRoute rt = i.next();
+			boolean isExternal = (rt instanceof ExternalFlightRoute); 
+			StringBuilder buf = new StringBuilder();
 			Element rte = new Element("route");
-			rte.setAttribute("id", String.valueOf(rt.getID()));
 			rte.setAttribute("altitude", rt.getCruiseAltitude());
+			rte.setAttribute("external", String.valueOf(isExternal));
 			rte.addContent(XMLUtils.createElement("waypoints", rt.getRoute()));
 			rte.addContent(XMLUtils.createElement("comments", rt.getComments(), true));
-			rte.setAttribute("external", String.valueOf(!(rt instanceof AuthoredBean)));
+			if (rt.getSID() != null) {
+				String sid = rt.getSID();
+				if (sid.endsWith(".ALL"))
+					sid = sid.replace("ALL", rwy);
+				
+				rte.setAttribute("sid", sid);
+			}
+				
+			if (rt.getSTAR() != null)
+				rte.setAttribute("star", rt.getSTAR());
+			if (rt instanceof DispatchRoute) {
+				rte.setAttribute("id", String.valueOf(rt.getID()));
+				buf.append('#');
+				buf.append(String.valueOf(rt.getID()));
+			} else if (isExternal) {
+				rte.setAttribute("id", "EXT" + String.valueOf(rt.getID()));
+				buf.append("EXT");
+				buf.append(String.valueOf(rt.getID()));
+			}
+			
+			// Build the label
+			buf.append(" - ");
+			List<String> wps = StringUtils.split(rt.getRoute(), " ");
+			if ((wps.size() > 10) && !doRoute && !isExternal) {
+				buf.append(StringUtils.listConcat(wps.subList(0, 3), " "));
+				buf.append(" ... ");
+				buf.append(StringUtils.listConcat(wps.subList(wps.size() - 2, wps.size()), " "));
+			} else
+				buf.append(rt.getRoute());
+
+			// Add the source
+			if (isExternal) {
+				buf.append(" (");
+				buf.append(((ExternalFlightRoute) rt).getSource());
+				buf.append(')');
+			}
+			
+			// Add the element
+			rte.addContent(XMLUtils.createElement("name", buf.toString(), true));
 			re.addContent(rte);
 		}
 		

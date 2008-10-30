@@ -7,9 +7,6 @@ import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.commands.*;
-import org.deltava.dao.*;
-
-import org.deltava.security.command.DispatchRouteAccessControl;
 
 import org.deltava.util.ComboUtils;
 import org.deltava.util.system.SystemData;
@@ -40,31 +37,6 @@ public class RoutePlotCommand extends AbstractCommand {
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("simVersions", SIM_VERSIONS, REQUEST);
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
-		
-		// Check for dispatch route creation access
-		DispatchRouteAccessControl access = new DispatchRouteAccessControl(ctx);
-		access.validate();
-		ctx.setAttribute("access", access, REQUEST);
-		
-		// Check for specified Airports
-		if (access.getCanCreate()) {
-			Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
-			Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
-			ctx.setAttribute("airportD", aD, REQUEST);
-			ctx.setAttribute("airportA", aA, REQUEST);
-			
-			// Load the airlines
-			if ((aD != null) && (aA != null)) {
-				try {
-					GetSchedule sdao = new GetSchedule(ctx.getConnection());
-					ctx.setAttribute("airlnes", sdao.getAirlines(aD, aA), REQUEST);
-				} catch (DAOException de) {
-					throw new CommandException(de);
-				} finally {
-					ctx.release();
-				}
-			}
-		}
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

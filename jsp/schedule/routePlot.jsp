@@ -14,6 +14,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="googleMaps" />
+<content:js name="routePlot" />
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
@@ -23,118 +24,6 @@
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
-function getAJAXParams()
-{
-var f = document.forms[0];
-var params = new Array();
-if (f.airportD.selectedIndex > 0) {
-	params.push('airportD=' + f.airportD.options[f.airportD.selectedIndex].value);
-	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
-}
-if (f.airportA.selectedIndex > 0) {
-	params.push('airportA=' + f.airportA.options[f.airportA.selectedIndex].value);
-	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
-}
-if (f.airportL.selectedIndex > 0) {
-	params.push('airportL=' + f.airportL.options[f.airportL.selectedIndex].value);
-	f.airportLCode.value = f.airportL.options[f.airportL.selectedIndex].value;
-}
-	
-if (f.sid.selectedIndex > 0)
-	params.push('sid=' + f.sid.options[f.sid.selectedIndex].value);
-if (f.star.selectedIndex > 0)
-	params.push('star=' + f.star.options[f.star.selectedIndex].value);
-if (f.route.value.length > 0)
-	params.push('route=' + f.route.value);
-
-return params;
-}
-
-function plotMap()
-{
-// Set map as loading
-var isLoading = getElement("isLoading");
-if (isLoading)
-	isLoading.innerHTML = " - LOADING...";
-	
-// Generate an XMLHTTP request
-var xmlreq = GXmlHttp.create();
-xmlreq.open("POST", "routeplot.ws", true);
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-// Build the update handler	
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	map.clearOverlays();
-	
-	// Draw the markers and load the codes
-	var positions = new Array();
-	var codes = new Array();
-	var xdoc = xmlreq.responseXML.documentElement;
-	var waypoints = xdoc.getElementsByTagName("pos");
-	for (var i = 0; i < waypoints.length; i++) {
-		var wp = waypoints[i];
-		var label = wp.firstChild;
-		var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-		positions.push(p);
-		codes.push(wp.getAttribute("code"));
-		if (wp.getAttribute("pal"))
-			map.addOverlay(googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, label.data));
-		else
-			map.addOverlay(googleMarker('${imgPath}', wp.getAttribute("color"), p, label.data));
-	} // for
-	
-	// Draw the route
-	map.addOverlay(new GPolyline(positions, '#4080AF', 2, 0.8));
-	
-	// Save the codes
-	var f = document.forms[0];
-	f.routeCodes.value = codes.join(' ');
-
-	// Get the midpoint and center the map
-	var mps = xdoc.getElementsByTagName("midpoint");
-	var mpp = mps[0];
-	if (mpp) {
-		var mp = new GLatLng(parseFloat(mpp.getAttribute("lat")), parseFloat(mpp.getAttribute("lng")));
-		map.setCenter(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
-	}
-
-	// Load the SID/STAR list
-	var sids = xdoc.getElementsByTagName("sid");
-	var stars = xdoc.getElementsByTagName("star");
-	updateRoutes(f.sid, sids);
-	updateRoutes(f.star, stars);
-	
-	// Focus on the map
-	if (isLoading)
-		isLoading.innerHTML = '';
-
-	return true;
-}
-
-var params = getAJAXParams();
-xmlreq.send(params.join('&'));
-return true;
-}
-
-function updateRoutes(combo, elements)
-{
-// Save the old value
-var oldCode = combo.options[combo.selectedIndex].value;
-
-// Update the combobox choices
-combo.options.length = elements.length + 1;
-combo.options[0] = new Option("-", "");
-for (var i = 0; i < elements.length; i++) {
-	var e = elements[i];
-	var rCode = e.getAttribute("code");
-	combo.options[i+1] = new Option(rCode, rCode);
-	if (oldCode == rCode)
-		combo.selectedIndex = (i+1);
-} // for
-
-return true;
-}
 
 function validate(form)
 {
@@ -143,19 +32,6 @@ if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
 if (!validateText(form.route, 3, 'Flight Route')) return false;
 return true;
 }
-<c:if test="${access.canCreate}">
-function saveRoute()
-{
-var f = document.forms[0];
-if (!validate(f)) return false;
-if (!validateCombo(f.airline, 'Airline')) return false;
-if (!validateText(f.cruiseAlt, 4, 'Cruising Altitude')) return false;
-f.action = 'dsproutesave.do';
-f.target = '_self';
-f.submit();
-return true;
-}
-</c:if>
 </script>
 <c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
 </head>
@@ -171,7 +47,7 @@ return true;
 <el:form action="routeplan.ws" method="post" target="_new" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER<span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER</td>
 </tr>
 <c:if test="${access.canCreate}">
 <tr>
@@ -229,9 +105,6 @@ return true;
 <tr>
  <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
  <el:button ID="SaveButton" type="submit" className="BUTTON" label="DOWNLOAD FLIGHT PLAN" />
-<c:if test="${access.canCreate}">
- <el:button ID="RouteSaveButton" className="BUTTON" onClick="void saveRoute()" label="SAVE DISPATCH ROUTE" />
-</c:if>
 </td>
 </tr>
 </el:table>
@@ -243,19 +116,9 @@ return true;
 <script language="JavaScript" type="text/javascript">
 // Load the airports
 var f = document.forms[0];
-<c:choose>
-<c:when test="${access.canCreate && (!empty airportD) && (!empty airportA)}">
-updateAirports(f.airportD, 'airline=all', ${!useIATA}, '${airportD.ICAO}');
-updateAirports(f.airportA, 'airline=all', ${!useIATA}, '${airportA.ICAO}');
-updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
-window.setTimeout('void plotMap()', 3250);
-</c:when>
-<c:otherwise>
 updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
 updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA));
 updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
-</c:otherwise>
-</c:choose>
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});

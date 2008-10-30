@@ -33,8 +33,12 @@ public class RoutePlotMapService extends RouteMapService {
 	 * @throws ServiceException if an error occurs
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
+		
+		// Check if we download runways
+		boolean doRunways = Boolean.valueOf(ctx.getParameter("runways")).booleanValue();
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
+		Collection<String> runways = new LinkedHashSet<String>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
@@ -54,6 +58,10 @@ public class RoutePlotMapService extends RouteMapService {
 				routePoints.add(aD);
 				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
 				tRoutes.addAll(sids);
+				
+				// Add departure runways
+				if (doRunways)
+					runways.addAll(dao.getSIDRunways(aD.getCode()));
 			}
 
 			// Check if we have a SID
@@ -105,7 +113,17 @@ public class RoutePlotMapService extends RouteMapService {
 			Element e = new Element(tr.getTypeName().toLowerCase());
 			e.setAttribute("name", tr.getName());
 			e.setAttribute("transition", tr.getTransition());
-			e.setAttribute("code", tr.getCode());
+			e.setAttribute("label", tr.getCode());
+			e.setAttribute("code", tr.toString().endsWith(".ALL") ? tr.getCode() + ".ALL" : tr.getCode());
+			re.addContent(e);
+		}
+		
+		// Add runways
+		for (Iterator<String> i = runways.iterator(); i.hasNext(); ) {
+			String rwy = i.next();
+			Element e = new Element("runway");
+			e.setAttribute("code", rwy);
+			e.setAttribute("label", rwy.replace("RW", "Runway "));
 			re.addContent(e);
 		}
 

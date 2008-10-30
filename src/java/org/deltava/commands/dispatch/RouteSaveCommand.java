@@ -38,6 +38,8 @@ public class RouteSaveCommand extends AbstractCommand {
 		rp.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
 		rp.setCruiseAltitude(ctx.getParameter("cruiseAlt"));
 		rp.setRoute(ctx.getParameter("route"));
+		rp.setComments(ctx.getParameter("comments"));
+		
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
@@ -69,9 +71,18 @@ public class RouteSaveCommand extends AbstractCommand {
 				}
 			}
 			
+			// Check for a duplicate
+			GetACARSRoute rdao = new GetACARSRoute(con);
+			int dupeID = rdao.hasDuplicate(rp.getAirportD(), rp.getAirportA(), rp.getRoute());
+			ctx.setAttribute("isDupe", Boolean.valueOf(dupeID != 0), REQUEST);
+			ctx.setAttribute("dupeID", Integer.valueOf(dupeID), REQUEST);
+			
 			// Save the route
-			SetACARSRoute wdao = new SetACARSRoute(con);
-			wdao.write(rp);
+			if (dupeID == 0) {
+				SetACARSRoute wdao = new SetACARSRoute(con);
+				wdao.write(rp);
+				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -79,7 +90,6 @@ public class RouteSaveCommand extends AbstractCommand {
 		}
 		
 		// Set status attributes
-		ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("route", rp, REQUEST);
 		
 		// Forward to the JSP
