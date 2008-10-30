@@ -180,6 +180,37 @@ public class GetACARSRoute extends DAO {
 	}
 	
 	/**
+	 * Searches for duplicate routes between two Airports.
+	 * @param aD the departure Airport
+	 * @param aA the arrival Airport
+	 * @param route the route waypoints, separated by spaces
+	 * @return the route database ID, or zero if no duplicate found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int hasDuplicate(Airport aD, Airport aA, String route) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT R.ID, GROUP_CONCAT(RW.CODE ORDER BY RW.SEQ SEPARATOR ?) "
+					+ "AS WPS FROM acars.ROUTES R LEFT JOIN acars.ROUTE_WP RW ON (R.ID=RW.ID) WHERE "
+					+ "(R.AIRPORT_D=?) AND (R.AIRPORT_A=?) GROUP BY R.ID HAVING (WPS=?) LIMIT 1");
+			_ps.setString(1, " ");
+			_ps.setString(2, aD.getIATA());
+			_ps.setString(3, aA.getIATA());
+			_ps.setString(4, route);
+			
+			// Do the query
+			ResultSet rs = _ps.executeQuery();
+			int id = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return id;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Helper method to parse result sets.
 	 */
 	private List<DispatchRoute> execute() throws SQLException {
