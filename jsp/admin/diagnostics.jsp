@@ -57,6 +57,13 @@
  Last 15 Minutes: <fmt:dec value="${fn:get(loadAvg, 2)}" /> processes queued</td>
 </tr>
 </c:if>
+<c:if test="${!empty osMemInfo}">
+<tr>
+ <td class="label" valign="top">Memory Usage</td>
+ <td class="data"><fmt:int value="${osMemInfo['MemTotal']}" /> KB total physical memory<br />
+<fmt:int value="${osMemInfo['MemFree']}" /> KB free physical memory</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Server Information</td>
  <td class="data">${pageContext.servletContext.serverInfo}</td>
