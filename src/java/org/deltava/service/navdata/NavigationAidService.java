@@ -1,9 +1,9 @@
 // Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
+import java.io.*;
 import java.util.*;
 import java.text.*;
-import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -13,6 +13,7 @@ import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to export the navigation data database to ACARS dispatch clients.
@@ -21,8 +22,8 @@ import org.deltava.util.StringUtils;
  * @since 2.0
  */
 
-public class NavigationAidService extends WebService {
-
+public class NavigationAidService extends DispatchDataService {
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -34,54 +35,65 @@ public class NavigationAidService extends WebService {
 		// Ensure we are a dispatcher
 		if (!ctx.isUserInRole("Dispatch"))
 			throw error(SC_UNAUTHORIZED, "Not in Dispatch role");
+		
+		// Get the navaid type and check the cache
+		int type = StringUtils.parse(ctx.getParameter("type"), NavigationDataBean.VOR);
+		File f = _dataCache.get(Integer.valueOf(type));
+		if (f != null) {
+			ctx.getResponse().setContentType("text/plain");
+			ctx.getResponse().setHeader("Cache-Control", "private");
+			ctx.getResponse().setIntHeader("max-age", 600);
+			sendFile(f, ctx.getResponse());
+			return SC_OK;
+		}
 
+		// Get the DAO and the airways/navaids
 		Collection<NavigationDataBean> navaids = null;
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO and the airways/navaids
-			GetNavRoute navdao = new GetNavRoute(con);
-			navaids = navdao.getAll(StringUtils.parse(ctx.getParameter("type"), NavigationDataBean.VOR));
+			GetNavRoute navdao = new GetNavRoute(ctx.getConnection());
+			navaids = navdao.getAll(type);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
+		
+		// Write to a temp file
+		File cacheDir = new File(SystemData.get("schedule.cache"));
+		f = new File(cacheDir, "navaid" + NavigationDataBean.NAVTYPE_NAMES[type] + ".txt");
 
 		// Format navaids
-		ctx.println("[navaids]");
-		final NumberFormat df = new DecimalFormat("#0.000000");
-		for (Iterator<NavigationDataBean> i = navaids.iterator(); i.hasNext();) {
-			NavigationDataBean nb = i.next();
-			ctx.print(nb.getCode() + "." + nb.getTypeName() + "=");
-			ctx.print(df.format(nb.getLatitude()) + "," + df.format(nb.getLongitude()));
-			switch (nb.getType()) {
-			case NavigationDataBean.VOR:
-				ctx.print("," + nb.getName() + ",");
-				ctx.print(((VOR) nb).getFrequency());
-				break;
-
-			case NavigationDataBean.NDB:
-				ctx.print("," + nb.getName() + ",");
-				ctx.print(((NDB) nb).getFrequency());
-				break;
+		try {
+			PrintWriter pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(f), 65536));
+			pw.println("[navaids]");
+			final NumberFormat df = new DecimalFormat("#0.000000");
+			for (Iterator<NavigationDataBean> i = navaids.iterator(); i.hasNext();) {
+				NavigationDataBean nb = i.next();
+				pw.print(nb.getCode() + "." + nb.getTypeName() + "=");
+				pw.print(df.format(nb.getLatitude()) + "," + df.format(nb.getLongitude()));
+				if ((nb.getType() == NavigationDataBean.VOR) || (nb.getType() == NavigationDataBean.NDB))  {
+					pw.print("," + nb.getName() + ",");
+					pw.print(((NavigationFrequencyBean) nb).getFrequency());
+				}
+			
+				ctx.print(",");
+				if (nb.getRegion() != null)
+					pw.println(nb.getRegion());
+				else
+					pw.println("");
+				
+				i.remove();
 			}
 			
-			ctx.print(",");
-			if (nb.getRegion() != null)
-				ctx.println(nb.getRegion());
-			else
-				ctx.println("");
-				
-			i.remove();
-		}
+			// Close the file and add to the cache
+			pw.close();
+			addCacheEntry(Integer.valueOf(type), f);
 
-		// Format and write
-		try {
+			// Format and write
 			ctx.getResponse().setContentType("text/plain");
 			ctx.getResponse().setHeader("Cache-Control", "private");
 			ctx.getResponse().setIntHeader("max-age", 600);
-			ctx.commit();
+			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error");
 		}
