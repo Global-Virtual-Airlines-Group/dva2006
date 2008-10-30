@@ -23,6 +23,7 @@
 	<service id="routeplan" class="org.deltava.service.schedule.RoutePlanService" />
 	<service id="dsproutes" class="org.deltava.service.schedule.DispatchRouteListService" />
 	<service id="dsproute" class="org.deltava.service.schedule.DispatchRouteMapService" />
+	<service id="troutes" class="org.deltava.service.schedule.TerminalRouteService" />
 
 	<!-- Flight Statistics Services -->
 	<service id="mystats" class="org.deltava.service.stats.MyFlightsService" />
