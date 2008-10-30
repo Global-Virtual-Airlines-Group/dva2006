@@ -145,6 +145,11 @@ BODY {
 	font-weight: normal;
 }
 
+.BUTTON:disabled, .cmdButton:disabled {
+	background-color: #002256;
+	color: #A0A0A0;
+}
+
 a, a:visited {
 	color: #1A4876;
 	text-decoration: underline;
