@@ -3,8 +3,12 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.io.IOException;
 
 import org.deltava.beans.system.EMailConfiguration;
+
+import org.deltava.util.ThreadUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
@@ -14,7 +18,7 @@ import org.deltava.beans.system.EMailConfiguration;
  */
 
 public class GetPilotEMail extends DAO {
-
+	
    /**
     * Initailizes the Data Access Object.
     * @param c the JDBC connection to use
@@ -56,6 +60,35 @@ public class GetPilotEMail extends DAO {
       } catch (SQLException se) {
          throw new DAOException(se); 
       }
+   }
+   
+   /**
+    * Checks whether a particular mailbox has new mail in it. This call executes a script that checks a maildir
+    * @param id the user's database ID
+    * @return the number of messages waiting
+    * @throws DAOException if an error occurs
+    */
+   public int hasNewMail(int id) throws DAOException {
+	   try {
+		   ProcessBuilder pBuilder = new ProcessBuilder(SystemData.get("smtp.imap.newmail"), String.valueOf(id));
+		   pBuilder.redirectErrorStream(true);
+		   Process p = pBuilder.start();
+		   
+			// Wait for the process to complete
+			int runTime = 0;
+			while (runTime < 1250) {
+				ThreadUtils.sleep(100);
+				try {
+					return p.exitValue();
+				} catch (IllegalThreadStateException itse) {
+					runTime += 100;            			
+				}
+			}
+			
+			return 0;
+	   } catch (IOException ie) {
+		   throw new DAOException(ie);
+	   }
    }
    
    /**
