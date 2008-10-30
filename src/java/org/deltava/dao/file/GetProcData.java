@@ -1,15 +1,16 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
 
 import org.deltava.dao.DAOException;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to read from the Linux /proc filesystem.
- * @author luke
- * @version 1.0
+ * @author Luke
+ * @version 2.2
  * @since 1.0
  */
 
@@ -78,6 +79,39 @@ public class GetProcData extends DAO {
 				}
 			}
 			
+			return results;
+		} catch (IOException ie) {
+			throw new DAOException(ie);
+		}
+	}
+
+	/**
+	 * Returns system memory data from /proc/meminfo.
+	 * @return a Map of Integers, keyed by value
+	 * @throws DAOException if an I/O error occurs
+	 */
+	public Map<String, Integer> getMemory() throws DAOException {
+		try {
+			Map<String, Integer> results = new LinkedHashMap<String, Integer>();
+			InputStream is = new FileInputStream("/proc/meminfo");
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			
+			// Parse the file
+			String data = br.readLine();
+			while (data != null) {
+				int pos = data.indexOf(':');
+				if ((pos != -1) && data.endsWith(" kB")) {
+					String key = data.substring(0, pos);
+					String rawValue = data.substring(pos + 1, data.lastIndexOf(' '));
+					int value = StringUtils.parse(rawValue.substring(rawValue.lastIndexOf(' ') + 1), 0);
+					results.put(key, Integer.valueOf(value));
+				}
+				
+				data = br.readLine();
+			}
+			
+			// Close and return
+			is.close();
 			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
