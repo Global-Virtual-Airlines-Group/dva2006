@@ -22,7 +22,8 @@ import org.deltava.util.cache.*;
 public class GetNavRoute extends GetNavData {
 	
 	private static final Cache<Route> _rCache = new AgingCache<Route>(640);
-	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(640); 
+	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(640);
+	private static final Cache<CacheableSet<String>> _rwCache = new ExpiringCache<CacheableSet<String>>(128, 7200);
 
 	private class CacheableRoute implements Route {
 
@@ -69,7 +70,7 @@ public class GetNavRoute extends GetNavData {
 	 * @return the number of hits
 	 */
 	public final int getRequests() {
-		return _rCache.getRequests();
+		return _rCache.getRequests() + _aCache.getRequests() + _rwCache.getRequests();
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public class GetNavRoute extends GetNavData {
 	 * @return the number of requests
 	 */
 	public final int getHits() {
-		return _rCache.getHits();
+		return _rCache.getHits() + _aCache.getHits() + _rwCache.getHits();
 	}
 
 	/**
@@ -103,9 +104,10 @@ public class GetNavRoute extends GetNavData {
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
 		if (tkCount == 3)
 			sqlBuf.append(" AND (RUNWAY=?)");
+		sqlBuf.append(" ORDER BY SEQ");
 
 		try {
-			prepareStatementWithoutLimits(" ORDER BY SEQ");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
 			if (tkns.hasMoreTokens())
@@ -177,6 +179,44 @@ public class GetNavRoute extends GetNavData {
 			prepareStatementWithoutLimits("SELECT DISTINCT ICAO, TYPE, NAME, TRANSITION, RUNWAY FROM common.SID_STAR "
 					+ "ORDER BY ICAO, NAME, TRANSITION");
 			List<TerminalRoute> results = executeSIDSTAR();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the available SID runways for a particular Airport.
+	 * @param code the Airport ICAO code
+	 * @return a Collection of Runway codes
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getSIDRunways(String code) throws DAOException {
+		
+		// Check the cache
+		CacheableSet<String> results = _rwCache.get(code.toUpperCase());
+		if (results != null)
+			return results;
+		
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SID_STAR WHERE (ICAO=?) AND "
+					+ "(TYPE=?) ORDER BY RUNWAY");
+			_ps.setString(1, code.toUpperCase());
+			_ps.setInt(2, TerminalRoute.SID);
+			
+			// Execute the query
+			results = new CacheableSet<String>(code.toUpperCase());
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				String rwy = rs.getString(1);
+				if (!"ALL".equals(rwy))
+					results.add(rwy);
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			_rwCache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
