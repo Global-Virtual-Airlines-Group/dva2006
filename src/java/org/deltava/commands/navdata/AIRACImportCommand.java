@@ -7,12 +7,12 @@ import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
+
 import static org.deltava.beans.navdata.NavigationDataBean.*;
+import org.deltava.service.navdata.DispatchDataService;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.SetNavData;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
@@ -63,7 +63,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
 		if (navaidType == -1)
 			throw notFoundException("Unknown Data File - " + navData.getName());
-
+		
 		List<String> errors = new ArrayList<String>();
 		int entryCount = 0; int regionCount = 0;
 		try {
@@ -173,6 +173,9 @@ public class AIRACImportCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Purge the dispatch web service file cache
+		DispatchDataService.invalidate();
 
 		// Set status attributes
 		ctx.setAttribute("entryCount", new Integer(entryCount), REQUEST);
