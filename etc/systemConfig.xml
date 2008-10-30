@@ -276,6 +276,12 @@
 	<weather>
 		<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
 		<tileHost>gima.weather.com</tileHost>
+		
+		<!-- Download locations -->
+		<url>
+			<metar>ftp://tgftp.nws.noaa.gov/data/observations/metar/stations/</metar>
+			<taf>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/stations/</taf>
+		</url>	
 	</weather>
 
 	<!-- Configuration files -->
@@ -424,13 +430,14 @@
 			<!-- downloaded file cache -->
 			<cache>/var/cache/innovata/sched_cache</cache>
 		</innovata>
+		<cache>/var/cache/sched</cache>
 		
 		<!-- FlightAware download data -->
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
 			<download>
 				<user>gvagroup</user>			
-				<pwd>gva@ware</pwd>			
+				<pwd>***REMOVED***</pwd>			
 			</download>
 		</flightaware>
 	</schedule>

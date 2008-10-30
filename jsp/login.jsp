@@ -75,7 +75,7 @@ in order to log into the site.<br />
 </tr>
 <c:if test="${!empty system_message}">
 <tr>
- <td colspan="2" class="error bld">LOGIN FAILURE - ${system_message}</td>
+ <td colspan="2"><span class="error bld">LOGIN FAILURE - ${system_message}</span></td>
 </tr>
 </c:if>
 </el:table>
