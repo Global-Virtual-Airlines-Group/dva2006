@@ -32,7 +32,7 @@ public class CacheableInteger implements Cacheable {
 	}
 
 	/**
-	 * Returns the value
+	 * Returns the value.
 	 * @return the value
 	 */
 	public int getValue() {
