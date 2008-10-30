@@ -43,8 +43,8 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	private int _simRate;
 	private int _fuelRemaining;
 
-	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS };
-	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS" };
+	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS , FLAG_AP_LNAV};
+	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
 	
 	private static final String[] PHASE_NAMES = {"Unknown", "Pre-Flight", "Pushback", "Taxi Out", "Takeoff", "Airborne", "Rollout",
 			"Taxi In", "At Gate", "Shutdown", "Completed", "Abort", "Error", "File PIREP" };
@@ -728,11 +728,12 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		}
 
 		// Add Autothrottle flags if set
-		if (isFlagSet(FLAG_AT_IAS)) {
+		if (isFlagSet(FLAG_AT_VNAV))
+			buf.append("Autothrottle: VNAV<br />");
+		else if (isFlagSet(FLAG_AT_IAS))
 			buf.append("Autothrottle: IAS<br />");
-		} else if (isFlagSet(FLAG_AT_MACH)) {
+		else if (isFlagSet(FLAG_AT_MACH))
 			buf.append("Autothrottle: MACH<br />");
-		}
 
 		// Add Pause/Stall/Overspeed flags
 		if (isFlagSet(FLAG_PAUSED))

@@ -3,32 +3,29 @@ package org.deltava.beans.schedule;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
- * 
+ * An abstract class to store common Flight Route information.
  * @author Luke
  * @version 2.2
  * @since 2.2
  */
-public class FlightRoute extends DatabaseBean {
+
+public abstract class FlightRoute extends DatabaseBean implements ComboAlias {
 	
 	private Date _createdOn;
 	
 	private Airport _airportD;
 	private Airport _airportA;
 	
+	private String _sid;
+	private String _star;
+	
 	private String _altitude;
 	private String _routeText;
 	private String _comments;
 
-	/**
-	 * Creates the bean. 
-	 */
-	public FlightRoute() {
-		super();
-	}
-	
 	/**
 	 * Returns the creation date of this route.
 	 * @return the creation date/time
@@ -51,6 +48,22 @@ public class FlightRoute extends DatabaseBean {
 	 */
 	public Airport getAirportA() {
 		return _airportA;
+	}
+	
+	/**
+	 * Returns the Standard Instrument Departure ID.
+	 * @return the ID in NAME.TRANSITION.RUNWAY format
+	 */
+	public String getSID() {
+		return _sid;
+	}
+	
+	/**
+	 * Returns the Standard Terminal Arrival Route ID.
+	 * @return the ID in NAME.TRANSITION.RUNWAY format
+	 */
+	public String getSTAR() {
+		return _star;
 	}
 	
 	/**
@@ -101,6 +114,21 @@ public class FlightRoute extends DatabaseBean {
 		_airportA = a;
 	}
 	
+	/**
+	 * Updates the Standard Instrument Departure ID.
+	 * @param sid the SID ID
+	 */
+	public void setSID(String sid) {
+		_sid = sid;
+	}
+	
+	/**
+	 * Updates the Standard Terminal Arrival Route ID.
+	 * @param star the STAR ID
+	 */
+	public void setSTAR(String star) {
+		_star = star;
+	}
 	
 	/**
 	 * Updates the cruise altitude for this route.

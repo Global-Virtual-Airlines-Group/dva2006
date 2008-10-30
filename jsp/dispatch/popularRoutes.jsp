@@ -30,7 +30,7 @@ function plot(aD, aA)
 var f = document.forms[0];
 f.airportD.value = aD;
 f.airportA.value = aA;
-f.action = '/routeplot.do';
+f.action = '/dsprouteplot.do';
 f.submit();
 return true;	
 }
