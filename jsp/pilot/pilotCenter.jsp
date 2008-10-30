@@ -351,12 +351,6 @@ every day.</td>
 <el:text name="navaidCode" size="4" max="5" value="" />&nbsp;<el:button ID="NavSearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="routes" op="domestic">Preferred Routes</el:cmd></td>
- <td class="data">We've obtained over 12,900 preferred flight routes from the Federal Aviation 
- Administration, providing mulitple routes from almost 100 airports in the United States and Canada. 
-<i>NOTE: These are for flight planning purposes only, and is NOT a schedule.</i></td>
-</tr>
-<tr>
  <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
  <td class="data">You can view SELCAL codes used by <content:airline /> and its partner airlines' aircraft,
  and temporarily reserve up to <fmt:int value="${selcalMax}" /> SELCAL codes for your own use, for up to
