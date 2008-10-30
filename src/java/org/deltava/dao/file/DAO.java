@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * An abstract class to support stream-based Data Access Objects.
  * @author Luke
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 
@@ -27,13 +27,9 @@ public abstract class DAO {
     /**
      * Sets the buffer size for the connection.
      * @param size the size in bytes
-     * @throws IllegalArgumentException if size is zero or negative
      */
     public void setBufferSize(int size) {
-        if (size <= 0)
-            throw new IllegalArgumentException("Invalid buffer size - " + size);
-        
-        _size = size;
+        _size = Math.max(0, size);
     }
 
     /**
