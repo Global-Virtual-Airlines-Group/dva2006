@@ -13,13 +13,15 @@
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.22.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/flightaware.jar" sourcepath="lib/src/flightaware.zip"/>
 	<classpathentry kind="lib" path="lib/deploy/jaxrpc-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.7-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/standard.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.23.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
