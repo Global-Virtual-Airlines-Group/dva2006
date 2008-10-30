@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# New Mail Checking Script
+# Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+#
+
+# Check parameters
+if [ -z "$1" ]; then
+	echo "newmail <userID> ..."
+	exit 0
+fi
+
+# Check that directory exists
+if [ ! -d "/home/mail/$1/new" ]; then
+	echo "/home/mail/$1 does not exist!"
+	exit 0
+fi
+
+# Count the number of new messages
+ExitCode=$(ls -A /home/mail/$1/new | wc -l)
+
+# Dump the number of messages as the code
+echo "You have $ExitCode new messages."
+exit $ExitCode
