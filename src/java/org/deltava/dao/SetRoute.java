@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Preferred Domestic/Oceanic Routes.
  * @author Luke
- * @version 1.0
+ * @version 2.2
  * @since 1.0
  */
 
@@ -22,20 +22,6 @@ public class SetRoute extends DAO {
 	 */
 	public SetRoute(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Purges the Domestic Preferred Routes table.
-	 * @return the number of routes deleted
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int purgeDomestic() throws DAOException {
-		try {
-			prepareStatement("DELETE FROM ROUTES");
-			return executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 
 	/**
@@ -72,26 +58,6 @@ public class SetRoute extends DAO {
 			prepareStatement("DELETE FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
 			_ps.setInt(1, routeType);
 			_ps.setTimestamp(2, createTimestamp(vd));
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Writes a domestic Preferred Route into the database.
-	 * @param pr the PreferredRoute bean
-	 * @throws DAOException if a JDBC error occurs
-	 * @deprecated
-	 */
-	@Deprecated
-	public void write(PreferredRoute pr) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO ROUTES (AIRPORT_D, AIRPORT_A, ARTCC, ROUTE) VALUES (?, ?, ?, ?)");
-			_ps.setString(1, pr.getAirportD().getIATA());
-			_ps.setString(2, pr.getAirportA().getIATA());
-			_ps.setString(3, pr.getARTCC());
-			_ps.setString(4, pr.getRoute());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
