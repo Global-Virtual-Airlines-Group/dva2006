@@ -46,11 +46,6 @@ The Oceanic Route was successfully deleted from the database.<br />
 <fmt:int value="${rowsDeleted}" /> Oceanic Routes have been purged from the database.<br />
 </c:if>
 
-<c:if test="${purgeDomestic}">
-<div class="updateHdr">Preferred Routes Purged</div>
-<br />
-<fmt:int value="${rowsDeleted}" /> FAA Preferred Routes have been purged from the database.<br />
-</c:if>
 <br />
 <content:copyright />
 </content:region>

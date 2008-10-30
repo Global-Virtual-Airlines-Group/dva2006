@@ -28,58 +28,6 @@ public class GetRoute extends DAO {
     }
 
     /**
-     * Return a list of preferred routes from a particular airport.
-     * @param srcAirport the source airport IATA code
-     * @param dstAirport the destination airport IATA code, or null
-     * @return a List of Preferred routes
-     * @throws DAOException if a JDBC error occurs
-     * @deprecated
-     */
-    @Deprecated
-    public List<PreferredRoute> getRoutes(String srcAirport, String dstAirport) throws DAOException {
-        
-       // Build the SQL statement
-       StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ROUTES WHERE (AIRPORT_D=?)");
-       if (dstAirport != null) sqlBuf.append(" AND (AIRPORT_A=?)");
-       sqlBuf.append(" ORDER BY AIRPORT_A");
-       
-        try {
-            // Init the prepared statement
-            prepareStatement(sqlBuf.toString());
-            _ps.setString(1, srcAirport);
-            if (dstAirport != null)
-               _ps.setString(2, dstAirport);
-            
-            // Get the airports map
-            Map airports = (Map) SystemData.getObject("airports");
-            
-            // Execute the query
-            ResultSet rs = _ps.executeQuery();
-            List<PreferredRoute> results = new ArrayList<PreferredRoute>();
-            
-            // Iterate through the results
-            while (rs.next()) {
-                Airport ad = (Airport) airports.get(rs.getString(2));
-                Airport aa = (Airport) airports.get(rs.getString(3));
-                PreferredRoute pr = new PreferredRoute(ad, aa);
-                pr.setID(rs.getInt(1));
-                pr.setARTCC(rs.getString(4));
-                pr.setRoute(rs.getString(5));
-                
-                // Add to the results
-                results.add(pr);
-            }
-            
-            // Clean up and return
-            rs.close();
-            _ps.close();
-            return results;
-        } catch (SQLException se) {
-            throw new DAOException(se);
-        }
-    }
-    
-    /**
      * Returns a list of all destinations with a preferred Route from a particular Airport.
      * @param aCode the source Airport IATA code
      * @return a List of Airport beans
