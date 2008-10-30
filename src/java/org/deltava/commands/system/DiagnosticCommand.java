@@ -56,6 +56,7 @@ public class DiagnosticCommand extends AbstractCommand {
 				ctx.setAttribute("osStart", cld.getTime(), REQUEST);
 				ctx.setAttribute("osExecTime", new Integer(osRunTime), REQUEST);
 				ctx.setAttribute("loadAvg", procdao.getLoad(), REQUEST);
+				ctx.setAttribute("osMemInfo", procdao.getMemory(), REQUEST);
 			} catch (DAOException de) {
 				log.error(de.getMessage());
 			}
@@ -139,7 +140,8 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetUserData(null));
 		daoCaches.add(new GetPilot(null));
 		daoCaches.add(new GetACARSLog(null));
-		daoCaches.add(new GetFlightAware());
+		daoCaches.add(new GetFARoutes());
+		daoCaches.add(new GetFAWeather());
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
 		// Get Virtual Machine properties
