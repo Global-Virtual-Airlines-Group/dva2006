@@ -469,9 +469,12 @@
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
 		<imap>
+			<path>/home/mail</path>
 			<enabled type="Boolean">true</enabled>
 			<quota type="Integer">10240000</quota>
-			<server>endor.gvagroup.org</server>
+			<server>mail.deltava.org</server>
+			<script>/usr/local/sbin/www/mailbox_create</script>
+			<newmail>/usr/local/sbin/www/sudonewmail</newmail>
 		</imap>
 	</smtp>
 
