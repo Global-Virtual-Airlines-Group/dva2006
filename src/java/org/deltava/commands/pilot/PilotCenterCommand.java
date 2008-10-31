@@ -16,6 +16,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.*;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.ACARSClientInfo;
@@ -98,7 +99,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			frdao.setQueryMax(10);
-			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("DATE DESC"));
+			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("DATE DESC, PR.ID DESC"));
 			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
@@ -189,6 +190,14 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ExamProfile ep = i.next();
 				if (!testHistory.canWrite(ep))
 					i.remove();
+			}
+			
+			// If we have an e-mail box and mail is enabled, check for new mail
+			if (SystemData.getBoolean("smtp.imap.enabled")) {
+				GetPilotEMail pedao = new GetPilotEMail(con);
+				EMailConfiguration mcfg = pedao.getEMailInfo(p.getID());
+				if ((mcfg != null) && (!StringUtils.isEmpty(SystemData.get("smtp.imap.newmail"))))
+					ctx.setAttribute("newMsgs", Integer.valueOf(pedao.hasNewMail(mcfg.getMailDirectory())), REQUEST);
 			}
 			
 			// If we are in the HR/Examination roles, get transfer request and exam counts

@@ -64,13 +64,13 @@ public class GetPilotEMail extends DAO {
    
    /**
     * Checks whether a particular mailbox has new mail in it. This call executes a script that checks a maildir
-    * @param id the user's database ID
+    * @param path the user's mail database path
     * @return the number of messages waiting
     * @throws DAOException if an error occurs
     */
-   public int hasNewMail(int id) throws DAOException {
+   public int hasNewMail(String path) throws DAOException {
 	   try {
-		   ProcessBuilder pBuilder = new ProcessBuilder(SystemData.get("smtp.imap.newmail"), String.valueOf(id));
+		   ProcessBuilder pBuilder = new ProcessBuilder(SystemData.get("smtp.imap.newmail"), path);
 		   pBuilder.redirectErrorStream(true);
 		   Process p = pBuilder.start();
 		   
