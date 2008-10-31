@@ -69,7 +69,9 @@ return true;
 <tr>
  <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
  <td class="data">Your e-mail address is <span class="sec bld">${pilot.email}</span>. Membership at <content:airline /> is contingent on providing
- a valid, verified e-mail address. You may update your e-mail address and start the validation process.</td>
+ a valid, verified e-mail address. You may update your e-mail address and start the validation process.
+<c:if test="${hasIMAP && (newMsgs > 0)}"><br />
+<span class="mid pri bld">You currently have <fmt:int value="${newMsgs}" /> new e-mail messages in your Inbox.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
@@ -690,6 +692,12 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
  <td class="data">You can sort route pairs based on popularity, to determine popular routes not covered by routes
  in the <content:airline /> ACARS Dispatch database.</td>
 </tr>
+<content:filter roles="HR,Route">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dsprouteplot">Dispatch Route Plotter</el:cmd></td>
+ <td class="data">You can graphically plot new routes to add into the <content:airline /> Dispatch Route database.</td>
+</tr>
+</content:filter>
 </content:filter>
 <content:filter roles="HR,Developer">
 <!-- ACARS Logging Section -->
