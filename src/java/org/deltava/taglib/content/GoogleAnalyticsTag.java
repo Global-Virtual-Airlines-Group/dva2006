@@ -18,6 +18,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	private String _jsVar;
 	private String _virtualURL;
 	private String _customVar;
+	private boolean _doFunction;
 	
 	/**
 	 * Sets the name of the JavaScript variable to use for the tracker object.
@@ -41,6 +42,14 @@ public class GoogleAnalyticsTag extends TagSupport {
 	 */
 	public void setCustom(String value) {
 		_customVar = value;
+	}
+	
+	/**
+	 * Sets if event support functionality should be enabled on this page.
+	 * @param doSupport TRUE to enable event support, otherwise FALSE
+	 */
+	public void setEventSupport(boolean doSupport) {
+		_doFunction = doSupport;
 	}
 	
 	/**
@@ -96,6 +105,19 @@ public class GoogleAnalyticsTag extends TagSupport {
 				out.println("');");
 			}
 			
+			// Write event tracker function
+			if (_doFunction) {
+				out.println();
+				out.println("function gaEvent(category, action, label, count) {");
+				out.print("if (");
+				out.print(_jsVar);
+				out.println(" == null) return false;");
+				out.print(_jsVar);
+				out.println("._trackEvent(category, action, label, count);");
+				out.println("return true;");
+				out.println("}");
+			}
+			
 			out.println("</script>");
 		} catch (Exception e) {
 			throw new JspException(e);
@@ -110,6 +132,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
+		_doFunction = false;
 		_jsVar = null;
 		_virtualURL = null;
 		_customVar = null;
