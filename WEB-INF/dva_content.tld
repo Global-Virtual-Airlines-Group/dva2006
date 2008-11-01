@@ -380,6 +380,12 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>eventSupport</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
 	</tag>
 
 	<!-- Page Layout Tag, for displaying regions as DIVs or TABLEs -->
