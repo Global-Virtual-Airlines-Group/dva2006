@@ -15,6 +15,7 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("pos");
+	gaEvent('ACARS', 'Flight Data', pirepID, ac.length);
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var label = a.firstChild;
@@ -60,6 +61,7 @@ if (kml != null)
 	return displayKML();
 
 // Build the XML Requester
+
 var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "acars_earth.ws?id=" + pirepID + "&noCompress=true&showRoute=" + showRoute, true);
 xmlreq.onreadystatechange = function() {
@@ -67,6 +69,7 @@ xmlreq.onreadystatechange = function() {
 	var xml = xmlreq.responseText;
 	if (!xml) return false;
 	kml = xml;
+	gaEvent('ACARS', 'Flight Data KML', pirepID);
 	displayKML();
 	return true;
 } // function

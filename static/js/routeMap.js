@@ -54,6 +54,7 @@ xmlreq.onreadystatechange = function() {
 	// Save in the hashmap
 	airports[aCode] = aps;
 	isLoading.innerHTML = '';
+	gaEvent('Route Map', 'Airports', aCode, els.length);
 	return true;
 }
 
@@ -83,6 +84,7 @@ xmlreq.onreadystatechange = function() {
 	var rts = wsdata.getElementsByTagName("route");
 	var aCombo = getElement("airlineCode");
 	var aCode = aCombo.options[aCombo.selectedIndex].value;
+	var routeCount = 0;
 	for (var x = 0; x < rts.length; x++) {
 		var rt = rts[x];
 		var al = rt.getAttribute("airline");
@@ -101,11 +103,13 @@ xmlreq.onreadystatechange = function() {
 			var routeLine = new GPolyline(positions, '#4080AF', 2, 0.8, { geodesic: true });
 			map.addOverlay(routeLine);
 			routes.push(routeLine);
+			routeCount++;
 		}
 	}
 
 	// Focus on the map
 	isLoading.innerHTML = '';
+	gaEvent('Route Map', 'Routes', this.icao, routeCount);
 	return true;
 } // function
 

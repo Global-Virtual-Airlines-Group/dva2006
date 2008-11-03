@@ -18,6 +18,7 @@
 <content:js name="common" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:js name="googleMaps" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
@@ -126,6 +127,5 @@ map.setMapType(G_SATELLITE_TYPE);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

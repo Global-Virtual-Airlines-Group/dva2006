@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:googleAnalytics eventSupport="true" />
 <c:if test="${googleMap}">
 <content:os windows="true"><c:set var="showGEarth" value="${false}" scope="request" /></content:os>
 <content:js name="googleMaps" />
@@ -341,6 +342,5 @@ generateKMLRequest(${fn:ACARS_ID(pirep)}, true);
 </c:if>
 </script>
 </c:if>
-<content:googleAnalytics />
 </body>
 </map:xhtml>
