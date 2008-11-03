@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A Factory to load Web Service configuration data.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -26,28 +26,22 @@ public class ServiceFactory {
    private ServiceFactory() {
    }
 
-   public static Map<String, String> load(String configXML) throws IOException {
+   public static Map<String, WebService> load(String configXML) throws IOException {
       
       // Gracefully fail if no commands found
-	   Map<String, String> results = new HashMap<String, String>();
+	   Map<String, WebService> results = new HashMap<String, WebService>();
       if (configXML == null) {
-          log.warn("No Web Services loaded");
+          log.error("No Web Services loaded");
           return results;
       }
-
-      // Get the file
-      InputStream is = ConfigLoader.getStream(configXML);
 
       // Create the builder and load the file into an XML in-memory document
       Document doc = null;
       try {
           SAXBuilder builder = new SAXBuilder();
-          doc = builder.build(is);
-          is.close();
+          doc = builder.build(ConfigLoader.getStream(configXML));
       } catch (JDOMException je) {
-          IOException ie = new IOException("XML Parse Error in " + configXML);
-          ie.initCause(je);
-          throw ie;
+          throw new IOException("XML Parse Error in " + configXML, je);
       }
       
       // Get the root element
@@ -63,17 +57,17 @@ public class ServiceFactory {
           
           try {
               Class c = Class.forName(svcClassName);
-              log.debug("Validated service " + c.getName());
+              WebService ws = (WebService) c.newInstance();
+              results.put(svcID.toLowerCase(), ws);
           } catch (ClassNotFoundException cnfe) {
               log.error("Cannot find class " + svcClassName + " for " + svcID);
+          } catch (Exception ex) {
+        	  log.error("Cannot load " + svcClassName + " - " + ex.getMessage());
           }
-          
-          // Save the command in the map
-          results.put(svcID.toLowerCase(), svcClassName);
       }
       
       // Return results
-      log.info("Validated " + results.size() + " services");
+      log.info("Loaded " + results.size() + " services");
       return results;
    }
 }

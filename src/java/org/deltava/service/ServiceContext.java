@@ -4,7 +4,6 @@ package org.deltava.service;
 import java.io.*;
 import java.util.*;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
 import org.deltava.beans.Person;
@@ -27,7 +26,6 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
    
    private Person _usr;
    
-   private ServletContext _sc;
    private HttpServletRequest _req;
    private HttpServletResponse _rsp;
    private final OutputBuffer _buf = new OutputBuffer();
@@ -61,9 +59,8 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
     * @see ServiceContext#getRequest()
     * @see ServiceContext#getResponse()
     */
-   public ServiceContext(HttpServletRequest req, HttpServletResponse rsp, ServletContext sc) {
+   public ServiceContext(HttpServletRequest req, HttpServletResponse rsp) {
       super();
-      _sc = sc;
       _req = req;
       _rsp = rsp;
    }
@@ -113,14 +110,6 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
     */
    public void setUser(Person p) {
       _usr = p;
-   }
-   
-   /**
-    * Returns the Servlet Context for this web service.
-    * @return the servlet context
-    */
-   public ServletContext getServletContext() {
-      return _sc;
    }
    
    /**
