@@ -14,6 +14,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
+<content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
@@ -144,6 +145,5 @@ mapTextElements.push(ffl);
 
 GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

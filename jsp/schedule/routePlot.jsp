@@ -15,6 +15,7 @@
 <content:js name="airportRefresh" />
 <content:js name="googleMaps" />
 <content:js name="routePlot" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
@@ -24,6 +25,7 @@
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
+var doRunways = false;
 
 function validate(form)
 {
@@ -149,6 +151,5 @@ map.getContainer().appendChild(cp);
 //Update text color
 GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

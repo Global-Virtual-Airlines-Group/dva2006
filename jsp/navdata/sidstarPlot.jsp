@@ -16,6 +16,7 @@
 <content:js name="markermanager" />
 <content:js name="googleMaps" />
 <content:js name="sidstarPlot" />
+<content:googleAnalytics eventSupport="true" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
@@ -178,6 +179,5 @@ GEvent.trigger(map, 'maptypechanged');
 GEvent.trigger(map, 'moveend');
 getRoutes(document.forms[0].airport, true);
 </script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

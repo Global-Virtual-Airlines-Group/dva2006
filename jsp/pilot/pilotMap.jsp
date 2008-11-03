@@ -14,6 +14,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="pilotMap" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
@@ -96,6 +97,5 @@ map.enableContinuousZoom();
 var mm = new GMarkerManager(map);
 reloadMap();
 </script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

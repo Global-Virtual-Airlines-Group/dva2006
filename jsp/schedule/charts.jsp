@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:googleAnalytics eventSupport="true" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
 function updateAirport(combo)
@@ -100,6 +101,5 @@ left to download the latest version of Adobe Acrobat Reader. This is a free down
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

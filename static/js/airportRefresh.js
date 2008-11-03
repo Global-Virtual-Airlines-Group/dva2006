@@ -19,6 +19,7 @@ xmlreq.onreadystatechange = function() {
 		combo.options[i+1] = opt;
 	} // for
 
+	gaEvent('Airports', 'Load Airport List');
 	setAirport(combo, oldCode);
 	changeAirport(combo);
 	combo.disabled = false;
@@ -35,6 +36,7 @@ function changeAirline(aCombo, useSched)
 var f = document.forms[0];
 updateAirports(f.airportD, 'useSched=' + useSched + '&airline=' + getValue(aCombo), false, getValue(f.airportD));
 updateAirports(f.airportA, 'useSched=' + useSched + '&airline=' + getValue(aCombo), false, getValue(f.airportA));
+gaEvent('Airports', 'Change airline');
 return true;
 }
 

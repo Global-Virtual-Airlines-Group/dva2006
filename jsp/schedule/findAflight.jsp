@@ -15,6 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:googleAnalytics eventSupport="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
@@ -232,6 +233,5 @@ return true;
 changeAirport(document.forms[0].airportD);
 changeAirport(document.forms[0].airportA);
 </script></c:if>
-<content:googleAnalytics />
 </body>
 </html>

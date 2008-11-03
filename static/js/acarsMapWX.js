@@ -8,6 +8,7 @@ var GMTOffset = new Date().getTimezoneOffset() * 60000;
 
 function loadSeries(id, sdata)
 {
+gaEvent('WeatherMap', 'Load Series List');
 for (var x = 0; x < sdata.seriesNames.length; x++)
 {
 	var series = sdata.seriesNames[x];
@@ -76,7 +77,6 @@ WXOverlayControl.prototype.getDefaultPosition = function() {
 
 WXOverlayControl.prototype.updateMap = function() {
 	clearWX();
-
 	var multiLayers = (this.layerNames instanceof Array);
 	if (multiLayers) {
 		map.wxData = new Array();
@@ -84,9 +84,12 @@ WXOverlayControl.prototype.updateMap = function() {
 			map.wxData.push(document.wxLayers[this.layerNames[x]]);
 			map.addOverlay(document.wxLayers[this.layerNames[x]]);
 		}
+
+		gaEvent('WeatherMap', 'Show Weather', this.layerNames.join(' '));
 	} else { 
 		map.wxData = document.wxLayers[this.layerNames];
 		map.addOverlay(map.wxData);
+		gaEvent('WeatherMap', 'Show Weather', this.layerNames);
 	}
 
 	delete map.ffLayer;
@@ -137,6 +140,7 @@ WXClearControl.prototype.getDefaultPosition = function() {
 
 function clearWX()
 {
+gaEvent('WeatherMap', 'Clear Weather');
 var ffs = document.getElementById("ffSlices");
 if (ffs) ffs.style.visibility = 'hidden';
 	

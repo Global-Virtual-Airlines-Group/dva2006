@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
@@ -229,6 +230,5 @@ map.getContainer().appendChild(cp);
 //Update text color
 GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

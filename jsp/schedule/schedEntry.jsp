@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -173,6 +174,5 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -12,20 +12,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="common" />
-<content:js name="pilotCenter" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
-function validate(form)
-{
-if (!checkSubmit()) return false;
-if (!validateText(form.navaidCode, 2, 'Navigation Aid Code')) return false;
-
-setSubmit();
-disableButton('NavSearchButton');
-disableButton('METARButton');
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -52,7 +39,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="navsearch.do" method="post" validate="return validate(this)">
+<el:form action="pilotcenter.do" method="get" validate="return false">
 <el:table ID="pilotCenter" className="form" pad="default" space="default">
 
 <!-- Pilot Information -->
@@ -348,6 +335,12 @@ every day.</td>
  for the previous several weeks.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="wxcenter">Weather Center</el:cmd></td>
+ <td class="data">The <content:airline /> Weather Center allows you to view Airport conditions and forecast
+ information, along with a number of interactive weather maps coveting the continental United States
+ and the world.</td>  
+</tr>
+<tr>
  <td class="mid bld">Navigation Aids</td>
  <td class="data">You can search for a particular Airport, VOR, NDB or Intersection.
 <el:text name="navaidCode" size="4" max="5" value="" />&nbsp;<el:button ID="NavSearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
@@ -357,16 +350,6 @@ every day.</td>
  <td class="data">You can view SELCAL codes used by <content:airline /> and its partner airlines' aircraft,
  and temporarily reserve up to <fmt:int value="${selcalMax}" /> SELCAL codes for your own use, for up to
  <fmt:int value="${selcalReserve}" /> days.</td>
-</tr>
-<tr>
- <td class="mid bld">Airport Information</td>
- <td class="data">You can view <select name="navaidType" size="1">
-<option value="APT">Airport Information</option>
-<option value="MET">METAR Information</option>
-</select> for the following Airport: <el:text name="airportCode" size="3" max="4" value="" />
-<el:button ID="METARButton" onClick="javascript:void showNAV()" type="button" className="BUTTON" label="GO" /><br />
-<span class="small sec">(Please note that these are external sites not affiliated with Delta
- Virtual Airlines. We make no representations as to the content and/or availability of these resources.)</span></td>
 </tr>
 
 <!-- Testing Section -->

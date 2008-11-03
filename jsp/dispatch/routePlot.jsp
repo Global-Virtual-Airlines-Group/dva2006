@@ -15,6 +15,7 @@
 <content:js name="airportRefresh" />
 <content:js name="googleMaps" />
 <content:js name="routePlot" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
@@ -93,6 +94,7 @@ xmlreq.onreadystatechange = function() {
 }
 
 xmlreq.send(null);
+gaEvent('Route Plotter', 'Route Search', aD + '-' + aA, ext ? 1 : 0);
 return true;
 }
 
@@ -120,6 +122,7 @@ setCombo(f.sid, opt.SID);
 setCombo(f.star, opt.STAR);
 enableElement('RouteSaveButton', opt.isExternal);
 plotMap();
+gaEvent('Route Plotter', 'Set Route');
 return true;
 }
 
@@ -129,7 +132,6 @@ function validate(form)
 var routeID = parseInt(f.routeID.value);
 if (!isNaN(routeID)) {
 	alert('Updating route #' + routeID);
-
 }
 	
 if (!checkSubmit()) return false;
@@ -143,6 +145,7 @@ setSubmit();
 disableButton('SearchButton');
 disableButton('UpdateButton');
 disableButton('RouteSaveButton');
+gaEvent('Route Plotter', 'Save Route');
 return true;
 }
 </script>
@@ -269,6 +272,5 @@ map.getContainer().appendChild(cp);
 // Update text color
 GEvent.trigger(map, 'maptypechanged');
 </script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

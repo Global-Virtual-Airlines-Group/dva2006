@@ -15,6 +15,7 @@
 <content:js name="googleMaps" />
 <content:js name="acarsMapWX" />
 <content:js name="acarsMapFF" />
+<content:googleAnalytics eventSupport="true" />
 <c:if test="${isDispatch}"><content:js name="dispatchMap" /></c:if>
 <content:js name="markermanager" />
 <content:sysdata var="imgPath" name="path.img" />

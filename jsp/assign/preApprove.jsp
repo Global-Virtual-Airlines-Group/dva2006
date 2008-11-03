@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {

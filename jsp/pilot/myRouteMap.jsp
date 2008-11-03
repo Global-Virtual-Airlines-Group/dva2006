@@ -50,9 +50,9 @@ var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLIT
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, 3);
-map.setMapType(G_SATELLITE_TYPE);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_SATELLITE_MAP" />
 
 // Create the routes
 var routes = new Array();

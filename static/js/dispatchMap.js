@@ -1,5 +1,6 @@
 function mapZoom()
 {
+gaEvent('Dispatch', 'Zoom/Pan');
 var b = map.getBounds();
 window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
 return true;
@@ -10,6 +11,7 @@ function addWaypoint(code)
 document.currentmarker.closeInfoWindow();
 window.external.addWaypoint(code);
 map.removeOverlay(document.currentmarker);
+gaEvent('Dispatch', 'Add Waypoint', code);
 return true;
 }
 
@@ -18,6 +20,7 @@ function delWaypoint(code)
 document.currentmarker.closeInfoWindow();
 window.external.deleteWaypoint(code);
 map.removeOverlay(document.currentmarker);
+gaEvent('Dispatch', 'Remove Waypoint', code);
 return true;
 }
 
@@ -68,6 +71,7 @@ map.removeOverlay(this);
 map.addOverlay(newLine);
 airways[this.AirwayID] = newLine;
 GEvent.bind(newLine, 'click', newLine, clickLine)
+gaEvent('Dispatch', 'Show Airway', this.AirwayID);
 return true;
 }
 
@@ -85,5 +89,6 @@ for (var x = 0; x < selectedAirways.length; x++)
 	map.addOverlay(newLine);
 }
 
+gaEvent('Dispatch', 'Clear Airways');
 return true;
 }

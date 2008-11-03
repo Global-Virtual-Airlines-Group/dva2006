@@ -17,6 +17,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="acarsFlightMap" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 </head>
@@ -170,6 +171,5 @@ map.enableContinuousZoom();
 addMarkers(map, 'gfRoute');
 addMarkers(map, 'filedMarkers');
 </script></c:if>
-<content:googleAnalytics />
 </body>
 </map:xhtml>

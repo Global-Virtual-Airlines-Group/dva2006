@@ -47,6 +47,7 @@ for (var i = 0; i < elements.length; i++) {
 		combo.selectedIndex = (i+1);
 } // for
 
+gaEvent('Route Plotter', 'Update Routes');
 return true;
 }
 
@@ -107,5 +108,6 @@ xmlreq.onreadystatechange = function() {
 }
 
 xmlreq.send(getAJAXParams().join('&'));
+gaEvent('Route Plotter', 'Plot', getAJAXParams().join(' '));
 return true;
 }

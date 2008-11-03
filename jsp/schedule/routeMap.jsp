@@ -15,6 +15,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="routeMap" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 </head>
@@ -70,6 +71,5 @@ var airports = new Array();
 // Load airports
 updateAirports(document.forms[0].airlineCode);
 </script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>
