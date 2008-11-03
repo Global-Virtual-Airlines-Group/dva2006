@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 var secondsLeft = ${empty timeRemaining ? 2400 : timeRemaining};
 
@@ -98,6 +99,7 @@ else if (txtbox.length > 1) {
 	}
 }
 
+gaEvent('Examination', 'Submit Answer', id, qNum);
 return true;
 }
 <c:if test="${hasQImages}">
@@ -167,8 +169,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSubmit}">
-<el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT EXAMINATION" />
-</c:if>
+<el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT EXAMINATION" /></c:if>
  </td>
 </tr>
 </el:table>
@@ -177,6 +178,5 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>

@@ -23,6 +23,8 @@ xmlreq.onreadystatechange = function() {
 	if (!xml) return false;
 	var xe = xml.documentElement;
 	var ac = xe.getElementsByTagName("aircraft");
+	if (ac.length > 0)
+		gaEvent('ACARS', 'Aircraft Positions');
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i]; var mrk = null;
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
@@ -55,6 +57,8 @@ xmlreq.onreadystatechange = function() {
 	} // for
 
 	var dc = xe.getElementsByTagName("dispatch");
+	if (dc.length > 0)
+		gaEvent('ACARS', 'Dispatch Positions');
 	for (var i = 0; i < dc.length; i++) {
 		var d = dc[i]; var mrk = null;
 		var p = new GLatLng(parseFloat(d.getAttribute("lat")), parseFloat(d.getAttribute("lng")));
@@ -116,6 +120,7 @@ var f = document.forms[0];
 var isProgress = f.showProgress.checked;
 var isRoute = f.showRoute.checked;
 var isInfo = f.showInfo.checked;
+gaEvent('ACARS', 'Flight Info', this.flight_id);
 
 // Display the info
 if (isInfo && (this.tabs))
@@ -139,6 +144,7 @@ function clickDispatch()
 // Check what info we display
 var f = document.forms[0];
 var isInfo = f.showInfo.checked;
+gaEvent('ACARS', 'Dispatch Info');
 
 //Display the info
 if (isInfo && (this.tabs))
@@ -149,8 +155,10 @@ else if (isInfo)
 //Display flight progress / route
 if (!this.rangeCircle) {
 	this.rangeCircle = getServiceRange(this, this.range);
-	if (this.rangeCircle)
+	if (this.rangeCircle) {
+		gaEvent('ACARS', 'Dispatch Service Range');
 		map.addOverlay(this.rangeCircle);
+	}
 } else
 	this.rangeCircle.show();
 
@@ -181,6 +189,7 @@ xreq.onreadystatechange = function() {
 			waypoints.push(p);
 		} // for
 
+		gaEvent('ACARS', 'Flight Route Info', marker.flight_id, wps.length);
 		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7);
 		map.addOverlay(routeWaypoints);
 	}
@@ -196,6 +205,7 @@ xreq.onreadystatechange = function() {
 		} // for
 
 		// Draw the line
+		gaEvent('ACARS', 'Flight Progress Info', marker.flight_id, pos.length);
 		routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
 		map.addOverlay(routeData);
 	}

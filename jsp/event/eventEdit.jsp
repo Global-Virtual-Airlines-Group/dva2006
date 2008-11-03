@@ -16,6 +16,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="airportRefresh" />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 function updateSignups()
 {
@@ -214,6 +215,5 @@ to a specific set of equipment.</span><br />
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
