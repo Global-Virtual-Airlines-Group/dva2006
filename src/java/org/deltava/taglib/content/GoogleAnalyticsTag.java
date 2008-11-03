@@ -86,8 +86,6 @@ public class GoogleAnalyticsTag extends TagSupport {
 			out.print(accountID);
 			out.println("');");
 			out.print(_jsVar);
-			out.println("._initData();");
-			out.print(_jsVar);
 			out.print("._trackPageview(");
 			if (_virtualURL != null) {
 				out.print("'");
