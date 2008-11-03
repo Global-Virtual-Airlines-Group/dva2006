@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -30,7 +30,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	private static final String WS_REALM = "\"DVA Web Services\"";
 
 	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
-	private Map<String, String> _svcs;
+	private final Map<String, WebService> _svcs = new HashMap<String, WebService>();
 
 	/**
 	 * Returns the servlet description.
@@ -47,10 +47,8 @@ public class WebServiceServlet extends BasicAuthServlet {
 	 */
 	public void init() throws ServletException {
 		log.info("Initializing");
-
-		// Load the services
 		try {
-			_svcs = ServiceFactory.load(SystemData.get("config.services"));
+			_svcs.putAll(ServiceFactory.load(SystemData.get("config.services")));
 		} catch (IOException ie) {
 			throw new ServletException(ie);
 		}
@@ -64,29 +62,6 @@ public class WebServiceServlet extends BasicAuthServlet {
 	}
 
 	/**
-	 * A private helper method to get the service from the URL.
-	 */
-	private WebService getService(String rawURL) throws ServletException {
-		URLParser parser = new URLParser(rawURL);
-		String svcName = parser.getName().toLowerCase();
-
-		// Get the service class
-		String svcClass = _svcs.get(svcName);
-		if (svcClass == null)
-			return null;
-
-		// Instantiate the service class
-		try {
-			Class svcC = Class.forName(svcClass);
-			return (WebService) svcC.newInstance();
-		} catch (ClassNotFoundException cnfe) {
-			throw new ServletException("Web Service " + svcClass + " not found");
-		} catch (Exception e) {
-			throw new ServletException("Error instantiating Web Service " + svcClass);
-		}
-	}
-
-	/**
     * Processes HTTP GET requests for web services.
     * @param req the HTTP request
     * @param rsp the HTTP response
@@ -95,16 +70,15 @@ public class WebServiceServlet extends BasicAuthServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
 
 		// Get the web service
-		WebService svc = getService(req.getRequestURI());
+		URLParser parser = new URLParser(req.getRequestURI());
+		WebService svc = _svcs.get(parser.getName().toLowerCase());
 		if (svc == null) {
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown Service");
 			return;
 		}
 
-		// Get our credentials if we're already logged in
-		Pilot usr = (Pilot) req.getUserPrincipal();
-
 		// Check if we need to be authenticated
+		Pilot usr = (Pilot) req.getUserPrincipal();
 		if (svc.isSecure() && (usr == null)) {
 			usr = authenticate(req);
 			if (usr == null) {
@@ -114,7 +88,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 		
 		// Generate the service context
-		ServiceContext ctx = new ServiceContext(req, rsp, getServletContext());
+		ServiceContext ctx = new ServiceContext(req, rsp);
 		ctx.setUser(usr);
 		if (svc.isLogged())
 			log.info("Executing Web Service " + svc.getClass().getName());
@@ -133,10 +107,10 @@ public class WebServiceServlet extends BasicAuthServlet {
 			} catch (Exception e) {
 				// empty
 			}
+		} finally {
+			// Disable the cache
+			rsp.setHeader("Cache-Control", "no-cache");
 		}
-		
-		// Disable the cache
-		rsp.setHeader("Cache-Control", "no-cache");
 	}
 
 	/**

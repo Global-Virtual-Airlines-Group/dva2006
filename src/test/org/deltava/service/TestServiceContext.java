@@ -1,7 +1,6 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.service;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
 import junit.framework.Test;
@@ -16,7 +15,6 @@ public class TestServiceContext extends TestCase {
    
    private ServiceContext _ctx;
    
-   private ServletContext _sc;
    private HttpServletRequest _req;
    private HttpServletResponse _rsp;
    
@@ -26,10 +24,9 @@ public class TestServiceContext extends TestCase {
 
    protected void setUp() throws Exception {
       super.setUp();
-      _sc = new ServletContextSimulator();
       _req = new HttpServletRequestSimulator();
       _rsp = new HttpServletResponseSimulator();
-      _ctx = new ServiceContext(_req, _rsp, _sc);
+      _ctx = new ServiceContext(_req, _rsp);
    }
 
    protected void tearDown() throws Exception {
@@ -38,7 +35,6 @@ public class TestServiceContext extends TestCase {
    }
 
    public void testProperties() {
-      assertEquals(_sc, _ctx.getServletContext());
       assertEquals(_req, _ctx.getRequest());
       assertEquals(_rsp, _ctx.getResponse());
       
