@@ -76,38 +76,6 @@ writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.
 </c:forEach>
 </el:table>
 </c:if>
-<c:if test="${!empty acarsBans}">
-<el:table className="view" pad="default" space="default">
-<tr class="title">
- <td class="left caps" colspan="7">ACARS BLOCKED USERS</td>
-</tr>
-
-<!-- Table Header Data -->
-<tr class="title">
- <td width="35%">REMOTE ADDRESS</td>
- <td width="25%">PILOT NAME</td>
- <td width="10%">PILOT CODE</td>
- <td width="15%">RANK</td>
- <td>EXPIRATION DATE</td>
-</tr>
-
-<!-- Table Ban Data -->
-<c:forEach var="ban" items="${acarsBans}">
-<tr>
- <td class="small">${ban.remoteHost} (${ban.remoteAddr})</td>
-<c:if test="${!empty ban.userData}">
- <td><el:profile className="bld" location="${ban.userData}">${ban.user.name}</el:profile></td>
- <td class="pri bld">${ban.user.pilotCode}</td>
- <td>${ban.user.rank}, ${ban.user.equipmentType}</td>
-</c:if> 
-<c:if test="${empty ban.userData}">
- <td colspan="3" class="bld">ANONYMOUS USER</td>
-</c:if>
- <td><fmt:date date="${ban.expiryDate}" /></td>
-</tr>
-</c:forEach>
-</el:table>
-</c:if>
 <c:if test="${!empty workers}">
 <!-- ACARS Server Worker threads -->
 <el:table className="view" pad="default" space="default">
