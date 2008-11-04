@@ -3,6 +3,10 @@ package org.deltava.beans.wx;
 
 import java.util.Date;
 
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.*;
+import org.deltava.beans.navdata.AirportLocation;
+
 import org.deltava.util.cache.ExpiringCacheable;
 
 /**
@@ -12,22 +16,35 @@ import org.deltava.util.cache.ExpiringCacheable;
  * @since 2.2
  */
 
-public abstract class WeatherDataBean implements ExpiringCacheable, Comparable<WeatherDataBean> {
-	
+public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheable, Comparable<WeatherDataBean> {
+
+	protected AirportLocation _pos;
 	private Date _createdOn;
 	private Date _obsDate;
-	private String _obsStnCode;
-	
+
 	private String _wxData;
 
 	/**
+	 * Creates an arbitrary weather bean type.
+	 * @param type the bean type
+	 * @return a WeatherDataBean, or null if unknown
+	 */
+	public static WeatherDataBean create(String type) {
+		try {
+			Class c = Class.forName(WeatherDataBean.class.getPackage().getName() + "." + type);
+			WeatherDataBean wx = (WeatherDataBean) c.newInstance();
+			return wx;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	/**
 	 * Initializes the bean.
-	 * @param code the observation station code
 	 * @throws NullPointerException if code is null
 	 */
-	public WeatherDataBean(String code) {
+	public WeatherDataBean() {
 		super();
-		_obsStnCode = code.toUpperCase();
 		_createdOn = new Date();
 	}
 
@@ -44,7 +61,15 @@ public abstract class WeatherDataBean implements ExpiringCacheable, Comparable<W
 	 * @return the code
 	 */
 	public String getCode() {
-		return _obsStnCode;
+		return _pos.getCode();
+	}
+	
+	/**
+	 * Returns the observation station name.
+	 * @return the name
+	 */
+	public String getName() {
+		return _pos.getName();
 	}
 	
 	/**
@@ -64,6 +89,20 @@ public abstract class WeatherDataBean implements ExpiringCacheable, Comparable<W
 	}
 	
 	/**
+	 * Returns the latitude of this observation.
+	 */
+	public double getLatitude() {
+		return _pos.getLatitude();
+	}
+	
+	/**
+	 * Returns the longitude of this observation.
+	 */
+	public double getLongitude() {
+		return _pos.getLongitude();
+	}
+	
+	/**
 	 * Returns the data type.
 	 * @return the data type
 	 */
@@ -78,6 +117,22 @@ public abstract class WeatherDataBean implements ExpiringCacheable, Comparable<W
 	}
 	
 	/**
+	 * Sets the geographic location of this Observation station.
+	 * @param al an AirportLocation bean
+	 */
+	public void setAirport(AirportLocation al) {
+		_pos = al;
+	}
+	
+	/**
+	 * Sets the geographic location of this Observation station.
+	 * @param a an Airport bean
+	 */
+	public void setAirport(Airport a) {
+		_pos = new AirportLocation(a);
+	}
+	
+	/**
 	 * Updates the weather data.
 	 * @param data the data
 	 */
@@ -85,10 +140,26 @@ public abstract class WeatherDataBean implements ExpiringCacheable, Comparable<W
 		_wxData = data;
 	}
 	
+	public String getInfoBox() {
+		StringBuilder buf = new StringBuilder();
+		if (_pos != null) {
+			buf.append(_pos.getInfoBox());
+			buf.append("<br /><br />");
+		}
+		
+		// Append the weather data
+		buf.append("<span class=\"mapInfoBox\"><b>");
+		buf.append(getType());
+		buf.append(" Data</b>:<br />");
+		buf.append(getData());
+		buf.append("</span>");
+		return buf.toString();
+	}
+	
 	public Object cacheKey() {
 		StringBuilder buf = new StringBuilder(getType());
 		buf.append('$');
-		buf.append(_obsStnCode);
+		buf.append(_pos.getCode());
 		return buf.toString();
 	}
 

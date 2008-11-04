@@ -965,8 +965,14 @@
 		<class>org.deltava.commands.cooler.SignatureUpdateCommand</class>
 		<roles>Pilot,HR,Signature</roles>
 	</command>
-	
-	
+
+	<command id="wxcenter">
+		<name>Weather Center</name>
+		<class>org.deltava.commands.main.WeatherCenterCommand</class>
+		<roles>Pilot</roles>	
+	</command>
+
+
 	<!-- Flight Assignment commands -->
 	<command id="findflight">
 		<name>Find A Flight</name>

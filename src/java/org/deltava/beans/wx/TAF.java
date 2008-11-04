@@ -13,18 +13,14 @@ import java.util.Date;
 public class TAF extends WeatherDataBean {
 
 	/**
-	 * Initializes the bean.
-	 * @param code the observation station code
-	 */
-	public TAF(String code) {
-		super(code);
-	}
-	
-	/**
 	 * Sets the expiration date of the bean (30 minutes after effective date).
 	 */
 	public Date getExpiryDate() {
 		return new Date(getDate().getTime() + 1800000);
+	}
+	
+	public String getIconColor() {
+		return BLUE;
 	}
 
 	public String getType() {

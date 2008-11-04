@@ -13,18 +13,14 @@ import java.util.Date;
 public class METAR extends WeatherDataBean {
 	
 	/**
-	 * Initializes the bean.
-	 * @param code the observation station code
-	 */
-	public METAR(String code) {
-		super(code);
-	}
-	
-	/**
 	 * Sets the expiration date of the bean (15 minutes after effective date).
 	 */
 	public Date getExpiryDate() {
 		return new Date(getDate().getTime() + 900000);
+	}
+	
+	public String getIconColor() {
+		return WHITE;
 	}
 	
 	public String getType() {

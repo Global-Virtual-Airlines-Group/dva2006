@@ -73,4 +73,9 @@
 	<service id="servinfo" class="org.deltava.service.servinfo.DataService" />
 	<service id="si_route" class="org.deltava.service.servinfo.MapRouteService" />
 	<service id="vatsim_info" class="org.deltava.service.servinfo.PilotValidationService" />
+
+	<!-- Weather Services -->
+	<service id="metar" class="org.deltava.service.wx.METARService" />
+	<service id="taf" class="org.deltava.service.wx.TAFService" />
+	<service id="airportwx" class="org.deltava.service.wx.AirportWeatherService" />
 </services>
