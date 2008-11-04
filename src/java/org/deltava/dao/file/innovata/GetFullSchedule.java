@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -17,15 +17,15 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
 public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
-	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	private static final DateFormat _tf = new SimpleDateFormat("HH:mm");
+	private final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	private final DateFormat _tf = new SimpleDateFormat("HH:mm");
 
 	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
@@ -86,8 +86,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			long ed = _df.parse(entries.get(6) + " 23:59").getTime();
 			if ((_effDate < sd) || (_effDate >= ed))
 				return false;
-		} catch (ParseException pe) {
-			log.warn("Invalid start/end date - " + pe.getMessage());
+		} catch (Exception e) {
+			log.warn("Invalid start/end date - " + e.getMessage());
 			return false;
 		}
 
@@ -137,7 +137,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	public Collection<CSVTokens> load() throws DAOException {
 		LineNumberReader br = null;
 		try {
-			br = new LineNumberReader(getReader());
+			br = getReader();
 			br.readLine(); // Skip first line
 
 			while (br.ready()) {
@@ -152,9 +152,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			}
 
 			br.close();
-		} catch (IOException ie) {
-			log.error("Error at line " + br.getLineNumber() + " - " + ie.getMessage(), ie);
-			throw new DAOException(ie);
+		} catch (Exception e) {
+			log.error("Error at line " + br.getLineNumber() + " - " + e.getMessage(), e);
+			throw new DAOException(e);
 		}
 
 		return _data;
