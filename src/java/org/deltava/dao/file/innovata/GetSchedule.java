@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -18,17 +18,17 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format direct flight schedules from Innovata LLC.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
 public class GetSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetSchedule.class);
-	private static final DateFormat _ddf = new SimpleDateFormat("dd-MMM");
-	private static final DateFormat _df = new SimpleDateFormat("dd-MMM-yyyy");
-	private static final DateFormat _tf = new SimpleDateFormat("HHmm");
-	private static final DateFormat _ftf = new SimpleDateFormat("HH:mm");
+	private final DateFormat _ddf = new SimpleDateFormat("dd-MMM");
+	private final DateFormat _df = new SimpleDateFormat("dd-MMM-yyyy");
+	private final DateFormat _tf = new SimpleDateFormat("HHmm");
+	private final DateFormat _ftf = new SimpleDateFormat("HH:mm");
 
 	private final Calendar _effDate = CalendarUtils.getInstance(null);
 	private Calendar _defaultStartDate;
