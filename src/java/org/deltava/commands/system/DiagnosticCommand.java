@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -75,7 +75,6 @@ public class DiagnosticCommand extends AbstractCommand {
 			// Get the ACARS Connection pool data and save in the request
 			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
 			ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(true)), REQUEST);
-			ctx.setAttribute("acarsBans", acarsPool.getBanInfo(), REQUEST);
 
 			// Get the acars worker info data and save in the request
 			ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SharedData.get(SharedData.ACARS_DAEMON);
