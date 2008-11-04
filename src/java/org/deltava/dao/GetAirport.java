@@ -14,13 +14,15 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
 public class GetAirport extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetAirport.class);
+	
+	private String _appCode;
 
 	/**
 	 * Creates the DAO with a JDBC connection.
@@ -28,6 +30,16 @@ public class GetAirport extends DAO {
 	 */
 	public GetAirport(Connection c) {
 		super(c);
+		setAppCode(SystemData.get("airline.code"));
+	}
+	
+	/**
+	 * Overrides the application code (for use by the ACARS server).
+	 * @param code the new application code
+	 * @throws NullPointerException if code is null
+	 */
+	public void setAppCode(String code) {
+		_appCode = code.toUpperCase();
 	}
 
 	/**
@@ -66,7 +78,7 @@ public class GetAirport extends DAO {
 			// Init the prepared statement to pull in the airline data
 			prepareStatementWithoutLimits("SELECT CODE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
 			_ps.setString(1, a.getIATA());
-			_ps.setString(2, SystemData.get("airline.code"));
+			_ps.setString(2, _appCode);
 
 			// Iterate through the results
 			rs = _ps.executeQuery();
@@ -97,7 +109,7 @@ public class GetAirport extends DAO {
 					+ "ORDER BY A.IATA");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
 			_ps.setString(2, al.getCode());
-			_ps.setString(3, SystemData.get("airline.code"));
+			_ps.setString(3, _appCode);
 
 			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();
@@ -204,11 +216,14 @@ public class GetAirport extends DAO {
 			_ps.close();
 			
 			// Load the airlines for each airport and execute the query
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)");
-			_ps.setString(1, SystemData.get("airline.code"));
-			rs = _ps.executeQuery();
-
+			if (!"ALL".equals(_appCode)) {
+				prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)");
+				_ps.setString(1, _appCode);
+			} else
+				prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE");
+			
 			// Iterate through the results
+			rs = _ps.executeQuery();
 			while (rs.next()) {
 				String code = rs.getString(2);
 				Airport a = results.get(code);
