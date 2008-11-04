@@ -21,6 +21,7 @@
 <content:js name="common" />
 <content:js name="hourCalc" />
 <c:if test="${!isAssign}"><content:js name="airportRefresh" /></c:if>
+<content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
@@ -213,6 +214,5 @@ if (f.airline.selectedIndex != 0) {
 	updateAirports(f.airportA, 'airline=' + aCode, false, '${pirep.airportA.IATA}');
 }
 </script>
-<content:googleAnalytics />
 </body>
 </html>
