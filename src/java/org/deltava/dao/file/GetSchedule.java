@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -14,13 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
 public class GetSchedule extends ScheduleLoadDAO {
 	
-	private static final DateFormat _df = new SimpleDateFormat("HH:mm");
+	private final DateFormat _df = new SimpleDateFormat("HH:mm");
 	
 	/**
 	 * Initializes the Data Access Object.
