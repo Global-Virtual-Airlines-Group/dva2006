@@ -56,7 +56,7 @@ public class GetFAWeather extends FlightAwareDAO implements CachingDAO {
 			return (METAR) _wxCache.get(key);
 
 		try {
-			METAR result = new METAR(code);
+			METAR result = new METAR();
 			result.setData(getStub().METAR(code));
             result.setDate(new Date());
             _wxCache.add(result);
@@ -83,7 +83,7 @@ public class GetFAWeather extends FlightAwareDAO implements CachingDAO {
 			return (TAF) _wxCache.get(key);
 
 		try {
-			TAF result = new TAF(code);
+			TAF result = new TAF();
 			result.setData(getStub().TAF(code));
 			result.setDate(new Date());
 			_wxCache.add(result);
