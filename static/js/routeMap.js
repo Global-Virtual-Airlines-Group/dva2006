@@ -54,7 +54,7 @@ xmlreq.onreadystatechange = function() {
 	// Save in the hashmap
 	airports[aCode] = aps;
 	isLoading.innerHTML = '';
-	gaEvent('Route Map', 'Airports', aCode, els.length);
+	gaEvent('Route Map', 'Airports', aCode);
 	return true;
 }
 
@@ -109,7 +109,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Focus on the map
 	isLoading.innerHTML = '';
-	gaEvent('Route Map', 'Routes', this.icao, routeCount);
+	gaEvent('Route Map', 'Routes', this.icao);
 	return true;
 } // function
 

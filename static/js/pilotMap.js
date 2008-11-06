@@ -31,7 +31,7 @@ xmlreq.onreadystatechange = function() {
 	enableElement(f.noFilter, true);
 	enableElement(f.eqType, true);
 	enableElement(f.rank, true);
-	gaEvent('Pilot Map', 'Load', ac.length);
+	gaEvent('Pilot Map', 'Load');
 	return true;
 } // function
 

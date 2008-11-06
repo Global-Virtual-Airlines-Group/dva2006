@@ -189,7 +189,7 @@ xreq.onreadystatechange = function() {
 			waypoints.push(p);
 		} // for
 
-		gaEvent('ACARS', 'Flight Route Info', marker.flight_id, wps.length);
+		gaEvent('ACARS', 'Flight Route Info', marker.flight_id);
 		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7);
 		map.addOverlay(routeWaypoints);
 	}
@@ -205,7 +205,7 @@ xreq.onreadystatechange = function() {
 		} // for
 
 		// Draw the line
-		gaEvent('ACARS', 'Flight Progress Info', marker.flight_id, pos.length);
+		gaEvent('ACARS', 'Flight Progress Info', marker.flight_id);
 		routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
 		map.addOverlay(routeData);
 	}

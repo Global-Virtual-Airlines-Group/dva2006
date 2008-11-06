@@ -126,7 +126,7 @@ xmlreq.onreadystatechange = function() {
 	if (mrk)
 		GEvent.trigger(mrk, 'click');
 
-	gaEvent('WeatherMap', 'Fetch TAF/METAR', code, wc.length);
+	gaEvent('WeatherMap', 'Fetch TAF/METAR', code);
 	return true;
 }
 
