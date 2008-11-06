@@ -15,7 +15,7 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("pos");
-	gaEvent('ACARS', 'Flight Data', pirepID, ac.length);
+	gaEvent('ACARS', 'Flight Data', pirepID);
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var label = a.firstChild;

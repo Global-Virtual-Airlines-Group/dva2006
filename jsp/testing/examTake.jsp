@@ -99,7 +99,7 @@ else if (txtbox.length > 1) {
 	}
 }
 
-gaEvent('Examination', 'Submit Answer', id, qNum);
+gaEvent('Examination', 'Submit Answer', id);
 return true;
 }
 <c:if test="${hasQImages}">
