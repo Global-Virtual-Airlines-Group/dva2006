@@ -35,7 +35,6 @@
 <tr class="title caps">
  <td colspan="2"><content:airline /> INTERACTIVE ROUTE MAP <span id="isLoading" /></td>
 </tr>
-<c:set var="alCount" value="${0}" scope="request" />
 <tr>
  <td class="label">Airline</td>
  <td class="data"><el:combo ID="airlineCode" name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="-" onChange="void updateAirports(this)" />
