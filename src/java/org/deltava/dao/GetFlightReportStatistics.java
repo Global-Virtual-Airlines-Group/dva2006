@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.1
  */
 
@@ -336,12 +336,16 @@ public class GetFlightReportStatistics extends DAO {
 			// Execute the query
 			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 			ResultSet rs = _ps.executeQuery();
+			boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 10);
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
 				entry.setACARSLegs(rs.getInt(7));
 				entry.setOnlineLegs(rs.getInt(8));
 				entry.setHistoricLegs(rs.getInt(9));
 				entry.setDispatchLegs(rs.getInt(10));
+				if (hasPilotIDs)
+					entry.setPilotIDs(rs.getInt(11));
+				
 				results.add(entry);
 			}
 
@@ -361,7 +365,8 @@ public class GetFlightReportStatistics extends DAO {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
 				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
 				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS,"
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS FROM PIREPS F WHERE (F.STATUS=?) ";
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM PIREPS F "
+				+ "WHERE (F.STATUS=?) ";
 	}
 
 	/**
@@ -393,7 +398,8 @@ public class GetFlightReportStatistics extends DAO {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS FROM "
-				+ "common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
+				+ "COUNT(DISTINCT F.PILIOT_ID) AS PIDS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA="
+				+ apColumn + ") AND (F.STATUS=?) ";
 	}
 }
