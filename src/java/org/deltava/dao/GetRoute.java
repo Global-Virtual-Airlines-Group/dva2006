@@ -6,14 +6,11 @@ import java.sql.*;
 
 import org.deltava.beans.navdata.Intersection;
 import org.deltava.beans.schedule.*;
-import org.deltava.comparators.AirportComparator;
-
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object for Preferred/Oceanic Routes.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -27,35 +24,6 @@ public class GetRoute extends DAO {
         super(c);
     }
 
-    /**
-     * Returns a list of all destinations with a preferred Route from a particular Airport.
-     * @param aCode the source Airport IATA code
-     * @return a List of Airport beans
-     * @throws DAOException
-     */
-    public Collection<Airport> getRouteDestinations(String aCode) throws DAOException {
-       try {
-          prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_A FROM ROUTES WHERE (AIRPORT_D=?) ORDER BY AIRPORT_A");
-          _ps.setString(1, aCode);
-          
-          // Iterate through the result set
-          Set<Airport> results = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-          ResultSet rs = _ps.executeQuery();
-          while (rs.next()) {
-             Airport a = SystemData.getAirport(rs.getString(1));
-             if (a != null)
-                results.add(a);
-          }
-          
-          // Clean up and return
-          rs.close();
-          _ps.close();
-          return results;
-       } catch (SQLException se) {
-          throw new DAOException(se);
-       }
-    }
-    
     /**
      * Returns a list of oceanic routes.
      * @return a List of OceanicRoutes
@@ -115,37 +83,6 @@ public class GetRoute extends DAO {
         rs.close();
         _ps.close();
         return results;
-    }
-    
-    /**
-     * Returns all Airports with a Preferred Route entry.
-     * @return a List of Airports
-     * @throws DAOException if a JDBC error occurs
-     */
-    public List<Airport> getAirports() throws DAOException {
-        try {
-            prepareStatementWithoutLimits("SELECT DISTINCT(AIRPORT_D) FROM ROUTES ORDER BY AIRPORT_D");
-
-            // Get the airport info map
-            Map airports = (Map) SystemData.getObject("airports");
-            
-            // Execute the query
-            ResultSet rs = _ps.executeQuery();
-            List<Airport> results = new ArrayList<Airport>();
-            
-            // Iterate through the results
-            while (rs.next()) {
-                Airport a = (Airport) airports.get(rs.getString(1));
-                results.add(a);
-            }
-            
-            // Clean up and return
-            rs.close();
-            _ps.close();
-            return results;
-        } catch (SQLException se) {
-            throw new DAOException(se);
-        }
     }
     
     /**
