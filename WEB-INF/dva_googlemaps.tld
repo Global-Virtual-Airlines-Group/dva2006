@@ -58,7 +58,7 @@
 		<attribute>
 			<name>ID</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>className</name>
