@@ -1,6 +1,10 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
+import java.util.List;
+
+import org.deltava.beans.stats.FlightStatsEntry;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -9,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -40,7 +44,12 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 			dao.setQueryMax(vc.getCount());
 
 			// Save the statistics in the request
-			vc.setResults(dao.getPIREPStatistics(0, labelType, vc.getSortType(), true));
+			List<FlightStatsEntry> results = dao.getPIREPStatistics(0, labelType, vc.getSortType(), true); 
+			vc.setResults(results);
+			
+			// Save pilot ID flag
+			boolean hasID = !results.isEmpty() && (results.get(0).getPilotIDs() > 0);
+			ctx.setAttribute("hasPilotID", Boolean.valueOf(hasID), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

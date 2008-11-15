@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store Flight statistics entries.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	private int _dispatchLegs;
 	private double _hours;
 	private int _miles;
+	private int _pilotIDs;
 
 	private final Map<Long, Integer> _verLegs = new TreeMap<Long, Integer>();
 	
@@ -80,6 +81,15 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 */
 	public int getHistoricLegs() {
 		return _historicLegs;
+	}
+	
+	/**
+	 * Returns the number of distinct Pilots flying legs in this period.
+	 * @return the number of pilots flying legs
+	 * @see FlightStatsEntry#setPilotIDs(int)
+	 */
+	public int getPilotIDs() {
+		return _pilotIDs;
 	}
 	
 	/**
@@ -193,6 +203,15 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	 */
 	public void setOnlineLegs(int legs) {
 		_onlineLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of Pilots flying legs during this period.
+	 * @param ids the number of pilots
+	 * @see FlightStatsEntry#getPilotIDs()
+	 */
+	public void setPilotIDs(int ids) {
+		_pilotIDs = ids;
 	}
 	
 	/**
