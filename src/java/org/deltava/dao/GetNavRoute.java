@@ -97,21 +97,30 @@ public class GetNavRoute extends GetNavData {
 		// Split the name
 		StringTokenizer tkns = new StringTokenizer(name, ".");
 		int tkCount = tkns.countTokens();
-		if ((tkCount != 2) && (tkCount != 3))
+		if ((tkCount < 1) || (tkCount > 4))
 			return null;
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
-		if (tkCount == 3)
+		if (tkCount > 2)
 			sqlBuf.append(" AND (RUNWAY=?)");
+		if (tkCount > 3)
+			sqlBuf.append(" AND (ICAO=?)");
 		sqlBuf.append(" ORDER BY SEQ");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, tkns.nextToken().toUpperCase());
-			_ps.setString(2, tkns.nextToken().toUpperCase());
-			if (tkns.hasMoreTokens())
+			if (tkCount < 4) {
+				_ps.setString(1, tkns.nextToken().toUpperCase());
+				_ps.setString(2, tkns.nextToken().toUpperCase());
+				if (tkns.hasMoreTokens())
+					_ps.setString(3, tkns.nextToken().toUpperCase());
+			} else {
+				_ps.setString(4, tkns.nextToken().toUpperCase());
+				_ps.setString(1, tkns.nextToken().toUpperCase());
+				_ps.setString(2, tkns.nextToken().toUpperCase());
 				_ps.setString(3, tkns.nextToken().toUpperCase());
+			}
 
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
