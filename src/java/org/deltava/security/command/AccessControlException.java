@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.commands.CommandException;
@@ -7,7 +7,7 @@ import org.deltava.commands.CommandException;
  * An exception thrown by an access controller. By default, stack traces of access
  * control exceptions are not logged.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -18,8 +18,7 @@ public class AccessControlException extends CommandException {
 	 * @param msg the message
 	 */
 	AccessControlException(String msg) {
-		super(msg);
-		setLogStackDump(false);
+		super(msg, false);
 	}
 	
 	/**
@@ -29,7 +28,7 @@ public class AccessControlException extends CommandException {
 	 * @param doWarn TRUE if the exception should be logged as a warning, otherwise FALSE
 	 */
 	AccessControlException(String msg, boolean doWarn) {
-		this(msg);
+		super(msg, false);
 		setWarning(doWarn);
 	}
 }
