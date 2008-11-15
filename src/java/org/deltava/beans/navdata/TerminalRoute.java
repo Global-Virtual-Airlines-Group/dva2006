@@ -1,16 +1,17 @@
 // Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.Airport;
 
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
-public class TerminalRoute extends Airway {
+public class TerminalRoute extends Airway implements ComboAlias {
    
    public static final int SID = 0;
    public static final int STAR = 1;
@@ -105,6 +106,14 @@ public class TerminalRoute extends Airway {
     */
    public String getTypeName() {
       return TYPES[_type];
+   }
+   
+   public String getComboName() {
+	   return getCode();
+   }
+   
+   public String getComboAlias() {
+	   return getCode();
    }
    
    /**
