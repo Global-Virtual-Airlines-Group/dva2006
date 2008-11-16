@@ -10,48 +10,32 @@ import org.jdom.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+
+import org.deltava.dao.ipc.GetACARSPool;
+
 import org.deltava.service.*;
 import org.deltava.util.*;
-import org.deltava.util.cache.*;
-
-import org.gvagroup.acars.ACARSAdminInfo;
-import org.gvagroup.common.SharedData;
 
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
 public class MapService extends WebService {
 	
-	private final Cache<CacheableCollection<ACARSMapEntry>> _cache = new ExpiringCache<CacheableCollection<ACARSMapEntry>>(1, 5); 
-
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
-	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// Get the pool
-		ACARSAdminInfo<ACARSMapEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-		if (acarsPool == null)
-			return SC_NOT_FOUND;
-		
-		// Get the ACARS connection data
-		CacheableCollection<ACARSMapEntry> entries = null;
-		synchronized (_cache) {
-			entries = _cache.get(MapService.class);
-			if (entries == null) {
-				entries = new CacheableList<ACARSMapEntry>(MapService.class);
-				entries.addAll(IPCUtils.deserialize(acarsPool));
-				_cache.add(entries);
-			}
-		}
+		// Get the pool data
+		GetACARSPool acdao = new GetACARSPool();
+		Collection<ACARSMapEntry> entries = acdao.getEntries();
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -104,7 +88,7 @@ public class MapService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

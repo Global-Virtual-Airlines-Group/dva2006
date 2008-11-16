@@ -20,9 +20,9 @@ import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to display the available Dispatch Routes between two Airprots.
+ * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
@@ -135,7 +135,7 @@ public class DispatchRouteListService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
 		// Return success code
