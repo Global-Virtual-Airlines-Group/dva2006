@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -49,51 +49,14 @@ public class SetExam extends DAO {
 			// Write the exam and get the new exam ID
 			executeUpdate(1);
 			ex.setID(getNewID());
-
-			// Prepare the statement for questions
-			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, "
-					+ "QUESTION, CORRECT_ANSWER) VALUES (?, ?, ?, ?, ?)");
-			_ps.setInt(1, ex.getID());
 			
-			// Batch the questions
+			// Write the questions
 			for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
 				Question q = i.next();
-				_ps.setInt(2, q.getID());
-				_ps.setInt(3, q.getNumber());
-				_ps.setString(4, q.getQuestion());
-				_ps.setString(5, q.getCorrectAnswer());
-				_ps.addBatch();
+				write(ex.getID(), q);
 			}
 
-			// Write the questions
-			_ps.executeBatch();
-			_ps.close();
-			
-			// Write multiple-choice questions
-			if (ex.hasMultipleChoice()) {
-				prepareStatement("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
-				_ps.setInt(1, ex.getID());
-				for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
-					Question q = i.next();
-					if (q instanceof MultipleChoice) {
-						MultipleChoice mq = (MultipleChoice) q;
-						_ps.setInt(2, q.getID());
-						
-						// Save the choices
-						int seq = 0;
-						for (Iterator<String> ci = mq.getChoices().iterator(); ci.hasNext(); ) {
-							String choice = ci.next();
-							_ps.setInt(3, ++seq);
-							_ps.setString(4, choice);
-							_ps.addBatch();
-						}
-						
-						_ps.executeBatch();
-					}
-				}
-			}
-
-			// Commit the transaction and clean up
+			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -101,6 +64,49 @@ public class SetExam extends DAO {
 		}
 	}
 
+	/**
+	 * Helper method to write a Question to the database.
+	 */
+	private void write(int id, Question q) throws SQLException {
+		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, "
+				+ "QUESTION, CORRECT_ANSWER) VALUES (?, ?, ?, ?, ?)");
+		_ps.setInt(1, id);
+		_ps.setInt(2, q.getID());
+		_ps.setInt(3, q.getNumber());
+		_ps.setString(4, q.getQuestion());
+		_ps.setString(5, q.getCorrectAnswer());
+		executeUpdate(1);
+		
+		// Write child tables
+		if (q instanceof MultiChoiceQuestion) {
+			MultiChoiceQuestion mcq = (MultiChoiceQuestion) q;
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) "
+					+ "VALUES (?, ?, ?, ?)");
+			_ps.setInt(1, id);
+			_ps.setInt(2, q.getID());
+			
+			// Save the choices
+			int seq = 0;
+			for (Iterator<String> ci = mcq.getChoices().iterator(); ci.hasNext(); ) {
+				String choice = ci.next();
+				_ps.setInt(3, ++seq);
+				_ps.setString(4, choice);
+				_ps.addBatch();
+			}
+			
+			_ps.executeBatch();
+		} else if (q instanceof RoutePlotQuestion) {
+			RoutePlotQuestion rpq = (RoutePlotQuestion) q;
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSRP (EXAM_ID, QUESTION_ID, AIRPORT_D, " + 
+					"AIRPORT_A) VALUES (?, ?, ?, ?)");
+			_ps.setInt(1, id);
+			_ps.setInt(2, q.getID());
+			_ps.setString(3, rpq.getAirportD().getIATA());
+			_ps.setString(4, rpq.getAirportA().getIATA());
+			executeUpdate(1);
+		}
+	}
+	
 	/**
 	 * Updates an existing Pilot Examination in the database.
 	 * @param ex the Examination to update

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store information about written examinations.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -22,7 +22,7 @@ public class Examination extends Test {
 	private static final String[] CLASS_NAMES = { "opt2", "opt1", null };
 
 	private Date _expiryDate;
-	private Map<Integer, Question> _questions;
+	private final Map<Integer, Question> _questions = new TreeMap<Integer, Question>();
 	private int _size;
 	private boolean _empty;
 	private boolean _autoScored;
@@ -33,7 +33,6 @@ public class Examination extends Test {
 	 */
 	public Examination(String name) {
 		super(name);
-		_questions = new TreeMap<Integer, Question>();
 	}
 
 	/**
@@ -65,7 +64,7 @@ public class Examination extends Test {
 	}
 
 	/**
-	 * Returns wether this Examination's answers were empty.
+	 * Returns whether this Examination's answers were empty.
 	 * @return TRUE if all Answers are blank, otherwise FALSE
 	 * @see Examination#setEmpty(boolean)
 	 */
@@ -82,6 +81,21 @@ public class Examination extends Test {
 
 		return true;
 	}
+	
+	/**
+	 * Returns if a route plotting question is included in this Examination. 
+	 * @return TRUE if a route plotting question is included, otherwise FALSE
+	 * @see RoutePlot
+	 */
+	public boolean getRoutePlot() {
+		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
+			Question q = i.next();
+			if (q instanceof RoutePlot)
+				return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Returns a specific Question from the Examination.
@@ -89,7 +103,7 @@ public class Examination extends Test {
 	 * @return the Question with the specified number, or null if not present
 	 */
 	public Question getQuestion(int idx) {
-		return _questions.get(new Integer(idx));
+		return _questions.get(Integer.valueOf(idx));
 	}
 	
 	/**
@@ -159,7 +173,7 @@ public class Examination extends Test {
 	public void addQuestion(Question q) {
 		// Generate a question number if the question does not currently have one
 		int qNum = (q.getNumber() == 0) ? (_questions.size() + 1) : q.getNumber();
-		_questions.put(new Integer(qNum), q);
+		_questions.put(Integer.valueOf(qNum), q);
 		q.setNumber(qNum);
 	}
 

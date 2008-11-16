@@ -47,19 +47,33 @@ public class GetExam extends DAO {
 
 			// Load the questions for this examination
 			Examination e = results.get(0);
-			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM "
-					+ "exams.EXAMQUESTIONS EQ LEFT JOIN exams.EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) "
-					+ "AND (EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (EQ.QUESTION_ID=QI.ID) "
-					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
+			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
+					+ "RQ.AIRPORT_A FROM exams.EXAMQUESTIONS EQ LEFT JOIN exams.EXAMQUESTIONSM MQ ON "
+					+ "(EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS "
+					+ "QI ON (EQ.QUESTION_ID=QI.ID) LEFT JOIN exams.EXAMQUESTIONSRP RQ ON (EQ.EXAM_ID=RQ.EXAM_ID) "
+					+ "AND (EQ.QUESTION_ID=RQ.QUESTION_ID) WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID, "
+					+ "EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				boolean isMC = (rs.getInt(8) > 0);
+				boolean isRP = (rs.getString(14) != null);
 
 				// Create the question
-				Question q = isMC ? new MultiChoiceQuestion(rs.getString(4)) : new Question(rs.getString(4));
+				Question q = null;
+				if (isMC)
+					q = new MultiChoiceQuestion(rs.getString(4));
+				else if (isRP) {
+					RoutePlotQuestion rpq = new RoutePlotQuestion(rs.getString(4));
+					rpq.setAirportD(SystemData.getAirport(rs.getString(13)));
+					rpq.setAirportA(SystemData.getAirport(rs.getString(14)));
+					q = rpq;
+				} else
+					q = new Question(rs.getString(4));
+				
+				// Populate the fields
 				q.setID(rs.getInt(2));
 				q.setCorrectAnswer(rs.getString(5));
 				q.setAnswer(rs.getString(6));
