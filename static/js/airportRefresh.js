@@ -1,5 +1,6 @@
 function updateAirports(combo, cmdURL, doICAO, oldCode)
 {
+if (combo == null) return false;
 var xmlreq = getXMLHttpRequest();
 xmlreq.open("GET", "airports.ws?" + cmdURL, true);
 xmlreq.onreadystatechange = function() {
@@ -19,10 +20,10 @@ xmlreq.onreadystatechange = function() {
 		combo.options[i+1] = opt;
 	} // for
 
-	gaEvent('Airports', 'Load Airport List');
+	combo.disabled = false;
 	setAirport(combo, oldCode);
 	changeAirport(combo);
-	combo.disabled = false;
+	gaEvent('Airports', 'Load Airport List');
 	return true;
 }
 
@@ -58,17 +59,13 @@ return true;
 
 function getValue(combo)
 {
-if (combo.selectedIndex == -1)
-	return null;
-	
+if (combo.selectedIndex == -1) return null;
 return combo.options[combo.selectedIndex].value;
 }
 
 function setAirport(combo, code)
 {
-if (code == null)
-	return false;
-
+if (code == null) return false;
 code = code.toUpperCase();
 for (var x = 0; x < combo.options.length; x++) {
 	var opt = combo.options[x];
@@ -79,4 +76,34 @@ for (var x = 0; x < combo.options.length; x++) {
 }
 
 return false;
+}
+
+function updateSIDSTAR(combo, code, type)
+{
+if (combo == null) return false;
+var oldValue = combo.options[combo.selectedIndex].value;
+var xmlreq = getXMLHttpRequest();
+xmlreq.open("GET", "troutes.ws?airportD=" + code + "&airportA=" + code, true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var xmlDoc = xmlreq.responseXML;
+	var trs = xmlDoc.documentElement.getElementsByTagName(type.toLowerCase());	
+	combo.options.length = trs.length + 1;
+	combo.options[0] = new Option("-", "");
+	for (var i = 0; i < trs.length; i++) {
+		var tr = trs[i];
+		var trCode = tr.getAttribute("code")
+		var opt = new Option(trCode, trCode);
+		combo.options[i+1] = opt;		
+	}
+
+	combo.disabled = false;
+	setCombo(combo, oldValue);
+	gaEvent('Airports', 'Load SID/STAR List');
+	return true;
+}
+
+combo.disabled = true;
+xmlreq.send(null);
+return true;
 }
