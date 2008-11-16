@@ -1,6 +1,9 @@
 #!/bin/sh
 # GVA Subversion Repository backup script
-# Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+
+# Set archiving options
+arc_util="bzip2 -9"
 
 # Goto backup directory
 cd /home/backup/svn
@@ -22,7 +25,7 @@ fi
 # Back up the first 1000 revisions
 if [ ! -f "/home/backup/svn/svn_1xxx.bz2" ] ;then
  echo 'Backing up revisions 0-999'
- nice svnadmin dump /home/svn --revision 0:999 | bzip2 -9 > svn_1xxx.bz2
+ nice svnadmin dump /home/svn --revision 0:999 | $arc_util > svn_1xxx.bz2
  echo 1000 > /tmp/svn.revision_base
 else
  echo 1000 > /tmp/svn.revision_base
@@ -32,7 +35,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "1500" ] ;then
  if [ ! -f "/home/backup/svn/svn_15xx.bz2" ] ;then
   echo 'Backing up revisions 1000-1499'
-  nice svnadmin dump /home/svn --incremental --revision 1000:1499 | bzip2 -9 > svn_15xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 1000:1499 | $arc_util > svn_15xx.bz2
  fi
 
  echo 1500 > /tmp/svn.revision_base
@@ -42,7 +45,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "2000" ] ;then
  if [ ! -f "/home/backup/svn/svn_20xx.bz2" ] ;then
   echo 'Backing up revisions 1500-1999'
-  nice svnadmin dump /home/svn --incremental --revision 1500:1999 | bzip2 -9 > svn_20xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 1500:1999 | $arc_util > svn_20xx.bz2
  fi
 
  echo 2000 > /tmp/svn.revision_base
@@ -52,7 +55,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "2500" ] ;then
  if [ ! -f "/home/backup/svn/svn_25xx.bz2" ] ;then
   echo 'Backing up revisions 2000-2499'
-  nice svnadmin dump /home/svn --incremental --revision 2000:2499 | bzip2 -9 > svn_25xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 2000:2499 | $arc_util > svn_25xx.bz2
  fi
 
  echo 2500 > /tmp/svn.revision_base
@@ -62,7 +65,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "3000" ] ;then
  if [ ! -f "/home/backup/svn/svn_30xx.bz2" ] ;then
   echo 'Backing up revisions 2500-2999'
-  nice svnadmin dump /home/svn --incremental --revision 2500:2999 | bzip2 -9 > svn_30xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 2500:2999 | $arc_util > svn_30xx.bz2
  fi
 
  echo 3000 > /tmp/svn.revision_base
@@ -72,7 +75,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "3500" ] ;then
  if [ ! -f "/home/backup/svn/svn_35xx.bz2" ] ;then
   echo 'Backing up revisions 3000-3499'
-  nice svnadmin dump /home/svn --incremental --revision 3000:3499 | bzip2 -9 > svn_35xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 3000:3499 | $arc_util > svn_35xx.bz2
  fi
 
  echo 3500 > /tmp/svn.revision_base
@@ -82,7 +85,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "4000" ] ;then
  if [ ! -f "/home/backup/svn/svn_40xx.bz2" ] ;then
   echo 'Backing up revisions 3500-3999'
-  nice svnadmin dump /home/svn --incremental --revision 3500:3999 | bzip2 -9 > svn_40xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 3500:3999 | $arc_util > svn_40xx.bz2
  fi
 
  echo 4000 > /tmp/svn.revision_base
@@ -92,7 +95,7 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "4500" ] ;then
  if [ ! -f "/home/backup/svn/svn_45xx.bz2" ] ;then
   echo 'Backing up revisions 4000-4499'
-  nice svnadmin dump /home/svn --incremental --revision 4000:4499 | bzip2 -9 > svn_45xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 4000:4499 | $arc_util > svn_45xx.bz2
  fi
 
  echo 4500 > /tmp/svn.revision_base
@@ -102,15 +105,35 @@ fi
 if [ "`cat /tmp/svn.revision`" -gt "5000" ] ;then
  if [ ! -f "/home/backup/svn/svn_50xx.bz2" ] ;then
   echo 'Backing up revisions 4500-4999'
-  nice svnadmin dump /home/svn --incremental --revision 4500:4999 | bzip2 -9 > svn_50xx.bz2
+  nice svnadmin dump /home/svn --incremental --revision 4500:4999 | $arc_util > svn_50xx.bz2
  fi
 
  echo 5000 > /tmp/svn.revision_base
 fi
 
+# If we have more than 5500 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "5500" ] ;then
+ if [ ! -f "/home/backup/svn/svn_55xx.bz2" ] ;then
+  echo 'Backing up revisions 5000-5499'
+  nice svnadmin dump /home/svn --incremental --revision 5000:5499 | $arc_util > svn_55xx.bz2
+ fi
+
+ echo 5500 > /tmp/svn.revision_base
+fi
+
+# If we have more than 6000 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "6000" ] ;then
+ if [ ! -f "/home/backup/svn/svn_60xx.bz2" ] ;then
+  echo 'Backing up revisions 5500-5999'
+  nice svnadmin dump /home/svn --incremental --revision 5500:5999 | $arc_util > svn_60xx.bz2
+ fi
+
+ echo 5500 > /tmp/svn.revision_base
+fi
+
 # Back up the last revisions
 echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
-nice svnadmin dump /home/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | bzip2 -9 > svn_top.bz2
+nice svnadmin dump /home/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | $arc_util > svn_top.bz2
 
 # Clean up
 mv /tmp/svn.revision /home/backup/svn/svn.revision_base
