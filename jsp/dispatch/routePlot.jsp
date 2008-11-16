@@ -44,6 +44,7 @@ if (airportsChanged) {
 	setRoute(f.routes);
 }
 
+enableElement('RouteSaveButton', (f.route.value.length > 3));
 return true;
 }
 
