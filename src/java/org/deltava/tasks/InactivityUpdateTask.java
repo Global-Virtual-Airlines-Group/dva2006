@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
@@ -13,12 +14,13 @@ import org.deltava.mail.*;
 import org.deltava.taskman.*;
 import org.deltava.security.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -47,15 +49,21 @@ public class InactivityUpdateTask extends Task {
 		
 		// Get the System authenticator
 		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Initialize the DAOs
-			GetInactivity idao = new GetInactivity(con);
+			GetInactivity dao = new GetInactivity(con);
+			GetAcademyCourses cdao = new GetAcademyCourses(con);
+			SetAcademy cwdao = new SetAcademy(con);
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			SetPilot pwdao = new SetPilot(con);
 			SetInactivity iwdao = new SetInactivity(con);
+			
+			// Load pending flight academy users
+			Collection<Course> pC = cdao.getByStatus("C.PILOT_ID", Course.PENDING);
+			pC.addAll(cdao.getByStatus("C.PILOT_ID", Course.STARTED));
+			Map<Integer, Course> courses = CollectionUtils.createMap(pC, "pilotID");
 
 			// Get the Message templates
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -63,7 +71,6 @@ public class InactivityUpdateTask extends Task {
 			MessageTemplate nmt = mtdao.get("USERNOTIFY");
 
 			// Figure out who we're operating as
-			GetInactivity dao = new GetInactivity(con);
 			Pilot taskBy = dao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
 			
 			// Get the pilots to deactivate
@@ -91,6 +98,20 @@ public class InactivityUpdateTask extends Task {
 					
 					// Start a transaction
 					ctx.startTX();
+					
+					// Check if we have a flight academy entry
+					Course c = courses.get(Integer.valueOf(p.getID()));
+					if (c != null) {
+						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
+						cc.setCreatedOn(upd.getCreatedOn());
+						cc.setText(upd.getDescription());
+						log.warn("Removing " + p.getName() + " from " + c.getName() + " Flight Academy Course");
+						
+						// Mark as abandoned and save comment
+						c.setStatus(Course.ABANDONED);
+						cwdao.comment(cc);
+						cwdao.write(c);
+					}
 
 					// Deactivate the Pilot
 					p.setStatus(Pilot.INACTIVE);
@@ -130,7 +151,7 @@ public class InactivityUpdateTask extends Task {
 				Pilot p = i.next();
 				
 				// Check if we've been notified already
-				InactivityPurge ip = idao.getInactivity(p.getID());
+				InactivityPurge ip = dao.getInactivity(p.getID());
 				if ((ip == null) || (!ip.isNotified())) {
 					log.warn("Notifying " + p.getName());
 					
