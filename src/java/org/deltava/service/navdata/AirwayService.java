@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to export Airway data to ACARS dispatch clients.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.0
  */
 
@@ -33,7 +33,7 @@ public class AirwayService extends DispatchDataService {
 
 		// Ensure we are a dispatcher
 		if (!ctx.isUserInRole("Dispatch"))
-			throw error(SC_UNAUTHORIZED, "Not in Dispatch role");
+			throw error(SC_UNAUTHORIZED, "Not in Dispatch role", false);
 
 		// Check the cache
 		File f = _dataCache.get("AIRWAY");
@@ -100,7 +100,7 @@ public class AirwayService extends DispatchDataService {
 			ctx.getResponse().setIntHeader("max-age", 600);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Write success code

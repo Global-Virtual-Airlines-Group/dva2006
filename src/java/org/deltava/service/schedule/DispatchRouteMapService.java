@@ -18,11 +18,11 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Dispatch flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
-public class DispatchRouteMapService extends RouteMapService {
+public class DispatchRouteMapService extends MapPlotService {
 
 	/**
 	 * Executes the Web Service.
@@ -36,7 +36,7 @@ public class DispatchRouteMapService extends RouteMapService {
 			GetACARSRoute rdao = new GetACARSRoute(ctx.getConnection());
 			rt = rdao.getRoute(StringUtils.parse(ctx.getParameter("id"), 0));
 			if (rt == null)
-				throw error(SC_NOT_FOUND, "Invalid Route - " + ctx.getParameter("id"));
+				throw error(SC_NOT_FOUND, "Invalid Route - " + ctx.getParameter("id"), false);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -56,7 +56,7 @@ public class DispatchRouteMapService extends RouteMapService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
 		// Return success code

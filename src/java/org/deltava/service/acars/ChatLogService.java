@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display aggregated ACARS chat logs.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
@@ -34,7 +34,7 @@ public class ChatLogService extends WebService {
 		
 		// Check our access
 		if (!ctx.isUserInRole("HR"))
-			throw error(SC_UNAUTHORIZED, "Not in HR Role");
+			throw error(SC_UNAUTHORIZED, "Not in HR Role", false);
 		
 		// Get the start/end dates
 		Date sd = StringUtils.parseDate(ctx.getParameter("start"), "MM/dd/yyyy HH:mm");
@@ -94,7 +94,7 @@ public class ChatLogService extends WebService {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsChatLog.csv");
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
 		// Write success code

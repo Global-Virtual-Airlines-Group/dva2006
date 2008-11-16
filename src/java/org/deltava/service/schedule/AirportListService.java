@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -113,7 +113,7 @@ public class AirportListService extends WebService {
 			boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
 			Airport a = SystemData.getAirport(ctx.getParameter("code").toUpperCase());
 			if (a == null)
-				throw error(SC_BAD_REQUEST, "Invalid Airport");
+				throw error(SC_BAD_REQUEST, "Invalid Airport", false);
 
 			// Get the airports from the schedule database
 			try {
@@ -155,7 +155,7 @@ public class AirportListService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

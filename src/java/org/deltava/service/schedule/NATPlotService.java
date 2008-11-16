@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return North Atlantic Track data.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -90,10 +90,11 @@ public class NATPlotService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		return SC_OK;

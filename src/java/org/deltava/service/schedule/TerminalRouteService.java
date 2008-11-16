@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the SIDs and STARs for a particular Airport pair.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
@@ -41,8 +41,10 @@ public class TerminalRouteService extends WebService {
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
-			tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aD.getICAO(), TerminalRoute.SID)));
-			tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aA.getICAO(), TerminalRoute.STAR)));			
+			if (aD != null)
+				tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aD.getICAO(), TerminalRoute.SID)));
+			if (aA != null)
+				tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aA.getICAO(), TerminalRoute.STAR)));			
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -71,7 +73,7 @@ public class TerminalRouteService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
 		// Return success code

@@ -148,7 +148,7 @@ public class BandwidthInfoService extends WebService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (Exception e) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
 		// Return success code
