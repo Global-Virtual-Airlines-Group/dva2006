@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create Microsoft Flight Simulator flight plans. 
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
@@ -162,7 +162,7 @@ public class RoutePlanService extends WebService {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + aD.getICAO() +"-" + aA.getICAO() + ".pln");
 			ctx.commit();
 		} catch (Exception e) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

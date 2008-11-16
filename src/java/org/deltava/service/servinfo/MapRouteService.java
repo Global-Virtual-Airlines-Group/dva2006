@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -49,11 +49,8 @@ public class MapRouteService extends WebService {
 
 		// Get the Pilot
 		Pilot p = info.getPilot(ctx.getParameter("id"));
-		if (p == null) {
-			ServiceException se = error(SC_NOT_FOUND, "Cannot find " + ctx.getParameter("id"));
-			se.setLogStackDump(false);
-			throw se;
-		}
+		if (p == null) 
+			throw error(SC_NOT_FOUND, "Cannot find " + ctx.getParameter("id"), false);
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -72,10 +69,11 @@ public class MapRouteService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

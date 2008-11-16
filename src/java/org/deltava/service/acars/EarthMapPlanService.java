@@ -17,17 +17,14 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
+import org.deltava.dao.ipc.*;
 import org.deltava.service.*;
-
 import org.deltava.util.*;
-
-import org.gvagroup.acars.ACARSAdminInfo;
-import org.gvagroup.common.SharedData;
 
 /**
  * A Web Service to display ACARS flight plan data in Google Earth.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -43,13 +40,7 @@ public class EarthMapPlanService extends GoogleEarthService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Get the ACARS flights currently in progress
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-		if (acarsPool == null)
-			return SC_NOT_FOUND;
-
 		// Load the flight information
-		Collection ids = acarsPool.getFlightIDs();
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
 			Connection con = ctx.getConnection();
@@ -57,8 +48,9 @@ public class EarthMapPlanService extends GoogleEarthService {
 			GetNavData navdao = new GetNavData(con);
 
 			// Loop through the flights
-			for (Iterator i = ids.iterator(); i.hasNext(); ) {
-				int flightID = ((Integer) i.next()).intValue();
+			GetACARSPool acdao = new GetACARSPool();
+			for (Iterator<Integer> i = acdao.getFlightIDs().iterator(); i.hasNext(); ) {
+				int flightID = i.next().intValue();
 				FlightInfo info = dao.getInfo(flightID);
 				if (info != null) {
 					Collection<NavigationDataBean> route = new LinkedHashSet<NavigationDataBean>();
@@ -131,7 +123,7 @@ public class EarthMapPlanService extends GoogleEarthService {
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

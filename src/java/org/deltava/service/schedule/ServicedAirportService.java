@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -9,8 +9,9 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.beans.schedule.*;
-import org.deltava.dao.*;
+import org.deltava.comparators.AirportComparator;
 
+import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to list all airports serviced by a particular Airline.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -36,12 +37,13 @@ public class ServicedAirportService extends WebService {
 		// Get the airline
 		Airline al = SystemData.getAirline(ctx.getParameter("airline"));
 		if (al == null)
-			throw error(SC_NOT_FOUND, "Unknown Airline - " + ctx.getParameter("airline"));
+			throw error(SC_NOT_FOUND, "Unknown Airline - " + ctx.getParameter("airline"), false);
 
-		Collection<Airport> airports = null;
+		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.ICAO));
 		try {
 			GetScheduleAirport dao = new GetScheduleAirport(ctx.getConnection());
-			airports = dao.getOriginAirports(al);
+			airports.addAll(dao.getOriginAirports(al));
+			airports.addAll(dao.getDestinationAirports(al));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -62,7 +64,8 @@ public class ServicedAirportService extends WebService {
 			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.00000"));
 			e.setAttribute("color", al.getColor());
-			e.addContent(new CDATA(a.getInfoBox()));
+			StringBuffer info = new StringBuffer(a.getInfoBox());
+			info.append("<div class=\"mapInfoBox\"><br />Airlines:<br />");
 			
 			// Add Airlines
 			for (Iterator<String> ai = a.getAirlineCodes().iterator(); ai.hasNext(); ) {
@@ -72,8 +75,15 @@ public class ServicedAirportService extends WebService {
 					ae.setAttribute("name", aal.getName());
 					ae.setAttribute("code", aal.getCode());
 					e.addContent(ae);
+					info.append(aal.getName());
+					if (ai.hasNext())
+						info.append("<br />");
 				}
 			}
+			
+			// Build info box
+			info.append("</div>");
+			e.addContent(new CDATA(info.toString()));
 			
 			// Add to results
 			re.addContent(e);
@@ -82,10 +92,11 @@ public class ServicedAirportService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

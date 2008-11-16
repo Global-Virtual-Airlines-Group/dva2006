@@ -24,7 +24,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -186,7 +186,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

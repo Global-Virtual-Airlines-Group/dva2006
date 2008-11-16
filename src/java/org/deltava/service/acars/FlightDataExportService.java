@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class FlightDataExportService extends WebService {
 		// Get the ACARS Flight ID
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		if (id < 1)
-			throw error(SC_BAD_REQUEST, "Invalid ID");
+			throw error(SC_BAD_REQUEST, "Invalid ID", false);
 
 		// Get the ACARS data
 		List<RouteEntry> routeData = null; 
@@ -123,7 +123,7 @@ public class FlightDataExportService extends WebService {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Write success code

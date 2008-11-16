@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to export the navigation data database to ACARS dispatch clients.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.0
  */
 
@@ -34,7 +34,7 @@ public class NavigationAidService extends DispatchDataService {
 
 		// Ensure we are a dispatcher
 		if (!ctx.isUserInRole("Dispatch"))
-			throw error(SC_UNAUTHORIZED, "Not in Dispatch role");
+			throw error(SC_UNAUTHORIZED, "Not in Dispatch role", false);
 		
 		// Get the navaid type and check the cache
 		int type = StringUtils.parse(ctx.getParameter("type"), NavigationDataBean.VOR);
@@ -95,7 +95,7 @@ public class NavigationAidService extends DispatchDataService {
 			ctx.getResponse().setIntHeader("max-age", 600);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Write success code

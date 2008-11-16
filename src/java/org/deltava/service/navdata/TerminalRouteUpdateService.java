@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle AJAX updates of Terminal Routes.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 2.1
  */
 
@@ -34,12 +34,12 @@ public class TerminalRouteUpdateService extends WebService {
 		
 		// Validate access
 		if (!ctx.isUserInRole("Schedule"))
-			throw error(SC_UNAUTHORIZED, "Not in Schedule role");
+			throw error(SC_UNAUTHORIZED, "Not in Schedule role", false);
 		
 		// Get the airport
 		Airport a = SystemData.getAirport(ctx.getParameter("icao"));
 		if (a == null)
-			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"));
+			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"), false);
 		
 		// Build the Terminal Route
 		int type = "sid".equalsIgnoreCase(ctx.getParameter("type")) ? TerminalRoute.SID : TerminalRoute.STAR;

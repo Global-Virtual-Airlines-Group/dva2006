@@ -9,22 +9,20 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
-public class RoutePlotMapService extends RouteMapService {
+public class RoutePlotMapService extends MapPlotService {
 
 	/**
 	 * Executes the Web Service.
@@ -134,24 +132,10 @@ public class RoutePlotMapService extends RouteMapService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code
 		return SC_OK;
-	}
-	
-	/**
-	 * Helper method to translate IATA to ICAO codes.
-	 */
-	private String txIATA(String code) {
-		
-		if ((code != null) && (code.length() == 3)) {
-			Airport aD = SystemData.getAirport(code);
-			if (aD != null)
-				return aD.getICAO();
-		}
-		
-		return code;
 	}
 }

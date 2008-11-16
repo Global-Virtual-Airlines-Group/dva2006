@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle posting of offline ACARS Flight Reports.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class FlightReportService extends WebService {
 		String xml = ctx.getParameter("xml");
 		String sha = ctx.getParameter("hashCode");
 		if (xml == null)
-			throw error(SC_BAD_REQUEST, "No Flight Information");
+			throw error(SC_BAD_REQUEST, "No Flight Information", false);
 
 		// Validate the SHA
 		MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
@@ -65,7 +65,7 @@ public class FlightReportService extends WebService {
 		String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
 		if (!calcHash.equals(sha)) {
 			log.warn("ACARS Hash mismatch - expected " + sha + ", calculated " + calcHash);
-			throw error(SC_BAD_REQUEST, "SHA mismatch");
+			throw error(SC_BAD_REQUEST, "SHA mismatch", false);
 		}
 
 		// Get the XML
@@ -84,12 +84,12 @@ public class FlightReportService extends WebService {
 		// Get aircraft information
 		Element ae = re.getChild("aircraft");
 		if ((ae == null) && (clientBuild > 92))
-			throw error(SC_BAD_REQUEST, "No Aircraft Information");
+			throw error(SC_BAD_REQUEST, "No Aircraft Information", false);
 
 		// Get the flight information
 		Element ie = re.getChild("info");
 		if (ie == null)
-			throw error(SC_BAD_REQUEST, "No Flight Information");
+			throw error(SC_BAD_REQUEST, "No Flight Information", false);
 
 		// Build the flight entry
 		Airline al = SystemData.getAirline(ie.getChildTextTrim("airline"));

@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -51,12 +51,12 @@ public class CoolerSyndicationService extends WebService {
 			if (channel != null) {
 				Channel c = cdao.get(channel);
 				if (c == null)
-					throw error(SC_NOT_FOUND, "Invalid Channel");
+					throw error(SC_NOT_FOUND, "Invalid Channel", false);
 
 				// Validate our access to the channel
 				CoolerChannelAccessControl c_access = new CoolerChannelAccessControl(ctx, c);
 				if (!c_access.getCanAccess())
-					throw error(SC_FORBIDDEN, "Cannot access channel");
+					throw error(SC_FORBIDDEN, "Cannot access channel", false);
 			} else {
 				channel = Channel.ALL.getName();
 			}
@@ -133,7 +133,7 @@ public class CoolerSyndicationService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code

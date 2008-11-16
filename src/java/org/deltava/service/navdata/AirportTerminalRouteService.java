@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display all Terminal Routes for an Airport.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.1
  */
 
@@ -38,7 +38,7 @@ public class AirportTerminalRouteService extends WebService {
 		// Get the airport
 		Airport a = SystemData.getAirport(ctx.getParameter("airport"));
 		if (a == null)
-			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("airport"));
+			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("airport"), false);
 
 		final NumberFormat df = new DecimalFormat("#0.000000");
 		Collection<TerminalRoute> routes = new ArrayList<TerminalRoute>();
@@ -111,7 +111,7 @@ public class AirportTerminalRouteService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code
