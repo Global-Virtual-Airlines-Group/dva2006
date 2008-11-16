@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -330,12 +330,7 @@ public class RegisterCommand extends AbstractCommand {
 			int qNum = 0;
 			for (Iterator<QuestionProfile> i = qPool.iterator(); i.hasNext();) {
 				QuestionProfile qp = i.next();
-				Question q = null;
-				if (qp instanceof MultipleChoice)
-					q = new MultiChoiceQuestion((MultiChoiceQuestionProfile) qp);
-				else
-					q = new Question(qp);
-
+				Question q = qp.toQuestion();
 				q.setNumber(++qNum);
 				ex.addQuestion(q);
 			}

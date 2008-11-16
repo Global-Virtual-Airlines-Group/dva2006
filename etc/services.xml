@@ -35,8 +35,9 @@
 	<service id="net_ids" class="org.deltava.service.OnlineIDService" />
 	<service id="id" class="org.deltava.service.DatabaseIDService" />
 
-	<!-- Examination Service -->
-	<service id="answer" class="org.deltava.service.ExamAnswerService" />
+	<!-- Examination Services -->
+	<service id="answer" class="org.deltava.service.exam.TextService" />
+	<service id="examplot" class="org.deltava.service.exam.RoutePlotService" />
 
 	<!-- ACARS Offline PIREP Service -->
 	<service id="acarspirep" class="org.deltava.service.acars.FlightReportService" />

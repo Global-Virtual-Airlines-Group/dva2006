@@ -281,6 +281,13 @@
 		<function-signature>boolean isMultiChoice(org.deltava.beans.testing.Question)</function-signature>
 	</function>
 
+	<!-- Check for route plotting question -->
+	<function>
+		<name>isRoutePlot</name>
+		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
+		<function-signature>boolean isRoutePlot(org.deltava.beans.testing.Question)</function-signature>
+	</function>
+
 	<!-- Check for correctly answered question -->
 	<function>
 		<name>correct</name>
