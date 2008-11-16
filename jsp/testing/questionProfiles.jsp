@@ -41,8 +41,9 @@ return true;
  <td width="6%">ASKED</td>
  <td width="6%">&nbsp;</td>
  <td width="15%" colspan="2" class="left">QUESTION TEXT</td>
- <td width="15%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" /> </td></c:if>
- <td class="right">SELECT EXAMINATION <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
+ <td width="30%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />
+ <el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></td></c:if>
+ <td class="right">SELECT EXAM <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
 </tr>
 
 <!-- Table Question Data -->
@@ -53,7 +54,7 @@ return true;
  <td><fmt:int value="${q.totalAnswers}" /></td>
  <td><c:if test="${q.totalAnswers > 0}"><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</c:if>
 <c:if test="${q.totalAnswers == 0}">-</c:if></td>
- <td width="8%">&nbsp;<c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
+ <td width="7%">&nbsp;<c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
 <c:if test="${q.size > 0}"><el:img src="testing/image.png" caption="Image Resource" /></c:if></td>
  <td class="left small" colspan="3">${q.question}</td>
 </view:row>

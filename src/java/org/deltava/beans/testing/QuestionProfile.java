@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Exam Question profiles.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -139,6 +139,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	/**
 	 * Updates the total number of times this Question has been answered correctly.
 	 * @param count the number of correct answers
+	 * @throws IllegalArgumentException if count is negative
 	 * @see QuestionProfile#getCorrectAnswers()
 	 */
 	public void setCorrectAnswers(int count) {
@@ -151,6 +152,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	/**
 	 * Updates the total number of times this Question has been included in an Examination.
 	 * @param count the number of times included
+	 * @throws IllegalArgumentException if count is negative
 	 * @see QuestionProfile#getTotalAnswers()
 	 */
 	public void setTotalAnswers(int count) {
@@ -206,5 +208,17 @@ public class QuestionProfile extends Question implements ViewEntry {
 	 */
 	public String getRowClassName() {
 		return _active ? null : "warn";
+	}
+	
+	/**
+	 * Converts this question profile into a question. Subclasess should extend this method
+	 * to create the necessary Question subclasses.
+	 * @return a Question bean
+	 */
+	public Question toQuestion() {
+		Question q = new Question(getQuestion());
+		q.setID(getID());
+		q.setCorrectAnswer(getCorrectAnswer());
+    	return q;
 	}
 }

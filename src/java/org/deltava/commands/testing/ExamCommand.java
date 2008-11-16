@@ -6,6 +6,8 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.navdata.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +17,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to view/take/score Pilot Examinations.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -67,6 +69,15 @@ public class ExamCommand extends AbstractCommand {
          Map<Integer, Pilot> pilots = pdao.get(udm);
          ctx.setAttribute("pilot", pilots.get(new Integer(ex.getPilotID())), REQUEST);
        	 ctx.setAttribute("scorer", pilots.get(new Integer(ex.getScorerID())), REQUEST);
+       	 
+       	 // Load the route plotting question numbers and Terminal Route choices
+       	 GetNavRoute navdao = new GetNavRoute(con);
+       	 Collection<Integer> rpQuestions = new TreeSet<Integer>();
+       	 for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
+       		 Question q = i.next();
+       		 if (q instanceof RoutePlot)
+       			 rpQuestions.add(Integer.valueOf(q.getNumber()));
+       	 }
          
          // Display answers only if we have the necessary role
          int activeExamID = dao.getActiveExam(ctx.getUser().getID());
@@ -78,15 +89,52 @@ public class ExamCommand extends AbstractCommand {
          // Determine what we will do with the examination
          String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
          if (access.getCanSubmit()) {
-            // Calculate time remaining
-            ctx.setAttribute("timeRemaining", new Long((ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000), REQUEST);
-            result.setURL("/jsp/testing/examTake.jsp");
-         } else if ((ex.getStatus() != Test.SCORED) && access.getCanScore())
-            result.setURL("/jsp/testing/examScore.jsp");
-         else if (("edit".equals(opName)) && (access.getCanEdit()))
-            result.setURL("/jsp/testing/examScore.jsp");
-         else
-            result.setURL("/jsp/testing/examView.jsp");
+           	 Map<Airport, Collection<TerminalRoute>> sids = new HashMap<Airport, Collection<TerminalRoute>>();
+           	 Map<Airport, Collection<TerminalRoute>> stars = new HashMap<Airport, Collection<TerminalRoute>>();
+           	 for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
+           		 Question q = i.next();
+           		 if (q instanceof RoutePlot) {
+           			 RoutePlotQuestion rpq = (RoutePlotQuestion) q;
+           			 if (!sids.containsKey(rpq.getAirportD()))
+           				 sids.put(rpq.getAirportD(), navdao.getRoutes(rpq.getAirportD().getICAO(), TerminalRoute.SID));
+           			 if (!stars.containsKey(rpq.getAirportA()))
+           				 stars.put(rpq.getAirportA(), navdao.getRoutes(rpq.getAirportA().getICAO(), TerminalRoute.STAR));
+           		 }
+           	 }
+
+           	 // Save SID/STAR and forward to the testing JSP
+             ctx.setAttribute("sids", sids, REQUEST);
+             ctx.setAttribute("stars", stars, REQUEST);
+        	 result.setURL("/jsp/testing/examTake.jsp"); 
+         } else {
+        	 Map<Integer, Collection<NavigationDataBean>> cRoutes = new HashMap<Integer, Collection<NavigationDataBean>>();
+        	 Map<Integer, Collection<NavigationDataBean>> aRoutes = new HashMap<Integer, Collection<NavigationDataBean>>();
+        	 for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
+        		 Question q = i.next();
+           		 if (q instanceof RoutePlot) {
+           			 RoutePlotQuestion rpq = (RoutePlotQuestion) q;
+           			 Collection<NavigationDataBean> cR = navdao.getRouteWaypoints(q.getCorrectAnswer(), rpq.getAirportD());
+           			 Collection<NavigationDataBean> aR = navdao.getRouteWaypoints(q.getAnswer(), rpq.getAirportD());
+           			 cRoutes.put(Integer.valueOf(q.getNumber()), cR);
+           			 aRoutes.put(Integer.valueOf(q.getNumber()), aR);
+           		 }
+        	 }
+        	 
+        	 // Save routes
+        	 ctx.setAttribute("aRoutes", aRoutes, REQUEST);
+        	 ctx.setAttribute("cRoutes", cRoutes, REQUEST);
+        	 
+        	 // Forward to the JSP
+        	 if ((ex.getStatus() != Test.SCORED) && access.getCanScore())
+                 result.setURL("/jsp/testing/examScore.jsp");
+             else if (("edit".equals(opName)) && (access.getCanEdit()))
+                result.setURL("/jsp/testing/examScore.jsp");
+             else
+                result.setURL("/jsp/testing/examView.jsp");
+         }
+         
+         // Save route plot questions
+         ctx.setAttribute("rpQuestions", rpQuestions, REQUEST);
          
          // Save the exam and access in the request
          ctx.setAttribute("exam", ex, REQUEST);

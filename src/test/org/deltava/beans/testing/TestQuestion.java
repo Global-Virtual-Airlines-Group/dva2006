@@ -39,7 +39,7 @@ public class TestQuestion extends AbstractBeanTestCase {
        qp.setID(2345);
        qp.setCorrectAnswer("Why Not?");
        
-       Question q2 = new Question(qp);
+       Question q2 = qp.toQuestion();
        assertEquals(qp.getQuestion(), q2.getQuestion());
        assertEquals(qp.getID(), q2.getID());
        assertEquals(qp.getCorrectAnswer(), q2.getCorrectAnswer());

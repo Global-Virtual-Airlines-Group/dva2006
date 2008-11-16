@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object for writing Examination/Question Profiles and Check Ride scripts.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -245,6 +245,13 @@ public class SetExamProfile extends DAO {
 				// Execute the batch transaction
 				_ps.executeBatch();
 				_ps.close();
+			} else if (qp instanceof RoutePlot) {
+				RoutePlot rp = (RoutePlot) qp;
+				prepareStatementWithoutLimits("REPLACE INTO exams.QUESTIONRPINFO (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)");
+				_ps.setInt(1, qp.getID());
+				_ps.setString(2, rp.getAirportD().getIATA());
+				_ps.setString(3, rp.getAirportA().getIATA());
+				executeUpdate(1);
 			}
 
 			// Commit the transaction

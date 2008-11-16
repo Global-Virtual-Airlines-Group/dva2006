@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.testing.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.testing.*;
 /**
  * A JSP Function Library to define Testing Center-related functions.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -22,12 +22,23 @@ public class TestingFunctions {
 	}
 	
 	/**
-	 * Returns wether the question is a multiple-choice question
+	 * Returns whether the question is a multiple-choice question.
 	 * @param q the Question or QuestionProfile bean
 	 * @return TRUE if the question is multiple-choice, otherwise FALSE
+	 * @see MultipleChoice
 	 */
 	public static boolean isMultiChoice(Question q) {
 		return (q instanceof MultipleChoice);
+	}
+	
+	/**
+	 * Returns whether the question is a route plotting question.
+	 * @param q the Question or QuestionProfile bean
+	 * @return TRUE if the question is a route plotting question, otherwise FALSE
+	 * @see RoutePlot
+	 */
+	public static boolean isRoutePlot(Question q) {
+		return (q instanceof RoutePlot);
 	}
 	
 	/**

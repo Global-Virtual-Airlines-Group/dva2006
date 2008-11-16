@@ -6,114 +6,55 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<map:xhtml>
 <head>
 <title>${exam.name} - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="examTake" />
+<c:if test="${exam.routePlot}">
+<content:js name="googleMaps" />
+<map:api version="2" />
+<map:vml-ie />
+</c:if>
 <content:googleAnalytics eventSupport="true" />
+<content:sysdata var="imgPath" name="path.img" />
+<c:set var="onLoad" value="showRemaining(10)" scope="request" />
 <script language="JavaScript" type="text/javascript">
-var secondsLeft = ${empty timeRemaining ? 2400 : timeRemaining};
+var expiry = ${exam.expiryDate.time};
+<c:if test="${exam.routePlot}">
+var rpInfo = new Array();
+var rpQuestions = ${rpQuestions};
+var doRunways = false;
 
-function validate(form)
+function initMaps()
 {
-if (!checkSubmit()) return false;
-
-// Check if all questions were answered
-var isOK = true;
-var qNum = 1;
-var a = getElementsById('A' + qNum);
-while (isOK && (a.length > 0)) {
-	if (a.length == 1) {
-		isOK = (isOK && (a[0].value.length > 1));
-	} else {
-		var checkCount = 0;
-		for (var x = 0; x < a.length; x++) {
-			if (a[x].checked)
-				checkCount++;
-		}
-
-		isOK = (isOK && (checkCount > 0));
-	}
-
-	qNum++;
-	a = getElementsById('A' + qNum);
+for (var x = 0; x < rpQuestions.length; x++) {
+	var idx = rpQuestions[x];
+	var info = rpInfo[idx];
+	info.map = new GMap2(getElement("qMap" + info.idx), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+	info.map.addControl(new GSmallMapControl());
+	info.map.addControl(new GMapTypeControl());
+	info.map.setCenter(info.mapCenter, getDefaultZoom(info.distance));
+	info.map.enableDoubleClickZoom();
+	info.map.enableContinuousZoom();
+	info.map.setMapType(G_PHYSICAL_MAP);
+	info.map.addOverlay(info.aD);
+	info.map.addOverlay(info.aA);
+	info.map.addOverlay(new GPolyline([info.aD.getLatLng(), info.aA.getLatLng()], '#4080AF', 1.75, 0.65, { geodesic:true }));
 }
 
-if ((!isOK) && (!document.isExpired)) {
-	if (!confirm("You have not answered all Questions. Hit OK to submit.")) return false;
-}
-
-setSubmit();
-disableButton('SubmitButton');
 return true;
 }
-
-function showRemaining(interval)
-{
-var tr = getElement('timeRemaining');
-
-// Update the text color
-if (secondsLeft < 300)
-	tr.className = 'error bld';
-else if (secondsLeft < 600)
-	tr.className = 'warn bld';
-
-// Display the text and decrement the counter
-tr.innerHTML = Math.round(secondsLeft / 60) + ' minutes';
-secondsLeft -= interval;
-
-// If we're out of time, set a flag and submit
-if (secondsLeft <= 0) {
-	document.isExpired = true;
-	document.forms[0].submit();
-	return true;
-}
-
-// Fire this off again
-window.setTimeout('void showRemaining(' + interval + ')', interval * 1000);
-return true;
-}
-
-function saveAnswer(qNum, id)
-{
-var txtbox = getElementsById('A' + qNum);
-if (!txtbox) return false;
-
-// Create the AJAX request
-var xmlreq = getXMLHttpRequest();
-xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum);
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-// Save the answer
-if ((txtbox.length == 1) && (txtbox[0].value.length > 1))
-	xmlreq.send('answer=' + escape(txtbox[0].value));
-else if (txtbox.length > 1) {
-	for (var x = 0; x < txtbox.length; x++) {
-		if (txtbox[x].checked) {
-			xmlreq.send('answer=' + escape(txtbox[x].value));
-			break;
-		}	
-	}
-}
-
-gaEvent('Examination', 'Submit Answer', id);
-return true;
-}
-<c:if test="${hasQImages}">
-function viewImage(id, x, y)
-{
-var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
-return true;
-}
+<c:set var="onLoad" value="initMaps(); ${onLoad}" scope="request" />
 </c:if>
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void showRemaining(30)">
+<body onload="${onLoad}"<c:if test="${exam.routePlot}"> onunload="GUnload()"</c:if>>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -138,6 +79,7 @@ return true;
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
 <c:set var="hasImage" value="${q.size > 0}" scope="request"/>
+<c:set var="isRP" value="${fn:isRoutePlot(q)}" scope="request" />
 <!-- Question #${q.number} -->
 <tr>
  <td class="label" rowspan="${hasImage ? '2' : '1'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
@@ -147,18 +89,46 @@ return true;
 <tr>
  <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
  bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
- <el:link className="pri bld" url="javascript:void viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+ <el:link className="pri bld" url="javascript:void viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+</tr>
+</c:if>
+<c:if test="${isRP}">
+<!-- Map #${q.number} -->
+<script language="JavaScript" type="text/javascript">
+var info = { examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distance: ${q.distance} };
+info.mapCenter = <map:point point="${q.midPoint}" />
+info.aD = <map:marker point="${q.airportD}" />
+info.aA = <map:marker point="${q.airportA}" />
+rpInfo[${q.number}] = info;
+</script>
+<tr>
+ <td class="label" valign="top">Map #<fmt:int value="${q.number}" /></td>
+ <td class="data"><map:div ID="qMap${q.number}" x="100%" y="320" /></td>
+</tr>
+<tr>
+ <td class="label">Departure Route (SID)</td>
+ <td class="data"><el:combo ID="sid${q.number}" name="sid${q.number}" size="1" idx="*" options="${sids[q.airportD]}" firstEntry="-" value="" onChange="void updateMap(rpInfo[${q.number}])" /></td>
+</tr>
+<tr>
+ <td class="label">Arrival Route (STAR)</td>
+ <td class="data"><el:combo ID="star${q.number}" name="star${q.number}" size="1" idx="*" options="${stars[q.airportA]}" firstEntry="-" value="" onChange="void updateMap(rpInfo[${q.number}])" /></td>
 </tr>
 </c:if>
 
-<!-- Answer# ${q.number} -->
+<!-- Answer #${q.number} -->
 <tr>
+<c:if test="${isRP}">
+ <td class="label" valign="top">Plotted Route</td>
+ <td class="data"><el:textbox ID="A${q.number}" onBlur="void updateMap(rpInfo[${q.number}])" name="answer${q.number}" className="small" width="90%" height="3">${q.answer}</el:textbox></td>
+</c:if>
+<c:if test="${!isRP}">
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
 <c:if test="${!fn:isMultiChoice(q)}">
- <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="90%" height="3">${q.answer}</el:textbox></td>
+ <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${exam.hexID})" name="answer${q.number}" className="small" width="90%" height="3">${q.answer}</el:textbox></td>
 </c:if>
 <c:if test="${fn:isMultiChoice(q)}">
- <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
+ <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${exam.hexID})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
+</c:if>
 </c:if>
 </tr>
 </c:forEach>
@@ -179,4 +149,4 @@ return true;
 </content:region>
 </content:page>
 </body>
-</html>
+</map:xhtml>

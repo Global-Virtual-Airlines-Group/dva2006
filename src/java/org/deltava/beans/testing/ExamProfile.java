@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -175,14 +175,10 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     /**
      * Sets the stage for this Examination.
      * @param stage the stage number
-     * @throws IllegalArgumentException if stage is zero or negative
      * @see ExamProfile#getStage()
      */
     public void setStage(int stage) {
-        if (stage < 1)
-            throw new IllegalArgumentException("Stage cannot be negative");
-        
-        _stage = stage;
+        _stage = Math.max(1, stage);
     }
     
     /**
@@ -207,14 +203,10 @@ public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntr
     /**
      * Sets the minimum stage required to take this Examination.
      * @param stage the stage number
-     * @throws IllegalArgumentException if stage is negative
      * @see ExamProfile#getMinStage()
      */
     public void setMinStage(int stage) {
-        if (stage < 0)
-            throw new IllegalArgumentException("Stage cannot be negative");
-
-        _minStage = stage;
+        _minStage = Math.max(1, stage);
     }
     
     /**

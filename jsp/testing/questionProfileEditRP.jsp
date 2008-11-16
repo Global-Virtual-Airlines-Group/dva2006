@@ -6,67 +6,37 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<c:set var="isMC" value="${empty question || fn:isMultiChoice(question)}" scope="request" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<map:xhtml>
 <head>
 <title>Examination Question Profile</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
+<content:js name="googleMaps" />
+<content:js name="routePlot" />
+<map:api version="2" />
+<map:vml-ie />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.question, 20, 'Question Text')) return false;
-if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return false;
+if (!validateText(form.routeCodes, 5, 'Correct Answer to this Question')) return false;
 if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
 if (!validateCombo(form.owner, 'Owner')) return false;
 if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
-
-// Validate multiple choice
-if ((form.isMultiChoice) && (form.isMultiChoice.checked)) {
-	if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
-}
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
-
-function toggleAnswerBox()
-{
-var f = document.forms[0];
-if (f.isMultiChoice) {
-	if (f.correct) f.correct.disabled = f.isMultiChoice.checked;
-	f.answerChoices.disabled = (!f.isMultiChoice.checked);
-	f.correctChoice.disabled = (!f.isMultiChoice.checked);
-}
-
-return true;
-}
-
-function updateAnswerCombo()
-{
-var f = document.forms[0];
-if ((!f.answerChoices) || (!f.correctChoice)) return false;
-
-// Save the old answer
-var oldAnswer = f.correctChoice.options[f.correctChoice.selectedIndex].text;
-
-// Copy each line in the textbox to an answer choice
-var choices = f.answerChoices.value.split('\n');
-f.correctChoice.options.length = 1;
-f.correctChoice.options.length = choices.length + 1;
-for (var x = 0; x < choices.length; x++) {
-	f.correctChoice.options[x + 1] = new Option(choices[x], choices[x]);
-	if (choices[x] == oldAnswer)
-		f.correctChoice.selectedIndex = x + 1;
-}
-
-return true;
-}
-
 <c:if test="${question.size > 0}">
 function viewImage(x, y)
 {
@@ -78,7 +48,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="updateAnswerCombo(); toggleAnswerBox()">
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -90,18 +60,12 @@ return true;
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
- <td colspan="2">EXAMINATION QUESTION PROFILE</td>
+ <td colspan="2">EXAMINATION ROUTE PLOTTING QUESTION PROFILE</td>
 </tr>
 <tr>
  <td class="label">Question Text</td>
  <td class="data bld"><el:text name="question" idx="*" size="120" className="req" max="255" value="${question.question}" /></td>
 </tr>
-<c:if test="${!isMC}">
-<tr>
- <td class="label">Correct Answer</td>
- <td class="data"><el:text name="correct" idx="*" size="120" className="req" max="255" value="${question.correctAnswer}" /></td>
-</tr>
-</c:if>
 <tr>
  <td class="label">Owner Airline</td>
  <td class="data"><el:combo name="owner" idx="*" size="1" className="req" firstEntry="-" options="${airlines}" value="${question.owner}" /></td>
@@ -144,38 +108,66 @@ return true;
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" className="small sec" value="true" checked="${question.active}" label="Question is Available" /></td>
 </tr>
-<c:if test="${isMC}">
-<tr class="title caps">
- <td colspan="2">MULTIPLE CHOICE QUESTION</td>
+<tr>
+ <td class="label">Departing from</td>
+ <td class="data"><el:combo name="airportD" size="1" options="${airports}" firstEntry="-" value="${question.airportD}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].sid, getValue(this), 'sid')" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${question.airportD.IATA}" onBlur="setAirport(document.forms[0].airportD, this.value); updateSIDSTAR(document.forms[0].sid, this.value, 'sid')" /></td>
 </tr>
 <c:if test="${empty question}">
 <tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" onChange="void toggleAnswerBox()" /></td>
+ <td class="label">SID</td>
+ <td class="data"><el:combo name="sid" size="1" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Answer Choices</td>
- <td class="data"><el:textbox name="answerChoices" idx="*" width="90%" height="5" onBlur="void updateAnswerCombo()">${qChoices}</el:textbox></td>
+ <td class="label">Arriving at</td>
+ <td class="data"><el:combo name="airportA" size="1" options="${airports}" firstEntry="-" value="${question.airportA}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].star, getValue(this), 'star')" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${question.airportA.IATA}" onBlur="setAirport(document.forms[0].airportA, this.value); updateSIDSTAR(document.forms[0].star, this.value, 'star')" /></td>
 </tr>
+<c:if test="${empty question}">
 <tr>
- <td class="label">Correct Answer</td>
- <td class="data"><el:combo name="correctChoice" size="1" idx="*" options="${question.choices}" firstEntry="-" value="${question.correctAnswer}" /></td>
+ <td class="label">STAR</td>
+ <td class="data"><el:combo name="star" size="1" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
 </tr>
 </c:if>
+<tr>
+ <td class="label" valign="top">Flight Route</td>
+ <td class="data"><el:textbox name="route" idx="*" width="90%" className="req" height="2" onBlur="void plotMap()">${question.correctAnswer}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Correct Answer</td>
+ <td class="data"><el:textbox name="routeCodes" idx="*" width="90%" height="2" readOnly="true">${question.correctAnswer}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Route Map</td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="320" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE QUESTION" /></td>
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE QUESTION" />
+<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
 </tr>
 </el:table>
+<el:text name="isRoutePlot" type="hidden" value="true" />
 </el:form>
 <br />
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
+<script language="JavaScript" type="text/javascript">
+var doRunways = false;
+<map:point var="mapC" point="${mapCenter}" />
+<c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="request" />
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+map.addControl(new GSmallMapControl());
+map.addControl(new GMapTypeControl());
+map.setCenter(mapC, getDefaultZoom(${mapDistance}));
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+map.setMapType(G_PHYSICAL_MAP);
+</script>
 </body>
-</html>
+</map:xhtml>

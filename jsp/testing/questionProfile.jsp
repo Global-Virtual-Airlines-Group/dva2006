@@ -6,13 +6,19 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<map:xhtml>
 <head>
 <title>Examination Question Profile</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${fn:isRoutePlot(question)}">
+<content:js name="googleMaps" />
+<map:api version="2" />
+<map:vml-ie />
+</c:if>
 <c:if test="${question.size > 0}">
 <script language="JavaScript" type="text/javascript">
 function viewImage(x, y)
@@ -74,6 +80,20 @@ return true;
  pixels) <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
+<c:if test="${fn:isRoutePlot(question)}">
+<tr>
+ <td class="label">Departing from</td>
+ <td class="data">${question.airportD.name} (<fmt:airport airport="${question.airportD}" />)</td>
+</tr>
+<tr>
+ <td class="label">Arriving at</td>
+ <td class="data">${question.airportA.name} 
+</tr>
+<tr>
+ <td class="label" valign="top">Route Map</td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="320" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
 <c:if test="${question.active}">
@@ -99,5 +119,25 @@ return true;
 </content:region>
 </content:page>
 <content:googleAnalytics />
+<c:if test="${fn:isRoutePlot(question)}">
+<script language="JavaScript" type="text/javascript">
+<map:point var="mapC" point="${question.midPoint}" />
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+map.addControl(new GLargeMapControl());
+map.addControl(new GMapTypeControl());
+map.setCenter(mapC, getDefaultZoom(${question.distance}) - 1);
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+<map:marker var="aD" point="${question.airportD}" />
+<map:marker var="aA" point="${question.airportA}" />
+<map:points var="routePoints" items="${route}" />
+<map:line var="rpLine" src="routePoints" color="#4080AF" width="2" transparency="0.65" geodesic="true" />
+<map:markers var = "routeMarkers" items="${route}" />
+map.addOverlay(rpLine);
+addMarkers(map, 'routeMarkers');
+map.addOverlay(aD);
+</script>
+</c:if>
 </body>
-</html>
+</map:xhtml>

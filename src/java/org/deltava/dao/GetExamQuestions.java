@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 2.1
  */
 
@@ -76,9 +76,10 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 	 */
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM exams.QUESTIONINFO Q "
-					+ "LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON "
-					+ "(MQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1");
+			prepareStatementWithoutLimits("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A "
+					+ "FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN "
+					+ "exams.QUESTIONMINFO MQ ON (MQ.ID=Q.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (RQ.ID=Q.ID) "
+					+ "WHERE (Q.ID=?) GROUP BY Q.ID LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the Query
@@ -89,19 +90,30 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 				return null;
 			}
 			
-			// Check if we are multiple choice
+			// Check if we are multiple choice/have an image
 			boolean isMultiChoice = (rs.getInt(6) > 0);
+			boolean isImage = (rs.getInt(8) > 0);
+			boolean isRP = (rs.getString(12) != null);
 
 			// Populate the Question Profile
-			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(
-					rs.getString(2));
+			QuestionProfile qp = null;
+			if (isMultiChoice)
+				qp = new MultiChoiceQuestionProfile(rs.getString(2));
+			else if (isRP) {
+				RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
+				rpqp.setAirportD(SystemData.getAirport(rs.getString(11)));
+				rpqp.setAirportA(SystemData.getAirport(rs.getString(12)));
+				qp = rpqp;
+			} else
+				qp = new QuestionProfile(rs.getString(2));
+			
 			qp.setID(rs.getInt(1));
 			qp.setCorrectAnswer(rs.getString(3));
 			qp.setActive(rs.getBoolean(4));
 			qp.setOwner(SystemData.getApp(rs.getString(5)));
 
 			// Load image data
-			if (rs.getInt(8) > 0) {
+			if (isImage) {
 				qp.setType(rs.getInt(7));
 				qp.setSize(rs.getInt(8));
 				qp.setWidth(rs.getInt(9));
@@ -141,7 +153,7 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 				rs.close();
 				_ps.close();
 			}
-
+			
 			// Get the exams for this question
 			prepareStatementWithoutLimits("SELECT ESP.* FROM exams.EXAM_QPOOLS ESP, exams.QE_INFO QE WHERE "
 					+ "(ESP.NAME=QE.EXAM_NAME) AND (ESP.ID=QE.SUBPOOL_ID) AND (QE.QUESTION_ID=?) ORDER BY "
@@ -175,9 +187,10 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 	public List<QuestionProfile> getQuestions(ExamProfile exam) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM "
-				+ "exams.QUESTIONINFO Q LEFT JOIN exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN "
-				+ "exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D,"
+				+ "RQ.AIRPORT_A FROM exams.QUESTIONINFO Q LEFT JOIN exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) "
+				+ "LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) "
+				+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) ");
 		if (exam != null)
 			sqlBuf.append("WHERE (QE.EXAM_NAME=?) ");
 		sqlBuf.append("GROUP BY Q.ID");
@@ -210,9 +223,10 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 	public List<QuestionProfile> getQuestionPool(ExamProfile exam, boolean isRandom) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM exams.QE_INFO QE, "
-				+ "exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
-				+ "ON (Q.ID=MQ.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) AND "
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
+				+ "RQ.AIRPORT_A FROM exams.QE_INFO QE, exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON "
+				+ "(Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ "
+				+ "ON (Q.ID=RQ.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) AND "
 				+ "(QE.SUBPOOL_ID=?) GROUP BY Q.ID ORDER BY ");
 		sqlBuf.append(isRandom ? "RAND()" : "Q.ID");
 		sqlBuf.append(" LIMIT ?");
@@ -233,8 +247,6 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 			// Load the correct answer counts and multiple choice options
 			loadResults(results, false);
 			loadMultiChoice(exam.getName(), results);
-
-			// Return results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -252,10 +264,21 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 		while (rs.next()) {
 			// Check if we are multiple choice
 			boolean isMultiChoice = (rs.getInt(6) > 0);
+			boolean isRP = (rs.getString(12) != null);
 
 			// Populate the Question Profile
-			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2))
-					: new QuestionProfile(rs.getString(2));
+			// Populate the Question Profile
+			QuestionProfile qp = null;
+			if (isMultiChoice)
+				qp = new MultiChoiceQuestionProfile(rs.getString(2));
+			else if (isRP) {
+				RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
+				rpqp.setAirportD(SystemData.getAirport(rs.getString(11)));
+				rpqp.setAirportA(SystemData.getAirport(rs.getString(12)));
+				qp = rpqp;
+			} else
+				qp = new QuestionProfile(rs.getString(2));
+			
 			qp.setID(rs.getInt(1));
 			qp.setCorrectAnswer(rs.getString(3));
 			qp.setActive(rs.getBoolean(4));

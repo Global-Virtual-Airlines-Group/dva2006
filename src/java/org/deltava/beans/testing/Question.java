@@ -6,7 +6,7 @@ import org.deltava.beans.ImageBean;
 /**
  * A class to store examination question information.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -30,16 +30,6 @@ public class Question extends ImageBean {
     public Question(String text) {
         super();
         _text = text.trim();
-    }
-    
-    /**
-     * Creates a new Question from an existing Question Profile.
-     * @param qp the Question Profile
-     */
-    public Question(QuestionProfile qp) {
-    	this(qp.getQuestion());
-    	setCorrectAnswer(qp.getCorrectAnswer());
-    	setID(qp.getID());
     }
     
     /**

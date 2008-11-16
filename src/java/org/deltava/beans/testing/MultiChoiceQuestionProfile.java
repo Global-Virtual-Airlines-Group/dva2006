@@ -1,12 +1,12 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
 
 /**
- * A bean to store multiple-choice questions 
+ * A bean to store multiple-choice question data.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -55,5 +55,21 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 		_choices.clear();
 		for (Iterator<String> i = choices.iterator(); i.hasNext(); )
 			addChoice(i.next());
+	}
+	
+	/**
+	 * Converts this profile into a {@link MultiChoiceQuestion} bean. The choices
+	 * will be rearranged in random order.
+	 */
+	public Question toQuestion() {
+		MultiChoiceQuestion q = new MultiChoiceQuestion(getQuestion());
+		q.setID(getID());
+		q.setCorrectAnswer(getCorrectAnswer());
+		List<String> rndChoices = new ArrayList<String>(_choices);
+		Collections.shuffle(rndChoices);
+		for (String c : rndChoices)
+			q.addChoice(c);
+		
+		return q;
 	}
 }
