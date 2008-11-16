@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -7,18 +7,16 @@ import java.sql.Connection;
 import org.deltava.beans.acars.ConnectionEntry;
 
 import org.deltava.dao.*;
+import org.deltava.dao.ipc.GetACARSPool;
 import org.deltava.taskman.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.acars.ACARSAdminInfo;
-import org.gvagroup.common.SharedData;
-
 /**
  * A Scheduled Task to purge old ACARS log data.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -34,13 +32,12 @@ public class ACARSDataPurgeTask extends Task {
 	/**
 	 * Executes the task.
 	 */
-	@SuppressWarnings("unchecked")
 	protected void execute(TaskContext ctx) {
 		log.info("Executing");
 		
 		// Get active flights
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-		Collection<Integer> activeIDs = acarsPool.getFlightIDs();
+		GetACARSPool acdao = new GetACARSPool();
+		Collection<Integer> activeIDs = acdao.getFlightIDs();
 		
 		// Determine the purge intervals
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
