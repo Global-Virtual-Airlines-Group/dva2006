@@ -141,6 +141,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetACARSLog(null));
 		daoCaches.add(new GetFARoutes());
 		daoCaches.add(new GetFAWeather());
+		daoCaches.add(new org.deltava.dao.ipc.GetACARSPool());
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
 		// Get Virtual Machine properties
