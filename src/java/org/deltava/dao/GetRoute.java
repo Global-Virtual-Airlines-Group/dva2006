@@ -163,4 +163,39 @@ public class GetRoute extends DAO {
     		throw new DAOException(se);
     	}
     }
+    
+    /**
+     * Retruns the track code for a particular oceanic track given a start/end waypoint.
+     * @param type the track type
+     * @param startWP the starting waypoint code
+     * @param endWP the ending waypoint code
+     * @param dt the validity date
+     * @return the track code, or null if not found
+     * @throws DAOException if a JDBC error occurs
+     */
+    public String getOceanicTrack(int type, String startWP, String endWP, java.util.Date dt) throws DAOException {
+    	try {
+    		prepareStatementWithoutLimits("SELECT TRACK FROM OCEANIC_ROUTES WHERE (VALID_DATE=?) "
+    			+ "AND ((WAYPOINT=?) OR (WAYPOINT=?)) LIMIT 2");
+    		_ps.setDate(1, new java.sql.Date(dt.getTime()));
+    		_ps.setString(2, startWP);
+    		_ps.setString(3, endWP);
+    		
+    		// Do the query
+    		Collection<String> results = new HashSet<String>();
+    		ResultSet rs = _ps.executeQuery();
+    		while (rs.next())
+    			results.add(rs.getString(1));
+    		
+    		// Clean up and return
+    		rs.close();
+    		_ps.close();
+    		if (results.size() != 1)
+    			return null;
+    		
+    		return results.iterator().next();
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
+    }
 }
