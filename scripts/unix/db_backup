@@ -2,6 +2,9 @@
 # Database backup script
 # (c) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 
+# Set archiving options
+arc_util="bzip2 -9"
+
 # Log Starting
 echo `date +%H:%M:%S`' Starting'
 
@@ -13,47 +16,47 @@ mv *.bz2 old
 tar cfj awstats.tar.bz2 /home/awstats
 
 # Set up mysql utility aliases
-alias mysql='/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock'
-alias mysqldump='/usr/local/mysql5/bin/mysqldump --socket=/var/run/mysql5/mysql.sock'
+mysql="/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock"
+mysqldump="/usr/local/mysql5/bin/mysqldump --socket=/var/run/mysql5/mysql.sock"
 
 # Dump core table
 echo `date +%H:%M:%S`' Writing mySQL configuration'
-mysqldump -e `cat /usr/local/etc/sqlbackup` mysql | bzip2 -9 > mysql.sql.bz2
+$mysqldump -e `cat /usr/local/etc/sqlbackup` mysql | $arc_util > mysql.sql.bz2
 
 # Dump table definitions
 echo `date +%H:%M:%S`' Writing table definitions'
-mysqldump -e -K -d --single-transaction --skip-triggers `cat /usr/local/etc/sqlbackup` --ignore-table=common.EQPROGRAMS --ignore-table=common.PILOTNAMES common > common.sql
-mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` events > event.sql
-mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` acars > acars.sql
-mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` exams > exams.sql
-mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` dva > dva.sql
-mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` afv > afv.sql
-mysqldump -e -K -d -n -t --single-transaction `cat /usr/local/etc/sqlbackup` common > common_triggers.sql
-mysqldump -e -K -d -n --single-transaction `cat /usr/local/etc/sqlbackup` common EQPROGRAMS PILOTNAMES > common_views.sql
+$mysqldump -e -K -d --single-transaction --skip-triggers `cat /usr/local/etc/sqlbackup` --ignore-table=common.EQPROGRAMS --ignore-table=common.PILOTNAMES common > common.sql
+$mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` events > event.sql
+$mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` acars > acars.sql
+$mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` exams > exams.sql
+$mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` dva > dva.sql
+$mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` afv > afv.sql
+$mysqldump -e -K -d -n -t --single-transaction `cat /usr/local/etc/sqlbackup` common > common_triggers.sql
+$mysqldump -e -K -d -n --single-transaction `cat /usr/local/etc/sqlbackup` common EQPROGRAMS PILOTNAMES > common_views.sql
 tar cfj create_tables.tar.bz2 *.sql
 rm *.sql
 
 # Dump e-mail data
 echo `date +%H:%M:%S`' Writing e-mail configuration'
-mysqldump -e -K --single-transaction `cat /usr/local/etc/sqlbackup` postfix | bzip2 -9 > postfix.sql.bz2
+$mysqldump -e -K --single-transaction `cat /usr/local/etc/sqlbackup` postfix | $arc_util > postfix.sql.bz2
 
 # Dump TeamSpeak data
 echo `date +%H:%M:%S`' Writing TeamSpeak configuration'
-mysqldump -e -K --single-transaction `cat /usr/local/etc/sqlbackup` teamspeak | bzip2 -9 > teamspeak.sql.bz2
+$mysqldump -e -K --single-transaction `cat /usr/local/etc/sqlbackup` teamspeak | $arc_util > teamspeak.sql.bz2
 
 # Dump Common data/Water Cooler/Events
 echo `date +%H:%M:%S`' Writing Common data'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES ISSUES ISSUE_COMMENTS SYSINFODATA | bzip2 -9 > common.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS | bzip2 -9 > navdata.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` events | bzip2 -9 > events.sql.bz2
+$mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES ISSUES ISSUE_COMMENTS SYSINFODATA | $arc_util > common.sql.bz2
+$mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS | $arc_util > navdata.sql.bz2
+$mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` events | $arc_util > events.sql.bz2
 
 # Dump testing database
 echo `date +%H:%M:%S`' Writing Examinations'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` exams | bzip2 -9 > exams.sql.bz2
+$mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` exams | $arc_util > exams.sql.bz2
 
 # Dump Water Cooler
 echo `date +%H:%M:%S`' Writing Water Cooler'
-mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | bzip2 -9 > cooler.sql.bz2
+$mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | $arc_util > cooler.sql.bz2
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
@@ -62,36 +65,36 @@ then
   echo 'SELECT UNIX_TIMESTAMP(NOW())' | mysql -h mysql.deltava.org -N `cat /usr/local/etc/sqlbackup` acars > lastbackuptime
 
   echo `date +%H:%M:%S`' Writing ACARS Position Archive'
-  mysqldump -e -n -t -K -q  --single-transaction `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | bzip2 -9 > acars_pos.sql.bz2
+  $mysqldump -e -n -t -K -q  --single-transaction `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | $arc_util > acars_pos.sql.bz2
 else
   echo `date +%H:%M:%S`' Writing Incremental ACARS Positions'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="REPORT_TIME > FROM_UNIXTIME(`cat lastbackuptime`)" acars POSITION_ARCHIVE | bzip2 -9 > acars_pos_inc.sql.bz2
+  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="REPORT_TIME > FROM_UNIXTIME(`cat lastbackuptime`)" acars POSITION_ARCHIVE | $arc_util > acars_pos_inc.sql.bz2
 fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=acars.POSITION_ARCHIVE acars | bzip2 -9 > acars.sql.bz2
+$mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=acars.POSITION_ARCHIVE acars | $arc_util > acars.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
-mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=dva.GALLERY dva | bzip2 -9 > dva.sql.bz2
+$mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=dva.GALLERY dva | $arc_util > dva.sql.bz2
 
 # Dump AFV database
 echo `date +%H:%M:%S`' Writing AFV database'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=afv.GALLERY afv | bzip2 -9 > afv.sql.bz2
+$mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=afv.GALLERY afv | $arc_util > afv.sql.bz2
 
 # Dump Galleries if we're doing a full backup
 if [ "$1" = "full" ]
 then
   echo `date +%H:%M:%S`' Writing DVA Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` dva GALLERY | bzip2 -9 > dva_gallery.sql.bz2
+  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` dva GALLERY | $arc_util > dva_gallery.sql.bz2
   echo `date +%H:%M:%S`' Writing AFV Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` afv GALLERY | bzip2 -9 > afv_gallery.sql.bz2
+  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` afv GALLERY | $arc_util > afv_gallery.sql.bz2
 else  
   echo `date +%H:%M:%S`' Writing Incremental DVA Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" dva GALLERY | bzip2 -9 > dva_gallery_inc.sql.bz2
+  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" dva GALLERY | $arc_util > dva_gallery_inc.sql.bz2
   echo `date +%H:%M:%S`' Writing Incremental AFV Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" afv GALLERY | bzip2 -9 > afv_gallery_inc.sql.bz2
+  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" afv GALLERY | $arc_util > afv_gallery_inc.sql.bz2
 fi
 
 # Change file permissions
