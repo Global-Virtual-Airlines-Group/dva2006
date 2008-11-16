@@ -10,16 +10,16 @@ if (f.airportA.selectedIndex > 0) {
 	params.push('airportA=' + f.airportA.options[f.airportA.selectedIndex].value);
 	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
 }
-if (f.airportL.selectedIndex > 0) {
+if ((f.airportL) && (f.airportL.selectedIndex > 0)) {
 	params.push('airportL=' + f.airportL.options[f.airportL.selectedIndex].value);
 	f.airportLCode.value = f.airportL.options[f.airportL.selectedIndex].value;
 }
 	
-if (f.sid.selectedIndex > 0)
+if ((f.sid) && (f.sid.selectedIndex > 0))
 	params.push('sid=' + f.sid.options[f.sid.selectedIndex].value);
-if (f.star.selectedIndex > 0)
+if ((f.star) && (f.star.selectedIndex > 0))
 	params.push('star=' + f.star.options[f.star.selectedIndex].value);
-if (f.route.value.length > 0)
+if ((f.route) && (f.route.value.length > 0))
 	params.push('route=' + f.route.value);
 if (doRunways) {
 	params.push('runways=true');
