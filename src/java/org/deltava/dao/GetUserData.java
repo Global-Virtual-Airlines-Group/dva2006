@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -25,7 +25,7 @@ public class GetUserData extends DAO implements CachingDAO {
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
 	private static final Cache<AirlineInformation> _appCache = new AgingCache<AirlineInformation>(3);
-	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(1024);
+	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(1280);
 
 	/**
 	 * Initializes the Data Access Object.
