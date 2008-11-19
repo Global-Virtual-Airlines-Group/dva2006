@@ -153,6 +153,42 @@
 </c:forEach>
 </view:table>
 </c:if>
+<c:if test="${!empty promoQueue}">
+<view:table className="view" pad="default" space="default" cmd="prgroster">
+<tr class="title">
+ <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${fn:sizeof(promoQueue)}" /> PILOTS</td>
+</tr>
+<!-- Table Header Bar -->
+<tr class="title caps">
+ <td width="15%">&nbsp;</td>
+ <td width="10%">PILOT CODE</td>
+ <td width="30%">PILOT NAME</td>
+ <td width="10%">TOTAL</td>
+ <td width="10%">ACARS</td>
+ <td width="10%">ONLINE</td>
+ <td>LAST FLIGHT</td>
+</tr>
+
+<!-- Table Data -->
+<c:forEach var="pilot" items="${promoQueue}">
+<c:set var="access" value="${promoAccess[pilot.ID]}" scope="request" />
+<view:row entry="${pilot}">
+<c:if test="${access.canPromote}">
+ <td><el:cmdbutton url="promote" link="${pilot}" label="PROMOTE" /></td>
+</c:if>
+<c:if test="${!access.canPromote}">
+ <td>&nbsp;</td>
+</c:if>
+ <td class="pri bld">${pilot.pilotCode}</td>
+ <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
+ <td class="small"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
+ <td class="pri small"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td class="sec small"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
+ <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
+</view:row>
+</c:forEach>
+</view:table>
+</c:if>
 <!-- Statistics -->
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -163,7 +199,7 @@
 <c:set var="stCount" value="${metrics.statusCounts[st]}" scope="request" />
 <tr>
  <td class="label">${st}</td>
- <td class="data"><span style="float: left; width: 64px;"><fmt:int value="${stCount}" /> pilots</span>
+ <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${stCount}" /> pilots</span>
  <el:img y="12" x="${(stCount * 650) / maxCount}" src="cooler/bar_blue.png" caption="${stCount} Pilots" /></td>
 </tr>
 </c:forEach>
@@ -175,7 +211,7 @@
 <c:set var="rnkCount" value="${metrics.rankCounts[rnk]}" scope="request" />
 <tr>
  <td class="label">${rnk}</td>
- <td class="data"><span style="float: left; width: 64px;"><fmt:int value="${rnkCount}" /> pilots</span>
+ <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${rnkCount}" /> pilots</span>
  <el:img y="12" x="${(rnkCount * 650) / maxCount}" src="cooler/bar_blue.png" caption="${rnkCount} Pilots" /></td>
 </tr>
 </c:forEach>
@@ -187,7 +223,7 @@
 <c:set var="hireCount" value="${metrics.hireCounts[hd]}" scope="request" />
 <tr>
  <td class="label"><fmt:date fmt="d" date="${hd}" d="MMMM yyyy" /></td>
- <td class="data"><span style="float: left; width: 64px;"><fmt:int value="${hireCount}" /> pilots</span>
+ <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${hireCount}" /> pilots</span>
  <el:img y="12" x="${(hireCount * 650) / maxCount}" src="cooler/bar_blue.png" caption="${hireCount} Pilots" /></td>
 </tr>
 </c:forEach>

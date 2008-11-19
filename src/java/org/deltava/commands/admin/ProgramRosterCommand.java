@@ -12,13 +12,15 @@ import org.deltava.beans.system.TransferRequest;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.PilotAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.1
  */
 
@@ -60,10 +62,33 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			pdao.setQueryMax(vc.getCount());
 			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, vc.getSortType(), true), "ID");
 			
+			// Load promotion queue
+			GetPilotRecognition pqdao = new GetPilotRecognition(con);
+			Collection<Integer> promoIDs = pqdao.getPromotionQueue(eqType);
+			Map<Integer, Pilot> promoPilots = pdao.getByID(promoIDs, "PILOTS");
+			
+			// Calculate promotion queue
+			boolean canPromote = false;
+			Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
+			for (Iterator<Pilot> i = promoPilots.values().iterator(); i.hasNext(); ) {
+				Pilot p = i.next();
+				PilotAccessControl ac = new PilotAccessControl(ctx, p);
+				ac.validate();
+				accessMap.put(new Integer(p.getID()), ac);
+				canPromote |= ac.getCanPromote();
+			}
+			
 			// Load Online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
 			vc.setResults(pilots.values());
+			
+			// Save promotion queue and access
+			if (canPromote) {
+				frdao.getOnlineTotals(promoPilots, SystemData.get("airline.db"));
+				ctx.setAttribute("promoQueue", promoPilots.values(), REQUEST);
+				ctx.setAttribute("promoAccess", accessMap, REQUEST);
+			}
 			
 			// Load the Equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);

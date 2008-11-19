@@ -1,7 +1,8 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 
@@ -9,10 +10,12 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.security.command.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to display Pilots eligible for Promotion.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -24,13 +27,22 @@ public class PromotionQueueCommand extends AbstractCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
+		
+		// Get the equipment type
+		String eqType = ctx.isUserInRole("HR") ? null : ctx.getUser().getEquipmentType();
 		Collection<Pilot> pilots = null;
 		try {
-			GetPilotRecognition dao = new GetPilotRecognition(ctx.getConnection());
-			Collection<Integer> IDs = dao.getPromotionQueue();
-			pilots = dao.getByID(IDs, "PILOTS").values();
-			ctx.setAttribute("queue", pilots, REQUEST);
+			Connection con = ctx.getConnection();
+			
+			// Load the queue
+			GetPilotRecognition dao = new GetPilotRecognition(con);
+			Collection<Integer> IDs = dao.getPromotionQueue(eqType);
+			Map<Integer, Pilot> queue = dao.getByID(IDs, "PILOTS");
+			
+			// Load PIREP totals
+			GetFlightReports prdao = new GetFlightReports(con);
+			prdao.getOnlineTotals(queue, SystemData.get("airline.db"));
+			pilots = queue.values();
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -48,6 +60,7 @@ public class PromotionQueueCommand extends AbstractCommand {
 
 		// Save pilot access
 		ctx.setAttribute("accessMap", accessMap, REQUEST);
+		ctx.setAttribute("queue", pilots, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

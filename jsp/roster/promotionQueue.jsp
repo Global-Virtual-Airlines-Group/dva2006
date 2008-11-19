@@ -19,19 +19,20 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:table className="view" pad="default" space="default">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">&nbsp;</td>
+ <td width="15%">&nbsp;</td>
  <td width="10%">PILOT CODE</td>
- <td width="25%">PILOT NAME</td>
- <td width="10%">EQUIPMENT</td>
- <td width="10%">RANK</td>
- <td width="8%">FLIGHTS</td>
- <td width="8%">HOURS</td>
+ <td width="${isHR ? 25 : 30}%">PILOT NAME</td>
+<c:if test="${isHR}"><td width="10%">EQUIPMENT</td></c:if>
+ <td width="10%">TOTAL</td>
+ <td width="10%">ACARS</td>
+ <td width="10%">ONLINE</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -47,17 +48,17 @@
 </c:if>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
- <td class="sec bld">${pilot.equipmentType}</td>
- <td class="bld">${pilot.rank}</td>
- <td><fmt:int value="${pilot.legs}" /></td>
- <td><fmt:dec value="${pilot.hours}" /></td>
- <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
+<c:if test="${isHR}"><td class="sec bld">${pilot.equipmentType}</td></c:if>
+ <td class="small"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
+ <td class="pri small"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td class="sec small"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
+ <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title caps">
- <td colspan="8">&nbsp;</td>
+ <td colspan="${isHR ? 8 : 9 }">&nbsp;</td>
 </tr>
 </el:table>
 <content:copyright />

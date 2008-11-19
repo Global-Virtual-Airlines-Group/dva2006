@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -357,7 +357,7 @@ public class GetFlightReports extends DAO {
 		int setSize = 0;
 		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
 			Pilot p = i.next();
-			if (p.getACARSLegs() < 0) {
+			if ((p.getACARSLegs() < 0) || (p.getOnlineLegs() < 0)) {
 				setSize++;
 				sqlBuf.append(String.valueOf(p.getID()));
 				sqlBuf.append(',');
@@ -403,6 +403,15 @@ public class GetFlightReports extends DAO {
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		}
+		
+		// Set to zero
+		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
+			Pilot p = i.next();
+			if ((p.getACARSLegs() < 0) || (p.getOnlineLegs() < 0)) {
+				p.setACARSLegs(Math.max(0, p.getACARSLegs()));
+				p.setOnlineLegs(Math.max(0, p.getOnlineLegs()));
+			}
 		}
 	}
 
