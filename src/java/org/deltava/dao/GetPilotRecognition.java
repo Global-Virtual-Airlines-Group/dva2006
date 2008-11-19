@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -62,41 +62,40 @@ public class GetPilotRecognition extends PilotReadDAO {
     		return result.getValue();
 
     	// Get the results
-    	Collection<Integer> results = getPromotionQueue();
-    	if (!"ALL".equals(eqType)) {
-    		Collection<Pilot> pilots = getByID(results, "PILOTS").values();
-    		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
-    			Pilot p = i.next();
-    			if (!p.getEquipmentType().equals(eqType))
-    				i.remove();
-    		}
-    	}
-    	
-    	// Save the result
+    	Collection<Integer> results = getPromotionQueue(eqType);
     	_promoCache.add(new CacheableInteger(eqType, results.size()));
     	return results.size();
     }
     
     /**
      * Returns Pilots eligible for promotion to Captain.
-     * @return a List of Pilots
+     * @return a List of Pilot IDs
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection<Integer> getPromotionQueue() throws DAOException {
+    public Collection<Integer> getPromotionQueue(String eqType) throws DAOException {
+    	
+    	// Build the SQL statement
+        StringBuilder buf = new StringBuilder("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, "
+        		+ "PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) "
+        		+ "AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS, COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, "
+        		+ "COUNT(DISTINCT EX.ID) as C_EXAMS FROM (PILOTS P, EQTYPES EQ) LEFT JOIN EQEXAMS EQE "
+        		+ "ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS EX ON ((EX.PILOT_ID=P.ID) AND "
+        		+ "(EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) WHERE (P.STATUS=?) AND "
+        		+ "(P.RANK=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) ");
+        if (eqType != null)
+        	buf.append("AND (P.EQTYPE=?) ");
+        buf.append("GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
+    	
        try {
-          prepareStatement("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE "
-        		  + "(F.PILOT_ID=P.ID) AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) AND (F.STATUS=?)) AS CLEGS, "
-        		  + "EQ.C_LEGS, COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, COUNT(DISTINCT EX.ID) as C_EXAMS FROM "
-        		  + "(PILOTS P, EQTYPES EQ) LEFT JOIN EQEXAMS EQE ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS "
-        		  + "EX ON ((EX.PILOT_ID=P.ID) AND (EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) "
-        		  + "WHERE (P.STATUS=?) AND (P.RANK=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) "
-        		  + "AND (EQE.EXAMTYPE=?)) GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
+    	   prepareStatement(buf.toString());
           _ps.setInt(1, FlightReport.OK);
           _ps.setInt(2, EquipmentType.EXAM_CAPT);
           _ps.setBoolean(3, true);
           _ps.setInt(4, Pilot.ACTIVE);
           _ps.setString(5, Ranks.RANK_FO);
           _ps.setInt(6, EquipmentType.EXAM_CAPT);
+          if (eqType != null)
+        	  _ps.setString(7, eqType);
           return executeIDs();
        } catch (SQLException se) {
           throw new DAOException(se);
