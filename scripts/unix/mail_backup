@@ -1,12 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 # Maildir backup script
-# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+
+# Set archiving options
+arc_util="pbzip2 -p2 -9 -c"
 
 # Goto backup directory
 cd /home/backup/mail
 
 # Backup maildirs
-nice tar cfj mailbox.tar.bz2 /home/mail
+tar cf - /home/mail | $arc_util > mailbox.tar.bz2
 
 # Update permissions
 chmod 640 *.tar.bz2

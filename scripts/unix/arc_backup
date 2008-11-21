@@ -3,7 +3,7 @@
 # (c) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
-arc_util="bzip2 -9"
+arc_util="pbzip2 -p2 -9 -c"
 
 # Log Starting
 echo `date +%H:%M:%S`' Starting'
@@ -17,7 +17,7 @@ cd /home/backup/db
 
 # Dump Navigation Data
 echo `date +%H:%M:%S`' Writing Approach Charts'
-$mysqldump -C -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` common CHARTS CHARTIMGS | bzip2 -6 > old/charts.sql.bz2
+$mysqldump -C -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` common CHARTS CHARTIMGS | gzip -5 > old/charts.sql.gz
 
 # Write last backup time
 echo `date +%H:%M:%S`' Write last backup time'
