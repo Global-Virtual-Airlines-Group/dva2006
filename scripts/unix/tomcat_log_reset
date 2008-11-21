@@ -3,7 +3,7 @@
 # (c) 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
-arc_util="bzip2 -9"
+arc_util="pbzip2 -p2 -9"
 
 $arc_util /var/log/tomcat/catalina.out
 chgrp gva /var/log/tomcat/catalina.out.bz2

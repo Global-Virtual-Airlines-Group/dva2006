@@ -3,7 +3,7 @@
 # (c) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
-arc_util="bzip2 -9"
+arc_util="pbzip2 -p2 -9 -c"
 
 # Log Starting
 echo `date +%H:%M:%S`' Starting'
@@ -13,7 +13,7 @@ cd /home/backup/db
 mv *.bz2 old
 
 # Backup AWSTATS tables
-tar cfj awstats.tar.bz2 /home/awstats
+tar cf - /home/awstats | $arc_util > awstats.tar.bz2 
 
 # Set up mysql utility aliases
 mysql="/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock"
