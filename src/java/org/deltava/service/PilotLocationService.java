@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 /**
  * A Web Service to display Pilot Locations on a map.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -121,7 +121,7 @@ public class PilotLocationService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
 		// Return success code
