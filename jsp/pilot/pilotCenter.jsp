@@ -13,6 +13,13 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!validateText(form.navaidCode, 2, 'Navigation Aid Code')) return false;
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -39,7 +46,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="pilotcenter.do" method="get" validate="return false">
+<el:form action="navsearch.do" method="post" validate="return validate(this)">
 <el:table ID="pilotCenter" className="form" pad="default" space="default">
 
 <!-- Pilot Information -->
