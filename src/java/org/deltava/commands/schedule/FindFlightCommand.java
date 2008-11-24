@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -85,6 +85,8 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setIncludeHistoric(Boolean.valueOf(ctx.getParameter("includeHistoric")).booleanValue());
+		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
+		criteria.setDispatchOnly(Boolean.valueOf(ctx.getParameter("dispatchOnly")).booleanValue());
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
 			criteria.setMaxResults(150);
