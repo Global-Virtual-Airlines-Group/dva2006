@@ -51,6 +51,8 @@ return true;
 }
 <c:set var="onLoad" value="initMaps(); ${onLoad}" scope="request" />
 </c:if>
+//Time offset between server and client clock
+var timeOffset = (new Date().getTime() - ${currentTime});
 </script>
 </head>
 <content:copyright visible="false" />
