@@ -81,6 +81,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -124,10 +125,21 @@ return true;
  <td class="label">Maximum Results</td>
  <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 20 : fafCriteria.maxResults}" /></td>
 </tr>
+<c:if test="${acarsEnabled}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /></td>
+ <td class="label" valign="top">ACARS Dispatch</td>
+ <td class="data"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
+ <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
+</tr>
+</c:if>
+<c:if test="${!acarsEnabled}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data" colspan="3"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /></td>
 </tr>
+</c:if>
 <tr class="title mid">
  <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT SCHEDULE" /></td>
 </tr>

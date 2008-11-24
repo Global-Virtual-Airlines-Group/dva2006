@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -33,6 +33,8 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _maxResults;
 	private boolean _includeAcademy;
 	private boolean _includeHistoric;
+	private boolean _dispatchRouteCounts;
+	private boolean _dispatchOnly;
 
 	private int _hourD = -1;
 	private int _hourA = -1;
@@ -79,6 +81,14 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public boolean getIncludeHistoric() {
 		return _includeHistoric;
+	}
+	
+	public boolean getCheckDispatch() {
+		return _dispatchRouteCounts;
+	}
+	
+	public boolean getDispatchOnly() {
+		return _dispatchOnly;
 	}
 
 	public Date getTimeD() {
@@ -221,5 +231,21 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setIncludeHistoric(boolean doInclude) {
 		_includeHistoric = doInclude;
+	}
+	
+	/**
+	 * Checks whether route pairs have Dispatch routes associated with them.
+	 * @param checkDispatch TRUE if Dispatch routes should be checked, otherwise FALSE
+	 */
+	public void setCheckDispatchRoutes(boolean checkDispatch) {
+		_dispatchRouteCounts = checkDispatch;
+	}
+	
+	/**
+	 * Includes only flights between airports that have a Dispatch route in the database.
+	 * @param dspOnly TRUE if Dispatch-only, otherwise FALSE
+	 */
+	public void setDispatchOnly(boolean dspOnly) {
+		_dispatchOnly = dspOnly;
 	}
 }

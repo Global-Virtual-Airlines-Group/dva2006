@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -39,6 +39,8 @@ public class GetSchedule extends DAO {
 		// Build the conditions
 		final Collection<String> conditions = new LinkedHashSet<String>();
 		final List<String> params = new ArrayList<String>();
+		if (criteria.getDispatchOnly())
+			criteria.setCheckDispatchRoutes(true);
 		
 		// Add airline
 		if (criteria.getAirline() != null) {
@@ -60,13 +62,13 @@ public class GetSchedule extends DAO {
 		
 		// Add departure airport
 		if (criteria.getAirportD() != null) {
-			conditions.add("AIRPORT_D=?");
+			conditions.add("S.AIRPORT_D=?");
 			params.add(criteria.getAirportD().getIATA());
 		}
 		
 		// Add arrival airport
 		if (criteria.getAirportA() != null) {
-			conditions.add("AIRPORT_A=?");
+			conditions.add("S.AIRPORT_A=?");
 			params.add(criteria.getAirportA().getIATA());
 		}
 			
@@ -114,9 +116,15 @@ public class GetSchedule extends DAO {
 		}
 
 		// Build the query string
-		StringBuilder buf = new StringBuilder("SELECT * FROM ");
+		StringBuilder buf = new StringBuilder("SELECT S.*");
+		if (criteria.getCheckDispatch())
+			buf.append(", COUNT(R.ID) AS RCNT");
+		buf.append(" FROM ");
 		buf.append(formatDBName(criteria.getDBName()));
-		buf.append(".SCHEDULE WHERE ");
+		buf.append(".SCHEDULE S");
+		if (criteria.getCheckDispatch())
+			buf.append(" LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A))");
+		buf.append(" WHERE ");
 		for (Iterator<String> i = conditions.iterator(); i.hasNext();) {
 			buf.append('(');
 			buf.append(i.next());
@@ -143,6 +151,10 @@ public class GetSchedule extends DAO {
 		}
 		
 		// Add sort column
+		if (criteria.getCheckDispatch())
+			buf.append(" GROUP BY S.AIRLINE, S.FLIGHT, S.LEG");
+		if (criteria.getDispatchOnly())
+			buf.append(" HAVING (RCNT>0)");
 		buf.append(" ORDER BY ");
 		buf.append(sortBy);
 
@@ -347,8 +359,16 @@ public class GetSchedule extends DAO {
 		// Execute the query
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		ResultSet rs = _ps.executeQuery();
+		boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);
 		while (rs.next()) {
-			ScheduleEntry entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+			ScheduleEntry entry = null;
+			if (hasDispatch) {
+				ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+				sse.setDispatchRoutes(rs.getInt(14));
+				entry = sse;
+			} else
+				entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+			
 			entry.setAirportD(SystemData.getAirport(rs.getString(4)));
 			entry.setAirportA(SystemData.getAirport(rs.getString(5)));
 			entry.setEquipmentType(rs.getString(7));
