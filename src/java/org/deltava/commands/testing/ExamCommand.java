@@ -101,6 +101,9 @@ public class ExamCommand extends AbstractCommand {
            				 stars.put(rpq.getAirportA(), navdao.getRoutes(rpq.getAirportA().getICAO(), TerminalRoute.STAR));
            		 }
            	 }
+           	 
+           	 // Return current time (+2 seconds) for time offset sync
+           	 ctx.setAttribute("currentTime", new Long(System.currentTimeMillis() + 2000), REQUEST);
 
            	 // Save SID/STAR and forward to the testing JSP
              ctx.setAttribute("sids", sids, REQUEST);
