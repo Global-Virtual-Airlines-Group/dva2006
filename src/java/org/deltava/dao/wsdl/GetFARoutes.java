@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
@@ -37,17 +37,46 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 		return _cache.getRequests();
 	}
 	
+	public class FAFlightRoute extends FlightRoute implements ExternalFlightRoute {
+		
+		private String _source;
+		
+		public String getSource() {
+			return _source;
+		}
+		
+		public void setSource(String src) {
+			_source = src;
+		}
+		
+		public String getComboAlias() {
+			return getRoute();
+		}
+
+		public String getComboName() {
+			return getRoute();
+		}
+		
+		public int hashCode() {
+			return getRoute().hashCode();
+		}
+		
+		public String toString() {
+			return getRoute();
+		}
+	}
+	
 	/**
 	 * Loads routes from a filesystem cache.
 	 */
-	private Collection<ExternalFlightRoute> get(Airport aD, Airport aA) {
+	private Collection<FlightRoute> get(Airport aD, Airport aA) {
 		String key = aD.getICAO() + "-" + aA.getICAO();
 		CacheableFile f = _cache.get(key);
 		if (f == null)
 			return null;
 		
 		// Load the data
-		Collection<ExternalFlightRoute> results = new ArrayList<ExternalFlightRoute>();
+		Collection<FlightRoute> results = new LinkedHashSet<FlightRoute>();
 		try {
 			Properties p = new Properties();
 			p.load(new FileInputStream(f));
@@ -55,7 +84,7 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 			// Get the counts
 			int rtCount = StringUtils.parse(p.getProperty("count"), 0);
 			for (int x = 1; x <= rtCount; x++) {
-				ExternalFlightRoute rt = new ExternalFlightRoute();
+				FAFlightRoute rt = new FAFlightRoute();
 				rt.setAirportD(aD);
 				rt.setAirportA(aA);
 				rt.setID(x);
@@ -78,7 +107,7 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 	/**
 	 * Saves routes in a filesystem cache.
 	 */
-	private void save(Airport aD, Airport aA, Collection<ExternalFlightRoute> routes) {
+	private void save(Airport aD, Airport aA, Collection<FlightRoute> routes) {
 		if (routes.isEmpty()) return;
 		
 		try {
@@ -88,14 +117,16 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 			
 			// Write the routes
 			int ofs = 0;
-			for (ExternalFlightRoute rt : routes) {
+			for (FlightRoute rt : routes) {
 				ofs++;
-				pw.println("route" + ofs + ".src=" + rt.getSource());
+				pw.println("route" + ofs + ".src=" + ((ExternalFlightRoute) rt).getSource());
 				pw.println("route" + ofs + ".created=" + String.valueOf(rt.getCreatedOn().getTime()));
 				pw.println("route" + ofs + ".alt=" + rt.getCruiseAltitude());
 				pw.println("route" + ofs + ".route=" + rt.getRoute());
-				pw.println("route" + ofs + ".sid=" + rt.getSID());
-				pw.println("route" + ofs + ".star=" + rt.getSTAR());
+				if (rt.getSID() != null)
+					pw.println("route" + ofs + ".sid=" + rt.getSID());
+				if (rt.getSTAR() != null)
+					pw.println("route" + ofs + ".star=" + rt.getSTAR());
 				pw.println("route" + ofs + ".comments=" + rt.getComments());
 				pw.println();
 			}
@@ -116,14 +147,14 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 	 * @return a Collection of FlightRoute beans
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public Collection<ExternalFlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
+	public Collection<FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
 
 		// Check the cache
-		Collection<ExternalFlightRoute> results = get(aD, aA);
+		Collection<FlightRoute> results = get(aD, aA);
 		if (results != null)
 			return results;
 		
-		results = new ArrayList<ExternalFlightRoute>();
+		results = new LinkedHashSet<FlightRoute>();
 		try {
 			// Do the SOAP call
             RoutesBetweenAirportsStruct[] data = getStub().routesBetweenAirports(aD.getICAO(), aA.getICAO());
@@ -132,7 +163,7 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
             for (int x = 0; (data != null) && (x < data.length); x++) {
             	RoutesBetweenAirportsStruct r = data[x];
             	int altitude = r.getFiledAltitude().intValue();
-            	ExternalFlightRoute rt = new ExternalFlightRoute();
+            	FAFlightRoute rt = new FAFlightRoute();
             	rt.setID(x + 1);
             	rt.setAirportD(aD);
             	rt.setAirportA(aA);
@@ -146,13 +177,13 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
             	try {
                 	String[] wps = waypoints.toArray(new String[0]);
                 	int wpMax = wps.length - 1;
-                	boolean hasSID = (wpMax > 3) && (wps[0].length() > 4) && Character.isDigit(wps[0].charAt(wps[0].length() - 1));
+                	boolean hasSID = (wpMax > 3) && (wps[0].length() > 3) && Character.isDigit(wps[0].charAt(wps[0].length() - 1));
                 	if (hasSID) {
                 		waypoints.remove(0);
                 		rt.setSID(wps[0] + "." + wps[1] + ".ALL");
                 	}
 
-                	boolean hasSTAR = (wpMax > 3) && (wps[wpMax].length() > 4) && Character.isDigit(wps[wpMax].charAt(wps[wpMax].length() - 1));
+                	boolean hasSTAR = (wpMax > 3) && (wps[wpMax].length() > 3) && Character.isDigit(wps[wpMax].charAt(wps[wpMax].length() - 1));
                 	if (hasSTAR) {
                 		rt.setSTAR(wps[wpMax] + "." + wps[wpMax - 1] + ".ALL");
                 		waypoints.remove(waypoints.size() - 1);
