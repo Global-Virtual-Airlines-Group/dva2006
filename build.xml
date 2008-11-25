@@ -20,6 +20,15 @@
 			<bottom><![CDATA[<i>Copyright &#169; 2004-2008 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
+		<!-- TAR up the JavaDoc -->
+    	<tar destfile="${java.io.tmpdir}/golgotha_javadoc.tar" longfile="fail">
+			<tarfileset uid="1000" group="gva" dir="${java.io.tmpdir}/javadoc" />
+    	</tar>
+
+    	<!-- Compress the TAR file -->
+		<bzip2 src="${java.io.tmpdir}/golgotha_javadoc.tar" destfile="${java.io.tmpdir}/golgotha_javadoc.tar.bz2" />
+		<delete file="${java.io.tmpdir}/golgotha_javadoc.tar" />
+
    		<!-- Load the SCP server properties -->
     	<property name="path.javadoc" value="/home/deltava.org/www/javadoc" />
    		<loadproperties srcFile="data/build_doc.properties">
@@ -27,21 +36,27 @@
 	   			<prefixlines prefix="javadoc." />
    			</filterchain>
    		</loadproperties>
-    	
+
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
     		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
     		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
-    	
-    	<!-- Upload the JavaDoc -->
-    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:${javadoc.ssh.path.javadoc}" trust="yes"
-    		verbose="yes" password="${javadoc.ssh.pwd}">
-    		<fileset dir="${java.io.tmpdir}/javadoc" />
-    	</scp>
-    	
+
+    	<!-- Upload the JavaDoc archive -->
+    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" 
+    		password="${javadoc.ssh.pwd}" localfile="${java.io.tmpdir}/golgotha_javadoc.tar.bz2" />
+
+    	<!-- Explode the JavaDoc -->
+    	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
+    		host="${javadoc.ssh.server}" timeout="12500" failonerror="no"
+    		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
+		<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
+    	    host="${javadoc.ssh.server}" timeout="12500" failonerror="no"
+    	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
+
     	<!-- Clean out the temp folder -->
     	<delete dir="${java.io.tmpdir}/javadoc" />
-    	<delete file="${java.io.tmpdir}/javadoc.tar.gz" />
+    	<delete file="${java.io.tmpdir}/javadoc.tar.bz2" />
     </target>
 	
 	<target name="junit">
