@@ -63,11 +63,9 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Check if we have a SID
-			if (!StringUtils.isEmpty(ctx.getParameter("sid"))) {
-				TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
-				if (sid != null)
-					routePoints.addAll(sid.getWaypoints());
-			}
+			TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
+			if (sid != null)
+				routePoints.addAll(sid.getWaypoints());
 
 			// Add the route waypoints
 			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
@@ -76,11 +74,9 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Check if we have a STAR
-			if (!StringUtils.isEmpty(ctx.getParameter("star"))) {
-				TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
-				if (star != null)
-					routePoints.addAll(star.getWaypoints());
-			}
+			TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
+			if (star != null)
+				routePoints.addAll(star.getWaypoints());
 
 			// Add the arrival airport
 			if (aA != null) {

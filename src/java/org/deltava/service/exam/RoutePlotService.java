@@ -78,15 +78,12 @@ public class RoutePlotService extends MapPlotService {
 			// Check if we have a SID
 			GetNavRoute dao = new GetNavRoute(con);
 			routePoints.add(new AirportLocation(rpq.getAirportD()));
-			if (!StringUtils.isEmpty(ctx.getParameter("sid"))) {
-				sid = dao.getRoute(ctx.getParameter("sid"));
-				if (sid != null)
-					routePoints.addAll(sid.getWaypoints());
-			}
+			sid = dao.getRoute(ctx.getParameter("sid"));
+			if (sid != null)
+				routePoints.addAll(sid.getWaypoints());
 			
 			// Check if we have a STAR
-			if (!StringUtils.isEmpty(ctx.getParameter("star")))
-				star = dao.getRoute(ctx.getParameter("star"));
+			star = dao.getRoute(ctx.getParameter("star"));
 			
 			// Add the route waypoints
 			String rt = ctx.getParameter("route"); 

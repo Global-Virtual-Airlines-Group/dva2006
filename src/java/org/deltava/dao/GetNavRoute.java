@@ -88,8 +88,9 @@ public class GetNavRoute extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TerminalRoute getRoute(String name) throws DAOException {
+		if (StringUtils.isEmpty(name)) return null;
 
-		// Chceck the cache
+		// Check the cache
 		Route result = _rCache.get(name);
 		if ((result != null) && (result instanceof TerminalRoute))
 			return (TerminalRoute) result;
