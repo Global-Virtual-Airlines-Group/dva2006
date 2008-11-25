@@ -123,7 +123,7 @@ return true;
  <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" />
  <el:box name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 20 : fafCriteria.maxResults}" /></td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" /></td>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>
@@ -150,7 +150,7 @@ return true;
 <el:table className="view" space="default" pad="default">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="7" class="left">SEARCH RESULTS</td>
+ <td colspan="8" class="left">FLIGHT SCHEDULE SEARCH RESULTS</td>
 </tr>
 
 <!-- Search Results Header Bar -->
@@ -161,6 +161,7 @@ return true;
  <td width="35%">AIRPORTS</td>
  <td width="10%">DEPARTS</td>
  <td width="10%">ARRIVES</td>
+ <td width="5%">ROUTES</td>
  <td>DISTANCE</td>
 </tr>
 
@@ -174,12 +175,18 @@ return true;
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+<c:if test="${fn:isSearchEntry(flight)}">
+ <td class="small bld"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
+</c:if>
+<c:if test="${!fn:isSearchEntry(flight)}">
+ <td class="sec" colspan="2"><fmt:int value="${flight.distance}" /> miles</td>
+</c:if>
 </view:row>
 </c:forEach>
 
 <tr class="title">
- <td colspan="7"><el:button ID="BuildButton" type="submit" className="BUTTON" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
+ <td colspan="8"><el:button ID="BuildButton" type="submit" className="BUTTON" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="BuildResetButton" url="buildassign" op="reset" label="RESET RESULTS" /></td>
 </tr>
 </el:table>

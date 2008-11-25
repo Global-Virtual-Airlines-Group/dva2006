@@ -477,4 +477,11 @@
 		<function-signature>java.lang.String getNetworkID(org.deltava.beans.Person, 
 			java.lang.String)</function-signature>
 	</function>
+
+	<!-- Check if a schedule entry is a search result -->
+	<function>
+		<name>isSearchEntry</name>
+		<function-class>org.deltava.taglib.functions.ScheduleFunctions</function-class>
+		<function-signature>boolean isSearchEntry(org.deltava.beans.schedule.ScheduleEntry)</function-signature>
+	</function>
 </taglib>
