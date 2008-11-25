@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 2.2
  */
 
@@ -45,13 +45,11 @@ public class RouteSaveCommand extends AbstractCommand {
 			GetNavRoute dao = new GetNavRoute(con);
 			
 			// Check if we have a SID
-			if (!StringUtils.isEmpty(ctx.getParameter("sid"))) {
-				TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
-				if (sid != null) {
-					rp.setSID(sid.getCode());
-					for (NavigationDataBean nd : sid.getWaypoints())
-						rp.addWaypoint(nd, sid.getCode());
-				}
+			TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
+			if (sid != null) {
+				rp.setSID(sid.getCode());
+				for (NavigationDataBean nd : sid.getWaypoints())
+					rp.addWaypoint(nd, sid.getCode());
 			}
 			
 			// Add the route waypoints
@@ -62,13 +60,11 @@ public class RouteSaveCommand extends AbstractCommand {
 			}
 			
 			// Check if we have a STAR
-			if (!StringUtils.isEmpty(ctx.getParameter("star"))) {
-				TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
-				if (star != null) {
-					rp.setSTAR(star.getCode());
-					for (NavigationDataBean nd : star.getWaypoints())
-						rp.addWaypoint(nd, star.getCode());
-				}
+			TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
+			if (star != null) {
+				rp.setSTAR(star.getCode());
+				for (NavigationDataBean nd : star.getWaypoints())
+					rp.addWaypoint(nd, star.getCode());
 			}
 			
 			// Check for a duplicate
