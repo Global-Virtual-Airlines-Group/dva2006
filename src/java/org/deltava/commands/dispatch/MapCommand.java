@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import org.deltava.commands.*;
@@ -6,7 +6,7 @@ import org.deltava.commands.*;
 /**
  * A Web Site Command to display the ACARS dispatch map.
  * @author Luke
- * @verison 2.1
+ * @version 2.1
  * @since 2.1
  */
 
