@@ -8,39 +8,17 @@ package org.deltava.beans.schedule;
  * @since 2.2
  */
 
-public class ExternalFlightRoute extends FlightRoute {
-	
-	private String _source;
-
-	public String getComboAlias() {
-		return getRoute();
-	}
-
-	public String getComboName() {
-		return getRoute();
-	}
+public interface ExternalFlightRoute {
 	
 	/**
 	 * Returns the source of this route.
 	 * @return the source name
 	 */
-	public String getSource() {
-		return _source;
-	}
-	
+	public abstract String getSource();
+
 	/**
 	 * Sets the source of this route.
 	 * @param src the source name
 	 */
-	public void setSource(String src) {
-		_source = src;
-	}
-
-	public int hashCode() {
-		return getRoute().hashCode();
-	}
-	
-	public String toString() {
-		return getRoute();
-	}
+	public abstract void setSource(String src);
 }
