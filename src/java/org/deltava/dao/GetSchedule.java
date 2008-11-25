@@ -44,19 +44,19 @@ public class GetSchedule extends DAO {
 		
 		// Add airline
 		if (criteria.getAirline() != null) {
-			conditions.add("AIRLINE=?");
+			conditions.add("S.AIRLINE=?");
 			params.add(criteria.getAirline().getCode());
 		}
 			
 		// Add flight number
 		if (criteria.getFlightNumber() != 0) {
-			conditions.add("FLIGHT=?");
+			conditions.add("S.FLIGHT=?");
 			params.add(String.valueOf(criteria.getFlightNumber()));
 		}
 			
 		// Add leg
 		if (criteria.getLeg() != 0) {
-			conditions.add("LEG=?");
+			conditions.add("S.LEG=?");
 			params.add(String.valueOf(criteria.getLeg()));
 		}
 		
@@ -74,44 +74,44 @@ public class GetSchedule extends DAO {
 			
 		// Set distance criteria +/- 150 miles
 		if (criteria.getDistance() != 0) {
-			conditions.add("DISTANCE >= ?");
-			conditions.add("DISTANCE <= ?");
+			conditions.add("S.DISTANCE >= ?");
+			conditions.add("S.DISTANCE <= ?");
 			params.add(String.valueOf(criteria.getDistance() - criteria.getDistanceRange()));
 			params.add(String.valueOf(criteria.getDistance() + criteria.getDistanceRange()));
 		}
 
 		// Set flight time criteria +/- 1 hour
 		if (criteria.getLength() != 0) {
-			conditions.add("FLIGHT_TIME >= ?");
-			conditions.add("FLIGHT_TIME <= ?");
+			conditions.add("S.FLIGHT_TIME >= ?");
+			conditions.add("S.FLIGHT_TIME <= ?");
 			params.add(String.valueOf((criteria.getLength() / 10.0) - 1));
 			params.add(String.valueOf((criteria.getLength() / 10.0) + 1));
 		}
 
 		// Set departure/arrival time criteria +/- 2 hours
 		if (criteria.getHourD() != -1) {
-			conditions.add("TIME_D >= ?");
-			conditions.add("TIME_D <= ?");
+			conditions.add("S.TIME_D >= ?");
+			conditions.add("S.TIME_D <= ?");
 			params.add(StringUtils.format(criteria.getHourD() - 1, "00") + ":00\'");
 			params.add(StringUtils.format(criteria.getHourD() + 1, "00") + ":00\'");
 		}
 
 		if (criteria.getHourA() != -1) {
-			conditions.add("TIME_A >= ?");
-			conditions.add("TIME_A <= ?");
+			conditions.add("S.TIME_A >= ?");
+			conditions.add("S.TIME_A <= ?");
 			params.add(StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
 			params.add(StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
 		}
 		
 		// Check whether to include Flight Academy flights
 		if (!criteria.getIncludeAcademy()) {
-			conditions.add("ACADEMY=?");
+			conditions.add("S.ACADEMY=?");
 			params.add("0");
 		}
 		
 		// Check whether to include historic flights
 		if (!criteria.getIncludeHistoric()) {
-			conditions.add("HISTORIC=?");
+			conditions.add("S.HISTORIC=?");
 			params.add("0");
 		}
 
@@ -140,7 +140,7 @@ public class GetSchedule extends DAO {
 			
 			for (Iterator<String> i = criteria.getEquipmentTypes().iterator(); i.hasNext(); ) {
 				String eqType = i.next();
-				buf.append("(EQTYPE=?)");
+				buf.append("(S.EQTYPE=?)");
 				params.add(eqType);
 				if (i.hasNext())
 					buf.append(" OR ");
