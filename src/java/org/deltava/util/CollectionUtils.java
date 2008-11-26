@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 /**
  * A utility class for dealing with Collections and Lists.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -23,7 +23,7 @@ public class CollectionUtils {
 	 * @return TRUE if c is null or has no elements, otherwise FALSE
 	 */
 	public static boolean isEmpty(Collection c) {
-		return ((c == null) || (c.isEmpty()));
+		return ((c == null) || (c.size() == 0));
 	}
 	
 	/**
@@ -175,5 +175,19 @@ public class CollectionUtils {
 		List<T> values = new ArrayList<T>(c);
 		Collections.sort(values, cmp);
 		return values;
+	}
+	
+	/**
+	 * Examines two Collections and returns the items present in both.
+	 * @param c1 the first Collection
+	 * @param c2 the second Collection
+	 * @return a Collection of items present in both c1 and c2
+	 */
+	public static <T> Collection<T> union(Collection<T> c1, Collection<T> c2) {
+		List<T> values = new ArrayList<T>(c1);
+		values.removeAll(c2);
+		List<T> results = new ArrayList<T>(c1);
+		results.removeAll(values);
+		return results;
 	}
 }
