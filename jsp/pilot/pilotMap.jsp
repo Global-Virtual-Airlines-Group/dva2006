@@ -11,14 +11,16 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
+<map:api version="2" />
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
+<content:js name="progressBar" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <script language="JavaScript" type="text/javascript">
+var imgPath = '${imgPath}';
 function reloadMap()
 {
 if (allMarkers.length > 0) {
@@ -28,7 +30,7 @@ if (allMarkers.length > 0) {
 
 // Load the map
 addMarkers(map, 'hq');
-var xmlreq = generateXMLRequest('${imgPath}');
+var xmlreq = generateXMLRequest();
 xmlreq.send(null);
 return true;
 }
@@ -50,7 +52,7 @@ return true;
  <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="625" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="525" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">PILOT LOCATION FILTERING</td>
@@ -62,10 +64,6 @@ return true;
 <tr>
  <td class="label">Pilot Ranks</td>
  <td class="data"><el:combo name="rank" size="1" firstEntry="ALL" options="${ranks}" onChange="void updateMarkers()" /></td>
-</tr>
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noFilter" value="true" checked="false" label="Disable range-based filtering (slow)" onChange="void reloadMap()" /></td>
 </tr>
 </el:table>
 
@@ -94,7 +92,7 @@ map.setCenter(mapC, 6);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-var mm = new GMarkerManager(map);
+var progressBar = new ProgressbarControl(map, {width:150, color:'blue'});
 reloadMap();
 </script>
 </body>
