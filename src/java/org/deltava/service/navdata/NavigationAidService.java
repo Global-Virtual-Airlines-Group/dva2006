@@ -76,7 +76,7 @@ public class NavigationAidService extends DispatchDataService {
 					pw.print(((NavigationFrequencyBean) nb).getFrequency());
 				}
 			
-				ctx.print(",");
+				pw.print(',');
 				if (nb.getRegion() != null)
 					pw.println(nb.getRegion());
 				else
