@@ -30,9 +30,9 @@ do
 		fi
 
 		# Check MySQL
-		if [ -f "/var/run/mysql5.pid" ]
+		if [ -f "/var/run/mysql.pid" ]
 		then
-			if [ ! -d "/proc/`cat /var/run/mysql5.pid`" ]
+			if [ ! -d "/proc/`cat /var/run/mysql.pid`" ]
 			then
 				echo `date +%H:%M:%S`" mySQL 5 (Database Server) is DOWN" >> /var/cache/isalive.txt
 				/etc/init.d/mysql start
@@ -43,9 +43,9 @@ do
 		fi
 
 		# Check Tomcat
-		if [ -f "/var/run/tomcat.pid" ]
+		if [ -f "/var/run/tomcat60.pid" ]
 		then
-			if [ ! -d "/proc/`cat /var/run/tomcat.pid`" ]
+			if [ ! -d "/proc/`cat /var/run/tomcat60.pid`" ]
 			then
 				echo `date +%H:%M:%S`" Tomcat (Application Server) is DOWN" >> /var/cache/isalive.txt
 				/etc/init.d/tomcat start
@@ -69,19 +69,19 @@ do
 		fi
 
 		# Check OpenLDAP
-		if [ -f "/var/run/slapd.pid" ]
-		then
-			if [ ! -d "/proc/`cat /var/run/slapd.pid`" ]
-			then
-				echo `date +%H:%M:%S`" OpenLDAP (Authentication Server) is DOWN" >> /var/cache/isalive.txt
-				/etc/init.d/slapd start
-			fi
-		fi
+		# if [ -f "/var/run/slapd.pid" ]
+		# then
+		#	if [ ! -d "/proc/`cat /var/run/slapd.pid`" ]
+		#	then
+		#		echo `date +%H:%M:%S`" OpenLDAP (Authentication Server) is DOWN" >> /var/cache/isalive.txt
+		#		/etc/init.d/slapd start
+		#	fi
+		# fi
 
 		# Check Postfix
-		if [ -f "/var/run/postfix-master.pid" ]
+		if [ -f "/var/run/postfix.pid" ]
 		then
-			if [ ! -d "/proc/`pidof postfix/master`" ]
+			if [ ! -d "/proc/`pidof master`" ]
 			then
 				echo `date +%H:%M:%S`" PostFix (SMTP Server) is DOWN" >> /var/cache/isalive.txt
 				/etc/init.d/postfix start

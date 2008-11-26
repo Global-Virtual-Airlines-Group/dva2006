@@ -22,9 +22,9 @@ else
  /etc/init.d/named start
 fi
 
-if [ -f "/var/run/mysql5.pid" ]
+if [ -f "/var/run/mysql.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/mysql5.pid`" ]
+  if [ -d "/proc/`cat /var/run/mysql.pid`" ]
   then
    echo "mySQL 5 (Database Server) is alive"
   else
@@ -36,9 +36,9 @@ else
  /etc/init.d/mysql start
 fi
 
-if [ -f "/var/run/tomcat.pid" ]
+if [ -f "/var/run/tomcat60.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/tomcat.pid`" ]
+  if [ -d "/proc/`cat /var/run/tomcat60.pid`" ]
   then
    echo "Tomcat (Application Server) is alive"
   else
@@ -78,7 +78,7 @@ fi
 #  /etc/init.d//ldapctl start
 #fi
 
-if [ -f "/var/run/postfix-master.pid" ]
+if [ -f "/var/run/postfix.pid" ]
 then
   if [ -d "/proc/`pidof master`" ]
   then
