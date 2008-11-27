@@ -57,8 +57,8 @@
 <c:if test="${route.dispatchBuild > 0}"> ACARS Dispatch Build <fmt:int value="${route.dispatchBuild}" /></c:if>
 <c:if test="${route.dispatchBuild == 0}"> Web Application</c:if></span></td>
  <td class="label">Created on</td>
- <td class="data"><span class="bld"><fmt:date date="${route.createdOn}" d="MM/dd/yyyy" fmt="d" /></span> (used
- <fmt:int value="${route.useCount}" /> times, last on <fmt:date date="${route.lastUsed}" t="HH:mm" />)</td>
+ <td class="data"><span class="bld"><fmt:date date="${route.createdOn}" d="MM/dd/yyyy" fmt="d" /></span>
+<c:if test="${route.useCount > 0}"> (used <fmt:int value="${route.useCount}" /> times, last on <fmt:date date="${route.lastUsed}" t="HH:mm" />)</c:if></td>
 </tr>
 <c:if test="${!empty route.comments}">
 <tr>
