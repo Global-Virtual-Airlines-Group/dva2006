@@ -359,7 +359,7 @@
 			<map name="googleMaps">
 				<dva2006.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQYRJWPVVk21iaQ8DXDNrYsoUMdqBT_o7t7mxqvs1dO5smwx9Pwrf_dTA</dva2006.deltava.org>
 			</map>
-			<analytics>UA-2066915-2</analytics>
+			<analytics>UA-2066915-1</analytics>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
@@ -487,7 +487,7 @@
 
 		<auto_reject type="Integer">5</auto_reject>
 		<ip_interval type="Integer">7</ip_interval>
-		<from>Luke Kolin</from>
+		<from>DVA2750</from>
 		<list name="email.ok" attr="addr" unique="true">
 			<addr>luke@sce.net</addr>
 			<addr>luke@deltava.org</addr>
@@ -565,7 +565,7 @@
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
-		<tasks_by>David Keech</tasks_by>
+		<tasks_by>DVA2570</tasks_by>
 	</users>
 	
 	<!-- ACARS Server Properties -->

@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -68,10 +68,12 @@ public class LoginCommand extends AbstractCommand {
 		// Get the names
 		String fName = ctx.getParameter("firstName");
 		String lName = ctx.getParameter("lastName");
+		String code = ctx.getParameter("pilotCode");
 		
 		// Get pre-loaded names
 		Cookie fnc = ctx.getCookie("dva_fname64");
 		Cookie lnc = ctx.getCookie("dva_lname64");
+		Cookie pcc = ctx.getCookie("dva_pCode");
 		
 		// Save first name
 		if (fName != null)
@@ -84,6 +86,12 @@ public class LoginCommand extends AbstractCommand {
 			ctx.setAttribute("lname", lName, REQUEST);
 		else if (lnc != null)
 			ctx.setAttribute("lname", Base64.decodeString(lnc.getValue()), REQUEST);
+		
+		// Save pilot code
+		if (code != null)
+			ctx.setAttribute("pilotCode", code, REQUEST);
+		else if (pcc != null)
+			ctx.setAttribute("pilotCode", pcc.getValue(), REQUEST);
 
 		// If we've got no firstName parameter, redirect to the login JSP
 		if (fName == null) {
@@ -112,11 +120,26 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the Pilot's Directory Name
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			p = dao.getByName(fullName.toString(), SystemData.get("airline.db"));
-			if (p == null) {
+			List<Pilot> users = dao.getByName(fullName.toString(), SystemData.get("airline.db"));
+			if (users.size() == 0) {
 				log.warn("Unknown User Name - \"" + fullName + "\"");
 				throw new SecurityException("Unknown User Name - \"" + fullName + "\"");
-			}
+			} else if (users.size() > 1) {
+				if (code != null) {
+					try {
+						int id = StringUtils.parseHex(code);
+						p = dao.get(id);
+					} catch (Exception e) {
+						log.warn("Cannot parse pilot ID - " + code);
+					}
+				}
+				
+				// If we got more than one pilot, save in the request and ask the user to pick
+				ctx.setAttribute("dupeUsers", users, REQUEST);
+				if (p == null)
+					throw new SecurityException("Multiple Users found - please select");
+			} else
+				p = users.get(0);
 
 			// Get the authenticator and try to authenticate
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
@@ -265,6 +288,10 @@ public class LoginCommand extends AbstractCommand {
 			lnc = new Cookie("dva_lname64", Base64.encode(p.getLastName()));
 			lnc.setMaxAge(cookieAge);
 			ctx.getResponse().addCookie(lnc);
+			
+			pcc = new Cookie("dva_pCode", p.getHexID());
+			pcc.setMaxAge(cookieAge);
+			ctx.getResponse().addCookie(pcc);
 		} else {
 			fnc = new Cookie("dva_fname64", "");
 			fnc.setMaxAge(0);
@@ -273,6 +300,10 @@ public class LoginCommand extends AbstractCommand {
 			lnc = new Cookie("dva_lname64", "");
 			lnc.setMaxAge(0);
 			ctx.getResponse().addCookie(lnc);
+			
+			pcc = new Cookie("dva_pCode", "");
+			pcc.setMaxAge(0);
+			ctx.getResponse().addCookie(pcc);
 		}
 		
 		// Clear warning cookie if valid

@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Password Reset</title>
@@ -15,6 +16,8 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
+<c:if test="${!empty dupeUsers}">
+if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;</c:if>
 if (!validateText(form.fName, 2, 'First Name')) return false;
 if (!validateText(form.lName, 2, 'Last Name')) return false;
 <content:filter roles="!HR">
@@ -42,14 +45,28 @@ return true;
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="fName" idx="1" size="10" max="16" className="req" />
- <el:text name="lName" idx="2" size="16" max="14" className="req" /></td>
+ <td class="data"><el:text name="fName" idx="1" size="10" max="16" className="req" value="${param.fName}" />
+ <el:text name="lName" idx="2" size="16" max="14" className="req" value="${param.lName}" /></td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><el:text name="eMail" idx="3" size="32" max="80" /><br />
  <span class="small">(We need your e-mail address to verify it's really you.)</span></td>
 </tr>
+<c:if test="${!empty dupeUsers}">
+<tr class="title caps">
+ <td colspan="2">MULTIPLE USERS NAMED ${userName} FOUND</td>
+</tr>
+<c:forEach var="pilot" items="${dupeUsers}">
+<c:if test="${fn:isActive(pilot)}">
+<c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="request" />
+<tr>
+ <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" /></td>
+ <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank}, ${pilot.equipmentType})
+<content:filter roles="HR"> <el:link url="mailto:${pilot.email}">${pilot.email}</el:link></content:filter></td>
+</tr>
+</c:if></c:forEach>
+</c:if>
 <c:if test="${!empty system_message}">
 <tr>
  <td colspan="2" class="error bld">PASSWORD RESET FAILURE - ${system_message}</td>

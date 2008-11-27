@@ -71,7 +71,8 @@ public class InactivityUpdateTask extends Task {
 			MessageTemplate nmt = mtdao.get("USERNOTIFY");
 
 			// Figure out who we're operating as
-			Pilot taskBy = dao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
+			GetPilotDirectory pddao = new GetPilotDirectory(con);
+			Pilot taskBy = pddao.getByCode(SystemData.get("users.tasks_by"));
 			
 			// Get the pilots to deactivate
 			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);

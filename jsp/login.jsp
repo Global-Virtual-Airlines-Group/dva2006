@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> User Login</title>
@@ -18,7 +19,9 @@ if (!checkSubmit()) return false;
 if (!validateText(form.firstName, 2, 'First Name')) return false;
 if (!validateText(form.lastName, 2, 'Last Name')) return false;
 if (!validateText(form.pwd, 3, 'Password')) return false;
-
+<c:if test="${!empty dupeUsers}">
+if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;
+</c:if>
 setSubmit();
 disableButton('SubmitButton');
 return true;
@@ -55,9 +58,9 @@ Welcome to <content:airline />! In order to access the secure areas of our site,
 your first and last name or your User ID and password. Your browser must be able to accept cookies 
 in order to log into the site.<br />
 <br />
-<el:form ID="Login" method="POST" action="login.do" validate="return validate(this)">
+<el:form method="post" action="login.do" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
-<tr class="title">
+<tr class="title caps">
  <td colspan="2">USER LOGIN</td>
 </tr>
 <tr>
@@ -73,6 +76,19 @@ in order to log into the site.<br />
  <td class="label">&nbsp;</td>
  <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember my User ID next time I Log in" checked="${!empty fname}" /></td>
 </tr>
+<c:if test="${!empty dupeUsers}">
+<tr class="title caps">
+ <td colspan="2">MULTIPLE USERS NAMED ${fname} ${lname} FOUND</td>
+</tr>
+<c:forEach var="pilot" items="${dupeUsers}">
+<c:if test="${fn:isActive(pilot)}">
+<c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="request" />
+<tr>
+ <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" checked="${pilotCode == pilot.hexID}" /></td>
+ <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank}, ${pilot.equipmentType})</td>
+</tr>
+</c:if></c:forEach>
+</c:if>
 <c:if test="${!empty system_message}">
 <tr>
  <td colspan="2"><span class="error bld">LOGIN FAILURE - ${system_message}</span></td>
@@ -88,6 +104,7 @@ in order to log into the site.<br />
 <el:text name="screenX" type="hidden" value="1024" />
 <el:text name="screenY" type="hidden" value="768" />
 <el:text name="redirectTo" type="hidden" value="${referTo}" />
+<c:if test="${empty dupeUsers}"><el:text name="pilotCode" type="hidden" value="${pilotCode}" /></c:if>
 </el:form>
 <br />
 <content:copyright />

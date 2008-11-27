@@ -1,7 +1,7 @@
 // Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.sql.Connection;
+import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -28,16 +28,24 @@ public class DatabaseIDService extends WebService {
 	 * @throws ServiceException if an error occurs
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
-		
-		// Get the name and password
+
+		// Get the user by name
 		String name = ctx.getParameter("name");
+		String eMail = ctx.getParameter("eMail");
 		Pilot usr = null;
 		try {
-			Connection con = ctx.getConnection();
+			GetPilot pdao = new GetPilot(ctx.getConnection());
+			List<Pilot> users = pdao.getByName(name, SystemData.get("airline.db"));
+			if (users.size() > 0) {
+				for (Iterator<Pilot> i = users.iterator(); i.hasNext(); ) {
+					Pilot p = i.next();
+					if ((eMail != null) && (!eMail.equalsIgnoreCase(p.getEmail())))
+						i.remove();
+				}
+			}
 			
-			// Get the user by name
-			GetPilot pdao = new GetPilot(con);
-			usr = pdao.getByName(name, SystemData.get("airline.db"));
+			// Get the first pilot
+			usr = users.isEmpty() ? null : users.get(0);
 		} catch (DAOException de ) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -54,7 +62,7 @@ public class DatabaseIDService extends WebService {
 		ctx.println("id=" + usr.getID());
 		if (!StringUtils.isEmpty(usr.getPilotCode()))
 			ctx.println("code=" + usr.getPilotCode());
-		
+
 		// Dump the text to the output stream
 		try {
 			ctx.getResponse().setContentType("text/plain");

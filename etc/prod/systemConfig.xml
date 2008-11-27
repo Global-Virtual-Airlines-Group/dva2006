@@ -376,7 +376,6 @@
 		<key>
 			<map name="googleMaps">
 				<golgotha.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</golgotha.deltava.org>
-				<endor.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRNY_m38FVZVfoLu9rA_lA1h6sggRRLScZXCXCNSnRTOjxLMQTGGrjG2Q</endor.deltava.org>
 				<www.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</www.deltava.org>
 				<acars.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRn8d3rP8x7XVGbg6YjfVi_J-KSjhQmGdPxb2_Vr0LkHmcNk3lv7dtK7A</acars.deltava.org>
 			</map>
@@ -487,7 +486,7 @@
 	</path>
 	
 	<smtp>
-		<server>endor.deltava.org</server>
+		<server>pollux.gvagroup.org</server>
 		<errors-to>webmaster@deltava.org</errors-to>
 		<testMode type="Boolean">false</testMode>
 		<imap>
@@ -509,7 +508,7 @@
 
 		<auto_reject type="Integer">5</auto_reject>
 		<ip_interval type="Integer">7</ip_interval>
-		<from>Jim Pray</from>
+		<from>DVA2570</from>
 		<list name="email.ok" attr="addr" unique="true">
 			<addr>luke@sce.net</addr>
 			<addr>luke@deltava.org</addr>
@@ -586,7 +585,7 @@
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
-		<tasks_by>Jim Pray</tasks_by>
+		<tasks_by>DVA2570</tasks_by>
 	</users>
 	
 	<!-- ACARS Server Properties -->

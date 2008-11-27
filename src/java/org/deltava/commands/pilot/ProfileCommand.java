@@ -417,7 +417,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// If we're unique, continue the update
-				if (dupeResults.isEmpty()) {
+				if (dupeResults.isEmpty() || ctx.isUserInRole("HR")) {
 					String newDN = "cn=" + p2.getName() + "," + SystemData.get("security.baseDN");
 
 					// Create the status update

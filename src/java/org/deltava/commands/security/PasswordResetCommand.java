@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
+import java.util.List;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -13,13 +14,13 @@ import org.deltava.mail.*;
 
 import org.deltava.security.Authenticator;
 
-import org.deltava.util.PasswordGenerator;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to reset users' passwords.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -43,12 +44,18 @@ public class PasswordResetCommand extends AbstractCommand {
 		// Check for first/last name
 		String fName = ctx.getParameter("fName");
 		String lName = ctx.getParameter("lName");
+		String code = ctx.getParameter("pilotCode");
 
 		// If no name found, then redirect to the page
 		if (fName == null) {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Build the name
+		StringBuilder buf = new StringBuilder(fName);
+		buf.append(' ');
+		buf.append(lName);
 
 		// Create the messaging context
 		MessageContext mctxt = new MessageContext();
@@ -61,12 +68,29 @@ public class PasswordResetCommand extends AbstractCommand {
 
 			// Get the Directory name
 			GetPilot dao = new GetPilot(con);
-			usr = dao.getByName(fName + " " + lName, SystemData.get("airline.db"));
-			if (usr == null) {
-				ctx.setMessage("User " + fName + " " + lName + " not found");
+			List<Pilot> users = dao.getByName(buf.toString(), SystemData.get("airline.db"));
+			if (users.size() == 0) {
+				ctx.setMessage("User " + buf.toString() + " not found");
 				ctx.release();
 				return;
-			}
+			} else if (users.size() > 1) {
+				if (code != null) {
+					try {
+						int id = StringUtils.parseHex(code);
+						usr = dao.get(id);
+					} catch (Exception e) {
+						log.warn("Cannot parse pilot ID - " + code);
+					}
+				}
+				
+				if (usr == null) {
+					ctx.setAttribute("userName", buf.toString(), REQUEST);
+					ctx.setAttribute("dupeUsers", users, REQUEST);
+					ctx.release();
+					return;
+				}
+			} else
+				usr = users.get(0);
 
 			// Save in the message context
 			mctxt.addData("pilot", usr);
@@ -75,6 +99,7 @@ public class PasswordResetCommand extends AbstractCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("PWDRESET"));
 		} catch (DAOException de) {
+			ctx.release();
 			ctx.setMessage(de.getMessage());
 			return;
 		} finally {
@@ -83,26 +108,23 @@ public class PasswordResetCommand extends AbstractCommand {
 
 		// Check user status
 		if ((usr.getStatus() != Pilot.ACTIVE) && (usr.getStatus() != Pilot.ON_LEAVE)) {
-			ctx.setMessage("Cannot reset password for " + usr.getName() + " - status=" + usr.getStatusName());
+			ctx.setMessage("Cannot reset password for " + usr.getName() + "(" + usr.getPilotCode() + ") - status=" + usr.getStatusName());
 			return;
 		}
 
-		// Check the roles; if we have more than one we cannot be reset
-		if (usr.getRoles().size() > 1) {
-			ctx.setMessage("Cannot reset password for " + usr.getName() + " - roles=" + usr.getRoles().size());
-			return;
-		}
-
-		// Check the e-mail address
+		// Check the email-address and roles; if we have more than one we cannot be reset
 		if (!ctx.isUserInRole("HR")) {
-			if (!usr.getEmail().equalsIgnoreCase(ctx.getParameter("eMail"))) {
+			if (usr.getRoles().size() > 1) {
+				ctx.setMessage("Cannot reset password for " + usr.getName() + " (" + usr.getPilotCode() + ") - roles=" + usr.getRoles().size());
+				return;
+			} else if (!usr.getEmail().equalsIgnoreCase(ctx.getParameter("eMail"))) {
 				ctx.setMessage("Cannot reset password for " + usr.getName() + " - Invalid E-Mail Address");
 				return;
 			}
 		}
 
 		// Generate a new password for the user and save the user in the request
-		String newPwd = PasswordGenerator.generate(10);
+		String newPwd = PasswordGenerator.generate(8);
 		usr.setPassword(newPwd);
 		ctx.setAttribute("pilot", usr, REQUEST);
 

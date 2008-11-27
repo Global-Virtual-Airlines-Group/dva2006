@@ -329,7 +329,6 @@
 		<key>
 			<map name="googleMaps">
 				<golgotha.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</golgotha.deltava.org>
-				<endor.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRNY_m38FVZVfoLu9rA_lA1h6sggRRLScZXCXCNSnRTOjxLMQTGGrjG2Q</endor.deltava.org>
 				<www.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</www.deltava.org>
 			</map>
 		</key>
@@ -375,7 +374,7 @@
 	</path>
 	
 	<smtp>
-		<server>endor.deltava.org</server>
+		<server>pollux.gvagroup.org</server>
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">false</testMode>
 		<daemon>
@@ -461,7 +460,7 @@
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
-		<tasks_by>Ralph Snyder</tasks_by>
+		<tasks_by>DVA2570</tasks_by>
 	</users>
 	
 	<!-- ACARS Server Properties -->
