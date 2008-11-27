@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
  * class, this uses the existing JDBC Connection Pool. Since this implements {@link SQLAuthenticator}, this behavior can
  * be overriden by providing a JDBC Connection to use.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -226,8 +226,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void rename(Person usr, String newName) throws SecurityException {
-		if (!contains(usr))
-			throw new SecurityException(usr.getID() + " not found");
+		// empty
 	}
 	
 	/**
