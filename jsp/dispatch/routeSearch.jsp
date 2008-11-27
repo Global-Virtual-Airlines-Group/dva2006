@@ -15,6 +15,8 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -49,9 +51,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportD}" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportD}" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" value="${airportD.IATA}" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportA}" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${airportA}" />
+ <el:text name="airportACode" idx="*" size="3" max="4" value="${airportA.IATA}" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 </el:table>
 
@@ -117,6 +121,5 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 </body>
 </html>
