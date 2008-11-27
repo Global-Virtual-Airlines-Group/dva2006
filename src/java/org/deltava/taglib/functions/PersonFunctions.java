@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public class PersonFunctions {
 	}
 	
 	/**
-	 * Returns wheter the Person is an Applicant.
+	 * Returns whether the Person is an Applicant.
 	 * @param usr the Person
 	 * @return TRUE if an Applicant, otherwise FALSE 
 	 */
@@ -33,7 +33,7 @@ public class PersonFunctions {
 	}
 	
 	/**
-	 * Returns wheter the Person is a Pilot.
+	 * Returns whether the Person is a Pilot.
 	 * @param usr the Person
 	 * @return TRUE if a Pilot, otherwise FALSE 
 	 */
@@ -42,12 +42,21 @@ public class PersonFunctions {
 	}
 	
 	/**
-	 * Returns wheter the Person is a Suspended Pilot.
+	 * Returns whether the Person is a Suspended Pilot.
 	 * @param usr the Person
 	 * @return TRUE if a Supended Pilot, otherwise FALSE
 	 */
 	public static boolean isSuspended(Person usr) {
 		return isPilot(usr) && (usr.getStatus() == Pilot.SUSPENDED);
+	}
+
+	/**
+	 * Returns whether the Person is an Active or On Leave Pilot.
+	 * @param usr the Person
+	 * @return TRUE if an Active or On Leave Pilot, otherwise FALSE
+	 */
+	public static boolean isActive(Person usr) {
+		return isPilot(usr) && ((usr.getStatus() == Pilot.ACTIVE) || (usr.getStatus() == Pilot.ON_LEAVE));
 	}
 	
 	/**

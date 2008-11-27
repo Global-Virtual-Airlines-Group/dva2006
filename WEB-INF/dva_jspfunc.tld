@@ -463,6 +463,13 @@
 		<function-signature>boolean isPilot(org.deltava.beans.Person)</function-signature>
 	</function>
 
+	<!-- Check if a Person is an Active/On Leave Pilot -->
+	<function>
+		<name>isActive</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>boolean isActive(org.deltava.beans.Person)</function-signature>
+	</function>
+
 	<!-- Check if a Person is a Suspended Pilot -->
 	<function>
 		<name>isSuspended</name>
