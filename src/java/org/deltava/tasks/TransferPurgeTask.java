@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -47,8 +47,8 @@ public class TransferPurgeTask extends Task {
 			MessageTemplate mt = mtdao.get("XFERREJECT");
 			
 			// Get the Pilot read DAO
-			GetPilot pdao = new GetPilot(con);
-			Pilot taskBy = pdao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			Pilot taskBy = pdao.getByCode(SystemData.get("users.tasks_by"));
 			
 			// Loop through the old transfers
 			GetExam exdao = new GetExam(con);

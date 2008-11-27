@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view the Command History Log.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -44,15 +44,17 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          Connection con = ctx.getConnection();
          
          // If we're searching for a pilot name, get it
-         GetPilot pdao = new GetPilot(con);
+         Collection<Integer> IDs = new HashSet<Integer>();
+         GetPilotDirectory pdao = new GetPilotDirectory(con);
          int id = ctx.getID();
          if ((id == 0) && (ctx.getParameter("pilotName") != null)) {
-        	 Pilot usr = pdao.getByName(ctx.getParameter("pilotName"), SystemData.get("airline.db"));
-        	 if (usr != null) {
-        		 ctx.setAttribute("pilot", usr, REQUEST);
-        		 id = usr.getID();
+        	 Collection<Pilot> users = pdao.getByName(ctx.getParameter("pilotName"), SystemData.get("airline.db"));
+        	 for (Iterator<Pilot> i = users.iterator(); i.hasNext(); ) {
+        		 Pilot usr = i.next();
+        		 IDs.add(new Integer(usr.getID()));
         	 }
-         }
+         } else
+        	 IDs.add(new Integer(id));
          
          // Get the DAO and the log entries
          GetSystemData dao = new GetSystemData(con);
@@ -60,7 +62,7 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          dao.setQueryMax(vc.getCount());
          
          // Do the query
-         Collection<CommandLog> results = (id != 0) ? dao.getCommands(id) : dao.getCommands(addr);
+         Collection<CommandLog> results = (id != 0) ? dao.getCommands(IDs) : dao.getCommands(addr);
          vc.setResults(results);
          
          // Load the pilot IDs
