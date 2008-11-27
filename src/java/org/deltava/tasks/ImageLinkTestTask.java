@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -47,8 +47,8 @@ public class ImageLinkTestTask extends Task {
 			Connection con = ctx.getConnection();
 			
 			// Figure out who we're operating as
-			GetPilot pdao = new GetPilot(con);
-			Pilot taskBy = pdao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			Pilot taskBy = pdao.getByCode(SystemData.get("users.tasks_by"));
 			
 			// Get the images to check
 			GetCoolerLinks dao = new GetCoolerLinks(con);

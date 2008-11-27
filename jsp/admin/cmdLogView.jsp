@@ -33,7 +33,7 @@
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data"><el:text name="pilotName" idx="*" size="32" max="48" value="${pilot.name}" /></td>
+ <td class="data"><el:text name="pilotName" idx="*" size="32" max="48" value="${param.pilotName}" /></td>
 </tr>
 </el:table>
 

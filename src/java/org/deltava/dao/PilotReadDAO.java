@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -76,10 +76,10 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * unpredictable.
 	 * @param fullName the Full Name of the Pilot
 	 * @param dbName the database name to search
-	 * @return the Pilot, or null if not found
+	 * @return a Collection of Pilot beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public final Pilot getByName(String fullName, String dbName) throws DAOException {
+	public final List<Pilot> getByName(String fullName, String dbName) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -90,27 +90,22 @@ abstract class PilotReadDAO extends PilotDAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) "
+		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)=?) "
 				+ "GROUP BY P.ID");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.OK);
-			_ps.setString(2, fullName.toUpperCase());
+			_ps.setString(2, fullName);
 
 			// Execute the query and get the result
-			List results = execute();
-			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
-			if (result == null)
-				return null;
-
-			// Add roles/ratings
-			addRatings(result, dbName);
-			addRoles(result, dbName);
+			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(), "ID");
+			loadRatings(results, dbName);
+			loadRoles(results, dbName);
 
 			// Add the result to the cache and return
-			_cache.add(result);
-			return result;
+			_cache.addAll(results.values());
+			return new ArrayList<Pilot>(results.values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

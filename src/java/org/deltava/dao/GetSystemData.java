@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -155,16 +155,31 @@ public class GetSystemData extends DAO implements CachingDAO {
 	}
 	
 	/**
-	 * Returns invocation statistics for a particular user.
-	 * @param pilotID the user's database ID
+	 * Returns invocation statistics for particular user(s).
+	 * @param pilotIDs a Collection of Database IDs
 	 * @return a List of CommandLog objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CommandLog> getCommands(int pilotID) throws DAOException {
+	public List<CommandLog> getCommands(Collection<Integer> pilotIDs) throws DAOException {
+		if (pilotIDs.isEmpty())
+			return Collections.emptyList();
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, "
+				+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (");
+		for (Iterator<Integer> i = pilotIDs.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			sqlBuf.append("(PILOT_ID=");
+			sqlBuf.append(id.toString());
+			sqlBuf.append(')');
+			if (i.hasNext())
+				sqlBuf.append(" OR ");
+		}
+		
+		sqlBuf.append(") ORDER BY CMDDATE DESC");
+		
 		try {
-			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
-					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (PILOT_ID=?) ORDER BY CMDDATE DESC");
-			_ps.setInt(1, pilotID);
+			prepareStatement(sqlBuf.toString());
 			return executeCommandLog();
 		} catch (SQLException se) {
 			throw new DAOException(se);

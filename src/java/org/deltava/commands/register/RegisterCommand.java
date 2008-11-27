@@ -279,7 +279,7 @@ public class RegisterCommand extends AbstractCommand {
 			}
 
 			// Get the e-mail originator
-			eMailFrom = pdao.getByName(SystemData.get("registration.from"), SystemData.get("airline.db"));
+			eMailFrom = pdao.getByCode(SystemData.get("registration.from"));
 
 			// Get the e-mail message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
