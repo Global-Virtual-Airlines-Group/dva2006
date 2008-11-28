@@ -6,9 +6,20 @@
 # remote user's home directory ~/.ssh/authorized_keys
 #
 
+USER="dva"
+if [ "$2" != "" ]; then
+	USER="$2"
+fi
+
 # Back up base files
-scp /home/backup/cfg/*.tar.gz dva@$1:~/cfg
-scp /home/backup/db/create_tables.tar.bz2 dva@$1:~/db
-scp /home/backup/db/*.sql.bz2 dva@$1:~/db
-scp /home/backup/svn/*.bz2 dva@$1:~/svn
-exit 1
+scp /home/backup/cfg/*.tar.gz $USER@$1:~/cfg
+scp /home/backup/db/create_tables.tar.bz2 $USER@$1:~/db
+scp /home/backup/db/*.sql.bz2 $USER@$1:~/db
+
+# Backup logs via rsync
+cd /home/backup
+rsync -avr logs $USER@$1:~
+rsync -avr --exclude=svn.revision_base svn $USER@$1:~
+
+# Exit with success
+exit 0
