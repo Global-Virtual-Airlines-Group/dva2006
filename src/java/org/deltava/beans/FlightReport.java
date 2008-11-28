@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -539,8 +539,10 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Compare two Flight Reports by comparing their date/time.
 	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(FlightReport fr2) {
-		return _date.compareTo(fr2.getDate());
+	public int compareTo(Object o) {
+		FlightReport fr2 = (FlightReport) o;
+		int tmpResult = _date.compareTo(fr2.getDate());
+		return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(fr2.getID())) : tmpResult;
 	}
 
 	/**
