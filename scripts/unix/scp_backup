@@ -18,7 +18,7 @@ scp /home/backup/db/*.sql.bz2 $USER@$1:~/db
 
 # Backup logs via rsync
 cd /home/backup
-rsync -avr --delete logs $USER@$1:~
+rsync -avr --delete logs/* $USER@$1:~/httplogs
 rsync -avr --delete --exclude=svn.revision_base svn $USER@$1:~
 
 # Exit with success
