@@ -29,6 +29,7 @@
  <td width="20%">AIRCRAFT NAME</td>
  <td width="20%">IATA CODE</td>
  <td width="5%">&nbsp;</td>
+ <td width="5%">WEIGHT</td>
  <td width="25%">WEB APPLICATIONS</td>
  <td><el:cmdbutton url="aircraft" op="edit" label="NEW AIRCRAFT" /></td>
 </tr>
@@ -39,13 +40,19 @@
  <td><el:cmd url="aircraft" linkID="${aircraft.name}" op="edit" className="pri bld">${aircraft.name}</el:cmd></td>
  <td><fmt:list value="${aircraft.IATA}" delim=", " /></td>
  <td class="small pri bld">${aircraft.ETOPS ? 'ETOPS' : '&nbsp;'}</td>
+<c:if test="${aircraft.maxWeight > 0}">
+ <td class="small sec bld">OK</td>
+</c:if>
+<c:if test="${aircraft.maxWeight == 0}">
+ <td class="small">N / A</td>
+</c:if>
  <td colspan="2" class="sec"><fmt:list value="${aircraft.apps}" delim=", " /></td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="5"><view:legend width="100" labels="Historic,Current" classes="opt1, " /></td>
+ <td colspan="6"><view:legend width="100" labels="Historic,Current" classes="opt1, " /></td>
 </tr>
 </view:table>
 <content:copyright />
