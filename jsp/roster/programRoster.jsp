@@ -30,7 +30,8 @@
  <td colspan="3" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
  <td colspan="4" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${param.sortType}" />
 <content:filter roles="HR">
- PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" /></content:filter>
+ PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" />
+ RANK <el:combo name="rank" size="1" idx="*" options="${ranks}" firstEntry="All Pilots" value="${param.rank}" /></content:filter>
  <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" />
  <el:button type="submit" className="BUTTON" label="UPDATE" /></td>
 </tr>
@@ -47,7 +48,7 @@
 </tr>
 
 <!-- Table Pilot Data -->
-<c:forEach var="pilot" items="${viewContext.results}">
+<c:forEach var="pilot" items="${pilotList}">
 <tr>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.pilotCode}</el:cmd></td>
  <td>${pilot.name}</td>
@@ -189,7 +190,15 @@
 </c:forEach>
 </view:table>
 </c:if>
-<!-- Statistics -->
+<!-- Flight Report Statistics -->
+<el:table className="view" pad="default" space="default">
+<tr class="title caps">
+ <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)</td>
+</tr>
+<%@ include file="/jsp/stats/pirepStats.jspf" %>
+</el:table>
+
+<!-- Membership Statistics -->
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td class="left" colspan="2">STATUS TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>

@@ -181,6 +181,19 @@ public class GetPilot extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Pilot> getPilotsByEQ(String eqType, String sortBy, boolean showActive) throws DAOException {
+		return getPilotsByEQ(eqType, sortBy, showActive, null);
+	}
+
+	/**
+	 * Returns all active Pilots with a particular rank in a particular equipment program.
+	 * @param eqType the equipment type
+	 * @param sortBy an optional sort SQL snippet
+	 * @param showActive TRUE if only active pilots should be displayed, otherwise FALSE
+	 * @param rank the Rank
+	 * @return a List of Pilots in a particular equipment type
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Pilot> getPilotsByEQ(String eqType, String sortBy, boolean showActive, String rank) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
@@ -188,41 +201,26 @@ public class GetPilot extends PilotReadDAO {
 				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
-				
+		if (rank != null)
+			sqlBuf.append(" AND (P.RANK=?)");
+		
 		sqlBuf.append("GROUP BY P.ID ORDER BY ");
 		sqlBuf.append((sortBy == null) ? "P.LASTNAME, P.FIRSTNAME" : sortBy);
-		
+
 		try {
+			int pos = 0;
 			prepareStatement(sqlBuf.toString());	
-			_ps.setInt(1, FlightReport.OK);
-			_ps.setString(2, eqType);
+			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setString(++pos, eqType);
 			if (showActive)
-				_ps.setInt(3, Pilot.ACTIVE);
+				_ps.setInt(++pos, Pilot.ACTIVE);
+			if (rank != null)
+				_ps.setString(++pos, rank);
 			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-	}
-
-	/**
-	 * Returns all active Pilots with a particular rank in a particular equipment program.
-	 * @param rank the rank
-	 * @param eqType the equipment type
-	 * @return a List of Pilots
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<Pilot> getPilotsByEQRank(String rank, String eqType) throws DAOException {
-
-		// Get all the pilots with the rank (since this is usually used to filter out ACPs/CPs)
-		List<Pilot> pilots = getPilotsByRank(rank);
-		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext();) {
-			Pilot p = i.next();
-			if (!eqType.equals(p.getEquipmentType()))
-				i.remove();
-		}
-
-		return pilots;
 	}
 
 	/**

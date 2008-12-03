@@ -121,7 +121,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("pirepQueueSize", Integer.valueOf(prdao.getDisposalQueueSize()), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
-			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);
+			ctx.setAttribute("asstCP", pdao.getPilotsByEQ(p.getEquipmentType(), null, true, Ranks.RANK_ACP), REQUEST);
 
 			// Initialize the testing history helper and check for test lockout
 			TestingHistoryHelper testHistory = initTestHistory(p, con);

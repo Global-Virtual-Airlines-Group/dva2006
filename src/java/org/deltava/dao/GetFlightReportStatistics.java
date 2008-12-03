@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.EquipmentType;
 import org.deltava.beans.FlightReport;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
@@ -290,6 +291,56 @@ public class GetFlightReportStatistics extends DAO {
 	}
 	
 	/**
+	 * Retrieves aggregated approved Flight Report statistics for Flights flown using aircraft that are Primary Ratings for
+	 * a particular Equipment Type program.
+	 * @param eqType the Equipment type name
+	 * @param groupBy the &quot;GROUP BY&quot; column name
+	 * @param orderBy the &quot;ORDER BY&quot; column name
+	 * @param descSort TRUE if a descending sort, otherwise FALSE
+	 * @return a List of FlightStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightStatsEntry> getEQPIREPStatistics(String eqType, String groupBy, String orderBy, boolean descSort) throws DAOException {
+		
+		// Build the SQL statemnet
+		boolean isPilot = groupBy.startsWith("P.");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		sqlBuf.append(groupBy);
+		sqlBuf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, "
+				+ "AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
+				+ "AS DSPLEGS, ");
+		sqlBuf.append(isPilot ? "1 AS PIDS" : "COUNT(DISTINCT F.PILOT_ID) AS PIDS");
+		sqlBuf.append(" FROM EQRATINGS EQR, PIREPS F");
+		if (isPilot)
+			sqlBuf.append(" LEFT JOIN PILOTS P ON (P.ID=F.PILOT_ID)");
+		sqlBuf.append(" WHERE (F.STATUS=?) AND ((EQR.EQTYPE=?) AND (EQR.RATING_TYPE=?) AND (EQR.RATED_EQ=F.EQTYPE))");
+		if (_dayFilter > 0)
+			sqlBuf.append("AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
+		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
+		sqlBuf.append(orderBy);
+		if (descSort)
+			sqlBuf.append(" DESC");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, FlightReport.ATTR_ACARS);
+			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(3, FlightReport.ATTR_HISTORIC);
+			_ps.setInt(4, FlightReport.ATTR_DISPATCH);
+			_ps.setInt(5, FlightReport.OK);
+			_ps.setString(6, eqType);
+			_ps.setInt(7, EquipmentType.PRIMARY_RATING);
+			if (_dayFilter > 0)
+				_ps.setInt(8, _dayFilter);
+			
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves aggregated approved Flight Report statistics.
 	 * @param pilotID the Pilot's database ID, or zero if airline-wide
 	 * @param groupBy the &quot;GROUP BY&quot; column name
@@ -333,29 +384,35 @@ public class GetFlightReportStatistics extends DAO {
 			if (pilotID != 0)
 				_ps.setInt(6, pilotID);
 
-			// Execute the query
-			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
-			ResultSet rs = _ps.executeQuery();
-			boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 10);
-			while (rs.next()) {
-				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
-				entry.setACARSLegs(rs.getInt(7));
-				entry.setOnlineLegs(rs.getInt(8));
-				entry.setHistoricLegs(rs.getInt(9));
-				entry.setDispatchLegs(rs.getInt(10));
-				if (hasPilotIDs)
-					entry.setPilotIDs(rs.getInt(11));
-				
-				results.add(entry);
-			}
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Helper method to parse stats entry result sets.
+	 */
+	private List<FlightStatsEntry> execute() throws SQLException {
+		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
+		ResultSet rs = _ps.executeQuery();
+		boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 10);
+		while (rs.next()) {
+			FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
+			entry.setACARSLegs(rs.getInt(7));
+			entry.setOnlineLegs(rs.getInt(8));
+			entry.setHistoricLegs(rs.getInt(9));
+			entry.setDispatchLegs(rs.getInt(10));
+			if (hasPilotIDs)
+				entry.setPilotIDs(rs.getInt(11));
+			
+			results.add(entry);
+		}
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
 	}
 	
 	/**
