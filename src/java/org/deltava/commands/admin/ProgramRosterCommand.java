@@ -30,6 +30,8 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		"P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
 	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date",
 			"Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
+	private static final List<String> RANKS = Arrays.asList(Ranks.RANK_FO, Ranks.RANK_C, Ranks.RANK_SC,
+			Ranks.RANK_ACP);
 
 	/**
 	 * Executes the command.
@@ -48,10 +50,13 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		if (isDesc)
 			vc.setSortType(vc.getSortType() + " DESC");
 		
-		// Get the equipment type
+		// Get the equipment type and rank
 		String eqType = ctx.getParameter("eqType");
 		if (eqType == null)
 			eqType = ctx.getUser().getEquipmentType();
+		String rank  = ctx.getParameter("rank");
+		if (!RANKS.contains(rank))
+			rank = null;
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -60,14 +65,14 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vc.getStart());
 			pdao.setQueryMax(vc.getCount());
-			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, vc.getSortType(), true), "ID");
+			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, vc.getSortType(), true, rank), "ID");
 			
 			// Load promotion queue
 			GetPilotRecognition pqdao = new GetPilotRecognition(con);
 			Collection<Integer> promoIDs = pqdao.getPromotionQueue(eqType);
 			Map<Integer, Pilot> promoPilots = pdao.getByID(promoIDs, "PILOTS");
 			
-			// Calculate promotion queue
+			// Calculate promotion queue and filter by rank
 			boolean canPromote = false;
 			Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
 			for (Iterator<Pilot> i = promoPilots.values().iterator(); i.hasNext(); ) {
@@ -81,7 +86,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			// Load Online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
-			vc.setResults(pilots.values());
+			ctx.setAttribute("pilotList", pilots.values(), REQUEST);
 			
 			// Save promotion queue and access
 			if (canPromote) {
@@ -131,6 +136,13 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 					IDs.add(new Integer(ex.getPilotID()));
 			}
 			
+			// Load flight report statistics for the past 14 days - this goes into the ViewContext
+			// because the included JSP expects it there
+			GetFlightReportStatistics psdao = new GetFlightReportStatistics(con);
+			psdao.setDayFilter(21);
+			ctx.setAttribute("flightStatsInterval", Integer.valueOf(21), REQUEST);
+			vc.setResults(psdao.getEQPIREPStatistics(eqType, "F.EQTYPE", "LEGS DESC, HOURS", true));
+			
 			// Load the Pilot names
 			GetUserData uddao = new GetUserData(con);
 			UserDataMap udm = uddao.get(IDs);
@@ -151,6 +163,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		
 		// Save sort options
 		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
+		ctx.setAttribute("ranks", RANKS, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
