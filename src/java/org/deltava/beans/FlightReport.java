@@ -541,7 +541,9 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 */
 	public int compareTo(Object o) {
 		FlightReport fr2 = (FlightReport) o;
-		int tmpResult = _date.compareTo(fr2.getDate());
+		int tmpResult = 0;
+		if ((_date != null) && (fr2.getDate() != null))
+			tmpResult = _date.compareTo(fr2.getDate());
 		return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(fr2.getID())) : tmpResult;
 	}
 
