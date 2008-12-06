@@ -19,8 +19,11 @@
 <content:js name="routePlot" />
 <map:api version="2" />
 <map:vml-ie />
+<content:sysdata var="imgPath" name="path.img" />
 <content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
+document.imgPath = '${imgPath}';
+
 function validate(form)
 {
 if (!checkSubmit()) return false;

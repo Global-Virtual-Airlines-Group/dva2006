@@ -29,6 +29,7 @@ var expiry = ${exam.expiryDate.time};
 var rpInfo = new Array();
 var rpQuestions = ${rpQuestions};
 var doRunways = false;
+document.imgPath = '${imgPath}';
 
 function initMaps()
 {
@@ -82,6 +83,7 @@ var timeOffset = (new Date().getTime() - ${currentTime});
 <c:forEach var="q" items="${exam.questions}">
 <c:set var="hasImage" value="${q.size > 0}" scope="request"/>
 <c:set var="isRP" value="${fn:isRoutePlot(q)}" scope="request" />
+<c:set var="isMC" value="${fn:isMultiChoice(q)}" scope="request" />
 <!-- Question #${q.number} -->
 <tr>
  <td class="label" rowspan="${hasImage ? '2' : '1'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
@@ -107,6 +109,7 @@ rpInfo[${q.number}] = info;
  <td class="label" valign="top">Map #<fmt:int value="${q.number}" /></td>
  <td class="data"><map:div ID="qMap${q.number}" x="100%" y="320" /></td>
 </tr>
+<c:if test="${!isMC}">
 <tr>
  <td class="label">Departure Route (SID)</td>
  <td class="data"><el:combo ID="sid${q.number}" name="sid${q.number}" size="1" idx="*" options="${sids[q.airportD]}" firstEntry="-" value="" onChange="void updateMap(rpInfo[${q.number}])" /></td>
@@ -116,22 +119,29 @@ rpInfo[${q.number}] = info;
  <td class="data"><el:combo ID="star${q.number}" name="star${q.number}" size="1" idx="*" options="${stars[q.airportA]}" firstEntry="-" value="" onChange="void updateMap(rpInfo[${q.number}])" /></td>
 </tr>
 </c:if>
+</c:if>
 
 <!-- Answer #${q.number} -->
 <tr>
-<c:if test="${isRP}">
+<c:choose>
+<c:when test="${isRP && !isMC}">
  <td class="label" valign="top">Plotted Route</td>
  <td class="data"><el:textbox ID="A${q.number}" onBlur="void updateMap(rpInfo[${q.number}])" name="answer${q.number}" className="small" width="90%" height="3">${q.answer}</el:textbox></td>
-</c:if>
-<c:if test="${!isRP}">
+</c:when>
+<c:when test="${isRP && isMC}">
+ <td class="label" valign="top">Correct Route</td>
+ <td class="data"><el:check ID="A${q.number}" onChange="void updateMap(rpInfo[${q.number}])" type="radio" idx="*" cols="1" separator="<br />" name="answer${q.number}" className="small" width="500" options="${q.choices}" value="${q.answer}" /></td>
+</c:when>
+<c:otherwise>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
-<c:if test="${!fn:isMultiChoice(q)}">
+<c:if test="${!isMC}">
  <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${exam.hexID})" name="answer${q.number}" className="small" width="90%" height="3">${q.answer}</el:textbox></td>
 </c:if>
-<c:if test="${fn:isMultiChoice(q)}">
+<c:if test="${isMC}">
  <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${exam.hexID})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
 </c:if>
-</c:if>
+</c:otherwise>
+</c:choose>
 </tr>
 </c:forEach>
 </el:table>

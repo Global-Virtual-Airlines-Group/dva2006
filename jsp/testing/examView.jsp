@@ -6,22 +6,32 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<map:xhtml>
 <head>
 <title>${exam.name} - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<c:if test="${hasQImages}">
+<c:if test="${exam.routePlot}">
+<content:js name="googleMaps" />
+<map:api version="2" />
+<map:vml-ie />
+<content:sysdata var="imgPath" name="path.img" />
+</c:if>
 <script language="JavaScript" type="text/javascript">
+<c:if test="${exam.routePlot}">
+document.imgPath = '${imgPath}';
+</c:if>
+<c:if test="${hasQImages}">
 function viewImage(id, x, y)
 {
 var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
 var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
 return true;
 }
-</script></c:if>
+</c:if></script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -56,7 +66,6 @@ return true;
 </c:if>
 
 <!-- Exam Questions -->
-<c:set var="qnum" value="0" scope="request" />
 <c:forEach var="q" items="${exam.questions}">
 <c:set var="hasImage" value="${q.size > 0}" scope="request" />
 <!-- Question #${q.number} -->
@@ -72,8 +81,14 @@ return true;
  <el:link className="pri bld" url="javascript:void viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
+<c:if test="${fn:isRoutePlot(q)}">
+<tr>
+ <td class="label" valign="top">Map #<fmt:int value="${q.number}" /></td>
+ <td class="data"><map:div ID="qMap${q.number}" x="100%" y="320" /></td>
+</tr>
+</c:if>
 
-<!-- Score / Answer -->
+<!-- Score / Answer #${q.number} -->
 <tr>
 <c:choose>
 <c:when test="${fn:correct(q)}">
@@ -115,6 +130,31 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<c:if test="${exam.routePlot}">
+<script language="JavaScript" type="text/javascript">
+var maps = new Array();
+<c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
+<c:set var="answerRoute" value="${aRoutes[q.number]}" scope="request" />
+<c:set var="correctRoute" value="${cRoutes[q.number]}" scope="request" />
+<map:point var="mapC" point="${q.midPoint}" />
+var map = new GMap2(getElement("qMap${q.number}"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+map.addControl(new GSmallMapControl());
+map.addControl(new GMapTypeControl());
+map.setCenter(mapC, getDefaultZoom(${q.distance}));
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+map.setMapType(G_PHYSICAL_MAP);
+<map:points var="arPoints" items="${answerRoute}" />
+<map:line var="arLine" src="arPoints" width="2" color="#4080AF" transparency="0.75" geodesic="true" />
+<map:points var="crPoints" items="${correctRoute}" />
+<map:line var="crLine" src="crPoints" width="2" color="#7F7F7F" transparency="0.5" geodesic="true" />
+map.addOverlay(arLine);
+map.addOverlay(crLine);
+<map:markers var="arMarkers" items="${answerRoute}" />
+addMarkers(map, 'arMarkers');
+maps.push(map);
+</c:if></c:forEach>
+</script></c:if>
 <content:googleAnalytics />
 </body>
-</html>
+</map:xhtml>
