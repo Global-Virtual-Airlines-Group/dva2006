@@ -34,6 +34,32 @@ var xmlreq = generateXMLRequest();
 xmlreq.send(null);
 return true;
 }
+<content:filter roles="HR">
+function deleteMarker(id)
+{
+var xmlreq = GXmlHttp.create();
+xmlreq.open("POST", "pilotmapclear.ws", true);
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xmlreq.onreadystatechange = function() {
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+
+	// Find the marker and remove it
+	for (var x = 0; x < allMarkers.length; x++) {
+		var mrk = allMarkers[x];
+		if (mrk.ID == id) {
+			allMarkers.splice(x, 1);
+			map.removeOverlay(mrk);
+			return true;
+		}
+	}
+
+	return false;
+} // function
+
+xmlreq.send('id=0x' + id.toString(16));
+return true;
+}
+</content:filter>
 </script>
 </head>
 <content:copyright visible="false" />

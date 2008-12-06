@@ -13,7 +13,7 @@ xmlreq.onreadystatechange = function() {
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("pilot");
 	queue = Array.prototype.slice.call(ac);
-	var batchSize = Math.round(queue.length / 100);
+	var batchSize = Math.round(queue.length / 50);
 	progressBar.start(100);
 	setTimeout("mrkLoad(" + batchSize + ")", 2);
 	return true;
@@ -31,8 +31,7 @@ function mrkLoad(batchSize)
 {
 var cnt = 0;
 var a = queue.pop();
-progressBar.updateLoader(1);
-var noFilter = document.forms[0].noFilter.checked;
+progressBar.updateLoader(2);
 while ((cnt < batchSize) && (a != null)) {
 	var label = a.firstChild;
 	var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
@@ -40,6 +39,7 @@ while ((cnt < batchSize) && (a != null)) {
 	mrk.infoLabel = label.data;
 	mrk.rank = a.getAttribute("rank");
 	mrk.eqType = a.getAttribute("eqType");
+	mrk.ID = parseInt(a.getAttribute("id"));
 
 	// Set the the click handler and add to the list
 	GEvent.bind(mrk, 'click', mrk, function() { this.openInfoWindowHtml(this.infoLabel); } );
@@ -79,7 +79,7 @@ var eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].value : null;
 var batchSize = Math.round(allMarkers.length / 50);
 progressBar.start(100);
 queue = allMarkers.slice();
-setTimeout("mrkUpdate('" + rank + "','" + eqType + "'," + batchSize + ")", 10);
+setTimeout("mrkUpdate('" + rank + "','" + eqType + "'," + batchSize + ")", 2);
 return true;
 }
 

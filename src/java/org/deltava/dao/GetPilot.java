@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -64,14 +64,14 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public Map<Integer, GeoLocation> getPilotBoard() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT M.* FROM PILOT_MAP M, PILOTS P WHERE (M.ID=P.ID) AND (P.STATUS=?)");
+			prepareStatementWithoutLimits("SELECT M.* FROM PILOT_MAP M, PILOTS P WHERE (M.ID=P.ID) AND "
+					+ "((P.STATUS=?) OR (P.STATUS=?)) ORDER BY M.ID");
 			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, Pilot.ON_LEAVE);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the result set
-			Map<Integer, GeoLocation> results = new TreeMap<Integer, GeoLocation>();
+			Map<Integer, GeoLocation> results = new LinkedHashMap<Integer, GeoLocation>();
 			while (rs.next()) {
 				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
 				results.put(new Integer(rs.getInt(1)), gp);
