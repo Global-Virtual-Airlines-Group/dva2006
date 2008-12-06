@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<c:set var="acLoaded" value="${!empty acInfo}" scope="request" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
  <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS DATA</td>
@@ -37,7 +38,7 @@
  <td class="data" colspan="${cspan}"><span class="bld">${dispatcher.name}</span> ${dispatcher.pilotCode}</td>
 </c:if>
 <c:if test="${empty dispatcher}">
- <td class="data" colspan="${cspan}"><span class="ter caps">Flight plotted using <content:airline /> Auto-Dispatch</span></td>
+ <td class="data" colspan="${cspan}"><span class="ter caps bld">Flight plotted using <content:airline /> Auto-Dispatch</span></td>
 </c:if>
 </tr>
 </c:if>
@@ -48,7 +49,8 @@
 <tr>
  <td class="label">Taxi from Gate</td>
  <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:int value="${pirep.taxiWeight}" />
-  lbs total, <fmt:int value="${pirep.taxiFuel}" /> lbs fuel</td>
+ lbs total, <fmt:int value="${pirep.taxiFuel}" /> lbs fuel<c:if test="${acLoaded && (pirep.taxiWeight > acInfo.maxWeight)}"> 
+ <span class="small bld">(<fmt:int value="${pirep.taxiWeight - acInfo.maxWeight}" /> lbs overweight)</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Takeoff Time</td>
@@ -59,7 +61,8 @@
  <td class="label">Takeoff Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.takeoffSpeed}" /> knots, <fmt:dec value="${pirep.takeoffN1}" />%
  N<sub>1</sub>, <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />
- lbs fuel</td>
+ lbs fuel<c:if test="${acLoaded && (pirep.takeoffWeight > acInfo.maxTakeoffWeight)}">
+ <span class="small bld">(<fmt:int value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> lbs overweight)</span></c:if></td>
 </tr>
 <c:if test="${!empty flightInfo.altitude}">
 <tr>
@@ -76,7 +79,8 @@
  <td class="label">Landing Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
  feet/minute, <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
- lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel</td>
+ lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel<c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
+ <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Arrival Time</td>

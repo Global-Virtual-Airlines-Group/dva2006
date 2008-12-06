@@ -438,6 +438,12 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (ud != null)
 							ctx.setAttribute("dispatcher", pdao.get(ud), REQUEST);
 					}
+					
+					// Get the aircraft profile
+					GetAircraft acdao = new GetAircraft(con);
+					Aircraft acInfo = acdao.get(fr.getEquipmentType());
+					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
+						ctx.setAttribute("acInfo", acInfo, REQUEST);
 
 					// Build the route
 					GetNavRoute navdao = new GetNavRoute(con);
