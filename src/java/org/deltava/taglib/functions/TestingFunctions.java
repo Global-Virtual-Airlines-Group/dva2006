@@ -28,7 +28,12 @@ public class TestingFunctions {
 	 * @see MultipleChoice
 	 */
 	public static boolean isMultiChoice(Question q) {
-		return (q instanceof MultipleChoice);
+		if (!(q instanceof MultipleChoice))
+			return false;
+		
+		// Check that we have more than one choice
+		MultipleChoice mc = (MultipleChoice) q;
+		return (mc.getChoices().size() > 1);
 	}
 	
 	/**
