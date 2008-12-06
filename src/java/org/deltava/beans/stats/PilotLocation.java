@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -17,8 +17,7 @@ public class PilotLocation implements MarkerMapEntry {
 	private Pilot _usr;
 	private GeoLocation _position;
 	private int _minZoom;
-	
-	public String _info;
+	private boolean _allowDelete;
 
 	/**
 	 * Creates a new Pilot location object.
@@ -58,7 +57,7 @@ public class PilotLocation implements MarkerMapEntry {
 	}
 	
 	/**
-	 * Reutrns the minimum map zoom level to display the Pilot at.
+	 * Returns the minimum map zoom level to display the Pilot at.
 	 * @return the minimum zoom level
 	 */
 	public int getMinZoom() {
@@ -70,7 +69,15 @@ public class PilotLocation implements MarkerMapEntry {
 	 * @param zoom the minimum zoom level
 	 */
 	public void setMinZoom(int zoom) {
-		_minZoom = (zoom < 1) ? 1 : zoom;
+		_minZoom = Math.max(1, zoom);
+	}
+	
+	/**
+	 * Sets whether the infobox should have a link to allow map entry deletion.
+	 * @param allowDelete TRUE if the deletion link should be added, otherwise FALSE
+	 */
+	public void setAllowDelete(boolean allowDelete) {
+		_allowDelete = allowDelete;
 	}
 	
 	/**
@@ -86,9 +93,6 @@ public class PilotLocation implements MarkerMapEntry {
 	 * @return the info box text
 	 */
 	public String getInfoBox() {
-		if (_info != null)
-			return _info;
-		
 		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><b>");
 		buf.append(_usr.getName());
 		buf.append("</b> (");
@@ -113,8 +117,15 @@ public class PilotLocation implements MarkerMapEntry {
 		buf.append(StringUtils.format(_position, true, GeoLocation.ALL));
 		buf.append("<br />Joined on: ");
 		buf.append(StringUtils.format(_usr.getCreatedOn(), "EEEE MMMM dd, yyyy"));
+		
+		// Add deletion link
+		if (_allowDelete) {
+			buf.append("<br /><br /><a href=\"javascript:void deleteMarker(");
+			buf.append(_usr.getID());
+			buf.append(")\" class=\"small sec bld\">DELETE MARKER</a>");
+		}
+		
 		buf.append("</span>");
-		_info = buf.toString();
-		return _info;
+		return buf.toString();
 	}
 }
