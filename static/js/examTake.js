@@ -7,9 +7,9 @@ var isOK = true;
 var qNum = 1;
 var a = getElementsById('A' + qNum);
 while (isOK && (a.length > 0)) {
-	if (a.length == 1) {
+	if (a.length == 1)
 		isOK = (isOK && (a[0].value.length > 1));
-	} else {
+	else {
 		var checkCount = 0;
 		for (var x = 0; x < a.length; x++) {
 			if (a[x].checked)
@@ -30,6 +30,21 @@ if ((!isOK) && (!document.isExpired)) {
 setSubmit();
 disableButton('SubmitButton');
 return true;
+}
+
+function getAnswer(txtbox)
+{
+if ((txtbox.length == 1) && (txtbox[0].value.length > 1))
+	return txtbox[0].value;
+else if (txtbox.length == 1)
+	return null;
+
+for (var x = 0; x < txtbox.length; x++) {
+	if (txtbox[x].checked)
+		return txtbox[x].value;
+}
+	
+return null;
 }
 
 function showRemaining(interval)
@@ -85,18 +100,12 @@ xmlreq.onreadystatechange = function() {
 }
 
 // Save the answer
-if ((txtbox.length == 1) && (txtbox[0].value.length > 1))
-	xmlreq.send('answer=' + escape(txtbox[0].value));
-else if (txtbox.length > 1) {
-	for (var x = 0; x < txtbox.length; x++) {
-		if (txtbox[x].checked) {
-			xmlreq.send('answer=' + escape(txtbox[x].value));
-			break;
-		}	
-	}
+var answer = getAnswer(txtbox);
+if (answer != null) {
+	xmlreq.send('answer=' + escape(answer));
+	gaEvent('Examination', 'Submit Answer');
 }
 
-gaEvent('Examination', 'Submit Answer');
 return true;
 }
 
@@ -115,7 +124,11 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("POST", "examplot.ws?examID=" + rpq.examID + "&qID=" + rpq.idx + "&date=" + d.getTime(), true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 var txtbox = getElementsById('A' + rpq.idx);
-txtbox.className = 'dirty';
+if (!txtbox) return false;
+if (txtbox.length == 1) {
+	txtbox[0].oldBorder = txtbox[0].style.border;
+	txtbox[0].style.border = '1px dashed #787980';
+}
 	
 //Build the update handler	
 xmlreq.onreadystatechange = function() {
@@ -136,16 +149,17 @@ xmlreq.onreadystatechange = function() {
 		if (wp.getAttribute("pal"))
 			rpq.map.addOverlay(googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, label.data));
 		else
-			rpq.map.addOverlay(googleMarker('${imgPath}', wp.getAttribute("color"), p, label.data));
+			rpq.map.addOverlay(googleMarker(document.imgPath, wp.getAttribute("color"), p, label.data));
 	} // for
 
 	// Draw the route
 	rpq.map.addOverlay(new GPolyline(positions, '#4080AF', 1.65, 0.8));
 
 	// Save the codes
-	if (txtbox) {
-		//txtbox.className = '';
-		txtbox.value = codes.join(' ');
+	if (txtbox.length == 1) {
+		txtbox[0].value = codes.join(' ');
+		txtbox[0].style.border = txtbox[0].oldBorder;
+		delete txtbox[0].oldBorder;
 	}
 
 	return true;
@@ -160,7 +174,7 @@ if ((sidC) && (sidC.selectedIndex > 0))
 	params.push("sid=" + sidC.options[sidC.selectedIndex].value);
 if ((starC) && (starC.selectedIndex > 0))
 	params.push("star=" + starC.options[starC.selectedIndex].value);
-params.push("route=" + txtbox.value);
+params.push("route=" + escape(getAnswer(txtbox)));
 xmlreq.send(params.join('&'));
 gaEvent('Examination', 'Route Plot');
 return true;

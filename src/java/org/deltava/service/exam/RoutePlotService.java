@@ -115,10 +115,18 @@ public class RoutePlotService extends MapPlotService {
 				routePoints.addAll(star.getWaypoints());
 			routePoints.add(new AirportLocation(rpq.getAirportA()));
 			
+			// Build the answer
+			StringBuilder buf = new StringBuilder();
+			for (Iterator<NavigationDataBean> i = routePoints.iterator(); i.hasNext(); ) {
+				NavigationDataBean nd = i.next();
+				buf.append(nd.getCode());
+				if (i.hasNext())
+					buf.append(' ');
+			}
+
 			// Save the answer
-			String answer = ctx.getParameter("answer");
-			if (!StringUtils.isEmpty(answer)) {
-				q.setAnswer(answer);
+			if (buf.length() > 2) {
+				q.setAnswer(buf.toString());
 				
 				// Get the DAO and write the question
 				SetExam wdao = new SetExam(con);
@@ -134,10 +142,8 @@ public class RoutePlotService extends MapPlotService {
 			ctx.release();
 		}
 			
-		// Convert the points into a List
-		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
-		
 		// Convert points to an XML document
+		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
 		Document doc = formatPoints(points, true);
 		Element re = doc.getRootElement();
 		
