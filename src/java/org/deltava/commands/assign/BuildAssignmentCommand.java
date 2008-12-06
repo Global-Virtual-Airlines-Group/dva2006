@@ -1,22 +1,21 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.ScheduleSearchCriteria;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -98,10 +97,8 @@ public class BuildAssignmentCommand extends AbstractCommand {
 			ScheduleSearchCriteria criteria = (ScheduleSearchCriteria) ctx.getSession().getAttribute("fafCriteria");
 			if (criteria != null) {
 				try {
-					Connection con = ctx.getConnection();
-					
 					// Get departure/arrival airports
-					GetScheduleAirport adao = new GetScheduleAirport(con);
+					GetScheduleAirport adao = new GetScheduleAirport(ctx.getConnection());
 					ctx.setAttribute("airports", adao.getOriginAirports(criteria.getAirline()), REQUEST);
 					ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
 				} catch (DAOException de) {
@@ -133,8 +130,6 @@ public class BuildAssignmentCommand extends AbstractCommand {
 		}
 
 		// If we got this far, it's an unknown opName
-		CommandException ce = new CommandException("Invalid Operation - " + opName);
-		ce.setLogStackDump(false);
-		throw ce;
+		throw new CommandException("Invalid Operation - " + opName, false);
 	}
 }

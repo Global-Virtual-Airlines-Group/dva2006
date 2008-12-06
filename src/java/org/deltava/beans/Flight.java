@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.DecimalFormat;
@@ -10,17 +10,17 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
-public abstract class Flight extends DatabaseBean implements Comparable {
+public abstract class Flight extends DatabaseBean {
 
     /**
      * A number formatter used to add leading zeroes to the Flight Number.
      * @see Flight#toString()
      */
-    protected static final DecimalFormat df = new DecimalFormat("#000");
+    protected final DecimalFormat df = new DecimalFormat("#000");
 
     private Airline _airline;
     private int _flightNumber;
@@ -202,22 +202,16 @@ public abstract class Flight extends DatabaseBean implements Comparable {
         if (tmpResult != 0)
             return tmpResult;
 
-        // Compare the flight number
-        tmpResult = new Integer(_flightNumber).compareTo(new Integer(f2.getFlightNumber()));
-        if (tmpResult != 0)
-            return tmpResult;
-
-        // Compare the flight leg
-        return new Integer(_leg).compareTo(new Integer(f2.getLeg()));
+        // Compare the flight number and leg
+        tmpResult = Integer.valueOf(_flightNumber).compareTo(Integer.valueOf(f2.getFlightNumber()));
+        return (tmpResult != 0) ? tmpResult : Integer.valueOf(_leg).compareTo(Integer.valueOf(f2.getLeg()));
     }
 
     /**
      * Tests for equality by comparing the Airline Code, Flight Number and Leg.
-     * @param f2 the Flight to compare to
-     * @return TRUE if all three components match, otherwise FALSE
      */
-    public boolean equals(Flight f2) {
-        return (_airline.equals(f2.getAirline()) && (_flightNumber == f2.getFlightNumber()) && (_leg == f2.getLeg()));
+    public boolean equals(Object o) {
+    	return (o instanceof Flight) && (compareTo(o) == 0);
     }
 
     /**
