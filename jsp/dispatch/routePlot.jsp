@@ -24,6 +24,7 @@
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
+document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 var routeUpdated = false;
 var doRunways = true;
