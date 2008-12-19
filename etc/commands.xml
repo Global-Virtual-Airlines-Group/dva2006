@@ -679,8 +679,14 @@
 		<class>org.deltava.commands.event.EventReleaseCommand</class>
 		<roles>Event,Pilot</roles>
 	</command>
-	
-	
+
+	<command id="eventbalance">
+		<name>Event Signup Balance</name>
+		<class>org.deltava.commands.event.EventBalanceCommand</class>
+		<roles>Event</roles>
+	</command>
+
+
 	<!-- Water Cooler Commands -->
 	<command id="channels">
 		<name>Water Cooler Channels</name>
@@ -964,6 +970,12 @@
 		<name>Water Cooler Signature Update</name>
 		<class>org.deltava.commands.cooler.SignatureUpdateCommand</class>
 		<roles>Pilot,HR,Signature</roles>
+	</command>
+
+	<command id="sigauth">
+		<name>Water Cooler Signature Approve</name>
+		<class>org.deltava.commands.cooler.SignatureApproveCommand</class>
+		<roles>HR,Signature</roles>
 	</command>
 
 	<command id="wxcenter">

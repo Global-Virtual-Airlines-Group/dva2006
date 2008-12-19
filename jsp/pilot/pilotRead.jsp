@@ -247,6 +247,9 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canAssignRide}">
  <el:cmdbutton url="nakedassign" link="${pilot}" label="ASSIGN CHECK RIDE" />
 </c:if>
+<c:if test="${access.canChangeSignature && pilot.hasSignature && !sigAuthorized}">
+ <el:cmdbutton url="sigauth" link="${pilot}" label="APPROVE SIGNATURE" />
+</c:if>
 <c:if test="${!crossDB}">
 <content:filter roles="HR,PIREP,Examination">
  <el:cmdbutton url="invalidate" link="${pilot}" label="INVALIDATE E-MAIL" />
