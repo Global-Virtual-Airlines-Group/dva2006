@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A class to hold Online Event pilot signups. 
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -97,7 +97,9 @@ public class Signup extends DatabaseBean {
      * @see Signup#getRouteID()
      */
     public void setRouteID(int id) {
-        validateID(_routeID, id);
+    	if (id < 1)
+            throw new IllegalArgumentException("Database ID cannot be zero or negative");
+        
         _routeID = id;
     }
     

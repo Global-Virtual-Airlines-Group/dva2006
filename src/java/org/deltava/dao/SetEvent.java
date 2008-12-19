@@ -6,11 +6,12 @@ import java.util.*;
 
 import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -42,6 +43,7 @@ public class SetEvent extends DAO {
 				update(e);
 
 			// Write the child rows
+			writeAirlines(e);
 			writeAirports(e);
 			writeCharts(e);
 			writeEQTypes(e);
@@ -76,14 +78,15 @@ public class SetEvent extends DAO {
 	}
 
 	/**
-	 * Saves a new Flight Route to the database.
+	 * Saves a Flight Route to the database. This can handle create and update operations.
 	 * @param r the Route bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void save(Route r) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, ROUTE_ID, AIRPORT_D, AIRPORT_A, ROUTE, "
-					+ "RNAV, ACTIVE, MAX_SIGNUPS, NAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "RNAV, ACTIVE, MAX_SIGNUPS, NAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
+					+ "ROUTE=?, RNAV=?, NAME=?");
 			_ps.setInt(1, r.getID());
 			_ps.setInt(2, r.getRouteID());
 			_ps.setString(3, r.getAirportD().getIATA());
@@ -93,12 +96,15 @@ public class SetEvent extends DAO {
 			_ps.setBoolean(7, r.getActive());
 			_ps.setInt(8, r.getMaxSignups());
 			_ps.setString(9, r.getName());
+			_ps.setString(10, r.getRoute());
+			_ps.setBoolean(11, r.getIsRNAV());
+			_ps.setString(12, r.getName());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Saves an Online Event flight plan.
 	 * @param fp the FlightPlan bean
@@ -287,10 +293,37 @@ public class SetEvent extends DAO {
 		}
 	}
 
+	/**
+	 * Writes participating airlines to the database.
+	 */
+	private void writeAirlines(Event e) throws SQLException {
+		
+		// Clear airlines
+		prepareStatementWithoutLimits("DELETE FROM events.AIRLINES WHERE (ID=?)");
+		_ps.setInt(1, e.getID());
+		executeUpdate(0);
+		
+		// Add airline codes
+		prepareStatement("INSERT INTO events.AIRLINES (ID, AIRLINE) VALUES (?, ?)");
+		_ps.setInt(1, e.getID());
+		for (Iterator<AirlineInformation> i = e.getAirlines().iterator(); i.hasNext(); ) {
+			AirlineInformation ai = i.next();
+			_ps.setString(2, ai.getCode());
+			_ps.addBatch();
+		}
+		
+		// Update the database and clean up
+		_ps.executeBatch();
+		_ps.close();
+	}
+
+	/**
+	 * Writes equipment types to the database.
+	 */
 	private void writeEQTypes(Event e) throws SQLException {
 
 		// Clear equipment types
-		prepareStatement("DELETE FROM events.EVENT_EQTYPES WHERE (ID=?)");
+		prepareStatementWithoutLimits("DELETE FROM events.EVENT_EQTYPES WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		executeUpdate(0);
 
@@ -307,6 +340,9 @@ public class SetEvent extends DAO {
 		_ps.close();
 	}
 
+	/**
+	 * Writes ATC contact addresses to the database.
+	 */
 	private void writeContactAddrs(Event e) throws SQLException {
 
 		// Clear contacts
@@ -332,7 +368,7 @@ public class SetEvent extends DAO {
 	 */
 	private void insert(Event e) throws SQLException {
 		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
-				+ "BRIEFING, CAN_SIGNUP, SIGNUP_URL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork().getValue());
 		_ps.setInt(3, e.getStatus());
@@ -342,6 +378,7 @@ public class SetEvent extends DAO {
 		_ps.setString(7, e.getBriefing());
 		_ps.setBoolean(8, e.getCanSignup());
 		_ps.setString(9, e.getSignupURL());
+		_ps.setString(10, e.getOwner().getCode());
 
 		// Execute the update and get the Event ID
 		executeUpdate(1);
@@ -353,7 +390,7 @@ public class SetEvent extends DAO {
 	 */
 	private void update(Event e) throws SQLException {
 		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
-				+ "BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=? WHERE (ID=?)");
+				+ "BRIEFING=?, CAN_SIGNUP=?, SIGNUP_URL=?, STATUS=?, OWNER=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork().getValue());
 		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
@@ -363,7 +400,8 @@ public class SetEvent extends DAO {
 		_ps.setBoolean(7, e.getCanSignup());
 		_ps.setString(8, e.getSignupURL());
 		_ps.setInt(9, e.getStatus());
-		_ps.setInt(10, e.getID());
+		_ps.setString(10, e.getOwner().getCode());
+		_ps.setInt(11, e.getID());
 		executeUpdate(1);
 	}
 }
