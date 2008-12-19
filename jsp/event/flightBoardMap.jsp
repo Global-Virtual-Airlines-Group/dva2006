@@ -103,7 +103,7 @@ return true;
 </content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GSmallMapControl());
 map.addControl(new GMapTypeControl());
 
