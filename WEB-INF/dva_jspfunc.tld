@@ -384,6 +384,13 @@
 		<function-signature>boolean isAssigned(org.deltava.beans.event.Event, int)</function-signature>
 	</function>
 
+	<!-- Get Signups for a particular Event route -->
+	<function>
+		<name>routeSignups</name>
+		<function-class>org.deltava.taglib.functions.OnlineEventFunctions</function-class>
+		<function-signature>java.util.Collection routeSignups(org.deltava.beans.event.Event, int)</function-signature>
+	</function>
+
 
 	<!-- Check if a Calendar Entry is an Instruction Session -->
 	<function>

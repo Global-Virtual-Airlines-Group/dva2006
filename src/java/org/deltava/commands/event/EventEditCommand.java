@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -48,7 +48,9 @@ public class EventEditCommand extends AbstractCommand {
 		
 		// Get the event ID - if not found, assume a new event
 		if (ctx.getID() == 0) {
-			EventAccessControl access = new EventAccessControl(ctx, new Event(""));
+			Event e = new Event("");
+			e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
+			EventAccessControl access = new EventAccessControl(ctx, e);
 			access.validate();
 			if (!access.getCanCreate())
 				throw securityException("Cannot create new Online Event");

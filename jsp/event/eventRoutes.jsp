@@ -15,13 +15,28 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
+var routeIDs = [${routeIDs}];
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.route, 6, 'Flight Route')) return false;
-if (!validateText(form.routeName, 6, 'Flight Route Name')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Destination Airport')) return false;
+
+// Validate existing routes
+for (var id in routeIDs) {
+	if (!validateText(eval('form.route' + id), 6, 'Flight Route #' + id)) return false;
+	if (!validateText(eval('form.routeName' + id), 6, 'Flight Route Name #' + id)) return false;
+}
+
+// Check if we're adding a new route
+var hasNewRoute = ((form.route.value.length > 0) || (form.routeName.value.length > 0) ||
+		(form.airportD.selectedIndex > 0) || (form.airportA.selectedIndex > 0));
+if (hasNewRoute)
+{
+	if (!validateText(form.route, 6, 'Flight Route')) return false;
+	if (!validateText(form.routeName, 6, 'Flight Route Name')) return false;
+	if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+	if (!validateCombo(form.airportA, 'Destination Airport')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
@@ -45,20 +60,24 @@ return true;
 </tr>
 <c:forEach var="route" items="${event.routes}">
 <c:set var="hasName" value="${!empty route.name}" scope="request" />
+<c:set var="toggleBoxClass" value="${route.active ? 'warn' : 'ter'}" scope="request" />
 <tr>
- <td class="label" valign="top" rowspan="${hasName ? '3' : '2'}">Route #<fmt:int value="${route.routeID}" /></td>
+ <td class="label" valign="top" rowspan="${hasName ? '4' : '3'}">Route #<fmt:int value="${route.routeID}" /></td>
 <c:if test="${hasName}">
- <td colspan="3" class="data pri bld">${route.name}</td>
+ <td colspan="3" class="data"><el:text name="routeName${route.routeID}" idx="*" className="pri bld req" size="80" max="144" value="${route.name}" /></td> 
 </tr>
 </c:if>
+<tr>
  <td class="data" colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) 
-- ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)&nbsp;
-<el:cmdbutton url="eventroutes" op="save&isDelete=true&routeID=${route.routeID}" link="${event}" label="DELETE" />
-&nbsp;
-<el:cmdbutton url="eventroutes" op="save&isToggle=true&routeID=${route.routeID}" link="${event}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
+- ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </tr>
 <tr>
- <td class="data" colspan="3">${route.route}</td>
+ <td class="data" colspan="3"><el:text name="route${route.routeID}" idx="*" className="req" size="160" max="640" value="${route.route}" /></td>
+</tr>
+<tr>
+ <td class="data" colspan="3"><el:box name="isRNAV${route.routeID}" idx="*" value="true" className="small" label="This is an RNAV Route" checked="${route.isRNAV}" /><br />
+<el:box name="disable${route.routeID}" value="true" className="small ${toggleBoxClass}" label="${route.active ? 'Disable' : 'Enable'} this Route" /><br />
+<el:box name="delete${route.routeID}" value="true" className="small bld" label="Delete this Route" /></td>
 </tr>
 </c:forEach>
 
@@ -68,7 +87,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Route Name</td>
- <td class="data" colspan="3"><el:text name="routeName" idx="*" size="48" max="96" className="bld req" value="" /></td>
+ <td class="data" colspan="3"><el:text name="routeName" idx="*" size="80" max="144" className="bld req" value="" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -86,7 +105,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="3"><el:text name="route" idx="*" size="160" max="640" value="" /></td>
+ <td class="data" colspan="3"><el:text name="route" idx="*" size="160" max="640" className="req" value="" /></td>
 </tr>
 </el:table>
 
@@ -94,7 +113,10 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="ADD NEW FLIGHT ROUTE" />
- <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" /></td>
+ <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" />
+<c:if test="${access.canBalance}">
+ <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE ROUTE SIGNUPS" />
+</c:if></td>
 </tr>
 </el:table>
 </el:form>

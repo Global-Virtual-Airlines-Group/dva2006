@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -35,9 +35,11 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getFutureEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM events.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?) "
-					+ "ORDER BY STARTTIME");
+			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE "
+					+ "(E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (E.ID=EA.ID) AND (EA.AIRLINE=?) "
+					+ "ORDER BY E.STARTTIME");
 			_ps.setInt(1, Event.CANCELED);
+			_ps.setString(2, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
 			// Load the airports
@@ -59,12 +61,13 @@ public class GetEvent extends DAO {
 	public List<Event> getAssignableEvents() throws DAOException {
 		try {
 			Timestamp now = new Timestamp(System.currentTimeMillis());
-			prepareStatement("select E.*, COUNT(S.ID) from events.EVENTS E LEFT JOIN events.EVENT_SIGNUPS S "
-					+ "ON (E.ID=S.ID) WHERE (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) "
-					+ "GROUP BY E.ID ORDER BY E.STARTTIME DESC");
+			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
+					+ "(E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (E.AIRLINE=?) "
+					+ "ORDER BY E.STARTTIME DESC");
 			_ps.setTimestamp(1, now);
 			_ps.setTimestamp(2, now);
 			_ps.setInt(3, Event.CANCELED);
+			_ps.setString(4, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
 			// Load the airports
@@ -89,9 +92,9 @@ public class GetEvent extends DAO {
 	 */
 	public int getEvent(Airport airportD, Airport airportA, OnlineNetwork network) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE "
-					+ "(E.ID=EA.ID) AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND "
-					+ "(E.STARTTIME < NOW()) AND (NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID LIMIT 1");
+			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
+					+ "AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (E.STARTTIME < NOW()) AND "
+					+ "(NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID LIMIT 1");
 			_ps.setString(1, airportD.getIATA());
 			_ps.setString(2, airportA.getIATA());
 			_ps.setInt(3, network.getValue());
@@ -118,12 +121,14 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getEventCalendar(java.util.Date startDate, int days) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM events.EVENTS WHERE (STARTTIME >= ?) AND "
-					+ "(STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) AND (STATUS !=?) ORDER BY STARTTIME");
+			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
+					+ "(E.STARTTIME >= ?) AND (E.STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) AND (E.STATUS !=?) "
+					+ "AND (EA.AIRLINE=?) ORDER BY E.STARTTIME");
 			_ps.setTimestamp(1, createTimestamp(startDate));
 			_ps.setTimestamp(2, createTimestamp(startDate));
 			_ps.setInt(3, days);
 			_ps.setInt(4, Event.CANCELED);
+			_ps.setString(5, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
 			// Load the airports
@@ -139,15 +144,16 @@ public class GetEvent extends DAO {
 	}
 	
 	/**
-	 * Returns wether there are any active Online Events schedule.
+	 * Returns whether there are any active Online Events schedule.
 	 * @return TRUE if at least one Event is scheduled, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean hasFutureEvents() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT ID FROM events.EVENTS WHERE (STARTTIME > NOW()) AND "
-					+ "(STATUS != ?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) "
+					+ "AND (E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (EA.AIRLINE=?) LIMIT 1");
 			_ps.setInt(1, Event.CANCELED);
+			_ps.setString(2, SystemData.get("airline.code"));
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -169,7 +175,9 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM events.EVENTS ORDER BY STARTTIME DESC");
+			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
+					+ "(EA.AIRLINE=?) ORDER BY E.STARTTIME DESC");
+			_ps.setString(1, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
 			// Load the airports
@@ -218,6 +226,7 @@ public class GetEvent extends DAO {
 
 			// Get the first event and populate it
 			Event e = results.get(0);
+			loadAirlines(e);
 			loadFlightPlans(e);
 			loadEQTypes(e);
 			loadContactAddrs(e);
@@ -286,7 +295,7 @@ public class GetEvent extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasBanner = (rs.getMetaData().getColumnCount() > 10);
+		boolean hasBanner = (rs.getMetaData().getColumnCount() > 11);
 		while (rs.next()) {
 			Event e = new Event(rs.getString(2));
 			e.setID(rs.getInt(1));
@@ -298,8 +307,9 @@ public class GetEvent extends DAO {
 			e.setBriefing(rs.getString(8));
 			e.setCanSignup(rs.getBoolean(9));
 			e.setSignupURL(rs.getString(10));
+			e.setOwner(SystemData.getApp(rs.getString(11)));
 			if (hasBanner)
-				e.setBannerExtension(rs.getString(11));
+				e.setBannerExtension(rs.getString(12));
 
 			// Add to results
 			results.add(e);
@@ -402,6 +412,20 @@ public class GetEvent extends DAO {
 		while (rs.next())
 			e.addContactAddr(rs.getString(1));
 
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+	
+	private void loadAirlines(Event e) throws SQLException {
+		prepareStatementWithoutLimits("SELECT AIRLINE FROM events.AIRLINES WHERE (ID=?)");
+		_ps.setInt(1, e.getID());
+		
+		// Execute the query and load the addresses
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			e.addAirline(SystemData.getApp(rs.getString(1)));
+		
 		// Clean up
 		rs.close();
 		_ps.close();

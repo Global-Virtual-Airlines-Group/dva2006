@@ -45,6 +45,7 @@ if (!validateText(form.name, 5, 'Event Name')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Destination Airport')) return false;
 if (!validateText(form.route, 5, 'Default Route')) return false;
+if (!validateCheckBox(form.airline, 1, 'Participating Airline')) return false;
 if (!validateText(form.briefing, 15, 'Flight Briefing')) return false;
 if (!validateFile(form.bannerImg, 'jpg,png,gif', 'Banner Image')) return false;
 
@@ -64,6 +65,7 @@ return true;
 <content:sysdata var="sigX" name="online.banner_max.x" />
 <content:sysdata var="sigY" name="online.banner_max.y" />
 <content:sysdata var="sigSize" name="online.banner_max.size" />
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />
 
 <!-- Main Body Frame -->
@@ -103,6 +105,10 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="canSignup" idx="*" value="true" checked="${empty event ? true : event.canSignup}" label="Allow Signups for this Online Event" onChange="void updateSignups()" /></td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${(empty event) ? airlines : event.airlines}" /></td>
 </tr>
 <tr>
  <td class="label">Signup URL</td>

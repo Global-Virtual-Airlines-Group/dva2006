@@ -32,6 +32,7 @@ disableButton('PlanButton');
 disableButton('CancelButton');
 disableButton('DeleteButton');
 disableButton('AssignButton');
+disableButton('BalanceButton');
 return true;
 }
 </script>
@@ -68,6 +69,16 @@ return true;
  <td class="label">Online Network</td>
  <td colspan="5" class="data sec bld">${event.networkName}</td>
 </tr>
+<c:if test="${fn:sizeof(event.airlines) > 1}">
+<tr>
+ <td class="label">Organized by</td>
+ <td class="data bld">${event.owner.name}</td> 
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><c:forEach var="airline" items="${event.airlines}">${airline.name}<br /></c:forEach></td>
+</tr>
+</c:if>
 <c:if test="${event.canSignup}">
 <tr>
  <td class="label">Signups Close on</td>
@@ -235,7 +246,7 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <view:row entry="${pirep}">
  <td class="bld"><el:cmd url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
- <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
+ <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld">${pirep.equipmentType}</td>
  <td>${pirep.flightCode}</td>
  <td colspan="2" class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
@@ -291,6 +302,9 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 </c:if>
 <c:if test="${access.canAssignFlights}">
  <el:cmdbutton ID="AssignButton" url="eventassign" link="${event}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
+</c:if>
+<c:if test="${access.canBalance}">
+ <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE SIGNUPS" />
 </c:if>
 <c:if test="${access.canCancel}">
  <el:cmdbutton ID="CancelButton" url="eventcancel" link="${event}" label="CANCEL EVENT" />
