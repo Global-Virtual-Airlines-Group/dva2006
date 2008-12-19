@@ -16,6 +16,7 @@
 <content:sysdata var="imgPath" name="path.img" />
 <map:api version="2" />
 <map:vml-ie />
+<content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
 function updateLocation()
 {
@@ -30,6 +31,7 @@ lng *= (f.lonDir.selectedIndex * -1);
 map.removeOverlay(usrLocation);
 usrLocation = googleMarker('${imgPath}','blue',new GLatLng(lat, lng),labelText);
 map.addOverlay(usrLocation);
+gaEvent('Pilot Map', 'Update Location');
 return true;
 }
 
@@ -80,6 +82,7 @@ var mrk = googleMarker('${imgPath}', 'white', p, lbl);
 GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(mrk); });
 map.addOverlay(mrk);
 map.setCenter(p, 14);
+gaEvent('Pilot Map', 'Geolocate');
 return true;
 }
 
@@ -188,12 +191,13 @@ randomize your location within a 3 mile circle each time the Pilot Location Boar
 <script language="JavaScript" type="text/javascript">
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
-var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 var geoCoder = new GClientGeocoder();
 
 // Add user's location
@@ -206,10 +210,8 @@ usrLocation = new GMarker(usrLoc, {icon:icon, draggable:true, bouncy:true, bounc
 GEvent.addListener(usrLocation, "dragend", function() { setLatLon(usrLocation, usrLocation.getPoint()); } );
 addMarkers(map, 'usrLocation');
 </c:if>
-
 // Set onClick event for the map
 GEvent.addListener(map, 'click', setLatLon);
 </script>
-<content:googleAnalytics />
 </body>
 </map:xhtml>
