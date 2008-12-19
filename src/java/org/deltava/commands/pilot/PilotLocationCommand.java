@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -40,9 +40,9 @@ public class PilotLocationCommand extends AbstractCommand {
 			// Get the pilot's location
 			GetPilot dao = new GetPilot(con);
 			GeoLocation gp = dao.getLocation(ctx.getUser().getID());
-			if (gp == null) {
+			if (gp == null)
 				gp = new GeoPosition(38.88, -93.25);
-			} else {
+			else {
 			   ctx.setAttribute("location", new PilotLocation((Pilot) ctx.getUser(), gp), REQUEST);   
 			   if (gp instanceof MapEntry)
 			      ctx.setAttribute("locationText", StringUtils.escapeSlashes(((MapEntry) gp).getInfoBox()), REQUEST);
@@ -52,32 +52,27 @@ public class PilotLocationCommand extends AbstractCommand {
 			ctx.setAttribute("mapCenter", gp, REQUEST);
 			if (ctx.getParameter("latD") != null) {
 				// Build the pilot latitude/longitude
-				GeoPosition loc = null;
-				try {
-					loc = new GeoPosition();
-					int latD = Integer.parseInt(ctx.getParameter("latD"));
-					int latM = Integer.parseInt(ctx.getParameter("latM"));
-					int latS = Integer.parseInt(ctx.getParameter("latS"));
-					loc.setLatitude(latD, latM, latS);
-					if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
-						loc.setLatitude(loc.getLatitude() * -1);
+				GeoPosition loc = new GeoPosition();
+				int latD = StringUtils.parse(ctx.getParameter("latD"), 0);
+				int latM = StringUtils.parse(ctx.getParameter("latM"), 0);
+				int latS = StringUtils.parse(ctx.getParameter("latS"), 0);
+				loc.setLatitude(latD, latM, latS);
+				if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
+					loc.setLatitude(loc.getLatitude() * -1);
 
-					// Update the longitude
-					int lonD = Integer.parseInt(ctx.getParameter("lonD"));
-					int lonM = Integer.parseInt(ctx.getParameter("lonM"));
-					int lonS = Integer.parseInt(ctx.getParameter("lonS"));
-					loc.setLongitude(lonD, lonM, lonS);
-					if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
-						loc.setLongitude(loc.getLongitude() * -1);
-				} catch (NumberFormatException nfe) {
-					CommandException ce = new CommandException("Error parsing Pilot latitude/longitude");
-					ce.setLogStackDump(false);
-					throw ce;
-				}
+				// Update the longitude
+				int lonD = StringUtils.parse(ctx.getParameter("lonD"), 0);
+				int lonM = StringUtils.parse(ctx.getParameter("lonM"), 0);
+				int lonS = StringUtils.parse(ctx.getParameter("lonS"), 0);
+				loc.setLongitude(lonD, lonM, lonS);
+				if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
+					loc.setLongitude(loc.getLongitude() * -1);
 				
 				// Update the pilot location
-				SetPilot wdao = new SetPilot(con);
-				wdao.setLocation(ctx.getUser().getID(), loc);
+				if ((loc.getLatitude() != 0.0) && (loc.getLongitude() != 0.0)) {
+					SetPilot wdao = new SetPilot(con);
+					wdao.setLocation(ctx.getUser().getID(), loc);
+				}
 				
 				// Forward to the JSP
 				ctx.setAttribute("location", gp, REQUEST);

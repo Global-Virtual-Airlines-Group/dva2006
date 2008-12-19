@@ -56,6 +56,7 @@ xmlreq.onreadystatechange = function() {
 	return false;
 } // function
 
+gaEvent('Pilot Map', 'Delete Invalid Marker');
 xmlreq.send('id=0x' + id.toString(16));
 return true;
 }
