@@ -1,8 +1,14 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
+import java.io.*;
 import java.util.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 import java.sql.Connection;
+
+import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
@@ -28,7 +34,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -48,7 +54,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
-			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
+			Collection<StatusUpdate> updates = new ArrayList<StatusUpdate>();
 
 			// Get the Pilot Profile and e-mail configuration to update
 			GetPilotDirectory rdao = new GetPilotDirectory(con);
@@ -202,7 +208,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Figure out if this is truly a promotion
 					@SuppressWarnings("unchecked")
-					RankComparator rcmp = new RankComparator((List) SystemData.getObject("ranks"));
+					RankComparator rcmp = new RankComparator((java.util.List) SystemData.getObject("ranks"));
 					rcmp.setRank2(p.getRank(), eq1.getStage());
 					rcmp.setRank1(newRank, eq2.getStage());
 
@@ -340,8 +346,30 @@ public class ProfileCommand extends AbstractFormCommand {
 
 				// Update the image if it's OK
 				if (imgOK) {
+					boolean isAuth = ctx.isUserInRole("HR") && Boolean.valueOf(ctx.getParameter("isAuthSig")).booleanValue();
+					if (isAuth) {
+						try {
+							BufferedImage img = ImageIO.read(imgData.getInputStream());
+							Graphics2D g = img.createGraphics();
+							g.setColor(Color.WHITE);
+							g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
+							g.drawString("Approved Signature", img.getWidth() - 120, img.getHeight() - 4);
+							g.dispose();
+						
+							// Save the new Image
+							ByteArrayOutputStream os = new ByteArrayOutputStream(16384);
+							ImageIO.write(img, "png", os);
+							imgData.load(new ByteArrayInputStream(os.toByteArray()));
+							img.flush();
+						} catch (IOException ie) {
+							log.error("Cannot authorize Signature Image - " + ie.getMessage(), ie);
+							isAuth = false;
+						}
+					}
+
+					// Save the image
 					p.load(imgData.getBuffer());
-					sigdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName());
+					sigdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);
 					ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
 					log.info("Signature Updated");
 				}
@@ -460,7 +488,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				GetTS2Data ts2dao = new GetTS2Data(con);
 				Collection<Server> srvs = ts2dao.getServers(p.getID());
 				Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
-				List<Client> usrs = ts2dao.getUsers(p.getID());
+				java.util.List<Client> usrs = ts2dao.getUsers(p.getID());
 
 				// Get the TS2 password
 				String pwd = usrs.isEmpty() ? "$dummy" : usrs.get(0).getPassword();
@@ -672,7 +700,7 @@ public class ProfileCommand extends AbstractFormCommand {
 		
 		// Don't allow manual switching to Suspended if the pilot isn't already in that status
 		if (p.getStatus() != Pilot.SUSPENDED) {
-			List<ComboAlias> statuses = ComboUtils.fromArray(Pilot.STATUS); 
+			java.util.List<ComboAlias> statuses = ComboUtils.fromArray(Pilot.STATUS); 
 			statuses.remove(Pilot.SUSPENDED);
 			ctx.setAttribute("statuses", statuses, REQUEST);
 		} else
@@ -780,6 +808,10 @@ public class ProfileCommand extends AbstractFormCommand {
 				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
 			}
+			
+			// Load if signature validated
+			GetImage imgdao = new GetImage(con);
+			ctx.setAttribute("sigAuthorized", Boolean.valueOf(imgdao.isSignatureAuthorized(p.getID())), REQUEST);
 
 			// Save the pilot profile and ratings in the request
 			ctx.setAttribute("pilot", p, REQUEST);
