@@ -245,7 +245,7 @@ map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, 5);
 map.enableDoubleClickZoom();
-// map.enableContinuousZoom();
+map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'maptypechanged', updateMapText);
 GEvent.addListener(map, 'maptypechanged', hideAllSlices);
