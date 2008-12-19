@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <services name="default">
+	<!-- Server health check -->
+	<service id="healthcheck" class="org.deltava.service.HealthCheckService" />
+
 	<!-- RSS Feeds -->
 	<service id="cooler_rss" class="org.deltava.service.rss.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.rss.EventSyndicationService" />
