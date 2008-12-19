@@ -1,15 +1,19 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
+import java.util.Iterator;
+
 import org.deltava.beans.Pilot;
 import org.deltava.beans.event.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.security.SecurityContext;
+import org.deltava.util.system.SystemData;
 
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -21,6 +25,7 @@ public class EventAccessControl extends AccessControl {
 	private boolean _canSignup;
 	private boolean _canEdit;
 	private boolean _canAddPlan;
+	private boolean _canBalance;
 	private boolean _canAssignFlights;
 	private boolean _canCancel;
 	private boolean _canDelete;
@@ -53,17 +58,27 @@ public class EventAccessControl extends AccessControl {
 		// Check if we have a network address
 		Pilot p = (Pilot) _ctx.getUser();
 		boolean hasID = p.hasNetworkID(_ev.getNetwork());
+		boolean isOurs = _ev.getOwner().getCode().equals(SystemData.get("airline.code"));
+		
+		// Check if we can participate
+		boolean canParticipate = isOurs;
+		for (Iterator<AirlineInformation> i = _ev.getAirlines().iterator(); !canParticipate && i.hasNext(); ) {
+			AirlineInformation ai = i.next();
+			isOurs |= ai.getCode().equals(SystemData.get("airline.code"));
+		}
 
 		// Check if any routes stil have signups
 		boolean isRouteAvailable = !_ev.getActiveRoutes().isEmpty();
 
 		// Set access variables
-		boolean isEvent = _ctx.isUserInRole("Event");
+		boolean isEvent = (_ctx.isUserInRole("Event") && isOurs) || _ctx.isUserInRole("Admin");
 		boolean hasSignups = (!_ev.getSignups().isEmpty());
 		_canSignup = (_ev.getStatus() == Event.OPEN) && _ev.getCanSignup() && hasID && isRouteAvailable
-				&& (!_ev.isSignedUp(_ctx.getUser().getID()));
+				&& canParticipate && (!_ev.isSignedUp(_ctx.getUser().getID()));
 		_canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
 		_canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
+		_canBalance = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && hasSignups 
+			&& isEvent && (_ev.getRoutes().size() > 1);
 		_canAssignFlights = ((_ev.getStatus() == Event.CLOSED) || (_ev.getStatus() == Event.ACTIVE)) && hasSignups
 				&& isEvent;
 		_canCancel = _canEdit;
@@ -100,6 +115,14 @@ public class EventAccessControl extends AccessControl {
 	 */
 	public boolean getCanAddPlan() {
 		return _canAddPlan;
+	}
+	
+	/**
+	 * Returns if Signups can be balanced for this Online Event.
+	 * @return TRUE if signups can be balanced, otherwise FALSE
+	 */
+	public boolean getCanBalance() {
+		return _canBalance;
 	}
 
 	/**

@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -57,6 +58,7 @@ public class EventSaveCommand extends AbstractCommand {
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			} else {
 				e = new Event(ctx.getParameter("name"));
+				e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 				ctx.setAttribute("isNew", Boolean.TRUE, REQUEST);
 			}
 
@@ -74,7 +76,16 @@ public class EventSaveCommand extends AbstractCommand {
 				e.setSignupURL(ctx.getParameter("signupURL"));
 			else
 				e.setSignupURL(null);
-
+			
+			// Get participating airlines
+			Collection<String> aCodes = ctx.getParameters("airlines");
+			if (aCodes != null) {
+				for (Iterator<String> i = aCodes.iterator(); i.hasNext(); ) {
+					AirlineInformation ai = SystemData.getApp(i.next());
+					e.addAirline(ai);
+				}
+			}
+			
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
 			e.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));

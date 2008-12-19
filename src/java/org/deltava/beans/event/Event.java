@@ -6,13 +6,14 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -41,6 +42,9 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     
     private boolean _canSignup;
     private String _signupURL;
+    
+    private AirlineInformation _owner;
+    private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
     
     private final Collection<Chart> _charts = new TreeSet<Chart>();
     private final Collection<FlightPlan> _plans = new ArrayList<FlightPlan>();
@@ -114,6 +118,25 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
             return Event.ACTIVE;
         else
             return Event.COMPLETE;
+    }
+    
+    /**
+     * Returns the Airline that owns this Online Event.
+     * @return an AirlineInformation bean
+     * @see Event#setOwner(AirlineInformation)
+     * @see Event#getAirlines()
+     */
+    public AirlineInformation getOwner() {
+    	return _owner;
+    }
+
+    /**
+     * Returns the Airlines participating in this Online Event.
+     * @return a Collection of AirlineInformation beans
+     * @see Event#addAirline(AirlineInformation)
+     */
+    public Collection<AirlineInformation> getAirlines() {
+    	return _airlines;
     }
     
     /**
@@ -489,6 +512,25 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
 		_bannerExt = StringUtils.isEmpty(ext) ? null : ext.toLowerCase();
 	}
 
+	/**
+	 * Sets the Airline that owns this Online Event.
+	 * @param ai the owning Airline's AirlineInformation bean
+	 * @see Event#getOwner()
+	 */
+	public void setOwner(AirlineInformation ai) {
+		_owner = ai;
+		_airlines.add(ai);
+	}
+	
+	/**
+	 * Adds a participatig Airline to this Online Event.
+	 * @param ai the participating airline's AirlineInformation bean
+	 * @see Event#getAirlines()
+	 */
+	public void addAirline(AirlineInformation ai) {
+		if (ai != null)
+			_airlines.add(ai);
+	}
     
     /**
      * Adds a Flight Plan to this Online Event.
