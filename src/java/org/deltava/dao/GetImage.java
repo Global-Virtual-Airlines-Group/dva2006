@@ -6,7 +6,7 @@ import java.sql.*;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -18,7 +18,6 @@ public class GetImage extends DAO {
      */
     public GetImage(Connection c) {
         super(c);
-        setQueryMax(1);
     }
     
     /**
@@ -63,7 +62,7 @@ public class GetImage extends DAO {
     public byte[] getSignatureImage(int id, String dbName) throws DAOException {
     	StringBuilder sqlBuf = new StringBuilder("SELECT WC_SIG FROM ");
     	sqlBuf.append(formatDBName(dbName));
-    	sqlBuf.append(".SIGNATURES WHERE (ID=?)");
+    	sqlBuf.append(".SIGNATURES WHERE (ID=?) LIMIT 1");
         return execute(id, sqlBuf.toString());
     }
     
@@ -74,7 +73,7 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getEventBanner(int id) throws DAOException {
-    	return execute(id, "SELECT IMG FROM events.BANNERS WHERE (ID=?)");
+    	return execute(id, "SELECT IMG FROM events.BANNERS WHERE (ID=?) LIMIT 1");
     }
     
     /**
@@ -84,7 +83,7 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getChart(int id) throws DAOException {
-        return execute(id, "SELECT IMG FROM common.CHARTIMGS WHERE (ID=?)");
+        return execute(id, "SELECT IMG FROM common.CHARTIMGS WHERE (ID=?) LIMIT 1");
     }
     
     /**
@@ -97,7 +96,7 @@ public class GetImage extends DAO {
     public byte[] getGalleryImage(int id, String dbName) throws DAOException {
     	StringBuilder sqlBuf = new StringBuilder("SELECT IMG FROM ");
     	sqlBuf.append(formatDBName(dbName));
-    	sqlBuf.append(".GALLERY WHERE (ID=?)");
+    	sqlBuf.append(".GALLERY WHERE (ID=?) LIMIT 1");
         return execute(id, sqlBuf.toString());
     }
 
@@ -108,6 +107,30 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getExamResource(int id) throws DAOException {
-    	return execute(id, "SELECT IMG FROM exams.QUESTIONIMGS WHERE (ID=?)");
+    	return execute(id, "SELECT IMG FROM exams.QUESTIONIMGS WHERE (ID=?) LIMIT 1");
+    }
+    
+    /**
+     * Returns if a Water Cooler signature image is officially approved.
+     * @param id the Pilot's database ID
+     * @return TRUE if approved, otherwise FALSE
+     * @throws DAOException if a JDBC error occurs
+     */
+    public boolean isSignatureAuthorized(int id) throws DAOException {
+    	try {
+    		prepareStatement("SELECT ISAPPROVED FROM SIGNATURES WHERE (ID=?)");
+    		_ps.setInt(1, id);
+    		
+    		// Execute the query
+    		ResultSet rs = _ps.executeQuery();
+    		boolean isOK = rs.next() ? rs.getBoolean(1) : false;
+    		
+    		// Clean up and return
+    		rs.close();
+    		_ps.close();
+    		return isOK;
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
     }
 }

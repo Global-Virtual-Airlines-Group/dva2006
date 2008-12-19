@@ -32,6 +32,7 @@ return true;
 <content:sysdata var="sigX" name="cooler.sig_max.x" />
 <content:sysdata var="sigY" name="cooler.sig_max.y" />
 <content:sysdata var="sigSize" name="cooler.sig_max.size" />
+<content:sysdata var="airlineName" name="airline.name" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -51,6 +52,12 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 </c:if>
  </td>
 </tr>
+<content:filter roles="HR,Signature">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isAuth" idx="*" className="small" value="true" label="Authorized ${airlineName} ${forumName} Signature" /></td>
+</tr>
+</content:filter>
 </el:table>
 
 <!-- Button Bar -->
