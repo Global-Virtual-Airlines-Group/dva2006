@@ -30,7 +30,7 @@ public class GetImage extends DAO {
     private byte[] execute(int id, String sql) throws DAOException {
         try {
             // Prepare the statement
-            prepareStatement(sql);
+            prepareStatementWithoutLimits(sql);
             _ps.setInt(1, id);
 
             // Execute the query, if not found return null
