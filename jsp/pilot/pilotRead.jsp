@@ -39,6 +39,8 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="forumName" name="airline.forum" />
+<content:sysdata var="dbName" name="airline.db" />
+<c:set var="canSigAuth" value="${access.canChangeSignature && pilot.hasSignature && !sigAuthorized}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -220,6 +222,12 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
  <td colspan="${cspan}" class="data">${wcPosts} total ${forumName} posts</td>
 </tr>
 </c:if></content:filter>
+<c:if test="${canSigAuth}">
+<tr>
+ <td class="label" valign="top">${forumName} Signature</td>
+ <td colspan="${cspan}" class="data"><img src="/sig/${dbName}/${pilot.hexID}.${pilot.signatureExtension}" alt="${pilot.name}" /></td>
+</tr>
+</c:if>
 <c:if test="${!empty applicant}">
 <tr>
  <td class="label">Applicant Profile</td>
@@ -247,7 +255,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canAssignRide}">
  <el:cmdbutton url="nakedassign" link="${pilot}" label="ASSIGN CHECK RIDE" />
 </c:if>
-<c:if test="${access.canChangeSignature && pilot.hasSignature && !sigAuthorized}">
+<c:if test="${canSigAuth}">
  <el:cmdbutton url="sigauth" link="${pilot}" label="APPROVE SIGNATURE" />
 </c:if>
 <c:if test="${!crossDB}">

@@ -233,7 +233,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:when test="${pilot.hasSignature}">
 <!-- Signature Image for ${pilot.name} -->
 <br />
-<img src="/sig/${pilotLoc.DB}/0x<fmt:hex value="${pilot.ID}" />.${pilot.signatureExtension}" alt="${pilot.name} (${pilot.pilotCode})" /><br />
+<img src="/sig/${pilotLoc.DB}/${pilot.hexID}.${pilot.signatureExtension}" alt="${pilot.name} (${pilot.pilotCode})" /><br />
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
