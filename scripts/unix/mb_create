@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # IMAP Mailbox directory creation script
-# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check for existing mailbox
 if [ -d "$2/$1" ]
@@ -14,6 +14,10 @@ mkdir $2/$1
 mkdir $2/$1/cur
 mkdir $2/$1/new
 mkdir $2/$1/tmp
+mkdir $2/$1/SPAM
+mkdir $2/$1/SPAM/cur
+mkdir $2/$1/SPAM/new
+mkdir $2/$1/SPAM/tmp
 chown -R postfix:postfix $2/$1
 
 # Log success
