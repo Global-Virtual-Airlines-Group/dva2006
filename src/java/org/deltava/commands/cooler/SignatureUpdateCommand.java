@@ -36,8 +36,6 @@ public class SignatureUpdateCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/pilot/sigUpdate.jsp");
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -52,62 +50,67 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanChangeSignature())
 				throw securityException("Cannot Update Signature Image");
-
-			// Load the signature Image, get the write DAO and update the image
+			
+			// If not image uploaded, then redirect
 			FileUpload imgData = ctx.getFile("coolerImg");
-			if (imgData != null) {
-				// Check the image
-				ImageInfo info = new ImageInfo(imgData.getBuffer());
-				if (!info.check()) {
-					ctx.release();
-					ctx.setMessage("Invalid Image format");
-					result.setSuccess(true);
-					return;
-				}
+			if (imgData == null) {
+				ctx.release();
+				result.setURL("/jsp/pilot/sigUpdate.jsp");
+				result.setSuccess(true);
+				return;
+			}
 
-				// Check the image dimensions
-				boolean isHR = ctx.isUserInRole("HR");
-				int maxX = SystemData.getInt("cooler.sig_max.x");
-				int maxY = SystemData.getInt("cooler.sig_max.y");
-				if (!isHR && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
-					ctx.release();
-					ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
-							+ info.getWidth() + "x" + info.getHeight());
-					return;
-				}
+			// Check the image
+			ImageInfo info = new ImageInfo(imgData.getBuffer());
+			if (!info.check()) {
+				ctx.release();
+				ctx.setMessage("Invalid Image format");
+				result.setSuccess(true);
+				return;
+			}
 
-				// Check the image size
-				int maxSize = SystemData.getInt("cooler.sig_max.size");
-				if (!isHR && (imgData.getSize() > maxSize)) {
-					ctx.release();
-					ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours ="
-							+ imgData.getSize() + " bytes");
-					return;
-				}
+			// Check the image dimensions
+			boolean isHR = ctx.isUserInRole("HR");
+			int maxX = SystemData.getInt("cooler.sig_max.x");
+			int maxY = SystemData.getInt("cooler.sig_max.y");
+			if (!isHR && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
+				ctx.release();
+				ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
+						+ info.getWidth() + "x" + info.getHeight());
+				return;
+			}
 
-				// Check if signature is authorized
-				boolean isAuth = (isHR || ctx.isUserInRole("Signature")) && Boolean.valueOf(ctx.getParameter("isAuth")).booleanValue();
+			// Check the image size
+			int maxSize = SystemData.getInt("cooler.sig_max.size");
+			if (!isHR && (imgData.getSize() > maxSize)) {
+				ctx.release();
+				ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours ="
+						+ imgData.getSize() + " bytes");
+				return;
+			}
+
+			// Check if signature is authorized
+			boolean isAuth = (isHR || ctx.isUserInRole("Signature")) && Boolean.valueOf(ctx.getParameter("isAuth")).booleanValue();
 				
-				// Write the data
-				SetSignatureImage wdao = new SetSignatureImage(con);
-				if (isAuth) {
-					BufferedImage img = ImageIO.read(imgData.getInputStream());
-					Graphics2D g = img.createGraphics();
-					g.setColor(Color.WHITE);
-					g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
-					g.drawString("Approved Signature", img.getWidth() - 120, img.getHeight() - 4);
-					g.dispose();
+			// Write the data
+			SetSignatureImage wdao = new SetSignatureImage(con);
+			if (isAuth) {
+				BufferedImage img = ImageIO.read(imgData.getInputStream());
+				Graphics2D g = img.createGraphics();
+				g.setColor(Color.WHITE);
+				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
+				g.drawString("Approved Signature", img.getWidth() - 120, img.getHeight() - 4);
+				g.dispose();
 
-					// Create the new Image
-					ByteArrayOutputStream os = new ByteArrayOutputStream(16384);
-					ImageIO.write(img, "png", os);
-					img.flush();
-					p.load(os.toByteArray());
-					wdao.write(p, img.getWidth(), img.getHeight(), "png", isAuth);
-				} else {
-					p.load(imgData.getBuffer());
-					wdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);
-				}
+				// Create the new Image
+				ByteArrayOutputStream os = new ByteArrayOutputStream(16384);
+				ImageIO.write(img, "png", os);
+				img.flush();
+				p.load(os.toByteArray());
+				wdao.write(p, img.getWidth(), img.getHeight(), "png", isAuth);
+			} else {
+				p.load(imgData.getBuffer());
+				wdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);
 			}
 
 			// Save the pilot in the request
