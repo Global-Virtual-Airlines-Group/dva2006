@@ -72,11 +72,11 @@ return true;
 <c:if test="${fn:sizeof(event.airlines) > 1}">
 <tr>
  <td class="label">Organized by</td>
- <td class="data bld">${event.owner.name}</td> 
+ <td colspan="5" class="data bld">${event.owner.name}</td> 
 </tr>
 <tr>
- <td class="label">Airlines</td>
- <td class="data"><c:forEach var="airline" items="${event.airlines}">${airline.name}<br /></c:forEach></td>
+ <td class="label" valign="top">Airlines</td>
+ <td colspan="5" class="data"><c:forEach var="airline" items="${event.airlines}">${airline.name}<br /></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${event.canSignup}">
