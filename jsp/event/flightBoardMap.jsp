@@ -123,7 +123,7 @@ var selectedRoute;
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-map.setMapType(G_SATELLITE_TYPE);
+map.setMapType(G_SATELLITE_MAP);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>
