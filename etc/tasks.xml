@@ -97,7 +97,7 @@
 	</task>
 
 	<!-- Water Cooler Image Link validation -->
-	<task id="imgurlvalidate" enabled="true">
+	<task id="imgurlvalidate" enabled="false">
 		<class>org.deltava.tasks.ImageLinkTestTask</class>
 		<time>
 			<min>45</min>

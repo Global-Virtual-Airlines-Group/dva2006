@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,9 +7,9 @@ import java.util.*;
 import org.deltava.beans.cooler.LinkedImage;
 
 /**
- * A Data Access Object to load Water Cooler image links
+ * A Data Access Object to load Water Cooler image links.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -64,6 +64,7 @@ public class GetCoolerLinks extends DAO {
 			while (rs.next()) {
 				LinkedImage img = new LinkedImage(rs.getInt(1), rs.getString(2));
 				img.setDescription(rs.getString(3));
+				img.setThreadID(id);
 				results.add(img);
 			}
 			
