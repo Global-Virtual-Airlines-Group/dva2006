@@ -26,7 +26,11 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateCheckBox(form.crApprove, 1, 'Check Ride status')) return false;
+
+// Validate form
+var act = form.action;
+if (act.indexOf('release.do') == -1)
+	if (!validateCheckBox(form.crApprove, 1, 'Check Ride status')) return false;
 
 setSubmit();
 disableButton('CRButton');
