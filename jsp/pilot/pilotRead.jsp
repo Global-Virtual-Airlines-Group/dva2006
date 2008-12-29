@@ -29,8 +29,8 @@ s.visibility = (s.visibility == 'collapse') ? 'visible' : 'collapse';
 var addrLink = getElement('addrDivLink');
 addrLink.innerHTML = (s.visibility == 'collapse') ? 'SHOW' : 'HIDE';
 return true;
-}</c:if>
-</script>
+}
+</script></c:if>
 </head>
 <content:copyright visible="false" />
 <body>
