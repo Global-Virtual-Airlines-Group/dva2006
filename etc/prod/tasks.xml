@@ -125,7 +125,7 @@
 		<class>org.deltava.tasks.ImageLinkTestTask</class>
 		<time>
 			<min>45</min>
-			<hour>15</hour>
+			<hour>8</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>

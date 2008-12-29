@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.net.*;
@@ -8,12 +8,13 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store Water Cooler Linked Images and their descriptions.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
 public class LinkedImage extends DatabaseBean {
 	
+	private int _threadID;
 	private String _url;
 	private String _desc;
 
@@ -48,6 +49,15 @@ public class LinkedImage extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the thread ID.
+	 * @return the thread database ID
+	 * @see LinkedImage#setThreadID(int)
+	 */
+	public int getThreadID() {
+		return _threadID;
+	}
+	
+	/**
 	 * Updates the linked Image URL.
 	 * @param url the URL
 	 * @throws IllegalArgumentException if the URL is malformed or invalid
@@ -60,6 +70,16 @@ public class LinkedImage extends DatabaseBean {
 		} catch (MalformedURLException mue) {
 			throw new IllegalArgumentException("Invalid URL - " + mue);
 		}
+	}
+	
+	/**
+	 * Updates the Message Thread ID. 
+	 * @param id the thread database ID
+	 * @see LinkedImage#getThreadID()
+	 */
+	public void setThreadID(int id) {
+		validateID(_threadID, id);
+		_threadID = id;
 	}
 	
 	/**
