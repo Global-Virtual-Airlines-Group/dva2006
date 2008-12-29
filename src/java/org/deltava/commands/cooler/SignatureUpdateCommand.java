@@ -51,6 +51,9 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			if (!access.getCanChangeSignature())
 				throw securityException("Cannot Update Signature Image");
 			
+			// Save the pilot in the request
+			ctx.setAttribute("pilot", p, REQUEST);
+			
 			// If not image uploaded, then redirect
 			FileUpload imgData = ctx.getFile("coolerImg");
 			if (imgData == null) {
@@ -112,9 +115,6 @@ public class SignatureUpdateCommand extends AbstractCommand {
 				p.load(imgData.getBuffer());
 				wdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);
 			}
-
-			// Save the pilot in the request
-			ctx.setAttribute("pilot", p, REQUEST);
 		} catch (IOException ie) {
 			throw new CommandException(ie);
 		} catch (DAOException de) {
