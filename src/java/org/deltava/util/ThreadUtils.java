@@ -1,12 +1,14 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
+
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -91,6 +93,31 @@ public class ThreadUtils {
 		while (isAlive(t) && (timeElapsed < maxTime)) {
 			sleep(150);
 			timeElapsed += 150;
+		}
+	}
+	
+	/**
+	 * Waits for a Thread pool to complete.
+	 * @param tPool a Collection of Threads
+	 */
+	public static void waitOnPool(Collection<? extends Thread> tPool) {
+		final List<Thread> threadPool = new ArrayList<Thread>(tPool);
+		do {
+			sleep(125);
+			for (Iterator<? extends Thread> i = threadPool.iterator(); i.hasNext(); ) {
+				Thread worker = i.next();
+				if (!worker.isAlive())
+					i.remove();
+			}
+		} while (!threadPool.isEmpty() && (!Thread.currentThread().isInterrupted()));
+		
+		// If we're interrupted, shut the threads down
+		if (Thread.currentThread().isInterrupted()) {
+			for (Iterator<? extends Thread> i = threadPool.iterator(); i.hasNext(); ) {
+				Thread worker = i.next();
+				if (worker.isAlive())
+					worker.interrupt();
+			}
 		}
 	}
 }
