@@ -62,7 +62,7 @@ public class GetEvent extends DAO {
 		try {
 			Timestamp now = new Timestamp(System.currentTimeMillis());
 			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
-					+ "(E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (E.AIRLINE=?) "
+					+ "(E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) AND (EA.AIRLINE=?) "
 					+ "ORDER BY E.STARTTIME DESC");
 			_ps.setTimestamp(1, now);
 			_ps.setTimestamp(2, now);
