@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -27,7 +27,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
-	 * @throws CommandException if an error occurs
+	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
@@ -110,7 +110,8 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					if (p.getStatus() == Pilot.ACTIVE)
 						p.setStatus(Pilot.RETIRED);
 					
-					p.setPilotNumber(usr.getPilotNumber());
+					if (usr.getPilotNumber() > 0)
+						p.setPilotNumber(usr.getPilotNumber());
 					pwdao.write(p);
 				} else if (p.getStatus() == Pilot.ACTIVE) {
 					p.setStatus(Pilot.RETIRED);
