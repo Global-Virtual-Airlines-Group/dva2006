@@ -363,13 +363,13 @@
 		<attribute>
 			<name>max</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>size</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
