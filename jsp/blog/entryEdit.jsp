@@ -32,6 +32,9 @@ return true;
 <content:page>
 <%@ include file="/jsp/blog/header.jspf" %> 
 <%@ include file="/jsp/blog/sideMenu.jspf" %>
+<c:set var="dateFmt" value="${user.dateFormat}" scope="request" />
+<c:set var="timeFmt" value="${user.timeFormat}" scope="request" />
+<c:set var="entryDate" value="${empty entry ? now : entry.date}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -40,13 +43,15 @@ return true;
 <tr class="title caps">
  <td colspan="2"><c:if test="${empty entry}">NEW </c:if>JOURNAL ENTRY</td>
 </tr>
-<tr>
+<tr> 
  <td class="label">Entry Title</td>
  <td class="data"><el:text name="title" idx="*" className="pri bld req" size="32" max="128" value="${entry.title}" /></td>
 </tr>
 <tr>
  <td class="label">Published on</td>
- <td class="data"><el:text name="entryDateTime" idx="*" className="req" size="17" max="16" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy HH:mm')}" /></td>
+ <td class="data"><el:text name="entryDate" idx="*" size="10" max="10" value="${fn:dateFmt(entryDate, dateFmt)}" className="req" />
+ at <el:text name="entryTime" idx="*" size="${fn:length(timeFmt) - 1}" max="${fn:length(timeFmt)}" value="${fn:dateFmt(entryDate, timeFmt)}" className="req" />
+&nbsp;<span class="small">All dates/times are ${user.TZ.name}. (Format: ${dateFmt} ${timeFmt})</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
