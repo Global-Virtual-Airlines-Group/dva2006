@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,14 +8,14 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
 public class XMLRenderer {
 	
 	private String _name;
-	private Map<String, String> _attrs;
+	private final Map<String, String> _attrs = new LinkedHashMap<String, String>();
 
 	/**
 	 * Creates a new XML element, with a lowercase name.
@@ -25,7 +25,6 @@ public class XMLRenderer {
 	public XMLRenderer(String name) {
 		super();
 		_name = name.toLowerCase();
-		_attrs = new LinkedHashMap<String, String>();
 	}
 	
 	/**
@@ -69,10 +68,7 @@ public class XMLRenderer {
 	 * @return the element rendered to XML
 	 */
 	public String open(boolean completeTag, boolean finishTag) {
-		StringBuilder buf = new StringBuilder();
-		
-		// Start with the element name
-		buf.append('<');
+		StringBuilder buf = new StringBuilder("<");
 		buf.append(_name);
 
 		// Append a space if we have attributes
@@ -80,14 +76,13 @@ public class XMLRenderer {
 			buf.append(' ');
 
 		// Loop through the attributes
-		for (Iterator<String> i = _attrs.keySet().iterator(); i.hasNext();) {
-			String attrName = i.next();
-			String attrValue = _attrs.get(attrName);
+		for (Iterator<Map.Entry<String, String>> i = _attrs.entrySet().iterator(); i.hasNext();) {
+			Map.Entry e = i.next();
 
 			// Append the attribute name and value
-			buf.append(attrName);
+			buf.append(e.getKey());
 			buf.append("=\"");
-			buf.append(attrValue);
+			buf.append(e.getValue());
 			buf.append('\"');
 
 			// If there's another attribute, add a space

@@ -219,13 +219,13 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 <content:filter roles="HR,Moderator"><c:if test="${wcPosts > 0}">
 <tr>
  <td class="label">${forumName} Posts</td>
- <td colspan="${cspan}" class="data">${wcPosts} total ${forumName} posts</td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${wcPosts}" /> total ${forumName} posts</td>
 </tr>
 </c:if></content:filter>
-<c:if test="${canSigAuth}">
+<c:if test="${access.canChangeSignature && pilot.hasSignature}">
 <tr>
  <td class="label" valign="top">${forumName} Signature</td>
- <td colspan="${cspan}" class="data"><img src="/sig/${dbName}/${pilot.hexID}.${pilot.signatureExtension}" alt="${pilot.name}" /></td>
+ <td colspan="${cspan}" class="data"><el:sig user="${pilot}" caption="${pilot.name}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant}">
