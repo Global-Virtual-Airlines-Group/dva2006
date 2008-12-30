@@ -1,17 +1,21 @@
 // Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
-import java.util.Arrays;
+import java.net.*;
+import java.util.*;
 import java.sql.Connection;
+import java.io.IOException;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
-import org.deltava.beans.stats.PilotLocation;
+import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetGoogleGeocode;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to set a user's geolocation.
@@ -69,9 +73,59 @@ public class PilotLocationCommand extends AbstractCommand {
 					loc.setLongitude(loc.getLongitude() * -1);
 				
 				// Update the pilot location
+				GeocodeResult geoCode = null;
 				if ((loc.getLatitude() != 0.0) && (loc.getLongitude() != 0.0)) {
+					Map apiKeys = (Map) SystemData.getObject("security.key.googleMaps");
+					if ((apiKeys != null) && (!apiKeys.isEmpty())) {
+						String hostName = ctx.getRequest().getServerName().toLowerCase();
+						String apiKey = (String) apiKeys.get(hostName);
+						if (apiKey == null)
+							apiKey = (String) apiKeys.values().iterator().next();
+
+						// Geocode the location
+						StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&output=xml&q=");
+						buf.append(loc.getLatitude());
+						buf.append(',');
+						buf.append(loc.getLongitude());
+						buf.append("&key=");
+						buf.append(apiKey);
+						
+						// Connect and get the data
+						try {
+							URL url = new URL(buf.toString());
+							HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
+							urlcon.setConnectTimeout(2500);
+							urlcon.setReadTimeout(4500);
+							urlcon.setRequestMethod("GET");
+							
+							// Read via the DAO
+							GetGoogleGeocode gcdao = new GetGoogleGeocode(urlcon.getInputStream());
+							List<GeocodeResult> locations = gcdao.getGeoData();
+							if (!locations.isEmpty()) {
+								GeocodeResult gr = locations.get(0);
+								if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue())
+									geoCode = gr; 
+							}
+						} catch (IOException ie) {
+							throw new DAOException(ie);
+						}
+					}
+
+					// Start a transaction
+					ctx.startTX();
+					
+					// Update the map location
 					SetPilot wdao = new SetPilot(con);
 					wdao.setLocation(ctx.getUser().getID(), loc);
+					
+					// Update the home town
+					if (geoCode != null) {
+						wdao.setHomeTown(ctx.getUser().getID(), geoCode);
+						ctx.setAttribute("geoCode", geoCode, REQUEST);
+					}
+					
+					// Commit
+					ctx.commitTX();
 				}
 				
 				// Forward to the JSP
@@ -105,6 +159,7 @@ public class PilotLocationCommand extends AbstractCommand {
 				result.setURL("/jsp/pilot/geoLocate.jsp");
 			}
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

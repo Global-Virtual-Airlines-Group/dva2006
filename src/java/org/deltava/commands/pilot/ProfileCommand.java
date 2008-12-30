@@ -627,7 +627,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and load the pilot profile
-			GetPilotDirectory dao = new GetPilotDirectory(con);
+			GetPilot dao = new GetPilot(con);
 			p = dao.get(ctx.getID());
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
@@ -664,6 +664,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
+			ctx.setAttribute("pilotLocation", dao.getLocation(p.getID()), REQUEST);
 
 			// Get all equipment type profiles
 			GetEquipmentType eqdao = new GetEquipmentType(con);
