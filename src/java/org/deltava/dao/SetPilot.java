@@ -4,13 +4,15 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.Collection;
 
+import org.deltava.beans.stats.GeocodeResult;
+
 import org.deltava.beans.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -137,7 +139,7 @@ public class SetPilot extends PilotWriteDAO {
 	}
 
 	/**
-	 * Updates this Pilot's location for the member board.
+	 * Updates a Pilot's location for the member board.
 	 * @param pilotID the Pilot's database ID
 	 * @param loc the Pilot's location
 	 * @throws DAOException if a JDBC error occurs
@@ -149,6 +151,23 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setDouble(2, loc.getLatitude());
 			_ps.setDouble(3, loc.getLongitude());
 			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Sets the pilot's Home town.
+	 * @param pilotID the Pilot's database ID
+	 * @param gr the Geocoding results.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setHomeTown(int pilotID, GeocodeResult gr) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE PILOTS SET LOCATION=? WHERE (ID=?)");
+			_ps.setString(1, gr.getCityState());
+			_ps.setInt(2, pilotID);
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

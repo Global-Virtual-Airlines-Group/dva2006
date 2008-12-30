@@ -192,10 +192,18 @@ return true;
  <td class="label">IVAO ID#</td>
  <td colspan="${cspan}" class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(pilot, 'IVAO')}" size="10" max="9" /></td>
 </tr>
+<c:if test="${empty pilotLocation}">
 <tr>
  <td class="label">Location</td>
  <td colspan="${cspan}" class="data"><el:combo name="location" idx="*" size="1" options="${locations}" value="${pilot.location}" /></td>
 </tr>
+</c:if>
+<c:if test="${!empty pilotLocation}">
+<tr>
+ <td class="label">Location</td>
+ <td colspan="${cspan}" class="data">${pilot.location} <span class="small"><i>(Set via Pilot Location Board)</i></span></td>
+</tr>
+</c:if>
 <c:if test="${!empty pilot.pilotCode}">
 <tr>
  <td class="label">Personal Motto</td>

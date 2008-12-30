@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * An abstract class to support stream-based Data Access Objects.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
@@ -38,5 +38,13 @@ public abstract class DAO {
      */
     protected LineNumberReader getReader() {
         return new LineNumberReader(new InputStreamReader(_is), _size);
+    }
+    
+    /**
+     * Returns the input stream used for input.
+     * @return an InputStream
+     */
+    protected InputStream getStream() {
+    	return _is;
     }
 }
