@@ -79,10 +79,10 @@ return true;
  <td class="label" valign="top">Additional Ratings</td>
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
-<c:if test="${!empty courses}">
+<c:if test="${!empty certs}">
 <tr>
  <td class="label">Flight Academy Certifications</td>
- <td colspan="${cspan}" class="data"><fmt:list value="${courses}" delim=", " /></td>
+ <td colspan="${cspan}" class="data"><fmt:list value="${certs}" delim=", " /></td>
 </tr>
 </c:if>
 <tr>
@@ -236,6 +236,7 @@ Applicant profile for ${pilot.name}.</td>
 </tr>
 </c:if>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
+<%@ include file="/jsp/pilot/pilotCourses.jspf" %>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 </el:table>
 

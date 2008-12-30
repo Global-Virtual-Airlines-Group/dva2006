@@ -1,0 +1,30 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<c:if test="${!empty courses}">
+<!-- Pilot Flight Academy History -->
+<tr class="title caps">
+ <td colspan="${cspan + 1}">FLIGHT ACADEMY COURSES</td>
+</tr>
+<tr class="title mid caps">
+ <td colspan="2">COURSE NAME</td>
+ <td>INSTRUCTOR</td>
+ <td>STATUS</td>
+ <td>STARTED ON</td>
+ <td>COMPLETED ON</td>
+ <td>LAST COMMENT</td>
+</tr>
+
+<!-- Pilot Flight Academy Data -->
+<c:forEach var="course" items="${courses}">
+<c:set var="ins" value="${authors[course.instructorID]}" scope="request" />
+<tr class="mid">
+ <td colspan="2" class="pri bld"><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
+ <td class="bld">${ins.name}</td>
+ <td class="sec">${course.statusName}</td>
+ <td><fmt:date date="${course.startDate}" fmt="d" /></td>
+ <td class="bld"><fmt:date date="${course.endDate}" fmt="d" default="N/A" /></td>
+ <td><fmt:date date="${course.lastComment}" fmt="d" default="N/A" /></td> 
+</tr>
+</c:forEach>
+</c:if>
