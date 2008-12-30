@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.testing.Test;
 import org.deltava.beans.system.*;
@@ -770,7 +771,16 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Get Academy Certifications
 			GetAcademyCourses fadao = new GetAcademyCourses(con);
-			ctx.setAttribute("courses", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
+			ctx.setAttribute("certs", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
+			Collection<Course> courses = fadao.getByPilot(p.getID());
+			ctx.setAttribute("courses", courses, REQUEST);
+			
+			// Load instructor IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
+				Course c = i.next();
+				IDs.add(new Integer(c.getInstructorID()));
+			}
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
@@ -778,7 +788,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("statusUpdates", upds, REQUEST);
 			
 			// Get Author IDs from Status Updates
-			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
 				StatusUpdate upd = i.next();
 				IDs.add(new Integer(upd.getAuthorID()));

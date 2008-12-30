@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -105,8 +105,9 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Collection<Course> getByPilot(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE FROM exams.COURSES C, exams.CERTS CR WHERE "
-					+ "(C.CERTNAME=CR.NAME) AND (C.PILOT_ID=?) ORDER BY C.STARTDATE");
+			prepareStatement("SELECT C.*, CR.STAGE, MAX(CC.CREATED) FROM exams.CERTS CR, exams.COURSES C "
+					+ "LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
+					+ "AND (C.PILOT_ID=?) GROUP BY C.ID ORDER BY C.STARTDATE");
 			_ps.setInt(1, pilotID);
 			return execute();
 		} catch (SQLException se) {

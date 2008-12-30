@@ -232,10 +232,12 @@ public class SetAcademy extends DAO {
 	 */
 	public void setStatus(int courseID, int status, java.util.Date sd) throws DAOException {
 		try {
-			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=? WHERE (ID=?)");
+			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=?, ENDDATE=IF(STATUS=?, NOW(), NULL)"
+					+ " WHERE (ID=?)");
 			_ps.setInt(1, status);
 			_ps.setTimestamp(2, createTimestamp(sd));
-			_ps.setInt(3, courseID);
+			_ps.setInt(3, Course.COMPLETE);
+			_ps.setInt(4, courseID);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
