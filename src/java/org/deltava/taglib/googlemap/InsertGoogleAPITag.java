@@ -2,6 +2,7 @@
 package org.deltava.taglib.googlemap;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -13,14 +14,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 
 public class InsertGoogleAPITag extends TagSupport {
 
 	public static final String USAGE_ATTR_NAME = "$googleMapUsage$";
-	private static int USAGE_COUNT = 0;
+	private static final AtomicLong USAGE_COUNT = new AtomicLong();
 
 	private int _majorVersion = 2;
 	private String _minorVersion;
@@ -74,11 +75,10 @@ public class InsertGoogleAPITag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doStartTag() throws JspException {
-		synchronized (InsertGoogleAPITag.class) {
-			USAGE_COUNT++;
-			pageContext.setAttribute(USAGE_ATTR_NAME, new Integer(USAGE_COUNT), PageContext.APPLICATION_SCOPE);
-		}
-
+		long value = USAGE_COUNT.incrementAndGet();
+		if (value == 1)
+			pageContext.setAttribute(USAGE_ATTR_NAME, USAGE_COUNT, PageContext.APPLICATION_SCOPE);
+		
 		return super.doStartTag();
 	}
 
