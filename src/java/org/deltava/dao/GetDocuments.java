@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -144,7 +144,7 @@ public class GetDocuments extends GetLibrary {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Manual> getRegistrationManuals() throws DAOException {
-		Collection<Manual> results = getManuals(SystemData.get("airline.db"), false);
+		Collection<Manual> results = getManuals(SystemData.get("airline.db"));
 		for (Iterator<Manual> i = results.iterator(); i.hasNext(); ) {
 			Manual m = i.next();
 			if (!m.getShowOnRegister())
@@ -158,11 +158,10 @@ public class GetDocuments extends GetLibrary {
 	 * Returns the contents of the Document Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.
 	 * @param dbName the database name
-	 * @param loadCerts TRUE if Flight Academy data should be loaded, otherwise FALSE
 	 * @return a Collection of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Manual> getManuals(String dbName, boolean loadCerts) throws DAOException {
+	public Collection<Manual> getManuals(String dbName) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -176,10 +175,7 @@ public class GetDocuments extends GetLibrary {
 			prepareStatement(sqlBuf.toString());
 			Collection<Manual> results = loadManuals();
 			Map<String, Manual> docMap = CollectionUtils.createMap(results, "fileName");
-			
-			// Load the certifications for the manual
-			if (loadCerts)
-				loadCertifications(dbName, docMap);
+			loadCertifications(docMap);
 			
 			// Return results
 			return results;
@@ -209,18 +205,11 @@ public class GetDocuments extends GetLibrary {
 	/**
 	 * Helper method to load Flight Academy Certifications into Manual beans.
 	 */
-	private void loadCertifications(String dbName, Map<String, Manual> manuals) throws SQLException {
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".CERTDOCS");
+	private void loadCertifications(Map<String, Manual> manuals) throws SQLException {
 		
 		// Prepare and execute the statement
-		prepareStatementWithoutLimits(sqlBuf.toString());
+		prepareStatementWithoutLimits("SELECT * FROM exams.CERTDOCS");
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		while (rs.next()) {
 			Manual m = manuals.get(rs.getString(1));
 			if (m != null)
@@ -243,8 +232,6 @@ public class GetDocuments extends GetLibrary {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		Collection<String> results = new LinkedHashSet<String>();
 		while (rs.next())
 			results.add(rs.getString(1));
