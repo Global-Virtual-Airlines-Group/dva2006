@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -23,6 +23,15 @@ public class MiscFunctions {
 	 */
 	public static int sizeof(Collection c) {
 		return (c != null) ? c.size() : 0;
+	}
+	
+	/**
+	 * A JSP function to return the size of a string.
+	 * @param o the string (or object)
+	 * @return the length of the string, or zero if null
+	 */
+	public static int length(Object o) {
+		return (o == null) ? 0 : String.valueOf(o).length();
 	}
 	
 	/**
