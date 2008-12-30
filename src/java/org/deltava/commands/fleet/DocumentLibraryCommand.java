@@ -7,7 +7,6 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.fleet.*;
-import org.deltava.beans.academy.Course;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -21,13 +20,34 @@ import org.deltava.util.system.SystemData;
  * A Web Site command to display the Document Library. Note that this command will display library entries from other
  * Airlines, with the proviso that <i>all files are in the same library path</i>.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
 public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 	private static final Logger log = Logger.getLogger(DocumentLibraryCommand.class);
+	
+	private class AppComparator implements Comparator<AirlineInformation> {
+		
+		private String _myCode;
+		
+		AppComparator() {
+			super();
+			_myCode = SystemData.get("airline.code");
+		}
+		
+		public int compare(AirlineInformation ai1, AirlineInformation ai2) {
+			if (ai1.getCode().equals(ai2.getCode()))
+				return 0;
+			else if (ai1.getCode().equals(_myCode))
+				return -1;
+			else if (ai2.getCode().equals(_myCode))
+				return 1;
+			
+			return ai1.compareTo(ai2);
+		}
+	}
 
 	/**
 	 * Executes the command.
@@ -38,7 +58,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 		// Calculate access for adding content
 		FleetEntryAccessControl access = null;
-		Map<AirlineInformation, Collection<Manual>> results = new LinkedHashMap<AirlineInformation, Collection<Manual>>();
+		Map<AirlineInformation, Collection<Manual>> results = new TreeMap<AirlineInformation, Collection<Manual>>(new AppComparator());
 		try {
 			Connection con = ctx.getConnection();
 
@@ -48,20 +68,17 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 			for (Iterator i = apps.values().iterator(); i.hasNext();) {
 				AirlineInformation info = (AirlineInformation) i.next();
 				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
-					results.put(info, dao.getManuals(info.getDB(), false));
+					results.put(info, dao.getManuals(info.getDB()));
 				else {
-					Collection<Manual> entries = dao.getManuals(info.getDB(), false);
+					Collection<Manual> entries = dao.getManuals(info.getDB());
 					appendDB(entries, info.getDB());
 					results.put(info, entries);
 				}
 			}
 
 			// Load the user's Flight Academy courses
-			if (SystemData.getBoolean("academy.enabled")) {
-				GetAcademyCourses cdao = new GetAcademyCourses(con);
-				access = new ManualAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
-			} else
-				access = new ManualAccessControl(ctx, new HashSet<Course>());
+			GetAcademyCourses cdao = new GetAcademyCourses(con);
+			access = new ManualAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
