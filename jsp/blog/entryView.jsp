@@ -52,7 +52,7 @@ return ${access.canComment};
 </tr>
 <c:forEach var="comment" items="${entry.comments}">
 <tr>
- <td class="label" valign="top">${comment.name}<br />
+ <td class="label" valign="top">${empty comment.name ? 'Anonymous' : comment.name}<br />
 <fmt:date date="${comment.date}" /></td>
  <td class="data"><fmt:msg value="${comment.body}" filter="${!access.canDelete}" />
 <c:if test="${access.canDelete}">
