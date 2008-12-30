@@ -1,9 +1,10 @@
 // Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.blog;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.Collection;
 
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.blog.Entry;
 
 import org.deltava.commands.*;
@@ -14,7 +15,7 @@ import org.deltava.security.command.BlogAccessControl;
 /**
  * A Web Site Command to handle blog entries.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -60,7 +61,7 @@ public class BlogEntryCommand extends AbstractFormCommand {
 			
 			// Load fields from request
 			e.setBody(ctx.getParameter("body"));
-			e.setDate(parseDateTime(ctx, "entry", "MM/dd/yyyy", "HH:mm"));
+			e.setDate(parseDateTime(ctx, "entry"	));
 			e.setLocked(Boolean.valueOf(ctx.getParameter("isLocked")).booleanValue());
 			e.setPrivate(Boolean.valueOf(ctx.getParameter("isPrivate")).booleanValue());
 			
@@ -96,7 +97,8 @@ public class BlogEntryCommand extends AbstractFormCommand {
 				e = dao.get(ctx.getID());
 				if (e == null)
 					throw notFoundException("Invalid Blog entry - " + ctx.getID());
-			}
+			} else
+				ctx.setAttribute("now", new Date(), REQUEST);
 				
 			// Get our access
 			BlogAccessControl ac = new BlogAccessControl(ctx, e);
@@ -146,8 +148,10 @@ public class BlogEntryCommand extends AbstractFormCommand {
 			Collection<Integer> authorIDs = dao.getAuthors(ctx.isUserInRole("Admin"));
 			
 			// Load the author names
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("authors", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
+			UserDataMap udm = uddao.get(authorIDs);
+			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
 			
 			// Get our access
 			BlogAccessControl ac = new BlogAccessControl(ctx, e);
