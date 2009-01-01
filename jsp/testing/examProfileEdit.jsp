@@ -51,8 +51,9 @@ return true;
  <td class="data"><el:text name="examName" className="pri bld req" idx="*" size="32" max="48" value="${eProfile.name}" /></td>
 </tr>
 <tr>
- <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="N/A" options="${eqTypes}" value="${eProfile.equipmentType}" /></td>
+ <td class="label">Limit to Equipment Program</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="N/A" options="${eqTypes}" value="${eProfile.equipmentType}" />
+ <span class="small"><i>This should be N/A for First Officer examinations.</i></span></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
