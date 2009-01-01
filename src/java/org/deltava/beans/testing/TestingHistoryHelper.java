@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -102,8 +102,7 @@ public class TestingHistoryHelper {
 	 */
 	private Collection<EquipmentType> getTypes(int stage) {
 		Collection<EquipmentType> results = new HashSet<EquipmentType>();
-		for (Iterator<EquipmentType> i = _allEQ.iterator(); i.hasNext();) {
-			EquipmentType eq = i.next();
+		for (EquipmentType eq : _allEQ) {
 			if (eq.getStage() == stage)
 				results.add(eq);
 		}
@@ -113,8 +112,8 @@ public class TestingHistoryHelper {
 
 	/**
 	 * Returns whether a Pilot qualifies for Captain's rank in a particular stage.
-	 * @return TRUE if the Pilot has passed the Captain's exam and flown the necessary legs in <i>ANY</i> equipment
-	 *         program in a particular stage.
+	 * @return TRUE if the Pilot has passed the Captain's exam and flown the necessary legs
+	 * in <i>ANY</i> equipment program in a particular stage.
 	 */
 	public boolean isCaptainInStage(int stage) {
 		
@@ -127,9 +126,7 @@ public class TestingHistoryHelper {
 			return true;
 
 		// Iterate through the equipment types in a stage
-		Collection<EquipmentType> eqTypes = getTypes(stage);
-		for (Iterator<EquipmentType> i = eqTypes.iterator(); i.hasNext();) {
-			EquipmentType eq = i.next();
+		for (EquipmentType eq : getTypes(stage)) {
 			if (promotionEligible(eq))
 				return true;
 		}
@@ -149,8 +146,7 @@ public class TestingHistoryHelper {
 			return CP_STAGE;
 
 		int maxStage = 1;
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
-			Test t = i.next();
+		for (Test t : _tests) {
 			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && t.getPassFail()
 					&& SystemData.get("airline.code").equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
@@ -167,8 +163,7 @@ public class TestingHistoryHelper {
 	 */
 	public int getMaxCheckRideStage() {
 		int maxStage = _myEQ.getStage();
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
-			Test t = i.next();
+		for (Test t : _tests) {
 			if ((t instanceof CheckRide) && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
@@ -184,8 +179,7 @@ public class TestingHistoryHelper {
 	 */
 	public int getFlightLegs(EquipmentType eq) {
 		int result = 0;
-		for (Iterator<FlightReport> i = _pireps.iterator(); i.hasNext();) {
-			FlightReport fr = i.next();
+		for (FlightReport fr : _pireps) {
 			if (fr.getStatus() == FlightReport.OK) {
 				if ((eq == null) || (fr.getCaptEQType().contains(eq.getName())))
 					result++;
@@ -279,10 +273,6 @@ public class TestingHistoryHelper {
 			log(eq.getName() + " is a " + eq.getOwner().getName() + " program");
 			return false;
 		}
-
-		// If it's a stage 1 program, allow the transfer
-		if (eq.getStage() == 1)
-			return true;
 
 		// Check if we've passed the FO exam for that program
 		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO))) {
@@ -403,8 +393,7 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the user has submitted this Examination, otherwise FALSE
 	 */
 	public boolean hasSubmitted(String examName) {
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
-			Test t = i.next();
+		for (Test t : _tests) {
 			if ((t.getStatus() == Test.SUBMITTED) && (t.getName().equals(examName)))
 				return true;
 		}
@@ -418,8 +407,7 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the user passed the check ride, otherwise FALSE
 	 */
 	public boolean hasCheckRide(EquipmentType eq) {
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
-			Test t = i.next();
+		for (Test t : _tests) {
 			if ((t instanceof CheckRide) && (t.getPassFail())) {
 				CheckRide cr = (CheckRide) t;
 				if (cr.getEquipmentType().equals(eq.getName()))
