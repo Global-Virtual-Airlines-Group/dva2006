@@ -300,7 +300,7 @@ public class SetSchedule extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, RANGE, IATA, HISTORIC, ETOPS, ENGINES, "
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, ACRANGE, IATA, HISTORIC, ETOPS, ENGINES, "
 					+ "ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
 					+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
 					+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -353,7 +353,7 @@ public class SetSchedule extends DAO {
 	public void update(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE common.AIRCRAFT A SET A.RANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
+			prepareStatement("UPDATE common.AIRCRAFT SET ACRANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 					+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
 					+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, FULLNAME=? "
 					+ "WHERE (NAME=?)");
