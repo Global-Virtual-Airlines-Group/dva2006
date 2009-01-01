@@ -122,7 +122,7 @@ return true;
 <c:if test="${isPilot}">
  <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span><br /></c:if>
- <span class="bld">${pilot.rank}</span>, ${pilot.equipmentType}<br />
+ <span class="bld caps">${pilot.rank}</span>, ${pilot.equipmentType}<br />
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br /></el:showaddr>
@@ -178,7 +178,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <font color="#0000A1"><b>${ccLevels['CC100']}</b></font><br />
 </c:when>
 </c:choose>
-<c:if test="${empty pilot.motto && empty pilot.location}">
+<c:if test="${!empty pilot.motto && !empty pilot.location}">
 <br />
 <c:if test="${!empty pilot.motto}"><i>"${pilot.motto}"</i><br /></c:if>
 <c:if test="${!empty pilot.location}">${pilot.location}<br /></c:if>
