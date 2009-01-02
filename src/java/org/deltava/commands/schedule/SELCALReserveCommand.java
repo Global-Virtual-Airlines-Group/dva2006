@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve and free SELCAL codes.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -46,11 +46,8 @@ public class SELCALReserveCommand extends AbstractCommand {
 			if (isReserve) {
 				int maxCodes = SystemData.getInt("users.selcal.max", 2);
 				Collection<SelectCall> rSC = dao.getReserved(ctx.getUser().getID());
-				if (rSC.size() > maxCodes) {
-					CommandException ce = new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes");
-					ce.setLogStackDump(false);
-					throw ce;
-				}
+				if (rSC.size() > maxCodes)
+					throw new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes", false);
 
 				// Reserve the code
 				sc.setReservedOn(new Date());
@@ -62,12 +59,8 @@ public class SELCALReserveCommand extends AbstractCommand {
 				ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("codes", new Integer(rSC.size() + 1), REQUEST);
 			} else {
-				if (sc.getReservedBy() != ctx.getUser().getID()) {
-					CommandException ce = new CommandException(sc.getAircraftCode() + " not reserved by "
-							+ ctx.getUser().getName());
-					ce.setLogStackDump(false);
-					throw ce;
-				}
+				if ((sc.getReservedBy() != ctx.getUser().getID()) && !ctx.isUserInRole("HR"))
+					throw new CommandException(sc.getAircraftCode() + " not reserved by " + ctx.getUser().getName(), false);
 
 				// Free the reservation
 				wdao.free(sc.getCode());
