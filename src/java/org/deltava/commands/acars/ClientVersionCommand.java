@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to control minimum ACARS client versions.
  * @author Luke
- * @version 2.1
+ * @version 2.3
  * @since 1.0
  */
 
@@ -79,6 +79,14 @@ public class ClientVersionCommand extends AbstractCommand {
 			Integer build = i.next();
 			String paramName = "min_" + build.toString() + "_beta";
 			cInfo.setMinimumBetaBuild(build.intValue(), StringUtils.parse(ctx.getParameter(paramName), 0));
+		}
+		
+		// Add new beta build
+		int newBuild = StringUtils.parse("newBuild", 0);
+		if (newBuild > 0) {
+			int newBeta = StringUtils.parse("newBeta", 0);
+			if (newBeta > 0)
+				cInfo.setMinimumBetaBuild(newBuild, newBeta);
 		}
 		
 		// Get the ACARS client versions that cannot request dispatch

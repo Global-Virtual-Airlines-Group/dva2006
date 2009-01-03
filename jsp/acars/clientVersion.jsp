@@ -64,10 +64,10 @@ return true;
  <td class="label">Client Builds without Dispatch</td>
  <td class="data"><el:text name="noDispatch" idx="*" size="12" max="24" value="${fn:splice(noDispatch, ',')}" /></td>
 </tr>
-<c:if test="${!empty betaInfo}">
 <tr class="title caps">
  <td colspan="2">ACARS BETA VERSION CONTROL</td>
 </tr>
+<c:if test="${!empty betaInfo}">
 <c:forEach var="build" items="${fn:keys(betaInfo)}">
 <c:set var="minBeta" value="${betaInfo[build]}" scope="request" />
 <tr>
@@ -75,6 +75,11 @@ return true;
  <td class="data"><el:text className="pri bld req" name="min_${build}_beta" idx="*" size="3" max="4" value="${minBeta}" /></td>
 </tr>
 </c:forEach>
+<tr>
+ <td class="label">New Beta</td>
+ <td class="data">Build <el:text name="newBuild" size="3" max="4" idx="*" value="" /> Beta
+ <el:text name="newBeta" size="3" max="4" idx="*" value="1" /></td>
+</tr>
 </c:if>
 
 <!-- Button Bar -->
