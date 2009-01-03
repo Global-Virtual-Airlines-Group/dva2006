@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <map:xhtml>
 <head>
 <title><content:airline /> Weather Center</title>
@@ -25,7 +26,47 @@
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
+<c:if test="${!empty jetStreamImgs}">
+function setJSMapType(combo)
+{
+var mapType = combo.options[combo.selectedIndex].value;
+var opts = jsMapTypes[mapType];
 
+var f = document.forms[0];
+var cbo = f.jsMapName;
+if (opts != null) {
+	cbo.options.length = opts.length;
+	for (var x = 0; x < opts.length; x++)
+		cbo.options[x] = opts[x];
+} else {
+	cbo.options.length = 1;
+	cbo.options[0] = new Option('-');
+}
+
+cbo.selectedIndex = 0;
+setJSMap(cbo);
+var div = getElement('jsURLSelect');
+div.style.visibility = (combo.selectedIndex == 0) ? 'hidden' : 'visible';
+return true;	
+}
+
+function setJSMap(combo)
+{
+var idx = combo.selectedIndex;
+var row = getElement('jsMapRow');
+if (idx == 0) {
+	row.style.display = 'none';
+	return true;
+} else if (row.style.display == 'none')
+	row.style.display = '';
+
+// Show the map
+var opt = combo.options[idx];
+var img = getElement('jsImg');
+img.src = opt.value;
+return true;
+}
+</c:if>
 function loadWX(code)
 {
 if (code.length < 4) {
@@ -199,6 +240,20 @@ return true;
  <td class="label" valign="top">TAF Data</td>
  <td class="data"><el:textbox name="tafData" width="75%" height="5" readOnly="true" disabled="true" /></td> 
 </tr>
+<c:if test="${!empty jetStreamImgs}">
+<tr class="title caps">
+ <td colspan="2" class="left">JET STREAM FORECASTS</td>
+</tr>
+<tr>
+ <td class="label">Jet Stream</td>
+ <td class="data"><el:combo name="jsType" size="1" firstEntry="-" options="${jetStreamTypes}" onChange="void setJSMapType(this)" />
+ <span id="jsURLSelect" style="visibility:hidden;"><el:combo name="jsMapName" size="1" firstEntry="-" options="${emptyList}" onChange="void setJSMap(this)" /></span></td>
+</tr>
+<tr id="jsMapRow" style="display:none;">
+ <td class="label" valign="top">Jet Stream Map</td>
+ <td class="data"><el:img ID="jsImg" src="blank.png" x="783" y="630" caption="Jet Stream Map" /></td>
+</tr>
+</c:if>
 </el:table>
 <div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small bld">Select Time</span>
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
@@ -276,6 +331,17 @@ GEvent.trigger(map, 'maptypechanged');</c:if>
 
 // Load METAR for home airport
 loadWX('${homeAirport.ICAO}');
+<c:if test="${!empty jetStreamImgs}">
+// Load Jet Stream map types
+var jsMapTypes = new Array();
+<c:forEach var="mapType" items="${fn:keys(jetStreamImgs)}">
+var mapOptions = new Array();
+mapOptions.push(new Option('-'));
+<c:forEach var="mapURL" items="${jetStreamImgs[mapType]}">
+mapOptions.push(new Option('${mapURL.comboName}', '${mapURL.comboAlias}'));</c:forEach>
+jsMapTypes['${mapType}'] = mapOptions;
+</c:forEach>
+</c:if>
 </script>
 </body>
 </map:xhtml>

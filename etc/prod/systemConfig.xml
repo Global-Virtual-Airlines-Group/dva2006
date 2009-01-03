@@ -292,12 +292,27 @@
 	<!-- Weather map tile sources -->	
 	<weather>
 		<tileHost>gima.weather.com</tileHost>
-		
-		<!-- Downloda locations -->
+
+		<!-- Download locations -->
 		<url>
 			<metar>ftp://tgftp.nws.noaa.gov/data/observations/metar/stations/</metar>
 			<taf>ftp://tgftp.nws.noaa.gov/data/forecasts/taf/stations/</taf>
-		</url>	
+		</url>
+
+		<!-- Jet Stream maps -->
+		<jetstream>
+			<map name="types">
+				<atl>Altantic</atl>
+				<na>North America</na>
+				<pac>Pacific</pac>
+			</map>
+
+			<url>
+				<atl>http://squall.sfsu.edu/gif/jetstream_atl_%H_00.gif</atl>
+				<na>http://squall.sfsu.edu/gif/jetstream_%H_00.gif</na>
+				<pac>http://squall.sfsu.edu/gif/jetstream_pac_%H_00.gif</pac>
+			</url>
+		</jetstream>	
 	</weather>
 
 	<config>
