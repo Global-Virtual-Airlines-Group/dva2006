@@ -1,10 +1,12 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.net.*;
 import java.util.*;
 import java.sql.Connection;
 import java.io.IOException;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
@@ -25,6 +27,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PilotLocationCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(PilotLocationCommand.class);
 
 	/**
 	 * Executes the command.
@@ -107,7 +111,7 @@ public class PilotLocationCommand extends AbstractCommand {
 									geoCode = gr; 
 							}
 						} catch (IOException ie) {
-							throw new DAOException(ie);
+							log.warn(ie.getMessage());
 						}
 					}
 
