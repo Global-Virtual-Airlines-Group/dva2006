@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -70,6 +70,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 					rt.setName(ctx.getParameter("routeName" + rt.getRouteID()));
 					rt.setRoute(ctx.getParameter("route" + rt.getRouteID()));
 					rt.setIsRNAV(Boolean.valueOf(ctx.getParameter("isRNAV" + rt.getRouteID())).booleanValue());
+					rt.setMaxSignups(StringUtils.parse(ctx.getParameter("maxSignups" + rt.getRouteID()), 0));
 					wdao.save(rt);
 					if (isDisable)
 						wdao.toggle(rt);
