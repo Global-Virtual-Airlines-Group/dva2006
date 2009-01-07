@@ -47,11 +47,14 @@ public class MiscFunctions {
 	 * A JSP-friendly function to get an element from a List. Equivalent to {@link List#get(int) }.
 	 * @param l the List containing the elements
 	 * @param idx the element position within the List
-	 * @return the element
-	 * @throws IndexOutOfBoundsException if the index is out of range
+	 * @return the element, or null if an invalid index is specified
 	 */
 	public static <T> T get(List<T> l, int idx) {
-		return (l == null) ? null : l.get(idx);
+		try {
+			return l.get(idx);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
