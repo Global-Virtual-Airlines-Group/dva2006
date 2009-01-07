@@ -1,6 +1,10 @@
-#!/bin/bash
+l#!/bin/bash
+#
 # IMAP Mailbox directory creation script
-# (c) 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+#
+
+spam_folder='.!SPAM'
 
 # Check for existing mailbox
 if [ -d "$2/$1" ]
@@ -14,10 +18,10 @@ mkdir $2/$1
 mkdir $2/$1/cur
 mkdir $2/$1/new
 mkdir $2/$1/tmp
-mkdir $2/$1/SPAM
-mkdir $2/$1/SPAM/cur
-mkdir $2/$1/SPAM/new
-mkdir $2/$1/SPAM/tmp
+mkdir $2/$1/$spam_folder
+mkdir $2/$1/$spam_folder/cur
+mkdir $2/$1/$spam_folder/new
+mkdir $2/$1/$spam_folder/tmp
 chown -R postfix:postfix $2/$1
 
 # Log success

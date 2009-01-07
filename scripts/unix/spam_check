@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Spam auto-learn script
+# (c) 2009 Global Virtual Airlines Group. All Rights Reserved.
+#
+
+mail_root='/home/mail'
+spam_folder='.!SPAM'
+spamd_db='/var/lib/nobody/.spamassassin/'
+
+for maildir in `ls -AD1 $mail_root`
+do
+	if [ ! -d $mail_root/$maildir/$spam_folder ]
+	then
+    	echo 'Creating' $mail_root/$maildir/$spam_folder
+		mkdir $mail_root/$maildir/$spam_folder
+		mkdir $mail_root/$maildir/$spam_folder/cur
+		mkdir $mail_root/$maildir/$spam_folder/new
+		mkdir $mail_root/$maildir/$spam_folder/tmp
+		chown -R postfix:postfix $mail_root/$maildir/$spam_folder
+	else
+		echo 'Checking' $maildir
+		sa-learn --no-sync --spam --dbpath $spamd_db $mail_root/$maildir/$spam_folder/{cur,new}
+		rm $mail_root/$maildir/$spam_folder/cur/*
+		rm $mail_root/$maildir/$spam_folder/new/*
+	fi
+done
+
+# Resync the spamd database
+sa-learn --sync --dbpath $spamd_db
+exit 0
