@@ -23,6 +23,7 @@ if (!checkSubmit()) return false;
 
 // Validate existing routes
 for (var id in routeIDs) {
+	if (!validateNumber(eval('form.maxSignups' + id), 0, 'Maximum Signups for Route #' + id)) return false; 
 	if (!validateText(eval('form.route' + id), 6, 'Flight Route #' + id)) return false;
 	if (!validateText(eval('form.routeName' + id), 6, 'Flight Route Name #' + id)) return false;
 }
@@ -36,11 +37,13 @@ if (hasNewRoute)
 	if (!validateText(form.routeName, 6, 'Flight Route Name')) return false;
 	if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 	if (!validateCombo(form.airportA, 'Destination Airport')) return false;
+	if (!validateNumber(form.maxSignups, 0, 'Maximum Signups')) return false;
 }
 
 setSubmit();
 disableButton('SaveButton');
 disableButton('ViewButton');
+disableButton('BalanceButton');
 return true;
 }
 </script>
@@ -75,9 +78,12 @@ return true;
  <td class="data" colspan="3"><el:text name="route${route.routeID}" idx="*" className="req" size="160" max="640" value="${route.route}" /></td>
 </tr>
 <tr>
- <td class="data" colspan="3"><el:box name="isRNAV${route.routeID}" idx="*" value="true" className="small" label="This is an RNAV Route" checked="${route.isRNAV}" /><br />
+ <td class="data"><el:box name="isRNAV${route.routeID}" idx="*" value="true" className="small" label="This is an RNAV Route" checked="${route.isRNAV}" /><br />
 <el:box name="disable${route.routeID}" value="true" className="small ${toggleBoxClass}" label="${route.active ? 'Disable' : 'Enable'} this Route" /><br />
 <el:box name="delete${route.routeID}" value="true" className="small bld" label="Delete this Route" /></td>
+ <td class="label" valign="top">Maximum Signups</td>
+ <td class="data" valign="top"><el:text name="maxSignups${route.routeID}" idx="*" className="req" size="2" max="3" value="${route.maxSignups}" />
+ <i><fmt:int value="${route.signups}" /> Pilots signed up</i></td>
 </tr>
 </c:forEach>
 
@@ -112,7 +118,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="ADD NEW FLIGHT ROUTE" />
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE FLIGHT ROUTES" />
  <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" />
 <c:if test="${access.canBalance}">
  <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE ROUTE SIGNUPS" />
