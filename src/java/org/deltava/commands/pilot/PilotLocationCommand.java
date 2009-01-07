@@ -4,7 +4,6 @@ package org.deltava.commands.pilot;
 import java.net.*;
 import java.util.*;
 import java.sql.Connection;
-import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
@@ -110,8 +109,8 @@ public class PilotLocationCommand extends AbstractCommand {
 								if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue())
 									geoCode = gr; 
 							}
-						} catch (IOException ie) {
-							log.warn(ie.getMessage());
+						} catch (Exception e) {
+							log.warn(e.getMessage());
 						}
 					}
 
