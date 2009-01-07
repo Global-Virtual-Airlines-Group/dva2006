@@ -1,6 +1,6 @@
 #!/bin/bash
 # System daemon checking script
-# (c) 2005-2008 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2009 Global Virtual Airlines Group. All Rights Reserved.
 
 # Start loop
 echo `date +%H:%M:%S`" Starting"
@@ -68,16 +68,6 @@ do
 			/etc/init.d/httpd start
 		fi
 
-		# Check OpenLDAP
-		# if [ -f "/var/run/slapd.pid" ]
-		# then
-		#	if [ ! -d "/proc/`cat /var/run/slapd.pid`" ]
-		#	then
-		#		echo `date +%H:%M:%S`" OpenLDAP (Authentication Server) is DOWN" >> /var/cache/isalive.txt
-		#		/etc/init.d/slapd start
-		#	fi
-		# fi
-
 		# Check Postfix
 		if [ -f "/var/run/postfix.pid" ]
 		then
@@ -123,10 +113,12 @@ do
 			if [ ! -d "/proc/`pidof clamav-milter`" ]
 			then
 				echo `date +%H:%M:%S`" ClamAV Milter (Anti-Virus mail filter) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/clamd stop
 				/etc/init.d/clamd start
 			fi
 		else
 			echo `date +%H:%M:%S`" ClamAV Milter (Anti-Virus mail filter) is DOWN" >> /var/cache/isalive.txt
+			/etc/init.d/clamd stop
 			/etc/init.d/clamd start
 		fi
 
@@ -168,17 +160,35 @@ do
 			echo `date +%H:%M:%S`" TeamSpeak (Voice Server) is DOWN - no pid" >> /var/cache/isalive.txt
 			/etc/init.d/ts2 start
 		fi
+		
+		# Check SSH blacklist process
+		if [ -f "/var/run/blacklist.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/blacklist.pid`" ]
+			then
+				echo `date +%H:%M:%S`" Blacklist (SSH blacklist daemon) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/blacklist start
+			fi
+		else
+			echo `date +%H:%M:%S`" Blacklist (SSH blacklist daemon) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/blacklist start
+		fi
+		
+		# Check site health check
+		if [ -f "/var/run/tomcat60.pid" ]
+		then
+			wget -q -O /dev/null --spider --timeout=3 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.do
+			if [ "$?" -ne "0" ]
+			then
+				echo `date +%H:%M:%S`" Site appears DOWN - healthcheck failed" >> /var/cache/isalive.txt
+				killall -9 java
+				sleep 1.5
+				echo `date +%H:%M:%S`" Archiving Tomcat log" >> /var/cache/isalive.txt
+				tomcat_log_reset
+				/etc/init.d/tomcat start
+			fi
+		fi		
 
-		# Check FSD Multiplayer FS Server
-		#if [ -f "/var/run/fsd.pid" ]
-		#then
-		#	if [ ! -d "/proc/`cat /var/run/fsd.pid`" ]
-		#	then
-		#		echo `date +%H:%M:%S`" FSD (FS Multiplayer Server) is DOWN" >> /var/cache/isalive.txt
-		#		/etc/init.d/fsd start
-		#	fi
-		#fi
-	
 		# If we have something, warn us
 		if [ -f "/var/cache/isalive.txt" ]
 		then
