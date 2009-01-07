@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # System daemon checking script
-# (c) 2005-2008 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2009 Global Virtual Airlines Group. All Rights Reserved.
 
 if [ -f "/var/run/siteDown.flag" ]
 then
@@ -85,11 +85,11 @@ then
    echo "PostFix (SMTP Server) is alive"
   else
    echo "PostFix (SMTP Server) is DOWN"
-   postfix start
+   /etc/init.d/postfix start
   fi
 else
- echo "PostFix (SMTP Server) is DOWN - no pid"
- postfix start
+  echo "PostFix (SMTP Server) is DOWN - no pid"
+  /etc/init.d/postfix start
 fi
 
 if [ -f "/var/run/spamd.pid" ]
@@ -144,9 +144,55 @@ then
     /etc/init.d/ts2 start
   fi
 else
- echo "TeamSpeak (Voice Server) is DOWN - no pid"
- /etc/init.d/ts2 start
+  echo "TeamSpeak (Voice Server) is DOWN - no pid"
+  /etc/init.d/ts2 start
 fi
+
+if [ -f "/var/run/clamd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/clamd.pid`" ]
+  then
+    echo "ClamAV (Anti-VIrus Server) is alive"
+  else
+    echo "ClamAV (Anti-VIrus Server) is DOWN"
+    /etc/init.d/clamd start
+  fi
+else
+  echo "ClamAV (Anti-Virus Server) is DOWN - no pid"
+  /etc/init.d/clamd start
+fi
+
+# Check SSH blacklist process
+if [ -f "/var/run/blacklist.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/blacklist.pid`" ]
+  then
+  	echo "Blacklist (SSH blacklist daemon) is alive"
+  else
+    echo "Blacklist (SSH blacklist daemon) is DOWN"
+    /etc/init.d/blacklist start
+  fi
+else
+  echo "Blacklist (SSH blacklist daemon) is DOWN - no pid"
+  /etc/init.d/blacklist start
+fi
+
+# Check HTTP health check
+if [ -f "/var/run/tomcat60.pid" ]
+then
+	wget -q -O /dev/null --spider --timeout=3 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.do
+	if [ "$?" -ne "0" ]
+	then
+		echo "Site appears DOWN - Health Check failed"
+		killall -9 java
+		sleep 1.5
+		echo "Archiving Tomcat log"
+		tomcat_log_reset
+		/etc/init.d/tomcat start
+	else
+		echo "Health Check is OK"
+	fi
+fi		
 
 # if [ -f "/var/run/fsd.pid" ]
 # then
