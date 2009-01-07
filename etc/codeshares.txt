@@ -1,12 +1,12 @@
 ; Airline code, start flight #, end flight #, filename, description
 CO,2100,3662,deltadirects.csv,Continental
-DVC,3663,4082,deltadirects.csv,SkyWest
-DVC,4083,4932,deltadirects.csv,ASA
-DVC,4933,5912,deltadirects.csv,Comair
-DVC,5913,6057,deltadirects.csv,American Eagle
-DVC,6058,6212,deltadirects.csv,Freedom Airlines
-DVC,6213,6432,deltadirects.csv,Chautauqua Airlines
-DVC,6433,6492,deltadirects.csv,Shuttle America
+DVA,3663,4082,deltadirects.csv,SkyWest
+DVA,4083,4932,deltadirects.csv,ASA
+DVA,4933,5912,deltadirects.csv,Comair
+DVA,5913,6057,deltadirects.csv,American Eagle
+DVA,6058,6212,deltadirects.csv,Freedom Airlines
+DVA,6213,6432,deltadirects.csv,Chautauqua Airlines
+DVA,6433,6492,deltadirects.csv,Shuttle America
 NW,6493,7779,deltadirects.csv,Northwest
 SAA,7780,729,deltadirects.csv,South African Airways
 CZ,7830,7839,deltadirects.csv,China Southern
