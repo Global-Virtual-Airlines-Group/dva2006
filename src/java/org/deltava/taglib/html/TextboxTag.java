@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -57,9 +57,9 @@ public class TextboxTag extends FormElementTag {
      * @param width the width of the textbox in columns, or as a percentage
      */
     public void setWidth(String width) {
-    	if ((width != null) && (width.endsWith("%"))) {
+    	if ((width != null) && (width.endsWith("%")))
     		_data.setAttribute("style", "width:" + width + ";");
-    	} else
+    	else
     		setNumericAttr("cols", StringUtils.parse(width, 0), 0);	
     }
     
@@ -103,6 +103,14 @@ public class TextboxTag extends FormElementTag {
      */
     public void setOnBlur(String jsCode) {
        _data.setAttribute("onblur", jsCode);
+    }
+    
+    /**
+     * Sets the JavaScript event for this element's onFocus() event.
+     * @param jsCode the JavaScript code
+     */
+    public void setOnFocus(String jsCode) {
+    	_data.setAttribute("onfocus", jsCode);
     }
     
     /**

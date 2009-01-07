@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
@@ -78,7 +78,11 @@ public class CheckTag extends FormElementTag {
 		// Open the formatting SPAN and set the width
 		_out.print("<span");
 		if (_width > 0) {
-			_out.print(" style=\"float:left; width:");
+			_out.print(" style=\"");
+			if (_cols > 1)
+				_out.print("float:left; ");
+			
+			_out.print("width:");
 			_out.print(String.valueOf(_width));
 			_out.print("px;\"");
 		}
@@ -105,9 +109,8 @@ public class CheckTag extends FormElementTag {
 			ComboAlias ca = (ComboAlias) optValue;
 			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(
 					String.valueOf(setValue)));
-		} else {
+		} else
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
-		}
 	}
 
 	/**
@@ -125,9 +128,8 @@ public class CheckTag extends FormElementTag {
 		if (_value instanceof Collection) {
 			for (Iterator i = ((Collection) _value).iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(opt, i.next());
-		} else {
+		} else
 			isSelected = checkOption(opt, _value);
-		}
 
 		_out.print(_data.open(false));
 		if (isSelected)
