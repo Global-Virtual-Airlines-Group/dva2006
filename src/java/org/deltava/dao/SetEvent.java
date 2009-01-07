@@ -86,7 +86,7 @@ public class SetEvent extends DAO {
 		try {
 			prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, ROUTE_ID, AIRPORT_D, AIRPORT_A, ROUTE, "
 					+ "RNAV, ACTIVE, MAX_SIGNUPS, NAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-					+ "ROUTE=?, RNAV=?, NAME=?");
+					+ "ROUTE=?, RNAV=?, NAME=?, MAX_SIGNUPS=?");
 			_ps.setInt(1, r.getID());
 			_ps.setInt(2, r.getRouteID());
 			_ps.setString(3, r.getAirportD().getIATA());
@@ -99,6 +99,7 @@ public class SetEvent extends DAO {
 			_ps.setString(10, r.getRoute());
 			_ps.setBoolean(11, r.getIsRNAV());
 			_ps.setString(12, r.getName());
+			_ps.setInt(13, r.getMaxSignups());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
