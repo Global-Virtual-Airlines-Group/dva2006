@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.util.*;
@@ -69,64 +69,56 @@ public class RoutePlotService extends MapPlotService {
 			access.validate();
 			if (!access.getCanSubmit())
 				throw new IllegalArgumentException("Cannot submit Examination");
+
+			// Check the answer
+			String answer = ctx.getParameter("route");
+			if (answer == null)
+				throw new IllegalArgumentException("No Answer");
 			
 			// Get the departure/arrival airports
 			RoutePlotQuestion rpq = (RoutePlotQuestion) q;
-			TerminalRoute sid = null;
-			TerminalRoute star = null;
-
-			// Check if we have a SID
-			GetNavRoute dao = new GetNavRoute(con);
 			routePoints.add(new AirportLocation(rpq.getAirportD()));
-			sid = dao.getRoute(ctx.getParameter("sid"));
-			if (sid != null)
-				routePoints.addAll(sid.getWaypoints());
-			
-			// Check if we have a STAR
-			star = dao.getRoute(ctx.getParameter("star"));
-			
-			// Add the route waypoints
-			String rt = ctx.getParameter("route"); 
-			if (!StringUtils.isEmpty(rt)) {
-				Collection<String> wps = new LinkedHashSet<String>(StringUtils.split(rt.trim(), " "));
-				wps.remove(rpq.getAirportD().getICAO());
-				wps.remove(rpq.getAirportA().getICAO());
-				
-				// Remove SID/STAR waypoints
+			GetNavRoute dao = new GetNavRoute(con);
+
+			// Parse the answer
+			List<String> wps = StringUtils.split(answer, " ");
+			wps.remove(rpq.getAirportD().getICAO());
+			wps.remove(rpq.getAirportA().getICAO());
+			if ((wps.size() > 1) && (wps.get(0).indexOf('.') != -1)) {
+				TerminalRoute sid = dao.getRoute(rpq.getAirportD(), TerminalRoute.SID, wps.get(0));
 				if (sid != null) {
+					routePoints.addAll(sid.getWaypoints());
+					wps.remove(0);
 					for (NavigationDataBean nd : sid.getWaypoints())
 						if (!nd.getCode().equals(sid.getTransition()))
 							wps.remove(nd.getCode());
 				}
+			}
+			
+			// Check if we have a STAR
+			TerminalRoute star = null;
+			if ((wps.size() > 1) && (wps.get(wps.size() - 1).indexOf('.') != -1)) {
+				star = dao.getRoute(rpq.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1));
 				if (star != null) {
+					wps.remove(wps.size() - 1);
 					for (NavigationDataBean nd : star.getWaypoints())
 						if (!nd.getCode().equals(star.getTransition()))
 							wps.remove(nd.getCode());
 				}
-				
-				// Do the route
-				rt = StringUtils.listConcat(wps, " ");
-				List<NavigationDataBean> points = dao.getRouteWaypoints(rt, rpq.getAirportD());
-				routePoints.addAll(points);
 			}
 			
-			// Build the route
+			// Load the route
+			String rt = StringUtils.listConcat(wps, " ");
+			routePoints.addAll(dao.getRouteWaypoints(rt, rpq.getAirportD()));
+			
+			// Add the star and the destination
 			if (star != null)
 				routePoints.addAll(star.getWaypoints());
 			routePoints.add(new AirportLocation(rpq.getAirportA()));
 			
-			// Build the answer
-			StringBuilder buf = new StringBuilder();
-			for (Iterator<NavigationDataBean> i = routePoints.iterator(); i.hasNext(); ) {
-				NavigationDataBean nd = i.next();
-				buf.append(nd.getCode());
-				if (i.hasNext())
-					buf.append(' ');
-			}
-
 			// Save the answer
-			if (buf.length() > 2) {
-				q.setAnswer(buf.toString());
+			if (!StringUtils.isEmpty(answer)) {
+				q.setAnswer(answer);
 				
 				// Get the DAO and write the question
 				SetExam wdao = new SetExam(con);
@@ -137,7 +129,7 @@ public class RoutePlotService extends MapPlotService {
 		} catch (AccessControlException ace) {
 			throw error(SC_INTERNAL_SERVER_ERROR, ace.getMessage());
 		} catch (IllegalArgumentException e) {
-			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
+			throw error(SC_BAD_REQUEST, e.getMessage());
 		} finally {
 			ctx.release();
 		}

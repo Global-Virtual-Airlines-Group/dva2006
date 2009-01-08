@@ -3,6 +3,8 @@ package org.deltava.beans.testing;
 
 import java.util.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A bean to store multiple-choice question data.
  * @author Luke
@@ -12,7 +14,7 @@ import java.util.*;
 
 public class MultiChoiceQuestionProfile extends QuestionProfile implements MultipleChoice {
 
-	private Collection<String> _choices = new LinkedHashSet<String>();
+	private final Collection<String> _choices = new LinkedHashSet<String>();
 	
 	/**
 	 * Creates a new multiple-choice question profile.
@@ -29,8 +31,8 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * @see MultiChoiceQuestionProfile#addChoice(String)
 	 * @see MultiChoiceQuestionProfile#setChoices(Collection)
 	 */
-	public Collection<String> getChoices() {
-		return _choices;
+	public List<String> getChoices() {
+		return new ArrayList<String>(_choices);
 	}
 	
 	/**
@@ -41,8 +43,10 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * @see MultiChoiceQuestionProfile#getChoices()
 	 */
 	public void addChoice(String choice) {
-		String tmp = choice.trim().replace("\n", "");
-		_choices.add(tmp.replace("\r", ""));
+		if (!StringUtils.isEmpty(choice)) {
+			String tmp = choice.trim().replace("\n", "");
+			_choices.add(tmp.replace("\r", ""));
+		}
 	}
 	
 	/**

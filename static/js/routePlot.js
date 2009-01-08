@@ -3,30 +3,39 @@ function getAJAXParams()
 var f = document.forms[0];
 var params = new Array();
 if (f.airportD.selectedIndex > 0) {
-	params.push('airportD=' + f.airportD.options[f.airportD.selectedIndex].value);
+	params['airportD'] = f.airportD.options[f.airportD.selectedIndex].value;
 	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
 }
 if (f.airportA.selectedIndex > 0) {
-	params.push('airportA=' + f.airportA.options[f.airportA.selectedIndex].value);
+	params['airportA'] = f.airportA.options[f.airportA.selectedIndex].value;
 	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
 }
 if ((f.airportL) && (f.airportL.selectedIndex > 0)) {
-	params.push('airportL=' + f.airportL.options[f.airportL.selectedIndex].value);
+	params['airportL'] = f.airportL.options[f.airportL.selectedIndex].value;
 	f.airportLCode.value = f.airportL.options[f.airportL.selectedIndex].value;
 }
 	
 if ((f.sid) && (f.sid.selectedIndex > 0))
-	params.push('sid=' + f.sid.options[f.sid.selectedIndex].value);
+	params['sid'] = f.sid.options[f.sid.selectedIndex].value;
 if ((f.star) && (f.star.selectedIndex > 0))
-	params.push('star=' + f.star.options[f.star.selectedIndex].value);
+	params['star'] = f.star.options[f.star.selectedIndex].value;
 if ((f.route) && (f.route.value.length > 0))
-	params.push('route=' + f.route.value);
+	params['route'] = f.route.value;
 if (doRunways) {
-	params.push('runways=true');
-	params.push('runway=' + f.runway.options[f.runway.selectedIndex].value);
+	params['runways'] = 'true';
+	params['runway'] = f.runway.options[f.runway.selectedIndex].value;
 }
 
 return params;
+}
+
+function formatAJAXParams(params, sep)
+{
+var results = new Array();
+for (k in params)
+	results.push(k + '=' + params[k]);
+	
+return results.join(sep);
 }
 
 function updateRoutes(combo, elements)
@@ -43,7 +52,7 @@ for (var i = 0; i < elements.length; i++) {
 	var rLabel = e.getAttribute("label");
 	var rCode = e.getAttribute("code");
 	combo.options[i+1] = new Option(rLabel, rCode);
-	if (oldCode == rCode)
+	if ((oldCode == rCode) || (oldCode == rLabel))
 		combo.selectedIndex = (i+1);
 } // for
 
@@ -51,7 +60,7 @@ gaEvent('Route Plotter', 'Update Routes');
 return true;
 }
 
-function plotMap()
+function plotMap(myParams)
 {
 // Generate an XMLHTTP request
 var xmlreq = GXmlHttp.create();
@@ -107,7 +116,10 @@ xmlreq.onreadystatechange = function() {
 	return true;
 }
 
-xmlreq.send(getAJAXParams().join('&'));
-gaEvent('Route Plotter', 'Plot', getAJAXParams().join(' '));
+if (myParams == null)
+	myParams = getAJAXParams();
+
+xmlreq.send(formatAJAXParams(myParams, '&'));
+gaEvent('Route Plotter', 'Plot', formatAJAXParams(myParams, ' '));
 return true;
 }

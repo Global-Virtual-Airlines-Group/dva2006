@@ -63,14 +63,14 @@ public class GetExam extends DAO {
 
 				// Create the question
 				Question q = null;
-				if (isMC)
-					q = new MultiChoiceQuestion(rs.getString(4));
-				else if (isRP) {
+				if (isRP) {
 					RoutePlotQuestion rpq = new RoutePlotQuestion(rs.getString(4));
 					rpq.setAirportD(SystemData.getAirport(rs.getString(13)));
 					rpq.setAirportA(SystemData.getAirport(rs.getString(14)));
 					q = rpq;
-				} else
+				} else if (isMC)
+					q = new MultiChoiceQuestion(rs.getString(4));
+				else
 					q = new Question(rs.getString(4));
 				
 				// Populate the fields

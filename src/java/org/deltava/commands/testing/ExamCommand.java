@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.commands.*;
@@ -89,25 +88,10 @@ public class ExamCommand extends AbstractCommand {
          // Determine what we will do with the examination
          String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
          if (access.getCanSubmit()) {
-           	 Map<Airport, Collection<TerminalRoute>> sids = new HashMap<Airport, Collection<TerminalRoute>>();
-           	 Map<Airport, Collection<TerminalRoute>> stars = new HashMap<Airport, Collection<TerminalRoute>>();
-           	 for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
-           		 Question q = i.next();
-           		 if (q instanceof RoutePlot) {
-           			 RoutePlotQuestion rpq = (RoutePlotQuestion) q;
-           			 if (!sids.containsKey(rpq.getAirportD()))
-           				 sids.put(rpq.getAirportD(), navdao.getRoutes(rpq.getAirportD().getICAO(), TerminalRoute.SID));
-           			 if (!stars.containsKey(rpq.getAirportA()))
-           				 stars.put(rpq.getAirportA(), navdao.getRoutes(rpq.getAirportA().getICAO(), TerminalRoute.STAR));
-           		 }
-           	 }
-           	 
            	 // Return current time (+2 seconds) for time offset sync
            	 ctx.setAttribute("currentTime", new Long(System.currentTimeMillis() + 2000), REQUEST);
 
            	 // Save SID/STAR and forward to the testing JSP
-             ctx.setAttribute("sids", sids, REQUEST);
-             ctx.setAttribute("stars", stars, REQUEST);
         	 result.setURL("/jsp/testing/examTake.jsp"); 
          } else {
         	 Map<Integer, Collection<NavigationDataBean>> cRoutes = new HashMap<Integer, Collection<NavigationDataBean>>();
@@ -116,8 +100,12 @@ public class ExamCommand extends AbstractCommand {
         		 Question q = i.next();
            		 if (q instanceof RoutePlot) {
            			 RoutePlotQuestion rpq = (RoutePlotQuestion) q;
-           			 Collection<NavigationDataBean> cR = navdao.getRouteWaypoints(q.getCorrectAnswer(), rpq.getAirportD());
-           			 Collection<NavigationDataBean> aR = navdao.getRouteWaypoints(q.getAnswer(), rpq.getAirportD());
+           			 List<NavigationDataBean> cR = navdao.getRouteWaypoints(q.getCorrectAnswer(), rpq.getAirportD());
+           			 cR.add(0, new AirportLocation(rpq.getAirportD()));
+           			 cR.add(new AirportLocation(rpq.getAirportA()));
+           			 List<NavigationDataBean> aR = navdao.getRouteWaypoints(q.getAnswer(), rpq.getAirportD());
+           			 aR.add(0, new AirportLocation(rpq.getAirportD()));
+           			 aR.add(new AirportLocation(rpq.getAirportA()));
            			 cRoutes.put(Integer.valueOf(q.getNumber()), cR);
            			 aRoutes.put(Integer.valueOf(q.getNumber()), aR);
            		 }

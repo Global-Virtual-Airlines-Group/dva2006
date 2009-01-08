@@ -245,7 +245,10 @@ public class SetExamProfile extends DAO {
 				// Execute the batch transaction
 				_ps.executeBatch();
 				_ps.close();
-			} else if (qp instanceof RoutePlot) {
+			}
+			
+			// Write the route plot entries
+			if (qp instanceof RoutePlot) {
 				RoutePlot rp = (RoutePlot) qp;
 				prepareStatementWithoutLimits("REPLACE INTO exams.QUESTIONRPINFO (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)");
 				_ps.setInt(1, qp.getID());
@@ -255,48 +258,6 @@ public class SetExamProfile extends DAO {
 			}
 
 			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Writes a multiple-choice Examination Question Profile to the database. This call can handle both INSERT and
-	 * UPDATE operations. If an INSERT operation is performed, the auto-assigned database ID will be set in the bean.
-	 * @param mqp the QuestionProfile bean to write
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(MultiChoiceQuestionProfile mqp) throws DAOException {
-
-		boolean isNew = (mqp.getID() == 0);
-		try {
-			startTransaction();
-			write((QuestionProfile) mqp);
-
-			// If this is not a new profile, then delete the previous choices
-			if (!isNew) {
-				prepareStatementWithoutLimits("DELETE FROM exams.QUESTIONMINFO WHERE (ID=?)");
-				_ps.setInt(1, mqp.getID());
-				executeUpdate(0);
-			}
-
-			// Write question choices
-			prepareStatementWithoutLimits("INSERT INTO exams.QUESTIONMINFO (ID, SEQ, ANSWER) VALUES (?, ?, ?)");
-			_ps.setInt(1, mqp.getID());
-			int seq = 0;
-			for (Iterator<String> i = mqp.getChoices().iterator(); i.hasNext();) {
-				_ps.setInt(2, ++seq);
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-
-			// Execute the batch update
-			_ps.executeBatch();
-			_ps.close();
-
-			// Commit
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

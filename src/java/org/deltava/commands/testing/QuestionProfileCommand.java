@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -49,34 +49,45 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				if (qp instanceof MultipleChoice) {
 					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
 					mqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
-					mqp.setChoices(StringUtils.split(ctx.getParameter("answerChoices"), "\n"));
-				} else if (qp instanceof RoutePlot) {
-					RoutePlotQuestionProfile rqp = (RoutePlotQuestionProfile) qp;
-					rqp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-					rqp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-					rqp.setCorrectAnswer(ctx.getParameter("routeCodes"));
+					if (qp instanceof RoutePlot) {
+						RoutePlotQuestionProfile rqp = (RoutePlotQuestionProfile) qp;
+						rqp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+						rqp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+						rqp.setChoices(new HashSet<String>());
+						rqp.addChoice(ctx.getParameter("route1"));
+						rqp.addChoice(ctx.getParameter("route2"));
+						rqp.addChoice(ctx.getParameter("route3"));
+						rqp.addChoice(ctx.getParameter("route4"));
+						rqp.addChoice(ctx.getParameter("route5"));
+					} else
+						mqp.setChoices(StringUtils.split(ctx.getParameter("answerChoices"), "\n"));
 				} else
 					qp.setCorrectAnswer(ctx.getParameter("correct"));
 			} else {
 				// Check if we're creating a multiple-choice or route plot question
 				boolean isMC = Boolean.valueOf(ctx.getParameter("isMultiChoice")).booleanValue();
 				boolean isRP = Boolean.valueOf(ctx.getParameter("isRoutePlot")).booleanValue();
-				if (isMC) {
+				if (isRP) {
+					RoutePlotQuestionProfile rqp = new RoutePlotQuestionProfile(ctx.getParameter("question"));
+					rqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
+					rqp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+					rqp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+					rqp.addChoice(ctx.getParameter("route1"));
+					rqp.addChoice(ctx.getParameter("route2"));
+					rqp.addChoice(ctx.getParameter("route3"));
+					rqp.addChoice(ctx.getParameter("route4"));
+					rqp.addChoice(ctx.getParameter("route5"));
+					qp = rqp;
+				} else if (isMC) {
 					MultiChoiceQuestionProfile mqp = new MultiChoiceQuestionProfile(ctx.getParameter("question"));
 					mqp.setChoices(StringUtils.split(ctx.getParameter("answerChoices"), "\n"));
 					mqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
 					qp = mqp;
-				} else if (isRP) {
-					RoutePlotQuestionProfile rqp = new RoutePlotQuestionProfile(ctx.getParameter("question"));
-					rqp.setCorrectAnswer(ctx.getParameter("routeCodes"));
-					rqp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-					rqp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-					qp = rqp;
 				} else {
 					qp = new QuestionProfile(ctx.getParameter("question"));
 					qp.setCorrectAnswer(ctx.getParameter("correct"));
 				}
-				
+
 				qp.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			}
 
@@ -91,7 +102,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			Collection<String> examPools = ctx.getParameters("examNames");
 			if (examPools != null) {
 				Collection<ExamSubPool> pools = new LinkedHashSet<ExamSubPool>();
-				for (Iterator<String> i = examPools.iterator(); i.hasNext(); ) {
+				for (Iterator<String> i = examPools.iterator(); i.hasNext();) {
 					String poolName = i.next();
 					int pos = poolName.lastIndexOf('-');
 					if (pos == -1)
@@ -102,7 +113,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 						pools.add(esp);
 					}
 				}
-				
+
 				qp.setPools(pools);
 			} else
 				qp.setPools(new HashSet<ExamSubPool>());
@@ -152,7 +163,8 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		boolean doEdit = false; boolean isRP = false;
+		boolean doEdit = false;
+		boolean isRP = false;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -167,30 +179,38 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			access.validate();
 			if (!access.getCanEdit() && !access.getCanInclude())
 				throw securityException("Cannot modify Examination Question Profile");
-			
+
 			// If we cannot edit, we're just including
 			doEdit = access.getCanEdit();
 			ctx.setAttribute("access", access, REQUEST);
-			
+
 			// Determine if the user uses IATA/ICAO codes
 			boolean useIATA = (ctx.getUser().getAirportCodeType() == Airport.IATA);
 			ctx.setAttribute("useIATA", Boolean.valueOf(useIATA), REQUEST);
-			
+
 			// Get exam names
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			if (doEdit)
 				ctx.setAttribute("examNames", epdao.getAllSubPools(), REQUEST);
 			else
 				ctx.setAttribute("examNames", epdao.getSubPools(), REQUEST);
-			
+
 			// Set the center of the map
 			if (qp == null) {
 				ctx.setAttribute("mapCenter", SystemData.getAirport(ctx.getUser().getHomeAirport()), REQUEST);
 				ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
 				isRP = Boolean.valueOf(ctx.getParameter("isRP")).booleanValue();
-			} else if (qp instanceof RoutePlot) {
-				ctx.setAttribute("mapCenter", ((RoutePlot) qp).getMidPoint(), REQUEST);
+			} else if (qp instanceof RoutePlot)
 				isRP = true;
+			
+			// Load SID/STAR list if a route plot question
+			if (isRP && (qp != null)) {
+				RoutePlot rp = (RoutePlot) qp;
+				ctx.setAttribute("mapCenter", rp.getMidPoint(), REQUEST);
+				
+				GetNavRoute trdao = new GetNavRoute(con);
+				ctx.setAttribute("sids", trdao.getRoutes(rp.getAirportD().getICAO(), TerminalRoute.SID), REQUEST);
+				ctx.setAttribute("stars", trdao.getRoutes(rp.getAirportA().getICAO(), TerminalRoute.STAR), REQUEST);
 			}
 
 			// Save the profile in the request
@@ -204,14 +224,14 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Save airports if route plotting
 		if (isRP) {
 			Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 			airports.addAll(SystemData.getAirports().values());
 			ctx.setAttribute("airports", airports, REQUEST);
 		}
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
@@ -239,12 +259,30 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Check our access level
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();
-			
+
 			// Display route
 			if (qp instanceof RoutePlot) {
 				RoutePlotQuestionProfile rp = (RoutePlotQuestionProfile) qp;
+				List<String> wps = StringUtils.split(rp.getCorrectAnswer(), " ");
+				
 				GetNavRoute rtdao = new GetNavRoute(con);
-				Collection<NavigationDataBean> rt = rtdao.getRouteWaypoints(rp.getCorrectAnswer(), rp.getAirportD());
+				Collection<NavigationDataBean> rt = new LinkedHashSet<NavigationDataBean>();
+				rt.add(new AirportLocation(rp.getAirportD()));
+				if ((wps.size() > 1) && (wps.get(0).indexOf('.') != -1)) {
+					TerminalRoute sid = rtdao.getRoute(rp.getAirportD(), TerminalRoute.SID, wps.get(0));
+					if (sid != null) {
+						rt.addAll(sid.getWaypoints());
+						wps.remove(0);
+					}
+				}
+				
+				rt.addAll(rtdao.getRouteWaypoints(StringUtils.listConcat(wps, " "), rp.getAirportD()));
+				if ((wps.size() > 1) && (wps.get(wps.size() - 1).indexOf('.') != -1)) {
+					TerminalRoute star = rtdao.getRoute(rp.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1));
+					if (star != null)
+						rt.addAll(star.getWaypoints());
+				}
+				
 				rt.add(new AirportLocation(rp.getAirportA()));
 				ctx.setAttribute("route", rt, REQUEST);
 			}

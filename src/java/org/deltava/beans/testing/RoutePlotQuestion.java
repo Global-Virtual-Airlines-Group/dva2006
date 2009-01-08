@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.GeoLocation;
@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.*;
  * @since 2.3
  */
 
-public class RoutePlotQuestion extends Question implements RoutePlot {
+public class RoutePlotQuestion extends MultiChoiceQuestion implements RoutePlot {
 	
 	private Airport _airportD;
 	private Airport _airportA;
