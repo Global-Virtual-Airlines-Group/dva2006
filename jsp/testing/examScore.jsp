@@ -141,14 +141,16 @@ map.setCenter(mapC, getDefaultZoom(${q.distance}));
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 map.setMapType(G_PHYSICAL_MAP);
-<map:points var="arPoints" items="${answerRoute}" />
-<map:line var="arLine" src="arPoints" width="2" color="#4080AF" transparency="0.75" geodesic="true" />
 <map:points var="crPoints" items="${correctRoute}" />
-<map:line var="crLine" src="crPoints" width="2" color="#7F7F7F" transparency="0.5" geodesic="true" />
-map.addOverlay(arLine);
+<map:line var="crLine" src="crPoints" width="2" color="#AF7F7F" transparency="0.6" geodesic="true" />
 map.addOverlay(crLine);
+<c:if test="${fn:sizeof(answerRoute) > 2}">
+<map:points var="arPoints" items="${answerRoute}" />
+<map:line var="arLine" src="arPoints" width="2" color="#4080AF" transparency="0.8" geodesic="true" />
+map.addOverlay(arLine);
 <map:markers var="arMarkers" items="${answerRoute}" />
 addMarkers(map, 'arMarkers');
+</c:if>
 maps.push(map);
 </c:if></c:forEach>
 </script>

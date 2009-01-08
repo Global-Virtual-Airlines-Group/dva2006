@@ -44,7 +44,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Question Text</td>
- <td class="data bld">${question.question}</td>
+ <td class="data pri bld">${question.question}</td>
 </tr>
 <c:if test="${fn:isMultiChoice(question)}">
 <tr>
@@ -55,7 +55,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Correct Answer</td>
- <td class="data">${question.correctAnswer}</td>
+ <td class="data bld">${question.correctAnswer}</td>
 </tr>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
@@ -87,11 +87,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data">${question.airportA.name} 
+ <td class="data">${question.airportA.name} (<fmt:airport airport="${question.airportD}" />)</td> 
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="320" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="400" /></td>
 </tr>
 </c:if>
 <tr>

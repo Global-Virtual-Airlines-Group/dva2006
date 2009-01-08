@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -95,7 +95,9 @@ public class SetExam extends DAO {
 			}
 			
 			_ps.executeBatch();
-		} else if (q instanceof RoutePlotQuestion) {
+		} 
+		
+		if (q instanceof RoutePlotQuestion) {
 			RoutePlotQuestion rpq = (RoutePlotQuestion) q;
 			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONSRP (EXAM_ID, QUESTION_ID, AIRPORT_D, " + 
 					"AIRPORT_A) VALUES (?, ?, ?, ?)");

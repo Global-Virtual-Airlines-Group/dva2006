@@ -121,7 +121,7 @@ function updateMap(rpq)
 // Generate an XMLHTTP request
 var d = new Date();
 var xmlreq = GXmlHttp.create();
-xmlreq.open("POST", "examplot.ws?examID=" + rpq.examID + "&qID=" + rpq.idx + "&date=" + d.getTime(), true);
+xmlreq.open("POST", "examplot.ws?id=" + rpq.examID + "&q=" + rpq.idx + "&date=" + d.getTime(), true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 var txtbox = getElementsById('A' + rpq.idx);
 if (!txtbox) return false;
@@ -166,16 +166,7 @@ xmlreq.onreadystatechange = function() {
 }
 
 // Build parameters
-var f = document.forms[0];
-var sidC = eval('f.sid' + rpq.idx);
-var starC = eval('f.star' + rpq.idx);
-var params = ["id=" + rpq.examID, "q=" + rpq.idx, "airportD=" + rpq.airportD, "airportA=" + rpq.airportA];
-if ((sidC) && (sidC.selectedIndex > 0))
-	params.push("sid=" + sidC.options[sidC.selectedIndex].value);
-if ((starC) && (starC.selectedIndex > 0))
-	params.push("star=" + starC.options[starC.selectedIndex].value);
-params.push("route=" + escape(getAnswer(txtbox)));
-xmlreq.send(params.join('&'));
+xmlreq.send("route=" + escape(getAnswer(txtbox)));
 gaEvent('Examination', 'Route Plot');
 return true;
 }
