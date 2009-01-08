@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -6,13 +6,13 @@ import java.util.*;
 /**
  * A bean to store multiple-choice examination questions.
  * @author Luke
- * @version 1.0
+ * @version 2.3
  * @since 1.0
  */
 
 public class MultiChoiceQuestion extends Question implements MultipleChoice {
 
-	private Collection<String> _choices = new LinkedHashSet<String>();
+	private final Collection<String> _choices = new LinkedHashSet<String>();
 	
 	/**
 	 * Creates a new Question bean
@@ -25,11 +25,11 @@ public class MultiChoiceQuestion extends Question implements MultipleChoice {
 
 	/**
 	 * Returns the list of choices.
-	 * @return a Collection of choices
+	 * @return a List of choices
 	 * @see MultiChoiceQuestionProfile#getChoices()
 	 */
-	public Collection<String> getChoices() {
-		return _choices;
+	public List<String> getChoices() {
+		return new ArrayList<String>(_choices);
 	}
 
 	/**

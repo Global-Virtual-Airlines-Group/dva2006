@@ -1,17 +1,21 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 
 /**
- * A bean to store route plottin question data.
+ * A bean to store route plotting question data.
  * @author Luke
  * @version 2.3
  * @since 2.3
  */
 
-public class RoutePlotQuestionProfile extends QuestionProfile implements RoutePlot {
+public class RoutePlotQuestionProfile extends MultiChoiceQuestionProfile implements RoutePlot {
 	
 	private Airport _airportD;
 	private Airport _airportA;
@@ -84,6 +88,11 @@ public class RoutePlotQuestionProfile extends QuestionProfile implements RoutePl
 		q.setCorrectAnswer(getCorrectAnswer());
 		q.setAirportD(_airportD);
 		q.setAirportA(_airportA);
+		List<String> rndChoices = new ArrayList<String>(getChoices());
+		Collections.shuffle(rndChoices);
+		for (String c : rndChoices)
+			q.addChoice(c);
+		
 		return q;
 	}
 }

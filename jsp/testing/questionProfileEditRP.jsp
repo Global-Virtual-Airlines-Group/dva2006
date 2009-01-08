@@ -28,16 +28,105 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.question, 20, 'Question Text')) return false;
-if (!validateText(form.routeCodes, 5, 'Correct Answer to this Question')) return false;
+if (!validateText(form.route1, 3, 'First Route Choice')) return false;
+if (!validateText(form.route2, 3, 'Second Route Choice')) return false;
 if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
 if (!validateCombo(form.owner, 'Owner')) return false;
 if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
+if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
 
 setSubmit();
 disableButton('SaveButton');
 disableButton('DeleteButton');
+return true;
+}
+
+function massageRoute(txtbox)
+{
+var f = document.forms[0];
+if (txtbox == null) txtbox = f.route1;
+var wps = txtbox.value.split(' ');
+if ((txtbox.value.length < 2) || (wps.length < 3))
+	return false;
+
+//Get SID/STAR
+var sidC = f.sid;
+var starC = f.star;
+var sid = (sidC.selectedIndex == 0) ? null : sidC.options[sidC.selectedIndex].value;
+var star = (starC.selectedIndex == 0) ? null : starC.options[starC.selectedIndex].value;
+
+//Add the selected SID/STAR to the route
+if ((sid != null) && (wps[0].indexOf('.') == -1))
+	txtbox.value = sid + ' ' + txtbox.value;
+if ((star != null) && (wps[wps.length - 1].indexOf('.') == -1))
+	txtbox.value = txtbox.value + ' ' + star;
+
+return true;
+}
+
+function updateCorrect(txtbox)
+{
+var f = document.forms[0];
+
+// Update correct answer choices
+var combo = f.correctChoice;
+var oldAnswer = combo.selectedIndex;
+combo.options.length = 1;
+combo.options[0] = new Option('-');
+var hasAnswers = false; var maxAnswer = 0;
+for (var x = 1; x <= 5; x++) {
+	var rt = eval('f.route' + x + '.value');
+	if (rt.length > 2) {
+		var ofs = f.correctChoice.length;
+		combo.options.length = (ofs + 1);
+		combo.options[ofs] = new Option(rt);
+		maxAnswer = x;
+	}
+}
+
+// Hide unused answers
+for (var x = 1; x <= 5; x++) {
+	var rt = eval('f.route' + x + '.value');
+	var row = getElement('choice' + x);
+	if (x > (maxAnswer + 1))
+		row.style.display = 'none';
+	else
+		row.style.display = '';
+}
+
+// Show the correct answer
+var row = getElement('correctAnswerRow');
+row.style.display = (maxAnswer > 1) ? '' : 'none';
+combo.selectedIndex = (oldAnswer >= combo.options.length) ? 0 : oldAnswer;
+plotRouteMap(combo);
+return true;
+}
+
+function plotRouteMap(combo)
+{
+var f = document.forms[0];
+if (combo.selectedIndex == 0) {
+	map.clearOverlays();
+	return false;
+}
+
+// Create updated map of parameters for route plotting
+var opt = combo.options[combo.selectedIndex];
+var wps = opt.value.split(' ');
+if (wps[0].indexOf('.') != -1) {
+	setCombo(f.sid, wps[0]);
+	wps.splice(0, 1);
+}
+if (wps[wps.length -1].indexOf('.') != -1) {
+	setCombo(f.star, wps[wps.length - 1]);
+	wps.splice(wps.length - 1, 1); 
+}
+
+var params = getAJAXParams();
+params['route'] = wps.join(' ');
+plotMap(params);
 return true;
 }
 <c:if test="${question.size > 0}">
@@ -51,7 +140,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body onunload="GUnload()" onload="void updateCorrect()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -113,37 +202,49 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" options="${airports}" firstEntry="-" value="${question.airportD}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].sid, getValue(this), 'sid')" />
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="-" value="${question.airportD}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].sid, getValue(this), 'sid')" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${question.airportD.IATA}" onBlur="setAirport(document.forms[0].airportD, this.value); updateSIDSTAR(document.forms[0].sid, this.value, 'sid')" /></td>
 </tr>
-<c:if test="${empty question}">
 <tr>
  <td class="label">SID</td>
- <td class="data"><el:combo name="sid" size="1" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
+ <td class="data"><el:combo name="sid" size="1" options="${sids}" firstEntry="-" /></td>
 </tr>
-</c:if>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" options="${airports}" firstEntry="-" value="${question.airportA}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].star, getValue(this), 'star')" />
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="-" value="${question.airportA}" className="req" onChange="changeAirport(this); updateSIDSTAR(document.forms[0].star, getValue(this), 'star')" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${question.airportA.IATA}" onBlur="setAirport(document.forms[0].airportA, this.value); updateSIDSTAR(document.forms[0].star, this.value, 'star')" /></td>
 </tr>
-<c:if test="${empty question}">
 <tr>
  <td class="label">STAR</td>
- <td class="data"><el:combo name="star" size="1" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
+ <td class="data"><el:combo name="star" size="1" options="${stars}" firstEntry="-" /></td>
 </tr>
-</c:if>
-<tr>
- <td class="label" valign="top">Flight Route</td>
- <td class="data"><el:textbox name="route" idx="*" width="90%" className="req" height="2" onBlur="void plotMap()">${question.correctAnswer}</el:textbox></td>
+<tr id="choice1">
+ <td class="label">Choice #1</td>
+ <td class="data"><el:text name="route1" idx="*" size="128" max="224" onBlur="massageRoute(this); updateCorrect()" className="small req" value="${fn:get(question.choices, 0)}" /></td>
 </tr>
-<tr>
+<tr id="choice2" style="display:none;">
+ <td class="label">Choice #2</td>
+ <td class="data"><el:text name="route2" idx="*" size="128" max="224" onBlur="massageRoute(this); updateCorrect()" className="small req" value="${fn:get(question.choices, 1)}" /></td>
+</tr>
+<tr id="choice3" style="display:none;">
+ <td class="label">Choice #3</td>
+ <td class="data"><el:text name="route3" idx="*" size="128" max="224" onBlur="massageRoute(this); updateCorrect()" className="small" value="${fn:get(question.choices, 2)}" /></td>
+</tr>
+<tr id="choice4" style="display:none;">
+ <td class="label">Choice #4</td>
+ <td class="data"><el:text name="route4" idx="*" size="128" max="224" onBlur="massageRoute(this); updateCorrect()" className="small" value="${fn:get(question.choices, 3)}" /></td>
+</tr>
+<tr id="choice5" style="display:none;">
+ <td class="label">Choice #5</td>
+ <td class="data"><el:text name="route5" idx="*" size="128" max="224" onBlur="massageRoute(this); updateCorrect()" className="small" value="${fn:get(question.choices, 4)}" /></td>
+</tr>
+<tr id="correctAnswerRow" style="display:none;">
  <td class="label" valign="top">Correct Answer</td>
- <td class="data"><el:textbox name="routeCodes" idx="*" width="90%" height="2" readOnly="true">${question.correctAnswer}</el:textbox></td>
+ <td class="data"><el:combo name="correctChoice" onChange="void plotRouteMap(this)" idx="*" size="1" className="small req" options="${question.choices}" firstEntry="-" value="${question.correctAnswer}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="320" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="480" /></td>
 </tr>
 </el:table>
 
@@ -160,10 +261,10 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="request" />
 <script language="JavaScript" type="text/javascript">
 var doRunways = false;
 <map:point var="mapC" point="${mapCenter}" />
-<c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="request" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GSmallMapControl());
 map.addControl(new GMapTypeControl());

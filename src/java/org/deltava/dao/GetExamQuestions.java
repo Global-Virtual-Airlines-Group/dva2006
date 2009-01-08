@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -97,14 +97,14 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 
 			// Populate the Question Profile
 			QuestionProfile qp = null;
-			if (isMultiChoice)
-				qp = new MultiChoiceQuestionProfile(rs.getString(2));
-			else if (isRP) {
+			if (isRP) {
 				RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
 				rpqp.setAirportD(SystemData.getAirport(rs.getString(11)));
 				rpqp.setAirportA(SystemData.getAirport(rs.getString(12)));
 				qp = rpqp;
-			} else
+			} else if (isMultiChoice)
+				qp = new MultiChoiceQuestionProfile(rs.getString(2));
+			else
 				qp = new QuestionProfile(rs.getString(2));
 			
 			qp.setID(rs.getInt(1));
@@ -267,16 +267,15 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 			boolean isRP = (rs.getString(12) != null);
 
 			// Populate the Question Profile
-			// Populate the Question Profile
 			QuestionProfile qp = null;
-			if (isMultiChoice)
-				qp = new MultiChoiceQuestionProfile(rs.getString(2));
-			else if (isRP) {
+			if (isRP) {
 				RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
 				rpqp.setAirportD(SystemData.getAirport(rs.getString(11)));
-				rpqp.setAirportA(SystemData.getAirport(rs.getString(12)));
+				rpqp.setAirportA(SystemData.getAirport(rs.getString(12)));	
 				qp = rpqp;
-			} else
+			} else if (isMultiChoice)
+				qp = new MultiChoiceQuestionProfile(rs.getString(2));
+			else
 				qp = new QuestionProfile(rs.getString(2));
 			
 			qp.setID(rs.getInt(1));

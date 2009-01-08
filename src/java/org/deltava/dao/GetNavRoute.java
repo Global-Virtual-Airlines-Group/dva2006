@@ -155,17 +155,19 @@ public class GetNavRoute extends GetNavData {
 			return null;
 			
 		// Split the name
-		StringTokenizer tkns = new StringTokenizer(name, ".");
-		if (tkns.countTokens() != 3)
+		List<String> parts = StringUtils.split(name, ".");
+		if (parts.size() == 2)
+			parts.add("ALL");
+		else if (parts.size() != 3)
 			return null;
 
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME=?) "
 					+ "AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
 			_ps.setString(1, a.getICAO());
-			_ps.setString(2, tkns.nextToken().toUpperCase());
-			_ps.setString(3, tkns.nextToken().toUpperCase());
-			_ps.setString(4, tkns.nextToken().toUpperCase());
+			_ps.setString(2, parts.get(0).toUpperCase());
+			_ps.setString(3, parts.get(1).toUpperCase());
+			_ps.setString(4, parts.get(2).toUpperCase());
 
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
@@ -390,8 +392,12 @@ public class GetNavRoute extends GetNavData {
 			String wp = tkns.get(x);
 			
 			// Check if we're referencing an airway
-			Collection<Airway> aws = getAirways(wp); 
-			if (aws.size() > 0) {
+			Collection<Airway> aws = getAirways(wp);
+			if (wp.indexOf('.') != -1) {
+				TerminalRoute tr = getRoute(wp);
+				if (tr != null)
+					routePoints.addAll(tr.getWaypoints());	
+			} else if (aws.size() > 0) {
 				Airway aw = null;
 				
 				// Find the closest one if there's more than one
