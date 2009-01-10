@@ -1,15 +1,13 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.awt.*;
-import java.awt.image.*;
 
 import java.io.*;
 import java.sql.Connection;
 
-import javax.imageio.ImageIO;
-
 import org.deltava.beans.*;
+import org.deltava.beans.cooler.SignatureImage;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -71,12 +69,16 @@ public class SignatureUpdateCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
+			
+			// Load the signature image
+			SignatureImage si = new SignatureImage(p.getID());
+			si.load(imgData.getBuffer());
 
 			// Check the image dimensions
 			boolean isHR = ctx.isUserInRole("HR");
 			int maxX = SystemData.getInt("cooler.sig_max.x");
 			int maxY = SystemData.getInt("cooler.sig_max.y");
-			if (!isHR && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
+			if (!isHR && ((si.getWidth() > maxX) || (si.getHeight() > maxY))) {
 				ctx.release();
 				ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
 						+ info.getWidth() + "x" + info.getHeight());
@@ -98,19 +100,9 @@ public class SignatureUpdateCommand extends AbstractCommand {
 			// Write the data
 			SetSignatureImage wdao = new SetSignatureImage(con);
 			if (isAuth) {
-				BufferedImage img = ImageIO.read(imgData.getInputStream());
-				Graphics2D g = img.createGraphics();
-				g.setColor(Color.WHITE);
-				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
-				g.drawString("Approved Signature", img.getWidth() - 120, img.getHeight() - 4);
-				g.dispose();
-
-				// Create the new Image
-				ByteArrayOutputStream os = new ByteArrayOutputStream(16384);
-				ImageIO.write(img, "png", os);
-				img.flush();
-				p.load(os.toByteArray());
-				wdao.write(p, img.getWidth(), img.getHeight(), "png", isAuth);
+				si.watermark("Approved Signature", new Point(si.getWidth() - 120, si.getHeight() - 4));
+				p.load(si.getImage("png"));
+				wdao.write(p, si.getWidth(), si.getHeight(), "png", isAuth);
 			} else {
 				p.load(imgData.getBuffer());
 				wdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);

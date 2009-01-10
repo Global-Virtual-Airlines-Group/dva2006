@@ -76,18 +76,18 @@ public class SignatureImage extends DatabaseBlobBean {
 	}
 	
 	/**
-	 * 
-	 * @param txt
-	 * @param loc
+	 * Marks the signature with a watermark. 
+	 * @param txt the watermark text
+	 * @param loc the location of the text
 	 */
-	public void updateSignature(String txt, Point loc) {
+	public void watermark(String txt, Point loc) {
 		if (_isApproved || (_img == null)) 
 			return;
 		
 		// Get the color
 		int whiteCount = 0;
-		for (int x = loc.x; x < Math.max(_img.getWidth() - 1, (loc.x + (txt.length() * 16))); x++) {
-			for (int y = loc.y; y < Math.max(0, loc.y - 30); y--) {
+		for (int x = loc.x; x < Math.min(_img.getWidth() - 1, (loc.x + (txt.length() * 8))); x++) {
+			for (int y = loc.y; y > Math.max(0, loc.y - 30); y--) {
 				Color c = new Color(_img.getRGB(x, y));
 				if ((c.getBlue() > 192) && (c.getRed() > 192) && (c.getGreen() > 192))
 					whiteCount++;
@@ -95,12 +95,12 @@ public class SignatureImage extends DatabaseBlobBean {
 		}
 		
 		// Get the percentage that is white
-		float whitePct = whiteCount / (30 * txt.length() * 16);
+		float whitePct = whiteCount / (30.0f * txt.length() * 8);
 		
 		// Draw the text
 		Graphics2D g = _img.createGraphics();
-		g.setColor((whitePct < .75) ? Color.WHITE : Color.BLACK);
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
+		g.setColor((whitePct < .71) ? Color.WHITE : Color.BLACK);
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.275f));
 		g.drawString(txt, loc.x, loc.y);
 		g.dispose();
 		_isApproved = true;
