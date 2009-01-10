@@ -180,8 +180,10 @@ fi
 # Check HTTP health check
 if [ -f "/var/run/tomcat60.pid" ]
 then
-	wget -q -O /dev/null --spider --timeout=3 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.do
-	if [ "$?" -ne "0" ]
+	wget -nv -O /dev/null -o /tmp/healthcheck.log --timeout=3 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
+	errorLines=`grep ERROR /tmp/healthcheck.log | wc -l`
+	rm /tmp/healthcheck.log
+	if [ "$?" -ne "0" ] || [ $errorLines -ne "0" ]
 	then
 		echo "Site appears DOWN - Health Check failed"
 		killall -9 java
