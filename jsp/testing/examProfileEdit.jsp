@@ -86,7 +86,7 @@ return true;
 <tr>
  <td class="label" valign="top">Allowed Scorers</td>
  <td class="data"><i>Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</i><br /> 
-<el:check name="scorerIDs" width="170" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
+<el:check name="scorerIDs" width="170" cols="5" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
