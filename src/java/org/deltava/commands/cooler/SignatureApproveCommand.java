@@ -1,15 +1,12 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Point;
 
 import java.sql.Connection;
 
-import javax.imageio.ImageIO;
-
 import org.deltava.beans.Pilot;
+import org.deltava.beans.cooler.SignatureImage;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -45,28 +42,17 @@ public class SignatureApproveCommand extends AbstractCommand {
 			
 			// If not authorized, give it the "seal of approval"
 			if (!isAuth) {
-				InputStream in = new ByteArrayInputStream(idao.getSignatureImage(ctx.getID(), SystemData.get("airline.db")));
-				BufferedImage img = ImageIO.read(in);
-				Graphics2D g = img.createGraphics();
-				g.setColor(Color.WHITE);
-				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
-				g.drawString("Approved Signature", img.getWidth() - 120, img.getHeight() - 4);
-				g.dispose();
-
-				// Save the new Image
-				ByteArrayOutputStream os = new ByteArrayOutputStream(16384);
-				ImageIO.write(img, "png", os);
-				img.flush();
-				p.load(os.toByteArray());
+				SignatureImage si = new SignatureImage(p.getID());
+				si.load(idao.getSignatureImage(ctx.getID(), SystemData.get("airline.db")));
+				si.watermark("Approved Signature", new Point(si.getWidth() - 120, si.getHeight() - 4));
+				p.load(si.getImage("png"));
 				
 				// Save the data
 				SetSignatureImage swdao = new SetSignatureImage(con);
-				swdao.write(p, img.getWidth(), img.getHeight(), "png", isAuth);
+				swdao.write(p, si.getWidth(), si.getHeight(), "png", isAuth);
 			}
-		} catch (IOException ie) {
-			throw new CommandException(ie);
-		} catch (DAOException de) {
-			throw new CommandException(de);
+		} catch (Exception e) {
+			throw new CommandException(e);
 		} finally {
 			ctx.release();
 		}
