@@ -16,7 +16,9 @@
 <content:js name="acarsMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
+<content:browserFilter webKit="false" ie="true" mozilla="true">
 <content:sysdata var="tileHost" name="weather.tileHost" />
+</content:browserFilter>
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="2" />
 <map:vml-ie />
@@ -189,7 +191,6 @@ map.enableDoubleClickZoom();
 // map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'maptypechanged', updateMapText);
-GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 
 // Placeholder for route
 var routeData;
@@ -218,6 +219,7 @@ ffpos.apply(ffs);
 map.getContainer().appendChild(ffs);
 var ffl = document.getElementById("ffLabel");
 mapTextElements.push(ffl);
+GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 
 // Update text color
 GEvent.trigger(map, 'maptypechanged');
