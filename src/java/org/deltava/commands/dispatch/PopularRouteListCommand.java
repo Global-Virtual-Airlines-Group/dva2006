@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import org.deltava.commands.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display popular route pairs.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.2
  */
 
@@ -45,7 +45,7 @@ public class PopularRouteListCommand extends AbstractViewCommand {
 		}
 		
 		// Check for dispatch route creation access
-		DispatchRouteAccessControl access = new DispatchRouteAccessControl(ctx);
+		DispatchRouteAccessControl access = new DispatchRouteAccessControl(ctx, null);
 		access.validate();
 		ctx.setAttribute("access", access, REQUEST);
 		

@@ -66,6 +66,12 @@
  <td class="data" colspan="3"><fmt:text value="${route.comments}" /></td>
 </tr>
 </c:if>
+<c:if test="${!route.active}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data" colspan="3"><span class="warn bld caps">THIS ROUTE IS CURRENTLY DISABLED</span></td>
+</tr>
+</c:if>
 <tr>
  <td class="label" valign="top">Flight Route</td>
  <td class="data" colspan="3">${route.route}</td>
@@ -81,7 +87,9 @@
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td>&nbsp;<c:if test="${access.canDelete}"><el:cmdbutton url="dsproutedelete" link="${route}" label="DELETE DISPATCHER ROUTE" /></c:if></td>
+ <td>&nbsp;<c:if test="${access.canDelete}"><el:cmdbutton url="dsproutedelete" link="${route}" label="DELETE DISPATCHER ROUTE" /></c:if>
+<c:if test="${access.canDisable}"> <el:cmdbutton url="dsproutetoggle" link="${route}" label="${route.active ? 'DISABLE ROUTE' : 'ENABLE ROUTE'}" /></c:if>
+</td>
 </tr>
 </el:table>
 <content:copyright />

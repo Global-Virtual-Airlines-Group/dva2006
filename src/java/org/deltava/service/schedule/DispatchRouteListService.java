@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 2.2
  */
 
@@ -62,7 +62,7 @@ public class DispatchRouteListService extends WebService {
 			
 			// Load from the database
 			GetACARSRoute rdao = new GetACARSRoute(ctx.getConnection());
-			routes.addAll(rdao.getRoutes(aD, aA));
+			routes.addAll(rdao.getRoutes(aD, aA, false));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
