@@ -313,6 +313,10 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 <map:markers var="filedMarkers" items="${filedRoute}" />
 <map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.5" geodesic="true" />
 </c:if>
+<c:if test="${!empty onlineTrack}">
+<map:points var="onlinePoints" items="${onlineTrack}" />
+<map:line var="otRoute" src="onlinePoints" color="#C09F8F" width="3" transparency="0.55" geodesic="true" />
+</c:if>
 // Build the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl());
@@ -336,6 +340,9 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
+</c:if>
+<c:if test="${!empty onlineTrack}">
+map.addOverlay(otRoute);
 </c:if>
 <c:if test="${showGEarth}">
 // Google Earth plugin support
