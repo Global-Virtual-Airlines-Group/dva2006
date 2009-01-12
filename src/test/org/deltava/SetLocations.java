@@ -1,8 +1,6 @@
 // Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.*;
 import java.util.*;
 
@@ -14,7 +12,7 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.stats.GeocodeResult;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetGoogleGeocode;
+import org.deltava.dao.http.GetGoogleGeocode;
 
 public class SetLocations extends TestCase {
 	
@@ -56,25 +54,11 @@ public class SetLocations extends TestCase {
 			Map.Entry<Integer, GeoLocation> e = i.next();
 			GeoLocation loc = e.getValue();
 			
-			// Build the URL
-			StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&output=xml&q=");
-			buf.append(loc.getLatitude());
-			buf.append(',');
-			buf.append(loc.getLongitude());
-			buf.append("&key=");
-			buf.append("ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA");
-			
-			// Geolocate
-			URL url = new URL(buf.toString());
-			HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
-			urlcon.setConnectTimeout(2500);
-			urlcon.setReadTimeout(4500);
-			urlcon.setRequestMethod("GET");
-			
 			// Read via the DAO
 			try {
-				GetGoogleGeocode gcdao = new GetGoogleGeocode(urlcon.getInputStream());
-				List<GeocodeResult> locations = gcdao.getGeoData();
+				GetGoogleGeocode gcdao = new GetGoogleGeocode();
+				gcdao.setAPIKey("ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA");
+				List<GeocodeResult> locations = gcdao.getGeoData(loc.getLatitude(), loc.getLongitude());
 				if (!locations.isEmpty()) {
 					GeocodeResult gr = locations.get(0);
 					if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue()) {
