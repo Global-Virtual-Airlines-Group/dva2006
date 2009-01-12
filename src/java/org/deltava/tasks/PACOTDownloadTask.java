@@ -1,8 +1,7 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
-import javax.net.ssl.*;
 
 import java.util.Date;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.security.cert.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.*;
+import org.deltava.dao.http.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.http.SSLUtils;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -38,32 +37,27 @@ public class PACOTDownloadTask extends Task {
 	 */
 	protected void execute(TaskContext ctx) {
 		try {
-			HttpURLConnection con = null;
 			
 			// Create the URL connection to the PACOT Download side
 			URL url = new URL(SystemData.get("config.pacot.url"));
-			if ("https".equals(url.getProtocol())) {
-				con = (HttpsURLConnection) url.openConnection();
-
-				// Load a special keystore if necessary
-				String keyStore = SystemData.get("config.pacot.keystore");
-				if (keyStore != null) {
-					log.info("Loading custom SSL keystore " + keyStore);
-					X509Certificate cert = SSLUtils.load(keyStore);
-					SSLContext sslctx = SSLUtils.getContext(cert);
-					((HttpsURLConnection) con).setSSLSocketFactory(sslctx.getSocketFactory());
-				}
-			} else {
-				con = (HttpURLConnection) url.openConnection();				
-			}
 			
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicRoute.PACOT, new Date());
 			or.setSource(url.getHost());
+			
+			// Load a key store if necessary
+			String keyStore = SystemData.get("config.pacot.keystore");
 
-			// Get the DAO and the NAT data
+			// Get the DAO and the PACOT data
 			log.info("Loading PACOT track data from " + url.toString());
-			TrackDAO dao = new GetPACOTs(con.getInputStream());
+			GetPACOTs dao = new GetPACOTs(url.toExternalForm());
+			if (("https".equals(url.getProtocol())) && (keyStore != null)) {
+				log.info("Loading custom SSL keystore " + keyStore);
+				X509Certificate cert = SSLUtils.load(keyStore);
+				dao.setSSLContext(SSLUtils.getContext(cert));
+			}
+			
+			// Download the track
 			or.setRoute(dao.getTrackInfo());
 
 			// Write the route data to the database

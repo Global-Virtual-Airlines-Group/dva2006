@@ -1,5 +1,5 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.file;
+// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao.http;
 
 import java.io.*;
 
@@ -8,18 +8,21 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to loac Pacific Track data.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
 public class GetPACOTs extends DAO implements TrackDAO {
+	
+	private String _url;
 
 	/**
-	 * Initializes the DAO with a particular stream.
-	 * @param is the stream
+	 * Initializes the Data Access Object.
+	 * @param url the URL to fetch from
 	 */
-	public GetPACOTs(InputStream is) {
-		super(is);
+	public GetPACOTs(String url) {
+		super();
+		_url = url;
 	}
 
 	/**
@@ -28,10 +31,9 @@ public class GetPACOTs extends DAO implements TrackDAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public String getTrackInfo() throws DAOException {
-		
 		StringBuilder buf = new StringBuilder();
 		try {
-			BufferedReader br = getReader();
+			LineNumberReader br = new LineNumberReader(new InputStreamReader(getStream(_url)));
 			
 			// Read through the URL results
 			String data = br.readLine();
