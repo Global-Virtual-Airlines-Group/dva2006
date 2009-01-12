@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.navdata.NavigationDataBean;
 /**
  * A Data Access Object to write ACARS Dispatcher routes.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.2
  */
 
@@ -75,6 +75,23 @@ public class SetACARSRoute extends DAO {
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Marks a saved route as active or inactive.
+	 * @param id the route ID
+	 * @param isActive TRUE if active, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void activate(int id, boolean isActive) throws DAOException {
+		try {
+			prepareStatement("UPDATE acars.ROUTES SET ACTIVE=? WHERE (ID=?)");
+			_ps.setBoolean(1, isActive);
+			_ps.setInt(2, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
