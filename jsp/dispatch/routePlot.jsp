@@ -19,7 +19,9 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
+<content:browserFilter webKit="false" ie="true" mozilla="true">
 <content:sysdata var="tileHost" name="weather.tileHost" />
+</content:browserFilter>
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
@@ -173,18 +175,18 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(true, true); plotMap()" />
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" value="${airportD}" onChange="updateRoute(true, true); plotMap()" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); updateRoute(true); plotMap()" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(true); plotMap()" />
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airports}" firstEntry="-" value="${airportA}" onChange="updateRoute(true); plotMap()" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); updateRoute(true); plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
- <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" />
+ <td class="data"><el:combo name="airportL" size="1" idx="*" options="${airports}" firstEntry="-" onChange="updateRoute(); plotMap()" />
  <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportL, this.value); plotMap()" /></td>
 </tr>
 <tr>
@@ -199,7 +201,7 @@ return true;
  <td colspan="2" class="left">ROUTE SEARCH</td>
 </tr>
 <tr>
- <td class="label" valign="top">Saved Routes</td>
+ <td class="label">Saved Routes</td>
  <td class="data"><span id="routeList" style="visibility:hidden;"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="-" onChange="void setRoute(this)" /> </span>
  <el:box name="external" value="true" className="small" label="Search FlightAware route database" />
  <el:button ID="SearchButton" className="BUTTON" onClick="void searchRoutes()" label="SEARCH" /></td>
@@ -242,9 +244,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 // Load the airports
 var f = document.forms[0];
-updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
-updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA));
-updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
+alert(getValue(f.airportD));
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -273,6 +273,10 @@ map.getContainer().appendChild(cp);
 </c:if>
 // Update text color
 GEvent.trigger(map, 'maptypechanged');
+<c:if test="${!empty airportD}">
+// Initialize the map
+plotMap();
+</c:if>
 </script>
 </body>
 </map:xhtml>

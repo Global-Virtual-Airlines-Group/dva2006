@@ -87,7 +87,7 @@ return true;
 <!-- Routes -->
 <c:forEach var="route" items="${results}">
 <c:set var="author" value="${authors[route.authorID]}" scope="request" />
-<tr>
+<view:row entry="${route}">
  <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
  <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br />
 ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
@@ -97,11 +97,11 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
  <td class="small sec"><fmt:date date="${route.lastUsed}" fmt="d" default="N/A" /></td>
  <td class="small">${route.SID}</td>
  <td class="small">${route.STAR}</td>
-</tr>
+</view:row>
 <c:if test="${!empty route.route}">
-<tr>
+<view:row entry="${route}">
  <td colspan="8" class="left small">${route.route}</td>
-</tr>
+</view:row>
 </c:if>
 </c:forEach>
 </c:if>
@@ -112,7 +112,9 @@ ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </c:if>
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="8">&nbsp;</td>
+ <td colspan="8">&nbsp;
+<c:if test="${access.canCreate && (!empty airportD) && (!empty airportA)}">
+<el:cmdbutton url="dsprouteplot" linkID="0&airportD=${airportD.ICAO}&airportA=${airportA.ICAO}" label="PLOT NEW DISPATCH ROUTE" /></c:if></td>
 </tr>
 </view:table>
 </c:if>

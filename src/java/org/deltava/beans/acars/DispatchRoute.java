@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,17 +10,19 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store saved ACARS dispatch routes.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.0
  */
 
-public class DispatchRoute extends FlightRoute implements AuthoredBean {
+public class DispatchRoute extends FlightRoute implements AuthoredBean, ViewEntry {
 	
 	private int _authorID;
 	private Date _lastUsed;
 	
 	private Airline _a;
 	private Airport _airportL;
+	
+	private boolean _active;
 
 	private int _useCount;
 	private int _dspBuild;
@@ -142,6 +144,14 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean {
 	}
 	
 	/**
+	 * Returns if this route is active.
+	 * @return TRUE if active, otherwise FALSE
+	 */
+	public boolean getActive() {
+		return _active;
+	}
+	
+	/**
 	 * Updates the Airline.
 	 * @param a the Airline
 	 */
@@ -162,11 +172,23 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean {
 		_authorID = id;
 	}
 	
+	/**
+	 * Marks this route as active.
+	 * @param isActive TRUE if active, otherwise false 
+	 */
+	public void setActive(boolean isActive) {
+		_active = isActive;
+	}
+	
 	public String getComboName() {
 		return getRoute();
 	}
 	
 	public String getComboAlias() {
 		return getHexID();
+	}
+	
+	public String getRowClassName() {
+		return _active ? null : "warn";
 	}
 }
