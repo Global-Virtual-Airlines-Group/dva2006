@@ -12,7 +12,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -644,7 +644,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">Position: <b>");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
-		buf.append("</b><br /> Altitude: ");
+		buf.append("</b><br />Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
 		buf.append(" feet");
 		if ((_radarAlt > 0) && (_radarAlt < 2500)) {
