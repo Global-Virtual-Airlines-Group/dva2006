@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -39,10 +39,8 @@ public class GetServInfo extends DAO {
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
 	private static final Cache<NetworkStatus> _netCache = new ExpiringCache<NetworkStatus>(3, 43200); // 12 hours
-	private static final ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 240); // 4 minutes
+	private static final ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 180); // 3 minutes
 	
-	private boolean _useCache = true;
-
 	/**
 	 * Initializes the DAO with a particular stream.
 	 * @param is the stream to use
@@ -103,43 +101,6 @@ public class GetServInfo extends DAO {
 	}
 	
 	/**
-	 * Optionally disables the use of the DAO cache.
-	 * @param useCache TRUE if the cache should be used, otherwise FALSE
-	 */
-	public void setUseCache(boolean useCache) {
-		_useCache = useCache;
-	}
-	
-	/**
-	 * Returns cached network status data, if present.
-	 * @param net the network
-	 * @return a NetworkStatus bean, or null if not cached
-	 */
-	public static synchronized NetworkStatus getCachedStatus(OnlineNetwork net) {
-		NetworkStatus status =  _netCache.get(net);
-		if (status != null)
-			status.setCached();
-		
-		return status;
-	}
-	
-	/**
-	 * Returns cached network information data, if present.
-	 * @param net the network
-	 * @return a NetworkInfo bean, or null if not cached
-	 */
-	public static synchronized NetworkInfo getCachedInfo(OnlineNetwork net) {
-		NetworkInfo info = _infoCache.get(net, true);
-		if (info != null) {
-			info.setCached();
-			if (_infoCache.isExpired(net) && !info.getExpired())
-				info.setExpired();
-		}
-		
-		return info;
-	}
-
-	/**
 	 * Loads network data URLs.
 	 * @param net the network
 	 * @return a Network Status bean
@@ -149,10 +110,8 @@ public class GetServInfo extends DAO {
 
 		// Get from the cache if possible
 		NetworkStatus status = _netCache.get(net);
-		if ((status != null) && (_useCache)) {
-			status.setCached();
+		if (status != null)
 			return status;
-		}
 
 		try {
 			BufferedReader br = getReader();
@@ -189,10 +148,8 @@ public class GetServInfo extends DAO {
 
 		// Get from the cache if possible
 		NetworkInfo info = _infoCache.get(network);
-		if ((info != null) && (_useCache)) {
-			info.setCached();
+		if (info != null)
 			return info;
-		}
 		
 		try {
 			LineNumberReader br = getReader();

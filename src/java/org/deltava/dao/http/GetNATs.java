@@ -1,5 +1,5 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.file;
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
@@ -13,29 +13,22 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get North Atlantic Track data.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
 public class GetNATs extends DAO implements TrackDAO {
 	
+	private String _url;
 	private String _notam;
-
-	/**
-	 * Initializes the DAO with a particular stream.
-	 * @param is the stream
-	 */
-	public GetNATs(InputStream is) {
-		super(is);
-	}
 	
 	/**
-	 * Initializes the DAO with a pre-generated NOTAM. <i>This is typically used for data migration</i>
-	 * @param notam the NOTAM text
+	 * Initializes the Data Access Object.
+	 * @param url the URL to fetch from
 	 */
-	public GetNATs(String notam) {
-		super(null);
-		_notam = notam;
+	public GetNATs(String url) {
+		super();
+		_url = url;
 	}
 	
 	/**
@@ -44,11 +37,8 @@ public class GetNATs extends DAO implements TrackDAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public String getTrackInfo() throws DAOException {
-		if (_notam != null)
-			return _notam;
-		
 		try {
-			BufferedReader br = getReader();
+			LineNumberReader br = new LineNumberReader(new InputStreamReader(getStream(_url)));
 			StringBuilder buf = new StringBuilder();
 
 			// Read through the URL results

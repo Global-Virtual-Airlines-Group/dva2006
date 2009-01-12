@@ -1,5 +1,5 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.file;
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
@@ -19,29 +19,44 @@ import org.deltava.util.StringUtils;
  * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
  * URL is http://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 2.3
  */
 
 public class GetGoogleGeocode extends DAO {
 	
+	private String _apiKey;
+	
+	private InputStream getStream(double lat, double lng) throws IOException {
+		StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&output=xml&q=");
+		buf.append(lat);
+		buf.append(',');
+		buf.append(lng);
+		buf.append("&key=");
+		buf.append(_apiKey);
+		return getStream(buf.toString());
+	}
+	
 	/**
-	 * Initializes the Data Access Object.
-	 * @param is the InputStream to use
+	 * Sets the Google Maps API key to use for this request.
+	 * @param key the API key
 	 */
-	public GetGoogleGeocode(InputStream is) {
-		super(is);
+	public void setAPIKey(String key) {
+		_apiKey = key;
 	}
 
 	/**
 	 * Retrieves the Geocoding results for the location.
+	 * @param lat the Latitude of the location in degrees
+	 * @param lng the Longitude of the location in degrees
+	 * @return a List of GeocodeResult beans
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public List<GeocodeResult> getGeoData() throws DAOException {
+	public List<GeocodeResult> getGeoData(double lat, double lng) throws DAOException {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			doc = builder.build(getStream());
+			doc = builder.build(getStream(lat, lng));
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
@@ -61,9 +76,7 @@ public class GetGoogleGeocode extends DAO {
 				
 				// Get the lat/lon
 				StringTokenizer tk = new StringTokenizer(pe.getChildTextTrim("coordinates", pe.getNamespace()), ",");
-				double lng = StringUtils.parse(tk.nextToken(), 0.0d);
-				double lat = StringUtils.parse(tk.nextToken(), 0.0d);
-				GeoPosition pos = new GeoPosition(lat, lng);
+				GeoPosition pos = new GeoPosition(StringUtils.parse(tk.nextToken(), 0.0d), StringUtils.parse(tk.nextToken(), 0.0d));
 				
 				// Create the result
 				GeocodeResult gr = new GeocodeResult(pos, GeocodeResult.GeocodeAccuracy.values()[accuracy]);

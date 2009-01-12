@@ -1,9 +1,8 @@
-// Copyright 2002, 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2002, 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
 import java.util.*;
-import javax.net.ssl.*;
 import java.security.cert.*;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.*;
+import org.deltava.dao.http.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.http.SSLUtils;
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Oceanic Track data.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -41,35 +40,27 @@ public class NATDownloadTask extends Task {
 	 */
 	protected void execute(TaskContext ctx) {
 		try {
-			HttpURLConnection sslcon = null;
-			
-			// Create the URL connection to the NAT Download side
 			URL url = new URL(SystemData.get("config.nat.url"));
-			if ("https".equals(url.getProtocol())) {
-				sslcon = (HttpsURLConnection) url.openConnection();
-
-				// Load a special keystore if necessary
-				String keyStore = SystemData.get("config.nat.keystore");
-				if (keyStore != null) {
-					log.info("Loading custom SSL keystore " + keyStore);
-					X509Certificate cert = SSLUtils.load(keyStore);
-					SSLContext sslctx = SSLUtils.getContext(cert);
-					((HttpsURLConnection) sslcon).setSSLSocketFactory(sslctx.getSocketFactory());
-				}
-			} else
-				sslcon = (HttpURLConnection) url.openConnection();				
 			
 			// Build the oceanic route bean
 			OceanicNOTAM or = new OceanicNOTAM(OceanicRoute.NAT, new Date());
 			or.setDate(new Date());
 			or.setSource(url.getHost());
+			
+			// Load a key store if necessary
+			String keyStore = SystemData.get("config.nat.keystore");
 
-			// Get the DAO and the NAT data
+			// Get the DAO
 			log.info("Loading NAT track data from " + url.toString());
-			GetNATs dao = new GetNATs(sslcon.getInputStream());
-			or.setRoute(dao.getTrackInfo());
+			GetNATs dao = new GetNATs(url.toExternalForm());
+			if (("https".equals(url.getProtocol())) && (keyStore != null)) {
+				log.info("Loading custom SSL keystore " + keyStore);
+				X509Certificate cert = SSLUtils.load(keyStore);
+				dao.setSSLContext(SSLUtils.getContext(cert));
+			}
 			
 			// Get the waypoint data
+			or.setRoute(dao.getTrackInfo());
 			Map<String, Collection<String>> trackData = dao.getWaypoints();
 			Collection<String> waypointIDs = new HashSet<String>();
 			for (Iterator<Collection<String>> i = trackData.values().iterator(); i.hasNext(); ) {
