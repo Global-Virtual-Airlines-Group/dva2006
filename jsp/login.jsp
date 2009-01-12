@@ -22,6 +22,12 @@ if (!validateText(form.pwd, 3, 'Password')) return false;
 <c:if test="${!empty dupeUsers}">
 if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;
 </c:if>
+if (form.jsOK.value.length == 0) {
+	form.jsOK.value = 'true';
+	f.screenX.value = screen.width;
+	f.screenY.value = screen.height;
+}
+
 setSubmit();
 disableButton('SubmitButton');
 return true;
