@@ -90,11 +90,6 @@ return true;
 <tr>
  <td colspan="3"><map:div ID="googleMap" x="100%" y="600" /></td>
 </tr>
-<c:if test="${netInfo.cached}">
-<tr class="title mid caps">
- <td colspan="3">USING CACHED DATA</td>
-</tr>
-</c:if>
 </el:table>
 </el:form>
 <br />
@@ -123,7 +118,7 @@ var selectedRoute;
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-map.setMapType(G_SATELLITE_MAP);
+map.setMapType(G_PHYSICAL_MAP);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>
