@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -9,21 +9,23 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
-import org.deltava.util.*;
+import org.deltava.dao.http.GetVRouteData;
 
 import org.deltava.security.command.*;
 
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -283,7 +285,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Check our access
 				ac = new PIREPAccessControl(ctx, fr);
 				ac.validate();
-				if (!ac.getCanEdit())
+				if (!ac.getCanEdit() || (usr.getACARSRestriction() == Pilot.ACARS_ONLY))
 					throw securityException("Not Authorized");
 
 				// Save the pilot info/PIREP in the request
@@ -372,6 +374,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			FlightReport fr = dao.get(ctx.getID());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
+			
+			// Get the pilot
+			Pilot p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			if (p == null)
+				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
@@ -492,6 +499,27 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 			}
 			
+			// If it's not ACARS, try and find VRoute data for it
+			if (!isACARS && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT)) {
+				GetOnlineTrack tdao = new GetOnlineTrack(con);
+				Collection<PositionData> pd = tdao.get(fr.getID());
+				long age = (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
+				if (pd.isEmpty() && fr.hasAttribute(FlightReport.ATTR_VATSIM) && (age < 86000)) {
+					GetVRouteData vddao = new GetVRouteData();
+					pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
+					
+					// Save the positions if we get them
+					if (!pd.isEmpty() && (age > 300)) {
+						SetOnlineTrack twdao = new SetOnlineTrack(con);
+						twdao.write(pd);
+					}
+				}
+				
+				// Write the positions
+				if (mapType == Pilot.MAP_GOOGLE)
+					ctx.setAttribute("onlineTrack", pd, REQUEST);
+			}
+			
 			// Display route for non-ACARS flights in Google Maps
 			if (!isACARS && (mapType != Pilot.MAP_FALLINGRAIN))
 				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
@@ -503,7 +531,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Get the pilot/PIREP beans in the request
-			ctx.setAttribute("pilot", pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
+			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
