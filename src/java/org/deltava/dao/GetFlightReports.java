@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -585,6 +585,7 @@ public class GetFlightReports extends DAO {
 				ap.setTime(4, rs.getInt(48));
 				ap.setFDE(rs.getString(49));
 				ap.setAircraftCode(rs.getString(50));
+				ap.setHasReload(rs.getBoolean(51));
 			}
 
 			// Add the flight report to the results
