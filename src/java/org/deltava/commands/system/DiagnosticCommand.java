@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -7,8 +7,6 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.servinfo.*;
 import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.commands.*;
@@ -22,7 +20,6 @@ import org.deltava.taskman.TaskScheduler;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
-import org.deltava.util.servinfo.ServInfoLoader;
 
 import org.gvagroup.acars.*;
 import org.gvagroup.common.SharedData;
@@ -30,7 +27,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -106,24 +103,6 @@ public class DiagnosticCommand extends AbstractCommand {
 		if (!pools.isEmpty()) {
 			ctx.setAttribute("appNames", appNames, REQUEST);
 			ctx.setAttribute("jdbcPools", pools, REQUEST);
-		}
-		
-		// Get ServInfo statistics
-		List networks = (List) SystemData.getObject("online.networks");
-		if (!CollectionUtils.isEmpty(networks)) {
-			Collection<NetworkStatus> netInfo = new TreeSet<NetworkStatus>();
-			for (Iterator i = networks.iterator(); i.hasNext(); ) {
-				OnlineNetwork net = OnlineNetwork.valueOf((String) i.next());
-				NetworkStatus status = GetServInfo.getCachedStatus(net);
-				if (status != null)
-					netInfo.add(status);
-			}
-			
-			ctx.setAttribute("servInfoStatus", netInfo, REQUEST);
-			
-			// Dump the Servinfo thread map after cleaning up
-			ServInfoLoader.isLoading(null);
-			ctx.setAttribute("servInfoLoaders", ServInfoLoader.getLoaders(), REQUEST);
 		}
 		
 		// Get DAO cache properties
