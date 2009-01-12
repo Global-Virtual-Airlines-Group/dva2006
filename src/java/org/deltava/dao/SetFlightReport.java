@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -319,8 +319,8 @@ public class SetFlightReport extends DAO {
 						+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "
 						+ "TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, "
 						+ "LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
-						+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			// Since we are writing to multiple tables, this is designd as a transaction
@@ -360,6 +360,7 @@ public class SetFlightReport extends DAO {
 			_ps.setInt(26, afr.getTime(4));
 			_ps.setString(27, afr.getFDE());
 			_ps.setString(28, afr.getAircraftCode());
+			_ps.setBoolean(29, afr.getHasReload());
 
 			// Write to the database
 			executeUpdate(1);
