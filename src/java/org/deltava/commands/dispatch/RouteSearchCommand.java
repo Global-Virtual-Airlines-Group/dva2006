@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -11,12 +11,14 @@ import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.DispatchRouteAccessControl;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search saved Dispatch routes. 
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.2
  */
 
@@ -41,7 +43,7 @@ public class RouteSearchCommand extends AbstractCommand {
 			if (ctx.getParameter("airportD") != null) {
 				Airport airportD = SystemData.getAirport(ctx.getParameter("airportD"));
 				Airport airportA = SystemData.getAirport(ctx.getParameter("airportA"));
-				ctx.setAttribute("results", dao.getRoutes(airportD, airportA), REQUEST);
+				ctx.setAttribute("results", dao.getRoutes(airportD, airportA, false), REQUEST);
 				ctx.setAttribute("airportD", airportD, REQUEST);
 				ctx.setAttribute("airportA", airportA, REQUEST);
 				
@@ -62,6 +64,11 @@ public class RouteSearchCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Calculate access
+		DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

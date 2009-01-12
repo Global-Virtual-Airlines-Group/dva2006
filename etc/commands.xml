@@ -1788,7 +1788,13 @@
 	<command id="dsproutesave">
 		<name>Dispatch Route Save</name>	
 		<class>org.deltava.commands.dispatch.RouteSaveCommand</class>
-		<roles>HR,Route</roles>
+		<roles>Route</roles>
+	</command>
+
+	<command id="dsproutetoggle">
+		<name>Dispatch Route Toggle</name>
+		<class>org.deltava.commands.dispatch.RouteToggleCommand</class>
+		<roles>Route</roles>
 	</command>
 
 	<command id="dsproutedelete">

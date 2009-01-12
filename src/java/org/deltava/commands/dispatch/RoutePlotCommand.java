@@ -1,10 +1,12 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
 
 import org.deltava.beans.Person;
 import org.deltava.beans.schedule.Airport;
+
+import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -16,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.2
  */
 
@@ -37,7 +39,7 @@ public class RoutePlotCommand extends AbstractCommand {
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		
 		// Check for dispatch route creation access
-		DispatchRouteAccessControl access = new DispatchRouteAccessControl(ctx);
+		DispatchRouteAccessControl access = new DispatchRouteAccessControl(ctx, null);
 		access.validate();
 		if (!access.getCanCreate())
 			throw securityException("Cannot plot Dispatch routes");
@@ -47,6 +49,11 @@ public class RoutePlotCommand extends AbstractCommand {
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		ctx.setAttribute("airportD", aD, REQUEST);
 		ctx.setAttribute("airportA", aA, REQUEST);
+		
+		// Get all airports
+		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+		airports.addAll(SystemData.getAirports().values());
+		ctx.setAttribute("airports", airports, REQUEST);
 			
 		// Load the airlines
 		if ((aD != null) && (aA != null)) {
