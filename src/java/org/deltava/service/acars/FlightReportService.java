@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle posting of offline ACARS Flight Reports.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -179,6 +179,7 @@ public class FlightReportService extends WebService {
 		afr.setSubmittedOn(afr.getDate());
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
+		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
 		afr.setRemarks("OFFLINE PIREP: " + inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());

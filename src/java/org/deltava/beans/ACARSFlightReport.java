@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -38,6 +38,8 @@ public class ACARSFlightReport extends FlightReport {
     
     private String _fde;
     private String _code;
+    
+    private boolean _hasReload;
     
     /**
      * Creates a new ACARS Flight Report object with a given flight.
@@ -323,6 +325,15 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Returns if the flight was reloaded by ACARS mid-flight.
+     * @return TRUE if reloaded, otherwise FALSE
+     * @see ACARSFlightReport#setHasReload(boolean)
+     */
+    public boolean getHasReload() {
+    	return _hasReload;
+    }
+    
+    /**
      * Updates the start time of the flight.
      * @param dt the date/time the flight started
      * @see ACARSFlightReport#getEndTime()
@@ -536,5 +547,14 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setAircraftCode(String code) {
     	_code = code;
+    }
+    
+    /**
+     * Sets if the flight was restored by ACARS mid-flight.
+     * @param hasReload TRUE if a reload occured, otherwise FALSE
+     * @see ACARSFlightReport#getHasReload()
+     */
+    public void setHasReload(boolean hasReload) {
+    	_hasReload = hasReload;
     }
 } 

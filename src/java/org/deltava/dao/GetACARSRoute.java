@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.0
  */
 
@@ -146,20 +146,26 @@ public class GetACARSRoute extends DAO {
 	 * Loads all saved routes between two Airports.
 	 * @param aD the departure Airport
 	 * @param aA the arrival Airport
+	 * @param activeOnly TRUE if only active routes should be returned, otherwise FALSE
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<DispatchRoute> getRoutes(Airport aD, Airport aA) throws DAOException {
+	public Collection<DispatchRoute> getRoutes(Airport aD, Airport aA, boolean activeOnly) throws DAOException {
 		
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.ROUTES WHERE ");
-		if (aD != null) {
-			sqlBuf.append("(AIRPORT_D=?)");
-			if (aA != null)
+		Collection<String> params = new ArrayList<String>();
+		if (aD != null)
+			params.add("(AIRPORT_D=?)");
+		if (aA != null) 
+			params.add("(AIRPORT_A=?)");
+		if (activeOnly)
+			params.add("(ACTIVE=?)");
+		for (Iterator<String> i = params.iterator(); i.hasNext(); ) {
+			sqlBuf.append(i.next());
+			if (i.hasNext())
 				sqlBuf.append(" AND ");
 		}
-		if (aA != null) 
-			sqlBuf.append("(AIRPORT_A=?)");
 		sqlBuf.append(" ORDER BY USED DESC");
 		
 		try {
@@ -169,6 +175,8 @@ public class GetACARSRoute extends DAO {
 				_ps.setString(++param, aD.getIATA());
 			if (aA != null)
 				_ps.setString(++param, aA.getIATA());
+			if (activeOnly)
+				_ps.setBoolean(++param, true);
 			
 			// Execute the Query and load routes
 			Collection<DispatchRoute> results = execute();
@@ -191,11 +199,12 @@ public class GetACARSRoute extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT R.ID, GROUP_CONCAT(RW.CODE ORDER BY RW.SEQ SEPARATOR ?) "
 					+ "AS WPS FROM acars.ROUTES R LEFT JOIN acars.ROUTE_WP RW ON (R.ID=RW.ID) WHERE "
-					+ "(R.AIRPORT_D=?) AND (R.AIRPORT_A=?) GROUP BY R.ID HAVING (WPS=?) LIMIT 1");
+					+ "(R.AIRPORT_D=?) AND (R.AIRPORT_A=?) AND (R.ACTIVE=?) GROUP BY R.ID HAVING (WPS=?) LIMIT 1");
 			_ps.setString(1, " ");
 			_ps.setString(2, aD.getIATA());
 			_ps.setString(3, aA.getIATA());
-			_ps.setString(4, route);
+			_ps.setBoolean(4, true);
+			_ps.setString(5, route);
 			
 			// Do the query
 			ResultSet rs = _ps.executeQuery();
@@ -227,12 +236,13 @@ public class GetACARSRoute extends DAO {
 			rp.setCreatedOn(rs.getTimestamp(7));
 			rp.setLastUsed(rs.getTimestamp(8));
 			rp.setUseCount(rs.getInt(9));
-			rp.setSID(rs.getString(10));
-			rp.setSTAR(rs.getString(11));
-			rp.setCruiseAltitude(rs.getString(12));
-			rp.setDispatchBuild(rs.getInt(13));
-			rp.setComments(rs.getString(14));
-			rp.setRoute(rs.getString(15));
+			rp.setActive(rs.getBoolean(10));
+			rp.setSID(rs.getString(11));
+			rp.setSTAR(rs.getString(12));
+			rp.setCruiseAltitude(rs.getString(13));
+			rp.setDispatchBuild(rs.getInt(14));
+			rp.setComments(rs.getString(15));
+			rp.setRoute(rs.getString(16));
 			results.add(rp);
 		}
 		
