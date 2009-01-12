@@ -108,7 +108,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airlines</td>
- <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${(empty event) ? airlines : event.airlines}" /></td>
+ <td class="data"><el:check name="airlines" width="175" options="${airlines}" className="req" checked="${(empty event) ? airlines : event.airlines}" /></td>
 </tr>
 <tr>
  <td class="label">Signup URL</td>
