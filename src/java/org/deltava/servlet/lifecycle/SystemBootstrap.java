@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -8,7 +8,6 @@ import javax.servlet.*;
 
 import org.apache.log4j.*;
 
-import org.deltava.beans.OnlineNetwork;
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 import org.deltava.jdbc.*;
@@ -20,7 +19,6 @@ import org.deltava.taskman.*;
 
 import org.deltava.util.*;
 import org.deltava.util.ipc.IPCDaemon;
-import org.deltava.util.servinfo.ServInfoLoader;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.SharedData;
@@ -28,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -182,20 +180,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			log.error("Error retrieving data - " + ex.getMessage(), ex);
 		} finally {
 			_jdbcPool.release(c);
-		}
-
-		// Get online network information
-		List networks = (List) SystemData.getObject("online.networks");
-		for (Iterator i = networks.iterator(); i.hasNext();) {
-			OnlineNetwork network = OnlineNetwork.valueOf((String) i.next());
-			log.info("Loading " + network + " data");
-
-			// Load the data
-			ServInfoLoader loader = new ServInfoLoader(network);
-			Thread t = new Thread(loader, network + " ServInfo Loader");
-			t.setDaemon(true);
-			t.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 1));
-			ServInfoLoader.addLoader(network, t);
 		}
 
 		// Start the mailer/IPC daemons

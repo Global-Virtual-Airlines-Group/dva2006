@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Airline users on VATSIM/IVAO for ServInfo.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -54,9 +54,13 @@ public class DataService extends WebService {
 		Collection<Pilot> users = new ArrayList<Pilot>();
 		try {
 			for (int x = 0; x < NETWORKS.length; x++) {
-				NetworkInfo info = GetServInfo.getCachedInfo(NETWORKS[x]);
-				if (info != null)
-					users.addAll(combineUsers(info, pilots));
+				File f = new File(SystemData.get("online." + NETWORKS[x].toString().toLowerCase() + ".local.info"));
+				if (f.exists()) {
+					GetServInfo sidao = new GetServInfo(new FileInputStream(f));
+					NetworkInfo info = sidao.getInfo(NETWORKS[x]);
+					if (info != null)
+						users.addAll(combineUsers(info, pilots));
+				}
 			}
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());

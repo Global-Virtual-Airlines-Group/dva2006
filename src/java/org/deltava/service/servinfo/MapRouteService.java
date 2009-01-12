@@ -1,8 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
+import java.io.*;
 import java.util.*;
-import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -45,7 +45,14 @@ public class MapRouteService extends WebService {
 		OnlineNetwork net = OnlineNetwork.valueOf(networkName.toUpperCase());
 
 		// Get the network info from the cache
-		NetworkInfo info = GetServInfo.getCachedInfo(net);
+		NetworkInfo info = null;
+		try {
+			File f = new File(SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
+			GetServInfo sidao = new GetServInfo(new FileInputStream(f));
+			info = sidao.getInfo(net);
+		} catch (Exception e) {
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 
 		// Get the Pilot
 		Pilot p = info.getPilot(ctx.getParameter("id"));

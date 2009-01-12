@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -11,17 +11,16 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
-public class NetworkInfo implements java.io.Serializable, Cacheable {
+public class NetworkInfo implements Cacheable {
 
     private OnlineNetwork _net;
     private int _version;
     private Date _validDate;
     
-    private boolean _isCached;
     private boolean _isExpired;
     
     private final Map<String, Pilot> _pilots = new TreeMap<String, Pilot>();
@@ -44,15 +43,6 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      */
     public int getVersion() {
         return _version;
-    }
-    
-    /**
-     * Returns if this data was cached by the DAO.
-     * @return TRUE if the data is cached, otherwise FALSE
-     * @see NetworkInfo#setCached()
-     */
-    public boolean getCached() {
-    	return _isCached;
     }
     
     /**
@@ -255,14 +245,6 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      */
     public Controller getController(String callsign) {
        return _controllers.get(callsign);
-    }
-    
-    /**
-	 * Marks this data as cached. <i>This flag cannot be cleared</i>.
-	 * @see NetworkInfo#getCached()
-	 */
-    public void setCached() {
-    	_isCached = true;
     }
     
     /**

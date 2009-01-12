@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store VATSIM/IVAO-specific ServInfo properties.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -19,7 +19,6 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	private final List<NetworkDataURL> _dataURLs = new ArrayList<NetworkDataURL>();
 	private NetworkDataURL _local;
 	private String _msg;
-	private boolean _isCached;
 
 	/**
 	 * Initializes the bean.
@@ -42,14 +41,6 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	 */
 	public NetworkStatus(OnlineNetwork network) {
 		this(network, null);
-	}
-
-	/**
-	 * Returns if this ServInfo data was cached by the DAO.
-	 * @return TRUE if the data is cached, otherwise FALSE
-	 */
-	public boolean getCached() {
-		return _isCached;
 	}
 
 	/**
@@ -116,14 +107,6 @@ public class NetworkStatus implements Cacheable, Comparable<NetworkStatus> {
 	 */
 	public void setMessage(String msg) {
 		_msg = msg;
-	}
-
-	/**
-	 * Marks this data as cached.
-	 * @see NetworkStatus#getCached()
-	 */
-	public void setCached() {
-		_isCached = true;
 	}
 
 	/**
