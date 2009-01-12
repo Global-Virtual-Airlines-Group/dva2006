@@ -1,7 +1,6 @@
 // Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
-import java.net.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -13,7 +12,7 @@ import org.deltava.beans.stats.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetGoogleGeocode;
+import org.deltava.dao.http.GetGoogleGeocode;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -21,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -85,25 +84,11 @@ public class PilotLocationCommand extends AbstractCommand {
 						if (apiKey == null)
 							apiKey = (String) apiKeys.values().iterator().next();
 
-						// Geocode the location
-						StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&output=xml&q=");
-						buf.append(loc.getLatitude());
-						buf.append(',');
-						buf.append(loc.getLongitude());
-						buf.append("&key=");
-						buf.append(apiKey);
-						
 						// Connect and get the data
 						try {
-							URL url = new URL(buf.toString());
-							HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
-							urlcon.setConnectTimeout(2500);
-							urlcon.setReadTimeout(4500);
-							urlcon.setRequestMethod("GET");
-							
-							// Read via the DAO
-							GetGoogleGeocode gcdao = new GetGoogleGeocode(urlcon.getInputStream());
-							List<GeocodeResult> locations = gcdao.getGeoData();
+							GetGoogleGeocode gcdao = new GetGoogleGeocode();
+							gcdao.setAPIKey(apiKey);
+							List<GeocodeResult> locations = gcdao.getGeoData(loc.getLatitude(), loc.getLongitude());
 							if (!locations.isEmpty()) {
 								GeocodeResult gr = locations.get(0);
 								if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue())
