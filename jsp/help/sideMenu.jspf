@@ -97,6 +97,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="roster">PILOT ROSTER</el:cmd></td>
 </tr>
+<content:filter roles="HR,PIREP,Examination">
+<tr class="MenuItem">
+ <td><el:cmd url="pilotsearch">PILOT SEARCH</el:cmd></td>
+</tr>
+</content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="lroster">VIEW LOGBOOKS</el:cmd></td>
 </tr>
