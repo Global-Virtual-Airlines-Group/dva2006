@@ -78,9 +78,6 @@ return true;
   <td colspan="2">${ctr.ratingName}</td>
 </view:row>
 </c:forEach>
-<tr class="title left caps">
- <td colspan="7">&nbsp;<c:if test="${netInfo.cached}">USING CACHED DATA</c:if></td>
-</tr>
 </view:table>
 </el:form>
 <content:copyright />
