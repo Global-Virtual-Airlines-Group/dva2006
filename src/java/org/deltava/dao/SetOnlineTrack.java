@@ -43,19 +43,20 @@ public class SetOnlineTrack extends DAO {
 	}
 	
 	/**
-	 * Writes position records to the database.
+	 * Writes position records to the database and links them to a Flight Report.
+	 * @param pirepID the Flight Report database ID
 	 * @param pds a Collection of PositionData beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(Collection<PositionData> pds) throws DAOException {
+	public void write(int pirepID, Collection<PositionData> pds) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO ONLINE_TRACK (PILOT_ID, PIREP_ID, DATE, "
 				+ "NETWORK, AIRPORT_D, AIRPORT_A, LAT, LNG, ALT, HEADING, ASPEED) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(2, pirepID);
 			for (Iterator<PositionData> i = pds.iterator(); i.hasNext(); ) {
 				PositionData pd = i.next();
 				_ps.setInt(1, pd.getPilotID());
-				_ps.setInt(2, pd.getFlightID());
 				_ps.setTimestamp(3, createTimestamp(pd.getDate()));
 				_ps.setString(4, pd.getNetwork().toString());
 				_ps.setString(5, pd.getAirportD().getIATA());
