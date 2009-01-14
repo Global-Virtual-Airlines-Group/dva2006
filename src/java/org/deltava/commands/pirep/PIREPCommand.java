@@ -511,7 +511,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Save the positions if we get them
 					if (!pd.isEmpty() && (age > 300)) {
 						SetOnlineTrack twdao = new SetOnlineTrack(con);
-						twdao.write(pd);
+						twdao.write(fr.getID(), pd);
 					}
 				}
 				

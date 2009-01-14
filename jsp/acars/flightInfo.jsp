@@ -150,7 +150,6 @@
 var gRoute;
 var routePoints = new Array();
 var routeMarkers = new Array();
-getACARSData(${info.ID}, '${imgPath}');
 
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
@@ -166,6 +165,8 @@ map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+var progressBar = new ProgressbarControl(map, {width:150, color:'blue'});
+getACARSData(${info.ID}, '${imgPath}');
 
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');

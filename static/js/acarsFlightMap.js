@@ -1,5 +1,6 @@
 // This stores the raw KML in case the plugin hasn't loaded yet
 var kml;
+var acarsDataQueue;
 
 function getACARSData(pirepID, imgPath)
 {
@@ -15,24 +16,10 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("pos");
+	acarsDataQueue = Array.prototype.slice.call(ac);
+	progressBar.start(Math.round(acarsDataQueue / 250));
 	gaEvent('ACARS', 'Flight Data', pirepID);
-	for (var i = 0; i < ac.length; i++) {
-		var a = ac[i];
-		var label = a.firstChild;
-		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		if (a.getAttribute("icon")) {
-			var mrk = googleIconMarker(a.getAttribute("pal"), a.getAttribute("icon"), p, label.data);
-			routeMarkers.push(mrk);
-		} else if (a.getAttribute("color")) {
-			var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
-			routeMarkers.push(mrk);
-		}
-
-		routePoints.push(p);
-	} // for
-
-	// Create line
-	gRoute = new GPolyline(routePoints,'#4080AF',3,0.85)
+	setTimeout("mrkLoad()", 10);
 
 	// Enable checkboxes
 	var isEarth = (map.getCurrentMapType() == G_SATELLITE_3D_MAP);
@@ -43,6 +30,38 @@ xmlreq.onreadystatechange = function() {
 
 xmlreq.send(null);
 return true;
+}
+
+function mrkLoad()
+{
+var cnt = 0;
+var a = queue.pop();
+progressBar.updateLoader(2);
+while ((cnt < 250) && (a != null)) {
+	var label = a.firstChild;
+	var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
+	if (a.getAttribute("icon")) {
+		var mrk = googleIconMarker(a.getAttribute("pal"), a.getAttribute("icon"), p, label.data);
+		routeMarkers.push(mrk);
+	} else if (a.getAttribute("color")) {
+		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
+		routeMarkers.push(mrk);
+	}
+	
+	routePoints.push(p);
+	cnt++;
+	if (cnt < 250)
+		a = queue.pop();
+}
+
+if (a != null)
+	setTimeout("mrkLoad()", 2);
+else {
+	gRoute = new GPolyline(routePoints,'#4080AF',3,0.85)
+	progressBar.remove();
+}
+	
+return true;	
 }
 
 function displayKML()
