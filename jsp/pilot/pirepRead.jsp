@@ -19,6 +19,7 @@
 <content:os windows="true"><c:set var="showGEarth" value="${false}" scope="request" /></content:os>
 <content:js name="googleMaps" />
 <map:api version="2" />
+<content:js name="progressBar" />
 <map:vml-ie />
 </c:if>
 <c:if test="${scoreCR}">
@@ -222,8 +223,9 @@ return true;
  <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" />
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
-<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span>
-<span id="routeProgress" class="small"></span></td>
+<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
+<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" /></c:if>
+</span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
@@ -325,6 +327,7 @@ map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+var progressBar = new ProgressbarControl(map, {width:150, color:'blue'});
 
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
@@ -340,9 +343,6 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
-</c:if>
-<c:if test="${!empty onlineTrack}">
-map.addOverlay(otRoute);
 </c:if>
 <c:if test="${showGEarth}">
 // Google Earth plugin support
