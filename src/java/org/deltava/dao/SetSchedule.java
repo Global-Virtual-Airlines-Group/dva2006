@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,13 +6,14 @@ import java.util.Iterator;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -180,26 +181,31 @@ public class SetSchedule extends DAO {
 	/**
 	 * Updates an existing Airport in the Schedule.
 	 * @param a the Airport bean
+	 * @param oldCode the old IATA code, or null if no change
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void update(Airport a) throws DAOException {
+	public void update(Airport a, String oldCode) throws DAOException {
+		if (oldCode == null)
+			oldCode = a.getIATA();
+		
 		try {
 			startTransaction();
 
 			// Update the airport data
-			prepareStatement("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=? WHERE "
-					+ "(IATA=?)");
+			prepareStatement("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, "
+					+ "IATA=? WHERE (IATA=?)");
 			_ps.setString(1, a.getICAO());
 			_ps.setString(2, a.getTZ().getID());
 			_ps.setString(3, a.getName());
 			_ps.setDouble(4, a.getLatitude());
 			_ps.setDouble(5, a.getLongitude());
 			_ps.setString(6, a.getIATA());
+			_ps.setString(7, oldCode);
 			executeUpdate(1);
 
 			// Clear out the airlines
 			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
-			_ps.setString(1, a.getIATA());
+			_ps.setString(1, oldCode);
 			_ps.setString(2, SystemData.get("airline.code"));
 			executeUpdate(0);
 
@@ -207,8 +213,8 @@ public class SetSchedule extends DAO {
 			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
 			_ps.setString(2, a.getIATA());
 			_ps.setString(3, SystemData.get("airline.code"));
-			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext();) {
-				String aCode = (String) i.next();
+			for (Iterator<String> i = a.getAirlineCodes().iterator(); i.hasNext();) {
+				String aCode = i.next();
 				_ps.setString(1, aCode);
 				_ps.addBatch();
 			}
