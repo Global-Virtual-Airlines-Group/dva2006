@@ -1,4 +1,4 @@
-var queue;
+var queue = new Array();
 
 function generateXMLRequest()
 {
@@ -12,7 +12,9 @@ xmlreq.onreadystatechange = function() {
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("pilot");
-	queue = Array.prototype.slice.call(ac);
+	for (var x = 0; x < ac.length; x++)
+		queue.push(ac[x]);
+
 	var batchSize = Math.round(queue.length / 50);
 	progressBar.start(100);
 	setTimeout("mrkLoad(" + batchSize + ")", 2);
@@ -72,8 +74,8 @@ function updateMarkers()
 var f = document.forms[0];
 var checkRank = (f.rank.selectedIndex > 0);
 var checkEQ = (f.eqType.selectedIndex > 0);
-var rank = checkRank ? f.rank.options[f.rank.selectedIndex].value : null;
-var eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].value : null;
+var rank = checkRank ? f.rank.options[f.rank.selectedIndex].text : null;
+var eqType = checkEQ ? f.eqType.options[f.eqType.selectedIndex].text : null;
 
 // Build the queue
 var batchSize = Math.round(allMarkers.length / 50);
