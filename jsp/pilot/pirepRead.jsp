@@ -327,7 +327,6 @@ map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-var progressBar = new ProgressbarControl(map, {width:150, color:'blue'});
 
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
