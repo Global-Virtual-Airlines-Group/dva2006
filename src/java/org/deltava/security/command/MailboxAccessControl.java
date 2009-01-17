@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.EMailConfiguration;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for mailbox profiles.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -35,8 +35,7 @@ public class MailboxAccessControl extends AccessControl {
 	 */
 	public void validate() {
 		validateContext();
-		_canCreate = _ctx.isUserInRole("HR");
-
+		_canCreate = _ctx.isUserInRole("Admin");
 		if ((_cfg == null) || !_ctx.isAuthenticated())
 			return;
 
