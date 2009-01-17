@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -136,7 +136,7 @@ public class ScheduleImportTask extends Task {
 					if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
 						log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
 						ap.setAirlines(svcMap.getAirlineCodes(ap));
-						dao.update(ap);
+						dao.update(ap, ap.getIATA());
 					}
 				}
 			}

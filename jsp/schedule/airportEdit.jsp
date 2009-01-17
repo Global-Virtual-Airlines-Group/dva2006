@@ -94,13 +94,13 @@ return true;
  <td class="data error bld">${system_message}</td>
 </tr>
 </c:if>
-<c:if test="${isNew}">
 <tr class="title caps">
  <td colspan="2">WORLD TIME ZONE MAP</td>
 </tr>
 <tr>
  <td colspan="2" class="mid"><el:img src="worldzones.png" caption="Time Zone Map" /></td>
 </tr>
+<c:if test="${isNew}">
 <c:if test="${!empty airport}">
 <tr class="title caps">
  <td colspan="2">AIRPORT LOCATION</td>

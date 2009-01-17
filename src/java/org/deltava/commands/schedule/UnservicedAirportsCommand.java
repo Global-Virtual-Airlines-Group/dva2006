@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to detect airports no longer serviced by an Airline.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
@@ -95,7 +95,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 				SetSchedule wdao = new SetSchedule(con);
 				for (Iterator<Airport> i = updateAirports.iterator(); i.hasNext(); ) {
 					Airport ap = i.next();
-					wdao.update(ap);
+					wdao.update(ap, ap.getIATA());
 				}
 				
 				// Commit the transaction

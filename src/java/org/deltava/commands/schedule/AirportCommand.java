@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ public class AirportCommand extends AbstractFormCommand {
 		}
 
 		try {
-			Airport a = null;
+			Airport a = null; String oldIATA = null;
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Airport
@@ -65,8 +65,10 @@ public class AirportCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Airport Code - " + aCode);
 
 				// Load airport fields
+				oldIATA = a.getIATA();
 				a.setName(ctx.getParameter("name"));
 				a.setICAO(ctx.getParameter("icao"));
+				a.setIATA(ctx.getParameter("iata"));
 			} else
 				a = new Airport(ctx.getParameter("iata"), ctx.getParameter("icao"), ctx.getParameter("name"));
 
@@ -108,7 +110,7 @@ public class AirportCommand extends AbstractFormCommand {
 				wdao.create(a);
 				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
 			} else {
-				wdao.update(a);
+				wdao.update(a, oldIATA);
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			}
 
