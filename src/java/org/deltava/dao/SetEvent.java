@@ -63,6 +63,7 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void signup(Signup s) throws DAOException {
+		PilotDAO.invalidate(s.getPilotID());
 		try {
 			prepareStatement("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) "
 					+ "VALUES (?, ?, ?, ?, ?)");
@@ -145,6 +146,7 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(Signup s) throws DAOException {
+		PilotDAO.invalidate(s.getPilotID());
 		try {
 			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
 			_ps.setInt(1, s.getID());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Iterator;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class EventAccessControl extends AccessControl {
 		boolean canParticipate = isOurs;
 		for (Iterator<AirlineInformation> i = _ev.getAirlines().iterator(); !canParticipate && i.hasNext(); ) {
 			AirlineInformation ai = i.next();
-			isOurs |= ai.getCode().equals(SystemData.get("airline.code"));
+			canParticipate |= ai.getCode().equals(SystemData.get("airline.code"));
 		}
 
 		// Check if any routes stil have signups

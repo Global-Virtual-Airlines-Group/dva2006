@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -103,6 +103,7 @@ public class EventCommand extends AbstractCommand {
 			
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
+			GetEventSignups evsdao = new GetEventSignups(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			GetAcademyCourses crsdao = new GetAcademyCourses(con);
 			
@@ -117,25 +118,50 @@ public class EventCommand extends AbstractCommand {
 				frdao.getCaptEQType(flights);
 				pireps.addAll(flights);
 				
+				// Load pilots signed up for the event
+				Map<Integer, Pilot> evPilots = pdao.getByID(ids, tableName);
+				
 				// Load pilots who may have logged the flight but not signed up
-				Collection<Integer> newIDs = new HashSet<Integer>();
-				for (Iterator<FlightReport> fi =flights.iterator(); fi.hasNext(); ) {
-					FlightReport fr = fi.next();
-					int pilotID = fr.getDatabaseID(FlightReport.DBID_PILOT);
-					if (!udm.contains(pilotID))
-						newIDs.add(new Integer(pilotID));
+				if (e.getStatus() == Event.COMPLETE) {
+					Collection<Integer> newIDs = new HashSet<Integer>();
+					for (Iterator<FlightReport> fi =flights.iterator(); fi.hasNext(); ) {
+						FlightReport fr = fi.next();
+						int pilotID = fr.getDatabaseID(FlightReport.DBID_PILOT);
+						if (!udm.contains(pilotID))
+							newIDs.add(new Integer(pilotID));
+					}
+				
+					// Load additional pilots
+					if (!newIDs.isEmpty())
+						evPilots.putAll(pdao.getByID(newIDs, tableName));
 				}
 				
-				// Load additional pilots
-				if (!newIDs.isEmpty())
-					pilots.putAll(pdao.getByID(newIDs, tableName));
+				// Load event stats and save pilots
+				frdao.getOnlineTotals(evPilots, tableName);
+				evsdao.getSignupTotals(evPilots);
+				pilots.putAll(evPilots);
 				
 				// Load Flight Academy Certifications
 				certs.putAll(crsdao.getCertifications(ids));
 			}
 			
+			// Calculate attendance probability
+			if (e.getStatus() != Event.CANCELED) {
+				double predictedPilots = 0;
+				for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
+					Signup s = i.next();
+					Pilot p = pilots.get(new Integer(s.getPilotID()));
+					if ((p != null) && (p.getEventSignups() > 0))
+						predictedPilots += Math.min(1.0d, (p.getEventLegs() * 1.0d) / p.getEventSignups());
+					else
+						predictedPilots += 0.4;
+				}
+				
+				// Save event probability
+				ctx.setAttribute("signupPredict", new Long(Math.round(predictedPilots)), REQUEST); 
+			}
+			
 			// Save the pilots and flight reports
-			pilots.putAll(pdao.get(udm));
 			ctx.setAttribute("pilots", pilots, REQUEST);
 			ctx.setAttribute("pireps", pireps, REQUEST);
 			ctx.setAttribute("certs", certs, REQUEST);

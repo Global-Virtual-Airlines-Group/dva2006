@@ -339,7 +339,7 @@ public class GetFlightReports extends DAO {
 	}
 
 	/**
-	 * Returns online and ACARS legs/hours for a group of Pilots .
+	 * Returns online and ACARS legs/hours for a group of Pilots.
 	 * @param pilots a Map of Pilot objects to populate with results
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
@@ -347,11 +347,12 @@ public class GetFlightReports extends DAO {
 	public void getOnlineTotals(Map<Integer, Pilot> pilots, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, COUNT(IF((ATTR & ?) != 0, FLIGHT_TIME, NULL)) AS OC, "
-				+ "ROUND(SUM(IF((ATTR & ?) != 0, FLIGHT_TIME, 0)), 1) AS OH, COUNT(IF((ATTR & ?) != 0, FLIGHT_TIME, NULL)) "
-				+ "AS AC, ROUND(SUM(IF((ATTR & ?) != 0, FLIGHT_TIME, 0)), 1) AS AH FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT FR.PILOT_ID, COUNT(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, NULL)) AS OC, "
+				+ "ROUND(SUM(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, 0)), 1) AS OH, COUNT(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, NULL)) "
+				+ "AS AC, ROUND(SUM(IF((FR.ATTR & ?) != 0, FR.FLIGHT_TIME, 0)), 1) AS AH, COUNT(IF(FR.EVENT_ID > 0, FR.ID, NULL)) "
+				+ "AS EC, ROUND(SUM(IF(FR.EVENT_ID > 0, FR.FLIGHT_TIME, 0)), 1) AS EH FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PIREPS WHERE (STATUS=?) AND PILOT_ID IN (");
+		sqlBuf.append(".PIREPS FR WHERE (FR.STATUS=?) AND FR.PILOT_ID IN (");
 
 		// Append the Pilot IDs
 		int setSize = 0;
@@ -375,7 +376,8 @@ public class GetFlightReports extends DAO {
 			sqlBuf.setLength(sqlBuf.length() - 1);
 
 		// Close the SQL statement
-		sqlBuf.append(") GROUP BY PILOT_ID LIMIT ?");
+		sqlBuf.append(") GROUP BY FR.PILOT_ID LIMIT ");
+		sqlBuf.append(String.valueOf(setSize));
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -384,7 +386,6 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(3, FlightReport.ATTR_ACARS);
 			_ps.setInt(4, FlightReport.ATTR_ACARS);
 			_ps.setInt(5, FlightReport.OK);
-			_ps.setInt(6, setSize);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -395,6 +396,8 @@ public class GetFlightReports extends DAO {
 					p.setOnlineHours(rs.getDouble(3));
 					p.setACARSLegs(rs.getInt(4));
 					p.setACARSHours(rs.getDouble(5));
+					p.setEventLegs(rs.getInt(6));
+					p.setEventHours(rs.getDouble(7));
 				}
 			}
 
