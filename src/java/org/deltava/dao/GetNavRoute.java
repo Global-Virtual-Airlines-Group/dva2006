@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -387,16 +387,22 @@ public class GetNavRoute extends GetNavData {
 		// Get the route text
 		List<String> tkns = StringUtils.split(route, " ");
 		GeoLocation lastPosition = start;
-		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
+		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = tkns.get(x);
 			
 			// Check if we're referencing an airway
 			Collection<Airway> aws = getAirways(wp);
-			if (wp.indexOf('.') != -1) {
+			if ((wp.indexOf('.') != -1) && ((x == 0) || (x == (tkns.size() - 1)))) {
 				TerminalRoute tr = getRoute(wp);
-				if (tr != null)
-					routePoints.addAll(tr.getWaypoints());	
+				if (tr != null) {
+					if ((tr.getType() == TerminalRoute.SID) && (x < (tkns.size() - 1)))
+						routePoints.addAll(tr.getWaypoints(tkns.get(x + 1)));
+					else if ((tr.getType() == TerminalRoute.STAR) && (x > 0))
+						routePoints.addAll(tr.getWaypoints(tkns.get(x - 1)));
+					else
+						routePoints.addAll(tr.getWaypoints());
+				}
 			} else if (aws.size() > 0) {
 				Airway aw = null;
 				

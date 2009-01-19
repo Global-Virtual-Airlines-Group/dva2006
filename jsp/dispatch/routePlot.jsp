@@ -242,10 +242,6 @@ return true;
 </content:region>
 </content:page>
 <script language="JavaScript" type="text/javascript">
-// Load the airports
-var f = document.forms[0];
-alert(getValue(f.airportD));
-
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty tileHost}">
