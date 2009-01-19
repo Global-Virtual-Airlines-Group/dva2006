@@ -43,6 +43,9 @@ return true;
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:sysdata var="airports" name="airports" />
+<content:filter roles="Event,HR">
+<c:set var="showStats" value="true" scope="request" />
+</content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -186,24 +189,30 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 <c:if test="${event.canSignup}">
 <!-- Signups Section -->
 <tr class="title caps">
- <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${fn:sizeof(event.signups)}" /> PILOTS</td>
+ <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${fn:sizeof(event.signups)}" /> PILOTS
+<c:if test="${!empty signupPredict}"> (EXPECTED TURNOUT - <fmt:int value="${signupPredict}" /> PILOTS)</c:if></td>
 </tr>
 <tr class="title caps mid">
  <td width="10%">ID</td>
  <td width="30%">PILOT NAME</td>
  <td width="10%">EQUIPMENT</td>
  <td width="10%">${event.networkName} ID</td>
+<c:if test="${showStats}">
+ <td>STATISTICS</td>
+ <td>FLIGHT ROUTE</td>
+</c:if>
+<c:if test="${!showStats}">
  <td colspan="2">FLIGHT ROUTE</td>
+</c:if>
 </tr>
 
 <c:if test="${!empty event.signups}">
-<c:set var="idx" value="${-1}" scope="request" />
 <c:forEach var="signup" items="${event.signups}">
-<c:set var="idx" value="${idx + 1}" scope="request" />
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
 <c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="request" />
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="request" />
+<c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
  <td><el:cmdbutton url="eventrelease" link="${event}" op="${pilot.hexID}" label="RELEASE" /></td>
@@ -215,7 +224,11 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 <c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim="," /></span></c:if></td>
  <td class="sec bld">${signup.equipmentType}</td>
  <td class="pri bld">${fn:networkID(pilot, event.networkName)}</td>
- <td colspan="2" class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
+<c:if test="${showPilotStats}">
+ <td class="small"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs
+ (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>
+</c:if>
+ <td<c:if test="${!showPilotStats}"> colspan="2"</c:if> class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
  (<fmt:airport airport="${signup.airportA}" />)</td>
 </tr>
 </c:forEach>
@@ -226,7 +239,6 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 </tr>
 </c:if>
 </c:if>
-
 <c:if test="${!empty pireps}">
 <!-- Flight Reports Section -->
 <tr class="title caps">
