@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * the same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway
  * sequence.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
@@ -139,6 +139,8 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	public List<NavigationDataBean> getWaypoints(String start, String end) {
 		int st = find(start);
 		int ed = find(end);
+		if (start == null)
+			st = 0;
 		if (st == -1)
 			return new ArrayList<NavigationDataBean>();
 		else if (ed == -1)

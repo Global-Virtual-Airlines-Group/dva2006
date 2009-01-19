@@ -1,5 +1,7 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
+
+import java.util.*;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.Airport;
@@ -7,7 +9,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -114,6 +116,18 @@ public class TerminalRoute extends Airway implements ComboAlias {
    
    public String getComboAlias() {
 	   return getCode();
+   }
+   
+   /**
+    * Returns the waypoints to a partial transition point.
+    * @param transition the transition waypoint code
+    * @return a Collection of NavigationDataBeans
+    */
+   public Collection<NavigationDataBean> getWaypoints(String transition) {
+	   if (_type == SID)
+		   return getWaypoints(null, transition);
+	   
+	   return getWaypoints(transition, null);
    }
    
    /**
