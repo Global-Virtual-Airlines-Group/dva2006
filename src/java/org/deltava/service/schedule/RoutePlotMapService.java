@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -50,6 +50,7 @@ public class RoutePlotMapService extends MapPlotService {
 			AirportLocation aD = dao.getAirport(airportDCode);
 			AirportLocation aA = dao.getAirport(airportACode);
 			AirportLocation aL = dao.getAirport(airportLCode);
+			String route = ctx.getParameter("route");
 
 			// Add the departure airport
 			if (aD != null) {
@@ -63,20 +64,30 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Check if we have a SID
+			List<String> wps = StringUtils.split(route, " ");
 			TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
-			if (sid != null)
-				routePoints.addAll(sid.getWaypoints());
+			if (sid != null) {
+				if (!CollectionUtils.isEmpty(wps))
+					routePoints.addAll(sid.getWaypoints(wps.get(0)));
+				else
+					routePoints.addAll(sid.getWaypoints());
+			}
 
 			// Add the route waypoints
-			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
-				List<NavigationDataBean> points = dao.getRouteWaypoints(ctx.getParameter("route"), aD);
+			if (!StringUtils.isEmpty(route)) {
+				List<NavigationDataBean> points = dao.getRouteWaypoints(route, aD);
 				routePoints.addAll(points);
 			}
 
 			// Check if we have a STAR
 			TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
-			if (star != null)
-				routePoints.addAll(star.getWaypoints());
+			if (star != null) {
+				if (!CollectionUtils.isEmpty(wps))
+					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
+				else
+					routePoints.addAll(star.getWaypoints());
+				
+			}
 
 			// Add the arrival airport
 			if (aA != null) {
