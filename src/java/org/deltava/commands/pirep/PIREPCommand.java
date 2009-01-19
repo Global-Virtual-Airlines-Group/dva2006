@@ -451,16 +451,26 @@ public class PIREPCommand extends AbstractFormCommand {
 					Aircraft acInfo = acdao.get(fr.getEquipmentType());
 					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
 						ctx.setAttribute("acInfo", acInfo, REQUEST);
-
+					
 					// Build the route
+					List<String> wps = StringUtils.split(info.getRoute(), " ");
 					GetNavRoute navdao = new GetNavRoute(con);
 					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
 					route.add(info.getAirportD());
-					if (info.getSID() != null)
-						route.addAll(info.getSID().getWaypoints());
+					if (info.getSID() != null) {
+						if (!CollectionUtils.isEmpty(wps))
+							route.addAll(info.getSID().getWaypoints(wps.get(0)));
+						else
+							route.addAll(info.getSID().getWaypoints());
+					}
+						
 					route.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
-					if (info.getSTAR() != null)
-						route.addAll(info.getSTAR().getWaypoints());
+					if (info.getSTAR() != null) {
+						if (!CollectionUtils.isEmpty(wps))
+							route.addAll(info.getSTAR().getWaypoints(wps.get(wps.size() - 1)));
+						else
+							route.addAll(info.getSTAR().getWaypoints());
+					}
 					
 					route.add(info.getAirportA());
 					
