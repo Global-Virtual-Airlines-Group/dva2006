@@ -73,11 +73,14 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private int _legs;
 	private int _acarsLegs = -1; // Set to -1 which is uninitialized
 	private int _onlineLegs;
+	private int _eventLegs;
 	private int _totalLegs;
 	private double _hours;
 	private double _acarsHours;
 	private double _onlineHours;
+	private double _eventHours;
 	private double _totalHours;
+	private int _eventSignups = -1; // Set to -1 which is uninitialized
 
 	private boolean _showSigs;
 	private boolean _showSSThreads;
@@ -315,7 +318,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
 	/**
 	 * Returns the number of online flight legs logged by this Pilot.
-	 * @return the number of hours flown
+	 * @return the number of legs flown
 	 * @see Pilot#getOnlineHours()
 	 * @see Person#getLegacyHours()
 	 * @see Pilot#setOnlineLegs(int)
@@ -335,6 +338,35 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public double getOnlineHours() {
 		return _onlineHours;
+	}
+	
+	/**
+	 * Returns the number of Online Event flight legs logged by this Pilot.
+	 * @return the number of legs flown
+	 * @see Pilot#setEventLegs(int)
+	 * @see Pilot#getEventHours()
+	 */
+	public int getEventLegs() {
+		return _eventLegs;
+	}
+	
+	/**
+	 * Returns the number of Online Event flight hours logged by this Pilot.
+	 * @return the number of hours flown
+	 * @see Pilot#setEventHours(double)
+	 * @see Pilot#getEventLegs()
+	 */
+	public double getEventHours() {
+		return _eventHours;
+	}
+	
+	/**
+	 * Returns the number of times this Pilot has signed up for an Online Event.
+	 * @return the number of Events signed up for
+	 * @see Pilot#setEventSignups(int)
+	 */
+	public int getEventSignups() {
+		return _eventSignups;
 	}
 	
 	/**
@@ -609,14 +641,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * Update this Pilot's logged hours. This method will typically only be called from a DAO where we are querying the
 	 * <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a <B>SUM(PIREPS.HOURS)</B>.
 	 * @param hours the number of hours logged by this Pilot.
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see Pilot#getHours()
 	 */
 	public void setHours(double hours) {
-		if (hours < 0)
-			throw new IllegalArgumentException("Hours cannot be negative");
-
-		_hours = hours;
+		_hours = Math.max(0, hours);
 	}
 
 	/**
@@ -624,16 +652,12 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
 	 * <B>COUNT(PIREPS.HOURS)</B>.
 	 * @param legs the number of legs logged by this Pilot
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setOnlineHours(double)
 	 * @see Pilot#getLegs()
 	 */
 	public void setLegs(int legs) {
-		if (legs < 0)
-			throw new IllegalArgumentException("Legs cannot be negative");
-
-		_legs = legs;
+		_legs = Math.max(0, legs);
 	}
 
 	/**
@@ -641,16 +665,30 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
 	 * <B>COUNT(PIREPS.HOURS) WHERE ((PIREPS.ATTR & 0x0D) != 0)</B>.
 	 * @param legs the number of online legs logged by this Pilot
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setOnlineHours(double)
 	 * @see Pilot#getLegs()
 	 */
 	public void setOnlineLegs(int legs) {
-		if (legs < 0)
-			throw new IllegalArgumentException("Online Legs cannot be negative");
-
-		_onlineLegs = legs;
+		_onlineLegs = Math.max(0, legs);
+	}
+	
+	/**
+	 * Updates the number of flight legs flown as part of an Online Event.
+	 * @param legs the number of lgs
+	 * @see Pilot#getEventLegs()
+	 */
+	public void setEventLegs(int legs) {
+		_eventLegs = Math.max(0, legs);
+	}
+	
+	/**
+	 * Updates the number of times this Pilot has signed up for an Online Event.
+	 * @param signups the number of signups
+	 * @see Pilot#getEventSignups()
+	 */
+	public void setEventSignups(int signups) {
+		_eventSignups = Math.max(0, signups);
 	}
 	
 	/**
@@ -658,16 +696,12 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
 	 * <B>COUNT(PIREPS.HOURS) WHERE ((PIREPS.ATTR & 0x10) != 0)</B>.
 	 * @param legs the number of ACARS legs logged by this Pilot
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setACARSHours(double)
 	 * @see Pilot#getACARSLegs()
 	 */
 	public void setACARSLegs(int legs) {
-		if (legs < 0)
-			throw new IllegalArgumentException("ACARS Legs cannot be negative");
-		
-		_acarsLegs = legs;
+		_acarsLegs = Math.max(0, legs);
 	}
 
 	/**
@@ -687,16 +721,21 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
 	 * <B>SUM(PIREPS.HOURS) WHERE ((PIREPS.ATTRS & 0x0D) != 0)</B>.
 	 * @param hours the online hours logged by this Pilot
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setLegs(int)
 	 * @see Pilot#getOnlineHours()
 	 */
 	public void setOnlineHours(double hours) {
-		if (hours < 0)
-			throw new IllegalArgumentException("Online hours cannot be negative");
-
-		_onlineHours = hours;
+		_onlineHours = Math.max(0, hours);
+	}
+	
+	/**
+	 * Updates this Pilot's logged hours as part of an Online Event.
+	 * @param hours the event hours logged by this Pilot
+	 * @see Pilot#getEventHours()
+	 */
+	public void setEventHours(double hours) {
+		_eventHours = Math.max(0, hours);
 	}
 	
 	/**
@@ -704,56 +743,40 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
 	 * <B>SUM(PIREPS.HOURS) WHERE ((PIREPS.ATTRS & 0x10) != 0)</B>.
 	 * @param hours the ACARS hours logged by this Pilot
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setLegs(int)
 	 * @see Pilot#getACARSHours()
 	 */
 	public void setACARSHours(double hours) {
-		if (hours < 0)
-			throw new IllegalArgumentException("ACARS hours cannot be negative");
-		
-		_acarsHours = hours;
+		_acarsHours = Math.max(0, hours);
 	}
 	
 	/**
 	 * Updates the Pilot's total logged hours between all airlines.
 	 * @param hours the total hours logged by this Pilot
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see Pilot#getTotalHours()
 	 */
 	public void setTotalHours(double hours) {
-		if (hours < 0)
-			throw new IllegalArgumentException("Total hours cannot be negative");
-		
-		_totalHours = hours;
+		_totalHours = Math.max(0, hours);
 	}
 	
 	/**
 	 * Updates the Pilot's total flight legs between all airlines.
 	 * @param legs the total legs logged by the Pilot
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see Pilot#getTotalLegs()
 	 */
 	public void setTotalLegs(int legs) {
-		if (legs < 0)
-			throw new IllegalArgumentException("Total legs cannot be negative");
-		
-		_totalLegs = legs;
+		_totalLegs = Math.max(0, legs);
 	}
 
 	/**
 	 * Update this pilot's logged miles. This method will typically only be called from a DAO where we are querying the
 	 * <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a <B>SUM(PIREPS.DISTANCE)</B>.
 	 * @param miles the number of miles logged by this pilot
-	 * @throws IllegalArgumentException if miles is negative
 	 * @see Pilot#getMiles()
 	 */
 	public void setMiles(long miles) {
-		if (miles < 0)
-			throw new IllegalArgumentException("Miles cannot be negative");
-
-		_miles = miles;
+		_miles = Math.max(0, miles);
 	}
 
 	/**

@@ -189,15 +189,15 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:if>
 <c:if test="${pilot.onlineLegs > 0}">
 <span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.onlineLegs}" /></b> legs,
- <b><fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br />
-</c:if>
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br /></c:if>
 <c:if test="${pilot.ACARSLegs > 0}">
 <span class="pri"><b><fmt:int fmt="#,##0" value="${pilot.ACARSLegs}" /></b> legs,
- <b><fmt:dec fmt="#,##0.0" value="${pilot.ACARSHours}" /></b> hours ACARS</span><br />
-</c:if>
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.ACARSHours}" /></b> hours ACARS</span><br /></c:if>
+<c:if test="${pilot.eventLegs > 0}">
+<span class="ter"><b><fmt:int fmt="#,##0" value="${pilot.eventLegs}" /></b> legs,
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.eventHours}" /></b> hours event</span><br /></c:if>
 <c:if test="${pilot.totalLegs > pilot.legs}">
-<b><fmt:int fmt="#,##0" value="${pilot.totalLegs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.totalHours}" /></b> hours total<br />
-</c:if>
+<b><fmt:int fmt="#,##0" value="${pilot.totalLegs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.totalHours}" /></b> hours total<br /></c:if>
 <content:filter roles="Moderator">
 <fmt:int fmt="#,##0" value="${postStats[pilot.ID]}" /> total posts<br />
 </content:filter>
