@@ -19,14 +19,16 @@ do
 		mkdir $mail_root/$maildir/$spam_folder/tmp
 		chown -R postfix:postfix $mail_root/$maildir/$spam_folder
 	else
-		echo 'Checking' $maildir
-		sa-learn --no-sync --spam --dbpath $spamd_db $mail_root/$maildir/$spam_folder/{cur,new}
 		if [ `ls -l $mail_root/$maildir/$spam_folder/cur/ | wc -l` -gt "1" ]
 		then
+			echo 'Checking' $maildir'/cur'
+			sa-learn --no-sync --spam --dbpath $spamd_db $mail_root/$maildir/$spam_folder/cur
 			rm $mail_root/$maildir/$spam_folder/cur/*
 		fi
 		if [ `ls -l $mail_root/$maildir/$spam_folder/new/ | wc -l` -gt "1" ]
 		then
+			echo 'Checking' $maildir'/new'
+			sa-learn --no-sync --spam --dbpath $spamd_db $mail_root/$maildir/$spam_folder/new
 			rm $mail_root/$maildir/$spam_folder/new/*
 		fi
 	fi
