@@ -127,8 +127,9 @@ return true;
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>
- <td class="label">&nbsp;</td>
- <td class="data" valign="top"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /></td>
+ <td class="label" valign="top">Search Options</td>
+ <td class="data"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /><br />
+<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
  <td class="label" valign="top">ACARS Dispatch</td>
  <td class="data"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
@@ -173,8 +174,14 @@ return true;
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+<c:if test="${param.showUTCTimes}">
+ <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
+</c:if>
+<c:if test="${!param.showUTCTimes}"> 
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+</c:if>
 <c:if test="${fn:isSearchEntry(flight)}">
  <td class="small bld"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
