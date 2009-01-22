@@ -4,6 +4,7 @@ package org.deltava.commands.schedule;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.TZInfo;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -127,6 +128,9 @@ public class FindFlightCommand extends AbstractCommand {
 				ctx.release();
 			}
 		}
+		
+		// Save UTC time zone
+		ctx.setAttribute("utc", TZInfo.UTC, REQUEST);
 
 		// Forward to the JSP
 		result.setSuccess(true);
