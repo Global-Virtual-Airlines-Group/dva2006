@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -220,8 +220,8 @@ public class GetACARSData extends DAO {
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
-					+ "acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) WHERE  "
-					+ "(F.CON_ID=C.ID) AND (F.ID=?) LIMIT 1");
+					+ "acars.FLIGHTS F LEFT JOIN acars.CONS C ON (F.CON_ID=C.ID) LEFT JOIN acars.FLIGHT_DISPATCH FD "
+					+ "ON (F.ID=FD.ID) WHERE (F.ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 
 			// Get the first entry, or null
