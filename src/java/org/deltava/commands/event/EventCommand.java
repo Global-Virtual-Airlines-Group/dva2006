@@ -151,10 +151,10 @@ public class EventCommand extends AbstractCommand {
 				for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
 					Signup s = i.next();
 					Pilot p = pilots.get(new Integer(s.getPilotID()));
-					if ((p != null) && (p.getEventSignups() > 0))
+					if ((p != null) && (p.getEventSignups() > 2))
 						predictedPilots += Math.min(1.0d, (p.getEventLegs() * 1.0d) / p.getEventSignups());
 					else
-						predictedPilots += 0.4;
+						predictedPilots += 0.45;
 				}
 				
 				// Save event probability
