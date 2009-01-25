@@ -184,10 +184,10 @@ return true;
 </c:if>
 <c:if test="${fn:isSearchEntry(flight)}">
  <td class="small bld"><fmt:int value="${flight.dispatchRoutes}" /></td>
- <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
+ <td class="sec"><fmt:distance value="${flight.distance}" /></td>
 </c:if>
 <c:if test="${!fn:isSearchEntry(flight)}">
- <td class="sec" colspan="2"><fmt:int value="${flight.distance}" /> miles</td>
+ <td class="sec" colspan="2"><fmt:distance value="${flight.distance}" /></td>
 </c:if>
 </view:row>
 </c:forEach>
@@ -228,7 +228,7 @@ return true;
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
+ <td class="sec"><fmt:distance value="${flight.distance}" /></td>
  <td><fmt:dec value="${flight.length / 10}" /> hours</td>
 </tr>
 </c:forEach>

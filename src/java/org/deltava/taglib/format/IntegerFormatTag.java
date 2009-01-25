@@ -1,4 +1,4 @@
-// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.DecimalFormat;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.JspException;
 /**
  * A JSP tag to support the rendering of formatted integer values.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -34,17 +34,21 @@ public class IntegerFormatTag extends NumberFormatTag {
     }
     
     /**
+     * Helper method to ensure that the formatter does not include decimals.
+     */
+    protected void fmtNoDecimals() {
+    	String pattern = _nF.toPattern();
+        if (pattern.indexOf('.') != -1)
+            _nF.applyPattern(pattern.substring(0, pattern.indexOf('.')));
+    }
+    
+    /**
      * Formats the number and writes it to the JSP output writer.
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
     public int doEndTag() throws JspException {
-        
-        // Check to ensure that the number format string has no decimals
-        String pattern = _nF.toPattern();
-        if (pattern.indexOf('.') != -1)
-            _nF.applyPattern(pattern.substring(0, pattern.indexOf('.')));
-        
+        fmtNoDecimals();
         return super.doEndTag();
     }
 }

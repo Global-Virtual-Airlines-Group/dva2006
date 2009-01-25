@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -75,9 +75,9 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, "
-				+ "VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, "
-				+ "MSNHANDLE=?, RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, "
-				+ "UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
+				+ "VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, MAPTYPE=?, "
+				+ "IMHANDLE=?, MSNHANDLE=?, RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, "
+				+ "ACARS_RESTRICT=?, UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
 
 		// Invalidate the cache entry
 		invalidate(p.getID());
@@ -108,21 +108,22 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(20, p.getTimeFormat());
 			_ps.setString(21, p.getNumberFormat());
 			_ps.setInt(22, p.getAirportCodeType());
-			_ps.setInt(23, p.getMapType());
-			_ps.setString(24, p.getIMHandle(InstantMessage.AIM));
-			_ps.setString(25, p.getIMHandle(InstantMessage.MSN));
-			_ps.setString(26, p.getRank());
-			_ps.setString(27, p.getEquipmentType());
-			_ps.setInt(28, p.getStatus());
-			_ps.setBoolean(29, p.getNoExams());
-			_ps.setBoolean(30, p.getNoVoice());
-			_ps.setBoolean(31, p.getNoCooler());
-			_ps.setInt(32, p.getACARSRestriction());
-			_ps.setString(33, p.getLDAPName());
-			_ps.setString(34, p.getMotto());
-			_ps.setString(35, p.getFirstName());
-			_ps.setString(36, p.getLastName());
-			_ps.setInt(37, p.getID());
+			_ps.setInt(23, p.getDistanceType());
+			_ps.setInt(24, p.getMapType());
+			_ps.setString(25, p.getIMHandle(InstantMessage.AIM));
+			_ps.setString(26, p.getIMHandle(InstantMessage.MSN));
+			_ps.setString(27, p.getRank());
+			_ps.setString(28, p.getEquipmentType());
+			_ps.setInt(29, p.getStatus());
+			_ps.setBoolean(30, p.getNoExams());
+			_ps.setBoolean(31, p.getNoVoice());
+			_ps.setBoolean(32, p.getNoCooler());
+			_ps.setInt(33, p.getACARSRestriction());
+			_ps.setString(34, p.getLDAPName());
+			_ps.setString(35, p.getMotto());
+			_ps.setString(36, p.getFirstName());
+			_ps.setString(37, p.getLastName());
+			_ps.setInt(38, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings

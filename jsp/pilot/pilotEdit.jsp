@@ -207,7 +207,7 @@ return true;
 <c:if test="${!empty pilot.pilotCode}">
 <tr>
  <td class="label">Personal Motto</td>
- <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="24" max="36" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="32" max="36" /></td>
 </tr>
 </c:if>
 
@@ -296,7 +296,11 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
- <td colspan="${cspan}" class="data"><el:check name="airportCodeType" type="RADIO" cols="2" options="${acTypes}" value="${pilot.airportCodeTypeName}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="airportCodeType" type="radio" cols="2" options="${acTypes}" value="${pilot.airportCodeTypeName}" /></td>
+</tr>
+<tr>
+ <td class="label">Distance Units</td>
+ <td colspan="${cspan}" class="data"><el:check name="distanceUnits" type="radio" cols="3" options="${distanceTypes}" value="${pilot.distanceTypeName}" /></td>
 </tr>
 <tr>
  <td class="label">Route Map Type</td>

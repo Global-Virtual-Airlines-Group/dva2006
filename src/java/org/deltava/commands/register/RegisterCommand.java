@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -63,6 +63,7 @@ public class RegisterCommand extends AbstractCommand {
 		// Save the notification options
 		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
+		ctx.setAttribute("distanceUnits", ComboUtils.fromArray(Person.DISTANCE_NAMES), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
 		// Sort and save the airports
@@ -135,6 +136,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setLegacyURL(ctx.getParameter("legacyURL"));
 		a.setHomeAirport(ctx.getParameter("homeAirport"));
 		a.setEmailAccess(Person.AUTH_EMAIL);
+		a.setDistanceType(ctx.getParameter("distanceUnits"));
 		a.setAirportCodeType(ctx.getParameter("airportCodeType"));
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));

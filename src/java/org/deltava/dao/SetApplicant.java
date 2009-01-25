@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -61,24 +61,23 @@ public class SetApplicant extends PilotWriteDAO {
 
 				// Get the new applicant ID
 				a.setID(getNewID());
-
 				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
 						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
 						+ "EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, "
-						+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, SIM_VERSION, TZ, UISCHEME, COMMENTS, ID) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, COMMENTS, "
+						+ "ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setInt(30, a.getID());
 			} else {
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
 						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
 						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 						+ "CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, "
-						+ "AIRPORTCODE=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, HR_COMMENTS=? "
-						+ "WHERE (ID=?)");
-				_ps.setString(30, a.getEquipmentType());
-				_ps.setString(31, a.getRank());
-				_ps.setString(32, a.getHRComments());
-				_ps.setInt(33, a.getID());
+						+ "AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, "
+						+ "HR_COMMENTS=? WHERE (ID=?)");
+				_ps.setString(31, a.getEquipmentType());
+				_ps.setString(32, a.getRank());
+				_ps.setString(33, a.getHRComments());
+				_ps.setInt(34, a.getID());
 			}
 
 			// Set the fields
@@ -107,10 +106,11 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(23, a.getTimeFormat());
 			_ps.setString(24, a.getNumberFormat());
 			_ps.setInt(25, a.getAirportCodeType());
-			_ps.setInt(26, a.getSimVersion());
-			_ps.setString(27, a.getTZ().getID());
-			_ps.setString(28, a.getUIScheme());
-			_ps.setString(29, a.getComments());
+			_ps.setInt(26, a.getDistanceType());
+			_ps.setInt(27, a.getSimVersion());
+			_ps.setString(28, a.getTZ().getID());
+			_ps.setString(29, a.getUIScheme());
+			_ps.setString(30, a.getComments());
 
 			// Update the database and commit
 			executeUpdate(1);

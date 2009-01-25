@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -9,9 +9,9 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.util.StringUtils;
 
 /**
- * A class storing information about a Person.
+ * An abstract class storing information about a Person.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -62,6 +62,26 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Show e-mail address to all users.
 	 */
 	public static final int SHOW_EMAIL = 2;
+	
+	/**
+	 * Show distances in statute miles.
+	 */
+	public static final int DISTANCE_MI = 0;
+	
+	/**
+	 * Show distances in nautical miles.
+	 */
+	public static final int DISTANCE_NM = 1;
+	
+	/**
+	 * Show distances in kilometers.
+	 */
+	public static final int DISTANCE_KM = 2;
+	
+	/**
+	 * Distance type names.
+	 */
+	public static final String[] DISTANCE_NAMES = {"Statute Miles", "Nautical Miles", "Kilometers"};
 
 	private String _firstName;
 	private String _lastName;
@@ -96,6 +116,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _dFormat = "MM/dd/yyyy";
 	private String _tFormat = "hh:mm:ss";
 	private int _airportCodeType;
+	private int _distanceType;
 	private String _uiScheme;
 	private int _viewCount;
 
@@ -463,6 +484,28 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public int getViewCount() {
 		return _viewCount;
 	}
+	
+	/**
+	 * Returns the Person's preferred distance unit.
+	 * @return the unit type code
+	 * @see Person#getDistanceTypeName()
+	 * @see Person#setDistanceType(int)
+	 * @see Person#setDistanceType(String)
+	 */
+	public int getDistanceType() {
+		return _distanceType;
+	}
+	
+	/**
+	 * Returns the Person's preferred distance unit name.
+	 * @return the unit name
+	 * @see Person#getDistanceType()
+	 * @see Person#setDistanceType(int)
+	 * @see Person#setDistanceType(String)
+	 */
+	public String getDistanceTypeName() {
+		return DISTANCE_NAMES[_distanceType];
+	}
 
 	/**
 	 * Returns the Person's preferred airport code type (IATA/ICAO).
@@ -795,7 +838,29 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @see Person#getViewCount()
 	 */
 	public void setViewCount(int size) {
-		_viewCount = Math.max(20, size);
+		_viewCount = Math.min(500, Math.max(20, size));
+	}
+	
+	/**
+	 * Updates the Person's preferred distance units.
+	 * @param code the Distance unit code
+	 * @see Person#setDistanceType(String)
+	 * @see Person#getDistanceType()
+	 * @see Person#getDistanceTypeName()
+	 */
+	public void setDistanceType(int code) {
+		_distanceType = Math.min(Math.max(0, code), DISTANCE_NAMES.length - 1);
+	}
+	
+	/**
+	 * Updates the Person's preferred distance units.
+	 * @param codeName the Airport code type name
+	 * @see Person#setDistanceType(int)
+	 * @see Person#getDistanceType()
+	 * @see Person#getDistanceTypeName()
+	 */
+	public void setDistanceType(String codeName) {
+		setDistanceType(StringUtils.arrayIndexOf(DISTANCE_NAMES, codeName, 0));
 	}
 
 	/**

@@ -31,7 +31,7 @@
  <td class="label">Total Flights</td>
  <td class="data"><fmt:int className="pri bld" value="${totals.totalLegs}" /> flights / 
  <fmt:int className="pri bld" value="${totals.totalHours}" /> hours / 
- <fmt:int className="pri bld" value="${totals.totalMiles}" /> miles</td>
+ <fmt:distance className="pri bld" value="${totals.totalMiles}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">Total Pilots</td>
@@ -42,35 +42,35 @@
  <td class="label">Online Flights</td>
  <td class="data"><fmt:int className="sec bld" value="${totals.onlineLegs}" /> flights / 
  <fmt:int className="bld" value="${totals.onlineHours}" /> hours / 
- <fmt:int className="bld" value="${totals.onlineMiles}" /> miles</td>
+ <fmt:distance className="bld" value="${totals.onlineMiles}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">ACARS Flights</td>
  <td class="data"><fmt:int className="pri bld" value="${totals.ACARSLegs}" /> flights / 
  <fmt:int className="pri bld" value="${totals.ACARSHours}" /> hours /
- <fmt:int className="pri bld" value="${totals.ACARSMiles}" /> miles</td>
+ <fmt:distance className="pri bld" value="${totals.ACARSMiles}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">per Pilot Average</td>
  <td class="data"><fmt:dec className="bld" value="${totals.totalLegs / totals.totalPilots}" /> flights / 
  <fmt:dec className="bld" value="${totals.totalHours / totals.totalPilots}" /> hours / 
- <fmt:int className="bld" value="${totals.totalMiles / totals.totalPilots}" /> miles</td>
+ <fmt:distance className="bld" value="${totals.totalMiles / totals.totalPilots}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">per Day Average</td>
  <td class="data"><fmt:dec className="bld" value="${totals.totalLegs / totals.age}" /> flights / 
  <fmt:dec className="bld" value="${totals.totalHours / totals.age}" /> hours / 
- <fmt:int className="bld" value="${totals.totalMiles / totals.age}" /> miles</td>
+ <fmt:distance className="bld" value="${totals.totalMiles / totals.age}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">Current Month</td>
  <td class="data"><fmt:int value="${totals.MTDLegs}" /> flights / <fmt:int value="${totals.MTDHours}" />
-  hours / <fmt:int value="${totals.MTDMiles}" /> miles</td>
+  hours / <fmt:distance value="${totals.MTDMiles}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">Current Year</td>
  <td class="data"><fmt:int value="${totals.YTDLegs}" /> flights / <fmt:int value="${totals.YTDHours}" />
-  hours / <fmt:int value="${totals.YTDMiles}" /> miles</td>
+  hours / <fmt:distance value="${totals.YTDMiles}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">Database Size</td>

@@ -82,7 +82,7 @@ return true;
  (<fmt:airport airport="${route.airportA}" />)</td>
 </c:otherwise>
 </c:choose>
- <td><fmt:int value="${route.distance}" /> miles</td>
+ <td><fmt:distance value="${route.distance}" /></td>
  <td class="bld"><fmt:int value="${route.flights}" /> flights</td>
 <c:if test="${route.routes > 0}">
  <td><el:link url="javascript:void search('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="sec bld"><fmt:int value="${route.routes}" /> routes</el:link></td>
