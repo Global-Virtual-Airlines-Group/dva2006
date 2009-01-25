@@ -169,6 +169,10 @@ this e-mail address.</div></c:if>
  <td class="data" colspan="${cspan}"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="IATA" /></td>
 </tr>
 <tr>
+ <td class="label">Distance Units</td>
+ <td class="data" colspan="${cspan}"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="" /></td>
+</tr>
+<tr>
  <td class="label">User Interface</td>
  <td class="data" colspan="${cspan}"><el:combo name="uiScheme" idx="*" size="1" options="${schemes}" value="${param.uiScheme}" /></td>
 </tr>

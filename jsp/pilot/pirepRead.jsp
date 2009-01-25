@@ -200,7 +200,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Distance</td>
- <td class="data pri bld"><fmt:int fmt="##,##0" value="${pirep.distance}" /> miles</td>
+ <td class="data pri bld"><fmt:distance value="${pirep.distance}" longUnits="true" /></td>
 </tr>
 <tr>
  <td class="label">Logged Time</td>

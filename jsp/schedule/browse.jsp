@@ -91,7 +91,7 @@ return true;
  ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.dateTimeD.UTC}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.dateTimeA.UTC}" /></td>
- <td class="sec"><fmt:int value="${entry.distance}" /> miles</td>
+ <td class="sec"><fmt:distance value="${entry.distance}" /></td>
  <td><fmt:dec value="${entry.length / 10}" /> hours</td>
 </view:row>
 </c:forEach>

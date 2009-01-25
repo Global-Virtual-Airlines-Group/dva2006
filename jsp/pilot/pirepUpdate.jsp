@@ -66,7 +66,7 @@ a delay in your Flight Report being approved.<br />
 <c:if test="${rangeWarning}">
 <br />
 <span class="warn bld">The flight leg between <fmt:airport airport="${pirep.airportD}" /> and <fmt:airport airport="${pirep.airportA}" /> 
-is <fmt:int value="${pirep.distance}" /> miles, and appears to exceed the maximum range of the ${pirep.equipmentType}.</span> 
+is <fmt:distance value="${pirep.distance}" longUnits="true" />, and appears to exceed the maximum range of the ${pirep.equipmentType}.</span> 
 This may cause a delay in your Flight Report being approved.<br />
 </c:if>
 <br />
