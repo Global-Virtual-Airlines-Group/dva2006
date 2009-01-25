@@ -13,7 +13,7 @@ public interface VersionInfo {
     public static final int MAJOR = 2;
     public static final int MINOR = 4;
     
-    public static final int BUILD = 224;
+    public static final int BUILD = 225;
     // public static final int RELEASE_CANDIDATE = 1;
     public static final boolean FINAL = false;
     
