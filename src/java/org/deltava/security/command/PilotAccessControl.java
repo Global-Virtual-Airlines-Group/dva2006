@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -60,11 +60,15 @@ public class PilotAccessControl extends AccessControl {
 		_isOurs = (_ctx.getUser().getID() == _p.getID());
 		boolean isHR = _ctx.isUserInRole("HR");
 		int status = _p.getStatus();
+		
+		// Check if we can view e-mail
+		_canViewEmail = (_p.getEmailAccess() != Person.HIDE_EMAIL) || isHR || _isOurs ||
+			_ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("PIREP") ||
+			_ctx.isUserInRole("Signature");
 
 		// Set parameters
 		_canEdit = (_isOurs || isHR);
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
-		_canViewEmail = (_p.getEmailAccess() == Person.HIDE_EMAIL) ? (_canEdit) : true;
 		_canViewExams = _isOurs || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor") || isHR;
 		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (_p.getStatus() == Pilot.ACTIVE);
 		_canChangeStatus = isHR;
