@@ -158,7 +158,7 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <c:if test="${manualPIREP}"><br />
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
  <td class="data">You have flown <fmt:quantity value="${pilot.legs}" single="flight" />, for a total of
- <fmt:dec value="${pilot.hours}" /> hours and <fmt:quantity value="${pilot.miles}" fmt="#,###,###" single="mile" />.<br />
+ <fmt:dec value="${pilot.hours}" /> hours and <fmt:distance value="${pilot.miles}" longUnits="true" />.<br />
 <c:if test="${pilot.onlineLegs > 0}">
 <span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and 
 <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br /></c:if>

@@ -1,4 +1,4 @@
-// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.*;
@@ -13,7 +13,7 @@ import org.deltava.beans.Person;
 /**
  * A JSP tag to support the rendering of formatted numeric values.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public abstract class NumberFormatTag extends TagSupport {
      * Updates this tag's page context and loads the user object from the request.
      * @param ctxt the new JSP page context
      */
-    public final void setPageContext(PageContext ctxt) {
+    public void setPageContext(PageContext ctxt) {
         super.setPageContext(ctxt);
         HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
         Principal user = req.getUserPrincipal();
@@ -85,7 +85,7 @@ public abstract class NumberFormatTag extends TagSupport {
      */
     public int doStartTag() throws JspException {
     	if (_value == null)
-    		_value = new Double(0);
+    		_value = Integer.valueOf(0);
     	
     	return SKIP_BODY;
     }

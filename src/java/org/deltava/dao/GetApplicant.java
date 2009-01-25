@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -421,12 +421,13 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setTimeFormat(rs.getString(27));
 			a.setNumberFormat(rs.getString(28));
 			a.setAirportCodeType(rs.getInt(29));
-			a.setSimVersion(rs.getInt(30));
-			a.setTZ(TZInfo.get(rs.getString(31)));
-			a.setUIScheme(rs.getString(32));
-			a.setComments(rs.getString(33));
-			a.setHRComments(rs.getString(34));
-			a.setRegisterAddress(rs.getString(35));
+			a.setDistanceType(rs.getInt(30));
+			a.setSimVersion(rs.getInt(31));
+			a.setTZ(TZInfo.get(rs.getString(32)));
+			a.setUIScheme(rs.getString(33));
+			a.setComments(rs.getString(34));
+			a.setHRComments(rs.getString(35));
+			a.setRegisterAddress(rs.getString(36));
 
 			// Add to results and cache
 			results.add(a);

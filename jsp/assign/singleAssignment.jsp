@@ -76,7 +76,7 @@ return true;
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
- <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
+ <td class="sec"><fmt:distance value="${flight.distance}" /></td>
 </view:row>
 </c:forEach>
 </c:if>

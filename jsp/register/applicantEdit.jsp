@@ -141,6 +141,10 @@ return cmdPost(f.action);
  <td class="data"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="${applicant.airportCodeTypeName}" /></td>
 </tr>
 <tr>
+ <td class="label">Distance Units</td>
+ <td class="data"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="${applicant.distanceTypeName}" /></td>
+</tr>
+<tr>
  <td class="label">User Interface</td>
  <td class="data"><el:combo name="uiScheme" idx="*" size="1" options="${schemes}" value="${applicant.UIScheme}" /></td>
 </tr>
