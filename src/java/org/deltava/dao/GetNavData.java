@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,19 +8,21 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.GeoUtils;
+import org.deltava.util.StringUtils;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
 public class GetNavData extends DAO implements CachingDAO {
 	
-	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(6144);
+	protected static final Cache<NavigationDataMap> _cache = new ExpiringCache<NavigationDataMap>(2048, 7200);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -61,6 +63,15 @@ public class GetNavData extends DAO implements CachingDAO {
 		if (result != null)
 			return result;
 		
+		// If we're too long, then try looking for a bearing and range
+		if (code.length() > 7) {
+			result = getBearingRange(code);
+			if (!result.isEmpty())
+				return result;
+			
+			code = code.substring(0, 7);
+		}
+		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE");
 			_ps.setString(1, code.toUpperCase());
@@ -74,6 +85,55 @@ public class GetNavData extends DAO implements CachingDAO {
 		
 		// Add to the cache and return
 		return  result;
+	}
+	
+	/**
+	 * Retrieves "special" navaids such as CODE[bearing][distance].
+	 * @param code the code/bearing/distance
+	 * @return a NavigationDataMap
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public NavigationDataMap getBearingRange(String code) throws DAOException {
+		if (code == null)
+			return new NavigationDataMap();
+		
+		// Check the cache
+		NavigationDataMap result = _cache.get(code);
+		if (result != null)
+			return result;
+		
+		// Get the code
+		StringBuilder cBuf = new StringBuilder();
+		for (int x = 0; x < code.length(); x++) {
+			char c = code.charAt(x);
+			if (Character.isLetter(c))
+				cBuf.append(c);
+			else
+				break;
+		}
+		
+		// Find the navaid
+		NavigationDataMap codeResults = get(cBuf.toString());
+		if (codeResults.isEmpty())
+			return codeResults;
+		
+		// Get the bearing and the distance
+		int hdg = StringUtils.parse(code.substring(cBuf.length(), cBuf.length() + 3), 0);
+		int distance = StringUtils.parse(code.substring(cBuf.length() + 3), 0);
+		
+		// Convert the results
+		result = new NavigationDataMap();
+		for (Iterator<NavigationDataBean> i = codeResults.getAll().iterator(); i.hasNext(); ) {
+			NavigationDataBean nd = i.next();
+			GeoLocation loc = GeoUtils.bearingPoint(nd, distance, hdg);
+			NavigationDataBean nd2 = new Intersection(code, loc.getLatitude(), loc.getLongitude());
+			nd2.setRegion(nd.getRegion());
+			result.add(nd2);
+		}
+		
+		result.setCacheKey(code);
+		_cache.add(result);
+		return result;
 	}
 	
 	/**
