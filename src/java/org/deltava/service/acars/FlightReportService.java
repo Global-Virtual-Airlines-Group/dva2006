@@ -92,9 +92,11 @@ public class FlightReportService extends WebService {
 			throw error(SC_BAD_REQUEST, "No Flight Information", false);
 
 		// Build the flight entry
-		Airline al = SystemData.getAirline(ie.getChildTextTrim("airline"));
 		int flight = StringUtils.parse(ie.getChildTextTrim("flight"), 1);
 		int leg = StringUtils.parse(ie.getChildTextTrim("leg"), 1);
+		Airline al = SystemData.getAirline(ie.getChildTextTrim("airline"));
+		if (al == null)
+			al = SystemData.getAirline(SystemData.get("airline.code"));
 
 		// Build a connection entry
 		ConnectionEntry ce = new ConnectionEntry(IDGenerator.generate());
