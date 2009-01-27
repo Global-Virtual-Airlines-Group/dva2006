@@ -28,7 +28,7 @@ public class GetGoogleGeocode extends DAO {
 	private String _apiKey;
 	
 	private InputStream getStream(double lat, double lng) throws IOException {
-		StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&output=xml&q=");
+		StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&oe=utf-8&output=xml&q=");
 		buf.append(lat);
 		buf.append(',');
 		buf.append(lng);
@@ -56,7 +56,7 @@ public class GetGoogleGeocode extends DAO {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			doc = builder.build(getStream(lat, lng));
+			doc = builder.build(new InputStreamReader(getStream(lat, lng), "UTF-8"));
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
@@ -76,7 +76,9 @@ public class GetGoogleGeocode extends DAO {
 				
 				// Get the lat/lon
 				StringTokenizer tk = new StringTokenizer(pe.getChildTextTrim("coordinates", pe.getNamespace()), ",");
-				GeoPosition pos = new GeoPosition(StringUtils.parse(tk.nextToken(), 0.0d), StringUtils.parse(tk.nextToken(), 0.0d));
+				double pLng = StringUtils.parse(tk.nextToken(), 0.0d);
+				double pLat = StringUtils.parse(tk.nextToken(), 0.0d);
+				GeoPosition pos = new GeoPosition(pLat, pLng, StringUtils.parse(tk.nextToken(), 0));
 				
 				// Create the result
 				GeocodeResult gr = new GeocodeResult(pos, GeocodeResult.GeocodeAccuracy.values()[accuracy]);
