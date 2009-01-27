@@ -77,11 +77,12 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body onload="initLinks(); initAirports()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="aCode" name="airline.code" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -92,7 +93,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${fafCriteria.airline}" onChange="void updateAirline(this)" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? aCode : fafCriteria.airline}" onChange="void updateAirline(this)" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${fafCriteria.equipmentType}" /></td>
 </tr>
@@ -138,7 +139,8 @@ return true;
 <c:if test="${!acarsEnabled}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data" colspan="3"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /></td>
+ <td class="data" colspan="3"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /><br />
+<el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
 </tr>
 </c:if>
 <tr class="title mid">
@@ -254,10 +256,19 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<c:if test="${!empty fafCriteria}">
 <script language="JavaScript" type="text/javascript">
-changeAirport(document.forms[0].airportD);
-changeAirport(document.forms[0].airportA);
-</script></c:if>
+function initAirports()
+{
+var f = document.forms[0];
+<c:if test="${!empty fafCriteria}">
+changeAirport(f.airportD);
+changeAirport(f.airportA);
+</c:if>
+<c:if test="${empty fafCriteria}">
+void updateAirline(f.airline);
+</c:if>
+return true;
+}
+</script>
 </body>
 </html>

@@ -17,7 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
-function updateAirport(combo)
+function updateAirport()
 {
 document.forms[0].submit();
 return true;
@@ -55,8 +55,8 @@ return (f.airport.selectedIndex > 0);
  <td colspan="2">CHART NAME</td>
  <td width="20%">CHART TYPE</td>
  <td width="10%"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
- <td class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport(this)" size="1" idx="*" options="${emptyList}" value="${airport}" />
- <el:text name="airportDCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].airport, this.value); updateAirport(document.forms[0].airport);" /></td>
+ <td class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport()" size="1" idx="*" options="${emptyList}" value="${airport}" />
+ <el:text name="idCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].id, this.value); updateAirport();" /></td>
 </tr>
 
 <!-- Table Pilot Data -->
