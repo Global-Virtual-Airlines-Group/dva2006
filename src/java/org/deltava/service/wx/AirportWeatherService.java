@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 2.3
  */
 
@@ -39,6 +39,11 @@ public class AirportWeatherService extends WeatherDataService {
 		boolean useFA = Boolean.valueOf(ctx.getParameter("fa")).booleanValue();
 		useFA &= SystemData.getBoolean("schedule.flightaware.enabled")
 				&& (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
+		
+		// Check the code
+		String code = ctx.getParameter("code");
+		if (code == null)
+			return SC_BAD_REQUEST;
 
 		// Get the weather types
 		Collection<String> wxTypes = StringUtils.split(ctx.getParameter("type"), ",");
@@ -49,7 +54,6 @@ public class AirportWeatherService extends WeatherDataService {
 		Collection<WeatherDataBean> wxBeans = new ArrayList<WeatherDataBean>();
 		AirportLocation al = null;
 		try {
-			String code = ctx.getParameter("code");
 			if (useFA) {
 				if (useMETAR)
 					wxBeans.add(getFAData().getMETAR(code));
