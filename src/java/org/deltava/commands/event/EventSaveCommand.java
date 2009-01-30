@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -80,6 +80,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// Get participating airlines
 			Collection<String> aCodes = ctx.getParameters("airlines");
 			if (aCodes != null) {
+				e.getAirlines().clear();
 				for (Iterator<String> i = aCodes.iterator(); i.hasNext(); ) {
 					AirlineInformation ai = SystemData.getApp(i.next());
 					e.addAirline(ai);
