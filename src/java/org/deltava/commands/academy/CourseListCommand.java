@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -79,6 +79,7 @@ public class CourseListCommand extends AbstractViewCommand {
 					break;
 
 				case 2:
+					ctx.setAttribute("isPending", Boolean.TRUE, REQUEST);
 					courses = dao.getByStatus(vc.getSortType(), Course.PENDING);
 					break;
 

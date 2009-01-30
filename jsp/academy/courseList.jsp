@@ -51,7 +51,7 @@ return true;
  <td width="20%">COURSE NAME</td>
  <td width="7%">STAGE</td>
  <td width="25%">PILOT NAME</td>
- <td width="10%">STATUS</td>
+ <td width="15%">STATUS</td>
  <td width="10%">STARTED</td>
  <td width="10%">LAST COMMENT</td>
  <td>COMPLETED</td>
@@ -60,12 +60,12 @@ return true;
 <!-- Table View data -->
 <c:forEach var="course" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
-<view:row entry="${course}">
+<view:row entry="${isPending ? pilot : course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>
- <td class="small"><el:cmd url="profile" link="${pilot}" className="sec bld">${pilot.name}</el:cmd>
- (${pilot.pilotCode})</td>
- <td class="pri bld small">${course.statusName}</td>
+ <td><el:cmd url="profile" link="${pilot}" className="sec bld">${pilot.name}</el:cmd>
+ <span class="small">(${pilot.pilotCode})</span></td>
+ <td class="pri bld">${course.statusName}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>
  <td class="sec small"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
  <td class="small"><fmt:date fmt="d" date="${course.endDate}" default="N/A" /></td>
