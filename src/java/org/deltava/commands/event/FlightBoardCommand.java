@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.io.*;
@@ -34,7 +34,12 @@ public class FlightBoardCommand extends AbstractCommand {
 		// Get the network name and wether we display a map
 		String networkName = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
 		boolean showMap = "map".equals(ctx.getCmdParameter(OPERATION, "false"));
-		OnlineNetwork network = OnlineNetwork.valueOf(networkName.toUpperCase());
+		OnlineNetwork network = OnlineNetwork.valueOf(SystemData.get("online.default_network"));
+		try {
+			network = OnlineNetwork.valueOf(networkName.toUpperCase());
+		} catch (Exception e) {
+			// empty
+		}
 
 		try {
 			// Get the network info
