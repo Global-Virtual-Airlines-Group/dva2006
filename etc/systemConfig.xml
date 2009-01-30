@@ -193,9 +193,11 @@
 	
 	<!-- Pilot Center equipment type images -->
 	<map name="pcImages">
+		<a320>aircraft/a320.png</a320>
 		<crj-200>aircraft/crj200.png</crj-200>
 		<b727-200>aircraft/b727.png</b727-200>
 		<b737-800>aircraft/b737.png</b737-800>
+		<b747-400>aircraft/b747.png</b747-400>
 		<b757-200>aircraft/b757.png</b757-200>
 		<b767-300>aircraft/b767.png</b767-300>
 		<b777-200>aircraft/b777.png</b777-200>
