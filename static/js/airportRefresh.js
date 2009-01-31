@@ -37,7 +37,7 @@ function changeAirline(aCombo, useSched)
 var f = document.forms[0];
 updateAirports(f.airportD, 'useSched=' + useSched + '&airline=' + getValue(aCombo), false, getValue(f.airportD));
 updateAirports(f.airportA, 'useSched=' + useSched + '&airline=' + getValue(aCombo), false, getValue(f.airportA));
-gaEvent('Airports', 'Change airline');
+gaEvent('Airports', 'Change Airline');
 return true;
 }
 
