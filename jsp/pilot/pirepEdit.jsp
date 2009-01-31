@@ -49,8 +49,10 @@ if (parseInt(form.flightLeg.value) > 8) {
 // Validate the date
 <content:filter roles="!PIREP">
 var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
-var pDate = new Date(pY, f.dateM.selectedIndex + 1,	f.dateD.selectedIndex + 1);
+var pD = parseInt(f.dateD.options[f.dateD.selectedIndex].text);
+var pDate = new Date(pY, f.dateM.selectedIndex, pD);
 if (pDate > fwdLimit) {
+	alert(pDate + " " + fwdLimit);
 	alert('You cannot file a Flight Report for a flight in the future.');
 	f.dateM.focus();
 	return false;
@@ -75,8 +77,8 @@ return cmdPost(f.action);
 }
 
 // Set PIREP date limitations
-var fwdLimit = new Date(${forwardDateLimit});
-var bwdLimit = new Date(${backwardDateLimit});
+<fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
+<fmt:jsdate var="bwdLimit" date="${backwardDateLimit}" />
 </script>
 </head>
 <content:copyright visible="false" />

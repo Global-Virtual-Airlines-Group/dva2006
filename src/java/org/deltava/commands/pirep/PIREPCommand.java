@@ -2,7 +2,6 @@
 package org.deltava.commands.pirep;
 
 import java.util.*;
-import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -316,11 +315,10 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Save PIREP date limitations
-		final DateFormat df = new SimpleDateFormat("yyyy, M, d");
 		Calendar forwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.maxDays"));
 		Calendar backwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.minDays") * -1);
-		ctx.setAttribute("forwardDateLimit", df.format(forwardLimit.getTime()), REQUEST);
-		ctx.setAttribute("backwardDateLimit", df.format(backwardLimit.getTime()), REQUEST);
+		ctx.setAttribute("forwardDateLimit", forwardLimit.getTime(), REQUEST);
+		ctx.setAttribute("backwardDateLimit", backwardLimit.getTime(), REQUEST);
 		
 		// Set flight years
 		Collection<String> years = new LinkedHashSet<String>();
@@ -454,6 +452,8 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Build the route
 					List<String> wps = StringUtils.split(info.getRoute(), " ");
+					wps.remove(info.getAirportD().getICAO());
+					wps.remove(info.getAirportA().getICAO());
 					GetNavRoute navdao = new GetNavRoute(con);
 					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
 					route.add(info.getAirportD());
@@ -461,7 +461,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (!CollectionUtils.isEmpty(wps))
 							route.addAll(info.getSID().getWaypoints(wps.get(0)));
 						else
-							route.addAll(info.getSID().getWaypoints());
+							route.addAll(info.getSID().getWaypoints()); 
 					}
 						
 					route.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
@@ -473,6 +473,17 @@ public class PIREPCommand extends AbstractFormCommand {
 					}
 					
 					route.add(info.getAirportA());
+					
+					// Trim out excessive bits
+					int lastDistance = Math.round(new GeoPosition(info.getAirportD()).distanceTo(info.getAirportA()) * 1.25f);
+					for (Iterator<? extends GeoLocation> i = route.iterator(); i.hasNext(); ) {
+						GeoLocation loc = i.next();
+						int distance = new GeoPosition(loc).distanceTo(info.getAirportA());
+						if ((distance > lastDistance) && (distance > 120))
+							i.remove();
+						else
+							lastDistance = distance;
+					}
 					
 					// Save ACARS route
 					ctx.setAttribute("filedRoute", route, REQUEST);
@@ -510,10 +521,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// If it's not ACARS, try and find VRoute data for it
-			if (!isACARS && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT)) {
+			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT)) {
 				GetOnlineTrack tdao = new GetOnlineTrack(con);
 				Collection<PositionData> pd = tdao.get(fr.getID());
-				long age = (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
+				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
 				if (pd.isEmpty() && fr.hasAttribute(FlightReport.ATTR_VATSIM) && (age < 86000)) {
 					GetVRouteData vddao = new GetVRouteData();
 					pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
