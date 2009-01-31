@@ -56,9 +56,9 @@ if ((form.pwd1) && (form.pwd2)) {
 }
 <content:filter roles="!HR">
 // Validate e-mail domain
+<fmt:jsarray var="invalidDomains" items="${badDomains}" />
 if (form.email) {
 	var eMail = form.email.value;
-	var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 	var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
 	for (var x = 0; x < invalidDomains.length; x++) {
 		if (usrDomain == invalidDomains[x]) {

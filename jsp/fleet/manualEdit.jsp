@@ -29,6 +29,15 @@ if (!validateText(form.title, 10, 'Manual Title')) return false;
 if (!validateNumber(form.version, 1, 'Revision Number')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
 if (!validateFile(form.file, 'pdf', 'Uploaded Manual')) return false;
+<c:if test="${empty entry}">
+var fileParts = form.file.value.split('\\');
+var fName = fileParts[fileParts.length - 1].toLowerCase();
+if (manualNames.indexOf(fName) != -1) {
+	alert('A Manual named ' + fName + ' already exists.');
+	form.file.focus();
+	return false;
+}
+</c:if>
 
 setSubmit();
 disableButton('SaveButton');
@@ -54,6 +63,8 @@ if ((updatedField == f.showRegister) && (f.security.selectedIndex > 0))
 
 return true;
 }
+<c:if test="${empty entry}">
+<fmt:jsarray var="manualNames" items="${manualNames}" /></c:if>
 </script>
 </head>
 <content:copyright visible="false" />

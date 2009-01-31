@@ -15,7 +15,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <script language="JavaScript" type="text/javascript">
-var routeIDs = [${routeIDs}];
+<fmt:jsarray var="routeIDs" items="${routeIDs}" />
 
 function validate(form)
 {

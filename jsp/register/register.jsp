@@ -18,7 +18,7 @@
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="request" />
 <script language="JavaScript" type="text/javascript">
-var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+<fmt:jsarray var="invalidDomains" items="${badDomains}" />
 
 function validate(form)
 {
