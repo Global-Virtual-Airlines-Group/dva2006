@@ -250,7 +250,7 @@
 		<body-content>empty</body-content>
 		<attribute>
 			<name>var</name>
-			<required>true</required>
+			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
@@ -258,6 +258,24 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.util.Collection</type>
+		</attribute>
+	</tag>
+
+	<!-- JS Date tag, used to translate date/times into JavaScript -->
+	<tag>
+		<name>jsdate</name>
+		<tag-class>org.deltava.taglib.format.JSDateTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>date</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Date</type>
 		</attribute>
 	</tag>
 
