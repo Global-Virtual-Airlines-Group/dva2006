@@ -112,6 +112,10 @@ public class GetNavData extends DAO implements CachingDAO {
 				break;
 		}
 		
+		// If there are no digits, abort
+		if ((code.length() - cBuf.length()) < 3)
+			return new NavigationDataMap();
+		
 		// Find the navaid
 		NavigationDataMap codeResults = get(cBuf.toString());
 		if (codeResults.isEmpty())
