@@ -14,7 +14,7 @@
 <content:pics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script language="JavaScript" type="text/javascript">
-var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+<fmt:jsarray var="invalidDomains" items="${badDomains}" />
 
 function validate(form)
 {

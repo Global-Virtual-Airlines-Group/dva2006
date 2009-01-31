@@ -243,6 +243,24 @@
 		</attribute>
 	</tag>
 
+	<!-- JS Array tag, used to put objects into a JavaScript array -->
+	<tag>
+		<name>jsarray</name>
+		<tag-class>org.deltava.taglib.format.JSArrayTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>items</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+	</tag>
+
 	<!-- List tag, used to format lists into delimited strings -->
 	<tag>
 		<name>list</name>
