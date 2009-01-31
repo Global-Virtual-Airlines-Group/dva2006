@@ -37,26 +37,31 @@ return true;
 function setAirportA(combo)
 {
 var f = document.forms[0];
-
-// Get the departure airport
 var ad = f.airportD.options[f.airportD.selectedIndex].value;
-if (combo.selectedIndex == 0) {
+if (combo.selectedIndex == 0)
 	self.location = '/browse.do?airportD=' + ad;
-} else {
+else {
 	var aa = combo.options[combo.selectedIndex].value;
 	self.location = '/browse.do?airportD=' + ad + '&airportA=' + aa;
 }
 
 return true;
 }
+
+function initChoices()
+{
+var f = document.forms[0];
+updateAirports(f.airportD, 'airline=all&useSched=true', ${useICAO}, '${airportD.IATA}');
+updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA}');
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body onload="initLinks(); initChoices()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:filter roles="Schedule"><c:set var="isSchedule" value="${true}" scope="request" /></content:filter>
+<content:filter roles="Schedule"><c:set var="isSchedule" value="true" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -66,9 +71,9 @@ return true;
 <!-- Table Header Bars -->
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
- <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" />
- <el:text name="airportDCode" idx="*" size="2" max="3" value="${airportD.IATA}" onBlur="void setAirportDCode(this.value)" /> TO
- <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" />
+ <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${emptyList}" onChange="void setAirportD(this)" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" value="${useICAO ? airportD.ICAO : airportD.IATA}" onBlur="void setAirportDCode(this.value)" /> TO
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="-" options="${emptyList}" onChange="void setAirportA(this)" />
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW SCHEDULE ENTRY" /></c:if></td>
 </tr>
 <tr class="title caps">
@@ -103,8 +108,7 @@ return true;
 </tr>
 </view:table>
 <c:if test="${innovataLink}">
-<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
-</c:if>
+<%@ include file="/jsp/schedule/innovataLink.jspf" %></c:if>
 </el:form>
 <br />
 <content:copyright />
