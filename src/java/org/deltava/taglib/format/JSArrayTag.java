@@ -4,7 +4,8 @@ package org.deltava.taglib.format;
 import java.util.*;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+
+import org.deltava.taglib.JSTag;
 
 /**
  * A JSP tag to add objects into a JavaScript array.
@@ -13,19 +14,10 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @since 2.4
  */
 
-public class JSArrayTag extends TagSupport {
+public class JSArrayTag extends JSTag {
 
-	private String _varName;
 	private Collection<Object> _data;
 
-	/**
-	 * Sets the JavaScript variable name.
-	 * @param varName the variable name
-	 */
-	public void setVar(String varName) {
-		_varName = varName;
-	}
-	
 	/**
 	 * Sets the items to put into the JavaScript array.
 	 * @param items a Collection of objects.
@@ -42,9 +34,14 @@ public class JSArrayTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		
         // Generate the output string
-        StringBuilder buf = new StringBuilder("var ");
-        buf.append(_varName);
-        buf.append(" = [");
+        StringBuilder buf = new StringBuilder();
+        if (_jsVarName != null) {
+        	buf.append("var ");
+        	buf.append(_jsVarName);
+        	buf.append(" = ");
+        }
+        
+        buf.append('[');
         for (Iterator<Object> i = _data.iterator(); i.hasNext(); ) {
         	Object obj = i.next();
         	if (obj instanceof Number)
@@ -67,6 +64,8 @@ public class JSArrayTag extends TagSupport {
         	pageContext.getOut().write(buf.toString());
         } catch (Exception e) {
         	throw new JspException(e);
+        } finally {
+        	release();
         }
         
         return EVAL_PAGE;

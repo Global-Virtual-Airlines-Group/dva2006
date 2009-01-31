@@ -1,12 +1,11 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.GeoLocation;
 
-import org.deltava.taglib.ContentHelper;
+import org.deltava.taglib.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -14,29 +13,16 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to support Google Maps JSP tags.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
-public abstract class GoogleMapEntryTag extends TagSupport {
+public abstract class GoogleMapEntryTag extends JSTag {
 
 	/**
 	 * Internal name used to check for Google Maps API inclusion.
 	 */
 	static final String API_JS_NAME = "$googleAPI$";
-
-	/**
-	 * The name of the Javascript variable to create.
-	 */
-	protected String _jsVarName;
-
-	/**
-	 * Sets the JavaScript variable to create.
-	 * @param varName the variable name
-	 */
-	public void setVar(String varName) {
-		_jsVarName = varName;
-	}
 
 	/**
 	 * Executed before the Tag is rendered. This will check for the presence of required JavaScript files in the
@@ -56,14 +42,6 @@ public abstract class GoogleMapEntryTag extends TagSupport {
 			throw new IllegalStateException("googleMaps.js not included in request");
 
 		return SKIP_BODY;
-	}
-
-	/**
-	 * Resets the tag's state variables.
-	 */
-	public void release() {
-		_jsVarName = null;
-		super.release();
 	}
 
 	/**
