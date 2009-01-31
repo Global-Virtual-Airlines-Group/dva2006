@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.fleet.*;
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -16,14 +17,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing Fleet/Document Library entries.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
 public abstract class LibraryEditCommand extends AbstractFormCommand {
 
-	private static final List<String> DOC_TYPES = Arrays.asList(new String[] { "fleet", "manual", "newsletter" });
-	private static final List<String> JSP_HDR = Arrays.asList(new String[] { "installer", "manual", "newsletter" });
+	private static final List<String> DOC_TYPES = Arrays.asList("fleet", "manual", "newsletter");
+	private static final List<String> JSP_HDR = Arrays.asList("installer", "manual", "newsletter");
 	private static final Map<String, String> JSP_NAMES = CollectionUtils.createMap(DOC_TYPES, JSP_HDR);
 	
 	/**
@@ -38,25 +39,7 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 		String fName = (String) ctx.getCmdParameter(ID, "NEW");
 		ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
 
-		// Get the command results
-		CommandResult result = ctx.getResult();
-
-		// If we're creating a new entry, check our access
-		if ("NEW".equals(fName)) {
-			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
-			access.validate();
-			if (!access.getCanCreate())
-				throw securityException("Cannot create Library Entry");
-
-			// Save the access controller
-			ctx.setAttribute("access", access, REQUEST);
-
-			// Forward to the JSP
-			result.setURL("/jsp/fleet/" + JSP_NAMES.get(docType) + "Edit.jsp");
-			result.setSuccess(true);
-			return;
-		}
-
+		boolean isNew = "NEW".equalsIgnoreCase(fName);
 		LibraryEntry entry = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -67,15 +50,29 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 				String db = SystemData.get("airline.db");
 				
 				// Load the manual
-				Manual m = dao.getManual(fName, db);
+				if (!isNew)
+					entry = dao.getManual(fName, db);
+				
+				// Load Academy certifications
 				GetAcademyCertifications cdao = new GetAcademyCertifications(con);
 				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
-
-				// Save the entry
-				entry = m;
-			} else if ("newsletter".equals(docType))
+				
+				// If we're new, load all manual titles
+				if (isNew) {
+					Collection<String> manualNames = new HashSet<String>();
+					Map airlines = (Map) SystemData.getObject("apps");
+					for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
+						AirlineInformation aInfo = (AirlineInformation) i.next();
+						Collection<Manual> docs = dao.getManuals(aInfo.getDB());
+						for (Manual mn : docs)
+							manualNames.add(mn.getFileName().toLowerCase());
+					}
+					
+					ctx.setAttribute("manualNames", manualNames, REQUEST);
+				}
+			} else if (!isNew && ("newsletter".equals(docType)))
 				entry = dao.getNewsletter(fName, SystemData.get("airline.db"));
-			else
+			else if (!isNew)
 				entry = dao.getInstaller(fName, SystemData.get("airline.db"));
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -86,7 +83,9 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 		// Check our access level
 		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
 		access.validate();
-		if (!access.getCanEdit())
+		if (isNew && !access.getCanCreate())
+			throw securityException("Cannot create Library Entry");
+		else if (!isNew && !access.getCanEdit())
 			throw securityException("Cannot edit Library Entry for " + fName);
 
 		// Save the entry in the request
@@ -94,6 +93,7 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 		ctx.setAttribute("access", access, REQUEST);
 
 		// Forward to the JSP
+		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/fleet/" + JSP_NAMES.get(docType) + "Edit.jsp");
 		result.setSuccess(true);
 	}
