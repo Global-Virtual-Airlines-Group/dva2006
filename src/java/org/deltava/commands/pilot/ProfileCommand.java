@@ -81,7 +81,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
 			p.setNetworkID(OnlineNetwork.VATSIM, ctx.getParameter("VATSIM_ID"));
 			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
-			p.setLocation(ctx.getParameter("location"));
 			p.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
 			p.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));
 			p.setMotto(ctx.getParameter("motto"));
@@ -95,6 +94,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setDateFormat(ctx.getParameter("df"));
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));
+			
+			// Set location
+			if (!StringUtils.isEmpty(ctx.getParameter("location")))
+				p.setLocation(ctx.getParameter("location"));
 
 			// Get Discussion Forum option checkboxes
 			p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
