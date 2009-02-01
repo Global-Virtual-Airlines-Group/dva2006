@@ -10,7 +10,7 @@
  <td width="10%">ACARS</td>
  <td width="9%">ONLINE</td>
  <td width="9%">HISTORIC</td>
- <td width="8%">DISPATCH</td>
+ <td width="9%">DISPATCH</td>
  <td width="9%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
  <td>AVERAGE</td>
 </tr>
@@ -27,14 +27,14 @@
  <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
  <td class="small"><fmt:int value="${stat.onlineLegs}" /> (<fmt:dec value="${(stat.onlineLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
  <td class="sec small"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="bld small"><fmt:int value="${stat.dispatchLegs}" /></td>
+ <td class="bld small"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
 <c:if test="${hasPilotID}">
  <td class="small"><fmt:int value="${stat.pilotIDs}" /></td>
 </c:if>
 <c:if test="${!hasPilotID}">
  <td class="small"><fmt:distance value="${stat.miles}" /></td>
 </c:if>
- <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> Hours, 
+ <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, 
 <fmt:distance value="${stat.avgMiles}" /></td>
 </view:row>
 </c:forEach>
