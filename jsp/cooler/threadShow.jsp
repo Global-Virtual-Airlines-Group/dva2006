@@ -178,7 +178,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <font color="#0000A1"><b>${ccLevels['CC100']}</b></font><br />
 </c:when>
 </c:choose>
-<c:if test="${(!empty pilot.motto) && (!empty pilot.location)}">
+<c:if test="${(!empty pilot.motto) || (!empty pilot.location)}">
 <br />
 <c:if test="${!empty pilot.motto}"><i>"${pilot.motto}"</i><br /></c:if>
 <c:if test="${!empty pilot.location}">${pilot.location}<br /></c:if>
