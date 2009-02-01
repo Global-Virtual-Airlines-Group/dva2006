@@ -89,7 +89,8 @@ return true;
 function setLatLon(overlay, geoPosition)
 {
 var f = document.forms[0];
-map.removeOverlay(usrLocation);
+if (usrLocation != null)
+	map.removeOverlay(usrLocation);
 
 // Update Latitude
 var isSouth = (geoPosition.y < 0);
@@ -146,8 +147,8 @@ return true;
  <td class="data"><c:if test="${empty location}"><span class="small">You have not selected your 
 location. Please click on the map below to set your location. You can drag the map with your 
 mouse and zoom in and out.</span><br />
-<span class="small sec bld"><u>NOTE</u>: To protect your privacy, the system will automatically 
-randomize your location within a 3 mile circle each time the Pilot Location Board is displayed.</span><br /></c:if>
+<span class="small sec bld">To protect your privacy, the system will automatically randomize your 
+location within a 3 mile circle each time the Pilot Location Board is displayed.</span><br /></c:if>
 <map:div ID="googleMap" x="100%" y="570" /></td>
 </tr>
 <tr>
@@ -195,8 +196,9 @@ var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLIT
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
-map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+map.disableDoubleClickZoom();
+map.enableScrollWheelZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 var geoCoder = new GClientGeocoder();
 
@@ -211,7 +213,7 @@ GEvent.addListener(usrLocation, "dragend", function() { setLatLon(usrLocation, u
 addMarkers(map, 'usrLocation');
 </c:if>
 // Set onClick event for the map
-GEvent.addListener(map, 'click', setLatLon);
+GEvent.addListener(map, 'dblclick', setLatLon);
 </script>
 </body>
 </map:xhtml>
