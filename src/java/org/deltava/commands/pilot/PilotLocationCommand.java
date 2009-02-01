@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PilotLocationCommand extends AbstractCommand {
-	
+
 	private static final Logger log = Logger.getLogger(PilotLocationCommand.class);
 
 	/**
@@ -37,7 +37,7 @@ public class PilotLocationCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-		
+
 		// Check if we are deleting the profile
 		boolean isDelete = "delete".equals(ctx.getCmdParameter(OPERATION, null));
 		try {
@@ -47,15 +47,15 @@ public class PilotLocationCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			GeoLocation gp = dao.getLocation(ctx.getUser().getID());
 			if (gp == null)
-				gp = new GeoPosition(38.88, -93.25);
+				ctx.setAttribute("mapCenter", new GeoPosition(38.88, -93.25), REQUEST);
 			else {
-			   ctx.setAttribute("location", new PilotLocation((Pilot) ctx.getUser(), gp), REQUEST);   
-			   if (gp instanceof MapEntry)
-			      ctx.setAttribute("locationText", StringUtils.escapeSlashes(((MapEntry) gp).getInfoBox()), REQUEST);
+				ctx.setAttribute("location", new PilotLocation((Pilot) ctx.getUser(), gp), REQUEST);
+				ctx.setAttribute("mapCenter", gp, REQUEST);
+				if (gp instanceof MapEntry)
+					ctx.setAttribute("locationText", StringUtils.escapeSlashes(((MapEntry) gp).getInfoBox()), REQUEST);
 			}
-			
+
 			// If we have a lat/lon pair, then update the location
-			ctx.setAttribute("mapCenter", gp, REQUEST);
 			if (ctx.getParameter("latD") != null) {
 				// Build the pilot latitude/longitude
 				GeoPosition loc = new GeoPosition();
@@ -73,7 +73,7 @@ public class PilotLocationCommand extends AbstractCommand {
 				loc.setLongitude(lonD, lonM, lonS);
 				if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
 					loc.setLongitude(loc.getLongitude() * -1);
-				
+
 				// Update the pilot location
 				GeocodeResult geoCode = null;
 				if ((loc.getLatitude() != 0.0) && (loc.getLongitude() != 0.0)) {
@@ -92,7 +92,7 @@ public class PilotLocationCommand extends AbstractCommand {
 							if (!locations.isEmpty()) {
 								GeocodeResult gr = locations.get(0);
 								if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue())
-									geoCode = gr; 
+									geoCode = gr;
 							}
 						} catch (Exception e) {
 							log.warn(e.getMessage());
@@ -101,44 +101,46 @@ public class PilotLocationCommand extends AbstractCommand {
 
 					// Start a transaction
 					ctx.startTX();
-					
+
 					// Update the map location
 					SetPilot wdao = new SetPilot(con);
 					wdao.setLocation(ctx.getUser().getID(), loc);
-					
+
 					// Update the home town
 					if (geoCode != null) {
 						wdao.setHomeTown(ctx.getUser().getID(), geoCode);
 						ctx.setAttribute("geoCode", geoCode, REQUEST);
 					}
-					
+
 					// Commit
 					ctx.commitTX();
 				}
-				
+
 				// Forward to the JSP
 				ctx.setAttribute("location", gp, REQUEST);
 				result.setURL("/jsp/pilot/geoLocateUpdate.jsp");
 			} else if (isDelete) {
-			   SetPilot wdao = new SetPilot(con);
-			   wdao.clearLocation(ctx.getUser().getID());
-			   
-			   // Forward to the JSP
-			   ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
-			   result.setURL("/jsp/pilot/geoLocateUpdate.jsp");
+				SetPilot wdao = new SetPilot(con);
+				wdao.clearLocation(ctx.getUser().getID());
+
+				// Forward to the JSP
+				ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
+				result.setURL("/jsp/pilot/geoLocateUpdate.jsp");
 			} else {
 				// Convert the geoPosition into degrees, minutes, seconds
-				int latS = new Double(GeoPosition.getSeconds(gp.getLatitude())).intValue();
-				int lngS = new Double(GeoPosition.getSeconds(gp.getLongitude())).intValue();
-				ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
-				ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
-				ctx.setAttribute("latS", Integer.valueOf(latS), REQUEST);
-				ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
-				ctx.setAttribute("lonD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
-				ctx.setAttribute("lonM", Integer.valueOf(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
-				ctx.setAttribute("lonS", Integer.valueOf(lngS), REQUEST);
-				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
-				
+				if (gp != null) {
+					int latS = new Double(GeoPosition.getSeconds(gp.getLatitude())).intValue();
+					int lngS = new Double(GeoPosition.getSeconds(gp.getLongitude())).intValue();
+					ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
+					ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
+					ctx.setAttribute("latS", Integer.valueOf(latS), REQUEST);
+					ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
+					ctx.setAttribute("lonD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
+					ctx.setAttribute("lonM", Integer.valueOf(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
+					ctx.setAttribute("lonS", Integer.valueOf(lngS), REQUEST);
+					ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
+				}
+
 				// Save the direction names
 				ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
 				ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
@@ -155,7 +157,7 @@ public class PilotLocationCommand extends AbstractCommand {
 
 		// Save the pilot bean
 		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-		
+
 		// Forward to the JSP
 		result.setSuccess(true);
 	}
