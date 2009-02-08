@@ -742,8 +742,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public void setLastLogin(Date lld) {
 		if (lld == null)
 			return;
-		else if (lld.getTime() > System.currentTimeMillis())
-			throw new IllegalArgumentException("Last Login Date cannot be in the future");
 		else if (lld.before(getCreatedOn()))
 			throw new IllegalStateException("Last Login Date cannot be < Created Date");
 		else
@@ -760,8 +758,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public void setLastLogoff(Date lld) {
 		if (lld == null)
 			return;
-		else if (lld.getTime() > System.currentTimeMillis())
-			throw new IllegalArgumentException("Last Logoff Date cannot be in the future");
 		else if (lld.before(getCreatedOn()))
 			throw new IllegalStateException("Last Logoff Date cannot be < Created Date");
 		else
