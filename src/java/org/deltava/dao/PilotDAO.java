@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
  * A Data Access Object to support reading and writing Pilot object(s) to the database. This DAO contains the shared
  * Pilot cache which other DAOs which access the PILOTS table may access.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -32,10 +32,13 @@ abstract class PilotDAO extends DAO implements CachingDAO {
 
 	/**
 	 * Removes an entry from the pilot cache.
-	 * @param id the database ID
+	 * @param id the database ID, or -1 to invalidate the entire cache
 	 */
 	static void invalidate(int id) {
-		_cache.remove(new Integer(id));
+		if (id == -1)
+			_cache.clear();
+		else
+			_cache.remove(new Integer(id));
 	}
 	
 	/**
