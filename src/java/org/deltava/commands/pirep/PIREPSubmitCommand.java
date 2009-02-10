@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				// Add programs if we still have any that do not require ACARS legs
 				if (!pTypeNames.isEmpty()) {
 					ctx.setAttribute("captEQ", Boolean.TRUE, REQUEST);
-					ctx.setAttribute("promoteLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
+					ctx.setAttribute("promoteLegs", Integer.valueOf(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
 					pirep.setCaptEQType(pTypeNames);
 				}
 			}
