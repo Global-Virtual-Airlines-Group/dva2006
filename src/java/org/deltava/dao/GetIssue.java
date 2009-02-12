@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.system.IssueComment;
 /**
  * A Data Access object to retrieve Issues and Issue Comments.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -198,7 +198,6 @@ public class GetIssue extends DAO {
 		// Execute the result
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-
 		List<Issue> results = new ArrayList<Issue>();
 		while (rs.next()) {
 			Issue i = new Issue(rs.getInt(1), rs.getString(6));
@@ -213,11 +212,12 @@ public class GetIssue extends DAO {
 			i.setType(rs.getInt(11));
 			i.setMajorVersion(rs.getInt(12));
 			i.setMinorVersion(rs.getInt(13));
+			i.setSecurity(rs.getInt(14));
 			
-			// Check if we have a column 14/15 for last comment date & comment count
-			if (md.getColumnCount() > 13) {
-				i.setLastCommentOn(rs.getTimestamp(14));
-				i.setCommentCount(rs.getInt(15));
+			// Check if we have a column 15/16 for last comment date & comment count
+			if (md.getColumnCount() > 15) {
+				i.setLastCommentOn(rs.getTimestamp(15));
+				i.setCommentCount(rs.getInt(16));
 			}
 
 			// Add to results
