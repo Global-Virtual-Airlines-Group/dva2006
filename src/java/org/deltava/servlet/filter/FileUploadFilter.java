@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.util.Enumeration;
@@ -13,13 +13,15 @@ import org.apache.log4j.Logger;
 
 import com.oreilly.servlet.multipart.*;
 
+import static org.deltava.commands.CommandContext.*;
+
 import org.deltava.beans.FileUpload;
 import org.deltava.util.StringUtils;
 
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request, and
  * @author Luke
- * @version 2.0
+ * @version 2.4
  * @since 1.0 
  */
 
@@ -92,6 +94,7 @@ public class FileUploadFilter implements Filter {
 							hreq.setAttribute("FILE$" + p.getName(), upload);
 						} catch (IOException ie) {
 							log.warn("Cannot load attachment - " + ie.getMessage());
+							reqWrap.setAttribute(INVALIDREQ_ATTR_NAME, ie);
 						}
 					}
 				} else if (p.isParam())
@@ -113,6 +116,7 @@ public class FileUploadFilter implements Filter {
 			}
 
 			// Filter with the new request
+			
 			fc.doFilter(reqWrap, rsp);
 		} else
 			fc.doFilter(req, rsp);

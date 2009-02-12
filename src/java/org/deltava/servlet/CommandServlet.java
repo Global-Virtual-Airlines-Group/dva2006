@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -183,6 +183,14 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "Command not found");
 			log.warn("Command not found - " + req.getRequestURI());
+			rd.forward(req, rsp);
+			return;
+		}
+		
+		// Check for invalid request
+		if (req.getAttribute(CommandContext.INVALIDREQ_ATTR_NAME) != null) {
+			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
+			req.setAttribute("servlet_error", "HTTP Upload Timed Out");
 			rd.forward(req, rsp);
 			return;
 		}

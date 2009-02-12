@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.SecurityContext;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  * @see Command
  */
@@ -36,6 +36,7 @@ public class CommandContext extends ConnectionContext implements SecurityContext
 	public static final String SCREENY_ATTR_NAME = "screenYSize";
 	public static final String THREADREAD_ATTR_NAME = "coolerThreadRead";
 	public static final String THREADREADOV_ATTR_NAME = "coolerThreadReadOverride";
+	public static final String INVALIDREQ_ATTR_NAME = "requestMapInvalid";
 
 	private HttpServletRequest _req;
 	private HttpServletResponse _rsp;
