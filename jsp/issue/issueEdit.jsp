@@ -60,25 +60,31 @@ return true;
 </c:if>
 <tr>
  <td class="label">Issue Title</td>
- <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="2" value="${issue.subject}" /></td>
+ <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="*" value="${issue.subject}" /></td>
 </tr>
+<c:if test="${!empty issue}">
+<tr>
+ <td class="label">Security</td>
+ <td class="data"><el:combo name="security" size="1" idx="*" options="${securityLevels}" value="${issue.securityName}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Issue Priority</td>
- <td class="data"><el:combo name="priority" size="1" idx="2" options="${priorities}" value="${issue.priorityName}" /></td>
+ <td class="data"><el:combo name="priority" size="1" idx="*" options="${priorities}" value="${issue.priorityName}" /></td>
 </tr>
 <tr>
  <td class="label">Area</td>
- <td class="data"><el:combo name="area" size="1" idx="3" options="${areas}" value="${issue.areaName}" /></td>
+ <td class="data"><el:combo name="area" size="1" idx="*" options="${areas}" value="${issue.areaName}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Type</td>
- <td class="data"><el:combo name="issueType" size="1" idx="4" options="${types}" value="${issue.typeName}" /></td>
+ <td class="data"><el:combo name="issueType" size="1" idx="*" options="${types}" value="${issue.typeName}" /></td>
 </tr>
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 <tr>
  <td class="label">Assigned To</td>
 <c:if test="${access.canReassign}">
- <td class="data"><el:combo name="assignedTo" size="1" idx="5" options="${devs}" value="${issue.assignedTo}" /></td>
+ <td class="data"><el:combo name="assignedTo" size="1" idx="*" options="${devs}" value="${issue.assignedTo}" /></td>
 </c:if>
 <c:if test="${!access.canReassign}">
  <td class="data sec bld">${assignee.name} ${asignee.pilotCode}</td>
@@ -86,11 +92,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Target Version</td>
- <td class="data"><el:combo name="version" size="1" idx="6" options="${versions}" value="${issue.majorVersion}.${issue.minorVersion}" /></td>
+ <td class="data"><el:combo name="version" size="1" idx="*" options="${versions}" value="${issue.majorVersion}.${issue.minorVersion}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Issue Description</td>
- <td class="data"><el:textbox name="desc" width="80%" height="5" idx="7" className="req">${issue.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" width="80%" height="5" idx="*" className="req">${issue.description}</el:textbox></td>
 </tr>
 <c:if test="${empty issue}">
 <tr>

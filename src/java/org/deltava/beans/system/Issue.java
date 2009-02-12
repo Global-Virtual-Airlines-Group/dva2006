@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean for tracking Web Site/Fleet issues.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -57,6 +57,15 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * Type Names
 	 */
 	public static final String[] TYPE = {"Bug", "Enhancement"};
+	
+	public static final int SECURITY_PUBLIC = 0;
+	public static final int SECURITY_USERS = 1;
+	public static final int SECURITY_STAFF = 2;
+	
+	/**
+	 * Security Names.
+	 */
+	public static final String[] SECURITY = {"Public", "Users Only", "Staff Only"};
 
 	private String _subject;
 	private String _description;
@@ -75,6 +84,8 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	private int _majorVersion;
 	private int _minorVersion;
+	
+	private int _security;
 	
 	private final Collection<IssueComment> _comments = new TreeSet<IssueComment>();
 	private int _commentCount;
@@ -227,7 +238,27 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @see Issue#setArea(int)
 	 */
 	public String getAreaName() {
-		return Issue.AREA[getArea()];
+		return Issue.AREA[_area];
+	}
+	
+	/**
+	 * Returns the Issue security level.
+	 * @return the security level
+	 * @see Issue#getSecurityName()
+	 * @see Issue#setSecurity(int)
+	 */
+	public int getSecurity() {
+		return _security;
+	}
+	
+	/**
+	 * Returns the Issue security name (for JSPs).
+	 * @return the security level name
+	 * @see Issue#getSecurity()
+	 * @see Issue#setSecurity(int)
+	 */
+	public String getSecurityName() {
+		return SECURITY[_security];
 	}
 	
 	/**
@@ -457,6 +488,18 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setPriority(int pv) {
 		validateCode(pv, Issue.PRIORITY);
 		_priority = pv;
+	}
+	
+	/**
+	 * Updates this Issues's security level.
+	 * @param pv the level code
+	 * @throws IllegalArgumentException if pv is negative or invalid
+	 * @see Issue#getSecurity()
+	 * @see Issue#getSecurityName()
+	 */
+	public void setSecurity(int pv) {
+		validateCode(pv, Issue.SECURITY);
+		_security = pv;
 	}
 	
 	/**

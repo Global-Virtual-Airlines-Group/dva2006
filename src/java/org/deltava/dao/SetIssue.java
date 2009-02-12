@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
-import java.util.Iterator;
 import java.sql.*;
 
 import org.deltava.beans.system.*;
@@ -9,7 +8,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to update Issues.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -51,7 +50,7 @@ public class SetIssue extends DAO {
 	 */
 	private void update(Issue i) throws SQLException {
 		prepareStatement("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, "
-				+ "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, MAJOR=?, MINOR=? WHERE (ID=?)");
+				+ "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, SECURITY=?, MAJOR=?, MINOR=? WHERE (ID=?)");
 
 		// Populate the prepared statement
 		_ps.setInt(1, i.getAssignedTo());
@@ -62,9 +61,10 @@ public class SetIssue extends DAO {
 		_ps.setInt(6, i.getPriority());
 		_ps.setInt(7, i.getStatus());
 		_ps.setInt(8, i.getType());
-		_ps.setInt(9, i.getMajorVersion());
-		_ps.setInt(10, i.getMinorVersion());
-		_ps.setInt(11, i.getID());
+		_ps.setInt(9, i.getSecurity());
+		_ps.setInt(10, i.getMajorVersion());
+		_ps.setInt(11, i.getMinorVersion());
+		_ps.setInt(12, i.getID());
 	}
 
 	/**
@@ -87,8 +87,7 @@ public class SetIssue extends DAO {
 			if (i.getID() == 0)
 				i.setID(getNewID());
 			else {
-				for (Iterator<IssueComment> it = i.getComments().iterator(); it.hasNext();) {
-					IssueComment ic = it.next();
+				for (IssueComment ic : i.getComments()) {
 					if (ic.getID() == 0)
 						writeComment(ic);
 				}
@@ -111,8 +110,6 @@ public class SetIssue extends DAO {
 			_ps.setInt(2, ic.getIssueID());
 			_ps.setInt(3, ic.getAuthorID());
 			_ps.setString(4, ic.getComments());
-
-			// Write the new comments
 			executeUpdate(1);
 
 			// Update the issue comment ID if inserting a new record

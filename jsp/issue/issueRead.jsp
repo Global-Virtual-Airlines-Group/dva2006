@@ -72,6 +72,10 @@ return true;
  <td class="data pri bld">${issue.priorityName}</td>
 </tr>
 <tr>
+ <td class="label">Security</td>
+ <td class="data">${issue.securityName}</td>
+</tr>
+<tr>
  <td class="label">Area</td>
  <td class="data">${issue.areaName}</td>
 </tr>

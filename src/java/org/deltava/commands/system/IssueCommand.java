@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to manipulate issues.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -33,9 +33,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
 		
-		// Check if we're creating a new issue
 		boolean isNew = (ctx.getID() == 0);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -73,6 +71,7 @@ public class IssueCommand extends AbstractFormCommand {
 				
 				// Update the subject
 				i.setSubject(ctx.getParameter("subject"));
+				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security")));
 			}
 
 			// Update the issue from the request
@@ -152,9 +151,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
-		// Check if we're creating a new Issue
 		boolean isNew = (ctx.getID() == 0);
-
 		try {
 			IssueAccessControl access = null;
 			Connection con = ctx.getConnection();
@@ -187,7 +184,7 @@ public class IssueCommand extends AbstractFormCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
 			// Get developers
-			Set<Pilot> devs = new HashSet<Pilot>();
+			Collection<Pilot> devs = new HashSet<Pilot>();
 			Collection apps = ((Map) SystemData.getObject("apps")).values();
 			for (Iterator it = apps.iterator(); it.hasNext(); ) {
 			   AirlineInformation aInfo = (AirlineInformation) it.next();
@@ -199,19 +196,10 @@ public class IssueCommand extends AbstractFormCommand {
 			
 			// Get the Pilots posting in this issue
 			if (!isNew) {
-				// Get the userData DAO
 				GetUserData uddao = new GetUserData(con);
 				UserDataMap udm = uddao.get(getPilotIDs(i));
 				ctx.setAttribute("userData", udm, REQUEST);
-
-				// Get the Pilots posting in this issue
-				Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
-				for (Iterator<String> it = udm.getTableNames().iterator(); it.hasNext(); ) {
-				   String tableName = it.next();
-				   pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-				}
-				
-				ctx.setAttribute("pilots", pilots, REQUEST);
+				ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 			}
 
 			// Save the objects in the request
@@ -228,6 +216,7 @@ public class IssueCommand extends AbstractFormCommand {
 		ctx.setAttribute("types", ComboUtils.fromArray(Issue.TYPE), REQUEST);
 		ctx.setAttribute("areas", ComboUtils.fromArray(Issue.AREA), REQUEST);
 		ctx.setAttribute("statuses", ComboUtils.fromArray(Issue.STATUS), REQUEST);
+		ctx.setAttribute("securityLevels", ComboUtils.fromArray(Issue.SECURITY), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -241,7 +230,6 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -251,27 +239,23 @@ public class IssueCommand extends AbstractFormCommand {
 			if (i == null)
 				throw notFoundException("Invalid Issue - " + ctx.getID());
 			
-			// Get the userData DAO
-			GetUserData uddao = new GetUserData(con);
-			UserDataMap udm = uddao.get(getPilotIDs(i));
-			ctx.setAttribute("userData", udm, REQUEST);
-
-			// Get the Pilots posting in this issue
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			for (Iterator<String> it = udm.getTableNames().iterator(); it.hasNext(); ) {
-			   String tableName = it.next();
-			   pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-			}
-			
 			// Check our access
 			IssueAccessControl access = new IssueAccessControl(ctx, i);
 			access.validate();
+			if (!access.getCanRead())
+				throw securityException("Cannot view Issue - " + ctx.getID());
+			
+			// Get the userData DAO
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			UserDataMap udm = uddao.get(getPilotIDs(i));
+			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 
 			// Save the issue and the access in the request
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
-			ctx.setAttribute("pilots", pilots, REQUEST);
+
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -287,8 +271,8 @@ public class IssueCommand extends AbstractFormCommand {
 	/**
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
-	private Set<Integer> getPilotIDs(Issue i) {
-		Set<Integer> results = new HashSet<Integer>();
+	private Collection<Integer> getPilotIDs(Issue i) {
+		Collection<Integer> results = new HashSet<Integer>();
 
 		// Add Creator / Assignee
 		results.add(new Integer(i.getAuthorID()));
