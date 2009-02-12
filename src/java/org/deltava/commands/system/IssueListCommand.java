@@ -43,6 +43,7 @@ public class IssueListCommand extends AbstractViewCommand {
         int id = ctx.getID();
         
         // Get issue status/area
+        Collection<Issue> results = new ArrayList<Issue>();
         int issueStatus = StringUtils.arrayIndexOf(Issue.STATUS, (String) ctx.getCmdParameter(OPERATION, null));
         int issueArea = StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"));
         try {
@@ -55,16 +56,28 @@ public class IssueListCommand extends AbstractViewCommand {
             
             // If we are getting a user's issues, then grab them
             if (id != 0)
-            	vc.setResults(dao.getUserIssues(id));
+            	results.addAll(dao.getUserIssues(id));
             else if (issueStatus != -1)
-                vc.setResults(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
+                results.addAll(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
             else
-                vc.setResults(dao.getAll(vc.getSortType(), issueArea));
+                results.addAll(dao.getAll(vc.getSortType(), issueArea));
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
             ctx.release();
         }
+        
+        // Trim issues we cannot see
+        for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
+        	Issue is = i.next();
+        	IssueAccessControl access = new IssueAccessControl(ctx, is);
+        	access.validate();
+        	if (!access.getCanRead())
+        		i.remove();
+        }
+        
+        // Save results
+        vc.setResults(results);
         
         // Calculate our access control for creating issues
         IssueAccessControl access = new IssueAccessControl(ctx, null);
