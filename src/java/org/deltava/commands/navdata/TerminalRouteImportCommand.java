@@ -1,9 +1,11 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
 import java.util.*;
 import java.sql.Connection;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
@@ -20,11 +22,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 2.0
  */
 
 public class TerminalRouteImportCommand extends AbstractCommand {
+
+	private static final Logger log = Logger.getLogger(TerminalRouteImportCommand.class);
 	
 	private static final String[] UPLOAD_NAMES = {"psssid.dat", "pssstar.dat"};
 
@@ -64,15 +68,16 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 
 		List<String> errors = new ArrayList<String>();
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
-		int entryCount = 0;
+		int entryCount = 0; LineNumberReader br = null;
 		try {
 			// Get the file
 			InputStream is = navData.getInputStream();
-			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
+			br = new LineNumberReader(new InputStreamReader(is));
 			
 			// Iterate through the file
 			TerminalRoute tr = null;
 			Collection<String> IDs = new HashSet<String>();
+			Collection<String> trIDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();
 			while (br.ready()) {
 				String txtData = br.readLine();
@@ -85,10 +90,17 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 						tr = new TerminalRoute(a, idParts.get(1), routeType);
 						tr.setRunway(idParts.get(2));
 						tr.setCanPurge(true);
-						if (routeType == TerminalRoute.SID)
+						if (idParts.size() > 3)
 							tr.setTransition(idParts.get(3));
 						
-						results.add(tr);
+						// Check that we don't have a duplicate
+						String routeID = tr.toString(); 
+						if (trIDs.add(routeID))
+							results.add(tr);
+						else {
+							log.warn("Duplicate " + tr.getTypeName() + " - " + routeID);
+							tr = null;
+						}
 					} else
 						tr = null;
 				} else if ((tr != null) && (txtData.length() > 5)) {
@@ -122,8 +134,10 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
-			if (doPurge)
-				dao.purge("SID_STAR", true);
+			if (doPurge) {
+				int purgeCount = dao.purgeTerminalRoutes(routeType);
+				ctx.setAttribute("purgeCount", new Integer(purgeCount), REQUEST);	
+			}
 
 			// Write the entries
 			for (Iterator<TerminalRoute> i = results.iterator(); i.hasNext(); ) {
@@ -136,16 +150,17 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			}
 			
 			// Update the waypoint types
-			dao.updateTRWaypoints();
+			int regionCount = dao.updateTRWaypoints();
+			ctx.setAttribute("regionCount", new Integer(regionCount), REQUEST);
 			
 			// Commit
 			ctx.commitTX();
-		} catch (DAOException de) {
+		} catch (Exception e) {
+			if (br != null)
+				log.error("Import error at line " + br.getLineNumber());
+			
 			ctx.rollbackTX();
-			throw new CommandException(de);
-		} catch (IOException ie) {
-			ctx.rollbackTX();
-			throw new CommandException(ie);
+			throw new CommandException(e);
 		} finally { 
 			ctx.release();
 		}
