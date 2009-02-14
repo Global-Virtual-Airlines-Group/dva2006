@@ -1,13 +1,13 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
 import org.deltava.security.SecurityContext;
 
 /**
- * An access controller for PIREP operations.
+ * An access controller for Flight Report operations.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -41,14 +41,21 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public void validate() {
 		validateContext();
+		
+		// Check if we can submit non-ACARS PIREPs
+		boolean noManual = false;
+		if (_ctx.isUserInRole("Pilot")) {
+			Pilot usr = (Pilot) _ctx.getUser();
+			noManual = (usr.getACARSRestriction() == Pilot.ACARS_ONLY);
+		}
 
 		// Get PIREP creation access, and abort if no PIREP provided
-		_canCreate = _ctx.isUserInRole("Pilot");
+		_canCreate = _ctx.isUserInRole("Pilot") && !noManual;
 		if (_pirep == null) {
 			_canSubmit = _canCreate;
 			return;
 		}
-
+		
 		// Set role variables
 		final int status = _pirep.getStatus();
 		final boolean isHR = _ctx.isUserInRole("HR");
@@ -66,7 +73,7 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
-		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR);
+		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR) && !noManual;
 		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightReport.OK) && isHR);
 		_canApprove = ((isPirep || isHR) && canReleaseHold && (isSubmitted || (status == FlightReport.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && canReleaseHold && (_canApprove || (isHR && (status == FlightReport.OK)));
