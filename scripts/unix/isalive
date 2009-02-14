@@ -180,16 +180,16 @@ fi
 # Check HTTP health check
 if [ -f "/var/run/tomcat60.pid" ]
 then
-	wget -nv -O /dev/null -o /tmp/healthcheck.log --timeout=3 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
-	errorLines=`grep ERROR /tmp/healthcheck.log | wc -l`
+	wget -nv -O /tmp/healthcheck.log -o /dev/null --timeout=6 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
+	errorLines=`grep "is OK" /tmp/healthcheck.log | wc -l`
 	rm /tmp/healthcheck.log
-	if [ "$?" -ne "0" ] || [ $errorLines -ne "0" ]
+	if [ $errorLines -ne "1" ]
 	then
 		echo "Site appears DOWN - Health Check failed"
 		killall -9 java
 		sleep 1.5
 		echo "Archiving Tomcat log"
-		tomcat_log_reset
+		/usr/local/sbin/www/tomcat_log_reset
 		/etc/init.d/tomcat start
 	else
 		echo "Health Check is OK"
