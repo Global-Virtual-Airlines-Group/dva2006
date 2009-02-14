@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -21,15 +21,15 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
 public class AIRACImportCommand extends AbstractCommand {
 
-	private static final String[] UPLOAD_NAMES = {"pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat"};
+	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat" };
 	private static final int[] NAVAID_TYPES = { AIRPORT, NDB, RUNWAY, VOR, INT };
-	
+
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -39,7 +39,7 @@ public class AIRACImportCommand extends AbstractCommand {
 
 		// Get the Command result
 		CommandResult result = ctx.getResult();
-		
+
 		// Check our access level
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
@@ -53,27 +53,29 @@ public class AIRACImportCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
-		
+
 		// Strip out .gz extension
 		String name = navData.getName();
 		if (name.endsWith(".gz"))
 			name = name.substring(0, name.lastIndexOf('.'));
-		
+
 		// Get the navaid type
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
 		if (navaidType == -1)
 			throw notFoundException("Unknown Data File - " + navData.getName());
-		
+
 		List<String> errors = new ArrayList<String>();
-		int entryCount = 0; int regionCount = 0;
+		int entryCount = 0;
+		int regionCount = 0;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
-			dao.purge(NAVAID_TYPES[navaidType]);
-			
+			int purgeCount = dao.purge(NAVAID_TYPES[navaidType]);
+			ctx.setAttribute("purgeCount", new Integer(purgeCount), REQUEST);
+
 			// Get the file - skipping the first line
 			InputStream is = navData.getInputStream();
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
@@ -84,13 +86,14 @@ public class AIRACImportCommand extends AbstractCommand {
 				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
 					double lat, lon;
 					NavigationDataBean nd = null;
-					
+
 					// Parse each line differently depending on the filename
-					switch (navaidType) {
+					try {
+						switch (navaidType) {
 						case 0: // Airport
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
-							
+
 							AirportLocation al = new AirportLocation(lat, lon);
 							al.setCode(txtData.substring(0, 5));
 							al.setAltitude(Integer.parseInt(txtData.substring(27, 32).trim()));
@@ -101,7 +104,7 @@ public class AIRACImportCommand extends AbstractCommand {
 						case 1: // NDB
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
-							
+
 							NDB ndb = new NDB(lat, lon);
 							ndb.setCode(txtData.substring(0, 4));
 							ndb.setFrequency(txtData.substring(28, 34).trim());
@@ -112,26 +115,26 @@ public class AIRACImportCommand extends AbstractCommand {
 						case 2: // Runway
 							lat = Double.parseDouble(txtData.substring(9, 19).trim());
 							lon = Double.parseDouble(txtData.substring(19, 30).trim());
-							
+
 							// Convert runway length from meters to feet
 							int lenM = Integer.parseInt(txtData.substring(35, 40).trim());
-							
+
 							Runway rwy = new Runway(lat, lon);
 							rwy.setCode(txtData.substring(0, 5));
 							rwy.setName(txtData.substring(5, 8).toUpperCase());
 							rwy.setHeading(Integer.parseInt(txtData.substring(31, 34).trim()));
 							rwy.setLength((int) Math.round(lenM * 3.2808399));
 							rwy.setFrequency("-");
-							if (txtData.length() > 46) 
+							if (txtData.length() > 46)
 								rwy.setFrequency(txtData.substring(41, 47).trim());
-							
+
 							nd = rwy;
 							break;
 
 						case 3: // VOR
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
-							
+
 							VOR vor = new VOR(lat, lon);
 							vor.setCode(txtData.substring(0, 5));
 							vor.setFrequency(txtData.substring(28, 34).trim());
@@ -140,12 +143,35 @@ public class AIRACImportCommand extends AbstractCommand {
 							break;
 
 						case 4: // Intersection
-							lat = Double.parseDouble(txtData.substring(5, 15).trim());
-							lon = Double.parseDouble(txtData.substring(16).trim());
-							nd = new Intersection(txtData.substring(0, 5), lat, lon);
+							StringTokenizer tkns = new StringTokenizer(txtData, " ");
+							int cnt = tkns.countTokens();
+							if (cnt == 3) {
+								String code = tkns.nextToken();
+								lat = Double.parseDouble(tkns.nextToken());
+								lon = Double.parseDouble(tkns.nextToken());
+								nd = new Intersection(code, lat, lon);
+							} else if ((cnt == 2) && (txtData.indexOf('-') < 8)) {
+								String codeLat = tkns.nextToken();
+								int pos = txtData.indexOf('-');
+								String code = codeLat.substring(0, pos);
+								lat = Double.parseDouble(codeLat.substring(pos).trim());
+								lon = Double.parseDouble(tkns.nextToken());
+								nd = new Intersection(code, lat, lon);
+							} else {
+								lat = Double.parseDouble(txtData.substring(5, 15).trim());
+								lon = Double.parseDouble(txtData.substring(16).trim());
+								nd = new Intersection(txtData.substring(0, 5), lat, lon);
+							}
 							break;
+						}
+					} catch (NumberFormatException nfe) {
+						errors.add("Error at line " + br.getLineNumber() + ": " + nfe.getMessage());
+						errors.add(txtData);
+					} catch (IllegalArgumentException iae) {
+						errors.add("Error at line " + br.getLineNumber() + ": " + iae.getMessage());
+						errors.add(txtData);
 					}
-					
+
 					// Write the bean, and log any errors
 					if (nd != null) {
 						try {
@@ -157,10 +183,10 @@ public class AIRACImportCommand extends AbstractCommand {
 					}
 				}
 			}
-			
+
 			// Update the regions
 			regionCount = dao.updateRegions(NAVAID_TYPES[navaidType]);
-			
+
 			// Commit and close down the stream
 			ctx.commitTX();
 			is.close();
@@ -173,7 +199,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Purge the dispatch web service file cache
 		DispatchDataService.invalidate();
 
@@ -182,11 +208,11 @@ public class AIRACImportCommand extends AbstractCommand {
 		ctx.setAttribute("regionCount", new Integer(regionCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
-		
+
 		// Save error messages
 		if (!errors.isEmpty())
 			ctx.setAttribute("errors", errors, REQUEST);
-		
+
 		// Forward to the JSP
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/navdata/navDataUpdate.jsp");

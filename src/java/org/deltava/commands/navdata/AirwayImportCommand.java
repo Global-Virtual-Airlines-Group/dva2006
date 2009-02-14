@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 2.0
  */
 
@@ -48,6 +48,7 @@ public class AirwayImportCommand extends AbstractCommand {
 			return;
 		}
 		
+		List<String> errors = new ArrayList<String>();
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		int entryCount = 0;
 		try {
@@ -76,10 +77,15 @@ public class AirwayImportCommand extends AbstractCommand {
 					}
 					
 					// Add a waypoint
-					NavigationDataBean nd = NavigationDataBean.create(NavigationDataBean.INT, StringUtils.parse(codes.get(4), 0.0),
-							StringUtils.parse(codes.get(5), 0.0));
-					nd.setCode(codes.get(3));
-					a.addWaypoint(nd);
+					try {
+						NavigationDataBean nd = NavigationDataBean.create(NavigationDataBean.INT, Double.parseDouble(codes.get(4)),
+								Double.parseDouble(codes.get(5)));
+						nd.setCode(codes.get(3));
+						a.addWaypoint(nd);
+					} catch (NumberFormatException nfe) {
+						errors.add("Error at line " + br.getLineNumber() + ": " + nfe.getMessage());
+						errors.add(txtData);
+					}
 				}
 			}
 			
@@ -92,8 +98,10 @@ public class AirwayImportCommand extends AbstractCommand {
 
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
-			if (doPurge)
-				dao.purge("AIRWAYS", false);
+			if (doPurge) {
+				int purgeCount = dao.purgeAirways();
+				ctx.setAttribute("purgeCount", new Integer(purgeCount), REQUEST);
+			}
 			
 			// Write the airways
 			for (Iterator<Airway> i = results.iterator(); i.hasNext(); ) {
@@ -103,7 +111,8 @@ public class AirwayImportCommand extends AbstractCommand {
 			}
 			
 			// Update the waypoint types
-			dao.updateAirwayWaypoints();
+			int regionCount = dao.updateAirwayWaypoints();
+			ctx.setAttribute("regionCount", new Integer(regionCount), REQUEST);
 			
 			// Commit
 			ctx.commitTX();
@@ -122,6 +131,10 @@ public class AirwayImportCommand extends AbstractCommand {
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
 		ctx.setAttribute("airway", Boolean.TRUE, REQUEST);
+		
+		// Save error messages
+		if (!errors.isEmpty())
+			ctx.setAttribute("errors", errors, REQUEST);
 		
 		// Forward to the JSP
 		result.setType(ResultType.REQREDIRECT);

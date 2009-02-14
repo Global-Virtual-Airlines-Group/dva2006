@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,19 +6,15 @@ import java.util.*;
 
 import org.deltava.beans.navdata.*;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
 public class SetNavData extends DAO {
    
-   private static final String[] TABLES = {"NAVDATA", "SID_STAR", "AIRWAYS"};
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -156,14 +152,15 @@ public class SetNavData extends DAO {
 	/**
 	 * Updates Airway waypoint types from the Navigation Data table. This will also load
 	 * the ICAO region codes.
+	 * @return the nuber of entries updated
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void updateAirwayWaypoints() throws DAOException {
+	public int updateAirwayWaypoints() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.AIRWAYS A, common.NAVDATA ND SET A.WPTYPE=ND.ITEMTYPE, "
 					+ "A.REGION=ND.REGION WHERE (A.WAYPOINT=ND.CODE) AND (ABS(A.LATITUDE-ND.LATITUDE)<0.0001) AND "
 					+ "(ABS(A.LONGITUDE-ND.LONGITUDE)<0.0001)");
-			executeUpdate(1);
+			return executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -172,14 +169,15 @@ public class SetNavData extends DAO {
 	/**
 	 * Updates Terminal Route waypoint types from the Navigation Data table. This will also load
 	 * the ICAO region codes.
+	 * @return the nuber of entries updated
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void updateTRWaypoints() throws DAOException {
+	public int updateTRWaypoints() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.SID_STAR TR, common.NAVDATA ND SET TR.WPTYPE=ND.ITEMTYPE, "
-					+ "TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE)<0.0001) AND "
-					+ "(ABS(TR.LONGITUDE-ND.LONGITUDE)<0.0001)");
-			executeUpdate(1);
+					+ "TR.REGION=ND.REGION WHERE (TR.WAYPOINT=ND.CODE) AND (ABS(TR.LATITUDE-ND.LATITUDE) < 0.001) AND "
+					+ "(ABS(TR.LONGITUDE-ND.LONGITUDE) < 0.001)");
+			return executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -188,6 +186,7 @@ public class SetNavData extends DAO {
 	/**
 	 * Updates the ICAO Region code for navigation data entries.
 	 * @param navaidType the navigation aid type
+	 * @return the nuber of entries updated
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int updateRegions(int navaidType) throws DAOException {
@@ -238,27 +237,32 @@ public class SetNavData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Purges all entries from a Navigation Data table.
-	 * @param tableName the table name
-	 * @param checkPurgeable TRUE if unpurgeable entries should be kept, otherwise FALSE
-	 * @return the number of rows deleted
+	 * Purges Airway records from the database.
+	 * @return the number of records deleted
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purge(String tableName, boolean checkPurgeable) throws DAOException {
-	   
-	   // Validate the table name
-	   if (StringUtils.arrayIndexOf(TABLES, tableName) == -1)
-	      throw new DAOException("Invalid Table - " + tableName);	
-	   
+	public int purgeAirways() throws DAOException {
 		try {
-			if (checkPurgeable) {
-				prepareStatementWithoutLimits("DELETE FROM common." + tableName + " WHERE (CAN_PURGE=?)");
-				_ps.setBoolean(1, true);
-			} else
-				prepareStatementWithoutLimits("TRUNCATE common." + tableName);
-			
+			prepareStatementWithoutLimits("TRUNCATE common.AIRWAYS");
+			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Purges Terminal Route records from the database.
+	 * @param routeType the Terminal Route type
+	 * @return the number of records deleted
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purgeTerminalRoutes(int routeType) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM common.SID_STAR WHERE (TYPE=?) AND (CAN_PURGE=?)");
+			_ps.setInt(1, routeType);
+			_ps.setBoolean(2, true);
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

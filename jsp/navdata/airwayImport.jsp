@@ -55,7 +55,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" label="Purge Airway Data before import" /></td>
+ <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" checked="true" label="Purge Airway Data before import" /></td>
 </tr>
 </el:table>
 
