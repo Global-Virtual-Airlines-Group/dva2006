@@ -54,6 +54,7 @@
 	<service id="airways" class="org.deltava.service.navdata.AirwayService" />
 	<service id="sidstar" class="org.deltava.service.navdata.TerminalRouteService" />
 	<service id="navaidsearch" class="org.deltava.service.navdata.NavaidSearchService" />
+	<service id="xmlsidstar" class="org.deltava.service.navdata.XMLTerminalRouteService" />
 
 	<!-- SID/STAR updating -->
 	<service id="apsidstar" class="org.deltava.service.navdata.AirportTerminalRouteService" />
