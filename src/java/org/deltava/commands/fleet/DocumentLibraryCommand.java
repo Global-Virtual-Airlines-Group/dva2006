@@ -98,9 +98,8 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 					log.warn(e.getFullName() + " not found in file system!");
 					if (!ctx.isUserInRole("Fleet"))
 						i.remove();
-				} else if (!access.getCanView()) {
+				} else if (!access.getCanView())
 					i.remove();
-				}
 			}
 		}
 

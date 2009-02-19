@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -7,16 +7,20 @@ import java.sql.*;
 
 import org.deltava.beans.fleet.*;
 
+import org.deltava.util.CollectionUtils;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
-public class GetLibrary extends DAO {
+public class GetLibrary extends DAO implements CachingDAO {
+	
+	private static final Cache<CacheableInteger> _dlCache = new ExpiringCache<CacheableInteger>(48, 3600);
 
 	/**
 	 * Initialze the Data Access Object.
@@ -24,6 +28,22 @@ public class GetLibrary extends DAO {
 	 */
 	public GetLibrary(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _dlCache.getRequests();
+	}
+
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _dlCache.getHits();
 	}
 
 	/**
@@ -38,13 +58,11 @@ public class GetLibrary extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.* FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".FLEET_AIRLINE FA, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".FLEET F LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=FA.FILENAME)");
+		sqlBuf.append(".FLEET F WHERE (F.FILENAME=FA.FILENAME)");
 		if (!isAdmin)
 			sqlBuf.append(" AND (FA.CODE=?)");
 		sqlBuf.append(" GROUP BY F.NAME");
@@ -54,7 +72,9 @@ public class GetLibrary extends DAO {
 			if (!isAdmin)
 				_ps.setString(1, SystemData.get("airline.code"));
 			
-			return loadInstallers();
+			List<Installer> results = loadInstallers();
+			loadDownloadCounts(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -70,11 +90,9 @@ public class GetLibrary extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".FLEET F LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME LIMIT 1");
+		sqlBuf.append(".FLEET WHERE (FILENAME=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -86,6 +104,7 @@ public class GetLibrary extends DAO {
 				return null;
 			
 			// Get airline data
+			loadDownloadCounts(results);
 			Installer i = results.get(0);
 			prepareStatementWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
 			_ps.setString(1, fName);
@@ -115,12 +134,9 @@ public class GetLibrary extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".FLEET F LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY "
-				+ "F.NAME ORDER BY F.NAME LIMIT 1");
+		sqlBuf.append(".FLEET WHERE (CODE=?) LIMIT 1");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -132,6 +148,7 @@ public class GetLibrary extends DAO {
 				return null;
 			
 			// Get airline data
+			loadDownloadCounts(results);
 			Installer i = results.get(0);
 			prepareStatementWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
 			_ps.setString(1, i.getFileName());
@@ -282,5 +299,49 @@ public class GetLibrary extends DAO {
 		rs.close();
 		_ps.close();
 		return results;
+	}
+	
+	/**
+	 * Helper method to fetch download counts from the cache.
+	 */
+	protected void loadDownloadCounts(Collection<? extends FleetEntry> files) throws SQLException {
+		
+		// Check the cache and build the SQL statement
+		int entrySize = 0;
+		StringBuilder sqlBuf = new StringBuilder("SELECT FILENAME, COUNT(*) FROM DOWNLOADS WHERE FILENAME IN (");
+		for (Iterator<? extends FleetEntry> i = files.iterator(); i.hasNext(); ) {
+			FleetEntry fe = i.next();
+			CacheableInteger cnt = _dlCache.get(fe.getFileName());
+			if (cnt == null) {
+				entrySize++;
+				sqlBuf.append('\'');
+				sqlBuf.append(fe.getFileName());
+				sqlBuf.append("\',");
+			} else
+				fe.setDownloadCount(cnt.getValue());
+		}
+		
+		if (entrySize == 0)
+			return;
+		
+		// Load from the database
+		sqlBuf.setLength(sqlBuf.length() - 1);
+		sqlBuf.append(") GROUP BY FILENAME");
+		Map<String, ? extends FleetEntry> is = CollectionUtils.createMap(files, "fileName");
+		prepareStatement(sqlBuf.toString());
+		
+		// Parse the results
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			FleetEntry fe = is.get(rs.getString(1));
+			if (fe != null) {
+				fe.setDownloadCount(rs.getInt(2));
+				CacheableInteger cnt = new CacheableInteger(fe.getFileName(), fe.getDownloadCount());
+				_dlCache.add(cnt);
+			}
+		}
+		
+		rs.close();
+		_ps.close();
 	}
 }

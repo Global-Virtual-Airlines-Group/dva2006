@@ -1,14 +1,18 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
+
+import java.util.Date;
 
 /**
  * A bean to store information about Fleet Library entries.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
 public abstract class FleetEntry extends LibraryEntry {
+	
+	private Date _lastModified;
 	
     private int _majorVersion;
     private int _minorVersion;
@@ -52,6 +56,15 @@ public abstract class FleetEntry extends LibraryEntry {
     }
     
     /**
+     * Updates the date this entry was last modified.
+     * @return the last modification date/time
+     * @see FleetEntry#setLastModified(Date)
+     */
+    public Date getLastModified() {
+    	return _lastModified;
+    }
+    
+    /**
      * Updates the version number of this resource.
      * @param major the major version number
      * @param minor the minor version number
@@ -68,6 +81,15 @@ public abstract class FleetEntry extends LibraryEntry {
         _majorVersion = major;
         _minorVersion = minor;
         _minorSubVersion = subMinor;
+    }
+    
+    /**
+     * Updates the date this entry was last modified.
+     * @param dt the last modified date/time
+     * @see FleetEntry#getLastModified()
+     */
+    public void setLastModified(Date dt) {
+    	_lastModified = dt;
     }
     
     /**

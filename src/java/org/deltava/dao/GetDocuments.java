@@ -164,16 +164,14 @@ public class GetDocuments extends GetLibrary {
 	public Collection<Manual> getManuals(String dbName) throws DAOException {
 
 		// Build the SQL statement
-		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".DOCS D LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".DOCS ORDER BY NAME");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			Collection<Manual> results = loadManuals();
+			loadDownloadCounts(results);
 			Map<String, Manual> docMap = CollectionUtils.createMap(results, "fileName");
 			loadCertifications(docMap);
 			
@@ -186,17 +184,24 @@ public class GetDocuments extends GetLibrary {
 
 	/**
 	 * Returns all Manuals associated with a particular Flight Academy certification.
+	 * @param dbName the database name
 	 * @param certName the Certification name
 	 * @return a Collection of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Manual> getByCertification(String certName) throws DAOException {
+	public Collection<Manual> getByCertification(String dbName, String certName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT D.* FROM exams.CERTDOCS CD, ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".DOCS D WHERE (CD.FILENAME=D.FILENAME) AND (CD.CERTNAME=?) ORDER BY D.NAME");
+		
 		try {
-			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM exams.CERTDOCS CD, DOCS D LEFT JOIN "
-					+ "DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (CD.FILENAME=D.FILENAME) AND "
-					+ "(CD.CERTNAME=?) GROUP BY D.NAME");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, certName);
-			return loadManuals();
+			Collection<Manual> results = loadManuals();
+			loadDownloadCounts(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
