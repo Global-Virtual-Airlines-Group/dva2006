@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -14,14 +14,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
 public class RoutePlotCommand extends AbstractCommand {
 	
-	private static final List SIM_VERSIONS = ComboUtils.fromArray(new String[] {"Flight Simulator X", "Flight Simulator 2004"},
-			new String[] {"FSX", "FS2004"}); 
+	private static final List SIM_VERSIONS = ComboUtils.fromArray(new String[] {"Flight Simulator X", 
+			"Flight Simulator 2004"}, new String[] {"FSX", "FS9"}); 
 
 	/**
 	 * Executes the command.
