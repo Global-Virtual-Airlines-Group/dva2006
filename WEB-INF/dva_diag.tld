@@ -19,4 +19,27 @@
 		<tag-class>org.deltava.taglib.diag.ServletVersionTag</tag-class>
 		<body-content>empty</body-content>
 	</tag>
+
+	<!-- Caching DAO tag, for displaying caching DAO cache statistics -->
+	<tag>
+		<name>daocache</name>
+		<tag-class>org.deltava.taglib.diag.CachingDAOTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>dao</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.dao.CachingDAO</type>
+		</attribute>
+		<attribute>
+			<name>hits</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>requests</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
 </taglib>
