@@ -177,18 +177,20 @@ do
 		# Check site health check
 		if [ -f "/var/run/tomcat60.pid" ]
 		then
-			wget -nv -O /tmp/healthcheck.log -o /dev/null --timeout=10 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
+			wget -nv -O /tmp/healthcheck.log -o /dev/null --timeout=15 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
 			errorLines=`grep "is OK" /tmp/healthcheck.log | wc -l`
-			rm /tmp/healthcheck.log
 			if [ $errorLines -ne "1" ]
 			then
 				echo `date +%H:%M:%S`" Site appears DOWN - healthcheck failed" >> /var/cache/isalive.txt
+				cat /tmp/healthcheck.log >> //var/cache/isalive.txt
 				killall -9 java
 				sleep 1.5
 				echo `date +%H:%M:%S`" Archiving Tomcat log" >> /var/cache/isalive.txt
 				/usr/local/sbin/www/tomcat_log_reset
 				/etc/init.d/tomcat start
 			fi
+
+			rm /tmp/healthcheck.log
 		fi		
 
 		# If we have something, warn us
