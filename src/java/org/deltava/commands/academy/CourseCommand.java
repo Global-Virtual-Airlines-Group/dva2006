@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class CourseCommand extends AbstractCommand {
 			// Load documents/exams if its our course
 			if (access.getCanComment()) {
 				GetDocuments ddao = new GetDocuments(con);
-				ctx.setAttribute("docs", ddao.getByCertification(c.getName()), REQUEST);
+				ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), c.getName()), REQUEST);
 				
 				// Get videos
 				GetVideos vdao = new GetVideos(con);

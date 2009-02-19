@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -93,6 +93,7 @@ public class ManualCommand extends LibraryEditCommand {
 			entry.addCertifications(ctx.getParameters("certNames"));
 			entry.setShowOnRegister(Boolean.valueOf(ctx.getParameter("showRegister")).booleanValue());
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			entry.setLastModified(new java.util.Date());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
 

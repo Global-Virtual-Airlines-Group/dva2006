@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.File;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -142,14 +142,10 @@ public abstract class LibraryEntry implements java.io.Serializable, Comparable, 
    /**
     * Updates the size of this resource.
     * @param size the size of the file in bytes
-    * @throws IllegalArgumentException if size is negative
     * @see LibraryEntry#getSize()
     */
    public void setSize(long size) {
-      if (size < 0)
-         throw new IllegalArgumentException("Invalid File Size - " + size);
-      
-      _fileSize = size;
+      _fileSize = Math.max(0, size);
    }
 
    /**
