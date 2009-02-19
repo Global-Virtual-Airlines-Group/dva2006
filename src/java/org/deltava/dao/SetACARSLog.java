@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -149,6 +149,27 @@ public class SetACARSLog extends DAO {
 					+ "INTERVAL ? HOUR))");
 			_ps.setInt(1, hours);
 			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Marks connections as completed.
+	 * @param ids A collection of connection IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void closeConnections(Collection<Long> ids) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE acars.CONS SET ENDDATE=NOW() WHERE (ID=?)");
+			for (Iterator<Long> i = ids.iterator(); i.hasNext(); ) {
+				long id = i.next().longValue();
+				_ps.setLong(1, id);
+				_ps.addBatch();
+			}
+			
+			_ps.executeBatch();
+			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
