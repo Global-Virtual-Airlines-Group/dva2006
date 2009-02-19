@@ -255,10 +255,12 @@ public class GetExam extends DAO {
 			// Load Check Rides
 			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
 					+ "common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN "
-					+ "exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?)");
+					+ "exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.PILOT_ID=?) AND (CR.EQTYPE=EQ.EQTYPE) "
+					+ "AND (LOCATE(?, EQ.AIRLINES) > 0)");
 			
 			// Execute the query
 			_ps.setInt(1, id);
+			_ps.setString(2, SystemData.get("airline.code"));
 			results.addAll(executeCheckride());
 
 			// Sort the results to merge them in by date
