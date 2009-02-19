@@ -301,10 +301,10 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-					+ "C.CLIENT_BUILD, C.BETA_BUILD, COUNT(DISTINCT F.ID), COUNT(P.REPORT_TIME) FROM acars.CONS C "
-					+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) "
-					+ "WHERE (C.ID=?) GROUP BY C.ID LIMIT 1");
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+					+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, COUNT(DISTINCT F.ID), COUNT(P.REPORT_TIME) "
+					+ "FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON "
+					+ "(F.ID=P.FLIGHT_ID) WHERE (C.ID=?) GROUP BY C.ID LIMIT 1");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
@@ -414,25 +414,23 @@ public class GetACARSData extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasMessageCounts = (rs.getMetaData().getColumnCount() > 9);
-
-		// Iterate through the results
+		boolean hasMessageCounts = (rs.getMetaData().getColumnCount() > 10);
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
 		while (rs.next()) {
 			ConnectionEntry entry = new ConnectionEntry(rs.getLong(1));
 			entry.setPilotID(rs.getInt(2));
 			entry.setStartTime(rs.getTimestamp(3));
-			entry.setRemoteAddr(rs.getString(4));
-			entry.setRemoteHost(rs.getString(5));
-			entry.setClientBuild(rs.getInt(6));
-			entry.setBeta(rs.getInt(7));
-			entry.setDispatch(rs.getBoolean(8));
+			entry.setEndTime(rs.getTimestamp(4));
+			entry.setRemoteAddr(rs.getString(5));
+			entry.setRemoteHost(rs.getString(6));
+			entry.setClientBuild(rs.getInt(7));
+			entry.setBeta(rs.getInt(8));
+			entry.setDispatch(rs.getBoolean(9));
 			if (hasMessageCounts) {
-				entry.setFlightInfoCount(rs.getInt(9));
-				entry.setPositionCount(rs.getInt(10));
+				entry.setFlightInfoCount(rs.getInt(10));
+				entry.setPositionCount(rs.getInt(11));
 			}
 
-			// Add to results
 			results.add(entry);
 		}
 

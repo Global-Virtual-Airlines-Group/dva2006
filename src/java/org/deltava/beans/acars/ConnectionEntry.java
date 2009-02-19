@@ -1,24 +1,24 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
-public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Comparable<ConnectionEntry> {
+public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, CalendarEntry {
 
    private long _id;
    private int _pilotID;
    private Pilot _usr;
-   private Date _dt;
+   private Date _st;
+   private Date _et;
    
    private String _remoteHost;
    private String _remoteAddr;
@@ -52,12 +52,27 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Com
    }
    
    /**
-    * Returns the date/time of this connection.
+    * Returns the start date/time of this connection.
     * @return the date/time
     * @see ConnectionEntry#setStartTime(Date)
+    * @see ConnectionEntry#getEndTime()
     */
    public Date getStartTime() {
-      return _dt;
+      return _st;
+   }
+   
+   /**
+    * Returns the end date/time of this connection.
+    * @return the date/time
+    * @see ConnectionEntry#setEndTime(Date)
+    * @see ConnectionEntry#getStartTime()
+    */
+   public Date getEndTime() {
+	   return _et;
+   }
+   
+   public Date getDate() {
+	   return _st;
    }
    
    /**
@@ -255,7 +270,16 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Com
     * @see ConnectionEntry#getStartTime()
     */
    public void setStartTime(Date dt) {
-      _dt = dt;
+      _st = dt;
+   }
+   
+   /**
+    * Returns the date/time the connection was ended.
+    * @param dt the date/time
+    * @see ConnectionEntry#getEndTime()
+    */
+   public void setEndTime(Date dt) {
+	   _et = dt;
    }
    
    /**
@@ -428,7 +452,8 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Com
    /**
     * Compares two connections by comparing their date/times.
     */
-   public int compareTo(ConnectionEntry c2) {
-      return _dt.compareTo(c2.getStartTime());
+   public int compareTo(Object o2) {
+	   CalendarEntry c2 = (CalendarEntry) o2;
+	   return _st.compareTo(c2.getDate());
    }
 }

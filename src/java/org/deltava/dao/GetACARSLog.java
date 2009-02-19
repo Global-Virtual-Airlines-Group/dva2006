@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -74,6 +74,27 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	}
 	
 	/**
+	 * Returns all ACARS Dispatch connection entries within a time span.
+	 * @param sd the start date/time
+	 * @param ed the end date/time
+	 * @return a List of dispatch ConnectionEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<ConnectionEntry> getDispatchConnections(java.util.Date sd, java.util.Date ed) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+					+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH FROM acars.CONS C WHERE "
+					+ "(C.DISPATCH=?) AND (C.DATE > ?) AND (C.DATE < ?) ORDER BY C.DATE");
+			_ps.setBoolean(1, true);
+			_ps.setTimestamp(2, createTimestamp(sd));
+			_ps.setTimestamp(3, createTimestamp(ed));
+			return executeConnectionInfo();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all ACARS connection log entries matching particular criteria.
 	 * @param criteria the search criteria
 	 * @return a List of ConnectionEntry beans sorted by date
@@ -91,10 +112,10 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			terms.add("(C.DATE < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, COUNT(DISTINCT F.ID), COUNT(P.FLIGHT_ID) "
-				+ "FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P "
-				+ "ON (F.ID=P.FLIGHT_ID)");
+		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, COUNT(DISTINCT F.ID), "
+				+ "COUNT(P.FLIGHT_ID) FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) "
+				+ "LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID)");
 
 		// Add the terms
 		if (!terms.isEmpty()) {
@@ -135,11 +156,11 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	 */
 	public List<ConnectionEntry> getUnusedConnections(int cutoff) throws DAOException {
 		try {
-			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-					+ "C.CLIENT_BUILD, C.BETA_BUILD, COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM "
-					+ "acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON "
-					+ "(F.ID=P.FLIGHT_ID) WHERE (C.DATE < DATE_SUB(NOW(), INTERVAL ? HOUR)) GROUP BY C.ID "
-					+ "HAVING (FC=0) AND (PC=0) ORDER BY C.DATE");
+			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, IFNULL(C.ENDDATE, DATE_ADD(C.DATE, INTERVAL 18 HOUR)) "
+					+ "AS ED, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, "
+					+ "COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM acars.CONS C LEFT JOIN "
+					+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) WHERE "
+					+ "GROUP BY C.ID HAVING (ED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (FC=0) AND (PC=0)");
 			_ps.setInt(1, cutoff);
 			return executeConnectionInfo();
 		} catch (SQLException se) {

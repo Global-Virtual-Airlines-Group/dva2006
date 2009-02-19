@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
@@ -34,14 +34,15 @@ public class SetACARSData extends DAO {
 	 */
 	public void createConnection(ConnectionEntry ce) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO acars.CONS (ID, PILOT_ID, DATE, REMOTE_ADDR, REMOTE_HOST, CLIENT_BUILD) "
-					+ "VALUES (?, ?, ?, INET_ATON(?), ?, ?)");
+			prepareStatement("INSERT INTO acars.CONS (ID, PILOT_ID, DATE, REMOTE_ADDR, REMOTE_HOST, "
+					+ "CLIENT_BUILD, DISPATCH) VALUES (?, ?, ?, INET_ATON(?), ?, ?, ?)");
 			_ps.setLong(1, ce.getID());
 			_ps.setInt(2, ce.getPilotID());
 			_ps.setTimestamp(3, createTimestamp(ce.getStartTime()));
 			_ps.setString(4, ce.getRemoteAddr());
 			_ps.setString(5, ce.getRemoteHost());
 			_ps.setInt(6, ce.getClientBuild());
+			_ps.setBoolean(7, ce.getDispatch());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
