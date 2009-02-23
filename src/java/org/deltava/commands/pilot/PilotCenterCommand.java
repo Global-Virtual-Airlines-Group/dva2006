@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -79,7 +79,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Stuff the pilot profile in the request and the session
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute(CommandContext.USER_ATTR_NAME, p, SESSION);
+			ctx.setAttribute(HTTPContext.USER_ATTR_NAME, p, SESSION);
 			
 			// Check for manual PIREP ability
 			GetFlightReports frdao = new GetFlightReports(con);
