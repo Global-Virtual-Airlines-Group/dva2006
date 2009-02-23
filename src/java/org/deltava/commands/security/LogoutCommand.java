@@ -1,3 +1,4 @@
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import javax.servlet.http.Cookie;
@@ -11,7 +12,7 @@ import org.deltava.commands.*;
  * A Web Site Command to log off the user. If a superuser is currently impersonating a user, then
  * the impersonation will end and the user will revert back to their true credentials.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -28,10 +29,10 @@ public class LogoutCommand extends AbstractCommand {
         HttpSession s = ctx.getSession();
         if (s != null) {
         	// Check if we're impersonating a user
-        	Pilot suUsr = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
+        	Pilot suUsr = (Pilot) s.getAttribute(HTTPContext.SU_ATTR_NAME);
             if (suUsr != null) {
-            	ctx.setAttribute(CommandContext.USER_ATTR_NAME, suUsr, SESSION);
-            	ctx.getSession().removeAttribute(CommandContext.SU_ATTR_NAME);
+            	ctx.setAttribute(HTTPContext.USER_ATTR_NAME, suUsr, SESSION);
+            	ctx.getSession().removeAttribute(HTTPContext.SU_ATTR_NAME);
             } else {
             	s.invalidate();
             	

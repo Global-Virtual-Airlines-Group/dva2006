@@ -120,7 +120,7 @@ public class TestCommandContext extends TestCase {
         assertTrue(_ctxt.getRoles().contains("Anonymous"));
 		
         HttpSession s = _ctxt.getSession();
-        s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+        s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
         assertTrue(_ctxt.isAuthenticated());
         assertEquals(p, _ctxt.getUser());
         assertEquals(p.getRoles(), _ctxt.getRoles());

@@ -14,7 +14,7 @@ import com.kizna.servletunit.*;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.deltava.beans.Person;
-import org.deltava.commands.CommandContext;
+import org.deltava.commands.HTTPContext;
 import org.deltava.servlet.filter.CustomRequestWrapper;
 
 import org.deltava.util.system.*;
@@ -72,7 +72,7 @@ public class AbstractTagTestCase extends TestCase {
 
    protected void setUser(Person p) {
       HttpSession s = _req.getSession(true);
-      s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+      s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
    }
 
    protected void assertSkipBody(int resultCode) {

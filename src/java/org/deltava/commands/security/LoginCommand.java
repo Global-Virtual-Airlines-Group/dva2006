@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.io.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -228,7 +228,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Create the session and stuff in the pilot data
 			HttpSession s = ctx.getRequest().getSession(true);
-			s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 			s.setAttribute(CommandContext.ADDR_ATTR_NAME, cData.getRemoteAddr());
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));

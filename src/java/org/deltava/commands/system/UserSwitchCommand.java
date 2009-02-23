@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to switch credentials and impersonate a user.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -60,8 +60,8 @@ public class UserSwitchCommand extends AbstractCommand {
 		
 		// Save new user in request and switch to the user, saving the old user
 		ctx.setAttribute("user", usr, REQUEST);
-		ctx.setAttribute(CommandContext.SU_ATTR_NAME, ctx.getUser(), SESSION);
-		ctx.setAttribute(CommandContext.USER_ATTR_NAME, usr, SESSION);
+		ctx.setAttribute(HTTPContext.SU_ATTR_NAME, ctx.getUser(), SESSION);
+		ctx.setAttribute(HTTPContext.USER_ATTR_NAME, usr, SESSION);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

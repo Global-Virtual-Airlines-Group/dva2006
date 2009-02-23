@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -13,7 +13,8 @@ import org.deltava.beans.*;
 import org.deltava.crypt.*;
 import org.deltava.security.*;
 
-import org.deltava.commands.CommandContext;
+import static org.deltava.commands.HTTPContext.*;
+import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.dao.*;
 import org.deltava.jdbc.ConnectionPool;
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -145,7 +146,7 @@ public class SecurityCookieFilter implements Filter {
 		String remoteAddr = req.getRemoteAddr();
 
 		// Check for the authentication cookie
-		String authCookie = getCookie(hreq, CommandContext.AUTH_COOKIE_NAME);
+		String authCookie = getCookie(hreq, AUTH_COOKIE_NAME);
 		if (StringUtils.isEmpty(authCookie)) {
 			fc.doFilter(req, rsp);
 			return;
@@ -159,15 +160,15 @@ public class SecurityCookieFilter implements Filter {
 				throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
 		} catch (Exception e) {
 			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + hreq.getHeader("user-agent") + " - " + e.getMessage());
-			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			cData = null;
 		}
 
 		// Validate the session/cookie data
 		HttpSession s = hreq.getSession(true);
-		Pilot p = (Pilot) s.getAttribute(CommandContext.USER_ATTR_NAME);
+		Pilot p = (Pilot) s.getAttribute(USER_ATTR_NAME);
 		try {
-			String savedAddr = (String) s.getAttribute(CommandContext.ADDR_ATTR_NAME);
+			String savedAddr = (String) s.getAttribute(ADDR_ATTR_NAME);
 			if (UserPool.isBlocked(p))
 				throw new SecurityException(p.getName() + " is blocked");
 			else if (hreq.isRequestedSessionIdFromURL())
@@ -175,10 +176,10 @@ public class SecurityCookieFilter implements Filter {
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr))
 				throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
 			else if (savedAddr == null)
-				s.setAttribute(CommandContext.ADDR_ATTR_NAME, remoteAddr);
+				s.setAttribute(ADDR_ATTR_NAME, remoteAddr);
 		} catch (SecurityException se) {
 			log.warn(se.getMessage());
-			hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			s.invalidate();
 			p = null;
 			cData = null;
@@ -186,8 +187,8 @@ public class SecurityCookieFilter implements Filter {
 			
 		// Load the user
 		if ((p == null) && (cData != null)) {
-			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
-			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
+			s.setAttribute(SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
+			s.setAttribute(SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
 			p = loadPersonFromDatabase(cData.getUserID());
 
 			// Make sure that the pilot is still active
@@ -195,11 +196,11 @@ public class SecurityCookieFilter implements Filter {
 				try {
 					if (p.getStatus() == Pilot.ACTIVE) {
 						if (authenticate(p, cData.getPassword())) {
-							s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+							s.setAttribute(USER_ATTR_NAME, p);
 							log.info("Restored " + p.getName() + " from Security Cookie");
 						
 							// Check if we are a superUser impersonating someone
-							Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
+							Person su = (Pilot) s.getAttribute(SU_ATTR_NAME);
 							UserPool.add((su != null) ? su : p, s.getId(), hreq.getHeader("user-agent"));
 						} else 
 							throw new SecurityException("Cannot re-authenticate " + p.getName());
@@ -207,7 +208,7 @@ public class SecurityCookieFilter implements Filter {
 						throw new SecurityException(p.getName() + " status = " + p.getStatusName());
 				} catch (SecurityException se) {
 					log.error(se.getMessage());
-					hrsp.addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+					hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 					s.invalidate();
 				}
 			}
