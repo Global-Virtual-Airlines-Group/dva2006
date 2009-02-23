@@ -1,18 +1,19 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.acars.DispatchScheduleEntry;
+import org.deltava.beans.acars.*;
 
 /**
  * A Data Access Object to read ther ACARS Dispatcher service calendar.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 2.2
  */
-public class GetDispatchCalendar extends DAO {
+
+public class GetDispatchCalendar extends GetACARSData {
 
 	/**
 	 * Initializes the Data Access Object.
@@ -21,7 +22,72 @@ public class GetDispatchCalendar extends DAO {
 	public GetDispatchCalendar(Connection c) {
 		super(c);
 	}
+	
+	/**
+	 * Returns all ACARS Dispatch connection entries within a time span.
+	 * @param sd the start date/time
+	 * @param days the number of days forward to retrieve
+	 * @return a List of dispatch ConnectionEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<ConnectionEntry> getDispatchConnections(java.util.Date sd, int days) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
+					+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH FROM acars.CONS C WHERE "
+					+ "(C.DISPATCH=?) AND (C.DATE > ?) AND (C.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY C.ID");
+			_ps.setBoolean(1, true);
+			_ps.setTimestamp(2, createTimestamp(sd));
+			_ps.setTimestamp(3, createTimestamp(sd));
+			_ps.setInt(4, days);
+			return executeConnectionInfo();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves all Flights dispatched by a Dispatcher during a particular Connection.
+	 * @param ce the DispatchConnectionEntry
+	 * @return a List of FlightInfo beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<FlightInfo> getDispatchedFlights(DispatchConnectionEntry ce) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
+				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCH FD WHERE (C.ID=F.CON_ID) AND (F.ID=FD.ID) AND "
+				+ "(FD.DISPATCHER_ID=?) AND (F.CREATED > ?) AND (F.CREATED < ?)");
+			_ps.setInt(1, ce.getPilotID());
+			_ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
+			_ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
+			return executeFlightInfo();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
+	/**
+	 * Retrieves all Flights dispatched by a Dispatcher within a time span.
+	 * @param id the Dispatcher's database ID
+	 * @param sd the start date/time
+	 * @param days the number of days forward to retrieve
+	 * @return a List of FlightInfo beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightInfo> getDispatchedFlights(int id, java.util.Date sd, int days) throws DAOException {
+		try {
+			prepareStatement("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
+				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCH FD WHERE (C.ID=F.CON_ID) AND (F.ID=FD.ID) AND "
+				+ "(FD.DISPATCHER_ID=?) AND (F.CREATED > ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? DAY))");
+			_ps.setInt(1, id);
+			_ps.setTimestamp(2, createTimestamp(sd));
+			_ps.setTimestamp(3, createTimestamp(sd));
+			_ps.setInt(4, days);
+			return executeFlightInfo();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Retrieves a specifc Dispatcher service entry.
 	 * @param id the entry database ID

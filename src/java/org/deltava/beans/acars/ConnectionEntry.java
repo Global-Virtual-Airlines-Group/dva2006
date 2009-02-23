@@ -37,7 +37,6 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
    private int _bufferWrites;
    
    private FlightInfo _fInfo;
-   private boolean _isDispatch;
    private boolean _isHidden;
    private long _bytesOut;
    
@@ -146,11 +145,10 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
    
    /**
     * Returns if this is a Dispatch connection.
-    * @return TRUE if this is a Dispatch connection, otherwise FALSE
-    * @see ConnectionEntry#setDispatch(boolean)
+    * @return FALSE
     */
    public boolean getDispatch() {
-	   return _isDispatch; 
+	   return false; 
    }
    
    /**
@@ -380,15 +378,6 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
     */
    public void setUser(Pilot usr) {
       _usr = usr;
-   }
-   
-   /**
-    * Marks the connection as a Dispatch connection.
-    * @param isDispatch TRUE if this is a Dispatcher connection, otherwise FALSE
-    * @see ConnectionEntry#getDispatch()
-    */
-   public void setDispatch(boolean isDispatch) {
-	   _isDispatch = isDispatch;
    }
    
    /**
