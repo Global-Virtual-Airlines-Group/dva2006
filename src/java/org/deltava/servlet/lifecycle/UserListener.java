@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -11,8 +11,7 @@ import org.deltava.security.UserPool;
 
 import org.deltava.dao.SetPilotLogin;
 
-import org.deltava.commands.CommandContext;
-
+import org.deltava.commands.*;
 import org.deltava.jdbc.*;
 
 import org.deltava.util.system.SystemData;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -35,7 +34,8 @@ public class UserListener implements HttpSessionListener {
 	public void sessionCreated(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
 		s.setAttribute(CommandContext.USRLISTENER_ATTR_NAME, new UserStartupListener());
-		log.debug("Created Session " + s.getId());
+		if (log.isDebugEnabled())
+			log.debug("Created Session " + s.getId());
 	}
 	
 	/**
@@ -44,10 +44,11 @@ public class UserListener implements HttpSessionListener {
 	 */
 	public void sessionDestroyed(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
-		log.debug("Destroyed Session " + s.getId());
+		if (log.isDebugEnabled())
+			log.debug("Destroyed Session " + s.getId());
 
 		// Get the user object
-		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+		Person p = (Person) s.getAttribute(HTTPContext.USER_ATTR_NAME);
 		if (p == null)
 			return;
 

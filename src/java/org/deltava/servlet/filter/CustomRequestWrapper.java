@@ -1,16 +1,17 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.security.Principal;
 import javax.servlet.http.*;
 
 import org.deltava.beans.Person;
-import org.deltava.commands.CommandContext;
+
+import org.deltava.commands.HTTPContext;
 
 /**
  * A custom HTTP request wrapper to allow access to custom security information via standard Servlet API calls.
  * @author Luke
- * @version 2.1
+ * @version 2.4
  * @since 1.0
  */
 
@@ -50,12 +51,12 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
      * @return the Person object, or null if not authenticated
      * @see CustomRequestWrapper#getRemoteUser()
      * @see Person
-     * @see CommandContext#USER_ATTR_NAME
+     * @see HTTPContext#USER_ATTR_NAME
      */
     @Override
     public final Principal getUserPrincipal() {
         HttpSession s = super.getSession(false);
-        return (s == null) ? null : (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+        return (s == null) ? null : (Person) s.getAttribute(HTTPContext.USER_ATTR_NAME);
     }
     
     /**
@@ -75,7 +76,7 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
             return ("Anonymous".equals(roleName));
         
         // Get the person object
-        Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+        Person p = (Person) s.getAttribute(HTTPContext.USER_ATTR_NAME);
         return (p == null) ? ("Anonymous".equals(roleName)) : p.isInRole(roleName);
     }
 }

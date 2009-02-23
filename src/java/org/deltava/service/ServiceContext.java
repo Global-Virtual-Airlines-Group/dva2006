@@ -1,33 +1,23 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
-import java.util.*;
 
 import javax.servlet.http.*;
 
 import org.deltava.beans.Person;
 
-import org.deltava.jdbc.*;
-
-import org.deltava.security.SecurityContext;
-
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
-public class ServiceContext extends ConnectionContext implements SecurityContext {
-   
-   // List of roles for anonymous users
-   private static final Collection<String> ANONYMOUS_ROLES = Collections.singleton("Anonymous");
+public class ServiceContext extends org.deltava.commands.HTTPContext {
    
    private Person _usr;
    
-   private HttpServletRequest _req;
-   private HttpServletResponse _rsp;
    private final OutputBuffer _buf = new OutputBuffer();
    
    protected class OutputBuffer {
@@ -60,18 +50,7 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
     * @see ServiceContext#getResponse()
     */
    public ServiceContext(HttpServletRequest req, HttpServletResponse rsp) {
-      super();
-      _req = req;
-      _rsp = rsp;
-   }
-
-   /**
-    * Returns if an authenticated user is executing this Web Service.
-    * @return TRUE if the user is authenticated, otherwise FALSE
-    * @see ServiceContext#getUser()
-    */
-   public boolean isAuthenticated() {
-      return (_usr != null);
+      super(req, rsp);
    }
 
    /**
@@ -85,58 +64,11 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
    }
 
    /**
-    * Returns the security roles associated with this user.
-    * @return a Collection of role names
-    */
-   public Collection<String> getRoles() {
-      return isAuthenticated() ? _usr.getRoles() : ANONYMOUS_ROLES;
-   }
-   
-   /**
-    * Queries if the user accessing this Web Service is a member of a particular Security Role.
-    * @return TRUE if the user is in the role or the wildcard role (&quot;*quot;) is specified, otherwise
-    * FALSE
-    */
-   public boolean isUserInRole(String roleName) {
-      if (isAuthenticated())
-         return _usr.isInRole(roleName);
-      
-      return ("*".equals(roleName) || ANONYMOUS_ROLES.contains(roleName));
-   }
-   
-   /**
     * Updates the User executing this Web Service.
     * @param p the User object, or null if anonymous
     */
    public void setUser(Person p) {
       _usr = p;
-   }
-   
-   /**
-    * Returns an HTTP request parameter.
-    * @param paramName the parameter name
-    * @return the parameter value, or null if not found
-    */
-   public String getParameter(String paramName) {
-      return _req.getParameter(paramName);
-   }
-   
-   /**
-    * Returns the current HTTP servlet request.
-    * @return the servlet request
-    * @see ServiceContext#getResponse()
-    */
-   public HttpServletRequest getRequest() {
-      return _req; 
-   }
-   
-   /**
-    * Returns the current HTTP servlet response.
-    * @return the servlet response
-    * @see ServiceContext#getRequest()
-    */
-   public HttpServletResponse getResponse() {
-      return _rsp;
    }
    
    /**
@@ -166,9 +98,10 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
     * @see ServiceContext#println(String)
     */
    public void commit() throws IOException {
-      _rsp.setBufferSize((_buf.length() < 32768) ? _buf.length() + 16 : 32768);
-      _rsp.setContentLength(_buf.length());
-      _rsp.getWriter().print(_buf);
-      _rsp.flushBuffer();
+	   HttpServletResponse rsp = getResponse();
+      rsp.setBufferSize((_buf.length() < 32768) ? _buf.length() + 16 : 32768);
+      rsp.setContentLength(_buf.length());
+      rsp.getWriter().print(_buf);
+      rsp.flushBuffer();
    }
 }
