@@ -1,74 +1,90 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service.acars;
+// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.acars;
 
 import java.util.*;
 import java.sql.Connection;
-
-import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.schedule.*;
-import org.deltava.beans.testing.*;
 import org.deltava.beans.navdata.TerminalRoute;
+import org.deltava.beans.schedule.Aircraft;
+import org.deltava.beans.schedule.ScheduleEntry;
+import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.Test;
 
-import org.deltava.crypt.MessageDigester;
-
+import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.service.*;
+import org.deltava.crypt.MessageDigester;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to handle posting of offline ACARS Flight Reports.
+ * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
  * @version 2.4
- * @since 1.0
+ * @since 2.4
  */
 
-public class FlightReportService extends WebService {
-
-	private static final Logger log = Logger.getLogger(FlightReportService.class);
+public class OfflineFlightCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(OfflineFlightCommand.class);
 
 	/**
-	 * Executes the Web Service.
-	 * @param ctx the Web Service context
-	 * @return the HTTP status code
-	 * @throws ServiceException if an error occurs
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
 	 */
-	public int execute(ServiceContext ctx) throws ServiceException {
-
-		// Get the SHA hash and XML
-		String xml = ctx.getParameter("xml");
-		String sha = ctx.getParameter("hashCode");
-		if (xml == null)
-			throw error(SC_BAD_REQUEST, "No Flight Information", false);
-
-		// Validate the SHA
-		boolean noValidate = ctx.isUserInRole("HR") && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
-		if (!noValidate) {
-			MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
-			md.salt(SystemData.get("security.hash.acars.salt"));
-			String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
-			if (!calcHash.equals(sha)) {
-				log.warn("ACARS Hash mismatch - expected " + sha + ", calculated " + calcHash);
-				throw error(SC_BAD_REQUEST, "SHA mismatch", false);
-			}
+	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get command result and check for post
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/acars/offlineSubmit.jsp");
+		
+		// Get the XML and SHA
+		FileUpload xmlF = ctx.getFile("xml");
+		FileUpload shaF = ctx.getFile("hashCode");
+		if (xmlF == null) {
+			result.setSuccess(true);
+			return;
 		}
-
-		// Parse the flight
-		OfflineFlight flight = OfflineFlightParser.create(xml);
+		
+		// Convert the files to strings
+		OfflineFlight flight = null; 
+		try {
+			String xml = new String(xmlF.getBuffer(), "UTF-8");
+			String sha = new String(shaF.getBuffer(), "UTF-8").trim();
+		
+			// Validate the SHA
+			boolean noValidate = ctx.isUserInRole("HR") && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
+			if (!noValidate) {
+				MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
+				md.salt(SystemData.get("security.hash.acars.salt"));
+				String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
+				if (!calcHash.equals(sha)) {
+					log.warn("ACARS Hash mismatch - expected " + sha + ", calculated " + calcHash);
+					ctx.setMessage("SHA-256 Mismatch");
+					return;
+				}
+			}
+		
+			// Parse the flight
+			flight = OfflineFlightParser.create(xml);
+		} catch (Exception e) {
+			log.error("Error parsing XML - " + e.getMessage(), e);
+			ctx.setMessage(e.getMessage());
+			return;
+		}
 
 		// Add connection fields from the request
 		ConnectionEntry ce = flight.getConnection();
 		ce.setPilotID(ctx.getUser().getID());
 		ce.setRemoteHost(ctx.getRequest().getRemoteHost());
 		ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-
+		
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
 		DateTime dt = new DateTime(inf.getEndTime());
@@ -79,20 +95,20 @@ public class FlightReportService extends WebService {
 		afr.setDatabaseID(FlightReport.DBID_PILOT, ctx.getUser().getID());
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(dt.getDate());
-
+		
 		try {
 			Connection con = ctx.getConnection();
-
+			
 			// Get the user information
 			GetPilot pdao = new GetPilot(con);
 			GetPilot.invalidateID(ctx.getUser().getID());
 			Pilot p = pdao.get(ctx.getUser().getID());
-
+			
 			// Get the SID/STAR data
 			GetNavRoute nvdao = new GetNavRoute(con);
 			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.SID, flight.getSID()));
 			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, flight.getSTAR()));
-
+			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
 			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(),
@@ -105,18 +121,18 @@ public class FlightReportService extends WebService {
 				afr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
 				afr.setComments(fr.getComments());
 			}
-
+			
 			// Check if this Flight Report counts for promotion
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), afr.getEquipmentType());
 			if (promoEQ.contains(p.getEquipmentType()))
 				afr.setCaptEQType(promoEQ);
-
+			
 			// Check if the user is rated to fly the aircraft
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
 			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
 				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
-
+			
 			// Check for historic aircraft
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(afr.getEquipmentType());
@@ -136,7 +152,7 @@ public class FlightReportService extends WebService {
 				else if ((a.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
 					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 			}
-
+			
 			// Check if it's a Flight Academy flight
 			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(afr);
@@ -152,7 +168,7 @@ public class FlightReportService extends WebService {
 				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
 					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}
-
+			
 			// Turn off auto-commit
 			ctx.startTX();
 
@@ -163,11 +179,11 @@ public class FlightReportService extends WebService {
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
-
+			
 			// Dump the positions
 			if (!CollectionUtils.isEmpty(flight.getPositions()))
 				awdao.writePositions(inf.getID(), flight.getPositions());
-
+			
 			// Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(p.getID(), afr.getEquipmentType(), Test.NEW);
@@ -181,30 +197,24 @@ public class FlightReportService extends WebService {
 				wdao.write(cr);
 			} else
 				afr.setAttribute(FlightReport.ATTR_CHECKRIDE, false);
-
+			
 			// Write the PIREP
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(afr);
 			fwdao.writeACARS(afr, SystemData.get("airline.db"));
-
+			ctx.setAttribute("pirep", afr, REQUEST);
+			
 			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-
-		// Return back success
-		return SC_OK;
-	}
-
-	/**
-	 * Returns wether this web service requires authentication.
-	 * @return TRUE always
-	 */
-	public final boolean isSecure() {
-		return true;
+		
+		// Forward to the JSP
+		result.setType(ResultType.REQREDIRECT);
+		result.setSuccess(true);
 	}
 }
