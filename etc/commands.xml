@@ -1704,7 +1704,13 @@
 		<class>org.deltava.commands.acars.MapCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+	<command id="acarsoffline">
+		<name>ACARS Offline Flight Submit</name>
+		<class>org.deltava.commands.acars.OfflineFlightCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="acarsempty">
 		<name>ACARS Empty Log Entries</name>
 		<class>org.deltava.commands.acars.EmptyLogEntriesCommand</class>
