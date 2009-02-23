@@ -74,27 +74,6 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	}
 	
 	/**
-	 * Returns all ACARS Dispatch connection entries within a time span.
-	 * @param sd the start date/time
-	 * @param ed the end date/time
-	 * @return a List of dispatch ConnectionEntry beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<ConnectionEntry> getDispatchConnections(java.util.Date sd, java.util.Date ed) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
-					+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH FROM acars.CONS C WHERE "
-					+ "(C.DISPATCH=?) AND (C.DATE > ?) AND (C.DATE < ?) ORDER BY C.DATE");
-			_ps.setBoolean(1, true);
-			_ps.setTimestamp(2, createTimestamp(sd));
-			_ps.setTimestamp(3, createTimestamp(ed));
-			return executeConnectionInfo();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns all ACARS connection log entries matching particular criteria.
 	 * @param criteria the search criteria
 	 * @return a List of ConnectionEntry beans sorted by date

@@ -417,7 +417,9 @@ public class GetACARSData extends DAO {
 		boolean hasMessageCounts = (rs.getMetaData().getColumnCount() > 10);
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
 		while (rs.next()) {
-			ConnectionEntry entry = new ConnectionEntry(rs.getLong(1));
+			boolean isDispatch = rs.getBoolean(9);
+			long id = rs.getLong(1);
+			ConnectionEntry entry = isDispatch ? new DispatchConnectionEntry(id) : new ConnectionEntry(id);
 			entry.setPilotID(rs.getInt(2));
 			entry.setStartTime(rs.getTimestamp(3));
 			entry.setEndTime(rs.getTimestamp(4));
@@ -425,7 +427,6 @@ public class GetACARSData extends DAO {
 			entry.setRemoteHost(rs.getString(6));
 			entry.setClientBuild(rs.getInt(7));
 			entry.setBeta(rs.getInt(8));
-			entry.setDispatch(rs.getBoolean(9));
 			if (hasMessageCounts) {
 				entry.setFlightInfoCount(rs.getInt(10));
 				entry.setPositionCount(rs.getInt(11));
