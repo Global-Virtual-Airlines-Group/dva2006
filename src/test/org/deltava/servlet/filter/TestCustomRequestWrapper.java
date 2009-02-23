@@ -8,7 +8,7 @@ import com.kizna.servletunit.*;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.Pilot;
-import org.deltava.commands.CommandContext;
+import org.deltava.commands.HTTPContext;
 
 public class TestCustomRequestWrapper extends TestCase {
 	
@@ -61,7 +61,7 @@ public class TestCustomRequestWrapper extends TestCase {
 		HttpSession s = _req.getSession(true);
 		Pilot p = new Pilot("John", "Smith");
 		p.addRole("HR");
-		s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+		s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 		assertEquals(p, _wreq.getUserPrincipal());
 		assertEquals("John Smith", _wreq.getRemoteUser());
 		assertTrue(_wreq.isUserInRole("*"));
@@ -69,7 +69,7 @@ public class TestCustomRequestWrapper extends TestCase {
 		assertFalse(_wreq.isUserInRole("Some other role"));
 		
 		// Test after logoff
-		s.removeAttribute(CommandContext.USER_ATTR_NAME);
+		s.removeAttribute(HTTPContext.USER_ATTR_NAME);
 		assertNull(_wreq.getRemoteUser());
 		assertNull(_wreq.getUserPrincipal());
 		assertFalse(_wreq.isUserInRole("AnyRole"));

@@ -7,7 +7,6 @@ import javax.servlet.http.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.TZInfo;
-import org.deltava.commands.CommandContext;
 import org.deltava.servlet.filter.CustomRequestWrapper;
 import org.deltava.taglib.AbstractTagTestCase;
 
@@ -35,8 +34,7 @@ public class TestDateFormatTag extends AbstractTagTestCase {
         p.setTimeFormat("hh:mm");
         p.setTZ(TZInfo.init("US/Eastern", null, null));
         HttpServletRequest hreq = _req;
-        HttpSession s = hreq.getSession(true);
-        s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+        setUser(p);
         _ctx.initialize(null, new CustomRequestWrapper(hreq), _rsp, "", false, 8192, false);
 
         _tag.setPageContext(_ctx);
