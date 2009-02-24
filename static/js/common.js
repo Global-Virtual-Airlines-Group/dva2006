@@ -5,11 +5,12 @@ return document.getElementById(eName);
 
 function getElementsById(eName)
 {
-var elements = new Array();
+var elements = [];
 var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
 for (var x = 0; x < all.length; x++) {
-	if (all[x].id == eName)
+	if (all[x].id == eName) {
 		elements.push(all[x]);
+	}
 }
 
 return elements;
@@ -17,38 +18,40 @@ return elements;
 
 function getElementsByClass(cName)
 {
-var elements = new Array();
+var elements = [];
 var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
 for (var x = 0; x < all.length; x++) {
 	var c = all[x].className;
 	if (c.indexOf) {
-		if ((c.indexOf(' ' + cName) > -1) || (c.indexOf(cName + ' ') > -1) || (c == cName))
+		if ((c.indexOf(' ' + cName) > -1) || (c.indexOf(cName + ' ') > -1) || (c == cName)) {
 			elements.push(all[x]);
+		}
 	}
 }
 
 return elements;
 }
 
-function disableButton(btnName)
+function enableObject(e, isEnabled)
 {
-return enableElement(btnName, false);
+if (e) e.disabled = (!isEnabled);
+return true;
 }
 
 function enableElement(eName, isEnabled)
 {
 var objs = getElementsById(eName);
 if (!objs) return false;
-for (var x = 0; x < objs.length; x++)
+for (var x = 0; x < objs.length; x++) {
 	enableObject(objs[x], isEnabled);
+}
 
 return true;
 }
 
-function enableObject(e, isEnabled)
+function disableButton(btnName)
 {
-if (e) e.disabled = (!isEnabled);
-return true;
+return enableElement(btnName, false);
 }
 
 function showObject(e, isVisible)
@@ -101,9 +104,8 @@ form.action = url;
  
 // Execute the form validation - if any
 if (form.onsubmit) {
-	submitOK = form.onsubmit();
-	if (!submitOK)
-		return false;
+	var submitOK = form.onsubmit();
+	if (!submitOK) return false;
 }
   
 setSubmit();
@@ -133,7 +135,7 @@ return true;
 function validateNumber(text, minValue, title)
 {
 if ((!text) || (text.disabled)) return true;
-intValue = parseFloat(text.value);
+var intValue = parseFloat(text.value);
 if ((text.value.length < 1) || (intValue == Number.NaN)) {
 	alert('Please provide a numeric ' + title + '.');
 	text.focus();
@@ -174,7 +176,7 @@ return true;
 function validateCombo(combo, title)
 {
 if ((!combo) || (combo.disabled)) return true;
-if (combo.selectedIndex == 0) {
+if (combo.selectedIndex === 0) {
 	alert('Please provide the ' + title + '.');
 	combo.focus();
 	return false;
@@ -185,12 +187,12 @@ return true;
 
 function validateFile(fileName, extType, title)
 {
-if ((!fileName) || (fileName.disabled) || (fileName.value.length == 0)) return true;
-extTypes = extType.toLowerCase().split(',');
+if ((!fileName) || (fileName.disabled) || (fileName.value.length === 0)) return true;
+var extTypes = extType.toLowerCase().split(',');
 
-fName = fileName.value;
-ext = fName.substring(fName.length - 3, fName.length).toLowerCase();
-for (x = 0; x < extTypes.length; x++) {
+var fName = fileName.value;
+var ext = fName.substring(fName.length - 3, fName.length).toLowerCase();
+for (var x = 0; x < extTypes.length; x++) {
 	if (ext == extTypes[x])
 		return true;
 }
@@ -204,7 +206,7 @@ function validateCheckBox(checkbox, minSelected, title)
 {
 if ((!checkbox) || (!checkbox.length)) return true;
 var checkCount = 0;
-for (x = 0; x < checkbox.length; x++) {
+for (var x = 0; x < checkbox.length; x++) {
 	if (checkbox[x].checked)
 		checkCount++;
 }
@@ -217,13 +219,14 @@ return false;
 
 function setDaysInMonth(combo)
 {
-var daysInMonth = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-var month = parseInt(combo.options[combo.selectedIndex].value);
+var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var month = parseInt(combo.options[combo.selectedIndex].value, 10);
 
 var dCombo = document.forms[0].dateD;
 dCombo.options.length = daysInMonth[month];
-for (x = 1; x <= daysInMonth[month]; x++)
+for (var x = 1; x <= daysInMonth[month]; x++) {
 	dCombo.options[x-1] = new Option(x);
+}
 	
 return true;
 }
@@ -242,7 +245,7 @@ var req;
 try {
 	req = new XMLHttpRequest();
 } catch (e) {
-	var MSXML_XMLHTTP_PROGIDS = new Array('MSXML2.XMLHTTP.5.0','MSXML2.XMLHTTP.4.0','MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP');
+	var MSXML_XMLHTTP_PROGIDS = ['MSXML2.XMLHTTP.5.0','MSXML2.XMLHTTP.4.0','MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP'];
 	var success = false;
 	for (var i = 0; i < MSXML_XMLHTTP_PROGIDS.length && (!req); i++) {
 		try {
@@ -260,8 +263,9 @@ if (!document.getElementsByTagName) return false;
 var anchors = document.getElementsByTagName("a");
 for (var i = 0; i < anchors.length; i++) {
 	var anchor = anchors[i];
-	if (anchor.getAttribute("href") && anchor.getAttribute("rel") == "external")
+	if (anchor.getAttribute("href") && anchor.getAttribute("rel") == "external") {
 		anchor.target = "_blank";
+	}
 }
 
 return true;
@@ -269,7 +273,7 @@ return true;
 
 function showHelp(helpname)
 {
-URLflags = 'height=460,width=660,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes';
+var URLflags = 'height=460,width=660,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes';
 var w = window.open('/help.do?id=' + helpname, 'HELP', URLflags);
 return true;
 }
