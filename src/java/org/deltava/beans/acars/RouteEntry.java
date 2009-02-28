@@ -689,7 +689,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 
 		buf.append("<br />Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
-		buf.append(" degrees<br />Veritical Speed: ");
+		buf.append(" degrees<br />Vertical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
 		buf.append(" feet/min<br />N<sub>1</sub>: ");
 		buf.append(StringUtils.format(_n1, "##0.0"));
