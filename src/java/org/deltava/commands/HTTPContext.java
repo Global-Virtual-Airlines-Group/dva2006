@@ -18,14 +18,16 @@ import org.deltava.security.SecurityContext;
  */
 
 public abstract class HTTPContext extends ConnectionContext implements SecurityContext {
-	
+
 	private static final Collection<String> ANONYMOUS_ROLES = Collections.singleton("Anonymous");
-	
+
 	public static final String USER_ATTR_NAME = "authUser";
 	public static final String SU_ATTR_NAME = "superUser";
-	
+
 	private HttpServletRequest _req;
 	private HttpServletResponse _rsp;
+
+	private Person _usr;
 
 	/**
 	 * Creates a new Command context from an HTTP Servlet Request/Resposne pair.
@@ -37,7 +39,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 		_req = req;
 		_rsp = rsp;
 	}
-	
+
 	/**
 	 * Returns the current HTTP session.
 	 * @return the HTTP session, null if none present or invalid
@@ -45,7 +47,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public HttpSession getSession() {
 		return _req.getSession(false);
 	}
-	
+
 	/**
 	 * Returns the current HTTP Servlet Request.
 	 * @return the Servlet Request
@@ -61,7 +63,27 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public HttpServletResponse getResponse() {
 		return _rsp;
 	}
-	
+
+	/**
+	 * Returns the authenticated user object.
+	 * @return the User object, or null if anonymous
+	 * @see HTTPContext#isAuthenticated()
+	 * @see HTTPContext#isUserInRole(String)
+	 */
+	public Person getUser() {
+		return (_usr == null) ? (Person) _req.getUserPrincipal() : _usr;
+	}
+
+	/**
+	 * Updates the User executing this operation. This method has no
+	 * effect if a user object is already present in the request.
+	 * @param p the User object, or null if anonymous
+	 */
+	public void setUser(Person p) {
+		if (_req.getUserPrincipal() == null)
+			_usr = p;
+	}
+
 	/**
 	 * Returns if this command is being invoked by an authenticated user.
 	 * @return TRUE if the user is logged in, FALSE otherwise
@@ -69,9 +91,9 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @see CommandContext#getRoles()
 	 */
 	public boolean isAuthenticated() {
-		return (_req.getRemoteUser() != null);
+		return (getUser() != null);
 	}
-	
+
 	/**
 	 * Returns whether an Administrator is impersonating another user.
 	 * @return TRUE if superuser mode is on, otherwise FALSE
@@ -79,18 +101,6 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public boolean isSuperUser() {
 		HttpSession s = _req.getSession(false);
 		return (s == null) ? false : (s.getAttribute(SU_ATTR_NAME) instanceof Person);
-	}
-	
-	/**
-	 * Returns the authenticated user object.
-	 * @return the User object, null if not authenticated
-	 * @see CommandContext#isAuthenticated()
-	 * @see CommandContext#getRoles()
-	 * @see org.deltava.beans.Pilot
-	 * @see org.deltava.beans.Applicant
-	 */
-	public Person getUser() {
-		return (Person) _req.getUserPrincipal();
 	}
 
 	/**
@@ -103,18 +113,23 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public Collection<String> getRoles() {
 		return isAuthenticated() ? getUser().getRoles() : ANONYMOUS_ROLES;
 	}
-	
+
 	/**
-	 * Returns if the currently logged in user is a member of a particular role. This method delegates the call to the
-	 * underlying HTTP servlet request's {@link HttpServletRequest#isUserInRole(String) } method, which may be overriden
-	 * by a custom request handler.
+	 * Returns if the currently logged in user is a member of a particular role. Unless a specific user has been injected, this 
+	 * method delegates the call to the underlying HTTP servlet request's {@link HttpServletRequest#isUserInRole(String)}
+	 * method, which may be overriden by a custom request handler.
 	 * @param roleName the role name
 	 * @return TRUE if the user is a member of the specified role, otherwise FALSE
 	 */
 	public boolean isUserInRole(String roleName) {
-		return _req.isUserInRole(roleName);
+		if (_usr == null)
+			return _req.isUserInRole(roleName);
+		else if (isAuthenticated())
+			return _usr.isInRole(roleName);
+
+		return ("*".equals(roleName) || ANONYMOUS_ROLES.contains(roleName));
 	}
-	
+
 	/**
 	 * Returns the value of a request parameter.
 	 * @param pName the parameter name
@@ -142,7 +157,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public FileUpload getFile(String name) {
 		return (FileUpload) _req.getAttribute("FILE$" + name);
 	}
-	
+
 	/**
 	 * Returns an HTTP cookie.
 	 * @param name the cookie name
@@ -151,7 +166,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	public Cookie getCookie(String name) {
 		return (Cookie) _req.getAttribute("COOKIE$" + name);
 	}
-	
+
 	/**
 	 * Sets an attribute in a particular context.
 	 * @param name the name of the attribute
