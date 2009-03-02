@@ -5,8 +5,6 @@ import java.io.*;
 
 import javax.servlet.http.*;
 
-import org.deltava.beans.Person;
-
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
@@ -15,8 +13,6 @@ import org.deltava.beans.Person;
  */
 
 public class ServiceContext extends org.deltava.commands.HTTPContext {
-   
-   private Person _usr;
    
    private final OutputBuffer _buf = new OutputBuffer();
    
@@ -53,24 +49,6 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
       super(req, rsp);
    }
 
-   /**
-    * Returns the User executing this Web Service.
-    * @return the User object, or null if anonymous
-    * @see ServiceContext#isAuthenticated()
-    * @see ServiceContext#isUserInRole(String)
-    */
-   public Person getUser() {
-      return _usr;
-   }
-
-   /**
-    * Updates the User executing this Web Service.
-    * @param p the User object, or null if anonymous
-    */
-   public void setUser(Person p) {
-      _usr = p;
-   }
-   
    /**
     * Prints a string to the output buffer.
     * @param data the string to print
