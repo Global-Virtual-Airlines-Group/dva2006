@@ -4,6 +4,7 @@ package org.deltava.dao.http;
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import java.net.SocketTimeoutException;
 
 import org.apache.log4j.Logger;
 
@@ -66,6 +67,9 @@ public class GetVRouteData extends DAO {
 			
 			lr.close();
 			return results;
+		} catch (SocketTimeoutException ste) {
+			log.warn("Socket Timeout - " + buf.toString());
+			return Collections.emptyList();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
