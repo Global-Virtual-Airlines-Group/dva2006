@@ -25,7 +25,7 @@ public class FS9Generator extends FlightPlanGenerator {
 	public byte[] generate(Collection<NavigationDataBean> waypoints) {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PrintWriter ctx = new PrintWriter(out);
+		PrintWriter ctx = new CustomNewlineWriter(out, "\r\n");
 
 		// Write header
 		ctx.println("[flightplan]");
