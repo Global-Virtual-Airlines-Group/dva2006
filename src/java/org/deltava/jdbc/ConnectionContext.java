@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -93,7 +93,8 @@ public abstract class ConnectionContext {
     public void commitTX() throws TransactionException {
        checkConnection();
        try {
-          _con.commit();
+    	   if (!_con.getAutoCommit())
+    		   _con.commit();
           _con.setAutoCommit(_autoCommit);
        } catch (Exception e) {
           throw new TransactionException(e);
@@ -108,7 +109,8 @@ public abstract class ConnectionContext {
     public void rollbackTX() {
        try {
     	   if (_con != null) {
-    		   _con.rollback();
+    		   if (!_con.getAutoCommit())
+    			   _con.rollback();
     		   _con.setAutoCommit(_autoCommit);
     	   }
        } catch (Exception e) {
