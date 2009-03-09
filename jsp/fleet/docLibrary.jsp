@@ -29,7 +29,8 @@
 <tr class="title caps">
  <td width="25%">TITLE</td>
  <td width="5%">&nbsp;</td>
- <td width="10%">SIZE</td>
+ <td width="8%">SIZE</td>
+ <td width="7%">UPDATED</td>
  <td width="5%">VERSION</td>
 <c:choose>
 <c:when test="${access.canCreate}">
@@ -45,7 +46,7 @@
 <!-- Table Data Section -->
 <c:forEach var="airline" items="${fn:keys(docs)}">
 <tr class="title caps">
- <td colspan="6" class="left">${airline.name}</td>
+ <td colspan="7" class="left">${airline.name}</td>
 </tr>
 <c:forEach var="doc" items="${docs[airline]}">
 <view:row entry="${doc}">
@@ -56,7 +57,8 @@
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
- <td class="sec bld"><fmt:int value="${doc.size}" /></td>
+ <td class="sec small bld"><fmt:int value="${doc.size}" /></td>
+ <td class="small"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
  <td class="bld">${doc.version}</td>
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
 </view:row>
@@ -66,7 +68,7 @@
 <!-- Download Adobe Acrobat Reader -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="5">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe 
+ <td colspan="6">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe 
 Acrobat Reader 6</span> or newer in order to be viewed. If you are having difficulties viewing our 
 manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader.<br /> 
 This is a free download.</td>
@@ -74,7 +76,7 @@ This is a free download.</td>
 
 <!-- Scroll Bar row -->
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="7">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />

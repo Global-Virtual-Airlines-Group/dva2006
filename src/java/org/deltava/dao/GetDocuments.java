@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 
@@ -266,6 +266,8 @@ public class GetDocuments extends GetLibrary {
 			doc.setSecurity(rs.getInt(5));
 			doc.setShowOnRegister(rs.getBoolean(6));
 			doc.setDescription(rs.getString(7));
+			if (f.exists())
+				doc.setLastModified(new java.util.Date(f.lastModified()));
 			if (hasTotals)
 				doc.setDownloadCount(rs.getInt(8));
 
