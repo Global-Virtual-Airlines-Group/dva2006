@@ -39,6 +39,12 @@ public class RoutePlanService extends WebService {
 		if (StringUtils.parse(alt, -1) < 1000)
 			alt = "35000";
 		
+		// Validate the airports
+		if (aD == null)
+			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), false);
+		else if (aA == null)
+			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
+		
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		routePoints.add(new AirportLocation(aD));
 		try {
