@@ -138,8 +138,8 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, IFNULL(C.ENDDATE, DATE_ADD(C.DATE, INTERVAL 18 HOUR)) "
 					+ "AS ED, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, "
 					+ "COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM acars.CONS C LEFT JOIN "
-					+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) WHERE "
-					+ "GROUP BY C.ID HAVING (ED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (FC=0) AND (PC=0)");
+					+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) GROUP BY "
+					+ "C.ID HAVING (ED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (FC=0) AND (PC=0)");
 			_ps.setInt(1, cutoff);
 			return executeConnectionInfo();
 		} catch (SQLException se) {
