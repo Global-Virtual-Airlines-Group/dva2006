@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to view the Image Gallery.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -37,9 +37,11 @@ public class GalleryCommand extends AbstractViewCommand {
 		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
 			vc.setSortType(SORT_CODE[0]);
 
+		// Check for a date
+		Date imgDate = parseDateTime(ctx, "img");
+
 		// Save sort options
 		ctx.setAttribute("sortOptions", SORT_OPTS, REQUEST);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -49,7 +51,11 @@ public class GalleryCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 
 			// Get the images
-			List<Image> results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null));
+			Collection<Image> results = null; 
+			if (imgDate != null)
+				results = dao.getPictureGallery(imgDate);
+			else
+				results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null));
 			
 			// Validate our access and get author IDs
 			Collection<Integer> authorIDs = new HashSet<Integer>();
@@ -64,9 +70,6 @@ public class GalleryCommand extends AbstractViewCommand {
 			// Load the Image Authors
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
-
-			// Save the list of months
-			ctx.setAttribute("months", dao.getMonths(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

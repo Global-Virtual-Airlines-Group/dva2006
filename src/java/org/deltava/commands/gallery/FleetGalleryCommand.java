@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -51,10 +51,6 @@ public class FleetGalleryCommand extends AbstractViewCommand {
 			// Load the Image Authors
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
-            
-			// Save the list of months
-            if (doAdmin)
-            	ctx.setAttribute("months", dao.getMonths(), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
