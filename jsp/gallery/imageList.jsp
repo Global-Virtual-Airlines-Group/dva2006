@@ -14,21 +14,21 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="datePicker" />
 <script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+setSubmit();
+disableButton('CalendarButton');
+disableButton('SubmitButton');
+return true;	
+}
+
 function setSort()
 {
 var f = document.forms[0];
-var url = '/imagegallery.do?';
-if (f.month.selectedIndex != 0) {
-	url = url + 'op=' + escape(f.month.options[f.month.selectedIndex].text);
-	if (f.sortType.selectedIndex != 0)
-		url = url + '&';
-}
-
-if (f.sortType.selectedIndex != 0)
-	url = url + 'sortType=' + escape(f.sortType.options[f.sortType.selectedIndex].value);
-
-self.location = url;
+f.submit();
 return true;
 }
 </script>
@@ -41,13 +41,15 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="imagegallery.do" method="GET" validate="return false">
+<el:form action="imagegallery.do" method="post" validate="return validate(this)">
 <view:table className="view" space="default" pad="default" cmd="imagegallery">
 <!-- Table Sort Bar -->
 <tr class="title">
- <td colspan="2">BY MONTH <el:combo name="month" idx="*" size="1" options="${months}" firstEntry="-" value="${param.op}" onChange="void setSort()" /></td>
+ <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />
+ <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].imgDate')" /></td>
  <td colspan="2"><el:cmd url="fleetgallery" linkID="true">FLEET GALLERY</el:cmd></td>
- <td colspan="2">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" /></td>
+ <td colspan="2">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" />
+ <el:button ID="SubmitButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar -->
