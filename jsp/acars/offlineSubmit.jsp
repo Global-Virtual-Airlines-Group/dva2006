@@ -29,6 +29,8 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:superUser><c:set var="isHR" value="true" scope="request" /></content:superUser>
+<content:filter roles="HR"><c:set var="isHR" value="true" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -45,15 +47,18 @@ return true;
  <td class="label">SHA File</td>
  <td class="data"><el:file name="hashCode" className="small" idx="*" size="96" max="144" /></td>
 </tr>
-<content:filter roles="HR">
+<c:if test="${isHR}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noValidate" idx="*" className="small" value="true" label="Don't validate SHA-256 signature" /></td>
 </tr>
-<c:if test="${!empty system_message}">
+</c:if>
+<c:if test="${hashFailure}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><span class="error bld">SUBMISSION FAILURE - ${system_message}</span></td>
+ <td class="data"><div class="error bld">SUBMISSION FAILURE - SHA-256 MISMATCH</div><br />
+<i>The content of the <content:airline /> ACARS XML data file that you have submitted does not match the cryptographic 
+signature contained in the SHA file.</i></td>
 </tr>
 </c:if>
 <c:if test="${!empty pirep}">
@@ -65,7 +70,6 @@ return true;
  <td class="data">Your ACARS Offline Flight Report has been submitted. <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd> to view it.</td>
 </tr>
 </c:if>
-</content:filter>
 </el:table>
 
 <!-- Button Bar -->

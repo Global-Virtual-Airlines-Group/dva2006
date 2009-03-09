@@ -55,18 +55,19 @@ public class OfflineFlightCommand extends AbstractCommand {
 		// Convert the files to strings
 		OfflineFlight flight = null; 
 		try {
-			String xml = new String(xmlF.getBuffer(), "UTF-8");
 			String sha = new String(shaF.getBuffer(), "UTF-8").trim();
+			String xml = new String(xmlF.getBuffer(), "UTF-8");
+			xml = xml.substring(0, xml.length() - 2);
 		
 			// Validate the SHA
-			boolean noValidate = ctx.isUserInRole("HR") && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
+			boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 			if (!noValidate) {
 				MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
 				md.salt(SystemData.get("security.hash.acars.salt"));
 				String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
 				if (!calcHash.equals(sha)) {
 					log.warn("ACARS Hash mismatch - expected " + sha + ", calculated " + calcHash);
-					ctx.setMessage("SHA-256 Mismatch");
+					ctx.setAttribute("hashFailure", Boolean.TRUE, REQUEST);
 					return;
 				}
 			}
