@@ -528,11 +528,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (pd.isEmpty() && fr.hasAttribute(FlightReport.ATTR_VATSIM) && (age < 86000)) {
 					GetVRouteData vddao = new GetVRouteData();
 					pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
+					synchronized (this) {
+						boolean hasDataLoaded = !tdao.get(fr.getID()).isEmpty();
 					
-					// Save the positions if we get them
-					if (!pd.isEmpty() && (age > 300)) {
-						SetOnlineTrack twdao = new SetOnlineTrack(con);
-						twdao.write(fr.getID(), pd);
+						// Save the positions if we get them
+						if (!pd.isEmpty() && (age > 300) & !hasDataLoaded) {
+							SetOnlineTrack twdao = new SetOnlineTrack(con);
+							twdao.write(fr.getID(), pd);
+						}
 					}
 				}
 				
