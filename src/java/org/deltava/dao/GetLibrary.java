@@ -288,6 +288,8 @@ public class GetLibrary extends DAO implements CachingDAO {
 			entry.setCode(rs.getString(9));
 			entry.setFSVersions(rs.getString(10));
 			entry.setDescription(rs.getString(11));
+			if (f.exists())
+				entry.setLastModified(new java.util.Date(f.lastModified()));
 			if (hasTotals)
 				entry.setDownloadCount(rs.getInt(12));
 
