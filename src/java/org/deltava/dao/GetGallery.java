@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -50,15 +50,13 @@ public class GetGallery extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, "
 				+ "G.PILOT_ID, T.ID FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) WHERE (G.ID=?)");
+		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) WHERE (G.ID=?) LIMIT 1");
 		
 		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
 
 			// Execute the query - return null if no image found
-			setQueryMax(0);
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next()) {
 				rs.close();
@@ -114,6 +112,24 @@ public class GetGallery extends DAO {
 			_ps.setBoolean(1, true);
 
 			// Execute the query
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retusn Images in the Image Gallery created on a specific date.
+	 * @param dt the date the image was posted
+	 * @return a List of Image beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Image> getPictureGallery(java.util.Date dt) throws DAOException {
+		try {
+			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
+				+ "I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON "
+				+ "(I.ID=V.IMG_ID) WHERE (DATE(I.DATE)=DATE(?)) GROUP BY I.ID ORDER BY I.DATE");
+			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
