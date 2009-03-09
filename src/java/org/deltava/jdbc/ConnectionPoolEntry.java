@@ -16,6 +16,8 @@ import org.apache.log4j.Logger;
 class ConnectionPoolEntry implements java.io.Serializable, Comparable<ConnectionPoolEntry> {
 
 	private static transient final Logger log = Logger.getLogger(ConnectionPoolEntry.class);
+	
+	private static final String PACKAGE = ConnectionPoolEntry.class.getPackage().getName();
 
 	private transient Connection _c;
 	private StackTrace _stackInfo;
@@ -246,10 +248,9 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 			try {
 				_stackInfo = new StackTrace();
 				_stackInfo.fillInStackTrace();
-				List<StackTraceElement> el = Arrays.asList(_stackInfo.getStackTrace());
+				List<StackTraceElement> el = new ArrayList<StackTraceElement>(Arrays.asList(_stackInfo.getStackTrace()));
 				StackTraceElement ste = el.get(0);
-				String cpePkg = ConnectionPoolEntry.class.getPackage().getName();
-				while (ste.getClassName().startsWith(cpePkg) && (el.size() > 1)) {
+				while (ste.getClassName().startsWith(PACKAGE) && (el.size() > 1)) {
 					el.remove(0);
 					ste = el.get(0);
 				}
