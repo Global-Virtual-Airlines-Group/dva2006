@@ -75,7 +75,7 @@ return true;
 <tr>
  <td class="label">Publishing Date</td>
  <td class="data"><el:text name="newsDate" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy')}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].date')" />
+&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].newsDate')" />
 &nbsp;<span class="small">(Format: ${dateFmt})</span></td>
 </tr>
 <c:if test="${!empty entry}">
