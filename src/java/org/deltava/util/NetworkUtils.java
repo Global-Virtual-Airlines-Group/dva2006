@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A utility class to handle TCP/IP network operations.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -38,7 +38,11 @@ public class NetworkUtils {
 	 * @return a 32-bit packed address
 	 */
 	public static int convertIP(byte[] addr) {
-		return ((addr[0] << 24) + (addr[1] << 16) + (addr[2] << 8) + addr[3]);
+		int address  = addr[3] & 0xFF;
+		address |= ((addr[2] << 8) & 0xFF00);
+		address |= ((addr[1] << 16) & 0xFF0000);
+		address |= ((addr[0] << 24) & 0xFF000000);
+		return address;	
 	}
 	
 	/**
