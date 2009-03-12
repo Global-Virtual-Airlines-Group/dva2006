@@ -26,12 +26,36 @@ return true;
 function validate(form)
 {
 var f = document.forms[0];
-return (f.airport.selectedIndex > 0);
+return (f.id.selectedIndex > 0);
+}
+
+function updateVisibility()
+{
+var f = document.forms[0];
+var chartTypes = [];
+for (var x = 0; x < f.chartType.length; x++) {
+	if (f.chartType[x].checked)
+		chartTypes.push(f.chartType[x].value.toLowerCase());
+}
+
+// Hide/select rows
+<fmt:jsarray var="cTypes" items="${chartTypeNames}" />
+for (var x = 0; x < cTypes.length; x++) {
+	var chartClass = cTypes[x].toLowerCase();
+	var isDisplayed = ((chartTypes.length == 0) || (chartTypes.indexOf(chartClass) > -1));
+	var rows = getElementsByClass(chartClass);
+	for (var y = 0; y < rows.length; y++) {
+		var row = rows[y];
+		row.style.display = isDisplayed ? '' : 'none';
+	}
+}
+
+return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void updateAirports(document.forms[0].id, 'airline=charts', false, '${airport.ICAO}')">
+<body onload="updateAirports(document.forms[0].id, 'airline=charts', false, '${airport.ICAO}'); updateVisibility()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -48,8 +72,7 @@ return (f.airport.selectedIndex > 0);
 </tr>
 <tr>
  <td class="priB right" style="color: #FFFFFF; font-size: 8pt;">Filter Options</td>
- <td colspan="4" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" />
- <el:button type="submit" className="BUTTON" label="UPDATE" /></td>
+ <td colspan="4" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void updateVisibility()" /></td>
 </tr>
 <tr class="title">
  <td colspan="2">CHART NAME</td>
@@ -59,8 +82,8 @@ return (f.airport.selectedIndex > 0);
  <el:text name="idCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].id, this.value); updateAirport();" /></td>
 </tr>
 
-<!-- Table Pilot Data -->
-<c:forEach var="chart" items="${charts}">
+<!-- Table Chart Data -->
+<c:forEach var="chart" items="${viewContext.results}">
 <c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="request" />
 <c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="request" />
 <view:row entry="${chart}">

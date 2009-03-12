@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ChartsCommand extends AbstractCommand {
+public class ChartsCommand extends AbstractViewCommand {
 
     /**
      * Executes the command.
@@ -43,35 +43,24 @@ public class ChartsCommand extends AbstractCommand {
         ctx.setAttribute("access", access, REQUEST);
 
         // Get charts for the airport
-        Collection<Chart> results = null;
+        ViewContext vc = initView(ctx);
         try {
-            GetChart dao = new GetChart(ctx.getConnection()); 
-            results = dao.getCharts(a);
+            GetChart dao = new GetChart(ctx.getConnection());
+            vc.setResults(dao.getCharts(a));
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
             ctx.release();
         }
+        
+        // Calculate chart types
+        List<String> typeNames = Arrays.asList(Chart.TYPES);
+        List<ComboAlias> types = ComboUtils.fromArray(Chart.TYPENAMES, Chart.TYPES);
 
-        // Filter charts
-        Collection<String> chartTypes = ctx.getParameters("chartType");
-        if (!CollectionUtils.isEmpty(chartTypes)) {
-        	ctx.setAttribute("selectedTypes", chartTypes, REQUEST);
-        	for (Iterator<Chart> i = results.iterator(); i.hasNext(); ) {
-        		Chart c = i.next();
-        		if (!chartTypes.contains(String.valueOf(c.getType())))
-        			i.remove();
-        	}
-        }
-        
-        // Build list of chart types
-        Collection<ComboAlias> choices = new ArrayList<ComboAlias>();
-        for (int x = 1; x < Chart.TYPES.length; x++)
-        	choices.add(ComboUtils.fromString(Chart.TYPENAMES[x], String.valueOf(x)));
-        
         // Save charts and types
-        ctx.setAttribute("chartTypes", choices, REQUEST);
-        ctx.setAttribute("charts", results, REQUEST);
+        ctx.setAttribute("chartTypeNames", typeNames.subList(1, typeNames.size()), REQUEST);
+        ctx.setAttribute("chartTypes", types.subList(1, types.size()), REQUEST);
+        ctx.setAttribute("selectedTypes", ctx.getParameters("chartType"), REQUEST);
         ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
         
         // Redirect to the home page
