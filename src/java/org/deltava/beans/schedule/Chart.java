@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.*;
@@ -8,11 +8,11 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
-public class Chart extends DatabaseBlobBean implements ComboAlias {
+public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 
 	public static final int UNKNOWN = 0;
 	public static final int ILS = 1;
@@ -210,6 +210,10 @@ public class Chart extends DatabaseBlobBean implements ComboAlias {
 		Chart c2 = (Chart) o2;
 		int tmp = _airport.compareTo(c2.getAirport());
 		return (tmp == 0) ? _name.compareTo(c2.getName()) : tmp;
+	}
+	
+	public String getRowClassName() {
+		return (_type == 0) ? null : TYPES[_type].toLowerCase();
 	}
 
 	/**
