@@ -26,6 +26,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="domain" name="airline.domain" />
 <content:sysdata var="maxHeld" name="users.pirep.maxHeld" default="5" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="fileLibEnabled" name="airline.files.enabled" />
@@ -65,7 +66,8 @@ return true;
  <td class="data">Your e-mail address is <span class="sec bld">${pilot.email}</span>. Membership at <content:airline /> is contingent on providing
  a valid, verified e-mail address. You may update your e-mail address and start the validation process.
 <c:if test="${hasIMAP && (newMsgs > 0)}"><br />
-<span class="mid pri bld">You currently have <fmt:int value="${newMsgs}" /> new e-mail messages in your Inbox.</span></c:if></td>
+<span class="mid pri bld">You currently have <fmt:int value="${newMsgs}" /> new e-mail messages in your 
+ <a rel="external" href="http://mail.${domain}/rcmail/" class="pri">Inbox</a>.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
