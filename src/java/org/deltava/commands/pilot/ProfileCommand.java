@@ -400,6 +400,11 @@ public class ProfileCommand extends AbstractFormCommand {
 				// Update the staff profile table
 				SetStaff swdao = new SetStaff(con);
 				if (removeStaffProfile) {
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription("Staff Profile removed");
+					updates.add(upd);
+
 					swdao.delete(p.getID());
 					ctx.setAttribute("spRemoved", Boolean.TRUE, REQUEST);
 					log.info("Staff Profile Removed");
