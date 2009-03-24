@@ -216,10 +216,10 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable, View
 	 * @see Channel#getMaxUsers()
 	 */
 	public void setMaxUsers(int users) {
-		if ((users < 1) || (users > 32000))
+		if (users > 32000)
 			throw new IllegalArgumentException("Invalid maxUser count - " + users);
 		
-		_maxUsers = users;
+		_maxUsers = Math.max(1, users);
 	}
 	
 	/**
