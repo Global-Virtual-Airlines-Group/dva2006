@@ -4,6 +4,8 @@ package org.deltava.commands.pirep;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
@@ -29,6 +31,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PIREPCommand extends AbstractFormCommand {
+	
+	private static final Logger log = Logger.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
 	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
@@ -527,7 +531,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
 				if (pd.isEmpty() && fr.hasAttribute(FlightReport.ATTR_VATSIM) && (age < 86000)) {
 					GetVRouteData vddao = new GetVRouteData();
-					pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
+					try {
+						pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
+					} catch (DAOException de) {
+						log.warn("Cannot download VRoute position data - " + de.getMessage());
+					}
+						
 					synchronized (this) {
 						boolean hasDataLoaded = !tdao.get(fr.getID()).isEmpty();
 					

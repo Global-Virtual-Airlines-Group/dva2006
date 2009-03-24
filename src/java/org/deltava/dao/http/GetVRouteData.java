@@ -39,11 +39,13 @@ public class GetVRouteData extends DAO {
 	public Collection<PositionData> getPositions(Pilot usr, Airport aD, Airport aA) throws DAOException {
 		
 		// Build the URL
-		StringBuilder buf = new StringBuilder("http://data.vroute.net/services/flthistory.php?pid=");
-		buf.append(usr.getNetworkID(OnlineNetwork.VATSIM));
+		String id = usr.getNetworkID(OnlineNetwork.VATSIM);
+		if (id == null)
+			return Collections.emptyList();
 		
+		String url = "http://data.vroute.net/services/flthistory.php?pid=" + id;
 		try {
-			LineNumberReader lr = new LineNumberReader(new InputStreamReader(getStream(buf.toString())));
+			LineNumberReader lr = new LineNumberReader(new InputStreamReader(getStream(url)));
 			Collection<PositionData> results = new ArrayList<PositionData>();
 			while (lr.ready()) {
 				String data = lr.readLine();
@@ -68,7 +70,7 @@ public class GetVRouteData extends DAO {
 			lr.close();
 			return results;
 		} catch (SocketTimeoutException ste) {
-			log.warn("Socket Timeout - " + buf.toString());
+			log.warn("Socket Timeout - " + url);
 			return Collections.emptyList();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
