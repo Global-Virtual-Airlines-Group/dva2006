@@ -18,11 +18,13 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.server, 'TeamSpeak Server')) return false;
+if (!validateCombo(form.codec, 'Channel Bandwidth')) return false;
 if (!validateText(form.name, 6, 'Channel Name')) return false;
 if (!validateNumber(form.maxUsers, 1, 'Channel User Limit')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 </script>

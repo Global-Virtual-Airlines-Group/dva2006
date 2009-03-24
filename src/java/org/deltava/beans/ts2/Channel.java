@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store TeamSpeak voice channel information.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
