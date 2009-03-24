@@ -46,7 +46,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			// Update the bean from the request
 			c.setDescription(ctx.getParameter("desc"));
 			c.setTopic(ctx.getParameter("topic"));
-			c.setMaxUsers(Integer.parseInt(ctx.getParameter("maxUsers")));
+			c.setMaxUsers(StringUtils.parse(ctx.getParameter("maxUsers"), 1));
 			c.setPassword(ctx.getParameter("pwd"));
 			c.setServerID(StringUtils.parseHex(ctx.getParameter("server")));
 			c.setModerated(Boolean.valueOf(ctx.getParameter("isModerated")).booleanValue());
