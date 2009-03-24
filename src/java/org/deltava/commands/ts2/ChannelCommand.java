@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update TeamSpeak 2 channel data.
  * @author Luke
- * @version 1.0
+ * @version 2.4
  * @since 1.0
  */
 
@@ -95,12 +95,12 @@ public class ChannelCommand extends AbstractFormCommand {
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
-			// Get the channel
+			Connection con = ctx.getConnection();
+			GetTS2Data dao = new GetTS2Data(con);
+			ctx.setAttribute("servers", dao.getServers(), REQUEST);
+			
 			if (ctx.getID() != 0) {
-				Connection con = ctx.getConnection();
-				
 				// Get the DAO and the Channel
-				GetTS2Data dao = new GetTS2Data(con);
 				Channel c = dao.getChannel(ctx.getID());
 				if (c == null)
 					throw notFoundException("Invalid Channel - " + ctx.getID());
@@ -111,7 +111,6 @@ public class ChannelCommand extends AbstractFormCommand {
 				// Save in the request
 				ctx.setAttribute("channel", c, REQUEST);
 				ctx.setAttribute("server", srv, REQUEST);
-				ctx.setAttribute("servers", dao.getServers(), REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
