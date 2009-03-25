@@ -88,12 +88,12 @@ return true;
  <td class="label" valign="top">Airlines</td>
  <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data error bld">${system_message}</td>
+ <td class="data error bld"><content:sysmsg /></td>
 </tr>
-</c:if>
+</content:hasmsg>
 <tr class="title caps">
  <td colspan="2">WORLD TIME ZONE MAP</td>
 </tr>

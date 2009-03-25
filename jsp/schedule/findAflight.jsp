@@ -201,11 +201,11 @@ return true;
 </el:table>
 </el:form>
 </c:if>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <tr class="error caps bld">
- <td colspan="5">${system_message}</td>
+ <td colspan="5"><content:sysmsg /></td>
 </tr>
-</c:if>
+</content:hasmsg>
 <c:if test="${!empty buildAssign}">
 <br />
 <el:table className="view" space="default" pad="default">

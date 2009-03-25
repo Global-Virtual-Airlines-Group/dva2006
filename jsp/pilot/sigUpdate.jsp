@@ -46,10 +46,10 @@ return true;
  <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br />
  <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
 pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <br />
-<span class="error bld">${system_message}</span>
-</c:if>
+<span class="error bld"><content:sysmsg /></span>
+</content:hasmsg>
  </td>
 </tr>
 <content:filter roles="HR,Signature">
