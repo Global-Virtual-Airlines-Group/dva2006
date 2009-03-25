@@ -23,6 +23,7 @@ public class CommandContext extends HTTPContext {
 	public static final String THREADREAD_ATTR_NAME = "coolerThreadRead";
 	public static final String THREADREADOV_ATTR_NAME = "coolerThreadReadOverride";
 	public static final String INVALIDREQ_ATTR_NAME = "requestMapInvalid";
+	public static final String SYSMSG_ATTR_NAME ="system_message";
 
 	private final CacheControl _cache = new CacheControl();
 	private final CommandResult _result = new CommandResult(null);
@@ -67,7 +68,7 @@ public class CommandContext extends HTTPContext {
 	 * @param msg the System Message
 	 */
 	public void setMessage(String msg) {
-		setAttribute("system_message", msg, Command.REQUEST);
+		setAttribute(SYSMSG_ATTR_NAME, msg, Command.Scope.REQ);
 	}
 
 	/**

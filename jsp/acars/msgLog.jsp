@@ -50,11 +50,11 @@
  <td class="label">Search String</td>
  <td class="data" colspan="3"><el:text name="searchStr" idx="*" size="32" max="64" value="${param.searchStr}" /></td>
 </tr>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <tr class="pri mid error">
- <td colspan="4">${system_message}</td>
+ <td colspan="4"><content:sysmsg /></td>
 </tr>
-</c:if>
+</content:hasmsg>
 <content:filter roles="HR"><c:if test="${doSearch && (!empty rangeStart)}">
 <tr class="mid">
  <td colspan="4">To view all ACARS Message Log entries in Microsoft Excel, <el:link url="acars_chat_log.ws?start=${rangeStart}&end=${rangeEnd}" className="sec bld">Click Here</el:link>.</td>

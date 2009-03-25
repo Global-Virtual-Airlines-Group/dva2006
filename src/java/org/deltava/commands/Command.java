@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Web Command.
  * @author Luke
- * @version 2.2
+ * @version 2.4
  * @since 1.0
  */
 
@@ -17,7 +17,8 @@ public interface Command {
 	public enum Scope {
 		APP(PageContext.APPLICATION_SCOPE),
 		REQ(PageContext.REQUEST_SCOPE),
-		SES(PageContext.SESSION_SCOPE);
+		SES(PageContext.SESSION_SCOPE),
+		PAG(PageContext.PAGE_SCOPE);
 		
 		private int _code;
 		
@@ -33,6 +34,7 @@ public interface Command {
     public static final Scope APPLICATION = Scope.APP;
     public static final Scope REQUEST = Scope.REQ;
     public static final Scope SESSION = Scope.SES;
+    public static final Scope PAGE = Scope.PAG;
     
     public static final int ID = 0;
     public static final int OPERATION = 1;

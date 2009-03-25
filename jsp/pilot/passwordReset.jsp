@@ -21,8 +21,7 @@ if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;</c:if>
 if (!validateText(form.fName, 2, 'First Name')) return false;
 if (!validateText(form.lName, 2, 'Last Name')) return false;
 <content:filter roles="!HR">
-if (!validateText(form.eMail, 10, 'E-Mail Address')) return false;
-</content:filter>
+if (!validateText(form.eMail, 10, 'E-Mail Address')) return false;</content:filter>
 
 setSubmit();
 disableButton('SaveButton');
@@ -67,11 +66,11 @@ return true;
 </tr>
 </c:if></c:forEach>
 </c:if>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <tr>
- <td colspan="2" class="error bld">PASSWORD RESET FAILURE - ${system_message}</td>
+ <td colspan="2" class="error bld">PASSWORD RESET FAILURE - <content:sysmsg /></td>
 </tr>
-</c:if>
+</content:hasmsg>
 </el:table>
 
 <!-- Button Bar -->
