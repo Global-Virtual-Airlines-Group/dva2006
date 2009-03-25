@@ -76,6 +76,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			flight = OfflineFlightParser.create(xml);
 		} catch (Exception e) {
 			log.error("Error parsing XML - " + e.getMessage(), e);
+			ctx.setAttribute("error", e.getCause(), REQUEST);
 			ctx.setMessage(e.getMessage());
 			return;
 		}

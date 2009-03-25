@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> ACARS Offline Flight Report Submission</title>
@@ -61,6 +62,18 @@ return true;
 signature contained in the SHA file.</i></td>
 </tr>
 </c:if>
+<content:hasmsg>
+<tr class="title caps">
+ <td colspan="2">FLIGHT REPORT SUBMISSION ERROR</td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><span class="error bld"><content:sysmsg /></span>
+<c:if test="${!empty error}"><br />
+<br />
+<pre><fmt:stack exception="${error}" /></pre></c:if></td>
+</tr>
+</content:hasmsg>
 <c:if test="${!empty pirep}">
 <tr class="title caps">
  <td colspan="2">FLIGHT REPORT SUBMITTED SUCCESSFULLY</td> 
