@@ -95,11 +95,11 @@ in order to log into the site.<br />
 </tr>
 </c:if></c:forEach>
 </c:if>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <tr>
- <td colspan="2"><span class="error bld">LOGIN FAILURE - ${system_message}</span></td>
+ <td colspan="2"><span class="error bld">LOGIN FAILURE - <content:sysmsg /></span></td>
 </tr>
-</c:if>
+</content:hasmsg>
 </el:table>
 <el:table className="bar" pad="default" space="default">
 <tr>

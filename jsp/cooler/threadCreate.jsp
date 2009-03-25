@@ -120,14 +120,18 @@ return true;
 <tr class="title caps">
  <td colspan="2">LINKED IMAGES</td>
 </tr>
+<content:hasmsg>
+<c:set var="imgURL" value="${param.imgURL}" scope="request" />
+<c:set var="imgDesc" value="${param.desc}" scope="request" />
+</content:hasmsg>
 <tr>
  <td class="label" valign="top">New Image URL</td>
- <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="${(!empty system_message) ? param.imgURL : ''}" />
-<c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td>
+ <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="${imgURL}" />
+<content:hasmsg><span class="small error bld"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="${(!empty system_message) ? param.desc : ''}" /> 
+ <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="${imgDesc}" /> 
 <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void submitImage()" /></td>
 </tr>
 <c:if test="${!empty sessionScope.imageURLs}">

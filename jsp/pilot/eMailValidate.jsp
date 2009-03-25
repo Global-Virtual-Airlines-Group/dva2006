@@ -112,11 +112,11 @@ space below.</td>
  <td class="data"><el:text name="code" idx="*" size="36" max="36" className="req" value="${param.code}" /></td>
 </tr>
 </c:if>
-<c:if test="${!empty system_message}">
+<content:hasmsg>
 <tr>
- <td colspan="2" class="error mid bld">${system_message}</td>
+ <td colspan="2" class="error mid bld"><content:sysmsg /></td>
 </tr>
-</c:if>
+</content:hasmsg>
 <c:if test="${resendEMail}">
 <tr>
  <td colspan="2" class="ter mid bld">The validation code has been re-sent to ${addr.address}</td>

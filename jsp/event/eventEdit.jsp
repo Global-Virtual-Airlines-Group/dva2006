@@ -133,7 +133,7 @@ return true;
  <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><br />
 <span class="small sec">The maximum size for a banner image is <fmt:int value="${bannerX}" />x<fmt:int value="${bannerY}" /> 
 pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</span>
-<c:if test="${!empty system_message}"><br /><span class="bld error">${system_message}</span></c:if></td>
+<content:hasmsg><br /><span class="bld error"><content:sysmsg /></span></content:hasmsg>></td>
 </tr>
 <tr>
  <td class="label" valign="top">ATC Contact Addresses</td>

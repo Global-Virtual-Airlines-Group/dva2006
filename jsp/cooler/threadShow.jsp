@@ -341,7 +341,7 @@ notification each time a reply is posted in this Thread.
 </tr>
 <tr class="pri bld mid">
  <td colspan="3">Add Linked Image at this URL <el:text name="imgURL" idx="*" size="64" max="192" value="${param.imgURL}" />
-<c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td>
+<content:hasmsg><span class="small error bld"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
 <tr class="pri bld mid">
  <td colspan="3">Image Description <el:text name="desc" idx="*" size="64" max="192" value="${param.desc}" /> <el:cmdbutton ID="LinkButton" url="imglink" link="${thread}" post="true" label="LINK IMAGE" /></td>

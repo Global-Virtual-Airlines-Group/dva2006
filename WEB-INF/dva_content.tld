@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.1"
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_1.xsd">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
 	<tlib-version>1.0</tlib-version>
 	<short-name>content</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dvacontent</uri>
 
-	<!-- Insert CSS tag, for inserting CSS file links -->
 	<tag>
+		<description>Insert CSS tag, for inserting CSS file links</description>
 		<name>css</name>
 		<tag-class>org.deltava.taglib.content.InsertCSSTag</tag-class>
 		<body-content>empty</body-content>
@@ -45,8 +45,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Insert RSS tag, for inserting RSS feed links -->
 	<tag>
+		<description>Insert RSS tag, for inserting RSS feed links</description>
 		<name>rss</name>
 		<tag-class>org.deltava.taglib.content.InsertRSSTag</tag-class>
 		<body-content>empty</body-content>
@@ -78,8 +78,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Insert JS tag, for inserting JavaScript file links -->
 	<tag>
+		<description>Insert JS tag, for inserting JavaScript file links</description>
 		<name>js</name>
 		<tag-class>org.deltava.taglib.content.InsertJSTag</tag-class>
 		<body-content>empty</body-content>
@@ -96,8 +96,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Insert PICS tag, for inserting PICS 1.1 rating links -->
 	<tag>
+		<description>Insert PICS tag, for inserting PICS 1.1 rating links</description>
 		<name>pics</name>
 		<tag-class>org.deltava.taglib.content.InsertPICSTag</tag-class>
 		<body-content>empty</body-content>
@@ -115,8 +115,8 @@
 		</attribute>
 	</tag>		
 
-	<!-- Role Filter tag, for stripping out JSP content based on security role -->
 	<tag>
+		<description>Role Filter tag, for stripping out JSP content based on security role</description>
 		<name>filter</name>
 		<tag-class>org.deltava.taglib.content.RoleFilterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -127,8 +127,8 @@
 		</attribute>
 	</tag>
 
-	<!-- OS Filter Tag, for filtering content based on client operating system -->
 	<tag>
+		<description>OS Filter Tag, for filtering content based on client operating system</description>
 		<name>os</name>
 		<tag-class>org.deltava.taglib.content.OSFilterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -152,8 +152,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Browser Filter Tag, for filtering content based on IE/Mozilla -->
 	<tag>
+		<description>Browser Filter Tag, for filtering content based on IE/Mozilla</description>
 		<name>browserFilter</name>
 		<tag-class>org.deltava.taglib.content.BrowserFilterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -195,8 +195,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Active User Filter tag, for stripping out JSP content if a user is not logged in -->
 	<tag>
+		<description>Active User Filter tag, for stripping out JSP content if a user is not logged in</description>
 		<name>activeUser</name>
 		<tag-class>org.deltava.taglib.content.ActiveUserFilterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -208,8 +208,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Super User Filter tag, for stripping out JSP content if a user is not su'ing someone -->
 	<tag>
+		<description>Super User Filter tag, for stripping out JSP content if a user is not su'ing someone</description>
 		<name>superUser</name>
 		<tag-class>org.deltava.taglib.content.SuperUserFilterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -238,8 +238,8 @@
 		</attribute>
 	</tag>
 
-	<!-- System Data access tag -->
 	<tag>
+		<description>System Data access tag</description>
 		<name>sysdata</name>
 		<tag-class>org.deltava.taglib.content.GetSystemDataTag</tag-class>
 		<body-content>empty</body-content>
@@ -273,15 +273,15 @@
 		</attribute>
 	</tag>
 
-	<!-- Airline name tag -->
 	<tag>
+		<description>Airline name tag</description>
 		<name>airline</name>
 		<tag-class>org.deltava.taglib.content.AirlineNameTag</tag-class>
 		<body-content>empty</body-content>
 	</tag>
 
-	<!-- Airline banner name tag -->
 	<tag>
+		<description>Airline banner image name tag</description>
 		<name>banner</name>
 		<tag-class>org.deltava.taglib.content.AirlineBannerTag</tag-class>
 		<body-content>empty</body-content>
@@ -292,8 +292,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Copyright notice tag -->
 	<tag>
+		<description>Copyright notice tag</description>
 		<name>copyright</name>
 		<tag-class>org.deltava.taglib.content.CopyrightTag</tag-class>
 		<body-content>empty</body-content>
@@ -305,8 +305,8 @@
 		</attribute>
 	</tag>
 
-	<!-- GetCookie tag, for reading cookie data -->
 	<tag>
+		<description>GetCookie tag, for reading cookie data</description>
 		<name>getCookie</name>
 		<tag-class>org.deltava.taglib.content.GetCookieTag</tag-class>
 		<body-content>empty</body-content>
@@ -327,8 +327,8 @@
 		</attribute>
 	</tag>
 
-	<!-- SetCookie tag, for writing cookie data -->
 	<tag>
+		<description>SetCookie tag, for writing cookie data</description>
 		<name>setCookie</name>
 		<tag-class>org.deltava.taglib.content.SetCookieTag</tag-class>
 		<body-content>empty</body-content>
@@ -360,8 +360,8 @@
 		</attribute>
 	</tag>
 
-	<!-- ClearCookie tag, for clearing cookies -->
 	<tag>
+		<description>ClearCookie tag, for clearing cookies</description>
 		<name>clearCookie</name>
 		<tag-class>org.deltava.taglib.content.ClearCookieTag</tag-class>
 		<body-content>empty</body-content>
@@ -372,8 +372,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Google Analytics Tag, for inserting Analytics calls -->
 	<tag>
+		<description>Google Analytics Tag, for inserting Google Analytics calls</description>
 		<name>googleAnalytics</name>
 		<tag-class>org.deltava.taglib.content.GoogleAnalyticsTag</tag-class>
 		<body-content>empty</body-content>
@@ -400,15 +400,29 @@
 		</attribute>
 	</tag>
 
-	<!-- Page Layout Tag, for displaying regions as DIVs or TABLEs -->
 	<tag>
+		<description>System Message Filter Tag, to display content if the system message is set</description>
+		<name>hasmsg</name>
+		<tag-class>org.deltava.taglib.content.SystemMessageFilterTag</tag-class>
+		<body-content>JSP</body-content>	
+	</tag>
+
+	<tag>
+		<description>System Message Tag, to display the system message</description>	
+		<name>sysmsg</name>
+		<tag-class>org.deltava.taglib.content.SystemMessageTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+
+	<tag>
+		<description>Page Layout Tag, for displaying regions as DIVs or TABLEs</description>
 		<name>page</name>
 		<tag-class>org.deltava.taglib.layout.PageTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 
-	<!-- Region Layout Tag, for displaying elements as DIVs or TDs -->
 	<tag>
+		<description>Region Layout Tag, for displaying elements as DIVs or TDs</description>
 		<name>region</name>
 		<tag-class>org.deltava.taglib.layout.RegionTag</tag-class>
 		<body-content>JSP</body-content>
