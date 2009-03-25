@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
 	<tlib-version>1.0</tlib-version>
 	<short-name>calendar</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/calendar</uri>
 
-	<!-- Monthly Calendar -->
 	<tag>
+		<description>Monthly Calendar</description>
 		<name>month</name>
 		<tag-class>org.deltava.taglib.calendar.MonthlyCalendarTag</tag-class>
 		<body-content>JSP</body-content>
@@ -89,8 +89,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Weekly Calendar -->
 	<tag>
+		<description>Weekly Calendar</description>
 		<name>week</name>
 		<tag-class>org.deltava.taglib.calendar.WeeklyCalendarTag</tag-class>
 		<body-content>JSP</body-content>
@@ -172,8 +172,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Calendar Entry -->
 	<tag>
+		<description>Calendar Entry</description>
 		<name>entry</name>
 		<tag-class>org.deltava.taglib.calendar.CalendarEntryTag</tag-class>
 		<body-content>JSP</body-content>
@@ -184,15 +184,15 @@
 		</attribute>
 	</tag>
 
-	<!-- Spacer Entry -->
 	<tag>
+		<description>Calendar Spacer, between Calendar Entries</description>
 		<name>spacer</name>
 		<tag-class>org.deltava.taglib.calendar.CalendarEntrySpacerTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 
-	<!-- No Entries -->
 	<tag>
+		<description>Empty Calendar, to display for a day if it has no Entires</description>
 		<name>empty</name>
 		<tag-class>org.deltava.taglib.calendar.CalendarEntryEmptyTag</tag-class>
 		<body-content>JSP</body-content>
