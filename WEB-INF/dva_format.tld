@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
 	<tlib-version>1.0</tlib-version>
 	<short-name>fmt</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dva_format</uri>
 
-	<!-- IntegerFormat tag, for formatting integer values -->
 	<tag>
+		<description>Integer Format tag, for formatting integer values</description>
 		<name>int</name>
 		<tag-class>org.deltava.taglib.format.IntegerFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -29,8 +29,8 @@
 		</attribute>
 	</tag>
 
-	<!-- DecimalFormat tag, for formatting decimal values -->
 	<tag>
+		<description>Decimal Format tag, for formatting decimal values</description>
 		<name>dec</name>
 		<tag-class>org.deltava.taglib.format.DecimalFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -52,8 +52,8 @@
 		</attribute>
 	</tag>
 
-	<!-- DistanceFormat tag, for displaying distances -->
 	<tag>
+		<description>Distance Format tag, for displaying distances</description>
 		<name>distance</name>
 		<tag-class>org.deltava.taglib.format.DistanceFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -86,8 +86,8 @@
 		</attribute>
 	</tag>
 
-	<!-- QuantitiyFormat tag, for displaying quantities -->
 	<tag>
+		<description>Quantitiy Format tag, for displaying quantities</description>
 		<name>quantity</name>
 		<tag-class>org.deltava.taglib.format.QuantityFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -124,8 +124,8 @@
 		</attribute>
 	</tag>
 
-	<!-- HexFormat tag, for formatting hexadecimal numbers -->
 	<tag>
+		<description>Hex Format Tag, for formatting hexadecimal numbers</description>
 		<name>hex</name>
 		<tag-class>org.deltava.taglib.format.HexFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -142,8 +142,8 @@
 		</attribute>
 	</tag>
 
-	<!-- TextFormat tag, for rendering formatted text in HTML -->
 	<tag>
+		<description>Text Format tag, for rendering formatted text in HTML</description>
 		<name>text</name>
 		<tag-class>org.deltava.taglib.format.TextFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -170,8 +170,8 @@
 		</attribute>
 	</tag>
 
-	<!-- MessageFormat tag, for formatting Water Cooler messages -->
 	<tag>
+		<description>Message Format tag, for formatting Water Cooler messages</description>
 		<name>msg</name>
 		<tag-class>org.deltava.taglib.format.MessageFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -188,8 +188,8 @@
 		</attribute>
 	</tag>
 
-	<!-- DateFormat tag, for formatting date/time values -->	
 	<tag>
+		<description>Date Format tag, for formatting date/time values</description>
 		<name>date</name>
 		<tag-class>org.deltava.taglib.format.DateFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -243,8 +243,8 @@
 		</attribute>
 	</tag>
 
-	<!-- JS Array tag, used to put objects into a JavaScript array -->
 	<tag>
+		<description>JS Array tag, used to put objects into a JavaScript array</description>
 		<name>jsarray</name>
 		<tag-class>org.deltava.taglib.format.JSArrayTag</tag-class>
 		<body-content>empty</body-content>
@@ -261,8 +261,8 @@
 		</attribute>
 	</tag>
 
-	<!-- JS Date tag, used to translate date/times into JavaScript -->
 	<tag>
+		<description>JS Date tag, used to translate date/times into JavaScript</description>
 		<name>jsdate</name>
 		<tag-class>org.deltava.taglib.format.JSDateTag</tag-class>
 		<body-content>empty</body-content>
@@ -279,8 +279,8 @@
 		</attribute>
 	</tag>
 
-	<!-- List tag, used to format lists into delimited strings -->
 	<tag>
+		<description>List tag, used to format lists into delimited strings</description>
 		<name>list</name>
 		<tag-class>org.deltava.taglib.format.ListFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -297,8 +297,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Airport tag, used to display ICAO/IATA codes depending on user preferences -->
 	<tag>
+		<description>Airport tag, used to display ICAO/IATA codes depending on user preferences</description>
 		<name>airport</name>
 		<tag-class>org.deltava.taglib.format.AirportFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -320,8 +320,8 @@
 		</attribute>
 	</tag>
 
-	<!-- GeoPosition tag, used to format geographic coordinates -->
 	<tag>
+		<description>GeoPosition tag, used to format geographic coordinates</description>
 		<name>geo</name>
 		<tag-class>org.deltava.taglib.format.GeoFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -338,8 +338,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Address tag, used to format IPv4 addresses -->
 	<tag>
+		<description>Address tag, used to format IPv4 addresses</description>
 		<name>ip4</name>
 		<tag-class>org.deltava.taglib.format.IP4AddressFormatTag</tag-class>
 		<body-content>empty</body-content>
@@ -351,8 +351,8 @@
 		</attribute>
 	</tag>
 
-	<!-- StackDump tag, used to format exception stack traces -->
 	<tag>
+		<description>StackDump tag, used to format exception stack traces</description>
 		<name>stack</name>
 		<tag-class>org.deltava.taglib.format.StackDumpFormatTag</tag-class>
 		<body-content>empty</body-content>

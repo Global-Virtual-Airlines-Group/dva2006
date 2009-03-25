@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
-    <tlib-version>2.2</tlib-version>
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+    <tlib-version>1.0</tlib-version>
 	<short-name>diag</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dva_diag</uri>
 	
-	<!-- JSP API tag, for displaying the JSP API version -->
 	<tag>
+		<description>JSP API tag, for displaying the JSP API version</description>
 		<name>jsp_api</name>
 		<tag-class>org.deltava.taglib.diag.JSPVersionTag</tag-class>
 		<body-content>empty</body-content>	
 	</tag>
 	
-	<!-- Servlet API tag, for displaying the Servlet API version -->
 	<tag>
+		<description>Servlet API tag, for displaying the Servlet API version</description>
 		<name>servlet_api</name>
 		<tag-class>org.deltava.taglib.diag.ServletVersionTag</tag-class>
 		<body-content>empty</body-content>
 	</tag>
 
-	<!-- Caching DAO tag, for displaying caching DAO cache statistics -->
 	<tag>
+		<description>Caching DAO tag, for displaying caching DAO cache statistics</description>
 		<name>daocache</name>
 		<tag-class>org.deltava.taglib.diag.CachingDAOTag</tag-class>
 		<body-content>empty</body-content>

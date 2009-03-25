@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
 	<tlib-version>1.0</tlib-version>
 	<short-name>map</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dvagooglemaps</uri>
 
-	<!-- InsertGoogleAPI tag, to link to the Google Maps API -->
 	<tag>
+		<description>Insert Google API tag, to link to the Google Maps API</description>
 		<name>api</name>
 		<tag-class>org.deltava.taglib.googlemap.InsertGoogleAPITag</tag-class>
 		<body-content>empty</body-content>
@@ -36,22 +36,22 @@
 		</attribute>
 	</tag>
 
-	<!-- InsertXHMTL Tag, to add IE-compliant Google Maps XHTML headers -->
 	<tag>
+		<description>Insert XHMTL Tag, to add IE-compliant Google Maps XHTML headers</description>
 		<name>xhtml</name>
 		<tag-class>org.deltava.taglib.googlemap.InsertXHTMLTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 
-	<!-- IEVMLStyleTag, for inserting a custom behavior for VML in IE -->
 	<tag>
+		<description>IE VML Style Tag, for inserting a custom behavior for VML in IE</description>
 		<name>vml-ie</name>
 		<tag-class>org.deltava.taglib.googlemap.IEVMLStyleTag</tag-class>
 		<body-content>empty</body-content>
 	</tag>
 
-	<!-- MapDIV Tag, to generate a scalable DIV for a Map -->
 	<tag>
+		<description>MapDIV Tag, to generate a scalable DIV for a Map</description>
 		<name>div</name>
 		<tag-class>org.deltava.taglib.googlemap.MapDIVTag</tag-class>
 		<body-content>empty</body-content>
@@ -84,8 +84,8 @@
 		</attribute>
 	</tag>
 
-	<!-- MapType Tag, to set the Map type -->
 	<tag>
+		<description>MapType Tag, to set the Map type</description>
 		<name>type</name>
 		<tag-class>org.deltava.taglib.googlemap.MapTypeTag</tag-class>
 		<body-content>empty</body-content>
@@ -106,8 +106,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Marker Tag, to generate a GMarker -->
 	<tag>
+		<description>Marker Tag, to generate a GMarker</description>
 		<name>marker</name>
 		<tag-class>org.deltava.taglib.googlemap.MarkerTag</tag-class>
 		<body-content>empty</body-content>
@@ -145,8 +145,8 @@
 		</attribute>
 	</tag>
 
-	<!-- MarkerArray Tag, to generate a JavaScript array of GMarkers -->
 	<tag>
+		<description>MarkerArray Tag, to generate a JavaScript array of GMarkers</description>
 		<name>markers</name>
 		<tag-class>org.deltava.taglib.googlemap.MarkerArrayTag</tag-class>
 		<body-content>empty</body-content>
@@ -174,8 +174,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Point Tag, to generate a GPoint -->
 	<tag>
+		<description>Point Tag, to generate a GPoint</description>
 		<name>point</name>
 		<tag-class>org.deltava.taglib.googlemap.PointTag</tag-class>
 		<body-content>empty</body-content>
@@ -192,8 +192,8 @@
 		</attribute>		
 	</tag>
 
-	<!-- PointArray Tag, to generate a JavaScript array of GPoints -->
 	<tag>
+		<description>Point Array Tag, to generate a JavaScript array of GPoints</description>
 		<name>points</name>
 		<tag-class>org.deltava.taglib.googlemap.PointArrayTag</tag-class>
 		<body-content>empty</body-content>
@@ -210,8 +210,8 @@
 		</attribute>
 	</tag>
 
-	<!-- LineTag, to generate a GPolyline -->
 	<tag>
+		<description>Line Tag, to generate a GPolyline</description>
 		<name>line</name>
 		<tag-class>org.deltava.taglib.googlemap.LineTag</tag-class>
 		<body-content>empty</body-content>
@@ -250,8 +250,8 @@
 		</attribute>
 	</tag>
 
-	<!-- LegendTag to display a marker legend entry -->
 	<tag>
+		<description>Legend Tag, to display a marker legend entry</description>
 		<name>legend</name>
 		<tag-class>org.deltava.taglib.googlemap.LegendTag</tag-class>
 		<body-content>empty</body-content>
@@ -272,8 +272,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Map Usage tag, to display the number of times the API has been used -->
 	<tag>
+		<description>Map Usage tag, to display the number of times the Google Maps API has been used</description>
 		<name>usage</name>
 		<tag-class>org.deltava.taglib.googlemap.APIUsageTag</tag-class>
 		<body-content>empty</body-content>
