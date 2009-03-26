@@ -22,7 +22,7 @@
 <diag:daocache dao="${dao}" hits="daoHits" requests="daoReqs" />
 <tr>
  <td class="pri bld">${dao.class.name}</td>
- <td><fmt:int value="${daoRreqs}" /></td>
+ <td><fmt:int value="${daoReqs}" /></td>
  <td><fmt:int value="${daoHits}" /></td>
 <c:if test="${daoReqs > 0}">
  <td class="bld"><fmt:dec value="${daoHits * 100 / daoReqs}" fmt="##0.0" />%</td>
