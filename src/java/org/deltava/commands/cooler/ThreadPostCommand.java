@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -274,7 +274,11 @@ public class ThreadPostCommand extends AbstractCommand {
 				nwdao.add(mt.getID(), ctx.getUser().getID());
 				ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);
 			}
-
+			
+			// Update the index
+			IndexableMessage imsg = new IndexableMessage(msg, mt.getChannel(), mt.getSubject(), p);
+			SearchUtils.add(imsg);
+			
 			// Commit the transaction
 			ctx.commitTX();
 			
@@ -292,6 +296,9 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("isPosted", Boolean.TRUE, REQUEST);
+		} catch (IOException ie) {
+			ctx.rollbackTX();
+			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

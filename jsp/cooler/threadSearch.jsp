@@ -94,27 +94,30 @@ return true;
 
 <!-- Table Header Bar-->
 <tr class="title">
+ <td width="12%">SCORE</td>
  <td width="35%">THREAD TITLE</td>
- <td width="15%">STARTED BY</td>
- <td width="8%">VIEWS</td>
- <td width="8%">POSTS</td>
+ <td width="14%">STARTED BY</td>
+ <td width="6%">POSTS</td>
  <td>LAST POST</td>
 </tr>
 
 <!-- Table Thread Data -->
-<c:forEach var="thread" items="${viewContext.results}">
+<c:forEach var="result" items="${viewContext.results}">
+<c:set var="thread" value="${result.thread}" scope="request" />
 <c:set var="author" value="${pilots[thread.authorID]}" scope="request" />
 <c:set var="authorLoc" value="${userData[thread.authorID]}" scope="request" />
 <c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="request" />
 <view:row entry="${thread}">
+ <td class="pri"><span class="bld"><fmt:dec value="${result.score}" fmt="#0.000" /></span>
+ <span class="small">(<fmt:int value="${result.hits}" /> hits)</span></td>
  <td class="left">
 <c:if test="${thread.image != 0}"><el:img caption="Image" x="20" y="20" src="cooler/icon_img.png" /></c:if>
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
- <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
+ <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd>
+ <span class="small">(in <span class="pri">${thread.channel}</span>)</span></td>
  <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
- <td><fmt:int value="${thread.views}" /></td>
  <td><fmt:int value="${thread.postCount}" /></td>
  <td class="small right"><fmt:date date="${thread.lastUpdatedOn}" /> by 
  <span class="pri bld">${lastPoster.name}</span></td>
@@ -122,7 +125,7 @@ return true;
 </c:forEach>
 
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="5" class="small">Search Completed in <fmt:int value="${searchTime}" />ms</td>
 </tr>
 </view:table>
 </c:if>

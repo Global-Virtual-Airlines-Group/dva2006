@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.24.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/cos-26Dec2008.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
