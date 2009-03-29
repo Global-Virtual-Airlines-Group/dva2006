@@ -523,7 +523,7 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 24);
+		boolean hasACARS = (md.getColumnCount() >= 51);
 		boolean hasComments = (md.getColumnCount() >= 21);
 
 		// Iterate throught the results
@@ -576,19 +576,20 @@ public class GetFlightReports extends DAO {
 				ap.setLandingDistance(rs.getInt(36));
 				ap.setLandingSpeed(rs.getInt(37));
 				ap.setLandingVSpeed(rs.getInt(38));
-				ap.setLandingN1(rs.getDouble(39));
-				ap.setLandingWeight(rs.getInt(40));
-				ap.setLandingFuel(rs.getInt(41));
-				ap.setEndTime(rs.getTimestamp(42));
-				ap.setGateWeight(rs.getInt(43));
-				ap.setGateFuel(rs.getInt(44));
-				ap.setTime(0, rs.getInt(45));
-				ap.setTime(1, rs.getInt(46));
-				ap.setTime(2, rs.getInt(47));
-				ap.setTime(4, rs.getInt(48));
-				ap.setFDE(rs.getString(49));
-				ap.setAircraftCode(rs.getString(50));
-				ap.setHasReload(rs.getBoolean(51));
+				ap.setLandingG(rs.getDouble(39));
+				ap.setLandingN1(rs.getDouble(40));
+				ap.setLandingWeight(rs.getInt(41));
+				ap.setLandingFuel(rs.getInt(42));
+				ap.setEndTime(rs.getTimestamp(43));
+				ap.setGateWeight(rs.getInt(44));
+				ap.setGateFuel(rs.getInt(45));
+				ap.setTime(0, rs.getInt(46));
+				ap.setTime(1, rs.getInt(47));
+				ap.setTime(2, rs.getInt(48));
+				ap.setTime(4, rs.getInt(49));
+				ap.setFDE(rs.getString(50));
+				ap.setAircraftCode(rs.getString(51));
+				ap.setHasReload(rs.getBoolean(52));
 			}
 
 			// Add the flight report to the results
