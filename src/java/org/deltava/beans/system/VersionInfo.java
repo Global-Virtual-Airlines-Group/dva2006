@@ -4,16 +4,16 @@ package org.deltava.beans.system;
 /**
  * An interface to store version info constants.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
 public interface VersionInfo {
 
     public static final int MAJOR = 2;
-    public static final int MINOR = 4;
+    public static final int MINOR = 5;
     
-    public static final int BUILD = 234;
+    public static final int BUILD = 235;
     // public static final int RELEASE_CANDIDATE = 1;
     public static final boolean FINAL = false;
     
