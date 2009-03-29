@@ -137,6 +137,9 @@ public class PasswordResetCommand extends AbstractCommand {
 				log.warn(usr.getName() + " not found, adding");
 				auth.add(usr, newPwd);
 			}
+			
+			// Validate the password
+			auth.authenticate(usr, newPwd);
 		} catch (SecurityException se) {
 			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + se.getMessage());
 			return;
