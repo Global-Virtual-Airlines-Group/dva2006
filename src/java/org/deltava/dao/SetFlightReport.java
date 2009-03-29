@@ -318,9 +318,9 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
 						+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "
 						+ "TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, "
-						+ "LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
-						+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
-						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "LANDING_G, LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, "
+						+ "GATE_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			// Since we are writing to multiple tables, this is designd as a transaction
@@ -348,19 +348,20 @@ public class SetFlightReport extends DAO {
 			_ps.setInt(14, afr.getLandingDistance());
 			_ps.setInt(15, afr.getLandingSpeed());
 			_ps.setInt(16, afr.getLandingVSpeed());
-			_ps.setDouble(17, afr.getLandingN1());
-			_ps.setInt(18, afr.getLandingWeight());
-			_ps.setInt(19, afr.getLandingFuel());
-			_ps.setTimestamp(20, createTimestamp(afr.getEndTime()));
-			_ps.setInt(21, afr.getGateWeight());
-			_ps.setInt(22, afr.getGateFuel());
-			_ps.setInt(23, afr.getTime(0));
-			_ps.setInt(24, afr.getTime(1));
-			_ps.setInt(25, afr.getTime(2));
-			_ps.setInt(26, afr.getTime(4));
-			_ps.setString(27, afr.getFDE());
-			_ps.setString(28, afr.getAircraftCode());
-			_ps.setBoolean(29, afr.getHasReload());
+			_ps.setDouble(17, afr.getLandingG());
+			_ps.setDouble(18, afr.getLandingN1());
+			_ps.setInt(19, afr.getLandingWeight());
+			_ps.setInt(20, afr.getLandingFuel());
+			_ps.setTimestamp(21, createTimestamp(afr.getEndTime()));
+			_ps.setInt(22, afr.getGateWeight());
+			_ps.setInt(23, afr.getGateFuel());
+			_ps.setInt(24, afr.getTime(0));
+			_ps.setInt(25, afr.getTime(1));
+			_ps.setInt(26, afr.getTime(2));
+			_ps.setInt(27, afr.getTime(4));
+			_ps.setString(28, afr.getFDE());
+			_ps.setString(29, afr.getAircraftCode());
+			_ps.setBoolean(30, afr.getHasReload());
 
 			// Write to the database
 			executeUpdate(1);

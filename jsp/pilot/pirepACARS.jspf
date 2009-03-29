@@ -79,7 +79,8 @@
 <tr>
  <td class="label">Landing Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
- feet/minute, <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
+ feet/minute<c:if test="${pirep.landingG > 0.0}"> (<fmt:dec value="${pirep.landingG}" fmt="#0.0000" />G)</c:if>,
+ <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
  lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel<c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
  <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if></td>
 </tr>

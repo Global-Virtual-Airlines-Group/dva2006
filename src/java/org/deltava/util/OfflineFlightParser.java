@@ -189,6 +189,7 @@ public class OfflineFlightParser {
 		afr.setLandingWeight(StringUtils.parse(ie.getChildTextTrim("landingWeight"), 0));
 		afr.setLandingSpeed(StringUtils.parse(ie.getChildTextTrim("landingSpeed"), 0));
 		afr.setLandingVSpeed(StringUtils.parse(ie.getChildTextTrim("landingVSpeed"), 0));
+		afr.setLandingG(StringUtils.parse(ie.getChildTextTrim("landingG"), 0.0d));
 		afr.setGateFuel(StringUtils.parse(ie.getChildTextTrim("gateFuel"), 0));
 		afr.setGateWeight(StringUtils.parse(ie.getChildTextTrim("gateWeight"), 0));
 		
