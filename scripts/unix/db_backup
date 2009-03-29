@@ -1,6 +1,6 @@
 #!/bin/bash
 # Database backup script
-# (c) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving/mysqldump options
 arc_util="pbzip2 -p2 -9 -c"
@@ -33,7 +33,6 @@ $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` acars > 
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` exams > exams.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` dva > dva.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` afv > afv.sql
-$mysqldump -e -K -d -n -t --single-transaction `cat /usr/local/etc/sqlbackup` common > common_triggers.sql
 $mysqldump -e -K -d -n --single-transaction `cat /usr/local/etc/sqlbackup` common EQPROGRAMS PILOTNAMES > common_views.sql
 tar cfj create_tables.tar.bz2 *.sql
 rm *.sql
