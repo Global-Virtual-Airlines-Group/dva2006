@@ -240,6 +240,8 @@
 			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 			<useLocalSessionState>false</useLocalSessionState>
+			<elideSetAutoCommits>true</elideSetAutoCommits>
+			<cacheServerConfiguration>true</cacheServerConfiguration>
 			<useCursorFetch>true</useCursorFetch>
 			<maintainTimeStats>false</maintainTimeStats>
 			<validationQuery>/* ping */</validationQuery>
@@ -573,6 +575,9 @@
 		</imgurls>
 
 		<maxreports type="Integer">3</maxreports>
+		<search>
+			<idx>/var/search</idx>
+		</search>
 	</cooler>
 	
 	<users>

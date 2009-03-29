@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.io.IOException;
 import java.sql.Connection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +19,13 @@ import org.deltava.mail.*;
 import org.deltava.security.SecurityContext;
 import org.deltava.security.command.CoolerThreadAccessControl;
 
+import org.deltava.util.SearchUtils;
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 2.1
+ * @version 2.5
  * @since 1.0
  */
 
@@ -81,28 +83,28 @@ public class ThreadReplyCommand extends AbstractCommand {
 		// Determine if we are editing the last post
 		boolean doEdit = Boolean.valueOf(ctx.getParameter("doEdit")).booleanValue();
 
-		Collection<Person> notifyList = new HashSet<Person>();
+		Collection<Person> notifyList = new LinkedHashSet<Person>();
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the Message Thread
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
-			MessageThread thread = tdao.getThread(ctx.getID());
-			if (thread == null)
+			MessageThread mt = tdao.getThread(ctx.getID());
+			if (mt == null)
 				throw notFoundException("Unknown Message Thread - " + ctx.getID());
 
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			Channel ch = cdao.get(thread.getChannel());
+			Channel ch = cdao.get(mt.getChannel());
 			
 			// Load the poll options (if any)
 			GetCoolerPolls tpdao = new GetCoolerPolls(con);
-			thread.addOptions(tpdao.getOptions(thread.getID()));
-			thread.addVotes(tpdao.getVotes(thread.getID()));
+			mt.addOptions(tpdao.getOptions(mt.getID()));
+			mt.addVotes(tpdao.getVotes(mt.getID()));
 
 			// Check user access
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
-			ac.updateContext(thread, ch);
+			ac.updateContext(mt, ch);
 			ac.validate();
 			if (!ac.getCanReply())
 				throw securityException("Cannot post in Message Thread " + ctx.getID());
@@ -110,8 +112,12 @@ public class ThreadReplyCommand extends AbstractCommand {
 				throw securityException("Cannot update Message Thread post in " + ctx.getID());
 
 			// Get the notification entries, and remove our own
-			ThreadNotifications nt = tdao.getNotifications(thread.getID());
+			ThreadNotifications nt = tdao.getNotifications(mt.getID());
 			nt.removeUser(ctx.getUser());
+			
+			// Get the DAOs
+			GetPilot pdao = new GetPilot(con);
+			GetUserData uddao = new GetUserData(con);
 
 			// If we are set to notify people for this thread, then load the data
 			if (!doEdit && (!nt.getIDs().isEmpty())) {
@@ -119,14 +125,8 @@ public class ThreadReplyCommand extends AbstractCommand {
 				mctxt.setTemplate(mtdao.get("THREADNOTIFY"));
 
 				// Get the users to notify
-				GetPilot pdao = new GetPilot(con);
-				GetUserData uddao = new GetUserData(con);
 				UserDataMap udm = uddao.get(nt.getIDs());
-				for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-					String tableName = i.next();
-					Map<Integer, Pilot> pilotSubset = pdao.getByID(udm.getByTable(tableName), "PILOTS");
-					notifyList.addAll(pilotSubset.values());
-				}
+				notifyList.addAll(pdao.get(udm).values());
 
 				// Filter out users who can no longer read this thread
 				MultiUserSecurityContext sctx = new MultiUserSecurityContext(ctx);
@@ -138,15 +138,15 @@ public class ThreadReplyCommand extends AbstractCommand {
 					ac.updateContxt(sctx);
 					ac.validate();
 					if (!ac.getCanRead()) {
-						log.warn(usr.getName() + " can no longer read " + thread.getSubject());
+						log.warn(usr.getName() + " can no longer read " + mt.getSubject());
 						i.remove();
 					}
 				}
 			}
 
 			// Create the new reply bean
-			Message msg = doEdit ? thread.getLastPost() : new Message(ctx.getUser().getID());
-			msg.setThreadID(thread.getID());
+			Message msg = doEdit ? mt.getLastPost() : new Message(ctx.getUser().getID());
+			msg.setThreadID(mt.getID());
 			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 			msg.setRemoteHost(ctx.getRequest().getRemoteHost());
 			msg.setBody(ctx.getParameter("msgText"));
@@ -165,20 +165,28 @@ public class ThreadReplyCommand extends AbstractCommand {
 				} else {
 					ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
 					wdao.write(msg);
-					thread.addPost(msg);
+					mt.addPost(msg);
 				}
 				
-				wdao.synchThread(thread);
+				wdao.synchThread(mt);
 			} else
 				notifyList.clear();
 			
 			// Get our vote on the thread
 			if (ac.getCanVote() && (!StringUtils.isEmpty(ctx.getParameter("pollVote")))) {
-				PollVote v = new PollVote(thread.getID(), ctx.getUser().getID());
+				PollVote v = new PollVote(mt.getID(), ctx.getUser().getID());
 				v.setOptionID(StringUtils.parseHex(ctx.getParameter("pollVote")));
 				wdao.vote(v);
 				ctx.setAttribute("isVote", Boolean.TRUE, REQUEST);
 			}
+			
+			// Load the message Author
+			UserData ud = uddao.get(msg.getAuthorID());
+			Person author = pdao.get(ud);
+			
+			// Update the search index
+			IndexableMessage imsg = new IndexableMessage(msg, mt.getChannel(), mt.getSubject(), author);
+			SearchUtils.add(imsg);
 
 			// Commit the transaction
 			ctx.commitTX();
@@ -192,14 +200,17 @@ public class ThreadReplyCommand extends AbstractCommand {
 			}
 
 			// Add thread and save
-			threadIDs.put(new Integer(thread.getID()), new Date());
+			threadIDs.put(new Integer(mt.getID()), new Date());
 
 			// Save thread data
-			mctxt.addData("thread", thread);
-			mctxt.addData("threadID", StringUtils.formatHex(thread.getID()));
+			mctxt.addData("thread", mt);
+			mctxt.addData("threadID", StringUtils.formatHex(mt.getID()));
 
 			// Save the thread in the request
-			ctx.setAttribute("thread", thread, REQUEST);
+			ctx.setAttribute("thread", mt, REQUEST);
+		} catch (IOException ie) {
+			ctx.rollbackTX();
+			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

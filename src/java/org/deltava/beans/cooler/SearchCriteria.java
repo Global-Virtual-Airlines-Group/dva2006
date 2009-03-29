@@ -1,12 +1,12 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
-import java.util.*;
+import java.util.Date;
 
 /**
  * A bean to store Water Cooler search criteria.
  * @author Luke
- * @version 2.1
+ * @version 2.5
  * @since 1.0
  */
 
@@ -14,12 +14,11 @@ public class SearchCriteria {
 
 	private String _searchStr;
 	private String _channel;
+	private String _author;
 	private Date _threadDate;
 	
 	private boolean _doSubject;
 	private boolean _doNameFragment;
-	
-	private final Collection<Integer> _ids = new LinkedHashSet<Integer>();
 	
 	/**
 	 * Creates a new search criteria bean.
@@ -36,6 +35,14 @@ public class SearchCriteria {
 	 */
 	public String getChannel() {
 		return _channel;
+	}
+	
+	/**
+	 * Returns the author name to search for.
+	 * @return the author name
+	 */
+	public String getAuthorName() {
+		return _author;
 	}
 	
 	/**
@@ -66,20 +73,12 @@ public class SearchCriteria {
 		return _doNameFragment;
 	}
 	
-	public Collection<Integer> getIDs() {
-		return _ids;
-	}
-	
-	public void addID(int id) {
-		_ids.add(new Integer(id));
-	}
-	
-	public void addIDs(Collection<Integer> ids) {
-		_ids.addAll(ids);
-	}
-	
 	public void setChannel(String c) {
 		_channel = c;
+	}
+	
+	public void setAuthorName(String aName) {
+		_author = aName;
 	}
 	
 	public void setMinimumDate(Date dt) {
