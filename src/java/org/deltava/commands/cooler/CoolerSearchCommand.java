@@ -1,7 +1,8 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.io.IOException;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -18,13 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 2.1
+ * @version 2.5
  * @since 1.0
  */
 
 public class CoolerSearchCommand extends AbstractViewCommand {
 	
-	private Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
+	private static final Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
 
 	/**
 	 * Executes the command.
@@ -62,42 +63,39 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			// Build the search criteria
 			SearchCriteria criteria = new SearchCriteria(ctx.getParameter("searchStr"));
 			criteria.setChannel(ctx.getParameter("channel"));
+			criteria.setAuthorName(ctx.getParameter("pilotName"));
 			criteria.setSearchSubject(Boolean.valueOf(ctx.getParameter("checkSubject")).booleanValue());
 			criteria.setSearchNameFragment(Boolean.valueOf(ctx.getParameter("nameMatch")).booleanValue());
 			criteria.setMinimumDate(lud);
 
-			// If we're doing a Pilot name search, start that first
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			if (!StringUtils.isEmpty(ctx.getParameter("pilotName"))) {
-				pdao.setQueryMax(50);
-				criteria.addIDs(pdao.search(ctx.getParameter("pilotName"), criteria.getSearchNameFragment()));
-				pdao.setQueryMax(0);
-			}
-
-			// Get the DAO and search
-			Collection<MessageThread> threads = null;
-			synchronized (CoolerSearchCommand.class) {
-				GetCoolerThreads dao = new GetCoolerThreads(con);
-				dao.setQueryStart(vc.getStart());
-				dao.setQueryMax(vc.getCount());
-				threads = dao.search(criteria);
-			}
-
-			// Filter out the threads based on our access
+			// Do the search
+			long start = System.currentTimeMillis();
+			Collection<SearchResult> results = SearchUtils.search(criteria, vc.getCount());
+			ctx.setAttribute("searchTime", new Long(System.currentTimeMillis() - start), REQUEST);
+			
+			// Load the threads
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			GetCoolerThreads dao = new GetCoolerThreads(con);
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
-			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
-				MessageThread mt = i.next();
-				Channel c = cdao.get(mt.getChannel());
-				access.updateContext(mt, c);
-				access.validate();
-
-				// Remove the thread if we cannot access it
-				if (access.getCanRead()) {
-					pilotIDs.add(new Integer(mt.getAuthorID()));
-					pilotIDs.add(new Integer(mt.getLastUpdateID()));
-				} else
-					i.remove();
+			for (Iterator<SearchResult> i = results.iterator(); i.hasNext(); ) {
+				SearchResult sr = i.next();
+				MessageThread mt = dao.getThread(sr.getID(), false);
+				
+				// Check our access
+				if (mt != null) {
+					Channel c = cdao.get(mt.getChannel());
+					access.updateContext(mt, c);
+					access.updateContext(mt, c);	
+					access.validate();
+					
+					// Remove the thread if we cannot access it
+					if (access.getCanRead()) {
+						sr.setThread(mt);
+						pilotIDs.add(new Integer(mt.getAuthorID()));
+						pilotIDs.add(new Integer(mt.getLastUpdateID()));
+					} else
+						i.remove();
+				}
 			}
 
 			// Get the location of all the Pilots
@@ -107,18 +105,16 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 
 			// Get the authors for the last post in each channel
 			Map<Integer, Person> authors = new HashMap<Integer, Person>();
+			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-				String tableName = i.next();
-				if (tableName.endsWith("APPLICANTS"))
-					authors.putAll(adao.getByID(udm.getByTable(tableName), tableName));
-				else
-					authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-			}
+			authors.putAll(pdao.get(udm));
+			authors.putAll(adao.get(udm));
 
 			// Save the threads in the request
-			vc.setResults(threads);
+			vc.setResults(results);
 			ctx.setAttribute("pilots", authors, REQUEST);
+		} catch (IOException ie) {
+			throw new CommandException(ie);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
