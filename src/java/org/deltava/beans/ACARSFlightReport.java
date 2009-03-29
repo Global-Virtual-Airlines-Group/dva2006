@@ -29,6 +29,7 @@ public class ACARSFlightReport extends FlightReport {
     private int _landingDistance;
     private int _landingSpeed;
     private int _landingVspeed;
+    private double _landingG;
     private double _landingN1;
     private int _landingWeight;
     private int _landingFuel;
@@ -181,11 +182,20 @@ public class ACARSFlightReport extends FlightReport {
 
     /**
      * Returns the vertical speed of the aircraft at touchdown.
-     * @return the vertical speed, in feet per minute
+     * @return the vertical speed in feet per minute
      * @see ACARSFlightReport#setLandingVSpeed(int)
      */
     public int getLandingVSpeed() {
         return _landingVspeed;
+    }
+    
+    /**
+     * Returns the G-Forces at touchdown.
+     * @return the G-Forces in G
+     * @see ACARSFlightReport#setLandingG(double)
+     */
+    public double getLandingG() {
+    	return _landingG;
     }
     
     /**
@@ -461,6 +471,15 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setLandingVSpeed(int s) {
         _landingVspeed = (s > 0) ? s * -1 : s;
+    }
+    
+    /**
+     * Updates the G-Forces at touchdown.
+     * @param g the G-forces in G
+     * @see ACARSFlightReport#getLandingG()
+     */
+    public void setLandingG(double g) {
+    	_landingG = g;
     }
     
     /**
