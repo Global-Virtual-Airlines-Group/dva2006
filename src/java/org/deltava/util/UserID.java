@@ -1,10 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 /**
  * A bean to parse user IDs.
  * @author Luke
- * @version 1.0
+ * @version 2.5
  * @since 1.0
  */
 
@@ -27,11 +27,10 @@ public class UserID {
         StringBuilder cBuf = new StringBuilder();
         for (int x = 0; x < code.length(); x++) {
             char c = Character.toUpperCase(code.charAt(x));
-            if ("0123456789".indexOf(c) != -1) {
+            if (Character.isDigit(c))
                 cBuf.append(c);
-            } else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(c) != -1) {
+            else if (Character.isLetter(c))
                 pBuf.append(c);
-            }
         }
 
         // Save the prefix and the code
@@ -50,6 +49,14 @@ public class UserID {
 	 */
 	public String getAirlineCode() {
 		return _airline;
+	}
+	
+	/**
+	 * Returns whether an airline code was submitted.
+	 * @return TRUE if a letter was in the ID, otherwise FALSE
+	 */
+	public boolean hasAirlineCode() {
+		return (_airline != null);
 	}
 
 	/**
