@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -153,6 +153,22 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		// Convert to a Map for easy searching
 		return CollectionUtils.createMap(results, "ID");
 	}
+	
+	/**
+	 * Returns an Applicant object which may be in another Airline's database.
+	 * @param ud the UserData bean containg the Applicant location
+	 * @return the Applicant bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Applicant get(UserData ud) throws DAOException {
+		if (ud == null)
+			return null;
+
+		// Get a map from the table, and get the first value
+		Map<Integer, Applicant> pilots = getByID(Collections.singleton(ud), ud.getDB() + "." + ud.getTable());
+		Iterator<Applicant> i = pilots.values().iterator();
+		return i.hasNext() ? i.next() : null;
+	}
 
 	/**
 	 * Returns Applicant objects which may be in another Airline's database.
@@ -164,7 +180,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		Map<Integer, Applicant> results = new HashMap<Integer, Applicant>();
 		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 			String tableName = i.next();
-			if (!UserDataMap.isPilotTable(tableName))
+			if (!UserData.isPilotTable(tableName))
 				results.putAll(getByID(udm.getByTable(tableName), tableName));
 		}
 		
