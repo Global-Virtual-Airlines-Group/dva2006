@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,10 +6,10 @@ import java.util.*;
 import org.deltava.util.CollectionUtils;
 
 /**
- * A class to support a map of {@link UserData} beans. This class implements Map to allow it to be accessed
- * directly via JSP Expression Language.
+ * A class to support a map of {@link UserData} beans. This class implements Map to allow it to be accessed directly via
+ * JSP Expression Language.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class UserDataMap implements Map<Integer, UserData> {
 	 * @param data a Collection of UserData objects
 	 */
 	@SuppressWarnings("unchecked")
-	public void putAll(Map  data) {
+	public void putAll(Map data) {
 		_entries.putAll(data);
 	}
 
@@ -71,7 +71,7 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public UserData get(Object id) {
 		return _entries.get(id);
 	}
-	
+
 	/**
 	 * Returns an entry for a particular user.
 	 * @param id the User's database ID
@@ -81,7 +81,7 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public UserData get(int id) {
 		return _entries.get(new Integer(id));
 	}
-	
+
 	/**
 	 * Returns all entries present within a particular table.
 	 * @param tableName the database table name
@@ -112,21 +112,21 @@ public class UserDataMap implements Map<Integer, UserData> {
 
 		return results;
 	}
-	
+
 	/**
 	 * Returns all domains containing users within this container.
 	 * @return a Collection of domain names
 	 */
 	public Collection<String> getDomains() {
 		Collection<String> results = new LinkedHashSet<String>(4);
-		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext(); ) {
+		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext();) {
 			UserData usr = i.next();
 			results.add(usr.getDomain());
 		}
-		
+
 		return results;
 	}
-	
+
 	/**
 	 * Returns the database IDs across all databases for every user within this container.
 	 * @return a Collection of database IDs
@@ -134,24 +134,12 @@ public class UserDataMap implements Map<Integer, UserData> {
 	 */
 	public Collection<Integer> getAllIDs() {
 		Collection<Integer> results = new HashSet<Integer>(_entries.size());
-		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext(); ) {
+		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext();) {
 			UserData usr = i.next();
 			results.addAll(usr.getIDs());
 		}
-		
+
 		return results;
-	}
-	
-	/**
-	 * Utility method to query wether a table is a Pilot or Applicant table.
-	 * @param tableName the table name, in either TABLE or DB.TABLE format
-	 * @return TRUE if the table should be queried by a Pilot DAO, otherwise FALSE
-	 */
-	public static boolean isPilotTable(String tableName) {
-	   if ((tableName != null) && (tableName.indexOf('.') != -1))
-	      tableName = tableName.substring(tableName.indexOf('.') + 1);
-	   
-	   return "PILOTS".equals(tableName);
 	}
 
 	/**
@@ -161,15 +149,15 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public int size() {
 		return _entries.size();
 	}
-	
+
 	/**
 	 * Removes an entry from the Map.
-	 * @return the removed UserData entry 
+	 * @return the removed UserData entry
 	 */
 	public UserData remove(Object obj) {
 		return _entries.remove(obj);
 	}
-	
+
 	/**
 	 * Checks if the Map is empty.
 	 * @return TRUE if the map is empty, otherwise FALSE
@@ -181,14 +169,14 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public Collection<UserData> values() {
 		return new LinkedHashSet<UserData>(_entries.values());
 	}
-	
+
 	/**
 	 * Clears the map.
 	 */
 	public void clear() {
 		_entries.clear();
 	}
-	
+
 	/**
 	 * <i>NOT IMPLEMENTED</i>
 	 * @throws UnsupportedOperationException always
@@ -196,7 +184,7 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public boolean containsKey(Object obj) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/**
 	 * <i>NOT IMPLEMENTED</i>
 	 * @throws UnsupportedOperationException always
@@ -212,7 +200,7 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public Set<Map.Entry<Integer, UserData>> entrySet() {
 		return _entries.entrySet();
 	}
-	
+
 	/**
 	 * Returns the database IDs contained within the map.
 	 * @return a Collection of Integers
@@ -222,7 +210,7 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public Collection<Integer> getIDs() {
 		return _entries.keySet();
 	}
-	
+
 	/**
 	 * Returns the database IDs contained within the map.
 	 * @return a Set of Integers
@@ -231,11 +219,11 @@ public class UserDataMap implements Map<Integer, UserData> {
 	public Set<Integer> keySet() {
 		return _entries.keySet();
 	}
-	
+
 	/**
 	 * Dumps the IDs to a string, like a list.
 	 */
 	public String toString() {
-	   return _entries.keySet().toString();
+		return _entries.keySet().toString();
 	}
 }
