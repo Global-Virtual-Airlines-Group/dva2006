@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 2.3
+ * @version 2.5
  * @since 1.0
  */
 
@@ -137,7 +137,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		Map<Integer, Pilot> results = new HashMap<Integer, Pilot>();
 		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 			String tableName = i.next();
-			if (UserDataMap.isPilotTable(tableName))
+			if (UserData.isPilotTable(tableName))
 				results.putAll(getByID(udm.getByTable(tableName), tableName));
 		}
 		

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -146,7 +146,7 @@ public class ThreadCommand extends AbstractCommand {
 				String dbTableName = i.next();
 
 				// Get the pilots/applicants from each table and apply their online totals and certifications
-				if (UserDataMap.isPilotTable(dbTableName)) {
+				if (UserData.isPilotTable(dbTableName)) {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
 					users.putAll(pilots);

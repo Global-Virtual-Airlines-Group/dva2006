@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.net.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -292,7 +292,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext();) {
 			String tableName = i.next();
 			Collection<UserData> IDs = udmap.getByTable(tableName);
-			if (UserDataMap.isPilotTable(tableName))
+			if (UserData.isPilotTable(tableName))
 				persons.putAll(pdao.getByID(IDs, tableName));
 			else
 				persons.putAll(dao.getByID(IDs, tableName));
@@ -339,7 +339,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext();) {
 			String tableName = i.next();
 			Collection<UserData> IDs = udmap.getByTable(tableName);
-			if (UserDataMap.isPilotTable(tableName))
+			if (UserData.isPilotTable(tableName))
 				persons.putAll(pdao.getByID(IDs, tableName));
 			else
 				persons.putAll(dao.getByID(IDs, tableName));
