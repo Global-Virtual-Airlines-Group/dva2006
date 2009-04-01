@@ -1,9 +1,11 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.io.IOException;
 import java.sql.Connection;
 
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 
 import org.deltava.commands.*;
@@ -11,12 +13,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to delete an individual message post.
  * @author Luke
- * @version 1.0
+ * @version 2.5
  * @since 1.0
  */
 
@@ -40,29 +42,32 @@ public class PostDeleteCommand extends AbstractCommand {
 
 			// Get the message thread
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
-			MessageThread thread = tdao.getThread(threadID);
-			if (thread == null)
+			MessageThread mt = tdao.getThread(threadID, true);
+			if (mt == null)
 				throw notFoundException("Invalid Message Thread - " + threadID);
 
 			// Get the Channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			Channel c = cdao.get(thread.getChannel());
+			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + thread.getChannel());
+				throw notFoundException("Invalid Channel - " + mt.getChannel());
 			
 	         // Check our access - only if we're reading
 	         CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
-	         access.updateContext(thread, c);
+	         access.updateContext(mt, c);
 	         access.validate();
 	         if (!access.getCanDelete())
 	            throw securityException("Cannot delete Message Post");
 	         
 	         // Ensure that the post exists
 	         boolean hasPost = false;
-	         Collection<Message> posts = thread.getPosts();
+	         Collection<Message> posts = mt.getPosts();
 	         for (Iterator<Message> i = posts.iterator(); !hasPost && i.hasNext(); ) {
 	        	 Message msg = i.next();
-	        	 hasPost |= (msg.getID() == postID);
+	        	 if (msg.getID() == postID) {
+	        		 hasPost = true;
+	        		 i.remove();
+	        	 }
 	         }
 	         
 	         // If we cannot find the post, abort
@@ -81,14 +86,31 @@ public class PostDeleteCommand extends AbstractCommand {
 	        	 ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 	        	 result.setURL("/jsp/cooler/threadUpdate.jsp");
 	         } else {
+	        	 // Convert the messages
+	        	 GetUserData uddao = new GetUserData(con);
+	        	 GetApplicant adao = new GetApplicant(con);
+	        	 GetPilot pdao = new GetPilot(con);
+	        	 Collection<IndexableMessage> imsgs = new ArrayList<IndexableMessage>();
+	        	 for (Iterator<Message> i = posts.iterator(); i.hasNext(); ) {
+	        		 Message msg = i.next();
+	        		 UserData ud = uddao.get(msg.getAuthorID());
+	        		 Person author = UserData.isPilotTable(ud.getTable()) ? pdao.get(ud) : adao.get(ud);
+	        		 IndexableMessage imsg = new IndexableMessage(msg, c.getName(), mt.getSubject(), author);
+	        		 imsgs.add(imsg);
+	        	 }
+	        	 
 	        	 wdao.delete(threadID, postID);
-	        	 wdao.synchThread(thread);
+	        	 wdao.synchThread(mt);
+	        	 SearchUtils.update(threadID, imsgs);
 	        	 result.setURL("thread", null, threadID);
 	        	 result.setType(ResultType.REDIRECT);
 	         }
 	         
 	         // Commit the transaction
 	         ctx.commitTX();
+		} catch (IOException ie) {
+			ctx.rollbackTX();
+			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

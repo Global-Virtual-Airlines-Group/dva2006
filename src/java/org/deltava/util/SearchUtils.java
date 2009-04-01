@@ -126,7 +126,7 @@ public class SearchUtils {
 		File idxPath = new File(SystemData.get("cooler.search.idx"));
 		Directory d = FSDirectory.getDirectory(idxPath);
 		IndexWriter.unlock(d);
-		IndexWriter idxW = new IndexWriter(d, new StopAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
+		IndexWriter idxW = new IndexWriter(d, getAnaylyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
 
 		Document doc = new Document();
 		doc.add(new Field("id", NumberTools.longToString(msg.getThreadID()), Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -155,7 +155,7 @@ public class SearchUtils {
 		File idxPath = new File(SystemData.get("cooler.search.idx"));
 		Directory d = FSDirectory.getDirectory(idxPath);
 		IndexWriter.unlock(d);
-		IndexWriter idxW = new IndexWriter(d, new StopAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
+		IndexWriter idxW = new IndexWriter(d, getAnaylyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
 
 		// Delete the thread
 		Term t = new Term("id", NumberTools.longToString(threadID));
@@ -179,5 +179,16 @@ public class SearchUtils {
 
 		idxW.commit();
 		idxW.close();
+	}
+
+	/**
+	 * Convenience method to delete a thread from the index. 
+	 * @param threadID the Message Thread database ID
+	 * @throws IOException if an I/O error occurs
+	 * @see SearchUtils#update(int, Collection)
+	 */
+	public static void delete(int threadID) throws IOException {
+		Collection<IndexableMessage> EMPTY = Collections.emptyList();
+		update(threadID, EMPTY);
 	}
 }
