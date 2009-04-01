@@ -5,6 +5,8 @@ import java.util.*;
 import java.io.IOException;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.commands.*;
@@ -25,6 +27,7 @@ import org.deltava.util.system.SystemData;
 
 public class CoolerSearchCommand extends AbstractViewCommand {
 	
+	private static final Logger log = Logger.getLogger(CoolerSearchCommand.class);
 	private static final Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
 
 	/**
@@ -95,6 +98,10 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 						pilotIDs.add(new Integer(mt.getLastUpdateID()));
 					} else
 						i.remove();
+				} else {
+					log.warn("Cannot find Message Thread " + sr.getID() + ", removing from index");
+					SearchUtils.delete(sr.getID());
+					i.remove();
 				}
 			}
 
