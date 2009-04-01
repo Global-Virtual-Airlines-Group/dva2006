@@ -1,6 +1,7 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
+import java.io.IOException;
 import java.sql.Connection;
 
 import org.deltava.beans.cooler.*;
@@ -8,11 +9,12 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
+import org.deltava.util.SearchUtils;
 
 /**
  * A Web Site Command to delete Water Cooler message threads.
  * @author Luke
- * @version 1.0
+ * @version 2.5
  * @since 1.0
  */
 
@@ -24,7 +26,6 @@ public class ThreadDeleteCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -63,12 +64,18 @@ public class ThreadDeleteCommand extends AbstractCommand {
 			// Get the write DAO and delete the thread
 			SetCoolerMessage twdao = new SetCoolerMessage(con);
 			twdao.delete(mt.getID());
+			
+			// Delete the serach index record
+			SearchUtils.delete(mt.getID());
 
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);
 
 			// Commit the transaction
 			ctx.commitTX();
+		} catch (IOException ie) {
+			ctx.rollbackTX();
+			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
