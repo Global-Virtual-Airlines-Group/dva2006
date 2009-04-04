@@ -56,7 +56,7 @@ public class UserID {
 	 * @return TRUE if a letter was in the ID, otherwise FALSE
 	 */
 	public boolean hasAirlineCode() {
-		return (_airline != null);
+		return !StringUtils.isEmpty(_airline);
 	}
 
 	/**
@@ -71,6 +71,11 @@ public class UserID {
 	 * Returns the Pilot code.
 	 */
 	public String toString() {
-		return _airline + StringUtils.format(_id, "#000");
+		StringBuilder buf = new StringBuilder();
+		if (hasAirlineCode())
+			buf.append(_airline);
+		
+		buf.append(StringUtils.format(_id, "#000"));
+		return buf.toString();
 	}
 }
