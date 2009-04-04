@@ -200,7 +200,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			}
 
 			// Create the new thread bean
-			MessageThread mt = new MessageThread(ProfanityFilter.filter(ctx.getParameter("subject")));
+			MessageThread mt = new MessageThread(ctx.getParameter("subject"));
 			mt.setChannel(cName);
 			mt.setAuthorID(p.getID());
 
@@ -229,7 +229,6 @@ public class ThreadPostCommand extends AbstractCommand {
 			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 			msg.setRemoteHost(ctx.getRequest().getRemoteHost());
 			msg.setBody(ctx.getParameter("msgText"));
-			msg.setContentWarning(ProfanityFilter.flag(msg.getBody()));
 			mt.addPost(msg);
 
 			// Load linked images
