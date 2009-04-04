@@ -5,6 +5,7 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
+@Deprecated
 public class TestProfanityFilter extends TestCase {
 
 	protected void setUp() throws Exception {

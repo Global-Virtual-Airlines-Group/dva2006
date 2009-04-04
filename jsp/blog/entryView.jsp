@@ -54,7 +54,7 @@ return ${access.canComment};
 <tr>
  <td class="label" valign="top">${empty comment.name ? 'Anonymous' : comment.name}<br />
 <fmt:date date="${comment.date}" /></td>
- <td class="data"><fmt:msg value="${comment.body}" filter="${!access.canDelete}" />
+ <td class="data"><fmt:msg value="${comment.body}" />
 <c:if test="${access.canDelete}">
 <hr />
 <span class="small">Posted from ${comment.remoteAddr} (${comment.remoteHost})</span>

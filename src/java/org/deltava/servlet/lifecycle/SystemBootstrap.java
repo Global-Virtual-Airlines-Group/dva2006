@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -64,14 +64,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		SystemData.init();
 		SharedData.addApp(SystemData.get("airline.code"));
 
-		// Load the profanity filter
-		try {
-			log.info("Initializing Content Filter");
-			ProfanityFilter.init(ConfigLoader.getStream("/etc/profanity.txt"));
-		} catch (IOException ie) {
-			log.warn("Cannot load Profanity Filter - " + ie.getMessage());
-		}
-		
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));

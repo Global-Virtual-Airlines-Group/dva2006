@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.net.*;
@@ -17,14 +17,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 1.0
+ * @version 2.5
  * @since 1.0
  */
 
 public class MessageFormatTag extends TagSupport {
 
 	private String _msg;
-	private boolean _useFilter;
 
 	/**
 	 * Updates the text to format.
@@ -34,14 +33,6 @@ public class MessageFormatTag extends TagSupport {
 		_msg = msg;
 	}
 	
-	/**
-	 * Toggles the profanity filter.
-	 * @param doFilter TRUE if the filter should be used, otherwise FALSE
-	 */
-	public void setFilter(boolean doFilter) {
-		_useFilter = doFilter; 
-	}
-
 	/**
 	 * Helper method to generate an emotion IMG tag.
 	 */
@@ -77,10 +68,6 @@ public class MessageFormatTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		
-		// If we're using the filter, then apply it
-		if (_useFilter)
-			_msg = ProfanityFilter.filter(_msg);
-
 		// Break out the string
 		StringTokenizer tkns = new StringTokenizer(_msg, " \n\r", true);
 		try {

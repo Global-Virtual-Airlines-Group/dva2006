@@ -228,7 +228,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:choose>
 </tr>
 <tr>
- <td class="postBody" colspan="2"><fmt:msg value="${msg.body}" filter="${!noFilter && msg.contentWarning}" />
+ <td class="postBody" colspan="2"><fmt:msg value="${msg.body}" />
 <c:if test="${isPilot && (pilot.hasSignature || pilot.hasDefaultSignature)}">
 <br />
 <c:choose>
