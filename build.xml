@@ -13,8 +13,9 @@
             <link href="http://java.sun.com/javase/6/docs/api/" />
         	<link href="http://java.sun.com/j2ee/1.4/docs/api/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
-        	<link href="http://logging.apache.org/log4j/docs/api" />
+        	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
         	<link href="http://www.servlets.com/cos/javadoc" />
+        	<link href="http://lucene.apache.org/java/2_4_1/api/core/" />
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; 2004-2009 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
