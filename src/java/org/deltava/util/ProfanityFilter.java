@@ -11,6 +11,7 @@ import java.util.*;
  * @since 1.0
  */
 
+@Deprecated
 public class ProfanityFilter {
 	
 	private static final Collection<String> _badWords = new TreeSet<String>(Collections.reverseOrder());
