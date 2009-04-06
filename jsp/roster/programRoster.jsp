@@ -48,7 +48,7 @@
 </tr>
 
 <!-- Table Pilot Data -->
-<c:forEach var="pilot" items="${pilotList}">
+<c:forEach var="pilot" items="${viewContext.results}">
 <tr>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.pilotCode}</el:cmd></td>
  <td>${pilot.name}</td>
@@ -195,7 +195,48 @@
 <tr class="title caps">
  <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)</td>
 </tr>
-<%@ include file="/jsp/stats/pirepStats.jspf" %>
+<!-- Table Header Bar-->
+<tr class="title caps">
+ <td width="5%">#</td>
+ <td width="20%">ENTRY</td>
+ <td width="8%">HOURS</td>
+ <td width="7%">LEGS</td>
+ <td width="10%">ACARS</td>
+ <td width="9%">ONLINE</td>
+ <td width="9%">HISTORIC</td>
+ <td width="9%">DISPATCH</td>
+ <td width="9%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
+ <td>AVERAGE</td>
+</tr>
+
+<!-- Table Statistics Data -->
+<c:set var="entryNumber" value="0" scope="request" />
+<c:forEach var="stat" items="${pirepStats}">
+<view:row entry="${stat}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+ <td class="sec bld small">${entryNumber}</td>
+ <td class="pri bld">${stat.label}</td>
+ <td class="bld"><fmt:dec value="${stat.hours}" /></td>
+ <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
+ <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
+ <td class="small"><fmt:int value="${stat.onlineLegs}" /> (<fmt:dec value="${(stat.onlineLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="sec small"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+ <td class="bld small"><fmt:int value="${stat.dispatchLegs}" /> (<fmt:dec value="${(stat.dispatchLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
+<c:if test="${hasPilotID}">
+ <td class="small"><fmt:int value="${stat.pilotIDs}" /></td>
+</c:if>
+<c:if test="${!hasPilotID}">
+ <td class="small"><fmt:distance value="${stat.miles}" /></td>
+</c:if>
+ <td class="small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> hours, 
+<fmt:distance value="${stat.avgMiles}" /></td>
+</view:row>
+</c:forEach>
+
+<!-- Table Footer Bar -->
+<tr class="title">
+ <td colspan="10">&nbsp;</td>
+</tr>
 </el:table>
 
 <!-- Membership Statistics -->
