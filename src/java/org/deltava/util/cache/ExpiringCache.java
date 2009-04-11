@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -129,7 +129,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * with the earliest expiration date will be removed.
 	 * @param obj the entry to add to the cache
 	 */
-	public void addEntry(T obj) {
+	protected void addEntry(T obj) {
 		if (obj == null)
 			return;
 
