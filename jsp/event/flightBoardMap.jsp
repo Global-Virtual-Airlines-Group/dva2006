@@ -12,7 +12,6 @@
 <head>
 <title><content:airline /> Online Flight Map</title>
 <content:css name="main" browserSpecific="true" />
-<content:css name="view" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -103,7 +102,7 @@ map.addControl(new GSmallMapControl());
 map.addControl(new GMapTypeControl());
 
 // Mark each pilot's position in hashmap
-var positions = new Array();
+var positions = [];
 <c:forEach var="pilot" items="${netInfo.pilots}">
 <map:marker var="gPosition" point="${pilot}" />
 GEvent.addListener(gPosition, 'click', function() { showRoute('${pilot.callsign}'); });
@@ -111,7 +110,7 @@ positions.push(gPosition);
 </c:forEach>
 
 // Route cache
-var allRoutes = new Array();
+var allRoutes = [];
 var selectedRoute;
 
 // Center the map and add positions
