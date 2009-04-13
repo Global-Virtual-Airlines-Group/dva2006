@@ -16,6 +16,13 @@
         	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
         	<link href="http://www.servlets.com/cos/javadoc" />
         	<link href="http://lucene.apache.org/java/2_4_1/api/core/" />
+
+   	    	<classpath>
+   				<pathelement path="${classpath}" />
+   		    	<fileset dir="lib">
+   					<include name="**/*.jar"/>
+   				</fileset>
+   	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; 2004-2009 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
@@ -106,11 +113,22 @@
 
 	<!-- Compile the Java classes -->
 	<target name="compile">
+		<!-- Set build date/time -->
+		<tstamp>
+			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss" />
+		</tstamp>
+		
+		<!-- Save VersionInfo.java -->
+		<property name="vInfo.path" value="src/java/org/deltava/beans/system" />
+		<!-- <copy file="${vInfo.path}/VersionInfo.java" todir="${java.io.tmpdir}" />
+		<replace file="${vInfo.path}/VersionInfo.java" token="$BUILD" value="${build_utc}" /> -->
+		
+		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" optimize="on" destdir="${java.io.tmpdir}/build/classes"
-		 debug="true" debuglevel="lines,vars,source" source="1.6" target="1.6" compiler="modern">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true"
+		 debuglevel="lines,vars,source" source="1.6" target="1.6" compiler="modern">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
-	    	<classpath>
+	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
 		    	<fileset dir="lib">
 					<include name="**/*.jar"/>
@@ -121,6 +139,9 @@
 		<!-- Compress the Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true"
 		 destfile="${java.io.tmpdir}/build/golgotha.jar" />
+		
+		<!-- Restore the old VersionInfo.java -->
+		<!-- <move file="${java.io.tmpdir}/VersionInfo.java" todir="${vInfo.path}" /> -->
 	</target>
 
 	<!-- Precompile the JSP pages -->
