@@ -51,6 +51,39 @@
 		</attribute>
 	</tag>
 
+	<tag>
+		<description>Flag Image tag, for generating national flag images</description>
+		<name>flag</name>
+		<tag-class>org.deltava.taglib.html.FlagTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>countryCode</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>caption</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>border</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>ID</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
 	<!-- Signature Image Tag, for generating Water Cooler signature image elements -->
 	<tag>
 		<name>sig</name>
