@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A bean used to block user names and IP addresses from registering.
  * @author Luke
- * @version 1.0
+ * @version 2.5
  * @since 1.0
  */
 
@@ -19,8 +19,8 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	private String _lastName;
 	
 	private String _remoteHost;
-	private int _remoteAddress;
-	private int _netMask = 0xFFFFFF;
+	private long _remoteAddress;
+	private long _netMask = 0xFFFFFF00;
 	
 	private String _comments;
 	
@@ -95,20 +95,20 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the IP address or network to block.
 	 * @return the network address
-	 * @see RegistrationBlock#setAddress(int)
+	 * @see RegistrationBlock#setAddress(long)
 	 * @see RegistrationBlock#getNetMask()
 	 */
-	public int getAddress() {
+	public long getAddress() {
 		return _remoteAddress;
 	}
 	
 	/**
 	 * Returns the IP address netmask.
 	 * @return the netmask
-	 * @see RegistrationBlock#setNetMask(int)
+	 * @see RegistrationBlock#setNetMask(long)
 	 * @see RegistrationBlock#getAddress()
 	 */
-	public int getNetMask() {
+	public long getNetMask() {
 		return _netMask;
 	}
 	
@@ -162,10 +162,10 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	 * Updates the IP address.
 	 * @param addr the IPv4 address
 	 * @see RegistrationBlock#getAddress()
-	 * @see RegistrationBlock#setNetMask(int)
+	 * @see RegistrationBlock#setNetMask(long)
 	 */
 
-	public void setAddress(int addr) {
+	public void setAddress(long addr) {
 		_remoteAddress = addr & _netMask;
 	}
 
@@ -173,9 +173,9 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	 * Updates the IP address and network mask.
 	 * @param mask the network mask
 	 * @see RegistrationBlock#getNetMask()
-	 * @see RegistrationBlock#setAddress(int)
+	 * @see RegistrationBlock#setAddress(long)
 	 */
-	public void setNetMask(int mask) {
+	public void setNetMask(long mask) {
 		_netMask = mask;
 	}
 	
