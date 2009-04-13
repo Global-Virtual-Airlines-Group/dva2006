@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access controller for dispatch data.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 2.1
  */
 
@@ -36,12 +36,15 @@ public class DispatchRouteAccessControl extends AccessControl {
 	 */
 	public void validate() {
 		validateContext();
-
+		
 		// Check access
 		_canCreate = _ctx.isUserInRole("Route");
-		_canView = _ctx.isUserInRole("Dispatch")|| _canCreate;
 		_canDisable = _canCreate;
 		_canDelete = _ctx.isUserInRole("Admin") && (_rt != null) && (_rt.getUseCount() == 0);
+		
+		// Check view access
+		boolean isActive = (_rt != null) && _rt.getActive();
+		_canView = _canCreate || _ctx.isUserInRole("Route") || (isActive && _ctx.isUserInRole("Pilot"));
 	}
 	
 	/**
