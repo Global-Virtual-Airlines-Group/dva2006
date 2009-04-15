@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 2.4
  */
 
@@ -48,6 +48,13 @@ public class OfflineFlightCommand extends AbstractCommand {
 		FileUpload xmlF = ctx.getFile("xml");
 		FileUpload shaF = ctx.getFile("hashCode");
 		if (xmlF == null) {
+			result.setSuccess(true);
+			return;
+		}
+		
+		// Check for SHA
+		if (shaF == null) {
+			ctx.setMessage("No SHA-256 signature");
 			result.setSuccess(true);
 			return;
 		}
