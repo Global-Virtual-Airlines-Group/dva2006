@@ -10,6 +10,8 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.IPAddressInfo;
+
 import org.deltava.crypt.*;
 import org.deltava.security.*;
 
@@ -25,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -73,36 +75,6 @@ public class SecurityCookieFilter implements Filter {
 		return null;
 	}
 
-	/**
-	 * Helper method to load a Person from the database.
-	 */
-	private Pilot loadPersonFromDatabase(String dN) {
-
-		Connection con = null;
-		Pilot p = null;
-		try {
-			con = _jdbcPool.getConnection(true);
-
-			// Get the person
-			GetPilotDirectory dao = new GetPilotDirectory(con);
-			p = dao.getFromDirectory(dN);
-			
-			// Populate online/ACARS legs
-			if (p != null) {
-				GetFlightReports frdao = new GetFlightReports(con);
-				frdao.getOnlineTotals(p, SystemData.get("airline.db"));
-			} else
-				log.error("Unknown Pilot - " + dN);
-		} catch (DAOException de) {
-			log.error("Error loading " + dN + " - " + de.getMessage(), de);
-		} finally {
-			_jdbcPool.release(con);
-		}
-
-		// Return the person
-		return p;
-	}
-	
 	/**
 	 * Helper method to revalidate a user's credentials.
 	 */
@@ -189,8 +161,33 @@ public class SecurityCookieFilter implements Filter {
 		if ((p == null) && (cData != null)) {
 			s.setAttribute(SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
 			s.setAttribute(SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
-			p = loadPersonFromDatabase(cData.getUserID());
+			IPAddressInfo addrInfo = null;
+			
+			// Load the person and the IP Address data
+			Connection con = null;
+			try {
+				con = _jdbcPool.getConnection(true);
+				
+				// Get the person
+				GetPilotDirectory dao = new GetPilotDirectory(con);
+				p = dao.getFromDirectory(cData.getUserID());
+				
+				// Populate online/ACARS legs
+				if (p != null) {
+					GetFlightReports frdao = new GetFlightReports(con);
+					frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+				} else
+					log.error("Unknown Pilot - " + cData.getUserID());
 
+				// Load the IP address data
+				GetIPLocation ipdao = new GetIPLocation(con);
+				addrInfo = ipdao.get(remoteAddr);
+			} catch (DAOException de) {
+				log.error("Error loading " + cData.getUserID() + " - " + de.getMessage(), de);
+			} finally {
+				_jdbcPool.release(con);
+			}
+			
 			// Make sure that the pilot is still active
 			if (p != null) {
 				try {
@@ -198,10 +195,10 @@ public class SecurityCookieFilter implements Filter {
 						if (authenticate(p, cData.getPassword())) {
 							s.setAttribute(USER_ATTR_NAME, p);
 							log.info("Restored " + p.getName() + " from Security Cookie");
-						
+							
 							// Check if we are a superUser impersonating someone
-							Person su = (Pilot) s.getAttribute(SU_ATTR_NAME);
-							UserPool.add((su != null) ? su : p, s.getId(), hreq.getHeader("user-agent"));
+							Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);
+							UserPool.add((su != null) ? su : p, s.getId(), addrInfo, hreq.getHeader("user-agent"));
 						} else 
 							throw new SecurityException("Cannot re-authenticate " + p.getName());
 					} else

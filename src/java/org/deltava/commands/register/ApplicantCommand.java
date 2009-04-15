@@ -1,7 +1,6 @@
 // Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
-import java.net.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -211,6 +210,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Check if the address has been validated
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			ctx.setAttribute("eMailValid", Boolean.valueOf(avdao.isValid(a.getID())), REQUEST);
+			
+			// Check 
 
 			// Do a soundex and netmask check on the applicant
 			soundexCheck(a, con, ctx);
@@ -249,37 +250,20 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 */
 	private void netmaskCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
 		
-		// Generate the netmask
-		String netMask = "255.255.255.0";
-		try {
-			InetAddress addr = InetAddress.getByName(a.getRegisterAddress());
-			if (addr.getAddress()[0] < 192)
-				netMask = "255.255.0.0";
-			
-			// Apply the netmask
-			StringBuilder buf = new StringBuilder();
-			byte[] maskAddr = InetAddress.getByName(netMask).getAddress();
-			for (int x = 0; x < 4; x++) {
-				buf.append(addr.getAddress()[x] & maskAddr[x]);
-				if (x < 3)
-					buf.append('.');
-			}
-
-			ctx.setAttribute("netmaskAddr", buf.toString().replace(".0", ".X"), REQUEST);
-		} catch (UnknownHostException uhe) {
-			String mask = a.getRegisterAddress().substring(0, a.getRegisterAddress().lastIndexOf('.')) + ".X";
-			ctx.setAttribute("netmaskAddr", mask, REQUEST);
-		}
-
+		// Get the user's netblock
+		GetIPLocation ipdao = new GetIPLocation(c);
+		IPAddressInfo addrInfo = ipdao.get(a.getRegisterAddress());
+		ctx.setAttribute("addrInfo", addrInfo, REQUEST);
+		
 		// Initialize the DAO
 		GetApplicant dao = new GetApplicant(c);
 
 		// Do a netmask check on the applicant against each database
 		Collection<Integer> netmaskIDs = new HashSet<Integer>();
 		Collection airlines = ((Map) SystemData.getObject("apps")).values();
-		for (Iterator i = airlines.iterator(); i.hasNext();) {
+		for (Iterator i = airlines.iterator(); i.hasNext() && (addrInfo != null); ) {
 			AirlineInformation info = (AirlineInformation) i.next();
-			netmaskIDs.addAll(dao.checkAddress(a.getRegisterAddress(), netMask, info.getDB()));
+			netmaskIDs.addAll(dao.checkAddress(addrInfo.getBlock(), info.getDB()));
 		}
 		
 		// Load the locations of all these matches

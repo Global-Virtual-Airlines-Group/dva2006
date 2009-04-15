@@ -1,15 +1,15 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.system.LoginAddress;
+import org.deltava.beans.system.*;
 
 /**
  * A Data Access Object to load Login IP address data.
  * @author Luke
- * @version 1.0
+ * @version 2.5
  * @since 1.0
  */
 
@@ -60,17 +60,17 @@ public class GetLoginData extends DAO {
 	/**
 	 * Searches for all user logins within a particular IP network.
 	 * @param address the IP address
-	 * @param mask the netmask
+	 * @param addrBlock the address network block
 	 * @return a Collection of LoginAddress beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<LoginAddress> getLoginUsers(String address, int mask) throws DAOException {
+	public Collection<LoginAddress> getLoginUsers(String address, IPBlock addrBlock) throws DAOException {
 		try {
 			prepareStatement("SELECT ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, LOGINS FROM SYS_LOGINS "
-					+ "WHERE ((REMOTE_ADDR & ?) = (INET_ATON(?) & ?))");
-			_ps.setInt(1, mask);
-			_ps.setString(2, address);
-			_ps.setInt(3, mask);
+					+ "WHERE (REMOTE_ADDR >= INET_ATON(?)) AND (REMOTE_ADDR <= (INET_ATON(?) + ?))");
+			_ps.setString(1, addrBlock.getAddress());
+			_ps.setString(2, addrBlock.getAddress());
+			_ps.setInt(3, addrBlock.getSize());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

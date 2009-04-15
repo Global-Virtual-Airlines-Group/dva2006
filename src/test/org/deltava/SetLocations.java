@@ -52,8 +52,9 @@ public class SetLocations extends TestCase {
 
 		// Get locations and Pilots
 		GetPilot pdao = new GetPilot(_c);
+		GetPilotBoard pbdao = new GetPilotBoard(_c);
 		SetPilot pwdao = new SetPilot(_c);
-		Map<Integer, GeoLocation> locs = pdao.getPilotBoard();
+		Map<Integer, GeoLocation> locs = pbdao.getAll();
 
 		// Loop through the locations
 		for (Iterator<Map.Entry<Integer, GeoLocation>> i = locs.entrySet().iterator(); i.hasNext();) {
