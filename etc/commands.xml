@@ -1776,19 +1776,19 @@
 	<command id="dsprsearch">
 		<name>Dispatch Route Search</name>
 		<class>org.deltava.commands.dispatch.RouteSearchCommand</class>
-		<roles>HR,Route,Dispatch</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="dsproutes">
 		<name>Dispatch Route List</name>
 		<class>org.deltava.commands.dispatch.RouteListCommand</class>
-		<roles>HR,Route,Dispatch</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="dsproute">
 		<name>Dispatch Route</name>
 		<class>org.deltava.commands.dispatch.RouteCommand</class>
-		<roles>HR,Route,Dispatch</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="dsproutesave">
