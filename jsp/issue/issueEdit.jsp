@@ -62,12 +62,12 @@ return true;
  <td class="label">Issue Title</td>
  <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="*" value="${issue.subject}" /></td>
 </tr>
-<c:if test="${!empty issue}">
+<content:filter roles="HR,Examination,PIREP,Developer">
 <tr>
  <td class="label">Security</td>
  <td class="data"><el:combo name="security" size="1" idx="*" options="${securityLevels}" value="${issue.securityName}" /></td>
 </tr>
-</c:if>
+</content:filter>
 <tr>
  <td class="label">Issue Priority</td>
  <td class="data"><el:combo name="priority" size="1" idx="*" options="${priorities}" value="${issue.priorityName}" /></td>
