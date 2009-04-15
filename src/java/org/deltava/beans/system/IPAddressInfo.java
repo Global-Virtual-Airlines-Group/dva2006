@@ -14,7 +14,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 2.5
  */
 
-public class IPAddressInfo implements Cacheable, GeoLocation {
+public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocation {
 	
 	private final GeoPosition _loc = new GeoPosition(0, 0);
 	
