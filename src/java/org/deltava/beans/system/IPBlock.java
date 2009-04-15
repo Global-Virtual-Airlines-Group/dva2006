@@ -10,7 +10,7 @@ import org.deltava.util.*;
  * @since 2.5
  */
 
-public class IPBlock implements Comparable<IPBlock> {
+public class IPBlock implements java.io.Serializable, Comparable<IPBlock> {
 	
 	private String _baseAddr;
 	private long _rawAddr;

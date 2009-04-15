@@ -4,11 +4,12 @@ package org.deltava.beans.acars;
 import java.util.Date;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.IPAddressInfo;
 
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -19,6 +20,8 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
    private Pilot _usr;
    private Date _st;
    private Date _et;
+   
+   private IPAddressInfo _addrInfo;
    
    private String _remoteHost;
    private String _remoteAddr;
@@ -123,6 +126,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
     */
    public String getRemoteHost() {
       return _remoteHost;
+   }
+   
+   /**
+    * Returns information about this IP address.
+    * @return the IP address Info
+    * @see ConnectionEntry#setAddressInfo(IPAddressInfo)
+    */
+   public IPAddressInfo getAddressInfo() {
+	   return _addrInfo;
    }
    
    /**
@@ -307,6 +319,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
     */
    public void setRemoteHost(String host) {
       _remoteHost = host;
+   }
+   
+   /**
+    * Updates information about this IP address.
+    * @param info the IP address Info
+    * @see ConnectionEntry#getAddressInfo()
+    */
+   public void setAddressInfo(IPAddressInfo info) {
+	   _addrInfo = info;
    }
 
    /**
