@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -32,15 +32,15 @@ public class SetSystemData extends DAO {
 	 * @param entries the Command log entries
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void logCommands(Collection entries) throws DAOException {
+	public void logCommands(Collection<CommandLog> entries) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, "
 					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?) ON "
 					+ "DUPLICATE KEY UPDATE CMDDATE=?");
 			
 			// Write the log entries
-			for (Iterator i = entries.iterator(); i.hasNext(); ) {
-			   CommandLog log = (CommandLog) i.next();
+			for (Iterator<CommandLog> i = entries.iterator(); i.hasNext(); ) {
+			   CommandLog log = i.next();
 				_ps.setTimestamp(1, createTimestamp(log.getDate()));
 				_ps.setInt(2, log.getPilotID());
 				_ps.setString(3, log.getRemoteAddr());
@@ -117,8 +117,8 @@ public class SetSystemData extends DAO {
 			_ps.setInt(1, block.getID());
 			_ps.setString(2, StringUtils.nullTrim(block.getFirstName()));
 			_ps.setString(3, StringUtils.nullTrim(block.getLastName()));
-			_ps.setInt(4, block.getAddress());
-			_ps.setInt(5, block.getNetMask());
+			_ps.setLong(4, block.getAddress());
+			_ps.setLong(5, block.getNetMask());
 			_ps.setString(6, StringUtils.nullTrim(block.getHostName()));
 			_ps.setString(7, block.getComments());
 			_ps.setBoolean(8, block.getHasUserFeedback());

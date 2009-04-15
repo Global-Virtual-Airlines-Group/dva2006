@@ -31,6 +31,38 @@ disableButton('ResendButton');
 </c:if>
 return ${access.canApprove};
 }
+
+function toggleSoundex()
+{
+var link = getElement('soundexToggle');
+if (link == null) return;
+
+var isDisplayed = (link.innerHTML == 'COLLAPSE');
+link.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
+var rows = getElementsByClass('soundexUser');
+for (var y = 0; y < rows.length; y++) {
+	var row = rows[y];
+	row.style.display = isDisplayed ? 'none' : '';
+}
+
+return true;
+}
+
+function toggleNetMask()
+{
+var link = getElement('netMaskToggle');
+if (link == null) return;
+
+var isDisplayed = (link.innerHTML == 'COLLAPSE');
+link.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
+var rows = getElementsByClass('netMaskUser');
+for (var y = 0; y < rows.length; y++) {
+	var row = rows[y];
+	row.style.display = isDisplayed ? 'none' : '';
+}
+
+return true;
+}
 <c:if test="${access.canApprove}">
 function checkVATSIMData(id, name)
 {
@@ -234,6 +266,12 @@ return true;
  <td class="data"><el:cmd url="loginaddrs" linkID="${applicant.registerAddress}" op="net">${applicant.registerAddress}</el:cmd>
  (${applicant.registerHostName})</td>
 </tr>
+<c:if test="${!empty addrInfo}">
+<tr>
+ <td class="label">IP Address Info</td>
+ <td class="data">${addrInfo.block} <el:flag countryCode="${addrInfo.countryCode}" caption="${addrInfo.country}" /> ${addrInfo.location}</td>
+</tr>
+</c:if>
 <c:if test="${!empty applicant.comments}">
 <tr>
  <td class="label" valign="top">Comments</td>

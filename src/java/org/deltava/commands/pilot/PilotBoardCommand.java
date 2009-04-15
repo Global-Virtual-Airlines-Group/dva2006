@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Pilot locations.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -75,8 +75,10 @@ public class PilotBoardCommand extends AbstractCommand {
 			// Get the pilot's location
 			GeoLocation gp = hq;
 			if (ctx.isAuthenticated()) {
-				GetPilot dao = new GetPilot(con);
+				GetPilotBoard dao = new GetPilotBoard(con);
 				gp = dao.getLocation(ctx.getUser().getID());
+				if (gp == null)
+					gp = (GeoLocation) ctx.getSession().getAttribute(HTTPContext.ADDRINFO_ATTR_NAME);
 				if (gp == null)
 					gp = hq;
 			}

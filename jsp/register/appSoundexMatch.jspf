@@ -4,12 +4,13 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- Soundex Potential Match list -->
 <tr class="title caps">
- <td colspan="2"><fmt:int value="${fn:sizeof(soundexUsers)}" /> POTENTIAL MATCHING USERS</td>
+ <td colspan="2"><fmt:int value="${fn:sizeof(soundexUsers)}" /> POTENTIAL MATCHING USERS -
+ <a id="soundexToggle" href="javascript:void toggleSoundex()">EXPAND</a></td>
 </tr>
 <c:forEach var="person" items="${soundexUsers}">
 <c:set var="personLoc" value="${userData[person.ID]}" scope="request" />
 <c:set var="rowColor" value="${fn:isSuspended(person) ? ' err' : ''}" scope="request" />
-<tr>
+<tr class="soundexUser" style="display:none;">
  <td class="label">&nbsp;</td>
  <td class="data${rowColor}"><el:profile location="${personLoc}">${person.name}</el:profile> 
 <a href="mailto:${person.email}" class="small">${person.email}</a>, registered on <fmt:date fmt="d" date="${person.createdOn}" /></td>

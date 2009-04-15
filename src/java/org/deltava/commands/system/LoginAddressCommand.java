@@ -1,20 +1,19 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
+import java.net.*;
 import java.util.Collection;
 import java.sql.Connection;
 
-import org.deltava.beans.system.LoginAddress;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.*;
-
 /**
  * A Web Site Command to display all the users logging in via a particular IP address or host name.
  * @author Luke
- * @version 2.2
+ * @version 2.5
  * @since 1.0
  */
 
@@ -29,35 +28,39 @@ public class LoginAddressCommand extends AbstractCommand {
 		
 		// Get the command result
 		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/admin/loginAddresses.jsp");
 
 		// Get the address parameter
 		String addr = (String) ctx.getCmdParameter(ID, null);
 		if (addr == null) {
-			result.setURL("/jsp/admin/loginAddresses.jsp");
 			result.setSuccess(true);
 			return;
 		}
 
-		// Determine if we are searching by host name or address
-		int netMask = -1;
-		if (!StringUtils.isEmpty(ctx.getParameter("mask1")) && (!addr.contains("%"))) {
-			int mask1 = StringUtils.parse(ctx.getParameter("mask1"), 0) & 0xFF;
-			int mask2 = StringUtils.parse(ctx.getParameter("mask2"), 0) & 0xFF;
-			int mask3 = StringUtils.parse(ctx.getParameter("mask3"), 0) & 0xFF;
-			int mask4 = StringUtils.parse(ctx.getParameter("mask4"), 0) & 0xFF;
-			netMask = (mask1 << 24) + (mask2 << 16) + (mask3 << 8) + mask4;
+		// Get the address
+		boolean searchNet = Boolean.valueOf(ctx.getParameter("searchNet")).booleanValue();
+		if (searchNet) {
+			try {
+				InetAddress ipAddr = InetAddress.getByName(addr);
+				addr = ipAddr.getHostAddress();
+			} catch (UnknownHostException uhe) {
+				ctx.setMessage("Unknown Host - " + addr);
+				result.setSuccess(true);
+				return;
+			}
 		}
-		
-		// Special case for IP lookups in links
-		if ("net".equals(ctx.getCmdParameter(OPERATION, null)))
-			netMask = 0xFFFFFF00;
 		
 		try {
 			Connection con = ctx.getConnection();
 			
+			// Get the network block
+			GetIPLocation ipdao = new GetIPLocation(con);
+			IPAddressInfo addrInfo = ipdao.get(addr);
+			ctx.setAttribute("addrInfo", addrInfo, REQUEST);
+			
 			// Get the Addresses
 			GetLoginData sysdao = new GetLoginData(con);
-			Collection<LoginAddress> addrs = (netMask == -1) ? sysdao.getLoginUsers(addr) : sysdao.getLoginUsers(addr, netMask);
+			Collection<LoginAddress> addrs = searchNet ? sysdao.getLoginUsers(addr, addrInfo.getBlock()) : sysdao.getLoginUsers(addr);
 			ctx.setAttribute("addrs", addrs, REQUEST);
 			
 			// Load the users
@@ -73,7 +76,6 @@ public class LoginAddressCommand extends AbstractCommand {
 		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
-		result.setURL("/jsp/admin/loginAddresses.jsp");
 		result.setSuccess(true);
 	}
 }

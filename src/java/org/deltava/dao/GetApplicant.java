@@ -7,9 +7,9 @@ import java.sql.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.IPBlock;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Data Access Object to read Applicant data.
@@ -21,7 +21,6 @@ import org.deltava.util.StringUtils;
 public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 	private static final Logger log = Logger.getLogger(GetApplicant.class);
-	private static final String NO_IP = "0.0.0.0";
 
 	/**
 	 * Initialize the Data Access Object.
@@ -331,27 +330,26 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	/**
 	 * Searches for Applicants registering from the same TCP/IP network. If the Applicant has
 	 * been hired, this will return the Pilot database ID, instead of the Applicant database ID.
-	 * @param addr the network Address
-	 * @param maskAddr the network Mask
+	 * @param addrBlock the network block
 	 * @param dbName the database name
 	 * @return a Collection of Database IDs as Integers
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Integer> checkAddress(String addr, String maskAddr, String dbName) throws DAOException {
-		if (NO_IP.equals(addr))
+	public Collection<Integer> checkAddress(IPBlock addrBlock, String dbName) throws DAOException {
+		if (addrBlock == null)
 			return Collections.emptyList();
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT IF(PILOT_ID, PILOT_ID, ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS A WHERE ((INET_ATON(?) & INET_ATON(?)) = "
-				+ "(REGADDR & INET_ATON(?)))");
-
+		sqlBuf.append(".APPLICANTS A WHERE (REGADDR >= INET_ATON(?)) AND "
+				+ "(REGADDR <= (INET_ATON(?) + ?)) ORDER BY CREATED DESC");
+		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, addr);
-			_ps.setString(2, maskAddr);
-			_ps.setString(3, maskAddr);
+			_ps.setString(1, addrBlock.getAddress());
+			_ps.setString(2, addrBlock.getAddress());
+			_ps.setInt(3, addrBlock.getSize());
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
