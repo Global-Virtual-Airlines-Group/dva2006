@@ -44,6 +44,9 @@ return true;
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
+<content:filter roles="HR,Route,Dispatch">
+<c:set var="hasDispatchAccess" value="${true}" scope="request" />
+</content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -59,7 +62,8 @@ return true;
  <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
- You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
+ You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
+  in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
@@ -662,15 +666,17 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
 </tr>
 </content:filter>
 <c:if test="${acarsEnabled}">
-<content:filter roles="HR,Route,Dispatch">
+<content:filter roles="HR,Route,Dispatch,PIREP">
 <!-- ACARS Dispatch Section -->
 <tr class="title caps">
  <td colspan="2">ACARS DISPATCH OPERATIONS</td>
 </tr>
+<c:if test="${hasDispatchAccess}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="dsproutes">Dispatcher Routes</el:cmd></td>
  <td class="data">You can view or delete flight routes previously created by <content:airline /> dispatchers.</td>
 </tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="dsprsearch">Dispatch Route Search</el:cmd></td>
  <td class="data">You can search <content:airline /> dispatcher routes by Origin and Destination airport.</td>
@@ -680,11 +686,13 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
  <td class="data">This calendar allows <content:airline /> ACARS Dispatchers to announce the times they will be
  providing Dispatch services.</td>
 </tr>
+<c:if test="${hasDispatchAccess}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="poproutes">Popular Flight Routes</el:cmd></td>
  <td class="data">You can sort route pairs based on popularity, to determine popular routes not covered by routes
  in the <content:airline /> ACARS Dispatch database.</td>
 </tr>
+</c:if>
 <content:filter roles="HR,Route">
 <tr>
  <td class="mid"><el:cmd className="bld" url="dsprouteplot">Dispatch Route Plotter</el:cmd></td>

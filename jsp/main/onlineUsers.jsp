@@ -27,14 +27,17 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:filter roles="HR">
+<c:set var="isHR" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="users.do" method="get" validate="return false">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td colspan="5" class="left caps"><fmt:int value="${fn:sizeof(fn:keys(pilots))}" /> CURRENTLY LOGGED IN USERS
+ <td colspan="4" class="left caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
+ <td><el:cmd url="users" op="map">VIEW MAP</el:cmd></td>
  <td class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void sortBy(this)" /></td>
 </tr>
 
@@ -49,26 +52,33 @@ return true;
 </tr>
 
 <!-- Pilot Data Bar -->
-<c:forEach var="pilot" items="${fn:keys(pilots)}">
-<c:set var="userAgent" value="${pilots[pilot]}" scope="request" />
+<c:forEach var="session" items="${pilots}">
+<c:set var="pilot" value="${session.person}" scope="request" />
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="pri">${pilot.rank}</td>
  <td class="sec">${pilot.equipmentType}</td>
+<c:choose>
+<c:when test="${isHR && (!empty session.addressInfo)}">
+ <td class="small"><el:flag countryCode="${session.addressInfo.countryCode}" /> ${session.addressInfo.location}</td>
+</c:when>
+<c:otherwise>
  <td>${pilot.location}</td>
+</c:otherwise>
+</c:choose>
  <td class="small"><fmt:date date="${pilot.createdOn}" fmt="d" d="EEEE MMMM dd, yyyy" /></td>
 </tr>
-<content:filter roles="HR">
+<c:if test="${isHR}">
 <tr>
  <td colspan="6">Logged in since <fmt:date date="${pilot.lastLogin}" />, from <b>${pilot.loginHost}</b><br />
-<span class="small">${userAgent}</span></td>
+<span class="small">${session.userAgent}</span></td>
 </tr>
-</content:filter>
+</c:if>
 </c:forEach>
 <c:if test="${empty pilots}">
 <tr>
- <td colspan="6" class="pri bld">NO CURRENTLY LOGGED IN WEB SITE USERS</td>
+ <td colspan="6" class="pri bld">NO CURRENTLY LOGGED IN <content:airline /> USERS</td>
 </tr>
 </c:if>
 <tr class="title">

@@ -1,16 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.GeoPosition;
 
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 2.3
+ * @version 2.5
  * @since 1.0
  */
 
@@ -31,59 +30,6 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public static void invalidateID(int id) {
 		invalidate(id);
-	}
-
-	/**
-	 * Returns the location of the specified Pilot.
-	 * @param pilotID the Pilot's database ID
-	 * @return a GeoLocation with the pilot's location, or null if none specified
-	 * @throws DAOException
-	 */
-	public GeoLocation getLocation(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT LAT, LNG FROM PILOT_MAP WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, pilotID);
-			
-			// Execute the query and get results
-			ResultSet rs = _ps.executeQuery();
-			GeoLocation gl = (rs.next()) ? new GeoPosition(rs.getDouble(1), rs.getDouble(2)) : null;
-			
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return gl;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns the locations of pilots who have signed up for the Pilot location board.
-	 * @return a Map of GeoLocation objects, keyed by database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Map<Integer, GeoLocation> getPilotBoard() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT M.* FROM PILOT_MAP M, PILOTS P WHERE (M.ID=P.ID) AND "
-					+ "((P.STATUS=?) OR (P.STATUS=?)) ORDER BY M.ID");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			Map<Integer, GeoLocation> results = new LinkedHashMap<Integer, GeoLocation>();
-			while (rs.next()) {
-				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
-				results.put(new Integer(rs.getInt(1)), gp);
-			}
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 
 	/**

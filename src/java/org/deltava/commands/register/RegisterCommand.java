@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -217,7 +217,7 @@ public class RegisterCommand extends AbstractCommand {
 			Collection<RegistrationBlock> regBList = sysdao.getBlocks();
 			
 			// Check the blacklist
-			int regAddr = NetworkUtils.pack(a.getRegisterAddress());
+			long regAddr = NetworkUtils.pack(a.getRegisterAddress());
 			for (Iterator<RegistrationBlock> i = regBList.iterator(); i.hasNext(); ) {
 				RegistrationBlock rb = i.next();
 				boolean doBlock = false;

@@ -11,23 +11,21 @@ import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.StatusUpdate;
-import org.deltava.beans.system.AddressValidation;
+import org.deltava.beans.*;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.SetProperties;
 import org.deltava.security.*;
 
-import org.deltava.util.Base64;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -173,6 +171,10 @@ public class LoginCommand extends AbstractCommand {
 			// Load online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			
+			// Get IP address info
+			GetIPLocation ipdao = new GetIPLocation(con);
+			IPAddressInfo addrInfo = ipdao.get(ctx.getRequest().getRemoteAddr());
 
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
@@ -229,6 +231,7 @@ public class LoginCommand extends AbstractCommand {
 			// Create the session and stuff in the pilot data
 			HttpSession s = ctx.getRequest().getSession(true);
 			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
+			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
 			s.setAttribute(CommandContext.ADDR_ATTR_NAME, cData.getRemoteAddr());
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
@@ -244,7 +247,7 @@ public class LoginCommand extends AbstractCommand {
 				s.setAttribute("next_url", "home.do");
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId(), ctx.getRequest().getHeader("user-agent"));
+			UserPool.add(p, s.getId(), addrInfo, ctx.getRequest().getHeader("user-agent"));
 
 			// Commit the transaction
 			ctx.commitTX();

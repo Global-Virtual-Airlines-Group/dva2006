@@ -20,13 +20,15 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
 public class PilotLocationCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(PilotLocationCommand.class);
+	
+	private static final GeoLocation DEFAULT = new GeoPosition(38.88, -93.25);
 
 	/**
 	 * Executes the command.
@@ -35,21 +37,28 @@ public class PilotLocationCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the command result
+		// Get the command result and the user
 		CommandResult result = ctx.getResult();
+		Pilot p = (Pilot) ctx.getUser();
+		
+		// Get the IP address Info
+		GeoLocation addrInfo = (GeoLocation) ctx.getSession().getAttribute(HTTPContext.ADDRINFO_ATTR_NAME);
 
 		// Check if we are deleting the profile
 		boolean isDelete = "delete".equals(ctx.getCmdParameter(OPERATION, null));
 		try {
 			Connection con = ctx.getConnection();
-
+			
 			// Get the pilot's location
-			GetPilot dao = new GetPilot(con);
+			GetPilotBoard dao = new GetPilotBoard(con);
 			GeoLocation gp = dao.getLocation(ctx.getUser().getID());
-			if (gp == null)
-				ctx.setAttribute("mapCenter", new GeoPosition(38.88, -93.25), REQUEST);
+			if ((gp == null) && (addrInfo != null)) {
+				ctx.setAttribute("mapCenter", addrInfo, REQUEST);
+				ctx.setAttribute("location", new PilotLocation(p, addrInfo), REQUEST);
+			} else if (gp == null)
+				ctx.setAttribute("mapCenter", DEFAULT, REQUEST);
 			else {
-				ctx.setAttribute("location", new PilotLocation((Pilot) ctx.getUser(), gp), REQUEST);
+				ctx.setAttribute("location", new PilotLocation(p, gp), REQUEST);
 				ctx.setAttribute("mapCenter", gp, REQUEST);
 				if (gp instanceof MapEntry)
 					ctx.setAttribute("locationText", StringUtils.escapeSlashes(((MapEntry) gp).getInfoBox()), REQUEST);

@@ -5,15 +5,17 @@ import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
+import org.deltava.beans.system.IPAddressInfo;
 
-import org.deltava.commands.HTTPContext;
 import org.deltava.security.UserPool;
+
+import static org.deltava.commands.HTTPContext.*;
 
 /**
  * An HTTP session listener to track serialization of User sessions.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -37,7 +39,7 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 
 		try {
 			// Get the User
-			Person p = (Person) s.getAttribute(HTTPContext.USER_ATTR_NAME);
+			Person p = (Person) s.getAttribute(USER_ATTR_NAME);
 			if (p == null)
 				return;
 
@@ -46,7 +48,7 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 			if (log.isDebugEnabled())
 				log.debug("Serializing Session " + s.getId());
 		} catch (IllegalStateException ise) {
-			System.out.println("Attempting to save invalid Session");
+			System.err.println("Attempting to save invalid Session");
 		}
 	}
 
@@ -56,17 +58,17 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 	 */
 	public void sessionDidActivate(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
-
-		// Get the User
 		try {
-			Person p = (Person) s.getAttribute(HTTPContext.USER_ATTR_NAME);
+			IPAddressInfo addrInfo = (IPAddressInfo) s.getAttribute(ADDRINFO_ATTR_NAME);
+			Person p = (Person) s.getAttribute(USER_ATTR_NAME);
 			if (p == null)
 				return;
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId(), "Unknown");
+			if (p instanceof Pilot)
+				UserPool.add((Pilot) p, s.getId(), addrInfo, "Unknown");
 		} catch (IllegalStateException ise) {
-			System.out.println("Attempting to restore invalid Session");
+			System.err.println("Attempting to restore invalid Session");
 		}
 	}
 }

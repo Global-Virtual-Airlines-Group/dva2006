@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to clear invalid Pilot Locations from the map.
  * @author Luke
- * @version 2.3
+ * @version 2.5
  * @since 2.3
  */
 
@@ -36,7 +36,7 @@ public class PilotLocationClearService extends WebService {
 			int id = StringUtils.parseHex(ctx.getParameter("id"));
 
 			// Get the pilot
-			GetPilot pdao = new GetPilot(con);
+			GetPilotBoard pdao = new GetPilotBoard(con);
 			loc = pdao.getLocation(id);
 
 			// Delete the entry

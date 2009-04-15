@@ -25,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -90,7 +90,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("heldPIREPCount", Integer.valueOf(heldPIREPs), REQUEST);
 
 			// Save the pilot location
-			ctx.setAttribute("geoLocation", pdao.getLocation(p.getID()), REQUEST);
+			GetPilotBoard pbdao = new GetPilotBoard(con);
+			ctx.setAttribute("geoLocation", pbdao.getLocation(p.getID()), REQUEST);
 
 			// Check our access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);

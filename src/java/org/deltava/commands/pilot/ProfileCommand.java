@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 
@@ -673,8 +673,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
 
 			// Save the pilot profile in the request
+			GetPilotBoard pbdao = new GetPilotBoard(con);
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("pilotLocation", dao.getLocation(p.getID()), REQUEST);
+			ctx.setAttribute("pilotLocation", pbdao.getLocation(p.getID()), REQUEST);
 
 			// Get all equipment type profiles
 			GetEquipmentType eqdao = new GetEquipmentType(con);

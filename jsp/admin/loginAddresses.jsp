@@ -43,17 +43,24 @@ return true;
 <tr>
  <td class="label" valign="top">Address / Host Name</td>
  <td class="data"><el:text name="id" idx="*" className="bld req" size="40" max="96" value="${param.id}" />
-<div class="small">Use '%' as a wildcard</div></td>
+<span class="small">Use '%' as a wildcard</span></td>
 </tr>
+<c:if test="${!empty addrInfo}">
 <tr>
- <td class="label" valign="top">Network Mask</td>
- <td class="data"><el:text name="mask1" idx="*" size="3" max="3" value="${param.mask1}" />
- <el:text name="mask2" idx="*" size="3" max="3" value="${param.mask2}" />
- <el:text name="mask3" idx="*" size="3" max="3" value="${param.mask3}" />
- <el:text name="mask4" idx="*" size="3" max="3" value="${param.mask4}" />
-<div class="small">Providing a network mask allows you to search a particular network. It will also 
-cause the provided host name to be translated into an IP address before searching.</div></td>
+ <td class="label">IP Address Info</td>
+ <td class="data">${addrInfo.block} <el:flag countryCode="${addrInfo.countryCode}" caption="${addrInfo.country}" /> ${addrInfo.location}</td>
 </tr>
+</c:if>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="searchNet" value="true" idx="*" checked="${param.searchNet}" label="Search entire Network block" /></td>
+</tr>
+<content:hasmsg>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data error bld"><content:sysmsg /></td>
+</tr>
+</content:hasmsg>
 </el:table>
 
 <!-- Button Bar -->

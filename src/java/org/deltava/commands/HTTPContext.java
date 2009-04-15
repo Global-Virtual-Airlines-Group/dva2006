@@ -13,7 +13,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 2.4
+ * @version 2.5
  * @since 2.4
  */
 
@@ -21,6 +21,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 
 	private static final Collection<String> ANONYMOUS_ROLES = Collections.singleton("Anonymous");
 
+	public static final String ADDRINFO_ATTR_NAME = "ipAddrInfo";
 	public static final String USER_ATTR_NAME = "authUser";
 	public static final String SU_ATTR_NAME = "superUser";
 

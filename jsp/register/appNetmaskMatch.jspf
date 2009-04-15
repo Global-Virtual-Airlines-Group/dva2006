@@ -4,10 +4,11 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- TCP/IP network mask Potential Match list -->
 <tr class="title caps">
- <td colspan="2"><fmt:int value="${fn:sizeof(netmaskUsers)}" /> USERS REGISTERED FROM ${netmaskAddr}</td>
+ <td colspan="2"><fmt:int value="${fn:sizeof(netmaskUsers)}" /> USERS REGISTERED FROM ${addrInfo} -
+ <a id="netMaskToggle" href="javascript:void toggleNetMask()">EXPAND</a></td>
 </tr>
 <c:forEach var="person" items="${netmaskUsers}">
-<tr>
+<tr class="netMaskUser" style="display:none;">
  <td class="label">&nbsp;</td>
 <c:if test="${fn:isPilot(person)}">
 <c:set var="rowColor" value="${fn:isSuspended(person) ? ' error' : ''}" scope="request" />
