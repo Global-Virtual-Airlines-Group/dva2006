@@ -43,10 +43,10 @@ so.write('flashcontent');
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="10%">ID</td>
- <td width="18%">USER</td>
- <td width="37%">REMOTE ADDRESS</td>
- <td width="15%">MESSAGES</td>
- <td>BYTES</td>
+ <td width="16%">USER</td>
+ <td>REMOTE ADDRESS</td>
+ <td width="14%">MESSAGES</td>
+ <td width="14%">DATA</td>
 </tr>
 
 <!-- Table Connection Data -->
@@ -54,9 +54,10 @@ so.write('flashcontent');
 <view:row entry="${con}">
  <td class="priB"><fmt:hex value="${con.ID}" /></td>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
- <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
- <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
- <td class="small"><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
+ <td class="small">${con.remoteAddr} (${con.remoteHost})
+<c:if test="${!empty con.addressInfo}"> <el:flag countryCode="${con.addressInfo.countryCode}" caption="${con.addressInfo.location}" /></c:if></td>
+ <td class="small"><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
+ <td class="small"><fmt:int value="${con.bytesIn / 1024}" />K in, <fmt:int value="${con.bytesOut / 1024}" />K out</td>
 </view:row>
 <view:row entry="${con}">
  <td class="small">Build <fmt:int value="${con.clientBuild}" /><c:if test="${con.beta > 0}"> (b${con.beta})</c:if></td>
