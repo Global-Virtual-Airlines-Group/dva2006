@@ -107,7 +107,8 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	 */
 	public String getLocation() {
 		StringBuilder buf = new StringBuilder(_city);
-		buf.append(", ");
+		if (buf.length() > 0)
+			buf.append(", ");
 		if (!StringUtils.isEmpty(_region)) {
 			buf.append(_region);
 			buf.append(' ');
