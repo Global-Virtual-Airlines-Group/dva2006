@@ -33,7 +33,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-Welcome to <content:airline />' web site. We are a group of flight simulation enthusiasts who fly Delta Air
+Welcome to the <content:airline /> web site. We are a group of flight simulation enthusiasts who fly Delta Air
 Lines and its alliance partners' routes using Microsoft's Flight Simulator 2002, 2004 or Flight 
 Simulator X. We are in no way affiliated with Delta Air Lines.<br />
 <br />
@@ -47,7 +47,7 @@ our ${forumName} discussion forum in the past 24 hours.</c:if>
 <br />
 <br />
 <content:filter roles="!Pilot">
-Please feel free to browse around our web site. Once you join <content:airline />' active pilot roster, 
+Please feel free to browse around our web site. Once you join the <content:airline /> active pilot roster, 
 you may submit flight reports and contribute to our image library. If you are interested in a serious 
 virtual airline, designed for both the experienced pilot and the novice (and all of us that are in 
 between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join 
