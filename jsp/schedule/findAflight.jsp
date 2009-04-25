@@ -236,7 +236,7 @@ return true;
 </c:forEach>
 <tr class="title">
  <td colspan="5"> <view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
-<el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGMENT" />&nbsp;
+<el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="ClearButton" url="buildassign" op="reset" label="CLEAR FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
