@@ -8,9 +8,10 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Helper class to check wether content has been aded into this request.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
+ * @see org.deltava.taglib.content.BrowserFilterTag
  */
 
 public class ContentHelper {
@@ -83,6 +84,14 @@ public class ContentHelper {
      */
     public static boolean isFirefox(PageContext ctx) {
         return (ctx.getRequest().getAttribute("browser$mozilla") != null);
+    }
+    
+    /**
+     * Detects if the browser is Opera.
+     * @return TRUE if the browser is Opera, otherwise FALSE
+     */
+    public static boolean isOpera(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("browser$opera") != null);
     }
     
     /**
