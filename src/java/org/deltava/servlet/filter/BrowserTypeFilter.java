@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class BrowserTypeFilter implements Filter {
 	private static final int MSIE7 = 2;
 	private static final int MSIE8 = 3;
 	private static final int WEBKIT = 4;
+	private static final int OPERA = 5;
 
 	private String _defaultCode;
 	private static final String[] MOZILLA_IDENT = { "Firefox", "Gecko" };
@@ -32,6 +33,7 @@ public class BrowserTypeFilter implements Filter {
 	private static final String[] MSIE7_IDENT = { "MSIE 7.0" };
 	private static final String[] MSIE_IDENT = { "MSIE" };
 	private static final String[] WEBKIT_IDENT = { "WebKit", "Chrome", "Safari" };
+	private static final String[] OPERA_IDENT = { "Opera" };
 
 	private static final int WINDOWS = 1;
 	private static final int MAC = 2;
@@ -79,6 +81,10 @@ public class BrowserTypeFilter implements Filter {
 
 		case MSIE7:
 			req.setAttribute("browser$ie7", Boolean.TRUE);
+			break;
+			
+		case OPERA:
+			req.setAttribute("browser$opera", Boolean.TRUE);
 			break;
 
 		case MSIE6:
@@ -145,6 +151,12 @@ public class BrowserTypeFilter implements Filter {
 		for (int x = 0; x < MSIE_IDENT.length; x++) {
 			if (userAgent.indexOf(MSIE_IDENT[x]) != -1)
 				return MSIE6;
+		}
+		
+		// Check for Opera
+		for (int x = 0; x < OPERA_IDENT.length; x++) {
+			if (userAgent.indexOf(OPERA_IDENT[x]) != -1)
+				return OPERA;
 		}
 
 		return UNKNOWN;
