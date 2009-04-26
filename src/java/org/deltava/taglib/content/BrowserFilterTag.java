@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to filter content based on the browser type.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -21,6 +21,7 @@ public class BrowserFilterTag extends TagSupport {
 	private boolean _showIE8;
 	private boolean _showMoz;
 	private boolean _showWebKit;
+	private boolean _showOpera;
 	
 	/**
 	 * Marks this content as visible to all Internet Explorer users.
@@ -73,6 +74,14 @@ public class BrowserFilterTag extends TagSupport {
 	}
 	
 	/**
+	 * Marks this content as visible to Opera users.
+	 * @param showOpera TRUE if content should be shown to Opera users, otherwise FALSE
+	 */
+	public void setOpera(boolean showOpera) {
+		_showOpera = showOpera;
+	}
+	
+	/**
 	 * Marks this content as visible to Mozilla/Firefox users.
 	 * @param showMoz TRUE if the content should be shown to Mozilla users, otherwise FALSE
 	 */
@@ -94,6 +103,8 @@ public class BrowserFilterTag extends TagSupport {
 		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isWebKit(pageContext) && _showWebKit)
+			return EVAL_BODY_INCLUDE;
+		else if (ContentHelper.isOpera(pageContext) && _showOpera)
 			return EVAL_BODY_INCLUDE;
 		else
 			return SKIP_BODY;
@@ -119,5 +130,6 @@ public class BrowserFilterTag extends TagSupport {
 		_showIE8 = false;
 		_showMoz = false;
 		_showWebKit = false;
+		_showOpera = false;
 	}
 }
