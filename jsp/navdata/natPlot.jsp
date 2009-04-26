@@ -17,9 +17,7 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
-<content:browserFilter webKit="false" ie="true" mozilla="true">
 <content:sysdata var="tileHost" name="weather.tileHost" />
-</content:browserFilter>
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">

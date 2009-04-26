@@ -16,9 +16,7 @@
 <content:js name="acarsMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:browserFilter webKit="false" ie="true" mozilla="true">
 <content:sysdata var="tileHost" name="weather.tileHost" />
-</content:browserFilter>
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="2" />
 <map:vml-ie />
