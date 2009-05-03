@@ -8,8 +8,8 @@
  <a id="soundexToggle" href="javascript:void toggleSoundex()">EXPAND</a></td>
 </tr>
 <c:forEach var="person" items="${soundexUsers}">
-<c:set var="personLoc" value="${userData[person.ID]}" scope="request" />
-<c:set var="rowColor" value="${fn:isSuspended(person) ? ' err' : ''}" scope="request" />
+<c:set var="personLoc" value="${userData[person.ID]}" scope="page" />
+<c:set var="rowColor" value="${fn:isSuspended(person) ? ' err' : ''}" scope="page" />
 <tr class="soundexUser" style="display:none;">
  <td class="label">&nbsp;</td>
  <td class="data${rowColor}"><el:profile location="${personLoc}">${person.name}</el:profile> 

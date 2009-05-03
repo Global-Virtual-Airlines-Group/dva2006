@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<c:set var="acLoaded" value="${!empty acInfo}" scope="request" />
+<c:set var="acLoaded" value="${!empty acInfo}" scope="page" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
  <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS DATA</td>
@@ -96,14 +96,14 @@
  lbs fuel</td>
 </tr>
 </c:if>
-<c:set var="airborneTime" value="${fn:delta(pirep.takeoffTime, pirep.landingTime) / 60}" scope="request" />
-<c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="request" />
+<c:set var="airborneTime" value="${fn:delta(pirep.takeoffTime, pirep.landingTime) / 60}" scope="page" />
+<c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="page" />
 <tr>
  <td class="label">Flight Time</td>
  <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, block time
  <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
 </tr>
-<c:set var="times" value="${pirep.times}" scope="request" />
+<c:set var="times" value="${pirep.times}" scope="page" />
 <c:if test="${(times[0] > 30) || (times[2] > 0) || (times[4] > 0)}">
 <c:if test="${times[0] > 90}">
 <tr>
@@ -143,7 +143,7 @@
  <td class="data pri bld" colspan="${cspan}">${checkRide.name} (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
 <c:if test="${scoreCR}">
-<c:set var="isForm" value="true" scope="request" />
+<c:set var="isForm" value="true" scope="page" />
 <tr>
  <td class="label" valign="top">Check Ride Instructions</td>
  <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>

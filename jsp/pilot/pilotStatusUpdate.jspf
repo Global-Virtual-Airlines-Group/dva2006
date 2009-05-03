@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:if test="${!empty statusUpdates}">
 <content:filter roles="HR">
-<c:set var="isHR" value="${true}" scope="request" />
+<c:set var="isHR" value="${true}" scope="page" />
 </content:filter>
 
 <!-- Pilot Status History -->
@@ -19,9 +19,9 @@
 
 <!-- Pilot Status History Data -->
 <c:forEach var="update" items="${statusUpdates}">
-<c:set var="author" value="${authors[update.authorID]}" scope="request" />
-<c:set var="isPrivate" value="${(update.type == 0)}" scope="request" />
-<c:set var="isSuspended" value="${(update.type == 15)}" scope="request" />
+<c:set var="author" value="${authors[update.authorID]}" scope="page" />
+<c:set var="isPrivate" value="${(update.type == 0)}" scope="page" />
+<c:set var="isSuspended" value="${(update.type == 15)}" scope="page" />
 <c:if test="${!isPrivate || isHR}">
 <tr class="mid">
  <td class="pri bld"><fmt:date fmt="d" date="${update.createdOn}" /></td>
