@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -13,7 +13,7 @@ import org.deltava.beans.EMailAddress;
 /**
  * A bean to aggregate SMTP message information.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -212,6 +212,14 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 			} catch (UnsupportedEncodingException uee) {
 			}
 		}
+	}
+
+	/**
+	 * Clears the list of recipients.
+	 */
+	public void clearRecipients() {
+		_copyTo.clear();
+		_msgTo.clear();
 	}
 
 	/**
