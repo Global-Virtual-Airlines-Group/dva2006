@@ -11,7 +11,7 @@
 <tr class="netMaskUser" style="display:none;">
  <td class="label">&nbsp;</td>
 <c:if test="${fn:isPilot(person)}">
-<c:set var="rowColor" value="${fn:isSuspended(person) ? ' error' : ''}" scope="request" />
+<c:set var="rowColor" value="${fn:isSuspended(person) ? ' error' : ''}" scope="page" />
  <td class="data"><c:if test="${fn:isSuspended(person)}"><span class="error bld">SUSPENDED USER </span></c:if>
 <el:cmd url="profile" link="${person}">${person.name}</el:cmd> <a href="mailto:${person.email}" class="small">${person.email}</a>,
  <span class="small">registered on <fmt:date fmt="d" date="${person.createdOn}" /></span></td>

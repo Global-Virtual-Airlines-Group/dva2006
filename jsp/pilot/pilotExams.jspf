@@ -19,8 +19,8 @@
  
 <!-- Pilot Examination Data -->
 <c:forEach var="exam" items="${exams}">
-<c:set var="examType" value="${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}" scope="request" />
-<c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="request" />
+<c:set var="examType" value="${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}" scope="page" />
+<c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="page" />
 <tr class="mid">
 <c:choose>
 <c:when test="${!fn:passed(exam) && !fn:failed(exam)}">

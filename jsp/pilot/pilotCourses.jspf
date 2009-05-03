@@ -17,7 +17,7 @@
 
 <!-- Pilot Flight Academy Data -->
 <c:forEach var="course" items="${courses}">
-<c:set var="ins" value="${authors[course.instructorID]}" scope="request" />
+<c:set var="ins" value="${authors[course.instructorID]}" scope="page" />
 <tr class="mid">
  <td colspan="2" class="pri bld"><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
  <td class="bld">${ins.name}</td>
