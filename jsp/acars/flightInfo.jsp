@@ -165,7 +165,6 @@ map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-var progressBar = new ProgressbarControl(map, {width:150, color:'blue'});
 getACARSData(${info.ID}, '${imgPath}');
 
 // Add the filed route and markers
