@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to send e-mail messages.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -137,6 +137,7 @@ public class Mailer {
 			log.warn("STMP Test Mode enabled - sending to " + _env.getFrom().getEmail());
 			_msgTo.clear();
 			_msgTo.add(_env.getFrom());
+			_env.clearRecipients();
 		}
 
 		// Warn if we have no template
