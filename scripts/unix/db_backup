@@ -45,6 +45,10 @@ $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` postfix | $arc_util > postfi
 echo `date +%H:%M:%S`' Writing TeamSpeak configuration'
 $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` teamspeak | $arc_util > teamspeak.sql.bz2
 
+# Dump GeoIP data
+echo `date +%H:%M:%S`' Writing GeoIP data'
+$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` geoip | $arc_util > geoip.sql.bz2
+
 # Dump Common data/Water Cooler/Events
 echo `date +%H:%M:%S`' Writing Common data'
 $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA XDB_IDS AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES ISSUES ISSUE_COMMENTS SYSINFODATA | $arc_util > common.sql.bz2
