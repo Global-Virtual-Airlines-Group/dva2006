@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.net.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class for common weather Web Service code. 
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.3
  */
 
@@ -29,13 +29,14 @@ abstract class WeatherDataService extends WebService {
 
 	/**
 	 * Returns an NOAA Weather bean.
-	 * @param type the weather type (TAF / METAR)  
+	 * @param t the weather type (TAF / METAR) 
+	 * @param code the 
 	 * @return a WeatherDataBean
 	 * @throws DAOException if an error occurs
 	 */
-	protected WeatherDataBean getNOAAData(String type, String code) throws DAOException {
+	protected WeatherDataBean getNOAAData(WeatherDataBean.Type t, String code) throws DAOException {
 		try {
-			URL url = new URL(SystemData.get("weather.url." + type.toLowerCase()));
+			URL url = new URL(SystemData.get("weather.url." + t.toString().toLowerCase()));
 			if (!"ftp".equalsIgnoreCase(url.getProtocol()))
 				throw new DAOException("FTP expected - " + url.toExternalForm());
 			
@@ -50,12 +51,12 @@ abstract class WeatherDataService extends WebService {
 				InputStream is = ftpc.get(code.toUpperCase() + ".TXT", false);
 				dao = new GetNOAAWeather(is);
 			} catch (FTPClientException fe) {
-				WeatherDataBean wx = WeatherDataBean.create(type);
+				WeatherDataBean wx = WeatherDataBean.create(t);
 				wx.setData("Weather not available - " + fe.getMessage());
 				return wx;
 			}
 			
-			return dao.get(type);
+			return dao.get(t);
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}

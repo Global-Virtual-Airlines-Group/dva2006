@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -7,19 +7,23 @@ import java.util.Date;
 
 import org.deltava.beans.wx.*;
 
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.2
  */
 
-public class GetNOAAWeather extends DAO {
+public class GetNOAAWeather extends DAO implements CachingDAO {
+	
+	private static final Cache<METAR> _metarCache = new ExpiringCache<METAR>(32768, 3600);
 	
 	private final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param is the InputStream to use
@@ -28,15 +32,28 @@ public class GetNOAAWeather extends DAO {
 		super(is);
 	}
 	
+	public int getHits() {
+		return _metarCache.getHits();
+	}
+	
+	public int getRequests() {
+		return _metarCache.getRequests();
+	}
+	
 	/**
 	 * Loads a weather data bean.
-	 * @param type the bean type (TAF/METAR)
+	 * @param t the bean type (TAF/METAR)
 	 * @return the weather bean, or null if not found
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public WeatherDataBean get(String type) throws DAOException {
-		boolean isMETAR = "METAR".equalsIgnoreCase(type);
-		return isMETAR ? getMETAR() : getTAF();
+	public WeatherDataBean get(WeatherDataBean.Type t) throws DAOException {
+		switch (t) {
+			case TAF:
+				return getTAF();
+			case METAR:
+			default:
+				return getMETAR();
+		}
 	}
 
 	/**
@@ -48,21 +65,19 @@ public class GetNOAAWeather extends DAO {
 		try {
 			LineNumberReader lr = getReader();
 			Date dt = df.parse(lr.readLine());
-			StringBuilder buf = new StringBuilder();
+			StringBuilder buf = new StringBuilder(lr.readLine());
 			while (lr.ready()) {
 				buf.append(lr.readLine());
-				buf.append("\r\n");
+				buf.append(' ');
 			}
 			
-			// Build the METAR
+			// Parse the METAR
 			METAR result = new METAR();
 			result.setDate(dt);
 			result.setData(buf.toString());
 			return result;
-		} catch (ParseException pe) {
-			throw new DAOException(pe);
-		} catch (IOException ie) {
-			throw new DAOException(ie);
+		} catch (Exception e) {
+			throw new DAOException(e);
 		}
 	}
 	

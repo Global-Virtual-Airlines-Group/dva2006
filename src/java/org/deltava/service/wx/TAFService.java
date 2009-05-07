@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch Terminal Area Forecast data.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.3
  */
 
@@ -45,7 +45,7 @@ public class TAFService extends WeatherDataService {
 			if (useFA)
 				data = getFAData().getTAF(code);
 			else
-				data = getNOAAData("TAF", code);
+				data = getNOAAData(WeatherDataBean.Type.TAF, code);
 			
 			// Get the geographic location
 			GetNavData navdao = new GetNavData(ctx.getConnection());

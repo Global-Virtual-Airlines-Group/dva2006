@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * Loads weather data from FlightAware via SOAP.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.2
  */
 
@@ -29,14 +29,19 @@ public class GetFAWeather extends FlightAwareDAO implements CachingDAO {
 	
 	/**
 	 * Loads a weather data bean.
-	 * @param type the bean type (TAF/METAR)
+	 * @param t the bean type (TAF/METAR)
 	 * @param code the airport ICAO code
 	 * @return the weather bean, or null if not found
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public WeatherDataBean get(String type, String code) throws DAOException {
-		boolean isMETAR = "METAR".equalsIgnoreCase(type);
-		return isMETAR ? getMETAR(code) : getTAF(code);
+	public WeatherDataBean get(WeatherDataBean.Type t, String code) throws DAOException {
+		switch (t) {
+			case TAF:
+				return getTAF(code);
+			case METAR:
+			default:
+				return getMETAR(code);
+		}
 	}
 
 	/**
