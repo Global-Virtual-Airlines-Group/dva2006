@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.1
  */
 
@@ -39,6 +39,11 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 		else if (GROUP_CODE[6].equals(labelType))
 			labelType = MONTH_SQL;
 		
+		// Get the user ID
+		int userID = ctx.getUser().getID();
+		if (ctx.isUserInRole("PIREP") && (ctx.getID() != 0))
+			userID = ctx.getID();
+		
 		// Get the number of days to retrieve
 		int daysBack = StringUtils.parse(ctx.getParameter("days"), 0);
 		try {
@@ -48,14 +53,14 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
 			stdao.setQueryStart(vc.getStart());
 			stdao.setQueryMax(vc.getCount());
-			vc.setResults(stdao.getPIREPStatistics(ctx.getUser().getID(), labelType, vc.getSortType(), true));
+			vc.setResults(stdao.getPIREPStatistics(userID, labelType, vc.getSortType(), true));
 			
 			// Get the DAO and the landing statistics
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(con);
 			dao.setDayFilter(daysBack);
-			Map<Integer, Integer> vsStats = dao.getLandingCounts(ctx.getUser().getID(), 50);
+			Map<Integer, Integer> vsStats = dao.getLandingCounts(userID, 50);
 			ctx.setAttribute("landingStats", vsStats, REQUEST);
-			ctx.setAttribute("eqLandingStats", dao.getLandings(ctx.getUser().getID()), REQUEST);
+			ctx.setAttribute("eqLandingStats", dao.getLandings(userID), REQUEST);
 			
 			// Calculate the maximum values for landing range
 			int maxLandCount = 0;
@@ -65,7 +70,7 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			}
 			
 			// Save maximum count
-			ctx.setAttribute("maxCount", new Integer(maxLandCount), REQUEST);
+			ctx.setAttribute("maxCount", Integer.valueOf(maxLandCount), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

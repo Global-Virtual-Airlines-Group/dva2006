@@ -58,12 +58,12 @@ return true;
  <td colspan="6" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${user.ACARSLegs}" /> LANDINGS</td>
 </tr>
 <c:forEach var="vs" items="${fn:keys(landingStats)}">
-<c:set var="vsCount" value="${landingStats[vs]}" scope="request" />
+<c:set var="vsCount" value="${landingStats[vs]}" scope="page" />
 <c:choose>
-<c:when test="${vs < -600}"><c:set var="barColor" value="red" scope="request" /></c:when>
-<c:when test="${vs < -300}"><c:set var="barColor" value="orange" scope="request" /></c:when>
-<c:when test="${vs < -50}"><c:set var="barColor" value="green" scope="request" /></c:when>
-<c:otherwise><c:set var="barColor" value="blue" scope="request" /></c:otherwise>
+<c:when test="${vs < -600}"><c:set var="barColor" value="red" scope="page" /></c:when>
+<c:when test="${vs < -300}"><c:set var="barColor" value="orange" scope="page" /></c:when>
+<c:when test="${vs < -50}"><c:set var="barColor" value="green" scope="page" /></c:when>
+<c:otherwise><c:set var="barColor" value="blue" scope="page" /></c:otherwise>
 </c:choose>
 <tr>
  <td class="label"><fmt:int value="${vs}" /> ft/min</td>
@@ -83,9 +83,9 @@ return true;
 </tr>
 
 <!-- Touchdown Speed Analysis -->
-<c:set var="entryNumber" value="0" scope="request" />
+<c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="entry" items="${eqLandingStats}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <tr class="mid">
  <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${entry.equipmentType}</td>
