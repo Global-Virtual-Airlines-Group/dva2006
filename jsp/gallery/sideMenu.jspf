@@ -1,62 +1,83 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
-<!-- Sidebar Navigation Frame -->
-<content:region id="sidebar">
-<el:table ID="sidenav" pad="default" space="default">
-<tr class="MenuHeader"><td>IMAGE GALLERY</td></tr>
+<content:sysdata var="academyEnabled" name="academy.enabled" />
+<content:sysdata var="academyFlights" name="academy.minFlights" />
+<content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
+<!-- Top Menu Frame -->
+<content:region id="navmenu">
+<content:menu attr="isSideMenu">
+<c:if test="${!isSideMenu}">
+<content:authUser var="user">
+<c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}"><span class="sec">${user.name}</span></content:menuitem>
+<content:superUser var="superUser">
+<c:set var="itemLength" value="${fn:length(superUser.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}"><span class="ter">${superUser.name}</span></content:menuitem>
+</content:superUser>
+</content:authUser>
+</c:if>
+
+<content:submenu title="Image Gallery" width="170">
+ <content:subitem><el:cmd url="imagegallery" linkID="ALL">All Images</el:cmd></content:subitem>
+<c:if test="${access.canCreate}">
+ <content:subitem><el:cmd url="image" op="edit">Add New Image</el:cmd></content:subitem>
+</c:if>
+</content:submenu>
+
+<content:submenu title="Our Airline" width="170">
+ <content:subitem><el:link url="/">Home</el:link></content:subitem>
 <content:authUser anonymous="true">
-<tr class="MenuItem">
- <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="login">Login</el:cmd></content:subitem>
 </content:authUser>
 <content:authUser var="user">
-<tr class="MenuItem">
- <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
-</tr>
+<c:if test="${isSideMenu}">
+ <content:menuitem><span class="sec caps bld">${user.name}</span></content:menuitem>
 <content:superUser var="superUser">
-<tr class="MenuItem">
- <td class="ter bld">${superUser.name}</td>
-</tr>
+ <content:menuitem><span class="ter">${superUser.name}</span></content:menuitem>
 </content:superUser>
-<tr class="MenuItem">
- <td><el:cmd url="logout">LOG OUT</el:cmd></td>
- </tr>
-</content:authUser>
-<tr class="MenuItem">
- <td><el:cmd url="imagegallery" linkID="ALL">ALL IMAGES</el:cmd></td>
-</tr>
-<c:if test="${access.canCreate}">
-<tr class="MenuItem">
- <td><el:cmd url="image" op="edit">POST NEW IMAGE</el:cmd></td>
-</tr>
 </c:if>
-<tr class="MenuHeader"><td>OUR AIRLINE</td></tr>
-<tr class="MenuItem">
- <td><el:link url="/">HOME</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td class="caps"><el:cmd url="channels">${forumName}</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>CONTACT US</td></tr>
-<tr class="MenuItem">
- <td><el:link url="mailto:${infoEmail}">CORPORATE OFFICES</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>GOLGOTHA</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
-</tr>
-</el:table>
-<content:browserFilter ie="true"><el:img y="1" x="158" border="0" src="blank.png" caption="spacer" /></content:browserFilter>
+ <content:subitem><el:cmd url="logout">Log Out</el:cmd></content:subitem>
+</content:authUser>
+<content:filter roles="Pilot">
+ <content:subitem><el:cmd url="pilotcenter">Pilot Center</el:cmd></content:subitem>
+<c:if test="${(academyEnabled && (user.legs > academyFlights))}">
+ <content:subitem><el:cmd url="academy">Flight Academy</el:cmd></content:subitem>
+</c:if>
+<c:if test="${helpDeskEnabled}">
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+</content:filter>
+ <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
+<content:filter roles="Developer">
+ <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
+</content:filter>
+</content:submenu>
+
+<c:if test="${acarsEnabled}">
+<content:submenu title="ACARS" width="170">
+ <content:subitem><el:cmd url="acarsmap">Live ACARS Map</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
+ <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
+ <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
+</content:submenu>
+</c:if>
+
+<content:submenu title="Contact Us" width="170">
+ <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
+ <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
+<c:if test="${helpDeskEnabled}">
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+<content:filter roles="Anonymous,HR">
+ <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
+</content:filter>
+</content:submenu>
+</content:menu>
 </content:region>

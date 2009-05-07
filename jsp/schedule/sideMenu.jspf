@@ -1,94 +1,99 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="academyEnabled" name="academy.enabled" />
+<content:sysdata var="academyFlights" name="academy.minFlights" />
+<content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
-<!-- Sidebar Navigation Frame -->
-<content:region id="sidebar">
-<el:table ID="sidenav" pad="default" space="default">
-<tr class="MenuHeader"><td>FLIGHT SCHEDULE</td></tr>
-<tr class="MenuItem">
- <td><el:link url="/">HOME</el:link></td>
-</tr>
+<!-- Top Menu Frame -->
+<content:region id="navmenu">
+<content:menu attr="isSideMenu">
+<c:if test="${!isSideMenu}">
+<content:authUser var="user">
+<c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}"><span class="sec">${user.name}</span></content:menuitem>
+<content:superUser var="superUser">
+<c:set var="itemLength" value="${fn:length(superUser.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}"><span class="ter">${superUser.name}</span></content:menuitem>
+</content:superUser>
+</content:authUser>
+</c:if>
+
+<content:submenu title="Flight Schedule" width="170">
+ <content:subitem><el:cmd url="airlines">Airlines</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="airports">Airports</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="aircraftlist">Aircraft</el:cmd></content:subitem>
+<content:filter roles="Admin">
+ <content:subitem><el:cmd url="tzones">Time Zones</el:cmd></content:subitem>
+</content:filter>
+ <content:subitem><el:cmd url="charts">Approach Charts</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="routes" op="oceanic">Oceanic Tracks</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="schedimport">Schedule Import</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="schedexport">Schedule Export</el:cmd></content:subitem>
+<c:if test="${innovataEnabled}">
+ <content:subitem><el:cmd url="ivimport">Innovata Download</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="ivstatus">Innovata Status</el:cmd></content:subitem>
+</c:if>
+ <content:subitem><el:cmd url="usvcairports">Unserviced Airports</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="navimport">Navigation Data</el:cmd></content:subitem>
+</content:submenu>
+
+<content:submenu title="Our Airline" width="170">
+ <content:subitem><el:link url="/">Home</el:link></content:subitem>
 <content:authUser anonymous="true">
-<tr class="MenuItem">
- <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="login">Login</el:cmd></content:subitem>
 </content:authUser>
 <content:authUser var="user">
-<tr class="MenuItem">
- <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
-</tr>
+<c:if test="${isSideMenu}">
+ <content:menuitem><span class="sec caps bld">${user.name}</span></content:menuitem>
 <content:superUser var="superUser">
-<tr class="MenuItem">
- <td class="ter bld">${superUser.name}</td>
-</tr>
+ <content:menuitem><span class="ter">${superUser.name}</span></content:menuitem>
 </content:superUser>
-<tr class="MenuItem">
- <td><el:cmd url="logout">LOG OUT</el:cmd></td>
-</tr>
-<tr class="MenuItem bld pri">
- <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
-</tr>
-</content:authUser>
-<tr class="MenuItem">
- <td><el:cmd url="airlines">AIRLINES</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="airports">AIRPORTS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="aircraftlist">AIRCRAFT</el:cmd></td>
-</tr>
-<content:filter roles="Admin">
-<tr class="MenuItem">
- <td><el:cmd url="tzones">TIME ZONES</el:cmd></td>
-</tr>
-</content:filter>
-<tr class="MenuItem">
- <td><el:cmd url="charts">APPROACH CHARTS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="routes" op="oceanic">OCEANIC TRACKS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="schedimport">SCHEDULE IMPORT</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="schedexport">SCHEDULE EXPORT</el:cmd></td>
-</tr>
-<c:if test="${innovataEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="ivimport">INNOVATA DOWNLOAD</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="ivstatus">INNOVATA STATUS</el:cmd></td>
-</tr>
 </c:if>
-<tr class="MenuItem">
- <td><el:cmd url="usvcairports">UNSERVICED AIRPORTS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="navimport">NAVIGATION DATA</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>CONTACT US</td></tr>
-<tr class="MenuItem">
- <td><el:link url="mailto:${infoEmail}">CORPORATE OFFICES</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
-</tr>
-<content:filter roles="Anonymous,HR,Admin">
-<tr class="MenuItem">
- <td><el:cmd url="pwdreset">PASSWORD RESET</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="logout">Log Out</el:cmd></content:subitem>
+</content:authUser>
+ <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
+<content:filter roles="Developer">
+ <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
 </content:filter>
-<tr class="MenuHeader"><td>GOLGOTHA</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
-</tr>
-</el:table>
+</content:submenu>
+
+<content:submenu title="Pilot's Lounge" width="170">
+<content:filter roles="Pilot">
+ <content:subitem className="bld"><el:cmd url="pilotcenter">Pilot Center</el:cmd></content:subitem>
+<c:if test="${(academyEnabled && (user.legs > academyFlights))}">
+ <content:subitem><el:cmd url="academy">Flight Academy</el:cmd></content:subitem>
+</c:if>
+<c:if test="${helpDeskEnabled}">
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+</content:filter>
+ <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
+</content:submenu>
+
+<c:if test="${acarsEnabled}">
+<content:submenu title="ACARS" width="170">
+ <content:subitem><el:cmd url="acarsmap">Live ACARS Map</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
+ <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
+ <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
+</content:submenu>
+</c:if>
+
+<content:submenu title="Contact Us" width="170">
+ <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
+ <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
+<c:if test="${helpDeskEnabled}">
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+<content:filter roles="Anonymous,HR">
+ <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
+</content:filter>
+</content:submenu>
+</content:menu>
 </content:region>

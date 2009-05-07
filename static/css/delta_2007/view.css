@@ -1,40 +1,41 @@
-/* Cascading Style Sheet for Table Views (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for Table Views (C) 2005, 2006, 2007, 2009 Global Virtual Airlines Group. */
 
 TABLE.view {
 	width: 100%;
+	font-size: 10px;
 }
 
-TABLE.view TR.title {
-	font-size: 9pt;
+TABLE.view tr.title {
+	font-size: 11px;
 	background-color: #003366;
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
 	color: #ffffff;
 	font-weight: bold;
 }
 
-TABLE.view TR {
-	font-size: 9pt;
-	background-color: #F8F8F8;
-	font-family: Verdana, Tahoma, sans-serif;
+TABLE.view tr {
+	font-size: 11px;
+	background-color: #f0f0f0;
+	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
 	text-align: center;
 }
 
-TD.priB {
-	background-color: #1A4876;
-	color: #FFFFFF;
+td.priB {
+	background-color: #1a4876;
+	color: #ffffff;
 	font-weight: bold;
 }
 
-TD.secB {
-	background-color: #C01933;
-	color: #FFFFFF;
+td.secB {
+	background-color: #c01933;
+	color: #ffffff;
 	font-weight: bold;
 }
 
-TD.def {
-	background-color: #F8F8F8;
+td.def {
+	background-color: #f0f0f0;
 	color: #000000;
 }
 
@@ -60,18 +61,18 @@ TABLE.view *.warn {
 }
 
 TABLE.view *.err {
-	background-color: #FFC0C0;
+	background-color: #ffc0c0;
 }
 
-*.title :link, *.title :visited, *.title A {
-	font-size: 9pt;	
-	font-family: Verdana, Tahoma, sans-serif;
+*.title :link, *.title :visited, *.title a {
+	font-size: 11px;	
+	font-family: verdana, tahoma, sans-serif;
 	font-weight: bold;
 	text-decoration: underline;
-	color: #FFFFFF;
+	color: #ffffff;
 }
 
-TABLE.view TR :link, TABLE.view TR :visited {
+table.view tr :link, table.view tr :visited {
 	color: inherit;
 	text-decoration: none;
 }

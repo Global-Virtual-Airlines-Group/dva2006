@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -94,6 +94,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setDateFormat(ctx.getParameter("df"));
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));
+			p.setShowNavBar(Boolean.valueOf(ctx.getParameter("showNavBar")).booleanValue());
 			
 			// Set location
 			if (!StringUtils.isEmpty(ctx.getParameter("location")))

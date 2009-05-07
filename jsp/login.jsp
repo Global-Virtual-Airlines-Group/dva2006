@@ -24,8 +24,11 @@ if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;
 </c:if>
 if (form.jsOK.value.length == 0) {
 	form.jsOK.value = 'true';
-	f.screenX.value = screen.width;
-	f.screenY.value = screen.height;
+	try {
+		f.screenX.value = screen.width;
+		f.screenY.value = screen.height;
+		f.bodyX.value = document.body.clientWidth;
+	} catch (err) { }
 }
 
 setSubmit();
@@ -43,8 +46,11 @@ if (f.firstName.value.length > 0) {
 }
 
 // Save screen resolution
-f.screenX.value = screen.width;
-f.screenY.value = screen.height;
+try {
+	f.screenX.value = screen.width;
+	f.screenY.value = screen.height;
+	f.bodyX.value = document.body.clientWidth;
+} catch (err) { }
 
 // Ensure javascript is working properly
 f.jsOK.value = 'true';
@@ -109,6 +115,7 @@ in order to log into the site.<br />
 <el:text name="jsOK" type="hidden" value="" />
 <el:text name="screenX" type="hidden" value="1024" />
 <el:text name="screenY" type="hidden" value="768" />
+<el:text name="bodyX" type="hidden" value="0" />
 <el:text name="redirectTo" type="hidden" value="${referTo}" />
 <c:if test="${empty dupeUsers}"><el:text name="pilotCode" type="hidden" value="${pilotCode}" /></c:if>
 </el:form>

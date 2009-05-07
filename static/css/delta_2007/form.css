@@ -1,6 +1,6 @@
-/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009 Global Virtual Airlines Group. */
 
-TABLE.form, TABLE.bar {
+table.form, table.bar {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
@@ -10,8 +10,8 @@ TABLE.form, TABLE.bar {
 }
 
 /* Title Top Row */
-TABLE.form TR.title {
-	font-size: 9pt;
+table.form tr.title {
+	font-size: 11px;
 	background-color: #003366;
 	font-family: Verdana, Tahoma, sans-serif;
 	vertical-align: middle;
@@ -20,78 +20,83 @@ TABLE.form TR.title {
 }
 
 /* Button bar table */
-TABLE.bar TD {
-	background-color: #1A4876;
+table.bar td {
+	background-color: #1a4876;
 	text-align: center;
 	vertical-align: middle;
 }
 
-TABLE.form TR {
-	font-family: Verdana, Tahoma, sans-serif;
+table.form tr {
+	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
-	background-color: #F8F8F8;
+	background-color: #f8f8f8;
 }
 
-TABLE.form TD.label {
+table.form td.label {
 	background-color: #003366;
 	text-align: right;
-	color: #FFFFFF;
-	font-size: 8pt;
-	width: 124px;
+	color: #ffffff;
+	font-size: 10px;
+	width: 128px;
 }
 
-TABLE.form TD.coolerPost {
+table.form td.coolerPost {
 	text-align: left;
-	font-size: 9pt;
+	font-size: 11px;
 	vertical-align: top;
 	width: 195px;
 }
 
 /* Default row with data */
-TABLE.form TD.data {
+table.form td.data {
 	color: #000000;
 	text-align: left;
-	font-size: 9pt;
+	font-size: 11px;
 }
 
-SELECT {
-	font-family: Verdana, Tahoma, sans-serif;
-	font-size: 9pt;
+select {
+	font-family: verdana, tahoma, sans-serif;
+	font-size: 11px;
 	font-weight: normal;
-	background-color: #003366;
-	color: #FFFFFF;
+	background-color: #1a4876;
+	color: #ffffff;
+	border: 1px solid #001a33;
 }
 
-INPUT, TEXTAREA {
-	font-family: Verdana, Tahoma, sans-serif;
-	font-size: 9pt;
-	border: 1px solid #1A4876;
-	background: #F0F4F8;
+tr.title select {
+	border: 1px solid #c0c0c0;
 }
 
-INPUT.radio, INPUT.check {
+input, textarea {
+	font-family: verdana, tahoma, sans-serif;
+	font-size: 11px;
+	border: 1px solid #1a4876;
+	background: #f0f0f0;
+}
+
+input.radio, input.check {
 	border: none;
 	font-size: 8pt;
 }
 
-SELECT.req {
-	border: 1px solid #C01933;
+select.req {
+	border: 1px solid #c01933;
 }
 
-INPUT.req, TEXTAREA.req {
-	background: #FFF8FA;
+input.req, input.req {
+	background: #fff8fa;
 	border: 1px solid #C01933;
 }
 
 *.label :link, *.label :visited {
-	font-size: 9pt;	
+	font-size: 11px;	
 	font-family: Verdana, Tahoma, sans-serif;
 	text-decoration: underline;
 	color: #EFFFFF;
 }
 
-*.title A {
-	font-size: 9pt;
+*.title a {
+	font-size: 11px;
 	text-transform: uppercase;
 	font-weight: bold;
 	font-family: Verdana, Tahoma, sans-serif;
