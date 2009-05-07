@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -218,18 +218,19 @@ public class SetACARSLog extends DAO {
 	public void logError(ACARSError err) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO acars.ERRORS (USERID, CREATED_ON, REMOTE_ADDR, REMOTE_HOST, "
-					+ "CLIENT_BUILD, FS_VERSION, FSUIPC_VERSION, ERROR_MSG, STACKDUMP, STATEDATA) VALUES (?, ?, "
-					+ "INET_ATON(?), ?, ?, ?, ?, ?, ?, ?)");
+					+ "CLIENT_BUILD, BETA, FS_VERSION, FSUIPC_VERSION, ERROR_MSG, STACKDUMP, STATEDATA) VALUES (?, ?, "
+					+ "INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, err.getUserID());
 			_ps.setTimestamp(2, createTimestamp(err.getCreatedOn()));
 			_ps.setString(3, err.getRemoteAddr());
 			_ps.setString(4, err.getRemoteHost());
 			_ps.setInt(5, err.getClientBuild());
-			_ps.setInt(6, err.getFSVersion());
-			_ps.setString(7, err.getFSUIPCVersion());
-			_ps.setString(8, err.getMessage());
-			_ps.setString(9, err.getStackDump());
-			_ps.setString(10, err.getStateData());
+			_ps.setInt(6, err.getBeta());
+			_ps.setInt(7, err.getFSVersion());
+			_ps.setString(8, err.getFSUIPCVersion());
+			_ps.setString(9, err.getMessage());
+			_ps.setString(10, err.getStackDump());
+			_ps.setString(11, err.getStateData());
 			executeUpdate(1);
 			
 			// Get the new ID

@@ -1,24 +1,21 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSError;
 
-import org.deltava.comparators.PilotComparator;
-
+import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
 
 /**
  * A Web Site Command to display ACARS client error reports.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -82,7 +79,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			Map<Integer, Pilot> pilots = pdao.get(udmap);
 			
 			// Get report author IDs
-			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator(PilotComparator.PILOTCODE));
+			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
 			for (Iterator<Integer> i = authorIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
 				Pilot usr = pilots.get(id);
