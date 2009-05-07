@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store ACARS error dumps.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class ACARSError extends DatabaseBean {
 	private String _remoteAddr;
 	private String _remoteHost;
 	private int _clientBuild;
+	private int _beta;
 	private int _fsVersion;
 	private String _fsuipcVersion;
 	
@@ -81,6 +82,15 @@ public class ACARSError extends DatabaseBean {
 	 */
 	public int getClientBuild() {
 		return _clientBuild;
+	}
+	
+	/**
+	 * Returns the ACARS Client beta build that generated this error.
+	 * @return the beta number
+	 * @see ACARSError#setBeta(int) 
+	 */
+	public int getBeta() {
+		return _beta;
 	}
 	
 	/**
@@ -172,7 +182,16 @@ public class ACARSError extends DatabaseBean {
 	 * @see ACARSError#getClientBuild()
 	 */
 	public void setClientBuild(int ver) {
-		_clientBuild = (ver < 1) ? 1 : ver;
+		_clientBuild = Math.max(1, ver);
+	}
+	
+	/**
+	 * Updates the ACARS Client beta version that generated this error.
+	 * @param beta the beta version
+	 * @see ACARSError#getBeta()
+	 */
+	public void setBeta(int beta) {
+		_beta = Math.max(0, beta);
 	}
 	
 	/**
