@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.Date;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -41,6 +41,7 @@ public class ErrorLogService extends WebService {
 		err.setCreatedOn(new Date());
 		err.setStackDump(ctx.getParameter("stackDump"));
 		err.setClientBuild(StringUtils.parse(ctx.getParameter("clientBuild"), 1));
+		err.setBeta(StringUtils.parse(ctx.getParameter("beta"), 0));
 		err.setFSVersion(StringUtils.parse(ctx.getParameter("fsVersion"), 2004));
 		err.setFSUIPCVersion(ctx.getParameter("fsuipcVersion"));
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
