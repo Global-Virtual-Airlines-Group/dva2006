@@ -67,7 +67,7 @@ return true;
 </c:choose>
 <tr>
  <td class="label"><fmt:int value="${vs}" /> ft/min</td>
- <td class="data" colspan="5"><span style="float:left; width:64px;"><fmt:int value="${vsCount}" /> landings</span><c:if test="${vsCount > 0}">
+ <td class="data" colspan="5"><span style="float:left; width:80px;"><fmt:int value="${vsCount}" /> landings</span><c:if test="${vsCount > 0}">
  <el:img y="11" x="${(vsCount * 550) / maxCount}" src="cooler/bar_${barColor}.png" caption="${vsCount} Landings" /></c:if></td>
 </tr>
 </c:forEach>
