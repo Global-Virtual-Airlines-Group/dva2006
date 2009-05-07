@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.Date;
@@ -12,26 +12,33 @@ import org.deltava.util.cache.ExpiringCacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.2
  */
 
 public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheable, Comparable<WeatherDataBean> {
 
-	protected AirportLocation _pos;
+	private AirportLocation _pos;
 	private Date _createdOn;
 	private Date _obsDate;
 
 	private String _wxData;
+	
+	/**
+	 * An enumeration to store valid weather data types.
+	 */
+	public enum Type {
+		METAR, TAF;
+	}
 
 	/**
 	 * Creates an arbitrary weather bean type.
-	 * @param type the bean type
+	 * @param t the bean type
 	 * @return a WeatherDataBean, or null if unknown
 	 */
-	public static WeatherDataBean create(String type) {
+	public static WeatherDataBean create(Type t) {
 		try {
-			Class c = Class.forName(WeatherDataBean.class.getPackage().getName() + "." + type);
+			Class c = Class.forName(WeatherDataBean.class.getPackage().getName() + "." + t.toString());
 			WeatherDataBean wx = (WeatherDataBean) c.newInstance();
 			return wx;
 		} catch (Exception e) {
@@ -61,7 +68,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheab
 	 * @return the code
 	 */
 	public String getCode() {
-		return _pos.getCode();
+		return (_pos == null) ? null : _pos.getCode();
 	}
 	
 	/**
@@ -129,7 +136,8 @@ public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheab
 	 * @param a an Airport bean
 	 */
 	public void setAirport(Airport a) {
-		_pos = new AirportLocation(a);
+		if (a != null)
+			_pos = new AirportLocation(a);
 	}
 	
 	/**

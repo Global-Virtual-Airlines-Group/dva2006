@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.3
  */
 
@@ -47,8 +47,8 @@ public class AirportWeatherService extends WeatherDataService {
 
 		// Get the weather types
 		Collection<String> wxTypes = StringUtils.split(ctx.getParameter("type"), ",");
-		boolean useMETAR = wxTypes.contains("METAR");
-		boolean useTAF = wxTypes.contains("TAF");
+		boolean useMETAR = wxTypes.contains(WeatherDataBean.Type.METAR.toString());
+		boolean useTAF = wxTypes.contains(WeatherDataBean.Type.TAF.toString());
 
 		// Get the weather data
 		Collection<WeatherDataBean> wxBeans = new ArrayList<WeatherDataBean>();
@@ -61,9 +61,9 @@ public class AirportWeatherService extends WeatherDataService {
 					wxBeans.add(getFAData().getTAF(code));
 			} else {
 				if (useMETAR)
-					wxBeans.add(getNOAAData("METAR", code));
+					wxBeans.add(getNOAAData(WeatherDataBean.Type.METAR, code));
 				if (useTAF)
-					wxBeans.add(getNOAAData("TAF", code));
+					wxBeans.add(getNOAAData(WeatherDataBean.Type.TAF, code));
 			}
 
 			// Get the geographic location
