@@ -1,8 +1,13 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
+import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import org.deltava.beans.Pilot;
+
+import org.deltava.commands.CommandContext;
 
 import org.deltava.taglib.ContentHelper;
 
@@ -10,13 +15,14 @@ import org.deltava.taglib.ContentHelper;
  * A JSP tag to render page layouts in a browser-specific way. On Mozilla, absolutely positioned DIV elements will be
  * used, while tables will be used for Internet Explorer 6.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
 public class PageTag extends TagSupport {
 	
 	private boolean _renderTable;
+	private boolean _sideMenu;
 	private boolean _rowOpen;
 
 	/**
@@ -46,10 +52,17 @@ public class PageTag extends TagSupport {
 	}
 	
 	/**
+	 * Tells a child tag wheter we are rendering side menus or navigation bars.
+	 * @return TRUE if rendering a side menu, otherwise FALSE
+	 */
+	boolean sideMenu() {
+		return _sideMenu;
+	}
+	
+	/**
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
-		_renderTable = false;
 		_rowOpen = false;
 		super.release();
 	}
@@ -60,20 +73,38 @@ public class PageTag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doStartTag() throws JspException {
-		// Do nothing for non-IE6
-		if (!ContentHelper.isIE6(pageContext) && !ContentHelper.isIE7(pageContext) && !ContentHelper.isIE8(pageContext))
-			return EVAL_BODY_INCLUDE;
-
-		// Render a table for IE
-		_renderTable = true;
+		_renderTable = ContentHelper.isIE6(pageContext);
+		
+		// Check if our screen size is big enough
+		if (!_renderTable) {
+			HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest(); 
+			HttpSession s = hreq.getSession(false);
+			if (s != null) {
+				Pilot usr = (Pilot) hreq.getUserPrincipal();
+				_sideMenu = ((usr == null) || !usr.getShowNavBar());
+				if (!_sideMenu) {
+					Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
+					_sideMenu = (sX == null) || (sX.intValue() < 1280);
+				}
+			} else
+				_sideMenu = true;
+		} else
+			_sideMenu = true;
+		
+		// Render a table for IE6
 		try {
-			pageContext.getOut().print("<table id=\"ieLayout\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");
+			JspWriter out = pageContext.getOut();
+			if (_renderTable)
+				out.print("<table id=\"ieLayout\" class=\"navside\"><tbody>");
+			else if (_sideMenu)
+				out.print("<div class=\"navside\">");
+			else
+				out.print("<div class=\"navbar\">");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
 
 		// Include the body
-		_rowOpen = false;
 		return EVAL_BODY_INCLUDE;
 	}
 
@@ -83,20 +114,21 @@ public class PageTag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
-		if (_renderTable) {
+		try {
 			JspWriter out = pageContext.getOut();
-			try {
+			if (_renderTable) {
 				if (_rowOpen)
 					out.print("</tr>");
 				
 				out.print("</tbody></table>");
-			} catch (Exception e) {
-				throw new JspException(e);
-			}
+			} else
+				out.print("</div>");
+		} catch (Exception e) {
+			throw new JspException(e);
+		} finally {
+			release();
 		}
 
-		// Release and return
-		release();
 		return EVAL_PAGE;
 	}
 }

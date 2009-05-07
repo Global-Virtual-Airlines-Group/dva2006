@@ -1,22 +1,19 @@
-/* Main Cascading Style Sheet (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009 Global Virtual Airlines Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
 div#header {
-	position: absolute;
-	top: 0px;
-	bottom: 104px;
-	left: 0px;
+	height: 104px;
 	right: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
+	margin: 0;
+	border: 1px solid #ffffff;
 }
 
 /* Formatting for header title caption */
 h1.header {
-	font-family: Trebuchet MS, Verdana, Tahoma, sans-serif;
+	font-family: Trebuchet MS, verdana, tahoma, sans-serif;
 	font-size: 20pt;
-	color: #1A4876;
+	color: #1a4876;
 	text-align: center;
 	vertical-align: middle;
 	margin-top: 8px;
@@ -29,21 +26,104 @@ img.header {
 }
 
 /* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the side menu section        */
-div#sidebar {
-	position: absolute;
-	top: 100px;
-	bottom: 0px;
-	left: 0px;
-	right: 159px;
+/* Controls the sizing and formatting of the top menu display section */
+
+div.navside div#navmenu {
+	width: 155px;
 }
 
-/* Formatting for the side menu table */
-TABLE#sidenav {
+div.navbar div#navmenu {
+	width: 100%;
+	height: 19px;
+	margin: 0;
+	background-color: #1a4876;
+}
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of navigation bar elements      */
+
+ul.menu, ul.menuitem {
+	text-align: center;
+	text-decoration: none;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float:left;
+}
+
+ul.menuitem li {
+	height: 15px;
+	font: 11px verdana, tahoma, helvetica, sans-serif;
+	background-color: #c01933;
+	color: #ffffff;
+	margin: 1px;
+	padding: 1px;
+	display: block;
+}
+
+ul.menu ul.submenu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.menu li.submenuTitle {
+	height: 17px;
+	font: bold 12px verdana, tahoma, helvetica, sans-serif;
+	color: #ffffff;
+	background-color: #1a4876;
+	margin: 0px;
+	padding: 1px;
+	display: block;
+}
+
+ul.menuitem li:hover {
+	background-color: #e02840;
+}
+
+ul.menu li:hover {
+	background-color: #003366;
+	color: #efffff;
+}
+
+ul.menu ul.submenu li {
+	display:none;
+}
+
+ul.menu:hover ul.submenu li {
+	display: block;
+	opacity: .935;
+}
+
+ul.menu ul.submenu li a {
+	font: normal 11px verdana, helvetica, sans-serif;
+	color: #cfefff;
+	text-decoration: none;
+	background-color: #1a4876;
+	text-transform: uppercase;
+	display: block;
+	margin: 1px;
+	padding: 2px;
+}
+
+ul.menu ul.submenu li a:hover {
+	background-color: #003366;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+ul.menu li ul {
+	position: fixed;
+	z-index: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of side navigation elements     */
+
+table#nav {
 	table-layout: fixed;
 	width: 154px;
 	border-collapse: separate;
-	text-align: center;
 	vertical-align: middle;
 	color: #000000;
 	border-width: 2px 2px 2px 2px;
@@ -51,53 +131,58 @@ TABLE#sidenav {
 }
 
 /* Formatting for side menu section headers */
-TR.MenuHeader {
-	font-family: Verdana, Tahoma, sans-serif;
-	background-color: #1A4876;
-	color: #FFFFFF;
+table.nav tr.submenuTitle {
+	font-family: verdana, tahoma, sans-serif;
 	text-align: center;
+	background-color: #1a4876;
+	color: #ffffff;
 	font-weight: bold;
 	font-size: 9pt;
 }
 
 /* Formatting for side menu items */
-TR.MenuItem {
-	font-family: Verdana, Tahoma, sans-serif;
-	background-color: #F8F8F8;
+table.nav tr.submenu, table.nav tr.menuitem {
+	font-family: tahoma, verdana, sans-serif;
+	text-align: center;
+	background-color: #f8f8f8;
 	text-decoration: none;
 	font-size: 7pt;
 }
+ 
+table.nav td {
+	text-transform: uppercase;
+	padding: 2px;	
+}
 
 /* Side menu hyperlinks */
-*.MenuItem :link, *.MenuItem :visited {
-	text-decoration:none;
-	font-size:7pt;
+table.nav *.submenu :link, table.nav *.submenu :visited {
+	text-decoration: none;
+	font-size: 7pt;
 	color: #000000;
 }
 
 /* Side menu hyperlinks */
-*.MenuItem :link:hover, *.MenuItem :hover {
-	text-decoration:none;
+table.nav *.submenu :link:hover, table.nav *.submenu :hover {
+	text-decoration: none;
 	font-size: 7pt;
-	color: #C01933;
-}
-
-/* Google Maps infobox font */
-.mapInfoBox {
-	font-family: Verdana, Tahoma, sans-serif;
-	font-size: 8pt;
+	color: #c01933;
 }
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main display section     */
-div#main {
+
+.navbar div#main {
+	margin: 4px;
+	padding: 8px;
+}
+
+.navside div#main {
 	position: absolute;
-	top: 108px;
-	bottom: 1px;
-	left: 160px;
+	top: 107px;
+	left: 156px;
 	right: 1px;
-	margin-left: 1px;
-	margin-right: 2px;
+	padding: 8px;
+	padding-top: 5px;
 }
 
 /* Result page Header */
@@ -105,7 +190,7 @@ div#main {
 	font-family: Verdana, Tahoma, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
-	background-color: #1A4876;
+	background-color: #1a4876;
 	width: 99%;
 	padding: 2px;
 	color: #ffffff;
@@ -113,33 +198,26 @@ div#main {
 }
 
 /* Default table formatting */
-TABLE {
+table {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
-	padding: 6px 6px 6px 6px;
 }
 
-TABLE.view {
-	width: 100%;
-}
-
-BODY {
-	color: #1A4876;
-	margin-left: 2px;
-	margin-right: 0px;
-	font-family: Verdana, Tahoma, sans-serif;
-	font-size: 9pt;
+body {
+	color: #1a4876;
+	margin: 1px;
+	font: 11px verdana, tahoma, sans-serif;
 }
 
 .BUTTON, .cmdButton {
 	background-color: #003366;
 	color: #FFFFFF;
-	font-family: Verdana, Tahoma, sans-serif;
-	font-size: 8pt;
+	font-family: verdana, tahoma, sans-serif;
+	font-size: 10px;
 	text-transform: uppercase;
 	border: 2px outset #CFCFFF;
 	font-weight: normal;
@@ -147,22 +225,24 @@ BODY {
 
 .BUTTON:disabled, .cmdButton:disabled {
 	background-color: #002256;
-	color: #A0A0A0;
+	color: #a0a0a0;
 }
 
 a, a:visited {
-	color: #1A4876;
+	color: #1a4876;
 	text-decoration: underline;
-	font-size: 9pt;
+	font-size: 11px;
 }
 
 a:hover {
-	color: #C01933;
+	color: #c01933;
 	text-decoration: underline;
 }
 
 .mapInfoBox {
 	white-space: nowrap;
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 8pt;
 }
 
 .bld {
@@ -170,11 +250,11 @@ a:hover {
 }
 
 .pri {
-	color: #1A4876;
+	color: #1a4876;
 }
 
 .sec {
-	color: #C01933;
+	color: #c01933;
 }
 
 .ok {
@@ -186,15 +266,15 @@ a:hover {
 }
 
 .error {
-	color: #E02010;
+	color: #e02010;
 }
 
 .warn {
-	color: #FF8040;
+	color: #ff8040;
 }
 
 .small {
-	font-size: 8pt;
+	font-size: 10px;
 }
 
 .caps {
@@ -222,7 +302,7 @@ a:hover {
 }
 
 *.small a {
-	font-size: 8pt;
+	font-size: 10px;
 }
 
 a.plain {

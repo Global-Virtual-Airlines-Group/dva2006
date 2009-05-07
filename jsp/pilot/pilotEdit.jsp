@@ -1,5 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -119,7 +118,7 @@ return true;
 <el:table className="form" pad="default" space="default">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="${cspan + 1}">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 
 <!-- Pilot Data -->
@@ -167,13 +166,13 @@ return true;
  <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${pilot.equipmentType}" /></td>
 </c:if>
 <c:if test="${!access.canChangeStatus}">
- <td colspan="${cspan}" class="data">${pilot.rank}, ${pilot.equipmentType}</td>
+ <td colspan="${cspan}" class="data">${pilot.rank}, <span class="bld">${pilot.equipmentType}</span></td>
 </c:if> 
 </tr>
 <tr>
  <td class="label" valign="top">Additional Ratings</td>
 <c:if test="${access.canPromote}">
- <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="85" newLine="true" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="95" newLine="true" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
 </c:if>
 <c:if test="${!access.canPromote}">
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
@@ -307,8 +306,11 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
  <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapTypeName}" /></td>
 </tr>
 <tr>
- <td class="label">User Interface</td>
- <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" /></td>
+ <td class="label" valign="top">User Interface</td>
+ <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
+<c:if test="${screenXSize > 1024}"> 
+<el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />
+ <span class="small">(Navigation Bar is not displayed at screen widths below 1280 pixels.)</span></c:if></td>
 </tr>
 <%@ include file="/jsp/pilot/staffEdit.jspf" %>
 <%@ include file="/jsp/pilot/eMailEdit.jspf" %>
