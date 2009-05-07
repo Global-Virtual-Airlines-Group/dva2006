@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -290,40 +290,40 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setHasDefaultSignature(rs.getBoolean(29));
 			p.setShowNewPosts(rs.getBoolean(30));
 			p.setUIScheme(rs.getString(31));
-			p.setViewCount(rs.getInt(32));
-			p.setLoginHost(rs.getString(33));
-			p.setDateFormat(rs.getString(34));
-			p.setTimeFormat(rs.getString(35));
-			p.setNumberFormat(rs.getString(36));
-			p.setAirportCodeType(rs.getInt(37));
-			p.setDistanceType(rs.getInt(38));
-			p.setMapType(rs.getInt(39));
-			p.setNoExams(rs.getBoolean(40));
-			p.setNoVoice(rs.getBoolean(41));
-			p.setNoCooler(rs.getBoolean(42));
-			p.setACARSRestriction(rs.getInt(43));
-			p.setLDAPName(rs.getString(44));
-			p.setMotto(rs.getString(45));
+			p.setShowNavBar(rs.getBoolean(32));
+			p.setViewCount(rs.getInt(33));
+			p.setLoginHost(rs.getString(34));
+			p.setDateFormat(rs.getString(35));
+			p.setTimeFormat(rs.getString(36));
+			p.setNumberFormat(rs.getString(37));
+			p.setAirportCodeType(rs.getInt(38));
+			p.setDistanceType(rs.getInt(39));
+			p.setMapType(rs.getInt(40));
+			p.setNoExams(rs.getBoolean(41));
+			p.setNoVoice(rs.getBoolean(42));
+			p.setNoCooler(rs.getBoolean(43));
+			p.setACARSRestriction(rs.getInt(44));
+			p.setLDAPName(rs.getString(45));
+			p.setMotto(rs.getString(46));
 
-			// Check if this result set has a column 46-49, which is the PIREP totals
-			if (columnCount > 48) {
-				p.setLegs(rs.getInt(46));
-				p.setMiles(rs.getLong(47));
-				p.setHours(rs.getDouble(48));
-				p.setLastFlight(expandDate(rs.getDate(49)));
+			// Check if this result set has a column 47-50, which is the PIREP totals
+			if (columnCount > 49) {
+				p.setLegs(rs.getInt(47));
+				p.setMiles(rs.getLong(48));
+				p.setHours(rs.getDouble(49));
+				p.setLastFlight(expandDate(rs.getDate(50)));
 			}
 
-			// Check if this result set has a column 50, which is the signature extension
-			if (columnCount > 49)
-				p.setSignatureExtension(rs.getString(50));
+			// Check if this result set has a column 51, which is the signature extension
+			if (columnCount > 50)
+				p.setSignatureExtension(rs.getString(51));
 
-			// CHeck if this result set has columns 51/52, which are online legs/hours
-			if (columnCount > 51) {
-				p.setOnlineLegs(rs.getInt(51));
-				p.setOnlineHours(rs.getDouble(52));
+			// CHeck if this result set has columns 52/53, which are online legs/hours
+			if (columnCount > 52) {
+				p.setOnlineLegs(rs.getInt(52));
+				p.setOnlineHours(rs.getDouble(53));
 			}
 
-			// Add the pilot
 			results.add(p);
 		}
 

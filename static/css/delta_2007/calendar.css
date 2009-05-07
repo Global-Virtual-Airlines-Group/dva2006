@@ -1,6 +1,6 @@
-/* Cascading Style Sheet for Calendar pages */
+/* Cascading Style Sheet for Calendar pages (C) 2005, 2006, 2007, 2009 Global Virtual Airlines Group. */
 
-TABLE.calendar {
+table.calendar {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
@@ -9,33 +9,33 @@ TABLE.calendar {
 	width: 100%;
 }
 
-TABLE.calendar TR {
-	background-color: #EFEFEF;
+table.calendar tr {
+	background-color: #efefef;
 }
 
-TABLE.calendar TD.dayHdr, TABLE.calendar TR.scroll {
-	font-size: 9pt;
+table.calendar td.dayHdr, table.calendar tr.scroll {
+	font-size: 11px;
 	background-color: #003366;
 	color: #ffffff;
 	font-weight: bold;
 }
 
-TABLE.calendar TD.contentW {
+TABLE.calendar td.contentW {
 	height: 300px;
 	width: 14%;
 	vertical-align: top;
 }
 
-TABLE.calendar TD.contentM {
+table.calendar td.contentM {
 	height: 160px;
 	width: 14%;
 	vertical-align: top;
 }
 
 *.dayHdr :link, *.dayHdr :visited, *.scroll :link, *.scroll :visited {
-	color: #EFFFFF;
+	color: #efffff;
 	font-weight: bold;
 	text-decoration: underline;
 	text-transform: uppercase;
-	font-family: Tahoma, Verdana;
+	font-family: tahoma, verdana;
 }

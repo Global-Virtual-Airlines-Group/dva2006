@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
@@ -10,176 +11,109 @@
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
-<!-- Sidebar Navigation Frame -->
-<content:region id="sidebar">
-<el:table ID="sidenav" pad="default" space="default">
-<tr class="MenuHeader"><td>OUR AIRLINE</td></tr>
-<tr class="MenuItem">
- <td><el:link url="/">HOME</el:link></td>
-</tr>
+<!-- Top Menu Frame -->
+<content:region id="navmenu">
+<content:menu attr="isSideMenu">
+<c:if test="${!isSideMenu}">
+<content:authUser var="user">
+<c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}">${user.name}</content:menuitem>
+<content:superUser var="superUser">
+<c:set var="itemLength" value="${fn:length(superUser.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}">${superUser.name}</content:menuitem>
+</content:superUser>
+</content:authUser>
+</c:if>
+
+<content:submenu title="Our Airline" width="170">
+ <content:subitem><el:link url="/">Home</el:link></content:subitem>
 <content:authUser anonymous="true">
-<tr class="MenuItem">
- <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="login" className="bld">Login</el:cmd></content:subitem>
 </content:authUser>
 <content:authUser var="user">
-<tr class="MenuItem">
- <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
-</tr>
+<c:if test="${isSideMenu}">
+ <content:menuitem><span class="sec caps bld">${user.name}</span></content:menuitem>
 <content:superUser var="superUser">
-<tr class="MenuItem">
- <td class="ter bld">${superUser.name}</td>
-</tr>
+ <content:menuitem><span class="ter">${superUser.name}</span></content:menuitem>
 </content:superUser>
-<tr class="MenuItem">
- <td><el:cmd url="logout">LOG OUT</el:cmd></td>
-</tr>
-</content:authUser>
-<tr class="MenuItem">
- <td><el:cmd url="notams">NOTAMs</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="news">AIRLINE NEWS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="fleetgallery">FLEET GALLERY</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="imagegallery">IMAGE GALLERY</el:cmd></td>
-</tr>
-<c:if test="${newsletterEnabled}">
-<tr class="MenuItem caps">
- <td><el:cmd url="newsletters">${newsletter}</el:cmd></td>
-</tr>
 </c:if>
-<tr class="MenuItem">
- <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="users">LOGGED IN USERS</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>PILOTS' LOUNGE</td></tr>
+ <content:subitem><el:cmd url="logout">Log Out</el:cmd></content:subitem>
+</content:authUser>
+ <content:subitem><el:cmd url="notams">NOTAMs</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="news">Airline News</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="fleetgallery">Fleet Gallery</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="imagegallery">Image Gallery</el:cmd></content:subitem>
+<c:if test="${newsletterEnabled}">
+ <content:subitem><el:cmd url="newsletters">${newsletter}</el:cmd></content:subitem>
+</c:if>
+ <content:subitem><el:cmd url="flightboard">Online Flights</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
+<content:filter roles="Developer">
+ <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
+</content:filter>
+</content:submenu>
+
+<content:submenu title="Pilot's Lounge" width="170">
 <content:filter roles="Pilot">
-<tr class="MenuItem bld pri">
- <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
-</tr>
-<c:if test="${((!empty user) && academyEnabled && (user.legs > academyFlights))}">
-<tr class="MenuItem">
- <td><el:cmd url="academy">FLIGHT ACADEMY</el:cmd></td>
-</tr>
+ <content:subitem className="bld"><el:cmd url="pilotcenter">Pilot Center</el:cmd></content:subitem>
+<c:if test="${(academyEnabled && (user.legs > academyFlights))}">
+ <content:subitem><el:cmd url="academy">Flight Academy</el:cmd></content:subitem>
 </c:if>
 <c:if test="${helpDeskEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
 </c:if>
 </content:filter>
-<tr class="MenuItem">
- <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td class="caps"><el:cmd url="channels">${forumName}</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>OUR PEOPLE</td></tr>
+ <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
+</content:submenu>
+ 
+<content:submenu title="Our People" width="180">
 <content:authUser anonymous="true">
-<tr class="MenuItem bld pri">
- <td><el:cmd url="register">JOIN US</el:cmd></td>
-</tr>
+ <content:subitem className="bld"><el:cmd url="register">Join Us</el:cmd></content:subitem>
 </content:authUser>
-<tr class="MenuItem">
- <td><el:cmd url="roster">PILOT ROSTER</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="pilotboard">PILOT LOCATIONS</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="roster">Pilot Roster</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="pilotboard">Pilot Locations</el:cmd></content:subitem>
 <content:filter roles="HR,PIREP,Examination">
-<tr class="MenuItem">
- <td><el:cmd url="pilotsearch">PILOT SEARCH</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
 </content:filter>
-<tr class="MenuItem">
- <td><el:cmd url="recognition">PILOT ACCOMPLISHMENTS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="centuryclub">CENTURY CLUB</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="landingstats">LANDING STATISTICS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="landings">GREASED LANDINGS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="simversionstats">SIMULATOR VERSIONS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="lroster">VIEW LOGBOOKS</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>ACARS</td></tr>
-<content:filter roles="Pilot">
-<c:if test="${ts2Enabled}">
-<tr class="MenuItem">
- <td><el:cmd url="ts2vox">TEAMSPEAK 2</el:cmd></td>
-</tr>
-</c:if>
-</content:filter>
+ <content:subitem><el:cmd url="recognition">Pilot Accomplishments</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="centuryclub">Century Club</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="lroster">View Logbooks</el:cmd></content:subitem>
+</content:submenu>
+
 <c:if test="${acarsEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="dspcalendar">DISPATCH SCHEDULE</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:link url="/acars_map_earth.ws">GOOGLE EARTH</el:link></td>
-</tr>
+<content:submenu title="ACARS" width="170">
+ <content:subitem><el:cmd url="acarsmap">Live ACARS Map</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
+ <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
+ <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
+</content:submenu>
 </c:if>
-<tr class="MenuItem">
- <td><el:cmd url="acarsprsearch">ACARS FLIGHTS</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>STATISTICS</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="airlinestats">AIRLINE TOTALS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="flightstats">FLIGHT TOTALS</el:cmd></td>
-</tr>
-<content:filter roles="Fleet,HR">
-<tr class="MenuItem">
- <td><el:cmd url="fleetstats">FLEET TOTALS</el:cmd></td>
-</tr>
+
+<content:submenu title="Statistics" width="175">
+ <content:subitem><el:cmd url="airlinestats">Airline Totals</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="flightstats">Flight Statistics</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="simversionstats">Simulator Versions</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="landings">Greased Landings</el:cmd></content:subitem>
+<content:filter roles="Fleet,HR"> 
+ <content:subitem><el:cmd url="fleetstats">Fleet Totals</el:cmd></content:subitem>
 </content:filter>
 <content:filter roles="Moderator,HR">
-<tr class="MenuItem">
- <td><el:cmd url="coolerstats">COOLER STATISTICS</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="coolerstats">Cooler Statistics</el:cmd></content:subitem>
 </content:filter>
-<tr class="MenuItem">
- <td><el:cmd url="httpstats">SERVER STATISTICS</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>CONTACT US</td></tr>
-<tr class="MenuItem">
- <td><el:link url="mailto:${infoEmail}">CORPORATE OFFICES</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
-</tr>
-<content:filter roles="Anonymous,HR,Admin">
-<tr class="MenuItem">
- <td><el:cmd url="pwdreset">PASSWORD RESET</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="httpstats">Server Statistics</el:cmd></content:subitem>
+</content:submenu>
+
+<content:submenu title="Contact Us" width="170"> 
+ <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
+ <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
+<c:if test="${helpDeskEnabled}">
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+<content:filter roles="Anonymous,HR">
+ <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
 </content:filter>
-<tr class="MenuHeader"><td>GOLGOTHA</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
-</tr>
-<content:filter roles="Developer">
-<tr class="MenuItem">
- <td><el:cmd url="issues" link="${user}">MY ISSUES</el:cmd></td>
-</tr>
-</content:filter>
-<tr class="MenuItem">
- <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
-</tr>
-</el:table>
+</content:submenu>
+</content:menu>
 </content:region>

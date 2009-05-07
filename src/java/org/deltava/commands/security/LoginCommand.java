@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -105,6 +105,13 @@ public class LoginCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Calculate screen size
+		int screenX = StringUtils.parse(ctx.getParameter("screenX"), 1024);
+		int screenY = StringUtils.parse(ctx.getParameter("screenY"), 768);
+		int bodyX = StringUtils.parse(ctx.getParameter("bodyX"), 0);
+		if ((bodyX > 800) && (bodyX < screenX))
+			screenX = bodyX;
 
 		// Build the full name
 		StringBuilder fullName = new StringBuilder(fName.trim());
@@ -180,7 +187,7 @@ public class LoginCommand extends AbstractCommand {
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
 			cData.setPassword(ctx.getParameter("pwd"));
 			cData.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-			cData.setScreenSize(StringUtils.parse(ctx.getParameter("screenX"), 1024), StringUtils.parse(ctx.getParameter("screenY"), 768));
+			cData.setScreenSize(screenX, screenY);
 			
 			// Encode the encrypted data via Base64
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));

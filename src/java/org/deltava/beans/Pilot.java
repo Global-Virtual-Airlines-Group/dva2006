@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -61,9 +61,9 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
 	private String _ldapID;
 
-	private final Set<String> _ratings = new TreeSet<String>();
-	private final Set<String> _roles = new TreeSet<String>();
-	private final Set<String> _certs = new LinkedHashSet<String>();
+	private final Collection<String> _ratings = new TreeSet<String>();
+	private final Collection<String> _roles = new TreeSet<String>();
+	private final Collection<String> _certs = new LinkedHashSet<String>();
 
 	private long _miles;
 	private Date _lastFlight;
@@ -95,6 +95,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private String _sigExt;
 
 	private final DecimalFormat _df = new DecimalFormat("##000");
+	private boolean _showNavBar;
 
 	/**
 	 * Creates a Pilot object with a given first and last name, converted to "proper case".
@@ -166,6 +167,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public boolean getShowSSThreads() {
 		return _showSSThreads;
+	}
+	
+	/**
+	 * Returns whether a navigation bar or a side menu will be rendered.
+	 * @return TRUE if a navigation bar should be displayed, otherwise FALSE
+	 * @see Pilot#setShowNavBar(boolean)
+	 */
+	public boolean getShowNavBar() {
+		return _showNavBar;
 	}
 	
 	/**
@@ -624,6 +634,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public void setMapType(String mapType) {
 		setMapType(StringUtils.arrayIndexOf(Pilot.MAP_TYPES, mapType, 0));
+	}
+	
+	/**
+	 * Sets whether a Navigation Bar or side menu should be rendered. 
+	 * @param showNavBar TRUE if a navigation bar should be rendered, otherwise FALSE
+	 * @see Pilot#getShowNavBar()
+	 */
+	public void setShowNavBar(boolean showNavBar) {
+		_showNavBar = showNavBar;
 	}
 
 	/**

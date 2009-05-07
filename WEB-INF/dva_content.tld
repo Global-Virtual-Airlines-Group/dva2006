@@ -188,6 +188,12 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>opera</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>webKit</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -220,8 +226,8 @@
 		</attribute>
 	</tag>
 
-	<!-- Authenticated User Filter tag, for stripping out content if a user is anonymous -->
 	<tag>
+		<description>Authenticated User Filter tag, for stripping out content if a user is anonymous</description>
 		<name>authUser</name>
 		<tag-class>org.deltava.taglib.content.AuthenticatedUserFilterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -453,6 +459,61 @@
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Menu Tag, for displaying navigation menus</description>
+		<name>menu</name>
+		<tag-class>org.deltava.taglib.layout.MenuTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>attr</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Menu Item Tag, for displaying top-level menu items</description>
+		<name>menuitem</name>
+		<tag-class>org.deltava.taglib.layout.MenuItemTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>			
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>SubMenu Tag, for displaying top-level menu items</description>
+		<name>submenu</name>
+		<tag-class>org.deltava.taglib.layout.SubMenuTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>title</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>			
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>Sub-Menu Item Tag, for displaying drop-down items</description>
+		<name>subitem</name>
+		<tag-class>org.deltava.taglib.layout.SubMenuItemTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
 </taglib>

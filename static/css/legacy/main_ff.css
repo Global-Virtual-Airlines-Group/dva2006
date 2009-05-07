@@ -1,22 +1,19 @@
-/* Main Cascading Style Sheet (C) 2005, 2006 Global Virtual Airlines Group. */
+/* Main Cascading Style Sheet (C) 2005, 2006, 2009 Global Virtual Airlines Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
 div#header {
-	position: absolute;
-	top: 0px;
-	bottom: 104px;
-	left: 0px;
+	height: 104px;
 	right: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
+	margin: 0;
+	border: 1px solid #ffffff;
 }
 
 /* Formatting for header title caption */
 h1.header {
-	font-family: Trebuchet MS, Tahoma, sans-serif;
+	font-family: Trebuchet MS, tahoma, sans-serif;
 	font-size: 17pt;
-	color: #0000A1;
+	color: #0000a1;
 	text-align: center;
 	vertical-align: middle;
 	margin-top: 12px;
@@ -29,17 +26,99 @@ img.header {
 }
 
 /* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the side menu section        */
-div#sidebar {
-	position: absolute;
-	top: 100px;
-	bottom: 0px;
-	left: 0px;
-	right: 159px;
+/* Controls the sizing and formatting of the top menu display section */
+
+div.navside div#navmenu {
+	width: 155px;
 }
 
-/* Formatting for the side menu table */
-TABLE#sidenav {
+div.navbar div#navmenu {
+	width: 100%;
+	height: 19px;
+	margin: 0;
+	background-color: #0000a1;
+}
+
+ul.menu, ul.menuitem {
+	text-align: center;
+	text-decoration: none;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float:left;
+}
+
+ul.menuitem li {
+	height: 15px;
+	font: 11px tahoma, verdana, helvetica, sans-serif;
+	background-color: #0000a1;
+	color: #ffffff;
+	margin: 1px;
+	padding: 1px;
+	display: block;
+}
+
+ul.menu ul.submenu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.menu li.submenuTitle {
+	height: 17px;
+	font: bold 12px tahoma, verdana, helvetica, sans-serif;
+	color: #ffffff;
+	background-color: #0000a1;
+	margin: 0px;
+	padding: 1px;
+	display: block;
+}
+
+ul.menuitem li:hover {
+	background-color: #0000c1;
+}
+
+ul.menu li:hover {
+	background-color: #0000c1;
+	color: #7fcfff;
+}
+
+ul.menu li.submenu li {
+	display:none;	
+}
+
+ul.menu:hover ul.submenu li {
+	display: block;
+	opacity: .905;
+}
+
+ul.menu ul.submenu li a {
+	font: normal 11px tahoma, verdana, helvetica, sans-serif;
+	color: #dfffff;
+	background-color: #0000a1;
+	text-transform: uppercase;
+	text-decoration: none;
+	display: block;
+	margin: 1px;
+	padding: 2px;
+}
+
+ul.menu ul.submenu li :hover {
+	background-color: #0000c8;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+ul.menu li ul {
+	position: fixed;
+	z-index: 500;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of side navigation elements     */
+
+table.nav {
 	table-layout: fixed;
 	width: 154px;
 	border-collapse: separate;
@@ -51,53 +130,57 @@ TABLE#sidenav {
 }
 
 /* Formatting for side menu section headers */
-TR.MenuHeader {
-	font-family: Verdana, Tahoma, sans-serif;
-	background-color: #0000A1;
-	color: #FFFFFF;
-	text-align: center;
+table.nav tr.submenuTitle {
+	font-family: verdana, tahoma, sans-serif;
+	background-color: #0000a1;
+	color: #ffffff;
 	font-weight: bold;
 	font-size: 9pt;
 }
 
 /* Formatting for side menu items */
-TR.MenuItem {
-	font-family: Tahoma, Verdana, sans-serif;
-	background-color: #EFEFEF;
+table.nav tr.submenu, table.nav tr.menuitem {
+	font-family: tahoma, verdana, sans-serif;
+	background-color: #efefef;
 	text-decoration: none;
 	font-size: 7pt;
 }
 
+table.nav td {
+	text-transform: uppercase;
+	padding: 2px;	
+}
+
 /* Side menu hyperlinks */
-*.MenuItem :link, *.MenuItem :visited {
-	text-decoration:none;
-	font-size:7pt;
+table.nav *.submenu :link, table.nav *.submenu :visited {
+	text-decoration: none;
+	font-size: 7pt;
 	color: #000000;
 }
 
 /* Side menu hyperlinks */
-*.MenuItem :link:hover, *.MenuItem :hover {
-	text-decoration:none;
-	font-size:7pt;
-	color:#0080D1;
+table.nav *.submenu :link:hover, table.nav *.submenu :hover {
+	text-decoration: none;
+	font-size: 7pt;
+	color: #0080d1;
 }
 
-/* Google Maps infobox font */
-.mapInfoBox {
-	font-family: Tahoma, Verdana, sans-serif;
-	font-size: 8pt;
-}
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main display section     */
-div#main {
+
+.navbar div#main {
+	margin: 4px;
+	padding: 8px;
+}
+
+.navside div#main {
 	position: absolute;
-	top: 108px;
-	bottom: 1px;
-	left: 160px;
+	top: 107px;
+	left: 156px;
 	right: 1px;
-	margin-left: 1px;
-	margin-right: 2px;
+	padding: 8px;
+	padding-top: 5px;
 }
 
 /* Result page Header */
@@ -105,7 +188,7 @@ div#main {
 	font-family: Tahoma, Verdana, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
-	background-color: #0000A1;
+	background-color: #0000a1;
 	width: 99%;
 	padding: 2px;
 	color: #ffffff;
@@ -113,26 +196,19 @@ div#main {
 }
 
 /* Default table formatting */
-TABLE {
+table {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
 	font-family: Tahoma, Verdana;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
-	padding: 6px 6px 6px 6px;
 }
 
-TABLE.view {
-	width: 100%;
-}
-
-BODY {
-	color: #0000A1;
-	margin-left: 2px;
-	margin-right: 0px;
-	font-family: Tahoma, Verdana;
-	font-size: 9pt;
+body {
+	color: #0000a1;
+	margin: 1px;
+	font: 12px tahoma, verdana, sans-serif;
 }
 
 .BUTTON, .cmdButton {
@@ -147,21 +223,24 @@ BODY {
 
 .BUTTON:disabled, .cmdButton:disabled {
 	background-color: #002068;
-	color: #A0A0A0;
+	color: #a0a0a0;
 }
 
 a, a:visited {
-	color: #0000A1;
+	color: #0000a1;
 	text-decoration: underline;
 	font-size: 9pt;
 }
 
 a:hover {
-	color: #0080D1;
+	color: #0080d1;
 	text-decoration: underline;
 }
 
+/* Google Maps infobox font */
 .mapInfoBox {
+	font-family: tahoma, verdana, sans-serif;
+	font-size: 8pt;
 	white-space: nowrap;
 }
 
@@ -170,7 +249,7 @@ a:hover {
 }
 
 .pri {
-	color: #0000A1;
+	color: #0000a1;
 }
 
 .ok, .sec {
@@ -182,7 +261,7 @@ a:hover {
 }
 
 .error {
-	color: #E02010;
+	color: #e02010;
 }
 
 .warn {

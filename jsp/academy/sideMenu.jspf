@@ -7,111 +7,85 @@
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
-<!-- Sidebar Navigation Frame -->
-<content:region id="sidebar">
-<el:table ID="sidenav" pad="default" space="default">
-<tr class="MenuHeader"><td>OUR AIRLINE</td></tr>
-<tr class="MenuItem">
- <td><el:link url="/">HOME</el:link></td>
-</tr>
-<tr class="MenuItem">
+<!-- Top Menu Frame -->
+<content:region id="navmenu">
+<content:menu attr="isSideMenu">
+<c:if test="${!isSideMenu}">
+<content:authUser var="user">
+<c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}"><span class="sec">${user.name}</span></content:menuitem>
+<content:superUser var="superUser">
+<c:set var="itemLength" value="${fn:length(superUser.name) * 10}" scope="page" />
+ <content:menuitem width="${itemLength}"><span class="ter">${superUser.name}</span></content:menuitem>
+</content:superUser>
+</content:authUser>
+</c:if>
+
+<content:submenu title="Flight Academy" width="170">
+ <content:subitem><el:cmd url="academy">Academy Home</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="academycalendar">Instruction Calendar</el:cmd></content:subitem>
+<content:filter roles="HR,Instructor,AcademyAdmin">
+ <content:subitem><el:cmd url="busycalendar">Busy Times</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="courses">Active Courses</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="certs">Certifications</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="academyridequeue">Check Rides</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="inslogbook">Instruction Logbook</el:cmd></content:subitem>
+<c:if test="${videoEnabled}">
+ <content:subitem><el:cmd url="tvideolibrary">Video Library</el:cmd></content:subitem>
+</c:if>
+</content:filter>
+</content:submenu>
+
+<content:submenu title="Our Airline" width="170">
+ <content:subitem><el:link url="/">Home</el:link></content:subitem>
 <content:authUser anonymous="true">
- <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
+ <content:subitem><el:cmd url="login">Login</el:cmd></content:subitem>
 </content:authUser>
 <content:authUser var="user">
- <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
-</tr>
+<c:if test="${isSideMenu}">
+ <content:menuitem><span class="sec caps bld">${user.name}</span></content:menuitem>
 <content:superUser var="superUser">
-<tr class="MenuItem">
- <td class="ter bld">${fn:upper(superUser.name)}</td>
-</tr>
+ <content:menuitem><span class="ter">${superUser.name}</span></content:menuitem>
 </content:superUser>
-<tr class="MenuItem">
- <td><el:cmd url="logout">LOG OUT</el:cmd></td>
+</c:if>
+ <content:subitem><el:cmd url="logout">Log Out</el:cmd></content:subitem>
 </content:authUser>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="users">LOGGED IN USERS</el:cmd></td>
-</tr>
-<tr class="MenuHeader"><td>FLIGHT ACADEMY</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="academy">ACADEMY HOME</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="academycalendar">INSTRUCTION CALENDAR</el:cmd></td>
-</tr>
-<content:filter roles="HR,Instructor,AcademyAdmin">
-<tr class="MenuItem">
- <td><el:cmd url="busycalendar">BUSY TIMES</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="courses">ACTIVE COURSES</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="certs">CERTIFICATIONS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="academyridequeue">CHECK RIDES</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="inslogbook">INSTRUCTION LOGBOOK</el:cmd></td>
-</tr>
-<c:if test="${videoEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="tvideolibrary">VIDEO LIBRARY</el:cmd></td>
-</tr>
-</c:if>
+ <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
+<content:filter roles="Developer">
+ <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
 </content:filter>
-<tr class="MenuHeader"><td>PILOTS' LOUNGE</td></tr>
+</content:submenu>
+
+<content:submenu title="Pilot's Lounge" width="170">
 <content:filter roles="Pilot">
-<tr class="MenuItem bld pri">
- <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
-</tr>
+ <content:subitem className="bld"><el:cmd url="pilotcenter">Pilot Center</el:cmd></content:subitem>
 <c:if test="${helpDeskEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
 </c:if>
 </content:filter>
-<tr class="MenuItem">
- <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td class="caps"><el:cmd url="channels">${forumName}</el:cmd></td>
-</tr>
+ <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
+</content:submenu>
+
 <c:if test="${acarsEnabled}">
-<tr class="MenuHeader"><td>ACARS</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="dspcalendar">DISPATCH SCHEDULE</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:link url="/acars_map_earth.ws">GOOGLE EARTH</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="acarsprsearch">ACARS FLIGHTS</el:cmd></td>
-</tr>
+<content:submenu title="ACARS" width="170">
+ <content:subitem><el:cmd url="acarsmap">Live ACARS Map</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
+ <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
+ <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
+</content:submenu>
 </c:if>
-<tr class="MenuHeader"><td>CONTACT US</td></tr>
-<tr class="MenuItem">
- <td><el:link url="mailto:${infoEmail}">CORPORATE OFFICES</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
-</tr>
-<content:filter roles="Anonymous,HR,Admin">
-<tr class="MenuItem">
- <td><el:cmd url="pwdreset">PASSWORD RESET</el:cmd></td>
-</tr>
+
+<content:submenu title="Contact Us" width="170">
+ <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
+ <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
+<c:if test="${helpDeskEnabled}">
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
+</c:if>
+<content:filter roles="Anonymous,HR">
+ <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
 </content:filter>
-<tr class="MenuHeader"><td>GOLGOTHA</td></tr>
-<tr class="MenuItem">
- <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
-</tr>
-<tr class="MenuItem">
- <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
-</tr>
-</el:table>
+</content:submenu>
+</content:menu>
 </content:region>

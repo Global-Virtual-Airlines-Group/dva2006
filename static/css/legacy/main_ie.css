@@ -1,25 +1,18 @@
-/* Main Cascading Style Sheet (C) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. */
-
-/* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the main IE formatting table */
-TABLE#ieLayout {
-	position: relative;
-	width: 100%;
-	top: -16px;
-	left: 0px;
-}
+/* Main Cascading Style Sheet (C) 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
-TD#header {
-	background-color: #ffffff;
+div#header {
+	height:104px;
+	left: 0px;
+	margin: 0;
 }
 
 /* Formatting for header title caption */
 h1.header {
-	font-family: Trebuchet MS, Tahoma, sans-serif;
+	font-family: Trebuchet MS, tahoma, sans-serif;
 	font-size: 17pt;
-	color: #0000A1;
+	color: #0000a1;
 	text-align: center;
 	vertical-align: middle;
 	margin-top: 12px;
@@ -32,86 +25,169 @@ img.header {
 }
 
 /* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the side menu section        */
-TD#sidebar {
-	width: 160px;
-	vertical-align: top;
-	background-color: #ffffff;
+/* Controls the sizing and formatting of the top menu display section */
+
+div.navside div#navmenu {
+	width: 155px;
 }
 
-/* Used by IE7+ */
-div#sidebar {
-	position: absolute;
-	top: 100px;
-	bottom: 0px;
+div.navbar div#navmenu {
+	width: 100%;
+	height: 19px;
+	margin: 0;
+	background-color: #0000a1;
+}
+
+ul.menu, ul.menuitem {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+ul.menuitem li {
+	height: 15px;
+	font: 11px tahoma, verdana, sans-serif;
+	text-align: center;
+	background-color: #0000b1;
+	color: #ffffff;
+	text-decoration: none;
+	margin: 1px;
+	padding: 1px;
+	display: block;
+}
+
+ul.menu ul.submenu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+ul.menu li.submenuTitle {
+	font: bold 12px tahoma, verdana, sans-serif;
+	text-align: center;
+	color: #ffffff;
+	text-decoration: none;
+	background-color: #0000a1;
+	margin: 0px;
+	padding: 1px;
+	display: block;
+}
+
+ul.menuitem li:hover {
+	background-color: #0000c1;
+}
+
+ul.menu li.submenu li {
+	display:none;	
+}
+
+ul.menu:hover li.submenuTitle {
+	background-color: #0000c1;
+	color: #7fcfff;
+}
+
+ul.menu:hover ul.submenu li {
+	display: block;
+	opacity: .905;
+}
+
+ul.menu ul.submenu li a {
+	font: normal 11px tahoma, verdana, helvetica, sans-serif;
+	color: #dfffff;
+	text-align: center;
+	background-color: #0000a1;
+	text-transform: uppercase;
+	text-decoration: none;
+	display: block;
+	margin: 0px;
+	padding: 0px;
+}
+
+ul.menu ul.submenu li a:hover {
+	background-color: #0000c8;
+	font-weight: bold;
+	color: #efffff;
+}
+
+ul.menu li ul {
+	position: fixed;
+	z-index: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of the main IE formatting table */
+table#ieLayout {
+	width: 100%;
 	left: 0px;
-	width: 159px;
-}
-
-TD#main {
-	vertical-align: top;
 	background-color: #ffffff;
-	color: #0000a1;
 }
 
-/* Used by IE7+ */
-div#main {
+table#ieLayout td#navmenu {
+	vertical-align: top;
+	width: 160px;
+}
+
+table#ieLayout td#main {
+	vertical-align: top;
+	color: #0000a1;
+	margin: 8px;
+}
+
+.navbar div#main {
+	margin: 4px;
+	padding: 8px;
+}
+
+.navside div#main {
 	position: absolute;
-	top: 110px;
-	bottom: 1px;
-	left: 162px;
-	right: 1px;
-	margin-left: 1px;
-	margin-right: 2px;
+	top: 108px;
+	left: 156px;
+	padding: 8px;
 }
 
 /* Formatting for the side menu table */
-TABLE#sidenav {
+table.nav {
 	table-layout: fixed;
+	width: 154px;
 	border-collapse: separate;
+	text-transform: uppercase;
 	text-align: center;
-	vertical-align: middle;
 	color: #000000;
 	border-width: 2px 2px 2px 2px;
 	padding: 4px 4px 4px 4px;
 }
 
 /* Formatting for side menu section headers */
-TR.MenuHeader {
-	font-family: Verdana, Tahoma, sans-serif;
-	background-color: #0000A1;
-	color: #FFFFFF;
-	text-align: center;
+table.nav tr.submenuTitle {
+	font-family: verdana, tahoma, sans-serif;
+	background-color: #0000a1;
+	color: #ffffff;
 	font-weight: bold;
-	font-size: 9pt;
+	font: 9pt;
 }
 
 /* Formatting for side menu items */
-TR.MenuItem {
-	font-family: Tahoma, Verdana, sans-serif;
-	background-color: #EFEFEF;
+table.nav tr.submenu, table.nav tr.menuitem {
+	font-family: tahoma, verdana, sans-serif;
+	background-color: #efefef;
 	text-decoration: none;
-	font-size: 7pt;
+	font-size: 11px;
 }
 
 /* Side menu hyperlinks */
-*.MenuItem :link, *.MenuItem :visited {
-	text-decoration:none;
-	font-size:7pt;
+table.nav *.submenu :link, table.nav *.submenu :visited {
+	text-decoration: none;
+	font-size: 11px;
 	color: #000000;
 }
 
 /* Side menu hyperlinks */
-*.MenuItem :link:hover, *.MenuItem :hover {
-	text-decoration:none;
-	font-size:7pt;
-	color:#0080D1;
-}
-
-/* Google Maps infobox font */
-.mapInfoBox {
-	font-family: Tahoma, Verdana, sans-serif;
-	font-size: 8pt;
+table.nav *.submenu :link:hover, table.nav *.submenu :hover {
+	text-decoration: none;
+	font-size: 11px;
+	color:#0080d1;
 }
 
 /* ------------------------------------------------------------------ */
@@ -129,39 +205,40 @@ TR.MenuItem {
 }
 
 /* Default table formatting */
-TABLE {
+table {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
 	font-family: Tahoma, Verdana;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
-	padding: 6px 6px 6px 6px;
 }
 
-BODY {
+body {
 	scrollbar-face-color: #000080;
 	scrollbar-track-color: #303030;
 	scrollbar-arrow-color: #FFFFFF;
 	color: #0000A1;	
 	margin-left: 2px;
 	margin-right: 0px;
-	font-family: Tahoma, Verdana;
+	margin-top: 1px;
+	font-family: tahoma, verdana;
 	font-size: 9pt;
+	behavior: url(csshover.htc);
 }
 
 .BUTTON, .cmdButton {
 	background-color: #000080;
 	color: #FFFFFF;
-	font-family: Tahoma, Verdana;
+	font-family: tahoma, verdana;
 	font-size: 8pt;
 	text-transform: uppercase;
-	border: 2px outset #CFCFFF;
+	border: 2px outset #cfcfff;
 	font-weight: normal;
 }
 
 a, a:visited {
-	color: #0000A1;
+	color: #0000a1;
 	text-decoration: underline;
 	font-size: 9pt;
 }
@@ -172,7 +249,7 @@ a:hover {
 	font-size: 9pt;
 }
 
-.bld {
+.bld, a.bld {
 	font-weight: bold;
 }
 
@@ -196,7 +273,7 @@ a:hover {
 	color: #FF8040;
 }
 
-.small {
+.small, a.small, *.small a {
 	font-size: 8pt;
 }
 
@@ -224,18 +301,20 @@ a:hover {
 	visibility: visible;
 }
 
-*.small a {
-	font-size: 8pt;
-}
-
 a.plain {
 	color: inherit;
 	text-decoration: none;
 }
 
 /* This is an IE-only hack for required SELECT elements */
-SELECT.req {
-	background: #FFF8FA;
-	border: 1px solid #E00404;
-	color: #9F0303;
+select.req {
+	background: #fff8fa;
+	border: 1px solid #e00404;
+	color: #9f0303;
+}
+
+/* Google Maps infobox font */
+.mapInfoBox {
+	font-family: tahoma, verdana, sans-serif;
+	font-size: 8pt;
 }
