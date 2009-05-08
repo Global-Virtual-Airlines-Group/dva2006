@@ -185,7 +185,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	/**
 	 * Calculates the distance between two GeoPositions.
 	 * @param gp2 the other position
-	 * @return The distance in natuical miles between the two positions, or -1 if gp2 is null
+	 * @return The distance in statute miles between the two positions, or -1 if gp2 is null
 	 */
 	public int distanceTo(GeoLocation gp2) {
 	   
