@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A common String utility class.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -20,6 +20,7 @@ public final class StringUtils {
 
 	// We're a singleton, alone and lonely
 	private StringUtils() {
+		super();
 	}
 
 	/**
@@ -158,7 +159,7 @@ public final class StringUtils {
 			return defaultValue;
 
 		try {
-			return Integer.parseInt(value);
+			return parseHex(value);
 		} catch (NumberFormatException nfe) {
 			return defaultValue;
 		}
