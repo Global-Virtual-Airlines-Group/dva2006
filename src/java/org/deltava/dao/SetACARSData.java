@@ -5,15 +5,15 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
-import org.deltava.beans.navdata.NavigationDataBean;
-import org.deltava.beans.navdata.TerminalRoute;
+import org.deltava.beans.navdata.*;
+
 import org.deltava.util.CalendarUtils;
 
 /**
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -81,7 +81,50 @@ public class SetACARSData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
+	/**
+	 * Writes the runways used on a Flight to the database.
+	 * @param flightID the Flight ID
+	 * @param rwyD the departure Runway
+	 * @param rwyA the arrival Runway
+	 * @throws DAOException if a JDBC error occured
+	 */
+	public void writeRunways(int flightID, Runway rwyD, Runway rwyA) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO acars.RWYDATA (ID, ICAO, RUNWAY, LATITUDE, LONGITUDE, LENGTH, DISTANCE, "
+				+ "ISTAKEOFF) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, flightID);
+			if (rwyD != null) {
+				int dist = (rwyD instanceof RunwayDistance) ? ((RunwayDistance) rwyD).getDistance() : 0;
+				_ps.setString(2, rwyD.getCode());
+				_ps.setString(3, rwyD.getName());
+				_ps.setDouble(4, rwyD.getLatitude());
+				_ps.setDouble(5, rwyD.getLongitude());
+				_ps.setInt(6, rwyD.getLength());
+				_ps.setInt(7, dist);
+				_ps.setBoolean(8, true);
+				_ps.addBatch();
+			}
+			
+			if (rwyA != null) {
+				int dist = (rwyA instanceof RunwayDistance) ? ((RunwayDistance) rwyA).getDistance() : 0;
+				_ps.setString(2, rwyA.getCode());
+				_ps.setString(3, rwyA.getName());
+				_ps.setDouble(4, rwyA.getLatitude());
+				_ps.setDouble(5, rwyA.getLongitude());
+				_ps.setInt(6, rwyA.getLength());
+				_ps.setInt(7, dist);
+				_ps.setBoolean(8, false);
+				_ps.addBatch();
+			}
+			
+			_ps.executeBatch();
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Writes a Flight's position entries to the database.
 	 * @param flightID the Flight ID

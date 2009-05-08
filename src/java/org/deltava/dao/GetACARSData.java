@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -147,6 +147,47 @@ public class GetACARSData extends DAO {
 	}
 	
 	/**
+	 * Retrieves the takeoff and landing coordinates for a particular flight. More than two results may be returned, if
+	 * the aircraft bounced on takeoff and/or landing.
+	 * @param flightID the flight ID
+	 * @param isArchived TRUE if the flight data is archived, otherwise FALSE 
+	 * @return a List of RouteEntry beans, ordered by time
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<RouteEntry> getTakeoffLanding(int flightID, boolean isArchived) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, HEADING, VSPEED FROM acars.");
+		buf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
+		buf.append(" WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) > 0) ORDER BY REPORT_TIME, TIME_MS");
+		
+		try {
+			prepareStatement(buf.toString());
+			_ps.setInt(1, flightID);
+			_ps.setInt(2, FLAG_TOUCHDOWN);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			List<RouteEntry> results = new ArrayList<RouteEntry>();
+			while (rs.next()) {
+				java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
+				RouteEntry entry = new RouteEntry(dt, new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
+				entry.setAltitude(rs.getInt(5));
+				entry.setHeading(rs.getInt(6));
+				entry.setVerticalSpeed(rs.getInt(7));
+				results.add(entry);
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Checks if in-flight refueling was used on a Flight.
 	 * @param flightID the ACARS Flight ID
 	 * @param isArchived TRUE if the flight data is archived, otherwise FALSE
@@ -163,8 +204,8 @@ public class GetACARSData extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, flightID);
-			_ps.setInt(2, FlightPhase.PREFLIGHT.getPhase());
-			_ps.setInt(3, FlightPhase.COMPLETE.getPhase());
+			_ps.setInt(2, FlightPhase.PUSHBACK.getPhase());
+			_ps.setInt(3, FlightPhase.ATGATE.getPhase());
 			
 			// Execute the query
 			boolean isRefuel = false;
@@ -234,6 +275,29 @@ public class GetACARSData extends DAO {
 			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());
 			info.setSID(routes.get(Integer.valueOf(TerminalRoute.SID)));
 			info.setSTAR(routes.get(Integer.valueOf(TerminalRoute.STAR)));
+			
+			// Fetch the takeoff and landing runways
+			if (info.getHasPIREP()) {
+				prepareStatementWithoutLimits("SELECT * FROM acars.RWYDATA WHERE (ID=?) LIMIT 2");
+				_ps.setInt(1, flightID);
+				
+				// Execute the query
+				ResultSet rs = _ps.executeQuery();
+				while (rs.next()) {
+					Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+					r.setCode(rs.getString(2));
+					r.setName(rs.getString(3));
+					r.setLength(rs.getInt(6));
+					int dist = rs.getInt(7);
+					if (rs.getBoolean(8))
+						info.setRunwayD(new RunwayDistance(r, dist));
+					else
+						info.setRunwayA(new RunwayDistance(r, dist));
+				}
+
+				rs.close();
+				_ps.close();
+			}
 
 			// Count the number of position records
 			prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")

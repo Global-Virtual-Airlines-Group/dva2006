@@ -10,6 +10,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.beans.schedule.*;
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -53,7 +54,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	 */
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
-		for (int x = 2; x < 185; x++)
+		for (int x = 2; x < 189; x++)
 			_flightTimes.add(String.valueOf(x / 10.0f));
 	}
 
@@ -275,8 +276,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 
 				// Get the active airlines
-				for (Iterator i = allAirlines.values().iterator(); i.hasNext();) {
-					Airline a = (Airline) i.next();
+				for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
+					Airline a = i.next();
 					if (a.getActive())
 						airlines.add(a);
 				}
@@ -454,13 +455,60 @@ public class PIREPCommand extends AbstractFormCommand {
 					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
 						ctx.setAttribute("acInfo", acInfo, REQUEST);
 					
+					// Get the runway data
+					GetNavRoute navdao = new GetNavRoute(con);
+					if (!info.hasRunwayData()) {
+						List<RouteEntry> tdEntries = ardao.getTakeoffLanding(info.getID(), info.getArchived());
+						if (tdEntries.size() > 2) {
+							int ofs = 0; RouteEntry entry = tdEntries.get(0);
+							GeoPosition adPos = new GeoPosition(info.getAirportD());
+							while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
+								ofs++;
+								entry = tdEntries.get(ofs);
+							}
+						
+							// Trim out spurious takeoff entries
+							if (ofs > 0)
+								tdEntries.subList(0, ofs - 1).clear();
+							if (tdEntries.size() > 2)
+								tdEntries.subList(1, tdEntries.size() - 1).clear();
+						}
+						
+						if (tdEntries.size() == 2) {
+							// Load the departure runway
+							Runway r = navdao.getBestRunway(info.getAirportD().getICAO(), tdEntries.get(0), tdEntries.get(0).getHeading());
+							if (r != null) {
+								int dist = GeoUtils.distanceFeet(r, tdEntries.get(0));
+								info.setRunwayD(new RunwayDistance(r, dist));
+							}
+							
+							// Load the arrival runway
+							r = navdao.getBestRunway(afr.getAirportA().getICAO(), tdEntries.get(1), tdEntries.get(1).getHeading());
+							if (r != null) {
+								int dist = GeoUtils.distanceFeet(r, tdEntries.get(1));
+								info.setRunwayA(new RunwayDistance(r, dist));
+							}
+							
+							// Write the runway data
+							synchronized (this) {
+								if (info.hasRunwayData()) {
+									SetACARSData awdao = new SetACARSData(con);
+									awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
+								}
+							}
+						}
+					}
+					
+					// Build the route
+					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
+					route.add(info.getAirportD());
+					if (info.getRunwayD() != null)
+						route.add(info.getRunwayD());
+					
 					// Build the route
 					List<String> wps = StringUtils.split(info.getRoute(), " ");
 					wps.remove(info.getAirportD().getICAO());
 					wps.remove(info.getAirportA().getICAO());
-					GetNavRoute navdao = new GetNavRoute(con);
-					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
-					route.add(info.getAirportD());
 					if (info.getSID() != null) {
 						if (!CollectionUtils.isEmpty(wps))
 							route.addAll(info.getSID().getWaypoints(wps.get(0)));
@@ -475,7 +523,9 @@ public class PIREPCommand extends AbstractFormCommand {
 						else
 							route.addAll(info.getSTAR().getWaypoints());
 					}
-					
+
+					if (info.getRunwayA() != null)
+						route.add(info.getRunwayA());
 					route.add(info.getAirportA());
 					
 					// Trim out excessive bits

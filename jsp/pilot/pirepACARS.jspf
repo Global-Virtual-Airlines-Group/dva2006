@@ -8,7 +8,7 @@
 <tr class="title">
  <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS DATA</td>
 </tr>
-<c:if test="${fn:ACARS_ID(pirep) != 0}">
+<c:if test="${fn:ACARS_ID(pirep) > 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${fn:ACARS_ID(pirep)}" /> (<fmt:int value="${flightInfo.positionCount}" /> position records)
@@ -58,6 +58,19 @@
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start)</td>
 </tr>
+<c:if test="${!empty flightInfo.runwayD}">
+<c:set var="rwy" value="${flightInfo.runwayD}" scope="page" />
+<c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" />
+<tr>
+ <td class="label">Takeoff Runway</td>
+ <td class="data"><span class="pri bld">${rwy.name}</span> (<fmt:int value="${rwy.length}" /> feet,
+<c:choose>
+<c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
+<c:when test="${fromEnd < 1000}"> <span class="bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
+<c:otherwise> takeoff run <fmt:int value="${rwy.distance}" /> feet)</c:otherwise>
+</c:choose></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Takeoff Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.takeoffSpeed}" /> knots, <fmt:dec value="${pirep.takeoffN1}" />%
@@ -76,6 +89,20 @@
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)</td>
 </tr>
+<c:if test="${!empty flightInfo.runwayA}">
+<c:set var="rwy" value="${flightInfo.runwayA}" scope="page" />
+<c:set var="fromEnd" value="${rwy.length - rwy.distance}" scope="page" />
+<tr>
+ <td class="label">Landing Runway</td>
+ <td class="data"><span class="pri bld">${rwy.name}</span> (<fmt:int value="${rwy.length}" /> feet,
+<c:choose>
+<c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
+<c:when test="${fromEnd < 2500}"> <span class="pri bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
+<c:when test="${rwy.distance > 2500}"> <span class="bld"><fmt:int value="${rwy.distance}" /> feet from threshold</span>)</c:when>
+<c:otherwise> <fmt:int value="${rwy.distance}" /> feet from threshold)</c:otherwise>
+</c:choose></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Landing Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />

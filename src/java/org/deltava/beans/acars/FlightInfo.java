@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,6 +32,9 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	private Airport _airportD;
 	private Airport _airportA;
 	private Airport _airportL;
+	
+	private Runway _rwyD;
+	private Runway _rwyA;
 	
 	private TerminalRoute _sid;
 	private TerminalRoute _star;
@@ -171,6 +174,16 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	public Airport getAirportA() {
 		return _airportA;
 	}
+	
+	/**
+	 * Returns the arrival Runway for this flight.
+	 * @return the arrival Runway, or null if unknown
+	 * @see FlightInfo#setRunwayA(Runway)
+	 * @see FlightInfo#getRunwayD()
+	 */
+	public Runway getRunwayA() {
+		return _rwyA;
+	}
 
 	/**
 	 * Returns the origin Airport for this flight.
@@ -180,6 +193,16 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	 */
 	public Airport getAirportD() {
 		return _airportD;
+	}
+	
+	/**
+	 * Returns the departure Runway for this flight.
+	 * @return the departure Runway, or null if unknown
+	 * @see FlightInfo#setRunwayD(Runway)
+	 * @see FlightInfo#getRunwayA()
+	 */
+	public Runway getRunwayD() {
+		return _rwyD;
 	}
 	
 	/**
@@ -335,6 +358,16 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	}
 	
 	/**
+	 * Returns if runway data for this flight has been loaded.
+	 * @return TRUE if runway data exists, otherwise FALSE
+	 * @see FlightInfo#getRunwayA()
+	 * @see FlightInfo#getRunwayD()
+	 */
+	public boolean hasRunwayData() {
+		return (_rwyD != null) || (_rwyA != null);
+	}
+	
+	/**
 	 * Returns if this flight has been validated as being in the schedule.
 	 * @return TRUE if the route was validated, otherwise FALSE
 	 */
@@ -467,6 +500,16 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	public void setAirportA(Airport a) {
 		_airportA = a;
 	}
+	
+	/**
+	 * Updates the arrival Runway for this flight.
+	 * @param r a Runway bean
+	 * @see FlightInfo#getRunwayA()
+	 * @see FlightInfo#setRunwayD(Runway)
+	 */
+	public void setRunwayA(Runway r) {
+		_rwyA = r;
+	}
 
 	/**
 	 * Updates the origination Airport for this flight.
@@ -476,6 +519,16 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	 */
 	public void setAirportD(Airport a) {
 		_airportD = a;
+	}
+	
+	/**
+	 * Updates the departure Runway for this flight.
+	 * @param r a Runway bean
+	 * @see FlightInfo#getRunwayD()
+	 * @see FlightInfo#setRunwayA(Runway)
+	 */
+	public void setRunwayD(Runway r) {
+		_rwyD = r;
 	}
 	
 	/**

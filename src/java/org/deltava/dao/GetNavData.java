@@ -7,16 +7,13 @@ import java.util.*;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.GeoUtils;
-import org.deltava.util.StringUtils;
-
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -196,6 +193,54 @@ public class GetNavData extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the likeliest runway for a takeoff or landing 
+	 * @param airportCode the airport ICAO code
+	 * @param loc the takeoff/landing location
+	 * @param hdg the takeoff/landing heading in degrees 
+	 * @return a Runway, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Runway getBestRunway(String airportCode, GeoLocation loc, int hdg) throws DAOException {
+		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
+		try {
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
+			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setString(2, airportCode.toUpperCase());
+			results.addAll(execute());
+		} catch (SQLException se) { 
+			throw new DAOException(se);
+		}
+		
+		// Iterate through the list
+		Runway rwy = null; long lastBrgDiff = 360;
+		for (Iterator<NavigationDataBean> i = results.iterator(); i.hasNext(); ) {
+			NavigationDataBean nd = i.next();
+			if (nd.getType() == NavigationDataBean.RUNWAY) {
+				Runway r = (Runway) nd;
+				
+				// Calculate the heading difference between us and the runway heading
+				int hdgDiff = Math.abs(r.getHeading() - hdg);
+				if (hdgDiff >= 300)
+					hdgDiff = Math.abs(hdgDiff - 360);
+				
+				// Calculate the bearing difference between our position and the runway heading
+				long brgDiff = Math.abs(r.getHeading() - Math.round(GeoUtils.course(r, loc)));
+				if (brgDiff >= 300)
+					brgDiff = Math.abs(hdgDiff - 360);
+				
+				if ((hdgDiff < 15) && (brgDiff < 10)) {
+					if (brgDiff < lastBrgDiff) {
+						rwy = r;
+						lastBrgDiff = brgDiff;
+					}
+				}
+			}
+		}
+		
+		return rwy;
+	}
 
 	/**
 	 * Returns a group of Navigation objects.
@@ -231,9 +276,9 @@ public class GetNavData extends DAO implements CachingDAO {
 		if ((distance < 0) || (distance > 1000))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
-		// Calculate the height/width of the square in degrees (use 85% of the value of a lon degree)
+		// Calculate the height/width of the square in degrees (use 95% of the value of a lon degree)
 		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
-		double width = (height * 0.85);
+		double width = (height * 0.95);
 
 		Collection<NavigationDataBean> results = null;
 		try {
