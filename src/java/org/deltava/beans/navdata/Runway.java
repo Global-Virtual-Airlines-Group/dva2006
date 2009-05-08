@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store runway information.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -45,27 +45,22 @@ public class Runway extends NavigationFrequencyBean {
 	/**
 	 * Updates the length of the runway.
 	 * @param len the length in feet
-	 * @throws IllegalArgumentException if len is zero, negative or > 25000
 	 * @see Runway#getLength()
 	 */
 	public void setLength(int len) {
-		if ((len < 1) || (len > 25000))
-			throw new IllegalArgumentException("Length cannot be < 1 or > 25000");
-
-		_length = len;
+		_length = Math.max(1, len);
 	}
 
 	/**
 	 * Updates the runway heading.
 	 * @param hdg the heading in degrees
-	 * @throws IllegalArgumentException if hdg is negative or > 360
 	 * @see Runway#getHeading()
 	 */
 	public void setHeading(int hdg) {
 		while (hdg > 360)
 			hdg -= 360;
-		if (hdg < 0)
-			throw new IllegalArgumentException("Invalid Heading - " + hdg);
+		while (hdg < 0)
+			hdg += 360;
 
 		_heading = hdg;
 	}
@@ -103,7 +98,7 @@ public class Runway extends NavigationFrequencyBean {
 		buf.append(getHTMLTitle());
 		buf.append("Heading: ");
 		buf.append(StringUtils.format(_heading, "000"));
-		buf.append("<br />Length:");
+		buf.append("<br />Length: ");
 		buf.append(StringUtils.format(_length, "#,##0"));
 
 		// Add ILS frequency if found
