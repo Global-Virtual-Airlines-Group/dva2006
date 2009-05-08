@@ -19,7 +19,6 @@
 <content:os windows="true"><c:set var="showGEarth" value="${false}" scope="request" /></content:os>
 <content:js name="googleMaps" />
 <map:api version="2" />
-<content:js name="progressBar" />
 <map:vml-ie />
 </c:if>
 <c:if test="${scoreCR}">
@@ -118,11 +117,13 @@ return true;
  <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}</td>
 </tr>
 </c:if>
+<c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="request" />
 <tr>
  <td class="label">Arrived at</td>
- <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
+ <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)
+<c:if test="${isDivert}"> <span class="data warn caps bld">Originally filed to ${flightInfo.airportA.name} (<fmt:airport airport="${flightInfo.airportA}" />)</span></c:if></td>
 </tr>
-<c:if test="${isACARS && (!empty flightInfo.STAR)}">
+<c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
 <tr>
  <td class="label">Arrival Route</td>
  <td class="data">${flightInfo.STAR.name}.${flightInfo.STAR.transition}</td>

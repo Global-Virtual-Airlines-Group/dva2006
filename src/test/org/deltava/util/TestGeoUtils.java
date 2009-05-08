@@ -41,10 +41,23 @@ public class TestGeoUtils extends TestCase {
 	}
 	
 	public void testDegreeCharacter() throws Exception {
-		String s = new String("°".getBytes(), "CP1252");
+		String s = new String("ï¿½".getBytes(), "CP1252");
 		int cp = s.codePointAt(0);
 		assertEquals(176, cp);
 		char c = s.charAt(0);
 		assertEquals(176, c);
+	}
+	
+	public void testCourse() {
+		GeoPosition loc = new GeoPosition(33.6347, -84.4361);
+		GeoPosition r28 = new GeoPosition(33.631822,-84.4184);
+		GeoPosition r27r = new GeoPosition(33.634703,-84.408908);
+		
+		double brg1 = GeoUtils.course(r28, loc);
+		double brg11 = GeoUtils.course(loc, r28);
+		assertEquals(brg1-180, brg11, 0.016);
+		double brg2 = GeoUtils.course(r27r, loc);
+		double brg21 = GeoUtils.course(loc, r27r);
+		assertEquals(brg2-180, brg21, 0.016);
 	}
 }
