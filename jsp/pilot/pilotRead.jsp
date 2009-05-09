@@ -207,7 +207,9 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 <c:if test="${pilot.ACARSLegs > 0}">
 <tr>
  <td class="label">ACARS Flights</td>
- <td colspan="${cspan}" class="data sec"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td colspan="${cspan}" class="data sec"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours
+<content:filter roles="PIREP,HR">
+ <el:cmd url="mystats" link="${pilot}" className="sec bld">Click Here</el:cmd> to view the Pilot's flight statistics.</content:filter></td>
 </tr>
 </c:if>
 <c:if test="${pilot.legacyHours > 0}">

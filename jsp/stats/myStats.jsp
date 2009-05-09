@@ -9,7 +9,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Flight Statistics - ${user.name}</title>
+<title><content:airline /> Flight Statistics - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -45,7 +45,7 @@ return true;
 <!-- All Flight Report statistics -->
 <view:table className="view" pad="default" space="default" cmd="mystats">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${user.name}</td>
+ <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
  <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void update()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void update()" /></td>
 </tr>
@@ -55,7 +55,7 @@ return true;
 <!-- Touchdown Speed statistics -->
 <el:table className="form" space="default" pad="default">
 <tr class="title">
- <td colspan="6" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${user.ACARSLegs}" /> LANDINGS</td>
+ <td colspan="6" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${pilot.ACARSLegs}" /> LANDINGS</td>
 </tr>
 <c:forEach var="vs" items="${fn:keys(landingStats)}">
 <c:set var="vsCount" value="${landingStats[vs]}" scope="page" />
@@ -117,7 +117,7 @@ var so = new SWFObject('/${swfPath}/ampie.swf', 'piechart', '100%', 500, '8', '#
 so.addVariable('preloader_color', '#999999');
 so.addVariable('path', '/');
 so.addVariable('chart_id', 'piechart');
-so.addVariable('data_file', escape('/mystats.ws'));
+so.addVariable('data_file', escape('/mystats.ws?id=${pilot.hexID}'));
 so.write('flashcontent');
 </script>
 <content:googleAnalytics />

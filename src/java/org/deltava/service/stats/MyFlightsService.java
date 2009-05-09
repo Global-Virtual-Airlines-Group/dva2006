@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to an Ampie Flash chart.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.1
  */
 
@@ -41,12 +41,18 @@ public class MyFlightsService extends WebService {
 			labelType = GROUP_CODE[2];
 		else if (GROUP_CODE[6].equals(labelType))
 			labelType = MONTH_SQL;
+		
+		// Get the user ID
+		int userID = ctx.getUser().getID();
+		int id = StringUtils.parse(ctx.getParameter("id"), 0);
+		if ((ctx.isUserInRole("PIREP") || ctx.isUserInRole("HR")) && (id > 0))
+			userID = id;
 
 		// Get the Flight Report statistics
 		Collection<FlightStatsEntry> results = null;
 		try {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			results = stdao.getPIREPStatistics(ctx.getUser().getID(), labelType, sortType, true);
+			results = stdao.getPIREPStatistics(userID, labelType, sortType, true);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -104,7 +110,8 @@ public class MyFlightsService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
