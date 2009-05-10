@@ -1,9 +1,10 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.util.system.SystemData;
@@ -11,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to stuff data from the SystemData singleton into the request.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -56,6 +57,10 @@ public class GetSystemDataTag extends TagSupport {
 	    _doSort = doSort;
 	}
 	
+	/**
+	 * Sets the default value of the attribute, if the SystemData property is not found.
+	 * @param value the default value
+	 */
 	public void setDefault(Object value) {
 		_defaultValue = value;
 	}
@@ -84,18 +89,18 @@ public class GetSystemDataTag extends TagSupport {
 	    	obj = _defaultValue;
 	    
 	    // If the object is a map and MapValues is selected, get the values object
-	    if ((obj instanceof Map) && (_doMapToList))
+	    if ((obj instanceof Map) && _doMapToList)
 	        obj = new LinkedHashSet(((Map) obj).values());
-	        
+	    
 	    // If we're a collection and Sort is selected, sort it
-	    if ((obj instanceof Collection) && (_doSort)) {
+	    if ((obj instanceof Collection) && _doSort) {
 	        List tmpResults = new ArrayList((Collection) obj);
 	        Collections.sort(tmpResults);
 	        obj = tmpResults;
 	    }
 	        
 	    // Save in the request
-	    pageContext.getRequest().setAttribute(_varName, obj);	        
+	    pageContext.setAttribute(_varName, obj, PageContext.PAGE_SCOPE);	        
 	    release();
 		return EVAL_PAGE;
 	}
