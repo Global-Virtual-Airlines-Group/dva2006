@@ -23,12 +23,6 @@ setSubmit();
 disableButton('SearchButton');
 return true;
 }
-
-function update()
-{
-document.forms[0].submit();
-return true;
-}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,35 +35,39 @@ return true;
 <content:region id="main">
 <el:form action="landingstats.do" method="post" validate="return validate(this)">
 The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of pilots 
-who consistently achieve the smoothest landings. This list is ordered by both average touchdown speed (which 
-counts for 60% of the ordering) and the standard deviation of those speeds (the remaining 40%).<br />
+who consistently achieve the smoothest landings. This list is ordered by both average touchdown speed (which  
+counts for 30% of the ordering) and the standard deviation of those speeds (20%), the distance from the 
+runway threshold (30% if available) and the standard deviation of those distances (the remaining 20%). If no 
+threshold displacement data is available <br />
 <br />
 <el:table className="view" pad="default" space="default">
 <!-- Table top Header bar -->
 <tr class="title">
- <td class="left caps" colspan="2"><content:airline /> LANDING STATISTICS</td>
- <td class="right" colspan="5">MINIMUM <el:text name="legCount" idx="*" size="1" max="2" value="${legCount}" /> 
-FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void update()" /> 
-IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void update()" />
+ <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
+ <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="1" max="2" value="${legCount}" /> 
+FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
+IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" />
 <el:button ID="SearchButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="5%">#</td>
- <td width="22%">PILOT NAME</td>
- <td width="18%">RANK</td>
- <td width="10%">FLIGHTS</td>
- <td width="10%">HOURS</td>
- <td width="15%">AVERAGE SPEED</td>
+ <td width="20%">PILOT NAME</td>
+ <td width="16%">RANK</td>
+ <td width="7%">FLIGHTS</td>
+ <td width="7%">HOURS</td>
+ <td width="14%">AVG. SPEED</td>
+ <td width="10%">STD. DEVIATION</td>
+ <td width="10%">AVG. DISTANCE</td>
  <td>STD. DEVIATION</td>
 </tr>
 
 <!-- Table Statistics Data -->
-<c:set var="entryNumber" value="0" scope="request" />
+<c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="entry" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[entry.ID]}" scope="request" />
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="pilot" value="${pilots[entry.ID]}" scope="page" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <tr>
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld">${pilot.name}</td>
@@ -78,12 +76,21 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
  <td><fmt:dec value="${entry.hours}" /></td>
  <td class="pri bld"><fmt:dec value="${entry.averageSpeed}" fmt="#0.00" /> ft/min</td>
  <td class="sec"><fmt:dec value="${entry.stdDeviation}" fmt="#0.00" /> ft/min</td>
+<c:choose>
+<c:when test="${entry.distanceStdDeviation < 1}">
+ <td colspan="2">N / A</td>
+</c:when>
+<c:otherwise>
+ <td class="bld"><fmt:dec value="${entry.averageDistance}" fmt="#0" /> ft</td>
+ <td><fmt:dec value="${entry.distanceStdDeviation}" fmt="#0.0" /> ft</td>
+</c:otherwise>
+</c:choose>
 </tr>
 </c:forEach>
 
-<!-- Button Bar -->
+<!-- Bottom Bar -->
 <tr class="title">
- <td colspan="7">&nbsp;</td>
+ <td colspan="9">&nbsp;</td>
 </tr>
 </el:table>
 </el:form>
