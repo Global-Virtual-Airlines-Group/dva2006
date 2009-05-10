@@ -230,7 +230,7 @@ public class GetNavData extends DAO implements CachingDAO {
 				if (brgDiff >= 300)
 					brgDiff = Math.abs(hdgDiff - 360);
 				
-				if ((hdgDiff < 15) && (brgDiff < 10)) {
+				if ((hdgDiff < 45) && (brgDiff < 15)) {
 					if (brgDiff < lastBrgDiff) {
 						rwy = r;
 						lastBrgDiff = brgDiff;
