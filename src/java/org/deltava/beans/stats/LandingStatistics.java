@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.DatabaseBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean used to track average landing speeds.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 2.1
  */
 
@@ -20,6 +20,9 @@ public class LandingStatistics extends DatabaseBean {
 	
 	private double _vSpeed;
 	private double _stdDev;
+	
+	private double _distance;
+	private double _distStdDev;
 
 	/**
 	 * Initializes the bean. When displaying statistics across multiple pilots or
@@ -82,6 +85,22 @@ public class LandingStatistics extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the average runway threshold displacement.
+	 * @return the average displacement in feet
+	 */
+	public double getAverageDistance() {
+		return _distance;
+	}
+	
+	/**
+	 * Returns the standard deviation of runway threshold displacements.
+	 * @return the standard deviation in feet
+	 */
+	public double getDistanceStdDeviation() {
+		return _distStdDev;
+	}
+	
+	/**
 	 * Updates the number of legs flown.
 	 * @param legs the number of legs
 	 */
@@ -99,18 +118,34 @@ public class LandingStatistics extends DatabaseBean {
 
 	/**
 	 * Updates the average touchdown speed.
-	 * @param spd the average speed in feet per minute.
+	 * @param spd the average speed in feet per minute
 	 */
 	public void setAverageSpeed(double spd) {
-		_vSpeed = Math.min(0.001, spd); 
+		_vSpeed = Math.min(0.01, spd); 
 	}
 	
 	/**
 	 * Updates the standard deviation of touchdown speeds.
-	 * @param sd the standard deviation in feet per minute.
+	 * @param sd the standard deviation in feet per minute
 	 */
 	public void setStdDeviation(double sd) {
-		_stdDev = Math.max(0.001, sd);
+		_stdDev = Math.max(0.01, sd);
+	}
+
+	/**
+	 * Updates the average threshold displacement.
+	 * @param distance the distance in feet
+	 */
+	public void setAverageDistance(double distance) {
+		_distance = Math.max(0.01, distance);
+	}
+	
+	/**
+	 * Updates the standard deviation of threshold displacements.
+	 * @param sd the standard deviation in feet
+	 */
+	public void setDistanceStdDeviation(double sd) {
+		_distStdDev = Math.max(0.01, sd);
 	}
 	
 	/**
@@ -119,5 +154,19 @@ public class LandingStatistics extends DatabaseBean {
 	public int compareTo(Object o) {
 		LandingStatistics ls2 = (LandingStatistics) o;
 		return new Double(_vSpeed).compareTo(new Double(ls2._vSpeed));
+	}
+	
+	/**
+	 * Returns the pilot and equipment type.
+	 */
+	public String toString() {
+		StringBuilder buf = new StringBuilder(_name);
+		buf.append('-');
+		buf.append(_eqType);
+		return buf.toString();
+	}
+	
+	public int hashCode() {
+		return toString().hashCode();
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.1
  */
 
@@ -102,11 +102,14 @@ public class GetFlightReportStatistics extends DAO {
 	public Collection<LandingStatistics> getLandings(String eqType, int minLandings) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, COUNT(PR.ID) AS CNT, "
-				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, STDDEV_POP(APR.LANDING_VSPEED) AS SD, "
-				+ "(ABS(AVG(APR.LANDING_VSPEED)*3)+STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PILOTS P, PIREPS PR, "
-				+ "ACARS_PIREPS APR LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
-				+ "WHERE (C.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
+		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, "
+				+ "COUNT(PR.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
+				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, STDDEV_POP(RD.DISTANCE) AS DSD, "
+				+ "IFNULL(IF(STDDEV_POP(RD.DISTANCE) < 20, NULL, (ABS(AVG(RD.DISTANCE))*3+STDDEV_POP(RD.DISTANCE)*2)/15), 650) "
+				+ "+ (ABS(AVG(APR.LANDING_VSPEED)*3) + STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PILOTS P, "
+				+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON "
+				+ "(C.ID=F.CON_ID) LEFT JOIN acars.RWYDATA RD ON (F.ID=RD.ID) AND (RD.ISTAKEOFF=?) WHERE (C.CLIENT_BUILD>?) "
+				+ "AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) AND (PR.PILOT_ID=P.ID) AND (PR.STATUS=?) ");
 		if (eqType != null)
 			buf.append("AND (PR.EQTYPE=?) ");
 		if (_dayFilter > 0)
@@ -116,6 +119,7 @@ public class GetFlightReportStatistics extends DAO {
 		try {
 			int pos = 0;
 			prepareStatement(buf.toString());
+			_ps.setBoolean(++pos, false);
 			_ps.setInt(++pos, MIN_ACARS_CLIENT);
 			_ps.setInt(++pos, FlightReport.OK);
 			if (eqType != null)
@@ -134,6 +138,12 @@ public class GetFlightReportStatistics extends DAO {
 				ls.setHours(rs.getDouble(4));
 				ls.setAverageSpeed(rs.getDouble(5));
 				ls.setStdDeviation(rs.getDouble(6));
+				double dist = rs.getDouble(7);
+				if (!rs.wasNull()) {
+					ls.setAverageDistance(dist);
+					ls.setDistanceStdDeviation(rs.getDouble(8));
+				}
+				
 				results.add(ls);
 			}
 			
@@ -155,23 +165,28 @@ public class GetFlightReportStatistics extends DAO {
 	public Collection<LandingStatistics> getLandings(int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(PR.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) "
-				+ "AS HRS, AVG(APR.LANDING_VSPEED) AS VS, STDDEV_POP(APR.LANDING_VSPEED) AS SD, "
-				+ "(ABS(AVG(APR.LANDING_VSPEED)*3)+STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM "
-				+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN "
-				+ "acars.CONS C ON (C.ID=F.CON_ID) WHERE (C.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND "
-				+ "(PR.PILOT_ID=?) AND (PR.STATUS=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(APR.ID) AS CNT, "
+				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
+				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, "
+				+ "STDDEV_POP(RD.DISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(RD.DISTANCE) < 20, "
+				+ "650, (ABS(AVG(RD.DISTANCE))*3+STDDEV_POP(RD.DISTANCE)*2)/15), 650) + "
+				+ "(ABS(AVG(APR.LANDING_VSPEED)*3)+STDDEV_POP(APR.LANDING_VSPEED)*2) "
+				+ "AS FACT FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN acars.FLIGHTS F ON "
+				+ "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) LEFT JOIN "
+				+ "acars.RWYDATA RD ON (F.ID=RD.ID) AND (RD.ISTAKEOFF=?) WHERE (C.CLIENT_BUILD>?) "
+				+ "AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
 		sqlBuf.append("GROUP BY PR.EQTYPE HAVING (CNT>1) ORDER BY FACT");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, MIN_ACARS_CLIENT);
-			_ps.setInt(2, pilotID);
-			_ps.setInt(3, FlightReport.OK);
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, MIN_ACARS_CLIENT);
+			_ps.setInt(3, pilotID);
+			_ps.setInt(4, FlightReport.OK);
 			if (_dayFilter > 0)
-				_ps.setInt(4, _dayFilter);
+				_ps.setInt(5, _dayFilter);
 			
 			// Execute the query
 			Collection<LandingStatistics> results = new ArrayList<LandingStatistics>();
@@ -183,6 +198,12 @@ public class GetFlightReportStatistics extends DAO {
 				ls.setHours(rs.getDouble(3));
 				ls.setAverageSpeed(rs.getDouble(4));
 				ls.setStdDeviation(rs.getDouble(5));
+				double avgDist = rs.getDouble(6);
+				if (!rs.wasNull()) {
+					ls.setAverageDistance(avgDist);
+					ls.setDistanceStdDeviation(rs.getDouble(7));
+				}
+				
 				results.add(ls);
 			}
 			
@@ -207,7 +228,7 @@ public class GetFlightReportStatistics extends DAO {
 		// Init the Map
 		Map<Integer, Integer> results = new TreeMap<Integer, Integer>();
 		for (int x = -1200; x <= 0; x += range)
-			results.put(new Integer(x), Integer.valueOf(0));
+			results.put(Integer.valueOf(x), Integer.valueOf(0));
 		
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(APR.LANDING_VSPEED / ?) * ? AS RNG, "
@@ -222,7 +243,7 @@ public class GetFlightReportStatistics extends DAO {
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				int vs = Math.max(-1200, rs.getInt(1));
-				results.put(new Integer(vs), new Integer(rs.getInt(2)));
+				results.put(Integer.valueOf(vs), Integer.valueOf(rs.getInt(2)));
 			}
 			
 			// Clean up
