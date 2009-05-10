@@ -13,7 +13,7 @@ table.form, table.bar {
 table.form tr.title {
 	font-size: 11px;
 	background-color: #003366;
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
 	color: #ffffff;
 	font-weight: bold;
@@ -38,6 +38,10 @@ table.form td.label {
 	color: #ffffff;
 	font-size: 10px;
 	width: 128px;
+}
+
+table.form td.top {
+	vertical-align: top;	
 }
 
 table.form td.coolerPost {
@@ -85,21 +89,21 @@ select.req {
 
 input.req, input.req {
 	background: #fff8fa;
-	border: 1px solid #C01933;
+	border: 1px solid #c01933;
 }
 
 *.label :link, *.label :visited {
 	font-size: 11px;	
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	text-decoration: underline;
-	color: #EFFFFF;
+	color: #efffff;
 }
 
 *.title a {
 	font-size: 11px;
 	text-transform: uppercase;
 	font-weight: bold;
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	text-decoration: underline;
-	color: #EFFFFF;
+	color: #efffff;
 }
