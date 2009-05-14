@@ -92,9 +92,9 @@ $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` --ignore-table=afv.GALLERY a
 if [ "$1" = "full" ]
 then
   echo `date +%H:%M:%S`' Writing DVA Image Gallery'
-  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` dva GALLERY | $arc_util > dva_gallery.sql.bz2
+  $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` dva GALLERY | $arc_util > dva_gallery.sql.bz2
   echo `date +%H:%M:%S`' Writing AFV Image Gallery'
-  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` afv GALLERY | $arc_util > afv_gallery.sql.bz2
+  $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` afv GALLERY | $arc_util > afv_gallery.sql.bz2
 else  
   echo `date +%H:%M:%S`' Writing Incremental DVA Image Gallery'
   $mysqldump $dump_opt -t `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" dva GALLERY | $arc_util > dva_gallery_inc.sql.bz2

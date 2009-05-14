@@ -1,6 +1,6 @@
 #!/bin/bash
 # SCP database backup script
-# Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+# Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 #
 # To get automated SSH working, create an SSH key for the user and then copy id_rsa.pub to the
 # remote user's home directory ~/.ssh/authorized_keys
@@ -12,14 +12,20 @@ if [ "$2" != "" ]; then
 fi
 
 # Back up base files
-scp /home/backup/cfg/*.tar.gz $USER@$1:~/cfg
-scp /home/backup/db/create_tables.tar.bz2 $USER@$1:~/db
-scp /home/backup/db/*.sql.bz2 $USER@$1:~/db
+cd /home/backup
+rsync -avr --delete cfg/*.tar.gz $USER@$1:cfg 
+rsync -avr --delete db/*.bz2 $USER@$1:db
 
 # Backup logs via rsync
-cd /home/backup
-rsync -avr --delete logs/* $USER@$1:~/httplogs
-rsync -avr --delete --exclude=svn.revision_base svn $USER@$1:~
+rsync -avr --delete logs/* $USER@$1:httplogs
+rsync -avr --delete --exclude=svn.revision_base svn $USER@$1:
+
+# Backup mail
+rsync -avr --delete mail/* $USER@$1:mail
+
+# Backup library
+cd /home/www/library
+rsync -avr --delete ./* $USER@$1:library
 
 # Exit with success
 exit 0
