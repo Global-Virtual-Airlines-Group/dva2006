@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		Connection c = null;
 		try {
 			// Get JDBC system connection
-			c = _jdbcPool.getConnection(true);
+			c = _jdbcPool.getConnection();
 
 			// Load time zones
 			log.info("Loading Time Zones");
@@ -196,8 +196,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 			Connection c = null;
 			try {
-				c = _jdbcPool.getConnection(true);
-
+				c = _jdbcPool.getConnection();
 				SetTS2Data ts2wdao = new SetTS2Data(c);
 				ts2wdao.clearActiveFlags();
 			} catch (DAOException de) {

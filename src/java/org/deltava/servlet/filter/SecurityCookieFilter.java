@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -166,7 +166,7 @@ public class SecurityCookieFilter implements Filter {
 			// Load the person and the IP Address data
 			Connection con = null;
 			try {
-				con = _jdbcPool.getConnection(true);
+				con = _jdbcPool.getConnection();
 				
 				// Get the person
 				GetPilotDirectory dao = new GetPilotDirectory(con);

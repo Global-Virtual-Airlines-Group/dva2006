@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to support Authenticators that use a JDBC Connection Pool.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -62,7 +62,7 @@ public abstract class ConnectionPoolAuthenticator implements SQLAuthenticator {
 	 * @return a JDBC connection
 	 */
 	protected Connection getConnection() throws ConnectionPoolException {
-		return (_con.get() == null) ? _pool.getConnection(true) : _con.get();
+		return (_con.get() == null) ? _pool.getConnection() : _con.get();
 	}
 	
 	/**
