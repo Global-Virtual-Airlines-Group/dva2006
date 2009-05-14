@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -19,7 +19,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	
 	private static final String PACKAGE = ConnectionPoolEntry.class.getPackage().getName();
 
-	private transient Connection _c;
+	private transient ConnectionWrapper _c;
 	private StackTrace _stackInfo;
 	private int _id;
 
@@ -27,7 +27,6 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private transient String _validationQuery = "SELECT 1";
 
 	private boolean _inUse = false;
-	private boolean _systemOwned = false;
 	private boolean _dynamic = false;
 	private boolean _connected = false;
 	private boolean _autoCommit = true;
@@ -36,7 +35,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private long _useTime;
 	private long _startTime;
 	private long _lastUsed;
-	private int _useCount;
+	private long _useCount;
 
 	/**
 	 * Create a new Connection Pool entry.
@@ -71,18 +70,8 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	}
 
 	/**
-	 * Returns if this connection is used by the system.
-	 * @return TRUE if the connection is system-owned, otherwise FALSE.
-	 * @see ConnectionPoolEntry#setSystemConnection(boolean)
-	 */
-	public boolean isSystemConnection() {
-		return _systemOwned;
-	}
-
-	/**
 	 * Returns if this connection can be reconnected by a connection monitor, or freed after use.
 	 * @return TRUE if the connection can be freed after use, otherwise FALSE
-	 * @see ConnectionPoolEntry#isSystemConnection()
 	 */
 	public boolean isDynamic() {
 		return _dynamic;
@@ -111,9 +100,9 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 		// Create the connection
 		Connection c = DriverManager.getConnection(_props.getProperty("url"), _props);
-		c.setAutoCommit(_autoCommit);
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-		_c = new ConnectionWrapper(_id, c);
+		_c = new ConnectionWrapper(c, this);
+		_c.setAutoCommit(_autoCommit);
 		_lastUsed = System.currentTimeMillis();
 		_connected = true;
 	}
@@ -123,7 +112,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 */
 	void close() {
 		try {
-			_c.close();
+			_c.forceClose();
 		} catch (Exception e) {
 			// empty
 		} finally {
@@ -141,11 +130,11 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 		// Reset auto-commit property
 		try {
-			if (_c.getAutoCommit() != _autoCommit)
+			if (_c.getAutoCommit() != _autoCommit) {
 				log.info("Resetting autoCommit to " + String.valueOf(_autoCommit));
-				
-			_c.setAutoCommit(_autoCommit);
-			_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+				_c.setAutoCommit(_autoCommit);
+				_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			}
 		} catch (Exception e) {
 			log.error("Error resetting autoCommit/isolation - " + e.getMessage());
 		}
@@ -179,7 +168,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 * @see ConnectionPoolEntry#equals(Object)
 	 */
 	Connection getConnection() {
-		return new ConnectionWrapper(_id, _c);
+		return _c.getConnection();
 	}
 
 	/**
@@ -200,16 +189,6 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 */
 	void setAutoCommit(boolean commit) {
 		_autoCommit = commit;
-	}
-
-	/**
-	 * Marks this connection as being owned by the system. System-owned connections are not used for direct user
-	 * queries, instead for application components that need guaranteed access to a JDBC connection.
-	 * @param isOwnedBySystem TRUE if this is a system-owned connection, otherwise FALSE
-	 * @see ConnectionPoolEntry#isSystemConnection()
-	 */
-	void setSystemConnection(boolean isOwnedBySystem) {
-		_systemOwned = isOwnedBySystem;
 	}
 
 	/**
@@ -283,7 +262,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 * Returns the number of times this connection has been reserved.
 	 * @return the number of times reserved
 	 */
-	public int getUseCount() {
+	public long getUseCount() {
 		return _useCount;
 	}
 
@@ -337,9 +316,6 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 */
 	public final String toString() {
 		StringBuilder buf = new StringBuilder("#");
-		if (isSystemConnection())
-			buf.append("SYS");
-
 		buf.append(String.valueOf(_id));
 		return buf.toString();
 	}
