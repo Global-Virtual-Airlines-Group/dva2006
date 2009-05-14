@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -9,17 +9,17 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * A JSP tag to filter body content based on the user's membership in a particular role.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class RoleFilterTag extends TagSupport {
     
-    private Set<String> _roles = new HashSet<String>();
+    private final Collection<String> _roles = new HashSet<String>();
 
     /**
      * Filters the body content by checking for the user attribute in the request, then retrieves the
-     * list of roles from this object. If no user object is found, an EMPTY_LIST is used.
+     * list of roles from this object.
      * @return SKIP_BODY if role not found, otherwise EVAL_BODY_INCLUDE
      */
     public int doStartTag() {
@@ -44,8 +44,8 @@ public class RoleFilterTag extends TagSupport {
     }
     
     /**
-     * Closes the JSP, and releases state.
-     * @return EVAL_PAGE
+     * Closes the JSP and releases state.
+     * @return EVAL_PAGE always
      */
     public int doEndTag() {
     	release();
@@ -53,7 +53,8 @@ public class RoleFilterTag extends TagSupport {
     }
     
     /**
-     * Sets the role(s) a user must belong to in order to view the body of this tag. Use * (asterisk) for all roles. 
+     * Sets the role(s) a user must belong to in order to view the body of this tag. Use * (asterisk) for all roles,
+     * and a role name prefaced by an ! (exclamation mark) for the lack of role memebrship.
      * @param roles a comma-delimited list of authorized role names
      */
     public void setRoles(String roles) {

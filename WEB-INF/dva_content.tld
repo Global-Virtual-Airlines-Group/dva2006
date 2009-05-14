@@ -128,6 +128,29 @@
 	</tag>
 
 	<tag>
+		<description>Role Attribute tag, for adding request attributes based on security role</description>
+		<name>attr</name>
+		<tag-class>org.deltava.taglib.content.RoleAttributeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>attr</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Object</type>
+		</attribute>
+		<attribute>
+			<name>roles</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>OS Filter Tag, for filtering content based on client operating system</description>
 		<name>os</name>
 		<tag-class>org.deltava.taglib.content.OSFilterTag</tag-class>
