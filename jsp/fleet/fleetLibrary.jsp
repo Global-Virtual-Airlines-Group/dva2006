@@ -89,7 +89,7 @@ return true;
 </tr>
 <tr>
  <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" caption="Fleet Library" /></td>
- <td valign="top"><div id="divName" class="pri bld"></div>
+ <td class="top"><div id="divName" class="pri bld"></div>
 <div id="divSize" class="sec bld"></div><br />
 <div id="FSVersions" class="pri bld small"></div><br />
 <div id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 

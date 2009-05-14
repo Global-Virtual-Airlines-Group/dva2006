@@ -62,7 +62,7 @@
 </tr>
 <c:if test="${!empty route.comments}">
 <tr>
- <td class="label" valign="top">Dispatcher Comments</td>
+ <td class="label top">Dispatcher Comments</td>
  <td class="data" colspan="3"><fmt:text value="${route.comments}" /></td>
 </tr>
 </c:if>
@@ -73,12 +73,12 @@
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Flight Route</td>
+ <td class="label top">Flight Route</td>
  <td class="data" colspan="3">${route.route}</td>
 </tr>
 <c:if test="${fn:sizeof(waypoints) > 0}">
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="500" /></td>
 </tr>
 </c:if>

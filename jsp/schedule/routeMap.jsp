@@ -41,7 +41,7 @@
  <el:box ID="showInfo" name="showInfo" idx="*" value="true" className="small" label="Show Airport Information" checked="true" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="540" /></td>
 </tr>
 </el:table>

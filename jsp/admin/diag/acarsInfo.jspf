@@ -19,7 +19,7 @@
  <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.</td>
 </tr>
 <tr>
- <td class="label" valign="top">Bandwidth Graph</td>
+ <td class="label top">Bandwidth Graph</td>
  <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
 </tr>
 </el:table>

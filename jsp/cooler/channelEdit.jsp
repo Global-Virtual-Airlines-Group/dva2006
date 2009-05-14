@@ -56,11 +56,11 @@ return true;
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${channel.airlines}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Read-Access Roles</td>
+ <td class="label top">Read-Access Roles</td>
  <td class="data"><el:check name="readRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.readRoles}" options="${roles}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Post-Access Roles</td>
+ <td class="label top">Post-Access Roles</td>
  <td class="data"><el:check name="writeRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.writeRoles}" options="${roles}" /></td>
 </tr>
 <tr>

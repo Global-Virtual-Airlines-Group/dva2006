@@ -43,7 +43,7 @@ return true;
 Flight Schedule.</div>
 </c:if>
 <c:forEach var="airline" items="${fn:keys(results)}">
-<c:set var="airports" value="${results[airline]}" scope="request" />
+<c:set var="airports" value="${results[airline]}" scope="page" />
 The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer served by 
 <span class="pri bld">${airline.name}</span>:<br />
 <br />

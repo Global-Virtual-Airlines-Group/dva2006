@@ -54,8 +54,8 @@ return true;
  <td class="data"><el:combo name="category" idx="*" size="1" className="req" firstEntry="-" value="${resource.category}" options="${cats}" /></td>
 </tr>
 <c:if test="${!empty resource}">
-<c:set var="author" value="${pilots[resource.authorID]}" scope="request" />
-<c:set var="lastUpd" value="${pilots[resource.lastUpdateID]}" scope="request" />
+<c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
+<c:set var="lastUpd" value="${pilots[resource.lastUpdateID]}" scope="page" />
 <tr>
  <td class="label">Created on</td>
  <td class="data"><span class="pri bld"><fmt:date fmt="d" date="${resource.createdOn}" /></span> by
@@ -71,7 +71,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Description</td>
+ <td class="label top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" height="6" className="req">${resource.description}</el:textbox></td>
 </tr>
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">

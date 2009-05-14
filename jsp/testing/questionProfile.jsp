@@ -48,7 +48,7 @@ return true;
 </tr>
 <c:if test="${fn:isMultiChoice(question)}">
 <tr>
- <td class="label" valign="top">Answer Choices</td>
+ <td class="label top">Answer Choices</td>
  <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br />
 </c:forEach></td>
 </tr>
@@ -58,7 +58,7 @@ return true;
  <td class="data bld">${question.correctAnswer}</td>
 </tr>
 <tr>
- <td class="label" valign="top">Pilot Examinations</td>
+ <td class="label top">Pilot Examinations</td>
  <td class="data small"><fmt:list value="${question.pools}" delim=", " /></td>
 </tr>
 <tr>
@@ -90,7 +90,7 @@ return true;
  <td class="data">${question.airportA.name} (<fmt:airport airport="${question.airportD}" />)</td> 
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="400" /></td>
 </tr>
 </c:if>

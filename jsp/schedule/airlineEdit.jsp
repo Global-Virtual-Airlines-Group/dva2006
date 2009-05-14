@@ -52,11 +52,11 @@ return true;
  <td class="data"><el:combo name="color" idx="*" size="1" className="req" options="${colors}" firstEntry="-" value="${airline.color}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Web Applications</td>
+ <td class="label top">Web Applications</td>
  <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Alternate Codes</td>
+ <td class="label top">Alternate Codes</td>
  <td class="data"><el:textbox name="altCodes" idx="*" width="50" height="3">${altCodes}</el:textbox></td>
 </tr>
 <tr>

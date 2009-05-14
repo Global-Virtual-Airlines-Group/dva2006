@@ -67,10 +67,10 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 </tr>
 
 <!-- Table Flight Report Data -->
-<c:set var="entryNumber" value="0" scope="request" />
+<c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="pirep" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <tr>
  <td class="sec bld">${entryNumber}</td>
  <td>${pilot.name}</td>

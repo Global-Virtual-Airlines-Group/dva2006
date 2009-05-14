@@ -68,7 +68,7 @@ return true;
  <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="< SELECT >" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Description</td>
+ <td class="label top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" className="req">${video.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty entry}">
@@ -88,7 +88,7 @@ return true;
 </c:if>
 <content:filter roles="HR">
 <tr>
- <td class="label" valign="top">Flight Academy Certifications</td>
+ <td class="label top">Flight Academy Certifications</td>
  <td class="data"><el:check name="certNames" width="150" cols="3" className="small" newLine="true" checked="${video.certifications}" options="${certs}" /></td>
 </tr>
 </content:filter>

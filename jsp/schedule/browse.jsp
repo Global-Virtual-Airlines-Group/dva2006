@@ -61,7 +61,7 @@ updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:filter roles="Schedule"><c:set var="isSchedule" value="true" scope="request" /></content:filter>
+<content:attr attr="isSchedule" value="true" roles="Schedule" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

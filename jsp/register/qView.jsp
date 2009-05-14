@@ -41,9 +41,9 @@
 </c:if>
 
 <!-- Exam Questions -->
-<c:set var="qnum" value="0" scope="request" />
+<c:set var="qnum" value="0" scope="page" />
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="qnum" value="${qnum + 1}" scope="request" />
+<c:set var="qnum" value="${qnum + 1}" scope="page" />
 <!-- Question #${qnum} -->
 <tr>
  <td class="label">Question #${qnum}</td>

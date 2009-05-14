@@ -63,7 +63,7 @@ return true;
  <td class="data"><el:text name="range" idx="*" className="req" size="4" max="5" value="${aircraft.range}" /> miles</td>
 </tr>
 <tr>
- <td class="label" valign="top">IATA Equipment Code(s)</td>
+ <td class="label top">IATA Equipment Code(s)</td>
  <td class="data"><el:textbox name="iataCodes" idx="*" width="30" height="3">${iataCodes}</el:textbox></td>
 </tr>
 <tr>
@@ -72,7 +72,7 @@ return true;
 <el:box name="isETOPS" idx="*" value="true" checked="${aircraft.ETOPS}" label="This Aircraft is ETOPS-rated" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Web Applications</td>
+ <td class="label top">Web Applications</td>
  <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${aircraft.apps}" /></td>
 </tr>
 <tr class="title caps">
@@ -119,7 +119,7 @@ return true;
  pounds</td>
 </tr>
 <tr>
- <td class="label" valign="top">Primary Tanks</td>
+ <td class="label top">Primary Tanks</td>
  <td class="data"><el:check name="pTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Primary']}" options="${tankNames}" /></td>
 </tr>
 <tr>
@@ -128,7 +128,7 @@ return true;
  percent before filling Secondary tanks</td>
 </tr>
 <tr>
- <td class="label" valign="top">Secondary Tanks</td>
+ <td class="label top">Secondary Tanks</td>
  <td class="data"><el:check name="sTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Secondary']}" options="${tankNames}" /></td>
 </tr>
 <tr>
@@ -137,7 +137,7 @@ return true;
  percent before filling Other tanks</td>
 </tr>
 <tr>
- <td class="label" valign="top">Other Tanks</td>
+ <td class="label top">Other Tanks</td>
  <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Other']}" options="${tankNames}" /></td>
 </tr>
 </el:table>

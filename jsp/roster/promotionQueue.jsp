@@ -19,7 +19,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
+<content:attr attr="isHR" value="true" roles="HR" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -38,7 +38,7 @@
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${queue}">
-<c:set var="access" value="${accessMap[pilot.ID]}" scope="request" />
+<c:set var="access" value="${accessMap[pilot.ID]}" scope="page" />
 <view:row entry="${pilot}">
 <c:if test="${access.canPromote}">
  <td><el:cmdbutton url="promote" link="${pilot}" label="PROMOTE" /></td>

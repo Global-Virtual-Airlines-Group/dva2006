@@ -107,7 +107,7 @@ ${navaid.frequency}</span></c:if></td>
  <el:button ID="ToggleButton" onClick="void toggleNavaids()" className="BUTTON" label="SHOW SURROUNDING NAVAIDS" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Map</td>
+ <td class="label top">Map</td>
  <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
 </tr>
 </c:if>

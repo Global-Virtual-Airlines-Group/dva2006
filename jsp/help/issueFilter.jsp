@@ -50,9 +50,9 @@ return true;
 
 <!-- Table View data -->
 <c:forEach var="issue" items="${viewContext.results}">
-<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
-<c:set var="cAuthor" value="${pilots[issue.lastCommentAuthorID]}" scope="request" />
-<c:set var="assignedTo" value="${pilots[issue.assignedTo]}" scope="request" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
+<c:set var="cAuthor" value="${pilots[issue.lastCommentAuthorID]}" scope="page" />
+<c:set var="assignedTo" value="${pilots[issue.assignedTo]}" scope="page" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td><el:cmd url="hdissue" link="${issue}"><fmt:text value="${issue.subject}" /></el:cmd></td>

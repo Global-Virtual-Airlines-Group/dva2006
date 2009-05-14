@@ -22,7 +22,7 @@
 </c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
-<c:set var="onLoad" value="showRemaining(10)" scope="request" />
+<c:set var="onLoad" value="showRemaining(10)" scope="page" />
 <script language="JavaScript" type="text/javascript">
 var expiry = ${exam.expiryDate.time};
 <c:if test="${exam.routePlot}">
@@ -50,7 +50,7 @@ for (var x = 0; x < rpQuestions.length; x++) {
 
 return true;
 }
-<c:set var="onLoad" value="initMaps(); ${onLoad}" scope="request" />
+<c:set var="onLoad" value="initMaps(); ${onLoad}" scope="page" />
 </c:if>
 //Time offset between server and client clock
 var timeOffset = (new Date().getTime() - ${currentTime});
@@ -81,12 +81,12 @@ var timeOffset = (new Date().getTime() - ${currentTime});
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="hasImage" value="${q.size > 0}" scope="request"/>
-<c:set var="isRP" value="${fn:isRoutePlot(q)}" scope="request" />
-<c:set var="isMC" value="${isRP || fn:isMultiChoice(q)}" scope="request" />
+<c:set var="hasImage" value="${q.size > 0}" scope="page"/>
+<c:set var="isRP" value="${fn:isRoutePlot(q)}" scope="page" />
+<c:set var="isMC" value="${isRP || fn:isMultiChoice(q)}" scope="page" />
 <!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="${hasImage ? '2' : '1'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${hasImage ? '2' : '1'}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">
@@ -106,14 +106,14 @@ info.aA = <map:marker point="${q.airportA}" />
 rpInfo[${q.number}] = info;
 </script>
 <tr>
- <td class="label" valign="top">Map #<fmt:int value="${q.number}" /></td>
+ <td class="label top">Map #<fmt:int value="${q.number}" /></td>
  <td class="data"><map:div ID="qMap${q.number}" x="100%" y="360" /></td>
 </tr>
 </c:if>
 
 <!-- Answer #${q.number} -->
 <tr>
- <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
+ <td class="label top">Answer #<fmt:int value="${q.number}" /></td>
 <c:choose>
 <c:when test="${isRP}">
  <td class="data"><el:check ID="A${q.number}" onChange="void updateMap(rpInfo[${q.number}])" type="radio" idx="*" cols="1" width="500" separator="<br />" name="answer${q.number}" className="small" options="${q.choices}" value="${q.answer}" /></td>

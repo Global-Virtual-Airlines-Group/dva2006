@@ -34,7 +34,7 @@
 
 <!-- Table Questionnaire Data -->
 <c:forEach var="exam" items="${examQueue}">
-<c:set var="applicant" value="${applicants[exam.pilotID]}" scope="request" />
+<c:set var="applicant" value="${applicants[exam.pilotID]}" scope="page" />
 <tr>
  <td><el:cmdbutton url="questionnaire" link="${exam}" label="SCORE" /></td>
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>

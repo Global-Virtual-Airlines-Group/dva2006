@@ -96,7 +96,7 @@ return true;
  <td class="data"><el:text name="version" idx="*" size="1" max="2" className="req" value="${entry.version}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Description</td>
+ <td class="label top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" className="req">${entry.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty entry}">
@@ -117,7 +117,7 @@ return true;
 <content:filter roles="Instructor,HR">
 <c:if test="${!empty certs}">
 <tr>
- <td class="label" valign="top">Flight Academy Certifications</td>
+ <td class="label top">Flight Academy Certifications</td>
  <td class="data"><el:check name="certNames" width="150" cols="4" className="small" newLine="true" checked="${entry.certifications}" options="${certs}" /></td>
 </tr>
 </c:if>

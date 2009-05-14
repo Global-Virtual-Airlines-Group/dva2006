@@ -100,7 +100,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
+<content:attr attr="isHR" value="true" roles="HR" />
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
 <content:sysdata var="ranks" name="ranks" />
@@ -131,7 +131,7 @@ return true;
 </c:if>
 <c:if test="${access.canChangeStatus}">
 <tr>
- <td class="label" valign="top">Pilot Status</td>
+ <td class="label top">Pilot Status</td>
  <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${pilot.statusName}" /><br />
 <el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
@@ -151,7 +151,7 @@ return true;
 </c:if>
 <c:if test="${access.canChangeRoles}">
 <tr>
- <td class="label" valign="top">Security Roles</td>
+ <td class="label top">Security Roles</td>
  <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="115" cols="7" newLine="true" checked="${pilot.roles}" options="${roles}" /></td>	
 </tr>
 <tr>
@@ -170,7 +170,7 @@ return true;
 </c:if> 
 </tr>
 <tr>
- <td class="label" valign="top">Additional Ratings</td>
+ <td class="label top">Additional Ratings</td>
 <c:if test="${access.canPromote}">
  <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="95" newLine="true" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
 </c:if>
@@ -229,7 +229,7 @@ return true;
 </c:otherwise>
 </c:choose>
 <tr>
- <td class="label" valign="top">E-Mail Notifications</td>
+ <td class="label top">E-Mail Notifications</td>
  <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
 </tr>
 <tr>
@@ -241,7 +241,7 @@ return true;
  <td colspan="${cspan}" class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${pilot.IMHandle['MSN']}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Privacy Options</td>
+ <td class="label top">Privacy Options</td>
  <td colspan="${cspan}" class="data"><el:check type="radio" name="privacyOption" idx="*" cols="1" separator="<br />" options="${privacyOptions}" value="${pilot.emailAccess}" /></td>
 </tr>
 
@@ -250,7 +250,7 @@ return true;
  <td colspan="${cspan + 1}">${forumName}</td>
 </tr>
 <tr>
- <td class="label" valign="top">Signature Image</td>
+ <td class="label top">Signature Image</td>
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
 <img alt="${forumName} Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
 <el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
@@ -259,13 +259,13 @@ return true;
 <el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void disableSigBoxes()" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Update Signature Image</td>
+ <td class="label top">Update Signature Image</td>
  <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br />
 <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
 pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Display Options</td>
+ <td class="label top">Display Options</td>
  <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show ${forumName} Signature Images" /><br />
  <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show ${forumName} screen shot Message Threads" /><br />
  <el:box name="scrollToNewPosts" value="true" checked="${pilot.showNewPosts}" label="Scroll to new ${forumName} Message Thread posts" /></td>
@@ -306,7 +306,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
  <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapTypeName}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">User Interface</td>
+ <td class="label top">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
 <c:if test="${screenXSize > 1024}"> 
 <el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />

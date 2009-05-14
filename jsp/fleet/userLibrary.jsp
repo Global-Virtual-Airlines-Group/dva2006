@@ -42,9 +42,9 @@
 
 <!-- Table Data Section -->
 <c:forEach var="entry" items="${files}">
-<c:set var="access" value="${accessMap[entry.fileName]}" scope="request" />
-<c:set var="author" value="${authors[entry.authorID]}" scope="request" />
-<c:set var="authorLoc" value="${userData[entry.authorID]}" scope="request" />
+<c:set var="access" value="${accessMap[entry.fileName]}" scope="page" />
+<c:set var="author" value="${authors[entry.authorID]}" scope="page" />
+<c:set var="authorLoc" value="${userData[entry.authorID]}" scope="page" />
 <view:row entry="${entry}">
 <c:if test="${access.canEdit}">
  <td class="pri bld"><el:cmd url="userfile" linkID="${doc.fileName}" op="edit">${entry.name}</el:cmd></td>

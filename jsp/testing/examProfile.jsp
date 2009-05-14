@@ -52,7 +52,7 @@
 </tr>
 <c:if test="${!empty eProfile.scorerIDs}">
 <tr>
- <td class="label" valign="top">Allowed Scorers</td>
+ <td class="label top">Allowed Scorers</td>
  <td class="data"><c:forEach var="scorer" items="${scorers}">${scorer.name} (${scorer.pilotCode})<br /></c:forEach></td>
 </tr>
 </c:if>

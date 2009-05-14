@@ -36,7 +36,7 @@
 
 <!-- Table data -->
 <c:forEach var="eqType" items="${eqTypes}">
-<c:set var="pilotCount" value="${eqTypeStats[eqType.name]}" scope="request" />
+<c:set var="pilotCount" value="${eqTypeStats[eqType.name]}" scope="page" />
 <view:row entry="${eqType}">
  <td class="pri bld"><el:cmd url="eqtype" linkID="${eqType.name}" op="edit">${eqType.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>

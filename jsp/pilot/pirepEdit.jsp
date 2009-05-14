@@ -10,7 +10,7 @@
 <head>
 <c:if test="${!empty pirep}">
 <title><content:airline /> Flight ${pirep.flightCode}</title>
-<c:set var="isAssign" value="${(fn:AssignID(pirep) > 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="request" />
+<c:set var="isAssign" value="${(fn:AssignID(pirep) > 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="page" />
 </c:if>
 <c:if test="${empty pirep}">
 <title>New <content:airline /> Flight Report</title>
@@ -171,8 +171,8 @@ return cmdPost(f.action);
  <td class="label">Flight Simulator</td>
  <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="${pirep.FSVersionCode}" /></td>
 </tr>
-<c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 10}" scope="request" />
-<c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="request" />
+<c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 10}" scope="page" />
+<c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
@@ -183,7 +183,7 @@ return cmdPost(f.action);
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
 </c:if>
 <tr>
- <td class="label" valign="top">Remarks</td>
+ <td class="label top">Remarks</td>
  <td class="data"><el:textbox idx="*" name="remarks" width="80%" height="5">${pirep.remarks}</el:textbox></td>
 </tr>
 </el:table>

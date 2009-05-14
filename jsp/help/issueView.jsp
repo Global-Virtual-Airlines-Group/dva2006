@@ -50,8 +50,8 @@ return ${access.canComment};
 <content:page>
 <%@ include file="/jsp/help/header.jspf" %> 
 <%@ include file="/jsp/help/sideMenu.jspf" %>
-<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
-<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -82,7 +82,7 @@ return ${access.canComment};
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Issue Description</td>
+ <td class="label top">Issue Description</td>
  <td class="data"><fmt:msg value="${issue.body}" /></td>
 </tr>
 
@@ -97,13 +97,13 @@ return ${access.canComment};
 </c:if>
 <c:if test="${!empty issue.comments}">
 <c:forEach var="comment" items="${issue.comments}">
-<c:set var="cAuthor" value="${pilots[comment.authorID]}" scope="request" />
+<c:set var="cAuthor" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label" valign="top">${cAuthor.name} (${cAuthor.pilotCode})<br />
+ <td class="label top">${cAuthor.name} (${cAuthor.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.time}" checked="false" label="Delete" /><br />
 <el:radio name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
- <td class="data" valign="top"><fmt:msg value="${comment.body}" /></td>
+ <td class="data top"><fmt:msg value="${comment.body}" /></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -111,7 +111,7 @@ return ${access.canComment};
 <c:if test="${access.canComment}">
 <!-- New Comment -->
 <tr>
- <td class="label" valign="top">New Comment</td>
+ <td class="label top">New Comment</td>
  <td><el:textbox name="body" width="80%" height="6" idx="*" className="req"></el:textbox></td>
 </tr>
 </c:if>

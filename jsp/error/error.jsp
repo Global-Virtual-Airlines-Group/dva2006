@@ -16,7 +16,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="ex" value="${empty servlet_exception ? exception : servlet_exception}" scope="request" />
+<c:set var="ex" value="${empty servlet_exception ? exception : servlet_exception}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

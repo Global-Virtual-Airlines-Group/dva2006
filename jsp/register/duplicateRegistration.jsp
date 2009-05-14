@@ -57,7 +57,7 @@ in <content:airline />!</td>
  <td class="data"><el:text name="email" idx="*" size="48" max="64" className="req" value="${param.email}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Other Information</td>
+ <td class="label top">Other Information</td>
  <td class="data"><el:textbox name="msgText" idx="*" width="90%" className="req" height="7"></el:textbox></td>
 </tr>
 </el:table>

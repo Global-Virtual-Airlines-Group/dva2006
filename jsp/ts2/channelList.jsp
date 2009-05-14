@@ -33,11 +33,11 @@
 </tr>
 
 <!-- Table Channel Data -->
-<c:set var="serverID" value="${0}" scope="request" />
+<c:set var="serverID" value="${0}" scope="page" />
 <c:forEach var="channel" items="${viewContext.results}">
 <c:if test="${serverID != channel.serverID}">
-<c:set var="server" value="${servers[channel.serverID]}" scope="request" />
-<c:set var="serverID" value="${channel.serverID}" scope="request" />
+<c:set var="server" value="${servers[channel.serverID]}" scope="page" />
+<c:set var="serverID" value="${channel.serverID}" scope="page" />
 <tr class="title">
  <td colspan="5" class="left caps">${server.name} - PORT ${server.port}</td>
 </tr>

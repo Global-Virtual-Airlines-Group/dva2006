@@ -78,11 +78,10 @@ return true;
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
-<c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
-<c:set var="user" value="${pageContext.request.userPrincipal}" scope="request" />
+<c:set var="serverName" value="${pageContext.request.serverName}" scope="page" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="ccLevels" name="centuryClubLevels" />
-<c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="request" />
+<c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -106,17 +105,17 @@ return true;
 <content:sysdata var="dateFmt" name="time.date_format" />
 
 <!-- Thread Posts -->
-<c:set var="postIdx" value="${0}" scope="request" />
-<c:set var="contentWarn" value="${false}" scope="request" />
+<c:set var="postIdx" value="${0}" scope="page" />
+<c:set var="contentWarn" value="${false}" scope="page" />
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response ${msg.hexID} -->
-<c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
-<c:set var="isUnread" value="${fn:get(unread, postIdx)}" scope="request" />
-<c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
-<c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
-<c:set var="postIdx" value="${postIdx + 1}" scope="request" />
-<c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="request" />
-<c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="request" />
+<c:set var="pilot" value="${pilots[msg.authorID]}" scope="page" />
+<c:set var="isUnread" value="${fn:get(unread, postIdx)}" scope="page" />
+<c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="page" />
+<c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="page" />
+<c:set var="postIdx" value="${postIdx + 1}" scope="page" />
+<c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="page" />
+<c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="page" />
 <tr id="post${msg.createdOn.time}">
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
@@ -239,8 +238,8 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
-<c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : pilotLoc.domain}" scope="request" />
-<c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="request" /></c:if>
+<c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : pilotLoc.domain}" scope="page" />
+<c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
 <el:table className="${pilotLoc.airlineCode}_defaultSig" pad="0"><tr>
  <td valign="bottom" class="sig" style="background-image: url(http://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
@@ -258,7 +257,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td colspan="3">THREAD STATUS HISTORY</td>
 </tr>
 <c:forEach var="update" items="${thread.updates}">
-<c:set var="pilot" value="${pilots[update.authorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[update.authorID]}" scope="page" />
 <tr>
  <td class="mid small"><fmt:date date="${update.date}" t="HH:mm" /></td>
  <td colspan="2">${update.message} by <span class="pri bld">${pilot.name}</span></td>

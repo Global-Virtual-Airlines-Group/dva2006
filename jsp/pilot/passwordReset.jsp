@@ -58,7 +58,7 @@ return true;
 </tr>
 <c:forEach var="pilot" items="${dupeUsers}">
 <c:if test="${fn:isActive(pilot)}">
-<c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="request" />
+<c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="page" />
 <tr>
  <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" /></td>
  <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank}, ${pilot.equipmentType})

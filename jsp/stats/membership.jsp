@@ -57,10 +57,10 @@ return true;
 <tr class="title">
  <td colspan="3" class="left caps">MEMBERSHIP QUANTILES</td>
 </tr>
-<c:set var="qCount" value="${0}" scope="request" />
+<c:set var="qCount" value="${0}" scope="page" />
 <c:forEach var="qLabel" items="${fn:keys(quantiles)}">
-<c:set var="qJoinDate" value="${quantiles[qLabel]}" scope="request" />
-<c:set var="qCount" value="${qCount + 1}" scope="request" />
+<c:set var="qJoinDate" value="${quantiles[qLabel]}" scope="page" />
+<c:set var="qCount" value="${qCount + 1}" scope="page" />
 <tr>
  <td class="label"><fmt:int value="${qCount}" /></td>
  <td class="data" colspan="2">Joined on or before <span class="pri bld"><fmt:date date="${qJoinDate}" fmt="d" /></span> 

@@ -72,7 +72,7 @@ return true;
  <td class="data"><el:box name="isHTML" idx="*" value="true" checked="${template.isHTML}" label="Send E-Mail message as HTML" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Template Text</td>
+ <td class="label top">Template Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="80%" className="req" height="10">${template.body}</el:textbox></td>
 </tr>
 </el:table>

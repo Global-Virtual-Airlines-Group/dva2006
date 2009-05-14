@@ -58,9 +58,9 @@ return true;
 
 <!-- Table Data Section -->
 <c:forEach var="sc" items="${viewContext.results}">
-<c:set var="access" value="${accessMap[sc.code]}" scope="request" />
-<c:set var="pilot" value="${pilots[sc.reservedBy]}" scope="request" />
-<c:set var="releaseDate" value="${releaseDates[sc.code]}" scope="request" />
+<c:set var="access" value="${accessMap[sc.code]}" scope="page" />
+<c:set var="pilot" value="${pilots[sc.reservedBy]}" scope="page" />
+<c:set var="releaseDate" value="${releaseDates[sc.code]}" scope="page" />
 <view:row entry="${se}">
  <td class="pri bld">${sc.code}</td>
 <c:choose>

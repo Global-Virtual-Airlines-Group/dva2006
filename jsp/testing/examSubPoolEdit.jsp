@@ -68,7 +68,7 @@ return true;
 </tr>
 <c:forEach var="pool" items="${exam.pools}">
 <tr>
- <td class="label" rowspan="2" valign="top">Question Pool #<fmt:int value="${pool.ID}" /></td>
+ <td class="label top" rowspan="2">Question Pool #<fmt:int value="${pool.ID}" /></td>
  <td class="data"><el:text name="pName${pool.ID}" idx="*" className="bld req" size="24" max="24" value="${pool.name}" /></td>
 </tr>
 <tr>
@@ -80,7 +80,7 @@ return true;
  <td colspan="2">ADD NEW QUESTION POOL</td>
 </tr>
 <tr>
- <td class="label" rowspan="2" valign="top">New Question Pool</td>
+ <td class="label top" rowspan="2">New Question Pool</td>
  <td class="data"><el:text name="pNameNew" idx="*" className="bld" size="24" max="24" value="" /></td>
 </tr>
 <tr>

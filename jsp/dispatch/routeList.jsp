@@ -56,7 +56,7 @@ return true;
 
 <!-- Routes -->
 <c:forEach var="route" items="${viewContext.results}">
-<c:set var="rAuthor" value="${authors[route.authorID]}" scope="request" />
+<c:set var="rAuthor" value="${authors[route.authorID]}" scope="page" />
 <tr>
  <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
  <td>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)<br />

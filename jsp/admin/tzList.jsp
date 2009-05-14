@@ -33,7 +33,7 @@
 
 <!-- Table Data -->
 <c:forEach var="tz" items="${viewContext.results}">
-<c:set var="gmtOffset" value="${tz.timeZone.rawOffset / 1000}" scope="request" />
+<c:set var="gmtOffset" value="${tz.timeZone.rawOffset / 1000}" scope="page" />
 <view:row entry="${tz}">
  <td class="bld"><el:cmd url="tz" op="edit" linkID="${tz.ID}">${tz.ID}</el:cmd></td>
  <td class="pri bld">${tz.abbr}</td>

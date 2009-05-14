@@ -70,8 +70,8 @@ with information about this session.</c:if><br />
 To view the <content:airline /> Flight Acadamy Instruction Calendar, <el:cmd url="academycalendar" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isSessionCancel}">
-<c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[session.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[session.instructorID]}" scope="page" />
 <!-- Flight Academy Instructor Session Canceled -->
 <div class="updateHdr">Flight Academy Instructor Session Canceled</div>
 <br />

@@ -223,7 +223,7 @@ return true;
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER</td>
 </tr>
 <tr>
- <td class="label" valign="top">Weather Map</td>
+ <td class="label top">Weather Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small"></div></td>
 </tr>
 <tr>
@@ -233,11 +233,11 @@ return true;
 <content:filter roles="Route,Dispatch"> <el:box name="useFA" value="true" checked="false" label="Use FlightAware Weather" /></content:filter></td>
 </tr>
 <tr>
- <td class="label" valign="top">METAR Data</td>
+ <td class="label top">METAR Data</td>
  <td class="data"><el:textbox name="metarData" width="75%" height="2" readOnly="true" disabled="true" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">TAF Data</td>
+ <td class="label top">TAF Data</td>
  <td class="data"><el:textbox name="tafData" width="75%" height="5" readOnly="true" disabled="true" /></td> 
 </tr>
 <c:if test="${!empty jetStreamImgs}">
@@ -250,7 +250,7 @@ return true;
  <span id="jsURLSelect" style="visibility:hidden;"><el:combo name="jsMapName" size="1" firstEntry="-" options="${emptyList}" onChange="void setJSMap(this)" /></span></td>
 </tr>
 <tr id="jsMapRow" style="display:none;">
- <td class="label" valign="top">Jet Stream Map</td>
+ <td class="label top">Jet Stream Map</td>
  <td class="data"><el:img ID="jsImg" src="blank.png" x="783" y="630" caption="Jet Stream Map" /></td>
 </tr>
 </c:if>

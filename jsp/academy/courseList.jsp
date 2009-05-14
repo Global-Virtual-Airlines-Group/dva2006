@@ -59,7 +59,7 @@ return true;
 
 <!-- Table View data -->
 <c:forEach var="course" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
 <view:row entry="${isPending ? pilot : course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>

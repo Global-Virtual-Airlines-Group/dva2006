@@ -65,7 +65,7 @@ return true;
  <td class="data"><el:text name="desc" idx="*" size="64" max="80" value="${server.description}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Server Options</td>
+ <td class="label top">Server Options</td>
  <td class="data"><el:box name="active" idx="*" value="true" className="sec" checked="${server.active}" label="Server is Active" /><br />
 <el:box name="isACARS" idx="*" value="true" checked="${server.ACARSOnly}" label="Virtual Server is accessible by logged in ACARS users only" /></td>
 </tr>
@@ -73,19 +73,19 @@ return true;
  <td colspan="2">SECURITY ROLES</td>
 </tr>
 <tr>
- <td class="label" valign="top">Server Access</td>
+ <td class="label top">Server Access</td>
  <td class="data"><el:check name="accessRoles" width="115" cols="7" newLine="true" checked="${server.roles['access']}" options="${roles}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Auto-Voice Access</td>
+ <td class="label top">Auto-Voice Access</td>
  <td class="data"><el:check name="voxRoles" width="115" cols="7" newLine="true" checked="${server.roles['voice']}" options="${roles}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Server Administration</td>
+ <td class="label top">Server Administration</td>
  <td class="data"><el:check name="adminRoles" width="115" cols="7" newLine="true" checked="${server.roles['admin']}" options="${roles}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Channel Operation</td>
+ <td class="label top">Channel Operation</td>
  <td class="data"><el:check name="opRoles" width="115" cols="7" newLine="true" checked="${server.roles['op']}" options="${roles}" /></td>
 </tr>
 </el:table>

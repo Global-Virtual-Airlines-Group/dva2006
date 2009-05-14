@@ -57,7 +57,7 @@ return true;
 <el:box name="active" idx="*" value="true" checked="${block.active}" label="Registration Block entry is Active" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4">${block.comments}</el:textbox></td>
 </tr>
 </el:table>

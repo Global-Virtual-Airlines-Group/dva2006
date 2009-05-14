@@ -18,8 +18,8 @@
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
-<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[flight.instructorID]}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

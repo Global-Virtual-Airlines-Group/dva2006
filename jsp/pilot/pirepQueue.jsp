@@ -20,7 +20,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="subLists" value="${(!empty myHeld) || (!empty myEQType)}" scope="request" />
+<c:set var="subLists" value="${(!empty myHeld) || (!empty myEQType)}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -41,7 +41,7 @@
  <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(myHeld)}" /> FLIGHT REPORTS HELD BY ${user.name}</td>
 </tr>
 <c:forEach var="pirep" items="${myHeld}">
-<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
  <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
@@ -63,7 +63,7 @@
  <td colspan="7" class="left caps"><fmt:int value="${fn:sizeof(myEQType)}" /> FLIGHT REPORTS FOR THE ${myEQ.name} PROGRAM</td>
 </tr>
 <c:forEach var="pirep" items="${myEQType}">
-<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
  <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 
@@ -86,7 +86,7 @@
 </c:if>
 <!-- Table Flight Report Data -->
 <c:forEach var="pirep" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td><fmt:date fmt="d" date="${pirep.date}" /></td>
  <td><c:if test="${fn:EventID(pirep) != 0}"><el:img src="network/event.png" caption="Online Event" /></c:if> 

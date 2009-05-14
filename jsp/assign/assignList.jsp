@@ -63,11 +63,11 @@ return true;
 </tr>
 
 <!-- Table Assignment Data -->
-<c:set var="idx" value="${-1}" scope="request" />
+<c:set var="idx" value="${-1}" scope="page" />
 <c:forEach var="assign" items="${viewContext.results}">
-<c:set var="idx" value="${idx + 1}" scope="request" />
-<c:set var="pilot" value="${pilots[assign.pilotID]}" scope="request" />
-<c:set var="access" value="${fn:get(accessList, idx)}" scope="request" />
+<c:set var="idx" value="${idx + 1}" scope="page" />
+<c:set var="pilot" value="${pilots[assign.pilotID]}" scope="page" />
+<c:set var="access" value="${fn:get(accessList, idx)}" scope="page" />
 <view:row entry="${assign}">
 <td>
 <c:if test="${!access.canReserve && !access.canRelease && !access.canDelete}">&nbsp;</c:if>

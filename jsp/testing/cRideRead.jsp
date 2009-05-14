@@ -84,8 +84,8 @@
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Comments</td>
- <td class="data" valign="top"><fmt:msg value="${checkRide.comments}" /></td>
+ <td class="label top">Comments</td>
+ <td class="data top"><fmt:msg value="${checkRide.comments}" /></td>
 </tr>
 </el:table>
 

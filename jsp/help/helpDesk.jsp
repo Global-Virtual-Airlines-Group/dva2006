@@ -69,8 +69,8 @@ one of our volunteer staff will answer it soon.</td>
  <td width="5%">COMMENTS</td>
 </tr>
 <c:forEach var="issue" items="${myIssues}">
-<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
-<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
@@ -90,8 +90,8 @@ one of our volunteer staff will answer it soon.</td>
  <td colspan="6" class="left">ACTIVE ISSUES</td>
 </tr>
 <c:forEach var="issue" items="${activeIssues}">
-<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
-<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
  <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>

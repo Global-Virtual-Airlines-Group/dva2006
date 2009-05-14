@@ -50,7 +50,7 @@ return true;
  <td class="data"><el:combo name="programType" idx="*" size="1" className="req" options="${eqTypes}" firstEntry="-" value="${script.program}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Script Text</td>
+ <td class="label top">Script Text</td>
  <td class="data"><el:textbox name="msgText" idx="*" width="90%" height="10" className="req">${script.description}</el:textbox></td>
 </tr>
 </el:table>

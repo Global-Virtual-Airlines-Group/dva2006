@@ -26,7 +26,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="fileName" value="${chart.hexID}.${fn:lower(chart.imgTypeName)}" scope="request" />
+<c:set var="fileName" value="${chart.hexID}.${fn:lower(chart.imgTypeName)}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

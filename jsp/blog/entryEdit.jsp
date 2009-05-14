@@ -32,9 +32,9 @@ return true;
 <content:page>
 <%@ include file="/jsp/blog/header.jspf" %> 
 <%@ include file="/jsp/blog/sideMenu.jspf" %>
-<c:set var="dateFmt" value="${user.dateFormat}" scope="request" />
-<c:set var="timeFmt" value="${user.timeFormat}" scope="request" />
-<c:set var="entryDate" value="${empty entry ? now : entry.date}" scope="request" />
+<c:set var="dateFmt" value="${user.dateFormat}" scope="page" />
+<c:set var="timeFmt" value="${user.timeFormat}" scope="page" />
+<c:set var="entryDate" value="${empty entry ? now : entry.date}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -59,7 +59,7 @@ return true;
 <el:box name="isLocked" idx="*" value="true" label="Journal Entry is Locked" checked="${entry.locked}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Entry Text</td>
+ <td class="label top">Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="15" className="req">${entry.body}</el:textbox></td>
 </tr>
 </el:table>

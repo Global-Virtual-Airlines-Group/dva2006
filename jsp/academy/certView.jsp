@@ -39,7 +39,7 @@
 </tr>
 <c:if test="${!empty docs}">
 <tr>
- <td class="label" valign="top">Study Documents</td>
+ <td class="label top">Study Documents</td>
  <td class="data"><span class="sec bld"><i>To modify this list, please update the Documents in the 
 <content:airline /> Document Library.</i></span><br />
 <c:forEach var="doc" items="${docs}">
@@ -59,9 +59,9 @@
  <td colspan="2">REQUIREMENTS FOR COMPLETION</td>
 </tr>
 <c:if test="${!empty cert.requirements}">
-<c:set var="reqNum" value="${0}" scope="request" />
+<c:set var="reqNum" value="${0}" scope="page" />
 <c:forEach var="req" items="${cert.requirements}">
-<c:set var="reqNum" value="${reqNum + 1}" scope="request" />
+<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <tr>
  <td class="label">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><fmt:text value="${req.text}" /></td>

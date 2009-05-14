@@ -69,7 +69,7 @@ return true;
  <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="< SELECT >" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Description</td>
+ <td class="label top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" height="4" className="req">${entry.description}</el:textbox></td>
 </tr>
 <tr>

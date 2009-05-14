@@ -25,20 +25,20 @@
 </tr>
 <c:if test="${!empty msgs}">
 <tr>
- <td class="label" valign="top">Import Messages</td>
+ <td class="label top">Import Messages</td>
  <td class="data"><c:forEach var="msg" items="${msgs}">
 <fmt:text value="${msg}" /><br /></c:forEach></td>
 </tr>
 </c:if>
 <c:if test="${!empty eqTypes}">
 <tr>
- <td class="label" valign="top">Invalid Equipment</td>
+ <td class="label top">Invalid Equipment</td>
  <td class="data"><fmt:list value="${eqTypes}" delim=", " /></td>
 </tr>
 </c:if>
 <c:if test="${!empty airports}">
 <tr>
- <td class="label" valign="top">Invalid Airports</td>
+ <td class="label top">Invalid Airports</td>
  <td class="data"><c:forEach var="code" items="${airports}">
 Invalid Airport Code - <el:cmd url="airport" linkID="${code}" op="edit" target="_new" className="bld">${code}</el:cmd><br />
 </c:forEach></td>

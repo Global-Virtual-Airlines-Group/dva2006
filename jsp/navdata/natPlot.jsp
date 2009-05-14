@@ -186,7 +186,7 @@ return true;
  <td class="data"><el:check name="showTracks" idx="*" options="${trackTypes}" checked="${trackTypes}" width="100" cols="3" onChange="void updateTracks(this)" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="small"></div></td>
 </tr>
 </el:table>

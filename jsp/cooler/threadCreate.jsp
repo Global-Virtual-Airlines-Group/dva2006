@@ -121,11 +121,11 @@ return true;
  <td colspan="2">LINKED IMAGES</td>
 </tr>
 <content:hasmsg>
-<c:set var="imgURL" value="${param.imgURL}" scope="request" />
-<c:set var="imgDesc" value="${param.desc}" scope="request" />
+<c:set var="imgURL" value="${param.imgURL}" scope="page" />
+<c:set var="imgDesc" value="${param.desc}" scope="page" />
 </content:hasmsg>
 <tr>
- <td class="label" valign="top">New Image URL</td>
+ <td class="label top">New Image URL</td>
  <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="${imgURL}" />
 <content:hasmsg><span class="small error bld"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
@@ -152,7 +152,7 @@ return true;
  <td class="data"><el:box name="hasPoll" idx="*" value="true" onChange="void enablePoll()" label="Enable Pilot Poll in this Discussion Thread" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Poll Options</td>
+ <td class="label top">Poll Options</td>
  <td class="data"><el:textbox name="pollOptions" idx="*" width="60" height="6"></el:textbox></td>
 </tr>
 </content:filter>

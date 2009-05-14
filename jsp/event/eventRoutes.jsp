@@ -62,10 +62,10 @@ return true;
  <td colspan="4">FLIGHT ROUTES FOR ${event.name}</td>
 </tr>
 <c:forEach var="route" items="${event.routes}">
-<c:set var="hasName" value="${!empty route.name}" scope="request" />
-<c:set var="toggleBoxClass" value="${route.active ? 'warn' : 'ter'}" scope="request" />
+<c:set var="hasName" value="${!empty route.name}" scope="page" />
+<c:set var="toggleBoxClass" value="${route.active ? 'warn' : 'ter'}" scope="page" />
 <tr>
- <td class="label" valign="top" rowspan="${hasName ? '4' : '3'}">Route #<fmt:int value="${route.routeID}" /></td>
+ <td class="label top" rowspan="${hasName ? '4' : '3'}">Route #<fmt:int value="${route.routeID}" /></td>
 <c:if test="${hasName}">
  <td colspan="3" class="data"><el:text name="routeName${route.routeID}" idx="*" className="pri bld req" size="80" max="144" value="${route.name}" /></td> 
 </tr>
@@ -81,8 +81,8 @@ return true;
  <td class="data"><el:box name="isRNAV${route.routeID}" idx="*" value="true" className="small" label="This is an RNAV Route" checked="${route.isRNAV}" /><br />
 <el:box name="disable${route.routeID}" value="true" className="small ${toggleBoxClass}" label="${route.active ? 'Disable' : 'Enable'} this Route" /><br />
 <el:box name="delete${route.routeID}" value="true" className="small bld" label="Delete this Route" /></td>
- <td class="label" valign="top">Maximum Signups</td>
- <td class="data" valign="top"><el:text name="maxSignups${route.routeID}" idx="*" className="req" size="2" max="3" value="${route.maxSignups}" />
+ <td class="label top">Maximum Signups</td>
+ <td class="data top"><el:text name="maxSignups${route.routeID}" idx="*" className="req" size="2" max="3" value="${route.maxSignups}" />
  <i><fmt:int value="${route.signups}" /> Pilots signed up</i></td>
 </tr>
 </c:forEach>

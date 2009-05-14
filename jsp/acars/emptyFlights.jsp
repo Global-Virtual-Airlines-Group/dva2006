@@ -76,8 +76,8 @@ return true;
 
 <!-- Result Data -->
 <c:forEach var="flight" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
-<c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="page" />
+<c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="page" />
 <view:row entry="${info}">
  <td class="pri bld"><el:cmd url="acarsinfo" link="${flight}"><fmt:int value="${flight.ID}" /></el:cmd></td>
  <td><el:box name="flightID" idx="*" value="${flight.ID}" label="" /></td>

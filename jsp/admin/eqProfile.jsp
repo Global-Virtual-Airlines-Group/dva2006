@@ -76,11 +76,11 @@ return true;
  <td class="data"><el:check name="ranks" cols="6" width="145" className="pri small" newLine="true" checked="${eqType.ranks}" options="${ranks}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Primary Ratings</td>
+ <td class="label top">Primary Ratings</td>
  <td class="data"><el:check name="pRatings" cols="8" width="95" className="small req" newLine="true" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Secondary Ratings</td>
+ <td class="label top">Secondary Ratings</td>
  <td class="data"><el:check name="sRatings" cols="8" width="95" className="small" newLine="true" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
@@ -88,7 +88,7 @@ return true;
  <td class="data"><el:check name="airline" width="175" idx="*" options="${airlines}" className="req" checked="${eqType.airlines}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">First Officer Examinations</td>
+ <td class="label top">First Officer Examinations</td>
  <td class="data"><el:check name="examFO" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examFO(eqType)}" /></td>
 </tr>
 <tr>
@@ -96,7 +96,7 @@ return true;
  <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty captLegs ? 10 : captLegs}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Captain Examinations</td>
+ <td class="label top">Captain Examinations</td>
  <td class="data"><el:check name="examC" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examC(eqType)}" /></td>
 </tr>
 <tr>

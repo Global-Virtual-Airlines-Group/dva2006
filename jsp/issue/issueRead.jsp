@@ -39,10 +39,10 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="versions" name="issue_track.versions" />
-<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
-<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
-<c:set var="authorLoc" value="${userData[issue.authorID]}" scope="request" />
-<c:set var="assigneeLoc" value="${userData[issue.assignedTo]}" scope="request" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
+<c:set var="authorLoc" value="${userData[issue.authorID]}" scope="page" />
+<c:set var="assigneeLoc" value="${userData[issue.assignedTo]}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -88,7 +88,7 @@ return true;
  <td class="data">${issue.majorVersion}.${issue.minorVersion}</td>
 </tr>
 <tr>
- <td class="label" valign="top">Issue Description</td>
+ <td class="label top">Issue Description</td>
  <td class="data"><fmt:msg value="${issue.description}" /></td>
 </tr>
 
@@ -103,11 +103,11 @@ return true;
 </c:if>
 <c:if test="${!empty issue.comments}">
 <c:forEach var="comment" items="${issue.comments}">
-<c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
+<c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name} (${author.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" /></td>
- <td class="data" valign="top"><fmt:msg value="${comment.comments}" /></td>
+ <td class="data top"><fmt:msg value="${comment.comments}" /></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -115,7 +115,7 @@ return true;
 <c:if test="${access.canComment}">
 <!-- New Comment -->
 <tr>
- <td class="label" valign="top">New Comment</td>
+ <td class="label top">New Comment</td>
  <td><el:textbox name="comment" width="80%" height="6" idx="*" className="req"></el:textbox></td>
 </tr>
 <tr>

@@ -64,7 +64,7 @@ return true;
  <td class="data sec"><c:forEach var="airline" items="${question.airlines}">${airline.name} </c:forEach></td>
 </tr>
 <tr>
- <td class="label" valign="top">Pilot Examinations</td>
+ <td class="label top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="160" newLine="true" className="small" checked="${question.examNames}" options="${examNames}" /></td>
 </tr>
 <tr>
@@ -91,7 +91,7 @@ return true;
  <td colspan="2">MULTIPLE CHOICE QUESTION</td>
 </tr>
 <tr>
- <td class="label" valign="top">Answer Choices</td>
+ <td class="label top">Answer Choices</td>
  <td class="data small"><c:forEach var="choice" items="${question.choices}">${choice}<br /></c:forEach>
 </tr>
 <tr>

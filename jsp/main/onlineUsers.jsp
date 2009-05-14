@@ -27,8 +27,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:filter roles="HR">
-<c:set var="isHR" value="${true}" scope="request" /></content:filter>
+<content:attr attr="isHR" roles="HR" value="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -53,7 +52,7 @@ return true;
 
 <!-- Pilot Data Bar -->
 <c:forEach var="session" items="${pilots}">
-<c:set var="pilot" value="${session.person}" scope="request" />
+<c:set var="pilot" value="${session.person}" scope="page" />
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>

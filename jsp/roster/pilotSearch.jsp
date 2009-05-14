@@ -112,13 +112,13 @@ return false;
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${results}">
-<c:set var="access" value="${accessMap[pilot.ID]}" scope="request" />
+<c:set var="access" value="${accessMap[pilot.ID]}" scope="page" />
 <view:row entry="${pilot}">
-<c:set var="cspan" value="${2}" scope="request" />
+<c:set var="cspan" value="${2}" scope="page" />
 <content:filter roles="HR">
 <c:if test="${access.canActivate || access.canChangeSignature}">
  <td><el:cmdbutton url="cmdlog" link="${pilot}" label="VIEW LOG" /></td>
-<c:set var="cspan" value="${1}" scope="request" />
+<c:set var="cspan" value="${1}" scope="page" />
 </c:if>
 </content:filter>
 <c:choose>

@@ -59,13 +59,13 @@
 </tr>
 <c:if test="${!empty err.stackDump}">
 <tr>
- <td class="label" valign="top">Error Information</td>
+ <td class="label top">Error Information</td>
  <td class="data"><fmt:text value="${err.stackDump}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty err.stateData}">
 <tr>
- <td class="label" valign="top">State Data</td>
+ <td class="label top">State Data</td>
  <td class="data">${err.stateData}</td>
 </tr>
 </c:if>

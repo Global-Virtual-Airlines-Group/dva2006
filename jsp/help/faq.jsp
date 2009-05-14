@@ -20,7 +20,7 @@
 <content:page>
 <%@ include file="/jsp/help/header.jspf" %> 
 <%@ include file="/jsp/help/sideMenu.jspf" %>
-<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
+<content:attr attr="isHR" value="true" roles="HR" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -37,7 +37,7 @@
 
 <!-- Table View data -->
 <c:forEach var="issue" items="${viewContext.results}">
-<c:set var="comment" value="${fn:first(issue.comments)}" scope="request" />
+<c:set var="comment" value="${fn:first(issue.comments)}" scope="page" />
 <tr>
 <c:if test="${isHR}">
  <td><el:cmd url="hdissue" link="${issue}" className="pri bld"><fmt:text value="${issue.subject}" /></el:cmd></td>

@@ -39,8 +39,8 @@
  
 <!-- Table View data -->
 <c:forEach var="ride" items="${viewContext.results}">
-<c:set var="course" value="${courses[ride.courseID]}" scope="request" />
-<c:set var="pilot" value="${pilots[ride.pilotID]}" scope="request" />
+<c:set var="course" value="${courses[ride.courseID]}" scope="page" />
+<c:set var="pilot" value="${pilots[ride.pilotID]}" scope="page" />
 <tr>
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
  <td><el:cmdbutton url="crview" linkID="${ride.hexID}" label="SCORE" /></td>

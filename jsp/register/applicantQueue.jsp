@@ -61,8 +61,8 @@ return true;
 
 <!-- Table Applicant Data -->
 <c:forEach var="applicant" items="${viewContext.results}">
-<c:set var="addrOK" value="${addrValid[applicant.ID]}" scope="request" />
-<c:set var="q" value="${qMap[applicant.ID]}" scope="request" />
+<c:set var="addrOK" value="${addrValid[applicant.ID]}" scope="page" />
+<c:set var="q" value="${qMap[applicant.ID]}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><fmt:date fmt="d" date="${applicant.createdOn}" /></td>

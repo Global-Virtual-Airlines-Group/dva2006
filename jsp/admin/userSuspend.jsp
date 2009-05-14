@@ -43,7 +43,7 @@ return true;
  already authenticated.</td>
 </tr>
 <tr>
- <td class="label" valign="top">Reason for Suspension</td>
+ <td class="label top">Reason for Suspension</td>
  <td class="data"><el:textbox name="comment" idx="*" width="80%" height="5" className="req" /></td>
 </tr>
 </el:table>

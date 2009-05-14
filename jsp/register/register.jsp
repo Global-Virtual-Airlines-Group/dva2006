@@ -16,7 +16,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="request" />
+<c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
 <script language="JavaScript" type="text/javascript">
 <fmt:jsarray var="invalidDomains" items="${badDomains}" />
 
@@ -139,7 +139,7 @@ this e-mail address.</div></c:if>
  </td>
 </tr>
 <tr>
- <td class="label" valign="top">E-Mail Notifications</td>
+ <td class="label top">E-Mail Notifications</td>
  <td class="data" colspan="${cspan}"><el:check name="notifyOption" idx="*" className="small" width="215" cols="2" newLine="true" options="${notifyOptions}" /></td>
 </tr>
 
@@ -195,7 +195,7 @@ this e-mail address.</div></c:if>
  <td colspan="${cspan + 1}">ADDITIONAL INFORMATION</td>
 </tr>
 <tr>
- <td class="label" rowspan="2" valign="top">Comments</td>
+ <td class="label top" rowspan="2">Comments</td>
  <td class="data" colspan="${cspan}"><span class="small">Please provide any comments or additional information that you feel would assist
 in processing your application.</span></td>
 </tr>

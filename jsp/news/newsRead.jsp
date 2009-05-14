@@ -33,7 +33,7 @@
  <td class="data"><fmt:date fmt="d" date="${entry.date}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Entry Text</td>
+ <td class="label top">Entry Text</td>
  <td class="data"><fmt:text value="${entry.body}" /></td>
 </tr>
 </el:table>

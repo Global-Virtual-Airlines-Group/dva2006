@@ -52,7 +52,7 @@ return true;
 
 <!-- Table Data -->
 <c:forEach var="exam" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="page" />
 <view:row entry="${exam}">
 <c:choose>
 <c:when test="${!fn:passed(exam) && !fn:failed(exam)}">

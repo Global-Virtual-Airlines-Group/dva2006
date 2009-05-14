@@ -57,7 +57,7 @@ return true;
 &nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Remarks</td>
+ <td class="label top">Remarks</td>
  <td class="data"><el:textbox name="comments" idx="*" width="90%" height="6">${entry.comments}</el:textbox></td>
 </tr>
 </el:table>

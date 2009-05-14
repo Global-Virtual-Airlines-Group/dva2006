@@ -34,7 +34,7 @@ program, and all Pilots in this program have been updated.<br />
 The following <content:airline /> Pilots have had their equipment type ratings updated:<br />
 <br />
 <c:forEach var="pilot" items="${fn:keys(updatedRatings)}">
-<c:set var="ratings" value="${updatedRatings[pilot]}" scope="request" />
+<c:set var="ratings" value="${updatedRatings[pilot]}" scope="page" />
 ${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> - 
 added <fmt:list value="${ratings}" delim=", " />.<br />
 </c:forEach>

@@ -208,7 +208,7 @@ return true;
  <td colspan="2" class="left">PLOTTED ROUTE</td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="580" /><div id="copyright" class="small"></div></td>
 </tr>
 <tr>
@@ -220,7 +220,7 @@ return true;
  <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" onBlur="updateRoute();" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4" onBlur="updateRoute();" /></td>
 </tr>
 </el:table>

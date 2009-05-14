@@ -51,7 +51,7 @@ return true;
  <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${eqTypes}" value="${param.eqType}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Message Text</td>
+ <td class="label top">Message Text</td>
  <td class="data"><el:textbox name="body" className="req" idx="*" width="80%" height="15">${param.body}</el:textbox></td>
 </tr>
 </el:table>

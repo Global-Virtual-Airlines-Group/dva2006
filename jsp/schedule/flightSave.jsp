@@ -36,14 +36,14 @@ return true;
  <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD - STEP TWO</td>
 </tr>
 <tr>
- <td class="label" valign="top">Import Results</td>
+ <td class="label top">Import Results</td>
  <td class="data"><fmt:int value="${fn:sizeof(sessionScope.entries)}" /> Schedule Entries loaded
 <c:if test="${innovataCache}"><br />
 <span class="warn small caps">Cached Innovata, LLC data used - no new data available</span></c:if></td>
 </tr>
 <c:if test="${!empty errors}">
 <tr>
- <td class="label" valign="top">Import Errors</td>
+ <td class="label top">Import Errors</td>
  <td class="data small"><c:forEach var="error" items="${sessionScope.errors}">
 ${error}<br />
 </c:forEach></td>
@@ -54,7 +54,7 @@ ${error}<br />
  <td class="data"><el:box name="doPurge" idx="*" value="true" checked="true" label="Purge existing Schedule Entries" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Import Options</td>
+ <td class="label top">Import Options</td>
  <td class="data"><el:box name="canPurge" idx="*" value="true" checked="true" label="Mark imported Schedule Entries as Purgeable" /><br />
 <el:box name="isHistoric" idx="*" value="true" label="Mark imported Schedule Entries as Historic Flights" /><br />
 <el:box name="updateAirports" idx="*" value="true" checked="true" label="Update Airport/Airline mappings in database" /></td>

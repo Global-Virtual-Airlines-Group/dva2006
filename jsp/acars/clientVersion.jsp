@@ -19,7 +19,7 @@ if (!checkSubmit()) return false;
 if (!validateNumber(form.latestBuild, 1, 'Latest Build')) return false;
 if (!validateNumber(form.latestDispatch, 1, 'Latest Dispatch Build')) return false;
 <c:forEach var="ver" items="${fn:keys(versionInfo)}">
-<c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
+<c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="page" />
 if (!validateNumber(form.min_${versionCode}_Build, 1, 'Minimum ${ver} Build')) return false;
 </c:forEach>
 <c:forEach var="build" items="${fn:keys(betaInfo)}">
@@ -45,8 +45,8 @@ return true;
  <td colspan="2">GLOBAL ACARS CLIENT VERSION CONTROL</td>
 </tr>
 <c:forEach var="ver" items="${fn:keys(versionInfo)}">
-<c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
-<c:set var="minBuild" value="${versionInfo[ver]}" scope="request" />
+<c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="page" />
+<c:set var="minBuild" value="${versionInfo[ver]}" scope="page" />
 <tr>
  <td class="label">Minimum ${ver} Build</td>
  <td class="data"><el:text className="pri bld req" name="min_${versionCode}_build" idx="*" size="3" max="4" value="${minBuild}" /></td>
@@ -69,7 +69,7 @@ return true;
 </tr>
 <c:if test="${!empty betaInfo}">
 <c:forEach var="build" items="${fn:keys(betaInfo)}">
-<c:set var="minBeta" value="${betaInfo[build]}" scope="request" />
+<c:set var="minBeta" value="${betaInfo[build]}" scope="page" />
 <tr>
  <td class="label">Minimum Build ${build} beta</td>
  <td class="data"><el:text className="pri bld req" name="min_${build}_beta" idx="*" size="3" max="4" value="${minBeta}" /></td>

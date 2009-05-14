@@ -46,7 +46,7 @@ return true;
  <td class="data"><el:text name="subject" idx="*" className="req" size="64" max="144" value="${help.subject}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Help Entry Text</td>
+ <td class="label top">Help Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" className="small req" width="80%" height="8">${help.body}</el:textbox></td>
 </tr>
 </el:table>

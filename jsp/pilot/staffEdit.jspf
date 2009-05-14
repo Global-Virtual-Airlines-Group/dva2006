@@ -17,7 +17,7 @@
  </c:if>
 </tr>
 <tr>
- <td class="label" valign="top">Biographical Profile</td>
+ <td class="label top">Biographical Profile</td>
  <td colspan="${cspan}" class="data"><el:textbox name="staffBody" idx="*" height="4" width="100" className="req">${staff.body}</el:textbox></td>
 </tr>
 <c:if test="${access.canChangeRoles}">

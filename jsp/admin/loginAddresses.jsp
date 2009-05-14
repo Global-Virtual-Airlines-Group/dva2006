@@ -41,7 +41,7 @@ return true;
  <td colspan="2">SEARCH USER LOGIN ADDRESSES</td>
 </tr>
 <tr>
- <td class="label" valign="top">Address / Host Name</td>
+ <td class="label top">Address / Host Name</td>
  <td class="data"><el:text name="id" idx="*" className="bld req" size="40" max="96" value="${param.id}" />
 <span class="small">Use '%' as a wildcard</span></td>
 </tr>
@@ -94,7 +94,7 @@ return true;
 
 <!-- Table Log Data -->
 <c:forEach var="addr" items="${addrs}">
-<c:set var="pilot" value="${pilots[addr.ID]}" scope="request" />
+<c:set var="pilot" value="${pilots[addr.ID]}" scope="page" />
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>

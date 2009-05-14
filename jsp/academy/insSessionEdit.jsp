@@ -77,7 +77,7 @@ return true;
 <el:box name="noSend" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Remarks</td>
+ <td class="label top">Remarks</td>
  <td class="data"><el:textbox name="remarks" idx="*" width="90%" height="6">${session.comments}</el:textbox></td>
 </tr>
 </el:table>

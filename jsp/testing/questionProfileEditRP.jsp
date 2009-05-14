@@ -167,7 +167,7 @@ return true;
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${question.airlines}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Pilot Examinations</td>
+ <td class="label top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="190" newLine="true" className="small" checked="${question.pools}" options="${examNames}" /></td>
 </tr>
 <c:if test="${!empty question}">
@@ -192,7 +192,7 @@ return true;
 </c:if>
 </c:if>
 <tr>
- <td class="label" valign="top">Upload Image</td>
+ <td class="label top">Upload Image</td>
  <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
 <el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>
@@ -239,11 +239,11 @@ return true;
  <td class="data"><el:text name="route5" idx="*" size="128" max="224" onBlur="massageRoute(this); updateCorrect()" className="small" value="${fn:get(question.choices, 4)}" /></td>
 </tr>
 <tr id="correctAnswerRow" style="display:none;">
- <td class="label" valign="top">Correct Answer</td>
+ <td class="label top">Correct Answer</td>
  <td class="data"><el:combo name="correctChoice" onChange="void plotRouteMap(this)" idx="*" size="1" className="small req" options="${question.choices}" firstEntry="-" value="${question.correctAnswer}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="480" /></td>
 </tr>
 </el:table>
@@ -261,7 +261,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="request" />
+<c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
 <script language="JavaScript" type="text/javascript">
 var doRunways = false;
 <map:point var="mapC" point="${mapCenter}" />

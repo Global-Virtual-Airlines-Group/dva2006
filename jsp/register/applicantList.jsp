@@ -60,9 +60,9 @@ return true;
 
 <!-- Table Applicant Data -->
 <c:forEach var="applicant" items="${viewContext.results}">
-<c:set var="q" value="${qMap[applicant.ID]}" scope="request" />
+<c:set var="q" value="${qMap[applicant.ID]}" scope="page" />
 <c:if test="${empty q}">
-<c:set var="q" value="${pqMap[applicant.pilotID]}" scope="request" />
+<c:set var="q" value="${pqMap[applicant.pilotID]}" scope="page" />
 </c:if>
 <view:row entry="${applicant}">
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>

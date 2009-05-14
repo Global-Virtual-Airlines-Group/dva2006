@@ -33,7 +33,7 @@
 
 <!-- Table NOTAM Data -->
 <c:forEach var="notam" items="${viewContext.results}">
-<c:set var="ac" value="${accessMap[notam.ID]}" scope="request" />
+<c:set var="ac" value="${accessMap[notam.ID]}" scope="page" />
 <view:row entry="${notam}">
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
  <td class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>

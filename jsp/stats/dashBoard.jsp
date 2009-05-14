@@ -36,7 +36,7 @@ return true;
  <td colspan="2" class="right">FROM <el:text name="startDays" idx="*" size="2" max="3" value="${startDays}" /> TO
  <el:text name="endDays" idx="*" size="2" max="3" value="${endDays}" /> DAYS AGO</td>
 </tr>
-<c:set var="pirepApproval" value="${results['pirepApproval']}" scope="request" />
+<c:set var="pirepApproval" value="${results['pirepApproval']}" scope="page" />
 <c:if test="${!empty pirepApproval}">
 <!-- PIREP Approval Data -->
 <tr class="title caps">
@@ -60,7 +60,7 @@ return true;
 </tr>
 </c:forEach>
 </c:if>
-<c:set var="examGrade" value="${results['examGrading']}" scope="request" />
+<c:set var="examGrade" value="${results['examGrading']}" scope="page" />
 <c:if test="${!empty examGrade}">
 <!-- Exam Grading Data -->
 <tr class="title caps">
@@ -84,7 +84,7 @@ return true;
 </tr>
 </c:forEach>
 </c:if>
-<c:set var="rideGrade" value="${results['rideGrading']}" scope="request" />
+<c:set var="rideGrade" value="${results['rideGrading']}" scope="page" />
 <c:if test="${!empty rideGrade}">
 <!-- Check Ride Grading Data -->
 <tr class="title caps">
@@ -108,7 +108,7 @@ return true;
 </tr>
 </c:forEach>
 </c:if>
-<c:set var="frStats" value="${results['pirepStats']}" scope="request" />
+<c:set var="frStats" value="${results['pirepStats']}" scope="page" />
 <c:if test="${!empty frStats}">
 <!-- Flight Report Statistics -->
 <tr class="title caps">
@@ -132,7 +132,7 @@ return true;
 </tr>
 </c:forEach>
 </c:if>
-<c:set var="afrStats" value="${results['acarsStats']}" scope="request" />
+<c:set var="afrStats" value="${results['acarsStats']}" scope="page" />
 <c:if test="${!empty afrStats}">
 <!-- ACARS Flight Report Statistics -->
 <tr class="title caps">

@@ -40,7 +40,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
-<c:set var="channelName" value="Watched ${forumName} Discussion Threads" scope="request" />
+<c:set var="channelName" value="Watched ${forumName} Discussion Threads" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -70,12 +70,12 @@ return true;
 
 <!-- Table Thread Data -->
 <c:forEach var="thread" items="${viewContext.results}">
-<c:set var="author" value="${pilots[thread.authorID]}" scope="request" />
-<c:set var="authorLoc" value="${userData[thread.authorID]}" scope="request" />
-<c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="request" />
-<c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="request" />
-<c:set var="cutoffDate" value="${!empty sessionScope.coolerThreadReadOverride ? sessionScope.coolerThreadReadOverride : user.lastLogoff}" scope="request" />
-<c:set var="isThreadNew" value="${(thread.lastUpdatedOn > cutoffDate) && ((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="request" />
+<c:set var="author" value="${pilots[thread.authorID]}" scope="page" />
+<c:set var="authorLoc" value="${userData[thread.authorID]}" scope="page" />
+<c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="page" />
+<c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="page" />
+<c:set var="cutoffDate" value="${!empty sessionScope.coolerThreadReadOverride ? sessionScope.coolerThreadReadOverride : user.lastLogoff}" scope="page" />
+<c:set var="isThreadNew" value="${(thread.lastUpdatedOn > cutoffDate) && ((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="page" />
 <view:row entry="${thread}" className="${isThreadNew ? 'opt1' : null}">
  <td><el:box name="threadID" idx="*" value="${thread.hexID}" label="" checked="false" /></td>
  <td class="left">

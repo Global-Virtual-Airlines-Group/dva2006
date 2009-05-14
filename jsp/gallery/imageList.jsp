@@ -64,7 +64,7 @@ return true;
 
 <!-- Table Data Section -->
 <c:forEach var="img" items="${viewContext.results}">
-<c:set var="author" value="${pilots[img.authorID]}" scope="request" />
+<c:set var="author" value="${pilots[img.authorID]}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="image" link="${img}">${img.name}</el:cmd></td>
  <td class="small"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:int value="${img.size / 1024}" />K</td>

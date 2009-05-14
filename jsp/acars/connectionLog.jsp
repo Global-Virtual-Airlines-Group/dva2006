@@ -82,8 +82,8 @@ return true;
 
 <!-- Log Entries -->
 <c:forEach var="entry" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[entry.pilotID]}" scope="request" />
-<c:set var="pilotLoc" value="${userData[entry.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[entry.pilotID]}" scope="page" />
+<c:set var="pilotLoc" value="${userData[entry.pilotID]}" scope="page" />
 <view:row entry="${entry}">
  <td class="pri bld"><fmt:hex value="${entry.ID}" /></td>
  <td class="small"><fmt:date date="${entry.startTime}" /></td>

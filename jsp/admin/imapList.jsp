@@ -40,7 +40,7 @@
 <!-- Table Log Data -->
 <c:forEach var="mb" items="${viewContext.results}">
 <view:row entry="mb">
-<c:set var="pilot" value="${pilots[mb.ID]}" scope="request" />
+<c:set var="pilot" value="${pilots[mb.ID]}" scope="page" />
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td><el:cmd url="imap" link="${mb}" className="plain">${mb.address}</el:cmd></td>

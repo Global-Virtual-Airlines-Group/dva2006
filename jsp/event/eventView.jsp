@@ -43,19 +43,17 @@ return true;
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:sysdata var="airports" name="airports" />
-<content:filter roles="Event,HR">
-<c:set var="showStats" value="true" scope="request" />
-</content:filter>
+<content:attr attr="showStats" value="true" roles="Event,HR" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <c:if test="${access.canSignup}">
-<c:set var="formAction" value="eventsignup.do" scope="request" />
-<c:set var="formValidate" value="return validate(this)" scope="request" />
+<c:set var="formAction" value="eventsignup.do" scope="page" />
+<c:set var="formValidate" value="return validate(this)" scope="page" />
 </c:if>
 <c:if test="${!access.canSignup}">
-<c:set var="formAction" value="event.do" scope="request" />
-<c:set var="formValidate" value="return false" scope="request" />
+<c:set var="formAction" value="event.do" scope="page" />
+<c:set var="formValidate" value="return false" scope="page" />
 </c:if>
 <el:form action="${formAction}" method="post" link="${event}" validate="${formValidate}">
 <el:table className="form view" pad="default" space="default">
@@ -78,7 +76,7 @@ return true;
  <td colspan="5" class="data bld">${event.owner.name}</td> 
 </tr>
 <tr>
- <td class="label" valign="top">Airlines</td>
+ <td class="label top">Airlines</td>
  <td colspan="5" class="data"><c:forEach var="airline" items="${event.airlines}">${airline.name}<br /></c:forEach></td>
 </tr>
 </c:if>
@@ -94,7 +92,7 @@ return true;
 </tr>
 <c:forEach var="route" items="${event.routes}">
 <view:row entry="${route}">
- <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
+ <td class="label top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
  <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)<c:if test="${route.isRNAV}"> (RNAV)</c:if></td>
 </view:row>
@@ -104,7 +102,7 @@ return true;
 </c:forEach>
 </c:if>
 <tr>
- <td class="label" valign="top">Flight Briefing</td>
+ <td class="label top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="8">${event.briefing}</el:textbox></td>
 </tr>
 <c:if test="${!empty event.equipmentTypes}">
@@ -115,7 +113,7 @@ return true;
 </c:if>
 <content:filter roles="Event,HR"><c:if test="${!empty event.contactAddrs}">
 <tr>
- <td class="label" valign="top">ATC Contact Addresses</td>
+ <td class="label top">ATC Contact Addresses</td>
  <td colspan="5" class="data"><c:forEach var="addr" items="${event.contactAddrs}">
 <el:link url="mailto:${addr}">${addr}</el:link><br /></c:forEach></td>
 </tr>
@@ -142,8 +140,8 @@ return true;
  <td>CHART TYPE</td>
 </tr>
 <c:forEach var="chart" items="${event.charts}">
-<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="request" />
-<c:set var="cAirport" value="${airports[chart.airport.IATA]}" scope="request" />
+<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="page" />
+<c:set var="cAirport" value="${airports[chart.airport.IATA]}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
@@ -174,7 +172,7 @@ return true;
  <td>PLAN TYPE</td>
 </tr>
 <c:forEach var="plan" items="${event.plans}">
-<c:set var="rt" value="${routes[plan.routeID]}" scope="request" />
+<c:set var="rt" value="${routes[plan.routeID]}" scope="page" />
 <view:row entry="${plan}">
  <td class="pri bld"><fmt:int value="${plan.routeID}" /></td>
  <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}.${plan.extension}"><c:if test="${!empty rt.name}"><span class="bld">(${rt.name})</span> </c:if>
@@ -208,11 +206,11 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 
 <c:if test="${!empty event.signups}">
 <c:forEach var="signup" items="${event.signups}">
-<c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
-<c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="request" />
-<c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="request" />
-<c:set var="sa" value="${saAccess[signup.pilotID]}" scope="request" />
-<c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="request" />
+<c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
+<c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="page" />
+<c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="page" />
+<c:set var="sa" value="${saAccess[signup.pilotID]}" scope="page" />
+<c:set var="showPilotStats" value="${showStats && (pilot.eventSignups > 0)}" scope="page" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
  <td><el:cmdbutton url="eventrelease" link="${event}" op="${pilot.hexID}" label="RELEASE" /></td>
@@ -254,8 +252,8 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 
 <!-- Flight Report data -->
 <c:forEach var="pirep" items="${pireps}">
-<c:set var="pilotLoc" value="${userData[fn:PilotID(pirep)]}" scope="request" />
-<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
+<c:set var="pilotLoc" value="${userData[fn:PilotID(pirep)]}" scope="page" />
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="page" />
 <view:row entry="${pirep}">
  <td class="bld"><el:cmd url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
@@ -281,7 +279,7 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 <tr>
  <td class="label">Flight Route</td>
  <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.activeRoutes}" firstEntry="-" className="req" /></td>
- <td class="label" valign="top" rowspan="2">Remarks</td> 
+ <td class="label top" rowspan="2">Remarks</td> 
  <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="95%" height="2"></el:textbox></td>
 </tr>
 <tr>

@@ -38,7 +38,7 @@ return true;
  <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD - STEP ONE</td>
 </tr>
 <tr>
- <td class="label" valign="top">Upload Data File</td>
+ <td class="label top">Upload Data File</td>
  <td class="data"><el:file name="csvData" idx="*" className="small req" size="80" max="144" /></td>
 </tr>
 <tr>

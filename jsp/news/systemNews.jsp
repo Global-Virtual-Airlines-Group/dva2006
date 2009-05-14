@@ -31,7 +31,7 @@
 
 <!-- Table Pilot Data -->
 <c:forEach var="news" items="${viewContext.results}">
-<c:set var="ac" value="${accessMap[news.ID]}" scope="request" />
+<c:set var="ac" value="${accessMap[news.ID]}" scope="page" />
 <tr>
  <td class="priB"><fmt:date fmt="d" date="${news.date}" /></td>
 <c:if test="${ac.canEdit}">
