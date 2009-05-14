@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class UserListener implements HttpSessionListener {
 		Connection con = null;
 		try {
 			// Update the user's last login date
-			con = jdbcPool.getConnection(true);
+			con = jdbcPool.getConnection();
 			SetPilotLogin pldao = new SetPilotLogin(con);
 			pldao.logout(p.getID());
 		} catch (ConnectionPoolException cpe) {
