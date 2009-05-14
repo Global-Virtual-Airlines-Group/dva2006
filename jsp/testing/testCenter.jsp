@@ -60,7 +60,7 @@ return true;
 <c:if test="${!empty exams}">
 <!-- Examination Data -->
 <c:forEach var="exam" items="${exams}">
-<c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="request" />
+<c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="page" />
 <tr>
 <c:choose>
 <c:when test="${!fn:passed(exam) && !fn:failed(exam)}">

@@ -75,10 +75,10 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="hasImage" value="${q.size > 0}" scope="request"/>
+<c:set var="hasImage" value="${q.size > 0}" scope="page"/>
 <!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="${hasImage ? '2' : '1'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${hasImage ? '2' : '1'}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">
@@ -91,7 +91,7 @@ return true;
 
 <!-- Answer# ${qnum} -->
 <tr>
- <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
+ <td class="label top">Answer #<fmt:int value="${q.number}" /></td>
  <c:if test="${!fn:isMultiChoice(q)}">
  <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="90%" height="2">${q.answer}</el:textbox></td>
 </c:if>

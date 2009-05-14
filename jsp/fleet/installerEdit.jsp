@@ -87,7 +87,7 @@ return true;
  <td class="data"><el:check name="fsVersion" width="200" options="${fsVersions}" className="req" checked="${entry.FSVersions}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Description</td>
+ <td class="label top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" className="req" height="3">${entry.description}</el:textbox></td>
 </tr>
 <tr>

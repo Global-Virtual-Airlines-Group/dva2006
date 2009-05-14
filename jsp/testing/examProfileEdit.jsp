@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<c:set var="examName" value="${empty eProfile ? 'New Examination' : eProfile.name}" scope="request" />
+<c:set var="examName" value="${empty eProfile ? 'New Examination' : eProfile.name}" scope="page" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>${examName}</title>
@@ -84,7 +84,7 @@ return true;
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${eProfile.airlines}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Allowed Scorers</td>
+ <td class="label top">Allowed Scorers</td>
  <td class="data"><i>Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</i><br /> 
 <el:check name="scorerIDs" width="170" cols="5" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
 </tr>

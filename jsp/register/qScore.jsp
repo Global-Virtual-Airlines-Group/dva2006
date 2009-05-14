@@ -60,10 +60,10 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="hasImage" value="${q.size > 0}" scope="request"/>
+<c:set var="hasImage" value="${q.size > 0}" scope="page" />
 <!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="${hasImage ? '3' : '2'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${hasImage ? '3' : '2'}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">

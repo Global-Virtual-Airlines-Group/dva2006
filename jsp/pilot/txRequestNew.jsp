@@ -28,7 +28,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="reqType" value="${isRating ? 'ADDITIONAL RATING' : 'EQUIPMENT PROGRAM TRANSFER'}" scope="request" />
+<c:set var="reqType" value="${isRating ? 'ADDITIONAL RATING' : 'EQUIPMENT PROGRAM TRANSFER'}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

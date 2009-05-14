@@ -50,7 +50,7 @@ return true;
 
 <!-- Table Emoticons -->
 <c:forEach var="iconName" items="${iconNames}">
-<c:set var="iconCode" value="${iconCodes[iconName]}" scope="request" />
+<c:set var="iconCode" value="${iconCodes[iconName]}" scope="page" />
 <tr class="mid">
  <td><a href="javascript:addEmoticon('${iconName}')"><el:img border="0" src="cooler/emoticons/${iconName}.gif" caption="${iconName}" /></a></td>
  <td class="bld">:${iconName}:</td>

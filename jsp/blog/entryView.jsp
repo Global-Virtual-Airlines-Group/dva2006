@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<c:set var="author" value="${authors[entry.authorID]}" scope="request" />
+<c:set var="author" value="${authors[entry.authorID]}" scope="page" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Journal - ${author.name}</title>
@@ -52,7 +52,7 @@ return ${access.canComment};
 </tr>
 <c:forEach var="comment" items="${entry.comments}">
 <tr>
- <td class="label" valign="top">${empty comment.name ? 'Anonymous' : comment.name}<br />
+ <td class="label top">${empty comment.name ? 'Anonymous' : comment.name}<br />
 <fmt:date date="${comment.date}" /></td>
  <td class="data"><fmt:msg value="${comment.body}" />
 <c:if test="${access.canDelete}">
@@ -81,7 +81,7 @@ return ${access.canComment};
 </tr>
 </content:authUser>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="body" idx="*" width="80%" height="7" className="req" /></td>
 </tr>
 </c:if>

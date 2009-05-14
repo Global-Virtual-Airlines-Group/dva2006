@@ -79,7 +79,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="6" readOnly="${!access.canScore}">${checkRide.comments}</el:textbox></td>
 </tr>
 </el:table>

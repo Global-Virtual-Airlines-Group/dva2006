@@ -78,7 +78,7 @@
  <fmt:int className="sec bld" value="${totals.DBSize}" /> bytes</td>
 </tr>
 <tr>
- <td class="label" valign="top">Flight Totals Graph</td>
+ <td class="label top">Flight Totals Graph</td>
  <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
 </tr>
 <tr class="title caps mid">

@@ -103,10 +103,10 @@ return true;
 
 <!-- Table Thread Data -->
 <c:forEach var="result" items="${viewContext.results}">
-<c:set var="thread" value="${result.thread}" scope="request" />
-<c:set var="author" value="${pilots[thread.authorID]}" scope="request" />
-<c:set var="authorLoc" value="${userData[thread.authorID]}" scope="request" />
-<c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="request" />
+<c:set var="thread" value="${result.thread}" scope="page" />
+<c:set var="author" value="${pilots[thread.authorID]}" scope="page" />
+<c:set var="authorLoc" value="${userData[thread.authorID]}" scope="page" />
+<c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="page" />
 <view:row entry="${thread}">
  <td class="pri"><span class="bld"><fmt:dec value="${result.score}" fmt="#0.000" /></span>
  <span class="small">(<fmt:int value="${result.hits}" /> hits)</span></td>

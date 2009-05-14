@@ -44,9 +44,7 @@ return true;
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
-<content:filter roles="HR,Route,Dispatch">
-<c:set var="hasDispatchAccess" value="${true}" scope="request" />
-</content:filter>
+<content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -192,10 +190,10 @@ To view statistics about your flights, <el:cmd className="sec bld" url="mystats"
 </c:if>
 <content:filter roles="PIREP">
 <c:if test="${pirepQueueSize > 15}">
-<c:set var="queueClass" value="sec bld" scope="request" />
+<c:set var="queueClass" value="sec bld" scope="page" />
 </c:if>
 <c:if test="${pirepQueueSize <= 15}">
-<c:set var="queueClass" value="sec" scope="request" />
+<c:set var="queueClass" value="sec" scope="page" />
 </c:if>
 <!-- Flight Report Admin Section -->
 <tr>
@@ -394,7 +392,7 @@ examination(s) in order to be eligible for promotion to Captain</i>.</td></c:whe
 </tr>
 </c:if>
 <c:if test="${!empty eqSwitch || !empty eqSwitchFOExam}">
-<c:set var="canSwitchFO" value="${!empty eqSwitchFOExam && (promoteLegs >= (fn:promoLegs(eqType, 'Captain') / 2))}" scope="request" />
+<c:set var="canSwitchFO" value="${!empty eqSwitchFOExam && (promoteLegs >= (fn:promoLegs(eqType, 'Captain') / 2))}" scope="page" />
 <tr>
 <c:if test="${!empty eqSwitch}">
  <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd><br />

@@ -35,7 +35,7 @@
 
 <!-- Table Server Data -->
 <c:forEach var="server" items="${viewContext.results}">
-<c:set var="accessRoles" value="${server.roles['access']}" scope="request" />
+<c:set var="accessRoles" value="${server.roles['access']}" scope="page" />
 <view:row entry="${server}">
  <td><el:cmd url="ts2server" op="edit" link="${server}" className="pri bld">${server.name}</el:cmd></td>
  <td class="sec bld">${server.port}</td>

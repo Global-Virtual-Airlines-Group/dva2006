@@ -49,7 +49,7 @@ return true;
 <span class="sec small bld">${event.networkName}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
 - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
 <c:forEach var="route" items="${event.routes}"><div class="small">${route.airportD.name} - ${route.airportA.name}</div></c:forEach>
-<c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="request" />
+<c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
 <c:if test="${!event.canSignup}">
 <c:if test="${!empty event.signupURL}">
 <el:link external="true" url="${event.signupURL}" className="bld small">SIGNUP</el:link>
@@ -63,10 +63,10 @@ return true;
 </c:if>
 <c:if test="${eventSize > 0}">
 <div class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></div>
-<c:set var="eventSignups" value="${fn:subset(event.signups, 15)}" scope="request" />
+<c:set var="eventSignups" value="${fn:subset(event.signups, 15)}" scope="page" />
 <span class="small">
 <c:forEach var="signup" items="${eventSignups}">
-<c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[signup.pilotID]}" scope="page" />
 ${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /></c:if>
 </c:forEach>
 </span>

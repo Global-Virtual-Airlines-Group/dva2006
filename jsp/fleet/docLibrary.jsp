@@ -20,7 +20,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:filter roles="Fleet"><c:set var="isFleetMgr" value="${true}" scope="request" /></content:filter>
+<content:attr attr="isFleetMgr" value="true" roles="Fleet" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

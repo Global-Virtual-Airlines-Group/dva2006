@@ -60,10 +60,10 @@ return true;
  <td class="data"><fmt:date date="${exam.date}" /></td>
 </tr>
 <c:if test="${!empty exam.submittedOn}">
-<c:set var="late" value="${(exam.submittedOn.time - exam.expiryDate.time) / 1000}" scope="request" />
-<c:set var="lateH" value="${late / 3600}" scope="request" />
-<c:set var="lateM" value="${(late % 3600) / 60}" scope="request" />
-<c:set var="lateS" value="${late % 60}" scope="request" />
+<c:set var="late" value="${(exam.submittedOn.time - exam.expiryDate.time) / 1000}" scope="page" />
+<c:set var="lateH" value="${late / 3600}" scope="page" />
+<c:set var="lateM" value="${(late % 3600) / 60}" scope="page" />
+<c:set var="lateS" value="${late % 60}" scope="page" />
 <tr>
  <td class="label">Submitted on</td>
  <td class="data"><fmt:date date="${exam.submittedOn}" />
@@ -78,11 +78,11 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="mcCSS" value="${fn:isMultiChoice(q) ? 'opt1' : ''}" scope="request" />
-<c:set var="hasImage" value="${q.size > 0}" scope="request" />
+<c:set var="mcCSS" value="${fn:isMultiChoice(q) ? 'opt1' : ''}" scope="page" />
+<c:set var="hasImage" value="${q.size > 0}" scope="page" />
 <!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="${hasImage ? '3' : '2'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${hasImage ? '3' : '2'}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data ${mcCSS}">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">
@@ -97,7 +97,7 @@ return true;
 </tr>
 <c:if test="${fn:isRoutePlot(q)}">
 <tr>
- <td class="label" valign="top">Map #<fmt:int value="${q.number}" /></td>
+ <td class="label top">Map #<fmt:int value="${q.number}" /></td>
  <td class="data"><map:div ID="qMap${q.number}" x="100%" y="320" /></td>
 </tr>
 </c:if>
@@ -111,7 +111,7 @@ return true;
 
 <!-- Examination Comments -->
 <tr>
- <td class="label" valign="top">Scorer Comments</td>
+ <td class="label top">Scorer Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="6">${exam.comments}</el:textbox></td>
 </tr>
 </el:table>
@@ -131,8 +131,8 @@ return true;
 <script language="JavaScript" type="text/javascript">
 var maps = new Array();
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
-<c:set var="answerRoute" value="${aRoutes[q.number]}" scope="request" />
-<c:set var="correctRoute" value="${cRoutes[q.number]}" scope="request" />
+<c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
+<c:set var="correctRoute" value="${cRoutes[q.number]}" scope="page" />
 <map:point var="mapC" point="${q.midPoint}" />
 var map = new GMap2(getElement("qMap${q.number}"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GSmallMapControl());

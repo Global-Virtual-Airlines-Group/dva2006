@@ -52,7 +52,7 @@ return true;
 
 <!-- Table Data -->
 <c:forEach var="txreq" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[txreq.ID]}" scope="request" />
+<c:set var="pilot" value="${pilots[txreq.ID]}" scope="page" />
 <view:row entry="${txreq}">
  <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>

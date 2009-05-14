@@ -66,16 +66,16 @@ return true;
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="academycalendar">
 <calendar:entry name="session">
 <c:if test="${fn:isBusyTime(session)}">
-<c:set var="ins" value="${pilots[session.ID]}" scope="request" />
-<c:set var="busyAccess" value="${accessMap[busy]}" scope="request" />
+<c:set var="ins" value="${pilots[session.ID]}" scope="page" />
+<c:set var="busyAccess" value="${accessMap[busy]}" scope="page" />
 <span class="warn bld caps">${ins.name} IS BUSY</span><br />
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" />
 <c:if test="${busyAccess.canDelete}"><br />
 <el:cmd url="insbusydelete" link="${ins}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
 </c:if>
 <c:if test="${!fn:isBusyTime(session)}">
-<c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[session.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[session.instructorID]}" scope="page" />
 <el:cmd url="isession" link="${session}" className="pri bld">${session.name}</el:cmd><br />
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" /><br />
 <span class="small"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd> (${pilot.pilotCode})</span><br />

@@ -49,7 +49,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Entry Text</td>
+ <td class="label top">Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="6" className="req">${entry.body}</el:textbox></td>
 </tr>
 </el:table>

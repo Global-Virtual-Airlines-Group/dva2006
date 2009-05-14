@@ -36,7 +36,7 @@
 
 <!-- Table Data -->
 <c:forEach var="exam" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="page" />
 <view:row entry="${exam}">
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" linkID="${fn:hex(exam.pilotID)}">${pilot.name}</el:cmd></td>

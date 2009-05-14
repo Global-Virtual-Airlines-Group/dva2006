@@ -98,7 +98,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <br />
 </c:if>
 <c:if test="${!empty acarsPool}">
-<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
+<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="page" /></content:filter>
 <!-- Current ACARS server connections -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps left">
@@ -135,7 +135,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="2">OUR NEWEST CENTURY CLUB MEMBERS</td>
 </tr>
 <c:forEach var="entry" items="${centuryClub}">
-<c:set var="pilot" value="${updPilots[entry.ID]}" scope="request" />
+<c:set var="pilot" value="${updPilots[entry.ID]}" scope="page" />
 <tr>
  <td class="priB mid">${pilot.name}</td>
  <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.createdOn}" /></td>
@@ -152,7 +152,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="2"><content:airline /> CONGRATULATES</td>
 </tr>
 <c:forEach var="entry" items="${promotions}">
-<c:set var="pilot" value="${updPilots[entry.ID]}" scope="request" />
+<c:set var="pilot" value="${updPilots[entry.ID]}" scope="page" />
 <tr>
  <td class="priB mid">${pilot.name}</td>
  <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.createdOn}" /></td>
@@ -168,7 +168,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="4">UPCOMING <content:airline /> ONLINE EVENTS</td>
 </tr>
 <c:forEach var="event" items="${futureEvents}">
-<c:set var="eRoute" value="${fn:first(event.routes)}" scope="request" />
+<c:set var="eRoute" value="${fn:first(event.routes)}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="event" link="${event}"><fmt:text value="${event.name}" /></el:cmd></td>
  <td class="sec bld">${event.networkName}</td>

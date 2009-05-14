@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
 <c:if test="${googleMap}">
-<content:os windows="true"><c:set var="showGEarth" value="${false}" scope="request" /></content:os>
+<content:os windows="true"><c:set var="showGEarth" value="false" scope="request" /></content:os>
 <content:js name="googleMaps" />
 <map:api version="2" />
 <map:vml-ie />
@@ -117,7 +117,7 @@ return true;
  <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}</td>
 </tr>
 </c:if>
-<c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="request" />
+<c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
 <tr>
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)
@@ -153,7 +153,7 @@ return true;
 </c:choose>
 </tr>
 <tr>
- <td class="label" valign="top">Other Information</td>
+ <td class="label top">Other Information</td>
  <td class="data"><c:if test="${fn:isOnline(pirep)}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
 <c:if test="${isACARS}">
 <div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
@@ -210,7 +210,7 @@ return true;
 </tr>
 <c:if test="${!empty pirep.remarks}">
 <tr>
- <td class="label" valign="top">Pilot Comments</td>
+ <td class="label top">Pilot Comments</td>
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
@@ -229,18 +229,18 @@ return true;
 </span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
 </c:if>
 <c:if test="${!googleMap}">
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><img src="http://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </c:if>
 </tr>
 <c:if test="${!scoreCR && (access.canDispose || access.canViewComments)}">
 <tr>
- <td class="label" valign="top">Reviewer Comments</td>
+ <td class="label top">Reviewer Comments</td>
 <c:if test="${access.canDispose}">
  <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </c:if>
@@ -274,7 +274,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:filter></c:if>
 </c:if>
 <content:filter roles="HR"><c:if test="${access.canDispose && (empty checkRide)}">
-<c:set var="bLabel" value="${(fn:sizeof(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="request" />
+<c:set var="bLabel" value="${(fn:sizeof(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="page" />
  <el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" />
 </c:if></content:filter>
 <c:if test="${access.canEdit}">

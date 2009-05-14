@@ -42,15 +42,15 @@ flights.<br />
 </tr>
 
 <!-- Table Pilot Data -->
-<c:set var="level" value="${15000 / 1}" scope="request" />
-<c:set var="entryNumber" value="0" scope="request" />
+<c:set var="level" value="${15000 / 1}" scope="page" />
+<c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="pilot" items="${roster}">
 
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
-<c:set var="pilotLevel" value="${pilot.legs - (pilot.legs % 100)}" scope="request" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
+<c:set var="pilotLevel" value="${pilot.legs - (pilot.legs % 100)}" scope="page" />
 <c:if test="${pilotLevel < level}">
 <!-- Level Header Bar -->
-<c:set var="level" value="${pilotLevel}" scope="request" />
+<c:set var="level" value="${pilotLevel}" scope="page" />
 <% request.setAttribute("ccLevel", "CC" + String.valueOf(request.getAttribute("pilotLevel"))); %>
 <tr class="title">
  <td colspan="8" class="caps left">${ccLevels[ccLevel]} - ${pilotLevel} FLIGHT LEGS</td>

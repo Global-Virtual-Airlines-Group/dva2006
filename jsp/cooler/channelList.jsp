@@ -51,8 +51,8 @@
  <td class="bld"><fmt:int value="${channel.threadCount}" /></td>
  <td><fmt:int value="${channel.postCount}" /></td>
  <td><fmt:int value="${channel.viewCount}" /></td>
-<c:set var="post" value="${posts[channel.lastThreadID]}" scope="request" />
-<c:set var="author" value="${authors[post.authorID]}" scope="request" />
+<c:set var="post" value="${posts[channel.lastThreadID]}" scope="page" />
+<c:set var="author" value="${authors[post.authorID]}" scope="page" />
  <td class="right"><span class="small">${author.rank}</span> <span class="pri bld small">${author.name}</span>
  <span class="small"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
  <fmt:date date="${post.createdOn}" /></span><br />

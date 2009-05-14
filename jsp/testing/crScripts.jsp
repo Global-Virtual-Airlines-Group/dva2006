@@ -19,7 +19,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="access" value="${accessMap['NEW']}" scope="request" />
+<c:set var="access" value="${accessMap['NEW']}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -35,7 +35,7 @@
 <!-- Table Script Data -->
 <c:forEach var="sc" items="${results}">
 <view:row entry="${sc}">
-<c:set var="access" value="${accessMap[sc.equipmentType]}" scope="request" />
+<c:set var="access" value="${accessMap[sc.equipmentType]}" scope="page" />
 <c:if test="${access.canEdit}">
  <td><el:cmd url="crscript" linkID="${sc.equipmentType}" op="edit">${sc.equipmentType}</el:cmd></td>
 </c:if>

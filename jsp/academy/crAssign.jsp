@@ -43,7 +43,7 @@ return true;
  <td class="data"><el:combo name="acType" idx="*" size="1" firstEntry="-" options="${actypes}" value="${param.acType}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </el:table>

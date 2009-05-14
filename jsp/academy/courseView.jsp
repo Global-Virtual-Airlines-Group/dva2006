@@ -56,8 +56,8 @@ return true;
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
-<c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[course.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[course.instructorID]}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -104,7 +104,7 @@ return true;
 </tr>
 <c:if test="${!empty docs}">
 <tr>
- <td class="label" valign="top">Study Documents</td>
+ <td class="label top">Study Documents</td>
  <td colspan="6" class="data"><c:forEach var="doc" items="${docs}">
 <el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
 </c:forEach></td>
@@ -112,15 +112,15 @@ return true;
 </c:if>
 <c:if test="${!empty videos}">
 <tr>
- <td class="label" valign="top">Training Videos</td>
+ <td class="label top">Training Videos</td>
  <td colspan="6" class="data"><c:forEach var="video" items="${videos}">
 <el:link url="/video/${video.fileName}">${video.name}</el:link><br />
 </c:forEach></td>
 </tr>
 </c:if>
 </c:if>
-<c:set var="cspan" value="${6}" scope="request" />
-<c:set var="forceExams" value="${true}" scope="request" />
+<c:set var="cspan" value="${6}" scope="page" />
+<c:set var="forceExams" value="true" scope="page" />
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 
 <!-- Course Progress -->
@@ -128,9 +128,9 @@ return true;
  <td colspan="7">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
-<c:set var="lastUpd" value="${pilots[progress.authorID]}" scope="request" />
+<c:set var="lastUpd" value="${pilots[progress.authorID]}" scope="page" />
 <view:row entry="${progress}">
- <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" /></td>
+ <td class="label top">Entry #<fmt:int value="${progress.ID}" /></td>
  <td colspan="6" class="data"><fmt:text value="${progress.text}" />
 <c:if test="${progress.complete || access.canUpdateProgress}">
 <br /><hr />
@@ -156,7 +156,7 @@ return true;
  <td colspan="2">INSTRUCTOR</td>
 </tr>
 <c:forEach var="session" items="${sessions}">
-<c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
+<c:set var="ins" value="${pilots[session.instructorID]}" scope="page" />
 <tr class="mid">
  <td><fmt:date date="${session.date}" fmt="d" default="-" /></td>
  <td class="left small" colspan="3">${session.comments}</td>
@@ -178,7 +178,7 @@ return true;
  <td>LENGTH</td>
 </tr>
 <c:forEach var="flight" items="${flights}">
-<c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
+<c:set var="ins" value="${pilots[flight.instructorID]}" scope="page" />
 <tr class="mid">
  <td><fmt:date date="${flight.date}" fmt="d" default="-" /></td>
  <td class="left small" colspan="2">${flight.comments}</td>
@@ -194,9 +194,9 @@ return true;
  <td colspan="7">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="comment" items="${course.comments}">
-<c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
+<c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
- <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
+ <td class="label top">${author.name} (${author.pilotCode})<br />
 <fmt:date date="${comment.createdOn}" /></td>
  <td colspan="6" class="data"><fmt:msg value="${comment.text}" /></td>
 </tr>
@@ -205,7 +205,7 @@ return true;
 <c:if test="${access.canComment}">
 <!-- New Comment -->
 <tr>
- <td class="label" valign="top">New Comment</td>
+ <td class="label top">New Comment</td>
  <td colspan="6" class="data"><el:textbox name="msgText" width="80%" height="6" idx="*" /></td>
 </tr>
 </c:if>

@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<c:set var="isMC" value="${empty question || fn:isMultiChoice(question)}" scope="request" />
+<c:set var="isMC" value="${empty question || fn:isMultiChoice(question)}" scope="page" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Examination Question Profile</title>
@@ -111,7 +111,7 @@ return true;
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${question.airlines}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Pilot Examinations</td>
+ <td class="label top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="190" newLine="true" className="small" checked="${question.pools}" options="${examNames}" /></td>
 </tr>
 <c:if test="${!empty question}">
@@ -136,7 +136,7 @@ return true;
 </c:if>
 </c:if>
 <tr>
- <td class="label" valign="top">Upload Image</td>
+ <td class="label top">Upload Image</td>
  <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
 <el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>
@@ -155,7 +155,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Answer Choices</td>
+ <td class="label top">Answer Choices</td>
  <td class="data"><el:textbox name="answerChoices" idx="*" width="90%" height="5" onBlur="void updateAnswerCombo()">${qChoices}</el:textbox></td>
 </tr>
 <tr>

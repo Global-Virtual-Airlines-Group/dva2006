@@ -4,7 +4,7 @@
 <c:if test="${thread.poll}">
 <!-- Pilot Poll -->
 <tr>
- <td class="label" valign="top">Poll Results<br />(${fn:sizeof(thread.votes)} VOTES)</td>
+ <td class="label top">Poll Results<br />(${fn:sizeof(thread.votes)} VOTES)</td>
  <td class="data" colspan="2"><c:forEach var="opt" items="${thread.options}">
 <span style="width:250px;"><c:if test="${opt.votes > 0}"><el:img y="12" x="${(opt.votes / maxVotes) * 250}" caption="${opt.name}" src="cooler/bar_blue.png" /></c:if></span>
 ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.votes}" /> vote)</c:when>
@@ -12,7 +12,7 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 </tr>
 <c:if test="${access.canVote}">
 <tr>
- <td class="label" valign="top">Your Choice</td>
+ <td class="label top">Your Choice</td>
  <td class="data" colspan="2"><el:check name="pollVote" type="radio" idx="*" cols="1" options="${thread.options}" /></td>
 </tr>
 </c:if>

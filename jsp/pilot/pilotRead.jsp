@@ -40,7 +40,7 @@ return true;
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="dbName" name="airline.db" />
-<c:set var="canSigAuth" value="${access.canChangeSignature && pilot.hasSignature && !sigAuthorized}" scope="request" />
+<c:set var="canSigAuth" value="${access.canChangeSignature && pilot.hasSignature && !sigAuthorized}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -76,7 +76,7 @@ return true;
  <td colspan="${cspan}" class="data pri bld">${pilot.equipmentType}</td>
 </tr>
 <tr>
- <td class="label" valign="top">Additional Ratings</td>
+ <td class="label top">Additional Ratings</td>
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
 <c:if test="${!empty certs}">
@@ -89,14 +89,14 @@ return true;
  <td class="label">Home Airport</td>
  <td colspan="${cspan}" class="data">${airport.name} (<fmt:airport airport="${airport}" />)</td>
 </tr>
-<c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="request" />
+<c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="page" />
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID#</td>
  <td colspan="${cspan}" class="data">${vatsimID}</td>
 </tr>
 </c:if>
-<c:set var="ivaoID" value="${fn:networkID(pilot, 'IVAO')}" scope="request" />
+<c:set var="ivaoID" value="${fn:networkID(pilot, 'IVAO')}" scope="page" />
 <c:if test="${!empty ivaoID}">
 <tr>
  <td class="label">IVAO ID#</td>
@@ -148,12 +148,12 @@ return true;
  <td colspan="${cspan + 1}">TEAMSPEAK 2 ACCESS</td>
 </tr>
 <tr>
- <td class="label" valign="top">Virtual Servers</td>
+ <td class="label top">Virtual Servers</td>
  <td colspan="${cspan}" class="data">${pilot.name} has access to the following TeamSpeak 2 Virtual Servers:<br />
 <br />
 <c:forEach var="ts2Client" items="${ts2Clients}">
 <c:if test="${ts2Client.serverID != 0}">
-<c:set var="ts2Server" value="${ts2Servers[ts2Client.serverID]}" scope="request" />
+<c:set var="ts2Server" value="${ts2Servers[ts2Client.serverID]}" scope="page" />
 <span class="sec bld">${ts2Server.name}</span> (Port ${ts2Server.port}) - ${ts2Server.description}
 <c:if test="${ts2Client.autoVoice}"> <span class="ter small bld">AUTO-VOICE</span></c:if>
 <c:if test="${ts2Client.serverOperator}"> <span class="sec small bld">SERVER OPERATOR</span></c:if>
@@ -172,7 +172,7 @@ return true;
 </tr>
 <c:if test="${!empty pilot.lastLogin}">
 <tr>
- <td class="label" valign="top">Logins</td>
+ <td class="label top">Logins</td>
  <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" />
 <content:filter roles="HR"> from <el:cmd url="loginaddrs" linkID="${pilot.loginHost}" op="net">${pilot.loginHost}</el:cmd>.
 <c:if test="${!empty loginAddrs}"><a id="addrDivLink" href="javascript:void toggleLoginAddrs()">SHOW</a></c:if></content:filter>
@@ -226,7 +226,7 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 </c:if></content:filter>
 <c:if test="${access.canChangeSignature && pilot.hasSignature}">
 <tr>
- <td class="label" valign="top">${forumName} Signature</td>
+ <td class="label top">${forumName} Signature</td>
  <td colspan="${cspan}" class="data"><el:sig user="${pilot}" caption="${pilot.name}" /></td>
 </tr>
 </c:if>

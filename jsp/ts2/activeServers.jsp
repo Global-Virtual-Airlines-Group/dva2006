@@ -44,8 +44,8 @@
 <!-- Table Data -->
 <c:if test="${!empty ts2servers}">
 <c:forEach var="srv" items="${ts2servers}">
-<c:set var="client" value="${clientInfo[srv.ID]}" scope="request" />
-<c:set var="acarsOnly" value="${srv.ACARSOnly && (!client.isACARS)}" scope="request" />
+<c:set var="client" value="${clientInfo[srv.ID]}" scope="page" />
+<c:set var="acarsOnly" value="${srv.ACARSOnly && (!client.isACARS)}" scope="page" />
 <view:row entry="${srv}">
 <c:if test="${!acarsOnly}">
  <td class="pri bld"><el:link url="${ts2URL}:${srv.port}/?nickname=${client.userID}?loginname=${client.userID}">${srv.name}</el:link></td>

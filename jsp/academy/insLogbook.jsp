@@ -54,8 +54,8 @@ return true;
 
 <!-- Table Flight Report Data -->
 <c:forEach var="pirep" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[pirep.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[pirep.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[pirep.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[pirep.instructorID]}" scope="page" />
 <view:row entry="${pirep}">
  <td><el:cmd url="insflight" link="${pirep}"><fmt:date date="${pirep.date}" fmt="d" default="-" /></el:cmd></td>
  <td class="pri small"><el:cmd url="course" linkID="${fn:hex(pirep.courseID)}">${pirep.courseName}</el:cmd></td>

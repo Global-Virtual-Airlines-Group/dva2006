@@ -128,10 +128,10 @@ return true;
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>
- <td class="label" valign="top">Search Options</td>
+ <td class="label top">Search Options</td>
  <td class="data"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /><br />
 <el:box name="showUTCTimes" value="true" checked="${param.showUTCTimes}" label="Show Departure/Arrival Times as UTC" /></td>
- <td class="label" valign="top">ACARS Dispatch</td>
+ <td class="label top">ACARS Dispatch</td>
  <td class="data"><el:box name="checkDispatch" idx="*" value="true" checked="${empty fafCriteria ? true : fafCriteria.checkDispatch}" label="Display Dispatch route count" /><br />
  <el:box name="dispatchOnly" idx="*" value="true" checked="${fafCriteria.dispatchOnly}" label="Flights with Dispatch routes only" /></td>
 </tr>

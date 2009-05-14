@@ -66,7 +66,7 @@ return true;
 <content:sysdata var="sigY" name="online.banner_max.y" />
 <content:sysdata var="sigSize" name="online.banner_max.size" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
-<c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />
+<c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -136,15 +136,15 @@ pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</s
 <content:hasmsg><br /><span class="bld error"><content:sysmsg /></span></content:hasmsg>></td>
 </tr>
 <tr>
- <td class="label" valign="top">ATC Contact Addresses</td>
+ <td class="label top">ATC Contact Addresses</td>
  <td class="data"><el:textbox name="contactAddrs" idx="*" width="50" height="2">${addrs}</el:textbox></td>
 </tr>
 <tr>
- <td class="label" valign="top">Flight Briefing</td>
+ <td class="label top">Flight Briefing</td>
  <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="15">${event.briefing}</el:textbox></td>
 </tr>
 <tr>
- <td class="label" valign="top">Equipment Types</td>
+ <td class="label top">Equipment Types</td>
  <td class="data"><span class="sec small">These should be unselected unless signups are restricted 
 to a specific set of equipment.</span><br />
 <el:check name="eqTypes" idx="*" cols="9" width="85" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
@@ -183,9 +183,9 @@ to a specific set of equipment.</span><br />
 </c:if>
 <c:if test="${!empty event}">
 <c:forEach var="route" items="${event.routes}">
-<c:set var="hasName" value="${!empty route.name}" scope="request" />
+<c:set var="hasName" value="${!empty route.name}" scope="page" />
 <view:row entry="${route}">
- <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
+ <td class="label top" rowspan="2">Route #<fmt:int value="${route.routeID}" /></td>
  <td class="data"><c:if test="${hasName}"><b>${route.name}</b> </c:if>${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)
  - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
 </view:row>
@@ -199,9 +199,9 @@ to a specific set of equipment.</span><br />
  <td colspan="2">APPROACH CHARTS</td>
 </tr>
 <c:forEach var="chartAirport" items="${fn:keys(charts)}">
-<c:set var="apCharts" value="${charts[chartAirport]}" scope="request" />
+<c:set var="apCharts" value="${charts[chartAirport]}" scope="page" />
 <tr>
- <td class="label" valign="top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
+ <td class="label top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
  <td class="data"><el:check name="charts" cols="4" width="185" checked="${event.charts}" options="${apCharts}" newLine="true" className="small" /></td>
 </tr>
 </c:forEach>

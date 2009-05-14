@@ -64,8 +64,8 @@ return true;
 <!-- View Data -->
 <!-- Log Entries -->
 <c:forEach var="err" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[err.userID]}" scope="request" />
-<c:set var="pilotLoc" value="${userData[err.userID]}" scope="request" />
+<c:set var="pilot" value="${pilots[err.userID]}" scope="page" />
+<c:set var="pilotLoc" value="${userData[err.userID]}" scope="page" />
 <view:row entry="${err}">
  <td class="sec bld"><fmt:int value="${err.ID}" /></td>
  <td class="small bld"><el:cmd url="acarserror" link="${err}"><fmt:date date="${err.createdOn}" t="HH:mm" /></el:cmd></td>

@@ -36,8 +36,8 @@ return true;
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
-<c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[flight.instructorID]}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -71,8 +71,8 @@ return true;
  <td class="data"><el:text name="logDate" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(flight.date, 'MM/dd/yyyy')}" />
  <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].logDate')" /></td>
 </tr>
-<c:set var="tmpH" value="${empty flight ? '' : (flight.length  / 10)}" scope="request" />
-<c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="request" />
+<c:set var="tmpH" value="${empty flight ? '' : (flight.length  / 10)}" scope="page" />
+<c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
@@ -80,7 +80,7 @@ return true;
 <el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Remarks</td>
+ <td class="label top">Remarks</td>
  <td class="data"><el:textbox idx="*" name="comments" width="80%" height="5">${flight.comments}</el:textbox></td>
 </tr>
 </el:table>

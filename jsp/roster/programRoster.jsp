@@ -82,7 +82,7 @@
 
 <!-- Table Data -->
 <c:forEach var="exam" items="${examQueue}">
-<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" linkID="${fn:hex(exam.pilotID)}">${pilot.name}</el:cmd></td>
@@ -110,7 +110,7 @@
 
 <!-- Table View data -->
 <c:forEach var="ride" items="${crQueue}">
-<c:set var="pilot" value="${pilots[ride.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[ride.pilotID]}" scope="page" />
 <tr>
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
 <c:if test="${ride.flightID > 0}">
@@ -143,7 +143,7 @@
 
 <!-- Table Data -->
 <c:forEach var="txreq" items="${txQueue}">
-<c:set var="pilot" value="${pilots[txreq.ID]}" scope="request" />
+<c:set var="pilot" value="${pilots[txreq.ID]}" scope="page" />
 <view:row entry="${txreq}">
  <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>
@@ -172,7 +172,7 @@
 
 <!-- Table Data -->
 <c:forEach var="pilot" items="${promoQueue}">
-<c:set var="access" value="${promoAccess[pilot.ID]}" scope="request" />
+<c:set var="access" value="${promoAccess[pilot.ID]}" scope="page" />
 <view:row entry="${pilot}">
 <c:if test="${access.canPromote}">
  <td><el:cmdbutton url="promote" link="${pilot}" label="PROMOTE" /></td>
@@ -210,10 +210,10 @@
 </tr>
 
 <!-- Table Statistics Data -->
-<c:set var="entryNumber" value="0" scope="request" />
+<c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="stat" items="${pirepStats}">
 <view:row entry="${stat}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:dec value="${stat.hours}" /></td>
@@ -244,9 +244,9 @@
 <tr class="title caps">
  <td class="left" colspan="2">STATUS TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
-<c:set var="maxCount" value="${metrics.maxStatusCount}" scope="request" />
+<c:set var="maxCount" value="${metrics.maxStatusCount}" scope="page" />
 <c:forEach var="st" items="${fn:keys(metrics.statusCounts)}">
-<c:set var="stCount" value="${metrics.statusCounts[st]}" scope="request" />
+<c:set var="stCount" value="${metrics.statusCounts[st]}" scope="page" />
 <tr>
  <td class="label">${st}</td>
  <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${stCount}" /> pilots</span>
@@ -256,9 +256,9 @@
 <tr class="title caps">
  <td class="left" colspan="2">RANK TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
-<c:set var="maxCount" value="${metrics.maxRankCount}" scope="request" />
+<c:set var="maxCount" value="${metrics.maxRankCount}" scope="page" />
 <c:forEach var="rnk" items="${fn:keys(metrics.rankCounts)}">
-<c:set var="rnkCount" value="${metrics.rankCounts[rnk]}" scope="request" />
+<c:set var="rnkCount" value="${metrics.rankCounts[rnk]}" scope="page" />
 <tr>
  <td class="label">${rnk}</td>
  <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${rnkCount}" /> pilots</span>
@@ -268,9 +268,9 @@
 <tr class="title caps">
  <td class="left" colspan="2">HIRE DATE TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
-<c:set var="maxCount" value="${metrics.maxHireCount}" scope="request" />
+<c:set var="maxCount" value="${metrics.maxHireCount}" scope="page" />
 <c:forEach var="hd" items="${fn:keys(metrics.hireCounts)}">
-<c:set var="hireCount" value="${metrics.hireCounts[hd]}" scope="request" />
+<c:set var="hireCount" value="${metrics.hireCounts[hd]}" scope="page" />
 <tr>
  <td class="label"><fmt:date fmt="d" date="${hd}" d="MMMM yyyy" /></td>
  <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${hireCount}" /> pilots</span>
