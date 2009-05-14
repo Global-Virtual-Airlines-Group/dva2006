@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -9,24 +9,26 @@ import java.util.*;
  * certain sensitive methods (such as {@link Connection#close()}) from being called by
  * command code. 
  * @author Luke
- * @version 2.0
+ * @version 2.6
  * @since 2.0
  */
 
 public class ConnectionWrapper implements Connection, Comparable<ConnectionWrapper> {
 	
 	private Integer _id;
+	private boolean _autoCommit;
 	private transient Connection _c;
+	private transient ConnectionPoolEntry _entry;
 
 	/**
 	 * Creates the wrapper.
-	 * @param id the Connection Pool id
-	 * @param c the JDBC Connection to wrap 
+	 * @param cpe the ConnectionPoolEntry to wrap
 	 */
-	ConnectionWrapper(int id, Connection c) {
+	ConnectionWrapper(Connection c, ConnectionPoolEntry cpe) {
 		super();
 		_c = c;
-		_id = Integer.valueOf(Math.max(1, id));
+		_id = Integer.valueOf(cpe.getID());
+		_entry = cpe;
 	}
 	
 	/**
@@ -43,7 +45,7 @@ public class ConnectionWrapper implements Connection, Comparable<ConnectionWrapp
 	}
 
 	public void close() {
-		// do nothing
+		_entry.free();
 	}
 	
 	void forceClose() throws SQLException {
@@ -96,7 +98,7 @@ public class ConnectionWrapper implements Connection, Comparable<ConnectionWrapp
 	}
 
 	public boolean getAutoCommit() throws SQLException {
-		return _c.getAutoCommit();
+		return _autoCommit;
 	}
 
 	public String getCatalog() throws SQLException {
@@ -198,7 +200,8 @@ public class ConnectionWrapper implements Connection, Comparable<ConnectionWrapp
 	}
 
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
-		_c.setAutoCommit(autoCommit);
+		_autoCommit = autoCommit;
+		_c.setAutoCommit(_autoCommit);
 	}
 
 	public void setCatalog(String catalog) throws SQLException {

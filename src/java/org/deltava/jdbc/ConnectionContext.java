@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -26,15 +26,13 @@ public abstract class ConnectionContext {
 	
     /**
      * Reserves a JDBC Connection from the connection pool.
-     * @param isSystem if the command requires a system connection.
      * @return a JDBC Connection
      * @throws ConnectionPoolException if an error occurs
      * @throws IllegalStateException if a connection has already been reserved by this context
      * @see ConnectionContext#getConnection()
-     * @see ConnectionPool#getConnection(boolean)
      * @see ConnectionContext#release()
      */
-    public Connection getConnection(boolean isSystem) throws ConnectionPoolException {
+    public Connection getConnection() throws ConnectionPoolException {
         if (_pool == null)
             throw new ConnectionPoolException("No Connection Pool defined", false);
 
@@ -42,22 +40,10 @@ public abstract class ConnectionContext {
         if (_con != null)
             throw new IllegalStateException("Connection already reserved");
 
-        _con = _pool.getConnection(isSystem);
+        _con = _pool.getConnection();
         return _con;
     }
 
-    /**
-     * Reserves a non-system JDBC Connection from the connection pool.
-     * @return a JDBC Connection
-     * @throws ConnectionPoolException if an error occurs
-     * @throws IllegalStateException if a connection has already been reserved by this context
-     * @see ConnectionContext#getConnection(boolean)
-     * @see ConnectionContext#release()
-     */
-    public Connection getConnection() throws ConnectionPoolException {
-        return getConnection(false);
-    }
-    
     /**
      * Helper method to ensure a connection has been reserved.
      */

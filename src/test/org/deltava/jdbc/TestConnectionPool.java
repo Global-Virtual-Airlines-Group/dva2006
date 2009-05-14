@@ -20,7 +20,7 @@ public class TestConnectionPool extends TestCase {
         PropertyConfigurator.configure("etc/log4j.properties");
         _props = new Properties();
         _props.load(new FileInputStream("data/jdbc.properties"));
-        _pool = new ConnectionPool(3);
+        _pool = new ConnectionPool(2);
     }
 
     protected void tearDown() throws Exception {
@@ -31,8 +31,8 @@ public class TestConnectionPool extends TestCase {
     }
     
     public void testProperties() throws ClassNotFoundException {
-        assertEquals(-1, _pool.getSize());
-        assertEquals(3, _pool.getMaxSize());
+        assertEquals(0, _pool.getSize());
+        assertEquals(2, _pool.getMaxSize());
         _pool.setProperties(_props);
         _pool.setCredentials(_props.getProperty("user"), _props.getProperty("password"));
         _pool.setDriver(_props.getProperty("driver"));
@@ -43,11 +43,6 @@ public class TestConnectionPool extends TestCase {
             _pool.setDriver("java.foo.bar");
             fail("ClassNotFoundException expected");
         } catch (ClassNotFoundException cnfe) { }
-        
-        try {
-            _pool.getConnection();
-            fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) { }
         
         try {
             _pool.connect(-1);
@@ -73,11 +68,11 @@ public class TestConnectionPool extends TestCase {
     public void testConnections() throws Exception {
         _pool.setProperties(_props);
         _pool.connect(1);
-        assertEquals(2, _pool.getSize());
+        assertEquals(1, _pool.getSize());
         Connection c1 = _pool.getConnection();
         assertNotNull(c1);
         Connection c2 = _pool.getConnection();
-        assertEquals(3, _pool.getSize());
+        assertEquals(2, _pool.getSize());
         assertEquals(_pool.getMaxSize(), _pool.getSize());
         try {
             Connection c3 = _pool.getConnection();

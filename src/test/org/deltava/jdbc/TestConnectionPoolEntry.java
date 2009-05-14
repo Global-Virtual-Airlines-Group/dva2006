@@ -61,9 +61,6 @@ public class TestConnectionPoolEntry extends TestCase {
     
     public void testSystemConnection() {
         assertFalse(_cpe.inUse());
-        assertFalse(_cpe.isSystemConnection());
-        _cpe.setSystemConnection(true);
-        assertTrue(_cpe.isSystemConnection());
         assertTrue(_cpe.isDynamic());
         _cpe.setDynamic(false);
         assertTrue(_cpe.isDynamic());
