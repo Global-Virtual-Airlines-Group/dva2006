@@ -44,7 +44,7 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <li><span class="warn">This Pilot could NOT be renamed, since the new name is not unique There are <fmt:int value="${fn:sizeof(dupeResults)}" /> 
 matching <content:airline /> Pilots or Applicants with the same name or e-mail address.</span></li>
 <c:forEach var="user" items="${dupeResults}">
-<c:set var="userLoc" value="${userData[id]}" scope="request" />
+<c:set var="userLoc" value="${userData[id]}" scope="page" />
 <li><el:profile location="${userLoc}">${user.name}</el:profile> ( <a href="mailto:${user.email}">${user.email}</a> )</li>
 </c:forEach>
 </c:if>

@@ -26,8 +26,8 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <map:usage var="mapsAPIUsage" />
-<c:set var="startedOn" value="${applicationScope.startedOn}" scope="request" />
-<c:set var="execTime" value="${(systemTime - startedOn.time) / 1000}" scope="request" />
+<c:set var="startedOn" value="${applicationScope.startedOn}" scope="page" />
+<c:set var="execTime" value="${(systemTime - startedOn.time) / 1000}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -51,7 +51,7 @@
 </c:if>
 <c:if test="${!empty loadAvg}">
 <tr>
- <td class="label" valign="top">Load Average</td>
+ <td class="label top">Load Average</td>
  <td class="data">Last 1 Minute: <fmt:dec value="${fn:get(loadAvg, 0)}" /> processes queued<br />
  Last 5 Minutes: <fmt:dec value="${fn:get(loadAvg, 1)}" /> processes queued<br />
  Last 15 Minutes: <fmt:dec value="${fn:get(loadAvg, 2)}" /> processes queued</td>
@@ -59,7 +59,7 @@
 </c:if>
 <c:if test="${!empty osMemInfo}">
 <tr>
- <td class="label" valign="top">Memory Usage</td>
+ <td class="label top">Memory Usage</td>
  <td class="data"><fmt:int value="${osMemInfo['MemTotal']}" /> KB total physical memory<br />
 <fmt:int value="${osMemInfo['MemFree']}" /> KB free physical memory</td>
 </tr>

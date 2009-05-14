@@ -48,7 +48,7 @@ return true;
 &nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </el:table>

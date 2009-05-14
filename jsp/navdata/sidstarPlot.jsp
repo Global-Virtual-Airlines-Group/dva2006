@@ -106,7 +106,7 @@ return false;
  <td class="data"><el:combo name="tRoutes" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotRoute(this)" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld"></div></td>
 </tr>
 <tr class="title caps doPlot" style="visibility:hidden;">

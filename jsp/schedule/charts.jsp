@@ -59,7 +59,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="cspan" value="${access.canEdit ? 1 : 2}" scope="request" />
+<c:set var="cspan" value="${access.canEdit ? 1 : 2}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -84,8 +84,8 @@ return true;
 
 <!-- Table Chart Data -->
 <c:forEach var="chart" items="${viewContext.results}">
-<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="request" />
-<c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="request" />
+<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="page" />
+<c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">

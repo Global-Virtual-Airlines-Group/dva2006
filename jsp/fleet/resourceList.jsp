@@ -52,8 +52,8 @@ return true;
 
 <!-- Table Data Section -->
 <c:forEach var="resource" items="${viewContext.results}">
-<c:set var="rAccess" value="${accessMap[resource.ID]}" scope="request" />
-<c:set var="author" value="${pilots[resource.authorID]}" scope="request" />
+<c:set var="rAccess" value="${accessMap[resource.ID]}" scope="page" />
+<c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
 <view:row entry="${resource}">
 <c:if test="${rAccess.canEdit}">
  <td><el:cmdbutton url="resource" link="${resource}" op="edit" label="EDIT" /></td>

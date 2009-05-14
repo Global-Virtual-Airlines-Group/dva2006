@@ -26,13 +26,13 @@
 <content:region id="main">
 <view:table className="view" space="default" pad="default" cmd="blog">
 <c:if test="${!showAll}">
-<c:set var="author" value="${authors[authorID]}" scope="request" />
+<c:set var="author" value="${authors[authorID]}" scope="page" />
 <tr class="title caps">
  <td colspan="2">JOURNAL - ${author.name}</td>
 </tr>
 </c:if>
 <c:forEach var="entry" items="${viewContext.results}">
-<c:set var="author" value="${authors[entry.authorID]}" scope="request" />
+<c:set var="author" value="${authors[entry.authorID]}" scope="page" />
 <tr class="title caps" valign="top">
  <td width="65%">${entry.title} - <fmt:date fmt="d" date="${entry.date}" />
 <c:if test="${showAll}"> <el:cmd url="blog" link="${author}">${author.name}</el:cmd></c:if></td>

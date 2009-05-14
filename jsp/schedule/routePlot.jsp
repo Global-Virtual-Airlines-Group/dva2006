@@ -86,7 +86,7 @@ return true;
  <td class="data"><el:text name="route" size="80" max="224" idx="*" value="" onBlur="void plotMap()" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="580" /><div id="copyright" class="small"></div></td>
 </tr>
 <tr>

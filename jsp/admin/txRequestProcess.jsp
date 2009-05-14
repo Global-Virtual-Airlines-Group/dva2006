@@ -45,7 +45,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="request" />
+<c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -95,7 +95,7 @@ return true;
  <td class="data">${checkRide.equipmentType}</td>
 </tr>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
@@ -124,7 +124,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Equipment Ratings</td>
+ <td class="label top">Equipment Ratings</td>
  <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" newLine="true" className="small" checked="${newRatings}" options="${allEQ}" /></td>
 </tr>
 </c:if>
@@ -137,7 +137,7 @@ return true;
  <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 <tr>
@@ -147,7 +147,7 @@ return true;
 </c:if>
 <c:if test="${access.canReject}">
 <tr>
- <td class="label" valign="top">Rejection Commnents</td>
+ <td class="label top">Rejection Commnents</td>
  <td class="data"><el:textbox name="rejectComments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </c:if>
@@ -170,7 +170,7 @@ return true;
  <el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />
 </c:if>
 <c:if test="${access.canToggleRatings}">
-<c:set var="tgLabel" value="${txReq.ratingOnly ? 'CONVERT TO PROGRAM CHANGE' : 'CONVERT TO RATINGS ONLY'}" scope="request" />
+<c:set var="tgLabel" value="${txReq.ratingOnly ? 'CONVERT TO PROGRAM CHANGE' : 'CONVERT TO RATINGS ONLY'}" scope="page" />
  <el:cmdbutton ID="ToggleButton" url="txreqtoggle" link="${txReq}" label="${tgLabel}" /> 
 </c:if>
 <c:if test="${access.canDelete}">

@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<c:set var="certName" value="${empty cert ? 'New Certification' : cert.name}" scope="request" />
+<c:set var="certName" value="${empty cert ? 'New Certification' : cert.name}" scope="page" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>${certName}</title>
@@ -56,7 +56,7 @@ return true;
  <td class="data"><el:combo name="preReqs" className="req" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" firstEntry="-" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Required Examinations</td>
+ <td class="label top">Required Examinations</td>
  <td class="data"><el:check name="reqExams" width="150" cols="4" className="small" newLine="true" checked="${cert.examNames}" options="${exams}" /></td>
 </tr>
 <tr>

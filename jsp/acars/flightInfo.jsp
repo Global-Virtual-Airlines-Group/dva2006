@@ -69,7 +69,7 @@
  <td class="data" colspan="3">${info.remarks}</td>
 </tr>
 <c:if test="${(!empty dispatcher) || (!empty route)}">
-<c:set var="cspan" value="${(!empty dispatcher) && (!empty route) ? 1 : 3}" scope="request" />
+<c:set var="cspan" value="${(!empty dispatcher) && (!empty route) ? 1 : 3}" scope="page" />
 <!-- ACARS Dispatch Information -->
 <tr class="title caps">
  <td colspan="4">ACARS DISPATCH DATA</td>
@@ -104,12 +104,12 @@
 
 <c:if test="${!empty pirep}">
 <!-- ACARS PIREP data -->
-<c:set var="cspan" value="${3}" scope="request" />
-<c:set var="flightInfo" value="${info}" scope="request" />
+<c:set var="cspan" value="${3}" scope="page" />
+<c:set var="flightInfo" value="${info}" scope="page" />
 <%@include file="/jsp/pilot/pirepACARS.jspf" %>
 <c:if test="${!empty pirep.remarks}">
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data" colspan="3"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
@@ -126,7 +126,7 @@
 <span id="routeProgress" class="small"></span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Route Map</td>
+ <td class="label top">Route Map</td>
  <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="530" /></td>
 </tr>
 </c:if>

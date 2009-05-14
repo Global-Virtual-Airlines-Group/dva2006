@@ -111,7 +111,7 @@ return cmdPost(f.action);
 </c:if>
 </tr>
 <tr>
- <td class="label" valign="top">E-Mail Notifications</td>
+ <td class="label top">E-Mail Notifications</td>
  <td class="data"><el:check name="notifyOption" idx="*" className="small" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${applicant.notifyOptions}" /></td>
 </tr>
 
@@ -150,7 +150,7 @@ return cmdPost(f.action);
 </tr>
 <c:if test="${!empty applicant.comments}">
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><fmt:msg value="${applicant.comments}" /></td>
 </tr>
 </c:if>
@@ -160,7 +160,7 @@ return cmdPost(f.action);
  <td colspan="2">HR COMMENTS</td>
 </tr>
 <tr>
- <td class="label" valign="top">HR Comments</td>
+ <td class="label top">HR Comments</td>
  <td class="data"><el:textbox name="HRcomments" idx="*" width="80%" height="4">${applicant.HRComments}</el:textbox></td>
 </tr>
 
@@ -213,9 +213,9 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
  <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" className="req" firstEntry="-" value="${applicant.rank}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Equipment Program Sizes</td>
+ <td class="label top">Equipment Program Sizes</td>
  <td class="data"><c:forEach var="eqType" items="${eqTypes}">
-<c:set var="eqSize" value="${eqTypeStats[eqType.name]}" scope="request" />
+<c:set var="eqSize" value="${eqTypeStats[eqType.name]}" scope="page" />
 <span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqSize}" /> Pilots</b><br />
 </c:forEach></td>
 </tr>

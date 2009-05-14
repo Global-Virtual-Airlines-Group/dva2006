@@ -28,11 +28,11 @@
 </tr>
 
 <!-- Table Pilot Data -->
-<c:set var="areaName" value="" scope="request" />
+<c:set var="areaName" value="" scope="page" />
 <c:forEach var="staff" items="${staffRoster}">
-<c:set var="hasBlog" value="${fn:contains(blogIDs, staff.ID)}" scope="request" />
+<c:set var="hasBlog" value="${fn:contains(blogIDs, staff.ID)}" scope="page" />
 <c:if test="${(hasAreas && (areaName != staff.area))}">
-<c:set var="areaName" value="${staff.area}" scope="request" />
+<c:set var="areaName" value="${staff.area}" scope="page" />
 <tr class="title">
  <td colspan="4" class="left caps"><fmt:text value="${areaName}" /></td>
 </tr>

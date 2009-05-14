@@ -67,10 +67,10 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="hasImage" value="${q.size > 0}" scope="request" />
+<c:set var="hasImage" value="${q.size > 0}" scope="page" />
 <!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="${hasImage ? '2' : '1'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${hasImage ? '2' : '1'}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}
 <c:if test="${showAnswers}"><div class="sec small">${q.correctAnswer}</div></c:if></td>
 </tr>
@@ -83,7 +83,7 @@ return true;
 </c:if>
 <c:if test="${fn:isRoutePlot(q)}">
 <tr>
- <td class="label" valign="top">Map #<fmt:int value="${q.number}" /></td>
+ <td class="label top">Map #<fmt:int value="${q.number}" /></td>
  <td class="data"><map:div ID="qMap${q.number}" x="100%" y="320" /></td>
 </tr>
 </c:if>
@@ -108,7 +108,7 @@ return true;
 <c:if test="${!empty exam.comments}">
 <!-- Scorer Comments -->
 <tr>
- <td class="label" valign="top">Scorer Comments</td>
+ <td class="label top">Scorer Comments</td>
  <td class="data"><fmt:msg value="${exam.comments}" /></td>
 </tr>
 </c:if>
@@ -134,8 +134,8 @@ return true;
 <script language="JavaScript" type="text/javascript">
 var maps = new Array();
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
-<c:set var="answerRoute" value="${aRoutes[q.number]}" scope="request" />
-<c:set var="correctRoute" value="${cRoutes[q.number]}" scope="request" />
+<c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
+<c:set var="correctRoute" value="${cRoutes[q.number]}" scope="page" />
 <map:point var="mapC" point="${q.midPoint}" />
 var map = new GMap2(getElement("qMap${q.number}"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GSmallMapControl());

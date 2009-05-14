@@ -39,39 +39,39 @@ return true;
 </tr>
 
 <!-- Existing Requirements -->
-<c:set var="reqNum" value="${0}" scope="request" />
+<c:set var="reqNum" value="${0}" scope="page" />
 <c:forEach var="req" items="${cert.requirements}">
-<c:set var="reqNum" value="${reqNum + 1}" scope="request" />
+<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
- <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
+ <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5">${req.text}</el:textbox></td>
 </tr>
 </c:forEach>
 
 <!-- Additional Requirements -->
-<c:set var="reqNum" value="${reqNum + 1}" scope="request" />
+<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
- <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
+ <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
-<c:set var="reqNum" value="${reqNum + 1}" scope="request" />
+<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
- <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
+ <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
-<c:set var="reqNum" value="${reqNum + 1}" scope="request" />
+<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
- <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
+ <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
-<c:set var="reqNum" value="${reqNum + 1}" scope="request" />
+<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
- <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
+ <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
 <tr>

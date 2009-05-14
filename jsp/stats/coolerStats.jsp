@@ -48,10 +48,10 @@ return true;
 </tr>
 
 <!-- Table Statistics Data -->
-<c:set var="entryNumber" value="${viewStart}" scope="request" />
+<c:set var="entryNumber" value="${viewStart}" scope="page" />
 <c:forEach var="stat" items="${viewContext.results}">
 <view:row entry="${stat}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:int value="${stat.posts}" /></td>

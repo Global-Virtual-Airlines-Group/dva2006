@@ -19,8 +19,8 @@
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
-<c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
-<c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
+<c:set var="pilot" value="${pilots[session.pilotID]}" scope="page" />
+<c:set var="ins" value="${pilots[session.instructorID]}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -65,7 +65,7 @@
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Remarks</td>
+ <td class="label top">Remarks</td>
  <td class="data"><fmt:msg value="${session.comments}" /></td>
 </tr>
 </el:table>

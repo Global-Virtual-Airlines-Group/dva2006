@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<c:set var="googleMap" value="${isNew && (!empty airport)}" scope="request" />
+<c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">
 <content:js name="googleMaps" />
 <map:api version="2" />
@@ -85,7 +85,7 @@ return true;
  <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" className="req" firstEntry="-" value="${airport.TZ}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Airlines</td>
+ <td class="label top">Airlines</td>
  <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
 <content:hasmsg>
@@ -110,7 +110,7 @@ return true;
 </tr>
 </c:if>
 <c:if test="${isNew && (!empty param.id)}">
-<c:set var="apCode" value="${empty airport ? param.id : airport.ICAO}" scope="request" />
+<c:set var="apCode" value="${empty airport ? param.id : airport.ICAO}" scope="page" />
 <tr class="title caps">
  <td colspan="2">AIRPORT INFORMATION</td>
 </tr>

@@ -40,7 +40,7 @@
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Entry Text</td>
+ <td class="label top">Entry Text</td>
  <td class="data"><c:if test="${entry.isHTML}">${entry.body}</c:if>
 <c:if test="${!entry.isHTML}"><fmt:text value="${entry.body}" /></c:if></td>
 </tr>

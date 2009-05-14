@@ -152,7 +152,7 @@ return true;
  <td class="label">Location</td>
  <td class="data">${applicant.location}</td>
 </tr>
-<c:set var="VATSIM_ID" value="${fn:networkID(applicant, 'VATSIM')}" scope="request" />
+<c:set var="VATSIM_ID" value="${fn:networkID(applicant, 'VATSIM')}" scope="page" />
 <c:if test="${!empty VATSIM_ID}">
 <tr>
  <td class="label">VATSIM ID#</td>
@@ -161,7 +161,7 @@ return true;
  </td>
 </tr>
 </c:if>
-<c:set var="IVAO_ID" value="${fn:networkID(applicant, 'IVAO')}" scope="request" />
+<c:set var="IVAO_ID" value="${fn:networkID(applicant, 'IVAO')}" scope="page" />
 <c:if test="${!empty IVAO_ID}">
 <tr>
  <td class="label">IVAO ID#</td>
@@ -199,7 +199,7 @@ return true;
 </c:if>
 </tr>
 <tr>
- <td class="label" valign="top">E-Mail Notifications</td>
+ <td class="label top">E-Mail Notifications</td>
  <td class="data">${applicant.notifyOptions}</td>
 </tr>
 
@@ -274,7 +274,7 @@ return true;
 </c:if>
 <c:if test="${!empty applicant.comments}">
 <tr>
- <td class="label" valign="top">Comments</td>
+ <td class="label top">Comments</td>
  <td class="data"><fmt:msg value="${applicant.comments}" /></td>
 </tr>
 </c:if>
@@ -289,7 +289,7 @@ do a Google search on &quot;${applicant.name}&quot;.</td>
 </tr>
 <c:if test="${!empty applicant.HRComments}">
 <tr>
- <td class="label" valign="top">HR Comments</td>
+ <td class="label top">HR Comments</td>
  <td class="data"><fmt:msg value="${applicant.HRComments}" /></td>
 </tr>
 </c:if>
@@ -325,9 +325,9 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
  <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Equipment Program Sizes</td>
+ <td class="label top">Equipment Program Sizes</td>
  <td class="data"><c:forEach var="eqType" items="${eqTypes}">
-<c:set var="eqSize" value="${eqTypeStats[eqType.name]}" scope="request" />
+<c:set var="eqSize" value="${eqTypeStats[eqType.name]}" scope="page" />
 <span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqSize}" /> Pilots</b><br />
 </c:forEach></td>
 </tr>

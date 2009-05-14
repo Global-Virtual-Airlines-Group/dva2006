@@ -40,14 +40,14 @@ return true;
  <td colspan="2">EVENT SIGNUP REBALANCING FOR ${event.name}</td>
 </tr>
 <c:forEach var="route" items="${event.routes}">
-<c:set var="routeSignups" value="${fn:routeSignups(event, route.routeID)}" scope="request" />
+<c:set var="routeSignups" value="${fn:routeSignups(event, route.routeID)}" scope="page" />
 <tr class="title caps">
  <td colspan="2">ROUTE #<fmt:int value="${route.routeID}" /><c:if test="${!empty route.name}"> - ${route.name}</c:if>
  (<fmt:int value="${fn:sizeof(routeSignups)}" /> SIGNED UP PILOTS)</td>
 </tr>
 <c:forEach var="signup" items="${routeSignups}">
-<c:set var="loc" value="${userLocs[signup.pilotID]}" scope="request" />
-<c:set var="pilot" value="${pilots[loc.ID]}" scope="request" />
+<c:set var="loc" value="${userLocs[signup.pilotID]}" scope="page" />
+<c:set var="pilot" value="${pilots[loc.ID]}" scope="page" />
 <tr>
  <td class="label mid"><el:box name="signupID" value="${pilot.hexID}" label="" /></td>
  <td class="data"><el:profile location="${pilotLoc}"><span class="pri bld">${pilot.name}</span></el:profile>

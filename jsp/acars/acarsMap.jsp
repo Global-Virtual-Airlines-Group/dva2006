@@ -129,7 +129,7 @@ return true;
  <td class="data" colspan="3"><span id="dispatchStatus" class="bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Live Flight Map</td>
+ <td class="label top">Live Flight Map</td>
  <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="545" /><div id="copyright" class="small"></div></td>
 </tr>
 </el:table>

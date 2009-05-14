@@ -49,7 +49,7 @@ return true;
  <td colspan="2">PSS AIRAC NAVIGATION DATA UPLOAD</td>
 </tr>
 <tr>
- <td class="label" valign="top">Upload Data File</td>
+ <td class="label top">Upload Data File</td>
  <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;
 <span class="small">AIRAC data must be in PSS Format.</span></td>
 </tr>

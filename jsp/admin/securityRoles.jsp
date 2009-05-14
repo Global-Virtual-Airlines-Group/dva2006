@@ -36,7 +36,7 @@
 </tr>
 
 <c:forEach var="role" items="${roles}">
-<c:set var="members" value="${roleMap[role]}" scope="request" />
+<c:set var="members" value="${roleMap[role]}" scope="page" />
 <!-- ${role} -->
 <tr class="title caps">
  <td colspan="7">SECURITY ROLE - ${role}</td>

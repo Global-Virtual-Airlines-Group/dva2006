@@ -30,8 +30,8 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:superUser><c:set var="isHR" value="true" scope="request" /></content:superUser>
-<content:filter roles="HR"><c:set var="isHR" value="true" scope="request" /></content:filter>
+<content:attr attr="isHR" value="true" roles="HR" />
+<content:superUser><c:set var="isHR" value="true" scope="page" /></content:superUser>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -48,6 +48,13 @@ return true;
  <td class="label">SHA File</td>
  <td class="data"><el:file name="hashCode" className="small" idx="*" size="96" max="144" /></td>
 </tr>
+<content:filter roles="HR,Developer">
+<tr>
+ <td class="label top">ZIP File</td>
+ <td class="data"><el:file name="zip" className="small" size="96" max="144" /><br />
+<span class="small">You can submit the XML and SHA files in a ZIP archive to reduce upload times.</span></td>
+</tr>
+</content:filter>
 <c:if test="${isHR}">
 <tr>
  <td class="label">&nbsp;</td>

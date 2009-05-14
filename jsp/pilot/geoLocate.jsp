@@ -143,7 +143,7 @@ return true;
  <td colspan="2">PILOT LOCATION <span id="isLoading" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Map</td>
+ <td class="label top">Map</td>
  <td class="data"><c:if test="${empty location}"><span class="small">You have not selected your 
 location. Please click on the map below to set your location. You can drag the map with your 
 mouse and zoom in and out.</span><br />
@@ -166,7 +166,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <el:combo name="lonDir" idx="*" size="1" options="${lonDir}" value="${lonEW}" onChange="void updateLocation()" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Zoom to</td>
+ <td class="label top">Zoom to</td>
  <td class="data"><el:text name="geoAddr" idx="*" size="64" max="96" value="" />
  <el:button ID="SearchButton" className="BUTTON" onClick="void geoLocate(document.forms[0].geoAddr)" label="SEARCH" /><br />
 <span class="small">You can type in a location or address to zoom to. <i>To protect your privacy, no

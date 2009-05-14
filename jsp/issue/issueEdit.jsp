@@ -43,7 +43,7 @@ return true;
 
 <!-- Issue Data -->
 <c:if test="${!empty issue}">
-<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
 <tr>
  <td class="label">Reported by</td>
  <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
@@ -80,7 +80,7 @@ return true;
  <td class="label">Issue Type</td>
  <td class="data"><el:combo name="issueType" size="1" idx="*" options="${types}" value="${issue.typeName}" /></td>
 </tr>
-<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 <tr>
  <td class="label">Assigned To</td>
 <c:if test="${access.canReassign}">
@@ -95,7 +95,7 @@ return true;
  <td class="data"><el:combo name="version" size="1" idx="*" options="${versions}" value="${issue.majorVersion}.${issue.minorVersion}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Issue Description</td>
+ <td class="label top">Issue Description</td>
  <td class="data"><el:textbox name="desc" width="80%" height="5" idx="*" className="req">${issue.description}</el:textbox></td>
 </tr>
 <c:if test="${empty issue}">
@@ -116,11 +116,11 @@ return true;
 </c:if>
 <c:if test="${!empty issue.comments}">
 <c:forEach var="comment" items="${issue.comments}">
-<c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
-<tr valign="top">
- <td class="label" valign="top">${author.name} ${author.pilotCode}<br />
+<c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
+<tr>
+ <td class="label top">${author.name} ${author.pilotCode}<br />
 <fmt:date date="${comment.createdOn}" /></td>
- <td class="data" valign="top"><fmt:msg value="${comment.comments}" /></td>
+ <td class="data top"><fmt:msg value="${comment.comments}" /></td>
 </tr>
 </c:forEach>
 </c:if>

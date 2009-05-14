@@ -157,7 +157,7 @@
 </c:if>
 <c:if test="${!empty flightInfo.route}">
 <tr>
- <td class="label" valign="top">Flight Route</td>
+ <td class="label top">Flight Route</td>
  <td class="data" colspan="${cspan}">${flightInfo.route}</td>
 </tr>
 </c:if>
@@ -172,11 +172,11 @@
 <c:if test="${scoreCR}">
 <c:set var="isForm" value="true" scope="request" />
 <tr>
- <td class="label" valign="top">Check Ride Instructions</td>
+ <td class="label top">Check Ride Instructions</td>
  <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Reviewer Comments</td>
+ <td class="label top">Reviewer Comments</td>
  <td class="data" colspan="${cspan}"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </tr>
 <tr>
@@ -189,7 +189,7 @@
 </c:if>
 <c:if test="${!scoreCR}">
 <tr>
- <td class="label" valign="top">Check Ride Instructions</td>
+ <td class="label top">Check Ride Instructions</td>
  <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 </c:if>

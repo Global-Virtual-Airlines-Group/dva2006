@@ -55,7 +55,7 @@ return true;
 <el:box name="noNotify" value="true" label="Don't send e-mail notification" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Entry Text</td>
+ <td class="label top">Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" height="6" className="req">${entry.body}</el:textbox></td>
 </tr>
 </el:table>

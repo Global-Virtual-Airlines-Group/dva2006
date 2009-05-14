@@ -55,7 +55,7 @@ return true;
  <td class="data"><el:text name="topic" idx="*" size="24" max="40" value="${channel.topic}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Channel Description</td>
+ <td class="label top">Channel Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="120" height="4">${channel.description}</el:textbox></td>
 </tr>
 <tr>
@@ -71,7 +71,7 @@ return true;
  <td class="data"><el:combo name="codec" idx="*" size="1" value="${channel.codec}" options="${codecs}" firstEntry="-" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Channel Options</td>
+ <td class="label top">Channel Options</td>
  <td class="data"><el:box name="isModerated" idx="*" value="true" checked="${channel.moderated}" label="Channel is Moderated" /><br />
 <el:box name="isDefault" idx="*" value="true" checked="${channel.default}" label="Default Channel for this Virtual Server" /></td>
 </tr>

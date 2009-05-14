@@ -66,8 +66,8 @@ return true;
 <calendar:week date="cDate" startDate="${startDate}" entries="${fn:keys(accessMap)}" topBarClass="dayHdr" 
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="busycalendar">
 <calendar:entry name="busy">
-<c:set var="ins" value="${pilots[busy.ID]}" scope="request" />
-<c:set var="busyAccess" value="${accessMap[busy]}" scope="request" />
+<c:set var="ins" value="${pilots[busy.ID]}" scope="page" />
+<c:set var="busyAccess" value="${accessMap[busy]}" scope="page" />
 <span class="warn bld caps">${ins.name} IS BUSY</span><br />
 <fmt:date fmt="t" t="HH:mm" date="${busy.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${busy.endTime}" />
 <c:if test="${busyAccess.canDelete}"><br />

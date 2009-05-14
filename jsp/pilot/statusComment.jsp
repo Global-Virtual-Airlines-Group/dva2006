@@ -28,7 +28,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="cspan" value="${6}" scope="request" />
+<c:set var="cspan" value="${6}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

@@ -64,7 +64,7 @@
  <td>DB TIME</td>
 </tr>
 <c:forEach var="entry" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[entry.pilotID]}" scope="request" />
+<c:set var="pilot" value="${pilots[entry.pilotID]}" scope="page" />
 <view:row entry="${entry}">
  <td class="small"><fmt:date d="MM/dd/yy" t="HH:mm:ss" date="${entry.date}" /></td>
 <c:if test="${entry.pilotID != 0}">

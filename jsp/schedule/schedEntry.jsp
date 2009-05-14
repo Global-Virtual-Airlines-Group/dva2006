@@ -120,7 +120,7 @@ return true;
  <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="< AIRLINE >" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Flight Number / Leg</td>
+ <td class="label top">Flight Number / Leg</td>
  <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" value="${entry.flightNumber}" />
  <el:text name="flightLeg" idx="*" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
 <c:if test="${empty entry}">

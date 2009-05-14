@@ -50,7 +50,7 @@ return true;
  <td class="data"><el:combo name="staffArea" idx="*" size="1" options="${staffAreas}" className="req" firstEntry="-" value="${staff.area}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Biographical Profile</td>
+ <td class="label top">Biographical Profile</td>
  <td class="data"><el:textbox name="staffBody" idx="*" height="4" width="80%"></el:textbox></td>
 </tr>
 <tr>

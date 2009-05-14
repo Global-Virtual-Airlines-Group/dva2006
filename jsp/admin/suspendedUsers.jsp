@@ -39,7 +39,7 @@
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${viewContext.results}">
-<c:set var="upd" value="${updates[pilot.ID]}" scope="request" />
+<c:set var="upd" value="${updates[pilot.ID]}" scope="page" />
 <tr>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="pri bld">${pilot.pilotCode}</td>
@@ -47,7 +47,7 @@
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="N/A" /></td>
  <td><fmt:int value="${pilot.legs}" /></td>
 <c:if test="${!empty upd}">
-<c:set var="duration" value="${(now.time - upd.createdOn.time) / 86400000}" scope="request" />
+<c:set var="duration" value="${(now.time - upd.createdOn.time) / 86400000}" scope="page" />
  <td class="bld"><fmt:date fmt="d" date="${upd.createdOn}" /></td>
  <td class="pri bld"><fmt:int value="${duration}" /> DAYS</td>
 </c:if>
