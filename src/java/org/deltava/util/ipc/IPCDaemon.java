@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ipc;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.gvagroup.common.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -50,14 +50,14 @@ public class IPCDaemon implements Runnable {
 						switch (event.getCode()) {
 							case SystemEvent.AIRLINE_RELOAD:
 								log.warn(SystemData.get("airline.code") + " Reloading Airlines");
-								con = cPool.getConnection(true);
+								con = cPool.getConnection();
 								GetAirline aldao = new GetAirline(con);
 								SystemData.add("airlines", aldao.getAll());
 								break;
 								
 							case SystemEvent.AIRPORT_RELOAD:
 								log.warn(SystemData.get("airline.code") + " Reloading Airports");
-								con = cPool.getConnection(true);
+								con = cPool.getConnection();
 								GetAirport apdao = new GetAirport(con);
 								SystemData.add("airports", apdao.getAll());
 								break;

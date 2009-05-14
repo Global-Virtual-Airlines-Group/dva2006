@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -79,7 +79,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 					ConnectionPool pool = getConnectionPool();
 					Connection c = null;
 					try {
-						c = pool.getConnection(true);
+						c = pool.getConnection();
 						SetSystemData swdao = new SetSystemData(c);
 						swdao.logCommands(entries);
 						if (tlog.isDebugEnabled())

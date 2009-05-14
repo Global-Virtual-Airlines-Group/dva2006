@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in
  * that it checks wether a task should be executed once every 60 seconds.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -84,7 +84,7 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 					Connection c = null;
 					ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 					try {
-						c = pool.getConnection(true);
+						c = pool.getConnection();
 
 						// Get the DAO and log the execution time
 						SetSystemData dao = new SetSystemData(c);
