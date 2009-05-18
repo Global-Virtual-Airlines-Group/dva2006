@@ -355,7 +355,7 @@
 
 		<vatsim>
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
-			<validation_url>http://cert.vatsim.net/vatsimnet/status.php</validation_url>
+			<validation_url>http://cert.vatsim.net/vatsimnet/idstatus.php</validation_url>
 			<banner>vatsim.gif</banner>
 			<url>http://www.vatsim.net/</url>
 			<local>

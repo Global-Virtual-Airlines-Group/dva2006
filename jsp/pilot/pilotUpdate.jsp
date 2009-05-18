@@ -29,7 +29,17 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <content:hasmsg>
 <div class="error bld"><content:sysmsg /></div><br />
 </content:hasmsg>
+<c:if test="${!empty vatsimValidationMsgs}">
+<div class="error bld">The following problems occurred attempting to validate your VATSIM account:<br />
+<br />
+<c:forEach var="msg" items="${vatsimValidationMsgs}">
+${msg}<br />
+</c:forEach></div><br /></c:if>
 <ul>
+<c:if test="${vatsimOK}">
+<!-- VATSIM Account Verified -->
+<li>${pilot.firstName}'s VATSIM account has been successfully verified.</li>
+</c:if>
 <c:if test="${ratingsUpdated}">
 <!-- Updated Equipment Ratings -->
 <li>Equipment Ratings have been updated. ${pilot.firstName} is now rated to fly the <span class="small">

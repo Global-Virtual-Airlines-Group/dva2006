@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.StringUtils;
@@ -6,14 +6,11 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class Controller extends NetworkUser {
-   
-   private static final String[] RATINGS = {"", "Observer", "Student", "Senior Student", "Senior Student", "Controller",
-         "Senior Controller", "Senior Controller", "Instructor", "Senior Instructor", "Senior Instructor", "Supervisor", "Administrator"};
    
    /**
     * Facility types.
@@ -32,7 +29,6 @@ public class Controller extends NetworkUser {
    
    private static final String[] FAC_COLORS = {WHITE, PURPLE, BLUE, ORANGE, GREEN, YELLOW, RED};
    
-   private int _rating;
    private int _facility;
    private String _freq;
 
@@ -52,15 +48,7 @@ public class Controller extends NetworkUser {
         return NetworkUser.ATC;
     }
     
-    /**
-     * Returns the Controller's rating code.
-     * @return the rating code
-     * @see Controller#getRatingName()
-     * @see Controller#setRating(int)
-     */
-    public int getRating() {
-       return _rating;
-    }
+
     
     /**
      * Returns the Controller's communication frequency.
@@ -82,16 +70,6 @@ public class Controller extends NetworkUser {
     }
     
     /**
-     * Returns the Controller's rating name.
-     * @return the rating name
-     * @see Controller#getRating()
-     * @see Controller#setRating(int)
-     */
-    public String getRatingName() {
-       return RATINGS[_rating];
-    }
-    
-    /**
      * Returns the Controller's facility type name.
      * @return the facility type
      * @see Controller#getFacility()
@@ -107,20 +85,6 @@ public class Controller extends NetworkUser {
      */
     public final void setName(String name) {
         super.setName(name + " STRIPME");
-    }
-    
-    /**
-     * Sets the Controller's rating code.
-     * @param rating the rating code
-     * @throws IllegalArgumentException if rating is negative or invalid
-     * @see Controller#getRating()
-     * @see Controller#getRatingName()
-     */
-    public void setRating(int rating) {
-       if ((rating < 0) || (rating >= RATINGS.length))
-             throw new IllegalArgumentException("Invalid Controller rating - " + rating);
-       
-       _rating = rating;
     }
     
     /**
