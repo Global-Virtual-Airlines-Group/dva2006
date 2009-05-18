@@ -22,20 +22,23 @@
 </c:if>
 
 <content:submenu title="Online Help" width="170">
- <content:menuitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:menuitem>
+ <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
 <content:filter roles="Pilot">
- <content:menuitem><el:cmd url="myhdissues">My Issues</el:cmd></content:menuitem>
+ <content:subitem><el:cmd url="myhdissues">My Issues</el:cmd></content:subitem>
 <c:if test="${access.canCreate}">
- <content:menuitem><el:cmd url="hdissue" op="edit">New Issue</el:cmd></content:menuitem>
+ <content:subitem><el:cmd url="hdissue" op="edit">New Issue</el:cmd></content:subitem>
 </c:if>
 </content:filter>
+<content:filter roles="HR,PIREP,Examination">
+ <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
+</content:filter>
 <content:filter roles="HR,Instructor,Examiner,AcademyAdmin,PIREP,Examination,Signature">
- <content:menuitem><el:cmd url="hdissues">All Issues</el:cmd></content:menuitem>
- <content:menuitem><el:cmd url="hdissues" op="active">Active Issues</el:cmd></content:menuitem>
+ <content:subitem><el:cmd url="hdissues">All Issues</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="hdissues" op="active">Active Issues</el:cmd></content:subitem>
 </content:filter>
 <content:filter roles="HR">
- <content:menuitem><el:cmd url="hdissuefilter">By Assignee</el:cmd></content:menuitem>
- <content:menuitem><el:cmd url="hdissuefilter" op="author">By Author</el:cmd></content:menuitem>
+ <content:subitem><el:cmd url="hdissuefilter">By Assignee</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="hdissuefilter" op="author">By Author</el:cmd></content:subitem>
 </content:filter>
 </content:submenu>
 
