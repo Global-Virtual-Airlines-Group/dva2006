@@ -1,7 +1,10 @@
 // Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,9 +14,12 @@ import java.sql.Connection;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
+import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.testing.Test;
 import org.deltava.beans.system.*;
@@ -22,7 +28,9 @@ import org.deltava.beans.ts2.*;
 import org.deltava.comparators.RankComparator;
 
 import org.deltava.commands.*;
+
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetVATSIMData;
 
 import org.deltava.security.*;
 import org.deltava.security.command.*;
@@ -76,10 +84,75 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Check our access level to the Staff profile
 			StaffAccessControl s_access = new StaffAccessControl(ctx, s);
 			s_access.validate();
+			
+			// Validate VATSIM ID
+			if (!StringUtils.isEmpty(ctx.getParameter("VATSIM_ID"))) {
+				String vid = ctx.getParameter("VATSIM_ID");
+				String uri = SystemData.get("online.vatsim.validation_url");
+				if (!StringUtils.isEmpty(uri)) {
+					try {
+						URL url = new URL(uri + "?cid=" + vid);
+						
+						// Init the HTTP client
+						HttpClient hc = new HttpClient();
+						hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+						hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
+						hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
+						hc.getParams().setParameter("http.socket.timeout", new Integer(5000));
+						hc.getParams().setParameter("http.connection.timeout", new Integer(2000));
+						
+						// Open the connection
+						GetMethod gm = new GetMethod(url.toExternalForm());
+						gm.setFollowRedirects(false);
+						int responseCode = hc.executeMethod(gm);
+						if (responseCode == SC_NOT_FOUND)
+							throw new IllegalStateException("Cannot fetch VATSIM data at " + url.toExternalForm());
+						
+						// Get the DAO
+						GetVATSIMData dao = new GetVATSIMData(gm.getResponseBodyAsStream());
+						Certificate c = dao.getInfo();
+						
+						if (c != null) {
+							Collection<String> msgs = new ArrayList<String>();
+							if (!c.isActive())
+								msgs.add("VATSIM ID inactive");
+							if (!vid.equals(String.valueOf(c.getID())))
+								msgs.add("VATSIM ID does not match");
+							if (!p.getFirstName().equals(c.getFirstName()))
+								msgs.add("First Name does not match");
+							if (!p.getLastName().equals(c.getLastName()))
+								msgs.add("Last Name does not match");
+							if (!p.getEmailDomain().equals(c.getEmailDomain()))
+								msgs.add("e-Mail Domain does not match");
+							
+							// Save messages
+							if (msgs.isEmpty())
+								p.setNetworkID(OnlineNetwork.VATSIM, vid);
+							else {
+								ctx.setAttribute("vatsimValidationMsgs", msgs, REQUEST);
+								vid = null;
+							}
+						} else {
+							ctx.setAttribute("vatsimValidationMsgs", "Unknown/Invalid VATSIM ID - " + vid, REQUEST);
+							vid = null;
+						}
+					} catch (IllegalStateException ise) {
+						log.warn(ise);
+					} catch (Exception e) {
+						log.error(e.getMessage(), e);
+					} finally {
+						if (!StringUtils.isEmpty(vid)) {
+							p.setNetworkID(OnlineNetwork.VATSIM, vid);
+							ctx.setAttribute("vatsimOK", Boolean.TRUE, REQUEST);
+						}
+					}
+				} else
+					p.setNetworkID(OnlineNetwork.VATSIM, vid);
+			} else
+				p.setNetworkID(OnlineNetwork.VATSIM, null);
 
 			// Update the profile with data from the request
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
-			p.setNetworkID(OnlineNetwork.VATSIM, ctx.getParameter("VATSIM_ID"));
 			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 			p.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
 			p.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));

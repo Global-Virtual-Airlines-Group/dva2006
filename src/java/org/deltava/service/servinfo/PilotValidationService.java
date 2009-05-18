@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.net.*;
@@ -11,7 +11,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 import org.jdom.*;
 
-import org.deltava.beans.servinfo.Pilot;
+import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.DAOException;
@@ -19,13 +19,14 @@ import org.deltava.dao.file.GetVATSIMData;
 
 import org.deltava.service.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to validate VATSIM membership data.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -44,9 +45,9 @@ public class PilotValidationService extends WebService {
 		if (uri == null)
 			return SC_NOT_FOUND;
 		
-		Pilot p = null;
+		Certificate c = null;
 		try {
-			URL url = new URL(uri + "?id=" + ctx.getParameter("id"));
+			URL url = new URL(uri + "?cid=" + ctx.getParameter("id"));
 			
 			// Init the HTTP client
 			HttpClient hc = new HttpClient();
@@ -61,14 +62,21 @@ public class PilotValidationService extends WebService {
 			gm.setFollowRedirects(false);
 			
 			// Get the DAO
-			hc.executeMethod(gm);
+			int responseCode = hc.executeMethod(gm);
+			if (responseCode == SC_NOT_FOUND)
+				return SC_NOT_FOUND;
+			
 			GetVATSIMData dao = new GetVATSIMData(gm.getResponseBodyAsStream());
-			p = dao.getInfo();
+			c = dao.getInfo();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, ie.getMessage());
 		}
+		
+		// Return a 404 if not found
+		if (c == null)
+			return SC_NOT_FOUND;
 		
 		// Build the XML Document
 		Document doc = new Document();
@@ -76,12 +84,13 @@ public class PilotValidationService extends WebService {
 		doc.setRootElement(re);
 		
 		// Set the properties
-		re.setAttribute("id", ctx.getParameter("id"));
+		re.setAttribute("id", String.valueOf(c.getID()));
 		re.setAttribute("network", "VATSIM");
-		re.setAttribute("name", p.getName());
-		re.setAttribute("status", p.getComments());
-		re.setAttribute("domain", p.getEquipmentCode());
-		re.setAttribute("nameOK", String.valueOf(p.getName().equals(ctx.getParameter("name"))));
+		re.setAttribute("firstName", c.getFirstName());
+		re.setAttribute("lastName", c.getLastName());
+		re.setAttribute("registeredOn", StringUtils.format(c.getRegistrationDate(), "yyyy/MM/dd HH:mm"));
+		re.setAttribute("active", String.valueOf(c.isActive()));
+		re.setAttribute("domain", c.getEmailDomain());
 		
 		// Dump the XML to the output stream
 		try {

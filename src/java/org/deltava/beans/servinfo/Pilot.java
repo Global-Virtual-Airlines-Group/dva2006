@@ -109,8 +109,15 @@ public class Pilot extends NetworkUser {
 	public int getType() {
 		return NetworkUser.PILOT;
 	}
-
 	
+    /**
+     * Returns the Pilot's rating code.
+     * @return 1 always
+     */
+    public final int getRating() {
+       return 1;
+    }
+
 	/**
 	 * Returns the Pilot's filed waypoints.
 	 * @return a Collection of waypoint IDs
@@ -239,6 +246,13 @@ public class Pilot extends NetworkUser {
 	public void setHighlighted(boolean isHighlighted) {
 		_isHighlighted = isHighlighted;
 	}
+	
+    /**
+     * Sets the Controller's rating code. This is overriden to 1.
+     */
+    public final void setRating(int rating) {
+    	super.setRating(1);
+    }
 	
 	/**
 	 * Returns the flight route. 

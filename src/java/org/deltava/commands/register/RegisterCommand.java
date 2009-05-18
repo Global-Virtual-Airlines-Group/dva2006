@@ -2,14 +2,19 @@
 package org.deltava.commands.register;
 
 import java.util.*;
+import java.net.URL;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
@@ -17,6 +22,7 @@ import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetVATSIMData;
 import org.deltava.mail.*;
 
 import org.deltava.security.AddressValidationHelper;
@@ -26,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -166,6 +172,57 @@ public class RegisterCommand extends AbstractCommand {
 			for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
 				a.setNotifyOption(Person.NOTIFY_CODES[x], notifyOptions.contains(Person.NOTIFY_CODES[x]));
 		}
+		
+		// Validate the VATSIM account if any
+		if (a.hasNetworkID(OnlineNetwork.VATSIM)) {
+			String uri = SystemData.get("online.vatsim.validation_url");
+			if (!StringUtils.isEmpty(uri)) {
+				try {
+					URL url = new URL(uri + "?cid=" + ctx.getParameter("id"));
+					
+					// Init the HTTP client
+					HttpClient hc = new HttpClient();
+					hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+					hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
+					hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
+					hc.getParams().setParameter("http.socket.timeout", new Integer(5000));
+					hc.getParams().setParameter("http.connection.timeout", new Integer(2000));
+					
+					// Open the connection
+					GetMethod gm = new GetMethod(url.toExternalForm());
+					gm.setFollowRedirects(false);
+					int responseCode = hc.executeMethod(gm);
+					if (responseCode == SC_NOT_FOUND)
+						throw new IllegalStateException("Cannot fetch VATSIM data at " + url.toExternalForm());
+
+					// Get the DAO
+					GetVATSIMData dao = new GetVATSIMData(gm.getResponseBodyAsStream());
+					Certificate c = dao.getInfo();
+					if (c != null) {
+						StringBuilder buf = new StringBuilder();
+						if (!c.isActive())
+							buf.append("VATSIM ID is inactive!\r\n");
+						if (!a.getNetworkID(OnlineNetwork.VATSIM).equals(String.valueOf(c.getID())))
+							buf.append("VATSIM ID does not match!\r\n");
+						if (!a.getFirstName().equals(c.getFirstName()))
+							buf.append("First Name does not match!\r\n");
+						if (!a.getLastName().equals(c.getLastName()))
+							buf.append("Last Name does not match!\r\n");
+						if (!a.getEmailDomain().equals(c.getEmailDomain()))
+							buf.append("e-Mail Domain does not match!\r\n");
+						if (StringUtils.isEmpty(buf))
+							a.setHRComments("VATSIM Information validated\r\n");
+						else
+							a.setHRComments(buf.toString());
+					} else
+						a.setHRComments("Unknown/Invalid VATSIM ID\r\n");
+				} catch (IllegalStateException ise) {
+					log.warn(ise.getMessage());
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
+				}
+			}
+		}
 
 		// Initialize the message context
 		MessageContext mctxt = new MessageContext();
@@ -184,9 +241,9 @@ public class RegisterCommand extends AbstractCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
 			// Check for Suspended User
-			StringBuilder buf = new StringBuilder();
-			Cookie wc = ctx.getCookie("dvaAuthStatus");
-			Cookie fn = ctx.getCookie("dva_fname64");
+			StringBuilder buf = new StringBuilder(a.getHRComments());
+			javax.servlet.http.Cookie wc = ctx.getCookie("dvaAuthStatus");
+			javax.servlet.http.Cookie fn = ctx.getCookie("dva_fname64");
 			if (wc != null) {
 				buf.append("Suspended Pilot: ");
 				try {
@@ -201,7 +258,7 @@ public class RegisterCommand extends AbstractCommand {
 			if (fn != null) {
 				buf.append("PC used to login as: ");
 				buf.append(Base64.decodeString(fn.getValue()));
-				Cookie ln = ctx.getCookie("dva_lname64");
+				javax.servlet.http.Cookie ln = ctx.getCookie("dva_lname64");
 				if (ln != null) {
 					buf.append(' ');
 					buf.append(Base64.decodeString(fn.getValue()));

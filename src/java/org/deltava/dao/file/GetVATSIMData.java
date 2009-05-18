@@ -1,16 +1,20 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 
-import org.deltava.beans.servinfo.Pilot;
+import org.jdom.*;
+import org.jdom.input.*;
 
+import org.deltava.beans.servinfo.Certificate;
 import org.deltava.dao.DAOException;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to read VATSIM CERT data.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -24,54 +28,49 @@ public class GetVATSIMData extends DAO {
 		super(is);
 	}
 
-	private String getSubstring(String s, char start, char end) {
-		int st = s.indexOf(start);
-		int en = s.indexOf(end, st);
-		return s.substring(++st, en);
-	}
-	
-	private String getNextLine(BufferedReader br) throws IOException {
-		String result = br.readLine();
-		if (!result.contains("</td>"))
-			result = result + br.readLine();
-		
-		return result.trim();
-	}
-	
 	/**
-	 * Returns information about the selected person. The user's e-mail domain is contained within the equipment
-	 * code field for a pilot.
-	 * @return a Pilot bean
-	 * @throws DAOException if an I/O error occurs
+	 * Returns information about the selected VATSIM certificate.
+	 * @return a Certificate bean
+	 * @throws DAOException if an error occurs
 	 */
-	public Pilot getInfo() throws DAOException {
+	public Certificate getInfo() throws DAOException {
 		try {
-			BufferedReader br = getReader();
-			
-			boolean hasData = false;
-			String iData = br.readLine();
-			while ((iData != null) && !hasData) {
-				hasData = iData.contains("remind.php?");
-				if (!hasData)
-					iData = br.readLine();
+			// Process the XML document
+			Document doc = null;	
+			try {
+				SAXBuilder builder = new SAXBuilder();
+				doc = builder.build(getReader());
+			} catch (JDOMException je) {
+				throw new DAOException(je);
 			}
 			
-			// If we have nothing, then abort
-			if (iData == null)
-				throw new EOFException("Did not find remind.php");
-			
-			// Read next few lines - name, email, status, created, location
-			if (!iData.contains("<td>"))
-				iData = br.readLine();
-			
 			// Get data
-			Pilot p = new Pilot(0);
-			p.setName(getSubstring(getNextLine(br), '>', '<').trim() + " XXX");
-			p.setEquipmentCode(getSubstring(getNextLine(br), '@', '<').trim());
-			p.setComments(getSubstring(getNextLine(br), '>', '<'));
+			Element re = doc.getRootElement();
+			if ((re == null) || (!"root".equals(re.getName())))
+				throw new DAOException("root element expected");
 			
-			// Return results
-			return p;
+			// Get user element
+			Element ue = re.getChild("user");
+			if (ue == null)
+				throw new DAOException("user element expected");
+			
+			// Check the ID
+			String id = ue.getAttributeValue("cid");
+			if (StringUtils.isEmpty(id))
+				return null;
+			
+			// Check if inactive
+			String rating = ue.getChildTextTrim("rating");
+			boolean isInactive = "suspended".equalsIgnoreCase(rating) || "inactive".equalsIgnoreCase(rating);
+			
+			// Create the return object
+			Certificate c = new Certificate(StringUtils.parse(id, 0));
+			c.setFirstName(ue.getChildTextTrim("name_first"));
+			c.setLastName(ue.getChildTextTrim("name_last"));
+			c.setEmailDomain(ue.getChildTextTrim("email"));
+			c.setRegistrationDate(StringUtils.parseDate(ue.getChildTextTrim("regdate"), "yyyy-MM-dd HH:mm:ss"));
+			c.setActive(!isInactive);
+			return c;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
