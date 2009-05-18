@@ -1,7 +1,9 @@
 // Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import java.io.*;
 import java.util.*;
+import java.util.zip.*;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -9,10 +11,8 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.TerminalRoute;
-import org.deltava.beans.schedule.Aircraft;
-import org.deltava.beans.schedule.ScheduleEntry;
-import org.deltava.beans.testing.CheckRide;
-import org.deltava.beans.testing.Test;
+import org.deltava.beans.schedule.*;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 2.4
  */
 
@@ -44,16 +44,45 @@ public class OfflineFlightCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/acars/offlineSubmit.jsp");
 		
+		String sha = null; String xml = null;
+		
+		// Check for a ZIP archive
+		FileUpload zipF = ctx.getFile("zip");
+		if (zipF != null) {
+			try {
+				ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipF.getBuffer()));
+				ZipEntry ze = zis.getNextEntry();
+				while ((ze != null) && ((sha == null) || (xml == null))) {
+					String name = ze.getName().toLowerCase();
+					byte[] buf = new byte[(int) ze.getSize()];
+					zis.read(buf);
+					if (name.endsWith(".xml")) {
+						xml = new String(buf);
+						xml = xml.substring(0, xml.length() - 2);
+					} else if (name.endsWith(".sha"))
+						sha = new String(buf).trim();
+					
+					ze = zis.getNextEntry();
+				}
+			
+				zis.close();
+			} catch (Exception e) {
+				ctx.setMessage("Cannot process ZIP file - " + e.getMessage());
+				result.setSuccess(true);
+				return;
+			}
+		}
+		
 		// Get the XML and SHA
 		FileUpload xmlF = ctx.getFile("xml");
 		FileUpload shaF = ctx.getFile("hashCode");
-		if (xmlF == null) {
+		if ((xmlF == null) && (xml == null)) {
 			result.setSuccess(true);
 			return;
 		}
 		
 		// Check for SHA
-		if (shaF == null) {
+		if ((shaF == null) && (sha == null)) {
 			ctx.setMessage("No SHA-256 signature");
 			result.setSuccess(true);
 			return;
@@ -62,9 +91,12 @@ public class OfflineFlightCommand extends AbstractCommand {
 		// Convert the files to strings
 		OfflineFlight flight = null; 
 		try {
-			String sha = new String(shaF.getBuffer(), "UTF-8").trim();
-			String xml = new String(xmlF.getBuffer(), "UTF-8");
-			xml = xml.substring(0, xml.length() - 2);
+			if (sha == null)
+				sha = new String(shaF.getBuffer(), "UTF-8").trim();
+			if (xml == null) {
+				xml = new String(xmlF.getBuffer(), "UTF-8");
+				xml = xml.substring(0, xml.length() - 2);
+			}
 		
 			// Validate the SHA
 			boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
