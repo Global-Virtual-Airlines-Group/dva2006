@@ -1,14 +1,11 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
 
 import org.deltava.beans.gallery.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetGallery;
-import org.deltava.dao.SetGalleryImage;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.GalleryAccessControl;
 
@@ -17,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command for voting on Image Gallery images.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,7 +29,6 @@ public class GalleryVoteCommand extends AbstractCommand {
 		
 		// Check if we are posting from the Water Cooler
 		boolean isCooler = (ctx.getCmdParameter(OPERATION, null) != null);
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -48,12 +44,12 @@ public class GalleryVoteCommand extends AbstractCommand {
 	        if (!access.getCanVote())
 	        	throw securityException("Cannot Vote for Image " + ctx.getID());
 
-	        // Create our vote
-	        Vote v = new Vote(ctx.getUser(), Integer.parseInt(ctx.getParameter("score")), ctx.getID());
-	        
-	        // Get the write DAO and save the vote
-	        SetGalleryImage wdao = new SetGalleryImage(con);
-			wdao.write(v);
+	        // Create our vote and save it
+	        Vote v = new Vote(ctx.getUser(), StringUtils.parse(ctx.getParameter("score"), 0), ctx.getID());
+	        if (v.getScore() > 0) {
+	        	SetGalleryImage wdao = new SetGalleryImage(con);
+	        	wdao.write(v);
+	        }
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -66,6 +62,7 @@ public class GalleryVoteCommand extends AbstractCommand {
 
 		// Redisplay the image
 		CommandResult result = ctx.getResult();
+		result.setType(ResultType.REDIRECT);
 		result.setURL(cmdName, null, id);
 		result.setSuccess(true);
 	}
