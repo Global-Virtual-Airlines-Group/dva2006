@@ -122,8 +122,6 @@ public class ProfileCommand extends AbstractFormCommand {
 								msgs.add("First Name does not match");
 							if (!p.getLastName().equals(c.getLastName()))
 								msgs.add("Last Name does not match");
-							if (!p.getEmailDomain().equals(c.getEmailDomain()))
-								msgs.add("e-Mail Domain does not match");
 							
 							// Save messages
 							if (msgs.isEmpty())
