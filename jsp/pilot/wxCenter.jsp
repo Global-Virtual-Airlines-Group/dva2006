@@ -296,7 +296,7 @@ map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize
 map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
 </c:if>
 // Add map controls
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, 5);
 map.enableDoubleClickZoom();

@@ -113,7 +113,7 @@ return true;
 <map:marker var="hq" point="${hq}" />
 var allMarkers = new Array();
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, 6);
 map.enableDoubleClickZoom();

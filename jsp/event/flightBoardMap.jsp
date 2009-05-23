@@ -69,6 +69,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -98,8 +99,9 @@ return true;
 <script language="JavaScript" type="text/javascript">
 // Create the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GSmallMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
+map.addControl(new GOverviewMapControl());
 
 // Mark each pilot's position in hashmap
 var positions = [];
@@ -117,7 +119,7 @@ var selectedRoute;
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-map.setMapType(G_PHYSICAL_MAP);
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>

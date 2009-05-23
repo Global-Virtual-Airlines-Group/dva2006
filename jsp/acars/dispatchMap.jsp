@@ -70,7 +70,7 @@ return mrk;
 <script language="JavaScript" type="text/javascript">
 // Load the map
 map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 
 // Display the map
