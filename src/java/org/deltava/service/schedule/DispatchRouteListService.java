@@ -64,7 +64,7 @@ public class DispatchRouteListService extends WebService {
 			GetACARSRoute rdao = new GetACARSRoute(ctx.getConnection());
 			routes.addAll(rdao.getRoutes(aD, aA, false));
 		} catch (DAOException de) {
-			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
 		} finally {
 			ctx.release();
 		}
