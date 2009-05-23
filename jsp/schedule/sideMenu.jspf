@@ -14,10 +14,10 @@
 <c:if test="${!isSideMenu}">
 <content:authUser var="user">
 <c:set var="itemLength" value="${fn:length(user.name) * 10}" scope="page" />
- <content:menuitem width="${itemLength}"><span class="sec">${user.name}</span></content:menuitem>
+ <content:menuitem width="${itemLength}">${user.name}</content:menuitem>
 <content:superUser var="superUser">
 <c:set var="itemLength" value="${fn:length(superUser.name) * 10}" scope="page" />
- <content:menuitem width="${itemLength}"><span class="ter">${superUser.name}</span></content:menuitem>
+ <content:menuitem width="${itemLength}">${superUser.name}</content:menuitem>
 </content:superUser>
 </content:authUser>
 </c:if>
