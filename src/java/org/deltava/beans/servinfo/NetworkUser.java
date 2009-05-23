@@ -240,8 +240,10 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
      */
     public void setName(String name) {
     	int pos = name.lastIndexOf(' '); 
-    	if (pos == (name.length() - 4))
+    	if (pos == (name.length() - 5))
     		name = name.substring(0, pos);
+    	if (name.endsWith(" -"))
+    		name = name.substring(0, name.length() - 2);
     	
     	// Split the data
     	pos = name.lastIndexOf(' ');
