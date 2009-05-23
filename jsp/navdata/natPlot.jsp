@@ -205,7 +205,7 @@ map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
 map.addControl(new WXClearControl(new GSize(142, 7)));
 </c:if>
 // Add map controls
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(52.0, -35.0), 4);
 map.setMapType(G_SATELLITE_MAP);

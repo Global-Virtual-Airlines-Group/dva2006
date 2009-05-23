@@ -47,15 +47,16 @@
 
 // Create the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
+map.addControl(new GOverviewMapControl());
 map.setCenter(mapC, 3);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_SATELLITE_MAP" />
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 
 // Create the routes
-var routes = new Array();
+var routes = [];
 <c:forEach var="route" items="${routes}">
 <map:point var="aD" point="${route.airportD}" />
 <map:point var="aA" point="${route.airportA}" />

@@ -131,7 +131,7 @@ getTileOverlay("sat", 0.35);
 map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
 map.addControl(new WXClearControl(new GSize(142, 7)));
 </c:if>
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />

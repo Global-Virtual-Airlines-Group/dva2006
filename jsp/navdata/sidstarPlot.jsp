@@ -165,7 +165,7 @@ var routeTrack;
 var routes = new Array();
 
 // Add map controls
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, 7);
 map.currentAirport = '${mapCenter.ICAO}';

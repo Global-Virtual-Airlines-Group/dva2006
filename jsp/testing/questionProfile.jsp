@@ -123,7 +123,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 <map:point var="mapC" point="${question.midPoint}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${question.distance}) - 1);
 map.enableDoubleClickZoom();

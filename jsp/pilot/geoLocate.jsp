@@ -193,7 +193,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
 map.enableContinuousZoom();
