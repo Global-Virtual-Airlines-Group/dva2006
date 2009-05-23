@@ -1,19 +1,18 @@
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
-
-import java.io.Serializable;
 
 import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store Airline-wide statistics.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class AirlineTotals implements Serializable, Comparable, Cacheable {
+public class AirlineTotals implements Comparable<AirlineTotals>, Cacheable {
 	
 	/**
 	 * Date the airline statistics commenced.
@@ -56,21 +55,6 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	public AirlineTotals(long ed) {
 		super();
 		_effectiveDate = ed;
-	}
-	
-	/**
-	 * Private helper method to validate numeric input.
-	 */
-	private void validateInput(long value, String desc) {
-		if (value < 0)
-			throw new IllegalArgumentException(desc + " cannot be negative");
-	}
-	
-	/**
-	 * Private helper method to validate numeric input.
-	 */
-	private void validateInput(double value, String desc) {
-		validateInput(Math.round(value), desc);
 	}
 	
 	/**
@@ -263,187 +247,153 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	/**
 	 * Updates the total number of legs flown.
 	 * @param legs the number of legs
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see AirlineTotals#getTotalLegs()
 	 */
 	public void setTotalLegs(int legs) {
-		validateInput(legs, "Total Legs");
 		_totalLegs = legs;
 	}
 	
 	/**
 	 * Updates the total number of miles flown.
 	 * @param miles the number of miles
-	 * @throws IllegalArgumentException if miles is negative
 	 * @see AirlineTotals#getTotalMiles()
 	 */
 	public void setTotalMiles(long miles) {
-		validateInput(miles, "Total Miles");
 		_totalMiles = miles;
 	}
 	
 	/**
 	 * Updates the total number of hours flown.
 	 * @param hours the number of hours
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see AirlineTotals#getTotalHours()
 	 */
 	public void setTotalHours(double hours) {
-		validateInput(hours, "Total Hours");
 		_totalHours = hours;
 	}
 	
 	/**
 	 * Updates the total number of pilots.
 	 * @param pilots the number of pilots
-	 * @throws IllegalArgumentException if pilots is negative
 	 * @see AirlineTotals#getTotalPilots()
 	 */
 	public void setTotalPilots(int pilots) {
-		validateInput(pilots, "Total Pilots");
 		_totalPilots = pilots;
 	}
 	
 	/**
 	 * Updates the total number of active pilots.
 	 * @param pilots the number of actve pilots
-	 * @throws IllegalArgumentException if pilots is negative
 	 * @see AirlineTotals#getActivePilots()
 	 */
 	public void setActivePilots(int pilots) {
-		validateInput(pilots, "Active Pilots");
 		_activePilots = pilots;
 	}
 	
 	/**
 	 * Updates the total number of legs flown with ACARS.
 	 * @param legs the number of legs
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see AirlineTotals#getACARSLegs()
 	 */
 	public void setACARSLegs(int legs) {
-		validateInput(legs, "ACARS Legs");
 		_acarsLegs = legs;
 	}
 	
 	/**
 	 * Updates the total number of miles flown with ACARS.
 	 * @param miles the number of miles
-	 * @throws IllegalArgumentException if miles is negative
 	 * @see AirlineTotals#getACARSMiles()
 	 */
 	public void setACARSMiles(int miles) {
-		validateInput(miles, "ACARS Miles");
 		_acarsMiles = miles;
 	}
 	
 	/**
 	 * Updates the total number of hours flown with ACARS.
 	 * @param hours the number of hours
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see AirlineTotals#getACARSHours()
 	 */
 	public void setACARSHours(double hours) {
-		validateInput(hours, "ACARS Hours");
 		_acarsHours = hours;
 	}
 	
 	/**
 	 * Updates the total number of legs flown online.
 	 * @param legs the number of legs
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see AirlineTotals#getOnlineLegs()
 	 */
 	public void setOnlineLegs(int legs) {
-		validateInput(legs, "Online Legs");
 		_onlineLegs = legs;
 	}
 	
 	/**
 	 * Updates the total number of miles flown online.
 	 * @param miles the number of miles
-	 * @throws IllegalArgumentException if miles is negative
 	 * @see AirlineTotals#getOnlineMiles()
 	 */
 	public void setOnlineMiles(long miles) {
-		validateInput(miles, "Online Miles");
 		_onlineMiles = miles;
 	}
 	
 	/**
 	 * Updates the total number of hours flown online.
 	 * @param hours the number of hours
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see AirlineTotals#getOnlineHours()
 	 */
 	public void setOnlineHours(double hours) {
-		validateInput(hours, "Online Hours");
 		_onlineHours = hours;
 	}
 	
 	/**
 	 * Updates the total number of legs flown since the start of the current Month.
 	 * @param legs the number of legs
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see AirlineTotals#getMTDLegs()
 	 */
 	public void setMTDLegs(int legs) {
-		validateInput(legs, "MTD Legs");
 		_mtdLegs = legs;
 	}
 	
 	/**
 	 * Updates the total number of hours flown since the start of the current Month.
 	 * @param hours the number of hours
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see AirlineTotals#getMTDHours()
 	 */
 	public void setMTDHours(double hours) {
-		validateInput(hours, "MTD Hours");
 		_mtdHours = hours;
 	}
 	
 	/**
 	 * Updates the total number of miles flown since the start of the current Month.
 	 * @param miles the number of miles
-	 * @throws IllegalArgumentException if miles is negative
 	 * @see AirlineTotals#getMTDMiles()
 	 */
 	public void setMTDMiles(int miles) {
-		validateInput(miles, "MTD Miles");
 		_mtdMiles = miles;
 	}
 
 	/**
 	 * Updates the total number of legs flown since the start of the current Yes.
 	 * @param legs the number of legs
-	 * @throws IllegalArgumentException if legs is negative
 	 * @see AirlineTotals#getYTDLegs()
 	 */
 	public void setYTDLegs(int legs) {
-		validateInput(legs, "YTD Legs");
 		_ytdLegs = legs;
 	}
 	
 	/**
 	 * Updates the total number of hours flown since the start of the current Year.
 	 * @param hours the number of hours
-	 * @throws IllegalArgumentException if hours is negative
 	 * @see AirlineTotals#getYTDHours()
 	 */
 	public void setYTDHours(double hours) {
-		validateInput(hours, "YTD Hours");
 		_ytdHours = hours;
 	}
 	
 	/**
 	 * Updates the total number of miles flown since the start of the current Year.
 	 * @param miles the number of miles
-	 * @throws IllegalArgumentException if miles is negative
 	 * @see AirlineTotals#getYTDMiles()
 	 */
 	public void setYTDMiles(int miles) {
-		validateInput(miles, "YTD Miles");
 		_ytdMiles = miles;
 	}
 
@@ -453,7 +403,6 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	 * @see AirlineTotals#getDBSize()
 	 */
 	public void setDBSize(long size) {
-		validateInput(size, "Database Size");
 		_dbSize = size;
 	}
 	
@@ -463,17 +412,14 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	 * @see AirlineTotals#getDBRows()
 	 */
 	public void setDBRows(long rows) {
-		validateInput(rows, "Database Rows");
 		_dbRows = rows;
 	}
 	
 	/**
 	 * Compares the effective date/times.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		AirlineTotals at2 = (AirlineTotals) o2;
-		return new Long(_effectiveDate).compareTo(new Long(at2.getEffectiveDate()));
+	public int compareTo(AirlineTotals at2) {
+		return new Long(_effectiveDate).compareTo(new Long(at2._effectiveDate));
 	}
 	
 	/**
@@ -481,6 +427,6 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	 * @return the class object
 	 */
 	public Object cacheKey() {
-		return getClass();
+		return AirlineTotals.class;
 	}
 }
