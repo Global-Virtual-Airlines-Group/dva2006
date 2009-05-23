@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -79,11 +79,11 @@ public class GetServInfo extends DAO {
 		public static final int ARR_LAT = 33;
 		public static final int ARR_LON = 34;
 
-		private List<String> _tkns;
+		private final List<String> _tkns = new ArrayList<String>();
 
 		public SITokens(String data) {
 			super();
-			_tkns = StringUtils.split(data, ":");
+			_tkns.addAll(StringUtils.split(data, ":"));
 		}
 
 		public String get(int idx) {
@@ -211,8 +211,10 @@ public class GetServInfo extends DAO {
 										c.setName(si.get(SITokens.NAME));
 										c.setFrequency(si.get(SITokens.FREQ));
 										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
-										c.setRating(Integer.parseInt(si.get(SITokens.RATING)));
-										c.setFacilityType(Integer.parseInt(si.get(SITokens.FACILITY)));
+										c.setRating(StringUtils.parse(si.get(SITokens.RATING), 0));
+										if (c.getFacility() != Controller.ATIS)
+											c.setFacilityType(Integer.parseInt(si.get(SITokens.FACILITY)));
+										
 										info.add(c);
 									} catch (Exception e) {
 										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
