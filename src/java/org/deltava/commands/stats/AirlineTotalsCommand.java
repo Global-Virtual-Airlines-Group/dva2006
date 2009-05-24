@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Airline Total statistics.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -66,6 +66,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     _tableStatus.addAll(dao2.getStatus("exams"));
                     _tableStatus.addAll(dao2.getStatus("events"));
                     _tableStatus.addAll(dao2.getStatus("acars"));
+                    _tableStatus.addAll(dao2.getStatus("geoip"));
                     _tableStatus.addAll(dao2.getStatus("postfix"));
                     _tableStatus.addAll(dao2.getStatus("teamspeak"));
                     _tableStatus.addAll(dao2.getStatus(SystemData.get("airline.db").toLowerCase()));
@@ -79,8 +80,8 @@ public class AirlineTotalsCommand extends AbstractCommand {
             // Calculate database size
             long dbSize = 0;
             long dbRows = 0;
-            for (Iterator i = _tableStatus.iterator(); i.hasNext(); ) {
-            	TableInfo info = (TableInfo) i.next();
+            for (Iterator<TableInfo> i = _tableStatus.iterator(); i.hasNext(); ) {
+            	TableInfo info = i.next();
             	dbSize += info.getSize();
             	dbSize += info.getIndexSize();
             	dbRows += info.getRows();
