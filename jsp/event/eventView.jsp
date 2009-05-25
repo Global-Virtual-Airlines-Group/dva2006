@@ -83,7 +83,7 @@ return true;
 <c:if test="${event.canSignup}">
 <tr>
  <td class="label">Signups Close on</td>
- <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" /></td>
+ <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" t="HH:mm" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty event.routes}">
@@ -160,7 +160,6 @@ return true;
 </view:row>
 </c:forEach>
 </c:if>
-
 <c:if test="${!empty event.plans}">
 <!-- Flight Plans Section -->
 <tr class="title caps">
@@ -179,6 +178,28 @@ return true;
 ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
  <td class="sec"><fmt:int value="${plan.size}" /> bytes</td>
  <td class="pri bld">${plan.typeName}</td>
+</view:row>
+</c:forEach>
+</c:if>
+<c:if test="${!empty event.dispatchRoutes}">
+<!-- Dispatch Route Section -->
+<tr class="title caps">
+ <td colspan="6" class="left">ACARS DISPATCH ROUTES - <fmt:int value="${fn:sizeof(event.dispatchRoutes)}" /> ROUTES</td>
+</tr>
+<tr class="title caps">
+ <td>ID</td>
+ <td>AIRPORTS</td>
+ <td>CREATED ON</td>
+ <td>USED</td>
+ <td colspan="2">FLIGHT ROUTE</td>
+</tr>
+<c:forEach var="drt" items="${event.dispatchRoutes}">
+<view:row entry="${drt}">
+ <td><el:cmd url="dsproute" link="${drt}" className="pri bld"><fmt:int value="${drt.ID}" /></el:cmd></td>
+ <td class="small">${drt.airportD.name} (<fmt:airport airport="${drt.airportD}" />) to ${drt.airportA.name} (<fmt:airport airport="${drt.airportA}" />)</td>
+ <td class="sec bld small"><fmt:date date="${drt.createdOn}" fmt="d" /></td>
+ <td class="bld"><fmt:int value="${drt.useCount}" /></td>
+ <td class="left small" colspan="2"><c:if test="${!empty drt.SID}">${drt.SID} </c:if>${drt.route}<c:if test="${!empty drt.STAR}"> ${drt.STAR}</c:if></td>
 </view:row>
 </c:forEach>
 </c:if>
