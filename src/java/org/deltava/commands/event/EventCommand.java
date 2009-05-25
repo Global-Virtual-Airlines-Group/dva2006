@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
+import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +18,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -92,6 +93,14 @@ public class EventCommand extends AbstractCommand {
 			GetChart cdao = new GetChart(con);
 			e.addCharts(cdao.getChartsByEvent(e.getID()));
 			
+			// Get dispatch routes
+			GetACARSRoute ardao = new GetACARSRoute(con);
+			for (Iterator<Route> i = e.getActiveRoutes().iterator(); i.hasNext(); ) {
+				Route r = i.next();
+				Collection<DispatchRoute> rts = ardao.getRoutes(r.getAirportD(), r.getAirportA(), true);
+				e.getDispatchRoutes().addAll(rts);
+			}
+			
 			// Get the equipment types
 			GetAircraft acdao = new GetAircraft(con);
 			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
@@ -147,7 +156,7 @@ public class EventCommand extends AbstractCommand {
 			
 			// Calculate attendance probability
 			if (e.getStatus() != Event.CANCELED) {
-				double predictedPilots = 0;
+				float predictedPilots = 0;
 				for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
 					Signup s = i.next();
 					Pilot p = pilots.get(new Integer(s.getPilotID()));
@@ -158,7 +167,7 @@ public class EventCommand extends AbstractCommand {
 				}
 				
 				// Save event probability
-				ctx.setAttribute("signupPredict", new Long(Math.round(predictedPilots)), REQUEST); 
+				ctx.setAttribute("signupPredict", Integer.valueOf(Math.round(predictedPilots)), REQUEST); 
 			}
 			
 			// Save the pilots and flight reports

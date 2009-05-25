@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -13,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -52,6 +53,7 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     private final Collection<Signup> _signups = new LinkedHashSet<Signup>();
     private final Collection<Route> _routes = new TreeSet<Route>();
     private final List<AssignmentInfo> _assignments = new ArrayList<AssignmentInfo>();
+    private final Collection<DispatchRoute> _dspRoutes = new LinkedHashSet<DispatchRoute>();
     private final Collection<String> _eqTypes = new TreeSet<String>();
     
     private final Collection<String> _contactAddrs = new LinkedHashSet<String>();
@@ -95,8 +97,8 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
      * Null-safe helper method to compare dates.
      */
     private boolean before(Date d2) {
-    	Date d = new Date();
-    	return (d2 == null) ? true : d.before(d2);
+    	long now = System.currentTimeMillis();    	
+    	return (d2 == null) ? true : (now < d2.getTime());
     }
     
     /**
@@ -274,6 +276,15 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
      */
     public Collection<Signup> getSignups() {
         return _signups;
+    }
+    
+    /**
+     * Returns the Dispatch Routes for this Online Event.
+     * @return a Collection of DispatchRoute beans
+     * @see Event#addRoute(DispatchRoute)
+     */
+    public Collection<DispatchRoute> getDispatchRoutes() {
+    	return _dspRoutes;
     }
     
     /**
@@ -559,6 +570,15 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
      */
     public void addRoute(Route r) {
     	_routes.add(r);
+    }
+    
+    /**
+     * Adds a Dispatch Route to this Online Event.
+     * @param dr a DispatchRoute bean
+     * @see Event#getDispatchRoutes()
+     */
+    public void addRoute(DispatchRoute dr) {
+    	_dspRoutes.add(dr);
     }
     
     /**
