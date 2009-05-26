@@ -169,6 +169,20 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (promoEQ.contains(p.getEquipmentType()))
 				afr.setCaptEQType(promoEQ);
 			
+			// Check if it's an Online Event flight
+			OnlineNetwork network = afr.getNetwork();
+			if ((afr.getDatabaseID(FlightReport.DBID_EVENT) == 0) && (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
+				GetEvent evdao = new GetEvent(con);
+				afr.setDatabaseID(FlightReport.DBID_EVENT, evdao.getEvent(afr.getAirportD(), afr.getAirportA(), network));
+			}
+			
+			// Check that the user has an online network ID
+			if ((network != null) && (!p.hasNetworkID(network))) {
+				log.warn(p.getName() + " does not have a " + network.toString() + " ID");
+				afr.setComments("No " + network.toString() + " ID, resetting Online Network flag");
+				afr.setNetwork(null);
+			}
+			
 			// Check if the user is rated to fly the aircraft
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
 			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
