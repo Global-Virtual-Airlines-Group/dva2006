@@ -21,7 +21,6 @@
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
-<content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
@@ -67,9 +66,13 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	enableElement('SearchButton', true);
 	showObject(getElement('routeList'), true);
-	var xdoc = xmlreq.responseXML.documentElement;
-
+	if (xmlreq.status != 200) {
+		alert(xmlreq.statusText);
+		return false;
+	}
+	
 	// Load the SID/STAR list
+	var xdoc = xmlreq.responseXML.documentElement;
 	var cbo = document.forms[0].routes;
 	var rts = xdoc.getElementsByTagName("route");
 	cbo.options.length = rts.length + 1;
@@ -88,7 +91,7 @@ xmlreq.onreadystatechange = function() {
 		cbo.options[x + 1] = opt;
 		var rtc = rt.getElementsByTagName("comments");
 		var c = rtc[0].firstChild;
-		if (c != null)
+		if ((c != null) && (c.data != null))
 			opt.comments = c.data;
 	}
 
@@ -131,17 +134,17 @@ return true;
 function validate(form)
 {
 // Check if we're saving an existing route
+var f = document.forms[0];
 var routeID = parseInt(f.routeID.value);
-if (!isNaN(routeID)) {
+if (!isNaN(routeID))
 	alert('Updating route #' + routeID);
-}
 	
 if (!checkSubmit()) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-if (!validateText(form.route, 3, 'Flight Route')) return false;
-if (!validateText(form.cruiseAlt, 4, 'Cruising Altitude')) return false;
+if (!validateCombo(f.airline, 'Airline')) return false;
+if (!validateCombo(f.airportD, 'Departure Airport')) return false;
+if (!validateCombo(f.airportA, 'Arrival Airport')) return false;
+if (!validateText(f.route, 3, 'Flight Route')) return false;
+if (!validateText(f.cruiseAlt, 4, 'Cruising Altitude')) return false;
 
 setSubmit();
 disableButton('SearchButton');
@@ -248,7 +251,7 @@ getTileOverlay("sat", 0.35);
 map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
 map.addControl(new WXClearControl(new GSize(142, 7)));
 </c:if>
-map.addControl(new GLargeMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
