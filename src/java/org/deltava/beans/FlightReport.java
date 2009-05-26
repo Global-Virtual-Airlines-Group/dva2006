@@ -314,6 +314,22 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	public String getStatusName() {
 		return STATUS[getStatus()];
 	}
+	
+	/**
+	 * Returns the Online Network used on this Flight.
+	 * @return an OnlineNetwork enum, or null
+	 * @see FlightReport#setNetwork(OnlineNetwork)
+	 */
+	public OnlineNetwork getNetwork() {
+		if (hasAttribute(ATTR_VATSIM))
+			return OnlineNetwork.VATSIM;
+		else if (hasAttribute(ATTR_IVAO))
+			return OnlineNetwork.IVAO;
+		else if (hasAttribute(ATTR_FPI))
+			return OnlineNetwork.FPI;
+		
+		return null;
+	}
 
 	/**
 	 * Returns the presence of a particular flight attribute.
@@ -325,6 +341,17 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 */
 	public boolean hasAttribute(int attrMask) {
 		return ((getAttributes() & attrMask) != 0);
+	}
+	
+	/**
+	 * Updates the Online Network used on this Flight.
+	 * @param network an OnlineNetwork enum
+	 * @see FlightReport#getNetwork()
+	 */
+	public void setNetwork(OnlineNetwork network) {
+		setAttribute(ATTR_VATSIM, (network == OnlineNetwork.VATSIM));
+		setAttribute(ATTR_IVAO, (network == OnlineNetwork.IVAO));
+		setAttribute(ATTR_FPI, (network == OnlineNetwork.FPI));
 	}
 
 	/**
