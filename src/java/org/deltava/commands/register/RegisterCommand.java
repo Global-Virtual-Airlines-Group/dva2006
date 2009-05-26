@@ -178,7 +178,7 @@ public class RegisterCommand extends AbstractCommand {
 			String uri = SystemData.get("online.vatsim.validation_url");
 			if (!StringUtils.isEmpty(uri)) {
 				try {
-					URL url = new URL(uri + "?cid=" + ctx.getParameter("id"));
+					URL url = new URL(uri + "?cid=" + a.getNetworkID(OnlineNetwork.VATSIM));
 					
 					// Init the HTTP client
 					HttpClient hc = new HttpClient();
@@ -199,7 +199,9 @@ public class RegisterCommand extends AbstractCommand {
 					GetVATSIMData dao = new GetVATSIMData(gm.getResponseBodyAsStream());
 					Certificate c = dao.getInfo();
 					if (c != null) {
-						StringBuilder buf = new StringBuilder();
+						StringBuilder buf = new StringBuilder("VATSIM ID belongs to ");
+						buf.append(c.getName());
+						buf.append("\r\n");
 						if (!c.isActive())
 							buf.append("VATSIM ID is inactive!\r\n");
 						if (!a.getNetworkID(OnlineNetwork.VATSIM).equals(String.valueOf(c.getID())))
@@ -261,7 +263,7 @@ public class RegisterCommand extends AbstractCommand {
 				javax.servlet.http.Cookie ln = ctx.getCookie("dva_lname64");
 				if (ln != null) {
 					buf.append(' ');
-					buf.append(Base64.decodeString(fn.getValue()));
+					buf.append(Base64.decodeString(ln.getValue()));
 				}
 			}
 			
