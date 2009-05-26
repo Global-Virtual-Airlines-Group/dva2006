@@ -91,6 +91,9 @@ public class GetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getEvent(Airport airportD, Airport airportA, OnlineNetwork network) throws DAOException {
+		if (network == null)
+			return 0;
+		
 		try {
 			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
 					+ "AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (E.STARTTIME < NOW()) AND "
