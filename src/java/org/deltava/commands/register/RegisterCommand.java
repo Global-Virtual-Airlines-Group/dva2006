@@ -243,7 +243,9 @@ public class RegisterCommand extends AbstractCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
 			// Check for Suspended User
-			StringBuilder buf = new StringBuilder(a.getHRComments());
+			StringBuilder buf = new StringBuilder();
+			if (!StringUtils.isEmpty(a.getHRComments()))
+				buf.append(a.getHRComments());
 			javax.servlet.http.Cookie wc = ctx.getCookie("dvaAuthStatus");
 			javax.servlet.http.Cookie fn = ctx.getCookie("dva_fname64");
 			if (wc != null) {
