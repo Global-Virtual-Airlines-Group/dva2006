@@ -44,7 +44,7 @@
 	<service id="examplot" class="org.deltava.service.exam.RoutePlotService" />
 
 	<!-- ACARS Offline PIREP Service -->
-	<service id="acarspirep" class="org.deltava.service.acars.FlightReportService" />
+	<!-- <service id="acarspirep" class="org.deltava.service.acars.FlightReportService" /> -->
 
 	<!-- XACARS Offline PIREP Service -->
 	<service id="xacarspirep" class="org.deltava.service.acars.XFlightReportService" />
