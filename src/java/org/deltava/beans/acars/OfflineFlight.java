@@ -8,7 +8,7 @@ import org.deltava.beans.ACARSFlightReport;
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.4
  */
 
@@ -16,12 +16,20 @@ public class OfflineFlight {
 
 	private ConnectionEntry _con;
 	private FlightInfo _flight;
-	private final Collection<RouteEntry> _positions = new ArrayList<RouteEntry>();
+	private final Collection<RouteEntry> _positions = 
+		new TreeSet<RouteEntry>(new PositionComparator());
 	
 	private String _sid;
 	private String _star;
 
 	private ACARSFlightReport _pirep;
+	
+	class PositionComparator implements Comparator<RouteEntry> {
+		
+		public int compare(RouteEntry re1, RouteEntry re2) {
+			return re1.getDate().compareTo(re2.getDate());
+		}
+	}
 	
 	/**
 	 * Returns the ACARS connection entry.

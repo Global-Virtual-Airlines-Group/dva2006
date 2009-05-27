@@ -22,6 +22,9 @@ import org.deltava.crypt.MessageDigester;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.acars.ACARSClientInfo;
+import org.gvagroup.common.SharedData;
+
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
@@ -89,7 +92,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 		}
 		
 		// Convert the files to strings
-		OfflineFlight flight = null; 
+		OfflineFlight flight = null;
+		boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 		try {
 			if (sha == null)
 				sha = new String(shaF.getBuffer(), "UTF-8").trim();
@@ -99,7 +103,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 			}
 		
 			// Validate the SHA
-			boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 			if (!noValidate) {
 				MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
 				md.salt(SystemData.get("security.hash.acars.salt"));
@@ -126,10 +129,49 @@ public class OfflineFlightCommand extends AbstractCommand {
 		ce.setRemoteHost(ctx.getRequest().getRemoteHost());
 		ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		
+		// Check that the build isn't deprecated
+		int minBuild = Integer.MAX_VALUE; int build = ce.getClientBuild();
+		ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
+		if (build < 80)
+			minBuild = cInfo.getMinimumBuild("v1.4");
+		else if (build < 95)
+			minBuild = cInfo.getMinimumBuild("v2.1");
+		else
+			minBuild = cInfo.getMinimumBuild("v2.2");
+		
+		if (build < minBuild) {
+			String msg = "ACARS Build " + build + " not supported.";
+			if (minBuild > 0)
+				msg += " Minimum build is Build " + minBuild;	
+			ctx.setAttribute("error", msg, REQUEST);
+			ctx.setMessage(msg);
+			return;
+		}
+		
+		// Check for BETA
+		if (ce.getBeta() > 0) {
+			int minBeta = cInfo.getMinimumBetaBuild(ce.getClientBuild());
+			if ((ce.getBeta() < minBeta) || (minBeta == 0)) {
+				String msg = "ACARS Build " + build + " Beta " + ce.getBeta() + " deprecated";
+				ctx.setAttribute("error", msg, REQUEST);
+				ctx.setMessage(msg);
+				return;	
+			}
+		}
+		
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
 		DateTime dt = new DateTime(inf.getEndTime());
 		dt.convertTo(ctx.getUser().getTZ());
+		
+		// If the date/time is too far in the future, reject
+		Calendar cld = CalendarUtils.getInstance(null, false, 1);
+		if (cld.getTime().before(dt.getUTC()) && !noValidate) {
+			String msg = "PIREP too far in future - " + StringUtils.format(dt.getUTC(), "MM/dd/yyyy");
+			ctx.setAttribute("error", msg, REQUEST);
+			ctx.setMessage(msg);
+			return;
+		}
 
 		// Add PIREP fields from the request
 		ACARSFlightReport afr = flight.getFlightReport();
