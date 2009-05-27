@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.4
  */
 
@@ -86,6 +86,7 @@ public class OfflineFlightParser {
 		
 		// Build a flight data entry
 		FlightInfo inf = new FlightInfo(ce.getID());
+		inf.setID(StringUtils.parse(ie.getChildTextTrim("id"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
 		inf.setEndTime(StringUtils.parseDate(ie.getChildTextTrim("shutdownTime"), "MM/dd/yyyy HH:mm:ss"));
