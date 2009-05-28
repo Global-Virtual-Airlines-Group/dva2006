@@ -65,7 +65,7 @@ map.enableContinuousZoom();
 
 // Routes/airports placeholder
 var routes;
-var airports = new Array();
+var airports = [];
 
 // Load airports
 updateAirports(document.forms[0].airlineCode);

@@ -1,7 +1,7 @@
 // ImageSeries data
-document.maxZoom = new Array();
-document.wxLayers = new Array();
-document.seriesDate = new Array();
+document.maxZoom = [];
+document.wxLayers = [];
+document.seriesDate = [];
 
 // Calculate GMT offset in seconds from local
 var GMTOffset = new Date().getTimezoneOffset() * 60000;
@@ -79,7 +79,7 @@ WXOverlayControl.prototype.updateMap = function() {
 	clearWX();
 	var multiLayers = (this.layerNames instanceof Array);
 	if (multiLayers) {
-		map.wxData = new Array();
+		map.wxData = [];
 		for (var x = 0; x < this.layerNames.length; x++) {
 			map.wxData.push(document.wxLayers[this.layerNames[x]]);
 			map.addOverlay(document.wxLayers[this.layerNames[x]]);

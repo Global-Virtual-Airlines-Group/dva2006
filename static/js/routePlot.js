@@ -1,7 +1,7 @@
 function getAJAXParams()
 {
 var f = document.forms[0];
-var params = new Array();
+var params = [];
 if (f.airportD.selectedIndex > 0) {
 	params['airportD'] = f.airportD.options[f.airportD.selectedIndex].value;
 	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
@@ -31,7 +31,7 @@ return params;
 
 function formatAJAXParams(params, sep)
 {
-var results = new Array();
+var results = [];
 for (k in params)
 	results.push(k + '=' + params[k]);
 	
@@ -73,8 +73,8 @@ xmlreq.onreadystatechange = function() {
 	map.clearOverlays();
 	
 	// Draw the markers and load the codes
-	var positions = new Array();
-	var codes = new Array();
+	var positions = [];
+	var codes = [];
 	var xdoc = xmlreq.responseXML.documentElement;
 	var waypoints = xdoc.getElementsByTagName("pos");
 	for (var i = 0; i < waypoints.length; i++) {
