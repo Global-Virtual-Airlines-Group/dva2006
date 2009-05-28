@@ -40,14 +40,6 @@ public class TestGeoUtils extends TestCase {
 		assertEquals(15, GeoUtils.distance(l1, l3), 0.5);
 	}
 	
-	public void testDegreeCharacter() throws Exception {
-		String s = new String("�".getBytes(), "CP1252");
-		int cp = s.codePointAt(0);
-		assertEquals(176, cp);
-		char c = s.charAt(0);
-		assertEquals(176, c);
-	}
-	
 	public void testCourse() {
 		GeoPosition loc = new GeoPosition(33.6347, -84.4361);
 		GeoPosition r28 = new GeoPosition(33.631822,-84.4184);
@@ -59,5 +51,31 @@ public class TestGeoUtils extends TestCase {
 		double brg2 = GeoUtils.course(r27r, loc);
 		double brg21 = GeoUtils.course(loc, r27r);
 		assertEquals(brg2-180, brg21, 0.016);
+	}
+	
+	public void testMeridianLatitude() {
+		
+		GeoLocation jfk = new GeoPosition(40+(48/60.0), (73+(47/60.0)) * -1);
+		GeoLocation lax = new GeoPosition(33+(57/60.0), (118+(24/60.0)) * -1);
+		GeoLocation hkg = new GeoPosition(22.32830, 114.19400);
+		
+		double lat = GeoUtils.meridianLatitude(jfk, lax, -111);
+		double lat2 = GeoUtils.meridianLatitude(lax, jfk, -111);
+		
+		assertEquals(Math.toDegrees(0.635200), lat, 0.1);
+		assertEquals(Math.toDegrees(0.635200), lat2, 0.1);
+		
+		double lat3 = GeoUtils.meridianLatitude(jfk, lax, -179.9);
+		assertTrue(lat3 < Math.min(jfk.getLatitude(), lax.getLatitude()));
+		
+		assertFalse(GeoUtils.crossesMeridian(jfk, lax, -179));
+		assertFalse(GeoUtils.crossesMeridian(jfk, lax, -19));
+		assertTrue(GeoUtils.crossesMeridian(jfk, lax, -111));
+		
+		assertFalse(GeoUtils.crossesMeridian(jfk, lax, 11));
+		
+		assertTrue(GeoUtils.crossesMeridian(lax, hkg, -179.9));
+		assertTrue(GeoUtils.crossesMeridian(lax, hkg, 179.9));
+		assertFalse(GeoUtils.crossesMeridian(jfk, hkg, 11));
 	}
 }
