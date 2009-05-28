@@ -68,7 +68,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 		try {
 			out.print("var ");
 			out.print(_jsVarName);
-			out.println(" = new Array();");
+			out.println(" = [];");
 
 			// Create the markers
 			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
