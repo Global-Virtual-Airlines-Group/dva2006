@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a user's Water Cooler Threads.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -41,7 +41,6 @@ public class MyThreadsCommand extends AbstractViewCommand {
       
       // Get/set start/count parameters
       ViewContext vc = initView(ctx);
-
       try {
          Connection con = ctx.getConnection();
          
@@ -60,13 +59,13 @@ public class MyThreadsCommand extends AbstractViewCommand {
          // Get the Message Thread DAO
          GetCoolerThreads dao2 = new GetCoolerThreads(con);
          dao2.setQueryStart(vc.getStart());
-         dao2.setQueryMax(vc.getCount());
+         dao2.setQueryMax(Math.round(vc.getCount() * 1.25f));
 
          // Initialize the access controller
          CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
 
          // Get either by channel or all; now filter by role
-         Set<Integer> pilotIDs = new HashSet<Integer>();
+         Collection<Integer> pilotIDs = new HashSet<Integer>();
          List<MessageThread> threads = dao2.getByAuthor(p.getID(), p.getShowSSThreads());
          for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
             MessageThread thread = i.next();
@@ -77,28 +76,22 @@ public class MyThreadsCommand extends AbstractViewCommand {
             ac.validate();
 
             // If we cannot read the thread, remove it from the results, otherwise load the pilot profiles
-            if (!ac.getCanRead()) {
+            if (ac.getCanRead()) {
+                pilotIDs.add(new Integer(thread.getAuthorID()));
+                pilotIDs.add(new Integer(thread.getLastUpdateID()));
+            } else
                i.remove();
-            } else {
-               pilotIDs.add(new Integer(thread.getAuthorID()));
-               pilotIDs.add(new Integer(thread.getLastUpdateID()));
-            }
          }
+         
+         // Remove excess entires
+         if (threads.size() > vc.getCount())
+        	 threads.subList(vc.getCount() - 1, threads.size()).clear();
          
          // Get the location of all the Pilots
          UserDataMap udm = uddao.get(pilotIDs);
-         ctx.setAttribute("userData", udm, REQUEST);
-
-         // Get the authors for the last post in each channel
-         Map<Integer, Pilot> authors = new HashMap<Integer, Pilot>();
          GetPilot pdao = new GetPilot(con);
-         for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-            String tableName = i.next();
-            authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-         }
-
-         // Get the pilot IDs in the returned threads
-         ctx.setAttribute("pilots", authors, REQUEST);
+         ctx.setAttribute("userData", udm, REQUEST);
+         ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 
          // Save in the view context
          vc.setResults(threads);
@@ -110,7 +103,7 @@ public class MyThreadsCommand extends AbstractViewCommand {
       
 		// Set channel/command name attributes
       ctx.setAttribute("viewCmd", getID(), REQUEST);
-		ctx.setAttribute("channelName", "My Discussion Threads", REQUEST);
+      ctx.setAttribute("channelName", "My Discussion Threads", REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
