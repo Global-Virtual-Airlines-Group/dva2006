@@ -135,8 +135,8 @@ GEvent.addListener(map, 'zoomend', updateZoomLevel);
 GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 </c:if>
 // Initialize arrays and collection
-var route = new Array();
-var routePoints = new Array();
+var route = [];
+var routePoints = [];
 var sidLine;
 var starLine;
 var routeLine;
@@ -150,14 +150,14 @@ var mm_int = new MarkerManager(map);
 var mm_aw = new MarkerManager(map, {maxZoom:14, borderPadding:32});
 
 // Navaid marker arrays
-var airways = new Array();
-var mrks_aw = new Array();
-var mrks_vor = new Array();
-var mrks_ndb = new Array();
-var mrks_int = new Array();
-var mrks_sid = new Array();
-var mrks_star = new Array();
-var selectedAirways = new Array();
+var airways = [];
+var mrks_aw = [];
+var mrks_vor = [];
+var mrks_ndb = [];
+var mrks_int = [];
+var mrks_sid = [];
+var mrks_star = [];
+var selectedAirways = [];
 
 <c:if test="${isDispatch}">
 GEvent.addListener(map, "moveend", mapZoom);

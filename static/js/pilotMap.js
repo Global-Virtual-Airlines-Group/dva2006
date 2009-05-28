@@ -1,4 +1,4 @@
-var queue = new Array();
+var queue = [];
 
 function generateXMLRequest()
 {

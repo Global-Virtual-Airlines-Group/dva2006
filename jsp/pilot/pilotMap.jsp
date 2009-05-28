@@ -111,7 +111,7 @@ return true;
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
-var allMarkers = new Array();
+var allMarkers = [];
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());

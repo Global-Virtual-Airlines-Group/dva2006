@@ -193,8 +193,8 @@ GEvent.addListener(map, 'maptypechanged', updateMapText);
 // Placeholder for route
 var routeData;
 var routeWaypoints;
-var acPositions = new Array();
-var dcPositions = new Array();
+var acPositions = [];
+var dcPositions = [];
 
 // Reload ACARS data
 document.dispatchOnline = false;

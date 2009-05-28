@@ -75,7 +75,7 @@ function Calendar_calc_month_year(p_Month, p_Year, incr) {
 	after applying the month increment/decrement as specified by 'incr' parameter.
 	'incr' will normally have 1/-1 to navigate thru the months.
 	*/
-	var ret_arr = new Array();
+	var ret_arr = [];
 	
 	if (incr == -1) {
 		// B A C K W A R D
@@ -113,7 +113,7 @@ function Calendar_calc_month_year(p_Month, p_Year, incr) {
 	after applying the month increment/decrement as specified by 'incr' parameter.
 	'incr' will normally have 1/-1 to navigate thru the months.
 	*/
-	var ret_arr = new Array();
+	var ret_arr = [];
 	
 	if (incr == -1) {
 		// B A C K W A R D

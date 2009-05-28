@@ -58,7 +58,7 @@ xmlreq.onreadystatechange = function() {
 		tr.SID = (tr.getAttribute('type') == 'SID');
 
 		// Add waypoints
-		tr.waypoints = new Array();
+		tr.waypoints = [];
 		var wps = tr.getElementsByTagName('waypoint');
 		for (var j = 0; j < wps.length; j++) {
 			var wp = wps[j];
@@ -168,7 +168,7 @@ mm.clearMarkers();
 removeMarkers(map, 'routeTrack');
 
 // Plot the markers
-var track = new Array();
+var track = [];
 if (tr.SID)
 	track.push(map.apMarker.getLatLng());
 	
@@ -215,7 +215,7 @@ return true;
 
 function toggleMarker()
 {
-var pnts = new Array();
+var pnts = [];
 var route = document.forms[0].route;
 
 var isRemoved = false;

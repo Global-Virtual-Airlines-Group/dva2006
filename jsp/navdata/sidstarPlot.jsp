@@ -157,12 +157,12 @@ return false;
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 
 // Global airport/waypoint markers
-var airports = new Array();
-var waypoints = new Array();
+var airports = [];
+var waypoints = [];
 
 // Add routes
 var routeTrack;
-var routes = new Array();
+var routes = [];
 
 // Add map controls
 map.addControl(new GLargeMapControl3D());

@@ -129,7 +129,7 @@ return true;
 </content:page>
 <c:if test="${exam.routePlot}">
 <script language="JavaScript" type="text/javascript">
-var maps = new Array();
+var maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
 <c:set var="correctRoute" value="${cRoutes[q.number]}" scope="page" />

@@ -41,7 +41,7 @@ if (!selectedRoute) {
 	request.open("GET", "si_route.ws?network=" + networkName + "&id=" + pilotID, true);
 	request.onreadystatechange = function() {
 		if (request.readyState != 4) return false;
-		var points = new Array();
+		var points = [];
 		var xmlDoc = request.responseXML;
 		var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
 		for (var i = 0; i < navaids.length; i++) {

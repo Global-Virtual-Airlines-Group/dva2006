@@ -1,6 +1,6 @@
 var defaultIconSize = 24;
-var displayedMarkers = new Array();
-var mapTextElements = new Array();
+var displayedMarkers = [];
+var mapTextElements = [];
 
 var ge;
 var kmlProgress = null;

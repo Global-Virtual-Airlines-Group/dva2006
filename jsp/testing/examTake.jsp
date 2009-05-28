@@ -26,7 +26,7 @@
 <script language="JavaScript" type="text/javascript">
 var expiry = ${exam.expiryDate.time};
 <c:if test="${exam.routePlot}">
-var rpInfo = new Array();
+var rpInfo = [];
 var rpQuestions = ${rpQuestions};
 var doRunways = false;
 document.imgPath = '${imgPath}';

@@ -307,8 +307,8 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${empty mapRoute && isACARS}">
 var gRoute;
-var routePoints = new Array();
-var routeMarkers = new Array();
+var routePoints = [];
+var routeMarkers = [];
 getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 </c:if>
 <c:if test="${!empty filedRoute}">
@@ -318,7 +318,7 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 </c:if>
 <c:if test="${!empty onlineTrack}">
 <map:points var="onlinePoints" items="${onlineTrack}" />
-<map:line var="otRoute" src="onlinePoints" color="#C09F8F" width="3" transparency="0.55" geodesic="true" />
+<map:line var="otRoute" src="onlinePoints" color="#F06F4F" width="3" transparency="0.55" geodesic="true" />
 </c:if>
 // Build the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});

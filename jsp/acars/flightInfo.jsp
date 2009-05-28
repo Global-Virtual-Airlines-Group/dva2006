@@ -148,8 +148,8 @@
 <c:if test="${fn:sizeof(mapRoute) > 0}">
 <script language="JavaScript" type="text/javascript">
 var gRoute;
-var routePoints = new Array();
-var routeMarkers = new Array();
+var routePoints = [];
+var routeMarkers = [];
 
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />

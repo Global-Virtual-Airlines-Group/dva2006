@@ -41,7 +41,7 @@ xmlreq.onreadystatechange = function() {
 			var label = a.firstChild;
 			mrk.infoLabel = label.data;
 		} else {
-			mrk.tabs = new Array();
+			mrk.tabs = [];
 			var tbs = a.getElementsByTagName("tab");
 			for (var x = 0; x < tbs.length; x++) {
 				var tab = tbs[x];
@@ -75,7 +75,7 @@ xmlreq.onreadystatechange = function() {
 			var label = d.firstChild;
 			mrk.infoLabel = label.data;
 		} else {
-			mrk.tabs = new Array();
+			mrk.tabs = [];
 			var tbs = d.getElementsByTagName("tab");
 			for (var x = 0; x < tbs.length; x++) {
 				var tab = tbs[x];
@@ -182,7 +182,7 @@ xreq.onreadystatechange = function() {
 	// Draw the flight route
 	if (doRoute) {
 		var wps = wsdata.getElementsByTagName("route");
-		var waypoints = new Array();
+		var waypoints = [];
 		for (var i = 0; i < wps.length; i++) {
 			var wp = wps[i];
 			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
@@ -197,7 +197,7 @@ xreq.onreadystatechange = function() {
 	// Draw the flight progress
 	if (doProgress) {
 		var pos = wsdata.getElementsByTagName("pos");
-		var positions = new Array();
+		var positions = [];
 		for (var i = 0; i < pos.length; i++) {
 			var pe = pos[i];
 			var p = new GLatLng(parseFloat(pe.getAttribute("lat")), parseFloat(pe.getAttribute("lng")));
@@ -226,7 +226,7 @@ var centerPt = p.fromLatLngToPixel(marker.getLatLng(), map.getZoom());
 var radiusPt = p.fromLatLngToPixel(l2, map.getZoom());
 
 // Build the circle
-var pts = new Array();
+var pts = [];
 var radius = Math.floor(Math.sqrt(Math.pow((centerPt.x-radiusPt.x),2) + Math.pow((centerPt.y-radiusPt.y),2))); 
 for (var a = 0 ; a < 361 ; a+=5 ) {
     var aRad = (Math.PI / 180) * a;
