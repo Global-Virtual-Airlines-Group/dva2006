@@ -108,7 +108,7 @@ xmlreq.onreadystatechange = function() {
 				if (label)
 					mrk.infoLabel = label.data.replace(/\n/g, "<br />");
 			} else {
-				mrk.tabs = new Array();
+				mrk.tabs = [];
 				var tbs = wx.getElementsByTagName("tab");
 				for (var x = 0; x < tbs.length; x++) {
 					var tab = tbs[x];
@@ -140,7 +140,7 @@ xmlreq.onreadystatechange = function() {
 			if (label)
 				mrk.infoLabel = label.data;
 		} else {
-			mrk.tabs = new Array();
+			mrk.tabs = [];
 			var tbs = wx.getElementsByTagName("tab");
 			for (var x = 0; x < tbs.length; x++) {
 				var tab = tbs[x];
@@ -306,7 +306,7 @@ GEvent.addListener(map, 'maptypechanged', updateMapText);
 GEvent.addListener(map, 'maptypechanged', hideAllSlices);
 
 // Map marker codes
-var wxMarkers = new Array();
+var wxMarkers = [];
 
 <c:if test="${!empty tileHost}">
 // Display the copyright notice
@@ -333,9 +333,9 @@ GEvent.trigger(map, 'maptypechanged');</c:if>
 loadWX('${homeAirport.ICAO}');
 <c:if test="${!empty jetStreamImgs}">
 // Load Jet Stream map types
-var jsMapTypes = new Array();
+var jsMapTypes = [];
 <c:forEach var="mapType" items="${fn:keys(jetStreamImgs)}">
-var mapOptions = new Array();
+var mapOptions = [];
 mapOptions.push(new Option('-'));
 <c:forEach var="mapURL" items="${jetStreamImgs[mapType]}">
 mapOptions.push(new Option('${mapURL.comboName}', '${mapURL.comboAlias}'));</c:forEach>

@@ -1,14 +1,14 @@
 // Combobox Options and Timeslices for FF layers
-document.ffOptions = new Array();
-document.ffSlices = new Array();
+document.ffOptions = [];
+document.ffSlices = [];
 
-var animateSlices = new Array();
-var loadSlices = new Array();
+var animateSlices = [];
+var loadSlices = [];
 
 function getFFSlices(seriesName)
 {
 var now = new Date();
-var dates = new Array();
+var dates = [];
 var slices = document.seriesData[seriesName].series[0].ff;
 for (var x = 0; x < slices.length; x++) {
 	var d = slices[x];
@@ -23,7 +23,7 @@ return dates;
 function getFFComboOptions(dates)
 {
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-var results = new Array();
+var results = [];
 results.push(new Option("< SELECT >", ""));
 for (var x = 0; x < dates.length; x++) {
 	var utc = dates[x];
@@ -110,7 +110,7 @@ return true;
 function getVisibleTiles()
 {
 if (!map.visibleTiles)
-	map.visibleTiles = new Array();
+	map.visibleTiles = [];
 
 var bnds = map.getBounds();
 var p = map.getCurrentMapType().getProjection();

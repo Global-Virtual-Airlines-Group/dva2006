@@ -136,8 +136,8 @@ xmlreq.onreadystatechange = function() {
 	rpq.map.clearOverlays();
 
 	// Draw the markers and load the codes
-	var positions = new Array();
-	var codes = new Array();
+	var positions = [];
+	var codes = [];
 	var xdoc = xmlreq.responseXML.documentElement;
 	var waypoints = xdoc.getElementsByTagName("pos");
 	for (var i = 0; i < waypoints.length; i++) {

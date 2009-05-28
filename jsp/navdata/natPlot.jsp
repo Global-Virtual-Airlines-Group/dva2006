@@ -37,14 +37,14 @@ return true;
 function resetTracks()
 {
 // Initialize map data arrays
-tracks['W'] = new Array();
-tracks['E'] = new Array();
-tracks['C'] = new Array();
-allTracks = new Array();
-points['W'] = new Array();
-points['E'] = new Array();
-points['C'] = new Array();
-allPoints = new Array();
+tracks['W'] = [];
+tracks['E'] = [];
+tracks['C'] = [];
+allTracks = [];
+points['W'] = [];
+points['E'] = [];
+points['C'] = [];
+allPoints = [];
 
 // Reset checkboxes
 var f = document.forms[0];
@@ -112,7 +112,7 @@ xmlreq.onreadystatechange = function() {
 	var xdoc = xmlreq.responseXML.documentElement;
 	var xtracks = xdoc.getElementsByTagName("track");
 	for (var i = 0; i < xtracks.length; i++) {
-		var trackPos = new Array();
+		var trackPos = [];
 		var track = xtracks[i];
 		var trackType = track.getAttribute("type");
 		var waypoints = track.getElementsByTagName("waypoint");
@@ -214,8 +214,8 @@ map.enableContinuousZoom();
 GEvent.addListener(map, 'maptypechanged', updateMapText);
 
 // Create the tracks/waypoints
-var tracks = new Array();
-var points = new Array();
+var tracks = [];
+var points = [];
 resetTracks();
 <c:if test="${!empty tileHost}">
 // Display the copyright notice
