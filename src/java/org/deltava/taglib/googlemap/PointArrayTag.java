@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -14,20 +14,27 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a JavaScript array of Google Maps GPoints.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class PointArrayTag extends GoogleMapEntryTag {
 
-	private Collection _entries;
+	private final Collection<GeoLocation> _entries = new ArrayList<GeoLocation>();
 
 	/**
 	 * Sets the points used to generate the array.
 	 * @param points a Collection of GeoLocations
 	 */
-	public void setItems(Collection points) {
-		_entries = points;
+	public void setItems(Collection<GeoLocation> points) {
+		_entries.addAll(points);
+	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		_entries.clear();
 	}
 
 	/**
@@ -42,11 +49,11 @@ public class PointArrayTag extends GoogleMapEntryTag {
 		try {
 			out.print("var ");
 			out.print(_jsVarName);
-			out.println(" = new Array();");
+			out.println(" = [];");
 
 			// Create the markers
-			for (Iterator i = _entries.iterator(); i.hasNext();) {
-				GeoLocation entry = (GeoLocation) i.next();
+			for (Iterator<GeoLocation> i = _entries.iterator(); i.hasNext();) {
+				GeoLocation entry = i.next();
 
 				// Generate the google point and push it into the array
 				out.print(_jsVarName);
