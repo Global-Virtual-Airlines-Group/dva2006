@@ -264,7 +264,7 @@ public class GeoUtils {
 		double lat1 = Math.toRadians(l1.getLatitude());
 		double lat2 = Math.toRadians(l2.getLatitude());
 		
-		// Get the longitude difference in radians
+		// Convert the longitude to radians
 		double lng1 = Math.toRadians(l1.getLongitude());
 		double lng2 = Math.toRadians(l2.getLongitude());
 		
@@ -279,5 +279,48 @@ public class GeoUtils {
 			crs += 360;
 		
 		return crs;
+	}
+	
+	/**
+	 * Returns the latitude at which point a Greate Cirlce route intersects a meridian.
+	 * @param l1 the first GeoLocation
+	 * @param l2 the second GeoLocation
+	 * @param lng the longitude in degrees
+	 * @return the latitude in degrees
+	 */
+	public static double meridianLatitude(GeoLocation l1, GeoLocation l2, double lng) {
+		double lon = Math.toRadians(lng);
+		
+		// Convert the latitude to radians
+		double lat1 = Math.toRadians(l1.getLatitude());
+		double lat2 = Math.toRadians(l2.getLatitude());
+		
+		// Convert the longitude to radians
+		double lng1 = Math.toRadians(l1.getLongitude());
+		double lng2 = Math.toRadians(l2.getLongitude());
+		
+		double x = StrictMath.sin(lat1) * StrictMath.cos(lat2) * StrictMath.sin(lon - lng2) - 
+		StrictMath.sin(lat2) * StrictMath.cos(lat1) * StrictMath.sin(lon - lng1);
+		double y = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.sin(lng1-lng2);
+		
+		double lat = StrictMath.atan(x / y);
+		return Math.toDegrees(lat);
+	}
+	
+	/**
+	 * Returns whether a direct Great Circle route crosses a meridian.
+	 * @param l1 the first GeoLocation
+	 * @param l2 the second GeoLocation
+	 * @param lng the longitude in degrees
+	 * @return TRUE if the meridian is crossed on the most direct route, otherwise FALSE
+	 */
+	public static boolean crossesMeridian(GeoLocation l1, GeoLocation l2, double lng) {
+		double lng2 = normalize(lng);
+		double ln1 = normalize(l1.getLongitude());
+		double ln2 = normalize(l2.getLongitude());
+		
+		double d1 = Math.abs(ln1 - lng2);
+		double d2 = Math.abs(ln2 - lng2);
+		return ((d1 + d2) <= Math.abs(ln1 - ln2));
 	}
 }
