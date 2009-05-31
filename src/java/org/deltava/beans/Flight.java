@@ -1,20 +1,19 @@
-// Copyright 2004, 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.DecimalFormat;
 
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.schedule.*;
+import org.deltava.util.GeoUtils;
 
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
-public abstract class Flight extends DatabaseBean {
+public abstract class Flight extends DatabaseBean implements RoutePair {
 
     /**
      * A number formatter used to add leading zeroes to the Flight Number.
@@ -104,6 +103,13 @@ public abstract class Flight extends DatabaseBean {
 
         // Calculate distance
         return _airportA.getPosition().distanceTo(_airportD.getPosition());
+    }
+
+    /**
+     * Returns whether this route crosses a particular meridian.
+     */
+    public boolean crosses(double lng) {
+    	return GeoUtils.crossesMeridian(_airportD, _airportA, lng);
     }
 
     /**

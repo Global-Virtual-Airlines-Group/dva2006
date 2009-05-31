@@ -5,9 +5,9 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 
 /**
  * A bean to store ACARS Flight Information records.
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
  * @since 1.0
  */
 
-public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry {
+public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair, ViewEntry {
 
 	private long _conID;
 	private int _pilotID;
@@ -233,6 +233,20 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, ViewEntry
 	public TerminalRoute getSTAR() {
 		return _star;
 	}
+	
+	/**
+	 * Returns the distance between the Airports.
+	 */
+	public int getDistance() {
+		return GeoUtils.distance(_airportD, _airportA);
+	}
+	
+	/**
+     * Returns whether this route crosses a particular meridian.
+     */
+    public boolean crosses(double lng) {
+    	return GeoUtils.crossesMeridian(_airportD, _airportA, lng);
+    }
 
 	/**
 	 * Returns the filed route for this flight.

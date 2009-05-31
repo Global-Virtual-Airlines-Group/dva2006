@@ -329,17 +329,20 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
    public String getInfoBox() {
       StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><b>");
       buf.append(_name);
-      buf.append("</b><br /><span class=\"small\"><br />IATA Code: ");
+      buf.append("</b><br /><br />IATA Code: ");
       buf.append(_iata);
       buf.append("<br />ICAO Code: ");
       buf.append(_icao);
-      buf.append("<br />ICAO Region: ");
-      buf.append(_region);
+      if (_region != null) {
+    	  buf.append("<br />ICAO Region: ");
+    	  buf.append(_region);
+      }
+      
       buf.append("<br /><br />Latitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LATITUDE));
       buf.append("<br />Longitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LONGITUDE));
-      buf.append("</span></div>");
+      buf.append("</div>");
       return buf.toString();
    }
 

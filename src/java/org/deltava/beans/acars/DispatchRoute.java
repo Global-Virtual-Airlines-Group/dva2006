@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store saved ACARS dispatch routes.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.0
  */
 

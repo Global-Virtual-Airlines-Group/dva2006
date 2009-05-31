@@ -500,7 +500,7 @@ public class GetFlightReports extends DAO {
 			Collection<RoutePair> results = new TreeSet<RoutePair>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				RoutePair rp = new RoutePair(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)),
+				ScheduleRoute rp = new ScheduleRoute(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)),
 						SystemData.getAirport(rs.getString(3)));
 				results.add(rp);
 			}
