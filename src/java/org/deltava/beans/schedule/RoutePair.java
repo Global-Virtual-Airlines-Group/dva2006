@@ -1,167 +1,37 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.*;
-
-import org.deltava.beans.ViewEntry;
-
 /**
- * A bean to store route pair information.
+ * An interface to mark Airport pairs. 
  * @author Luke
- * @version 2.2
- * @since 1.0
+ * @version 2.6
+ * @since 2.6
  */
 
-public class RoutePair implements Comparable<RoutePair>, ViewEntry {
-	
-	private static final String DEP = "$D";
-	private static final String ARR = "$A";
+public interface RoutePair {
 
-	private Airline _a;
-	private final Map<String, Airport> _airports = new HashMap<String, Airport>();
-	
-	private int _flights;
-	private int _routes;
-	
-	/**
-	 * Creates a new Route Pair.
-	 * @param a the Airline serving this route
-	 * @param ad the departure Airport bean
-	 * @param aa the arrival Airport bean
-	 */
-	public RoutePair(Airline a, Airport ad, Airport aa) {
-		super();
-		_a = a;
-		_airports.put(DEP, ad);
-		_airports.put(ARR, aa);
-	}
-	
-	/**
-	 * Returns the Airline serving this airport pair.
-	 * @return the Airline bean
-	 */
-	public Airline getAirline() {
-		return _a;
-	}
-	
 	/**
 	 * Returns the departure Airport.
-	 * @return the Airport bean
-	 * @see RoutePair#getAirports()
+	 * @return the departure Airport 
 	 */
-	public Airport getAirportD() {
-		return _airports.get(DEP);
-	}
+	public Airport getAirportD();
 
 	/**
 	 * Returns the arrival Airport.
-	 * @return the Airport bean
-	 * @see RoutePair#getAirports()
+	 * @return the arrival Airport 
 	 */
-	public Airport getAirportA() {
-		return _airports.get(ARR);
-	}
+	public Airport getAirportA();
 	
 	/**
-	 * Returns the sorted airports in this route pair. 
-	 * @return a Collection of Airport beans
-	 * @see RoutePair#getAirportA()
-	 * @see RoutePair#getAirportD()
-	 */
-	public Collection<Airport> getAirports() {
-		return _airports.values();
-	}
-	
-	/**
-	 * Returns the number of flights between these two airports.
-	 * @return the number of flights
-	 * @see RoutePair#setFlights(int)
-	 * @see RoutePair#getRoutes()
-	 */
-	public int getFlights() {
-		return _flights;
-	}
-
-	/**
-	 * Returns the number of Dispatch rotues between these two airports.
-	 * @return the number of routes
-	 * @see RoutePair#setRoutes(int)
-	 * @see RoutePair#getFlights()
-	 */
-	public int getRoutes() {
-		return _routes;
-	}
-	
-	/**
-	 * Returns the distance between the airports.
+	 * Returns the distance between the Airports.
 	 * @return the distance in miles
 	 */
-	public int getDistance() {
-		GeoPosition gp = new GeoPosition(getAirportD());
-		return gp.distanceTo(getAirportA());
-	}
-
-	/**
-	 * Updates the number of flights between these two airports. 
-	 * @param count  the number of flights
-	 * @see RoutePair#getFlights()
-	 * @see RoutePair#setRoutes(int)
-	 */
-	public void setFlights(int count) {
-		_flights = Math.max(0, count);
-	}
+	public int getDistance();
 	
 	/**
-	 * Updates the number of Dispatch routes between these two airports.
-	 * @param count the number of routes
-	 * @see RoutePair#getRoutes()
-	 * @see RoutePair#setFlights(int)
+	 * Returns whether the route crosses a particular meridian.
+	 * @param lng the longitude in degrees
+	 * @return TRUE if it crosses the meridian, otherwise FALSE
 	 */
-	public void setRoutes(int count) {
-		_routes = Math.max(0, count);
-	}
-	
-	public String getRowClassName() {
-		return (_routes == 0) ? "opt1" : null;
-	}
-	
-	/**
-	 * Compares two route pairs by comparing their sorted airport codes.
-	 * @see RoutePair#toString()
-	 * @see Comparable#compareTo(Object)
-	 */
-	public int compareTo(RoutePair rp2) {
-		return toString().compareTo(rp2.toString());
-	}
-	
-	/**
-	 * Compars two route pairs by comparing their airport codes.
-	 * @see RoutePair#toString()
-	 */
-	public boolean equals(Object o) {
-		return (o instanceof RoutePair) ? (compareTo((RoutePair) o) == 0) : false;
-	}
-	
-	/**
-	 * Returns the route pair's hash code.
-	 * @see RoutePair#toString()
-	 */
-	public int hashCode() {
-		return toString().hashCode();
-	}
-
-	/**
-	 * Returns the route pair.
-	 */
-	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		for (Iterator<Airport> i = _airports.values().iterator(); i.hasNext(); ) {
-			Airport a = i.next();
-			buf.append(a.getICAO());
-			if (i.hasNext())
-				buf.append('-');				
-		}
-		
-		return buf.toString();
-	}
+	public boolean crosses(double lng);
 }

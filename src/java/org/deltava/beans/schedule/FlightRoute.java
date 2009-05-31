@@ -1,18 +1,19 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
 
 import org.deltava.beans.*;
+import org.deltava.util.GeoUtils;
 
 /**
  * An abstract class to store common Flight Route information.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.2
  */
 
-public abstract class FlightRoute extends DatabaseBean implements ComboAlias {
+public abstract class FlightRoute extends DatabaseBean implements RoutePair, ComboAlias {
 	
 	private Date _createdOn;
 	
@@ -65,6 +66,20 @@ public abstract class FlightRoute extends DatabaseBean implements ComboAlias {
 	public String getSTAR() {
 		return _star;
 	}
+	
+	/**
+	 * Returns the distance between the airports.
+	 */
+	public int getDistance() {
+		return GeoUtils.distance(_airportD, _airportA);
+	}
+	
+	/**
+     * Returns whether this route crosses a particular meridian.
+     */
+    public boolean crosses(double lng) {
+    	return GeoUtils.crossesMeridian(_airportD, _airportA, lng);
+    }
 	
 	/**
 	 * Returns the Cruise Altitude.
