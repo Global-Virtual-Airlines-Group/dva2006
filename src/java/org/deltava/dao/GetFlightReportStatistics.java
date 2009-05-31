@@ -82,7 +82,7 @@ public class GetFlightReportStatistics extends DAO {
 			Collection<RoutePair> results = new ArrayList<RoutePair>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				RoutePair rp = new RoutePair(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+				ScheduleRoute rp = new ScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 				rp.setFlights(rs.getInt(3));
 				rp.setRoutes(rs.getInt(4));
 				results.add(rp);
