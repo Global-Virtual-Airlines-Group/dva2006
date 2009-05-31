@@ -1,6 +1,8 @@
 // Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
+import java.util.Date;
+
 import org.deltava.beans.ViewEntry;
 
 /**
@@ -19,6 +21,7 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
    private long _useCount;
    private long _totalUse;
    private long _currentUse;
+   private Date _lastUsed;
    private Throwable _trace;
 
    /**
@@ -35,6 +38,8 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
       _totalUse = entry.getTotalUseTime();
       _currentUse = entry.getUseTime();
       _trace = entry.getStackInfo();
+      if (entry.getLastUseTime() > 0)
+    	  _lastUsed = new Date(entry.getLastUseTime());
    }
    
    /**
@@ -103,15 +108,21 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
    }
    
    /**
+    * Returns the last time this connection was reserved.
+    * @return the last use date/time, or null if never
+    */
+   public Date getLastUsed() {
+	   return _lastUsed;
+   }
+   
+   /**
     * Returns the connection type for rendering in a JSP.
     * @return the connection type
     */
    public String getTypeName() {
-	   StringBuilder buf = new StringBuilder();
-	   if (_isDynamic)
-		   buf.append("Dynamic ");
-	   
-	   return buf.append("User").toString();
+	   StringBuilder buf = new StringBuilder(_isDynamic ? "Dynamic" : "Persistent");
+	   buf.append(" User");
+	   return buf.toString();
    }
 
    /**
