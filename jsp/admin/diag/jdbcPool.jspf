@@ -7,7 +7,7 @@
 <!-- JDBC Connection Pool Data Table -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
- <td colspan="7" class="left">JDBC CONNECTION INFORMATION</td>
+ <td colspan="8" class="left">JDBC CONNECTION INFORMATION</td>
 </tr>
 
 <c:if test="${!empty jdbcPools}">
@@ -15,22 +15,23 @@
 <tr class="title caps">
  <td width="10%">ID</td>
  <td width="15%">CONNECTION TYPE</td>
- <td width="10%">STATUS</td>
- <td width="10%">USE COUNT</td>
- <td width="15%">AVERAGE USAGE</td>
- <td width="15%">TOTAL USAGE</td>
- <td>LAST/CURRENT USAGE</td>
+ <td width="12%">STATUS</td>
+ <td width="12%">USE COUNT</td>
+ <td width="12%">AVERAGE USE</td>
+ <td width="12%">TOTAL USE</td>
+ <td width="12%">LAST/CURRENT USE</td>
+ <td>LAST USED ON</td>
 </tr>
 <c:forEach var="appName" items="${appNames}">
 <c:set var="pool" value="${jdbcPools[appName]}" scope="page" />
 <tr class="title caps">
- <td colspan="7" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS, 
+ <td colspan="8" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS, 
  <fmt:int value="${pool.expandCount}" /> EXPANSIONS, <fmt:int value="${pool.waitCount}" /> WAITS, 
  <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</td>
 </tr>
 <c:if test="${!empty pool.lastValidation}">
 <tr>
- <td colspan="7" class="left"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last
+ <td colspan="8" class="left"><fmt:int value="${pool.validations}" /> Connection Pool Monitor validation runs, last
  on <fmt:date date="${pool.lastValidation}" /></td>
 </tr>
 </c:if>
@@ -45,6 +46,12 @@
  <td class="bld"><fmt:dec value="${con.totalUse / con.useCount}" /> ms</td>
  <td><fmt:int value="${con.totalUse}" /> ms</td>
  <td><fmt:int value="${con.currentUse}" /> ms</td>
+<c:if test="${!empty con.lastUsed}">
+ <td><fmt:date date="${con.lastUsed}" /></td>
+</c:if>
+<c:if test="${empty con.lastUsed}">
+ <td>NEVER</td>
+</c:if>
 </view:row>
 <c:if test="${jdbcStackLog && con.connected && (con.inUse || (con.currentUse > 1500))}">
 <view:row entry="${con}">
