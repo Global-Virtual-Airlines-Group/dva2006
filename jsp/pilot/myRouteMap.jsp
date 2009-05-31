@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
-<title><content:airline /> Route Map - ${pilot.name}</title>
+<title><content:airline /> Route History Map - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -32,7 +32,7 @@
 </tr>
 <tr>
  <td class="label">Map Legend</td>
- <td class="data"><map:legend color="blue" legend="Airports" /> <map:legend color="white" legend="My Home Airport" /></td>
+ <td class="data"><map:legend color="blue" legend="Airports" /> <map:legend color="white" legend="Home Airport" /></td>
 </tr>
 <tr>
  <td colspan="2"><map:div ID="googleMap" x="100%" y="510" /></td>
@@ -49,7 +49,6 @@
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
-map.addControl(new GOverviewMapControl());
 map.setCenter(mapC, 3);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
@@ -58,15 +57,25 @@ map.enableContinuousZoom();
 // Create the routes
 var routes = [];
 <c:forEach var="route" items="${routes}">
+// ${route}
+<c:choose>
+<c:when test="${fn:sizeof(route.points) > 2}">
+<map:points var="rtPoints" items="${route.points}" />
+var route = new GPolyline(rtPoints, '#4080AF', 1.5, 0.55, { geodesic:false, clickable:false });
+</c:when>
+<c:otherwise>
 <map:point var="aD" point="${route.airportD}" />
 <map:point var="aA" point="${route.airportA}" />
-var route = new GPolyline([aD, aA], '#4080AF', 1.5, 0.6, { geodesic:true });
+var route = new GPolyline([aD, aA], '#4080AF', 1.5, 0.55, { geodesic:true, clickable:false });
+</c:otherwise>
+</c:choose>
+
+map.addOverlay(route);
 routes.push(route);
 </c:forEach>
 
 // Add the airports
 <map:markers var="airports" items="${airports}" color="blue" marker="true" />
-addMarkers(map, 'routes');
 addMarkers(map, 'airports');
 
 // Add the home airport
