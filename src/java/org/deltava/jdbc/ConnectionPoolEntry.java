@@ -35,7 +35,9 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private long _useTime;
 	private long _startTime;
 	private long _lastUsed;
+	
 	private long _useCount;
+	private long _sessionUseCount;
 
 	/**
 	 * Create a new Connection Pool entry.
@@ -105,6 +107,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 		_c.setAutoCommit(_autoCommit);
 		_lastUsed = System.currentTimeMillis();
 		_connected = true;
+		_sessionUseCount = 0;
 	}
 
 	/**
@@ -247,6 +250,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 		_lastUsed = _startTime;
 		_inUse = true;
 		_useCount++;
+		_sessionUseCount++;
 		return _c;
 	}
 
@@ -264,6 +268,14 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 */
 	public long getUseCount() {
 		return _useCount;
+	}
+	
+	/**
+	 * Returns the number of times this connection has been reserved since last connected.
+	 * @return the number of times reserved
+	 */
+	public long getSessionUseCount() {
+		return _sessionUseCount;	
 	}
 
 	/**
