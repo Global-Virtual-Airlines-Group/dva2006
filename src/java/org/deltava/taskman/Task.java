@@ -1,17 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.dao.*;
 import org.deltava.util.*;
 
 /**
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -123,7 +124,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
     
     /**
-     * Determines wether this Scheduled Task is runnable at a particular date/time. <i>This is package private
+     * Determines whether this Scheduled Task is runnable at a particular date/time. <i>This is package private
      * for unit testing purposes.</i>
      * @param dt the date/time to execute the task at
      * @return TRUE if the Task can be executed, otherwise FALSE
@@ -212,15 +213,48 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
     
     /**
+     * Overrides the last execution duration for this Task.
+     * @param execTime the last execution duration in milliseconds
+     * @see Task#getLastRunTime()
+     */
+    public void setLastExecTime(long execTime) {
+    	_lastRunTime = Math.max(0, execTime);
+    }
+    
+    /**
      * Executes the Task. This logs execution start/stop times and calls each Task implementation's
      * {@link Task#execute(TaskContext)} method.
      */
     public void run() {
-        setStartTime(new Date());
-        _runCount++;
-        log.info(_name + " starting ");
-        execute(new TaskContext());
+    	setStartTime(new Date());
+    	_runCount++;
+    	log.info(_name + " starting ");
+    	
+    	// Log task starting
+    	TaskContext ctxt = new TaskContext();
+    	try {
+    		SetSystemData dao = new SetSystemData(ctxt.getConnection());
+    		dao.logTaskExecution(getID(), 0);
+    	} catch (Exception e) {
+    		log.error("Cannot log Task start - " + e.getMessage(), e);
+    	} finally {
+    		ctxt.release();
+    	}
+
+    	// Execute the task
+        execute(ctxt);
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.getTime());
+        log.info(getName() + " completed - " + getLastRunTime() + " ms");
+        
+        // Log execution time
+    	try {
+    		SetSystemData dao = new SetSystemData(ctxt.getConnection());
+    		dao.logTaskExecution(getID(), _lastRunTime);
+    	} catch (Exception e) {
+    		log.error("Cannot log Task completion - " + e.getMessage(), e);
+    	} finally {
+    		ctxt.release();
+    	}
     }
     
     /**
