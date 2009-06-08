@@ -81,7 +81,7 @@ public class SetACARSData extends DAO {
 			_ps.setBoolean(12, true);
 			_ps.setLong(13, info.getConnectionID());
 			if (info.getID() != 0)
-				_ps.setInt(1, info.getID());
+				_ps.setInt(14, info.getID());
 			
 			executeUpdate(1);
 
