@@ -86,7 +86,9 @@ public class OfflineFlightParser {
 		
 		// Build a flight data entry
 		FlightInfo inf = new FlightInfo(ce.getID());
-		inf.setID(StringUtils.parse(ie.getChildTextTrim("id"), 0));
+		int flightID = StringUtils.parse(ie.getChildTextTrim("id"), 0);
+		if (flightID > 0)
+			inf.setID(flightID);
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
 		inf.setEndTime(StringUtils.parseDate(ie.getChildTextTrim("shutdownTime"), "MM/dd/yyyy HH:mm:ss"));
