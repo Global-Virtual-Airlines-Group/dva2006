@@ -40,7 +40,9 @@ return true;
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="dbName" name="airline.db" />
-<c:set var="canSigAuth" value="${access.canChangeSignature && pilot.hasSignature && !sigAuthorized}" scope="page" />
+<content:filter roles="HR,Signature">
+<c:set var="canSigAuth" value="${pilot.hasSignature && !sigAuthorized}" scope="page" />
+</content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
