@@ -2,12 +2,8 @@
 package org.deltava.taskman;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-
-import org.deltava.jdbc.*;
-import org.deltava.dao.*;
 
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
@@ -68,42 +64,22 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 
 		// Sleep for a while when we start
 		ThreadUtils.sleep(10000);
-
-		// Check loop
 		while (!Thread.currentThread().isInterrupted()) {
 			long now = System.currentTimeMillis();
 
 			// Check each task
-			log.debug("Checking Task Pool");
 			for (Iterator<Task> i = _tasks.values().iterator(); i.hasNext();) {
 				Task t = i.next();
-				log.debug("Checking " + t.getName());
+				if (log.isDebugEnabled())
+					log.debug("Checking " + t.getName());
 
 				// If the task is running, leave it alone. Only execute when it's supposed to
 				if (t.isRunnable()) {
-					Connection c = null;
-					ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-					try {
-						c = pool.getConnection();
-
-						// Get the DAO and log the execution time
-						SetSystemData dao = new SetSystemData(c);
-						dao.logTaskExecution(t.getID());
-					} catch (DAOException de) {
-						log.error("Cannot save execution time", de);
-					} finally {
-						pool.release(c);
-					}
-
-					// Spawn the thread
 					Thread tt = new Thread(t, t.getName());
 					tt.setDaemon(true);
 					tt.setUncaughtExceptionHandler(this);
 					tt.start();
-					ThreadUtils.waitFor(tt, 52000);
-					
-					// Log completion
-					log.info(t.getName() + " completed - " + t.getLastRunTime() + " ms");
+					ThreadUtils.waitFor(tt, 5000);
 				}
 			}
 
@@ -122,13 +98,15 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	}
 
 	/**
-	 * Updates the last execution time of a Scheduled Task.
+	 * Updates the last execution time and duration of a Scheduled Task.
 	 * @param lr the TaskLastRun bean
 	 */
 	public void setLastRunTime(TaskLastRun lr) {
 		Task t = _tasks.get(lr.getName());
-		if (t != null)
+		if (t != null) {
 			t.setStartTime(lr.getLastRun());
+			t.setLastExecTime(lr.getExecTime());
+		}
 	}
 
 	/**
