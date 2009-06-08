@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -65,12 +65,14 @@ public class SetSystemData extends DAO {
 	/**
 	 * Logs the execution time of a Scheduled Task.
 	 * @param name the Scheduled Task name
+	 * @param execTime the execution time in milliseconds
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void logTaskExecution(String name) throws DAOException {
+	public void logTaskExecution(String name, long execTime) throws DAOException {
 	   try {
-	      prepareStatement("REPLACE INTO SYS_TASKS (ID, LASTRUN) VALUES (?, NOW())");
+	      prepareStatement("REPLACE INTO SYS_TASKS (ID, LASTRUN, RUNTIME) VALUES (?, NOW(), ?)");
 	      _ps.setString(1, name);
+	      _ps.setLong(2, execTime);
 	      executeUpdate(1);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);

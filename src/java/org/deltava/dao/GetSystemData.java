@@ -272,10 +272,8 @@ public class GetSystemData extends DAO implements CachingDAO {
 	      
 	      // Execute the query
 	      ResultSet rs = _ps.executeQuery();
-	      
-	      // Iterate through the results
 	      while (rs.next())
-	         results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2)));
+	         results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2), rs.getLong(3)));
 
 	      // Clean up after ourselves
 	      rs.close();
