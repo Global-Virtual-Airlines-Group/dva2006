@@ -19,6 +19,7 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
    private boolean _isConnected;
    private boolean _inUse;
    private long _useCount;
+   private long _sessionUseCount;
    private long _totalUse;
    private long _currentUse;
    private Date _lastUsed;
@@ -35,6 +36,7 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
       _isConnected = entry.isConnected();
       _inUse = entry.inUse();
       _useCount = entry.getUseCount();
+      _sessionUseCount = entry.getSessionUseCount();
       _totalUse = entry.getTotalUseTime();
       _currentUse = entry.getUseTime();
       _trace = entry.getStackInfo();
@@ -91,6 +93,14 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
       return _useCount;
    }
    
+	/**
+	 * Returns the number of times this connection has been reserved since last connected.
+	 * @return the number of times reserved
+	 */
+   public long getSessionUseCount() {
+	   return _sessionUseCount;
+   }
+   
    /**
     * Returns the total usage time for the Connection.
     * @return the total usage time in milliseconds
@@ -120,9 +130,7 @@ public class ConnectionInfo implements java.io.Serializable, Comparable<Connecti
     * @return the connection type
     */
    public String getTypeName() {
-	   StringBuilder buf = new StringBuilder(_isDynamic ? "Dynamic" : "Persistent");
-	   buf.append(" User");
-	   return buf.toString();
+	   return _isDynamic ? "Dynamic" : "Persistent";
    }
 
    /**
