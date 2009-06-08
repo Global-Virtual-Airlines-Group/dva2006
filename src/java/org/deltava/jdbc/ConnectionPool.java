@@ -302,7 +302,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 				log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 
 			// Check if we need to restart
-			if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
+			if ((_maxRequests > 0) && (cpe.getSessionUseCount() > _maxRequests)) {
 				log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount() + " reservations");
 				cpe.close();
 				try {
