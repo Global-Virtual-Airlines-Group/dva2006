@@ -140,10 +140,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 			minBuild = cInfo.getMinimumBuild("v2.2");
 		
 		if (build < minBuild) {
-			String msg = "ACARS Build " + build + " not supported.";
+			String msg = "ACARS Build " + build + " not supported";
 			if (minBuild > 0)
 				msg += " Minimum build is Build " + minBuild;	
-			ctx.setAttribute("error", msg, REQUEST);
 			ctx.setMessage(msg);
 			return;
 		}
@@ -153,7 +152,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 			int minBeta = cInfo.getMinimumBetaBuild(ce.getClientBuild());
 			if ((ce.getBeta() < minBeta) || (minBeta == 0)) {
 				String msg = "ACARS Build " + build + " Beta " + ce.getBeta() + " deprecated";
-				ctx.setAttribute("error", msg, REQUEST);
 				ctx.setMessage(msg);
 				return;	
 			}
