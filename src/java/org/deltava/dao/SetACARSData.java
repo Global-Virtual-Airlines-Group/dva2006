@@ -63,7 +63,7 @@ public class SetACARSData extends DAO {
 					+ "PIREP, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			else
 				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
-					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT=A=?, ROUTE=?, REMARKS=?, "
+					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, REMARKS=?, "
 					+ "FSVERSION=?, OFFLINE=?, PIREP=?, CON_ID=? WHERE (ID=?)");
 			
 			// Write the flight info record
