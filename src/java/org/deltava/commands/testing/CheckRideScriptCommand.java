@@ -1,9 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
-import java.util.*;
 import java.sql.Connection;
+import java.util.Collections;
 
+import org.deltava.beans.EquipmentType;
 import org.deltava.beans.testing.CheckRideScript;
 
 import org.deltava.commands.*;
@@ -11,10 +12,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CheckrideScriptAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -26,18 +29,25 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
+		
+		// Get the equipment type
+		String id = (String) ctx.getCmdParameter(ID, null);
+		if (StringUtils.isEmpty(id))
+			id = ctx.getParameter("eqType");
+		
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the existing script
 			GetExamProfiles dao = new GetExamProfiles(con);
-			CheckRideScript sc = dao.getScript(ctx.getParameter("eqType"));
+			CheckRideScript sc = dao.getScript(id);
 			if (sc == null)
-				sc = new CheckRideScript(ctx.getParameter("eqType"));
+				sc = new CheckRideScript(id);
 
 			// Load the program and description
 			sc.setProgram(ctx.getParameter("programType"));
 			sc.setDescription(ctx.getParameter("msgText"));
+			sc.setEquipmentType(ctx.getParameter("eqType"));
 
 			// Calculate our access
 			CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, sc);
@@ -77,6 +87,10 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 		String id = (String) ctx.getCmdParameter(ID, null);
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Get equipment type DAOs
+			GetAircraft acdao = new GetAircraft(con);
+			GetEquipmentType eqdao = new GetEquipmentType(con);
 
 			// Get the DAO and the script
 			GetExamProfiles dao = new GetExamProfiles(con);
@@ -91,14 +105,19 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Check Ride script");
 
-				// Create single-entry equipment type list
-				Set<String> eqtypes = new HashSet<String>();
-				eqtypes.add(sc.getEquipmentType());
-				ctx.setAttribute("actypes", eqtypes, REQUEST);
-
 				// Save in the request
 				ctx.setAttribute("script", sc, REQUEST);
 				ctx.setAttribute("access", access, REQUEST);
+				
+				// Get primary equipment types
+				EquipmentType eq = eqdao.get(sc.getProgram());
+				if (eq != null) {
+					ctx.setAttribute("eqTypes", Collections.singleton(eq), REQUEST);
+					ctx.setAttribute("acTypes", eq.getPrimaryRatings(), REQUEST);
+				} else {
+					ctx.setAttribute("acTypes", acdao.getAircraftTypes(), REQUEST);
+					ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);	
+				}
 			} else {
 				// Calculate our access
 				CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, null);
@@ -108,15 +127,11 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 
 				// Save in request
 				ctx.setAttribute("access", access, REQUEST);
-
+				
 				// Save all equipment types
-				GetAircraft acdao = new GetAircraft(con);
-				ctx.setAttribute("actypes", acdao.getAircraftTypes(), REQUEST);
+				ctx.setAttribute("acTypes", acdao.getAircraftTypes(), REQUEST);
+				ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
 			}
-
-			// Load equipment types
-			GetEquipmentType eqdao = new GetEquipmentType(con);
-			ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -130,11 +145,11 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the script. <i>NOT IMPLEMENTED</i>
+	 * Callback method called when reading the script.
 	 * @param ctx the Command context
 	 * @throws UnsupportedOperationException
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }
