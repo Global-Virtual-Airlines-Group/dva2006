@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -86,7 +86,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			txreq.setStatus(testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
 			if (!eq.getOwner().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
-			else if (eq.getStage() > 1)
+			else
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
 
 			// Save the transfer request
