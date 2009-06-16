@@ -235,7 +235,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 
 	<!-- Sessions time out after 20 minutes -->
 	<session-config>
-		<session-timeout>20</session-timeout> 
+		<session-timeout>30</session-timeout> 
 	</session-config>
 
 	<!-- welcome files for the application -->
