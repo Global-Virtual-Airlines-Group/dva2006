@@ -86,4 +86,13 @@ public class Certificate extends NetworkUser {
 	public String getInfoBox() {
 		return null;
 	}
+	
+	public String toString() {
+		StringBuilder buf = new StringBuilder(getID());
+		buf.append(' ');
+		buf.append(getName());
+		buf.append(' ');
+		buf.append(_eMail);
+		return buf.toString();
+	}
 }

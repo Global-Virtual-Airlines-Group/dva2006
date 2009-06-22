@@ -118,17 +118,21 @@ public class ProfileCommand extends AbstractFormCommand {
 								msgs.add("VATSIM ID inactive");
 							if (!vid.equals(String.valueOf(c.getID())))
 								msgs.add("VATSIM ID does not match");
-							if (!p.getFirstName().equals(c.getFirstName()))
+							if (!p.getFirstName().equalsIgnoreCase(c.getFirstName()))
 								msgs.add("First Name does not match");
-							if (!p.getLastName().equals(c.getLastName()))
+							if (!p.getLastName().equalsIgnoreCase(c.getLastName()))
 								msgs.add("Last Name does not match");
 							
 							// Save messages
-							if (msgs.isEmpty())
+							if (msgs.isEmpty() || ctx.isUserInRole("HR"))
 								p.setNetworkID(OnlineNetwork.VATSIM, vid);
-							else {
+							if (!msgs.isEmpty()) {
+								if (ctx.isUserInRole("HR"))
+									msgs.add(c.toString());
+								else
+									vid = null;
+								
 								ctx.setAttribute("vatsimValidationMsgs", msgs, REQUEST);
-								vid = null;
 							}
 						} else {
 							ctx.setAttribute("vatsimValidationMsgs", "Unknown/Invalid VATSIM ID - " + vid, REQUEST);
