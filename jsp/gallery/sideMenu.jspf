@@ -66,7 +66,9 @@
  <content:subitem><el:link url="/acars_map_earth.ws">Google Earth</el:link></content:subitem>
  <content:subitem><el:cmd url="acarsprsearch">ACARS Flights</el:cmd></content:subitem>
  <content:subitem><el:cmd url="dspcalendar">Dispatch Schedule</el:cmd></content:subitem>
+<content:filter roles="Pilot">
  <content:subitem><el:cmd url="dsprsearch">Dispatch Route Search</el:cmd></content:subitem>
+</content:filter>
 <content:filter roles="Route">
  <content:subitem><el:cmd url="dsprouteplot">Dispatch Plotter</el:cmd></content:subitem>
  <content:subitem><el:cmd url="poproutes">Popular Routes</el:cmd></content:subitem>
@@ -77,9 +79,11 @@
 <content:submenu title="Contact Us" width="170">
  <content:subitem><el:link url="mailto:${infoEmail}">Corporate Offices</el:link></content:subitem>
  <content:subitem><el:cmd url="staff">Our Staff</el:cmd></content:subitem>
+<content:filter roles="Pilot">
 <c:if test="${helpDeskEnabled}">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
 </c:if>
+</content:filter>
 <content:filter roles="Anonymous,HR">
  <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
 </content:filter>
