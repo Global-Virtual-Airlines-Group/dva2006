@@ -55,7 +55,7 @@
 </view:row>
 <c:if test="${jdbcStackLog && con.connected && (con.inUse || (con.currentUse > 1500))}">
 <view:row entry="${con}">
- <td class="left small" colspan="7"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
+ <td class="left small" colspan="8"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
 </view:row>
 </c:if>
 </c:forEach>
