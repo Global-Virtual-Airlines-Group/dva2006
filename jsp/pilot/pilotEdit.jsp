@@ -17,7 +17,7 @@
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <content:sysdata var="minPwd" name="security.password.min" />
 <content:sysdata var="defaultTFormat" name="time.time_format" />
-<content:sysdata var="defaultDFormat" name="date.time_format" />
+<content:sysdata var="defaultDFormat" name="time.date_format" />
 <script language="JavaScript" type="text/javascript">
 var hasSignature = ${pilot.hasSignature};
 
