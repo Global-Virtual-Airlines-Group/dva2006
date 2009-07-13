@@ -74,7 +74,9 @@ return true;
 
 <!-- Bottom Bar -->
 <tr class="title caps">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="7">
+<c:if test="${isPending}"><view:legend width="100" labels="Active,Inactive,Retired,On Leave,Suspended" classes=" ,opt2,opt3,warn,error" /></c:if>
+<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
