@@ -73,10 +73,18 @@
 </c:if>
 <tr>
  <td class="label">Takeoff Information</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.takeoffSpeed}" /> knots, <fmt:dec value="${pirep.takeoffN1}" />%
- N<sub>1</sub>, <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />
- lbs fuel<c:if test="${acLoaded && (pirep.takeoffWeight > acInfo.maxTakeoffWeight)}">
- <span class="small bld">(<fmt:int value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> lbs overweight)</span></c:if></td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.takeoffSpeed}" /> knots,
+<c:choose>
+<c:when test="${pirep.takeoffN1 > 150}">
+ <fmt:int value="${pirep.takeoffN1}" /> RPM,
+</c:when>
+<c:otherwise> 
+ <fmt:dec value="${pirep.takeoffN1}" />% N<sub>1</sub>, 
+</c:otherwise>
+</c:choose>
+ <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />  lbs fuel
+<c:if test="${acLoaded && (pirep.takeoffWeight > acInfo.maxTakeoffWeight)}"> 
+<span class="small bld">(<fmt:int value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> lbs overweight)</span></c:if></td>
 </tr>
 <c:if test="${!empty flightInfo.altitude}">
 <tr>
@@ -107,8 +115,16 @@
  <td class="label">Landing Information</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
  feet/minute<c:if test="${pirep.landingG > 0.0}"> (<fmt:dec value="${pirep.landingG}" fmt="#0.0000" />G)</c:if>,
- <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
- lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel<c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
+<c:choose>
+<c:when test="${pirep.landingN1 > 150}">
+ <fmt:int value="${pirep.landingN1}" /> RPM,
+</c:when>
+<c:otherwise>
+ <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>,
+</c:otherwise>
+</c:choose>
+ <fmt:int value="${pirep.landingWeight}" /> lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel
+<c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
  <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if></td>
 </tr>
 <tr>
@@ -154,6 +170,12 @@
  <td class="data bld" colspan="${cspan}"><fmt:int value="${times[4] / 60}" /> minutes <fmt:int value="${times[4] % 60}" /> seconds</td>
 </tr>
 </c:if>
+</c:if>
+<c:if test="${flightInfo.averageFrameRate > 0}">
+<tr>
+ <td class="label">Average Frame Rate</td>
+ <td class="data"><fmt:dec value="${flightInfo.averageFrameRate}" /> frames per second</td>
+</tr>
 </c:if>
 <c:if test="${!empty flightInfo.route}">
 <tr>
