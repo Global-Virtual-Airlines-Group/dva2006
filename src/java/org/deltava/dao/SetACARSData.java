@@ -193,14 +193,31 @@ public class SetACARSData extends DAO {
 	}
 	
 	/**
-	 * Deletes a Flight's SID/STAR data from the datbase.
+	 * Deletes a Flight's SID data from the datbase.
 	 * @param id the Flight ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void clearSIDSTAR(int id) throws DAOException {
+	public void clearSID(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHT_SIDSTAR WHERE (ID=?)");
+			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHT_SIDSTAR WHERE (ID=?) AND (TYPE=?)");
 			_ps.setInt(1, id);
+			_ps.setInt(2, TerminalRoute.SID);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes a Flight's STAR data from the datbase.
+	 * @param id the Flight ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clearSTAR(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHT_SIDSTAR WHERE (ID=?) AND (TYPE=?)");
+			_ps.setInt(1, id);
+			_ps.setInt(2, TerminalRoute.STAR);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
