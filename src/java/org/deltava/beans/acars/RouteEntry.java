@@ -441,53 +441,41 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	/**
 	 * Updates the aircraft's average N1 speed.
 	 * @param nn1 the N1 speed as a percentage
-	 * @throws IllegalArgumentException if nn1 is negative or > 155
 	 * @see RouteEntry#getN1()
 	 */
 	public void setN1(double nn1) {
-		if ((nn1 < 0) || (nn1 > 155.0))
-			throw new IllegalArgumentException("N1 cannot be negative or > 155.0% - " + nn1);
-
-		_n1 = nn1;
+		_n1 = Math.max(0, nn1);
 	}
 
 	/**
 	 * Updates the aircraft's average N2 speed.
 	 * @param nn2 the N2 speed as a percentage
-	 * @throws IllegalArgumentException if nn2 is negative or > 145
 	 * @see RouteEntry#getN2()
 	 */
 	public void setN2(double nn2) {
-		if ((nn2 < 0) || (nn2 > 145.0))
-			throw new IllegalArgumentException("N2 cannot be negative or > 145.0% - " + nn2);
-
-		_n2 = nn2;
+		_n2 = Math.max(0, nn2);
 	}
 
 	/**
 	 * Updates the aircraft's total fuel flow.
 	 * @param flow the flow in pounds per hour
-	 * @throws IllegalArgumentException if flow is negative or &gt; 120000
+	 * @throws IllegalArgumentException if flow is &gt; 120000
 	 * @see RouteEntry#getFuelFlow()
 	 */
 	public void setFuelFlow(int flow) {
-		if ((flow < 0) || (flow > 120000))
-			throw new IllegalArgumentException("Fuel Flow cannot be negative or > 120000 - " + flow);
+		if (flow > 125000)
+			throw new IllegalArgumentException("Fuel Flow cannot be > 125000 - " + flow);
 
-		_fuelFlow = flow;
+		_fuelFlow = Math.max(0, flow);
 	}
 	
 	/**
 	 * Updates the amount of fuel remaining on the aircraft.
 	 * @param fuel the amount of fuel in pounds
-	 * @throws IllegalArgumentException if fuel is engative
 	 * @see RouteEntry#getFuelRemaining()
 	 */
 	public void setFuelRemaining(int fuel) {
-		if (fuel < 0)
-			throw new IllegalArgumentException("Fuel Remaining cannot be negative - " + fuel);
-		
-		_fuelRemaining = fuel;
+		_fuelRemaining = Math.max(0, fuel);
 	}
 
 	/**
@@ -691,11 +679,21 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		buf.append(StringUtils.format(_hdg, "000"));
 		buf.append(" degrees<br />Vertical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
-		buf.append(" feet/min<br />N<sub>1</sub>: ");
-		buf.append(StringUtils.format(_n1, "##0.0"));
-		buf.append("%, N<sub>2</sub>: ");
-		buf.append(StringUtils.format(_n2, "##0.0"));
-		buf.append("%<br />Fuel Flow:");
+		buf.append(" feet/min<br />");
+		if (_n1 > 155) {
+			buf.append(StringUtils.format(_n1, "###0"));
+			buf.append(" RPM, ");
+			buf.append(StringUtils.format(_n2, "##0.0"));
+			buf.append("% throttle");
+		} else {
+			buf.append("N<sub>1</sub>: ");	
+			buf.append(StringUtils.format(_n1, "##0.0"));
+			buf.append("%, N<sub>2</sub>: ");
+			buf.append(StringUtils.format(_n2, "##0.0"));
+			buf.append('%');
+		}
+		
+		buf.append("<br />Fuel Flow:");
 		buf.append(StringUtils.format(_fuelFlow, "#,##0"));
 		buf.append(" lbs/hr<br />");
 

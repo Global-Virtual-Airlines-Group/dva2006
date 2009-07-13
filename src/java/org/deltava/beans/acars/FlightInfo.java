@@ -52,6 +52,8 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	
 	private int _dispatcherID;
 	private int _routeID;
+	
+	private double _avgFrames;
 
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
@@ -349,6 +351,15 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 */
 	public Collection<NavigationDataBean> getPlanData() {
 		return _planData;
+	}
+	
+	/**
+	 * Returns the average simulator frame rate for this flight.
+	 * @return the average frames per second
+	 * @see FlightInfo#setAverageFrameRate(double)
+	 */
+	public double getAverageFrameRate() {
+		return _avgFrames;
 	}
 
 	/**
@@ -672,6 +683,15 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 */
 	public void setPlanData(Collection<NavigationDataBean> entries) {
 		_planData = entries;
+	}
+	
+	/**
+	 * Updates the average simulator frame rate for this flight.
+	 * @param avgRate the average rate in frames per second
+	 * @see FlightInfo#getAverageFrameRate()
+	 */
+	public void setAverageFrameRate(double avgRate) {
+		_avgFrames = Math.max(0, avgRate);
 	}
 
 	/**

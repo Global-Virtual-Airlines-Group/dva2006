@@ -11,6 +11,7 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.navdata.Runway;
+import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.beans.schedule.*;
@@ -457,6 +458,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Get the runway data
 					GetNavRoute navdao = new GetNavRoute(con);
+					SetACARSData awdao = new SetACARSData(con);
 					if (!info.hasRunwayData()) {
 						List<RouteEntry> tdEntries = ardao.getTakeoffLanding(info.getID(), info.getArchived());
 						if (tdEntries.size() > 2) {
@@ -492,10 +494,32 @@ public class PIREPCommand extends AbstractFormCommand {
 							// Write the runway data
 							synchronized (this) {
 								if (info.hasRunwayData()) {
-									SetACARSData awdao = new SetACARSData(con);
 									awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
 								}
 							}
+						}
+					}
+					
+					// Split the route
+					List<String> wps = StringUtils.split(info.getRoute(), " ");
+					wps.remove(info.getAirportD().getICAO());
+					wps.remove(info.getAirportA().getICAO());
+					
+					// Check the SID
+					if (info.getSID() == null) {
+						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.SID, wps.get(0), wps.get(1), info.getRunwayD());
+						if (sid != null) {
+							info.setSID(sid);
+							awdao.writeSIDSTAR(info.getID(), sid);
+						}
+					}
+					
+					// Check the STAR
+					if (info.getSID() == null) {
+						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1), wps.get(wps.size() - 2), info.getRunwayA());
+						if (star != null) {
+							info.setSTAR(star);
+							awdao.writeSIDSTAR(info.getID(), star);
 						}
 					}
 					
@@ -505,10 +529,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					if (info.getRunwayD() != null)
 						route.add(info.getRunwayD());
 					
-					// Build the route
-					List<String> wps = StringUtils.split(info.getRoute(), " ");
-					wps.remove(info.getAirportD().getICAO());
-					wps.remove(info.getAirportA().getICAO());
 					if (info.getSID() != null) {
 						if (!CollectionUtils.isEmpty(wps))
 							route.addAll(info.getSID().getWaypoints(wps.get(0)));

@@ -198,6 +198,41 @@ public class GetNavRoute extends GetNavData {
 	}
 	
 	/**
+	 * Returns the most likely Terminal Route used based on the Airport, Name, last waypoint and runway.
+	 * @param a the Airport
+	 * @param type the TerminalRoute type
+	 * @param name the name
+	 * @param wp the waypoint
+	 * @param rwy the Runway bean, or null
+	 * @return the TerminalRoute, or null if none found
+	 */
+	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, Runway rwy) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
+					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND (NAME=?) AND (WAYPOINT=?) "
+					+ "AND ((RUNWAY=?) OR (RUNWAY=?)) ORDER BY PRF, SEQ");
+			_ps.setString(1, "ALL");
+			_ps.setString(2, a.getICAO());
+			_ps.setInt(3, type);
+			_ps.setString(4, name);
+			_ps.setString(5, wp);
+			_ps.setString(6, "ALL");
+			_ps.setString(7, (rwy == null) ? "ALL" : "RW" + rwy.getName());
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			String code = rs.next() ? rs.getString(1) : null;
+			rs.close();
+			_ps.close();
+			
+			// Fetch the route itself
+			return getRoute(a, type, code);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the available SID runways for a particular Airport.
 	 * @param code the Airport ICAO code
 	 * @return a Collection of Runway codes

@@ -300,13 +300,16 @@ public class GetACARSData extends DAO {
 			}
 
 			// Count the number of position records
-			prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
+			prepareStatement("SELECT COUNT(*), AVG(FRAMERATE) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
 					+ " WHERE (FLIGHT_ID=?)");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			info.setPositionCount(rs.next() ? rs.getInt(1) : 0);
+			if (rs.next()) {
+				info.setPositionCount(rs.getInt(1));
+				info.setAverageFrameRate(rs.getDouble(2));
+			}
 
 			// Clean up and return
 			rs.close();
