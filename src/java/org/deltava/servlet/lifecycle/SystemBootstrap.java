@@ -67,7 +67,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));
-		_jdbcPool.setProperties((Map) SystemData.getObject("jdbc.connectProperties"));
+		_jdbcPool.setProperties((Map<?, ?>) SystemData.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setProperty("url", SystemData.get("jdbc.url"));
 		_jdbcPool.setMaxRequests(SystemData.getInt("jdbc.max_reqs", 0));
@@ -91,7 +91,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
 		try {
-			Class c = Class.forName(authClass);
+			Class<?> c = Class.forName(authClass);
 			log.debug("Loaded class " + authClass);
 			Authenticator auth = (Authenticator) c.newInstance();
 
