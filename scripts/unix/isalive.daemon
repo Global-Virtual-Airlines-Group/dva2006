@@ -212,14 +212,15 @@ do
 		then
 			wget -nv -O /tmp/healthcheck.log -o /tmp/healthcheck.out --timeout=10 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
 			errorLines=`grep "is OK" /tmp/healthcheck.log | wc -l`
-			if [ $errorLines -ne "1" ]
+			transient=`grep "ERROR 502" /tmp/healthcheck.out | wc -l`
+			if (( ($errorLines != 1) && ($transient != 1) ))
 			then
 				logger -p local3.err "Site appears DOWN - healthcheck failed"
 				echo `date +%H:%M:%S`" Site appears DOWN - healthcheck failed" >> /var/cache/isalive.txt
 				cat /tmp/healthcheck.log >> //var/cache/isalive.txt
 				cat /tmp/healthcheck.out >> //var/cache/isalive.txt
 				killall -9 java
-				sleep 1.5
+				sleep 1.25
 				logger -p local3.err "Archiving Tomcat log"
 				echo `date +%H:%M:%S`" Archiving Tomcat log" >> /var/cache/isalive.txt
 				/usr/local/sbin/www/tomcat_log_reset
