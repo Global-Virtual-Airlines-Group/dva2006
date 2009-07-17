@@ -18,11 +18,11 @@
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/flightaware.jar" sourcepath="lib/src/flightaware.zip"/>
 	<classpathentry kind="lib" path="lib/deploy/jaxrpc-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/standard.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.24.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/cos-26Dec2008.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.8-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
