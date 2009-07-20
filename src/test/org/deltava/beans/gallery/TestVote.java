@@ -41,7 +41,9 @@ public class TestVote extends AbstractBeanTestCase {
         try {
             _v = new Vote(null, 0, 1);
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) {  }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testValidation() {

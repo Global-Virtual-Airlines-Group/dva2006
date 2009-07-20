@@ -60,15 +60,6 @@ public class TestDateTime extends TestCase {
 		
 		assertFalse(_dt.equals(null));
 		assertEquals(1, _dt.compareTo(null));
-		
-		try {
-			assertEquals(0, _dt.compareTo(new Object()));
-			fail("Exepected ClassCastException");
-		} catch (ClassCastException cce) {
-			return;
-		} catch (Exception e) {
-			fail("Exepected ClassCastException");
-		}
 	}
 
 	public void testDifferentZones() {

@@ -36,7 +36,9 @@ public class TestAssignment extends AbstractBeanTestCase {
         try {
             assertEquals(0, _a.getLength());
             fail("UnsupportedOperationException expected");
-        } catch (UnsupportedOperationException uoe) { }
+        } catch (UnsupportedOperationException uoe) {
+        	// empty
+        }
     }
     
     public void testFlightConstructor() {

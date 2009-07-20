@@ -152,6 +152,7 @@ public class TestImage extends AbstractBeanTestCase {
             is.close();
             fail("UnsupportedOperationException expected");
         } catch (UnsupportedOperationException upe) {
+        	// empty
         } catch (IOException ie) {
             fail("I/O Error");
         }

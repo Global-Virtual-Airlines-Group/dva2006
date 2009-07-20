@@ -98,6 +98,7 @@ public class TestRankComparator extends TestCase {
          rc2.compare();
          fail("IllegalStateException expected");
       } catch (IllegalStateException ise) {
+    	// empty
       }
    }
 }

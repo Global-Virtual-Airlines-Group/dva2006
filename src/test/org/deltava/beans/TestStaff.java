@@ -42,13 +42,17 @@ public class TestStaff extends AbstractBeanTestCase {
             Staff s2 = new Staff(null, "Smith");
             fail("NullPointerException expected");
             assertNull(s2);
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
         
         try {
             Staff s2 = new Staff("John", null);
             fail("NullPointerException expected");
             assertNull(s2);
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testComparator() {

@@ -42,17 +42,23 @@ public class TestConnectionPool extends TestCase {
         try {
             _pool.setDriver("java.foo.bar");
             fail("ClassNotFoundException expected");
-        } catch (ClassNotFoundException cnfe) { }
+        } catch (ClassNotFoundException cnfe) { 
+        	// empty
+        }
         
         try {
             _pool.connect(-1);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
         
         try {
             _pool.connect(4);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
     }
     
     public void testSemaphore() {
@@ -78,7 +84,9 @@ public class TestConnectionPool extends TestCase {
             Connection c3 = _pool.getConnection();
             fail("ConectionPoolException expected");
             assertNotNull(c3);
-        } catch (ConnectionPoolException cpe) { }
+        } catch (ConnectionPoolException cpe) {
+        	// empty
+        }
         
         _pool.release(c2);
         assertEquals(2, _pool.getSize());

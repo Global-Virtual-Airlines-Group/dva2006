@@ -46,6 +46,7 @@ public class TestIntersection extends AbstractBeanTestCase {
          _int.getName();
          fail("UnsupportedOperationException expected");
       } catch (UnsupportedOperationException uoe) {
+    	// empty
       }
    }
 }
