@@ -8,7 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> System Error</title>
-<content:css name="main" browserSpecific="true" force="true" />
+<content:css name="main" browserSpecific="true" />
 <content:pics />
 </head>
 <content:copyright visible="false" />

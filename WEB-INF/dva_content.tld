@@ -33,12 +33,6 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>force</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
-		<attribute>
 			<name>scheme</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -70,12 +64,6 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
-		<attribute>
-			<name>force</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
 	</tag>
 
 	<tag>
@@ -87,12 +75,6 @@
 			<name>name</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>force</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 

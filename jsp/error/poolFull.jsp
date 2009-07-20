@@ -8,7 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Connection Pool Error</title>
-<content:css name="main" browserSpecific="true" force="true" />
+<content:css name="main" browserSpecific="true" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -19,7 +19,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<div class="updateHdr"><content:airline /> CONNECTION POOL FULL</div>
+<div class="updateHdr"><content:airline /> DATABASE CONNECTION POOL FULL</div>
 <br />
 The database Connection Pool is full. This means that our database server is currently overloaded and 
 needs a few minutes to get settled down. Please wait a few minutes and try again.<br />

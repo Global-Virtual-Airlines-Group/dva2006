@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class InsertCSSTag extends InsertContentTag {
 	private String _ie7suffix;
 
 	/**
-	 * Sets wether to include a brower-specific Cascading Style Sheet.
+	 * Sets whether to include a brower-specific Cascading Style Sheet.
 	 * @param isSpecific TRUE if the CSS is browser-specific, otherwise FALSE
 	 */
 	public void setBrowserSpecific(boolean isSpecific) {
@@ -123,7 +123,7 @@ public class InsertCSSTag extends InsertContentTag {
 			}
 			
 			// Check if the content has already been added
-			if (ContentHelper.containsContent(pageContext, "CSS", buf.toString()) && (!_forceInclude)) {
+			if (ContentHelper.containsContent(pageContext, "CSS", buf.toString())) {
 				release();
 				return EVAL_PAGE;
 			}
