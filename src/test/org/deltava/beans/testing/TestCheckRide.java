@@ -68,7 +68,9 @@ public class TestCheckRide extends AbstractBeanTestCase {
             CheckRide cr2 = new CheckRide(null);
             fail("NullPointerException expected");
             assertNotNull(cr2);
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testComparator() {

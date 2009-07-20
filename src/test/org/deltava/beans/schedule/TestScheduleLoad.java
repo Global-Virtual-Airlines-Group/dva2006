@@ -97,8 +97,8 @@ public class TestScheduleLoad extends TestCase {
    }
    
    public void testValidTZ() {
-      for (Iterator i = _airports.iterator(); i.hasNext(); ) {
-         Airport a = (Airport) i.next();
+      for (Iterator<Airport> i = _airports.iterator(); i.hasNext(); ) {
+         Airport a = i.next();
          if (a.getTZ() == null)
             log.warn(a.getIATA() + " has no timezone");
          
@@ -107,12 +107,12 @@ public class TestScheduleLoad extends TestCase {
    }
    
    public void testValidCodes() throws IOException {
-      List sched = loadScheduleCSV("dva_sched.csv");
-      for (Iterator i = sched.iterator(); i.hasNext(); ) {
-         List entry = (List) i.next();
+	   List<List<String>> sched = loadScheduleCSV("dva_sched.csv");
+      for (Iterator<List<String>> i = sched.iterator(); i.hasNext(); ) {
+         List<String> entry = i.next();
          assertEquals(9, entry.size());
-         String adCode = (String) entry.get(4);
-         String aaCode = (String) entry.get(6);
+         String adCode = entry.get(4);
+         String aaCode = entry.get(6);
          if (!_apMap.containsKey(adCode)) {
             log.warn("Cannot find " + adCode);
          } else if (!_apMap.containsKey(aaCode)) {

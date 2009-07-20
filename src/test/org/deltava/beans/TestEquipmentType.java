@@ -36,7 +36,9 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         try {
             _eq.addRank(null);
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testComboAlias() {
@@ -84,12 +86,16 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         try {
             _eq.setPromotionHours(Ranks.RANK_C, -10);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
         
         try {
             _eq.setPromotionLegs(Ranks.RANK_C, -10);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
     }
     
     public void testRatings() {

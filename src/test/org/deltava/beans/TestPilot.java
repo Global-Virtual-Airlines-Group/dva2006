@@ -82,7 +82,9 @@ public class TestPilot extends AbstractBeanTestCase {
         try {
             _p.addRating(null);
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
         
         // Test removal
         ArrayList<String> allRatings = new ArrayList<String>(_p.getRatings());
@@ -117,7 +119,9 @@ public class TestPilot extends AbstractBeanTestCase {
         try {
             _p.addRole(null);
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
         
         _p.addRole("Admin");
         assertTrue(_p.getRoles().contains("Admin"));
@@ -165,7 +169,9 @@ public class TestPilot extends AbstractBeanTestCase {
     	try {
     		_p.setPilotCode("DVAXXX");
     		fail("IllegalArgumentException expected");
-    	} catch (IllegalArgumentException iae) { }
+    	} catch (IllegalArgumentException iae) { 
+    		// empty
+    	}
     }
     
     public void testFlights() {

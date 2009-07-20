@@ -38,11 +38,15 @@ public class TestSecretKeyEncryptors extends TestCase {
         try {
             _crypt = new DESEncryptor("2short");
             fail("CryptoException expected");
-        } catch (CryptoException ce) { }
+        } catch (CryptoException ce) {
+        	// empty
+        }
         
         try {
             _crypt = new BlowfishEncryptor("2short");
             fail("CryptoException expected");
-        } catch (CryptoException ce) { }
+        } catch (CryptoException ce) {
+        	// empty
+        }
     }
 }

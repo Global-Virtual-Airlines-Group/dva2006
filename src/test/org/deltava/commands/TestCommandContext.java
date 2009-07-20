@@ -67,7 +67,9 @@ public class TestCommandContext extends TestCase {
     		int id = _ctxt.getID();
     		fail("CommandException expected");
     		assertEquals(0, id);
-    	} catch (CommandException ce) { }
+    	} catch (CommandException ce) {
+    		// empty
+    	}
     	
     	_rootReq.addParameter("op", "OPERATION");
     	assertEquals("OPERATION", _ctxt.getCmdParameter(Command.OPERATION, null));
@@ -83,7 +85,9 @@ public class TestCommandContext extends TestCase {
     		Connection c = _ctxt.getConnection();
     		fail("ConnectionPoolException expected");
     		assertNull(c);
-    	} catch (ConnectionPoolException cpe) { }
+    	} catch (ConnectionPoolException cpe) {
+    		// empty
+    	}
     	
     	// Make sure we can handle an uninitialized connection pool
     	_ctxt.release();
@@ -97,7 +101,9 @@ public class TestCommandContext extends TestCase {
     		Connection c = _ctxt.getConnection();
     		fail("ConnectionPoolException expected");
     		assertNull(c);
-    	} catch (ConnectionPoolException cpe) { }
+    	} catch (ConnectionPoolException cpe) { 
+    		// empty
+    	}
     	
     	// Make sure we can handle an unconnected connection pool
     	_ctxt.release();

@@ -119,6 +119,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 			assertEquals(0, _e.getDistance());
 			fail("IllegalStateException expected");
 		} catch (IllegalStateException ise) {
+			// empty
 		}
 
 		_e.setAirportA(_jfk);
@@ -127,6 +128,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 			assertEquals(0, _e.getDistance());
 			fail("IllegalStateException expected");
 		} catch (IllegalStateException ise) {
+			// empty
 		}
 
 		_e.setAirportD(_atl);
@@ -140,6 +142,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 			assertEquals(0, _e.getLength());
 			fail("IllegalStateException expected");
 		} catch (IllegalStateException ise) {
+			// empty
 		}
 
 		_e.setTimeA(df.parse("12:05"));
@@ -149,6 +152,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 			assertEquals(0, _e.getLength());
 			fail("IllegalStateException expected");
 		} catch (IllegalStateException ise) {
+			// empty
 		}
 
 		_e.setTimeD(df.parse("10:15"));

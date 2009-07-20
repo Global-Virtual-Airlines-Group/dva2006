@@ -87,7 +87,9 @@ public class TestFlightReport extends AbstractBeanTestCase {
         try {
             _fr.getDistance();
             fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
         
         Airport jfk = new Airport("JFK", "KJFK", "New York-Kennedy NY");
         jfk.setLocation(40.6397, -73.7789);
@@ -96,7 +98,9 @@ public class TestFlightReport extends AbstractBeanTestCase {
         try {
             _fr.getDistance();
             fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
         
         Airport atl = new Airport("ATL", "KATL", "Atlanta GA");
         atl.setLocation(33.6404, -84.4269);
@@ -116,12 +120,16 @@ public class TestFlightReport extends AbstractBeanTestCase {
         try {
             _fr.setDatabaseID(null, 123);
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
 
         try {
             _fr.setDatabaseID("EVENT", -1);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
     }
     
     public void testComparison() {

@@ -64,17 +64,23 @@ public class TestInstaller extends AbstractBeanTestCase {
         try {
             _i.setVersion(-1, 1, 2);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
         
         try {
             _i.setVersion(1, -1, 2);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
         
         try {
             _i.setVersion(1, 1, -2);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) { 
+        	// empty
+        }
     }
     
     public void testComboAlias() {

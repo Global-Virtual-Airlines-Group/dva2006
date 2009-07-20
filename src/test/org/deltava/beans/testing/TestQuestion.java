@@ -60,6 +60,8 @@ public class TestQuestion extends AbstractBeanTestCase {
             Question q2 = new Question(s);
             fail("NullPointerException expected");
             assertNotNull(q2);
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
 }
