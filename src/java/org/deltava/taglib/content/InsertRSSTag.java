@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP Tag to insert a link to an RSS data feed.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -87,21 +87,16 @@ public class InsertRSSTag extends InsertContentTag {
 	public int doEndTag() throws JspException {
 
 		// Check if the content has already been added
-		if (ContentHelper.containsContent(pageContext, "RSS", _resourceName) && (!_forceInclude)) {
+		if (ContentHelper.containsContent(pageContext, "RSS", _resourceName)) {
 			release();
 			return EVAL_PAGE;
 		}
 
 		// Build the URL
 		URL url = null;
-		try {
-			url = new URL(_protocol, _host, _path);
-		} catch (MalformedURLException mue) {
-			throw new JspException(mue);
-		}
-
 		JspWriter out = pageContext.getOut();
 		try {
+			url = new URL(_protocol, _host, _path);
 			out.print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"");
 			out.print(_title);
 			out.print("\" href=\"");
@@ -109,11 +104,12 @@ public class InsertRSSTag extends InsertContentTag {
 			out.print("\" />");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
 		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "RSS", url.toString());
-		release();
 		return EVAL_PAGE;
 	}
 }

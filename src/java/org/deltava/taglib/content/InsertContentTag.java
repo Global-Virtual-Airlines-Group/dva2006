@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.tagext.TagSupport;
@@ -6,14 +6,12 @@ import javax.servlet.jsp.tagext.TagSupport;
 /**
  * An abstract class for content insertion JSP tags.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public abstract class InsertContentTag extends TagSupport {
 	
-    protected boolean _forceInclude;
-    
     /**
      * The name of the resource to display, <i>without extension</i>.
      */
@@ -25,21 +23,5 @@ public abstract class InsertContentTag extends TagSupport {
      */
     public void setName(String name) {
         _resourceName = name;
-    }
-    
-    /**
-     * Toggles if this content shall been included, even if already included previously in the request.
-     * @param doForce TRUE if the content should be included
-     */
-    public void setForce(boolean doForce) {
-        _forceInclude = doForce;
-    }
-    
-    /**
-     * Releases the tag's state variables.
-     */
-    public void release() {
-       super.release();
-       _forceInclude = false;
     }
 }
