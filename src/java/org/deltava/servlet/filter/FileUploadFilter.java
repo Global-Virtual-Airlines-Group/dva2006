@@ -19,9 +19,9 @@ import org.deltava.beans.FileUpload;
 import org.deltava.util.StringUtils;
 
 /**
- * A servlet filter to support saving multi-part form upload data into the servlet request, and
+ * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0 
  */
 
@@ -105,7 +105,7 @@ public class FileUploadFilter implements Filter {
 			}
 
 			// Add requests from the command line and convert to the proper character set
-			Enumeration pNames = hreq.getParameterNames();
+			Enumeration<?> pNames = hreq.getParameterNames();
 			while (pNames.hasMoreElements()) {
 				String pName = (String) pNames.nextElement();
 				String[] rawValues = hreq.getParameterValues(pName);
@@ -116,7 +116,6 @@ public class FileUploadFilter implements Filter {
 			}
 
 			// Filter with the new request
-			
 			fc.doFilter(reqWrap, rsp);
 		} else
 			fc.doFilter(req, rsp);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -34,19 +34,17 @@ public class GetQuestionnaire extends DAO {
 	 */
 	public Examination get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT) FROM APPEXAMS E, "
-					+ "APPQUESTIONS Q WHERE (E.ID=Q.EXAM_ID) AND (E.ID=?) GROUP BY E.ID");
+			prepareStatementWithoutLimits("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT) FROM APPEXAMS E, "
+					+ "APPQUESTIONS Q WHERE (E.ID=Q.EXAM_ID) AND (E.ID=?) GROUP BY E.ID LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Get the examination
-			List results = execute();
-			setQueryMax(0);
+			List<Examination> results = execute();
 			if (results.isEmpty())
 				return null;
 
 			// Get the exam bean
-			Examination e = (Examination) results.get(0);
+			Examination e = results.get(0);
 
 			// Load the questions for this examination
 			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM "
@@ -117,14 +115,12 @@ public class GetQuestionnaire extends DAO {
 
 		int examID = 0;
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT ID FROM APPEXAMS WHERE (APP_ID=?)");
+			prepareStatementWithoutLimits("SELECT ID FROM APPEXAMS WHERE (APP_ID=?) LIMIT 1");
 			_ps.setInt(1, applicantID);
 
 			// Get the ID
 			ResultSet rs = _ps.executeQuery();
-			examID = (rs.next()) ? rs.getInt(1) : 0;
-			setQueryMax(0);
+			examID = rs.next() ? rs.getInt(1) : 0;
 
 			// Clean up
 			rs.close();

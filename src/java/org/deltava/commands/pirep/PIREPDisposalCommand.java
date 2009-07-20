@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -157,7 +157,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			fr.setStatus(opCode);
 			
 			// If we're approving and we have hit a century club milestone, log it
-			Map ccLevels = (Map) SystemData.getObject("centuryClubLevels");
+			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
 			if ((opCode == FlightReport.OK) && (ccLevels.containsKey("CC" + pirepCount))) {
 			   StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 			   upd.setAuthorID(ctx.getUser().getID());

@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to centralize weather information. 
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.2
  */
 
@@ -35,9 +35,9 @@ public class WeatherCenterCommand extends AbstractCommand {
 		super.init(id, cmdName);
 		
 		// Get the image types
-		Map mapTypes = (Map) SystemData.getObject("weather.jetstream.types");
-		for (Iterator i = mapTypes.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry entry = (Map.Entry) i.next();
+		Map<?, ?> mapTypes = (Map<?, ?>) SystemData.getObject("weather.jetstream.types");
+		for (Iterator<?> i = mapTypes.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
 			_mapTypes.add(ComboUtils.fromString(entry.getValue().toString(), entry.getKey().toString()));
 		}
 	}

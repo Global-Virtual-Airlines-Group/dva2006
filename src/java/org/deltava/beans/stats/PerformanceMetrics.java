@@ -1,14 +1,14 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 /**
  * A bean to track performance metrics data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class PerformanceMetrics implements java.io.Serializable, Comparable {
+public class PerformanceMetrics implements java.io.Serializable, Comparable<PerformanceMetrics> {
 
 	private String _name;
 	private double _avg;
@@ -104,10 +104,12 @@ public class PerformanceMetrics implements java.io.Serializable, Comparable {
 
 	/**
 	 * Compares two entries by comparing their category names.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o) {
-		PerformanceMetrics m2 = (PerformanceMetrics) o;
+	public int compareTo(PerformanceMetrics m2) {
 		return _name.compareTo(m2._name);
+	}
+	
+	public int hashCode() {
+		return _name.hashCode();
 	}
 }

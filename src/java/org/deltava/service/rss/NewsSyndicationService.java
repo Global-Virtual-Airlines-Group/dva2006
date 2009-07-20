@@ -36,7 +36,7 @@ public class NewsSyndicationService extends WebService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		List entries = null;
+		List<?> entries = null;
 		try {
 			GetNews dao = new GetNews(ctx.getConnection());
 			dao.setQueryMax(getCount(ctx, 10));
@@ -68,7 +68,7 @@ public class NewsSyndicationService extends WebService {
 		re.addContent(ch);
 		
 		// Convert the entries to RSS items
-		for (Iterator i = entries.iterator(); i.hasNext(); ) {
+		for (Iterator<?> i = entries.iterator(); i.hasNext(); ) {
 			News n = (News) i.next();
 			try {
 				URL url = new URL("http", ctx.getRequest().getServerName(), "/news.do?id=" + StringUtils.formatHex(n.getID()));
@@ -81,7 +81,9 @@ public class NewsSyndicationService extends WebService {
 			
 				// Add the item element
 				ch.addContent(item);
-			} catch (MalformedURLException mue) { }
+			} catch (MalformedURLException mue) {
+				// empty
+			}
 		}
 		
 		// Dump the XML to the output stream

@@ -70,10 +70,10 @@ public class UserListCommand extends AbstractCommand {
     			UserSession usr = i.next();
     			GeoLocation loc = pLocs.get(new Integer(usr.getPerson().getID()));
     			if (!isHR) {
-    				if (loc == null)
+    				if ((loc == null) && (usr.getAddressInfo() != null)) {
     					loc = new GeoPosition(usr.getAddressInfo());
-    				
-    				markers.add(new PilotLocation(usr.getPerson(), loc));
+    					markers.add(new PilotLocation(usr.getPerson(), loc));
+    				}
     			} else if (usr.getAddressInfo() != null)
     				markers.add(new PilotLocation(usr.getPerson(), usr.getAddressInfo()));
     			else

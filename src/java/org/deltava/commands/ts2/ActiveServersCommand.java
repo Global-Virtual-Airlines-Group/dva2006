@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display active TeamSpeak 2 servers.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -49,9 +49,9 @@ public class ActiveServersCommand extends AbstractCommand {
 		
 		// Check our access
 		Collection<Server> servers = new ArrayList<Server>();
-		for (Iterator i = srvs.iterator(); i.hasNext(); ) {
-			Server srv = (Server) i.next();
-			Client usr = clients.get(new Integer(srv.getID()));
+		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
+			Server srv = i.next();
+			Client usr = clients.get(Integer.valueOf(srv.getID()));
 			
 			// Make sure we can access the server
 			if ((usr != null) && (RoleUtils.hasAccess(ctx.getRoles(), srv.getRoles().get(Server.ACCESS))))

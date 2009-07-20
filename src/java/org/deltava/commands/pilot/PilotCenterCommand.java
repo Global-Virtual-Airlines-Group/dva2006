@@ -248,7 +248,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		}
 
 		// Figure out the image to display
-		Map acImgs = (Map) SystemData.getObject("pcImages");
+		Map<?, ?> acImgs = (Map<?, ?>) SystemData.getObject("pcImages");
 		if (acImgs != null)
 			ctx.setAttribute("acImage", acImgs.get(p.getEquipmentType().toLowerCase()), REQUEST);
 

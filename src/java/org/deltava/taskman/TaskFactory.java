@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class TaskFactory {
 
    // singleton
    private TaskFactory() {
+	   super();
    }
 
    public static Collection<Task> load(String configXML) throws IOException {
@@ -56,14 +57,14 @@ public class TaskFactory {
 
       // Parse through the tasks
       Collection<Task> results = new HashSet<Task>();
-      for (Iterator i = root.getChildren("task").iterator(); i.hasNext(); ) {
+      for (Iterator<?> i = root.getChildren("task").iterator(); i.hasNext(); ) {
          Element e = (Element) i.next();
          String id = e.getAttributeValue("id");
          String className = e.getChildTextTrim("class");
          
          // Instantiate the task and set the interval
          try {
-            Class c = Class.forName(className);
+            Class<?> c = Class.forName(className);
             Task t = (Task) c.newInstance();
             log.debug("Validated task " + c.getName());
             t.setID(id);
@@ -73,7 +74,7 @@ public class TaskFactory {
             // Load the time
             Element te = e.getChild("time");
             if (te != null) {
-            	for (Iterator ti = te.getChildren().iterator(); ti.hasNext(); ) {
+            	for (Iterator<?> ti = te.getChildren().iterator(); ti.hasNext(); ) {
             		Element tte = (Element) ti.next();
             		t.setRunTimes(tte.getName(), tte.getTextNormalize());
             	}

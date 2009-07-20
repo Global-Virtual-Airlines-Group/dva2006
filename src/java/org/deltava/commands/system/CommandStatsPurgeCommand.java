@@ -1,15 +1,15 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
-
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to purge the Command log.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -23,20 +23,10 @@ public class CommandStatsPurgeCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the number of days to purge
-      int days = 100;
+      int days = StringUtils.parse(ctx.getParameter("purgeDays"), 100);
       try {
-         days = Integer.parseInt(ctx.getParameter("purgeDays"));
-      } catch (NumberFormatException nfe) { }
-
-      try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and purge the log
-         SetSystemData wdao = new SetSystemData(con);
-         int rowsPurged = wdao.purge("COMMANDS", "CMDDATE", days);
-         
-         // Log message
-         ctx.setMessage(String.valueOf(rowsPurged) + " command entries purged");
+         SetSystemData wdao = new SetSystemData(ctx.getConnection());
+         wdao.purge("COMMANDS", "CMDDATE", days);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

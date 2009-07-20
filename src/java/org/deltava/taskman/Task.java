@@ -49,7 +49,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
      * @param name the task name 
      * @param loggerClass the logger Class for Log4J
      */
-    protected Task(String name, Class loggerClass) {
+    protected Task(String name, Class<?> loggerClass) {
         super();
         _name = name.trim();
         log = Logger.getLogger(loggerClass);

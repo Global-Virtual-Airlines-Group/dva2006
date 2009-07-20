@@ -46,7 +46,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Select Aircraft</td>
- <td><el:combo name="Aircraft" size="1" idx="1" options="${fleetGallery}" onChange="void selectAircraft(this)" /></td>
+ <td><el:combo name="Aircraft" size="1" idx="1" options="${fleetGallery}" firstEntry="< SELECT AIRCRAFT >" onChange="void selectAircraft(this)" /></td>
 </tr>
 <tr>
  <td class="label">Description</td>

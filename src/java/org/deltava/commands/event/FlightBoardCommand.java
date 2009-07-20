@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -56,11 +56,11 @@ public class FlightBoardCommand extends AbstractCommand {
 			info.setPilotIDs(idMap);
 
 			// Get airports to load from DAFIF data and highlight our airline's code
-			List codes = (List) SystemData.getObject("online.highlightCodes");
+			List<?> codes = (List<?>) SystemData.getObject("online.highlightCodes");
 			Set<String> airportIDs = new HashSet<String>();
 			for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
 				Pilot usr = i.next();
-				for (Iterator ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted());) {
+				for (Iterator<?> ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted());) {
 					String code = (String) ci.next();
 					if (usr.getCallsign().startsWith(code))
 						usr.setHighlighted(true);

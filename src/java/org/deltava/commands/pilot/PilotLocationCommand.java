@@ -86,7 +86,7 @@ public class PilotLocationCommand extends AbstractCommand {
 				// Update the pilot location
 				GeocodeResult geoCode = null;
 				if ((loc.getLatitude() != 0.0) && (loc.getLongitude() != 0.0)) {
-					Map apiKeys = (Map) SystemData.getObject("security.key.googleMaps");
+					Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
 					if ((apiKeys != null) && (!apiKeys.isEmpty())) {
 						String hostName = ctx.getRequest().getServerName().toLowerCase();
 						String apiKey = (String) apiKeys.get(hostName);

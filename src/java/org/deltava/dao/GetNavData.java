@@ -187,7 +187,7 @@ public class GetNavData extends DAO implements CachingDAO {
 			_ps.setString(3, rwyCode.toUpperCase());
 
 			// Execute the query
-			List results = execute();
+			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

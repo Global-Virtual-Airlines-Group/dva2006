@@ -109,7 +109,7 @@ public class ViewContext {
      * @return a Collection of beans
      * @see ViewContext#setResults(Collection)
      */
-    public Collection getResults() {
+    public Collection<?> getResults() {
         return _results;
     }
     

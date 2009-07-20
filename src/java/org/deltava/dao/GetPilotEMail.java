@@ -119,8 +119,8 @@ public class GetPilotEMail extends DAO {
 
       // Build SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
-      for (Iterator i = results.keySet().iterator(); i.hasNext(); ) {
-         String addr = (String) i.next();
+      for (Iterator<String> i = results.keySet().iterator(); i.hasNext(); ) {
+         String addr = i.next();
          sqlBuf.append("\'");
          sqlBuf.append(addr);
          sqlBuf.append(i.hasNext() ? "\'," : "\'))");

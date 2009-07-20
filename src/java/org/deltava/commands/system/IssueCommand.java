@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to manipulate issues.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -185,8 +185,8 @@ public class IssueCommand extends AbstractFormCommand {
 			
 			// Get developers
 			Collection<Pilot> devs = new HashSet<Pilot>();
-			Collection apps = ((Map) SystemData.getObject("apps")).values();
-			for (Iterator it = apps.iterator(); it.hasNext(); ) {
+			Collection<?> apps = ((Map<?, ?>) SystemData.getObject("apps")).values();
+			for (Iterator<?> it = apps.iterator(); it.hasNext(); ) {
 			   AirlineInformation aInfo = (AirlineInformation) it.next();
 			   devs.addAll(pdao.getByRole("Developer", aInfo.getDB()));
 			}

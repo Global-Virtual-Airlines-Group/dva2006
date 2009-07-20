@@ -43,19 +43,18 @@ public class ConnectionInfoDeleteCommand extends AbstractCommand {
          ctx.startTX();
          
          // Delete the connection entries
-         for (Iterator i = conIDs.iterator(); i.hasNext(); ) {
-            long id = Long.parseLong((String) i.next());
+         for (Iterator<String> i = conIDs.iterator(); i.hasNext(); ) {
+            long id = Long.parseLong(i.next());
             
             // Get the Connection entry - check for a Flight Information Report
             ConnectionEntry c = dao.getConnection(id);
-            if (c == null) {
+            if (c == null)
                skippedIDs.add(StringUtils.formatHex(id));
-            } else if (c.getFlightInfoCount() > 0) {
+            else if (c.getFlightInfoCount() > 0)
                skippedIDs.add(StringUtils.formatHex(id));
-            } else {
+            else
                wdao.deleteConnection(id);
                deletedIDs.add(StringUtils.formatHex(id));
-            }
          }
          
          // Commit the transaction

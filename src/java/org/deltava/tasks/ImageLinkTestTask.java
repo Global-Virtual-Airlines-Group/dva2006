@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -25,13 +25,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
 public class ImageLinkTestTask extends Task {
 
-	protected Collection _mimeTypes;
+	protected Collection<?> _mimeTypes;
 	
 	private class ImageLinkWorker extends Thread {
 		private Logger tLog;
@@ -107,7 +107,7 @@ public class ImageLinkTestTask extends Task {
 	 */
 	public ImageLinkTestTask() {
 		super("Image URL Test", ImageLinkTestTask.class);
-		_mimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
+		_mimeTypes = (Collection<?>) SystemData.getObject("cooler.imgurls.mime_types");
 	}
 
 	/**

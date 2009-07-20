@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -68,20 +68,19 @@ public class CoolerSyndicationService extends WebService {
 
 			// Filter out threads based on our access
 			CoolerThreadAccessControl tac = new CoolerThreadAccessControl(ctx);
-			for (Iterator i = threads.iterator(); i.hasNext();) {
-				MessageThread thread = (MessageThread) i.next();
+			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+				MessageThread thread = i.next();
 
 				// Get this thread's channel and see if we can read it
 				Channel c = cdao.get(thread.getChannel());
 				tac.updateContext(thread, c);
 				try {
 					tac.validate();
+					if (!tac.getCanRead())
+						i.remove();
 				} catch (Exception e) {
-				}
-
-				// If we cannot read the thread, remove it from the results
-				if (!tac.getCanRead())
 					i.remove();
+				}
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
@@ -110,8 +109,8 @@ public class CoolerSyndicationService extends WebService {
 		re.addContent(ch);
 
 		// Convert the threads into RSS items
-		for (Iterator i = threads.iterator(); i.hasNext(); ) {
-			MessageThread mt = (MessageThread) i.next();
+		for (Iterator<MessageThread> i = threads.iterator(); i.hasNext(); ) {
+			MessageThread mt = i.next();
 			try {
 				URL url = new URL("http", ctx.getRequest().getServerName(), "/thread.do?id=" + StringUtils.formatHex(mt.getID()));
 			
@@ -123,7 +122,9 @@ public class CoolerSyndicationService extends WebService {
 			
 				// Add the item element
 				ch.addContent(item);
-			} catch (MalformedURLException mue) { }
+			} catch (MalformedURLException mue) {
+				// empty
+			}
 		}
 
 		// Dump the XML to the output stream

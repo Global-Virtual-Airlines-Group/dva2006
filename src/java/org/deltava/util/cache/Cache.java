@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.*;
 /**
  * An an abstract class to store common cache operations.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -97,7 +97,7 @@ public abstract class Cache<T extends Cacheable> {
 	protected void checkOverflow() {
 		if ((_cache.size() > _maxSize) && _ovLock.tryAcquire()) {
 			try {
-				TreeSet<Comparable> entries = new TreeSet<Comparable>(_cache.values());
+				TreeSet<CacheEntry<T>> entries = new TreeSet<CacheEntry<T>>(_cache.values());
 				_cache.values().remove(entries.first());
 			} finally {
 				_ovLock.release();

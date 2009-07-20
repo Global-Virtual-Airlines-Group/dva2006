@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class XMLRenderer {
 
 		// Loop through the attributes
 		for (Iterator<Map.Entry<String, String>> i = _attrs.entrySet().iterator(); i.hasNext();) {
-			Map.Entry e = i.next();
+			Map.Entry<String, String> e = i.next();
 
 			// Append the attribute name and value
 			buf.append(e.getKey());

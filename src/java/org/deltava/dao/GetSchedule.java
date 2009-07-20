@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -109,12 +109,6 @@ public class GetSchedule extends DAO {
 			params.add("0");
 		}
 		
-		// Check whether to include historic flights
-		if (!criteria.getIncludeHistoric()) {
-			conditions.add("S.HISTORIC=?");
-			params.add("0");
-		}
-
 		// Build the query string
 		StringBuilder buf = new StringBuilder("SELECT S.*");
 		if (criteria.getCheckDispatch())

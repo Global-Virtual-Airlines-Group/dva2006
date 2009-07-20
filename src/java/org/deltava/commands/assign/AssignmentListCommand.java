@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to list Flight Assignments.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -55,18 +55,17 @@ public class AssignmentListCommand extends AbstractViewCommand {
          dao.setQueryStart(vc.getStart());
          
          // Figure out what call to make
-         if ((status != null) && (eqType == null)) {
+         if ((status != null) && (eqType == null))
             vc.setResults(dao.getByStatus(statusCode));
-         } else if (eqType != null) {
+         else if (eqType != null)
             vc.setResults(dao.getByEquipmentType(eqType, statusCode));
-         } else {
+         else
             vc.setResults(dao.getByStatus(AssignmentInfo.AVAILABLE));
-         }
          
          // Build a Collection of access controllers and Pilot IDs
-         Set<Integer> pilotIDs = new HashSet<Integer>();
+         Collection<Integer> pilotIDs = new HashSet<Integer>();
          List<AssignmentAccessControl> accessList = new ArrayList<AssignmentAccessControl>();
-         for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
+         for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
          	AssignmentInfo ai = (AssignmentInfo) i.next();
          	if (ai.getPilotID() != 0)
          		pilotIDs.add(new Integer(ai.getPilotID()));

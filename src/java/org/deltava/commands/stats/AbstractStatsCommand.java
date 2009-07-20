@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import org.deltava.util.ComboUtils;
 /**
  * An Abstract Command used to store options for Flight Report statistics.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.1
  */
 
@@ -25,7 +25,7 @@ public abstract class AbstractStatsCommand extends AbstractViewCommand {
 	/**
 	 * Sort option labels.
 	 */
-	public static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Legs", "Miles Flown", "Flight Hours", 
+	public static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Legs", "Miles Flown", "Flight Hours", 
 			"Avg. Hours", "Avg. Miles", "Flight Date", "ACARS Legs", "Online Legs", "Historic Legs", "Distinct Pilots"}, SORT_CODE);
 
 	/**
@@ -37,7 +37,7 @@ public abstract class AbstractStatsCommand extends AbstractViewCommand {
 	/**
 	 * Group option labels.
 	 */
-	public static final List GROUP_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Flight Date", "Equipment Type", 
+	public static final List<?> GROUP_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Flight Date", "Equipment Type", 
 			"Airline", "Departed from", "Arrived at", "Month", "Week" }, GROUP_CODE);
 	
 	/**

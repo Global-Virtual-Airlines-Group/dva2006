@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * An authenticator to validate users against an LDAP server.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -159,7 +159,7 @@ public class LDAPAuthenticator implements Authenticator {
 			// Do the LDAP search
 			SearchControls ctrls = new SearchControls();
 			ctrls.setSearchScope(SearchControls.OBJECT_SCOPE);
-			NamingEnumeration ne = ctxt.search(usr.getDN(), "(objectClass=person)", ctrls);
+			NamingEnumeration<?> ne = ctxt.search(usr.getDN(), "(objectClass=person)", ctrls);
 			boolean isOK = ne.hasMoreElements();
 			
 			// Close the context

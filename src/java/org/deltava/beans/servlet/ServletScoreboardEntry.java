@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.Date;
@@ -8,11 +8,11 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store servlet scoreboard entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class ServletScoreboardEntry implements java.io.Serializable, Comparable, ViewEntry {
+public class ServletScoreboardEntry implements java.io.Serializable, Comparable<ServletScoreboardEntry>, ViewEntry {
 
 	private String _threadName;
 	private String _remoteAddr;
@@ -158,10 +158,8 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable,
 	
 	/**
 	 * Compares two scorebard entries by comparing their thread names.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o) {
-		ServletScoreboardEntry sse2 = (ServletScoreboardEntry) o;
+	public int compareTo(ServletScoreboardEntry sse2) {
 		return _threadName.compareTo(sse2._threadName);
 	}
 	

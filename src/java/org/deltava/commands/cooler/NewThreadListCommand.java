@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Water Cooler threads updated since a certain date/time.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -36,9 +36,9 @@ public class NewThreadListCommand extends AbstractViewCommand {
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Get the thread view map
-		Map threadViews = (Map) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
+		Map<?, ?> threadViews = (Map<?, ?>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
 		if (threadViews == null)
-			threadViews = new HashMap();
+			threadViews = new HashMap<Object, Object>();
 
 		// Get/set start/count parameters
 		ViewContext vc = initView(ctx);

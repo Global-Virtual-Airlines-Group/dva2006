@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.net.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an Online Event RSS feed.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class EventSyndicationService extends WebService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		List entries = null;
+		List<Event> entries = null;
 		try {
 			GetEvent dao = new GetEvent(ctx.getConnection());
 			dao.setQueryMax(getCount(ctx, 5));
@@ -68,8 +68,8 @@ public class EventSyndicationService extends WebService {
 		re.addContent(ch);
 		
 		// Convert the entries to RSS items
-		for (Iterator i = entries.iterator(); i.hasNext(); ) {
-			Event e = (Event) i.next();
+		for (Iterator<Event> i = entries.iterator(); i.hasNext(); ) {
+			Event e = i.next();
 			try {
 				URL url = new URL("http", ctx.getRequest().getServerName(), "/event.do?id=" + StringUtils.formatHex(e.getID()));
 				
@@ -81,7 +81,9 @@ public class EventSyndicationService extends WebService {
 
 				// Add the item element
 				ch.addContent(item);
-			} catch (MalformedURLException mue) { }
+			} catch (MalformedURLException mue) {
+				// empty
+			}
 		}
 		
 		// Dump the XML to the output stream

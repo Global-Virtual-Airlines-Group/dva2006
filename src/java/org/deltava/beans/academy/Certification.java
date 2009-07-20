@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -8,11 +8,11 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class Certification implements java.io.Serializable, ViewEntry, Comparable {
+public class Certification implements java.io.Serializable, ViewEntry, Comparable<Certification> {
 	
 	public static final int REQ_ANY = 0;
 	public static final int REQ_ANYPRIOR = 1;
@@ -213,14 +213,10 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	/**
 	 * Updates the stage number.
 	 * @param stage the stage
-	 * @throws IllegalArgumentException if stage is negative
 	 * @see Certification#getStage()
 	 */
 	public void setStage(int stage) {
-		if (stage < 0)
-			throw new IllegalArgumentException("Invalid Stage - " + stage);
-		
-		_stage = stage;
+		_stage = Math.max(0, stage);
 	}
 	
 	/**
@@ -277,11 +273,9 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 
 	/**
 	 * Compares two certifications by comparing their stage and name.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o) {
-		Certification c2 = (Certification) o;
-		int tmpResult = new Integer(_stage).compareTo(new Integer(c2._stage));
+	public int compareTo(Certification c2) {
+		int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(c2._stage));
 		return (tmpResult == 0) ? _name.compareTo(c2._name) : tmpResult;
 	}
 	

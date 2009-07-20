@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.assign.*;
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -61,8 +61,8 @@ public class SetAssignment extends DAO {
          writeLegs(a.getID(), a.getAssignments(), db);
 
          // Update the Flight Reports with the new database ID
-         for (Iterator i = a.getFlights().iterator(); i.hasNext();) {
-            FlightReport fr = (FlightReport) i.next();
+         for (Iterator<FlightReport> i = a.getFlights().iterator(); i.hasNext();) {
+            FlightReport fr = i.next();
             fr.setDatabaseID(FlightReport.DBID_ASSIGN, a.getID());
          }
 
@@ -101,7 +101,7 @@ public class SetAssignment extends DAO {
    /**
     * Private method to write the individual legs of a Flight Assignment to the database.
     */
-   private void writeLegs(int assignID, Collection legs, String db) throws SQLException {
+   private void writeLegs(int assignID, Collection<AssignmentLeg> legs, String db) throws SQLException {
 
       // Prepare the SQL statement
       StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
@@ -111,8 +111,8 @@ public class SetAssignment extends DAO {
       _ps.setInt(1, assignID);
 
       // Write the legs
-      for (Iterator i = legs.iterator(); i.hasNext();) {
-         AssignmentLeg leg = (AssignmentLeg) i.next();
+      for (Iterator<AssignmentLeg> i = legs.iterator(); i.hasNext();) {
+         AssignmentLeg leg = i.next();
          _ps.setString(2, leg.getAirline().getCode());
          _ps.setInt(3, leg.getFlightNumber());
          _ps.setInt(4, leg.getLeg());

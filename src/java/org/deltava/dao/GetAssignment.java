@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -220,26 +220,21 @@ public class GetAssignment extends DAO {
 	 * Helper method to process the assignment legs result set.
 	 */
 	private void loadLegs(List<AssignmentInfo> assignments) throws SQLException {
-
-		// Check for empty list
 		if (assignments.isEmpty())
 			return;
 
 		// Execute the Query
-		Map infoMap = CollectionUtils.createMap(assignments, "ID");
-
+		Map<Integer, AssignmentInfo> infoMap = CollectionUtils.createMap(assignments, "ID");
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			int assignID = rs.getInt(1);
-			AssignmentInfo info = (AssignmentInfo) infoMap.get(new Integer(assignID));
+			AssignmentInfo info = infoMap.get(Integer.valueOf(assignID));
 			if (info != null) {
 				AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(rs.getString(2)), rs.getInt(3), rs.getInt(4));
 				leg.setID(assignID);
 				leg.setEquipmentType(info.getEquipmentType());
 				leg.setAirportD(SystemData.getAirport(rs.getString(5)));
 				leg.setAirportA(SystemData.getAirport(rs.getString(6)));
-
-				// Add to assignment
 				info.addAssignment(leg);
 			}
 		}

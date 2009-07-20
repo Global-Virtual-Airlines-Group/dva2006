@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
 import org.deltava.dao.ipc.*;
@@ -24,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS flight plan data in Google Earth.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -45,7 +44,7 @@ public class EarthMapPlanService extends GoogleEarthService {
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSData dao = new GetACARSData(con);
-			GetNavData navdao = new GetNavData(con);
+			GetNavRoute navdao = new GetNavRoute(con);
 
 			// Loop through the flights
 			GetACARSPool acdao = new GetACARSPool();
@@ -54,32 +53,20 @@ public class EarthMapPlanService extends GoogleEarthService {
 				FlightInfo info = dao.getInfo(flightID);
 				if (info != null) {
 					Collection<NavigationDataBean> route = new LinkedHashSet<NavigationDataBean>();
+					if (info.getRunwayD() != null)
+						route.add(info.getRunwayD());
 					if (info.getSID() != null)
 						route.addAll(info.getSID().getWaypoints());
 
 					// Load the navaids
-					Collection<String> rPoints = StringUtils.split(info.getRoute(), " ");
-					GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
-					int distance = lastWaypoint.distanceTo(info.getAirportA());
-					NavigationDataMap navaids = navdao.getByID(rPoints);
-
-					// Filter out navaids and put them in the correct order
-					for (Iterator<String> ri = rPoints.iterator(); ri.hasNext();) {
-						String navCode = ri.next();
-						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
-						if (wPoint != null) {
-							if (lastWaypoint.distanceTo(wPoint) < distance) {
-								route.add(wPoint);
-								lastWaypoint.setLatitude(wPoint.getLatitude());
-								lastWaypoint.setLongitude(wPoint.getLongitude());
-							}
-						}
-					}
+					route.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
 
 					if (info.getSTAR() != null)
 						route.addAll(info.getSTAR().getWaypoints());
+					if (info.getRunwayA() != null)
+						route.add(info.getRunwayA());
 					
-					info.setPlanData(route);
+					info.setPlanData(GeoUtils.stripDetours(route, 50));
 					flights.add(info);
 				}
 			}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class to handle Thread operations.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ public class ThreadUtils {
 
 	// Singleton
 	private ThreadUtils() {
+		super();
 	}
 	
 	/**

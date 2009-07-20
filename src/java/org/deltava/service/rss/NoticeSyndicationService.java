@@ -36,7 +36,7 @@ public class NoticeSyndicationService extends WebService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		List entries = null;
+		List<?> entries = null;
 		try {
 			GetNews dao = new GetNews(ctx.getConnection());
 			dao.setQueryMax(getCount(ctx, 10));
@@ -56,9 +56,7 @@ public class NoticeSyndicationService extends WebService {
 		// Create the RSS channel
 		Element ch = new Element("channel");
 		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " NOTAMs"));
-		ch
-				.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/notams.do",
-						true));
+		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/notams.do", true));
 		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " Notices to Airmen"));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
@@ -70,7 +68,7 @@ public class NoticeSyndicationService extends WebService {
 		re.addContent(ch);
 
 		// Convert the entries to RSS items
-		for (Iterator i = entries.iterator(); i.hasNext();) {
+		for (Iterator<?> i = entries.iterator(); i.hasNext();) {
 			News n = (News) i.next();
 			try {
 				URL url = new URL("http", ctx.getRequest().getServerName(), "/notam.do?id="
@@ -85,6 +83,7 @@ public class NoticeSyndicationService extends WebService {
 				// Add the item element
 				ch.addContent(item);
 			} catch (MalformedURLException mue) {
+				// empty
 			}
 		}
 

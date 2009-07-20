@@ -23,7 +23,7 @@ import org.deltava.util.*;
 public class GalleryCommand extends AbstractViewCommand {
 
 	private static final String[] SORT_CODE = { "I.DATE DESC", "VC DESC", "SC DESC, VC DESC" };
-	static final List SORT_OPTS = ComboUtils.fromArray(new String[] { "Image Date", "Feedback Count", "Average Score" }, SORT_CODE);
+	static final List<?> SORT_OPTS = ComboUtils.fromArray(new String[] { "Image Date", "Feedback Count", "Average Score" }, SORT_CODE);
 	
 	/**
 	 * Executes the command.

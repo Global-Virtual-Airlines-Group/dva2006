@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to support generating HTML combo/list boxes.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -21,7 +21,7 @@ public class ComboTag extends FormElementTag {
 	/**
 	 * The combo/listbox choices.
 	 */
-	protected Collection _options;
+	protected Collection<?> _options;
 	
 	/**
 	 * A first entry for the combo/listbox.
@@ -61,7 +61,7 @@ public class ComboTag extends FormElementTag {
 		// Determine if the option is selected
 		boolean isSelected = false;
 		if (_value instanceof Collection) {
-			for (Iterator i = ((Collection) _value).iterator(); (i.hasNext() && !isSelected);)
+			for (Iterator<?> i = ((Collection<?>) _value).iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(optValue, i.next());
 		} else {
 			isSelected = checkOption(optValue, _value);
@@ -104,7 +104,7 @@ public class ComboTag extends FormElementTag {
 
 			// Render the options
 			if (_options != null) {
-				for (Iterator i = _options.iterator(); i.hasNext();) {
+				for (Iterator<?> i = _options.iterator(); i.hasNext();) {
 					Object opt = i.next();
 					renderOption(opt);
 				}
@@ -124,7 +124,7 @@ public class ComboTag extends FormElementTag {
 	 * Sets the value(s) of this combo/listbox.
 	 * @param values a Collection of selected values
 	 */
-	public void setValues(Collection values) {
+	public void setValues(Collection<?> values) {
 		_value = values;
 	}
 
@@ -166,7 +166,7 @@ public class ComboTag extends FormElementTag {
 	 * Sets the choices for this combo/listbox.
 	 * @param choices a List of choices
 	 */
-	public void setOptions(Collection choices) {
+	public void setOptions(Collection<?> choices) {
 		_options = (choices == null) ? Collections.emptySet() : choices;
 	}
 

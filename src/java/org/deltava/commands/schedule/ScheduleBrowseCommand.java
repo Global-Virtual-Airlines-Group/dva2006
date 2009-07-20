@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -39,7 +39,6 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       criteria.setAirportD(aD);
       criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
       criteria.setDBName(SystemData.get("airline.db"));
-      criteria.setIncludeHistoric(true);
       criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));
       
       // Save the search criteria

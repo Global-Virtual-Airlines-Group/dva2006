@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.GeospaceLocation;
 /**
  * A utility class for performing Google Earth KML operations.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class KMLUtils extends XMLUtils {
 	 */
 	public static void copyNamespace(Document doc) {
 		Element re = doc.getRootElement();
-		for (Iterator i = re.getDescendants(new ElementFilter()); i.hasNext(); ) {
+		for (Iterator<?> i = re.getDescendants(new ElementFilter()); i.hasNext(); ) {
 			Element e = (Element) i.next();
 			if (e.getNamespace() != re.getNamespace())
 				e.setNamespace(re.getNamespace());

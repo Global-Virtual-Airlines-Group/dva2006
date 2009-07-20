@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 2.0
  */
 
@@ -124,7 +124,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			}
 			
 			// If we're approving and we have hit a century club milestone, log it
-			Map ccLevels = (Map) SystemData.getObject("centuryClubLevels");
+			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
 			if (ccLevels.containsKey("CC" + pirepCount)) {
 				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 				upd.setAuthorID(ctx.getUser().getID());

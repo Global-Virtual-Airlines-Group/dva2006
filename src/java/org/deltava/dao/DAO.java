@@ -58,6 +58,7 @@ public abstract class DAO {
 		try {
 			setManualCommit(!c.getAutoCommit());
 		} catch (Exception e) {
+			// empty
 		}
 	}
 

@@ -48,7 +48,7 @@ public class NewsCommand extends AbstractViewCommand {
         
         // Calculate access rights
         Map<Integer, NewsAccessControl> accessMap = new HashMap<Integer, NewsAccessControl>();
-        for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
+        for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
         	News n = (News) i.next();
         	NewsAccessControl access = new NewsAccessControl(ctx, n);
         	access.validate();

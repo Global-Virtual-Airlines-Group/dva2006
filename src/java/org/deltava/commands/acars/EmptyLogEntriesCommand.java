@@ -15,13 +15,13 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to display empty ACARS log entries.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
 public class EmptyLogEntriesCommand extends ACARSLogViewCommand {
    
-   private static final List LIST_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Information", "ACARS Connections"},
+   private static final List<?> LIST_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Information", "ACARS Connections"},
          new String[] {"info", "con"});
 
 	/**

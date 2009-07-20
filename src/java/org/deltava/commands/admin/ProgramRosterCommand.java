@@ -28,7 +28,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 	
 	private static final String[] SORT_CODE = {"P.LASTNAME, P.FIRSTNAME", "P.CREATED", "P.LOGINS",
 		"P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
-	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date",
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date",
 			"Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
 	private static final List<String> RANKS = Arrays.asList(Ranks.RANK_FO, Ranks.RANK_C, Ranks.RANK_SC,
 			Ranks.RANK_ACP);

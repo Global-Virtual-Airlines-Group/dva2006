@@ -98,7 +98,9 @@ public class BlogSyndicationService extends WebService {
 
 				// Add the item element
 				ch.addContent(item);
-			} catch (MalformedURLException mue) { }
+			} catch (MalformedURLException mue) {
+				// empty
+			}
 		}
 		
 		// Dump the XML to the output stream

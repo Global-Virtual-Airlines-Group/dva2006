@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
  * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
  * URL is http://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.3
  */
 
@@ -64,7 +64,7 @@ public class GetGoogleGeocode extends DAO {
 		// Process the document
 		Element re = doc.getRootElement();
 		List<GeocodeResult> results = new ArrayList<GeocodeResult>();
-		for (Iterator i = re.getDescendants(new ElementFilter("Placemark")); i.hasNext(); ) {
+		for (Iterator<?> i = re.getDescendants(new ElementFilter("Placemark")); i.hasNext(); ) {
 			Element ple = (Element) i.next();
 			
 			// Get the details

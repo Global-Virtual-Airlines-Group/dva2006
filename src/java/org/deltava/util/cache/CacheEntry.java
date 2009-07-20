@@ -8,7 +8,7 @@ package org.deltava.util.cache;
  * @since 1.0
  */
 
-abstract class CacheEntry<T extends Cacheable> implements Comparable<CacheEntry> {
+abstract class CacheEntry<T extends Cacheable> implements Comparable<CacheEntry<T>> {
 	
 	private T _data;
 

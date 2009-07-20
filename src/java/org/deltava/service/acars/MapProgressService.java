@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -43,24 +43,32 @@ public class MapProgressService extends WebService {
 
 		// Get the DAO and the route data
 		FlightInfo info = null;
-		Collection<GeoLocation> routePoints = null;
-		Collection<MarkerMapEntry> routeWaypoints = new LinkedHashSet<MarkerMapEntry>();
+		final Collection<GeoLocation> routePoints = new ArrayList<GeoLocation>();
+		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSData dao = new GetACARSData(con);
-			routePoints = dao.getRouteEntries(id, false, false);
+			routePoints.addAll(dao.getRouteEntries(id, false, false));
 
 			// Load the route and the route waypoints
 			info = dao.getInfo(id);
 			if ((info != null) && doRoute) {
+				Collection<MarkerMapEntry> wps = new LinkedHashSet<MarkerMapEntry>(); 
 				GetNavRoute navdao = new GetNavRoute(con);
-				routeWaypoints.add(info.getAirportD());
+				wps.add(info.getAirportD());
+				if (info.getRunwayD() != null)
+					wps.add(info.getRunwayD());
 				if (info.getSID() != null)
-					routeWaypoints.addAll(info.getSID().getWaypoints());
-				routeWaypoints.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
+					wps.addAll(info.getSID().getWaypoints());
+				wps.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
 				if (info.getSTAR() != null)
-					routeWaypoints.addAll(info.getSTAR().getWaypoints());
-				routeWaypoints.add(info.getAirportA());
+					wps.addAll(info.getSTAR().getWaypoints());
+				if (info.getRunwayA() != null)
+					wps.add(info.getRunwayA());
+				wps.add(info.getAirportA());
+				
+				// Trim spurious entries
+				routeWaypoints.addAll(GeoUtils.stripDetours(wps, 50));
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());

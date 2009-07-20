@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.util.Date;
-import java.io.Serializable;
 
 /**
  * A bean to store system information reported by Fleet Installers.
@@ -11,7 +10,7 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class SystemInformation implements Serializable, Comparable {
+public class SystemInformation implements java.io.Serializable, Comparable<SystemInformation> {
 	
 	private String _id;
 	private String _code;
@@ -198,11 +197,9 @@ public class SystemInformation implements Serializable, Comparable {
 
 	/**
 	 * Compares to another SystemInformation bean by comparing the ID and the date.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		SystemInformation si2 = (SystemInformation) o2;
-		int tmpResult = _id.compareTo(si2.getID());
-		return (tmpResult == 0) ? _created.compareTo(si2.getDate()) : tmpResult;
+	public int compareTo(SystemInformation si2) {
+		int tmpResult = _id.compareTo(si2._id);
+		return (tmpResult == 0) ? _created.compareTo(si2._created) : tmpResult;
 	}
 }

@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing Fleet/Document Library entries.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -60,8 +60,8 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 				// If we're new, load all manual titles
 				if (isNew) {
 					Collection<String> manualNames = new HashSet<String>();
-					Map airlines = (Map) SystemData.getObject("apps");
-					for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
+					Map<?, ?> airlines = (Map<?, ?>) SystemData.getObject("apps");
+					for (Iterator<?> i = airlines.values().iterator(); i.hasNext(); ) {
 						AirlineInformation aInfo = (AirlineInformation) i.next();
 						Collection<Manual> docs = dao.getManuals(aInfo.getDB());
 						for (Manual mn : docs)

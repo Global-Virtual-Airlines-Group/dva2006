@@ -31,7 +31,7 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadPostCommand extends AbstractCommand {
 
-	private Collection _imgMimeTypes;
+	private Collection<?> _imgMimeTypes;
 
 	/**
 	 * Initializes this command.
@@ -41,7 +41,7 @@ public class ThreadPostCommand extends AbstractCommand {
 	 */
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
-		_imgMimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
+		_imgMimeTypes = (Collection<?>) SystemData.getObject("cooler.imgurls.mime_types");
 	}
 
 	/**
@@ -232,9 +232,9 @@ public class ThreadPostCommand extends AbstractCommand {
 			mt.addPost(msg);
 
 			// Load linked images
-			Collection imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
+			Collection<?> imgURLs = (Collection<?>) ctx.getRequest().getSession().getAttribute("imageURLs");
 			if (imgURLs != null) {
-				for (Iterator i = imgURLs.iterator(); i.hasNext();)
+				for (Iterator<?> i = imgURLs.iterator(); i.hasNext();)
 					mt.addImageURL((LinkedImage) i.next());
 			}
 			

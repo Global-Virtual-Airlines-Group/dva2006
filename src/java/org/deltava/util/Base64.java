@@ -123,6 +123,7 @@ public class Base64 {
     // encoding
 
     private Base64() {
+    	super();
     }
 
     /**

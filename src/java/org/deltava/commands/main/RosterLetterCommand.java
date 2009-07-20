@@ -1,27 +1,22 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
-import java.util.Arrays;
-import java.util.List;
-
-import java.sql.Connection;
+import java.util.*;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A web site command to view pilot statistics by letter.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class RosterLetterCommand extends AbstractViewCommand {
 
     // List of letters to display
-    private static final List LETTERS = Arrays.asList(new String [] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+    private static final List<?> LETTERS = Arrays.asList(new String [] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
             "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"});
 
     /**
@@ -49,14 +44,9 @@ public class RosterLetterCommand extends AbstractViewCommand {
         }
         
         try {
-            Connection con = ctx.getConnection();
-            
-            // Get the roster and save in the request
-            GetPilot dao = new GetPilot(con);
+            GetPilot dao = new GetPilot(ctx.getConnection());
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
-            
-            // Save the results
             vc.setResults(dao.getPilotsByLetter(letter));
         } catch (DAOException de) {
             throw new CommandException(de);

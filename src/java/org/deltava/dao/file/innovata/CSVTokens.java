@@ -1,9 +1,9 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.util.*;
 
-class CSVTokens implements Comparable {
+class CSVTokens implements Comparable<CSVTokens> {
 
 	private int _lineNumber;
 	private List<String> _tkns = new ArrayList<String>();
@@ -58,8 +58,7 @@ class CSVTokens implements Comparable {
 		return _tkns.size();
 	}
 	
-	public int compareTo(Object o2) {
-		CSVTokens t2 = (CSVTokens) o2;
+	public int compareTo(CSVTokens t2) {
 		int tmpResult = _tkns.get(7).compareTo(t2.get(7)); // flight number
 		if (tmpResult == 0)
 			tmpResult = (_tkns.get(10).compareTo(t2.get(10)) * -1); // stops

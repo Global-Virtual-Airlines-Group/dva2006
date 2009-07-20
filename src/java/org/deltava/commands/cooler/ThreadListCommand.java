@@ -133,7 +133,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 		
 		// Add the thread map
 		if (ctx.isAuthenticated()) {
-			Map threadViews = (Map) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
+			Map<?, ?> threadViews = (Map<?, ?>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
 			ctx.setAttribute("threadViews", threadViews, REQUEST);
 		}
 

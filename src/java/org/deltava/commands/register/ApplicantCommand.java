@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -260,8 +260,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 
 		// Do a netmask check on the applicant against each database
 		Collection<Integer> netmaskIDs = new HashSet<Integer>();
-		Collection airlines = ((Map) SystemData.getObject("apps")).values();
-		for (Iterator i = airlines.iterator(); i.hasNext() && (addrInfo != null); ) {
+		Collection<?> airlines = ((Map<?, ?>) SystemData.getObject("apps")).values();
+		for (Iterator<?> i = airlines.iterator(); i.hasNext() && (addrInfo != null); ) {
 			AirlineInformation info = (AirlineInformation) i.next();
 			netmaskIDs.addAll(dao.checkAddress(addrInfo.getBlock(), info.getDB()));
 		}
@@ -303,8 +303,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 
 		// Do a soundex check on the applicant against each database
 		Collection<Integer> soundexIDs = new LinkedHashSet<Integer>();
-		Collection airlines = ((Map) SystemData.getObject("apps")).values();
-		for (Iterator i = airlines.iterator(); i.hasNext();) {
+		Collection<?> airlines = ((Map<?, ?>) SystemData.getObject("apps")).values();
+		for (Iterator<?> i = airlines.iterator(); i.hasNext();) {
 			AirlineInformation info = (AirlineInformation) i.next();
 			soundexIDs.addAll(dao.checkSoundex(a, info.getDB()));
 			soundexIDs.addAll(pdao.checkSoundex(a, info.getDB()));

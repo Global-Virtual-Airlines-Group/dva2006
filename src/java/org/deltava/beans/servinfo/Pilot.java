@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online pilot information.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -123,7 +123,7 @@ public class Pilot extends NetworkUser {
 	 * @return a Collection of waypoint IDs
 	 * @see Pilot#setWayPoints(String)
 	 */
-	public Collection getWayPoints() {
+	public Collection<String> getWayPoints() {
 	   return StringUtils.split(_wayPoints, " ");
 	}
 	

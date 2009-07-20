@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
  * An authenticator to validate users against a file repository. This should
  * typically be used for testing or backup purposes only.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -153,8 +153,8 @@ public class FileAuthenticator implements Authenticator {
 	private void save() throws SecurityException {
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter(new File(_props.getProperty("file.name"))));
-			for (Iterator i = _users.values().iterator(); i.hasNext();) {
-				UserInfo user = (UserInfo) i.next();
+			for (Iterator<UserInfo> i = _users.values().iterator(); i.hasNext();) {
+				UserInfo user = i.next();
 				pw.print(user.getDN());
 				pw.print(',');
 				pw.println(user.getPassword());

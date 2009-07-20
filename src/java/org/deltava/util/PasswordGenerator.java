@@ -1,3 +1,4 @@
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.Random;
@@ -5,15 +6,17 @@ import java.util.Random;
 /**
  * A utility class to generate random web site passwords.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
+
 public final class PasswordGenerator {
 
 	private static final String PWD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789";
 	private static long LAST_SEED = 0;
 	
 	private PasswordGenerator() {
+		super();
 	}
 
 	/**

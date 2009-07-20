@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,13 +13,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display landing statistics.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 2.1
  */
 
 public class LandingStatsCommand extends AbstractViewCommand {
 	
-	private static final List DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
+	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
 		"90 Days" }, new String[] { "0", "30", "60", "90" });
 
 	/**

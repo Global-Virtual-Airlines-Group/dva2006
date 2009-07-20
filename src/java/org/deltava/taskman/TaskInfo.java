@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -6,11 +6,11 @@ import java.util.*;
 /**
  * A bean to store information about a scheduled task. 
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class TaskInfo implements Comparable {
+public class TaskInfo implements Comparable<TaskInfo> {
    
    private String _id;
    private String _name;
@@ -116,10 +116,8 @@ public class TaskInfo implements Comparable {
    
    /**
     * Compares two TaskInfo beans by comparing their next execution times.
-    * @see Comparable#compareTo(Object)
     */
-   public int compareTo(Object o2) {
-      TaskInfo ti2 = (TaskInfo) o2;
-      return _lastStart.compareTo(ti2.getLastStartTime());
+   public int compareTo(TaskInfo ti2) {
+      return _lastStart.compareTo(ti2._lastStart);
    }
 }

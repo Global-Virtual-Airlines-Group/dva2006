@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -290,7 +290,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTimes()
      */
     public int getTime(int rate) {
-    	Integer time = _time.get(new Long(rate));
+    	Integer time = _time.get(Long.valueOf(rate));
     	return (time == null) ? 0 : time.intValue();
     }
     
@@ -409,14 +409,10 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the average N1 of the engines at takeoff.
      * @param n1 the average N1, multiplied by 100
-     * @throws IllegalArgumentException if N1 &lt; 0 or N1 &gt; 140
      * @see ACARSFlightReport#getTakeoffN1()
      */
     public void setTakeoffN1(double n1) {
-        if ((n1 < 0) || (n1 > 140))
-            throw new IllegalArgumentException("Takeoff N1% cannot be negative");
-        
-        _takeoffN1 = n1;
+        _takeoffN1 = Math.max(0, n1);
     }
     
     /**
@@ -488,7 +484,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getLandingN1()
      */
     public void setLandingN1(double n1) {
-        _landingN1 = Math.min(140, Math.max(0, n1));
+        _landingN1 = Math.max(0, n1);
     }
     
     /**

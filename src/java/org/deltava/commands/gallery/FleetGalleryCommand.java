@@ -4,7 +4,6 @@ package org.deltava.commands.gallery;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.ComboAlias;
 import org.deltava.beans.gallery.Image;
 
 import org.deltava.commands.*;
@@ -17,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the Fleet Gallery.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -33,18 +32,18 @@ public class FleetGalleryCommand extends AbstractViewCommand {
     	// Determining if we're opening the admin view
     	boolean doAdmin = Boolean.valueOf((String) ctx.getCmdParameter(ID, null)).booleanValue();
 
-        List<ComboAlias> results = null;
+        List<Image> results = null;
         try {
             Connection con = ctx.getConnection();
 
             // Get the fleet gallery
             GetGallery dao = new GetGallery(con);
-            results = new ArrayList<ComboAlias>(dao.getFleetGallery());
+            results = new ArrayList<Image>(dao.getFleetGallery());
             
 			// Get all the Author IDs
-			Set<Integer> authorIDs = new HashSet<Integer>();
-			for (Iterator i = results.iterator(); i.hasNext();) {
-				Image img = (Image) i.next();
+			Collection<Integer> authorIDs = new HashSet<Integer>();
+			for (Iterator<Image> i = results.iterator(); i.hasNext();) {
+				Image img = i.next();
 				authorIDs.add(new Integer(img.getAuthorID()));
 			}
 
@@ -79,15 +78,12 @@ public class FleetGalleryCommand extends AbstractViewCommand {
         
         // Build the description array
         StringBuilder buf = new StringBuilder();
-        for (Iterator i = results.iterator(); i.hasNext(); ) {
-            Image img = (Image) i.next();
+        for (Iterator<Image> i = results.iterator(); i.hasNext(); ) {
+            Image img = i.next();
             buf.append(StringUtils.stripInlineHTML(img.getDescription()));
             if (i.hasNext())
                 buf.append(',');
         }
-        
-        // Add <SELECT> combo entry
-        results.add(0, ComboUtils.fromString("< SELECT AIRCRAFT >", ""));
         
         // Save the results and description array
         ctx.setAttribute("fleetGallery", results, REQUEST);

@@ -40,15 +40,13 @@ public final class StringUtils {
 	 */
 	public static String properCase(String s) {
 		StringBuilder buf = new StringBuilder(s.length());
-		buf.append(Character.toUpperCase(s.charAt(0))); // Convert first character to
-		// uppercase always
+		buf.append(Character.toUpperCase(s.charAt(0))); // Convert first character to uppercase always
 		for (int x = 1; x < s.length(); x++) {
 			char c = s.charAt(x);
-			if (UPPER_AFTER.indexOf(s.charAt(x - 1)) != -1) {
+			if (UPPER_AFTER.indexOf(s.charAt(x - 1)) != -1)
 				buf.append(Character.toUpperCase(c));
-			} else {
+			else
 				buf.append(Character.toLowerCase(c));
-			}
 		}
 
 		return buf.toString();
@@ -115,9 +113,9 @@ public final class StringUtils {
 	 * @param delim the value delimiter
 	 * @return the delimited value stirng
 	 */
-	public static String listConcat(Collection values, String delim) {
-		StringBuilder buf = new StringBuilder(48);
-		for (Iterator i = values.iterator(); i.hasNext();) {
+	public static String listConcat(Collection<?> values, String delim) {
+		StringBuilder buf = new StringBuilder(64);
+		for (Iterator<?> i = values.iterator(); i.hasNext();) {
 			buf.append(String.valueOf(i.next()));
 			if (i.hasNext())
 				buf.append(delim);

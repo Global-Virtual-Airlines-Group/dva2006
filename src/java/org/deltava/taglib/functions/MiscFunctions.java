@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -21,7 +21,7 @@ public class MiscFunctions {
 	 * @return the number of elements
 	 * @see Collection#size()
 	 */
-	public static int sizeof(Collection c) {
+	public static int sizeof(Collection<?> c) {
 		return (c != null) ? c.size() : 0;
 	}
 	
@@ -122,7 +122,7 @@ public class MiscFunctions {
 	 * @param delim the delimiter
 	 * @return a delimited String
 	 */
-	public static String splice(Collection c, String delim) {
+	public static String splice(Collection<?> c, String delim) {
 		return StringUtils.listConcat(c, delim);
 	}
 

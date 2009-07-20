@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -24,13 +24,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
 public class LinkImageCommand extends AbstractCommand {
 	
-	private Collection _imgMimeTypes;
+	private Collection<?> _imgMimeTypes;
 	
 	/**
 	 * Initializes this command.
@@ -40,7 +40,7 @@ public class LinkImageCommand extends AbstractCommand {
 	 */
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
-		_imgMimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
+		_imgMimeTypes = (Collection<?>) SystemData.getObject("cooler.imgurls.mime_types");
 	}
 
 	/**

@@ -21,7 +21,7 @@ public class CheckTag extends FormElementTag {
 	private int _width;
 	private int _cols;
 
-	private Collection _options;
+	private Collection<?> _options;
 
 	/**
 	 * An additional entry prepended to the list of options
@@ -126,7 +126,7 @@ public class CheckTag extends FormElementTag {
 		// Determine if the option is selected
 		boolean isSelected = false;
 		if (_value instanceof Collection) {
-			for (Iterator i = ((Collection) _value).iterator(); (i.hasNext() && !isSelected);)
+			for (Iterator<?> i = ((Collection<?>) _value).iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(opt, i.next());
 		} else
 			isSelected = checkOption(opt, _value);
@@ -172,7 +172,7 @@ public class CheckTag extends FormElementTag {
 
 			// Render the remaining options
 			if (!CollectionUtils.isEmpty(_options)) {
-				for (Iterator i = _options.iterator(); i.hasNext();) {
+				for (Iterator<?> i = _options.iterator(); i.hasNext();) {
 					Object opt = i.next();
 					renderOption(opt);
 
@@ -243,7 +243,7 @@ public class CheckTag extends FormElementTag {
 	 * Sets the selected value(s) of this element.
 	 * @param values a List of selected values of this element
 	 */
-	public void setChecked(Collection values) {
+	public void setChecked(Collection<Object> values) {
 		_value = values;
 	}
 
@@ -251,7 +251,7 @@ public class CheckTag extends FormElementTag {
 	 * Sets the choices for this checkbox/radio button.
 	 * @param choices a Collection of choices
 	 */
-	public void setOptions(Collection choices) {
+	public void setOptions(Collection<?> choices) {
 		_options = (choices == null) ? Collections.emptySet() : choices;
 	}
 }

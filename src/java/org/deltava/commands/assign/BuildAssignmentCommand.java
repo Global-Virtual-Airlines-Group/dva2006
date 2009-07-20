@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
 
 		// If we're adding flights to the in-session assignment
 		if ("build".equals(opName)) {
-			List results = (List) ctx.getSession().getAttribute("fafResults");
+			List<?> results = (List<?>) ctx.getSession().getAttribute("fafResults");
 			Collection<String> ids = ctx.getParameters("addFA");
 			if ((ids == null) || (results == null)) {
 				result.setURL("/jsp/schedule/findAflight.jsp");
@@ -59,7 +59,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
 
 			// Get the list of results and split into two - the selected, and those remaining
 			List<Flight> fList = new ArrayList<Flight>();
-			for (Iterator i = results.iterator(); i.hasNext();) {
+			for (Iterator<?> i = results.iterator(); i.hasNext();) {
 				Flight f = (Flight) i.next();
 				if (ids.contains(f.getFlightCode())) {
 					fList.add(f);

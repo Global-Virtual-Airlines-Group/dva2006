@@ -103,7 +103,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @return a Map of Applicants, indexed by the pilot code
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, Applicant> getByID(Collection ids, String tableName) throws DAOException {
+	public Map<Integer, Applicant> getByID(Collection<?> ids, String tableName) throws DAOException {
 
 		List<Applicant> results = new ArrayList<Applicant>();
 		log.debug("Raw set size = " + ids.size());
@@ -113,7 +113,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		sqlBuf.append(tableName);
 		sqlBuf.append(" A WHERE (A.ID IN (");
 		int querySize = 0;
-		for (Iterator i = ids.iterator(); i.hasNext();) {
+		for (Iterator<?> i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((UserData) rawID).getID());
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A Factory to load Web Service configuration data.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class ServiceFactory {
 
    // Private constructor
    private ServiceFactory() {
+	   super();
    }
 
    public static Map<String, WebService> load(String configXML) throws IOException {
@@ -50,13 +51,13 @@ public class ServiceFactory {
           throw new IOException("Empty XML Document");
       
       // Parse through the services
-      for (Iterator i = root.getChildren("service").iterator(); i.hasNext(); ) {
+      for (Iterator<?> i = root.getChildren("service").iterator(); i.hasNext(); ) {
           Element e = (Element) i.next();
           String svcID = e.getAttributeValue("id");
           String svcClassName = e.getAttributeValue("class");
           
           try {
-              Class c = Class.forName(svcClassName);
+              Class<?> c = Class.forName(svcClassName);
               WebService ws = (WebService) c.newInstance();
               results.put(svcID.toLowerCase(), ws);
           } catch (ClassNotFoundException cnfe) {

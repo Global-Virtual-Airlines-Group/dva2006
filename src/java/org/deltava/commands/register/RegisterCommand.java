@@ -231,7 +231,7 @@ public class RegisterCommand extends AbstractCommand {
 		mctxt.addData("applicant", a);
 
 		// Determine if we do a uniqueness check
-		List okAddrs = (List) SystemData.getObject("registration.email.ok");
+		List<?> okAddrs = (List<?>) SystemData.getObject("registration.email.ok");
 		boolean checkAddr = (okAddrs == null) || (!okAddrs.contains(a.getEmail()));
 		if (!checkAddr)
 			log.warn("Skipping address uniqueness checks for " + a.getEmail());

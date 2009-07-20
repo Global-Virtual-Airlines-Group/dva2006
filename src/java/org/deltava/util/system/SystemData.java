@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.system.AirlineInformation;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -46,7 +46,7 @@ public final class SystemData implements Serializable {
 		// Get the data loader class
 		SystemDataLoader loader = null;
 		try {
-			Class ldClass = Class.forName(loaderClassName);
+			Class<?> ldClass = Class.forName(loaderClassName);
 			loader = (SystemDataLoader) ldClass.newInstance();
 			log.debug("Instantiated " + loaderClassName);
 		} catch (Exception e) {
@@ -184,7 +184,7 @@ public final class SystemData implements Serializable {
 		if (!_properties.containsKey("airports"))
 			throw new IllegalStateException("Airports not Loaded");
 
-		Map airports = (Map) getObject("airports");
+		Map<?, ?> airports = (Map<?, ?>) getObject("airports");
 		return (Airport) airports.get(airportCode.toUpperCase());
 	}
 	
@@ -212,13 +212,13 @@ public final class SystemData implements Serializable {
 			throw new IllegalStateException("Airlines not Loaded");
 
 		// Search based on primary code
-		Map airlines = (Map) getObject("airlines");
+		Map<?, ?> airlines = (Map<?, ?>) getObject("airlines");
 		Airline a = (Airline) airlines.get(airlineCode.trim().toUpperCase());
 		if (a != null)
 			return a;
 		
 		// Search based on secondary codes
-		for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
+		for (Iterator<?> i = airlines.values().iterator(); i.hasNext(); ) {
 			a = (Airline) i.next();
 			if (a.getCodes().contains(airlineCode.toUpperCase()))
 				return a;
@@ -233,9 +233,9 @@ public final class SystemData implements Serializable {
 	 */
 	public static Map<String, Airline> getAirlines() {
 		String code = (String) getObject("airline.code");
-		Map airlines = (Map) getObject("airlines");
+		Map<?, ?> airlines = (Map<?, ?>) getObject("airlines");
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
-		for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
+		for (Iterator<?> i = airlines.values().iterator(); i.hasNext(); ) {
 			Airline a = (Airline) i.next();
 			if (a.getApplications().contains(code))
 				results.put(a.getCode(), a);
@@ -257,7 +257,7 @@ public final class SystemData implements Serializable {
 	   if (!_properties.containsKey("apps"))
 			throw new IllegalStateException("Applications not Loaded");
 	   
-	   Map apps = (Map) getObject("apps");
+	   Map<?, ?> apps = (Map<?, ?>) getObject("apps");
 	   return (AirlineInformation) apps.get(airlineCode.trim().toUpperCase());
 	}
 }

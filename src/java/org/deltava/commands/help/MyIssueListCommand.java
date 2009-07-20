@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to display a Pilot's Help Desk issues.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class MyIssueListCommand extends AbstractViewCommand {
 			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
-			Collection<Issue> results = idao.getByPilot(myID, myID, true);
+			Collection<Issue> results = idao.getByPilot(myID, myID, false);
 			vc.setResults(results);
 			
 			// Get Author IDs

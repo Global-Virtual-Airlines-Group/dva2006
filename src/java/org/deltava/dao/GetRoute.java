@@ -47,15 +47,14 @@ public class GetRoute extends DAO {
      */
     public OceanicRoute get(int routeType, java.util.Date vd) throws DAOException {
     	try {
-    		setQueryMax(1);
-    		prepareStatement("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
+    		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND "
+    				+ "(VALID_DATE=?) LIMIT 1");
     		_ps.setInt(1, routeType);
     		_ps.setTimestamp(2, createTimestamp(vd));
     		
     		// Get the results and return the first element
-    		List results = execute();
-    		setQueryMax(0);
-    		return (results.size() == 0) ? null : (OceanicRoute) results.get(0);
+    		List<? extends OceanicRoute> results = execute();
+    		return (results.size() == 0) ? null : results.get(0);
     	} catch (SQLException se) {
     		throw new DAOException(se);
     	}
