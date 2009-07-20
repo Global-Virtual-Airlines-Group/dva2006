@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.TransferRequest;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for equipment program Transfer Requests.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -41,18 +41,20 @@ public class TransferAccessControl extends AccessControl {
       
       // Set role status
       boolean isMine = (_ctx.isAuthenticated() && (_ctx.getUser().getID() == _treq.getID()));
-      boolean hrExam = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Examination");
-      boolean hrPIREP = _ctx.isUserInRole("HR") || _ctx.isUserInRole("PIREP");
-      if (!hrExam && !hrPIREP && !isMine)
+      boolean isHR = _ctx.isUserInRole("HR");
+      boolean isOps = _ctx.isUserInRole("Operations");
+      boolean isExam = isHR || isOps || _ctx.isUserInRole("Examination");
+      boolean isPIREP = isHR || isOps ||_ctx.isUserInRole("PIREP");
+      if (!isExam && !isPIREP && !isHR && !isPIREP && !isMine)
          throw new AccessControlException("Cannot view Transfer Request");
 
       // Set access rights
       int status = _treq.getStatus();
-      _canToggleRatings = (isMine || hrExam || hrPIREP);
-      _canApprove = (status == TransferRequest.OK) && hrPIREP;
-      _canAssignRide = (status == TransferRequest.PENDING) && hrExam;
-      _canReject = hrPIREP || hrExam;
-      _canDelete = _ctx.isUserInRole("Admin") || (isMine && (status != TransferRequest.ASSIGNED));
+      _canToggleRatings = (isMine || isExam || isPIREP);
+      _canApprove = (status == TransferRequest.OK) && isPIREP;
+      _canAssignRide = (status == TransferRequest.PENDING) && isExam;
+      _canReject = isPIREP || isExam;
+      _canDelete = isHR || isOps || (isMine && (status != TransferRequest.ASSIGNED));
    }
 
    /**

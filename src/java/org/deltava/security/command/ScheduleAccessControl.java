@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,7 +6,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Schdeule data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class ScheduleAccessControl extends AccessControl {
 		validateContext();
 
 		// Set role fields
-		_canEdit = _ctx.isUserInRole("Schedule");
+		_canEdit = _ctx.isUserInRole("Schedule") || _ctx.isUserInRole("Operations");
 		_canDelete = _canEdit;
 		_canImport = _canEdit;
 		_canExport = _canEdit;

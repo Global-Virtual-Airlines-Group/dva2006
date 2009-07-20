@@ -7,7 +7,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class PIREPAccessControl extends AccessControl {
 		
 		// Set role variables
 		final int status = _pirep.getStatus();
-		final boolean isHR = _ctx.isUserInRole("HR");
+		final boolean isHR = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations");
 		final boolean isPirep = _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(FlightReport.DBID_PILOT) == _ctx.getUser().getID());
 		
