@@ -447,13 +447,13 @@
 	<command id="routedelete">
 		<name>Delete Route</name>
 		<class>org.deltava.commands.schedule.RouteDeleteCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="routepurge">
 		<name>Purge Routes</name>
 		<class>org.deltava.commands.schedule.RoutePurgeCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="routeplot">
@@ -471,25 +471,25 @@
 	<command id="navimport">
 		<name>Import AIRAC data</name>
 		<class>org.deltava.commands.navdata.AIRACImportCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="awyimport">
 		<name>Import Airway data</name>
 		<class>org.deltava.commands.navdata.AirwayImportCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="trouteimport">
 		<name>Import SID/STAR data</name>
 		<class>org.deltava.commands.navdata.TerminalRouteImportCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="trouteplot">
 		<name>SID/STAR Plot</name>
 		<class>org.deltava.commands.navdata.TerminalRoutePlotCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="navsearch">
@@ -501,91 +501,91 @@
 	<command id="sched">
 		<name>Update Schedule</name>
 		<class>org.deltava.commands.schedule.ScheduleEntryCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="sched_delete">
 		<name>Delete Schedule Entry</name>
 		<class>org.deltava.commands.schedule.ScheduleDeleteCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="schedimport">
 		<name>Schedule Import</name>
 		<class>org.deltava.commands.schedule.ScheduleImportCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="usvcairports">
 		<name>Unserviced Airports</name>
 		<class>org.deltava.commands.schedule.UnservicedAirportsCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="ivimport">
 		<name>Innovata Schedule Download</name>
 		<class>org.deltava.commands.schedule.InnovataDownloadCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="ivstatus">
 		<name>Innovata Status Display</name>
 		<class>org.deltava.commands.schedule.InnovataStatusCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="schedsave">
 		<name>Schedule Save</name>
 		<class>org.deltava.commands.schedule.ScheduleSaveCommand</class>
-		<roles>schedules</roles>
+		<roles>schedules,Operations</roles>
 	</command>
 
 	<command id="schedexport">
 		<name>Schedule Export</name>
 		<class>org.deltava.commands.schedule.ScheduleExportCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="airlines">
 		<name>Airline List</name>
 		<class>org.deltava.commands.schedule.AirlineListCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 	
 	<command id="airline">
 		<name>Airline Profile</name>
 		<class>org.deltava.commands.schedule.AirlineCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 	
 	<command id="airports">
 		<name>Airport List</name>
 		<class>org.deltava.commands.schedule.AirportListCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 	
 	<command id="airport">
 		<name>Airport Profile</name>
 		<class>org.deltava.commands.schedule.AirportCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="airportdelete">
 		<name>Delete Airport</name>
 		<class>org.deltava.commands.schedule.AirportDeleteCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="aircraftlist">
 		<name>Aircraft List</name>
 		<class>org.deltava.commands.schedule.AircraftListCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="aircraft">
 		<name>Aircraft Profile</name>
 		<class>org.deltava.commands.schedule.AircraftCommand</class>
-		<roles>Schedule</roles>
+		<roles>Schedule,Operations</roles>
 	</command>
 
 	<command id="tzones">
@@ -1082,49 +1082,49 @@
 	<command id="massmail">
 		<name>Mass E-Mail</name>
 		<class>org.deltava.commands.admin.MassMailingCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,PIREP,Operations</roles>
 	</command>
 
 	<command id="eqtypes">
 		<name>Equipment Type Profiles</name>
 		<class>org.deltava.commands.admin.EquipmentProfilesCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Operations</roles>
 	</command>
 
 	<command id="eqtype">
 		<name>Equipment Type Profile</name>
 		<class>org.deltava.commands.admin.EquipmentCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Operations</roles>
 	</command>
 
 	<command id="txrequests">
 		<name>Transfer Requests</name>
 		<class>org.deltava.commands.admin.TransferListCommand</class>
-		<roles>HR,PIREP,Examination</roles>
+		<roles>HR,PIREP,Examination,Operations</roles>
 	</command>
 
 	<command id="txreqview">
 		<name>View Transfer Request</name>
 		<class>org.deltava.commands.admin.TransferProcessCommand</class>
-		<roles>HR,PIREP,Examination</roles>
+		<roles>HR,PIREP,Examination,Operations</roles>
 	</command>
 
 	<command id="txreqtoggle">
 		<name>Toggle Transfer Request</name>
 		<class>org.deltava.commands.admin.TransferConvertCommand</class>
-		<roles>HR,PIREP,Examination</roles>
+		<roles>HR,PIREP,Examination,Operations</roles>
 	</command>
 
 	<command id="transfer">
 		<name>Approve Transfer Request</name>
 		<class>org.deltava.commands.admin.TransferApproveCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,PIREP,Operations</roles>
 	</command>
 	
 	<command id="txreqreject">
 		<name>Reject Transfer Request</name>
 		<class>org.deltava.commands.admin.TransferRejectCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,PIREP,Operations</roles>
 	</command>
 
 	<command id="txreqdelete">
@@ -1192,13 +1192,13 @@
 	<command id="nakedassign">
 		<name>Naked Check Ride Assign</name>
 		<class>org.deltava.commands.testing.NakedCheckRideCommand</class>
-		<roles>Examination,HR</roles>
+		<roles>Examination,HR,Operations</roles>
 	</command>
 
 	<command id="crflag">
 		<name>Naked Check Ride Flag</name>
 		<class>org.deltava.commands.testing.CheckRideFlagCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,PIREP,Operations</roles>
 	</command>
 
 	<command id="exam">
@@ -1240,7 +1240,7 @@
 	<command id="promote">
 		<name>Promote to Captain</name>
 		<class>org.deltava.commands.pilot.PromoteCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,PIREP,Operations</roles>
 	</command>
 
 
@@ -1302,19 +1302,19 @@
 	<command id="crscripts">
 		<name>Check Ride Scripts</name>
 		<class>org.deltava.commands.testing.CheckRideScriptsCommand</class>
-		<roles>HR,Examination</roles>
+		<roles>HR,Examination,Operations</roles>
 	</command>
 
 	<command id="crscript">
 		<name>Check Ride Script</name>
 		<class>org.deltava.commands.testing.CheckRideScriptCommand</class>
-		<roles>HR,Examination</roles>
+		<roles>HR,Examination,Operations</roles>
 	</command>
 
 	<command id="crscriptdelete">
 		<name>Check Ride Script Delete</name>
 		<class>org.deltava.commands.testing.CheckRideScriptDeleteCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Operations</roles>
 	</command>
 
 
