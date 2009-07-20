@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.2
  */
 
@@ -64,10 +64,8 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("ID DESC"));
 			for (Iterator<FlightReport> i = pireps.iterator(); (criteria.getAirportD() == null) && i.hasNext();) {
 				FlightReport fr = i.next();
-				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
+				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED))
 					criteria.setAirportD(fr.getAirportA());
-					criteria.setIncludeHistoric(fr.hasAttribute(FlightReport.ATTR_HISTORIC));
-				}
 			}
 
 			// If no last airport, abort
@@ -82,7 +80,6 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			if (ctx.getParameter("eqType") != null) {
 				criteria.setEquipmentType(ctx.getParameter("eqType"));
 				criteria.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
-				criteria.setIncludeHistoric(Boolean.valueOf(ctx.getParameter("includeHistoric")).booleanValue());
 			}
 			
 			// Load the schedule entries
