@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 /**
  * A utility class for dealing with Collections and Lists.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -15,6 +15,7 @@ public class CollectionUtils {
 
 	// Singleton constructor
 	private CollectionUtils() {
+		super();
 	}
 
 	/**
@@ -22,7 +23,7 @@ public class CollectionUtils {
 	 * @param c the Collection to check
 	 * @return TRUE if c is null or has no elements, otherwise FALSE
 	 */
-	public static boolean isEmpty(Collection c) {
+	public static boolean isEmpty(Collection<?> c) {
 		return ((c == null) || (c.size() == 0));
 	}
 	
@@ -139,7 +140,9 @@ public class CollectionUtils {
 				
 				Object key = m.invoke(obj, (Object []) null);
 				results.put((K) key, obj);
-			} catch (Exception e) { }
+			} catch (Exception e) {
+				// empty
+			}
 		}
 		
 		return results;

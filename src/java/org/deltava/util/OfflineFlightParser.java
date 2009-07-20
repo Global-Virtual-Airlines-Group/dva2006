@@ -106,9 +106,9 @@ public class OfflineFlightParser {
 		
 		// Build the position entries
 		Element ppe = re.getChild("positions");
-		List pL = (ppe != null) ? ppe.getChildren("position") : null;
+		List<?> pL = (ppe != null) ? ppe.getChildren("position") : null;
 		if (!CollectionUtils.isEmpty(pL)) {
-			for (Iterator i = pL.iterator(); i.hasNext();) {
+			for (Iterator<?> i = pL.iterator(); i.hasNext();) {
 				Element pe = (Element) i.next();
 				String dt = pe.getChildTextTrim("date");
 				if (dt.indexOf('.') == -1)

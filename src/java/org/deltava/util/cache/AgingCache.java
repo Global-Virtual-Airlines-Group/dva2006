@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -29,8 +29,8 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 			return _createdOn;
 		}
 
-		public int compareTo(CacheEntry e2) {
-			AgingCacheEntry ae2 = (AgingCacheEntry) e2;
+		public int compareTo(CacheEntry<U> e2) {
+			AgingCacheEntry<U> ae2 = (AgingCacheEntry<U>) e2;
 			return new Long(_createdOn).compareTo(new Long(ae2._createdOn));
 		}
 	}

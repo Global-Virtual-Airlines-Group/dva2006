@@ -24,7 +24,7 @@ public class FileCache extends Cache<CacheableFile> {
 			return getData().lastModified();
 		}
 		
-		public int compareTo(CacheEntry e2) {
+		public int compareTo(CacheEntry<CacheableFile> e2) {
 			FileCacheEntry fe2 = (FileCacheEntry) e2;
 			return new Long(getLastUpdateTime()).compareTo(new Long(fe2.getLastUpdateTime()));
 		}

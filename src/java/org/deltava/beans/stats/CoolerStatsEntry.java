@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.io.Serializable;
@@ -10,9 +10,9 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class CoolerStatsEntry implements Serializable, Comparable {
+public class CoolerStatsEntry<T> implements Serializable, Comparable<CoolerStatsEntry<T>> {
 
-   private Comparable _label;
+   private Comparable<T> _label;
    private int _posts;
    private int _distinct;
    
@@ -21,7 +21,7 @@ public class CoolerStatsEntry implements Serializable, Comparable {
     * @param label the label
     * @param posts the number of posts
     */
-   public CoolerStatsEntry(Comparable label, int posts, int distinct) {
+   public CoolerStatsEntry(Comparable<T> label, int posts, int distinct) {
       super();
       _label = label;
       _posts = posts;
@@ -32,7 +32,7 @@ public class CoolerStatsEntry implements Serializable, Comparable {
     * Returns the statistics label.
     * @return the label
     */
-   public Object getLabel() {
+   public Comparable<T> getLabel() {
       return _label;
    }
    
@@ -53,8 +53,7 @@ public class CoolerStatsEntry implements Serializable, Comparable {
     * @see Comparable#compareTo(Object)
     */
    @SuppressWarnings("unchecked")
-   public int compareTo(Object o2) {
-      CoolerStatsEntry e2 = (CoolerStatsEntry) o2;
-      return _label.compareTo(e2._label);
+   public int compareTo(CoolerStatsEntry<T> e2) {
+      return _label.compareTo((T) e2._label);
    }
 }

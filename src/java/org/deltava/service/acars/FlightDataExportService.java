@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -57,8 +57,8 @@ public class FlightDataExportService extends WebService {
 		ctx.println("WindSpeed,WindHdg,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,WARN");
 
 		// Format the ACARS data
-		for (Iterator i = routeData.iterator(); i.hasNext();) {
-			RouteEntry entry = (RouteEntry) i.next();
+		for (Iterator<RouteEntry> i = routeData.iterator(); i.hasNext();) {
+			RouteEntry entry = i.next();
 			ctx.print(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getLatitude(), "##0.0000"));

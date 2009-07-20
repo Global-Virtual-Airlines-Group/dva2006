@@ -30,7 +30,7 @@ public class GetNavRoute extends GetNavData {
 		private String _route;
 		private final LinkedList<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
 
-		CacheableRoute(String route, LinkedList<NavigationDataBean> waypoints) {
+		CacheableRoute(String route, Collection<NavigationDataBean> waypoints) {
 			super();
 			_route = route.toUpperCase();
 			_waypoints.addAll(waypoints);
@@ -407,7 +407,7 @@ public class GetNavRoute extends GetNavData {
 	 * @return an ordered List of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public LinkedList<NavigationDataBean> getRouteWaypoints(String route, GeoLocation start) throws DAOException {
+	public List<NavigationDataBean> getRouteWaypoints(String route, GeoLocation start) throws DAOException {
 		if (route == null)
 			return new LinkedList<NavigationDataBean>();
 
@@ -464,29 +464,11 @@ public class GetNavRoute extends GetNavData {
 			}
 		}
 
-		// Get the points, and the start/distance
-		LinkedList<NavigationDataBean> points = new LinkedList<NavigationDataBean>(routePoints);
-		if (points.size() > 2) {
-			GeoLocation lastP = points.getFirst();
-			int distance = GeoUtils.distance(lastP, points.getLast());
-
-			// Add a check to ensure that this point isn't crazily out of the way
-			for (Iterator<? extends GeoLocation> i = points.iterator(); i.hasNext();) {
-				GeoLocation gl = i.next();
-				if (GeoUtils.distance(lastP, gl) > distance)
-					i.remove();
-				else
-					lastP = gl;
-			}
-		}
-
 		// Add to the cache and return the waypoints
-		if (tkns.size() > 1) {
-			CacheableRoute cr = new CacheableRoute(route, points);
-			_rCache.add(cr);
-		}
+		if (routePoints.size() > 1)
+			_rCache.add(new CacheableRoute(route, routePoints));
 		
-		return points;
+		return new LinkedList<NavigationDataBean>(routePoints);
 	}
 
 	/**

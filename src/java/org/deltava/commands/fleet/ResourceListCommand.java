@@ -23,7 +23,7 @@ import org.deltava.util.*;
 public class ResourceListCommand extends AbstractViewCommand {
 	
 	private static final String[] SORT_CODES = {"CREATEDON DESC", "HITCOUNT DESC"};
-	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Created On", "Popularity"}, SORT_CODES);
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Created On", "Popularity"}, SORT_CODES);
 
 	/**
 	 * Executes the command.

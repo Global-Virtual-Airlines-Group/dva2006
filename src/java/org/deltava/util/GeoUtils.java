@@ -323,4 +323,43 @@ public class GeoUtils {
 		double d2 = Math.abs(ln2 - lng2);
 		return ((d1 + d2) <= Math.abs(ln1 - ln2));
 	}
+	
+	/**
+	 * Strips out spurious waypoints from a route, that are at least a certain number of miles off
+	 * the most direct route. 
+	 * @param entries a Collection of GeoLocation objects
+	 * @param minDetour the minimum
+	 * @return the stripped list of GeoLocations
+	 */
+	public static <T extends GeoLocation> List<T> stripDetours(Collection<T> entries, int minDetour) {
+		LinkedList<T> locs = new LinkedList<T>(entries);
+		if (entries.size() > 3) {
+			GeoLocation lastP = locs.getFirst();
+			int distance = GeoUtils.distance(lastP, locs.getLast());
+			int distThreshold = Math.min(150, Math.max(minDetour, distance / 10));
+
+			// Strip out any points that are too far out of the way
+			final Collection<GeoLocation> deletedItems = new LinkedHashSet<GeoLocation>();
+			for (int x = 1; x < locs.size() - 2; x++) {
+				GeoLocation gl = locs.get(x);
+				GeoLocation next = locs.get(x+1);
+
+				int d0 = distance(lastP, gl);
+				int d1 = distance(lastP, next);
+				int d2 = d0 + distance(gl, next);
+				
+				if (d2 > (d1 + distThreshold))
+					deletedItems.add(gl);
+				else if (d0 > (distance + distThreshold))
+					deletedItems.add(gl);
+				else
+					lastP = gl;
+			}
+			
+			// Remove the stripped-out points
+			locs.removeAll(deletedItems);
+		}
+		
+		return locs;
+	}
 }

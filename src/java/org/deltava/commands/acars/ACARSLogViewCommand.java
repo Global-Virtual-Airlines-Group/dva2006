@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class for viewing ACARS logs.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -54,9 +54,9 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	 * @param viewEntries the view result entries
 	 * @return a Set of Pilot IDs
 	 */
-	protected Set<Integer> getPilotIDs(Collection viewEntries) {
+	protected Set<Integer> getPilotIDs(Collection<?> viewEntries) {
 		Set<Integer> results = new HashSet<Integer>();
-		for (Iterator i = viewEntries.iterator(); i.hasNext();) {
+		for (Iterator<?> i = viewEntries.iterator(); i.hasNext();) {
 			ACARSLogEntry entry = (ACARSLogEntry) i.next();
 			results.add(new Integer(entry.getPilotID()));
 		}
@@ -74,8 +74,8 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 			return false;
 
 		// Get the airline codes
-		Map apps = (Map) SystemData.getObject("apps");
-		for (Iterator i = apps.values().iterator(); i.hasNext();) {
+		Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
+		for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
 			AirlineInformation info = (AirlineInformation) i.next();
 			if (pCode.toUpperCase().startsWith(info.getCode().toUpperCase()))
 				return true;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AddressValidation;
 /**
  * A Data Access Object to read e-mail address validation entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -31,13 +31,11 @@ public class GetAddressValidation extends DAO {
 	 */
 	public AddressValidation get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT * FROM EMAIL_VALIDATION WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Run the query, if empty return null
-			List results = execute();
-			setQueryMax(0);
+			List<AddressValidation> results = execute();
 			return results.isEmpty() ? null : (AddressValidation) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -62,13 +60,11 @@ public class GetAddressValidation extends DAO {
 	 */
 	public AddressValidation get(String hashCode) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (HASH=?)");
+			prepareStatementWithoutLimits("SELECT * FROM EMAIL_VALIDATION WHERE (HASH=?) LIMIT 1");
 			_ps.setString(1, hashCode);
 
 			// Run the query, if empty return null
-			List results = execute();
-			setQueryMax(0);
+			List<AddressValidation> results = execute();
 			return results.isEmpty() ? null : (AddressValidation) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -83,13 +79,11 @@ public class GetAddressValidation extends DAO {
 	 */
 	public AddressValidation getAddress(String eMail) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (EMAIL=?)");
+			prepareStatementWithoutLimits("SELECT * FROM EMAIL_VALIDATION WHERE (EMAIL=?) LIMIT 1");
 			_ps.setString(1, eMail);
 
 			// Run the query, if empty return null
-			List results = execute();
-			setQueryMax(0);
+			List<AddressValidation> results = execute();
 			return results.isEmpty() ? null : (AddressValidation) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -103,8 +97,6 @@ public class GetAddressValidation extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<AddressValidation> results = new ArrayList<AddressValidation>();
 		while (rs.next()) {
 			AddressValidation addr = new AddressValidation(rs.getInt(1), rs.getString(2));

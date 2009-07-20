@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to clear a user's Water Cooler thread unread marks. 
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class UnreadClearCommand extends AbstractCommand {
 		ctx.setAttribute(CommandContext.THREADREADOV_ATTR_NAME, new Date(), SESSION);
 		
 		// Clear unread marks
-		Map threadIDs = (Map) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
+		Map<?, ?> threadIDs = (Map<?, ?>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
 		if (threadIDs != null)
 			threadIDs.clear();
 		

@@ -1,14 +1,14 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 /**
  * A class for storing Online Help entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class OnlineHelpEntry implements java.io.Serializable, Comparable {
+public class OnlineHelpEntry implements java.io.Serializable, Comparable<OnlineHelpEntry> {
 
     private String _title;
     private String _subject;
@@ -61,18 +61,15 @@ public class OnlineHelpEntry implements java.io.Serializable, Comparable {
     
     /**
      * Compare entries by doing a comparison on their title.
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     * @see String#compareTo(java.lang.String)
      */
-    public int compareTo(Object o2) {
-        OnlineHelpEntry he2 = (OnlineHelpEntry) o2;
-        return _title.compareTo(he2.getTitle());
+    public int compareTo(OnlineHelpEntry he2) {
+        return _title.compareTo(he2._title);
     }
 
     /**
      * Checks for equality using the title.
      */
     public boolean equals(Object o2) {
-       return (o2 instanceof OnlineHelpEntry) ? (compareTo(o2) == 0) : false;
+       return (o2 instanceof OnlineHelpEntry) ? (compareTo((OnlineHelpEntry) o2) == 0) : false;
     }
 }

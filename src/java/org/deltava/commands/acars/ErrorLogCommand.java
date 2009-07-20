@@ -65,9 +65,9 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			
 			// Get user IDs
 			Collection<Integer> IDs = new HashSet<Integer>(authorIDs);
-			for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
+			for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
 				ACARSError err = (ACARSError) i.next();
-				IDs.add(new Integer(err.getUserID()));
+				IDs.add(Integer.valueOf(err.getUserID()));
 			}
 			
 			// Load the User IDs

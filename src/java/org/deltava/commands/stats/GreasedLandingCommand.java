@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,13 +13,13 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the smoothest landings.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
 public class GreasedLandingCommand extends AbstractViewCommand {
 
-	private static final List DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
+	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
 			"90 Days" }, new String[] { "0", "30", "60", "90" });
 
 	/**
@@ -51,7 +51,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
+			for (Iterator<?> i = vc.getResults().iterator(); i.hasNext(); ) {
 				FlightReport fr = (FlightReport) i.next();
 				IDs.add(new Integer(fr.getDatabaseID(FlightReport.DBID_PILOT)));
 			}

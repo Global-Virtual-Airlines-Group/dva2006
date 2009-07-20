@@ -40,7 +40,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			_ps.setString(2, directoryName.toUpperCase());
 
 			// Execute the query and get the result
-			List results = execute();
+			List<Pilot> results = execute();
 			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
 			if (result == null)
 				return null;

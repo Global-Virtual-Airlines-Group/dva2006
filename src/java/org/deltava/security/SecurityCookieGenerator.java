@@ -1,4 +1,4 @@
-// Copyright 2004, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.Base64;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public final class SecurityCookieGenerator {
 	
 	// Private constructor
 	private SecurityCookieGenerator() {
+		super();
 	}
 	
 	/**

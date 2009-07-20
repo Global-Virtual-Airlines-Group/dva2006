@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -179,8 +179,6 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		return _flags;
 	}
 
-
-
 	/**
 	 * Returns the aircraft's Mach number.
 	 * @return the Mach number
@@ -306,13 +304,13 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	/**
 	 * Updates the aircraft's altitude above <i>sea level</i>.
 	 * @param alt the altitude in feet MSL
-	 * @throws IllegalArgumentException if alt < -300 or alt > 100000
+	 * @throws IllegalArgumentException if alt < -300 or alt > 120000
 	 * @see RouteEntry#getAltitude()
 	 * @see RouteEntry#setRadarAltitude(int)
 	 */
 	public void setAltitude(int alt) {
-		if ((alt < -300) || (alt > 100000))
-			throw new IllegalArgumentException("Altitude cannot be < -300 or > 100000");
+		if ((alt < -300) || (alt > 120000))
+			throw new IllegalArgumentException("Altitude cannot be < -300 or > 120000 - " + alt);
 
 		_alt = alt;
 	}
@@ -415,12 +413,12 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	/**
 	 * Updates the aircraft's vertical speed.
 	 * @param speed the speed in feet per minute
-	 * @throws IllegalArgumentException if speed < -7000 or speed > 7000
+	 * @throws IllegalArgumentException if speed < -12000 or speed > 12000
 	 * @see RouteEntry#getGroundSpeed()
 	 */
 	public void setVerticalSpeed(int speed) {
-		if ((speed < -7000) || (speed > 7000))
-			throw new IllegalArgumentException("Vertical speed cannot be < -7000 or > 7000 - " + speed);
+		if ((speed < -12000) || (speed > 12000))
+			throw new IllegalArgumentException("Vertical speed cannot be < -12000 or > 12000 - " + speed);
 
 		_vSpeed = speed;
 	}
@@ -428,14 +426,14 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	/**
 	 * Updates the aircraft's Mach number.
 	 * @param mach the Mach number
-	 * @throws IllegalArgumentException if mach < 0 or mach > 5.0
+	 * @throws IllegalArgumentException if mach > 5.0
 	 * @see RouteEntry#getMach()
 	 */
 	public void setMach(double mach) {
-		if ((mach < 0) || (mach > 5.0))
+		if (mach > 5.0)
 			throw new IllegalArgumentException("Invalid Mach Number - " + mach);
 
-		_mach = mach;
+		_mach = Math.max(0, mach);
 	}
 
 	/**
@@ -459,13 +457,9 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	/**
 	 * Updates the aircraft's total fuel flow.
 	 * @param flow the flow in pounds per hour
-	 * @throws IllegalArgumentException if flow is &gt; 120000
 	 * @see RouteEntry#getFuelFlow()
 	 */
 	public void setFuelFlow(int flow) {
-		if (flow > 125000)
-			throw new IllegalArgumentException("Fuel Flow cannot be > 125000 - " + flow);
-
 		_fuelFlow = Math.max(0, flow);
 	}
 	

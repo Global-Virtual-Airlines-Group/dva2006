@@ -1,7 +1,7 @@
 // Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
-import java.io.File;
+import java.io.*;
 
 import org.deltava.beans.ViewEntry;
 import org.deltava.util.cache.Cacheable;
@@ -9,11 +9,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
-public abstract class LibraryEntry implements java.io.Serializable, Comparable, Cacheable, ViewEntry {
+public abstract class LibraryEntry implements Serializable, Comparable<LibraryEntry>, Cacheable, ViewEntry {
 
 	public static final int PUBLIC = 0;
 	public static final int AUTH_ONLY = 1;
@@ -182,11 +182,9 @@ public abstract class LibraryEntry implements java.io.Serializable, Comparable, 
    
    /**
     * Compares two Library entries by comparing their names.
-    * @see Comparable#compareTo(Object)
     */
-   public int compareTo(Object o2) {
-    	LibraryEntry e2 = (LibraryEntry) o2;
-    	return _name.compareTo(e2.getName());
+   public int compareTo(LibraryEntry e2) {
+    	return _name.compareTo(e2._name);
    }
    
    /**

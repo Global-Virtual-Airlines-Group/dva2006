@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display HTTP Server totals.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public class ServerStatsCommand extends AbstractViewCommand {
    private static final String[] SORT_NAMES = { "Date", "Total Hits", "Server Time", "Home Page Hits", "Bandwidth" };
    private static final String[] SORT_CODE = { "DATE DESC", "REQUESTS DESC", "EXECTIME DESC", "HOMEHITS DESC",
          "BANDWIDTH DESC" };
-   private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
+   private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
 
    /**
     * Execute the command.

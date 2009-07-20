@@ -19,12 +19,12 @@ import org.deltava.util.StringUtils;
 public class SimulatorStatsCommand extends AbstractViewCommand {
 
 	private static final String[] SORT_CODE = {"F.DATE", "LEGS", "HOURS", "MILES"};
-	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] { "Flight Date", "Flight Legs",
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] { "Flight Date", "Flight Legs",
 			"Miles Flown", "Flight Hours"}, SORT_CODE);
 	
 	private static final String[] GROUP_CODE = { "$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)",
 		"CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.EQTYPE"};
-	private static final List GROUP_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week", "Pilot Name", 
+	private static final List<?> GROUP_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week", "Pilot Name", 
 			"Equipment Type"}, GROUP_CODE);
 
 	/**

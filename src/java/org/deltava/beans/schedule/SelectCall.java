@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
@@ -9,11 +9,11 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store Aircraft SELCAL data and reservations.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class SelectCall implements java.io.Serializable, Comparable, ViewEntry {
+public class SelectCall implements java.io.Serializable, Comparable<SelectCall>, ViewEntry {
 
 	private String _acCode;
 	private String _selcalCode;
@@ -160,10 +160,8 @@ public class SelectCall implements java.io.Serializable, Comparable, ViewEntry {
 	
 	/**
 	 * Compares two beans by comparing the SELCAL codes.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		SelectCall sc2 = (SelectCall) o2;
+	public int compareTo(SelectCall sc2) {
 		return _selcalCode.compareTo(sc2._selcalCode);
 	}
 	

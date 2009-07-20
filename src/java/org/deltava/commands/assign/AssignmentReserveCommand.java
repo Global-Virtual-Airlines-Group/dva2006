@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve a Flight Assignment.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -31,7 +31,6 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 		// Get Command Results
 		CommandResult result = ctx.getResult();
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -72,8 +71,8 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 			// Write the Flight Reports
 			SetFlightReport fwdao = new SetFlightReport(con);
-			for (Iterator i = assign.getAssignments().iterator(); i.hasNext();) {
-				AssignmentLeg leg = (AssignmentLeg) i.next();
+			for (Iterator<AssignmentLeg> i = assign.getAssignments().iterator(); i.hasNext();) {
+				AssignmentLeg leg = i.next();
 
 				// Create a draft PIREP from the assignment leg
 				FlightReport fr = new FlightReport(leg);

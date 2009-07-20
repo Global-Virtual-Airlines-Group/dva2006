@@ -64,8 +64,8 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 			// Get the document libraries from the other airlines
 			GetDocuments dao = new GetDocuments(con);
-			Map apps = (Map) SystemData.getObject("apps");
-			for (Iterator i = apps.values().iterator(); i.hasNext();) {
+			Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
+			for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
 				AirlineInformation info = (AirlineInformation) i.next();
 				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
 					results.put(info, dao.getManuals(info.getDB()));

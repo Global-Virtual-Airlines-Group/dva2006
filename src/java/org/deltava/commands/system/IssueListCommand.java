@@ -24,7 +24,7 @@ public class IssueListCommand extends AbstractViewCommand {
    
    private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA, I.RESOLVED DESC", "I.STATUS DESC", "I.CREATED",
          "I.RESOLVED DESC", "LC DESC"};
-   private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Created On",
+   private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Created On",
          "Resolved On", "Last Comment"}, SORT_CODE);
     
     /**

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to search for ACARS Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class ACARSFlightSearchCommand extends AbstractViewCommand {
 		CommandResult result = ctx.getResult();
 		
 		// Calculate the search types
-		List sTypes = ComboUtils.fromArray(SEARCH_TYPES);
+		List<?> sTypes = ComboUtils.fromArray(SEARCH_TYPES);
 		if (!ctx.isAuthenticated())
 			sTypes.remove(sTypes.size() - 1);
 		

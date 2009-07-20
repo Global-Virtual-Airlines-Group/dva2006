@@ -226,8 +226,8 @@ public class FlightReportFunctions {
     public static String promoTypes(FlightReport fr) {
     	StringBuilder buf = new StringBuilder();
     	if (fr != null) {
-    		for (Iterator i = fr.getCaptEQType().iterator(); i.hasNext(); ) {
-    			String eqType = (String) i.next();
+    		for (Iterator<String> i = fr.getCaptEQType().iterator(); i.hasNext(); ) {
+    			String eqType = i.next();
     			buf.append(eqType);
     			if (i.hasNext())
     				buf.append(',');

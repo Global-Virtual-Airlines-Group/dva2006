@@ -200,7 +200,7 @@ public class GetLibrary extends DAO implements CachingDAO {
 			_ps.setString(1, fName);
 			
 			// Get results - if empty return null
-			List results = loadFiles(true);
+			List<FileEntry> results = loadFiles(true);
 			return (results.isEmpty()) ? null : (Video) results.get(0); 
 		} catch (SQLException se) {
 			throw new DAOException(se);

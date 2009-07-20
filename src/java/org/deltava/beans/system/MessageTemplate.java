@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.ViewEntry;
@@ -7,11 +7,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing E-Mail message templates.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class MessageTemplate implements Comparable, Cacheable, ViewEntry {
+public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, ViewEntry {
 
     private String _name;
     private String _subject;
@@ -132,11 +132,9 @@ public class MessageTemplate implements Comparable, Cacheable, ViewEntry {
     
     /**
      * Compares two templates by comparing their names.
-     * @see Comparable#compareTo(Object)
      */
-    public int compareTo(Object o2) {
-    	MessageTemplate mt2 = (MessageTemplate) o2;
-    	return _name.compareTo(mt2.getName());
+    public int compareTo(MessageTemplate mt2) {
+    	return _name.compareTo(mt2._name);
     }
     
     /**

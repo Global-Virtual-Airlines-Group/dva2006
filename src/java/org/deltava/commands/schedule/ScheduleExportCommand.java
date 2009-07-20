@@ -3,7 +3,6 @@ package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
-import java.sql.Connection;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,12 +41,10 @@ public class ScheduleExportCommand extends AbstractCommand {
       if (!access.getCanExport())
          throw securityException("Cannot export Flight Schedule");
 
-      Collection results = null;
+      Collection<ScheduleEntry> results = null;
       try {
-         Connection con = ctx.getConnection();
-
          // Get the DAO and export the schedule
-         GetSchedule dao = new GetSchedule(con);
+         GetSchedule dao = new GetSchedule(ctx.getConnection());
          results = dao.export();
       } catch (DAOException de) {
          throw new CommandException(de);
@@ -73,10 +70,8 @@ public class ScheduleExportCommand extends AbstractCommand {
          out.println("AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
          // Loop through the results
-         for (Iterator i = results.iterator(); i.hasNext();) {
-            ScheduleEntry entry = (ScheduleEntry) i.next();
-
-            // Convert the entry to a string
+         for (Iterator<ScheduleEntry> i = results.iterator(); i.hasNext();) {
+            ScheduleEntry entry = i.next();
             StringBuilder buf = new StringBuilder(entry.getAirline().getCode());
             buf.append(',');
             buf.append(StringUtils.format(entry.getFlightNumber(), "#000"));

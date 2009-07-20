@@ -1,8 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.testing.CheckRideScript;
 
@@ -16,7 +15,7 @@ import org.deltava.security.command.CheckrideScriptAccessControl;
 /**
  * A Web Site Command to display Check Ride scripts. 
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -29,12 +28,9 @@ public class CheckRideScriptsCommand extends AbstractCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
       
-      List results = null;
+      List<CheckRideScript> results = null;
       try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and the scripts
-         GetExamProfiles dao = new GetExamProfiles(con);
+         GetExamProfiles dao = new GetExamProfiles(ctx.getConnection());
          results = dao.getScripts();
       } catch (DAOException de) {
          throw new CommandException(de);
@@ -51,8 +47,8 @@ public class CheckRideScriptsCommand extends AbstractCommand {
       accessMap.put("NEW", access);
 
       // Check edit access
-      for (Iterator i = results.iterator(); i.hasNext(); ) {
-         CheckRideScript sc = (CheckRideScript) i.next();
+      for (Iterator<CheckRideScript> i = results.iterator(); i.hasNext(); ) {
+         CheckRideScript sc = i.next();
          access = new CheckrideScriptAccessControl(ctx, sc);
          access.validate();
          accessMap.put(sc.getEquipmentType(), access);

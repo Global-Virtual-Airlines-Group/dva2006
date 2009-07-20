@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.StringTokenizer;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse flight codes.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -18,6 +18,7 @@ public class FlightCodeParser {
 
 	// Singleton
 	private FlightCodeParser() {
+		super();
 	}
 
 	/**
@@ -36,11 +37,10 @@ public class FlightCodeParser {
 		String code = tkns.nextToken();
 		for (int x = 0; x < code.length(); x++) {
 			char c = Character.toUpperCase(code.charAt(x));
-			if ("0123456789".indexOf(c) != -1) {
+			if ("0123456789".indexOf(c) != -1)
                 fNumber.append(c);
-            } else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(c) != -1) {
+            else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(c) != -1)
                 aCode.append(c);
-            }
 		}
 		
 		// Do default airline
@@ -48,13 +48,9 @@ public class FlightCodeParser {
 			aCode.append(SystemData.get("airline.code"));
 		
 		// Generate the entry
-		try {
-			Airline a = SystemData.getAirline(aCode.toString());
-			int fNum = Integer.parseInt(fNumber.toString());
-			int lNum = (tkns.countTokens() == 0) ? 1 : Integer.parseInt(tkns.nextToken());
-			return new ScheduleEntry(a, fNum, lNum);
-		} catch (NumberFormatException nfe) {
-			return null;
-		}
+		Airline a = SystemData.getAirline(aCode.toString());
+		int fNum = StringUtils.parse(fNumber.toString(), 1);
+		int lNum = (tkns.countTokens() == 0) ? 1 : StringUtils.parse(tkns.nextToken(), 1);
+		return new ScheduleEntry(a, fNum, lNum);
 	}
 }

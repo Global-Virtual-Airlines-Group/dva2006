@@ -45,7 +45,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	 * Initializes the Authentiactor.
 	 * @param logClass the log4j log class name
 	 */
-	protected MultiAuthenticator(Class logClass) {
+	protected MultiAuthenticator(Class<?> logClass) {
 		super();
 		log = Logger.getLogger(logClass);
 	}
@@ -67,7 +67,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 
 		// Initialize the source authenticator
 		try {
-			Class sc = Class.forName(props.getProperty(authPrefix + ".src"));
+			Class<?> sc = Class.forName(props.getProperty(authPrefix + ".src"));
 			_src = (Authenticator) sc.newInstance();
 			_src.init(props.getProperty(authPrefix + ".src.properties"));
 		} catch (Exception e) {
@@ -81,7 +81,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 		for (Iterator<String> i = classes.iterator(); i.hasNext();) {
 			String cName = i.next();
 			try {
-				Class dc = Class.forName(cName);
+				Class<?> dc = Class.forName(cName);
 				Authenticator auth = (Authenticator) dc.newInstance();
 				auth.init(props.getProperty(authPrefix + ".dst.properties"));
 				_dst.add(auth);

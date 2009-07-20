@@ -24,5 +24,6 @@
 	<classpathentry kind="lib" path="lib/deploy/cos-26Dec2008.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.8-bin.jar"/>
+	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

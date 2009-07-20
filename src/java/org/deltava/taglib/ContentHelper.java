@@ -20,6 +20,7 @@ public class ContentHelper {
 
 	// Singleton constructor
 	private ContentHelper() {
+		super();
 	}
 
 	/**
@@ -35,7 +36,7 @@ public class ContentHelper {
 		Set content = (Set) ctx.findAttribute(CONTENT_MAP_ATTR);
 		if (content == null) {
 			content = new HashSet();
-			ctx.getRequest().setAttribute(CONTENT_MAP_ATTR, content);
+			ctx.setAttribute(CONTENT_MAP_ATTR, content, PageContext.PAGE_SCOPE);
 		}
 
 		// Add the resource to the content name map
@@ -50,7 +51,7 @@ public class ContentHelper {
 	 * @see ContentHelper#addContent(PageContext, String, String)
 	 */
 	public static boolean containsContent(PageContext ctx, String contentType, String contentName) {
-		Set content = (Set) ctx.findAttribute(CONTENT_MAP_ATTR);
+		Set<?> content = (Set<?>) ctx.findAttribute(CONTENT_MAP_ATTR);
 		return (content == null) ? false : content.contains(contentType + "$" + contentName);
 	}
 	

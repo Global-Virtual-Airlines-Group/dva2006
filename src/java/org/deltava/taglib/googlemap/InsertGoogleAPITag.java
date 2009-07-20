@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -90,7 +90,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	public int doEndTag() throws JspException {
 
 		// Get the API keymap
-		Map apiKeys = (Map) SystemData.getObject("security.key.googleMaps");
+		Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
 		if ((apiKeys == null) || (apiKeys.isEmpty()))
 			throw new JspException("Google Maps API keys not defined");
 
