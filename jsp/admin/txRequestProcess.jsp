@@ -114,7 +114,7 @@ return true;
 <tr>
  <td class="label">Transfer to</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${activeEQ}" value="${eqType}" />
- as <el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" className="req" firstEntry="-" /></td>
+ as <el:combo name="rank" idx="*" size="1" options="${newRanks}" className="req" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Promotion to Captain</td>
