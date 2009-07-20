@@ -46,10 +46,6 @@ return true;
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" /></td>
 </tr>
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data" colspan="3"><el:box name="includeHistoric" idx="*" value="true" checked="${criteria.includeHistoric}" label="Include Historic Flights" /></td>
-</tr>
 </el:table>
 
 <!-- Search Results -->
