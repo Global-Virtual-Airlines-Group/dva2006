@@ -26,6 +26,7 @@ public class TestThreadUtils extends TestCase {
 			try {
 				Thread.sleep(_sleepTime);
 			} catch (InterruptedException ie) {
+				// empty
 			}
 		}
 	}

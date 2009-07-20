@@ -43,13 +43,17 @@ public class TestAirline extends TestCase {
 			Airline a2 = new Airline(null, "DAL");
 			fail("Expected NullPointerException");
 			assertNotNull(a2);
-		} catch (NullPointerException npe) { }
+		} catch (NullPointerException npe) { 
+			// empty
+		}
 		
 		try {
 			Airline a2 = new Airline("DAL", null);
 			fail("Expected NullPointerException");
 			assertNotNull(a2);
-		} catch (NullPointerException npe) { }
+		} catch (NullPointerException npe) {
+			// empty
+		}
 	}
 	
 	public void testComparator() {

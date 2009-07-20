@@ -70,7 +70,9 @@ public class TestQuestionProfile extends AbstractBeanTestCase {
             QuestionProfile qp2 = new QuestionProfile(null);
             fail("NullPointerException expected");
             assertNotNull(qp2);
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testComparator() {

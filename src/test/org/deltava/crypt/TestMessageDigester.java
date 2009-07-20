@@ -78,7 +78,9 @@ public class TestMessageDigester extends TestCase {
         try {
             _md = new MessageDigester("XXXX");
             fail("CryptoException expected");
-        } catch (CryptoException ce) { }
+        } catch (CryptoException ce) {
+        	// empty
+        }
     }
     
     public void testACARSData() throws Exception {

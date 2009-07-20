@@ -31,7 +31,9 @@ public class TestHelpEntry extends TestCase {
         try {
             _he = new OnlineHelpEntry(null, "BODY");
             fail("Expected NullPointerException");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testComparator() {

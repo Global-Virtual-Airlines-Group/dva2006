@@ -36,7 +36,7 @@ public class AbstractTagTestCase extends TestCase {
 
       public Map<String, String[]> getParameterMap() {
          Map<String, String[]> results = new HashMap<String, String[]>();
-         Enumeration pNames = getParameterNames();
+         Enumeration<?> pNames = getParameterNames();
          while (pNames.hasMoreElements()) {
             String pName = (String) pNames.nextElement();
             results.put(pName, getParameterValues(pName));

@@ -39,7 +39,9 @@ public class TestIssueComment extends AbstractBeanTestCase {
 		try {
 			_ic.setCreatedOn(null);
 			fail("IllegalArgumentException expected");
-		} catch (IllegalArgumentException iae) { }
+		} catch (IllegalArgumentException iae) {
+			// empty
+		}
 	}
 
 	public void testComparator() {

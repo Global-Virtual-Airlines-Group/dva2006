@@ -31,17 +31,17 @@ public abstract class AbstractBeanTestCase extends TestCase {
     }
     
     // If the Object is a numeric primitive wrapper, return the result of the static TYPE field
-    private Class getNumericPrimitiveWrapper(Object value) {
+    private Class<?> getNumericPrimitiveWrapper(Object value) {
         try {
             Field f = value.getClass().getField("TYPE");
-            return (Class) f.get(null);
+            return (Class<?>) f.get(null);
         } catch (Exception e) {
             return null;
         }
     }
     
     private Method getSetter(String pName, Object value) throws NoSuchMethodException {
-        Class primitiveClass = getNumericPrimitiveWrapper(value);
+        Class<?> primitiveClass = getNumericPrimitiveWrapper(value);
         if (primitiveClass != null) {
             return _bean.getClass().getMethod(getMethod(pName, true), new Class[] { primitiveClass });
         } else if (value == null) {
@@ -82,7 +82,7 @@ public abstract class AbstractBeanTestCase extends TestCase {
         }
     }
     
-    protected void validateInput(String pName, Object testValue, Class[] exClasses) {
+    protected void validateInput(String pName, Object testValue, Class<?>[] exClasses) {
 
         Method setProperty = null;
         try {
@@ -113,7 +113,7 @@ public abstract class AbstractBeanTestCase extends TestCase {
         }
     }
     
-    protected void validateInput(String pName, Object testValue, Class exClass) {
+    protected void validateInput(String pName, Object testValue, Class<?> exClass) {
         validateInput(pName, testValue, new Class[] { exClass } );
     }
 }

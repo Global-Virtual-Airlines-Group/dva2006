@@ -17,7 +17,7 @@ public class TestGetAirport extends AbstractDAOTestCase {
     }
 
     public void testAirportMap() throws DAOException {
-        Map airports = _dao.getAll();
+        Map<String, ?> airports = _dao.getAll();
         
         assertTrue(airports.containsKey("ATL"));
         assertTrue(airports.containsKey("KATL"));

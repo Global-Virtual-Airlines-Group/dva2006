@@ -74,7 +74,9 @@ public class TestChart extends AbstractBeanTestCase {
             Chart c2 = new Chart(null, new Airport("ATL", "KATL", "Atlanta GA"));
             fail("NullPointerException expected");
             assertNull(c2);
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) { 
+        	// empty
+        }
     }
     
     public void testBlobBuffer() throws IOException {

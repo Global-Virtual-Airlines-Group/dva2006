@@ -54,7 +54,9 @@ public class TestApplicant extends AbstractBeanTestCase {
     	try {
     		_a.addRole("any Role");
     		fail("UnsupportedOperationException expected");
-    	} catch (UnsupportedOperationException uoe) { }
+    	} catch (UnsupportedOperationException uoe) {
+    		// empty
+    	}
     }
     
     public void testViewEntry() {

@@ -130,7 +130,9 @@ public class TestPerson extends AbstractBeanTestCase {
         try {
             _p.setNotifyOption(null, true);
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
         
         assertEquals(1, _p.getNotifyOptions().size());
     }

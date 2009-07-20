@@ -16,12 +16,12 @@ public class TestSystemData extends TestCase {
         SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
         assertEquals("org.deltava.util.system.XMLSystemDataLoader", SystemData.get(SystemData.LOADER_NAME));
         assertEquals(3072000, SystemData.getInt("testing.max_video_size"));
-        Map jdbcProps = (Map) SystemData.getObject("jdbc.connectProperties");
+        Map<?, ?> jdbcProps = (Map<?, ?>) SystemData.getObject("jdbc.connectProperties");
         assertNotNull(jdbcProps);
         assertTrue(jdbcProps.containsKey("useNewIO"));
         
         // Test that ranks are in the proper order
-        List ranks = (List) SystemData.getObject("ranks");
+        List<?> ranks = (List<?>) SystemData.getObject("ranks");
         assertNotNull(ranks);
         assertTrue(ranks.contains("First Officer"));
         assertTrue(ranks.indexOf("First Officer") < ranks.indexOf("Captain"));

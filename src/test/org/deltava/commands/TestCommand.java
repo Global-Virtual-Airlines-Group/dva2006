@@ -21,6 +21,7 @@ public class TestCommand extends TestCase {
         }
         
         public void execute(CommandContext ctxt) {
+        	// empty
         }
     }
 
@@ -65,6 +66,8 @@ public class TestCommand extends TestCase {
         try {
             _cmd.setRoles(new LinkedList<String>());
             fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
     }
 }

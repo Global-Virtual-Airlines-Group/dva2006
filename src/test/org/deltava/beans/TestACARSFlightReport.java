@@ -98,10 +98,14 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         
         try {
             assertNull(_fr.getBlockTime());
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
         
         try {
             assertNull(_fr.getAirborneTime());
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
     }
 }

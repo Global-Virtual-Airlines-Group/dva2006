@@ -72,7 +72,9 @@ public class TestConnectionPoolEntry extends TestCase {
         try {
             _cpe.connect();
             fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
     }
     
     public void testCloseException() {
@@ -102,7 +104,9 @@ public class TestConnectionPoolEntry extends TestCase {
         try {
             _cpe.reserve(false);
             fail("IllegalStateException expected");
-        } catch (IllegalStateException ise) { }
+        } catch (IllegalStateException ise) {
+        	// empty
+        }
         
         _cpe.free();
     }

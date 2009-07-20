@@ -28,6 +28,7 @@ public class TestQuestionProfileAccessControl extends AccessControlTestCase {
 		   _ac.validate();
 		   fail("AccessControlException expected");
 	   } catch (AccessControlException ace) {
+		// empty
 	   }
       
       assertFalse(_ac.getCanRead());

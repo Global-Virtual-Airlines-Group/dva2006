@@ -50,7 +50,7 @@ public class TestMetarParser extends TestCase {
 			// Parse the METAR
 			METAR m = MetarParser.parse(data);
 			assertNotNull(m);
-			//assertEquals(dt, m.getDate());
+			assertEquals(dt, m.getDate());
 			log.info("Processed " + m.getCode());
 		}
 	}

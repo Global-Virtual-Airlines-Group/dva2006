@@ -34,6 +34,8 @@ public class TestFileAuthenticator extends TestCase {
         	usr2 = new AuthPerson("David", "Schaum", "cn=David Schaum,ou=dva,o=sce");
             _auth.authenticate(usr2, "David");
             fail("SecurityException expected");
-        } catch (SecurityException se) { }
+        } catch (SecurityException se) {
+        	// empty
+        }
     }
 }

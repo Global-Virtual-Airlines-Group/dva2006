@@ -22,7 +22,9 @@ public class TestStringUtils extends TestCase {
         try {
             assertNull(StringUtils.properCase(null));
             fail("NullPointerException expected");
-        } catch (NullPointerException npe) { }
+        } catch (NullPointerException npe) {
+        	// empty
+        }
     }
     
     public void testStripInllineHTML() {
@@ -58,7 +60,7 @@ public class TestStringUtils extends TestCase {
     }
     
     public void testSplit() {
-       List values = StringUtils.split("1,B,C,D", ",");
+       List<String> values = StringUtils.split("1,B,C,D", ",");
        assertEquals(4, values.size());
        assertEquals("1", values.get(0));
        assertEquals("B", values.get(1));

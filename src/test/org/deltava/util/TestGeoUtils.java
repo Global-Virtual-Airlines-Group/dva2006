@@ -13,8 +13,8 @@ public class TestGeoUtils extends TestCase {
 		GeoPosition ogg = new GeoPosition(20.8986, -156.4305);
 		GeoPosition lax = new GeoPosition(33.9425, -118.4080);
 		
-		List gc = GeoUtils.greatCircle(ogg, lax, 90);
-		Iterator i = gc.iterator();
+		List<GeoLocation> gc = GeoUtils.greatCircle(ogg, lax, 90);
+		Iterator<?> i = gc.iterator();
 		GeoPosition gp = (GeoPosition) i.next(); 
 		while (i.hasNext()) {
 			GeoPosition gp2 = (GeoPosition) i.next();

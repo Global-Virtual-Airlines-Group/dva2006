@@ -22,7 +22,7 @@ public class TestCollectionUtils extends TestCase {
 	public void testIsEmpty() {
 		assertTrue(CollectionUtils.isEmpty(null));
 		assertTrue(CollectionUtils.isEmpty(Collections.EMPTY_LIST));
-		assertTrue(CollectionUtils.isEmpty(new ArrayList()));
+		assertTrue(CollectionUtils.isEmpty(new ArrayList<Object>()));
 
 		List<String> testList = new ArrayList<String>();
 		testList.add("test");
@@ -83,7 +83,7 @@ public class TestCollectionUtils extends TestCase {
 		ids.add(new ID(10));
 		ids.add(new Object());
 
-		Map m = CollectionUtils.createMap(ids, "ID");
+		Map<?, ?> m = CollectionUtils.createMap(ids, "ID");
 		assertEquals(ids.size() - 1, m.size());
 		assertTrue(m.containsKey(new Integer(1)));
 		assertTrue(m.containsKey(new Integer(2)));

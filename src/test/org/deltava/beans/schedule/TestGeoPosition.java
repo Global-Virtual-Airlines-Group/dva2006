@@ -90,11 +90,15 @@ public class TestGeoPosition extends AbstractBeanTestCase {
         try {
             _gp.setLatitude(90, 0, 1);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) {
+        	// empty
+        }
 
         try {
             _gp.setLatitude(-90, 0, 1);
             fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { }
+        } catch (IllegalArgumentException iae) { 
+        	// empty
+        }
     }
 }

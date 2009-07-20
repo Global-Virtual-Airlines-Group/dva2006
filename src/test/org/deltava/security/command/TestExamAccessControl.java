@@ -117,7 +117,9 @@ public class TestExamAccessControl extends AccessControlTestCase {
       try {
          _ac.validate();
          fail("AccessControlException expected");
-      } catch (AccessControlException cse) { }
+      } catch (AccessControlException cse) {
+    	  // empty
+      }
       
       assertEquals(org.deltava.beans.testing.Test.NEW, _exam.getStatus());
       _exam.setPilotID(_user.getID());
@@ -153,7 +155,9 @@ public class TestExamAccessControl extends AccessControlTestCase {
       try {
          _ac.validate();
          fail("AccessControlException expected");
-      } catch (AccessControlException cse) { }
+      } catch (AccessControlException cse) {
+    	// empty
+      }
    }
    
    public void testContextValidation() {

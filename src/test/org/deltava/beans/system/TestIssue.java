@@ -81,7 +81,9 @@ public class TestIssue extends AbstractBeanTestCase {
 		try {
 			_i.setCreatedOn(null);
 			fail("IllegalArgumentException expected");
-		} catch (IllegalArgumentException iae) { }
+		} catch (IllegalArgumentException iae) { 
+			// empty
+		}
 		
 		_i.setCreatedOn(new Date());
 		validateInput("resolvedOn", new Date(System.currentTimeMillis() - 100), IllegalArgumentException.class);

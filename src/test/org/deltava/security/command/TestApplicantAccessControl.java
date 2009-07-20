@@ -66,7 +66,9 @@ public class TestApplicantAccessControl extends AccessControlTestCase {
       try {
          _ac.validate();
          fail("AccessControlException expected");
-      } catch (AccessControlException cse) { }
+      } catch (AccessControlException cse) {
+    	// empty
+      }
    }
    
    public void testContextValidation() {
