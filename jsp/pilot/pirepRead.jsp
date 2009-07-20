@@ -269,7 +269,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
-<c:if test="${isACARS && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR,PIREP">
+<c:if test="${isACARS && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR,PIREP,Operations">
  <el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" />
 </content:filter></c:if>
 </c:if>
@@ -299,8 +299,18 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:page>
 <c:if test="${googleMap}">
 <script language="JavaScript" type="text/javascript">
-// Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
+
+//Build the map
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+map.addControl(new GLargeMapControl3D());
+map.addControl(new GMapTypeControl());
+map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+
+// Build the route line and map center
 <c:if test="${!empty mapRoute}">
 <map:points var="routePoints" items="${mapRoute}" />
 <map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.75" geodesic="true" />
@@ -320,15 +330,6 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 <map:points var="onlinePoints" items="${onlineTrack}" />
 <map:line var="otRoute" src="onlinePoints" color="#F06F4F" width="3" transparency="0.55" geodesic="true" />
 </c:if>
-// Build the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
 addMarkers(map, 'gRoute');
