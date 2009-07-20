@@ -175,7 +175,7 @@ public class ChartLoader extends TestCase {
 	public void testUpdatedCharts() throws Exception {
 		Element re = _doc.getRootElement();
 		Collection<Element> chartEs = new ArrayList<Element>();
-		Iterator aI = re.getDescendants(new ElementFilter("airport_name"));
+		Iterator<?> aI = re.getDescendants(new ElementFilter("airport_name"));
 		while (aI.hasNext()) {
 			Element e = (Element) aI.next();
 			String id = e.getAttributeValue("icao_ident").toUpperCase();
@@ -202,8 +202,8 @@ public class ChartLoader extends TestCase {
 			log.info("Processing " + a.getName());
 			
 			// Get the charts
-			Collection cEs = e.getChildren("record");
-			for (Iterator ci = cEs.iterator(); ci.hasNext(); ) {
+			Collection<?> cEs = e.getChildren("record");
+			for (Iterator<?> ci = cEs.iterator(); ci.hasNext(); ) {
 				Element ce = (Element) ci.next();
 				
 				// Get the chart name

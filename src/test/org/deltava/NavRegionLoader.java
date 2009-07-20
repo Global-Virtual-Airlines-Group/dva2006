@@ -165,7 +165,7 @@ public class NavRegionLoader extends TestCase {
 			for (Iterator<String> ei = XML_ENAMES.iterator(); ei.hasNext(); ) {
 				String wpType = ei.next();
 				boolean isWP = "Waypoint".equals(wpType);
-				Iterator eli = doc.getDescendants(new ElementFilter(wpType));
+				Iterator<?> eli = doc.getDescendants(new ElementFilter(wpType));
 				while (eli.hasNext()) {
 					Element e = (Element) eli.next();
 					double lat = Double.parseDouble(e.getAttributeValue("lat"));
