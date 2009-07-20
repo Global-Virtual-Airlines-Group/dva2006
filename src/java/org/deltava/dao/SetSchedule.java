@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -162,8 +162,8 @@ public class SetSchedule extends DAO {
 			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
 			_ps.setString(2, a.getIATA());
 			_ps.setString(3, SystemData.get("airline.code"));
-			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext();) {
-				String aCode = (String) i.next();
+			for (Iterator<String> i = a.getAirlineCodes().iterator(); i.hasNext();) {
+				String aCode = i.next();
 				_ps.setString(1, aCode);
 				_ps.addBatch();
 			}

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to delete ACARS Flight Info entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,15 +32,14 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 
 		// Get the flight IDs
 		Collection<String> IDs = ctx.getParameters("flightID");
-		List<String> flightIDs = new ArrayList<String>();
-		if (IDs == null) {
+		Collection<String> flightIDs = new LinkedHashSet<String>();
+		if (IDs == null)
 			flightIDs.add(ctx.getParameter("id"));
-		} else {
+		else
 			flightIDs.addAll(IDs);			
-		}
 
-		Set<String> deletedIDs = new HashSet<String>();
-		Set<String> skippedIDs = new HashSet<String>();
+		Collection<String> deletedIDs = new HashSet<String>();
+		Collection<String> skippedIDs = new HashSet<String>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -54,23 +53,22 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 			ctx.startTX();
 
 			// Delete the connection entries
-			for (Iterator i = flightIDs.iterator(); i.hasNext();) {
-				int id = Integer.parseInt((String) i.next());
+			for (Iterator<String> i = flightIDs.iterator(); i.hasNext();) {
+				int id = StringUtils.parse(i.next(), 0);
 
 				// Get the flight information entry - make sure the flight doesn't have a PIREP linked to it
 				FlightInfo info = dao.getInfo(id);
-				if (info == null) {
+				if (info == null)
 					skippedIDs.add(StringUtils.formatHex(id));
-				} else {
+				else {
 				   UserData uloc = uddao.get(info.getPilotID());
 				   String dbName = (uloc == null) ? SystemData.get("airline.db") : uloc.getDB();
 				   ACARSFlightReport afr = frdao.getACARS(dbName, id);
 				   if (afr == null) {
 						wdao.deleteInfo(info.getID());
 						deletedIDs.add(StringUtils.formatHex(id));
-				   } else {
+				   } else
 				      skippedIDs.add(StringUtils.formatHex(id));   
-				   }
 				}
 			}
 

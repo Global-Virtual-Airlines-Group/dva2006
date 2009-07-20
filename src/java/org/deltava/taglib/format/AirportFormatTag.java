@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.security.Principal;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to selectively display airport codes.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0 
  */
 
@@ -41,8 +40,7 @@ public class AirportFormatTag extends TagSupport {
     * @see AirportFormatTag#setAirport(Airport)
     */
    public void setAirportCode(String code) {
-      Map airports = (Map) SystemData.getObject("airports");
-      setAirport((Airport) airports.get(code.toUpperCase()));
+      setAirport(SystemData.getAirport(code));
    }
 
    /**
@@ -108,9 +106,10 @@ public class AirportFormatTag extends TagSupport {
          }
       } catch (Exception e) {
          throw new JspException(e);
+      } finally {
+    	  release();
       }
 
-      release();
       return EVAL_PAGE;
    }
 }

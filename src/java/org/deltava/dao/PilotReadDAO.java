@@ -154,7 +154,7 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * @return a Map of Pilots, indexed by the pilot code
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, Pilot> getByID(Collection ids, String tableName) throws DAOException {
+	public Map<Integer, Pilot> getByID(Collection<?> ids, String tableName) throws DAOException {
 
 		// Get the datbaase - if we haven't specified one, use the current database
 		int ofs = tableName.indexOf('.');
@@ -180,7 +180,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Add the pilot IDs to the set
 		int querySize = 0;
-		for (Iterator i = ids.iterator(); i.hasNext();) {
+		for (Iterator<?> i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 
@@ -371,8 +371,8 @@ abstract class PilotReadDAO extends PilotDAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".ROLES WHERE (ID IN (");
-		for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {
-			Integer id = (Integer) i.next();
+		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
+			Integer id = i.next();
 			sqlBuf.append(id.toString());
 			if (i.hasNext())
 				sqlBuf.append(',');
@@ -386,7 +386,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		// Exeute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Pilot p = pilots.get(new Integer(rs.getInt(1)));
+			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
 			if (p != null)
 				p.addRole(rs.getString(2));
 		}
@@ -425,7 +425,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		// Exeute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Pilot p = pilots.get(new Integer(rs.getInt(1)));
+			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
 			if (p != null)
 				p.addRating(rs.getString(2));
 		}
@@ -444,8 +444,8 @@ abstract class PilotReadDAO extends PilotDAO {
 		if (SystemData.get("airline.db").equals(dbName))
 			return;
 		
-		Map apps = (Map) SystemData.getObject("apps");
-		for (Iterator i = apps.values().iterator(); i.hasNext();) {
+		Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
+		for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
 			AirlineInformation info = (AirlineInformation) i.next();
 			if (dbName.equals(info.getDB())) {
 				for (Iterator<Pilot> uci = pilots.iterator(); uci.hasNext();) {

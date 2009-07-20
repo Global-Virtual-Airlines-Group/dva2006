@@ -11,11 +11,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store TeamSpeak voice channel information.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
-public class Channel extends DatabaseBean implements Comparable, Cacheable, ViewEntry {
+public class Channel extends DatabaseBean implements Cacheable, ViewEntry {
 	
 	public static final Collection<ComboAlias> CODECS = ComboUtils.fromArray(new String[] { "CELP 5.1 kbit",
 			"CELP 6.3 kbit", "GSM 14.8 kbit", "GSM 16.4 kbit", "CELP Windows 5.2 kbit", "Speex 3.4 kbit", "Speex 5.2 kbit",
@@ -256,16 +256,6 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable, View
 	 */
 	public void setModerated(boolean isModerated) {
 		_isModerated = isModerated;
-	}
-	
-	/**
-	 * Compares two Channels by comparing their names and server IDs.
-	 * @see java.lang.Comparable#compareTo(Object)
-	 */
-	public int compareTo(Object o) {
-		Channel c2 = (Channel) o;
-		int tmpResult = _name.compareTo(c2._name);
-		return (tmpResult == 0) ? Integer.valueOf(_serverID).compareTo(Integer.valueOf(c2._serverID)) : tmpResult;
 	}
 	
 	/**

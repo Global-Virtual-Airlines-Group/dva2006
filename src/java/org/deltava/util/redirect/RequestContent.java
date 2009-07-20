@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.redirect;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.util.*;
  * servlet request for display on a result JSP, while at the same time using a redirect so that refreshing the result
  * URL does not invoke the command a second time.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  * @see org.deltava.commands.RedirectCommand
  */
@@ -32,7 +32,7 @@ class RequestContent implements java.io.Serializable {
 	 * Returns the saved servlet request attribute names.
 	 * @return a Set of attribute names
 	 */
-	public Set getAttributeNames() {
+	public Set<String> getAttributeNames() {
 		return _attrs.keySet();
 	}
 
@@ -40,7 +40,7 @@ class RequestContent implements java.io.Serializable {
 	 * Returns the saved servlet request attribute values.
 	 * @return a Collection of objects
 	 */
-	public Collection getAttributeValues() {
+	public Collection<Object> getAttributeValues() {
 		return _attrs.values();
 	}
 

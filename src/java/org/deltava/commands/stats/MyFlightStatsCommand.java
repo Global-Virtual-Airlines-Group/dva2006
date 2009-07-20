@@ -19,7 +19,7 @@ import org.deltava.util.*;
 
 public class MyFlightStatsCommand extends AbstractStatsCommand {
 	
-	private static final List DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
+	private static final List<?> DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
 		"90 Days" }, new String[] { "0", "30", "60", "90" });
 
 	/**

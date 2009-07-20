@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to read System News entries.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class GetNews extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query - if we get nothing back, then return null
-			List results = execute();
+			List<?> results = execute();
 			return results.isEmpty() ? null : (News) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -72,7 +72,7 @@ public class GetNews extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query - if we get nothing back, then return null
-			List results = execute();
+			List<?> results = execute();
 			return results.isEmpty() ? null : (Notice) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

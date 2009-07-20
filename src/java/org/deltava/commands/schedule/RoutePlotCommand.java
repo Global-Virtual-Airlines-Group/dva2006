@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 
 public class RoutePlotCommand extends AbstractCommand {
 	
-	private static final List SIM_VERSIONS = ComboUtils.fromArray(new String[] {"Flight Simulator X", 
+	private static final List<?> SIM_VERSIONS = ComboUtils.fromArray(new String[] {"Flight Simulator X", 
 			"Flight Simulator 2004"}, new String[] {"FSX", "FS9"}); 
 
 	/**

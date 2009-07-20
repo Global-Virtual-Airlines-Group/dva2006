@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.Date;
@@ -6,11 +6,11 @@ import java.util.Date;
 /**
  * A class for storing daily HTTP server statistics.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class HTTPStatistics implements java.io.Serializable, Comparable {
+public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStatistics> {
 
 	private Date _date;
 	private int _reqs;
@@ -130,10 +130,8 @@ public class HTTPStatistics implements java.io.Serializable, Comparable {
 
 	/**
 	 * Compares two statistics objects by comparing their date.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		HTTPStatistics s2 = (HTTPStatistics) o2;
-		return _date.compareTo(s2.getDate());
+	public int compareTo(HTTPStatistics s2) {
+		return _date.compareTo(s2._date);
 	}
 }

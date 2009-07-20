@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -329,7 +329,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @return a List of CoolerStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CoolerStatsEntry> getCoolerStatistics(String orderBy, String groupBy, String distinctBy)
+	public List<CoolerStatsEntry<String>> getCoolerStatistics(String orderBy, String groupBy, String distinctBy)
 			throws DAOException {
 
 		// Generate SQL statement
@@ -347,9 +347,9 @@ public class GetStatistics extends DAO implements CachingDAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
-			List<CoolerStatsEntry> results = new ArrayList<CoolerStatsEntry>();
+			List<CoolerStatsEntry<String>> results = new ArrayList<CoolerStatsEntry<String>>();
 			while (rs.next())
-				results.add(new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3)));
+				results.add(new CoolerStatsEntry<String>(rs.getString(1), rs.getInt(2), rs.getInt(3)));
 
 			// Clean up and return
 			rs.close();

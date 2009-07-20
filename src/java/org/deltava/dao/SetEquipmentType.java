@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -140,15 +140,15 @@ public class SetEquipmentType extends DAO {
 		
 		// Add the primary ratings
 		_ps.setInt(2, EquipmentType.PRIMARY_RATING);
-		for (Iterator i = eq.getPrimaryRatings().iterator(); i.hasNext(); ) {
-			_ps.setString(3, (String) i.next());
+		for (Iterator<String> i = eq.getPrimaryRatings().iterator(); i.hasNext(); ) {
+			_ps.setString(3, i.next());
 			_ps.addBatch();
 		}
 		
 		// Add the secondary ratings
 		_ps.setInt(2, EquipmentType.SECONDARY_RATING);
-		for (Iterator i = eq.getSecondaryRatings().iterator(); i.hasNext(); ) {
-			_ps.setString(3, (String) i.next());
+		for (Iterator<String> i = eq.getSecondaryRatings().iterator(); i.hasNext(); ) {
+			_ps.setString(3, i.next());
 			_ps.addBatch();
 		}
 		

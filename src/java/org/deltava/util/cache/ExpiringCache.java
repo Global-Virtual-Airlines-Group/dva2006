@@ -40,8 +40,8 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			return _expiryTime;
 		}
 
-		public int compareTo(CacheEntry e2) {
-			ExpiringCacheEntry ee2 = (ExpiringCacheEntry) e2;
+		public int compareTo(CacheEntry<U> e2) {
+			ExpiringCacheEntry<U> ee2 = (ExpiringCacheEntry<U>) e2;
 			return new Long(_expiryTime).compareTo(new Long(ee2._expiryTime));
 		}
 	}
@@ -83,7 +83,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @return TRUE if the cache contains the key, otherwise FALSE
 	 */
 	public boolean contains(Object key) {
-		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
+		ExpiringCacheEntry<?> entry = (ExpiringCacheEntry<?>) _cache.get(key);
 		return (entry != null) && (!entry.isExpired());
 	}
 
@@ -120,7 +120,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * @return TRUE if the object is present and expired, otherwise FALSE
 	 */
 	public boolean isExpired(Object key) {
-		ExpiringCacheEntry entry = (ExpiringCacheEntry<T>) _cache.get(key);
+		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		return (entry == null) ? false : entry.isExpired();
 	}
 
@@ -146,7 +146,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 		if (_pLock.tryAcquire()) {
 			try {
 				for (Iterator<CacheEntry<T>> i = _cache.values().iterator(); i.hasNext();) {
-					ExpiringCacheEntry entry = (ExpiringCacheEntry<T>) i.next();
+					ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) i.next();
 					if (entry.isExpired())
 						i.remove();
 				}

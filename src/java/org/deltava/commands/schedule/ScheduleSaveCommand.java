@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save imported Flight Schedule data to the database.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public class ScheduleSaveCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get command results - redirect if no results loaded
-		Collection entries = (Collection) ctx.getSession().getAttribute("entries");
+		Collection<?> entries = (Collection<?>) ctx.getSession().getAttribute("entries");
 		CommandResult result = ctx.getResult();
 		if (entries == null) {
 			result.setURL("schedimport", null, null);
@@ -68,7 +68,7 @@ public class ScheduleSaveCommand extends AbstractCommand {
 				dao.purge(false);
 
 			// Save the schedule entries
-			for (Iterator i = entries.iterator(); i.hasNext();) {
+			for (Iterator<?> i = entries.iterator(); i.hasNext();) {
 				ScheduleEntry se = (ScheduleEntry) i.next();
 				se.setCanPurge(canPurge);
 				se.setHistoric(isHistoric);

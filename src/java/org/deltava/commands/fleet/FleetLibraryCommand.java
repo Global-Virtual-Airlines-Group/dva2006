@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Fleet Library.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -52,8 +52,8 @@ public class FleetLibraryCommand extends AbstractLibraryCommand {
          // Get the fleet libraries from the other airlines if we're not in admin mode
          GetLibrary dao = new GetLibrary(con);
          if (!isAdmin) {
-            Map apps = (Map) SystemData.getObject("apps");
-            for (Iterator i = apps.values().iterator(); i.hasNext();) {
+            Map<?, ?> apps = (Map<?, ?>) SystemData.getObject("apps");
+            for (Iterator<?> i = apps.values().iterator(); i.hasNext();) {
                AirlineInformation info = (AirlineInformation) i.next();
                if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
                   results.addAll(0, dao.getFleet(info.getDB(), false));

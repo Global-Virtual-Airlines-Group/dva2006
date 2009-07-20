@@ -1,16 +1,14 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
-
-import java.io.Serializable;
 
 /**
  * A system bean to store JDBC table data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class TableInfo implements Serializable, Comparable {
+public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
 
     private String _tableName;
     private int _rows;
@@ -119,17 +117,15 @@ public class TableInfo implements Serializable, Comparable {
     
     /**
      * Compares two TableInfo objects by comparing the table names.
-     * @see Comparable#compareTo(Object)
      */
-    public int compareTo(Object o2) {
-    	TableInfo ti2 = (TableInfo) o2;
-    	return _tableName.compareTo(ti2.getName());
+    public int compareTo(TableInfo ti2) {
+    	return _tableName.compareTo(ti2._tableName);
     }
     
     /**
      * Overrides equality by using the compareTo method.
      */
     public boolean equals(Object o2) {
-       return (o2 instanceof TableInfo) ? (compareTo(o2) == 0) : false;
+       return (o2 instanceof TableInfo) ? (compareTo((TableInfo) o2) == 0) : false;
     }
 }

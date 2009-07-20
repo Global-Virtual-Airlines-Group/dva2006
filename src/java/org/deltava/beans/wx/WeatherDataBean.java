@@ -38,7 +38,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheab
 	 */
 	public static WeatherDataBean create(Type t) {
 		try {
-			Class c = Class.forName(WeatherDataBean.class.getPackage().getName() + "." + t.toString());
+			Class<?> c = Class.forName(WeatherDataBean.class.getPackage().getName() + "." + t.toString());
 			WeatherDataBean wx = (WeatherDataBean) c.newInstance();
 			return wx;
 		} catch (Exception e) {

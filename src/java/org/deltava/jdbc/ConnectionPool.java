@@ -174,7 +174,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * @throws ClassNotFoundException if the class cannot be loaded or is not a JDBC driver
 	 */
 	public void setDriver(String driverClassName) throws ClassNotFoundException {
-		Class c = Class.forName(driverClassName);
+		Class<?> c = Class.forName(driverClassName);
 		for (int x = 0; x < c.getInterfaces().length; x++) {
 			if (c.getInterfaces()[x].getName().equals("java.sql.Driver"))
 				return;

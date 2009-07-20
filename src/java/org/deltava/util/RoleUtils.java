@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A utility class to help with security role filtering.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0 
  */
 
@@ -14,6 +14,7 @@ public class RoleUtils {
 
     // Singleton constructor
     private RoleUtils() {
+    	super();
     }
 
     /**

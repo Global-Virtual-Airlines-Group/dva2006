@@ -1,8 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display all members of all security roles.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -33,15 +32,12 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
       PilotComparator cmp = new PilotComparator(PilotComparator.RANK);
       
       try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO
-         GetPilotDirectory dao = new GetPilotDirectory(con);
+         GetPilotDirectory dao = new GetPilotDirectory(ctx.getConnection());
 
          // Load all members for each role
          Map<String, Collection<Pilot>> results = new TreeMap<String, Collection<Pilot>>();
-         Collection roles = (List) SystemData.getObject("security.roles");
-         for (Iterator i = roles.iterator(); i.hasNext(); ) {
+         Collection<?> roles = (List<?>) SystemData.getObject("security.roles");
+         for (Iterator<?> i = roles.iterator(); i.hasNext(); ) {
             String roleName = (String) i.next();
             List<Pilot> pilots = new ArrayList<Pilot>();
             pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db")));

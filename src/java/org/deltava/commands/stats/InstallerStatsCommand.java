@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,13 +14,13 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to retrieve Fleet Installer statistics.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class InstallerStatsCommand extends AbstractCommand {
 	
-	private static final List _sortOptions = ComboUtils.fromArray(new String[] {"Installer Code", "Operating System", "Memory Size", 
+	private static final List<?> _sortOptions = ComboUtils.fromArray(new String[] {"Installer Code", "Operating System", "Memory Size", 
 		"Flight Simulator Version"}, new String[] {"INSTALLER", "OS", "MEMORY", "FSVERSION"});
 
 	/**

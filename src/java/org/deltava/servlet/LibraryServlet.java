@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -59,12 +59,12 @@ public class LibraryServlet extends GenericServlet {
 			c = jdbcPool.getConnection();
 
 			// Get the airline data
-			Map airlines = (Map) SystemData.getObject("apps");
+			Map<?, ?> airlines = (Map<?, ?>) SystemData.getObject("apps");
 
 			// Get the Library DAO
 			GetDocuments rdao = new GetDocuments(c);
 			if (!"usrlibrary".equals(url.getLastPath())) {
-				for (Iterator i = airlines.values().iterator(); (entry == null) && i.hasNext();) {
+				for (Iterator<?> i = airlines.values().iterator(); (entry == null) && i.hasNext();) {
 					AirlineInformation aInfo = (AirlineInformation) i.next();
 					if ("fleet".equals(url.getLastPath()))
 						entry = rdao.getInstaller(url.getFileName(), aInfo.getDB());

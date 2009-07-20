@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -197,14 +197,14 @@ public class GetAcademyCourses extends DAO {
 	 * @return a Map of comma-delimited certifications, indexed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, Collection<String>> getCertifications(Collection ids) throws DAOException {
+	public Map<Integer, Collection<String>> getCertifications(Collection<?> ids) throws DAOException {
 		if (ids.isEmpty())
 			return Collections.emptyMap();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.PILOT_ID, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE "
 				+ "(CR.NAME=C.CERTNAME) AND (C.STATUS=?) AND (C.PILOT_ID IN (");
-		for (Iterator i = ids.iterator(); i.hasNext(); ) {
+		for (Iterator<?> i = ids.iterator(); i.hasNext(); ) {
 			Object rawID = i.next();
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 			sqlBuf.append(id.toString());

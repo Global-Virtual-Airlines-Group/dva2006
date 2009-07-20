@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 public class SELCALCodeCommand extends AbstractViewCommand {
 	
 	private static final String[] SORT_CODES = {"SC.CODE", "SC.EQTYPE", "SC.AIRCRAFT", "PNAME DESC", "RESERVED"}; 
-	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"SELCAL Code", "Equipment Type",
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"SELCAL Code", "Equipment Type",
 			"Registration Code", "Pilot Name", "My Reserved Codes"}, SORT_CODES);
 
 	/**

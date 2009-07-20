@@ -84,8 +84,8 @@ public class DataService extends WebService {
 		
 		// CLIENTS section
 		ctx.println("!CLIENTS");
-		for (Iterator i = users.iterator(); i.hasNext();) {
-			Pilot p = (Pilot) i.next();
+		for (Iterator<Pilot> i = users.iterator(); i.hasNext();) {
+			Pilot p = i.next();
 			ctx.println(p.getRawData());
 		}
 
@@ -116,12 +116,12 @@ public class DataService extends WebService {
 	/**
 	 * Helper method to extract airline members from ServInfo data.
 	 */
-	private Collection<Pilot> combineUsers(NetworkInfo info, Map pilots) {
+	private Collection<Pilot> combineUsers(NetworkInfo info, Map<String, ?> pilots) {
 
 		List<Pilot> results = new ArrayList<Pilot>();
 		for (int x = 0; x < NETWORKS.length; x++) {
-			for (Iterator i = info.getPilots().iterator(); i.hasNext();) {
-				Pilot p = (Pilot) i.next();
+			for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
+				Pilot p = i.next();
 				if (pilots.containsKey(String.valueOf(p.getID())))
 					results.add(p);
 			}

@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.gvagroup.ipc.IPCInfo;
 /**
  * A utility class to handle deserializing IPC data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class IPCUtils {
 
 	// singleton
 	private IPCUtils() {
+		super();
 	}
 	
 	/**

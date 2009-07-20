@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to send group e-mail messages.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -96,8 +96,8 @@ public class MassMailingCommand extends AbstractCommand {
 		}
 		
 		// Add the roles to the request with a special marker
-		Collection roles = (Collection) SystemData.getObject("security.roles");
-		for (Iterator i = roles.iterator(); i.hasNext(); ) {
+		Collection<?> roles = (Collection<?>) SystemData.getObject("security.roles");
+		for (Iterator<?> i = roles.iterator(); i.hasNext(); ) {
 		   String role = (String) i.next();
 		   eqTypes.add(ComboUtils.fromString(role, "$role_" + role));
 		}

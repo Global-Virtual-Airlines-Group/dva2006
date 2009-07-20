@@ -625,14 +625,14 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append("))");
 
 		// Convert PIREPs to a Map for lookup
-		Map pMap = CollectionUtils.createMap(pireps, "ID");
+		Map<Integer, FlightReport> pMap = CollectionUtils.createMap(pireps, "ID");
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				FlightReport fr = (FlightReport) pMap.get(new Integer(rs.getInt(1)));
+				FlightReport fr = pMap.get(Integer.valueOf(rs.getInt(1)));
 				if (fr != null)
 					fr.setCaptEQType(rs.getString(2));
 			}

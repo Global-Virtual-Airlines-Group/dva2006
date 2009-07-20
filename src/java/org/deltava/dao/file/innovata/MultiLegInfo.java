@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.util.*;
@@ -8,11 +8,11 @@ import org.deltava.beans.schedule.*;
 /**
  * A class to track multiple-leg flights during an Innovata schedule import.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-class MultiLegInfo implements Comparable {
+class MultiLegInfo implements Comparable<MultiLegInfo> {
 	
 	private DailyScheduleEntry _startEnd; 
 	
@@ -49,9 +49,8 @@ class MultiLegInfo implements Comparable {
 	 * Compares two multi-leg beans by comparing their flight numbers.
 	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		MultiLegInfo i2 = (MultiLegInfo) o2;
-		return new Integer(_flightNumber).compareTo(new Integer(i2._flightNumber));
+	public int compareTo(MultiLegInfo i2) {
+		return Integer.valueOf(_flightNumber).compareTo(Integer.valueOf(i2._flightNumber));
 	}
 
 	/**

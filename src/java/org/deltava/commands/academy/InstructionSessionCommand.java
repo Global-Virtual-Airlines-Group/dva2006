@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,13 +19,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class InstructionSessionCommand extends AbstractFormCommand {
 	
-	private static final List STATUSES = ComboUtils.fromArray(InstructionSession.STATUS_NAMES);
+	private static final List<?> STATUSES = ComboUtils.fromArray(InstructionSession.STATUS_NAMES);
 
 	/**
 	 * Method called when saving the form.

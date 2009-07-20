@@ -172,6 +172,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 			try {
 				_msgTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 			} catch (UnsupportedEncodingException uee) {
+				// empty
 			}
 		}
 	}
@@ -210,6 +211,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable<SMTPEn
 			try {
 				_copyTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 			} catch (UnsupportedEncodingException uee) {
+				// empty
 			}
 		}
 	}

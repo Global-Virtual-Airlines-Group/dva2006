@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.util.StringUtils;
@@ -7,11 +7,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A common abstract class for beans stored in the database with a numeric primary key.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public abstract class DatabaseBean implements java.io.Serializable, Cacheable, Comparable {
+public abstract class DatabaseBean implements java.io.Serializable, Cacheable, Comparable<Object> {
 
     private int _id;
     

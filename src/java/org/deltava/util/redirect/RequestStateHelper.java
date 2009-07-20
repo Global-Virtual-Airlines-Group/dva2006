@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.redirect;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class to save and restore servlet request state.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -43,10 +43,11 @@ public class RequestStateHelper {
 			throw new IllegalStateException("Request state not found in HTTP session");
 
 		// Restore the request attributes
-		for (Iterator i = rc.getAttributeNames().iterator(); i.hasNext();) {
-			String attrName = (String) i.next();
-			log.debug("Restoring attribute " + attrName);
+		for (Iterator<String> i = rc.getAttributeNames().iterator(); i.hasNext();) {
+			String attrName = i.next();
 			req.setAttribute(attrName, rc.getAttribute(attrName));
+			if (log.isDebugEnabled())
+				log.debug("Restoring attribute " + attrName);
 		}
 
 		// Return the URL to forward to
@@ -64,11 +65,12 @@ public class RequestStateHelper {
 		RequestContent rc = new RequestContent(url);
 
 		// Save the attributes
-		Enumeration attrs = req.getAttributeNames();
+		Enumeration<?> attrs = req.getAttributeNames();
 		while (attrs.hasMoreElements()) {
 			String attrName = (String) attrs.nextElement();
-			log.debug("Saving attribute " + attrName);
 			rc.setAttribute(attrName, req.getAttribute(attrName));
+			if (log.isDebugEnabled())
+				log.debug("Saving attribute " + attrName);
 		}
 
 		// Get the current HTTP session
@@ -85,13 +87,12 @@ public class RequestStateHelper {
 	 * @param req the current servlet request
 	 */
 	public static void clear(HttpServletRequest req) {
-
-		// Get the HTTP session
 		if (req.isRequestedSessionIdValid()) {
 			HttpSession s = req.getSession(false);
 			if ((s != null) && (s.getAttribute(STATE_ATTR_NAME) != null)) {
-				log.debug("Clearing saved request state");
 				s.removeAttribute(STATE_ATTR_NAME);
+				if (log.isDebugEnabled())
+					log.debug("Clearing saved request state");
 			}
 		}
 	}

@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
-import java.io.IOException;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -12,13 +11,13 @@ import org.deltava.beans.ComboAlias;
 /**
  * A JSP tag to format List values.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class ListFormatTag extends TagSupport {
 
-    private Collection _values;
+    private Collection<?> _values;
     private String _delim;
     
     /**
@@ -33,7 +32,7 @@ public class ListFormatTag extends TagSupport {
      * Sets the values to display.
      * @param c a Collection of objects
      */
-    public void setValue(Collection c) {
+    public void setValue(Collection<?> c) {
         _values = c;
     }
     
@@ -48,7 +47,7 @@ public class ListFormatTag extends TagSupport {
         
         // Generate the output string
         StringBuilder buf = new StringBuilder();
-        for (Iterator i = _values.iterator(); i.hasNext(); ) {
+        for (Iterator<?> i = _values.iterator(); i.hasNext(); ) {
             Object obj = i.next();
             if (obj instanceof ComboAlias) {
                 buf.append(((ComboAlias) obj).getComboName());
@@ -62,13 +61,12 @@ public class ListFormatTag extends TagSupport {
         
         try {
             pageContext.getOut().write(buf.toString());
-        } catch (IOException ie) {
-            JspException je = new JspException(ie.getMessage());
-            je.initCause(ie);
-            throw je;
+        } catch (Exception e) {
+            throw new JspException(e);
+        } finally {
+        	release();
         }
         
-        release();
         return EVAL_PAGE;
     }
 }

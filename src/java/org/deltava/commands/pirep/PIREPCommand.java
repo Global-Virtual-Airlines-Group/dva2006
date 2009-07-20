@@ -37,7 +37,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final Logger log = Logger.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
-	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
+	private static final Collection<?> _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
 
 	// Month combolist values
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
@@ -506,18 +506,20 @@ public class PIREPCommand extends AbstractFormCommand {
 					wps.remove(info.getAirportA().getICAO());
 					
 					// Check the SID
-					if (info.getSID() == null) {
+					if ((info.getSID() == null) && (wps.size() > 2)) {
 						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.SID, wps.get(0), wps.get(1), info.getRunwayD());
 						if (sid != null) {
+							wps.remove(0);
 							info.setSID(sid);
 							awdao.writeSIDSTAR(info.getID(), sid);
 						}
 					}
 					
 					// Check the STAR
-					if (info.getSID() == null) {
+					if ((info.getSID() == null) && (wps.size() > 2)) {
 						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1), wps.get(wps.size() - 2), info.getRunwayA());
 						if (star != null) {
+							wps.remove(wps.size() - 1);
 							info.setSTAR(star);
 							awdao.writeSIDSTAR(info.getID(), star);
 						}
@@ -536,7 +538,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							route.addAll(info.getSID().getWaypoints()); 
 					}
 						
-					route.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
+					route.addAll(navdao.getRouteWaypoints(StringUtils.listConcat(wps," "), info.getAirportD()));
 					if (info.getSTAR() != null) {
 						if (!CollectionUtils.isEmpty(wps))
 							route.addAll(info.getSTAR().getWaypoints(wps.get(wps.size() - 1)));
@@ -548,19 +550,8 @@ public class PIREPCommand extends AbstractFormCommand {
 						route.add(info.getRunwayA());
 					route.add(info.getAirportA());
 					
-					// Trim out excessive bits
-					int lastDistance = Math.round(new GeoPosition(info.getAirportD()).distanceTo(info.getAirportA()) * 1.25f);
-					for (Iterator<? extends GeoLocation> i = route.iterator(); i.hasNext(); ) {
-						GeoLocation loc = i.next();
-						int distance = new GeoPosition(loc).distanceTo(info.getAirportA());
-						if ((distance > lastDistance) && (distance > 120))
-							i.remove();
-						else
-							lastDistance = distance;
-					}
-					
-					// Save ACARS route
-					ctx.setAttribute("filedRoute", route, REQUEST);
+					// Save ACARS route, stripping out excessive bits
+					ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 50), REQUEST);
 				}
 
 				// Get the check ride
