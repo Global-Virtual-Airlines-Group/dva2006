@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -30,7 +30,6 @@ public class TransferProcessCommand extends AbstractCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -81,11 +80,23 @@ public class TransferProcessCommand extends AbstractCommand {
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
 			int promoLegs = prdao.getPromotionCount(txreq.getID(), txreq.getEquipmentType());
 			boolean hasLegs = (promoLegs >= newEQ.getPromotionLegs(Ranks.RANK_C));
+			
+			// Check if user ever received Senior Captain rank
+			GetStatusUpdate stdao = new GetStatusUpdate(con);
+			boolean isSC = stdao.isSeniorCaptain(usr.getID());
 
 			// Check if the user is eligible for promotion
 			ctx.setAttribute("captExam", Boolean.valueOf(hasCaptExam), REQUEST);
-			ctx.setAttribute("promoLegs", new Integer(promoLegs), REQUEST);
+			ctx.setAttribute("promoLegs", Integer.valueOf(promoLegs), REQUEST);
 			ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
+			
+			// Get the available ranks
+			Collection<String> eqRanks = newEQ.getRanks();
+			if (!isSC)
+				eqRanks.remove(Ranks.RANK_SC);
+			if (!hasCaptExam || !hasLegs)
+				eqRanks.remove(Ranks.RANK_C);
+			ctx.setAttribute("newRanks", eqRanks, REQUEST);
 
 			// Determine new equipment ratings if approved
 			Collection<String> newRatings = new TreeSet<String>(usr.getRatings());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -72,6 +72,10 @@ public class TransferApproveCommand extends AbstractCommand {
 			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
 			Collection<String> ratings = ctx.getParameters("ratings");
 			Collection<String> newRatings = new TreeSet<String>((ratings == null) ? usr.getRatings() : ratings);
+			
+			// Check if user ever received Senior Captain rank
+			GetStatusUpdate stdao = new GetStatusUpdate(con);
+			boolean isSC = stdao.isSeniorCaptain(usr.getID());
 
 			// Check if we're switching programs
 			String eqType = ctx.getParameter("eqType");
@@ -79,10 +83,15 @@ public class TransferApproveCommand extends AbstractCommand {
 				EquipmentType newEQ = eqdao.get(eqType);
 				if ((currentEQ == null) || (newEQ == null))
 					throw notFoundException("Invalid Equipment Program - " + eqType + " / " + usr.getEquipmentType());
+				
+				// Get the available ranks
+				Collection<String> eqRanks = newEQ.getRanks();
+				if (!isSC)
+					eqRanks.remove(Ranks.RANK_SC);
 
 				// Validate the rank
 				String rank = ctx.getParameter("rank");
-				if (!newEQ.getRanks().contains(rank))
+				if (!eqRanks.contains(rank))
 					throw notFoundException("Invalid Rank - " + rank);
 
 				// Check if we're doing a promotion or a rating change
@@ -119,7 +128,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			}
 
 			// Figure out what ratings have been added
-			Collection addedRatings = CollectionUtils.getDelta(newRatings, usr.getRatings());
+			Collection<String> addedRatings = CollectionUtils.getDelta(newRatings, usr.getRatings());
 			if (!addedRatings.isEmpty()) {
 				ctx.setAttribute("addedRatings", addedRatings, REQUEST);
 				StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RATING_ADD);
