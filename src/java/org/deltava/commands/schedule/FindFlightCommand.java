@@ -85,7 +85,6 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		criteria.setDBName(SystemData.get("airline.db"));
-		criteria.setIncludeHistoric(Boolean.valueOf(ctx.getParameter("includeHistoric")).booleanValue());
 		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
 		criteria.setDispatchOnly(Boolean.valueOf(ctx.getParameter("dispatchOnly")).booleanValue());
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));

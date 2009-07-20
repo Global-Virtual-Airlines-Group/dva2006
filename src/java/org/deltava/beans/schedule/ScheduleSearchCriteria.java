@@ -19,9 +19,9 @@ public class ScheduleSearchCriteria extends Flight {
 			"Departure Time", "Arrival Time", "Length", "Distance"};
 	public static final String[] SORT_CODES = {"RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A", "TIME_D",
 			"TIME_A", "FLIGHT_TIME", "DISTANCE"};
-	public static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
+	public static final List<?> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
-	public static final List HOURS = ComboUtils.fromArray(new String[] { "-", "Midnight", "1 AM", "2 AM", "3 AM",
+	public static final List<?> HOURS = ComboUtils.fromArray(new String[] { "-", "Midnight", "1 AM", "2 AM", "3 AM",
 			"4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM",
 			"5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM" },
 			new String[] { "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
@@ -32,7 +32,6 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _length;
 	private int _maxResults;
 	private boolean _includeAcademy;
-	private boolean _includeHistoric;
 	private boolean _dispatchRouteCounts;
 	private boolean _dispatchOnly;
 
@@ -77,10 +76,6 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public boolean getIncludeAcademy() {
 		return _includeAcademy;
-	}
-	
-	public boolean getIncludeHistoric() {
-		return _includeHistoric;
 	}
 	
 	public boolean getCheckDispatch() {
@@ -223,14 +218,6 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setIncludeAcademy(boolean doInclude) {
 		_includeAcademy = doInclude;
-	}
-	
-	/**
-	 * Includes Historic flights in the search.
-	 * @param doInclude TRUE if Historic flights should be included, otherwise FALSE
-	 */
-	public void setIncludeHistoric(boolean doInclude) {
-		_includeHistoric = doInclude;
 	}
 	
 	/**
