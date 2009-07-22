@@ -478,14 +478,14 @@ public class PIREPCommand extends AbstractFormCommand {
 						
 						if (tdEntries.size() == 2) {
 							// Load the departure runway
-							Runway r = navdao.getBestRunway(info.getAirportD().getICAO(), tdEntries.get(0), tdEntries.get(0).getHeading());
+							Runway r = navdao.getBestRunway(info.getAirportD().getICAO(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
 							if (r != null) {
 								int dist = GeoUtils.distanceFeet(r, tdEntries.get(0));
 								info.setRunwayD(new RunwayDistance(r, dist));
 							}
 							
 							// Load the arrival runway
-							r = navdao.getBestRunway(afr.getAirportA().getICAO(), tdEntries.get(1), tdEntries.get(1).getHeading());
+							r = navdao.getBestRunway(afr.getAirportA().getICAO(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
 							if (r != null) {
 								int dist = GeoUtils.distanceFeet(r, tdEntries.get(1));
 								info.setRunwayA(new RunwayDistance(r, dist));
