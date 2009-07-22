@@ -197,25 +197,50 @@ public class GetNavData extends DAO implements CachingDAO {
 	/**
 	 * Returns the likeliest runway for a takeoff or landing 
 	 * @param airportCode the airport ICAO code
+	 * @param simVersion the Flight Simulator Version
 	 * @param loc the takeoff/landing location
 	 * @param hdg the takeoff/landing heading in degrees 
 	 * @return a Runway, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Runway getBestRunway(String airportCode, GeoLocation loc, int hdg) throws DAOException {
-		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
+	public Runway getBestRunway(String airportCode, int simVersion, GeoLocation loc, int hdg) throws DAOException {
+		Map<String, NavigationDataBean> results = new LinkedHashMap<String, NavigationDataBean>();
 		try {
+			if (simVersion > 0) {
+				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
+				_ps.setString(1, airportCode.toUpperCase());
+				_ps.setInt(2, Math.max(2004, simVersion));
+				
+				ResultSet rs = _ps.executeQuery();
+				while (rs.next()) {
+					Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+					r.setCode(rs.getString(1));
+					r.setName(rs.getString(2));
+					r.setHeading(rs.getInt(6));
+					r.setLength(rs.getInt(7));
+					results.put(r.getName(), r);
+				}
+				
+				rs.close();
+				_ps.close();
+			}
+			
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, NavigationDataBean.RUNWAY);
 			_ps.setString(2, airportCode.toUpperCase());
-			results.addAll(execute());
+			List<NavigationDataBean> rwys = execute();
+			for (Iterator<NavigationDataBean> i = rwys.iterator(); i.hasNext(); ) {
+				NavigationDataBean ndb = i.next();
+				if (!results.containsKey(ndb.getName()))
+					results.put(ndb.getName(), ndb);
+			}
 		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}
 		
 		// Iterate through the list
 		Runway rwy = null; long lastBrgDiff = 360;
-		for (Iterator<NavigationDataBean> i = results.iterator(); i.hasNext(); ) {
+		for (Iterator<NavigationDataBean> i = results.values().iterator(); i.hasNext(); ) {
 			NavigationDataBean nd = i.next();
 			if (nd.getType() == NavigationDataBean.RUNWAY) {
 				Runway r = (Runway) nd;
