@@ -120,7 +120,7 @@ Your Assistant Chief Pilots are
 You are also qualified to file Flight Reports using the following aircraft:<br />
 <fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
-<content:filter roles="HR,Examination">
+<content:filter roles="HR,Examination,Operations">
 <tr>
  <td class="mid"><el:cmd url="prgroster" className="bld">Program Roster</el:cmd></td>
  <td class="data">You can view statistics about the ${pilot.equipmentType} program, and view the pilot roster for
@@ -532,26 +532,28 @@ training session with a Flight Academy student.</td>
 </c:if>
 </content:filter>
 </c:if>
-<content:filter roles="HR,PIREP">
+<content:filter roles="HR,PIREP,Operations">
 <!-- Human Resources Admin Section -->
 <tr class="title caps">
  <td colspan="2">HUMAN RESOURCES</td>
 </tr>
 </content:filter>
-<content:filter roles="HR,PIREP">
+<content:filter roles="HR,PIREP,Operations">
 <tr>
  <td class="mid"><el:cmd className="bld" url="massmail">Group E-Mail</el:cmd></td>
  <td class="data">You can send an e-mail message to a group of pilots in a single equipment program,
  or to the entire airline.</td>
 </tr>
 </content:filter>
-<content:filter roles="HR">
+<content:filter roles="HR,Operations">
 <tr>
  <td class="mid"><el:cmd className="bld" url="eqtypes">Equipment Type Programs</el:cmd></td>
  <td class="data">You can add new equipment programs, or modify existing programs to
  change Chief Pilots, automatic additional ratings or equipment types for flight legs
  that qualify for promotion to Captain.</td>
 </tr>
+</content:filter>
+<content:filter roles="HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
  <td class="data">This section tracks applicants to <content:airline /> before they are hired on as Pilots.</td>
@@ -581,7 +583,7 @@ training session with a Flight Academy student.</td>
  a particular IP address, host name or address range.</td> 
 </tr>
 </content:filter> 
-<content:filter roles="HR,Examination,TestAdmin">
+<content:filter roles="HR,Examination,TestAdmin,Operations">
 <tr class="title caps">
  <td colspan="2">PILOT EXAMINATIONS</td>
 </tr>
@@ -606,7 +608,7 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 </tr>
 </content:filter>
 
-<content:filter roles="Schedule">
+<content:filter roles="Schedule,Operations">
 <!-- Schedule Admin Section -->
 <tr class="title caps">
  <td colspan="2">FLIGHT SCHEDULE</td>
