@@ -5,17 +5,12 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.*;
 
 import org.jdom.*;
-import org.jdom.input.*;
 import org.jdom.filter.ElementFilter;
 
-public class NavRegionLoader extends TestCase {
-	
-	private static Logger log;
+public class NavRegionLoader extends SceneryLoaderTestCase {
 	
 	private static final String JDBC_URL ="jdbc:mysql://polaris.sce.net/common";
 	private Connection _c;
@@ -27,12 +22,6 @@ public class NavRegionLoader extends TestCase {
 	
 	private static final List<String> XML_ENAMES = Arrays.asList("Waypoint", "Vor", "Ndb");
 	
-	final class DirectoryFilter implements FileFilter {
-		public boolean accept(File f) {
-			return ((f != null) && f.isDirectory() && !f.getName().startsWith("."));
-		}
-	}
-	
 	final class SceneryFilter implements FileFilter {
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
@@ -41,40 +30,9 @@ public class NavRegionLoader extends TestCase {
 		}
 	}
 	
-	final class XMLFilter implements FileFilter {
-		public boolean accept(File f) {
-			String fn = f.getName().toLowerCase();
-			return (f.isFile() && fn.endsWith(".xml"));
-		}
-	}
-	
-	private Collection<File> getFiles(File root) {
-		Collection<File> files = new ArrayList<File>();
-		File[] dirs = root.listFiles(new DirectoryFilter());
-		assertNotNull(dirs);
-		for (int x = 0; x < dirs.length; x++) {
-			File f = new File(dirs[x], "scenery");
-			if (f.isDirectory()) {
-				File[] bgls = f.listFiles(new SceneryFilter());
-				if (bgls != null)
-					files.addAll(Arrays.asList(bgls));
-			}
-		}
-		
-		return files;
-	}
-	
-	private Document loadXML(File f) throws IOException, JDOMException {
-		SAXBuilder builder = new SAXBuilder();
-		return builder.build(f);
-	}
-	
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
-		log = Logger.getLogger(ChartLoader.class);
+		log = Logger.getLogger(NavRegionLoader.class);
 		
 		// Create the output directory
 		File xmlP = new File(XML_PATH);
@@ -104,7 +62,7 @@ public class NavRegionLoader extends TestCase {
 		File rt = new File(SCENERY_ROOT);
 		assertTrue(rt.isDirectory());
 		
-		Collection<File> bglFiles = getFiles(rt);
+		Collection<File> bglFiles = getFiles(rt, new SceneryFilter());
 		assertNotNull(bglFiles);
 		
 		// Process the BGLs
