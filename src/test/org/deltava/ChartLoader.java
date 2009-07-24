@@ -45,8 +45,6 @@ public class ChartLoader extends TestCase {
 	
 	private class MD5Chart extends Chart {
 		private String _md5;
-		private String _fileName;
-		private boolean _dirty;
 		
 		MD5Chart(String name, Airport ap) {
 			super(name, ap);
@@ -63,24 +61,8 @@ public class ChartLoader extends TestCase {
 			return _md5;
 		}
 		
-		public String getFileName() {
-			return _fileName;
-		}
-		
 		public void setHash(String md5) {
 			_md5 = md5.toLowerCase();
-		}
-		
-		public void setDirty() {
-			_dirty = true;
-		}
-		
-		public void setFileName(String fName) {
-			_fileName = fName;
-		}
-		
-		public boolean isDirty() {
-			return _dirty; 
 		}
 	}
 
@@ -227,7 +209,6 @@ public class ChartLoader extends TestCase {
 					// Create the new chart entry
 					MD5Chart c = new MD5Chart(chartName.replace("  ", " "), a);
 					c.setID(oc.getID());
-					c.setFileName(f.getName());
 					c.load(new FileInputStream(f));
 					c.setImgType(Chart.PDF);
 					c.setType(StringUtils.arrayIndexOf(TYPES, ce.getChildTextTrim("chart_code"), 0));
@@ -244,7 +225,6 @@ public class ChartLoader extends TestCase {
 					}
 				} else {
 					MD5Chart c = new MD5Chart(chartName, a);
-					c.setFileName(f.getName());
 					c.load(new FileInputStream(f));
 					c.setImgType(Chart.PDF);
 					c.setType(StringUtils.arrayIndexOf(TYPES, ce.getChildTextTrim("chart_code"), 0));

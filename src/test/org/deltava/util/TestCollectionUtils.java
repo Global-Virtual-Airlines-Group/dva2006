@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 public class TestCollectionUtils extends TestCase {
 
-	private class ID {
+	class ID {
 		private int _id;
 
 		public ID(int id) {

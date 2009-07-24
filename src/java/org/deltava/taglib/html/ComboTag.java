@@ -60,7 +60,7 @@ public class ComboTag extends FormElementTag {
 
 		// Determine if the option is selected
 		boolean isSelected = false;
-		if (_value instanceof Collection) {
+		if (_value instanceof Collection<?>) {
 			for (Iterator<?> i = ((Collection<?>) _value).iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(optValue, i.next());
 		} else {
