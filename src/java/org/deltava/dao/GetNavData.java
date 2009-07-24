@@ -204,7 +204,7 @@ public class GetNavData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Runway getBestRunway(String airportCode, int simVersion, GeoLocation loc, int hdg) throws DAOException {
-		Map<String, NavigationDataBean> results = new LinkedHashMap<String, NavigationDataBean>();
+		Collection<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
 		try {
 			if (simVersion > 0) {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
@@ -218,7 +218,7 @@ public class GetNavData extends DAO implements CachingDAO {
 					r.setName(rs.getString(2));
 					r.setHeading(rs.getInt(6));
 					r.setLength(rs.getInt(7));
-					results.put(r.getName(), r);
+					results.add(r);
 				}
 				
 				rs.close();
@@ -228,19 +228,14 @@ public class GetNavData extends DAO implements CachingDAO {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, NavigationDataBean.RUNWAY);
 			_ps.setString(2, airportCode.toUpperCase());
-			List<NavigationDataBean> rwys = execute();
-			for (Iterator<NavigationDataBean> i = rwys.iterator(); i.hasNext(); ) {
-				NavigationDataBean ndb = i.next();
-				if (!results.containsKey(ndb.getName()))
-					results.put(ndb.getName(), ndb);
-			}
+			results.addAll(execute());
 		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}
 		
 		// Iterate through the list
 		Runway rwy = null; long lastBrgDiff = 360;
-		for (Iterator<NavigationDataBean> i = results.values().iterator(); i.hasNext(); ) {
+		for (Iterator<NavigationDataBean> i = results.iterator(); i.hasNext(); ) {
 			NavigationDataBean nd = i.next();
 			if (nd.getType() == NavigationDataBean.RUNWAY) {
 				Runway r = (Runway) nd;
