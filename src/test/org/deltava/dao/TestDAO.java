@@ -21,10 +21,6 @@ public class TestDAO extends AbstractBeanTestCase {
             return _queryTimeout;
         }
         
-        public void initStatement() throws SQLException {
-            prepareStatement("SELECT COUNT(*) FROM STAFF");
-        }
-        
         public void initStatement(String sql) throws SQLException {
         	prepareStatement(sql);
         }
@@ -81,8 +77,8 @@ public class TestDAO extends AbstractBeanTestCase {
     }
     
     public void testLimits() {
-        validateInput("queryMax", new Integer(-1), IllegalArgumentException.class);
-        validateInput("queryStart", new Integer(-1), IllegalArgumentException.class);
+        validateInput("queryMax", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("queryStart", Integer.valueOf(-1), IllegalArgumentException.class);
         _dao.setQueryMax(30);
         _dao.setQueryStart(1);
         assertEquals(30, _dao.getQueryMax());

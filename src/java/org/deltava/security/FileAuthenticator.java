@@ -28,7 +28,6 @@ public class FileAuthenticator implements Authenticator {
 	private class UserInfo {
 
 		private String _dn;
-		private String _uid;
 		private String _pwd;
 		private boolean _enabled = true;
 
@@ -36,7 +35,7 @@ public class FileAuthenticator implements Authenticator {
 			StringTokenizer tokens = new StringTokenizer(rawInput, ",");
 			_dn = tokens.nextToken();
 			_pwd = tokens.nextToken();
-			_uid = tokens.nextToken();
+			tokens.nextToken();
 			if (tokens.hasMoreTokens())
 				_enabled = Boolean.valueOf(tokens.nextToken()).booleanValue();
 		}
@@ -47,10 +46,6 @@ public class FileAuthenticator implements Authenticator {
 
 		public String getDN() {
 			return _dn;
-		}
-
-		public String getUID() {
-			return _uid;
 		}
 
 		public String getPassword() {
