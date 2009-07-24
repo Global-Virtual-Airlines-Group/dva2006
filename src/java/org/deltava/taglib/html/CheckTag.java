@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -125,7 +125,7 @@ public class CheckTag extends FormElementTag {
 
 		// Determine if the option is selected
 		boolean isSelected = false;
-		if (_value instanceof Collection) {
+		if (_value instanceof Collection<?>) {
 			for (Iterator<?> i = ((Collection<?>) _value).iterator(); (i.hasNext() && !isSelected);)
 				isSelected = checkOption(opt, i.next());
 		} else
