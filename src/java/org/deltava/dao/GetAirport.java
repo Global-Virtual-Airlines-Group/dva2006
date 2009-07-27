@@ -1,10 +1,8 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.NavigationDataBean;
@@ -14,14 +12,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
 public class GetAirport extends DAO {
 
-	private static final Logger log = Logger.getLogger(GetAirport.class);
-	
 	private String _appCode;
 
 	/**
@@ -68,8 +64,9 @@ public class GetAirport extends DAO {
 			Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 			a.setTZ(rs.getString(3));
 			a.setLocation(rs.getDouble(5), rs.getDouble(6));
-			a.setAltitude(rs.getInt(7));
-			a.setRegion(rs.getString(8));
+			a.setADSE(rs.getBoolean(7));
+			a.setAltitude(rs.getInt(8));
+			a.setRegion(rs.getString(9));
 
 			// Close JDBC resources
 			rs.close();
@@ -118,8 +115,9 @@ public class GetAirport extends DAO {
 				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 				a.setTZ(rs.getString(3));
 				a.setLocation(rs.getDouble(5), rs.getDouble(6));
-				a.setAltitude(rs.getInt(7));
-				a.setRegion(rs.getString(8));
+				a.setADSE(rs.getBoolean(7));
+				a.setAltitude(rs.getInt(8));
+				a.setRegion(rs.getString(9));
 				results.add(a);
 			}
 
@@ -203,8 +201,9 @@ public class GetAirport extends DAO {
 				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 				a.setTZ(rs.getString(3));
 				a.setLocation(rs.getDouble(5), rs.getDouble(6));
-				a.setAltitude(rs.getInt(7));
-				a.setRegion(rs.getString(8));
+				a.setADSE(rs.getBoolean(7));
+				a.setAltitude(rs.getInt(8));
+				a.setRegion(rs.getString(9));
 
 				// Save in the map
 				results.put(a.getIATA(), a);
@@ -229,8 +228,6 @@ public class GetAirport extends DAO {
 				Airport a = results.get(code);
 				if (a != null)
 					a.addAirlineCode(rs.getString(1));
-				else
-					log.warn("Cannot find Airport " + code);
 			}
 
 			// Clean up the second query and return results
@@ -247,21 +244,18 @@ public class GetAirport extends DAO {
 	 * @param iata the IATA code
 	 * @return the ICAO code, or null if not found
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws NullPointerException if iata is null
 	 */
 	public String getICAO(String iata) throws DAOException {
 		if ((iata == null) || (iata.length() == 4))
 			return iata;
 		
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?)");
+			prepareStatementWithoutLimits("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?) LIMIT 1");
 			_ps.setString(1, iata.toUpperCase());
 			
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
 			String code = rs.next() ? rs.getString(1) : null;
-			setQueryMax(0);
 			
 			// Clean up and return
 			rs.close();

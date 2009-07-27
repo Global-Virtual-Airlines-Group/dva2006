@@ -88,6 +88,10 @@ return true;
  <td class="label top">Airlines</td>
  <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="hasADSE" idx="*" className="small" value="true" checked="${airport.ADSE}" label="This Airport has ADSE-X Ground Radar" /></td>
+</tr>
 <content:hasmsg>
 <tr>
  <td class="label">&nbsp;</td>
