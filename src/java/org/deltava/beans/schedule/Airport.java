@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -39,6 +39,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private String _name;
 	private int _alt;
 	private String _region;
+	private boolean _adseX;
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
 	private TZInfo _tz = TZInfo.local();
@@ -70,7 +71,6 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * Sets this airport's location.
 	 * @param lat This airport's latitude
 	 * @param lng This airport's longitude
-	 * @see GeoPosition#GeoPosition(double, double)
 	 */
 	public void setLocation(double lat, double lng) {
 		_position.setLatitude(lat);
@@ -80,6 +80,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	/**
 	 * Set this airport's Time Zone.
 	 * @param tz A Time Zone wrapper for the time zone
+	 * @see Airport#getTZ()
 	 */
 	public void setTZ(TZInfo tz) {
 		_tz = tz;
@@ -91,6 +92,14 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public void setTZ(String tzID) {
 		_tz = TZInfo.get(tzID);
+	}
+	
+	/**
+	 * Sets whether this airport has ADSE-X radar.
+	 * @param hasADSE TRUE if ADSE-X present, otherwise FALSE
+	 */
+	public void setADSE(boolean hasADSE) {
+		_adseX = hasADSE;
 	}
 
 	/**
@@ -215,10 +224,20 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	}
 	
 	/**
+	 * Returns whether this Airport has ADSE-X radar.
+	 * @return TRUE if ADSE-X radar present, otherwise FALSE
+	 * @see Airport#setADSE(boolean)
+	 */
+	public boolean getADSE() {
+		return _adseX;
+	}
+	
+	/**
 	 * Sort the airports by comparing their IATA codes.
 	 */
 	public int compareTo(Airport a2) {
-		return _iata.compareTo(a2._iata);
+		int tmpResult = _iata.compareTo(a2._iata);
+		return (tmpResult == 0) ? _icao.compareTo(a2._icao) : tmpResult;
 	}
 
 	public String getComboAlias() {
