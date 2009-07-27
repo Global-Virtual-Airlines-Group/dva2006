@@ -149,13 +149,15 @@ public class SetSchedule extends DAO {
 			startTransaction();
 
 			// Write the airport data
-			prepareStatement("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, LATITUDE, LONGITUDE, ADSE) "
+					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getIATA());
 			_ps.setString(2, a.getICAO());
 			_ps.setString(3, a.getTZ().getID());
 			_ps.setString(4, a.getName());
 			_ps.setDouble(5, a.getLatitude());
 			_ps.setDouble(6, a.getLongitude());
+			_ps.setBoolean(7, a.getADSE());
 			executeUpdate(1);
 
 			// Write the airline data
@@ -193,14 +195,15 @@ public class SetSchedule extends DAO {
 
 			// Update the airport data
 			prepareStatement("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, "
-					+ "IATA=? WHERE (IATA=?)");
+					+ "IATA=?, ADSE=? WHERE (IATA=?)");
 			_ps.setString(1, a.getICAO());
 			_ps.setString(2, a.getTZ().getID());
 			_ps.setString(3, a.getName());
 			_ps.setDouble(4, a.getLatitude());
 			_ps.setDouble(5, a.getLongitude());
 			_ps.setString(6, a.getIATA());
-			_ps.setString(7, oldCode);
+			_ps.setBoolean(7, a.getADSE());
+			_ps.setString(8, oldCode);
 			executeUpdate(1);
 
 			// Clear out the airlines

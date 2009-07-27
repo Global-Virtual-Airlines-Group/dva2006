@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -75,6 +75,7 @@ public class AirportCommand extends AbstractFormCommand {
 			// Update the aiport from the request
 			a.setTZ(ctx.getParameter("tz"));
 			a.setAirlines(ctx.getParameters("airline"));
+			a.setADSE(Boolean.valueOf(ctx.getParameter("hasADSE")).booleanValue());
 
 			// Build the airport latitude/longitude
 			try {
