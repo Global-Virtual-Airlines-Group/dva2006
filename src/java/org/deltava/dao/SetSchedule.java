@@ -357,15 +357,16 @@ public class SetSchedule extends DAO {
 	/**
 	 * Updates the aircraft profile.
 	 * @param a the Aircraft bean
+	 * @param oldName the old aircraft name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void update(Aircraft a) throws DAOException {
+	public void update(Aircraft a, String oldName) throws DAOException {
 		try {
 			startTransaction();
 			prepareStatement("UPDATE common.AIRCRAFT SET ACRANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 					+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
-					+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, FULLNAME=? "
-					+ "WHERE (NAME=?)");
+					+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, FULLNAME=?, "
+					+ "NAME=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
@@ -386,6 +387,7 @@ public class SetSchedule extends DAO {
 			_ps.setInt(18, a.getMaxLandingWeight());
 			_ps.setString(19, a.getFullName());
 			_ps.setString(20, a.getName());
+			_ps.setString(21, oldName);
 			executeUpdate(1);
 
 			// Clean out the webapps
