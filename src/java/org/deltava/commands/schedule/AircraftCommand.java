@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,18 +32,18 @@ public class AircraftCommand extends AbstractFormCommand {
 		// Get the aircraft code
 		String aCode = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (aCode == null);
-
 		try {
 			Connection con = ctx.getConnection();
 			
 			// If we're editing an existing aircraft, load it
-			Aircraft a = null;
+			Aircraft a = null; String oldName = null;
 			if (!isNew) {
 				GetAircraft dao = new GetAircraft(con);
 				a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Unknown Aircraft - " + aCode);
 
+				oldName = a.getName();
 				a.setName(ctx.getParameter("name"));
 			} else
 				a = new Aircraft(ctx.getParameter("name"));
@@ -85,7 +85,7 @@ public class AircraftCommand extends AbstractFormCommand {
 				wdao.create(a);
 				ctx.setAttribute("aircraftCreate", Boolean.TRUE, REQUEST);
 			} else {
-				wdao.update(a);
+				wdao.update(a, oldName);
 				ctx.setAttribute("aircraftUpdate", Boolean.TRUE, REQUEST);
 			}
 			
@@ -144,11 +144,10 @@ public class AircraftCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the Aircraft profile. <i>NOT IMPLEMENTED </i>
+	 * Callback method called when reading the Aircraft profile.
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }
