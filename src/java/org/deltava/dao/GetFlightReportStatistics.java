@@ -483,7 +483,7 @@ public class GetFlightReportStatistics extends DAO {
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
 				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
-				+ "COUNT(DISTINCT F.PILIOT_ID) AS PIDS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA="
+				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA="
 				+ apColumn + ") AND (F.STATUS=?) ";
 	}
 }
