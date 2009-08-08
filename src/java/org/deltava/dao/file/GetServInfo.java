@@ -213,12 +213,11 @@ public class GetServInfo extends DAO {
 										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
 										c.setRating(StringUtils.parse(si.get(SITokens.RATING), 0));
 										if (c.getFacility() != Controller.ATIS)
-											c.setFacilityType(Integer.parseInt(si.get(SITokens.FACILITY)));
+											c.setFacilityType(StringUtils.parse(si.get(SITokens.FACILITY), 0));
 										
 										info.add(c);
 									} catch (Exception e) {
 										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
-										log.info(iData);
 									}
 									
 									break;

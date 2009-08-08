@@ -239,11 +239,17 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
      * @see NetworkUser#getName()
      */
     public void setName(String name) {
-    	int pos = name.lastIndexOf(' '); 
-    	if (pos == (name.length() - 5))
-    		name = name.substring(0, pos);
-    	if (name.endsWith(" -"))
-    		name = name.substring(0, name.length() - 2);
+    	while (name.indexOf("  ") > -1)
+    		name = name.replace("  ", " ");
+    	
+    	int pos = name.lastIndexOf(' ');
+    	boolean oneSpace = (name.indexOf(' ') == pos);
+    	if (!oneSpace) {
+    		if (pos == (name.length() - 5))
+    			name = name.substring(0, pos);
+    		if (name.endsWith(" -"))
+    			name = name.substring(0, name.length() - 2);
+    	}
     	
     	// Split the data
     	pos = name.lastIndexOf(' ');
