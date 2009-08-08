@@ -84,8 +84,13 @@ public class Controller extends NetworkUser {
      */
     public final void setName(String name) {
     	int pos = name.lastIndexOf(' ');
-    	setLastName(name.substring(pos + 1));
-    	setFirstName(name.substring(0, pos));
+    	if (pos == -1) {
+    		setLastName(name);
+    		setFirstName("??");
+    	} else {
+    		setLastName(name.substring(pos + 1));
+    		setFirstName(name.substring(0, pos));
+    	}
     }
     
     /**
