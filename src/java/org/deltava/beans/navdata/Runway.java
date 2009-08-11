@@ -105,9 +105,9 @@ public class Runway extends NavigationFrequencyBean {
 		if (getFrequency() != null) {
 			buf.append("<br />ILS Frequency: ");
 			buf.append(getFrequency());
-			buf.append("<br />");
 		}
 
+		buf.append("<br />");
 		buf.append(getHTMLPosition());
 		buf.append("</span>");
 		return buf.toString();
