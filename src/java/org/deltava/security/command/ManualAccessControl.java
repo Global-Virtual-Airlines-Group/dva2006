@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * An Access Controller for Document Library entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 		// Check if we have any active courses
 		for (Iterator<Course> i = _courses.iterator(); i.hasNext();) {
 			Course c = i.next();
-			if ((c.getStatus() == Course.STARTED) || (c.getStatus() == Course.COMPLETE)) {
+			if (c.getStatus() != Course.ABANDONED) {
 				if (m.getCertifications().contains(c.getName()))
 					return;
 			}
