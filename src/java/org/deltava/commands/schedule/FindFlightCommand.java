@@ -1,12 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.TZInfo;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -76,7 +75,6 @@ public class FindFlightCommand extends AbstractCommand {
 		// Populate the search criteria from the request
 		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0),
 				StringUtils.parse(ctx.getParameter("flightLeg"), 0));
-		criteria.setEquipmentType(ctx.getParameter("eqType"));
 		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
@@ -87,9 +85,16 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
 		criteria.setDispatchOnly(Boolean.valueOf(ctx.getParameter("dispatchOnly")).booleanValue());
-		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));
+		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations"));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
 			criteria.setMaxResults(150);
+		
+		// Set equipment type(s)
+		boolean myRatedEQ = Boolean.valueOf(ctx.getParameter("myEQTypes")).booleanValue();
+		if (myRatedEQ)
+			criteria.setEquipmentTypes(((Pilot) ctx.getUser()).getRatings());
+		else
+			criteria.setEquipmentType(ctx.getParameter("eqType"));
 		
 		// Validate sort criteria
 		String sortType = ctx.getParameter("sortType"); 
