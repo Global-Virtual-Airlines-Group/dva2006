@@ -43,7 +43,7 @@ return true;
 </c:if>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body onload="initLinks()" onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -218,26 +218,31 @@ return true;
 <c:set var="cspan" value="${1}" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
-<tr>
+
 <c:if test="${googleMap}">
+<tr>
  <td class="label">Route Map Data</td>
  <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" />
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
 <c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" /></c:if>
+<c:if test="${fn:network(pirep) == 'VATSIM'}"> <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" external="true">
+<el:img src="vataware.png" border="0" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if>
 </span></td>
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="vrouteAck" class="small"></div></td>
+</tr>
 </c:if>
 <c:if test="${!googleMap}">
+<tr>
  <td class="label top">Route Map</td>
  <td class="data"><img src="http://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
-</c:if>
 </tr>
+</c:if>
 <c:if test="${!scoreCR && (access.canDispose || access.canViewComments)}">
 <tr>
  <td class="label top">Reviewer Comments</td>
@@ -344,6 +349,15 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
+</c:if>
+<c:if test="${!empty onlineTrack}">
+//Display the online track notice
+var ack = document.getElementById("vrouteAck");
+ack.innerHTML = 'Online track courtesy of vRoute.info'
+var apos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
+apos.apply(ack);
+mapTextElements.push(ack);
+map.getContainer().appendChild(ack);
 </c:if>
 <c:if test="${showGEarth}">
 // Google Earth plugin support
