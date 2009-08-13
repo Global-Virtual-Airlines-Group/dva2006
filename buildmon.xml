@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy">
+	<target name="compile">
+		<!-- Compile the code -->
+		<mkdir dir="${java.io.tmpdir}/usageTracker/classes" />
+		<javac srcdir="src" destdir="${java.io.tmpdir}/usageTracker/classes" debug="true"
+		 debuglevel="lines,vars,source" source="1.6" target="1.6" compiler="modern">
+			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
+	    	<classpath id="javac.classpath">
+				<pathelement path="${classpath}" />
+		    	<fileset dir="lib">
+					<include name="**/log4j-*.jar"/>
+					<include name="**/jdom-*.jar"/>
+				</fileset>
+	    	</classpath>
+	    	<include name="java/org/deltava/beans/*.java" />
+	    	<include name="java/org/deltava/beans/servinfo/*.java" />
+	    	<include name="java/org/deltava/beans/schedule/*.java" />
+	    	<include name="java/org/deltava/dao/DAO.java" />
+	    	<include name="java/org/deltava/dao/GetAirport.java" />
+	    	<include name="java/org/deltava/dao/GetTimeZone.java" />
+	    	<include name="java/org/deltava/dao/DAOException.java" />
+	    	<include name="java/org/deltava/dao/file/GetServInfo.java" />
+	    	<include name="java/org/deltava/dao/file/GetVATSIMData.java" />
+	    	<include name="java/org/deltava/util/StringUtils.java" />
+	    	<include name="java/org/deltava/util/cache/*.java" />
+	    	<include name="java/org/deltava/util/system/SystemData.java" />
+	    	<include name="test/org/deltava/UsageTracker.java" />
+		</javac>
+		
+		<!-- Build the manifest -->
+		<manifest file="${java.io.tmpdir}/usageTracker/classes/MANIFEST.MF">
+			<attribute name="Built-By" value="Luke" />
+			<attribute name="Main-Class" value="org.deltava.UsageTracker" />
+		</manifest>
+		
+		<!-- Build the JAR -->
+		<jar compress="true" index="true" destfile="${java.io.tmpdir}/build/usageTracker.jar"
+			manifest="${java.io.tmpdir}/usageTracker/classes/MANIFEST.MF">
+		 	<fileset dir="${java.io.tmpdir}/usageTracker/classes" />
+		 	<fileset dir="etc" includes="log4j.properties" />
+		</jar>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<loadproperties srcFile="data/build_deploy.properties" />
+		
+		<!-- Upload the web configuration -->
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/usageTrack"
+			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			<fileset file="${java.io.tmpdir}/build/usageTracker.jar" />
+	    	<fileset dir="lib/deploy">
+				<include name="log4j-*.jar"/>
+				<include name="jdom-*.jar"/>
+				<include name="mysql-connector-java-5.1.8-bin.jar" />
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/usageTrack.txt" />
+				</modified>
+			</fileset>
+			<fileset dir="src/test/org/deltava" includes="*.sh">
+				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/usageTrack.txt" />
+				</modified>
+			</fileset>
+		</scp>
+	</target>
+</project>
