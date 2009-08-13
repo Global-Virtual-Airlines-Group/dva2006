@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -11,13 +11,15 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.PIREPAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -90,6 +92,11 @@ public class LogBookCommand extends AbstractViewCommand {
         } finally {
             ctx.release();
         }
+        
+        // Get pre-approval ability
+        PIREPAccessControl ac = new PIREPAccessControl(ctx, null);
+        ac.validate();
+        ctx.setAttribute("access", ac, REQUEST);
       
         // Set the result page and return
         CommandResult result = ctx.getResult();
