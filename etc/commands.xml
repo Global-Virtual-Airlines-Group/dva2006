@@ -1062,7 +1062,7 @@
 	<command id="preapprove">
 		<name>Pre-Approve Flight</name>
 		<class>org.deltava.commands.assign.FlightPreapproveCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Operations</roles>
 	</command>
 	
 	<command id="singleassign">

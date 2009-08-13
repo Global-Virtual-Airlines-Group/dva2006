@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -11,13 +11,15 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.PIREPAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 2.1
  */
 
@@ -32,6 +34,12 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 		// Get command result
 		CommandResult result = ctx.getResult();
+		
+		// Check our access
+        PIREPAccessControl ac = new PIREPAccessControl(ctx, null);
+        ac.validate();
+        if (!ac.getCanPreApprove())
+        	throw securityException("Cannot Pre-Approve Flight");
 
 		// Check for a GET and redirect
 		if (ctx.getParameter("airportD") == null) {
