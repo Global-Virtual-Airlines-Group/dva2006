@@ -150,7 +150,7 @@ public class SetSchedule extends DAO {
 
 			// Write the airport data
 			prepareStatement("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, LATITUDE, LONGITUDE, ADSE) "
-					+ "VALUES (?, ?, ?, ?, ?, ?)");
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getIATA());
 			_ps.setString(2, a.getICAO());
 			_ps.setString(3, a.getTZ().getID());
