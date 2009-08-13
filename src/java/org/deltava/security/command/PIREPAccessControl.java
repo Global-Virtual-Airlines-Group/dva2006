@@ -25,6 +25,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canReject;
 	private boolean _canDelete;
 	private boolean _canViewComments;
+	private boolean _canPreApprove;
 
 	/**
 	 * Initializes the controller.
@@ -50,7 +51,9 @@ public class PIREPAccessControl extends AccessControl {
 		}
 
 		// Get PIREP creation access, and abort if no PIREP provided
+		final boolean isHR = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations");
 		_canCreate = _ctx.isUserInRole("Pilot") && !noManual;
+		_canPreApprove = isHR;
 		if (_pirep == null) {
 			_canSubmit = _canCreate;
 			return;
@@ -58,7 +61,6 @@ public class PIREPAccessControl extends AccessControl {
 		
 		// Set role variables
 		final int status = _pirep.getStatus();
-		final boolean isHR = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations");
 		final boolean isPirep = _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(FlightReport.DBID_PILOT) == _ctx.getUser().getID());
 		
@@ -190,5 +192,13 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanDispose() {
 		return _canApprove || _canReject || _canHold;
+	}
+	
+	/**
+	 * Returns if the user can pre-approve a Charter Flight.
+	 * @return TRUE if a flight can be pre-approved, otherwise FALSE
+	 */
+	public boolean getCanPreApprove() {
+		return _canPreApprove;
 	}
 }
