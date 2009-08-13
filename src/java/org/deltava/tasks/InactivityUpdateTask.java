@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -74,22 +74,29 @@ public class InactivityUpdateTask extends Task {
 			GetPilotDirectory pddao = new GetPilotDirectory(con);
 			Pilot taskBy = pddao.getByCode(SystemData.get("users.tasks_by"));
 			
+			// Get the pilots to mark without warning
+			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
+			
 			// Get the pilots to deactivate
 			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);
 			Map<Integer, Pilot> pilots = dao.getByID(purgeBeans, "PILOTS");
 			for (Iterator<InactivityPurge> i = purgeBeans.iterator(); i.hasNext();) {
 				InactivityPurge ip = i.next();
-				Pilot p = pilots.get(new Integer(ip.getID()));
+				Integer id = Integer.valueOf(ip.getID());
+				Pilot p = pilots.get(id);
 				if (p != null) {
+					boolean noWarn = noWarnIDs.contains(id);
 					log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
 
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(taskBy.getID());
 					upd.setCreatedOn(new Date());
-					upd.setDescription("Marked Inactive due to no logins within " + ip.getInterval() + " days");
-					sudao.write(upd);
-
+					if (noWarn)
+						upd.setDescription("Marked Inactive due to no participation within " + inactiveDays + " days");
+					else
+						upd.setDescription("Marked Inactive due to no logins within " + ip.getInterval() + " days");
+					
 					// Create the Message Context
 					MessageContext mctxt = new MessageContext();
 					mctxt.setTemplate(imt);
@@ -100,8 +107,11 @@ public class InactivityUpdateTask extends Task {
 					// Start a transaction
 					ctx.startTX();
 					
+					// Write the update
+					sudao.write(upd);
+					
 					// Check if we have a flight academy entry
-					Course c = courses.get(Integer.valueOf(p.getID()));
+					Course c = courses.get(id);
 					if (c != null) {
 						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
 						cc.setCreatedOn(upd.getCreatedOn());
@@ -137,9 +147,11 @@ public class InactivityUpdateTask extends Task {
 					ctx.commitTX();
 
 					// Send notification message
-					Mailer mailer = new Mailer(isTest ? null : taskBy);
-					mailer.setContext(mctxt);
-					mailer.send(p);
+					if (!noWarn) {
+						Mailer mailer = new Mailer(isTest ? null : taskBy);
+						mailer.setContext(mctxt);
+						mailer.send(p);
+					}
 				} else {
 					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
 					iwdao.delete(ip.getID());
@@ -147,7 +159,9 @@ public class InactivityUpdateTask extends Task {
 			}
 			
 			// Get the Pilots to notify
-			Collection<Pilot> nPilots = dao.getInactivePilots(notifyDays);
+			Collection<Integer> nPilotIDs = dao.getInactivePilots(notifyDays);
+			nPilotIDs.removeAll(noWarnIDs);
+			Collection<Pilot> nPilots = dao.getByID(nPilotIDs, "PILOTS").values();
 			for (Iterator<Pilot> i = nPilots.iterator(); i.hasNext();) {
 				Pilot p = i.next();
 				
