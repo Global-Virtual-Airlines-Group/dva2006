@@ -204,7 +204,7 @@ public class GetNavData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Runway getBestRunway(String airportCode, int simVersion, GeoLocation loc, int hdg) throws DAOException {
-		Collection<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
+		Map<String, Runway> results = new LinkedHashMap<String, Runway>();
 		try {
 			if (simVersion > 0) {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
@@ -218,7 +218,7 @@ public class GetNavData extends DAO implements CachingDAO {
 					r.setName(rs.getString(2));
 					r.setHeading(rs.getInt(6));
 					r.setLength(rs.getInt(7));
-					results.add(r);
+					results.put(r.getName(), r);
 				}
 				
 				rs.close();
@@ -228,33 +228,37 @@ public class GetNavData extends DAO implements CachingDAO {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, NavigationDataBean.RUNWAY);
 			_ps.setString(2, airportCode.toUpperCase());
-			results.addAll(execute());
+			Collection<NavigationDataBean> r2 = execute();
+			for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
+				NavigationDataBean nd = i.next();
+				if ((nd.getType() == NavigationDataBean.RUNWAY) && (!results.containsKey(nd.getName())))
+					results.put(nd.getName(), (Runway) nd);
+			}
 		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}
 		
 		// Iterate through the list
 		Runway rwy = null; long lastBrgDiff = 360;
-		for (Iterator<NavigationDataBean> i = results.iterator(); i.hasNext(); ) {
-			NavigationDataBean nd = i.next();
-			if (nd.getType() == NavigationDataBean.RUNWAY) {
-				Runway r = (Runway) nd;
+		for (Iterator<Runway> i = results.values().iterator(); i.hasNext(); ) {
+			Runway r = i.next();
 				
-				// Calculate the heading difference between us and the runway heading
-				int hdgDiff = Math.abs(r.getHeading() - hdg);
-				if (hdgDiff >= 300)
-					hdgDiff = Math.abs(hdgDiff - 360);
+			// Calculate the heading difference between us and the runway heading
+			int hdgDiff = Math.abs(r.getHeading() - hdg);
+			if (hdgDiff >= 300)
+				hdgDiff = Math.abs(hdgDiff - 360);
 				
-				// Calculate the bearing difference between our position and the runway heading
-				long brgDiff = Math.abs(r.getHeading() - Math.round(GeoUtils.course(r, loc)));
-				if (brgDiff >= 300)
-					brgDiff = Math.abs(hdgDiff - 360);
+			// Calculate the bearing difference between our position and the runway heading
+			int brg = (int) Math.round(GeoUtils.course(r, loc));
+			int brgDiff = Math.abs(r.getHeading() - brg);
+			if (brgDiff >= 300)
+				brgDiff = Math.abs(hdgDiff - 360);
 				
-				if ((hdgDiff < 45) && (brgDiff < 35)) {
-					if (brgDiff < lastBrgDiff) {
-						rwy = r;
-						lastBrgDiff = brgDiff;
-					}
+			if ((hdgDiff < 45) && (brgDiff < 35)) {
+				System.out.println("Runway " + r.getName() + " - hdg=" + r.getHeading() + " (" + hdgDiff + "), brg=" +  brg + " (" + brgDiff + ")");
+				if (brgDiff < lastBrgDiff) {
+					rwy = r;
+					lastBrgDiff = brgDiff;
 				}
 			}
 		}
