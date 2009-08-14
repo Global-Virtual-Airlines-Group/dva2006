@@ -20,10 +20,16 @@ else
  network="vatsim"
 fi
 
-# Check if we're already downloading
+# Check if we're already downloading or reading
 if [ -f "/tmp/$network.isactive" ]; then
- echo "Already downloading $network data!"
- exit 2
+ echo "$network data is busy!"
+ sleep 1.5
+ if [ -f "/tmp/$network.isactive" ]; then
+  echo "Already downloading $network data!"
+  exit 2
+ else
+  echo active > /tmp/$network.isactive
+ fi
 else
  echo active > /tmp/$network.isactive
 fi
