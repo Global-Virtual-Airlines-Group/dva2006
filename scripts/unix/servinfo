@@ -1,11 +1,17 @@
 #!/bin/bash
 # ServInfo download script
-# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set the file to download to
 if [ -z "$2" ]; then
- echo "servinfo <network> <path> ..."
+ echo "servinfo <network> <path> [verbose] ..."
  exit 1
+fi
+
+# Turn on verbose operation if requested
+QuietOpt=""
+if [ -z "$3" ]; then
+ QuietOpt="-q"
 fi
 
 # Get the status URL
@@ -19,6 +25,9 @@ else
  StatusURL="http://usa-s1.vatsim.net/data/status.txt"
  network="vatsim"
 fi
+
+StatusFileField=$(echo -n "$StatusURL" | awk -F / '{print NF}')
+StatusFile=$(echo -n "$StatusURL" | cut -d / -f $StatusFileField)
 
 # Check if we're already downloading or reading
 if [ -f "/tmp/$network.isactive" ]; then
@@ -35,40 +44,60 @@ else
 fi
 
 # Get the status file and active URLs
-wget $StatusURL -q -N --timeout=15 --tries=3 -O $2/$network.status.tmp
-if [ -s "$2/$network.status.tmp" ]; then
- mv -f $2/$network.status.tmp $2/$network.status
+mkdir /tmp/$network
+cd /tmp/$network
+InfoTries=3
+if [ -f "$2/$network.status" ]; then
+ cp -f $2/$network.status /tmp/$network/$StatusFile
+ touch -r $2/$network.status /tmp/$network/$StatusFile
+ InfoTries=1
+fi
+wget $StatusURL -N --timeout=10 --tries=$InfoTries $QuietOpt
+if [ -f "/tmp/$network/$StatusFile" ]; then
+ cp -f /tmp/$network/$StatusFile $2/$network.status
+ touch -r /tmp/$network/$StatusFile $2/$network.status
 else
  echo "Invalid $network status data!"
- rm $2/$network.status.tmp
 fi
 
 # Parse status file
-cat $2/$network.status | grep url0= | grep -v ";url0=" | grep -v "gzurl" > /tmp/$network.active
-cut -d "=" -f 2 /tmp/$network.active > /tmp/$network.urls
+cat $2/$network.status | grep url0= | grep -v ";url0=" | grep -v "gzurl" > /tmp/$network/active
+cut -d = -f 2 /tmp/$network/active > /tmp/$network/urls
 
 # Generate a random URL to load
-UpperBound=$(cat /tmp/$network.urls | wc -l)
+UpperBound=$(cat /tmp/$network/urls | wc -l)
 RandomLine=$((1 + ($UpperBound * $RANDOM) / (32767 + 1) ))
 
 # Use sed to grab the random line and get rid of the trailing newline
-MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network.urls")
+MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network/urls")
 URLSize=$(echo -n "$MyURL" | wc -c | sed "s/ //g")
 URLSize=`expr $URLSize "-" 1`
 MyURL=$(echo -n "$MyURL" | cut -b 0-${URLSize})
-
-# Clean up temp files
-rm /tmp/$network.active
-rm /tmp/$network.urls
+FileField=$(echo -n "$MyURL" | awk -F / '{print NF}')
+InfoFile=$(echo -n "$MyURL" | cut -d / -f $FileField)
 
 # Get the info file
-wget $MyURL -N --timeout=15 --tries=3 -q -O $2/$network.info.tmp
-if [ -s "$2/$network.info.tmp" ]; then
- mv -f $2/$network.info.tmp $2/$network.info
+LastMod=1
+if [ -f "$2/$network.info" ]; then
+ cp $2/$network.info /tmp/$network/$InfoFile
+ touch -r $2/$network.info /tmp/$network/$InfoFile
+ LastMod=$(stat -c %Y /tmp/$network/$InfoFile)
+fi
+wget $MyURL -N --timeout=10 --tries=5 $QuietOpt
+if [ -f "/tmp/$network/$InfoFile" ]; then
+ LastModDL=$(stat -c %Y /tmp/$network/$InfoFile)
+ if [ "$LastMod" -ge "$LastModDL" ]; then
+  echo "Downloaded file is same/older!"
+ else
+  cp /tmp/$network/$InfoFile $2/$network.info
+  touch -r /tmp/$network/$InfoFile $2/$network.info
+ fi 
 else
  echo "Invalid $network traffic data!"
- rm $2/$network.info.tmp
 fi
 
-rm /tmp/$network.isactive
+# Clean up temp files
+cd /tmp
+rm -r /tmp/$network
+rm $network.isactive
 exit 0
