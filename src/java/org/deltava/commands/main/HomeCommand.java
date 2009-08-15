@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -46,7 +46,6 @@ public class HomeCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
-	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get Command result
@@ -82,7 +81,7 @@ public class HomeCommand extends AbstractCommand {
 			cList.add(Integer.valueOf(DYN_CHOICES[x]));
 
 		// Check if ACARS has anyone connected
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		ACARSAdminInfo<?> acarsPool = (ACARSAdminInfo<?>) SharedData.get(SharedData.ACARS_POOL);
 		if ((acarsPool == null) || (acarsPool.size() == 0)) {
 			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
 			cList.remove(Integer.valueOf(ACARS_USERS));
@@ -109,13 +108,13 @@ public class HomeCommand extends AbstractCommand {
 
 			// Get latest water cooler data
 			GetStatistics stdao = new GetStatistics(con);
-			ctx.setAttribute("coolerStats", new Integer(stdao.getCoolerStatistics(1)), REQUEST);
+			ctx.setAttribute("coolerStats", Long.valueOf(stdao.getCoolerStatistics(1)), REQUEST);
 
 			// Get new/active NOTAMs since last login
 			if (ctx.isAuthenticated() && (ctx.getUser().getLastLogin() != null)) {
 				Person usr = ctx.getUser();
-				Collection notams = nwdao.getActiveNOTAMs();
-				for (Iterator i = notams.iterator(); i.hasNext();) {
+				Collection<?> notams = nwdao.getActiveNOTAMs();
+				for (Iterator<?> i = notams.iterator(); i.hasNext();) {
 					Notice ntm = (Notice) i.next();
 					if (ntm.getDate().before(usr.getLastLogin()))
 						i.remove();

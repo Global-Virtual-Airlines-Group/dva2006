@@ -19,8 +19,8 @@ import org.deltava.util.cache.*;
 
 public class GetStatistics extends DAO implements CachingDAO {
 
-	private static final Cache<CacheableInteger> _coolerStatsCache = new ExpiringCache<CacheableInteger>(100, 1800);
-	private static final Cache<CacheableInteger> _cache = new ExpiringCache<CacheableInteger>(2, 1800);
+	private static final Cache<CacheableLong> _coolerStatsCache = new ExpiringCache<CacheableLong>(100, 1800);
+	private static final Cache<CacheableLong> _cache = new ExpiringCache<CacheableLong>(2, 1800);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -272,17 +272,17 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @return a Map of post counts, indexed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, Integer> getCoolerStatistics(Collection<Integer> ids) throws DAOException {
+	public Map<Integer, Long> getCoolerStatistics(Collection<Integer> ids) throws DAOException {
 		if (ids.isEmpty())
 			return Collections.emptyMap();
 
 		// Load from the cache
-		Map<Integer, Integer> results = new HashMap<Integer, Integer>();
+		Map<Integer, Long> results = new HashMap<Integer, Long>();
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			if (_coolerStatsCache.contains(id)) {
-				CacheableInteger result = _coolerStatsCache.get(id);
-				results.put(id, new Integer(result.getValue()));
+				CacheableLong result = _coolerStatsCache.get(id);
+				results.put(id, Long.valueOf(result.getValue()));
 				i.remove();
 			}
 		}
@@ -310,7 +310,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
-				results.put(new Integer(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
+				results.put(new Integer(rs.getInt(1)), Long.valueOf(rs.getInt(2)));
 			
 			// Clean up and return
 			rs.close();
@@ -366,10 +366,10 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @return the number of posts in the specified interval
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public synchronized int getCoolerStatistics(int days) throws DAOException {
+	public synchronized long getCoolerStatistics(int days) throws DAOException {
 
 		// Check the cache
-		CacheableInteger result = _cache.get(Integer.valueOf(days));
+		CacheableLong result = _cache.get(Integer.valueOf(days));
 		if (result != null)
 			return result.getValue();
 
@@ -380,7 +380,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			result = new CacheableInteger(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
+			result = new CacheableLong(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
 
 			// Clean up
 			rs.close();
