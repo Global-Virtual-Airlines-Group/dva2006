@@ -4,6 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 
@@ -19,6 +21,7 @@ import org.deltava.util.cache.*;
 
 public class GetNavData extends DAO implements CachingDAO {
 	
+	private static final Logger log = Logger.getLogger(GetNavData.class);
 	protected static final Cache<NavigationDataMap> _cache = new ExpiringCache<NavigationDataMap>(2048, 7200);
 
 	/**
@@ -255,7 +258,7 @@ public class GetNavData extends DAO implements CachingDAO {
 				brgDiff = Math.abs(hdgDiff - 360);
 				
 			if ((hdgDiff < 45) && (brgDiff < 35)) {
-				System.out.println("Runway " + r.getName() + " - hdg=" + r.getHeading() + " (" + hdgDiff + "), brg=" +  brg + " (" + brgDiff + ")");
+				log.info("Runway " + r.getName() + " - hdg=" + r.getHeading() + " (" + hdgDiff + "), brg=" +  brg + " (" + brgDiff + ")");
 				if (brgDiff < lastBrgDiff) {
 					rwy = r;
 					lastBrgDiff = brgDiff;
