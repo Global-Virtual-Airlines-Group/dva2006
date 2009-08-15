@@ -207,7 +207,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				
 				// Get promotion queue size
 				GetPilotRecognition rdao = new GetPilotRecognition(con);
-				ctx.setAttribute("promoQueueSize", Integer.valueOf(rdao.hasPromotionQueue(myEQType)), REQUEST);
+				ctx.setAttribute("promoQueueSize", Long.valueOf(rdao.hasPromotionQueue(myEQType)), REQUEST);
 				
 				// Get exam/transfer queue sizes
 				GetExam exdao = new GetExam(con);

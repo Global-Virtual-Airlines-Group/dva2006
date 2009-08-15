@@ -29,8 +29,8 @@ public class TestExpiringCache extends TestCase {
    }
    
    public void testCacheEntry() throws Exception {
-      Cacheable e1 = new CacheableInteger(Integer.valueOf(1), 1);
-      Cacheable e2 = new CacheableInteger(Integer.valueOf(2), 2);
+      Cacheable e1 = new CacheableLong(Integer.valueOf(1), 1);
+      Cacheable e2 = new CacheableLong(Integer.valueOf(2), 2);
       _cache.setExpiration(2);
       _entry = _cache.new ExpiringCacheEntry<Cacheable>(e1);
       assertSame(e1, _entry.getData());
@@ -40,7 +40,7 @@ public class TestExpiringCache extends TestCase {
    }
    
    public void testClone() throws Exception {
-      Cacheable o1 = new CacheableInteger(Integer.valueOf(1), 1);
+      Cacheable o1 = new CacheableLong(Integer.valueOf(1), 1);
       _cache.add(o1);
       assertEquals(1, _cache.size());
       Cacheable o2 = _cache.get(new Integer(1));
@@ -80,7 +80,7 @@ public class TestExpiringCache extends TestCase {
    public void testLargeCache() {
 	   Collection<Cacheable> entries = new ArrayList<Cacheable>();
 	   for (int x = 0; x < 8192; x++)
-		   entries.add(new CacheableInteger(Integer.valueOf(x), x));
+		   entries.add(new CacheableLong(Integer.valueOf(x), x));
 	   
 	   assertEquals(8192, entries.size());
 	   _cache.setMaxSize(entries.size());

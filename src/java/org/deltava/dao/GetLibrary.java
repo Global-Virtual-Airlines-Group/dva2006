@@ -14,13 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
 public class GetLibrary extends DAO implements CachingDAO {
 	
-	private static final Cache<CacheableInteger> _dlCache = new ExpiringCache<CacheableInteger>(48, 3600);
+	private static final Cache<CacheableLong> _dlCache = new ExpiringCache<CacheableLong>(48, 3600);
 
 	/**
 	 * Initialze the Data Access Object.
@@ -313,14 +313,14 @@ public class GetLibrary extends DAO implements CachingDAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT FILENAME, COUNT(*) FROM DOWNLOADS WHERE FILENAME IN (");
 		for (Iterator<? extends FleetEntry> i = files.iterator(); i.hasNext(); ) {
 			FleetEntry fe = i.next();
-			CacheableInteger cnt = _dlCache.get(fe.getFileName());
+			CacheableLong cnt = _dlCache.get(fe.getFileName());
 			if (cnt == null) {
 				entrySize++;
 				sqlBuf.append('\'');
 				sqlBuf.append(fe.getFileName());
 				sqlBuf.append("\',");
 			} else
-				fe.setDownloadCount(cnt.getValue());
+				fe.setDownloadCount((int) cnt.getValue());
 		}
 		
 		if (entrySize == 0)
@@ -338,7 +338,7 @@ public class GetLibrary extends DAO implements CachingDAO {
 			FleetEntry fe = is.get(rs.getString(1));
 			if (fe != null) {
 				fe.setDownloadCount(rs.getInt(2));
-				CacheableInteger cnt = new CacheableInteger(fe.getFileName(), fe.getDownloadCount());
+				CacheableLong cnt = new CacheableLong(fe.getFileName(), fe.getDownloadCount());
 				_dlCache.add(cnt);
 			}
 		}
