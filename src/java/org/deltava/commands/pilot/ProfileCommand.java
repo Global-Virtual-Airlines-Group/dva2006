@@ -894,7 +894,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// If we're a moderator, get the water cooler post stats
 			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Moderator")) {
 				GetStatistics stdao = new GetStatistics(con);
-				Map<Integer, Integer> wcStats = stdao.getCoolerStatistics(Collections.singleton(new Integer(p.getID())));
+				Map<Integer, Long> wcStats = stdao.getCoolerStatistics(Collections.singleton(Integer.valueOf(p.getID())));
 				if (!wcStats.isEmpty())
 					ctx.setAttribute("wcPosts", wcStats.get(new Integer(p.getID())), REQUEST);
 			}

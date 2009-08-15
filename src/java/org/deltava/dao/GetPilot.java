@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List<Pilot> getNewestPilots() throws DAOException {
 		try {
-			prepareStatement("SELECT P.* FROM PILOTS P WHERE (P.PILOT_ID IS NOT NULL) ORDER BY PILOT_ID DESC");
+			prepareStatement("SELECT * FROM PILOTS WHERE (PILOT_ID IS NOT NULL) ORDER BY PILOT_ID DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -107,7 +107,6 @@ public class GetPilot extends PilotReadDAO {
 
 		// Add sort by column
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
-
 		try {
 			prepareStatement(sql.toString());
 			_ps.setInt(1, FlightReport.OK);
