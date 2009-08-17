@@ -111,6 +111,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetCoolerThreads(null));
 		daoCaches.add(new GetExamQuestions(null));
 		daoCaches.add(new GetMessageTemplate(null));
+		daoCaches.add(new GetImage(null));
 		daoCaches.add(new GetNavData(null));
 		daoCaches.add(new GetNavRoute(null));
 		daoCaches.add(new GetStatistics(null));
