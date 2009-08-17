@@ -94,7 +94,7 @@ public class GetInactivity extends PilotReadDAO {
 					+ "PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?) AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))) LEFT JOIN "
 					+ "common.COOLER_POSTS CP ON ((P.ID=CP.AUTHOR_ID) AND (CP.CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))) "
 					+ "WHERE (P.STATUS=?) AND P.LAST_LOGIN < DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY P.ID HAVING (FLIGHTS=0) "
-					+ "AND (POSTS<2)");
+					+ "AND (POSTS<?)");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, activityDays);
 			_ps.setInt(3, activityDays);
