@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.ACARSError;
 
-import org.deltava.util.CollectionUtils;
-
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
@@ -84,31 +82,17 @@ public class SetACARSLog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> purgeFlights(int hours, Collection<Integer> activeIDs) throws DAOException {
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND "
-				+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR))");
-		if (!CollectionUtils.isEmpty(activeIDs)) {
-			sqlBuf.append(" AND (ID NOT IN (");
-			for (Iterator<Integer> i = activeIDs.iterator(); i.hasNext(); ) {
-				Integer id = i.next();
-				sqlBuf.append(id.toString());
-				if (i.hasNext())
-					sqlBuf.append(',');
-			}
-			
-			sqlBuf.append("))");
-		}
-		
 		try {
 			startTransaction();
 			
 			// Get IDs to purge
-			prepareStatementWithoutLimits("SELECT ID FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND "
-					+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR))");
+			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON "
+					+ "(F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), "
+					+ "INTERVAL ? HOUR)) AND (FD.ID=?)");
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, hours);
+			_ps.setInt(4, 0);
 			
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
@@ -122,11 +106,11 @@ public class SetACARSLog extends DAO {
 			results.removeAll(activeIDs);
 
 			// Purge the ones we want to
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setBoolean(1, false);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, hours);
-			executeUpdate(0);
+			for (Iterator<Integer> i = results.iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				log.info("Deleting Flight #" + id.toString());
+				deleteInfo(id.intValue());
+			}
 			
 			// Commit and return
 			commitTransaction();
