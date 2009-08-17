@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * An abstract class to implement support for image/file buffers in a bean.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -71,5 +71,12 @@ public abstract class DatabaseBlobBean extends DatabaseBean {
      */
     public void load(byte[] buffer) {
         _buffer = buffer;
+    }
+    
+    /**
+     * Clears the buffer.
+     */
+    public void clear() {
+    	_buffer = null;
     }
 }
