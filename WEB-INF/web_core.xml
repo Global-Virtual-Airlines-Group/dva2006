@@ -69,9 +69,16 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<servlet>
 		<servlet-name>dbImage</servlet-name>
 		<servlet-class>org.deltava.servlet.ImageServlet</servlet-class>
-		<load-on-startup>2</load-on-startup>
+		<load-on-startup>3</load-on-startup>
 	</servlet>
-	
+
+	<!-- Signature Image servlet -->
+	<servlet>
+		<servlet-name>sigImage</servlet-name>
+		<servlet-class>org.deltava.servlet.SignatureServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+
 	<!-- Flight Plan servlet -->
 	<servlet>
 		<servlet-name>flightPlan</servlet-name>
@@ -83,7 +90,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<servlet>
 		<servlet-name>fleetLibrary</servlet-name>
 		<servlet-class>org.deltava.servlet.LibraryServlet</servlet-class>
-		<load-on-startup>3</load-on-startup>
+		<load-on-startup>4</load-on-startup>
 	</servlet>
 	
 	<!-- Filter mappings to Command Controller -->
@@ -192,7 +199,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	</servlet-mapping>
     
 	<servlet-mapping>
-		<servlet-name>dbImage</servlet-name>
+		<servlet-name>sigImage</servlet-name>
 		<url-pattern>/sig/*</url-pattern>
     </servlet-mapping>
 

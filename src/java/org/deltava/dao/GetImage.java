@@ -1,16 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.util.cache.CacheableLong;
+
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
-public class GetImage extends DAO {
+public class GetImage extends PilotSignatureDAO {
 
     /**
      * Initializes the DAO from a JDBC connection.
@@ -38,8 +40,13 @@ public class GetImage extends DAO {
             if (!rs.next())
                 return null;
             
-            // Get the image data 
+            // Get the image data
+            ResultSetMetaData md = rs.getMetaData();
             byte[] imgBuffer = rs.getBytes(1);
+            if (md.getColumnCount() > 1) {
+            	Timestamp lastMod = rs.getTimestamp(2);
+            	_sigCache.add(new CacheableLong(Integer.valueOf(id), lastMod.getTime()));
+            }
 
             // Close the result set
             rs.close();
@@ -60,10 +67,43 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getSignatureImage(int id, String dbName) throws DAOException {
-    	StringBuilder sqlBuf = new StringBuilder("SELECT WC_SIG FROM ");
+    	StringBuilder sqlBuf = new StringBuilder("SELECT WC_SIG, MODIFIED FROM ");
     	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".SIGNATURES WHERE (ID=?) LIMIT 1");
         return execute(id, sqlBuf.toString());
+    }
+    
+    /**
+     * Returns the last modification date of a Pilot signature.
+     * @param id the Pilot's database ID
+     * @param dbName the database containing the signature
+     * @return the signature last modified date/time, or null if not found
+     * @throws DAOException if a JDBC error occurs
+     */
+    public java.util.Date getSigModified(int id, String dbName) throws DAOException {
+    	CacheableLong lastMod = _sigCache.get(new Integer(id));
+    	if (lastMod != null)
+    		return new Date(lastMod.getValue());
+    	
+    	StringBuilder sqlBuf = new StringBuilder("SELECT MODIFIED FROM ");
+    	sqlBuf.append(formatDBName(dbName));
+    	sqlBuf.append(".SIGNATURES WHERE (ID=?) LIMIT 1");
+    	
+    	try {
+    		prepareStatement(sqlBuf.toString());
+    		ResultSet rs = _ps.executeQuery();
+    		java.util.Date dt = rs.next() ? rs.getTimestamp(1) : null;
+    		rs.close();
+    		_ps.close();
+    		
+    		// Update the cache and return
+    		if (dt != null)
+    			_sigCache.add(new CacheableLong(new Integer(id), dt.getTime()));
+    		
+    		return dt;
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
     }
     
     /**
@@ -118,7 +158,7 @@ public class GetImage extends DAO {
      */
     public boolean isSignatureAuthorized(int id) throws DAOException {
     	try {
-    		prepareStatement("SELECT ISAPPROVED FROM SIGNATURES WHERE (ID=?)");
+    		prepareStatementWithoutLimits("SELECT ISAPPROVED FROM SIGNATURES WHERE (ID=?) LIMIT 1");
     		_ps.setInt(1, id);
     		
     		// Execute the query
