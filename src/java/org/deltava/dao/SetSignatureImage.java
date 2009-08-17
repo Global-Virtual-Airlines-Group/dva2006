@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,11 +8,11 @@ import org.deltava.beans.Pilot;
 /**
  * A Data Access Object to write Signature Images.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
-public class SetSignatureImage extends DAO {
+public class SetSignatureImage extends PilotSignatureDAO {
 
 	/**
 	 * Initialize the Data Access Object.
@@ -33,10 +33,10 @@ public class SetSignatureImage extends DAO {
 	 * @see Pilot#getHasSignature()
 	 */
 	public void write(Pilot p, int x, int y, String ext, boolean isApproved) throws DAOException {
-		PilotDAO.invalidate(p.getID());
+		invalidate(p.getID());
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG, X, Y, EXT, ISAPPROVED) "
-					+ "VALUES (?, ?, ?, ?, LCASE(?), ?)");
+			prepareStatementWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG, X, Y, EXT, ISAPPROVED, "
+					+ "MODIFIED) VALUES (?, ?, ?, ?, LCASE(?), ?, NOW())");
 			_ps.setInt(1, p.getID());
 			_ps.setBinaryStream(2, p.getInputStream(), p.getSize());
 			_ps.setInt(3, x);
@@ -55,7 +55,7 @@ public class SetSignatureImage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int pilotID) throws DAOException {
-		PilotDAO.invalidate(pilotID);
+		invalidate(pilotID);
 		try {
 			prepareStatementWithoutLimits("DELETE FROM SIGNATURES WHERE (ID=?)");
 			_ps.setInt(1, pilotID);

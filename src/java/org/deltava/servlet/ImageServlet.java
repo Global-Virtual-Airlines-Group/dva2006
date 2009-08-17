@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -35,11 +35,10 @@ public class ImageServlet extends BasicAuthServlet {
 
 	private static final int IMG_CHART = 0;
 	private static final int IMG_GALLERY = 1;
-	private static final int IMG_SIG = 2;
-	private static final int IMG_EXAM = 3;
-	private static final int IMG_EVENT = 4;
+	private static final int IMG_EXAM = 2;
+	private static final int IMG_EVENT = 3;
 
-	private static final String[] IMG_TYPES = { "charts", "gallery", "sig", "exam_rsrc", "event" };
+	private static final String[] IMG_TYPES = { "charts", "gallery", "exam_rsrc", "event" };
 
 	/**
 	 * Returns the servlet description.
@@ -147,12 +146,6 @@ public class ImageServlet extends BasicAuthServlet {
 					
 					// Serve the image
 					imgBuffer = dao.getGalleryImage(imgID, url.getLastPath());
-					rsp.setHeader("Cache-Control", "private");
-					rsp.setIntHeader("max-age", 600);
-					break;
-
-				case IMG_SIG:
-					imgBuffer = dao.getSignatureImage(imgID, url.getLastPath());
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 600);
 					break;
