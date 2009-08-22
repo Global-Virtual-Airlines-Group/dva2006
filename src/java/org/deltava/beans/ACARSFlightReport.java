@@ -412,7 +412,8 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTakeoffN1()
      */
     public void setTakeoffN1(double n1) {
-        _takeoffN1 = Math.max(0, n1);
+    	if (!Double.isNaN(n1))
+    		_takeoffN1 = Math.max(0, n1);
     }
     
     /**
@@ -475,7 +476,8 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getLandingG()
      */
     public void setLandingG(double g) {
-    	_landingG = g;
+    	if (!Double.isNaN(g))
+    		_landingG = g;
     }
     
     /**
@@ -484,7 +486,8 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getLandingN1()
      */
     public void setLandingN1(double n1) {
-        _landingN1 = Math.max(0, n1);
+    	if (!Double.isNaN(n1))
+    		_landingN1 = Math.max(0, n1);
     }
     
     /**
