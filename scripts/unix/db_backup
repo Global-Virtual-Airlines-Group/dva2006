@@ -18,7 +18,7 @@ echo `date +%H:%M:%S`' Writing AWStats database'
 tar cf - /home/awstats | $arc_util > awstats.tar.bz2 
 
 # Set up mysql utility aliases
-mysql="/usr/local/mysql/bin/mysql --socket=/var/run/mysql/mysql.sock"
+mysql="/usr/local/mysql/bin/mysql --socket=/var/run/mysql/mysql.sock --skip-column-names"
 mysqldump="/usr/local/mysql/bin/mysqldump --socket=/var/run/mysql/mysql.sock"
 
 # Dump core table
@@ -67,13 +67,21 @@ $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLE
 if [ "$1" = "full" ]
 then
   echo `date +%H:%M:%S`' Write last backup time'
-  echo 'SELECT UNIX_TIMESTAMP(NOW())' | mysql -h mysql.deltava.org -N `cat /usr/local/etc/sqlbackup` acars > lastbackuptime
+  echo 'SELECT UNIX_TIMESTAMP(NOW())' | $mysql `cat /usr/local/etc/sqlbackup` acars > lastbackuptime
+  echo 'TRUNCATE ARCHIVE_UPDATES' | $mysql `cat /usr/local/etc/sqlbackup` acars
 
   echo `date +%H:%M:%S`' Writing ACARS Position Archive'
   $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | $arc_util > acars_pos.sql.bz2
 else
+  echo `date +%H:%M:%S`' Creating Incremental ACARS Table'
+  echo 'CREATE TABLE IF NOT EXISTS POS_ARC LIKE POSITION_ARCHIVE' | $mysql `cat /usr/local/etc/sqlbackup` acars
+  echo 'TRUNCATE POS_ARC' | $mysql `cat /usr/local/etc/sqlbackup` acars
+  echo `date +%H:%M:%S`' Copying Incremental ACARS Positions'
+  echo 'INSERT INTO POS_ARC (SELECT PA.* FROM POSITION_ARCHIVE PA, ARCHIVE_UPDATES AU WHERE (PA.FLIGHT_ID=AU.ID))' | $mysql `cat /usr/local/etc/sqlbackup` acars
   echo `date +%H:%M:%S`' Writing Incremental ACARS Positions'
-  $mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="REPORT_TIME > FROM_UNIXTIME(`cat lastbackuptime`)" acars POSITION_ARCHIVE | $arc_util > acars_pos_inc.sql.bz2
+  $mysqldump $dump_opt -t `cat /usr/local/etc/sqlbackup` acars POS_ARC | $arc_util > acars_pos_inc.sql.bz2
+  echo `date +%H:%M:%S`' Removing Incremental ACARS Table'
+  echo 'DROP TABLE POS_ARC' | $mysql `cat /usr/local/etc/sqlbackup` acars
 fi
 
 # Dump ACARS data
