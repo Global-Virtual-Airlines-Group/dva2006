@@ -185,6 +185,12 @@ public class SetACARSLog extends DAO {
 			_ps.setBoolean(2, true);
 			_ps.setInt(3, flightID);
 			executeUpdate(0);
+			
+			// Update archive log
+			prepareStatementWithoutLimits("INSERT INTO acars.ARCHIVE_UPDATES (ID, ARCHIVED) VALUES (?, NOW()) ON "
+					+" DUPLICATE KEY UPDATE ARCHIVED=NOW()");
+			_ps.setInt(1, flightID);
+			executeUpdate(0);
 
 			// Commit the transaction
 			commitTransaction();
@@ -275,6 +281,12 @@ public class SetACARSLog extends DAO {
 				
 					// Delete the entries
 					prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
+					_ps.setInt(1, id);
+					executeUpdate(0);
+					
+					// Update archive log
+					prepareStatementWithoutLimits("INSERT INTO acars.ARCHIVE_UPDATES (ID, ARCHIVED) VALUES (?, NOW()) ON "
+							+" DUPLICATE KEY UPDATE ARCHIVED=NOW()");
 					_ps.setInt(1, id);
 					executeUpdate(0);
 				
