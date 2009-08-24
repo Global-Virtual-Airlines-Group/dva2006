@@ -75,10 +75,16 @@ public class InactivityUpdateTask extends Task {
 			Pilot taskBy = pddao.getByCode(SystemData.get("users.tasks_by"));
 			
 			// Get the pilots to mark without warning
+			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
+			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				InactivityPurge ip = new InactivityPurge(id.intValue());
+				ip.setInterval(notifyDays);
+				purgeBeans.add(ip);
+			}
 			
 			// Get the pilots to deactivate
-			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);
 			Map<Integer, Pilot> pilots = dao.getByID(purgeBeans, "PILOTS");
 			for (Iterator<InactivityPurge> i = purgeBeans.iterator(); i.hasNext();) {
 				InactivityPurge ip = i.next();
