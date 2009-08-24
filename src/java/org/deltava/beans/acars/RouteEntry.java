@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.util.*;
 
 import org.deltava.beans.*;
 
@@ -578,22 +578,33 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @return TRUE if the entry should be noted, otherwise FALSE
 	 */
 	public boolean isWarning() {
+		return (getWarning() != null);
+	}
+	
+	/**
+	 * Returns the warning message.
+	 * @return the warning
+	 */
+	public String getWarning() {
+		Collection<String> warnings = new ArrayList<String>();
 		if ((_alt < 10000) && (_aSpeed > 250))
-			return true;
-
+			warnings.add("250 UNDER 10K");
 		if ((_radarAlt < 1500) && (_vSpeed < -1500))
-			return true;
-
-		if ((Math.abs(_bank) > 45) || (Math.abs(_pitch) > 35))
-			return true;
-
+			warnings.add("DESCENT RATE");
+		if (Math.abs(_bank) > 45)
+			warnings.add("BANK");
+		if (Math.abs(_pitch) > 35)
+			warnings.add("PITCH");
 		if (Math.abs(1 - _gForce) >= 0.25)
-			return true;
-		
+			warnings.add("G-FORCE");
 		if (_fuelRemaining == 0)
-			return true;
-
-		return (isFlagSet(FLAG_STALL) || isFlagSet(FLAG_OVERSPEED));
+			warnings.add("NO FUEL");
+		if (isFlagSet(FLAG_STALL))
+			warnings.add("STALL");
+		if (isFlagSet(FLAG_OVERSPEED))
+			warnings.add("OVERSPEED");
+		
+		return warnings.isEmpty() ? null : StringUtils.listConcat(warnings, " ");
 	}
 
 	/**
@@ -624,7 +635,8 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @return an HTML String
 	 */
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">Position: <b>");
+		StringBuilder buf = new StringBuilder(192);
+		buf.append("<span class=\"mapInfoBox\">Position: <b>");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</b><br />Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
@@ -727,16 +739,18 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		else if (isFlagSet(FLAG_AT_MACH))
 			buf.append("Autothrottle: MACH<br />");
 
-		// Add Pause/Stall/Overspeed flags
+		// Add Pause/Stall/Warning flags
 		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
-		if (isFlagSet(FLAG_STALL))
-			buf.append("<span class=\"warn bld\">STALL</span><br />");
-		if (isFlagSet(FLAG_OVERSPEED))
-			buf.append("<span class=\"warn bld\">OVERSPEED</span><br />");
 		if (isFlagSet(FLAG_CRASH))
-			buf.append("<span class=\"error\">AIRCRAFT CRASHED</span><br />");
-
+			buf.append("<span class=\"error bld\">AIRCRAFT CRASHED</span><br />");
+		String warn = getWarning();
+		if (warn != null) {
+			buf.append("<span class=\"error bld\">");
+			buf.append(warn);
+			buf.append("</span>");
+		}
+			
 		buf.append("</span>");
 		return buf.toString();
 	}
