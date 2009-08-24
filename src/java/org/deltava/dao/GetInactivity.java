@@ -71,9 +71,8 @@ public class GetInactivity extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (DATE_ADD(IFNULL(LAST_LOGIN, CREATED), "
 					+ "INTERVAL ? DAY) < CURDATE())");
-			_ps.setInt(1, FlightReport.OK);
-			_ps.setInt(2, Pilot.ACTIVE);
-			_ps.setInt(3, days);
+			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, days);
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
