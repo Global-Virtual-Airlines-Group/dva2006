@@ -637,6 +637,6 @@
 	<!-- Help Desk Data -->
 	<helpdesk>
 		<enabled type="Boolean">true</enabled>
-		<assignto type="Integer">2253</assignto>
+		<assignto type="Integer">2724</assignto>
 	</helpdesk>
 </config>
