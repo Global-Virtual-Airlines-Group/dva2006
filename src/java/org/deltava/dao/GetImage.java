@@ -91,6 +91,7 @@ public class GetImage extends PilotSignatureDAO {
     	
     	try {
     		prepareStatement(sqlBuf.toString());
+    		_ps.setInt(1, id);
     		ResultSet rs = _ps.executeQuery();
     		java.util.Date dt = rs.next() ? rs.getTimestamp(1) : null;
     		rs.close();
