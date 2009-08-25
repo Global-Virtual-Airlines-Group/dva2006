@@ -57,6 +57,14 @@
 </tr>
 </c:if>
 <tr>
+ <td class="label">Owner</td>
+ <td class="data bld">${eProfile.owner.name}</td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><fmt:list value="${eProfile.airlines}" delim=", " /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data bld caps">
 <c:if test="${eProfile.active}"><span class="ter">Examination is Available</span></c:if>
