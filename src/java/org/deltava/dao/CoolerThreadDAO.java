@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,11 +17,11 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read/write Water Cooler threads.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 2.1
  */
 
-public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
+abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(CoolerThreadDAO.class);
 	
