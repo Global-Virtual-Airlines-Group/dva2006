@@ -146,6 +146,7 @@ public class SignatureServlet extends GenericServlet {
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength(imgBuffer.length);
 		rsp.setBufferSize(Math.min(65536, imgBuffer.length));
+		rsp.setIntHeader("max-age", 3600);
 
 		// Dump the data to the output stream
 		try {
