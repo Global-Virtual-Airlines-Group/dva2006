@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,16 +6,21 @@ import java.util.*;
 
 import org.deltava.beans.FlightReport;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
-public class GetFlightReportRecognition extends GetFlightReports {
+public class GetFlightReportRecognition extends GetFlightReports implements CachingDAO {
 	
 	private static final int MIN_ACARS_CLIENT = 61;
+	
+	private static final Cache<CacheableList<FlightReport>> _cache = 
+		new ExpiringCache<CacheableList<FlightReport>>(16, 600);
 	
 	private int _dayFilter;
 
@@ -25,6 +30,22 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 */
 	public GetFlightReportRecognition(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getHits() {
+		return _cache.getHits();
+	}
+
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
 	}
 	
 	/**
@@ -42,6 +63,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getGreasedLandings() throws DAOException {
+		
+		// Check the cache
+		CacheableList<FlightReport> results = _cache.get("ALL" + _dayFilter);
+		if (results != null)
+			return results;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
@@ -59,7 +85,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 			if (_dayFilter > 0)
 				_ps.setInt(3, _dayFilter);
 
-			return execute();
+			// Add to the cache
+			results = new CacheableList<FlightReport>("ALL" + _dayFilter);
+			results.addAll(execute());
+			_cache.add(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -71,6 +101,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getStaffReports() throws DAOException {
+		
+		// Check the cache
+		CacheableList<FlightReport> results = _cache.get("STAFF" + _dayFilter);
+		if (results != null)
+			return results;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM STAFF S LEFT JOIN PIREPS PR "
@@ -88,7 +123,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 			if (_dayFilter > 0)
 				_ps.setInt(3, _dayFilter);
 
-			return execute();
+			// Add to the cache
+			results = new CacheableList<FlightReport>("STAFF" + _dayFilter);
+			results.addAll(execute());
+			_cache.add(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -101,6 +140,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getGreasedLandings(String eqType) throws DAOException {
+		
+		// Check the cache
+		CacheableList<FlightReport> results = _cache.get("EQ" + eqType + "$" + _dayFilter);
+		if (results != null)
+			return results;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
@@ -119,7 +163,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 			if (_dayFilter > 0)
 				_ps.setInt(4, _dayFilter);
 			
-			return execute();
+			// Add to the cache
+			results = new CacheableList<FlightReport>("EQ" + eqType + "$" + _dayFilter);
+			results.addAll(execute());
+			_cache.add(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

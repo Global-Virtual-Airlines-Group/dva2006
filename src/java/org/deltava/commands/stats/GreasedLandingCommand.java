@@ -38,8 +38,17 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAO and the results
+			// Get the DAO
 			GetFlightReportRecognition dao = new GetFlightReportRecognition(con);
+			
+			// Save equipment choices
+			List<Object> eqTypes = new ArrayList<Object>();
+			eqTypes.add(ComboUtils.fromString("All Aircraft", ""));
+			eqTypes.add(ComboUtils.fromString("Staff Members", "staff"));
+			eqTypes.addAll(dao.getACARSEquipmentTypes(25));
+			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
+			
+			// Get the results
 			dao.setQueryMax(vc.getCount());
 			dao.setDayFilter(daysBack);
 			if (StringUtils.isEmpty(eqType))
@@ -59,14 +68,6 @@ public class GreasedLandingCommand extends AbstractViewCommand {
 			// Load the Pilots
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
-
-			// Save equipment choices
-			List<Object> eqTypes = new ArrayList<Object>();
-			eqTypes.add(ComboUtils.fromString("All Aircraft", ""));
-			eqTypes.add(ComboUtils.fromString("Staff Members", "staff"));
-			dao.setDayFilter(0);
-			eqTypes.addAll(dao.getACARSEquipmentTypes(25));
-			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
