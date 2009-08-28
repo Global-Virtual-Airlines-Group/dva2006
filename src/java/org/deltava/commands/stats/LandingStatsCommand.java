@@ -43,7 +43,7 @@ public class LandingStatsCommand extends AbstractViewCommand {
 			
 			// Get the DAO and the results
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(con);
-			dao.setDayFilter(StringUtils.parse(ctx.getParameter("days"), 0));
+			dao.setDayFilter(StringUtils.parse(ctx.getParameter("days"), 30));
 			dao.setQueryMax(vc.getCount());
 			Collection<LandingStatistics> stats = dao.getLandings(eqType, minLegs);
 			vc.setResults(stats);
