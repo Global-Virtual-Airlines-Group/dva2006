@@ -4,8 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.EquipmentType;
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
 
@@ -173,16 +172,15 @@ public class GetFlightReportStatistics extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(APR.ID) AS CNT, "
 				+ "ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
 				+ "STDDEV_POP(APR.LANDING_VSPEED) AS SD, AVG(RD.DISTANCE) AS DST, "
-				+ "STDDEV_POP(RD.DISTANCE) AS DSD, IFNULL(IF(STDDEV_POP(RD.DISTANCE) < 20, "
-				+ "650, (ABS(AVG(RD.DISTANCE))*3+STDDEV_POP(RD.DISTANCE)*2)/15), 650) + "
-				+ "(ABS(AVG(APR.LANDING_VSPEED)*3)+STDDEV_POP(APR.LANDING_VSPEED)*2) "
-				+ "AS FACT FROM PIREPS PR, ACARS_PIREPS APR LEFT JOIN acars.FLIGHTS F ON "
-				+ "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) LEFT JOIN "
-				+ "acars.RWYDATA RD ON (F.ID=RD.ID) AND (RD.ISTAKEOFF=?) WHERE (C.CLIENT_BUILD>?) "
-				+ "AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ");
+				+ "STDDEV_POP(RD.DISTANCE) AS DSD, (ABS(AVG(APR.LANDING_VSPEED)*3)+"
+				+ "STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PIREPS PR, ACARS_PIREPS APR "
+				+ "LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON "
+				+ "(C.ID=F.CON_ID) LEFT JOIN acars.RWYDATA RD ON (F.ID=RD.ID) AND (RD.ISTAKEOFF=?) "
+				+ "WHERE (C.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) "
+				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
-		sqlBuf.append("GROUP BY PR.EQTYPE HAVING (CNT>1) ORDER BY FACT");
+		sqlBuf.append("GROUP BY PR.EQTYPE HAVING (CNT>2) ORDER BY FACT");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
