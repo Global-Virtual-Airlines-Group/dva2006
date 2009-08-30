@@ -86,6 +86,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="inactivelist">
+		<name>Inactive Pilot List</name>
+		<class>org.deltava.commands.admin.InactivityListCommand</class>
+		<roles>HR</roles>	
+	</command>
+
 	<command id="suspend">
 		<name>Suspend Pilot</name>
 		<class>org.deltava.commands.security.SuspendUserCommand</class>
