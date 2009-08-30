@@ -75,24 +75,30 @@ public class InactivityUpdateTask extends Task {
 			Pilot taskBy = pddao.getByCode(SystemData.get("users.tasks_by"));
 			
 			// Get the pilots to mark without warning
-			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);
+			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(true),  "ID");
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
 			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
-				InactivityPurge ip = new InactivityPurge(id.intValue());
-				ip.setInterval(notifyDays);
-				purgeBeans.add(ip);
+				if (!purgeBeans.containsKey(id)) {
+					InactivityPurge ip = new InactivityPurge(id.intValue());
+					ip.setInterval(notifyDays);
+					purgeBeans.put(id, ip);
+				}
 			}
 			
 			// Get the pilots to deactivate
-			Map<Integer, Pilot> pilots = dao.getByID(purgeBeans, "PILOTS");
-			for (Iterator<InactivityPurge> i = purgeBeans.iterator(); i.hasNext();) {
-				InactivityPurge ip = i.next();
-				Integer id = Integer.valueOf(ip.getID());
+			Map<Integer, Pilot> pilots = dao.getByID(purgeBeans.keySet(), "PILOTS");
+			for (Iterator<Map.Entry<Integer, InactivityPurge>> i = purgeBeans.entrySet().iterator(); i.hasNext();) {
+				Map.Entry<Integer, InactivityPurge> me = i.next();
+				InactivityPurge ip = me.getValue();
+				Integer id = me.getKey();
 				Pilot p = pilots.get(id);
 				if (p != null) {
-					boolean noWarn = noWarnIDs.contains(id);
-					log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
+					boolean noWarn = !ip.isNotified();
+					if (noWarn)
+						log.warn("Marking " + p.getName() + " Inactive after no participation in " + inactiveDays + " days");
+					else
+						log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
 
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
