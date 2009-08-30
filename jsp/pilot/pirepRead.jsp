@@ -314,6 +314,7 @@ map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+GEvent.addListener(map, 'maptypechanged', updateMapText);
 
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
