@@ -66,7 +66,8 @@ return true;
 <c:if test="${!isDispatch}">
 <tr>
  <td class="data"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
- <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
+ <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" />
+ <map:legend color="green" legend="Available Dispatcher" /> <map:legend color="purple" legend="Busy Dispatcher" /></td>
 </tr>
 </c:if>
 <tr>
