@@ -16,7 +16,7 @@ import org.deltava.security.command.DispatchRouteAccessControl;
 /**
  * A Web Site Command to display saved dispatch routes.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 2.1
  */
 
@@ -46,7 +46,7 @@ public class RouteListCommand extends AbstractViewCommand {
 			rdao.setQueryMax(vc.getCount());
 			
 			// Get the plans and filter
-			Collection<DispatchRoute> plans = (authorID == 0) ? rdao.getAll(true) : rdao.getByAuthor(authorID);
+			Collection<DispatchRoute> plans = (authorID == 0) ? rdao.getAll(false, true) : rdao.getByAuthor(authorID);
 			for (Iterator<DispatchRoute> i = plans.iterator(); i.hasNext(); ) {
 				DispatchRoute rt = i.next();
 				DispatchRouteAccessControl ac = new DispatchRouteAccessControl(ctx, rt);

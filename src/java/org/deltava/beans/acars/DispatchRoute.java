@@ -118,6 +118,31 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean, ViewEntr
 	public void addWaypoint(NavigationDataBean nd, String airway) {
 		_route.put(nd, (airway == null) ? "" : airway);
 	}
+	
+	/**
+	 * Adds a waypoint to the start of the route.
+	 * @param nd the waypoint
+	 * @param airway the airway it is on, or null
+	 */
+	public void insertWaypoint(NavigationDataBean nd, String airway) {
+		Map<NavigationDataBean, String> tmpRoute = new LinkedHashMap<NavigationDataBean, String>();
+		tmpRoute.put(nd, (airway == null) ? "" : airway);
+		tmpRoute.putAll(_route);
+		_route.clear();
+		_route.putAll(tmpRoute);
+	}
+	
+	/**
+	 * Removes all waypoints on a particular Airway from the route.
+	 * @param code the airway code
+	 */
+	public void removeAirway(String code) {
+		for (Iterator<Map.Entry<NavigationDataBean, String>> i = _route.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<NavigationDataBean, String> me = i.next();
+			if (me.getValue().equals(code))
+				i.remove();
+		}
+	}
 
 	/**
 	 * Updates the last use date of this route.

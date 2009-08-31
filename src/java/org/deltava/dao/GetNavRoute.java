@@ -102,7 +102,13 @@ public class GetNavRoute extends GetNavData {
 			return null;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE ");
+		if (name.contains("%"))
+			sqlBuf.append("(NAME LIKE ?)");
+		else
+			sqlBuf.append("(NAME=?)");
+		
+		sqlBuf.append(" AND (TRANSITION=?)");
 		if (tkCount > 2)
 			sqlBuf.append(" AND (RUNWAY=?)");
 		if (tkCount > 3)

@@ -668,6 +668,13 @@ data file. You may also export entries from the Flight Schedule into a CSV data 
 database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes 
 (SIDs / STARs).</td>
 </tr>
+<c:if test="${acarsEnabled}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dsptrouteupdate">Dispatch SID/STAR Update</el:cmd></td>
+ <td class="data">You can update the <content:airline /> ACARS Dispatch Route Terminal Routes. This should be 
+performed each time the Terminal Routes have been imported from AIRAC data.</td>
+</tr>
+</c:if>
 </content:filter>
 <c:if test="${acarsEnabled}">
 <content:filter roles="HR,Route,Dispatch,PIREP">

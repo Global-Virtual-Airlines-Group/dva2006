@@ -10,7 +10,7 @@ import org.deltava.beans.navdata.NavigationDataBean;
 /**
  * A Data Access Object to write ACARS Dispatcher routes.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.2
  */
 
@@ -33,10 +33,17 @@ public class SetACARSRoute extends DAO {
 		try {
 			startTransaction();
 			
-			// Create the route
-			prepareStatementWithoutLimits("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, "
-					+ "AIRPORT_A, AIRPORT_L, CREATEDON, USED, ALTITUDE, SID, STAR, BUILD, REMARKS, "
-					+ "ROUTE) VALUES (?, ?, ?, ?, ?, NOW(), 0, ?, ?, ?, 0, ?, ?)");
+			// Prepare the statement
+			if (rp.getID() != 0) {
+				prepareStatement("UPDATE acars.ROUTES SET AUTHOR=?, AIRLINE=?, AIRPORT_D=?, AIRPORT_A=?, "
+						+ "AIRPORT_L=?, ALTITUDE=?, SID=?, STAR=?, REMARKS=?, ROUTE=? WHERE (ID=?)");
+				_ps.setInt(11, rp.getID());
+			} else
+				prepareStatementWithoutLimits("INSERT INTO acars.ROUTES (AUTHOR, AIRLINE, AIRPORT_D, AIRPORT_A, "
+						+ "AIRPORT_L, ALTITUDE, SID, STAR, BUILD, REMARKS, ROUTE, USED, CREATEDON) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, 0, NOW())");	
+			
+			// Write the route
 			_ps.setInt(1, rp.getAuthorID());
 			_ps.setString(2, rp.getAirline().getCode());
 			_ps.setString(3, rp.getAirportD().getIATA());
@@ -47,10 +54,14 @@ public class SetACARSRoute extends DAO {
 			_ps.setString(8, rp.getSTAR());
 			_ps.setString(9, rp.getComments());
 			_ps.setString(10, rp.getRoute());
+			executeUpdate(1);
 			
-			// Save the data
-			_ps.executeUpdate();
-			if (rp.getID() == 0)
+			// Clear the waypoints if necessary
+			if (rp.getID() != 0) {
+				prepareStatementWithoutLimits("DELETE FROM acars.ROUTE_WP WHERE (ID=?)");
+				_ps.setInt(1, rp.getID());
+				executeUpdate(0);	
+			} else
 				rp.setID(getNewID());
 			
 			// Save the waypoints
@@ -72,6 +83,7 @@ public class SetACARSRoute extends DAO {
 
 			// Write and commit
 			_ps.executeBatch();
+			_ps.close();
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
