@@ -492,6 +492,12 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
+	<command id="dsptrouteupdate">
+		<name>Dispatch SID/STAR Update</name>
+		<class>org.deltava.commands.navdata.DispatchRouteUpdateCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="trouteplot">
 		<name>SID/STAR Plot</name>
 		<class>org.deltava.commands.navdata.TerminalRoutePlotCommand</class>

@@ -79,17 +79,29 @@ public class GetACARSRoute extends DAO {
 	
 	/**
 	 * Loads all saved routes from the database.
+	 * @param activeOnly TRUE if only active routes hould be loaded, otherwise FALSE
 	 * @param loadWP TRUE if waypoints should be loaded, otherwise FALSE
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<DispatchRoute> getAll(boolean loadWP) throws DAOException {
+	public Collection<DispatchRoute> getAll(boolean activeOnly, boolean loadWP) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.ROUTES ");
+		if (activeOnly)
+			sqlBuf.append("WHERE (ACTIVE=?) ");
+		sqlBuf.append("ORDER BY ID");
+		
 		try {
-			prepareStatement("SELECT * FROM acars.ROUTES ORDER BY CREATEDON");
+			prepareStatement(sqlBuf.toString());
+			if (activeOnly)
+				_ps.setBoolean(1, true);
 
 			// Execute the Query and load routes
 			Collection<DispatchRoute> results = execute();
-			loadRoutes(results);
+			if (loadWP)
+				loadRoutes(results);
+			
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
