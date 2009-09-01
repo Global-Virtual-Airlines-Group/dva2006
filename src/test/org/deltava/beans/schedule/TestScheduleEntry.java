@@ -1,6 +1,7 @@
 package org.deltava.beans.schedule;
 
 import java.text.*;
+import java.util.Date;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
@@ -24,6 +25,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	private Airport _icn;
 	private Airport _phx;
 	private Airport _dfw;
+	private Airport _kin;
 
 	public static Test suite() {
 		return new CoverageDecorator(TestScheduleEntry.class, new Class[] { ScheduleEntry.class, Flight.class });
@@ -39,6 +41,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		TZInfo.init("Asia/Seoul", null, null);
 		TZInfo.init("America/Sao_Paulo", null, null);
 		TZInfo.init("US/Arizona", null, null);
+		TZInfo.init("Jamaica", null, null);
 
 		_atl = new Airport("ATL", "KATL", "Atlanta GA");
 		_atl.setLocation(34.6404, -84.4269);
@@ -67,6 +70,9 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_dfw = new Airport("DFW", "KDFW", "Dallas-Fort Worth TX");
 		_dfw.setLocation(32.8956, -97.0367);
 		_dfw.setTZ("US/Central");
+		_kin = new Airport("KIN", "MKJP", "Kingston Jamaica");
+		_kin.setLocation(17.9356, -76.7869);
+		_kin.setTZ("Jamaica");
 
 		_e = new ScheduleEntry(_dva, 129, 1);
 		setBean(_e);
@@ -164,6 +170,8 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	public void testLongFlightLength() throws ParseException {
 		_e.setAirportD(_atl);
 		_e.setAirportA(_nrt);
+		assertTrue(_atl.getTZ().getTimeZone().inDaylightTime(new Date()));
+		assertTrue(_nrt.getTZ().getTimeZone().inDaylightTime(new Date()));
 		_e.setTimeD(df.parse("10:25"));
 		_e.setTimeA(df.parse("13:25"));
 		assertEquals(130, _e.getLength());
@@ -226,8 +234,20 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setAirportD(_phx);
 		_e.setAirportA(_dfw);
 		_e.setTimeD(df.parse("12:30"));
-		_e.setTimeA(df.parse("13:26"));
-		assertEquals(19, _e.getLength());
+		_e.setTimeA(df.parse("14:26"));
+		boolean dfwDST = _dfw.getTZ().getTimeZone().inDaylightTime(new Date());
+		int time = dfwDST ? 29 : 19;
+		assertEquals(time, _e.getLength());
+	}
+	
+	public void testJamaicaDST() throws ParseException {
+		_e.setAirportD(_jfk);	
+		_e.setAirportA(_kin);
+		_e.setTimeD(df.parse("14:00"));
+		_e.setTimeA(df.parse("16:50"));
+		boolean jfkDST = _jfk.getTZ().getTimeZone().inDaylightTime(new Date());
+		int time = jfkDST ? 38 : 28;
+		assertEquals(time, _e.getLength());
 	}
 
 	public void testComparator() {

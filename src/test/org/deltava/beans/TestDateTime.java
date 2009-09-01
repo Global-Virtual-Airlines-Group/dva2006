@@ -99,6 +99,26 @@ public class TestDateTime extends TestCase {
 		assertEquals(d2.getTime(), t1);
 	}
 	
+	public void testNoDST() throws Exception {
+		
+		// Create the time zone
+		TZInfo jt = TZInfo.init("Jamaica", null, null);
+		
+		// Create the dates
+		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+		DateTime dt = new DateTime(df.parse("09/01/2009 07:00"), _tz);
+		DateTime dt2 = new DateTime(df.parse("09/01/2009 07:40"), jt);
+		assertTrue(_tz.getTimeZone().inDaylightTime(dt.getDate()));
+		assertFalse(jt.getTimeZone().inDaylightTime(dt2.getDate()));
+		
+		// Validate the dates
+		Date utc1 = dt.getUTC();
+		Date utc2 = dt2.getUTC();
+		assertTrue(utc1.getTime() < utc2.getTime());
+		long tDiff = dt2.difference(dt);
+		assertTrue(tDiff > 3600);
+	}
+	
 	public void testToString() throws Exception {
 	    TZInfo mdt = TZInfo.init("US/Mountain", "Mountain Time", "MDT");
 	    SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
