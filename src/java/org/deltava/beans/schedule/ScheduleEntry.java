@@ -1,22 +1,23 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
 import org.deltava.beans.*;
-
 import org.deltava.util.*;
 
 /**
  * A class to store Schedule Entry information.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public class ScheduleEntry extends Flight implements ViewEntry {
 	
 	private static final String[] SST = {"Concorde", "TU-144"};
+	
+	private final Calendar today = CalendarUtils.getInstance(null, true);
 
 	private DateTime _timeD;
 	private DateTime _timeA;
@@ -147,6 +148,20 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	public final void setID(int id) {
 		throw new UnsupportedOperationException();
 	}
+	
+	/**
+	 * Ensures each time has a date component of the current date if the year is less than 2001.
+	 */
+	private Date updateDate(Date dt) {
+		Calendar cld = CalendarUtils.getInstance(dt);
+		if (cld.get(Calendar.YEAR) < 2001) {
+			cld.set(Calendar.YEAR, today.get(Calendar.YEAR));
+			cld.set(Calendar.MONTH, today.get(Calendar.MONTH));
+			cld.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH));
+		}
+		
+		return cld.getTime();
+	}
 
 	/**
 	 * Sets the departure time for this flight.
@@ -159,7 +174,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	public void setTimeD(Date dt) {
 		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportD().getTZ();
 		_length = 0; // reset length
-		_timeD = new DateTime(dt, tz);
+		_timeD = new DateTime(updateDate(dt), tz);
 	}
 
 	/**
@@ -171,6 +186,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @see ScheduleEntry#getDateTimeA()
 	 */
 	public void setTimeA(Date dt) {
+		dt = updateDate(dt);
 		TZInfo tz = (getAirportA() == null) ? TZInfo.local() : getAirportA().getTZ();
 		_length = 0; // reset length
 		if ((_timeD != null) && (dt.before(_timeD.getDate())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
