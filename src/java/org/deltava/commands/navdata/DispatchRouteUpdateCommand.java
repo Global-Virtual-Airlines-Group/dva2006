@@ -32,9 +32,6 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 			GetNavRoute navdao = new GetNavRoute(con);
 			SetACARSRoute rwdao = new SetACARSRoute(con);
 			
-			// TODO: Remove this transaction after testing
-			ctx.startTX();
-			
 			// Get the routes
 			int updateCount = 0;
 			Collection<String> msgs = new ArrayList<String>();
