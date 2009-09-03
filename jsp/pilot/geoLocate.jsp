@@ -198,7 +198,6 @@ map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
 map.enableContinuousZoom();
 map.disableDoubleClickZoom();
-map.enableScrollWheelZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 var geoCoder = new GClientGeocoder();
 
