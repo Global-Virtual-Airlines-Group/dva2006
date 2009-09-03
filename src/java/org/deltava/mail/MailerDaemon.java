@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * A daemon thread to send e-mail messages in the background. SMTP messages are not designed for critical information;
  * they are designed to fail silently on an error.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -56,7 +56,7 @@ public class MailerDaemon implements Runnable {
 		try {
 			imsg.setFrom(new InternetAddress(env.getFrom().getEmail(), env.getFrom().getName()));
 			imsg.addHeader("Errors-to", SystemData.get("smtp.errors-to"));
-			imsg.setSubject(env.getSubject());
+			imsg.setSubject(env.getSubject(), "UTF-8");
 			imsg.setRecipients(javax.mail.Message.RecipientType.TO, env.getRecipients());
 			if (env.getCopyTo() != null)
 				imsg.addRecipients(javax.mail.Message.RecipientType.CC, env.getCopyTo());
