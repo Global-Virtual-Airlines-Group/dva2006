@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/hansel-2.0a3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
@@ -25,5 +24,6 @@
 	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.8-bin.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
