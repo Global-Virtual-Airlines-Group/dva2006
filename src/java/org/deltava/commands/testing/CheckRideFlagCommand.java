@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -76,7 +76,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			} else if (cr.getStatus() == Test.SUBMITTED) {
 				if (cr.getFlightID() != 0) {
 					ACARSFlightReport ofr = frdao.getACARS(SystemData.get("airline.db"), cr.getFlightID()); 
-					if ((ofr != null) && (ofr.getDatabaseID(FlightReport.DBID_ACARS) != cr.getFlightID()))
+					if (ofr != null)
 						throw securityException("Check Ride ACARS ID #" + cr.getFlightID() + " already has PIREP");
 				}
 						
