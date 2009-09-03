@@ -24,7 +24,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.title, 6, 'Image Title')) return false;
 if (!validateText(form.desc, 5, 'Image Description')) return false;
-if (!validateText(form.img, 8, 'Attached Image')) return false;
+if (!validateText(form.img, 6, 'Attached Image')) return false;
 if (!validateFile(form.img, 'jpg,png', 'Attached Image')) return false;
 
 setSubmit();
