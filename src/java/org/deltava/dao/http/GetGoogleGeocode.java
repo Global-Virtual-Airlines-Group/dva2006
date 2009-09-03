@@ -70,8 +70,8 @@ public class GetGoogleGeocode extends DAO {
 			// Get the details
 			Element de = (Element) ple.getDescendants(new ElementFilter("AddressDetails")).next();
 			Element pe = ple.getChild("Point", ple.getNamespace());
-			if ((de != null) && (pe != null)) {
-				Element ce = de.getChild("Country", de.getNamespace());
+			Element ce = (de == null) ? null : de.getChild("Country", de.getNamespace());
+			if ((ce != null) && (pe != null)) {
 				int accuracy = StringUtils.parse(de.getAttributeValue("Accuracy", "1"), 1);
 				
 				// Get the lat/lon
@@ -91,8 +91,9 @@ public class GetGoogleGeocode extends DAO {
 					gr.setState(se.getChildTextTrim("AdministrativeAreaName", se.getNamespace()));
 					
 					// Load the city or county
-					Element cte = se.getChild("Locality", se.getNamespace());
-					if (cte != null) {
+					Iterator<?> cti = se.getDescendants(new ElementFilter("Locality"));
+					if (cti.hasNext()) {
+						Element cte = (Element) cti.next();
 						gr.setCity(cte.getChildTextTrim("LocalityName", cte.getNamespace()));
 						Element pce = cte.getChild("PostalCode", cte.getNamespace());
 						if (pce != null)

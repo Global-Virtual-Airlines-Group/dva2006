@@ -104,7 +104,7 @@ public class PilotLocationCommand extends AbstractCommand {
 									geoCode = gr;
 							}
 						} catch (Exception e) {
-							log.warn(e.getMessage());
+							log.error(e.getMessage(), e);
 						}
 					}
 
