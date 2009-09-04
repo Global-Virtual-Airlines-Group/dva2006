@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A class for storing Applicant entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -46,6 +46,8 @@ public class Applicant extends Person {
     private String _registerAddress;
     private String _comments;
     private String _hrComments;
+    
+    private final Map<Long, String> _typeChoices = new TreeMap<Long, String>();
     
     /**
      * Create an Applicant object with a given first and last name, converted to "proper case".
@@ -176,6 +178,18 @@ public class Applicant extends Person {
      */
     public void setLegacyVerified(boolean verified) {
         _legacyVerified = verified;
+    }
+    
+    /**
+     * Sets the preferred equipment program for a stage.
+     * @param stage the stage number
+     * @param eqName the equipment program
+     */
+    public void setTypeChoice(int stage, String eqName) {
+    	if (eqName == null)
+    		_typeChoices.remove(Long.valueOf(stage));
+    	else
+    		_typeChoices.put(Long.valueOf(stage), eqName);
     }
     
 	/**
@@ -312,6 +326,14 @@ public class Applicant extends Person {
      */
     public Collection<String> getRoles() {
     	return Collections.singleton(ROLE);
+    }
+    
+    /**
+     * Returns the stage equipment type choices. 
+     * @return a Map of choices, keyed by stage
+     */
+    public Map<Long, String> getTypeChoices() {
+    	return new LinkedHashMap<Long, String>(_typeChoices);
     }
     
     /**
