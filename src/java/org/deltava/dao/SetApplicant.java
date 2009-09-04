@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.Map;
 
 import org.deltava.beans.*;
 
@@ -69,6 +70,12 @@ public class SetApplicant extends PilotWriteDAO {
 				_ps.setString(31, a.getHRComments());
 				_ps.setInt(32, a.getID());
 			} else {
+				// Delete stage choices
+				prepareStatementWithoutLimits("DELETE FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
+				_ps.setInt(1, a.getID());
+				executeUpdate(0);
+				
+				// Create the UPDATE statement
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
 						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
 						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
@@ -112,9 +119,22 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(28, a.getTZ().getID());
 			_ps.setString(29, a.getUIScheme());
 			_ps.setString(30, a.getComments());
-
-			// Update the database and commit
 			executeUpdate(1);
+			
+			// Write the stage choices
+			prepareStatementWithoutLimits("INSERT INTO APPLICANT_STAGE_CHOICES (ID, STAGE, EQTYPE) VALUES (?, ?, ?)");
+			_ps.setInt(1, a.getID());
+			for (Map.Entry<Long, String> me : a.getTypeChoices().entrySet()) {
+				_ps.setInt(2, me.getKey().intValue());
+				_ps.setString(3, me.getValue());
+				_ps.addBatch();
+			}
+			
+			// Write
+			_ps.executeBatch();
+			_ps.close();
+			
+			// Commit
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
