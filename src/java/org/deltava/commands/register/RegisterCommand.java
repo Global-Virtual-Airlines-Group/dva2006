@@ -97,6 +97,22 @@ public class RegisterCommand extends AbstractCommand {
 				int size = stdao.getActivePilots(SystemData.get("airline.db"));
 				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				
+				// Load program names
+				Map<Long, Collection<ComboAlias>> eqTypes = new HashMap<Long, Collection<ComboAlias>>();
+				GetEquipmentType eqdao = new GetEquipmentType(con);
+				for (int stage = 1; stage <= 3; stage++) {
+					Collection<EquipmentType> types = eqdao.getByStage(stage, SystemData.get("airline.db"));
+					if (types.size() > 1) {
+						Collection<ComboAlias> choices = new ArrayList<ComboAlias>();
+						choices.add(ComboUtils.fromString("No Preference", ""));
+						choices.addAll(types);
+						eqTypes.put(Long.valueOf(stage), choices);
+					}
+				}
+				
+				// Save programs
+				ctx.setAttribute("eqTypes", eqTypes, REQUEST);
+				
 				// Load manuals to display
 				if ((!isFull) || ignoreFull) {
 					GetDocuments docdao = new GetDocuments(con);
@@ -130,8 +146,7 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Load the data from the request
-		Applicant a = new Applicant(StringUtils.properCase(ctx.getParameter("firstName")), StringUtils.properCase(ctx
-				.getParameter("lastName")));
+		Applicant a = new Applicant(StringUtils.properCase(ctx.getParameter("firstName")), StringUtils.properCase(ctx.getParameter("lastName")));
 		a.setStatus(Applicant.PENDING);
 		a.setEmail(ctx.getParameter("email"));
 		a.setLocation(ctx.getParameter("location"));
@@ -172,6 +187,14 @@ public class RegisterCommand extends AbstractCommand {
 			for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
 				a.setNotifyOption(Person.NOTIFY_CODES[x], notifyOptions.contains(Person.NOTIFY_CODES[x]));
 		}
+		
+		// Get eq type preferences
+		if (!StringUtils.isEmpty(ctx.getParameter("s1prefs")))
+			a.setTypeChoice(1, ctx.getParameter("s1prefs"));
+		if (!StringUtils.isEmpty(ctx.getParameter("s2prefs")))
+			a.setTypeChoice(2, ctx.getParameter("s2prefs"));
+		if (!StringUtils.isEmpty(ctx.getParameter("s3prefs")))
+			a.setTypeChoice(3, ctx.getParameter("s3prefs"));
 		
 		// Validate the VATSIM account if any
 		if (a.hasNetworkID(OnlineNetwork.VATSIM)) {

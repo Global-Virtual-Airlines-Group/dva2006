@@ -94,19 +94,32 @@ public class GetEquipmentType extends DAO {
 	/**
 	 * Returns all the Equipment Types in a particular stage.
 	 * @param stage the stage number
+	 * @param dbName the database name
 	 * @return a List of EquipmentTypes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<EquipmentType> getByStage(int stage) throws DAOException {
+	public Collection<EquipmentType> getByStage(int stage, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+				+ "P.EMAIL FROM common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".EQTYPES EQ, ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS P WHERE (EP.AIRLINE=AI.CODE) AND (AI.DBNAME=LOWER(?)) AND (EP.EQTYPE=EQ.EQTYPE) "
+				+ "AND (EQ.CP_ID=P.ID) AND (EQ.STAGE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
+		
 		try {
-			prepareStatement("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, "
-					+ "R.RATING_TYPE, R.RATED_EQ FROM EQTYPES EQ, common.EQPROGRAMS EP, PILOTS P, EQRATINGS R "
-					+ "WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.EQTYPE=R.EQTYPE) AND (EQ.STAGE=?) "
-					+ "ORDER BY EQ.STAGE, EQ.EQTYPE");
-			_ps.setInt(1, stage);
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, dbName);
+			_ps.setInt(2, stage);
 
 			// Return results
-			return execute();
+			List<EquipmentType> results = execute();
+			loadRatings(results, dbName);
+			loadExams(results, dbName);
+			loadAirlines(results, dbName);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

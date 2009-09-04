@@ -190,17 +190,49 @@ this e-mail address.</div></c:if>
  <td class="data" colspan="${cspan}"><el:text name="legacyURL" idx="*" size="64" max="128" value="${param.legacyURL}" /></td>
 </tr>
 
+<!-- Equipment Type preferences -->
+<tr class="title">
+ <td colspan="${cspan + 1}">EQUIPMENT PROGRAM PREFERENCE</td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data" colspan="${cspan}"><span class="small">To most effectively place you in the equipment type program of your choice, please
+ select your preferred equipment type program in each stage below. You may be placed in a different program than the one you
+ selected depending on demand and pilot numbers.</span></td>
+</tr>
+<c:set var="stageEQ" value="${eqTypes[1]}" scope="page" />
+<c:if test="${fn:sizeof(stageEQ) > 1}">
+<tr>
+ <td class="label">Stage 1</td>
+ <td class="data" colspan="${cspan}"><el:check name="s1prefs" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param.s1prefs}" /></td>
+</tr>
+</c:if>
+<c:set var="stageEQ" value="${eqTypes[2]}" scope="page" />
+<c:if test="${fn:sizeof(stageEQ) > 1}">
+<tr>
+ <td class="label">Stage 2</td>
+ <td class="data" colspan="${cspan}"><el:check name="s2prefs" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param.s2prefs}" /></td>
+</tr>
+</c:if>
+<c:set var="stageEQ" value="${eqTypes[3]}" scope="page" />
+<c:if test="${fn:sizeof(stageEQ) > 1}">
+<tr>
+ <td class="label">Stage 3</td>
+ <td class="data" colspan="${cspan}"><el:check name="s3prefs" type="radio" width="100" cols="6" options="${stageEQ}" checked="${param.s3prefs}" /></td>
+</tr>
+</c:if>
+
 <!-- Applicant Comments -->
 <tr class="title">
  <td colspan="${cspan + 1}">ADDITIONAL INFORMATION</td>
 </tr>
 <tr>
  <td class="label top" rowspan="2">Comments</td>
- <td class="data" colspan="${cspan}"><span class="small">Please provide any comments or additional information that you feel would assist
-in processing your application.</span></td>
+ <td class="data" colspan="${cspan}"><span class="small">Please provide any comments or additional information that you feel would assist in processing 
+ your application.</span></td>
 </tr>
 <tr>
- <td class="data" colspan="${cspan + 1}"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
+ <td class="data" colspan="${cspan}"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </el:table>
 

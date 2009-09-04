@@ -316,6 +316,14 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </c:if>
 </c:if>
 </tr>
+<c:if test="${!empty fn:keys(applicant.typeChoices)}">
+<tr>
+ <td class="label top">Program Preference</td>
+ <td class="data"><c:forEach var="eqStage" items="${fn:keys(applicant.typeChoices)}">
+<c:set var="eqStagePref" value="${applicant.typeChoices[eqStage]}" scope="page" />
+Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${applicant.equipmentType}" /></td>

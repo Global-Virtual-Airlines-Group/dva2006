@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public Applicant get(int id) throws DAOException {
 
 		// Check if we're in the cache
-		Applicant a = (Applicant) _cache.get(new Integer(id));
+		Applicant a = (Applicant) _cache.get(Integer.valueOf(id));
 		if (a != null)
 			return a;
 
@@ -49,7 +49,12 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 			// Get results, return first or null
 			List<Applicant> results = execute();
-			return results.isEmpty() ? null : (Applicant) results.get(0);
+			if (!results.isEmpty()) {
+				a = results.get(0);
+				loadStageChoices(a);
+			}
+			
+			return a;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -130,7 +135,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		log.debug("Uncached set size = " + querySize);
+		if (log.isDebugEnabled())
+			log.debug("Uncached set size = " + querySize);
 		if (querySize > 0) {
 			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
 				sqlBuf.setLength(sqlBuf.length() - 1);
@@ -140,6 +146,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			try {
 				prepareStatementWithoutLimits(sqlBuf.toString());
 				uncached = execute();
+				for (Applicant a : uncached)
+					loadStageChoices(a);
 			} catch (SQLException se) {
 				throw new DAOException(se);
 			}
@@ -397,6 +405,22 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		_ps.close();
 		return new ArrayList<Integer>(results);
 	}
+	
+	/**
+	 * Helper method to populate stage program choices.
+	 */
+	private void loadStageChoices(Applicant a) throws SQLException {
+
+		prepareStatementWithoutLimits("SELECT * FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
+		_ps.setInt(1, a.getID());
+		
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			a.setTypeChoice(rs.getInt(2), rs.getString(3));
+		
+		rs.close();
+		_ps.close();
+	}
 
 	/**
 	 * Helper method to extract appliacnt data from the result set.
@@ -442,10 +466,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setComments(rs.getString(34));
 			a.setHRComments(rs.getString(35));
 			a.setRegisterAddress(rs.getString(36));
-
-			// Add to results and cache
 			results.add(a);
-			_cache.add(a);
 		}
 
 		// Clean up and return
