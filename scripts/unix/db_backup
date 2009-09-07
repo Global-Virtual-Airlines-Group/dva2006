@@ -11,7 +11,6 @@ echo `date +%H:%M:%S`' Starting'
 
 # Goto backup directory
 cd /home/backup/db
-mv *.bz2 old
 
 # Backup AWSTATS tables
 echo `date +%H:%M:%S`' Writing AWStats database'
@@ -114,7 +113,6 @@ fi
 echo `date +%H:%M:%S`' Setting file permissions'
 chown -R backup:gva *
 chmod 640 *
-chmod 750 old
 
 # Log Completion
 echo `date +%H:%M:%S`' Complete'
