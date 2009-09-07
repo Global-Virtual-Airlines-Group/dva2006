@@ -411,8 +411,8 @@ public class GetACARSData extends DAO {
 			_ps.close();
 
 			// Load the waypoint data
-			prepareStatementWithoutLimits("SELECT TYPE, CODE, LATITUDE, LONGITUDE FROM acars.FLIGHT_SIDSTAR_WP WHERE "
-					+ "(ID=?) ORDER BY TYPE, SEQ");
+			prepareStatementWithoutLimits("SELECT TYPE, CODE, LATITUDE, LONGITUDE, REGION FROM acars.FLIGHT_SIDSTAR_WP "
+					+ "WHERE (ID=?) ORDER BY TYPE, SEQ");
 			_ps.setInt(1, id);
 			rs = _ps.executeQuery();
 			while (rs.next()) {
@@ -420,6 +420,7 @@ public class GetACARSData extends DAO {
 				if (tr != null) {
 					NavigationDataBean nd = NavigationDataBean.create(NavigationDataBean.INT, rs.getDouble(3), rs.getDouble(4));
 					nd.setCode(rs.getString(2));
+					nd.setRegion(rs.getString(5));
 					tr.addWaypoint(nd);
 				}
 			}

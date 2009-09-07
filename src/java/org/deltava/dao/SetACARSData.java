@@ -249,7 +249,7 @@ public class SetACARSData extends DAO {
 
 			// Write the route data
 			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, LATITUDE, "
-					+ "LONGITUDE) VALUES (?, ? ,?, ?, ?, ?)");
+					+ "LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, tr.getType());
 			LinkedList<NavigationDataBean> wps = tr.getWaypoints();
@@ -259,6 +259,7 @@ public class SetACARSData extends DAO {
 				_ps.setString(4, ai.getCode());
 				_ps.setDouble(5, ai.getLatitude());
 				_ps.setDouble(6, ai.getLongitude());
+				_ps.setString(7, ai.getRegion());
 				_ps.addBatch();
 			}
 
