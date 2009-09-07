@@ -375,6 +375,12 @@
 			<min type="Integer">5</min>
 		</password>
 
+		<!-- Security cookie settings -->
+		<cookie>
+			<checkIP type="Boolean">false</checkIP>
+			<maxAge type="Integer">-1</maxAge>
+		</cookie>
+
 		<key>
 			<map name="googleMaps">
 				<dva2006.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQYRJWPVVk21iaQ8DXDNrYsoUMdqBT_o7t7mxqvs1dO5smwx9Pwrf_dTA</dva2006.deltava.org>
