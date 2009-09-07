@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
  * An interface to define icon formatting for entries that can be displayed in Google Maps.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -46,6 +46,16 @@ public interface MapEntry extends GeoLocation {
    public static final String YELLOW = "yellow";
    
    /**
+    * Grey Google Maps icon, displayed as $static/img/maps/point_grey.png
+    */
+   public static final String GREY = "grey";
+   
+   /**
+    * Brown Google Maps icon, displayed as $static/img/maps/point_brown.png
+    */
+   public static final String BROWN = "brown";
+   
+   /**
     * Returns the text to display in this marker's infobox if displayed in a Google Map.
     * @return the infobox HTML text, or null if no infobox to be displayed
     */
@@ -54,7 +64,7 @@ public interface MapEntry extends GeoLocation {
    /**
     * All Google Maps icon colors.
     */
-   public static final String[] COLORS = {BLUE, GREEN, ORANGE, PURPLE, RED, WHITE, YELLOW};
+   public static final String[] COLORS = {BLUE, GREEN, ORANGE, PURPLE, RED, WHITE, YELLOW, GREY, BROWN};
    
    /**
     * Google Maps line colors.
