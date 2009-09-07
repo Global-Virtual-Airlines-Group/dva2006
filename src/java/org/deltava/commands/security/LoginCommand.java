@@ -191,7 +191,7 @@ public class LoginCommand extends AbstractCommand {
 			
 			// Encode the encrypted data via Base64
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
-			c.setMaxAge(-1);
+			c.setMaxAge(SystemData.getInt("security.cookie.maxAge", -1));
 			c.setPath("/");
 			ctx.getResponse().addCookie(c);
 

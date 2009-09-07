@@ -128,8 +128,10 @@ public class SecurityCookieFilter implements Filter {
 		SecurityCookieData cData = null;
 		try {
 			cData = SecurityCookieGenerator.readCookie(authCookie);
-			if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
-				throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
+			if (SystemData.getBoolean("security.cookie.checkIP")) {
+				if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
+					throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
+			}
 		} catch (Exception e) {
 			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + hreq.getHeader("user-agent") + " - " + e.getMessage());
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
