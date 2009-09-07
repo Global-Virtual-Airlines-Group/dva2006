@@ -393,6 +393,12 @@
 			<default type="Integer">8</default>
 			<min type="Integer">5</min>
 		</password>
+		
+		<!-- Security cookie settings -->
+		<cookie>
+			<checkIP type="Boolean">false</checkIP>
+			<maxAge type="Integer">-1</maxAge>
+		</cookie>
 
 		<key>
 			<map name="googleMaps">
