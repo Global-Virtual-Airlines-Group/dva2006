@@ -627,7 +627,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		else if (isFlagSet(FLAG_AP_ANY))
 			return WHITE;
 
-		return YELLOW;
+		return GREY;
 	}
 
 	/**
