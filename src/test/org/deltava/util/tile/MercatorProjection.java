@@ -90,8 +90,8 @@ public class MercatorProjection {
 		double pY = (pmY - minY) / dLat;
 		
 		double pX = ((lng * -1) - 180) / 360;
-		int x = (int) Math.floor(_xScale - (pX * _xScale)) - 1;
-		int y = (int) Math.floor(_yScale - (pY * _yScale)) - 1;
+		int x = (int) Math.floor(_xScale - (pX * _xScale));
+		int y = (int) Math.floor(_yScale - (pY * _yScale));
 		
 		// Normalize
 		while (x > _xScale)
