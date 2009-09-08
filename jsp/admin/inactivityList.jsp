@@ -56,8 +56,9 @@
 </view:row>
 </c:forEach>
 
+<!-- Legend Bar -->
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="6"><view:legend width="100" labels="Active,On Leave" classes=" ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />
