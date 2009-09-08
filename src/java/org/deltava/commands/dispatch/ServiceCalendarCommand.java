@@ -82,7 +82,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 					
 					// Prune out any entries with no flights and less than 3 minutes long
 					long conTime = (ce.getEndTime().getTime() - ce.getStartTime().getTime()) / 1000;
-					if (flights.isEmpty() && (conTime < 180))
+					if (flights.isEmpty() && (conTime < 150))
 						i.remove();
 				}
 				

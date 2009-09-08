@@ -53,12 +53,14 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public Collection<FlightInfo> getDispatchedFlights(DispatchConnectionEntry ce) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
-				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCH FD WHERE (C.ID=F.CON_ID) AND (F.ID=FD.ID) AND "
-				+ "(FD.DISPATCHER_ID=?) AND (F.CREATED > ?) AND (F.CREATED < ?)");
+			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
+					+ "acars.FLIGHT_DISPATCH FD, acars.FLIGHTS F LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
+					+ "WHERE (F.ID=FD.ID) AND (FD.DISPATCHER_ID=?) AND (F.CREATED > ?) AND "
+					+ "(F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
 			_ps.setInt(1, ce.getPilotID());
 			_ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
+			_ps.setInt(4, 20);
 			return executeFlightInfo();
 		} catch (SQLException se) {
 			throw new DAOException(se);
