@@ -93,7 +93,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				// Get Airports
 				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 				GetAirport adao = new GetAirport(con);
-				airports.addAll(adao.getByAirline(entry.getAirline()));
+				airports.addAll(adao.getByAirline(entry.getAirline(), null));
 
 				// Save the entry and airports in the request
 				ctx.setAttribute("entry", entry, REQUEST);
@@ -156,7 +156,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				// Get Airports
 				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 				GetAirport adao = new GetAirport(con);
-				airports.addAll(adao.getByAirline(entry.getAirline()));
+				airports.addAll(adao.getByAirline(entry.getAirline(), null));
 
 				// Save the entry and airports in the request
 				ctx.setAttribute("entry", entry, REQUEST);
