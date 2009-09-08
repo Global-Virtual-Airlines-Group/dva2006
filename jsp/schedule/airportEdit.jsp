@@ -56,7 +56,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport Name</td>
- <td class="data"><el:text name="name" idx="*" className="pri bld req" size="24" max="36" value="${airport.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld req" size="36" max="36" value="${airport.name}" /></td>
 </tr>
 <tr>
  <td class="label">IATA Code</td>

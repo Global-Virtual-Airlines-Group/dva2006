@@ -94,19 +94,28 @@ public class GetAirport extends DAO {
 	/**
 	 * Returns all airports served by a particular airline.
 	 * @param al the Airline to query with
+	 * @param sortBy the SORT BY column
 	 * @return a List of Airport objects
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if al is null
 	 */
-	public Collection<Airport> getByAirline(Airline al) throws DAOException {
+	public Collection<Airport> getByAirline(Airline al, String sortBy) throws DAOException {
+		
+		// Build SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORT_AIRLINE AA, "
+				+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) ");
+		if (al != null)
+			sqlBuf.append("WHERE (A.IATA=AA.IATA) AND (AA.CODE=?) AND (AA.APPCODE=?)");
+		sqlBuf.append(" ORDER BY A.");
+		sqlBuf.append(sortBy);
+		
 		try {
-			prepareStatement("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORT_AIRLINE AA, "
-					+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND "
-					+ "(ND.ITEMTYPE=?) WHERE (A.IATA=AA.IATA) AND (AA.CODE=?) AND (AA.APPCODE=?) "
-					+ "ORDER BY A.IATA");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
-			_ps.setString(2, al.getCode());
-			_ps.setString(3, _appCode);
+			if (al != null) {
+				_ps.setString(2, al.getCode());
+				_ps.setString(3, _appCode);
+			}
 
 			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();
