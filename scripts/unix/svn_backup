@@ -131,6 +131,16 @@ if [ "`cat /tmp/svn.revision`" -gt "6000" ] ;then
  echo 5500 > /tmp/svn.revision_base
 fi
 
+# If we have more than 6500 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "6500" ] ;then
+ if [ ! -f "/home/backup/svn/svn_65xx.bz2" ] ;then
+  echo 'Backing up revisions 6000-6499'
+  nice svnadmin dump /home/svn --incremental --revision 6000:6499 | $arc_util > svn_65xx.bz2
+ fi
+
+ echo 5500 > /tmp/svn.revision_base
+fi
+
 # Back up the last revisions
 echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
 nice svnadmin dump /home/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | $arc_util > svn_top.bz2
