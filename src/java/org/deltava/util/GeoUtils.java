@@ -159,6 +159,12 @@ public class GeoUtils {
 	 * @return the normalized location
 	 */
 	public static GeoLocation normalize(double lat, double lng) {
+		
+		// Sanity check
+		if (Math.abs(lat) > 500)
+			lat = 0;
+		if (Math.abs(lng) > 1000)
+			lng = 0;
 
 		// Normalize latitude
 		int amt = (lat < -90) ? 90 : -90;
