@@ -14,17 +14,28 @@
 				</fileset>
 	    	</classpath>
 	    	<include name="java/org/deltava/beans/*.java" />
+			<include name="java/org/deltava/beans/navdata/*.java" />
 	    	<include name="java/org/deltava/beans/servinfo/*.java" />
 	    	<include name="java/org/deltava/beans/schedule/*.java" />
+			<include name="java/org/deltava/beans/system/AirlineInformation.java" />
+			<include name="java/org/deltava/comparators/GeoComparator.java" />
 	    	<include name="java/org/deltava/dao/DAO.java" />
 	    	<include name="java/org/deltava/dao/GetAirport.java" />
 	    	<include name="java/org/deltava/dao/GetTimeZone.java" />
 	    	<include name="java/org/deltava/dao/DAOException.java" />
+			<include name="java/org/deltava/dao/file/DAO.java" />
 	    	<include name="java/org/deltava/dao/file/GetServInfo.java" />
 	    	<include name="java/org/deltava/dao/file/GetVATSIMData.java" />
+			<include name="java/org/deltava/servlet/ControllerException.java" />
+			<include name="java/org/deltava/util/CalendarUtils.java" />
+			<include name="java/org/deltava/util/CollectionUtils.java" />
+			<include name="java/org/deltava/util/ComboUtils.java" />
+			<include name="java/org/deltava/util/ConfigLoader.java" />
+			<include name="java/org/deltava/util/GeoUtils.java" />
+			<include name="java/org/deltava/util/ImageInfo.java" />
 	    	<include name="java/org/deltava/util/StringUtils.java" />
 	    	<include name="java/org/deltava/util/cache/*.java" />
-	    	<include name="java/org/deltava/util/system/SystemData.java" />
+	    	<include name="java/org/deltava/util/system/*.java" />
 	    	<include name="test/org/deltava/UsageTracker.java" />
 		</javac>
 		
