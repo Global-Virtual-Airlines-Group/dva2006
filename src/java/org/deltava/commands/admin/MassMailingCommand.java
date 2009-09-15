@@ -25,8 +25,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class MassMailingCommand extends AbstractCommand {
-   
-   private static final String ALL_ACTIVE = "$ALL$";
+
+	private static final String ALL_ACTIVE = "$ALL$";
 
 	/**
 	 * Executes the command.
@@ -41,22 +41,20 @@ public class MassMailingCommand extends AbstractCommand {
 
 		// If we're just executing the command and not in the HR role, get our equipment type and return
 		if ((eqType == null) && (!ctx.getRequest().isUserInRole("HR"))) {
-			Collection<String> eqTypes = new HashSet<String>();
-			eqTypes.add(ctx.getUser().getEquipmentType());
-			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
+			ctx.setAttribute("eqTypes", Collections.singleton(ctx.getUser().getEquipmentType()), REQUEST);
 			result.setURL("/jsp/admin/massMail.jsp");
 			result.setSuccess(true);
 			return;
 		}
-		
+
 		// Initialize the messaging context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 		mctxt.addData("body", ctx.getParameter("body"));
-		
+
 		// Check if we're sending to a role
 		boolean isRole = (eqType != null) && (eqType.startsWith("$role_"));
-		
+
 		List<? extends EMailAddress> pilots = new ArrayList<EMailAddress>();
 		Collection<Object> eqTypes = null;
 		try {
@@ -65,28 +63,28 @@ public class MassMailingCommand extends AbstractCommand {
 			// Get a list of equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			eqTypes = new ArrayList<Object>(eqdao.getActive());
-			
+
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("MASSMAIL"));
-			
+
 			// Check if we're sending to a different equipment type
 			if ((!ctx.getRequest().isUserInRole("HR")) && (!eqType.equals(ctx.getUser().getEquipmentType())))
 				throw securityException("Equipment Type " + eqType + " != " + ctx.getUser().getEquipmentType());
 
 			// If we're posting to the command, get the pilots to display
 			if (isRole) {
-			   GetPilotDirectory dao = new GetPilotDirectory(con);
-			   pilots = dao.getByRole(eqType.substring(6), SystemData.get("airline.db"));
-			   ctx.setAttribute("eqType", eqType.substring(6), REQUEST);
-			   ctx.setAttribute("isRole", Boolean.TRUE, REQUEST);
+				GetPilotDirectory dao = new GetPilotDirectory(con);
+				pilots = dao.getByRole(eqType.substring(6), SystemData.get("airline.db"));
+				ctx.setAttribute("eqType", eqType.substring(6), REQUEST);
+				ctx.setAttribute("isRole", Boolean.TRUE, REQUEST);
 			} else if (ALL_ACTIVE.equals(eqType)) {
-			   GetPilot dao = new GetPilot(con);
-			   pilots = dao.getActivePilots(null);
-			   ctx.setAttribute("eqType", eqType, REQUEST);
+				GetPilot dao = new GetPilot(con);
+				pilots = dao.getActivePilots(null);
+				ctx.setAttribute("eqType", eqType, REQUEST);
 			} else if (eqType != null) {
-			   GetPilot dao = new GetPilot(con);
-				pilots = dao.getPilotsByEQ(eqType, null, true);
+				GetPilot dao = new GetPilot(con);
+				pilots = dao.getPilotsByEQ(eqdao.get(ctx.getUser().getEquipmentType(), SystemData.get("airline.db")), null, true, null);
 				ctx.setAttribute("eqType", eqType, REQUEST);
 			}
 		} catch (DAOException de) {
@@ -94,17 +92,17 @@ public class MassMailingCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Add the roles to the request with a special marker
 		Collection<?> roles = (Collection<?>) SystemData.getObject("security.roles");
-		for (Iterator<?> i = roles.iterator(); i.hasNext(); ) {
-		   String role = (String) i.next();
-		   eqTypes.add(ComboUtils.fromString(role, "$role_" + role));
+		for (Iterator<?> i = roles.iterator(); i.hasNext();) {
+			String role = i.next().toString();
+			eqTypes.add(ComboUtils.fromString(role, "$role_" + role));
 		}
-		
+
 		// Add all users
 		eqTypes.add(ComboUtils.fromString("All Users", ALL_ACTIVE));
-		
+
 		// Save the choices
 		ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 
@@ -114,11 +112,11 @@ public class MassMailingCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
-		
+
 		// Create the e-mail message
 		Mailer mailer = new Mailer(ctx.getUser());
 		mailer.setContext(mctxt);
-		
+
 		// Add an attachment if we have one
 		FileUpload file = ctx.getFile("fAttach");
 		if (file != null) {
@@ -127,13 +125,13 @@ public class MassMailingCommand extends AbstractCommand {
 			src.setName(file.getName());
 			mailer.setAttachment(src);
 		}
-		
+
 		// Send the message
 		mailer.send(pilots);
-		
+
 		// Save results
-		ctx.setAttribute("msgSent", new Integer(pilots.size()), REQUEST);
-		
+		ctx.setAttribute("msgSent", Integer.valueOf(pilots.size()), REQUEST);
+
 		// Forward to the JSP
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/admin/massMailComplete.jsp");
