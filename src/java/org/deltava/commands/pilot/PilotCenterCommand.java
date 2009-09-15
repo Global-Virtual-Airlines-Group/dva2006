@@ -115,19 +115,22 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get the schedule size
 			GetSchedule sdao = new GetSchedule(con);
-			ctx.setAttribute("scheduleSize", new Integer(sdao.getFlightCount()), REQUEST);
+			ctx.setAttribute("scheduleSize", Integer.valueOf(sdao.getFlightCount()), REQUEST);
 
-			// Get the PIREP disposal queue size
-			if (ctx.isUserInRole("PIREP"))
+			// Get the PIREP disposal queue sizes
+			if (ctx.isUserInRole("PIREP")) {
 				ctx.setAttribute("pirepQueueSize", Integer.valueOf(prdao.getDisposalQueueSize()), REQUEST);
-
-			// Get the Assistant Chief Pilots (if any) for the equipment program
-			ctx.setAttribute("asstCP", pdao.getPilotsByEQ(p.getEquipmentType(), null, true, Ranks.RANK_ACP), REQUEST);
-
+				String eqType = ctx.isUserInRole("HR") ? null : p.getEquipmentType();
+				ctx.setAttribute("checkRideQueueSize", Integer.valueOf(prdao.getCheckRideQueueSize(eqType)), REQUEST);
+			}
+			
 			// Initialize the testing history helper and check for test lockout
 			TestingHistoryHelper testHistory = initTestHistory(p, con);
 			testHistory.setDebug(ctx.isSuperUser());
 			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
+
+			// Get the Assistant Chief Pilots (if any) for the equipment program
+			ctx.setAttribute("asstCP", pdao.getPilotsByEQ(testHistory.getEquipmentType(), null, true, Ranks.RANK_ACP), REQUEST);
 
 			// Save the pilot's equipment program and check if we can get promoted to Captain
 			ctx.setAttribute("eqType", testHistory.getEquipmentType(), REQUEST);

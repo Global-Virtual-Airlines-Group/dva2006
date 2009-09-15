@@ -153,8 +153,43 @@ public class GetFlightReports extends DAO {
 	 */
 	public int getDisposalQueueSize() throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?)");
+			prepareStatementWithoutLimits("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?)");
 			_ps.setInt(1, FlightReport.SUBMITTED);
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int results = rs.next() ? rs.getInt(1) : 0;
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of Flight Reports awaiting disposition.
+	 * @param eqType the equipment type, or null if all
+	 * @return the number Check Ride Flight Reports in SUBMITTED status
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getCheckRideQueueSize(String eqType) throws DAOException {
+		
+		// Build the SQL Statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(F.ID) FROM PIREPS F, EQRATINGS R WHERE "
+				+ "(F.EQTYPE=R.RATED_EQ) AND (R.RATING_TYPE=?) AND (F.STATUS=?) AND ((F.ATTR & ?) > 0)");
+		if (eqType != null)
+			sqlBuf.append(" AND (R.EQTYPE=?)");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, EquipmentType.PRIMARY_RATING);
+			_ps.setInt(2, FlightReport.SUBMITTED);
+			_ps.setInt(3, FlightReport.ATTR_CHECKRIDE);
+			if (eqType != null)
+				_ps.setString(4, eqType);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
