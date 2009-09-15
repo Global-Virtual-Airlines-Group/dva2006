@@ -46,9 +46,13 @@ public class InactivityListCommand extends AbstractCommand {
 			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
 				if (!purgeBeans.containsKey(id)) {
-					InactivityPurge ip = new InactivityPurge(id.intValue());
-					ip.setInterval(notifyDays);
-					purgeBeans.put(id, ip);
+					InactivityPurge ip = dao.getInactivity(id.intValue());
+					if (ip == null) {
+						ip = new InactivityPurge(id.intValue());
+						ip.setInterval(notifyDays);
+						purgeBeans.put(id, ip);
+					} else
+						i.remove();
 				}
 			}
 
