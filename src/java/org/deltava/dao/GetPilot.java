@@ -118,32 +118,24 @@ public class GetPilot extends PilotReadDAO {
 	}
 
 	/**
-	 * Returns all active pilots within an equipment type program.
-	 * @param eqType the equipment type
-	 * @param sortBy an optional sort SQL snippet
-	 * @param showActive TRUE if only active pilots should be displayed, otherwise FALSE
-	 * @return a List of Pilots in a particular equipment type
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<Pilot> getPilotsByEQ(String eqType, String sortBy, boolean showActive) throws DAOException {
-		return getPilotsByEQ(eqType, sortBy, showActive, null);
-	}
-
-	/**
 	 * Returns all active Pilots with a particular rank in a particular equipment program.
-	 * @param eqType the equipment type
+	 * @param eq the EquipmentType bean
 	 * @param sortBy an optional sort SQL snippet
 	 * @param showActive TRUE if only active pilots should be displayed, otherwise FALSE
 	 * @param rank the Rank
 	 * @return a List of Pilots in a particular equipment type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilotsByEQ(String eqType, String sortBy, boolean showActive, String rank) throws DAOException {
+	public List<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, String rank) throws DAOException {
 		
 		// Build the SQL statement
+		String dbName = formatDBName(eq.getOwner().getDB());
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P LEFT JOIN PIREPS F "
-				+ "ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) AS LASTFLIGHT FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.EQTYPE=?)");
 		if (showActive)
 			sqlBuf.append(" AND (P.STATUS=?)");
 		if (rank != null)
@@ -156,7 +148,7 @@ public class GetPilot extends PilotReadDAO {
 			int pos = 0;
 			prepareStatement(sqlBuf.toString());	
 			_ps.setInt(++pos, FlightReport.OK);
-			_ps.setString(++pos, eqType);
+			_ps.setString(++pos, eq.getName());
 			if (showActive)
 				_ps.setInt(++pos, Pilot.ACTIVE);
 			if (rank != null)

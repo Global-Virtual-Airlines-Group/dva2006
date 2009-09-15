@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.1
  */
 
@@ -61,11 +61,18 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
+			// Get the eq program
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			EquipmentType eq = eqdao.get(eqType, SystemData.get("airline.db"));
+			Collection<String> examNames = eq.getExamNames();
+			if (ctx.isUserInRole("HR"))
+				ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
+			
 			// Get the program members
 			GetPilot pdao = new GetPilot(con);
 			pdao.setQueryStart(vc.getStart());
 			pdao.setQueryMax(vc.getCount());
-			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, vc.getSortType(), true, rank), "ID");
+			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eq, vc.getSortType(), true, rank), "ID");
 			vc.setResults(pilots.values());
 			
 			// Load promotion queue
@@ -94,13 +101,6 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 				ctx.setAttribute("promoQueue", promoPilots.values(), REQUEST);
 				ctx.setAttribute("promoAccess", accessMap, REQUEST);
 			}
-			
-			// Load the Equipment program
-			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = eqdao.get(eqType);
-			Collection<String> examNames = eq.getExamNames();
-			if (ctx.isUserInRole("HR"))
-				ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
 			
 			// Load the program statistics
 			Collection<Integer> IDs = new HashSet<Integer>();
