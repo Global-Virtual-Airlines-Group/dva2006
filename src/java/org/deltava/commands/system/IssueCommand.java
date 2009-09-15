@@ -52,6 +52,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i.setStatus(Issue.STATUS_OPEN);
 				i.setAuthorID(ctx.getUser().getID());
 				i.setCreatedOn(new Date());
+				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security"), Issue.SECURITY_USERS));
 
 				// Assign to default user
 				GetPilot dao2 = new GetPilot(con);
