@@ -205,7 +205,7 @@ To view statistics about your flights, <el:cmd className="sec bld" url="mystats"
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
 </tr>
 </content:filter>
-<content:filter roles="HR,Examination">
+<content:filter roles="HR,Operations,Examination">
 <!-- Pending Transfer Request / Examination Section -->
 <tr class="title caps">
  <td colspan="2">PENDING EXAMINATIONS AND TRANSFER REQUESTS</td>
@@ -225,12 +225,14 @@ for promotion to the rank of Captain in their Equipment Program.<c:if test="${pr
 <br />
 <b>There are <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</b></c:if></td>
 </tr>
+<content:filter roles="HR,Examination">
 <tr>
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
  <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
 <br />
 <b>There are <fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
 </tr>
+</content:filter>
 </content:filter>
 
 <!-- Download Section -->
