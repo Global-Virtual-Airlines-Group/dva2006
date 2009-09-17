@@ -1246,7 +1246,7 @@
 	<command id="promoqueue">
 		<name>Promotion Queue</name>
 		<class>org.deltava.commands.admin.PromotionQueueCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,PIREP,Operations</roles>
 	</command>
 
 	<command id="promote">

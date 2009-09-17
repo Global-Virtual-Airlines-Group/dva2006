@@ -1,7 +1,5 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
-
-import java.sql.Connection;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -9,7 +7,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site command to display Equipment Type profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -21,16 +19,8 @@ public class EquipmentProfilesCommand extends AbstractCommand {
      * @throws CommandException if an error (typically database) occurs
      */
 	public void execute(CommandContext ctx) throws CommandException {
-		
-		// Check our access
-		if (!ctx.isUserInRole("HR"))
-			throw securityException("Cannot view Equipment Type profiles");
-		
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and execute
-			GetEquipmentType dao = new GetEquipmentType(con);
+			GetEquipmentType dao = new GetEquipmentType(ctx.getConnection());
 			ctx.setAttribute("eqTypes", dao.getAll(), REQUEST);
 			ctx.setAttribute("eqTypeStats", dao.getPilotCounts(), REQUEST);
 		} catch (DAOException de) {
