@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,13 +6,15 @@ import java.sql.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.util.cache.*;
 import org.deltava.beans.system.MessageTemplate;
+
+import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -44,7 +46,7 @@ public class GetMessageTemplate extends DAO implements CachingDAO {
 	public int getHits() {
 		return _cache.getHits();
 	}
-
+	
 	/**
 	 * Returns a particular Message Template.
 	 * @param name the Template Name
@@ -52,24 +54,41 @@ public class GetMessageTemplate extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public MessageTemplate get(String name) throws DAOException {
-
+		
 		// Check the cache
 		MessageTemplate result = _cache.get(name);
 		if (result != null)
 			return result;
+		
+		return get(SystemData.get("airline.db"), name);
+	}
 
+	/**
+	 * Returns a particular Message Template.
+	 * @param dbName the database name
+	 * @param name the Template Name
+	 * @return a MessageTemplate bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public MessageTemplate get(String dbName, String name) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".MSG_TEMPLATES WHERE (NAME=?) LIMIT 1");
+		
+		MessageTemplate result = null;
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM MSG_TEMPLATES WHERE (NAME=?) LIMIT 1");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, name.toUpperCase());
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
 			List<MessageTemplate> results = execute();
-			if (results.isEmpty()) {
-				log.warn("Cannot load Message Template " + name);
-			} else {
+			if (!results.isEmpty()) {
 				result = results.get(0);
 				_cache.add(result);
-			}
+			} else
+				log.warn("Cannot load Message Template " + name);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
