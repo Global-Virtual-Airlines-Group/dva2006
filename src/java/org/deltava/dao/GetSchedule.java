@@ -117,7 +117,7 @@ public class GetSchedule extends DAO {
 		buf.append(formatDBName(criteria.getDBName()));
 		buf.append(".SCHEDULE S");
 		if (criteria.getCheckDispatch())
-			buf.append(" LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A))");
+			buf.append(" LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1))");
 		buf.append(" WHERE ");
 		for (Iterator<String> i = conditions.iterator(); i.hasNext();) {
 			buf.append('(');
