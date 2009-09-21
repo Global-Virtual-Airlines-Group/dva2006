@@ -41,7 +41,7 @@ public class InactivityListCommand extends AbstractCommand {
 			GetInactivity dao = new GetInactivity(con);
 			
 			// Get the pilots to mark without warning
-			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(true),  "ID");
+			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(),  "ID");
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
 			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
@@ -68,6 +68,8 @@ public class InactivityListCommand extends AbstractCommand {
 					boolean noWarn = !ip.isNotified();
 					if (noWarn)
 						results.put(p, "Inactive after no participation in " + inactiveDays + " days");
+					else if (p.getLoginCount() == 0)
+						results.put(p, "No first login in " + notifyDays + " days");
 					else 
 						results.put(p, "Inactive after no logins in " + ip.getInterval() + " days");
 				}

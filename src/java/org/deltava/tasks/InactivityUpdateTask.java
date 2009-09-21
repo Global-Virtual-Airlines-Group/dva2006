@@ -75,7 +75,7 @@ public class InactivityUpdateTask extends Task {
 			Pilot taskBy = pddao.getByCode(SystemData.get("users.tasks_by"));
 			
 			// Get the pilots to mark without warning
-			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(true),  "ID");
+			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(),  "ID");
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
 			for (Iterator<Integer> i = noWarnIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
@@ -101,6 +101,8 @@ public class InactivityUpdateTask extends Task {
 					boolean noWarn = !ip.isNotified();
 					if (noWarn)
 						log.warn("Marking " + p.getName() + " Inactive after no participation in " + inactiveDays + " days");
+					else if (p.getLoginCount() == 0)
+						log.warn("Marking " + p.getName() + " Inactive after no first login in " + notifyDays + " days");
 					else
 						log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
 
@@ -110,6 +112,8 @@ public class InactivityUpdateTask extends Task {
 					upd.setCreatedOn(new Date());
 					if (noWarn)
 						upd.setDescription("Marked Inactive due to no participation within " + inactiveDays + " days");
+					else if (p.getLoginCount() == 0)
+						upd.setDescription("Marked Inactive after no first login in " + notifyDays + " days");
 					else
 						upd.setDescription("Marked Inactive due to no logins within " + ip.getInterval() + " days");
 					
