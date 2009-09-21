@@ -105,25 +105,30 @@ return true;
 <tr class="title caps">
  <td class="left" colspan="7">PILOT EXAMINATIONS</td>
 </tr>
-<tr>
+
 <c:choose>
 <c:when test="${examActive > 0}">
+<tr>
  <td class="left" colspan="7">You currently are in the process of taking a Pilot Examination.
  Until it has been submitted and scored, you cannot take any new examinations.
  <el:cmd url="exam" linkID="${fn:hex(examActive)}" className="sec bld">Click Here</el:cmd> to
  return to the Examination.</td>
+</tr>
 </c:when>
 <c:when test="${!empty txreq}">
+<tr>
  <td class="left" colspan="7">You currently are in the process of transferring between Equipment
  Programs. Until your Equipment Program Transfer has been completed, you cannot take any new
  examinations.</td>
+</tr>
 </c:when>
 <c:otherwise>
+<tr>
  <td class="left" colspan="7">Please select a written examination from the list below. Make sure that
  you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
-Our exams are timed. You will see time remaining at the top of the examianation page. After starting
- you have 40 minutes to complete and submit the examianation. <i>After 40 minutes the examianation will
+Our exams are timed. You will see time remaining at the top of the examination page. After starting
+ you have 40 minutes to complete and submit the examination. <i>After 40 minutes the examination will
  be automatically submitted, regardless of number of questions answered</i>.<br />
 <br />
 The specific program Chief Pilot or Assistant Chief Pilots score examianations within 72 hours of
@@ -134,9 +139,9 @@ The specific program Chief Pilot or Assistant Chief Pilots score examianations w
 <tr class="title">
  <td colspan="7">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="< SELECT EXAM >" />
  <el:button ID="ExamButton" type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
+</tr>
 </c:otherwise>
 </c:choose>
-</tr>
 </el:table>
 </el:form>
 <br />
