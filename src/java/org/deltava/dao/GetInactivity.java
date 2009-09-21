@@ -47,14 +47,15 @@ public class GetInactivity extends PilotReadDAO {
 	
 	/**
 	 * Returns purge entries for all pilots who are eligible to be purged.
-	 * @param isNotified TRUE if the Pilots should have been notified, otherwise FALSE  
 	 * @return a Collection of InactivityPurge beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<InactivityPurge> getPurgeable(boolean isNotified) throws DAOException {
+	public Collection<InactivityPurge> getPurgeable() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM INACTIVITY WHERE (NOTIFY=?) AND (PURGE_DATE < CURDATE())");
-			_ps.setBoolean(1, isNotified);
+			prepareStatement("SELECT I.* FROM INACTIVITY I, PILOTS P WHERE (P.ID=I.ID) AND (I.PURGE_DATE < CURDATE()) "
+					+ "AND ((I.NOTIFY=?) OR (P.LOGINS=?))");
+			_ps.setBoolean(1, true);
+			_ps.setInt(2, 0);
 			return executeInactivity();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -69,8 +70,8 @@ public class GetInactivity extends PilotReadDAO {
 	 */
 	public Collection<Integer> getInactivePilots(int days) throws DAOException {
 		try {
-			prepareStatement("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (DATE_ADD(IFNULL(LAST_LOGIN, CREATED), "
-					+ "INTERVAL ? DAY) < CURDATE())");
+			prepareStatement("SELECT ID FROM PILOTS WHERE (STATUS=?) AND (DATE_ADD(IFNULL(LAST_LOGIN, " +
+					"DATE_ADD(CREATED, INTERVAL 1 HOUR)), INTERVAL ? DAY) < NOW())");
 			_ps.setInt(1, Pilot.ACTIVE);
 			_ps.setInt(2, days);
 			return executeIDs();
