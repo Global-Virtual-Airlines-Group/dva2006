@@ -81,7 +81,9 @@ public class InactivityListCommand extends AbstractCommand {
 			Collection<Pilot> nPilots = dao.getByID(nPilotIDs, "PILOTS").values();
 			for (Iterator<Pilot> i = nPilots.iterator(); i.hasNext();) {
 				Pilot p = i.next();
-				results.put(p, "Sent Reminder due to no logins within " + notifyDays + " days");
+				InactivityPurge ip = dao.getInactivity(p.getID());
+				if (ip == null)
+					results.put(p, "Sent Reminder due to no logins within " + notifyDays + " days");
 			}
 			
 			// Save the results
