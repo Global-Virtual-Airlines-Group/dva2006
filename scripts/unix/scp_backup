@@ -8,24 +8,26 @@
 
 USER="dva"
 if [ "$2" != "" ]; then
-	USER="$2"
+        USER="$2"
 fi
+
+OPTS="-avr --delete --progress --bwlimit=512"
 
 # Back up base files
 cd /home/backup
-rsync -avr --delete cfg/*.tar.gz $USER@$1:cfg 
-rsync -avr --delete db/*.bz2 $USER@$1:db
+rsync $OPTS cfg/*.tar.gz $USER@$1:cfg 
+rsync $OPTS db/*.bz2 $USER@$1:db
 
 # Backup logs via rsync
-rsync -avr --delete logs/* $USER@$1:httplogs
-rsync -avr --delete --exclude=svn.revision_base svn $USER@$1:
+rsync $OPTS logs/* $USER@$1:httplogs
+rsync $OPTS --exclude=svn.revision_base svn $USER@$1:
 
 # Backup mail
-rsync -avr --delete mail/* $USER@$1:mail
+rsync $OPTS mail/* $USER@$1:mail
 
 # Backup library
 cd /home/www/library
-rsync -avr --delete ./* $USER@$1:library
+rsync $OPTS ./* $USER@$1:library
 
 # Exit with success
 exit 0
