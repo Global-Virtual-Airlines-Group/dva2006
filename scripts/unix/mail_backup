@@ -1,16 +1,49 @@
 #!/bin/bash
 # Maildir backup script
-# (c) 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
 arc_util="pbzip2 -p2 -9 -c"
 
 # Goto backup directory
-cd /home/backup/mail
+backup_path="/home/backup/mail"
+mbox_path="/home/mail"
 
-# Backup maildirs
-tar cf - /home/mail | $arc_util > mailbox.tar.bz2
+# Loop through the mailboxes
+for maildir in $mbox_path/*
+do
+  # Get the mailbox
+  mbox=`echo $maildir | awk 'BEGIN {FS="/"}; { print $4}'`
+  lmfile=$maildir/lastmod
 
-# Update permissions
-chmod 640 *.tar.bz2
-chown backup:root *.tar.bz2
+  # Get the mailbox update time
+  declare -i lastmod
+  lastmod=`stat -c %Y $maildir`
+
+  # Check if it's newer
+  doBackup=0
+  if [ -f "$lmfile" ]; then
+    declare -i mblastmod
+    mblastmod=`cat $maildir/lastmod`+2
+    if [ $lastmod -gt $mblastmod ]; then
+      echo $lastmod+2 > $lmfile
+      doBackup=1
+    fi
+  else
+    echo $lastmod+2 > $lmfile
+    doBackup=1
+  fi
+
+  # Backup the directory
+  if [ $doBackup == 1 ]; then
+    echo "Backing up" $maildir
+
+    # TAR the directory and update permissions
+    tar cf - $maildir | $arc_util > $backup_path/$mbox.tar.bz2
+    chmod 640 $backup_path/$mbox.tar.bz2
+    chown backup:root $backup_path/$mbox.tar.bz2
+  fi
+done
+
+# Exit with success
+exit 0
