@@ -88,11 +88,12 @@ public class SetACARSLog extends DAO {
 			// Get IDs to purge
 			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON "
 					+ "(F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), "
-					+ "INTERVAL ? HOUR)) AND (FD.ID=?)");
+					+ "INTERVAL ? HOUR)) AND (IFNULL(FD.DISPATCHER_ID, ?)=?)");
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, hours);
 			_ps.setInt(4, 0);
+			_ps.setInt(5, 0);
 			
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
