@@ -209,10 +209,24 @@ public class GetNavRoute extends GetNavData {
 	 * @param type the TerminalRoute type
 	 * @param name the name
 	 * @param wp the waypoint
+	 * @param rwy the runway name, or null
+	 * @return the TerminalRoute, or null if none found
+	 * @see GetNavRoute#getBestRoute(Airport, int, String, String, Runway)
+	 */
+	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, Runway rwy) throws DAOException {
+		return getBestRoute(a, type, name, wp, (rwy == null) ? "ALL" : "RW" + rwy.getName());
+	}
+	
+	/**
+	 * Returns the most likely Terminal Route used based on the Airport, Name, last waypoint and runway.
+	 * @param a the Airport
+	 * @param type the TerminalRoute type
+	 * @param name the name
+	 * @param wp the waypoint
 	 * @param rwy the Runway bean, or null
 	 * @return the TerminalRoute, or null if none found
 	 */
-	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, Runway rwy) throws DAOException {
+	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, String rwy) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
 					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND (NAME=?) AND (WAYPOINT=?) "
@@ -223,7 +237,7 @@ public class GetNavRoute extends GetNavData {
 			_ps.setString(4, name);
 			_ps.setString(5, wp);
 			_ps.setString(6, "ALL");
-			_ps.setString(7, (rwy == null) ? "ALL" : "RW" + rwy.getName());
+			_ps.setString(7, (rwy == null) ? "ALL" : rwy);
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
