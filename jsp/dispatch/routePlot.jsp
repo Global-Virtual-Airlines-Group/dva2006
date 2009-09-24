@@ -44,7 +44,7 @@ if (airportsChanged) {
 	setRoute(f.routes);
 }
 
-enableElement('RouteSaveButton', (f.route.value.length > 3));
+enableElement('RouteSaveButton', (f.route.value.length > 2));
 return true;
 }
 
@@ -125,7 +125,7 @@ f.comments.value = opt.comments;
 f.routeID.value = opt.routeID;
 setCombo(f.sid, opt.SID);
 setCombo(f.star, opt.STAR);
-enableElement('RouteSaveButton', opt.isExternal);
+enableElement('RouteSaveButton', true);
 plotMap();
 gaEvent('Route Plotter', 'Set Route');
 return true;
@@ -233,7 +233,6 @@ return true;
 <tr>
  <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
  <el:button ID="RouteSaveButton" type="submit" className="BUTTON" label="SAVE DISPATCH ROUTE" /></td>
-</tr>
 </tr>
 </el:table>
 <el:text name="routeID" type="hidden" value="true" />

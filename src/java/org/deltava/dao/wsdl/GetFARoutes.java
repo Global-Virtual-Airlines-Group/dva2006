@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.2
  */
 
@@ -54,29 +54,38 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 		}
 
 		public String getComboName() {
-			return getRoute();
+			return toString();
 		}
 		
 		public int hashCode() {
-			return getRoute().hashCode();
+			return toString().hashCode();
 		}
 		
-		public String toString() {
-			return getRoute();
+		public boolean equals(Object o) {
+			if (!(o instanceof FAFlightRoute))
+				return false;
+			
+			try {
+				FAFlightRoute r2 = (FAFlightRoute) o;
+				return (getAirportD().equals(r2.getAirportD())) && (getAirportA().equals(r2.getAirportA())) &&
+					toString().equals(r2.toString());
+			} catch (Exception e) {
+				return false;
+			}
 		}
 	}
 	
 	/**
 	 * Loads routes from a filesystem cache.
 	 */
-	private Collection<FlightRoute> get(Airport aD, Airport aA) {
+	private Collection<FAFlightRoute> get(Airport aD, Airport aA) {
 		String key = aD.getICAO() + "-" + aA.getICAO();
 		CacheableFile f = _cache.get(key);
 		if (f == null)
 			return null;
 		
 		// Load the data
-		Collection<FlightRoute> results = new LinkedHashSet<FlightRoute>();
+		Collection<FAFlightRoute> results = new LinkedHashSet<FAFlightRoute>();
 		try {
 			Properties p = new Properties();
 			p.load(new FileInputStream(f));
@@ -107,7 +116,7 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 	/**
 	 * Saves routes in a filesystem cache.
 	 */
-	private void save(Airport aD, Airport aA, Collection<FlightRoute> routes) {
+	private void save(Airport aD, Airport aA, Collection<? extends FlightRoute> routes) {
 		if (routes.isEmpty()) return;
 		
 		try {
@@ -147,14 +156,15 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 	 * @return a Collection of FlightRoute beans
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public Collection<FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
+	public Collection<? extends FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
 
 		// Check the cache
-		Collection<FlightRoute> results = get(aD, aA);
+		Collection<FAFlightRoute> results = get(aD, aA);
 		if (results != null)
 			return results;
 		
-		results = new LinkedHashSet<FlightRoute>();
+		results = new HashSet<FAFlightRoute>();
+		List<FlightRoute> tmp = new ArrayList<FlightRoute>();
 		try {
 			// Do the SOAP call
             RoutesBetweenAirportsStruct[] data = getStub().routesBetweenAirports(aD.getICAO(), aA.getICAO());
@@ -164,7 +174,6 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
             	RoutesBetweenAirportsStruct r = data[x];
             	int altitude = r.getFiledAltitude().intValue();
             	FAFlightRoute rt = new FAFlightRoute();
-            	rt.setID(x + 1);
             	rt.setAirportD(aD);
             	rt.setAirportA(aA);
             	rt.setCreatedOn(new Date());
@@ -177,20 +186,22 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
             	try {
                 	String[] wps = waypoints.toArray(new String[0]);
                 	int wpMax = wps.length - 1;
-                	boolean hasSID = (wpMax > 3) && (wps[0].length() > 3) && Character.isDigit(wps[0].charAt(wps[0].length() - 1));
+                	boolean hasSID = (wpMax > 1) && (wps[0].length() > 3) && Character.isDigit(wps[0].charAt(wps[0].length() - 1));
                 	if (hasSID) {
-                		waypoints.remove(0);
-                		rt.setSID(wps[0] + "." + wps[1] + ".ALL");
+                		waypoints.remove(wps[0]);
+                		rt.setSID(wps[0] + "." + wps[1]);
                 	}
 
-                	boolean hasSTAR = (wpMax > 3) && (wps[wpMax].length() > 3) && Character.isDigit(wps[wpMax].charAt(wps[wpMax].length() - 1));
+                	boolean hasSTAR = (wpMax > 1) && (wps[wpMax].length() > 3) && Character.isDigit(wps[wpMax].charAt(wps[wpMax].length() - 1));
                 	if (hasSTAR) {
-                		rt.setSTAR(wps[wpMax] + "." + wps[wpMax - 1] + ".ALL");
-                		waypoints.remove(waypoints.size() - 1);
+                		rt.setSTAR(wps[wpMax] + "." + wps[wpMax - 1]);
+                		waypoints.remove(wps[wpMax]);
                 	}
             	} finally {
             		rt.setRoute(StringUtils.listConcat(waypoints, " "));
+            		rt.setID(results.size() + 1);
             		results.add(rt);
+            		tmp.add(rt);
             	}
             }
 
