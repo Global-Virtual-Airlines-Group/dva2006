@@ -168,4 +168,25 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	public void setRoute(String routeText) {
 		_routeText = routeText;
 	}
+	
+	/**
+	 * Displays a friendly route with SID/STAR name.
+	 */
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		String sid = getSID();
+		if ((sid != null) && (sid.contains("."))) {
+			buf.append(sid.substring(0, sid.indexOf('.')));
+			buf.append(' ');
+		}
+		
+		buf.append(getRoute());
+		String star = getSTAR();
+		if ((star != null) && (star.contains("."))) {
+			buf.append(' ');
+			buf.append(star.substring(0, star.indexOf('.')));
+		}
+		
+		return buf.toString();
+	}
 }

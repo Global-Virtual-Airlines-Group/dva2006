@@ -5,10 +5,12 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import org.jdom.*;
 
 import org.deltava.beans.acars.DispatchRoute;
+import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -22,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.2
  */
 
@@ -60,8 +62,27 @@ public class DispatchRouteListService extends WebService {
 				routes.addAll(fwdao.getRouteData(aD, aA));
 			}
 			
+			// Fix the SID/STAR
+			Connection con = ctx.getConnection();
+			GetNavRoute navdao = new GetNavRoute(con);
+			for (FlightRoute rt : routes) {
+				if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
+					StringTokenizer tkns = new StringTokenizer(rt.getSID(), ".");
+					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, tkns.nextToken(), tkns.nextToken(), rwy);
+					if (sid != null)
+						rt.setSID(sid.getCode());
+				}
+				
+				if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
+					StringTokenizer tkns = new StringTokenizer(rt.getSTAR(), ".");
+					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.nextToken(), tkns.nextToken(), (String) null);
+					if (star != null)
+						rt.setSTAR(star.getCode());
+				}
+			}
+			
 			// Load from the database
-			GetACARSRoute rdao = new GetACARSRoute(ctx.getConnection());
+			GetACARSRoute rdao = new GetACARSRoute(con);
 			routes.addAll(rdao.getRoutes(aD, aA, false));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
@@ -108,13 +129,13 @@ public class DispatchRouteListService extends WebService {
 			
 			// Build the label
 			buf.append(" - ");
-			List<String> wps = StringUtils.split(rt.getRoute(), " ");
+			List<String> wps = StringUtils.split(rt.toString(), " ");
 			if ((wps.size() > 10) && !doRoute && !isExternal) {
 				buf.append(StringUtils.listConcat(wps.subList(0, 3), " "));
 				buf.append(" ... ");
 				buf.append(StringUtils.listConcat(wps.subList(wps.size() - 2, wps.size()), " "));
 			} else
-				buf.append(rt.getRoute());
+				buf.append(rt.toString());
 
 			// Add the source
 			if (isExternal) {
