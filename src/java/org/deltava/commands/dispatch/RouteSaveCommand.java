@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.2
  */
 
@@ -31,6 +31,7 @@ public class RouteSaveCommand extends AbstractCommand {
 		
 		// Get the airports
 		DispatchRoute rp = new DispatchRoute();
+		rp.setID(ctx.getID());
 		rp.setAuthorID(ctx.getUser().getID());
 		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		rp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
@@ -39,6 +40,7 @@ public class RouteSaveCommand extends AbstractCommand {
 		rp.setCruiseAltitude(ctx.getParameter("cruiseAlt"));
 		rp.setRoute(ctx.getParameter("route"));
 		rp.setComments(ctx.getParameter("comments"));
+		rp.setActive(true);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -70,15 +72,16 @@ public class RouteSaveCommand extends AbstractCommand {
 			// Check for a duplicate
 			GetACARSRoute rdao = new GetACARSRoute(con);
 			int dupeID = rdao.hasDuplicate(rp.getAirportD(), rp.getAirportA(), rp.getRoute());
-			ctx.setAttribute("isDupe", Boolean.valueOf(dupeID != 0), REQUEST);
 			ctx.setAttribute("dupeID", Integer.valueOf(dupeID), REQUEST);
 			
 			// Save the route
-			if (dupeID == 0) {
+			if ((dupeID == 0) || (dupeID == rp.getID())) {
 				SetACARSRoute wdao = new SetACARSRoute(con);
 				wdao.write(rp);
-				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
-			}
+				ctx.setAttribute("isCreate", Boolean.valueOf(rp.getID() == 0), REQUEST);
+				ctx.setAttribute("isUpdate", Boolean.valueOf(rp.getID() != 0), REQUEST);
+			} else
+				ctx.setAttribute("isDupe", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -31,12 +31,20 @@ for use by Dispatchers or Pilots.<br />
 <c:when test="${isDupe}">
 <div class="updateHdr">Duplicate ACARS Dispatcher Route</div>
 <br />
-A duplicate <content:airline /> ACARS Dispatcher route has been detected from ${route.airportD.name} 
+A duplicate active <content:airline /> ACARS Dispatcher route has been detected from ${route.airportD.name} 
 (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) using
 the route <span class="bld">${route.route}</span>. <span class="error bld">This route has not been saved.</span>
 <br />
 To view the original Dispatch route, <el:cmd url="dsproute" linkID="${dupeID}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
+</c:when>
+<c:when test="${isUpdate}">
+<div class="updateHdr">ACARS Dispatcher Route Updated</div>
+<br />
+This <content:airline /> ACARS Dispatcher route has been updated.<br />
+<br />
+To view this Dispatch route, <el:cmd url="dsproute" link="${route}" className="sec bld">Click Here</el:cmd>.<br />
+To plot another route, <el:cmd url="dsprouteplot" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isCreate}">
 <div class="updateHdr">ACARS Dispatcher Route Created</div>
