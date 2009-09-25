@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display popular route pairs.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.2
  */
 
@@ -23,15 +23,14 @@ public class PopularRouteListCommand extends AbstractViewCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
-		// Get the view context
-		ViewContext vc = initView(ctx);
 		
 		// Get parameters
 		boolean noRoutes = Boolean.valueOf(ctx.getParameter("noRoutes")).booleanValue();
 		boolean allFlights = Boolean.valueOf(ctx.getParameter("allFights")).booleanValue();
 		int dayFilter = StringUtils.parse(ctx.getParameter("days"), 60);
-		
+
+		// Get the view context
+		ViewContext vc = initView(ctx);
 		try {
 			GetFlightReportStatistics frdao = new GetFlightReportStatistics(ctx.getConnection());
 			frdao.setQueryStart(vc.getStart());

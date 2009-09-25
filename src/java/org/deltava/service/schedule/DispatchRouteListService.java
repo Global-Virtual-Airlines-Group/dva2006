@@ -9,6 +9,8 @@ import java.sql.Connection;
 
 import org.jdom.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.*;
@@ -29,6 +31,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class DispatchRouteListService extends WebService {
+	
+	private static final Logger log = Logger.getLogger(DispatchRouteListService.class);
 
 	/**
 	 * Executes the Web Service.
@@ -49,8 +53,8 @@ public class DispatchRouteListService extends WebService {
 		
 		// Check for default runway
 		String rwy = ctx.getParameter("runway");
-		if ((rwy == null) || !rwy.startsWith("RW"))
-			rwy = "ALL";
+		if ((rwy != null) && !rwy.startsWith("RW"))
+			rwy = null;
 		
 		// Get the Data
 		Collection<FlightRoute> routes = new ArrayList<FlightRoute>();
@@ -67,17 +71,23 @@ public class DispatchRouteListService extends WebService {
 			GetNavRoute navdao = new GetNavRoute(con);
 			for (FlightRoute rt : routes) {
 				if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
+					log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
 					StringTokenizer tkns = new StringTokenizer(rt.getSID(), ".");
 					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, tkns.nextToken(), tkns.nextToken(), rwy);
-					if (sid != null)
+					if (sid != null) {
+						log.info("Found " + sid.getCode());
 						rt.setSID(sid.getCode());
+					}
 				}
 				
 				if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
+					log.info("Searching for best STAR for " + rt.getSTAR());
 					StringTokenizer tkns = new StringTokenizer(rt.getSTAR(), ".");
 					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.nextToken(), tkns.nextToken(), (String) null);
-					if (star != null)
+					if (star != null) {
+						log.info("Found " + star.getCode()); 
 						rt.setSTAR(star.getCode());
+					}
 				}
 			}
 			

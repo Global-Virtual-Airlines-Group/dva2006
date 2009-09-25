@@ -52,14 +52,14 @@ return true;
  <td colspan="3" class="left caps"><content:airline /> Flight Route Popularity</td> 
  <td colspan="4" class="right"><el:box name="noRoutes" idx="*" value="true" label="Show Pairs without Dispatch Routes" checked="${param.noRoutes}" />
  <el:box name="allFlights" idx="*" value="true" label="Inlcude non-ACARS Flights" checked="${param.allFlights}" />
- IN THE PAST <el:text name="days" idx="*" size="3" max="4" className="bld" value="${dayFilter}" /> DAYS 
+ in the past <el:text name="days" idx="*" size="3" max="4" className="bld" value="${dayFilter}" /> Days 
  <el:button ID="UpdateButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 <tr class="title caps">
  <td width="5%">#</td>
  <td width="10%">&nbsp;</td>
- <td width="20%">DEPARTING FROM</td>
- <td width="30%">ARRIVING AT</td>
+ <td width="25%">DEPARTING FROM</td>
+ <td width="25%">ARRIVING AT</td>
  <td width="10%">DISTANCE</td>
  <td width="12%">FLIGHTS</td>
  <td>ROUTES</td>

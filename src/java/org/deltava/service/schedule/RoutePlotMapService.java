@@ -3,6 +3,7 @@ package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -14,6 +15,7 @@ import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
@@ -39,7 +41,9 @@ public class RoutePlotMapService extends MapPlotService {
 		Collection<String> runways = new LinkedHashSet<String>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
-			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			GetNavRoute dao = new GetNavRoute(con);
+			GetACARSData acdao = new GetACARSData(con);
 			
 			// Translate IATA to ICAO codes
 			String airportDCode = txIATA(ctx.getParameter("airportD"));
@@ -58,9 +62,12 @@ public class RoutePlotMapService extends MapPlotService {
 				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
 				tRoutes.addAll(sids);
 				
-				// Add departure runways
-				if (doRunways)
-					runways.addAll(dao.getSIDRunways(aD.getCode()));
+				// Add popular departure runways
+				if (doRunways) {
+					Collection<String> popRunways = acdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
+					Collection<String> sidRunways = dao.getSIDRunways(aD.getCode());
+					runways.addAll(CollectionUtils.union(popRunways, sidRunways));
+				}
 			}
 
 			// Check if we have a SID
@@ -86,7 +93,6 @@ public class RoutePlotMapService extends MapPlotService {
 					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
 				else
 					routePoints.addAll(star.getWaypoints());
-				
 			}
 
 			// Add the arrival airport
