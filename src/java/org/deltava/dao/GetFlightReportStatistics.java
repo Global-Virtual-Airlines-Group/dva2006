@@ -52,9 +52,7 @@ public class GetFlightReportStatistics extends DAO {
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(DISTINCT P.ID) AS CNT, "
 				+ "COUNT(DISTINCT R.ID) AS RCNT FROM PIREPS P LEFT JOIN acars.ROUTES R ON "
-				+ "(P.AIRPORT_D=R.AIRPORT_D) AND (P.AIRPORT_A=R.AIRPORT_A) ");
-		if (noRoutes)
-			buf.append("AND (R.ACTIVE=?) ");
+				+ "(P.AIRPORT_D=R.AIRPORT_D) AND (P.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=?) ");
 		buf.append("WHERE (P.STATUS=?) ");
 		if (!allFlights)
 			buf.append("AND ((P.ATTR & ?) > 0) ");
@@ -68,8 +66,7 @@ public class GetFlightReportStatistics extends DAO {
 		try {
 			int pos = 0;
 			prepareStatement(buf.toString());
-			if (noRoutes)
-				_ps.setBoolean(++pos, true);
+			_ps.setBoolean(++pos, true);
 			_ps.setInt(++pos, FlightReport.OK);
 			if (!allFlights)
 				_ps.setInt(++pos, FlightReport.ATTR_ACARS);

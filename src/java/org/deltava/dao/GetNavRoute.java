@@ -227,17 +227,25 @@ public class GetNavRoute extends GetNavData {
 	 * @return the TerminalRoute, or null if none found
 	 */
 	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, String rwy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
+					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND (NAME=?) AND (WAYPOINT=?) ");
+		if (rwy != null)
+			buf.append("AND ((RUNWAY=?) OR (RUNWAY=?))");
+		buf.append(" ORDER BY PRF, SEQ");
+		
 		try {
-			prepareStatementWithoutLimits("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
-					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND (NAME=?) AND (WAYPOINT=?) "
-					+ "AND ((RUNWAY=?) OR (RUNWAY=?)) ORDER BY PRF, SEQ");
+			prepareStatementWithoutLimits(buf.toString());
 			_ps.setString(1, "ALL");
 			_ps.setString(2, a.getICAO());
 			_ps.setInt(3, type);
 			_ps.setString(4, name);
 			_ps.setString(5, wp);
-			_ps.setString(6, "ALL");
-			_ps.setString(7, (rwy == null) ? "ALL" : rwy);
+			if (rwy != null) {
+				_ps.setString(6, "ALL");
+				_ps.setString(7, rwy);
+			}
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
