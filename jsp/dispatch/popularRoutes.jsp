@@ -72,7 +72,7 @@ return true;
 <view:row entry="${route}">
  <td class="pri bld"><fmt:int value="${entryNumber}" /></td>
 <c:choose>
-<c:when test="${access.canCreate && (route.routes == 0)}">
+<c:when test="${access.canCreate}">
  <td><el:button onClick="javascript:void plot('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="BUTTON" label="PLOT ROUTE" /></td>
  <td colspan="2">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
