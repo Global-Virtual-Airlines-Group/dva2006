@@ -41,7 +41,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -57,7 +56,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport</td>
- <td class="data"><el:combo className="req" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${airports}" value="${chart.airport}" />
+ <td class="data"><el:combo className="req" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${emptyList}" value="${chart.airport}" />
  <el:text name="airportCode" idx="*" size="3" max="4" value="${chart.airport.ICAO}" onBlur="void setAirport(document.forms[0].airport, this.value)" /></td>
 </tr>
 <tr>

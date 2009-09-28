@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -20,14 +21,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
 public class AirportListService extends WebService {
 
 	private class NonFilter implements AirportFilter {
-		
+
 		protected NonFilter() {
 			super();
 		}
@@ -77,77 +78,70 @@ public class AirportListService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Figure out what kind of search we are doing
-		AirportFilter filter = null;
-		String al = ctx.getParameter("airline");
-		if (al != null) {
-			boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
-			Airline a = SystemData.getAirline(al);
+		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+		try {
+			AirportFilter filter = null;
+			Connection con = ctx.getConnection();
 
-			// Either search the schedule or return the SystemData list
-			if (useSched) {
-				try {
-					GetScheduleAirport dao = new GetScheduleAirport(ctx.getConnection());
+			String al = ctx.getParameter("airline");
+			if (al != null) {
+				boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
+				Airline a = SystemData.getAirline(al);
+
+				// Either search the schedule or return the SystemData list
+				if (useSched) {
+					GetScheduleAirport dao = new GetScheduleAirport(con);
 					filter = new AirportListFilter(dao.getOriginAirports(a));
-				} catch (DAOException de) {
-					throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
-				} finally {
-					ctx.release();
-				}
-			} else {
-				if ("all".equalsIgnoreCase(al))
-					filter = new NonFilter();
-				else if ("charts".equalsIgnoreCase(al)) {
-					try {
-						GetChart dao = new GetChart(ctx.getConnection());
+				} else {
+					if ("all".equalsIgnoreCase(al))
+						filter = new NonFilter();
+					else if ("charts".equalsIgnoreCase(al)) {
+						GetChart dao = new GetChart(con);
 						filter = new AirportListFilter(dao.getAirports());
-					} catch (DAOException de) {
-						throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
-					} finally {
-						ctx.release();	
-					}
-				} else
-					filter = new AirlineFilter(a);
-			}
-		} else if (ctx.getParameter("code") != null) {
-			// Check if we are searching origin/departure
-			boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
-			Airport a = SystemData.getAirport(ctx.getParameter("code").toUpperCase());
-			if (a == null)
-				throw error(SC_BAD_REQUEST, "Invalid Airport", false);
+					} else
+						filter = new AirlineFilter(a);
+				}
+			} else if (ctx.getParameter("code") != null) {
+				// Check if we are searching origin/departure
+				boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
+				Airport a = SystemData.getAirport(ctx.getParameter("code").toUpperCase());
+				if (a == null)
+					throw error(SC_BAD_REQUEST, "Invalid Airport", false);
 
-			// Get the airports from the schedule database
-			try {
-				GetScheduleAirport dao = new GetScheduleAirport(ctx.getConnection());
+				// Get the airports from the schedule database
+				GetScheduleAirport dao = new GetScheduleAirport(con);
 				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
-			} catch (DAOException de) {
-				throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
-			} finally {
-				ctx.release();
 			}
+			
+			// Generate the destination list
+			GetAirport adao = new GetAirport(con);
+			Map<String, Airport> allAirports = adao.getAll();
+			for (Iterator<Airport> i = allAirports.values().iterator(); i.hasNext();) {
+				Airport a = i.next();
+				if (filter.accept(a))
+					airports.add(a);
+			}
+		} catch (DAOException de) {
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+		} finally {
+			ctx.release();
 		}
 
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
-
-		// Generate the destination list
-		Map<String, Airport> allAirports = SystemData.getAirports();
-		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-		airports.addAll(allAirports.values());
-		for (Iterator<Airport> i = airports.iterator(); i.hasNext();) {
+		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
 			Airport a = i.next();
-			if (filter.accept(a)) {
-				Element e = new Element("airport");
-				e.setAttribute("iata", a.getIATA());
-				e.setAttribute("icao", a.getICAO());
-				e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.0000"));
-				e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.0000"));
-				e.setAttribute("name", a.getName());
-				re.addContent(e);
-			}
+			Element e = new Element("airport");
+			e.setAttribute("iata", a.getIATA());
+			e.setAttribute("icao", a.getICAO());
+			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.0000"));
+			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.0000"));
+			e.setAttribute("name", a.getName());
+			re.addContent(e);
 		}
-
+		
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
