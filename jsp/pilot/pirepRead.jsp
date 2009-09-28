@@ -88,6 +88,17 @@ return true;
  <td class="label">E-Mail Address</td>
  <td class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
 </tr>
+<c:if test="${fn:network(pirep) == 'VATSIM'}">
+<c:set var="vatsimID" value="${fn:networkID(pilot, 'VATSIM')}" scope="page" />
+<c:if test="${!empty vatsimID}">
+<tr>
+ <td class="label">VATSIM ID</td>
+ <td class="data"><span class="bld">${vatsimID}</span> - View flight log at 
+ <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" external="true">
+<el:img src="vataware.png" border="0" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></td>
+</tr>
+</c:if>
+</c:if>
 </content:filter>
 <tr>
  <td class="label">Status</td>
@@ -218,7 +229,6 @@ return true;
 <c:set var="cspan" value="${1}" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
-
 <c:if test="${googleMap}">
 <tr>
  <td class="label">Route Map Data</td>
@@ -227,8 +237,6 @@ return true;
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
 <c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" /></c:if>
-<c:if test="${fn:network(pirep) == 'VATSIM'}"> <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" external="true">
-<el:img src="vataware.png" border="0" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if>
 </span></td>
 </tr>
 <tr>
