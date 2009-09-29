@@ -36,7 +36,7 @@ public class MyIssueListCommand extends AbstractViewCommand {
 			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
-			Collection<Issue> results = idao.getByPilot(myID, myID, false);
+			Collection<Issue> results = idao.getByPilot(myID, myID, false, false);
 			vc.setResults(results);
 			
 			// Get Author IDs
