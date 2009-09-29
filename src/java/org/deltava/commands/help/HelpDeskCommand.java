@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.RoleUtils;
 /**
  * A Web Site Command to display the Help Desk.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class HelpDeskCommand extends AbstractCommand {
 			
 			// Get the DAO and my issue list
 			GetHelp idao = new GetHelp(con);
-			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false); 
+			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false, true); 
 			for (Iterator<Issue> i = myIssues.iterator(); i.hasNext(); ) {
 				Issue is = i.next();
 				if (is.getStatus() == Issue.CLOSED)

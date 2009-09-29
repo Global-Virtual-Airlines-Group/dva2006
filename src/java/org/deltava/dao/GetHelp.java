@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -162,27 +162,35 @@ public class GetHelp extends DAO {
 	 * Returns all Help Desk Issues for a Pilot, or Public Issues.
 	 * @param authorID the author's database ID
 	 * @param assigneeID the assignee's database ID
+	 * @param showPublic TRUE to show public issues, otherwise FALSE
+	 * @param activeOnly TRUE to show active issues only, otherwise FALSE
 	 * @return a Collection of Issue beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Issue> getByPilot(int authorID, int assigneeID, boolean showPublic) throws DAOException {
+	public Collection<Issue> getByPilot(int authorID, int assigneeID, boolean showPublic, boolean activeOnly) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR "
 				+ "FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
-				+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.AUTHOR=?) OR "
+				+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((I.AUTHOR=?) OR "
 				+ "(I.ASSIGNEDTO=?) ");
 		if (showPublic)
-			sqlBuf.append("OR (I.ISPUBLIC=?) ");
+			sqlBuf.append("OR (I.ISPUBLIC=?)");
+		sqlBuf.append(") ");
+		if (activeOnly)
+			sqlBuf.append("AND (I.STATUS<>?) ");
 
 		sqlBuf.append("GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON");
 
 		try {
+			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, authorID);
-			_ps.setInt(2, assigneeID);
+			_ps.setInt(++pos, authorID);
+			_ps.setInt(++pos, assigneeID);
 			if (showPublic)
-				_ps.setBoolean(3, true);
+				_ps.setBoolean(++pos, true);
+			if (activeOnly)
+				_ps.setInt(++pos, Issue.CLOSED);
 
 			return executeIssue();
 		} catch (SQLException se) {
