@@ -78,4 +78,13 @@ public class TestGeoUtils extends TestCase {
 		assertTrue(GeoUtils.crossesMeridian(lax, hkg, 179.9));
 		assertFalse(GeoUtils.crossesMeridian(jfk, hkg, 11));
 	}
+	
+	public void testFormat() {
+		
+		GeoLocation nat5020 = new GeoPosition(50.0, 20.0);
+		String fmt9 = GeoUtils.formatFS9(nat5020);
+		String fmtX = GeoUtils.formatFSX(nat5020);
+		assertNotNull(fmt9);
+		assertNotNull(fmtX);
+	}
 }
