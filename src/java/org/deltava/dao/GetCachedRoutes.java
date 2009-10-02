@@ -56,6 +56,29 @@ public class GetCachedRoutes extends DAO {
 	public GetCachedRoutes(Connection c) {
 		super(c);
 	}
+	
+	/**
+	 * Retrieves the average age of cached routes between two airports. 
+	 * @param aD the departure Airport bean
+	 * @param aA the arrival Airport bean
+	 * @return the average age in days, or -1 if none found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getAverageAge(Airport aD, Airport aA) throws DAOException {
+		try {
+			prepareStatement("SELECT IFNULL(ROUND(AVG(DATEDIFF(NOW(), CREATED))), -1) FROM common.ROUTE_CACHE "
+					+ "WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
+			_ps.setString(1, aD.getICAO());
+			_ps.setString(2, aA.getICAO());
+			ResultSet rs = _ps.executeQuery();
+			int avgAge = rs.next() ? rs.getInt(1) : -1;
+			rs.close();
+			_ps.close();
+			return avgAge;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Loads all the cached routes between two airports.

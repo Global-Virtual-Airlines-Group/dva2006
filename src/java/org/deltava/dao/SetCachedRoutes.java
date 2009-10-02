@@ -78,7 +78,7 @@ public class SetCachedRoutes extends DAO {
 	public int purge(int days) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.ROUTE_CACHE WHERE "
-					+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)");
+					+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
 			return executeUpdate(0);
 		} catch (SQLException se) {

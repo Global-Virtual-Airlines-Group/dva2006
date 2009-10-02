@@ -484,6 +484,7 @@
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
+			<max_load type="Integer">75</max_load>
 			<download>
 				<user>gvagroup</user>			
 				<pwd>***REMOVED***</pwd>			
