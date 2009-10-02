@@ -188,51 +188,6 @@ public class GetACARSData extends DAO {
 	}
 	
 	/**
-	 * Retrieves the most popular runways used at a particular airport. Runways used less than 1/10th as much as the most
-	 * popular runway are assumed to be erroneous and removed.
-	 * @param aD the departure Airport bean
-	 * @param aA the arrival Airport bean, or null if none
-	 * @param isTakeoff TRUE if takeoff, otherwise landing
-	 * @return a Collection of runway codes, ordered by popularity
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<String> getPopularRunways(Airport aD, Airport aA, boolean isTakeoff) throws DAOException {
-
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT R.RUNWAY, COUNT(R.ID) AS CNT from acars.RWYDATA R, acars.FLIGHTS F "
-				+ "WHERE (F.ID=R.ID) AND (R.ISTAKEOFF=?) AND (F.AIRPORT_D=?) ");
-		if (aA != null)
-			sqlBuf.append(" AND (F.AIRPORT_A=?)");
-		sqlBuf.append("GROUP BY R.RUNWAY ORDER BY CNT DESC");
-		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setBoolean(1, isTakeoff);
-			_ps.setString(2, aD.getIATA());
-			if (aA != null)
-				_ps.setString(3, aA.getIATA());
-			
-			// Execute the Query
-			int max = 0;
-			Collection<String> results = new LinkedHashSet<String>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				int cnt = rs.getInt(2);
-				max = Math.max(max, cnt);
-				if (cnt > (max / 10))
-					results.add("RW" + rs.getString(1));
-			}
-				
-			// Clean up
-			rs.close();
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Checks if in-flight refueling was used on a Flight.
 	 * @param flightID the ACARS Flight ID
 	 * @param isArchived TRUE if the flight data is archived, otherwise FALSE

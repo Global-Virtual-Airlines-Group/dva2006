@@ -463,6 +463,7 @@
 		<!-- FlightAware download data -->
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
+			<max_age type="Integer">180</max_age>
 			<download>
 				<user>gvagroup</user>			
 				<pwd>***REMOVED***</pwd>			

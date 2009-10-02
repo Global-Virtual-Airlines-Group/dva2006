@@ -216,4 +216,8 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean, ViewEntr
 	public String getRowClassName() {
 		return _active ? null : "warn";
 	}
+	
+	public int hashCode() {
+		return toString().hashCode();
+	}
 }

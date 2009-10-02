@@ -21,11 +21,11 @@ if ((f.star) && (f.star.selectedIndex > 0))
 	params['star'] = f.star.options[f.star.selectedIndex].value;
 if ((f.route) && (f.route.value.length > 0))
 	params['route'] = f.route.value;
-if (doRunways) {
-	params['runways'] = 'true';
-	params['runway'] = f.runway.options[f.runway.selectedIndex].value;
-}
+if (getInactive)
+	params['getInactive'] = 'true';
 
+params['runways'] = 'true';
+params['runway'] = f.runway.options[f.runway.selectedIndex].value;
 return params;
 }
 
@@ -121,5 +121,119 @@ if (myParams == null)
 
 xmlreq.send(formatAJAXParams(myParams, '&'));
 gaEvent('Route Plotter', 'Plot', formatAJAXParams(myParams, ' '));
+return true;
+}
+
+function searchRoutes()
+{
+disableButton('SearchButton');
+var f = document.forms[0];
+var aD = f.airportD.options[f.airportD.selectedIndex].value;
+var aA = f.airportA.options[f.airportA.selectedIndex].value;
+var rwy = f.runway.options[f.runway.selectedIndex].value;
+var ext = true;
+if (f.external)
+	ext = f.external.checked;
+
+// Generate an XMLHTTP request
+var xmlreq = GXmlHttp.create();
+xmlreq.open("GET", "dsproutes.ws?airportD=" + aD + "&airportA=" + aA + "&external=" + ext + "&runway=" + rwy, true);
+
+//Build the update handler	
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	enableElement('SearchButton', true);
+	if (xmlreq.status != 200) {
+		alert(xmlreq.statusText);
+		return false;
+	}
+	
+	// Load the SID/STAR list
+	var xdoc = xmlreq.responseXML.documentElement;
+	var cbo = document.forms[0].routes;
+	enableObject(cbo, true);
+	var rts = xdoc.getElementsByTagName("route");
+	cbo.options.length = rts.length + 1;
+	cbo.options[0] = new Option("-");
+	for (var x = 0; x < rts.length; x++) {
+		var rt = rts[x];
+		var rtw = rt.getElementsByTagName("waypoints");
+		var rtn = rt.getElementsByTagName("name");
+		var oLabel = rtn[0].firstChild.data;
+		var oValue = rtw[0].firstChild.data;
+		var opt = new Option(oLabel, oValue);
+		opt.routeID = rt.getAttribute("id");
+		opt.SID = rt.getAttribute("sid");
+		opt.STAR = rt.getAttribute("star");
+		opt.altitude = rt.getAttribute("altitude");
+		opt.isExternal = rt.getAttribute("external");
+		cbo.options[x + 1] = opt;
+		var rtc = rt.getElementsByTagName("comments");
+		var c = rtc[0].firstChild;
+		if ((c != null) && (c.data != null))
+			opt.comments = c.data;
+	}
+
+	return true;
+}
+
+xmlreq.send(null);
+gaEvent('Route Plotter', 'Route Search', aD + '-' + aA, ext ? 1 : 0);
+return true;
+}
+
+function setRoute(combo)
+{
+var f = document.forms[0];
+if (combo.selectedIndex < 1) {
+	f.cruiseAlt.value = '';
+	f.route.value = '';
+	f.comments.value = ''
+	f.sid.selectedIndex = 0;
+	f.star.selectedIndex = 0;
+	if (f.routeID)
+		f.routeID.value = '0';
+
+	plotMap();
+	return true;
+}
+
+// Update the route
+try {
+	var opt = combo.options[combo.selectedIndex];
+	f.cruiseAlt.value = opt.altitude;
+	f.route.value = opt.value;
+	f.comments.value = opt.comments;
+	setCombo(f.sid, opt.SID);
+	setCombo(f.star, opt.STAR);
+	if (f.routeID)
+		f.routeID.value = opt.routeID;
+} catch (err) {
+	alert('Error setting route - ' + err.description);
+}
+
+enableElement('RouteSaveButton', true);
+plotMap();
+gaEvent('Route Plotter', 'Set Route');
+return true;
+}
+
+function updateRoute(airportsChanged, rwyChanged)
+{
+var f = document.forms[0];
+routeUpdated = true;
+if (rwyChanged) {
+	f.runway.selectedIndex = 0;
+	f.runway.options.length = 1;
+}
+
+if (airportsChanged) {
+	f.routes.selectedIndex = 0;
+	f.routes.options.length = 1;
+	showObject(getElement('routeList'), false);
+	setRoute(f.routes);
+}
+
+enableElement('RouteSaveButton', (f.route.value.length > 2));
 return true;
 }

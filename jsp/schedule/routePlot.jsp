@@ -26,7 +26,8 @@
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
-var doRunways = false;
+var routeUpdated = false;
+var getInactive = false;
 
 function validate(form)
 {
@@ -61,7 +62,8 @@ return true;
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" /></td>
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" />
+<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
@@ -84,6 +86,21 @@ return true;
 <tr>
  <td class="label">Waypoints</td>
  <td class="data"><el:text name="route" size="80" max="224" idx="*" value="" onBlur="void plotMap()" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2" class="left">ROUTE SEARCH</td>
+</tr>
+<tr>
+ <td class="label">Saved Routes</td>
+ <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void setRoute(this)" />
+<el:button ID="SearchButton" className="BUTTON" onClick="void searchRoutes()" label="SEARCH" /></td>
+</tr>
+<tr>
+ <td class="label top">Comments</td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="2" readOnly="true" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2" class="left">PLOTTED ROUTE</td>
 </tr>
 <tr>
  <td class="label top">Route Map</td>
@@ -117,8 +134,10 @@ return true;
 </content:region>
 </content:page>
 <script language="JavaScript" type="text/javascript">
-// Load the airports
 var f = document.forms[0];
+enableObject(f.routes, false);
+
+// Load the airports
 updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
 updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA));
 updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));

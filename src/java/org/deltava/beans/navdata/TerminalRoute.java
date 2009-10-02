@@ -5,11 +5,12 @@ import java.util.*;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.util.StringUtils;
 
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -27,6 +28,19 @@ public class TerminalRoute extends Airway implements ComboAlias {
    private String _name;
    private String _transition;
    private String _runway;
+   
+   /**
+    * Checks if a route waypoint is really a SID/STAR name.
+    * @param name the waypoint code
+    * @return TRUE if a SID/STAR, otherwise FALSE
+    */
+   public static boolean isNameValid(String name) {
+	   if (StringUtils.isEmpty(name) || (name.length() < 4))
+		   return false;
+	   
+	   char last = name.charAt(name.length() - 1);
+	   return Character.isDigit(last);
+   }
    
    /**
     * Creates a new Terminal Route.
