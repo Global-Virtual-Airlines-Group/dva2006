@@ -100,6 +100,7 @@ public class Runway extends NavigationFrequencyBean {
 		buf.append(StringUtils.format(_heading, "000"));
 		buf.append("<br />Length: ");
 		buf.append(StringUtils.format(_length, "#,##0"));
+		buf.append(" feet");
 
 		// Add ILS frequency if found
 		if (getFrequency() != null) {
