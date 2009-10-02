@@ -47,7 +47,7 @@ public class GetFlightReportStatistics extends DAO {
 	 * @return a Collection of RoutePair beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RoutePair> getPopularRoutes(boolean noRoutes, boolean allFlights) throws DAOException {
+	public Collection<ScheduleRoute> getPopularRoutes(boolean noRoutes, boolean allFlights) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(DISTINCT P.ID) AS CNT, "
@@ -75,7 +75,7 @@ public class GetFlightReportStatistics extends DAO {
 			
 			// Execute the query
 			Airline a = SystemData.getAirline(SystemData.get("airline.code"));
-			Collection<RoutePair> results = new ArrayList<RoutePair>();
+			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				ScheduleRoute rp = new ScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
