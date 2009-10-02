@@ -278,8 +278,11 @@ public class GetACARSData extends DAO {
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
-				prepareStatementWithoutLimits("SELECT * FROM acars.RWYDATA WHERE (ID=?) LIMIT 2");
-				_ps.setInt(1, flightID);
+				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ FROM acars.RWYDATA R LEFT JOIN "
+						+ "common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?) "
+						+ "WHERE (ID=?) LIMIT 2");
+				_ps.setInt(1, NavigationDataBean.RUNWAY);
+				_ps.setInt(2, flightID);
 				
 				// Execute the query
 				ResultSet rs = _ps.executeQuery();
@@ -288,11 +291,12 @@ public class GetACARSData extends DAO {
 					r.setCode(rs.getString(2));
 					r.setName(rs.getString(3));
 					r.setLength(rs.getInt(6));
-					int dist = rs.getInt(7);
+					r.setHeading(rs.getInt(9));
+					r.setFrequency(rs.getString(10));
 					if (rs.getBoolean(8))
-						info.setRunwayD(new RunwayDistance(r, dist));
+						info.setRunwayD(new RunwayDistance(r, rs.getInt(7)));
 					else
-						info.setRunwayA(new RunwayDistance(r, dist));
+						info.setRunwayA(new RunwayDistance(r, rs.getInt(7)));
 				}
 
 				rs.close();
