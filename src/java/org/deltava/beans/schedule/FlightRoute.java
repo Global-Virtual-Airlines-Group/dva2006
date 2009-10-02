@@ -171,8 +171,9 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	
 	/**
 	 * Displays a friendly route with SID/STAR name.
+	 * @return the route with SID/STAR
 	 */
-	public String toString() {
+	public String getFullRoute() {
 		StringBuilder buf = new StringBuilder();
 		String sid = getSID();
 		if ((sid != null) && (sid.contains("."))) {
@@ -188,5 +189,9 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 		}
 		
 		return buf.toString();
+	}
+	
+	public String toString() {
+		return getFullRoute();
 	}
 }

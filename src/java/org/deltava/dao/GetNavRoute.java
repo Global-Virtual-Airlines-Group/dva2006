@@ -12,14 +12,18 @@ import org.deltava.comparators.GeoComparator;
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
+import com.enterprisedt.util.debug.Logger;
+
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
 public class GetNavRoute extends GetNavData {
+	
+	private static final Logger log = Logger.getLogger(GetNavRoute.class);
 	
 	private static final Cache<Route> _rCache = new AgingCache<Route>(640);
 	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(640);
@@ -254,6 +258,7 @@ public class GetNavRoute extends GetNavData {
 			_ps.close();
 			
 			// Fetch the route itself
+			log.info("Found " + code);
 			return getRoute(a, type, code);
 		} catch (SQLException se) {
 			throw new DAOException(se);

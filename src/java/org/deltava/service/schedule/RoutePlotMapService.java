@@ -43,7 +43,7 @@ public class RoutePlotMapService extends MapPlotService {
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
-			GetACARSData acdao = new GetACARSData(con);
+			GetACARSRunways acdao = new GetACARSRunways(con);
 			
 			// Translate IATA to ICAO codes
 			String airportDCode = txIATA(ctx.getParameter("airportD"));

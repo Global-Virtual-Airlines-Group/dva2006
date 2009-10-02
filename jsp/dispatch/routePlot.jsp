@@ -26,114 +26,12 @@
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 var routeUpdated = false;
-var doRunways = true;
-
-function updateRoute(airportsChanged, rwyChanged)
-{
-var f = document.forms[0];
-routeUpdated = true;
-if (rwyChanged) {
-	f.runway.selectedIndex = 0;
-	f.runway.options.length = 1;
-}
-
-if (airportsChanged) {
-	f.routes.selectedIndex = 0;
-	f.routes.options.length = 1;
-	showObject(getElement('routeList'), false);
-	setRoute(f.routes);
-}
-
-enableElement('RouteSaveButton', (f.route.value.length > 2));
-return true;
-}
-
-function searchRoutes()
-{
-var f = document.forms[0];
-var aD = f.airportD.options[f.airportD.selectedIndex].value;
-var aA = f.airportA.options[f.airportA.selectedIndex].value;
-var rwy = f.runway.options[f.runway.selectedIndex].value;
-var ext = f.external.checked;
-disableButton('SearchButton');
-
-// Generate an XMLHTTP request
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "dsproutes.ws?airportD=" + aD + "&airportA=" + aA + "&external=" + ext + "&runway=" + rwy, true);
-
-//Build the update handler	
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	enableElement('SearchButton', true);
-	showObject(getElement('routeList'), true);
-	if (xmlreq.status != 200) {
-		alert(xmlreq.statusText);
-		return false;
-	}
-	
-	// Load the SID/STAR list
-	var xdoc = xmlreq.responseXML.documentElement;
-	var cbo = document.forms[0].routes;
-	var rts = xdoc.getElementsByTagName("route");
-	cbo.options.length = rts.length + 1;
-	for (var x = 0; x < rts.length; x++) {
-		var rt = rts[x];
-		var rtw = rt.getElementsByTagName("waypoints");
-		var rtn = rt.getElementsByTagName("name");
-		var oLabel = rtn[0].firstChild.data;
-		var oValue = rtw[0].firstChild.data;
-		var opt = new Option(oLabel, oValue);
-		opt.routeID = rt.getAttribute("id");
-		opt.SID = rt.getAttribute("sid");
-		opt.STAR = rt.getAttribute("star");
-		opt.altitude = rt.getAttribute("altitude");
-		opt.isExternal = rt.getAttribute("external");
-		cbo.options[x + 1] = opt;
-		var rtc = rt.getElementsByTagName("comments");
-		var c = rtc[0].firstChild;
-		if ((c != null) && (c.data != null))
-			opt.comments = c.data;
-	}
-
-	return true;
-}
-
-xmlreq.send(null);
-gaEvent('Route Plotter', 'Route Search', aD + '-' + aA, ext ? 1 : 0);
-return true;
-}
-
-function setRoute(combo)
-{
-var f = document.forms[0];
-if (combo.selectedIndex < 1) {
-	f.routeID.value = '';
-	f.cruiseAlt.value = '';
-	f.route.value = '';
-	f.comments.value = ''
-	f.sid.selectedIndex = 0;
-	f.star.selectedIndex = 0;
-	plotMap();
-	return true;
-}
-
-// Update the route
-var opt = combo.options[combo.selectedIndex];
-f.cruiseAlt.value = opt.altitude;
-f.route.value = opt.value;
-f.comments.value = opt.comments;
-f.routeID.value = opt.routeID;
-setCombo(f.sid, opt.SID);
-setCombo(f.star, opt.STAR);
-enableElement('RouteSaveButton', true);
-plotMap();
-gaEvent('Route Plotter', 'Set Route');
-return true;
-}
+var getInactive = false;
 
 function validate(form)
 {
 // Check if we're saving an existing route
+try {
 var f = document.forms[0];
 var routeID = parseInt(f.routeID.value);
 if (!isNaN(routeID))
@@ -152,6 +50,10 @@ disableButton('UpdateButton');
 disableButton('RouteSaveButton');
 gaEvent('Route Plotter', 'Save Route');
 return true;
+} catch (err) {
+	alert(err.description)
+	return false;
+}
 }
 </script>
 <c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
@@ -203,7 +105,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Saved Routes</td>
- <td class="data"><span id="routeList" style="visibility:hidden;"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="-" onChange="void setRoute(this)" /> </span>
+ <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void setRoute(this)" />
  <el:box name="external" value="true" className="small" label="Search FlightAware route database" />
  <el:button ID="SearchButton" className="BUTTON" onClick="void searchRoutes()" label="SEARCH" /></td>
 </tr>
@@ -242,6 +144,9 @@ return true;
 </content:region>
 </content:page>
 <script language="JavaScript" type="text/javascript">
+var f = document.forms[0];
+enableObject(f.routes, false);
+
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty tileHost}">

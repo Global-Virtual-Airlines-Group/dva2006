@@ -250,7 +250,7 @@
 		</map>
 		
 		<pool_size type="Integer">2</pool_size>
-		<pool_max_size type="Integer">16</pool_max_size>
+		<pool_max_size type="Integer">12</pool_max_size>
 		<max_reqs type="Integer">0</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 		<log_stack type="Boolean">true</log_stack>
@@ -483,6 +483,7 @@
 		<!-- FlightAware download data -->
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
+			<max_age type="Integer">180</max_age>
 			<download>
 				<user>gvagroup</user>			
 				<pwd>18f14fe837c03e585d20b955d797fd711cd907b0</pwd>			

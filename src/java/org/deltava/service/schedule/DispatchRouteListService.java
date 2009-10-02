@@ -47,9 +47,11 @@ public class DispatchRouteListService extends WebService {
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		
 		// Check if loading from FlightAware
-		boolean doFW = Boolean.valueOf(ctx.getParameter("external")).booleanValue();
-		doFW &= ctx.isUserInRole("Route") && SystemData.getBoolean("schedule.flightaware.enabled");
+		boolean doFA = Boolean.valueOf(ctx.getParameter("external")).booleanValue() &&
+			SystemData.getBoolean("schedule.flightaware.enabled");
+		boolean hasFARole = ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch");
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("fullRoute")).booleanValue();
+		boolean getInactive = Boolean.valueOf(ctx.getParameter("getInactive")).booleanValue();
 		
 		// Check for default runway
 		String rwy = ctx.getParameter("runway");
@@ -59,21 +61,36 @@ public class DispatchRouteListService extends WebService {
 		// Get the Data
 		Collection<FlightRoute> routes = new ArrayList<FlightRoute>();
 		try {
-			if (doFW) {
-				GetFARoutes fwdao = new GetFARoutes();
-				fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
-				fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
-				routes.addAll(fwdao.getRouteData(aD, aA));
+			Connection con = ctx.getConnection();
+			
+			// Load flight aware routes
+			if (doFA) {
+				GetCachedRoutes rcdao = new GetCachedRoutes(con);
+				routes.addAll(rcdao.getRoutes(aD, aA));
+				
+				// If we don't have anything in the cache, fetch more
+				if (routes.isEmpty() && hasFARole) {
+					GetFARoutes fwdao = new GetFARoutes();
+					fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
+					fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
+					Collection<? extends FlightRoute> faroutes = fwdao.getRouteData(aD, aA);
+					
+					// Save in the cache
+					if (!faroutes.isEmpty()) {
+						routes.addAll(faroutes);
+						SetCachedRoutes rcwdao = new SetCachedRoutes(con);
+						rcwdao.write(faroutes);
+					}
+				}
 			}
 			
 			// Fix the SID/STAR
-			Connection con = ctx.getConnection();
 			GetNavRoute navdao = new GetNavRoute(con);
 			for (FlightRoute rt : routes) {
 				if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
 					log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
-					StringTokenizer tkns = new StringTokenizer(rt.getSID(), ".");
-					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, tkns.nextToken(), tkns.nextToken(), rwy);
+					List<String> tkns = StringUtils.split(rt.getSID(), ".");
+					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, tkns.get(0), tkns.get(1), rwy);
 					if (sid != null) {
 						log.info("Found " + sid.getCode());
 						rt.setSID(sid.getCode());
@@ -82,8 +99,18 @@ public class DispatchRouteListService extends WebService {
 				
 				if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
 					log.info("Searching for best STAR for " + rt.getSTAR());
-					StringTokenizer tkns = new StringTokenizer(rt.getSTAR(), ".");
-					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.nextToken(), tkns.nextToken(), (String) null);
+					List<String> tkns = StringUtils.split(rt.getSTAR(), ".");
+					
+					// Find the most popular runway
+					GetACARSRunways ardao = new GetACARSRunways(con);
+					List<String> rwys = ardao.getPopularRunways(aD, aA, false);
+					String popRwy = rwys.isEmpty() ? null : rwys.get(0);
+					String arrRwy = (tkns.size() < 3) ? popRwy : tkns.get(2);
+
+					// Load the STAR - if we can't find based on the runway, try the most popular
+					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.get(0), tkns.get(1), arrRwy);
+					if (star == null)
+						star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.get(0), tkns.get(1), popRwy);
 					if (star != null) {
 						log.info("Found " + star.getCode()); 
 						rt.setSTAR(star.getCode());
@@ -93,7 +120,7 @@ public class DispatchRouteListService extends WebService {
 			
 			// Load from the database
 			GetACARSRoute rdao = new GetACARSRoute(con);
-			routes.addAll(rdao.getRoutes(aD, aA, false));
+			routes.addAll(rdao.getRoutes(aD, aA, !getInactive));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
 		} finally {
