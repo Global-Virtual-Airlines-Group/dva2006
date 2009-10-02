@@ -233,7 +233,7 @@ public abstract class GoogleEarthService extends WebService {
 				continue;
 			
 			Element pe = new Element("Placemark");
-			pe.addContent(XMLUtils.createElement("name", (wp.getType() == INT) ? wp.getCode() : wp.getName()));
+			pe.addContent(XMLUtils.createElement("name", (wp.getType() != AIRPORT) ? wp.getCode() : wp.getName()));
 			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 			pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
 			pe.addContent(XMLUtils.createElement("Snippet", wp.getTypeName()));
