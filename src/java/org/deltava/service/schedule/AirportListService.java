@@ -146,6 +146,7 @@ public class AirportListService extends WebService {
 		try {
 			ctx.getResponse().setContentType("text/xml");
 			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.getResponse().setDateHeader("Expires", System.currentTimeMillis() + 120000);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

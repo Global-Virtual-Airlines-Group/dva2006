@@ -1,20 +1,13 @@
 // Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
-import java.io.*;
 import java.util.*;
-
-import org.apache.log4j.Logger;
 
 import com.flightaware.directflight.soap.DirectFlight.*;
 
 import org.deltava.beans.schedule.*;
-
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
-import org.deltava.util.cache.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * Loads route data from FlightAware via SOAP. 
@@ -23,19 +16,7 @@ import org.deltava.util.system.SystemData;
  * @since 2.2
  */
 
-public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
-	
-	private static final Logger log = Logger.getLogger(GetFARoutes.class);
-	
-	private static final FileSystemCache _cache =  new FileSystemCache(128, SystemData.get("schedule.cache"));
-	
-	public int getHits() {
-		return _cache.getHits();
-	}
-	
-	public int getRequests() {
-		return _cache.getRequests();
-	}
+public class GetFARoutes extends FlightAwareDAO {
 	
 	public class FAFlightRoute extends FlightRoute implements ExternalFlightRoute {
 		
@@ -76,80 +57,6 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 	}
 	
 	/**
-	 * Loads routes from a filesystem cache.
-	 */
-	private Collection<FAFlightRoute> get(Airport aD, Airport aA) {
-		String key = aD.getICAO() + "-" + aA.getICAO();
-		CacheableFile f = _cache.get(key);
-		if (f == null)
-			return null;
-		
-		// Load the data
-		Collection<FAFlightRoute> results = new LinkedHashSet<FAFlightRoute>();
-		try {
-			Properties p = new Properties();
-			p.load(new FileInputStream(f));
-			
-			// Get the counts
-			int rtCount = StringUtils.parse(p.getProperty("count"), 0);
-			for (int x = 1; x <= rtCount; x++) {
-				FAFlightRoute rt = new FAFlightRoute();
-				rt.setAirportD(aD);
-				rt.setAirportA(aA);
-				rt.setID(x);
-				rt.setSource(p.getProperty("route" + x + ".src"));
-				rt.setSID(p.getProperty("route" + x + ".sid"));
-				rt.setSTAR(p.getProperty("route" + x + ".star"));
-				rt.setRoute(p.getProperty("route" + x + ".route"));
-				rt.setCruiseAltitude(p.getProperty("route" + x + ".alt", "350"));
-				rt.setCreatedOn(new Date(Long.parseLong(p.getProperty("route" + x + ".created"))));
-				rt.setComments(p.getProperty("route" + x + ".comments"));
-				results.add(rt);
-			}
-		} catch (IOException ie) {
-			log.error("Cannot load cached routes - " + ie.getMessage(), ie);
-		}
-		
-		return results;
-	}
-	
-	/**
-	 * Saves routes in a filesystem cache.
-	 */
-	private void save(Airport aD, Airport aA, Collection<? extends FlightRoute> routes) {
-		if (routes.isEmpty()) return;
-		
-		try {
-			File f = File.createTempFile("faRoutes", aD.getICAO() + "$" + aA.getICAO());
-			PrintWriter pw = new PrintWriter(new FileWriter(f));
-			pw.println("count=" + routes.size());
-			
-			// Write the routes
-			int ofs = 0;
-			for (FlightRoute rt : routes) {
-				ofs++;
-				pw.println("route" + ofs + ".src=" + ((ExternalFlightRoute) rt).getSource());
-				pw.println("route" + ofs + ".created=" + String.valueOf(rt.getCreatedOn().getTime()));
-				pw.println("route" + ofs + ".alt=" + rt.getCruiseAltitude());
-				pw.println("route" + ofs + ".route=" + rt.getRoute());
-				if (rt.getSID() != null)
-					pw.println("route" + ofs + ".sid=" + rt.getSID());
-				if (rt.getSTAR() != null)
-					pw.println("route" + ofs + ".star=" + rt.getSTAR());
-				pw.println("route" + ofs + ".comments=" + rt.getComments());
-				pw.println();
-			}
-			
-			// Close and cache
-			pw.close();
-			String key = aD.getICAO() + "-" + aA.getICAO();
-			_cache.add(new CacheableFile(key, f));
-		} catch (IOException ie) {
-			log.error("Cannot cache routes - " + ie.getMessage(), ie);
-		}
-	}
-	
-	/**
 	 * Retrieves routes between two airports.
 	 * @param aD the origin Airport
 	 * @param aA the destination Airport
@@ -158,13 +65,7 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
 	 */
 	public Collection<? extends FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
 
-		// Check the cache
-		Collection<FAFlightRoute> results = get(aD, aA);
-		if (results != null)
-			return results;
-		
-		results = new HashSet<FAFlightRoute>();
-		List<FlightRoute> tmp = new ArrayList<FlightRoute>();
+		Collection<FAFlightRoute> results = new LinkedHashSet<FAFlightRoute>();
 		try {
 			// Do the SOAP call
             RoutesBetweenAirportsStruct[] data = getStub().routesBetweenAirports(aD.getICAO(), aA.getICAO());
@@ -201,11 +102,9 @@ public class GetFARoutes extends FlightAwareDAO implements CachingDAO {
             		rt.setRoute(StringUtils.listConcat(waypoints, " "));
             		rt.setID(results.size() + 1);
             		results.add(rt);
-            		tmp.add(rt);
             	}
             }
 
-            save(aD, aA, results);
             return results;
 		} catch (Exception e) {
 			throw new DAOException(e);

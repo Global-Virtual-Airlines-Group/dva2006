@@ -31,7 +31,6 @@ public class RouteSaveCommand extends AbstractCommand {
 		
 		// Get the airports
 		DispatchRoute rp = new DispatchRoute();
-		rp.setID(ctx.getID());
 		rp.setAuthorID(ctx.getUser().getID());
 		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		rp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
@@ -40,7 +39,13 @@ public class RouteSaveCommand extends AbstractCommand {
 		rp.setCruiseAltitude(ctx.getParameter("cruiseAlt"));
 		rp.setRoute(ctx.getParameter("route"));
 		rp.setComments(ctx.getParameter("comments"));
-		rp.setActive(true);
+		
+		// Update the route ID
+		int routeID = StringUtils.parse(ctx.getParameter("routeID"), 0);
+		if (routeID > 0) {
+			rp.setID(routeID);
+			rp.setActive(true);
+		}
 		
 		try {
 			Connection con = ctx.getConnection();
