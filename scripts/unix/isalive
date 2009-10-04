@@ -64,20 +64,6 @@ else
   /etc/init.d/httpd start
 fi
 
-#if [ -f "/var/run/slapd.pid" ]
-#then
-#  if [ -d "/proc/`cat /var/run/slapd.pid`" ]
-#  then
-#   echo "OpenLDAP (Authentication Server) is alive"
-#  else
-#   echo "OpenLDAP (Authentication Server) is DOWN"
-#   /etc/init.d//ldapctl start
-#  fi
-#else
-#  echo "OpenLDAP (Authentication Server) is DOWN - no pid"
-#  /etc/init.d//ldapctl start
-#fi
-
 if [ -f "/var/run/postfix.pid" ]
 then
   if [ -d "/proc/`pidof master`" ]
@@ -175,6 +161,21 @@ then
 else
   echo "Blacklist (SSH blacklist daemon) is DOWN - no pid"
   /etc/init.d/blacklist start
+fi
+
+# Check VATSIM statistics daemon
+if [ -f "/var/run/usageTrack.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/usageTrack.pid`" ]
+  then
+    echo "VATSIM Stats (VATSIM statistics daemon) is alive"
+  else
+    echo "VATSIM Stats (VATSIM statistics daemon) is DOWN"
+    /etc/init.d/vatsimstat start
+  fi
+else
+  echo "VATSIM Stats (VATSIM statistics daemon) is DOWN - no pid"
+  /etc/init.d/vatsimstat start
 fi
 
 # Check HTTP health check
