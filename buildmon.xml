@@ -63,7 +63,7 @@
 	    	<fileset dir="lib/deploy">
 				<include name="log4j-*.jar"/>
 				<include name="jdom-*.jar"/>
-				<include name="mysql-connector-java-5.1.8-bin.jar" />
+				<include name="mysql-connector-java-5.1.10-bin.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/usageTrack.txt" />

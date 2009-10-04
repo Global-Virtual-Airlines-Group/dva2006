@@ -6,7 +6,7 @@
 ISALIVE=true;
 
 # Trap SIGINT
-#trap 'ISALIVE=false; logger -p local3.info Interrupted' SIGTERM SIGINT
+trap 'ISALIVE=false; logger -p local3.info Interrupted' SIGTERM SIGINT
 
 # Start loop
 logger -p local3.info "Starting"
@@ -206,7 +206,22 @@ do
 			echo `date +%H:%M:%S`" Blacklist (SSH blacklist daemon) is DOWN - no pid" >> /var/cache/isalive.txt
 			/etc/init.d/blacklist start
 		fi
-		
+
+		# Check VATSIM statistics daemon
+		if [ -f "/var/run/usageTrack.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/usageTrack.pid`" ]
+			then
+				logger -p local3.err "VATSIM Stats (VATSIM statistics daemon) is DOWN"
+				echo `date +%H:%M:%S`" VATSIM Stats (VATSIM statistics daemon) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/vatsimstat start
+			fi
+		else
+			logger -p local3.err "VATSIM Stats (VATSIM statistics daemon) is DOWN - no pid"
+			echo `date +%H:%M:%S`" VATSIM Stats (VATSIM statistics daemon) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/vatsimstat start
+		fi
+
 		# Check site health check
 		if [ -f "/var/run/tomcat60.pid" ]
 		then
