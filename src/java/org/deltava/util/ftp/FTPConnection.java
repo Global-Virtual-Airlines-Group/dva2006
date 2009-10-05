@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import com.enterprisedt.net.ftp.*;
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -150,17 +150,14 @@ public class FTPConnection {
 	 */
 	public boolean hasFile(String dirName, String fName) throws FTPClientException {
 		try {
-			FTPFile[] files = _client.dirDetails(dirName);
-			for (int x = 0; x < files.length; x++) {
-				FTPFile f = files[x];
-				if (f.getName().equals(fName) && !f.isDir())
-					return true;
-			}
+			String curPath = _client.pwd();
+			_client.chdir(dirName);
+			boolean hasFile = _client.exists(fName);
+			_client.chdir(curPath);
+			return hasFile;
 		} catch (Exception e) {
 			throw new FTPClientException(e);
 		}
-
-		return false;
 	}
 
 	/**
