@@ -234,7 +234,7 @@ do
 				echo `date +%H:%M:%S`" Site appears DOWN - healthcheck failed" >> /var/cache/isalive.txt
 				cat /tmp/healthcheck.log >> //var/cache/isalive.txt
 				cat /tmp/healthcheck.out >> //var/cache/isalive.txt
-				killall -9 java
+				kill -9 `cat /var/run/tomcat60.pid`
 				sleep 1.25
 				logger -p local3.err "Archiving Tomcat log"
 				echo `date +%H:%M:%S`" Archiving Tomcat log" >> /var/cache/isalive.txt
