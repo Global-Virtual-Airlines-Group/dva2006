@@ -18,37 +18,6 @@ import org.deltava.util.system.SystemData;
 
 public class GetCachedRoutes extends DAO {
 
-	private class CachedRoute extends FlightRoute implements ExternalFlightRoute {
-		
-		private String _source;
-		
-		CachedRoute(Airport aD, Airport aA) {
-			super();
-			setAirportD(aD);
-			setAirportA(aA);
-		}
-		
-		public String getSource() {
-			return _source;
-		}
-		
-		public void setSource(String src) {
-			_source = src;
-		}
-		
-		public String getComboAlias() {
-			return getRoute();
-		}
-
-		public String getComboName() {
-			return toString();
-		}
-		
-		public int hashCode() {
-			return toString().hashCode();
-		}
-	}
-	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -98,7 +67,9 @@ public class GetCachedRoutes extends DAO {
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				CachedRoute rt = new CachedRoute(SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+				ExternalRoute rt = new ExternalRoute();
+				rt.setAirportD(SystemData.getAirport(rs.getString(1)));
+				rt.setAirportA(SystemData.getAirport(rs.getString(2)));
 				rt.setCreatedOn(rs.getTimestamp(3));
 				rt.setCruiseAltitude(rs.getString(4));
 				rt.setSource(rs.getString(5));
@@ -107,7 +78,7 @@ public class GetCachedRoutes extends DAO {
 				// Get the SID/STAR out of the route
 				String rawRoute = rs.getString(7);
 				List<String> wps = StringUtils.split(rawRoute, " ");
-				if (wps.size() > 2) {
+				if (wps.size() > 1) {
 					if (TerminalRoute.isNameValid(wps.get(0))) {
 						rt.setSID(wps.get(0) + "." + wps.get(1));
 						wps.remove(0);
