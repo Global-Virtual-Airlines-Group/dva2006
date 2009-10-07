@@ -89,14 +89,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
 
-			// Get the Pilot DAO and check if we're unique
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, SystemData.get("airline.db")));
-			dupeResults.addAll(dao.checkUnique(a, SystemData.get("airline.db")));
-			dupeResults.remove(new Integer(a.getID()));
-			if (!dupeResults.isEmpty())
-				throw notFoundException("Applicant name/email not unique");
-
 			// Get the DAO and write to the database
 			SetApplicant wdao = new SetApplicant(con);
 			wdao.write(a);

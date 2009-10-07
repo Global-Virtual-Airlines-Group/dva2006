@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -8,12 +8,12 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object interface to check for uniqueness.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
 public interface PersonUniquenessDAO {
-
+	
 	/**
 	 * Checks if a Person exists within a Particular database.
 	 * @param usr the Person to check for
@@ -22,6 +22,16 @@ public interface PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> checkUnique(Person usr, String dbName) throws DAOException;
+
+	/**
+	 * Checks if a Person exists within a Particular database.
+	 * @param usr the Person to check for
+	 * @param dbName the database name
+	 * @param days restrict uniqueness search to users created in the last number of days, or -1 for all
+	 * @return a Collection of Database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> checkUnique(Person usr, String dbName, int days) throws DAOException;
 
 	/**
 	 * Performs a soundex search on a Person's last name to detect possible matches. The soundex implementation is
