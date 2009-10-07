@@ -1,29 +1,30 @@
-// Copyright 2004, 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.Ranks;
+import java.util.Date;
+
+import org.deltava.beans.*;
 
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
 @SuppressWarnings("hiding")
 public class PilotComparator extends PersonComparator<Pilot> {
 
-	
 	public static final int PILOTCODE = 4;
     public static final int EQTYPE = 5;
     public static final int RANK = 6;
     public static final int LEGS = 7;
     public static final int HOURS = 8;
     public static final int STATUS = 9;
+    public static final int LASTFLIGHT = 10;
     
     public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code",
-            "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status"};
+            "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status", "Last Flight"};
     
     private static final String[] RANKS = {"Trainee", Ranks.RANK_SO, Ranks.RANK_FO, Ranks.RANK_C, "Senior Captain",
             "Assistant Chief Pilot", Ranks.RANK_CP};
@@ -95,6 +96,18 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		case STATUS :
         		    tmpResult = Integer.valueOf(p1.getStatus()).compareTo(Integer.valueOf(p2.getStatus()));
         		    break;
+        		    
+        		case LASTFLIGHT:
+        			Date lf1 = p1.getLastFlight();
+        			Date lf2 = p2.getLastFlight();
+        			if (lf1 == null)
+        				tmpResult = (lf2 == null) ? 0 : -1;
+        			else if (lf2 == null)
+        				tmpResult = 1;
+        			else
+        				tmpResult = lf1.compareTo(lf2);
+        			
+        			break;
         		    
         		default :   
         		case HOURS :

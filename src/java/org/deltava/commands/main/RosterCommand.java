@@ -20,7 +20,7 @@ public class RosterCommand extends AbstractViewCommand {
 
     // List of query columns we can order by
     private static final String[] SORT_CODE = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED",
-            "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS DESC", "HOURS DESC", "P.STATUS"};
+            "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS DESC", "HOURS DESC", "P.STATUS", "LASTFLIGHT DESC"};
     private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(PilotComparator.TYPES, SORT_CODE);
     
     /**

@@ -101,9 +101,9 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getActivePilots(String orderBy) throws DAOException {
 
 		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON "
-				+ "((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) "
-				+ "GROUP BY P.ID ORDER BY ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM PILOTS P "
+				+ "LEFT JOIN PIREPS F ON ((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND "
+				+ "(P.PILOT_ID > 0) GROUP BY P.ID ORDER BY ");
 
 		// Add sort by column
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
