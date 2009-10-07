@@ -61,25 +61,25 @@ return true;
 </c:if>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" />
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, true)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); plotMap()" /></td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true)" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
- <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
+ <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" />
  <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportL, this.value); plotMap()" /></td>
 </tr>
-<tr>
+<tr id="sids" style="display:none;">
  <td class="label">Standard Departure (SID)</td>
  <td class="data"><el:combo name="sid" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
 </tr>
-<tr>
+<tr id="stars" style="display:none;">
  <td class="label">Terminal Arrival (STAR)</td>
  <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
 </tr>
@@ -136,6 +136,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
 enableObject(f.routes, false);
+enableElement('SearchButton', false);
 
 // Load the airports
 updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
@@ -145,10 +146,14 @@ updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty tileHost}">
-//Build the sat layer control
+//Build the weather layer controls
+getTileOverlay("radar", 0.45);
+getTileOverlay("eurorad", 0.45);
 getTileOverlay("sat", 0.35);
-map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
-map.addControl(new WXClearControl(new GSize(142, 7)));
+var xPos = 70;
+map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
+map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
+map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
 </c:if>
 map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());

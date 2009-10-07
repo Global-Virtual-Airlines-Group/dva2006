@@ -194,4 +194,21 @@ public abstract class FlightRoute extends DatabaseBean implements RoutePair, Com
 	public String toString() {
 		return getFullRoute();
 	}
+	
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		if (!(o instanceof FlightRoute))
+			return false;
+		
+		try {
+			FlightRoute r2 = (FlightRoute) o;
+			return (getAirportD().equals(r2.getAirportD())) && (getAirportA().equals(r2.getAirportA())) &&
+				toString().equals(r2.toString());
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }

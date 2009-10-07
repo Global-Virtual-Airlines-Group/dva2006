@@ -10,8 +10,12 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.wx.*;
+
+import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.dao.*;
+import org.deltava.dao.file.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -20,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -38,17 +42,27 @@ public class RoutePlotMapService extends MapPlotService {
 		boolean doRunways = Boolean.valueOf(ctx.getParameter("runways")).booleanValue();
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
-		Collection<String> runways = new LinkedHashSet<String>();
+		Collection<Runway> runways = new LinkedHashSet<Runway>();
+		Collection<METAR> wx = new ArrayList<METAR>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
 			GetACARSRunways acdao = new GetACARSRunways(con);
+			GetNOAAWeather wxdao = new GetNOAAWeather();
 			
 			// Translate IATA to ICAO codes
 			String airportDCode = txIATA(ctx.getParameter("airportD"));
 			String airportACode = txIATA(ctx.getParameter("airportA"));
 			String airportLCode = txIATA(ctx.getParameter("airportL"));
+			
+			// Get the weather
+			METAR wxD = wxdao.getMETAR(airportDCode);
+			if (wxD != null)
+				wx.add(wxD);
+			METAR wxA = wxdao.getMETAR(airportACode);
+			if (wxA != null)
+				wx.add(wxA);
 
 			// Get the departure/arrival airports
 			AirportLocation aD = dao.getAirport(airportDCode);
@@ -64,9 +78,19 @@ public class RoutePlotMapService extends MapPlotService {
 				
 				// Add popular departure runways
 				if (doRunways) {
-					Collection<String> popRunways = acdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
+					Collection<Runway> popRunways = acdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
 					Collection<String> sidRunways = dao.getSIDRunways(aD.getCode());
-					runways.addAll(CollectionUtils.union(popRunways, sidRunways));
+					for (Runway r : popRunways) {
+						String code = "RW" + r.getName();
+						if (sidRunways.contains(code))
+							runways.add(r);
+					}
+					
+					// Sort runways based on wind heading
+					if (wxD != null) {
+						RunwayComparator rcmp = new RunwayComparator(wxD.getWindDirection());
+						runways = CollectionUtils.sort(runways, Collections.reverseOrder(rcmp));
+					}
 				}
 			}
 
@@ -130,14 +154,34 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 		
 		// Add runways
-		for (Iterator<String> i = runways.iterator(); i.hasNext(); ) {
-			String rwy = i.next();
+		for (Iterator<Runway> i = runways.iterator(); i.hasNext(); ) {
+			Runway r = i.next();
 			Element e = new Element("runway");
-			e.setAttribute("code", rwy);
-			e.setAttribute("label", rwy.replace("RW", "Runway "));
+			e.setAttribute("code", "RW" + r.getName());
+			
+			// Build the labe
+			StringBuilder buf = new StringBuilder("Runway ");
+			buf.append(r.getName());
+			buf.append(" (");
+			buf.append(r.getLength());
+			buf.append(" feet - ");
+			buf.append(r.getHeading());
+			buf.append(" degrees)");
+			e.setAttribute("label", buf.toString());
 			re.addContent(e);
 		}
-
+		
+		// Add weather
+		for (Iterator<METAR> i = wx.iterator(); i.hasNext(); ) {
+			METAR m = i.next();
+			Element e = XMLUtils.createElement("data", m.getData(), true);
+			//e.setAttribute("code", m.getCode());
+			e.setAttribute("wHdg", String.valueOf(m.getWindDirection()));
+			e.setAttribute("wSpeed", String.valueOf(m.getWindSpeed()));
+			e.setAttribute("wGust", String.valueOf(m.getWindGust()));
+			re.addContent(e);
+		}
+		
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");

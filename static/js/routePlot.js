@@ -63,7 +63,7 @@ return true;
 function plotMap(myParams)
 {
 // Generate an XMLHTTP request
-var xmlreq = GXmlHttp.create();
+var xmlreq = getXMLHttpRequest();
 xmlreq.open("POST", "routeplot.ws", true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
@@ -108,11 +108,13 @@ xmlreq.onreadystatechange = function() {
 	// Load the runways
 	var rws = xdoc.getElementsByTagName("runway");
 	updateRoutes(f.runway, rws);
-	showObject(getElement('runways'), true);
+	showObject(getElement("runways"), (f.runway.options.length > 1));
 
 	// Load the SID/STAR list
 	updateRoutes(f.sid, xdoc.getElementsByTagName("sid"));
+	displayObject(getElement("sids"), (f.sid.options.length > 1));
 	updateRoutes(f.star, xdoc.getElementsByTagName("star"));
+	displayObject(getElement("stars"), (f.star.options.length > 1));
 	return true;
 }
 
@@ -136,7 +138,7 @@ if (f.external)
 	ext = f.external.checked;
 
 // Generate an XMLHTTP request
-var xmlreq = GXmlHttp.create();
+var xmlreq = getXMLHttpRequest();
 xmlreq.open("GET", "dsproutes.ws?airportD=" + aD + "&airportA=" + aA + "&external=" + ext + "&runway=" + rwy, true);
 
 //Build the update handler	
@@ -228,12 +230,15 @@ if (rwyChanged) {
 }
 
 if (airportsChanged) {
-	f.routes.selectedIndex = 0;
 	f.routes.options.length = 1;
+	f.routes.options[0] = new Option("No Routes Loaded", "");
+	f.routes.selectedIndex = 0;
+	f.route.value = '';
 	showObject(getElement('routeList'), false);
 	setRoute(f.routes);
 }
 
+enableElement('SearchButton', (f.airportD.selectedIndex > 0) && (f.airportA.selectedIndex > 0));
 enableElement('RouteSaveButton', (f.route.value.length > 2));
 return true;
 }
