@@ -12,15 +12,18 @@ import org.jdom.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.DispatchRoute;
-import org.deltava.beans.navdata.TerminalRoute;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.wx.METAR;
+
+import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetNOAAWeather;
 import org.deltava.dao.wsdl.*;
 import org.deltava.service.*;
 
-import org.deltava.util.StringUtils;
-import org.deltava.util.XMLUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -84,6 +87,10 @@ public class DispatchRouteListService extends WebService {
 				}
 			}
 			
+			// Get the arrival weather
+			GetNOAAWeather wxdao = new GetNOAAWeather();
+			METAR mA = wxdao.getMETAR(aA.getICAO());
+			
 			// Fix the SID/STAR
 			GetNavRoute navdao = new GetNavRoute(con);
 			for (FlightRoute rt : routes) {
@@ -101,10 +108,11 @@ public class DispatchRouteListService extends WebService {
 					log.info("Searching for best STAR for " + rt.getSTAR());
 					List<String> tkns = StringUtils.split(rt.getSTAR(), ".");
 					
-					// Find the most popular runway
+					// Find the most popular runway based on weather
 					GetACARSRunways ardao = new GetACARSRunways(con);
-					List<String> rwys = ardao.getPopularRunways(aD, aA, false);
-					String popRwy = rwys.isEmpty() ? null : rwys.get(0);
+					List<Runway> rwys = ardao.getPopularRunways(aD, aA, false);
+					Collections.sort(rwys, new RunwayComparator(mA.getWindDirection()));
+					String popRwy = rwys.isEmpty() ? null : "RW" + rwys.get(0).getName();
 					String arrRwy = (tkns.size() < 3) ? popRwy : tkns.get(2);
 
 					// Load the STAR - if we can't find based on the runway, try the most popular

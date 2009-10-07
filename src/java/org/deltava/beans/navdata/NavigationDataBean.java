@@ -228,9 +228,11 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	protected String getHTMLTitle() {
 		StringBuilder buf = new StringBuilder("<b>");
 		buf.append(getCode());
-		buf.append("</b> ");
-		if (_type != INT)
-			buf.append(getName());
+		buf.append("</b>");
+		if ((_type != INT) && (!StringUtils.isEmpty(_name))) {
+			buf.append(' ');
+			buf.append(_name);
+		}
 			
 		buf.append(" (");
 		buf.append(getTypeName());

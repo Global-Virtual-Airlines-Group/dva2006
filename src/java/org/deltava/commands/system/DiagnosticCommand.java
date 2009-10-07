@@ -27,7 +27,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -113,6 +113,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetMessageTemplate(null));
 		daoCaches.add(new GetImage(null));
 		daoCaches.add(new GetNavData(null));
+		daoCaches.add(new GetNavAirway(null));
 		daoCaches.add(new GetNavRoute(null));
 		daoCaches.add(new GetFlightReportRecognition(null));
 		daoCaches.add(new GetStatistics(null));
@@ -124,6 +125,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetACARSLog(null));
 		daoCaches.add(new GetIPLocation(null));
 		daoCaches.add(new GetFAWeather());
+		daoCaches.add(new GetNOAAWeather());
 		daoCaches.add(new org.deltava.dao.ipc.GetACARSPool());
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		

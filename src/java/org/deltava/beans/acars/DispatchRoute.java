@@ -4,7 +4,6 @@ package org.deltava.beans.acars;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 /**
@@ -14,7 +13,7 @@ import org.deltava.beans.schedule.*;
  * @since 2.0
  */
 
-public class DispatchRoute extends FlightRoute implements AuthoredBean, ViewEntry {
+public class DispatchRoute extends PopulatedRoute implements AuthoredBean, ViewEntry {
 	
 	private int _authorID;
 	private Date _lastUsed;
@@ -27,8 +26,42 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean, ViewEntr
 	private int _useCount;
 	private int _dspBuild;
 	
-	private final Map<NavigationDataBean, String> _route = new LinkedHashMap<NavigationDataBean, String>(); 
-
+	/**
+	 * Creates a new, empty Dispatch route.
+	 */
+	public DispatchRoute() {
+		super();
+	}
+	
+	/**
+	 * Creates a new Dispatch route from a Populated route.
+	 * @param pr the PopulatedRoute bean
+	 */
+	public DispatchRoute(PopulatedRoute pr) {
+		super();
+		setAirportD(pr.getAirportD());
+		setAirportA(pr.getAirportA());
+		setCruiseAltitude(pr.getCruiseAltitude());
+		setComments(pr.getComments());
+		setCreatedOn(pr.getCreatedOn());
+		setSID(pr.getSID());
+		setSTAR(pr.getSTAR());
+		setRoute(pr.getRoute());
+		load(pr);
+		
+		// Copy dispatch fields
+		if (pr instanceof DispatchRoute) {
+			DispatchRoute dr = (DispatchRoute) pr;
+			_authorID = dr._authorID;
+			_lastUsed = dr._lastUsed;
+			_a = dr._a;
+			_airportL = dr._airportL;
+			_active = dr._active;
+			_useCount = dr._useCount;
+			_dspBuild = dr._dspBuild;
+		}
+	}
+	
 	public int getAuthorID() {
 		return _authorID;
 	}
@@ -73,77 +106,6 @@ public class DispatchRoute extends FlightRoute implements AuthoredBean, ViewEntr
 		return _airportL;
 	}
 	
-	/**
-	 * Returns the route.
-	 * @return a space-separated list of waypoints and airways
-	 */
-	public String getRoute() {
-		String rt = super.getRoute();
-		if (rt != null)
-			return rt;
-		
-		StringBuilder buf = new StringBuilder();
-		for (Iterator<NavigationDataBean> i = _route.keySet().iterator(); i.hasNext(); ) {
-			NavigationDataBean nd = i.next();
-			buf.append(nd.getCode());
-			if (i.hasNext())
-				buf.append(' ');
-		}
-		
-		return buf.toString();
-	}
-	
-	/**
-	 * Returns the waypoints on this route.
-	 * @return a Collection of NavigationDataBeans
-	 */
-	public Collection<NavigationDataBean> getWaypoints() {
-		return _route.keySet();
-	}
-	
-	/**
-	 * Returns the Airway each waypoint is on.
-	 * @param nd the waypoint
-	 * @return the Airway code, or null if none
-	 */
-	public String getAirway(NavigationDataBean nd) {
-		return _route.get(nd);
-	}
-	
-	/**
-	 * Adds a waypoint to the route.
-	 * @param nd the waypoint
-	 * @param airway the airway it is on, or null
-	 */
-	public void addWaypoint(NavigationDataBean nd, String airway) {
-		_route.put(nd, (airway == null) ? "" : airway);
-	}
-	
-	/**
-	 * Adds a waypoint to the start of the route.
-	 * @param nd the waypoint
-	 * @param airway the airway it is on, or null
-	 */
-	public void insertWaypoint(NavigationDataBean nd, String airway) {
-		Map<NavigationDataBean, String> tmpRoute = new LinkedHashMap<NavigationDataBean, String>();
-		tmpRoute.put(nd, (airway == null) ? "" : airway);
-		tmpRoute.putAll(_route);
-		_route.clear();
-		_route.putAll(tmpRoute);
-	}
-	
-	/**
-	 * Removes all waypoints on a particular Airway from the route.
-	 * @param code the airway code
-	 */
-	public void removeAirway(String code) {
-		for (Iterator<Map.Entry<NavigationDataBean, String>> i = _route.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry<NavigationDataBean, String> me = i.next();
-			if (me.getValue().equals(code))
-				i.remove();
-		}
-	}
-
 	/**
 	 * Updates the last use date of this route.
 	 * @param dt the last use date/time

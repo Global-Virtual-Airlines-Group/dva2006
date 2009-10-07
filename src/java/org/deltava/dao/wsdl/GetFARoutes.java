@@ -18,44 +18,6 @@ import org.deltava.util.*;
 
 public class GetFARoutes extends FlightAwareDAO {
 	
-	public class FAFlightRoute extends FlightRoute implements ExternalFlightRoute {
-		
-		private String _source;
-		
-		public String getSource() {
-			return _source;
-		}
-		
-		public void setSource(String src) {
-			_source = src;
-		}
-		
-		public String getComboAlias() {
-			return getRoute();
-		}
-
-		public String getComboName() {
-			return toString();
-		}
-		
-		public int hashCode() {
-			return toString().hashCode();
-		}
-		
-		public boolean equals(Object o) {
-			if (!(o instanceof FAFlightRoute))
-				return false;
-			
-			try {
-				FAFlightRoute r2 = (FAFlightRoute) o;
-				return (getAirportD().equals(r2.getAirportD())) && (getAirportA().equals(r2.getAirportA())) &&
-					toString().equals(r2.toString());
-			} catch (Exception e) {
-				return false;
-			}
-		}
-	}
-	
 	/**
 	 * Retrieves routes between two airports.
 	 * @param aD the origin Airport
@@ -65,7 +27,7 @@ public class GetFARoutes extends FlightAwareDAO {
 	 */
 	public Collection<? extends FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
 
-		Collection<FAFlightRoute> results = new LinkedHashSet<FAFlightRoute>();
+		Collection<ExternalRoute> results = new LinkedHashSet<ExternalRoute>();
 		try {
 			// Do the SOAP call
             RoutesBetweenAirportsStruct[] data = getStub().routesBetweenAirports(aD.getICAO(), aA.getICAO());
@@ -74,7 +36,7 @@ public class GetFARoutes extends FlightAwareDAO {
             for (int x = 0; (data != null) && (x < data.length); x++) {
             	RoutesBetweenAirportsStruct r = data[x];
             	int altitude = r.getFiledAltitude().intValue();
-            	FAFlightRoute rt = new FAFlightRoute();
+            	ExternalRoute rt = new ExternalRoute();
             	rt.setAirportD(aD);
             	rt.setAirportA(aA);
             	rt.setCreatedOn(new Date());
