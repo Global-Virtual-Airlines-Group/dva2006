@@ -27,6 +27,7 @@ public class GetNavRoute extends GetNavAirway {
 	private static final Logger log = Logger.getLogger(GetNavRoute.class);
 	
 	private static final Cache<Route> _rCache = new AgingCache<Route>(320);
+	private static final Collection<String> EMPTY = new ArrayList<String>(1) {{ add(null); }};
 
 	private class CacheableRoute implements Route {
 
@@ -187,6 +188,18 @@ public class GetNavRoute extends GetNavAirway {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public PopulatedRoute populate(FlightRoute rt) throws DAOException {
+		return populate(rt, EMPTY, EMPTY);
+	}
+	
+	/**
+	 * Populates a flight route with waypoint beans and allows specific runways to be chosen for the SID/STAR.
+	 * @param rt the FlightRoute bean to populate
+	 * @param dRwys the departure runways in order of preference
+	 * @param aRwys the arrival runways in order of preference
+	 * @return a populated DispatchRoute
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public PopulatedRoute populate(FlightRoute rt, Collection<String> dRwys, Collection<String> aRwys) throws DAOException {
 
 		PopulatedRoute pr = null; 
 		if (rt instanceof ExternalFlightRoute) {
@@ -203,16 +216,24 @@ public class GetNavRoute extends GetNavAirway {
 		pr.setCreatedOn(rt.getCreatedOn());
 		pr.setCruiseAltitude(rt.getCruiseAltitude());
 		pr.setRoute(rt.getRoute());
-
+		
 		// Load the SID
 		if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
 			List<String> tkns = StringUtils.split(rt.getSID(), ".");
-			String rwy = (tkns.size() > 2) ? tkns.get(2) : null;
-			log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
-			TerminalRoute sid = getBestRoute(pr.getAirportD(), TerminalRoute.SID, tkns.get(0), tkns.get(1), rwy);
-			if (sid != null) {
-				log.info("Found " + sid.getCode());
-				pr.setSID(sid.getCode());
+			String rwyName = (tkns.size() > 2) ? tkns.get(2) : null;
+			if (!dRwys.contains(rwyName)) {
+				dRwys = new ArrayList<String>(dRwys);
+				dRwys.add(rwyName);
+			}
+			
+			for (Iterator<String> i = dRwys.iterator(); i.hasNext() && (StringUtils.isEmpty(pr.getSID())); ) {
+				String rwy = i.next();
+				log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
+				TerminalRoute sid = getBestRoute(pr.getAirportD(), TerminalRoute.SID, tkns.get(0), tkns.get(1), rwy);
+				if (sid != null) {
+					log.info("Found " + sid.getCode());
+					pr.setSID(sid.getCode());
+				}
 			}
 		}
 		
@@ -223,12 +244,16 @@ public class GetNavRoute extends GetNavAirway {
 		
 		// Load best STAR
 		if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
-			StringTokenizer tkns = new StringTokenizer(rt.getSTAR(), ".");
-			TerminalRoute star = getBestRoute(pr.getAirportA(), TerminalRoute.STAR, tkns.nextToken(), tkns.nextToken(), (String) null);
-			if (star != null) {
-				pr.setSTAR(star.getCode());
-				for (NavigationDataBean nd : star.getWaypoints())
-					pr.addWaypoint(nd, star.getCode());
+			List<String> tkns = StringUtils.split(rt.getSTAR(), ".");
+			for (Iterator<String> i = aRwys.iterator(); i.hasNext() && (StringUtils.isEmpty(pr.getSTAR())); ) {
+				String rwy = i.next();
+				log.info("Searching for best STAR for " + rt.getSTAR() + " runway " + rwy);
+				TerminalRoute star = getBestRoute(pr.getAirportA(), TerminalRoute.STAR, tkns.get(0), tkns.get(1), rwy);
+				if (star != null) {
+					pr.setSTAR(star.getCode());
+					for (NavigationDataBean nd : star.getWaypoints())
+						pr.addWaypoint(nd, star.getCode());
+				}
 			}
 		}
 		
