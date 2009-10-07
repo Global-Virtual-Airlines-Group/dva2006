@@ -307,7 +307,6 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			throw new DAOException(se);
 		}
 	}
-
 	/**
 	 * Checks if an Applicant is unique, by checking the first/last names and the e-mail address. This will not return a
 	 * match against rejected Applicants.
@@ -317,11 +316,26 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
+		return checkUnique(p, dbName, -1);
+	}
+
+	/**
+	 * Checks if an Applicant is unique, by checking the first/last names and the e-mail address. This will not return a
+	 * match against rejected Applicants.
+	 * @param p the Person
+	 * @param dbName the database to search
+	 * @param days restrict uniqueness search to users created in the last number of days, or -1 for all
+	 * @return a Collection of database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> checkUnique(Person p, String dbName, int days) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS WHERE (STATUS=?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR " + "(EMAIL=?))");
+		sqlBuf.append(".APPLICANTS WHERE (STATUS=?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?))");
+		if (days > 0)
+			sqlBuf.append(" AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -329,6 +343,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			_ps.setString(2, p.getFirstName());
 			_ps.setString(3, p.getLastName());
 			_ps.setString(4, p.getEmail());
+			if (days > 0)
+				_ps.setInt(5, days);
+			
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);

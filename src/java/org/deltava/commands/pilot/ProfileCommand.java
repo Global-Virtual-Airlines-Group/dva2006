@@ -522,7 +522,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Check Pilots & applicants
 					dupeResults.addAll(rdao.checkUnique(p2, info.getDB()));
-					dupeResults.addAll(adao.checkUnique(p2, info.getDB()));
+					dupeResults.addAll(adao.checkUnique(p2, info.getDB(), 21));
 
 					// Remove our entry, or that of our applicant entry
 					dupeResults.remove(new Integer(p.getID()));

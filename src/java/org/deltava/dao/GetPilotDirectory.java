@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -98,7 +98,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Checks if a Person is unique, by checking the first/last names and the e-mail address.
 	 * @param p the Person
@@ -107,17 +107,34 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
+		return checkUnique(p, dbName, -1);
+	}
+
+	/**
+	 * Checks if a Person is unique, by checking the first/last names and the e-mail address.
+	 * @param p the Person
+	 * @param dbName the database to search
+	 * @param days restrict uniqueness search to users created in the last number of days, or -1 for all
+	 * @return a Collection of database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> checkUnique(Person p, String dbName, int days) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?))");
+		if (days > 0)
+			sqlBuf.append(" AND (CREATED > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, p.getFirstName());
 			_ps.setString(2, p.getLastName());
 			_ps.setString(3, p.getEmail());
+			if (days > 0)
+				_ps.setInt(4, days);
+			
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
