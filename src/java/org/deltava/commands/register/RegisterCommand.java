@@ -73,9 +73,8 @@ public class RegisterCommand extends AbstractCommand {
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
 		// Sort and save the airports
-		Map<String, Airport> airports = SystemData.getAirports();
 		Collection<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-		apSet.addAll(airports.values());
+		apSet.addAll(SystemData.getAirports().values());
 		ctx.setAttribute("airports", apSet, REQUEST);
 		
 		// Check if we ignore the fact that the airline is full
@@ -346,8 +345,8 @@ public class RegisterCommand extends AbstractCommand {
 					AirlineInformation info = i.next();
 
 					// Check Pilots & applicants
-					Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB()));
-					dupeResults.addAll(adao.checkUnique(a, info.getDB()));
+					Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB(), 28));
+					dupeResults.addAll(adao.checkUnique(a, info.getDB(), 28));
 					if (!dupeResults.isEmpty()) {
 						ctx.release();
 						ctx.setAttribute("appSubmitted", Boolean.TRUE, REQUEST);
