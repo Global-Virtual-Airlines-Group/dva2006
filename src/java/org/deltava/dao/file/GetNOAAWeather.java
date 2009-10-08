@@ -2,11 +2,11 @@
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.URL;
+import java.net.*;
 import java.text.*;
 import java.util.Date;
 
+import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.*;
 
 import org.deltava.dao.*;
@@ -122,7 +122,7 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 	 * @return a TAF bean
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public TAF getTAF(String code) throws DAOException {
+	public TAF getTAF(final String code) throws DAOException {
 		if (code == null)
 			return null;
 		
@@ -165,6 +165,7 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 			result = new TAF();
 			result.setDate(dt);
 			result.setData(buf.toString());
+			result.setAirport(new AirportLocation(0, 0) {{ setCode(code); }});
 			_cache.add(result);
 			return result;
 		} catch (Exception e) {
