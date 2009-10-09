@@ -87,6 +87,10 @@ return true;
  <td class="label">Waypoints</td>
  <td class="data"><el:text name="route" size="80" max="224" idx="*" value="" onBlur="void plotMap()" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /></td>
+</tr>
 <tr class="title caps">
  <td colspan="2" class="left">ROUTE SEARCH</td>
 </tr>
@@ -140,8 +144,8 @@ enableElement('SearchButton', false);
 
 // Load the airports
 updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
-updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA));
-updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL));
+window.setTimeout("updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA))", 1250);
+window.setTimeout("updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL))", 1500);
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -162,9 +166,8 @@ map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 GEvent.addListener(map, 'maptypechanged', updateMapText);
-
 <c:if test="${!empty tileHost}">
-//Display the copyright notice
+// Display the copyright notice
 var d = new Date();
 var cp = document.getElementById('copyright');
 cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
@@ -173,7 +176,7 @@ cpos.apply(cp);
 mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
 
-//Update text color
+// Update text color
 GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
 </body>

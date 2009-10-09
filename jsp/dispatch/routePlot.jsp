@@ -100,6 +100,10 @@ return true;
  <td class="label">Terminal Arrival (STAR)</td>
  <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /></td>
+</tr>
 <tr class="title caps">
  <td colspan="2" class="left">ROUTE SEARCH</td>
 </tr>

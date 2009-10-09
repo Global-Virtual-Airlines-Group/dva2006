@@ -98,9 +98,10 @@ xmlreq.onreadystatechange = function() {
 		f.routeCodes.value = codes.join(' ');
 
 	// Get the midpoint and center the map
+	var reCenter = (!f.noRecenter.checked);
 	var mps = xdoc.getElementsByTagName("midpoint");
 	var mpp = mps[0];
-	if (mpp) {
+	if (mpp && reCenter) {
 		var mp = new GLatLng(parseFloat(mpp.getAttribute("lat")), parseFloat(mpp.getAttribute("lng")));
 		map.setCenter(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
 	}
