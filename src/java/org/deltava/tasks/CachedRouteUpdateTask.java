@@ -4,8 +4,7 @@ package org.deltava.tasks;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.schedule.FlightRoute;
-import org.deltava.beans.schedule.ScheduleRoute;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.wsdl.GetFARoutes;
@@ -71,10 +70,21 @@ public class CachedRouteUpdateTask extends Task {
 					// Purge the routes and load new ones
 					routesLoaded++;
 					Collection<? extends FlightRoute> faroutes = fwdao.getRouteData(rp.getAirportD(), rp.getAirportA());
-					log.warn("Loaded " + faroutes.size() + " routes between " + rp.getAirportD() + " and " + rp.getAirportA());
 					if (!faroutes.isEmpty()) {
+						log.warn("Loaded " + faroutes.size() + " routes between " + rp.getAirportD() + " and " + rp.getAirportA());
 						rcwdao.purge(rp.getAirportD(), rp.getAirportA());
 						rcwdao.write(faroutes);
+					} else {
+						log.warn("Created dummy route between " + rp.getAirportD() + " and " + rp.getAirportA());
+						ExternalRoute rt = new ExternalRoute();
+						rt.setAirportD(rp.getAirportD());
+						rt.setAirportA(rp.getAirportA());
+						rt.setComments("Auto-generated dummy route");
+						rt.setSource("Internal");
+						rt.setCruiseAltitude("35000");
+						rt.setCreatedOn(new Date());
+						rt.setRoute(rp.getAirportD().getICAO() + " " + rp.getAirportA().getICAO());
+						rcwdao.write(Collections.singleton(rt));
 					}
 					
 					// Commit
