@@ -92,7 +92,7 @@ public class GetACARSData extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, R_ALT, HEADING, "
-				+ "PITCH, BANK, ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUEL, FUELFLOW, "
+				+ "PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUEL, FUELFLOW, "
 				+ "AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, PHASE FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
@@ -107,7 +107,7 @@ public class GetACARSData extends DAO {
 			while (rs.next()) {
 				java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
 				RouteEntry entry = new RouteEntry(dt, new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
-				entry.setFlags(rs.getInt(22));
+				entry.setFlags(rs.getInt(23));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
 				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
@@ -121,18 +121,19 @@ public class GetACARSData extends DAO {
 					entry.setAirSpeed(rs.getInt(10));
 					entry.setGroundSpeed(rs.getInt(11));
 					entry.setVerticalSpeed(rs.getInt(12));
-					entry.setN1(rs.getDouble(13));
-					entry.setN2(rs.getDouble(14));
-					entry.setFlaps(rs.getInt(15));
-					entry.setWindHeading(rs.getInt(16));
-					entry.setWindSpeed(rs.getInt(17));
-					entry.setFuelRemaining(rs.getInt(18));
-					entry.setFuelFlow(rs.getInt(19));
-					entry.setAOA(rs.getDouble(20));
-					entry.setG(rs.getDouble(21));
-					entry.setFrameRate(rs.getInt(23));
-					entry.setSimRate(rs.getInt(24));
-					entry.setPhase(rs.getInt(25));
+					entry.setMach(rs.getDouble(13));
+					entry.setN1(rs.getDouble(14));
+					entry.setN2(rs.getDouble(15));
+					entry.setFlaps(rs.getInt(16));
+					entry.setWindHeading(rs.getInt(17));
+					entry.setWindSpeed(rs.getInt(18));
+					entry.setFuelRemaining(rs.getInt(19));
+					entry.setFuelFlow(rs.getInt(20));
+					entry.setAOA(rs.getDouble(21));
+					entry.setG(rs.getDouble(22));
+					entry.setFrameRate(rs.getInt(24));
+					entry.setSimRate(rs.getInt(25));
+					entry.setPhase(rs.getInt(26));
 					results.add(entry);
 				}
 			}
