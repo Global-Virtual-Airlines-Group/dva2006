@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML text field elements.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -45,10 +45,10 @@ public class InputTag extends FormElementTag {
             _out.print(" />");
         } catch (Exception e) {
             throw new JspException(e);
+        } finally {
+        	release();
         }
         
-        // Reset state and return
-        release();
         return EVAL_PAGE;
     }
     
@@ -119,6 +119,14 @@ public class InputTag extends FormElementTag {
      */
     public void setOnBlur(String jsCode) {
         _data.setAttribute("onblur", jsCode);
+    }
+    
+    /**
+     * Sets the JavaScript event for this element's onChange() event.
+     * @param jsCode the JavaScript code
+     */
+    public void setOnChange(String jsCode) {
+    	_data.setAttribute("onchange", jsCode);
     }
     
     /**
