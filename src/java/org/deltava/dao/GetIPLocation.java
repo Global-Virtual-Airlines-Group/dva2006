@@ -5,13 +5,13 @@ import java.sql.*;
 
 import org.deltava.beans.system.*;
 
-import org.deltava.util.NetworkUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 2.5
  */
 
@@ -42,6 +42,8 @@ public class GetIPLocation extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public IPAddressInfo get(String addr) throws DAOException {
+		if (StringUtils.isEmpty(addr) || !addr.contains("."))
+			return null;
 		
 		// Check the cache
 		long rawAddr = NetworkUtils.pack(addr) & 0xFFFFFF00;
