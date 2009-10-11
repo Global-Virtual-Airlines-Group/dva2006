@@ -2,6 +2,9 @@
 package org.deltava.commands.main;
 
 import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.EquipmentType;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -34,12 +37,23 @@ public class RosterCommand extends AbstractViewCommand {
         ViewContext vc = initView(ctx);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
            vc.setSortType(SORT_CODE[4]);
-     
+        
         try {
-            GetPilot dao = new GetPilot(ctx.getConnection());
+        	Connection con = ctx.getConnection();
+        	
+        	// Get equipment types
+        	GetEquipmentType eqdao = new GetEquipmentType(con);
+        	EquipmentType eq = eqdao.get(ctx.getParameter("eqType"));
+        	ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
+        	
+        	// Load the roster
+            GetPilot dao = new GetPilot(con);
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
-            vc.setResults(dao.getActivePilots(vc.getSortType()));
+            if (eq == null)
+            	vc.setResults(dao.getActivePilots(vc.getSortType()));
+            else
+            	vc.setResults(dao.getPilotsByEQ(eq, vc.getSortType(), true, null));
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

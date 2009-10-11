@@ -33,8 +33,9 @@ return true;
 <view:table className="view" pad="default" space="default" cmd="roster">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="3" class="left">PILOT ROSTER</td>
- <td colspan="5" class="right">SORT BY <el:combo name="sortType" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sort()" /></td>
+ <td colspan="3" class="left caps"><content:airline /> PILOT ROSTER</td>
+ <td colspan="5" class="right">PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="All Programs" value="${param.eqType}" onChange="void sort()" />
+ SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sort()" /></td>
 </tr>
 
 <!-- Table Header Bar-->
