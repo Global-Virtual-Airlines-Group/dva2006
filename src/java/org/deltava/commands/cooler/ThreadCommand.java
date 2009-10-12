@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -58,7 +58,7 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Get the Message Thread
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
-			mt = tdao.getThread(ctx.getID());
+			mt = tdao.getThread(ctx.getID(), true);
 			if (mt == null)
 				throw notFoundException("Unknown Message Thread - " + ctx.getID());
 
@@ -78,7 +78,7 @@ public class ThreadCommand extends AbstractCommand {
 				}
 				
 				ctx.setAttribute("barColors", COLORS, REQUEST);
-				ctx.setAttribute("maxVotes", new Integer(maxVotes), REQUEST);
+				ctx.setAttribute("maxVotes", Integer.valueOf(maxVotes), REQUEST);
 			}
 
 			// Check user access
@@ -210,13 +210,25 @@ public class ThreadCommand extends AbstractCommand {
 			mt.view();
 
 			// Save all channels in the thread for the move combobox
-			if (ctx.isUserInRole("Moderator")) {
+			if (ctx.isUserInRole("Moderator") || ctx.isUserInRole("HR")) {
 				ctx.setAttribute("channel", c, REQUEST);
 				boolean isAdmin = ctx.isUserInRole("Admin");
 				Collection<Channel> channels = cdao.getChannels(isAdmin ? null : airline, isAdmin, isAdmin);
 				channels.remove(Channel.ALL);
 				channels.remove(Channel.SHOTS);
 				ctx.setAttribute("channels", channels, REQUEST);
+				
+				// Load poster IP addreses
+				GetIPLocation ipdao = new GetIPLocation(con);
+				Map<String, IPAddressInfo> addrInfo = new HashMap<String, IPAddressInfo>();
+				for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
+					Message msg = i.next();
+					IPAddressInfo info = ipdao.get(msg.getRemoteAddr());
+					if (info != null)
+						addrInfo.put(msg.getRemoteAddr(), info);
+				}
+			
+				ctx.setAttribute("addrInfo", addrInfo, REQUEST);
 			}
 			
 			// Save the thread, pilots and access controller in the request
