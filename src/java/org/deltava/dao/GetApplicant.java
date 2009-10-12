@@ -21,7 +21,7 @@ import org.deltava.util.*;
 public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 	private static final Logger log = Logger.getLogger(GetApplicant.class);
-
+	
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -37,18 +37,13 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Applicant get(int id) throws DAOException {
-
-		// Check if we're in the cache
-		Applicant a = (Applicant) _cache.get(Integer.valueOf(id));
-		if (a != null)
-			return a;
-
 		try {
 			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Get results, return first or null
 			List<Applicant> results = execute();
+			Applicant a = null;
 			if (!results.isEmpty()) {
 				a = results.get(0);
 				loadStageChoices(a);
@@ -123,20 +118,13 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((UserData) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
-			Applicant a = (Applicant) _cache.get(id);
-			if (a != null) {
-				results.add(a);
-			} else {
-				querySize++;
-				sqlBuf.append(id.toString());
-				if (i.hasNext())
-					sqlBuf.append(',');
-			}
+			querySize++;
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		if (log.isDebugEnabled())
-			log.debug("Uncached set size = " + querySize);
 		if (querySize > 0) {
 			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
 				sqlBuf.setLength(sqlBuf.length() - 1);
@@ -152,9 +140,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 				throw new DAOException(se);
 			}
 
-			// Add to results and the cache
 			results.addAll(uncached);
-			_cache.addAll(uncached);
 		}
 
 		// Convert to a Map for easy searching

@@ -3,7 +3,7 @@ package org.deltava.dao;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.Pilot;
 
 import org.deltava.util.cache.*;
 
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
  * A Data Access Object to support reading and writing Pilot object(s) to the database. This DAO contains the shared
  * Pilot cache which other DAOs which access the PILOTS table may access.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -20,7 +20,7 @@ abstract class PilotDAO extends DAO implements CachingDAO {
 	/**
 	 * The Pilot bean cache.
 	 */
-	protected static final Cache<Person> _cache = new ExpiringCache<Person>(512, 3600);
+	protected static final Cache<Pilot> _cache = new ExpiringCache<Pilot>(640, 3600);
 
 	/**
 	 * Initializes the Data Access Object. 
@@ -38,22 +38,10 @@ abstract class PilotDAO extends DAO implements CachingDAO {
 		if (id == -1)
 			_cache.clear();
 		else
-			_cache.remove(new Integer(id));
+			_cache.remove(Integer.valueOf(id));
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _cache.getRequests();
-	}
-	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _cache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 }

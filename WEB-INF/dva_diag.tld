@@ -32,12 +32,7 @@
 			<type>org.deltava.dao.CachingDAO</type>
 		</attribute>
 		<attribute>
-			<name>hits</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>requests</name>
+			<name>var</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

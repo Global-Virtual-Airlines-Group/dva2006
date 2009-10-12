@@ -1,25 +1,21 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
+
+import org.deltava.util.cache.CacheInfo;
 
 /**
  * This interface is used by Data Access Objects that implement an internal cache, to provide
  * visibility for cache statistics.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
 public interface CachingDAO {
-
+	
 	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
+	 * Returns the cache information.
+	 * @return a CacheInfo bean
 	 */
-	public abstract int getHits();
-
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public abstract int getRequests();
+	public abstract CacheInfo getCacheInfo();
 }
