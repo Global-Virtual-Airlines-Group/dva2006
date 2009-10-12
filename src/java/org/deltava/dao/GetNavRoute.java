@@ -122,7 +122,7 @@ public class GetNavRoute extends GetNavAirway {
 			return new LinkedList<NavigationDataBean>();
 
 		// Check the cache
-		Route obj = _rCache.get(route);
+		Route obj = _rCache.get(new Integer(route.hashCode()));
 		if (obj instanceof CacheableRoute) {
 			CacheableRoute cr = (CacheableRoute) obj;
 			return cr.getWaypoints();
