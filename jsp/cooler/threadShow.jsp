@@ -110,6 +110,7 @@ return true;
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response ${msg.hexID} -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="page" />
+<c:set var="ipInfo" value="${addrInfo[msg.remoteAddr]}" scope="page" />
 <c:set var="isUnread" value="${fn:get(unread, postIdx)}" scope="page" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="page" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="page" />
@@ -215,7 +216,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </el:showaddr></td>
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator,HR">
- from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT WARNING</span></c:if>
+ from ${msg.remoteHost} (${msg.remoteAddr}
+<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
+<c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
 </content:filter></td>
 <c:choose>
 <c:when test="${canEdit}">
