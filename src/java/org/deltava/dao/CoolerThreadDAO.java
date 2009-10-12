@@ -40,7 +40,7 @@ abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 	 * @param threadID the Message Thread database ID
 	 */
 	protected static void invalidate(int threadID) {
-		_tCache.remove(new Integer(threadID));
+		_tCache.remove(Integer.valueOf(threadID));
 	}
 	
 	/**
@@ -49,15 +49,11 @@ abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 	static void invalidateAll() {
 		_tCache.clear();
 	}
-
-	public int getHits() {
-		return _tCache.getHits();
-	}
-
-	public int getRequests() {
-		return _tCache.getRequests();
-	}
 	
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_tCache);
+	}
+
 	/**
 	 * Loads a number of message threads based on their ID.
 	 * @param IDs a Collection of database IDs

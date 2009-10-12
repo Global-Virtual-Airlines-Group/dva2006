@@ -18,8 +18,8 @@ public abstract class Cache<T extends Cacheable> {
 	private final Semaphore _ovLock = new Semaphore(1, true);
 	private int _maxSize;
 
-	private final AtomicInteger _hits = new AtomicInteger();
-	private final AtomicInteger _gets = new AtomicInteger();
+	private final AtomicLong _hits = new AtomicLong();
+	private final AtomicLong _gets = new AtomicLong();
 
 	/**
 	 * Initializes the cache.
@@ -131,7 +131,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @return the number of hits
 	 * @see Cache#getRequests()
 	 */
-	public final int getHits() {
+	public final long getHits() {
 		return _hits.intValue();
 	}
 
@@ -140,7 +140,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @return the number of requests
 	 * @see Cache#getHits()
 	 */
-	public final int getRequests() {
+	public final long getRequests() {
 		return _gets.intValue();
 	}
 	

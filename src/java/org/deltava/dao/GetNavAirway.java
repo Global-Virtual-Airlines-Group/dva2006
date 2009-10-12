@@ -35,22 +35,13 @@ public class GetNavAirway extends GetNavData {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _rCache.getRequests() + _aCache.getRequests() + _rwCache.getRequests();
+	public CacheInfo getCacheInfo() {
+		CacheInfo info = new CacheInfo(_rCache);
+		info.add(_aCache);
+		info.add(_rwCache);
+		return info;
 	}
 	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _rCache.getHits() + _aCache.getHits() + _rwCache.getHits();
-	}
-
 	/**
 	 * Loads a SID/STAR from the navigation database.
 	 * @param name the name of the Terminal Route, as NAME.TRANSITION

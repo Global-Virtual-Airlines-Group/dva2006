@@ -10,16 +10,14 @@ import org.deltava.dao.CachingDAO;
  * A JSP Tag to call static methods on a Caching DAO that cannot be
  * performed via EL in JDK7.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.4
  */
 
 public class CachingDAOTag extends SimpleTagSupport {
 	
 	private CachingDAO _dao;
-
-	private String _hitVar;
-	private String _reqVar;
+	private String _infoVar;
 	
 	/**
 	 * Sets the caching Data Access Object to query.
@@ -30,31 +28,20 @@ public class CachingDAOTag extends SimpleTagSupport {
 	}
 
 	/**
-	 * Sets the request attribute to store the hit count in.
-	 * @param varName the request attribute name
+	 * Sets the page attribute to store the cache info in.
+	 * @param varName the page attribute name
 	 */
-	public void setHits(String varName) {
-		_hitVar = varName;
+	public void setVar(String varName) {
+		_infoVar = varName;
 	}
 	
-	/**
-	 * Sets the request attribute to store the request count in.
-	 * @param varName the request attribute name
-	 */
-	public void setRequests(String varName) {
-		_reqVar = varName;
-	}
-
 	/**
 	 * Saves the cache hit/request counts in the request  
 	 */
 	public void doTag() throws JspException {
 		try {
 			JspContext ctx = getJspContext();
-			if (_hitVar != null)
-				ctx.setAttribute(_hitVar, new Integer(_dao.getHits()), PageContext.REQUEST_SCOPE);
-			if (_reqVar != null)
-				ctx.setAttribute(_reqVar, new Integer(_dao.getRequests()), PageContext.REQUEST_SCOPE);
+			ctx.setAttribute(_infoVar, _dao.getCacheInfo(), PageContext.PAGE_SCOPE);
 		} catch (Exception e) {
 			throw new JspException(e);
 		}

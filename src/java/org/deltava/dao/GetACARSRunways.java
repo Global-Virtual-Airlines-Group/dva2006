@@ -78,20 +78,8 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 		}
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _cache.getRequests();
-	}
-	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _cache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 	
 	/**

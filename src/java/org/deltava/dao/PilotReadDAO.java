@@ -42,7 +42,7 @@ abstract class PilotReadDAO extends PilotDAO {
 	public final Pilot get(int id) throws DAOException {
 
 		// Check if we're in the cache
-		Pilot p = (Pilot) _cache.get(new Integer(id));
+		Pilot p = _cache.get(Integer.valueOf(id));
 		if (p != null)
 			return p;
 
@@ -185,7 +185,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
-			Pilot p = (Pilot) _cache.get(id);
+			Pilot p = _cache.get(id);
 			if (p != null) {
 				results.add(p);
 			} else {

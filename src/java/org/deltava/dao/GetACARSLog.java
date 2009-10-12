@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -65,12 +65,8 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 		}
 	}
 
-	public int getHits() {
-		return _statCache.getHits();
-	}
-	
-	public int getRequests() {
-		return _statCache.getRequests();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_statCache);
 	}
 	
 	/**
