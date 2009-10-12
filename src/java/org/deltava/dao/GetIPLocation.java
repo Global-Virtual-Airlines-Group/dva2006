@@ -27,14 +27,10 @@ public class GetIPLocation extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	public int getHits() {
-		return _cache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 	
-	public int getRequests() {
-		return _cache.getRequests();
-	}
-
 	/**
 	 * Retrieves Geolocation data for a particular IP address.
 	 * @param addr the IP address

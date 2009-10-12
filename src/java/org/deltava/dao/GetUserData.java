@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 1.0
  */
 
@@ -35,20 +35,10 @@ public class GetUserData extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _appCache.getRequests() + _usrCache.getRequests();
-	}
-	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _appCache.getHits() + _usrCache.getHits();
+	public CacheInfo getCacheInfo() {
+		CacheInfo info = new CacheInfo(_appCache);
+		info.add(_usrCache);
+		return info;
 	}
 	
 	/**
@@ -56,7 +46,7 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * @param id the database ID
 	 */
 	static void invalidate(int id) {
-		_usrCache.remove(new Integer(id));
+		_usrCache.remove(Integer.valueOf(id));
 	}
 	
 	/**

@@ -19,14 +19,10 @@ public class GetFAWeather extends FlightAwareDAO implements CachingDAO {
 	
 	private static final ExpiringCache<WeatherDataBean> _wxCache = new ExpiringCache<WeatherDataBean>(256, 1800);
 
-	public int getHits() {
-		return _wxCache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_wxCache);
 	}
-	
-	public int getRequests() {
-		return _wxCache.getRequests();
-	}
-	
+
 	/**
 	 * Loads a weather data bean.
 	 * @param t the bean type (TAF/METAR)

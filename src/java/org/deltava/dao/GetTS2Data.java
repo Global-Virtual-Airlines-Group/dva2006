@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load TeamSpeak 2 configuration data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -23,7 +23,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(GetTS2Data.class);
 
-	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
+	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 	private static final Cache<Cacheable> _cache = new ExpiringCache<Cacheable>(12, 600);
 
 	/**
@@ -34,20 +34,8 @@ public class GetTS2Data extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _cache.getRequests();
-	}
-	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _cache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 
 	/**
@@ -58,9 +46,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 			return null;
 
 		try {
-			synchronized (_df) {
-				return _df.parse(dt);
-			}
+			return _df.parse(dt);
 		} catch (ParseException pe) {
 			log.warn("Error parsing date " + dt);
 			return new java.util.Date();
@@ -75,13 +61,11 @@ public class GetTS2Data extends DAO implements CachingDAO {
 	 */
 	public Channel getChannel(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM teamspeak.ts2_channels WHERE (i_channel_id=?)");
+			prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_channels WHERE (i_channel_id=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the query and return
 			List<Channel> results = executeChannels();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

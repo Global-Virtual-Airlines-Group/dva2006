@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 2.3
+ * @version 2.6
  * @since 2.1
  */
 
@@ -52,20 +52,8 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _rCache.getRequests();
-	}
-
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _rCache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_rCache);
 	}
 	
 	/**

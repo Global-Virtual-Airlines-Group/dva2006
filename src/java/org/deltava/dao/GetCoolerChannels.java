@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,13 +15,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
 public class GetCoolerChannels extends DAO implements CachingDAO {
 
-	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(16, 1800);
+	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(24, 1800);
 
 	/**
 	 * Create this DAO using a JDBC connection.
@@ -31,22 +31,10 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _cache.getRequests();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _cache.getHits();
-	}
-
 	/**
 	 * Helper class to allow displaying of last subject in a channel.
 	 */

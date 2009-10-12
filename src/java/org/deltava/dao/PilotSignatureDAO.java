@@ -34,19 +34,7 @@ public abstract class PilotSignatureDAO extends DAO implements CachingDAO {
 		PilotDAO.invalidate(id);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getHits() {
-		return _sigCache.getHits();
-	}
-
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getRequests() {
-		return _sigCache.getRequests();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_sigCache);
 	}
 }

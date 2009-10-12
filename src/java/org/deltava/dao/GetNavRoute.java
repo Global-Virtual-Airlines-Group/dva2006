@@ -94,20 +94,8 @@ public class GetNavRoute extends GetNavAirway {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _rCache.getRequests();
-	}
-	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _rCache.getHits();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_rCache);
 	}
 
 	/**

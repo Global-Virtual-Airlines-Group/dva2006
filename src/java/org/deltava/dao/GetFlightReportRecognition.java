@@ -32,20 +32,8 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getHits() {
-		return _cache.getHits();
-	}
-
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getRequests() {
-		return _cache.getRequests();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 	
 	/**

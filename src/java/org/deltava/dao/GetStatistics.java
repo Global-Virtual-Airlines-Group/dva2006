@@ -30,22 +30,12 @@ public class GetStatistics extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _cache.getRequests() + _coolerStatsCache.getRequests();
+	public CacheInfo getCacheInfo() {
+		CacheInfo info = new CacheInfo(_cache);
+		info.add(_coolerStatsCache);
+		return info;
 	}
 	
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _cache.getHits() + _coolerStatsCache.getHits();
-	}
-
 	/**
 	 * Returns Airline Totals.
 	 * @return the AirlineTotals for this airline

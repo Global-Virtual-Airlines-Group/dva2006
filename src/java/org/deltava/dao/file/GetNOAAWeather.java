@@ -35,12 +35,8 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 		super(null);
 	}
 	
-	public int getHits() {
-		return _cache.getHits();
-	}
-	
-	public int getRequests() {
-		return _cache.getRequests();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 	
 	/**

@@ -30,22 +30,10 @@ public class GetLibrary extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	/**
-	 * Returns the number of cache hits.
-	 * @return the number of hits
-	 */
-	public int getRequests() {
-		return _dlCache.getRequests();
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_dlCache);
 	}
-
-	/**
-	 * Returns the number of cache requests.
-	 * @return the number of requests
-	 */
-	public int getHits() {
-		return _dlCache.getHits();
-	}
-
+	
 	/**
 	 * Returns the contents of a Fleet Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.

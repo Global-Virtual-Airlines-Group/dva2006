@@ -11,23 +11,29 @@
 
 <!-- DAO CACHE Data Title Bar -->
 <tr class="title caps">
- <td width="65%">DATA ACCESS OBJECT CLASS</td>
- <td width="10%">REQUESTS</td>
- <td width="10%">HITS</td>
+ <td width="36%">DATA ACCESS OBJECT CLASS</td>
+ <td width="9%">SIZE</td>
+ <td width="9%">CAPACITY</td>
+ <td width="14%">FILL RATE</td>
+ <td width="9%">REQUESTS</td>
+ <td width="9%">HITS</td>
  <td>HIT RATE</td>
 </tr>
 
 <!-- DAO Cache Data -->
 <c:forEach var="dao" items="${daoCaches}">
-<diag:daocache dao="${dao}" hits="daoHits" requests="daoReqs" />
+<diag:daocache dao="${dao}" var="cacheInfo" />
 <tr>
  <td class="pri bld">${dao.class.name}</td>
- <td><fmt:int value="${daoReqs}" /></td>
- <td><fmt:int value="${daoHits}" /></td>
-<c:if test="${daoReqs > 0}">
- <td class="bld"><fmt:dec value="${daoHits * 100 / daoReqs}" fmt="##0.0" />%</td>
+ <td><fmt:int value="${cacheInfo.size}" /></td>
+ <td><fmt:int value="${cacheInfo.maxSize}" /></td>
+ <td class="sec"><fmt:dec value="${(cacheInfo.size * 100.0) / cacheInfo.maxSize}" fmt="##0.0" />%</td>
+ <td><fmt:int value="${cacheInfo.requests}" /></td>
+ <td><fmt:int value="${cacheInfo.hits}" /></td>
+<c:if test="${cacheInfo.requests > 0}">
+ <td class="bld"><fmt:dec value="${(cacheInfo.hits * 100.0) / cacheInfo.requests}" fmt="##0.0" />%</td>
 </c:if> 
-<c:if test="${daoReqs == 0}">
+<c:if test="${cacheInfo.requests == 0}">
  <td class="bld">N/A</td>
 </c:if>
 </tr>
