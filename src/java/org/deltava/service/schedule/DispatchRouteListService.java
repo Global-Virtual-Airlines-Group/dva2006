@@ -89,7 +89,7 @@ public class DispatchRouteListService extends WebService {
 			
 			// Get the arrival weather
 			GetNOAAWeather wxdao = new GetNOAAWeather();
-			METAR mA = wxdao.getMETAR(aA.getICAO());
+			METAR mA = wxdao.getMETAR(new AirportLocation(aA));
 			
 			// Fix the SID/STAR
 			GetNavRoute navdao = new GetNavRoute(con);

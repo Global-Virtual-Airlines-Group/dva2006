@@ -54,21 +54,20 @@ public class AirportWeatherService extends WeatherDataService {
 		Collection<WeatherDataBean> wxBeans = new ArrayList<WeatherDataBean>();
 		AirportLocation al = null;
 		try {
-			if (useFA) {
-				if (useMETAR)
-					wxBeans.add(getFAData().getMETAR(code));
-				if (useTAF)
-					wxBeans.add(getFAData().getTAF(code));
-			} else {
-				if (useMETAR)
-					wxBeans.add(getNOAAData(WeatherDataBean.Type.METAR, code));
-				if (useTAF)
-					wxBeans.add(getNOAAData(WeatherDataBean.Type.TAF, code));
-			}
-
-			// Get the geographic location
 			GetNavData navdao = new GetNavData(ctx.getConnection());
 			al = navdao.getAirport(code);
+			
+			if (useFA) {
+				if (useMETAR)
+					wxBeans.add(getFAData().getMETAR(al));
+				if (useTAF)
+					wxBeans.add(getFAData().getTAF(al));
+			} else {
+				if (useMETAR)
+					wxBeans.add(getNOAAData(WeatherDataBean.Type.METAR, al));
+				if (useTAF)
+					wxBeans.add(getNOAAData(WeatherDataBean.Type.TAF, al));
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
