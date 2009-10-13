@@ -1,6 +1,7 @@
 // Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
+import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.WeatherDataBean;
 
 import org.deltava.dao.DAOException;
@@ -9,7 +10,6 @@ import org.deltava.dao.wsdl.GetFAWeather;
 
 import org.deltava.service.WebService;
 
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -21,19 +21,17 @@ import org.deltava.util.system.SystemData;
 
 abstract class WeatherDataService extends WebService {
 	
-	protected static final Cache<WeatherDataBean> _cache = new ExpiringCache<WeatherDataBean>(256, 1800);
-
 	/**
 	 * Returns an NOAA Weather bean.
 	 * @param t the weather type (TAF / METAR) 
-	 * @param code the 
+	 * @param a the AirportLocation bean
 	 * @return a WeatherDataBean
 	 * @throws DAOException if an error occurs
 	 */
-	protected WeatherDataBean getNOAAData(WeatherDataBean.Type t, String code) throws DAOException {
+	protected WeatherDataBean getNOAAData(WeatherDataBean.Type t, AirportLocation a) throws DAOException {
 		try {
 			GetNOAAWeather dao = new GetNOAAWeather();
-			WeatherDataBean wx = dao.get(t, code);
+			WeatherDataBean wx = dao.get(t, a);
 			if (wx == null) {
 				wx = WeatherDataBean.create(t);
 				wx.setData("Weather not available");

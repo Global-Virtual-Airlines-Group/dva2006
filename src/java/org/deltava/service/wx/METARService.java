@@ -5,6 +5,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
+import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.WeatherDataBean;
 
 import org.deltava.dao.*;
@@ -38,15 +39,14 @@ public class METARService extends WeatherDataService {
 		// Get the weather data
 		WeatherDataBean data = null;
 		try {
-			String code = ctx.getParameter("code");
-			if (useFA)
-				data = getFAData().getMETAR(code);
-			else 
-				data = getNOAAData(WeatherDataBean.Type.METAR, code);
-			
 			// Get the geographic location
+			String code = ctx.getParameter("code");
 			GetNavData navdao = new GetNavData(ctx.getConnection());
-			data.setAirport(navdao.getAirport(code));
+			AirportLocation loc = navdao.getAirport(code);
+			if (useFA)
+				data = getFAData().getMETAR(loc);
+			else 
+				data = getNOAAData(WeatherDataBean.Type.METAR, loc);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
