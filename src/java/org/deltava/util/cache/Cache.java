@@ -98,7 +98,11 @@ public abstract class Cache<T extends Cacheable> {
 		if ((_cache.size() > _maxSize) && _ovLock.tryAcquire()) {
 			try {
 				TreeSet<CacheEntry<T>> entries = new TreeSet<CacheEntry<T>>(_cache.values());
-				_cache.values().remove(entries.first());
+				while (entries.size() > _maxSize) {
+					CacheEntry<T> entry = entries.first();
+					_cache.values().remove(entry);
+					entries.remove(entry);
+				}
 			} finally {
 				_ovLock.release();
 			}
