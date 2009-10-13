@@ -165,10 +165,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheab
 	}
 	
 	public Object cacheKey() {
-		StringBuilder buf = new StringBuilder(getType());
-		buf.append('$');
-		buf.append(_pos.getCode());
-		return buf.toString();
+		return _pos.getCode();
 	}
 
 	/**

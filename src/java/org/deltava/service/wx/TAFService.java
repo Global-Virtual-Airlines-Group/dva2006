@@ -42,15 +42,12 @@ public class TAFService extends WeatherDataService {
 		WeatherDataBean data = null;
 		try {
 			String code = ctx.getParameter("code");
-			if (useFA)
-				data = getFAData().getTAF(code);
-			else
-				data = getNOAAData(WeatherDataBean.Type.TAF, code);
-			
-			// Get the geographic location
 			GetNavData navdao = new GetNavData(ctx.getConnection());
 			AirportLocation al = navdao.getAirport(code);
-			data.setAirport(al);
+			if (useFA)
+				data = getFAData().getTAF(al);
+			else
+				data = getNOAAData(WeatherDataBean.Type.TAF, al);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {

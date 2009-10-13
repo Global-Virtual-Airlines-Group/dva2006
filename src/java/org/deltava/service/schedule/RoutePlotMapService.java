@@ -56,19 +56,19 @@ public class RoutePlotMapService extends MapPlotService {
 			String airportACode = txIATA(ctx.getParameter("airportA"));
 			String airportLCode = txIATA(ctx.getParameter("airportL"));
 			
-			// Get the weather
-			METAR wxD = wxdao.getMETAR(airportDCode);
-			if (wxD != null)
-				wx.add(wxD);
-			METAR wxA = wxdao.getMETAR(airportACode);
-			if (wxA != null)
-				wx.add(wxA);
-
 			// Get the departure/arrival airports
 			AirportLocation aD = dao.getAirport(airportDCode);
 			AirportLocation aA = dao.getAirport(airportACode);
 			AirportLocation aL = dao.getAirport(airportLCode);
 			String route = ctx.getParameter("route");
+			
+			// Get the weather
+			METAR wxD = wxdao.getMETAR(aD);
+			if (wxD != null)
+				wx.add(wxD);
+			METAR wxA = wxdao.getMETAR(aA);
+			if (wxA != null)
+				wx.add(wxA);
 
 			// Add the departure airport
 			if (aD != null) {

@@ -24,7 +24,8 @@ import org.deltava.util.system.SystemData;
 
 public class GetNOAAWeather extends DAO implements CachingDAO {
 	
-	private static final Cache<WeatherDataBean> _cache = new ExpiringCache<WeatherDataBean>(8192, 3600);
+	private static final Cache<METAR> _wxCache = new ExpiringCache<METAR>(512, 1800);
+	private static final Cache<TAF> _fCache = new ExpiringCache<TAF>(512, 1800);
 	
 	private final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	
@@ -36,38 +37,40 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 	}
 	
 	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
+		CacheInfo info = new CacheInfo(_wxCache);
+		info.add(_fCache);
+		return info;
 	}
 	
 	/**
 	 * Loads a weather data bean.
 	 * @param t the bean type (TAF/METAR)
-	 * @param code the ICAO code
+	 * @param loc the AirportLocation
 	 * @return the weather bean, or null if not found
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public WeatherDataBean get(WeatherDataBean.Type t, String code) throws DAOException {
+	public WeatherDataBean get(WeatherDataBean.Type t, AirportLocation loc) throws DAOException {
 		switch (t) {
 			case TAF:
-				return getTAF(code);
+				return getTAF(loc);
 			case METAR:
 			default:
-				return getMETAR(code);
+				return getMETAR(loc);
 		}
 	}
 
 	/**
 	 * Loads METAR data from the stream.
-	 * @param code the ICAO code
+	 * @param loc the AirportLocation
 	 * @return a METAR bean
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public METAR getMETAR(String code) throws DAOException {
-		if (code == null)
+	public METAR getMETAR(AirportLocation loc) throws DAOException {
+		if (loc == null)
 			return null;
 		
 		// Check the cache
-		METAR result = (METAR) _cache.get("METAR$" + code);
+		METAR result = _wxCache.get(loc.getCode());
 		if (result != null)
 			return result;
 		
@@ -77,7 +80,7 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 				throw new DAOException("FTP expected - " + url.toExternalForm());
 			
 			// Get the file name
-			String fName = code.toUpperCase() + ".TXT";
+			String fName = loc.getCode() + ".TXT";
 
 			// Connect to the FTP site and change directories
 			FTPConnection ftpc = new FTPConnection(url.getHost());
@@ -105,7 +108,8 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 			result = MetarParser.parse(buf.toString());
 			result.setDate(dt);
 			result.setData(buf.toString());
-			_cache.add(result);
+			result.setAirport(loc);
+			_wxCache.add(result);
 			return result;
 		} catch (Exception e) {
 			throw new DAOException(e);
@@ -114,16 +118,16 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 	
 	/**
 	 * Loads TAF data from the stream.
-	 * @param code the ICAO code
+	 * @param loc the AirportLocation bean
 	 * @return a TAF bean
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public TAF getTAF(final String code) throws DAOException {
-		if (code == null)
+	public TAF getTAF(AirportLocation loc) throws DAOException {
+		if (loc == null)
 			return null;
 		
 		// Check the cache
-		TAF result = (TAF) _cache.get("TAF$" + code);
+		TAF result = _fCache.get(loc.getCode());
 		if (result != null)
 			return result;
 		
@@ -133,7 +137,7 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 				throw new DAOException("FTP expected - " + url.toExternalForm());
 			
 			// Get the file name
-			String fName = code.toUpperCase() + ".TXT";
+			String fName = loc.getCode() + ".TXT";
 			
 			// Connect to the FTP site and change directories
 			FTPConnection ftpc = new FTPConnection(url.getHost());
@@ -145,7 +149,7 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 			}
 
 			// Get the file
-			InputStream is = ftpc.get(code + ".TXT", false);
+			InputStream is = ftpc.get(fName, false);
 			LineNumberReader lr = new LineNumberReader(new InputStreamReader(is), 16384);
 			Date dt = df.parse(lr.readLine());
 			StringBuilder buf = new StringBuilder();
@@ -161,8 +165,8 @@ public class GetNOAAWeather extends DAO implements CachingDAO {
 			result = new TAF();
 			result.setDate(dt);
 			result.setData(buf.toString());
-			result.setAirport(new AirportLocation(0, 0) {{ setCode(code); }});
-			_cache.add(result);
+			result.setAirport(loc);
+			_fCache.add(result);
 			return result;
 		} catch (Exception e) {
 			throw new DAOException(e);
