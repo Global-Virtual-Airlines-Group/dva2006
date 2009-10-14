@@ -7,6 +7,7 @@ import java.sql.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.NavigationDataBean;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -102,20 +103,21 @@ public class GetAirport extends DAO {
 	public Collection<Airport> getByAirline(Airline al, String sortBy) throws DAOException {
 		
 		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORT_AIRLINE AA, "
-				+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) ");
-		if (al != null)
-			sqlBuf.append("WHERE (A.IATA=AA.IATA) AND (AA.CODE=?) AND (AA.APPCODE=?)");
-		sqlBuf.append(" ORDER BY A.");
-		sqlBuf.append(sortBy);
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT A.*, ND.ALTITUDE, ND.REGION, AA.CODE FROM common.AIRPORTS A "
+				+ "LEFT JOIN common.AIRPORT_AIRLINE AA ON (AA.APPCODE=?) AND (A.IATA=AA.IATA) LEFT JOIN "
+				+ "common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) WHERE ");
+		sqlBuf.append((al == null) ? "(AA.CODE IS NULL)" : "(AA.CODE=?)");
+		if (!StringUtils.isEmpty(sortBy)) {
+			sqlBuf.append(" ORDER BY A.");
+			sqlBuf.append(sortBy);
+		}
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, NavigationDataBean.AIRPORT);
-			if (al != null) {
-				_ps.setString(2, al.getCode());
-				_ps.setString(3, _appCode);
-			}
+			_ps.setString(1, _appCode);
+			_ps.setInt(2, NavigationDataBean.AIRPORT);
+			if (al != null)
+				_ps.setString(3, al.getCode());
 
 			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();

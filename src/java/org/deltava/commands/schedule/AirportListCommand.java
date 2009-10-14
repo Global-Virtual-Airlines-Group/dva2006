@@ -61,7 +61,7 @@ public class AirportListCommand extends AbstractViewCommand {
 			
 			// Get all airlines
 			Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();
-			airlines.add(ComboUtils.fromString("All Airports", ""));
+			airlines.add(ComboUtils.fromString("No Airline", ""));
 			airlines.addAll(SystemData.getAirlines().values());
 			ctx.setAttribute("airlines", airlines, REQUEST);
 		} catch (DAOException de) {
