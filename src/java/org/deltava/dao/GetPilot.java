@@ -131,7 +131,7 @@ public class GetPilot extends PilotReadDAO {
 		// Build the SQL statement
 		String dbName = formatDBName(eq.getOwner().getDB());
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) AS LASTFLIGHT FROM ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) AS LASTFLIGHT FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
