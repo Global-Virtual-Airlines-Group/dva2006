@@ -24,8 +24,8 @@ public class GetNavAirway extends GetNavData {
 	private static final Logger log = Logger.getLogger(GetNavAirway.class);
 	
 	private static final Cache<TerminalRoute> _rCache = new AgingCache<TerminalRoute>(640);
-	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(640);
-	private static final Cache<CacheableSet<String>> _rwCache = new ExpiringCache<CacheableSet<String>>(128, 7200);
+	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(1024);
+	private static final Cache<CacheableSet<String>> _rwCache = new AgingCache<CacheableSet<String>>(256);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -35,11 +35,24 @@ public class GetNavAirway extends GetNavData {
 		super(c);
 	}
 	
+	/**
+	 * Returns information about the caches.
+	 */
 	public CacheInfo getCacheInfo() {
 		CacheInfo info = new CacheInfo(_rCache);
 		info.add(_aCache);
 		info.add(_rwCache);
 		return info;
+	}
+	
+	/**
+	 * Clears the caches.
+	 */
+	public void clear() {
+		_rCache.clear();
+		_aCache.clear();
+		_rwCache.clear();
+		super.clear();
 	}
 	
 	/**
@@ -230,7 +243,8 @@ public class GetNavAirway extends GetNavData {
 	public Collection<String> getSIDRunways(String code) throws DAOException {
 		
 		// Check the cache
-		CacheableSet<String> results = _rwCache.get(code.toUpperCase());
+		code = code.toUpperCase();
+		CacheableSet<String> results = _rwCache.get(code);
 		if (results != null)
 			return results;
 		
@@ -241,7 +255,7 @@ public class GetNavAirway extends GetNavData {
 			_ps.setInt(2, TerminalRoute.SID);
 			
 			// Execute the query
-			results = new CacheableSet<String>(code.toUpperCase());
+			results = new CacheableSet<String>(code);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				String rwy = rs.getString(1);
