@@ -1,9 +1,9 @@
 #!/bin/sh
 # GVA Subversion Repository backup script
-# (c) 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving options
-arc_util="bzip2 -9"
+arc_util="pbzip2 -9 -p2 -c"
 
 # Goto backup directory
 cd /home/backup/svn
@@ -128,7 +128,7 @@ if [ "`cat /tmp/svn.revision`" -gt "6000" ] ;then
   nice svnadmin dump /home/svn --incremental --revision 5500:5999 | $arc_util > svn_60xx.bz2
  fi
 
- echo 5500 > /tmp/svn.revision_base
+ echo 6000 > /tmp/svn.revision_base
 fi
 
 # If we have more than 6500 revisions, back them up
@@ -138,7 +138,7 @@ if [ "`cat /tmp/svn.revision`" -gt "6500" ] ;then
   nice svnadmin dump /home/svn --incremental --revision 6000:6499 | $arc_util > svn_65xx.bz2
  fi
 
- echo 5500 > /tmp/svn.revision_base
+ echo 6500 > /tmp/svn.revision_base
 fi
 
 # Back up the last revisions
