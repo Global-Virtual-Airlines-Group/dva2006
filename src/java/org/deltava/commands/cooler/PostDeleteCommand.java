@@ -2,10 +2,8 @@
 package org.deltava.commands.cooler;
 
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
 
-import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 
 import org.deltava.commands.*;
@@ -18,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to delete an individual message post.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -86,31 +84,14 @@ public class PostDeleteCommand extends AbstractCommand {
 	        	 ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 	        	 result.setURL("/jsp/cooler/threadUpdate.jsp");
 	         } else {
-	        	 // Convert the messages
-	        	 GetUserData uddao = new GetUserData(con);
-	        	 GetApplicant adao = new GetApplicant(con);
-	        	 GetPilot pdao = new GetPilot(con);
-	        	 Collection<IndexableMessage> imsgs = new ArrayList<IndexableMessage>();
-	        	 for (Iterator<Message> i = posts.iterator(); i.hasNext(); ) {
-	        		 Message msg = i.next();
-	        		 UserData ud = uddao.get(msg.getAuthorID());
-	        		 Person author = UserData.isPilotTable(ud.getTable()) ? pdao.get(ud) : adao.get(ud);
-	        		 IndexableMessage imsg = new IndexableMessage(msg, c.getName(), mt.getSubject(), author);
-	        		 imsgs.add(imsg);
-	        	 }
-	        	 
 	        	 wdao.delete(threadID, postID);
 	        	 wdao.synchThread(mt);
-	        	 SearchUtils.update(threadID, imsgs);
 	        	 result.setURL("thread", null, threadID);
 	        	 result.setType(ResultType.REDIRECT);
 	         }
 	         
 	         // Commit the transaction
 	         ctx.commitTX();
-		} catch (IOException ie) {
-			ctx.rollbackTX();
-			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

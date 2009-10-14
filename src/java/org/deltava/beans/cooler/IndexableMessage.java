@@ -11,6 +11,7 @@ import org.deltava.beans.Person;
  * @since 2.5
  */
 
+@Deprecated
 public class IndexableMessage extends Message {
 	
 	private Person _author;

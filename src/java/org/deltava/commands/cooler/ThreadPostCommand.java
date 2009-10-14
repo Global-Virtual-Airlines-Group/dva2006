@@ -274,10 +274,6 @@ public class ThreadPostCommand extends AbstractCommand {
 				ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);
 			}
 			
-			// Update the index
-			IndexableMessage imsg = new IndexableMessage(msg, mt.getChannel(), mt.getSubject(), p);
-			SearchUtils.add(imsg);
-			
 			// Commit the transaction
 			ctx.commitTX();
 			
@@ -295,9 +291,6 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("isPosted", Boolean.TRUE, REQUEST);
-		} catch (IOException ie) {
-			ctx.rollbackTX();
-			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

@@ -2,10 +2,7 @@
 package org.deltava.commands.cooler;
 
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -21,13 +18,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
 public class CoolerSearchCommand extends AbstractViewCommand {
 	
-	private static final Logger log = Logger.getLogger(CoolerSearchCommand.class);
 	private static final Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
 
 	/**
@@ -70,39 +66,31 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			criteria.setSearchSubject(Boolean.valueOf(ctx.getParameter("checkSubject")).booleanValue());
 			criteria.setSearchNameFragment(Boolean.valueOf(ctx.getParameter("nameMatch")).booleanValue());
 			criteria.setMinimumDate(lud);
-
-			// Do the search
-			long start = System.currentTimeMillis();
-			Collection<SearchResult> results = SearchUtils.search(criteria, vc.getCount());
-			ctx.setAttribute("searchTime", new Long(System.currentTimeMillis() - start), REQUEST);
 			
-			// Load the threads
+			// Get the DAO and search
+			Collection<MessageThread> threads = null;
+			synchronized (CoolerSearchCommand.class) {
+				GetCoolerThreads dao = new GetCoolerThreads(con);
+				dao.setQueryStart(vc.getStart());
+				dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
+				threads = dao.search(criteria);
+			}
+			
+			// Filter out the threads based on our access
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			GetCoolerThreads dao = new GetCoolerThreads(con);
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
-			for (Iterator<SearchResult> i = results.iterator(); i.hasNext(); ) {
-				SearchResult sr = i.next();
-				MessageThread mt = dao.getThread(sr.getID(), false);
-				
-				// Check our access
-				if (mt != null) {
-					Channel c = cdao.get(mt.getChannel());
-					access.updateContext(mt, c);
-					access.updateContext(mt, c);	
-					access.validate();
-					
-					// Remove the thread if we cannot access it
-					if (access.getCanRead()) {
-						sr.setThread(mt);
-						pilotIDs.add(new Integer(mt.getAuthorID()));
-						pilotIDs.add(new Integer(mt.getLastUpdateID()));
-					} else
-						i.remove();
-				} else {
-					log.warn("Cannot find Message Thread " + sr.getID() + ", removing from index");
-					SearchUtils.delete(sr.getID());
+			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+				MessageThread mt = i.next();
+				Channel c = cdao.get(mt.getChannel());
+				access.updateContext(mt, c);
+				access.validate();
+
+				// Remove the thread if we cannot access it
+				if (access.getCanRead()) {
+					pilotIDs.add(new Integer(mt.getAuthorID()));
+					pilotIDs.add(new Integer(mt.getLastUpdateID()));
+				} else
 					i.remove();
-				}
 			}
 
 			// Get the location of all the Pilots
@@ -118,10 +106,8 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			authors.putAll(adao.get(udm));
 
 			// Save the threads in the request
-			vc.setResults(results);
+			vc.setResults(threads);
 			ctx.setAttribute("pilots", authors, REQUEST);
-		} catch (IOException ie) {
-			throw new CommandException(ie);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
