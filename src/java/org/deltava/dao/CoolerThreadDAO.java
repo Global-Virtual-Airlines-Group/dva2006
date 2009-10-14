@@ -25,7 +25,7 @@ abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(CoolerThreadDAO.class);
 	
-	protected static final Cache<MessageThread> _tCache = new ExpiringCache<MessageThread>(320, 900); 
+	protected static final Cache<MessageThread> _tCache = new ExpiringCache<MessageThread>(640, 600); 
 
 	/**
 	 * Initializes the Data Access Object.
