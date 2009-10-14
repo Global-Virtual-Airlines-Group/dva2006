@@ -106,7 +106,7 @@ return true;
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
  <td class="label top">${author.name} (${author.pilotCode})<br />
- <fmt:date date="${comment.createdOn}" /></td>
+ <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
  <td class="data top"><fmt:msg value="${comment.comments}" /></td>
 </tr>
 </c:forEach>
