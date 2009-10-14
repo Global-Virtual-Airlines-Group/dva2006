@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 2.0
  */
 
@@ -165,8 +165,11 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Purge the cache
+		new GetNavRoute(null).clear();
+		
 		// Set status attributes
-		ctx.setAttribute("entryCount", new Integer(entryCount), REQUEST);
+		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
 		ctx.setAttribute("terminalRoute", Boolean.TRUE, REQUEST);

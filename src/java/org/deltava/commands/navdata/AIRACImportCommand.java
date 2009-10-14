@@ -21,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -200,7 +200,8 @@ public class AIRACImportCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Purge the dispatch web service file cache
+		// Purge the dispatch web service file cache and navdata cache
+		new GetNavRoute(null).clear();
 		DispatchDataService.invalidate();
 
 		// Set status attributes

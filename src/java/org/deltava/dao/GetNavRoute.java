@@ -26,7 +26,7 @@ public class GetNavRoute extends GetNavAirway {
 	
 	private static final Logger log = Logger.getLogger(GetNavRoute.class);
 	
-	private static final Cache<Route> _rCache = new AgingCache<Route>(320);
+	private static final Cache<Route> _rCache = new AgingCache<Route>(640);
 	private static final Collection<String> EMPTY = new ArrayList<String>(1) {{ add(null); }};
 
 	private class CacheableRoute implements Route {
@@ -96,6 +96,14 @@ public class GetNavRoute extends GetNavAirway {
 	
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_rCache);
+	}
+	
+	/**
+	 * Clears the cache.
+	 */
+	public void clear() {
+		_rCache.clear();
+		super.clear();
 	}
 
 	/**
