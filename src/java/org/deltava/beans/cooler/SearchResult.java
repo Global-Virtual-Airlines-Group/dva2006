@@ -8,6 +8,7 @@ package org.deltava.beans.cooler;
  * @since 2.5
  */
 
+@Deprecated
 public class SearchResult implements Comparable<SearchResult> {
 	
 	private int _id;

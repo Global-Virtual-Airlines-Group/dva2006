@@ -2,7 +2,6 @@
 package org.deltava.commands.cooler;
 
 import java.util.*;
-import java.io.IOException;
 import java.sql.Connection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +18,12 @@ import org.deltava.mail.*;
 import org.deltava.security.SecurityContext;
 import org.deltava.security.command.CoolerThreadAccessControl;
 
-import org.deltava.util.SearchUtils;
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 1.0
  */
 
@@ -180,14 +178,6 @@ public class ThreadReplyCommand extends AbstractCommand {
 				ctx.setAttribute("isVote", Boolean.TRUE, REQUEST);
 			}
 			
-			// Load the message Author
-			UserData ud = uddao.get(msg.getAuthorID());
-			Person author = pdao.get(ud);
-			
-			// Update the search index
-			IndexableMessage imsg = new IndexableMessage(msg, mt.getChannel(), mt.getSubject(), author);
-			SearchUtils.add(imsg);
-
 			// Commit the transaction
 			ctx.commitTX();
 			
@@ -208,9 +198,6 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);
-		} catch (IOException ie) {
-			ctx.rollbackTX();
-			throw new CommandException(ie);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

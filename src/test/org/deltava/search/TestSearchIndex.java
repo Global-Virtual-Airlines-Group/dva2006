@@ -13,6 +13,7 @@ import org.deltava.util.*;
 
 import junit.framework.TestCase;
 
+@Deprecated
 public class TestSearchIndex extends TestCase {
 	
 	private IndexReader _ir;
