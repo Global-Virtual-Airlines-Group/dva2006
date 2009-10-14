@@ -19,10 +19,10 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetNavData extends DAO implements CachingDAO {
+public class GetNavData extends DAO implements ClearableCachingDAO {
 	
 	private static final Logger log = Logger.getLogger(GetNavData.class);
-	protected static final Cache<NavigationDataMap> _cache = new ExpiringCache<NavigationDataMap>(4096, 7200);
+	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(3072);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -34,6 +34,10 @@ public class GetNavData extends DAO implements CachingDAO {
 	
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_cache);
+	}
+	
+	public void clear() {
+		_cache.clear();
 	}
 
 	/**
