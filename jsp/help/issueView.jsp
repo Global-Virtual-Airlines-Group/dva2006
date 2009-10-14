@@ -100,7 +100,7 @@ return ${access.canComment};
 <c:set var="cAuthor" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
  <td class="label top">${cAuthor.name} (${cAuthor.pilotCode})<br />
- <fmt:date date="${comment.createdOn}" /><c:if test="${access.canUpdateContent}"><br />
+ <fmt:date date="${comment.createdOn}" t="HH:mm" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.time}" checked="false" label="Delete" /><br />
 <el:radio name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
  <td class="data top"><fmt:msg value="${comment.body}" /></td>
