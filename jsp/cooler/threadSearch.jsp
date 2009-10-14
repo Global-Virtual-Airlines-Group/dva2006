@@ -88,28 +88,24 @@ return true;
 <view:table className="view" pad="default" space="default" cmd="coolersearch">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="2" class="left caps">${forumName} SEARCH RESULTS</td>
+ <td colspan="1" class="left caps">${forumName} SEARCH RESULTS</td>
  <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="12%">SCORE</td>
- <td width="35%">THREAD TITLE</td>
- <td width="14%">STARTED BY</td>
- <td width="6%">POSTS</td>
+ <td width="50%">THREAD TITLE</td>
+ <td width="20%">STARTED BY</td>
+ <td width="5%">POSTS</td>
  <td>LAST POST</td>
 </tr>
 
 <!-- Table Thread Data -->
-<c:forEach var="result" items="${viewContext.results}">
-<c:set var="thread" value="${result.thread}" scope="page" />
+<c:forEach var="thread" items="${viewContext.results}">
 <c:set var="author" value="${pilots[thread.authorID]}" scope="page" />
 <c:set var="authorLoc" value="${userData[thread.authorID]}" scope="page" />
 <c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="page" />
 <view:row entry="${thread}">
- <td class="pri"><span class="bld"><fmt:dec value="${result.score}" fmt="#0.000" /></span>
- <span class="small">(<fmt:int value="${result.hits}" /> hits)</span></td>
  <td class="left">
 <c:if test="${thread.image != 0}"><el:img caption="Image" x="20" y="20" src="cooler/icon_img.png" /></c:if>
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
@@ -125,7 +121,7 @@ return true;
 </c:forEach>
 
 <tr class="title">
- <td colspan="5" class="small">Search Completed in <fmt:int value="${searchTime}" />ms</td>
+ <td colspan="4" class="small">Search Completed in <fmt:int value="${searchTime}" />ms</td>
 </tr>
 </view:table>
 </c:if>

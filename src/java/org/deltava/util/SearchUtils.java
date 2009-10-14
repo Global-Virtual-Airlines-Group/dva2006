@@ -16,10 +16,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class for Water Cooler Lucene searches.
  * @author Luke
- * @version 2.5
+ * @version 2.6
  * @since 2.5
  */
 
+@Deprecated
 public class SearchUtils {
 	
 	public static final String[] STOPWORDS = new String[] {"i", "you", "have", "my", "like", "do",

@@ -18,6 +18,7 @@ import org.deltava.dao.*;
 import org.deltava.util.SearchUtils;
 import org.deltava.util.system.SystemData;
 
+@Deprecated
 public class CoolerIndexCreate extends TestCase {
 
 	private Logger log;
