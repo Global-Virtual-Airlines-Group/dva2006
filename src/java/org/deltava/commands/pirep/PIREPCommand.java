@@ -440,7 +440,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
-					ctx.setAttribute("conInfo", ardao.getConnection(info.getConnectionID()), REQUEST);
+					
+					// Get the connection info and the IP address
+					ConnectionEntry conInfo = ardao.getConnection(info.getConnectionID());
+					ctx.setAttribute("conInfo", conInfo, REQUEST);
+					if (ctx.isUserInRole("HR") && (conInfo != null)) {
+						GetIPLocation ipdao = new GetIPLocation(con);
+						ctx.setAttribute("ipInfo", ipdao.get(conInfo.getRemoteAddr()), REQUEST);
+					}
 					
 					// Load the dispatcher if there is one
 					if (info.getDispatcherID() != 0) {
