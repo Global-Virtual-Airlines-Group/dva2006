@@ -1,15 +1,15 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
 public class Intersection extends NavigationDataBean {
-
+	
 	/**
 	 * Creates a new Intersection object.
 	 * @param code the intersection code
@@ -81,14 +81,46 @@ public class Intersection extends NavigationDataBean {
 	 * @throws NullPointerException if code is null
 	 * @throws NumberFormatException if the latitude/longitude cannot be parsed
 	 */
-	public static Intersection parseNAT(String code) {
-		if (code.contains("/") && (code.length() == 5)) {
-			return parseNAT(code.substring(0, 2) + code.substring(3) + "N");
-		} else if (code.endsWith("N") && (code.length() == 5)) {
-			double lat = Double.parseDouble(code.substring(0, 2));
-			double lng = Double.parseDouble(code.substring(2, 4)) * -1;
-			return new Intersection(code, lat, lng);
-		} else
-			throw new IllegalArgumentException("Invalid NAT waypoint - " + code);
+	public static Intersection parse(String code) {
+		if (code == null)
+			return null;
+		else if (code.contains("/") && (code.length() == 5))
+			return parse(code.substring(0, 2) + code.substring(3) + "N");
+		
+		// Determine what type of coordinate we are
+		CodeType ct = NavigationDataBean.isCoordinates(code);
+		switch (ct) {
+			case FULL:
+				// Find where the lat ends
+				int pos = 0;
+				while ((pos < code.length()) && Character.isDigit(code.charAt(pos)))
+					pos++;
+				
+				String latDir = code.substring(pos, pos + 1).toUpperCase();
+				String lngDir = code.substring(code.length() - 1).toUpperCase();
+				try {
+					Hemisphere hLat = Hemisphere.valueOf(latDir);
+					Hemisphere hLng = Hemisphere.valueOf(lngDir);
+					double lat = Double.parseDouble(code.substring(0, pos)) * hLat.getLatitudeFactor();
+					double lng = Double.parseDouble(code.substring(pos + 1, code.length() - 1)) * hLng.getLongitudeFactor();
+					return new Intersection(code, lat, lng);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Invalid waypoint code - " + code);
+				}
+				
+			case QUADRANT:
+				String dir = code.substring(code.length() - 1);
+				try {
+					Hemisphere h = Hemisphere.valueOf(dir);
+					double lat = Double.parseDouble(code.substring(0, 2)) * h.getLatitudeFactor();
+					double lng = Double.parseDouble(code.substring(2, code.length() - 1)) * h.getLongitudeFactor();
+					return new Intersection(code, lat, lng);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Invalid waypoint code - " + code);
+				}				
+				
+			default:
+				return null;
+		}
 	}
 }

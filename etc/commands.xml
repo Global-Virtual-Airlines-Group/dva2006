@@ -474,6 +474,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="pacotplot">
+		<name>PACOT Route Plotter</name>	
+		<class>org.deltava.commands.schedule.PACOTPlotCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="navimport">
 		<name>Import AIRAC data</name>
 		<class>org.deltava.commands.navdata.AIRACImportCommand</class>

@@ -92,7 +92,7 @@ public class SetRoute extends DAO {
 			startTransaction();
 			
 			// Clean out the route
-			prepareStatement("DELETE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND (VALID_DATE=?) AND "
+			prepareStatement("DELETE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) AND "
 					+ "(TRACK=?)");
 			_ps.setInt(1, ow.getType());
 			_ps.setTimestamp(2, createTimestamp(ow.getDate()));

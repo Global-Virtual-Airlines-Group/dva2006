@@ -49,4 +49,49 @@ public class TestIntersection extends AbstractBeanTestCase {
     	// empty
       }
    }
+   
+   public void testCoordinates() {
+	   assertEquals(CodeType.QUADRANT, NavigationDataBean.isCoordinates("5052N"));
+	   assertEquals(CodeType.QUADRANT, NavigationDataBean.isCoordinates("5052S"));
+	   assertEquals(CodeType.QUADRANT, NavigationDataBean.isCoordinates("5052E"));
+	   assertEquals(CodeType.QUADRANT, NavigationDataBean.isCoordinates("5052W"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50N52W"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50N52E"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52W"));
+	   assertEquals(CodeType.FULL, NavigationDataBean.isCoordinates("50S52E"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("FOO"));
+	   assertEquals(CodeType.CODE, NavigationDataBean.isCoordinates("VASA1"));
+   }
+   
+   public void testParse() {
+	   Intersection i = Intersection.parse("5250N");
+	   assertNotNull(i);
+	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(52.0, i.getLatitude(), 0.001);
+	   assertEquals(-50.0, i.getLongitude(), 0.001);
+	   
+	   Intersection i2 = Intersection.parse("52/50");
+	   assertNotNull(i2);
+	   assertEquals(NavigationDataBean.INT, i2.getType());
+	   assertEquals(52.0, i2.getLatitude(), 0.001);
+	   assertEquals(-50.0, i2.getLongitude(), 0.001);
+
+	   i = Intersection.parse("5250S");
+	   assertNotNull(i);
+	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(-52.0, i.getLatitude(), 0.001);
+	   assertEquals(50.0, i.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("35160E");
+	   assertNotNull(i);
+	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(35.0, i.getLatitude(), 0.001);
+	   assertEquals(160.0, i.getLongitude(), 0.001);
+	   
+	   i = Intersection.parse("35N160E");
+	   assertNotNull(i);
+	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(35.0, i.getLatitude(), 0.001);
+	   assertEquals(160.0, i.getLongitude(), 0.001);
+   }
 }
