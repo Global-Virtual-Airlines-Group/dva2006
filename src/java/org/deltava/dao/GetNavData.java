@@ -64,19 +64,31 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 			code = code.substring(0, 7);
 		}
 		
+		// Build the navigation data map
+		NavigationDataMap ndmap = new NavigationDataMap();
+		ndmap.setCacheKey(code);
+		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (CODE=?) ORDER BY ITEMTYPE");
 			_ps.setString(1, code.toUpperCase());
-			NavigationDataMap ndmap = new NavigationDataMap(execute());
-			ndmap.setCacheKey(code);
+			ndmap.addAll(execute());
 			_cache.add(ndmap);
-			result = ndmap;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 		
+		// Check for a lat/long pair
+		if (NavigationDataBean.isCoordinates(code) != CodeType.CODE) {
+			try {
+				Intersection i = Intersection.parse(code);
+				ndmap.add(i);
+			} catch (Exception e) {
+				// empty
+			}
+		}
+		
 		// Add to the cache and return
-		return  result;
+		return ndmap;
 	}
 	
 	/**

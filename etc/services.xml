@@ -68,6 +68,7 @@
 	<service id="acars_pirep" class="org.deltava.service.acars.MapFlightDataService" />
 	<service id="acars_earth" class="org.deltava.service.acars.FlightDataEarthService" />
 	<service id="natinfo" class="org.deltava.service.schedule.NATPlotService" />
+	<service id="pacotinfo" class="org.deltava.service.schedule.PACOTPlotService" />
 	<service id="acars_chat_log" class="org.deltava.service.acars.ChatLogService" />
 
 	<!-- The names of ACARSMapEarthServices are hardcoded in ACARSMapEarthLinkService -->

@@ -1,5 +1,7 @@
 package org.deltava.dao.file;
 
+import java.util.*;
+
 import javax.net.ssl.*;
 import java.security.cert.X509Certificate;
 
@@ -42,6 +44,10 @@ public class TestTrackDAO extends TestCase {
 
 		String natInfo = dao.getTrackInfo();
 		assertNotNull(natInfo);
+		
+		// Test that we can parse
+		Map<String, Collection<String>> results = dao.getWaypoints();
+		assertNotNull(results);
 	}
 	
 	public void testInvalidKeyPACOT() {
@@ -69,5 +75,9 @@ public class TestTrackDAO extends TestCase {
 		dao.setSSLContext(ctx);
 		String pacotInfo = dao.getTrackInfo();
 		assertNotNull(pacotInfo);
+		
+		// Test that we can parse
+		Map<String, Collection<String>> results = dao.getWaypoints();
+		assertNotNull(results);
 	}
 }

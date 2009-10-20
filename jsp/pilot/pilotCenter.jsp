@@ -347,8 +347,9 @@ departing today.</td>
 every day.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd></td>
- <td class="data">You can use our Google Maps tool to plot today's North Atlantic Tracks, or NAT routes
+ <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br />
+<el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd></td>
+ <td class="data">You can use our Google Maps tool to plot today's North Atlantic and Pacific Tracks, or NAT / PACOT routes
  for the previous several weeks.</td>
 </tr>
 <tr>

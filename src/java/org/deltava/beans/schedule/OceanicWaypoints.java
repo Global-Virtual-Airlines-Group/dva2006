@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,15 +9,15 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store waypoint information for an oceanic route.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
 public class OceanicWaypoints extends OceanicRoute implements Comparable<OceanicWaypoints> {
 	
 	public static final Collection<? extends OceanicWaypoints> CONC_ROUTES = Arrays.asList(new ConcordeNAT("M",
-		"5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("N", "45/50,47/40,49/30,49/20,49/15"), 
-		new ConcordeNAT("O", "48/15,48/20,48/30,46/40,44/50,42/60"));
+		"5015N,5020N,5030N,4840N,4750N"), new ConcordeNAT("N", "4550N,4740N,4930N,4920N,4915N"), 
+		new ConcordeNAT("O", "4815N,4820N,4830N,4640N,4450N,4260N"));
 
 	private static class ConcordeNAT extends OceanicWaypoints {
 
@@ -26,7 +26,7 @@ public class OceanicWaypoints extends OceanicRoute implements Comparable<Oceanic
 			setTrack(track);
 			for (Iterator<String> i = StringUtils.split(route, ",").iterator(); i.hasNext();) {
 				String wpCode = i.next();
-				Intersection wp = Intersection.parseNAT(wpCode);
+				Intersection wp = Intersection.parse(wpCode);
 				wp.setAirway("NAT" + getTrack());
 				addWaypoint(wp);
 			}

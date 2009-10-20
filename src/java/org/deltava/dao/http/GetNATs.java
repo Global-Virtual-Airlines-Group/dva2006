@@ -13,11 +13,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get North Atlantic Track data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
 public class GetNATs extends DAO implements TrackDAO {
+	
+	private static final String CRLF = System.getProperty("line.separator");
 	
 	private String _url;
 	private String _notam;
@@ -51,17 +53,17 @@ public class GetNATs extends DAO implements TrackDAO {
 				if (!isWriting && data.contains("NAT-")) {
 					buf.append(data);
 					buf.append("<br />");
-					buf.append(System.getProperty("line.separator"));
+					buf.append(CRLF);
 					isWriting = true;
 				} else if (isWriting && (data.startsWith("END OF PART"))) {
 					buf.append(data);
 					buf.append("<br /><hr />");
-					buf.append(System.getProperty("line.separator"));
+					buf.append(CRLF);
 					isWriting = false;
 				} else if (isWriting) {
 					buf.append(data);
 					buf.append("<br />");
-					buf.append(System.getProperty("line.separator"));
+					buf.append(CRLF);
 				}
 
 				// Read next line
