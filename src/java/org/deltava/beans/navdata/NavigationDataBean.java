@@ -364,4 +364,30 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 			
 		return nd;
 	}
+	
+	/**
+	 * Returns whether a waypoint code is actually encoded coordinates.
+	 * @param code the waypoint code
+	 * @return TRUE if in XXYYN format or XXNYYYE format, otherwise FALSE
+	 */
+	public static CodeType isCoordinates(String code) {
+		if (StringUtils.isEmpty(code))
+			return CodeType.CODE;
+		if (!Character.isDigit(code.charAt(0)))
+			return CodeType.CODE;
+		if (!Character.isLetter(code.charAt(code.length() - 1)))
+			return CodeType.CODE;
+		
+		// Check to ensure no additional letters, except in position 1/2
+		int ltrCount = 0;
+		for (int x = 1; x < code.length() - 2; x++) {
+			if (Character.isLetter(code.charAt(x))) {
+				ltrCount++;
+				if ((ltrCount > 1) || (x > 2))
+					return CodeType.CODE;
+			}
+		}
+		
+		return (ltrCount == 0) ? CodeType.QUADRANT : CodeType.FULL;
+	}
 }

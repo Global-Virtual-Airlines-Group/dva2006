@@ -2,11 +2,13 @@
 package org.deltava.tasks;
 
 import java.net.*;
-
-import java.util.Date;
+import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 import java.security.cert.*;
 
+import org.deltava.beans.GeoLocation;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
@@ -19,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download PACOT data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -57,18 +59,67 @@ public class PACOTDownloadTask extends Task {
 				dao.setSSLContext(SSLUtils.getContext(cert));
 			}
 			
-			// Download the track
+			// Get the waypoint data
 			or.setRoute(dao.getTrackInfo());
+			Map<String, Collection<String>> trackData = dao.getWaypoints();
+			log.info(trackData.keySet());
+			Collection<String> waypointIDs = new HashSet<String>();
+			for (Iterator<Collection<String>> i = trackData.values().iterator(); i.hasNext(); ) {
+				Collection<String> waypoints = i.next();
+				waypointIDs.addAll(waypoints);
+			}
+			
+			// Get the intersection navdata values
+			Connection con = ctx.getConnection();
+			GetNavData nddao = new GetNavData(con);
+			NavigationDataMap ndmap = nddao.getByID(waypointIDs);
+			
+			// Build the Route waypoints
+			log.info("Building PACOT track waypoints");
+			Collection<OceanicWaypoints> oTracks = new ArrayList<OceanicWaypoints>();
+			for (Iterator<Map.Entry<String, Collection<String>>> i = trackData.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<String, Collection<String>> e = i.next();
+				OceanicWaypoints ot = new OceanicWaypoints(OceanicRoute.PACOT, or.getDate());
+				ot.setTrack(e.getKey());
+				
+				// Calculate the location of the waypoint
+				GeoLocation lastLoc = new GeoPosition(35, -175);
+				for (Iterator<String> wi = e.getValue().iterator(); wi.hasNext(); ) {
+					String code = wi.next();
+					NavigationDataBean ndb = (lastLoc == null) ? ndmap.get(code) : ndmap.get(code, lastLoc);
+					if (ndb != null) {
+						NavigationDataBean nd = NavigationDataBean.create(ndb.getType(), ndb.getLatitude(), ndb.getLongitude());
+						nd.setCode(ndb.getCode());
+						nd.setRegion(ndb.getRegion());
+						ot.addWaypoint(nd);
+						lastLoc = ndb;
+					}
+				}
 
+				oTracks.add(ot);
+			}
+
+			// Start a transaction
+			ctx.startTX();
+			
 			// Write the route data to the database
-			SetRoute wdao = new SetRoute(ctx.getConnection());
+			SetRoute wdao = new SetRoute(con);
 			wdao.write(or);
+			for (Iterator<OceanicWaypoints> i = oTracks.iterator(); i.hasNext(); ) {
+				OceanicWaypoints ow = i.next();
+				log.info("Saving " + ow.getTrack());
+				wdao.write(ow);
+			}
+			
+			// Commit
+			ctx.commitTX();
 		} catch (CertificateException ce) {
 			log.error("Cannot load SSL certificate - " + ce.getMessage());
 		} catch (IOException ie) {
 			log.error("Error downloading PACOT Tracks - " + ie.getMessage(), ie);
-		} catch (DAOException de) {
-			log.error("Error saving PACOT Data - " + de.getMessage(), de);
+		} catch (Exception e) {
+			ctx.rollbackTX();
+			log.error("Error saving PACOT Data - " + e.getMessage(), e);
 		} finally {
 			ctx.release();
 		}

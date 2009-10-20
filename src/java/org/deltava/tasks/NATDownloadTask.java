@@ -82,30 +82,23 @@ public class NATDownloadTask extends Task {
 			// Build the Route waypoints
 			log.info("Building NAT track waypoints");
 			Collection<OceanicWaypoints> oTracks = new ArrayList<OceanicWaypoints>();
-			for (Iterator<String> i = trackData.keySet().iterator(); i.hasNext(); ) {
-				String trackCode = i.next();
-				Collection<String> codes = trackData.get(trackCode);
+			for (Iterator<Map.Entry<String, Collection<String>>> i = trackData.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<String, Collection<String>> e = i.next();
 				OceanicWaypoints ot = new OceanicWaypoints(OceanicRoute.NAT, or.getDate());
-				ot.setTrack(trackCode);
+				ot.setTrack(e.getKey());
 				
 				// Calculate the location of the waypoint
 				GeoLocation lastLoc = new GeoPosition(42, -30);
-				for (Iterator<String> wi = codes.iterator(); wi.hasNext(); ) {
+				for (Iterator<String> wi = e.getValue().iterator(); wi.hasNext(); ) {
 					String code = wi.next();
 					NavigationDataBean ndb = (lastLoc == null) ? ndmap.get(code) : ndmap.get(code, lastLoc);
 					if (ndb != null) {
-						ot.addWaypoint(new Intersection(code, ndb.getLatitude(), ndb.getLongitude()));
+						NavigationDataBean nd = NavigationDataBean.create(ndb.getType(), ndb.getLatitude(), ndb.getLongitude());
+						nd.setCode(ndb.getCode());
+						nd.setRegion(ndb.getRegion());
+						ot.addWaypoint(nd);
 						lastLoc = ndb;
-					} else if (code.contains("/")) {
-						try {
-							Intersection wp = Intersection.parseNAT(code);
-							ot.addWaypoint(wp);
-							lastLoc = wp;
-						} catch (IllegalArgumentException iae) {
-							log.warn(iae.getMessage() + " - Track " + ot.getTrack());
-						}
 					}
-						
 				}
 				
 				oTracks.add(ot);
