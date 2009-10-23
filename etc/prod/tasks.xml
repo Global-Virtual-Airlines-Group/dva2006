@@ -29,7 +29,7 @@
 		<class>org.deltava.tasks.PACOTDownloadTask</class>
 		<time>
 			<min>1</min>
-			<hour>20</hour>
+			<hour>20,6</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
