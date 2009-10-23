@@ -4,8 +4,6 @@ package org.deltava.dao.http;
 import java.io.*;
 import java.util.*;
 
-import org.deltava.beans.schedule.*;
-
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.StringUtils;
@@ -81,7 +79,7 @@ public class GetNATs extends DAO implements TrackDAO {
 
 	/**
 	 * Returns the Waypoints for each North Atlantic Track.
-	 * @return a Map of {@link OceanicWaypoints} beans, keyed by track code
+	 * @return a Map of {@link org.deltava.beans.navdata.OceanicTrack} beans, keyed by track code
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public Map<String, Collection<String>> getWaypoints() throws DAOException {

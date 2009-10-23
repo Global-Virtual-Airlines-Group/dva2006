@@ -6,6 +6,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
+import org.deltava.beans.navdata.OceanicTrackInfo;
 
 public class TestOceanicNOTAM extends AbstractBeanTestCase {
 
@@ -17,7 +18,7 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
-        _or = new OceanicNOTAM(OceanicRoute.NAT, new Date());
+        _or = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, new Date());
         setBean(_or);
     }
 
@@ -27,15 +28,13 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
     }
     
     public void testProperties() {
-        assertEquals(OceanicRoute.NAT, _or.getType());
-        assertEquals(OceanicRoute.TYPES[OceanicRoute.NAT], _or.getTypeName());
+        assertEquals(OceanicTrackInfo.Type.NAT, _or.getType());
+        assertEquals(OceanicTrackInfo.TYPES[OceanicTrackInfo.Type.NAT.ordinal()], _or.getTypeName());
         checkProperty("date", new Date());
         checkProperty("source", "localhost");
         checkProperty("route", "!@# SADJSAKD");
-        checkProperty("type", new Integer(OceanicRoute.PACOT));
-        assertEquals(OceanicRoute.TYPES[OceanicRoute.PACOT], _or.getTypeName());
-        _or.setType(OceanicRoute.TYPES[OceanicRoute.NAT]);
-        assertEquals(OceanicRoute.TYPES[OceanicRoute.NAT], _or.getTypeName());
+        checkProperty("type", OceanicTrackInfo.Type.PACOT);
+        assertEquals(OceanicTrackInfo.TYPES[OceanicTrackInfo.Type.PACOT.ordinal()], _or.getTypeName());
     }
     
     public void testValidation() {
@@ -50,8 +49,8 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
         Date d = new Date();
         Date d2 = new Date(d.getTime() + 100);
         _or.setDate(d);
-        OceanicNOTAM or2 = new OceanicNOTAM(OceanicRoute.NAT, d2);
-        OceanicNOTAM or3 = new OceanicNOTAM(OceanicRoute.PACOT, d);
+        OceanicNOTAM or2 = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, d2);
+        OceanicNOTAM or3 = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, d);
         assertTrue(_or.compareTo(or2) < 0);
         assertTrue(_or.compareTo(or3) < 0);
         assertTrue(or2.compareTo(or3) > 0);

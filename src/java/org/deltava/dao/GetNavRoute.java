@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.navdata.OceanicTrackInfo.Type;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.GeoComparator;
@@ -22,12 +23,14 @@ import org.deltava.util.cache.*;
  * @since 2.6
  */
 
-public class GetNavRoute extends GetNavAirway {
+public class GetNavRoute extends GetOceanicRoute {
 	
 	private static final Logger log = Logger.getLogger(GetNavRoute.class);
 	
 	private static final Cache<Route> _rCache = new AgingCache<Route>(640);
 	private static final Collection<String> EMPTY = new ArrayList<String>(1) {{ add(null); }};
+	
+	private java.util.Date _effectiveDate;
 
 	private class CacheableRoute implements Route {
 
@@ -94,6 +97,14 @@ public class GetNavRoute extends GetNavAirway {
 		super(c);
 	}
 	
+	/**
+	 * Sets the effective date when looking up Oceanic Tracks.
+	 * @param dt the effective date/time
+	 */
+	public void setEffectiveDate(java.util.Date dt) {
+		_effectiveDate = dt;
+	}
+	
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_rCache);
 	}
@@ -127,13 +138,24 @@ public class GetNavRoute extends GetNavAirway {
 
 		// Get the route text
 		List<String> tkns = StringUtils.split(route, " ");
-		GeoLocation lastPosition = start;
+		GeoLocation lastPosition = start; Collection<Airway> aws = new ArrayList<Airway>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = tkns.get(x);
+			aws.clear();
+			
+			// Check if we're referencing a NAT route
+			if (wp.startsWith("NAT") || wp.startsWith("PACOT")) {
+				OceanicTrackInfo.Type rType = wp.startsWith("NAT") ? Type.NAT : Type.PACOT; 
+				Map<String, ? extends Airway> tracks = getOceanicTracks(rType, _effectiveDate);
+				if (tracks.isEmpty())
+					tracks = getOceanicTracks(rType, null);
+				if (tracks.containsKey(wp))
+					aws.add(tracks.get(wp));
+			} else
+				aws.addAll(getAirways(wp));
 			
 			// Check if we're referencing an airway
-			Collection<Airway> aws = getAirways(wp);
 			if ((wp.indexOf('.') != -1) && ((x == 0) || (x == (tkns.size() - 1)))) {
 				TerminalRoute tr = getRoute(wp);
 				if (tr != null) {
