@@ -11,7 +11,6 @@ import org.jdom.*;
 
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -42,10 +41,10 @@ public class PACOTPlotService extends WebService {
 			// empty
 		}
 
-		List<OceanicWaypoints> tracks = null;
+		List<OceanicTrack> tracks = null;
 		try {
-			GetRoute dao = new GetRoute(ctx.getConnection());
-			tracks = new ArrayList<OceanicWaypoints>(dao.getOceanicTrakcs(OceanicRoute.PACOT, dt).values());
+			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
+			tracks = new ArrayList<OceanicTrack>(dao.getOceanicTracks(OceanicTrackInfo.Type.PACOT, dt).values());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -65,14 +64,14 @@ public class PACOTPlotService extends WebService {
 
 		// Build the track data
 		final NumberFormat nf = new DecimalFormat("##0.0000");
-		for (Iterator<OceanicWaypoints> i = tracks.iterator(); i.hasNext();) {
-			OceanicWaypoints ow = i.next();
-			boolean isEast = (ow.getDirection() == OceanicWaypoints.EAST);
+		for (Iterator<OceanicTrack> i = tracks.iterator(); i.hasNext();) {
+			OceanicTrack ow = i.next();
+			boolean isEast = (ow.getDirection() == OceanicTrackInfo.Direction.EAST);
 			Element te = new Element("track");
 			te.setAttribute("code", ow.getTrack());
 			te.setAttribute("type", isEast ? "E" : "W");
 			te.setAttribute("color", isEast ? "#EEEEEE" : "#EEEE44");
-			te.setAttribute("track", ow.getWaypointCodes());
+			te.setAttribute("track", ow.getRoute());
 			for (Iterator<NavigationDataBean> wi = ow.getWaypoints().iterator(); wi.hasNext();) {
 				NavigationDataBean ndb = wi.next();
 				Element we = XMLUtils.createElement("waypoint", ndb.getInfoBox(), true);

@@ -44,7 +44,7 @@ public class PACOTDownloadTask extends Task {
 			URL url = new URL(SystemData.get("config.pacot.url"));
 			
 			// Build the oceanic route bean
-			OceanicNOTAM or = new OceanicNOTAM(OceanicRoute.PACOT, new Date());
+			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.PACOT, new Date());
 			or.setSource(url.getHost());
 			
 			// Load a key store if necessary
@@ -76,11 +76,11 @@ public class PACOTDownloadTask extends Task {
 			
 			// Build the Route waypoints
 			log.info("Building PACOT track waypoints");
-			Collection<OceanicWaypoints> oTracks = new ArrayList<OceanicWaypoints>();
+			Collection<OceanicTrack> oTracks = new ArrayList<OceanicTrack>();
 			for (Iterator<Map.Entry<String, Collection<String>>> i = trackData.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry<String, Collection<String>> e = i.next();
-				OceanicWaypoints ot = new OceanicWaypoints(OceanicRoute.PACOT, or.getDate());
-				ot.setTrack(e.getKey());
+				OceanicTrack ot = new OceanicTrack(OceanicTrackInfo.Type.PACOT, e.getKey());
+				ot.setDate(or.getDate());
 				
 				// Calculate the location of the waypoint
 				GeoLocation lastLoc = new GeoPosition(35, -175);
@@ -105,11 +105,8 @@ public class PACOTDownloadTask extends Task {
 			// Write the route data to the database
 			SetRoute wdao = new SetRoute(con);
 			wdao.write(or);
-			for (Iterator<OceanicWaypoints> i = oTracks.iterator(); i.hasNext(); ) {
-				OceanicWaypoints ow = i.next();
-				log.info("Saving " + ow.getTrack());
-				wdao.write(ow);
-			}
+			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
+				wdao.write(i.next());
 			
 			// Commit
 			ctx.commitTX();

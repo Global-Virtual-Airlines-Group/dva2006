@@ -35,7 +35,7 @@ public class RouteCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the route
-			GetRoute dao = new GetRoute(con);
+			GetOceanicRoute dao = new GetOceanicRoute(con);
 			ctx.setAttribute("route", dao.get(routeType, vd), REQUEST);
 			
 			// Get our access level

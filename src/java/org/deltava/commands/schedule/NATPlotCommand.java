@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 
 import org.deltava.beans.ComboAlias;
-import org.deltava.beans.schedule.OceanicRoute;
+import org.deltava.beans.navdata.OceanicTrackInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the North Atlantic Track plotting map.
  * @author Luke
- * @version 2.1
+ * @version 2.6
  * @since 1.0
  */
 
@@ -32,9 +32,9 @@ public class NATPlotCommand extends AbstractCommand {
 		
 		Collection<Date> dates = null;
 		try {
-			GetRoute dao = new GetRoute(ctx.getConnection());
+			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
 			dao.setQueryMax(31);
-			dates = dao.getOceanicTrackDates(OceanicRoute.NAT);
+			dates = dao.getOceanicTrackDates(OceanicTrackInfo.Type.NAT);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
