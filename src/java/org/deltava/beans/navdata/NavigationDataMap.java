@@ -121,7 +121,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
    }
    
    /**
-    * Returns wether the map is empty.
+    * Returns whether the map is empty.
     * @return TRUE if the object is empty, otherwise FALSE
     */
    public boolean isEmpty() {
@@ -139,7 +139,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
 		   Set<NavigationDataBean> subEntries = i.next();
 		   for (Iterator<NavigationDataBean> i2 = subEntries.iterator(); i2.hasNext(); ) {
 			   NavigationDataBean nd = i2.next();
-			   if (!types.contains(new Integer(nd.getType())))
+			   if (!types.contains(Integer.valueOf(nd.getType())))
 				   i2.remove();
 		   }
 		   
@@ -156,9 +156,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataBean#getType()
     */
    public void filter(int navaidType) {
-	   Set<Integer> filterSet = new HashSet<Integer>();
-	   filterSet.add(new Integer(navaidType));
-	   filter(filterSet);
+	   filter(Collections.singleton(Integer.valueOf(navaidType)));
    }
    
    /**

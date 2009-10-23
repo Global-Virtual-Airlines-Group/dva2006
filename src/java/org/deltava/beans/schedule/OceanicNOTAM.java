@@ -1,17 +1,21 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
 
+import org.deltava.beans.navdata.*;
+
 /**
  * A bean to store NOTAMs containing Oceanic route data.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
-public class OceanicNOTAM extends OceanicRoute implements Comparable<OceanicNOTAM> {
-	
+public class OceanicNOTAM implements OceanicTrackInfo {
+
+	private Date _date;
+    private Type _routeType;
     private String _sourceHost;
     private String _routeInfo;
 
@@ -20,10 +24,39 @@ public class OceanicNOTAM extends OceanicRoute implements Comparable<OceanicNOTA
 	 * @param type the route type
 	 * @param dt the effective date
 	 */
-	public OceanicNOTAM(int type, Date dt) {
-		super(type);
+	public OceanicNOTAM(Type type, Date dt) {
+		super();
+		setType(type);
 		setDate(dt);
 	}
+	
+    /**
+     * Returns the date of the Oceanic Route NOTAM.
+     * @return the route date
+     * @see OceanicNOTAM#setDate(Date)
+     */
+    public Date getDate() {
+        return _date;
+    }
+    
+    /**
+     * Returns the route type code.
+     * @return the route type
+     * @see OceanicTrackInfo#getTypeName()
+     */
+    public Type getType() {
+        return _routeType;
+    }
+    
+    /**
+     * Returns the route type name.
+     * @return the route type name
+     * @see OceanicTrackInfo#TYPES
+     * @see OceanicTrackInfo#getType()
+     */
+    public String getTypeName() {
+        return OceanicTrackInfo.TYPES[_routeType.ordinal()];
+    }
 	
     /**
      * Returns the source hostname where this NOTAM was downloaded from.
@@ -41,6 +74,25 @@ public class OceanicNOTAM extends OceanicRoute implements Comparable<OceanicNOTA
      */
     public String getRoute() {
         return _routeInfo;
+    }
+    
+    /**
+     * Updates the NOTAM effective date.
+     * @param d the NOTAM date
+     * @see OceanicTrackInfo#getDate()
+     */
+    public void setDate(Date d) {
+        _date = d;
+    }
+    
+    /**
+     * Updates the route type.
+     * @param type the route type code
+     * @see OceanicTrackInfo#getType()
+     * @see OceanicTrackInfo#getTypeName()
+     */
+    public void setType(Type type) {
+        _routeType = type;
     }
     
     /**
@@ -67,8 +119,8 @@ public class OceanicNOTAM extends OceanicRoute implements Comparable<OceanicNOTA
      * @see Comparable#compareTo(Object)
      */
     public int compareTo(OceanicNOTAM or2) {
-        int tmpResult = getDate().compareTo(or2.getDate());
-        return (tmpResult == 0) ? new Integer(getType()).compareTo(new Integer(or2.getType())) : tmpResult;
+        int tmpResult = _date.compareTo(or2._date);
+        return (tmpResult == 0) ? _routeType.compareTo(or2._routeType) : tmpResult;
     }
     
     public String toString() {

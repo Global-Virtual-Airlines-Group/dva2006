@@ -4,7 +4,7 @@ package org.deltava.commands.schedule;
 import java.util.*;
 
 import org.deltava.beans.ComboAlias;
-import org.deltava.beans.schedule.OceanicRoute;
+import org.deltava.beans.navdata.OceanicTrackInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -32,9 +32,9 @@ public class PACOTPlotCommand extends AbstractCommand {
 		
 		Collection<Date> dates = null;
 		try {
-			GetRoute dao = new GetRoute(ctx.getConnection());
+			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
 			dao.setQueryMax(31);
-			dates = dao.getOceanicTrackDates(OceanicRoute.PACOT);
+			dates = dao.getOceanicTrackDates(OceanicTrackInfo.Type.PACOT);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

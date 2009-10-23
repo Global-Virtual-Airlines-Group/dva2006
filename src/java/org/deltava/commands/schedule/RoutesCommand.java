@@ -3,7 +3,7 @@ package org.deltava.commands.schedule;
 
 import org.deltava.commands.*;
 
-import org.deltava.dao.GetRoute;
+import org.deltava.dao.GetOceanicRoute;
 import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.ScheduleAccessControl;
@@ -33,7 +33,7 @@ public class RoutesCommand extends AbstractViewCommand {
         ctx.setAttribute("access", access, REQUEST);
         
         try {
-            GetRoute dao = new GetRoute(ctx.getConnection());
+            GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
             dao.setQueryStart(vc.getStart());
             dao.setQueryMax(vc.getCount());
             vc.setResults(dao.getOceanic());

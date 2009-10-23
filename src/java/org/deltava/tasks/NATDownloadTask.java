@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Oceanic Track data.
  * @author Luke
- * @version 2.4
+ * @version 2.6
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class NATDownloadTask extends Task {
 			URL url = new URL(SystemData.get("config.nat.url"));
 			
 			// Build the oceanic route bean
-			OceanicNOTAM or = new OceanicNOTAM(OceanicRoute.NAT, new Date());
+			OceanicNOTAM or = new OceanicNOTAM(OceanicTrackInfo.Type.NAT, new Date());
 			or.setDate(new Date());
 			or.setSource(url.getHost());
 			
@@ -81,11 +81,11 @@ public class NATDownloadTask extends Task {
 			
 			// Build the Route waypoints
 			log.info("Building NAT track waypoints");
-			Collection<OceanicWaypoints> oTracks = new ArrayList<OceanicWaypoints>();
+			Collection<OceanicTrack> oTracks = new ArrayList<OceanicTrack>();
 			for (Iterator<Map.Entry<String, Collection<String>>> i = trackData.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry<String, Collection<String>> e = i.next();
-				OceanicWaypoints ot = new OceanicWaypoints(OceanicRoute.NAT, or.getDate());
-				ot.setTrack(e.getKey());
+				OceanicTrack ot = new OceanicTrack(OceanicTrackInfo.Type.NAT, e.getKey());
+				ot.setDate(or.getDate());
 				
 				// Calculate the location of the waypoint
 				GeoLocation lastLoc = new GeoPosition(42, -30);
@@ -110,7 +110,7 @@ public class NATDownloadTask extends Task {
 			// Write the route data to the database
 			SetRoute wdao = new SetRoute(con);
 			wdao.write(or);
-			for (Iterator<OceanicWaypoints> i = oTracks.iterator(); i.hasNext(); )
+			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
 				wdao.write(i.next());
 			
 			// Commit the transaction

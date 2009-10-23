@@ -41,7 +41,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the Route - we don't care what it is (so long as it exists)
-			GetRoute dao = new GetRoute(con);
+			GetOceanicRoute dao = new GetOceanicRoute(con);
 			Object route = dao.get(routeType, vd);
 			if (route == null)
 				throw notFoundException("Invalid Oceanic Route - " + ctx.getID());

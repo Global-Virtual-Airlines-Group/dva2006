@@ -1,16 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 /**
  * A Data Access Object to write Preferred Domestic/Oceanic Routes.
  * @author Luke
- * @version 2.2
+ * @version 2.6
  * @since 1.0
  */
 
@@ -72,7 +72,7 @@ public class SetRoute extends DAO {
 	public void write(OceanicNOTAM or) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO common.OCEANIC (ROUTETYPE, VALID_DATE, SOURCE, ROUTE) VALUES (?, ?, ?, ?)");
-			_ps.setInt(1, or.getType());
+			_ps.setInt(1, or.getType().ordinal());
 			_ps.setTimestamp(2, createTimestamp(or.getDate()));
 			_ps.setString(3, or.getSource());
 			_ps.setString(4, or.getRoute());
@@ -84,17 +84,17 @@ public class SetRoute extends DAO {
 	
 	/**
 	 * Wirtes an Oceanic route into the database.
-	 * @param ow the OceanicWaypoints bean
+	 * @param ow the OceanicTrack bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(OceanicWaypoints ow) throws DAOException {
+	public void write(OceanicTrack ow) throws DAOException {
 		try {
 			startTransaction();
 			
 			// Clean out the route
 			prepareStatement("DELETE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND (VALID_DATE=DATE(?)) AND "
 					+ "(TRACK=?)");
-			_ps.setInt(1, ow.getType());
+			_ps.setInt(1, ow.getType().ordinal());
 			_ps.setTimestamp(2, createTimestamp(ow.getDate()));
 			_ps.setString(3, ow.getTrack());
 			executeUpdate(0);
@@ -102,7 +102,7 @@ public class SetRoute extends DAO {
 			// Write the route
 			prepareStatement("INSERT INTO common.OCEANIC_ROUTES (ROUTETYPE, VALID_DATE, TRACK, SEQ, WAYPOINT, "
 					+ "LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ? ,?)");
-			_ps.setInt(1, ow.getType());
+			_ps.setInt(1, ow.getType().ordinal());
 			_ps.setTimestamp(2, createTimestamp(ow.getDate()));
 			_ps.setString(3, ow.getTrack());
 			

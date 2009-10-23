@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Comparable<NavigationDataBean>, GeoLocation, MarkerMapEntry, IconMapEntry {
+public abstract class NavigationDataBean implements Cloneable, Comparable<NavigationDataBean>, GeoLocation, MarkerMapEntry, IconMapEntry {
 
 	/**
 	 * Object type names.
@@ -305,6 +305,12 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 		}
 		
 		return buf.toString();
+	}
+	
+	public Object clone() throws CloneNotSupportedException {
+		NavigationDataBean nd2 = (NavigationDataBean) super.clone();
+		nd2._gp = new GeoPosition(nd2._gp);
+		return nd2;
 	}
 
 	/**
