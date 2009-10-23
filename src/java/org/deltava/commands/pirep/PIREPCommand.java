@@ -465,6 +465,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Get the runway data
 					GetNavRoute navdao = new GetNavRoute(con);
+					navdao.setEffectiveDate(fr.getDate());
 					SetACARSData awdao = new SetACARSData(con);
 					if (!info.hasRunwayData()) {
 						List<RouteEntry> tdEntries = ardao.getTakeoffLanding(info.getID(), info.getArchived());
