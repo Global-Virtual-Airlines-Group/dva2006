@@ -65,11 +65,7 @@ public class NATDownloadTask extends Task {
 			Collection<String> waypointIDs = new HashSet<String>();
 			for (Iterator<Collection<String>> i = trackData.values().iterator(); i.hasNext(); ) {
 				Collection<String> waypoints = i.next();
-				for (Iterator<String> wi = waypoints.iterator(); wi.hasNext(); ) {
-					String id = wi.next();
-					if (!id.contains("/"))
-						waypointIDs.add(id);
-				}
+				waypointIDs.addAll(waypoints);
 			}
 
 			// Get the connection
@@ -92,6 +88,8 @@ public class NATDownloadTask extends Task {
 				for (Iterator<String> wi = e.getValue().iterator(); wi.hasNext(); ) {
 					String code = wi.next();
 					NavigationDataBean ndb = (lastLoc == null) ? ndmap.get(code) : ndmap.get(code, lastLoc);
+					if ((ndb == null) && (code.indexOf('/') > -1))
+						ndb = Intersection.parse(code);
 					if (ndb != null) {
 						NavigationDataBean nd = NavigationDataBean.create(ndb.getType(), ndb.getLatitude(), ndb.getLongitude());
 						nd.setCode(ndb.getCode());
