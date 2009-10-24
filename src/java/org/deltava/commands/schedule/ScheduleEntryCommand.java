@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Schedule entries.
  * @author Luke
- * @version 1.0
+ * @version 2.6
  * @since 1.0
  */
 
@@ -181,9 +181,8 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading the profile. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }
