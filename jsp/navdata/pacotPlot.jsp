@@ -132,7 +132,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Draw the route
-		var trackLine = new GPolyline(trackPos, track.getAttribute("color"), 2, 0.7);
+		var trackLine = new GPolyline(trackPos, track.getAttribute("color"), 2, 0.7, { geodesic:true });
 		map.addOverlay(trackLine);
 		
 		// Save the route/points
