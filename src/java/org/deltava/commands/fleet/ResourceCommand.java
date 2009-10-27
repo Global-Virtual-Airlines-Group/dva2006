@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.security.command.ResourceAccessControl;
 /**
  * A Web Site Command to display/edit a Web Resource.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
@@ -51,26 +51,19 @@ public class ResourceCommand extends AbstractFormCommand {
 
 			// Check if we are doing a delete
 			SetResource wdao = new SetResource(con);
-			boolean doDelete = Boolean.valueOf(ctx.getParameter("doDelete")).booleanValue();
-			if (doDelete) {
-				wdao.delete(r.getID());
-			} else {
-				r.setURL(ctx.getParameter("url"));
-				r.setCategory(ctx.getParameter("category"));
-				r.setDescription(ctx.getParameter("desc"));
-				r.setLastUpdateID(ctx.getUser().getID());
-				r.setPublic(ac.getCanEdit() && Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
-				
-				// Save the resource
-				wdao.write(r);
-			}
+			r.setURL(ctx.getParameter("url"));
+			r.setCategory(ctx.getParameter("category"));
+			r.setDescription(ctx.getParameter("desc"));
+			r.setLastUpdateID(ctx.getUser().getID());
+			r.setPublic(ac.getCanEdit() && Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+			wdao.write(r);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
 
-		// Forword to the Command
+		// Forward to the Command
 		CommandResult result = ctx.getResult();
 		result.setURL("resources.do");
 		result.setType(ResultType.REDIRECT);
@@ -139,6 +132,6 @@ public class ResourceCommand extends AbstractFormCommand {
 	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

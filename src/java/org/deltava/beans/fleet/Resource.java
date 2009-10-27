@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.net.*;
@@ -7,15 +7,16 @@ import java.util.Date;
 import org.deltava.beans.*;
 
 /**
- * A bean to store Web resource data.
+ * A bean to store Web Resource link data.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
 public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	
 	private String _url;
+	private String _domain;
 	private String _category;
 	private int _authorID;
 	private int _lastUpdateID;
@@ -40,9 +41,19 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * Returns the Resource URL.
 	 * @return the URL
 	 * @see Resource#setURL(String)
+	 * @see Resource#getDomain()
 	 */
 	public String getURL() {
 		return _url;
+	}
+	
+	/**
+	 * Retruns the Resource URL domain.
+	 * @return the domain
+	 * @see Resource#getURL()
+	 */
+	public String getDomain() {
+		return _domain;
 	}
 	
 	/**
@@ -118,9 +129,14 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	public void setURL(String url) {
 		try {
 			URL urlData = new URL(url); 
-			_url = urlData.toString();
+			_url = urlData.toExternalForm();
+			String host = urlData.getHost();
+			if (host.startsWith("www."))
+				host = host.substring(4);
+			
+			_domain = host; 
 		} catch (Exception e) {
-			throw new IllegalArgumentException(e.getMessage());
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
