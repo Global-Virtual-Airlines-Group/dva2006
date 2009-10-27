@@ -197,7 +197,7 @@ if ((!fileName) || (fileName.disabled) || (fileName.value.length === 0)) return 
 var extTypes = extType.toLowerCase().split(',');
 
 var fName = fileName.value;
-var ext = fName.substring(fName.length - 3, fName.length).toLowerCase();
+var ext = fName.substring(fName.lastIndexOf('.') + 1).toLowerCase();
 for (var x = 0; x < extTypes.length; x++) {
 	if (ext == extTypes[x])
 		return true;
