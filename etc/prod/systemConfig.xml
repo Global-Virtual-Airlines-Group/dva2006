@@ -58,7 +58,11 @@
 				<category>Charts</category>
 				<category>Aircraft</category>
 				<category>Flight Planners</category>
+				<category>Fuel Planners</category>
 				<category>Online Networks</category>
+				<category>Scenery</category>
+				<category>Weather</category>
+				<category>Other</category>
 			</list>
 		</resources>
 
@@ -429,6 +433,7 @@
 			<role>Operations</role>
 			<role>PIREP</role>
 			<role>Moderator</role>
+			<role>Resource</role>
 			<role>Route</role>
 			<role>Schedule</role>
 			<role>Senior Staff</role>

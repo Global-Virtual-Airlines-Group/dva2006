@@ -35,19 +35,20 @@ return true;
 <el:form action="resources.do" method="post" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="resources">
 <tr class="title">
- <td class="left caps" colspan="3"><content:airline /> WEB RESOURCES</td>
- <td class="right" colspan="3"><c:if test="${access.canCreate}"><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></c:if>
+ <td class="left caps" colspan="2"><content:airline /> WEB RESOURCES</td>
+ <td class="right" colspan="4"><c:if test="${access.canCreate}"><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></c:if>
  CATEGORY <el:combo name="cat" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${param.cat}" onChange="void sort()" />
  SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${viewContext.sortType}" onChange="void sort()" /></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">&nbsp;</td>
- <td width="5%">HITS</td>
- <td colspan="2">RESOURCE URL</td>
+ <td width="40%">RESOURCE URL</td>
+ <td width="8%">HITS</td>
  <td width="15%">AUTHOR</td>
- <td width="10%">CREATED ON</td>
+ <td width="9%">CREATED ON</td>
+ <td width="20%">CATEGORY</td>
+ <td>&nbsp;</td>
 </tr>
 
 <!-- Table Data Section -->
@@ -55,16 +56,20 @@ return true;
 <c:set var="rAccess" value="${accessMap[resource.ID]}" scope="page" />
 <c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
 <view:row entry="${resource}">
-<c:if test="${rAccess.canEdit}">
- <td><el:cmdbutton url="resource" link="${resource}" op="edit" label="EDIT" /></td>
-</c:if>
- <td class="small"><fmt:int value="${resource.hits}" /></td>
- <td colspan="${rAccess.canEdit ? '2' : '3'}"><el:cmd url="gotoresource" link="${resource}" className="pri bld">${resource.URL}</el:cmd></td>
+ <td class="left"><el:cmd url="gotoresource" link="${resource}" className="pri bld">${resource.URL}</el:cmd></td>
+ <td class="sec bld"><fmt:int value="${resource.hits}" /></td>
  <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd></td>
  <td class="sec"><fmt:date date="${resource.createdOn}" fmt="d" /></td>
+<c:if test="${rAccess.canEdit}">
+ <td class="pri">${resource.category}</td>
+ <td><el:cmdbutton url="resource" link="${resource}" op="edit" label="EDIT" /></td>
+</c:if>
+<c:if test="${!rAccess.canEdit}">
+ <td colspan="2" class="pri">${resource.category}</td>
+</c:if>
 </view:row>
 <view:row entry="${resource}">
- <td colspan="6" class="small"><fmt:text value="${resource.description}" /></td>
+ <td colspan="6" class="left small"><fmt:text value="${resource.description}" /></td>
 </view:row>
 </c:forEach>
 

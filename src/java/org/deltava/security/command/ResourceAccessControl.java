@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.fleet.Resource;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Web Resources.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
@@ -42,8 +42,9 @@ public class ResourceAccessControl extends AccessControl {
 
 		// Validate edit/delete rights
 		boolean isMine = (_r.getAuthorID() == _ctx.getUser().getID());
-		_canEdit = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Fleet") || (isMine && !_r.getPublic());
-		_canDelete = _canEdit;
+		boolean isAdmin = _ctx.isUserInRole("Resource") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Fleet");
+		_canEdit = isAdmin || (isMine && !_r.getPublic());
+		_canDelete = isAdmin;
 	}
 
 	/**

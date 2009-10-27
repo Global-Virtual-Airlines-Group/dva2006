@@ -368,6 +368,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="resourcedelete">
+		<name>Web Resource Delete</name>
+		<class>org.deltava.commands.fleet.ResourceDeleteCommand</class>
+		<roles>HR,Fleet</roles>
+	</command>
+
 
 	<!-- Statistics commands -->
 	<command id="airlinestats">
