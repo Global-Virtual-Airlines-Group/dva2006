@@ -72,14 +72,12 @@ return true;
 </c:if>
 <tr>
  <td class="label top">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="80%" height="6" className="req">${resource.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="80%" height="4" className="req">${resource.description}</el:textbox></td>
 </tr>
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.public}" label="This is a public Web Resource" />
-<c:if test="${access.canDelete}"><br />
- <el:box name="doDelete" idx="*" value="true" label="Delete this Web Resource" /></c:if></td>
+ <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.public}" label="This is a public Web Resource" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -87,7 +85,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE WEB RESOURCE" /></td>
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE WEB RESOURCE" />
+<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="resourcedelete" link="${resource}" label="DELETE WEB RESOURCE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

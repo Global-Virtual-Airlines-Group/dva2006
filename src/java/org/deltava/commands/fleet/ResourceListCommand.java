@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -16,14 +16,15 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Web Resources.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
 public class ResourceListCommand extends AbstractViewCommand {
 	
-	private static final String[] SORT_CODES = {"CREATEDON DESC", "HITCOUNT DESC"};
-	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Created On", "Popularity"}, SORT_CODES);
+	private static final String[] SORT_CODES = {"CREATEDON DESC", "HITCOUNT DESC", "DOMAIN", "CATEGORY, URL"};
+	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Created On", "Popularity", "Web Site", "Category"}, 
+			SORT_CODES);
 
 	/**
 	 * Executes the command.
