@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.6
  */
 
@@ -27,7 +27,7 @@ public class GetNavRoute extends GetOceanicRoute {
 	
 	private static final Logger log = Logger.getLogger(GetNavRoute.class);
 	
-	private static final Cache<Route> _rCache = new AgingCache<Route>(640);
+	private static final Cache<Route> _rCache = new AgingCache<Route>(1024);
 	private static final Collection<String> EMPTY = new ArrayList<String>(1) {{ add(null); }};
 	
 	private java.util.Date _effectiveDate;
