@@ -14,13 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
 public class GetLibrary extends DAO implements CachingDAO {
 	
-	private static final Cache<CacheableLong> _dlCache = new ExpiringCache<CacheableLong>(48, 3600);
+	private static final Cache<CacheableLong> _dlCache = new ExpiringCache<CacheableLong>(128, 3600);
 
 	/**
 	 * Initialze the Data Access Object.
