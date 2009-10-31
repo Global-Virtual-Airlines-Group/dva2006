@@ -18,14 +18,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.2
  */
 
 public class GetNOAAWeather extends DAO implements CachingDAO {
 	
-	private static final Cache<METAR> _wxCache = new ExpiringCache<METAR>(512, 1800);
-	private static final Cache<TAF> _fCache = new ExpiringCache<TAF>(512, 1800);
+	private static final Cache<METAR> _wxCache = new ExpiringCache<METAR>(128, 1800);
+	private static final Cache<TAF> _fCache = new ExpiringCache<TAF>(128, 1800);
 	
 	private final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	
