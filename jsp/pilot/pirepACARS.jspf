@@ -16,13 +16,14 @@
  <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></td>
 </tr>
 </c:if>
-<c:if test="${!empty conInfo && (conInfo.clientBuild > 0)}">
+<c:if test="${(!empty conInfo) || (pirep.clientBuild > 0)}">
 <tr>
  <td class="label">ACARS Client</td>
- <td class="data" colspan="${cspan}">Build <fmt:int value="${conInfo.clientBuild}" />
-<c:if test="${conInfo.beta > 0}"> (Beta <fmt:int value="${conInfo.beta}" />)</c:if> 
+ <td class="data" colspan="${cspan}"><c:if test="${pirep.clientBuild > 0}">Build <fmt:int value="${pirep.clientBuild}" />
+<c:if test="${pirep.beta > 0}"> (Beta <fmt:int value="${pirep.beta}" />)</c:if></c:if>
+<c:if test="${!empty conInfo}"> 
 <content:filter roles="HR"> from ${conInfo.remoteHost}
-<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></content:filter>
+<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></content:filter></c:if>
 <c:if test="${pirep.hasReload}"> <span class="small"><i>(ACARS Flight Restore)</i></span></c:if></td>
 </tr>
 </c:if>
@@ -37,7 +38,7 @@
 <tr>
  <td class="label">Dispatcher</td>
 <c:if test="${!empty dispatcher}">
- <td class="data" colspan="${cspan}"><span class="ter bld">${dispatcher.name}</span> ${dispatcher.pilotCode}</td>
+ <td class="data" colspan="${cspan}"><span class="ter bld">${dispatcher.name}</span> (${dispatcher.pilotCode})</td>
 </c:if>
 <c:if test="${empty dispatcher}">
  <td class="data" colspan="${cspan}"><span class="ter caps bld"><content:airline /> Auto-Dispatch</span></td>

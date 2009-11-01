@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 1.0
  */
 
@@ -316,11 +316,11 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
-						+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "
-						+ "TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, "
-						+ "LANDING_G, LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, "
-						+ "GATE_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, TAKEOFF_FUEL, "
+			+ "LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_G, LANDING_N1, "
+			+ "LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TIME_0X, TIME_1X, TIME_2X, "
+			+ "TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD) VALUES "
+			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			// Since we are writing to multiple tables, this is designd as a transaction
@@ -362,8 +362,8 @@ public class SetFlightReport extends DAO {
 			_ps.setString(28, afr.getFDE());
 			_ps.setString(29, afr.getAircraftCode());
 			_ps.setBoolean(30, afr.getHasReload());
-
-			// Write to the database
+			_ps.setInt(31, afr.getClientBuild());
+			_ps.setInt(32, afr.getBeta());
 			executeUpdate(1);
 
 			// Commit the transaction
