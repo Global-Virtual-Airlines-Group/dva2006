@@ -17,13 +17,13 @@ import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
- * A Web Service to return North Atlantic Track data.
+ * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
-public class NATPlotService extends WebService {
+public class OceanicPlotService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -40,11 +40,19 @@ public class NATPlotService extends WebService {
 		} catch (Exception e) {
 			// empty
 		}
+		
+		// Get the track type
+		OceanicTrackInfo.Type trackType = OceanicTrackInfo.Type.NAT;
+		try {
+			trackType = OceanicTrackInfo.Type.valueOf(ctx.getParameter("type").toUpperCase());
+		} catch (Exception e) {
+			// empty
+		}
 
 		List<OceanicTrack> tracks = null;
 		try {
 			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
-			tracks = new ArrayList<OceanicTrack>(dao.getOceanicTracks(OceanicTrackInfo.Type.NAT, dt).values());
+			tracks = new ArrayList<OceanicTrack>(dao.getOceanicTracks(trackType, dt).values());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -54,6 +62,10 @@ public class NATPlotService extends WebService {
 		// Get the date from the tracks
 		if ((dt == null) && !tracks.isEmpty())
 			dt = tracks.get(0).getDate();
+		
+		// Add concorde routes if NAT
+		if (trackType == OceanicTrackInfo.Type.NAT)
+			tracks.addAll(OceanicTrack.CONC_ROUTES);
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -64,7 +76,6 @@ public class NATPlotService extends WebService {
 
 		// Build the track data
 		final NumberFormat nf = new DecimalFormat("##0.0000");
-		tracks.addAll(OceanicTrack.CONC_ROUTES);
 		for (Iterator<OceanicTrack> i = tracks.iterator(); i.hasNext();) {
 			OceanicTrack ow = i.next();
 			boolean isEast = (ow.getDirection() == OceanicTrackInfo.Direction.EAST);

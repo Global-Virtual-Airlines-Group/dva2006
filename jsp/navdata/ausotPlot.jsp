@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
-<title><content:airline /> North Atlantic Track Plotter</title>
+<title><content:airline /> Australian Track Plotter</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -39,11 +39,9 @@ function resetTracks()
 // Initialize map data arrays
 tracks['W'] = [];
 tracks['E'] = [];
-tracks['C'] = [];
 allTracks = [];
 points['W'] = [];
 points['E'] = [];
-points['C'] = [];
 allPoints = [];
 
 // Reset checkboxes
@@ -101,7 +99,7 @@ if (isLoading)
 
 // Generate an XMLHTTP request
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "otrackinfo.ws?type=NAT&date=" + dt.text, true);
+xmlreq.open("GET", "otrackinfo.ws?type=AUSOT&date=" + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	removeMarkers(map, 'allPoints');
@@ -163,10 +161,10 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="natplot.do" method="get" validate="return false">
+<el:form action="pacotplot.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2"><content:airline /> NORTH ATLANTIC ROUTE PLOTTER<span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> AUSTRALIAN ROUTE PLOTTER<span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="label">Date</td>
@@ -178,8 +176,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Map Legend</td>
- <td class="data"><map:legend color="white" legend="Eastbound" />  <map:legend color="orange" legend="Westbound" />
- <map:legend color="blue" legend="Concorde" /></td>
+ <td class="data"><map:legend color="white" legend="Eastbound" />  <map:legend color="orange" legend="Westbound" /></td>
 </tr>
 <tr>
  <td class="label">Display Tracks</td>
@@ -207,7 +204,7 @@ map.addControl(new WXClearControl(new GSize(142, 7)));
 // Add map controls
 map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
-map.setCenter(new GLatLng(52.0, -35.0), 4);
+map.setCenter(new GLatLng(-26.0, 133.0), 4);
 map.setMapType(G_SATELLITE_MAP);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
