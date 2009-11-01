@@ -99,7 +99,7 @@ if (isLoading)
 
 // Generate an XMLHTTP request
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "pacotinfo.ws?date=" + dt.text, true);
+xmlreq.open("GET", "otrackinfo.ws?type=PACOT&date=" + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	removeMarkers(map, 'allPoints');

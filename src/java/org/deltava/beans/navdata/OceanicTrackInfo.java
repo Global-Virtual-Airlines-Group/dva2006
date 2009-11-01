@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * An interface to describe Oceanic track airways and NOTAMs.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -16,7 +16,7 @@ public interface OceanicTrackInfo {
 	 * An enumeration for Oceanic Track types.
 	 */
 	public enum Type {
-		NAT, PACOT;
+		NAT, PACOT, AUSOT;
 	}
 	
 	/**
@@ -29,7 +29,7 @@ public interface OceanicTrackInfo {
     /**
      * Track type names.
      */
-    public static final String[] TYPES = {"NAT", "PACOT"};
+    public static final String[] TYPES = {"NAT", "PACOT", "AUSOT"};
 
     /**
      * Returns the effective date of the Oceanic.

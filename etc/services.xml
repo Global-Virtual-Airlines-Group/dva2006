@@ -43,11 +43,8 @@
 	<service id="answer" class="org.deltava.service.exam.TextService" />
 	<service id="examplot" class="org.deltava.service.exam.RoutePlotService" />
 
-	<!-- ACARS Offline PIREP Service -->
-	<!-- <service id="acarspirep" class="org.deltava.service.acars.FlightReportService" /> -->
-
 	<!-- XACARS Offline PIREP Service -->
-	<service id="xacarspirep" class="org.deltava.service.acars.XFlightReportService" />
+	<!-- <service id="xacarspirep" class="org.deltava.service.acars.XFlightReportService" /> -->
 
 	<!-- ACARS Dispatch Services -->
 	<service id="navaids" class="org.deltava.service.navdata.NavigationAidService" />
@@ -67,8 +64,7 @@
 	<service id="acars_progress" class="org.deltava.service.acars.MapProgressService" />
 	<service id="acars_pirep" class="org.deltava.service.acars.MapFlightDataService" />
 	<service id="acars_earth" class="org.deltava.service.acars.FlightDataEarthService" />
-	<service id="natinfo" class="org.deltava.service.schedule.NATPlotService" />
-	<service id="pacotinfo" class="org.deltava.service.schedule.PACOTPlotService" />
+	<service id="otrackinfo" class="org.deltava.service.schedule.OceanicPlotService" />
 	<service id="acars_chat_log" class="org.deltava.service.acars.ChatLogService" />
 
 	<!-- The names of ACARSMapEarthServices are hardcoded in ACARSMapEarthLinkService -->

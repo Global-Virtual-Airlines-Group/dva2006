@@ -40,8 +40,20 @@
 	<task id="pacot" enabled="true">
 		<class>org.deltava.tasks.PACOTDownloadTask</class>
 		<time>
-			<min>1</min>
+			<min>0</min>
 			<hour>20</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+
+	<!-- Download AUSOT Track data -->
+	<task id="ausot" enabled="true">
+		<class>org.deltava.tasks.AUSOTDownloadTask</class>
+		<time>
+			<min>0</min>
+			<hour>8</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
