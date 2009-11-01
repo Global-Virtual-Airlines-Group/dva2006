@@ -12,13 +12,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.6
  */
 
 public class GetACARSRunways extends DAO implements CachingDAO {
 	
-	private static final Cache<CacheableCollection<Runway>> _cache = new AgingCache<CacheableCollection<Runway>>(128);
+	private static final Cache<CacheableCollection<Runway>> _cache = new AgingCache<CacheableCollection<Runway>>(256);
 
 	private class RunwayCacheKey {
 		private String _key;
