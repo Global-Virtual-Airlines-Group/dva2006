@@ -348,9 +348,10 @@ every day.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br />
-<el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd></td>
- <td class="data">You can use our Google Maps tool to plot today's North Atlantic and Pacific Tracks, or NAT / PACOT routes
- for the previous several weeks.</td>
+<el:cmd className="bld" url="pacotplot">PACOT Route Plotter</el:cmd><br />
+<el:cmd className="bld" url="ausotplot">AUSOT Route Plotter</el:cmd></td>
+ <td class="data">You can use our Google Maps tool to plot today's North Atlantic, Pacific and Australian Tracks, or NAT / PACOT 
+ / AUSOT routes for the previous several months.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="wxcenter">Weather Center</el:cmd></td>
