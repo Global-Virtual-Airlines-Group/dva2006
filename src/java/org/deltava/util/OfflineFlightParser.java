@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.4
  */
 
@@ -59,7 +59,7 @@ public class OfflineFlightParser {
 		
 		// Get aircraft information
 		Element ae = re.getChild("aircraft");
-		if ((ae == null) && (clientBuild > 92))
+		if (ae == null)
 			throw new IllegalArgumentException("No Aircraft Information");
 
 		// Get the flight information
@@ -78,7 +78,7 @@ public class OfflineFlightParser {
 		OfflineFlight result = new OfflineFlight();
 		
 		// Build a connection entry
-		ConnectionEntry ce = new ConnectionEntry(IDGenerator.generate());
+		ConnectionEntry ce = new ConnectionEntry(0);
 		ce.setStartTime(new Date());
 		ce.setClientBuild(clientBuild);
 		ce.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
@@ -154,7 +154,7 @@ public class OfflineFlightParser {
 		afr.setAttribute(FlightReport.ATTR_ACARS, true);
 		afr.setFSVersion(inf.getFSVersion());
 		afr.setStatus(FlightReport.SUBMITTED);
-		afr.setSubmittedOn(afr.getDate());
+		afr.setSubmittedOn(new Date());
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
 		afr.setHasReload(Boolean.valueOf(ie.getChildTextTrim("hasRestore")).booleanValue());
@@ -162,8 +162,9 @@ public class OfflineFlightParser {
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
-		if (ae != null)
-			afr.setFDE(ae.getChildTextTrim("fde"));
+		afr.setFDE(ae.getChildTextTrim("airFile"));
+		afr.setClientBuild(ce.getClientBuild());
+		afr.setBeta(ce.getBeta());
 		
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());

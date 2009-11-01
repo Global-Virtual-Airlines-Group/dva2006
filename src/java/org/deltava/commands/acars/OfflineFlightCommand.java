@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.4
  */
 
@@ -57,13 +57,19 @@ public class OfflineFlightCommand extends AbstractCommand {
 				ZipEntry ze = zis.getNextEntry();
 				while ((ze != null) && ((sha == null) || (xml == null))) {
 					String name = ze.getName().toLowerCase();
-					byte[] buf = new byte[(int) ze.getSize()];
-					zis.read(buf);
+					ByteArrayOutputStream out = new ByteArrayOutputStream(102400);
+					byte[] buffer = new byte[16384];
+					int bytesRead = zis.read(buffer);
+					while (bytesRead > -1) {
+						out.write(buffer, 0, bytesRead);
+						bytesRead = zis.read(buffer);
+					}
+						
 					if (name.endsWith(".xml")) {
-						xml = new String(buf);
+						xml = new String(out.toByteArray(), "UTF-8");
 						xml = xml.substring(0, xml.length() - 2);
 					} else if (name.endsWith(".sha"))
-						sha = new String(buf).trim();
+						sha = new String(out.toByteArray(), "UTF-8").trim();
 					
 					ze = zis.getNextEntry();
 				}
