@@ -86,8 +86,8 @@ public class GetPACOTs extends DAO implements TrackDAO {
 		if (_notam == null)
 			getTrackInfo();
 
-		Map<String, Collection<String>> info = new LinkedHashMap<String, Collection<String>>();
 		try {
+			Map<String, Collection<String>> info = new LinkedHashMap<String, Collection<String>>();
 			LineNumberReader br = new LineNumberReader(new StringReader(_notam));
 			String data = br.readLine();
 			while (data != null) {

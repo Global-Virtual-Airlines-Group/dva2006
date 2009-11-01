@@ -80,4 +80,16 @@ public class TestTrackDAO extends TestCase {
 		Map<String, Collection<String>> results = dao.getWaypoints();
 		assertNotNull(results);
 	}
+	
+	public void testAUSOT() throws Exception {
+		
+		// Pull down the data
+		GetAUSOTs dao = new GetAUSOTs("http://www.airservicesaustralia.com/customer/ausots/html.asp?/flextracks/text.asp?ver=1");
+		String ausotInfo = dao.getTrackInfo();
+		assertNotNull(ausotInfo);
+		
+		// Test that we can parse
+		Map<String, Collection<String>> results = dao.getWaypoints();
+		assertNotNull(results);
+	}
 }
