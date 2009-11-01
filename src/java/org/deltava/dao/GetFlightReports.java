@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 1.0
  */
 
@@ -106,8 +106,13 @@ public class GetFlightReports extends DAO {
 			if (results.size() == 0)
 				return null;
 
+			// Check that it's really an ACARSFlightReport object
+			FlightReport fr = results.get(0);
+			if (!(fr instanceof ACARSFlightReport))
+				return null;
+
 			// Get the primary equipment types
-			ACARSFlightReport afr = (ACARSFlightReport) results.get(0);
+			ACARSFlightReport afr = (ACARSFlightReport) fr;
 			afr.setCaptEQType(getCaptEQType(afr.getID(), dbName));
 			return afr;
 		} catch (SQLException se) {
@@ -558,7 +563,7 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 51);
+		boolean hasACARS = (md.getColumnCount() >= 53);
 		boolean hasComments = (md.getColumnCount() >= 21);
 
 		// Iterate throught the results
@@ -625,6 +630,8 @@ public class GetFlightReports extends DAO {
 				ap.setFDE(rs.getString(50));
 				ap.setAircraftCode(rs.getString(51));
 				ap.setHasReload(rs.getBoolean(52));
+				ap.setClientBuild(rs.getInt(53));
+				ap.setBeta(rs.getInt(54));
 			}
 
 			// Add the flight report to the results
@@ -688,8 +695,7 @@ public class GetFlightReports extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PROMO_EQ WHERE (ID=?) ORDER BY EQTYPE");
-		
+		sqlBuf.append(".PROMO_EQ WHERE (ID=?)");
 
 		// Build the prepared statement and execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
@@ -697,7 +703,7 @@ public class GetFlightReports extends DAO {
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		Collection<String> results = new LinkedHashSet<String>();
+		Collection<String> results = new TreeSet<String>();
 		while (rs.next())
 			results.add(rs.getString(1));
 

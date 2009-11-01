@@ -58,10 +58,8 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
-				+ "PIREP_COMMENT PC ON (PC.ID=PR.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN "
-				+ "acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE "
-				+ "(C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, APR.* FROM PIREPS PR LEFT JOIN ACARS_PIREPS APR "
+				+ "ON (PR.ID=APR.ID) WHERE (APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
@@ -96,10 +94,9 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM STAFF S LEFT JOIN PIREPS PR "
-				+ "ON (PR.PILOT_ID=S.ID) LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
-				+ "ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON "
-				+ "(C.ID=F.CON_ID) WHERE (C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, APR.* FROM STAFF S LEFT JOIN PIREPS PR ON "
+				+ "(PR.PILOT_ID=S.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (APR.CLIENT_BUILD >= ?) "
+				+ "AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
@@ -135,10 +132,9 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
-				+ "PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
-				+ "LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
-				+ "WHERE (PR.EQTYPE=?) AND (C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, APR.* FROM PIREPS PR LEFT JOIN ACARS_PIREPS APR "
+				+ "ON (PR.ID=APR.ID) WHERE (PR.EQTYPE=?) AND (APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND "
+				+ "(APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
@@ -171,8 +167,7 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.EQTYPE, COUNT(P.ID) AS CNT FROM PIREPS P, ACARS_PIREPS APR "
-				+ "LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) LEFT JOIN acars.CONS C ON (F.CON_ID=C.ID) WHERE "
-				+ "(P.ID=APR.ID) AND (P.STATUS=?) AND (C.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0)");
+				+ "WHERE (P.ID=APR.ID) AND (P.STATUS=?) AND (APR.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			buf.append(" AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		buf.append(" GROUP BY P.EQTYPE HAVING (CNT >= ?) ORDER BY CNT DESC");
