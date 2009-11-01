@@ -3,17 +3,18 @@ package org.deltava.beans;
 
 import java.util.*;
 
+import org.deltava.beans.acars.ConnectionEntry;
 import org.deltava.beans.schedule.Airline;
 
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
 public class ACARSFlightReport extends FlightReport {
-
+	
     private final Map<String, Date> _stateChangeTimes = new HashMap<String, Date>();
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     
@@ -41,6 +42,8 @@ public class ACARSFlightReport extends FlightReport {
     private String _code;
     
     private boolean _hasReload;
+    private int _clientBuild;
+    private int _beta;
     
     /**
      * Creates a new ACARS Flight Report object with a given flight.
@@ -344,6 +347,24 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Returns the ACARS client build number.
+     * @return the client build number
+     * @see ConnectionEntry#setClientBuild(int)
+     */
+    public int getClientBuild() {
+       return _clientBuild;
+    }
+    
+    /**
+     * Returns the ACARS beta build number.
+     * @return the beta number
+     * @see ConnectionEntry#setBeta(int)
+     */
+    public int getBeta() {
+ 	   return _beta;
+    }
+    
+    /**
      * Updates the start time of the flight.
      * @param dt the date/time the flight started
      * @see ACARSFlightReport#getEndTime()
@@ -574,5 +595,23 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setHasReload(boolean hasReload) {
     	_hasReload = hasReload;
+    }
+    
+    /**
+     * Updates the ACARS client build number.
+     * @param ver the build number
+     * @see ConnectionEntry#getClientBuild()
+     */
+    public void setClientBuild(int ver) {
+       _clientBuild = ver;
+    }
+    
+    /**
+     * Updates the ACARS beta build number.
+     * @param beta the beta number
+     * @see ConnectionEntry#getBeta()
+     */
+    public void setBeta(int beta) {
+ 	   _beta = Math.max(0, beta);
     }
 } 
