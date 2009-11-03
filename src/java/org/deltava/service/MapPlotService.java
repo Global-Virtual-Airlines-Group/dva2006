@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 2.3
+ * @version 2.7
  * @since 2.3
  */
 
@@ -35,7 +35,7 @@ public abstract class MapPlotService extends WebService {
 		doc.setRootElement(re);
 
 		// Calculate the distance and midpoint by taking the first/last waypoints
-		GeoLocation mp = null;
+		GeoLocation mp = null; 
 		int distance = 500;
 		if (points.size() > 1) {
 			NavigationDataBean ndf = points.get(0);
@@ -54,8 +54,10 @@ public abstract class MapPlotService extends WebService {
 		}
 
 		// Write the entries
+		GeoLocation start = points.get(0); distance = 0;
 		for (Iterator<NavigationDataBean> i = points.iterator(); i.hasNext();) {
 			NavigationDataBean entry = i.next();
+			distance += entry.distanceTo(start);
 			Element e = XMLUtils.createElement("pos", entry.getInfoBox(), true);
 			e.setAttribute("code", entry.getCode());
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
@@ -70,6 +72,7 @@ public abstract class MapPlotService extends WebService {
 		}
 
 		// Return the document
+		re.setAttribute("distance", StringUtils.format(distance, "###0"));
 		return doc;
 	}
 	
