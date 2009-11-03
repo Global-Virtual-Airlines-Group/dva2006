@@ -80,15 +80,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Maximum Weight</td>
- <td class="data"><el:text name="maxWeight" idx="*" size="6" max="7" value="${aircraft.maxWeight}" className="req" /></td>
+ <td class="data"><el:text name="maxWeight" idx="*" size="6" max="7" value="${aircraft.maxWeight}" className="req" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Maximum Takeoff Weight</td>
- <td class="data"><el:text name="maxTWeight" idx="*" size="6" max="7" value="${aircraft.maxTakeoffWeight}" className="req" /></td>
+ <td class="data"><el:text name="maxTWeight" idx="*" size="6" max="7" value="${aircraft.maxTakeoffWeight}" className="req" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Maximum Landing Weight</td>
- <td class="data"><el:text name="maxLWeight" idx="*" size="6" max="7" value="${aircraft.maxLandingWeight}" className="req" /></td>
+ <td class="data"><el:text name="maxLWeight" idx="*" size="6" max="7" value="${aircraft.maxLandingWeight}" className="req" /> pounds</td>
 </tr>
 <tr class="title caps">
  <td colspan="2">ACARS FUEL PROFILE</td>
@@ -100,8 +100,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Cruise Speed</td>
- <td class="data"><el:text name="cruiseSpeed" idx="*" size="3" max="4" value="${aircraft.cruiseSpeed}" className="req" />
- knots</td>
+ <td class="data"><el:text name="cruiseSpeed" idx="*" size="3" max="4" value="${aircraft.cruiseSpeed}" className="req" /> knots</td>
 </tr>
 <tr>
  <td class="label">Fuel Flow</td>
@@ -110,13 +109,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Base Fuel</td>
- <td class="data"><el:text name="baseFuel" idx="*" size="3" max="5" value="${aircraft.baseFuel}" className="req" />
- pounds</td>
+ <td class="data"><el:text name="baseFuel" idx="*" size="3" max="5" value="${aircraft.baseFuel}" className="req" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Taxi Fuel</td>
- <td class="data"><el:text name="taxiFuel" idx="*" size="3" max="5" value="${aircraft.taxiFuel}" className="req" />
- pounds</td>
+ <td class="data"><el:text name="taxiFuel" idx="*" size="3" max="5" value="${aircraft.taxiFuel}" className="req" /> pounds</td>
 </tr>
 <tr>
  <td class="label top">Primary Tanks</td>
