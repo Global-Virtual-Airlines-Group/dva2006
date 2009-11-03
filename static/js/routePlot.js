@@ -106,6 +106,18 @@ xmlreq.onreadystatechange = function() {
 		map.setCenter(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
 	}
 
+	// Set the distance
+	var dstE = getElement("rtDistance");
+	if (dstE != null) {
+		var dst = xdoc.getAttribute("distance");
+		if (dst) {
+			if(dst > 0)
+				dstE.innerHTML = ' - ' + dst + ' miles';
+			else
+				dstE.innerHTML = '';
+		}
+	}
+
 	// Load the runways
 	var rws = xdoc.getElementsByTagName("runway");
 	updateRoutes(f.runway, rws);

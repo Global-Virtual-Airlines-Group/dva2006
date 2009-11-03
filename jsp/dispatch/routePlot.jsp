@@ -114,7 +114,7 @@ return true;
  <el:button ID="SearchButton" className="BUTTON" onClick="void searchRoutes()" label="SEARCH" /></td>
 </tr>
 <tr class="title caps">
- <td colspan="2" class="left">PLOTTED ROUTE</td>
+ <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance" /></td>
 </tr>
 <tr>
  <td class="label top">Route Map</td>
