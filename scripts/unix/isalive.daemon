@@ -225,7 +225,7 @@ do
 		# Check site health check
 		if [ -f "/var/run/tomcat60.pid" ]
 		then
-			wget -nv -O /tmp/healthcheck.log -o /tmp/healthcheck.out --timeout=10 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
+			wget -nv -O /tmp/healthcheck.log -o /tmp/healthcheck.out --timeout=10 --tries=2 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
 			errorLines=`grep "is OK" /tmp/healthcheck.log | wc -l`
 			transient=`grep "ERROR 502" /tmp/healthcheck.out | wc -l`
 			if (( ($errorLines != 1) && ($transient != 1) ))
