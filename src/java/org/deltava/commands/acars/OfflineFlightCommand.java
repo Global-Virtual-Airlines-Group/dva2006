@@ -35,6 +35,7 @@ import org.gvagroup.common.SharedData;
 public class OfflineFlightCommand extends AbstractCommand {
 	
 	private static final Logger log = Logger.getLogger(OfflineFlightCommand.class);
+	private static final int MAX_XML_SIZE = 4096 * 1024;
 
 	/**
 	 * Executes the command.
@@ -47,9 +48,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/acars/offlineSubmit.jsp");
 		
-		String sha = null; String xml = null;
-		
 		// Check for a ZIP archive
+		String sha = null; String xml = null;
 		FileUpload zipF = ctx.getFile("zip");
 		if (zipF != null) {
 			try {
@@ -65,10 +65,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 						bytesRead = zis.read(buffer);
 					}
 						
-					if (name.endsWith(".xml")) {
+					if (name.endsWith(".xml"))
 						xml = new String(out.toByteArray(), "UTF-8");
-						xml = xml.substring(0, xml.length() - 2);
-					} else if (name.endsWith(".sha"))
+					else if (name.endsWith(".sha"))
 						sha = new String(out.toByteArray(), "UTF-8").trim();
 					
 					ze = zis.getNextEntry();
@@ -103,13 +102,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 		try {
 			if (sha == null)
 				sha = new String(shaF.getBuffer(), "UTF-8").trim();
-			if (xml == null) {
+			if (xml == null)
 				xml = new String(xmlF.getBuffer(), "UTF-8");
-				xml = xml.substring(0, xml.length() - 2);
-			}
+			
+			// Sanity check the length
+			if (xml.length() > MAX_XML_SIZE)
+				throw new IllegalArgumentException("XML too large - " + StringUtils.format(xml.length(), ctx.getUser().getNumberFormat()) + " bytes");
 		
 			// Validate the SHA
 			if (!noValidate) {
+				xml = xml.substring(0, xml.length() - 2);
 				MessageDigester md = new MessageDigester(SystemData.get("security.hash.acars.algorithm"));
 				md.salt(SystemData.get("security.hash.acars.salt"));
 				String calcHash = MessageDigester.convert(md.digest(xml.getBytes()));
@@ -140,10 +142,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 		ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
 		if (build < 80)
 			minBuild = cInfo.getMinimumBuild("v1.4");
-		else if (build < 95)
-			minBuild = cInfo.getMinimumBuild("v2.1");
-		else
+		else if (build < 100)
 			minBuild = cInfo.getMinimumBuild("v2.2");
+		else
+			minBuild = cInfo.getMinimumBuild("v3.0");
 		
 		if (build < minBuild) {
 			String msg = "ACARS Build " + build + " not supported";
