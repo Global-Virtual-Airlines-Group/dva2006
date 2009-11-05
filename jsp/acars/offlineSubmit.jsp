@@ -16,8 +16,12 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateFile(form.xml, 'xml,gz', 'Offline Flight XML data')) return false;
-if (!validateFile(form.hashCode, 'sha', 'Offline Flight SHA-256 signature data')) return false;
+if (form.zip.value.length > 0) {
+	if (!validateFile(form.zip, 'zip', 'Offline Flight ZIP data')) return false;
+} else {
+	if (!validateFile(form.xml, 'xml', 'Offline Flight XML data')) return false;
+	if (!validateFile(form.hashCode, 'sha', 'Offline Flight SHA-256 signature data')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
