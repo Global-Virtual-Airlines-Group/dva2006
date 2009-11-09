@@ -68,6 +68,7 @@ public abstract class MapPlotService extends WebService {
 				e.setAttribute("icon", String.valueOf(entry.getIconCode()));
 			}
 			
+			start = entry;
 			re.addContent(e);
 		}
 
