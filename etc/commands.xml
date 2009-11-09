@@ -1685,6 +1685,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="hdsearch">
+		<name>Help Desk Search</name>
+		<class>org.deltava.commands.help.HelpDeskSearchCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 
 	<!-- ACARS log/data commands -->
 	<command id="acarsversion">
