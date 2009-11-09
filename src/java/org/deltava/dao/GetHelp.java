@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -260,6 +260,36 @@ public class GetHelp extends DAO {
 			}
 
 			return results.values();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Searches all Issues for a particular phrase.
+	 * @param searchStr the search phrase
+	 * @param includeComments TRUE if Issue Comments should be searched, otherwise FALSE
+	 * @return a List of Issues
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Issue> search(String searchStr, boolean includeComments) throws DAOException {
+	
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED_ON) AS LC, COUNT(IC.ID) AS CC FROM "
+				+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE ((LOCATE(?, I.SUBJECT) > 0) "
+				+ "OR (LOCATE(?, I.BODY) > 0)");
+		if (includeComments)
+			sqlBuf.append(" OR (LOCATE(?, IC.BODY) > 0)");
+		sqlBuf.append(") GROUP BY I.ID ORDER BY I.ISFAQ DESC, I.STATUS DESC, I.CREATED_ON");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, searchStr);
+			_ps.setString(2, searchStr);
+			if (includeComments)
+				_ps.setString(3, searchStr);
+			
+			return executeIssue();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

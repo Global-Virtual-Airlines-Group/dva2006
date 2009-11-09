@@ -47,6 +47,14 @@ one of our volunteer staff will answer it soon.</td>
  <content:airline />.</td>
  <td colspan="2"><el:cmdbutton url="faq" label="FREQUENTLY ASKED QUESTIONS" /></td>
 </tr>
+
+<!-- Help Desk Search -->
+<tr>
+ <td class="left" colspan="4">Have a question or a problem? Chances are you're not the first person to need help.
+ You can search the Help Desk to see if other people have had the same Issue, and how it was resolved.</td>
+ <td colspan="2"><el:cmdbutton url="hdsearch" label="HELP DESK SEARCH" /></td>
+</tr>
+
 <!-- My Issues -->
 <tr class="title caps">
  <td class="left" colspan="6">MY ISSUES</td>

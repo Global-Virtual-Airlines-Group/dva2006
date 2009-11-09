@@ -28,6 +28,7 @@
 <c:if test="${access.canCreate}">
  <content:subitem><el:cmd url="hdissue" op="edit">New Issue</el:cmd></content:subitem>
 </c:if>
+ <content:subitem><el:cmd url="hdsearch">Search Help Desk</el:cmd></content:subitem>
 </content:filter>
 <content:filter roles="HR,PIREP,Examination">
  <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
