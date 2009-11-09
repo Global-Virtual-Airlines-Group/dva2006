@@ -3,10 +3,17 @@ package org.deltava.dao.file.innovata;
 
 import java.util.*;
 
+/**
+ * A utility class to parse CSV data.
+ * @author Luke
+ * @version 2.7
+ * @since 1.0
+ */
+
 class CSVTokens implements Comparable<CSVTokens> {
 
 	private int _lineNumber;
-	private List<String> _tkns = new ArrayList<String>();
+	private final List<String> _tkns = new ArrayList<String>();
 
 	CSVTokens(String entry, int line) {
 		super();

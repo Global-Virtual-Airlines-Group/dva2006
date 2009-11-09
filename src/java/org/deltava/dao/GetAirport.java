@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -218,7 +218,8 @@ public class GetAirport extends DAO {
 
 				// Save in the map
 				results.put(a.getIATA(), a);
-				results.put(a.getICAO(), a);
+				if (!results.containsKey(a.getICAO()))
+					results.put(a.getICAO(), a);
 			}
 
 			// Clean up the first query
