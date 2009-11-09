@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 2.3
+ * @version 2.7
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
-	private long _effDate;
+	private long _effDate = System.currentTimeMillis();
 
 	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
@@ -41,7 +41,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 */
 	public GetFullSchedule(InputStream is) {
 		super(is);
-		_effDate = System.currentTimeMillis();
 	}
 
 	/**
@@ -143,9 +142,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			while (br.ready()) {
 				String data = br.readLine();
 				CSVTokens tkns = new CSVTokens(data, br.getLineNumber());
-				if (data.startsWith("//"))
-					log.debug("Skipping line " + br.getLineNumber() + " - comment");
-				else if (tkns.size() < 53)
+				if (data.startsWith("//")) {
+					if (log.isDebugEnabled())
+						log.debug("Skipping line " + br.getLineNumber() + " - comment");
+				} else if (tkns.size() < 53)
 					log.warn("Skipping line " + br.getLineNumber() + " - size = " + tkns.size());
 				else if (include(tkns))
 					_data.add(tkns);
@@ -174,6 +174,12 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			// Load the Airports
 			Airport airportD = SystemData.getAirport(entries.get(14));
 			Airport airportA = SystemData.getAirport(entries.get(22));
+			
+			// Ensure all BSL/MLH comes from a common airport.
+			if ((airportD != null) && ("LFSB".equals(airportD.getICAO())))
+				airportD = SystemData.getAirport("LFSB");
+			if ((airportA != null) && ("LFSB".equals(airportA.getICAO())))
+				airportA = SystemData.getAirport("LFSB");
 
 			// Look up the equipment type
 			String eqType = getEquipmentType(entries.get(27));
@@ -218,8 +224,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 			// Build the Schedule Entry
 			if (isOK) {
-				DailyScheduleEntry entry = new DailyScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer
-						.parseInt(entries.get(46)));
+				DailyScheduleEntry entry = new DailyScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));
 				entry.setAirportD(airportD);
 				entry.setAirportA(airportA);
 				entry.setEquipmentType(eqType);
