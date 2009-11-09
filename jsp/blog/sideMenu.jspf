@@ -36,6 +36,9 @@
  <content:subitem><el:cmd url="logout">Log Out</el:cmd></content:subitem>
 </content:authUser>
  <content:subitem><el:cmd url="users">Logged In Users</el:cmd></content:subitem>
+<content:filter roles="HR,PIREP,Examination">
+ <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
+</content:filter>
  <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
 <content:filter roles="Developer">
  <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
