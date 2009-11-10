@@ -78,7 +78,7 @@ public class OfflineFlightParser {
 		OfflineFlight result = new OfflineFlight();
 		
 		// Build a connection entry
-		ConnectionEntry ce = new ConnectionEntry(0);
+		ConnectionEntry ce = new ConnectionEntry(IDGenerator.generate());
 		ce.setStartTime(new Date());
 		ce.setClientBuild(clientBuild);
 		ce.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
