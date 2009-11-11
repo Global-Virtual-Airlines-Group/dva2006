@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 2.1
+ * @version 2.7
  * @since 1.0
  */
 
@@ -29,12 +29,15 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     private String _cpName;
     private String _cpEmail;
     private int _cpID;
+    
+    private int _promotionLegs;
+    private int _promotionHours;
+    private int _promotionMinLength;
 
-    private final Collection<String> _ranks = new ArrayList<String>();
+    private final Collection<String> _ranks = new LinkedHashSet<String>();
     private final Collection<String> _primaryRatings = new TreeSet<String>();
     private final Collection<String> _secondaryRatings = new TreeSet<String>();
     
-    private final Map<String, Integer> _promotionCriteria = new HashMap<String, Integer>();
     private final Map<String, Collection<String>> _examNames = new HashMap<String, Collection<String>>();
     
     private AirlineInformation _owner;
@@ -169,40 +172,32 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
-     * Return the number of hours required for promotion.
-     * @param rank The <i>current</i> rank of the pilot
+     * Return the number of hours required for promotion to Captain.
      * @return The number of hours required for a promotion <i>out of</i> the specified rank, returns 0 if not set
-     * @throws NullPointerException if rank is null 
-     * @see EquipmentType#setPromotionHours(String, int)
-     * @see EquipmentType#getPromotionLegs(String)
+     * @see EquipmentType#setPromotionHours(int)
+     * @see EquipmentType#getPromotionLegs()
      */
-    public int getPromotionHours(String rank) {
-        Integer hours = _promotionCriteria.get(rank + "_HOURS");
-        return (hours == null) ? 0 : hours.intValue();
+    public int getPromotionHours() {
+    	return _promotionHours;
     }
 
     /**
-     * Return the number of flight legs required for promotion.
-     * @param rank The <i>current</i> rank of the pilot
+     * Return the number of flight legs required for promotion to Captain.
      * @return The number of legs required for a promotion <i>out of</i> the specified rank, returns 0 if not set
-     * @throws NullPointerException if rank is null 
-     * @see Ranks
-     * @see EquipmentType#setPromotionLegs(String, int)
-     * @see EquipmentType#getPromotionHours(String)
+     * @see EquipmentType#setPromotionLegs(int)
+     * @see EquipmentType#getPromotionHours()
      */
-    public int getPromotionLegs(String rank) {
-        Integer legs = _promotionCriteria.get(rank + "_LEGS");
-        return (legs == null) ? 0 : legs.intValue();
+    public int getPromotionLegs() {
+    	return _promotionLegs;
     }
     
     /**
-     * Does this equipment type have a Second Officer rank?
-     * @return TRUE if this program has a Second Officer rank, otherwise FALSE
-     * @see EquipmentType#getRanks()
-     * @see EquipmentType#addRank(String)
+     * Returns the minimum flight leg distance requires for promotion to Captain.
+     * @return the minimum leg distance in miles
+     * @see EquipmentType#setPromotionMinLength(int)
      */
-    public boolean hasSO() {
-        return _ranks.contains(Ranks.RANK_SO);
+    public int getPromotionMinLength() {
+    	return _promotionMinLength;
     }
     
     /**
@@ -245,15 +240,12 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     /**
      * Add an available rank to this equipment type.
      * @param rank The rank
-     * @throws NullPointerException if rank is null
      * @see EquipmentType#getRanks()
      * @see EquipmentType#addRanks(String, String)
      */
     public void addRank(String rank) {
-        if (rank == null)
-            throw new NullPointerException("Rank cannot be null");
-        
-        _ranks.add(rank);
+        if (rank != null)
+        	_ranks.add(rank);
     }
     
     /**
@@ -454,37 +446,32 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
-     * Set the number of hours required for promotion
-     * @param rank The <i>current</i> rank of the pilot, use constants when you can
+     * Set the number of hours required for promotion to Cpatain.
      * @param hours The number of hours required for promotion
-     * @throws IllegalArgumentException if hours is negative
-     * @throws NullPointerException if rank is null
-     * @see Ranks
-     * @see EquipmentType#getPromotionHours(String)
-     * @see EquipmentType#setPromotionLegs(String, int)
+     * @see EquipmentType#getPromotionHours()
+     * @see EquipmentType#setPromotionLegs(int)
      */
-    public void setPromotionHours(String rank, int hours) {
-        if (hours < 0)
-            throw new IllegalArgumentException("Hours cannot be zero");
-        
-        _promotionCriteria.put(rank + "_HOURS", new Integer(hours));
+    public void setPromotionHours(int hours) {
+    	_promotionHours = Math.max(0, hours);
     }
 
     /**
-     * Set the number of legs required for promotion.
-     * @param rank The <i>current</i> rank of the pilot
+     * Set the number of legs required for promotion to Captain.
      * @param legs The number of legs required for promotion
-     * @throws IllegalArgumentException if legs is negative
-     * @throws NullPointerException if rank is null
-     * @see Ranks
-     * @see EquipmentType#getPromotionLegs(String)
-     * @see EquipmentType#setPromotionHours(String, int)
+     * @see EquipmentType#getPromotionLegs()
+     * @see EquipmentType#setPromotionHours(int)
      */
-    public void setPromotionLegs(String rank, int legs) {
-        if (legs < 0)
-            throw new IllegalArgumentException("Legs cannot be zero");
-        
-        _promotionCriteria.put(rank + "_LEGS", Integer.valueOf(legs));
+    public void setPromotionLegs(int legs) {
+    	_promotionLegs = Math.max(0, legs);
+    }
+    
+    /**
+     * Sets the minimum length of a leg for promotion to Captain.
+     * @param distance the distance in miles
+     * @see EquipmentType#getPromotionMinLength()
+     */
+    public void setPromotionMinLength(int distance) {
+    	_promotionMinLength = Math.max(0, distance);
     }
     
     /**
@@ -527,7 +514,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     public Object cacheKey() {
-    	return _owner.getCode() + "!!" + _name;
+    	return _owner.getDB() + "!!" + _name;
     }
     
     public String getRowClassName() {

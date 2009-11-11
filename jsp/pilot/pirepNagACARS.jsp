@@ -31,7 +31,7 @@ vast majority of our Flight Reports are logged using ACARS because it makes the 
 <br />
 <c:if test="${eqType.ACARSPromotionLegs}">
 Since you are a member of the <span class="sec bld">${eqType.name}</span> program, all of the 
-<fmt:int className="bld" value="${fn:promoLegs(eqType, 'Captain')}" /> flight legs required for promotion to Captain <b>must</b> be 
+<fmt:int className="bld" value="${eqType.promotionLegs}" /> flight legs required for promotion to Captain <b>must</b> be 
 logged using ACARS.<br />
 <br />
 </c:if>
@@ -42,7 +42,7 @@ right now to start getting familair with ACARS and all of the great things it ca
 You can download ACARS from the <content:airline /> <el:cmd url="fleetlibrary" className="sec bld">Fleet Library</el:cmd>. There 
 are two different versions of ACARS available for download, depending on your needs and your computer's capabilities. ACARS 1.0
 is a basic version of ACARS, designed for lower-end systems. ACARS 2.0 is the latest version, running on the Microsoft .NET 2.0 
-Framework. All versions of ACARS run on Microsoft Windows 2000, XP, and Vista (including 64-bit) and are fully compatible with 
+Framework. All versions of ACARS run on Microsoft Windows 2000, XP, Vista, Windows 7 (including 64-bit) and are fully compatible with 
 Microsoft Flight Simulator 2002, 2004 and Flight Simulator X. You can also run ACARS on a seperate computer if you have a 
 registered version of <el:link external="true" url="http://www.schiratti.com/dowson.html">Peter Dowson's WideFS</el:link>.<br />
 <br />

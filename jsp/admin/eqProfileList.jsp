@@ -20,6 +20,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:attr roles="HR" attr="isHR" value="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -30,11 +31,15 @@
  <td width="5%">STAGE</td>
  <td width="12%">CHIEF PILOT</td>
  <td width="23%">RANKS</td>
- <td width="5%">SIZE</td>
+ <td width="6%">PILOTS</td>
+<c:if test="${isHR}">
+ <td width="15%"><el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></td>
+</c:if>
  <td>RATINGS</td>
 </tr>
 
 <!-- Table data -->
+<c:set var="cspan" value="${isHR ? 2 : 1}" scope="page" />
 <c:forEach var="eqType" items="${eqTypes}">
 <c:set var="pilotCount" value="${eqTypeStats[eqType.name]}" scope="page" />
 <view:row entry="${eqType}">
@@ -43,7 +48,7 @@
  <td><el:cmd url="profile" linkID="${fn:hex(eqType.CPID)}">${eqType.CPName}</el:cmd></td>
  <td class="sec small"><fmt:list value="${eqType.ranks}" delim=", " /></td>
  <td><fmt:int value="${empty pilotCount ? 0 : pilotCount}" /></td>
- <td class="left small"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
+ <td class="left small" colspan="${cspan}"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
 <c:if test="${!empty eqType.secondaryRatings}">
 <br />SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
 </c:if>
@@ -53,9 +58,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="90" classes=" ,opt2" labels="Active,Inactive" />
-<content:filter roles="HR">&nbsp;<el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></content:filter>
- </td>
+ <td colspan="${cspan + 5}"><view:legend width="95" classes=" ,opt2" labels="Active,Inactive" /></td>
 </tr>
 </view:table>
 <content:copyright />

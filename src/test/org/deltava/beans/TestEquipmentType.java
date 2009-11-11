@@ -49,11 +49,8 @@ public class TestEquipmentType extends AbstractBeanTestCase {
     public void testRanks() {
         assertNotNull(_eq.getRanks());
         assertEquals(0, _eq.getRanks().size());
-        _eq.addRank(Ranks.RANK_SO);
-        assertEquals(1, _eq.getRanks().size());
-        assertTrue(_eq.getRanks().contains(Ranks.RANK_SO));
         _eq.addRank(Ranks.RANK_FO);
-        assertEquals(2, _eq.getRanks().size());
+        assertEquals(1, _eq.getRanks().size());
         assertTrue(_eq.getRanks().contains(Ranks.RANK_FO));
         
         _eq.addRanks("Senior Captain,Chief Pilot", ",");
@@ -68,30 +65,22 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         assertTrue(_eq.getRanks().contains("Captain"));
     }
     
-    public void testAFVRanks() {
-        assertNotNull(_eq.getRanks());
-        assertEquals(0, _eq.getRanks().size());
-        assertFalse(_eq.hasSO());
-        _eq.addRank(Ranks.RANK_SO);
-        assertTrue(_eq.hasSO());
-    }
-    
     public void testPromotionInfo() {
-        assertEquals(0, _eq.getPromotionHours(Ranks.RANK_FO));
-        assertEquals(0, _eq.getPromotionLegs(Ranks.RANK_FO));
-        _eq.setPromotionHours(Ranks.RANK_FO, 10);
-        _eq.setPromotionLegs(Ranks.RANK_FO, 10);
-        assertEquals(10, _eq.getPromotionHours(Ranks.RANK_FO));
-        assertEquals(10, _eq.getPromotionLegs(Ranks.RANK_FO));
+        assertEquals(0, _eq.getPromotionHours());
+        assertEquals(0, _eq.getPromotionLegs());
+        _eq.setPromotionHours(10);
+        _eq.setPromotionLegs(10);
+        assertEquals(10, _eq.getPromotionHours());
+        assertEquals(10, _eq.getPromotionLegs());
         try {
-            _eq.setPromotionHours(Ranks.RANK_C, -10);
+            _eq.setPromotionHours(-10);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException iae) {
         	// empty
         }
         
         try {
-            _eq.setPromotionLegs(Ranks.RANK_C, -10);
+            _eq.setPromotionLegs(-10);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException iae) {
         	// empty
