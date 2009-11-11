@@ -25,7 +25,8 @@ if (!checkSubmit()) return false;
 if (!validateCombo(form.eqType, 'Equipment Type')) return false;
 if (!validateCombo(form.cp, 'Chief Pilot')) return false;
 if (!validateNumber(form.stage, 1, 'Equipment Stage')) return false;
-if (!validateNumber(form.captLegs, 0, 'Flight Legs for promotion')) return false;
+if (!validateNumber(form.captLegs, 0, 'Flight Legs for Promotion')) return false;
+if (!validateNumber(form.captDistance, 0, 'Flight Distance for Promotion')) return false;
 if (!validateCheckBox(form.ranks, 2, 'Ranks')) return false;
 if (!validateCheckBox(form.pRatings, 1, 'Primary Rating')) return false;
 
@@ -87,13 +88,20 @@ return true;
  <td class="label">Web Applications</td>
  <td class="data"><el:check name="airline" width="175" idx="*" options="${airlines}" className="req" checked="${eqType.airlines}" /></td>
 </tr>
+<tr class="title caps">
+ <td colspan="2">PILOT PROMOTION REQUIREMENTS</td>
+</tr>
 <tr>
  <td class="label top">First Officer Examinations</td>
  <td class="data"><el:check name="examFO" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examFO(eqType)}" /></td>
 </tr>
 <tr>
  <td class="label">Flight Legs for Promotion</td>
- <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty captLegs ? 10 : captLegs}" /></td>
+ <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty eqType ? 10 : eqType.promotionLegs}" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Distance for Promotion</td>
+ <td class="data"><el:text name="captDistance" size="3" max="4" idx="*" className="req" value="${eqType.promotionMinLength}" /> miles</td>
 </tr>
 <tr>
  <td class="label top">Captain Examinations</td>

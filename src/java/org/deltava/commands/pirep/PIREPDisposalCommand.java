@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -103,7 +103,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			if (p == null)
 			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 			
-			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted
+			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
 			int pirepCount = rdao.getCount(p.getID()) + 1;
 			
 			// Load the pilot's equipment type
@@ -122,6 +122,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 						i.remove();
 					} else if (peq.getACARSPromotionLegs() && !isACARS) {
 						log.warn("Flight " + fr.getID() + " not logged using ACARS - " + peq.getName() + " requires ACARS");					 
+						i.remove();
+					} else if (fr.getDistance() < eq.getPromotionMinLength()) {
+						log.warn("Minimum flight length is "  +  eq.getPromotionMinLength() + ", distance=" + fr.getDistance());
 						i.remove();
 					}
 				}
@@ -145,7 +148,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
 			mctx.addData("flightLength", new Double(fr.getLength() / 10.0));
-			mctx.addData("flightDate", StringUtils.format(fr.getDate(), "MM/dd/yyyy"));
+			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
 			
 			// Start a JDBC transaction

@@ -198,24 +198,48 @@ public class OfflineFlightCommand extends AbstractCommand {
 			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.SID, flight.getSID()));
 			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, flight.getSTAR()));
 			
+			// Create comments field
+			Collection<String> comments = new ArrayList<String>();
+			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(),
-					SystemData.get("airline.db"));
+			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(), SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				afr.setID(fr.getID());
 				afr.setDatabaseID(FlightReport.DBID_ASSIGN, fr.getDatabaseID(FlightReport.DBID_ASSIGN));
 				afr.setDatabaseID(FlightReport.DBID_EVENT, fr.getDatabaseID(FlightReport.DBID_EVENT));
 				afr.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
-				afr.setComments(fr.getComments());
+				if (!StringUtils.isEmpty(fr.getComments()))
+					comments.add(fr.getComments());
 			}
 			
 			// Check if this Flight Report counts for promotion
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), afr.getEquipmentType());
-			if (promoEQ.contains(p.getEquipmentType()))
-				afr.setCaptEQType(promoEQ);
+
+			// Loop through the eq types, not all may have the same minimum promotion stage length!!
+			if (promoEQ.contains(p.getEquipmentType())) {
+				boolean canPromote = (afr.getTime(1) > 3600) || (afr.getTime(1) > (afr.getTime(2) + afr.getTime(4)));
+				if (canPromote) {
+					for (Iterator<String> i = promoEQ.iterator(); i.hasNext(); ) {
+						String pType = i.next();
+						EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
+						if (pEQ == null)
+							i.remove();
+						else if (afr.getDistance() < pEQ.getPromotionMinLength()) {
+							log.info("Minimum " + pType + " flight length is "  +  pEQ.getPromotionMinLength() + ", distance=" + afr.getDistance());
+							comments.add("Minimum flight length for promotion to Captain in " + pType + " is "  +  pEQ.getPromotionMinLength() + " miles");
+							i.remove();
+						}
+					}
+
+					afr.setCaptEQType(promoEQ);
+				} else {
+					log.info("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
+					comments.add("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
+				}
+			}
 			
 			// Check if it's an Online Event flight
 			OnlineNetwork network = afr.getNetwork();
@@ -227,7 +251,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Check that the user has an online network ID
 			if ((network != null) && (!p.hasNetworkID(network))) {
 				log.warn(p.getName() + " does not have a " + network.toString() + " ID");
-				afr.setComments("No " + network.toString() + " ID, resetting Online Network flag");
+				comments.add("No " + network.toString() + " ID, resetting Online Network flag");
 				afr.setNetwork(null);
 			}
 			
@@ -271,6 +295,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
 					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}
+			
+			// Save comments
+			if (!comments.isEmpty())
+				afr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
 			// Turn off auto-commit
 			ctx.startTX();
