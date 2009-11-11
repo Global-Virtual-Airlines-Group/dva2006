@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -79,7 +79,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			// Check how many legs the user has completed
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
 			int promoLegs = prdao.getPromotionCount(txreq.getID(), txreq.getEquipmentType());
-			boolean hasLegs = (promoLegs >= newEQ.getPromotionLegs(Ranks.RANK_C));
+			boolean hasLegs = (promoLegs >= newEQ.getPromotionLegs());
 			
 			// Check if user ever received Senior Captain rank
 			GetStatusUpdate stdao = new GetStatusUpdate(con);

@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -26,7 +26,7 @@ public class PilotComparator extends PersonComparator<Pilot> {
     public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code",
             "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status", "Last Flight"};
     
-    private static final String[] RANKS = {"Trainee", Ranks.RANK_SO, Ranks.RANK_FO, Ranks.RANK_C, "Senior Captain",
+    private static final String[] RANKS = {"Trainee", Ranks.RANK_FO, Ranks.RANK_C, "Senior Captain",
             "Assistant Chief Pilot", Ranks.RANK_CP};
     
     /**

@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 1.0
  */
 
@@ -50,8 +50,6 @@ public class EquipmentCommand extends AbstractFormCommand {
 			// Get the DAO and execute
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = (eqType == null) ? null : eqdao.get(eqType, SystemData.get("airline.db"));
-			if (eq != null)
-			   ctx.setAttribute("captLegs", Integer.valueOf(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
 			
 			// Get the aircraft types
 			GetAircraft acdao = new GetAircraft(con);
@@ -104,7 +102,8 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setCPID(StringUtils.parse(ctx.getParameter("cp"), 0));
 			eq.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
 			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			eq.setPromotionLegs(Ranks.RANK_C, StringUtils.parse(ctx.getParameter("captLegs"), 10));
+			eq.setPromotionLegs(StringUtils.parse(ctx.getParameter("captLegs"), 10));
+			eq.setPromotionMinLength(StringUtils.parse(ctx.getParameter("captDistance"), 0));
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));

@@ -384,14 +384,14 @@ every day.</td>
 program. Your name is on the list of Pilots eligible for a promotion, and you can expect to be promoted 
 within the next 24 to 72 hours. You are also eligible for equipment transfers and additional ratings in 
 higher stage equipment type programs.</td></c:when>
-<c:when test="${promoteLegs < fn:promoLegs(eqType, 'Captain')}">
- <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:quantity value="${fn:promoLegs(eqType, 'Captain')}" single="Flight" />
+<c:when test="${promoteLegs < eqType.promotionLegs}">
+ <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:quantity value="${eqType.promotionLegs}" single="Flight" />
  in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
 <c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if>required for promotion to the rank of 
 Captain in the ${eqType.name} program.</td></c:when>
-<c:when test="${promoteLegs >= fn:promoLegs(eqType, 'Captain')}">
- <td class="data">You have completed the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight Legs
- in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
+<c:when test="${promoteLegs >= eqType.promotionLegs}">
+ <td class="data">You have completed the <fmt:int value="${eqType.promotionLegs}" /> Flight Legs in 
+ the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
 <c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if> required for promotion to the rank of 
 Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld"><fmt:list value="${fn:examC(eqType)}" delim="," /></span> 
 examination(s) in order to be eligible for promotion to Captain</i>.</td></c:when>
@@ -399,7 +399,7 @@ examination(s) in order to be eligible for promotion to Captain</i>.</td></c:whe
 </tr>
 </c:if>
 <c:if test="${!empty eqSwitch || !empty eqSwitchFOExam}">
-<c:set var="canSwitchFO" value="${!empty eqSwitchFOExam && (promoteLegs >= (fn:promoLegs(eqType, 'Captain') / 2))}" scope="page" />
+<c:set var="canSwitchFO" value="${!empty eqSwitchFOExam && (promoteLegs >= (eqType.promotionLegs / 2))}" scope="page" />
 <tr>
 <c:if test="${!empty eqSwitch}">
  <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd><br />
@@ -414,17 +414,17 @@ examination(s) in order to be eligible for promotion to Captain</i>.</td></c:whe
 <c:if test="${canSwitchFO}">You are eligible to transfer to or request additional ratings in the 
 following equipment types upon successful completion of the First Officer's examination for these 
 equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c:if>
-<c:if test="${(isFO && !captPromote) || (promoteLegs < fn:promoLegs(eqType, 'Captain'))}"><br />
+<c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br />
 <c:if test="${isFO && !captPromote}">
 <br />
 <i>You will not be eligible for equipment type transfers or additional ratings in higher stage equipment type 
 programs until you become eligible for promotion to Captain in the ${eqType.name} program.</i><br />
 </c:if>
-<c:if test="${promoteLegs < (fn:promoLegs(eqType, 'Captain') / 2)}">
+<c:if test="${promoteLegs < (eqType.promotionLegs / 2)}">
 <br />
 <i>You will not be eligible for equipment type transfers or additional ratings in new equipment type programs 
-in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${fn:promoLegs(eqType, 'Captain') / 2}" /> 
-of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</i></c:if>
+in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${eqType.promotionLegs / 2}" /> 
+of the <fmt:int value="${eqType.promotionLegs}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</i></c:if>
 </c:if>
 </td></tr>
 </c:if>

@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -34,19 +34,18 @@ public class SetEquipmentType extends DAO {
 	public void create(EquipmentType eq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, ACTIVE, SO_LEGS, SO_HOURS, "
-					+ "C_LEGS, C_HOURS, C_LEGS_ACARS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, ACTIVE, C_LEGS, C_HOURS, "
+				+ "C_LEGS_ACARS, C_LEGS_DISTANCE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
 			_ps.setInt(3, eq.getStage());
 			_ps.setString(4, StringUtils.listConcat(eq.getRanks(), ","));
 			_ps.setBoolean(5, eq.getActive());
-			_ps.setInt(6, eq.getPromotionLegs(Ranks.RANK_SO));
-			_ps.setDouble(7, eq.getPromotionHours(Ranks.RANK_SO));
-			_ps.setInt(8, eq.getPromotionLegs(Ranks.RANK_C));
-			_ps.setDouble(9, eq.getPromotionHours(Ranks.RANK_C));
-			_ps.setBoolean(10, eq.getACARSPromotionLegs());
+			_ps.setInt(7, eq.getPromotionLegs());
+			_ps.setDouble(8, eq.getPromotionHours());
+			_ps.setBoolean(9, eq.getACARSPromotionLegs());
+			_ps.setInt(10, eq.getPromotionMinLength());
 			executeUpdate(1);
 			
 			// Write the exams/ratings and commit
@@ -68,19 +67,18 @@ public class SetEquipmentType extends DAO {
 	public void update(EquipmentType eq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, ACTIVE=?, SO_LEGS=?, SO_HOURS=?, "
-					+ "C_LEGS=?, C_HOURS=?, C_LEGS_ACARS=? WHERE (EQTYPE=?)");
+			prepareStatementWithoutLimits("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, ACTIVE=?, C_LEGS=?, C_HOURS=?, "
+					+ "C_LEGS_ACARS=?, C_LEGS_DISTANCE=? WHERE (EQTYPE=?) LIMIT 1");
 			
 			_ps.setInt(1, eq.getCPID());
 			_ps.setInt(2, eq.getStage());
 			_ps.setString(3, StringUtils.listConcat(eq.getRanks(), ","));
 			_ps.setBoolean(4, eq.getActive());
-			_ps.setInt(5, eq.getPromotionLegs(Ranks.RANK_SO));
-			_ps.setDouble(6, eq.getPromotionHours(Ranks.RANK_SO));
-			_ps.setInt(7, eq.getPromotionLegs(Ranks.RANK_C));
-			_ps.setDouble(8, eq.getPromotionHours(Ranks.RANK_C));
-			_ps.setBoolean(9, eq.getACARSPromotionLegs());
-			_ps.setString(10, eq.getName());
+			_ps.setInt(5, eq.getPromotionLegs());
+			_ps.setDouble(6, eq.getPromotionHours());
+			_ps.setBoolean(7, eq.getACARSPromotionLegs());
+			_ps.setInt(8, eq.getPromotionMinLength());
+			_ps.setString(9, eq.getName());
 			executeUpdate(1);
 			
 			// Write the exams/ratings and commit

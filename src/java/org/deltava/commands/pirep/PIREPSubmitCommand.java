@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				// Add programs if we still have any that do not require ACARS legs
 				if (!pTypeNames.isEmpty()) {
 					ctx.setAttribute("captEQ", Boolean.TRUE, REQUEST);
-					ctx.setAttribute("promoteLegs", Integer.valueOf(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
+					ctx.setAttribute("promoteLegs", Integer.valueOf(eq.getPromotionLegs()), REQUEST);
 					pirep.setCaptEQType(pTypeNames);
 				}
 			}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Collection;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP Function Library to define Equipment Program-related functions.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  * @see Ranks
  */
@@ -31,27 +31,5 @@ public class EquipmentTypeFunctions {
     */
 	public static Collection<String> examC(EquipmentType eq) {
 	   return (eq == null) ? null : eq.getExamNames(Ranks.RANK_C);
-	}
-   
-	/**
-	 * Returns the number of Flight Legs required for promotion to a particular rank.
-	 * @param eq the Equipment Program
-	 * @param rank the rank to be promoted to
-	 * @return the number of legs required
-	 * @throws NullPointerException if eq is null
-	 */
-	public static int promotionLegs(EquipmentType eq, String rank) {
-	   return eq.getPromotionLegs(rank);
-	}
-	
-	/**
-	 * Returns the number of Flight Hours required for promotion to a particular rank.
-	 * @param eq the Equipment Program
-	 * @param rank the rank to be promoted to
-	 * @return the number of hours required
-	 * @throws NullPointerException if eq is null
-	 */
-	public static double promotionHours(EquipmentType eq, String rank) {
-	   return eq.getPromotionHours(rank);
 	}
 }

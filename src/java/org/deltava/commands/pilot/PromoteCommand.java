@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 2.1
+ * @version 2.7
  * @since 1.0
  */
 
@@ -26,7 +26,6 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -55,7 +54,7 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 				throw new CommandException(usr.getName() + " has not passed Captain's exams", false);
 			
 			// Make sure we have the legs
-			if (testHistory.getFlightLegs(eq) < eq.getPromotionLegs(Ranks.RANK_C))
+			if (testHistory.getFlightLegs(eq) < eq.getPromotionLegs())
 				throw new CommandException(usr.getName() + " has insufficient flight legs", false);
 			
 			// Determine if we can jump to SC

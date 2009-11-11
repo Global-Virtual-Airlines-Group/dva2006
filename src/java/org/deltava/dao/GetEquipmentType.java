@@ -449,16 +449,13 @@ public class GetEquipmentType extends DAO {
 			eq.setStage(rs.getInt(3));
 			eq.addRanks(rs.getString(4), ",");
 			eq.setActive(rs.getBoolean(5));
-			eq.setPromotionLegs(Ranks.RANK_SO, rs.getInt(6));
-			eq.setPromotionHours(Ranks.RANK_SO, rs.getInt(7));
-			eq.setPromotionLegs(Ranks.RANK_C, rs.getInt(8));
-			eq.setPromotionHours(Ranks.RANK_C, rs.getInt(9));
-			eq.setACARSPromotionLegs(rs.getBoolean(10));
-			eq.setOwner(SystemData.getApp(rs.getString(11)));
-			eq.setCPName(rs.getString(12));
-			eq.setCPEmail(rs.getString(13));
-
-			// Add to the results
+			eq.setPromotionLegs(rs.getInt(6));
+			eq.setPromotionHours(rs.getInt(7));
+			eq.setACARSPromotionLegs(rs.getBoolean(8));
+			eq.setPromotionMinLength(rs.getInt(9));
+			eq.setOwner(SystemData.getApp(rs.getString(10)));
+			eq.setCPName(rs.getString(11));
+			eq.setCPEmail(rs.getString(12));
 			results.add(eq);
 		}
 

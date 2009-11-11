@@ -1,10 +1,10 @@
-// Copyright 2004, 2005, 2007 Global Virtual Airlines Group. All Righs Reserved.
+// Copyright 2004, 2005, 2007, 2009 Global Virtual Airlines Group. All Righs Reserved.
 package org.deltava.beans;
 
 /**
  * A holder interface for rank name constants. Other ranks may be defined, but these are used internally.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
@@ -34,9 +34,4 @@ public interface Ranks {
      * Name of Senior Captain rank.
      */
     public static final String RANK_SC = "Senior Captain";
-    
-    /**
-     * Name of Second Officer rank. <i>Used by Aviation Francais Virtuel</i>
-     */
-    public static final String RANK_SO = "Second Officer";
 }

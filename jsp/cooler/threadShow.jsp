@@ -67,8 +67,7 @@ return true;
 
 function openEmoticons()
 {
-var flags = 'height=280,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes';
-var w = window.open('emoticons.do', 'emoticonHelp', flags);
+var w = window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes');
 return true;
 }
 </script>
@@ -106,7 +105,8 @@ return true;
 
 <!-- Thread Posts -->
 <c:set var="postIdx" value="${0}" scope="page" />
-<c:set var="contentWarn" value="${false}" scope="page" />
+<c:set var="contentWarn" value="false" scope="page" />
+<content:attr attr="isModerator" value="true" roles="Moderator" />
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response ${msg.hexID} -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="page" />
@@ -225,12 +225,12 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td class="postEdit"><el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd></td>
 </c:when>
 <c:when test="${access.canDelete && (postCount > 1)}">
- <td class="postEdit"><el:cmd className="pri error small" url="postkill" link="${thread}" op="${fn:hex(msg.ID)}">KILL POST</el:cmd></td>
+ <td class="postEdit"><el:cmd className="pri error small" url="postkill" link="${thread}" op="${msg.hexID}">KILL POST</el:cmd></td>
 </c:when>
 </c:choose>
 </tr>
 <tr>
- <td class="postBody" colspan="2"><fmt:msg value="${msg.body}" />
+ <td class="postBody" colspan="2"><span id="msgBody${msg.ID}"><fmt:msg value="${msg.body}" /></span>
 <c:if test="${isPilot && (pilot.hasSignature || pilot.hasDefaultSignature)}">
 <br />
 <c:choose>
@@ -376,11 +376,11 @@ notification each time a reply is posted in this Thread.
 <content:copyright />
 </content:region>
 </content:page>
-<content:googleAnalytics />
 <c:if test="${!empty firstUnreadTime}">
 <script language="JavaScript" type="text/javascript">
 var postRow = getElement('post${firstUnreadTime.time}');
 postRow.scrollIntoView();
 </script></c:if>
+<content:googleAnalytics />
 </body>
 </html>

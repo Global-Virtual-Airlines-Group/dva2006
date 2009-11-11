@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 2.3
+ * @version 2.7
  * @since 1.0
  */
 
@@ -232,7 +232,7 @@ public class TestingHistoryHelper {
 			}
 
 			// If the exam is limited to a specific equipment program, require 1/2 the legs required for promotion
-			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs(Ranks.RANK_C))) {
+			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs())) {
 				log(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
 				return false;
 			}
@@ -295,7 +295,7 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the Pilot has completed one half of the legs required for promotion to Captain, otherwise FALSE
 	 */
 	public boolean canRequestSwitch() {
-		return (getFlightLegs(_myEQ) >= (_myEQ.getPromotionLegs(Ranks.RANK_C) / 2));
+		return (getFlightLegs(_myEQ) >= (_myEQ.getPromotionLegs() / 2));
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class TestingHistoryHelper {
 			return false;
 
 		// Check if we've got enough flight legs in the primary equipment type
-		return (getFlightLegs(eq) >= eq.getPromotionLegs(Ranks.RANK_C));
+		return (getFlightLegs(eq) >= eq.getPromotionLegs());
 	}
 
 	/**
