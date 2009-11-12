@@ -371,7 +371,7 @@
 	<command id="resourcedelete">
 		<name>Web Resource Delete</name>
 		<class>org.deltava.commands.fleet.ResourceDeleteCommand</class>
-		<roles>HR,Fleet</roles>
+		<roles>HR,Fleet,Resource</roles>
 	</command>
 
 
