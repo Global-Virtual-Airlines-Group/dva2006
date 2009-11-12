@@ -17,6 +17,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.url, 12, 'Resource URL')) return false;
+if (!validateText(form.title, 8, 'Resource Title')) return false;
 if (!validateText(form.desc, 8, 'Resource Description')) return false;
 if (!validateCombo(form.category, 'Resource Category')) return false;
 
@@ -48,6 +49,10 @@ return true;
 <tr>
  <td class="label">Resource URL</td>
  <td class="data"><el:text name="url" size="80" max="255" idx="*" className="small req" value="${resource.URL}" /></td>
+</tr>
+<tr>
+ <td class="label">Resource Title</td>
+ <td class="data"><el:text name="title" size="64" max="128" idx="*" className="req" value="${resource.title}" /></td>
 </tr>
 <tr>
  <td class="label">Category</td>

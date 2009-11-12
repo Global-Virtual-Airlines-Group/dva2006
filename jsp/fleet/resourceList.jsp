@@ -56,7 +56,8 @@ return true;
 <c:set var="rAccess" value="${accessMap[resource.ID]}" scope="page" />
 <c:set var="author" value="${pilots[resource.authorID]}" scope="page" />
 <view:row entry="${resource}">
- <td class="left"><el:cmd url="gotoresource" link="${resource}" className="pri bld">${resource.URL}</el:cmd></td>
+<c:set var="title" value="${(empty resource.title) ? resource.URL : resource.title}" scope="page" />
+ <td class="left"><el:cmd url="gotoresource" link="${resource}" className="pri bld">${title}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${resource.hits}" /></td>
  <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd></td>
  <td class="sec"><fmt:date date="${resource.createdOn}" fmt="d" /></td>
