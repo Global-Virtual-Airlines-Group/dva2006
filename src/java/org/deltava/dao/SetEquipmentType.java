@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class SetEquipmentType extends DAO {
+public class SetEquipmentType extends EquipmentTypeDAO {
 
 	/**
 	 * Initialze the Data Access Object.
@@ -53,6 +53,7 @@ public class SetEquipmentType extends DAO {
 			writeRatings(eq);
 			writeAirlines(eq);
 			commitTransaction();
+			_cache.add(eq);
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -86,6 +87,7 @@ public class SetEquipmentType extends DAO {
 			writeRatings(eq);
 			writeAirlines(eq);
 			commitTransaction();
+			invalidate(eq.getName());
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);

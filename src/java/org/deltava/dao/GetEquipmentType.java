@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,11 +12,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
-public class GetEquipmentType extends DAO {
+public class GetEquipmentType extends EquipmentTypeDAO {
 
 	/**
 	 * Initializes the DAO with a given JDBC connection.
@@ -62,6 +62,11 @@ public class GetEquipmentType extends DAO {
 					return null;
 			}
 			
+			// Check the cache
+			EquipmentType eq = _cache.get(dbName + "!!" + eqType);
+			if (eq != null)
+				return eq;
+			
 			// Build the SQL statement
 			StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
 					+ "P.EMAIL FROM ");
@@ -85,6 +90,7 @@ public class GetEquipmentType extends DAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results, dbName);
+			_cache.addAll(results);
 			return results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -119,6 +125,7 @@ public class GetEquipmentType extends DAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results, dbName);
+			_cache.addAll(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -459,7 +466,6 @@ public class GetEquipmentType extends DAO {
 			results.add(eq);
 		}
 
-		// Clean up JDBC resources
 		rs.close();
 		_ps.close();
 		return results;
