@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
  * A Data Access Object to support reading and writing Pilot object(s) to the database. This DAO contains the shared
  * Pilot cache which other DAOs which access the PILOTS table may access.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -20,7 +20,7 @@ abstract class PilotDAO extends DAO implements CachingDAO {
 	/**
 	 * The Pilot bean cache.
 	 */
-	protected static final Cache<Pilot> _cache = new ExpiringCache<Pilot>(640, 14400);
+	protected static final Cache<Pilot> _cache = new ExpiringCache<Pilot>(1024, 14400);
 
 	/**
 	 * Initializes the Data Access Object. 
