@@ -16,6 +16,7 @@ import org.deltava.beans.*;
 public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	
 	private String _url;
+	private String _title;
 	private String _domain;
 	private String _category;
 	private int _authorID;
@@ -45,6 +46,15 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 */
 	public String getURL() {
 		return _url;
+	}
+	
+	/**
+	 * Returns the Resource title.
+	 * @return the title
+	 * @see Resource#setTitle(String)
+	 */
+	public String getTitle() {
+		return _title;
 	}
 	
 	/**
@@ -138,6 +148,15 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	/**
+	 * Updates the title of the Resource
+	 * @param title the title
+	 * @see Resource#getTitle()
+	 */
+	public void setTitle(String title) {
+		_title = title;
 	}
 	
 	/**
