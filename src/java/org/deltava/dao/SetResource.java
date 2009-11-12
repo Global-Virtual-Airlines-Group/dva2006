@@ -29,18 +29,19 @@ public class SetResource extends DAO {
 	 */
 	public void write(Resource r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO RESOURCES (ID, URL, DOMAIN, REMARKS, CATEGORY, CREATEDON, "
-					+ "AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, "
+					+ "CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getURL());
-			_ps.setString(3, r.getDomain());
-			_ps.setString(4, r.getDescription());
-			_ps.setString(5, r.getCategory());
-			_ps.setTimestamp(6, createTimestamp(r.getCreatedOn()));
-			_ps.setInt(7, r.getAuthorID());
-			_ps.setInt(8, r.getLastUpdateID());
-			_ps.setInt(9, r.getHits());
-			_ps.setBoolean(10, r.getPublic());
+			_ps.setString(3, r.getTitle());
+			_ps.setString(4, r.getDomain());
+			_ps.setString(5, r.getDescription());
+			_ps.setString(6, r.getCategory());
+			_ps.setTimestamp(7, createTimestamp(r.getCreatedOn()));
+			_ps.setInt(8, r.getAuthorID());
+			_ps.setInt(9, r.getLastUpdateID());
+			_ps.setInt(10, r.getHits());
+			_ps.setBoolean(11, r.getPublic());
 			executeUpdate(1);
 			
 			// Get new database ID

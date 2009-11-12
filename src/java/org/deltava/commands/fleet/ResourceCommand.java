@@ -49,13 +49,16 @@ public class ResourceCommand extends AbstractFormCommand {
 			if (!canSave)
 				throw securityException("Cannot edit Web Resource");
 
-			// Check if we are doing a delete
-			SetResource wdao = new SetResource(con);
+			// Copy fields from request
+			r.setTitle(ctx.getParameter("title"));
 			r.setURL(ctx.getParameter("url"));
 			r.setCategory(ctx.getParameter("category"));
 			r.setDescription(ctx.getParameter("desc"));
 			r.setLastUpdateID(ctx.getUser().getID());
 			r.setPublic(ac.getCanEdit() && Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+			
+			// Save the resource
+			SetResource wdao = new SetResource(con);
 			wdao.write(r);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -102,7 +105,6 @@ public class ResourceCommand extends AbstractFormCommand {
 				// Save the User names
 				GetPilot pdao = new GetPilot(con);
 				ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
-
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
@@ -129,7 +131,6 @@ public class ResourceCommand extends AbstractFormCommand {
 	/**
 	 * Method called when reading the form. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command Context
-	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
