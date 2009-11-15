@@ -6,20 +6,33 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A unique ID generator for messaging purposes.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
 public class IDGenerator {
 
-	private static final AtomicLong _id = new AtomicLong(System.currentTimeMillis());
+	private final AtomicLong _id = new AtomicLong(System.currentTimeMillis());
 
 	/**
 	 * Generates a unique ID. This currently returns a timestamp-derived value, but is not guaranteed to do so in the future.
 	 * @return a unique number
 	 */
-	public static long generate() {
-		long id = _id.incrementAndGet();
-		return id;
+	public long generate() {
+		return _id.incrementAndGet();
+	}
+	
+	/**
+	 * Resets the value to the current timestamp.
+	 */
+	public void reset() {
+		_id.set(System.currentTimeMillis());
+	}
+	
+	/**
+	 * Sets the value to use.
+	 */
+	public void reset(long value) {
+		_id.set(value);
 	}
 }
