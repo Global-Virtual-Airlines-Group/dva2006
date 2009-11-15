@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.2
  */
 
@@ -154,7 +154,7 @@ public class DispatchRouteListService extends WebService {
 			rte.addContent(XMLUtils.createElement("comments", rt.getComments(), true));
 			if (rt.getSID() != null) {
 				String sid = rt.getSID();
-				if (sid.endsWith(".ALL"))
+				if (sid.endsWith(".ALL") && (rwy != null))
 					sid = sid.replace("ALL", rwy);
 				
 				rte.setAttribute("sid", sid);

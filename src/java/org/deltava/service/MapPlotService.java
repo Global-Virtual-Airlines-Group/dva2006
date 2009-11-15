@@ -54,7 +54,7 @@ public abstract class MapPlotService extends WebService {
 		}
 
 		// Write the entries
-		GeoLocation start = points.get(0); distance = 0;
+		GeoLocation start = points.isEmpty() ? null : points.get(0); distance = 0;
 		for (Iterator<NavigationDataBean> i = points.iterator(); i.hasNext();) {
 			NavigationDataBean entry = i.next();
 			distance += entry.distanceTo(start);
