@@ -15,7 +15,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 2.2
  */
 
@@ -67,12 +67,6 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 				Collection<Integer> conIDs = new HashSet<Integer>();
 				for (Iterator<ConnectionEntry> i = cons.iterator(); i.hasNext(); ) {
 					DispatchConnectionEntry ce = (DispatchConnectionEntry) i.next();
-					if (ce.getEndTime() == null) {
-						i.remove();
-						continue;
-					}
-						
-					// Add the dispatcher ID
 					conIDs.add(new Integer(ce.getPilotID()));
 					
 					// Load the flights
@@ -80,16 +74,16 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 					for (FlightInfo fi : flights)
 						ce.addFlight(fi);
 					
-					// Prune out any entries with no flights and less than 3 minutes long
-					long conTime = (ce.getEndTime().getTime() - ce.getStartTime().getTime()) / 1000;
-					if (flights.isEmpty() && (conTime < 150))
-						i.remove();
+					// Prune out any entries with no flights and less than 2 minutes long
+					if (ce.getEndTime() != null) {
+						long conTime = (ce.getEndTime().getTime() - ce.getStartTime().getTime()) / 1000;
+						if (flights.isEmpty() && (conTime < 120))
+							i.remove();
+					}
 				}
 				
 				// Save in the request
 				results.addAll(cons);
-				
-				// Save the dispatcher IDs
 				IDs.addAll(conIDs);
 			}
 			
