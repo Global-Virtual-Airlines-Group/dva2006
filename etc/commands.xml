@@ -1049,7 +1049,7 @@
 
 	<command id="resetassign">
 		<name>Reset Flight Assignment</name>
-		<class>org.deltava.commands.asign.ResetCommand</class>
+		<class>org.deltava.commands.assign.ResetCommand</class>
 		<roles>Pilot</roles>
 	</command>
 	
