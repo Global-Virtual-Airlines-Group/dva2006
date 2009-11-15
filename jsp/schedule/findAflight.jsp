@@ -74,10 +74,18 @@ updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), false, ge
 updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), false, getValue(f.airportA));
 return true;
 }
+
+function updateSort(combo)
+{
+if (!combo)
+	combo = document.forms[0].sortType;
+enableElement('sortDesc', (combo.selectedIndex > 0));
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="initLinks(); initAirports()">
+<body onload="initLinks(); initAirports(); updateSort()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -121,8 +129,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Sort Flights by</td>
- <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" />
- <el:box name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
+ <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" onChange="void updateSort(this)" />
+ <el:box ID="sortDesc" name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
  <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" /></td>
 </tr>
@@ -149,7 +157,7 @@ return true;
 </el:table>
 </el:form>
 <c:if test="${!empty fafResults}">
-<el:form method="post" action="buildAssign.do" validate="return buildValidate(this)">
+<el:form method="post" action="buildassign.do" validate="return buildValidate(this)">
 <el:table className="view" space="default" pad="default">
 <!-- Search Results Data -->
 <tr class="title caps">
@@ -196,7 +204,7 @@ return true;
 
 <tr class="title">
  <td colspan="8"><el:button ID="BuildButton" type="submit" className="BUTTON" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
-<el:cmdbutton ID="BuildResetButton" url="buildassign" op="reset" label="RESET RESULTS" /></td>
+<el:cmdbutton ID="BuildResetButton" url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -235,9 +243,9 @@ return true;
 </tr>
 </c:forEach>
 <tr class="title">
- <td colspan="5"> <view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
+ <td colspan="5"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
 <el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGNMENT" />&nbsp;
-<el:cmdbutton ID="ClearButton" url="buildassign" op="reset" label="CLEAR FLIGHT ASSIGNMENT" /></td>
+<el:cmdbutton ID="ClearButton" url="resetassign" label="CLEAR FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
 </c:if>
