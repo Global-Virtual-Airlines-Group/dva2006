@@ -460,9 +460,12 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			eq.setPromotionHours(rs.getInt(7));
 			eq.setACARSPromotionLegs(rs.getBoolean(8));
 			eq.setPromotionMinLength(rs.getInt(9));
-			eq.setOwner(SystemData.getApp(rs.getString(10)));
-			eq.setCPName(rs.getString(11));
-			eq.setCPEmail(rs.getString(12));
+			eq.setPromotionSwitchLength(rs.getInt(10));
+			eq.setMinimum1XTime(rs.getInt(11));
+			eq.setMaximumAccelTime(rs.getInt(12));
+			eq.setOwner(SystemData.getApp(rs.getString(13)));
+			eq.setCPName(rs.getString(14));
+			eq.setCPEmail(rs.getString(15));
 			results.add(eq);
 		}
 

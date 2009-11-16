@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.CollectionUtils;

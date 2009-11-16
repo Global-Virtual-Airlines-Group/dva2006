@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

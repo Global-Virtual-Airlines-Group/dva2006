@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.navdata.TerminalRoute;
@@ -28,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

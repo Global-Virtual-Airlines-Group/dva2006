@@ -97,181 +97,180 @@
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>int difference(java.util.Date, java.util.Date)</function-signature>
 	</function>
-		
+
 	<!-- Converts a number to a hex string -->
 	<function>
 		<name>hex</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>java.lang.String toHex(long)</function-signature>
 	</function>
-	
+
 	<!-- Converts a date/time into a string -->
 	<function>
 		<name>dateFmt</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
-		<function-signature>java.lang.String format(java.util.Date,
-			java.lang.String)</function-signature>
+		<function-signature>java.lang.String format(java.util.Date,	java.lang.String)</function-signature>
 	</function>
-	
+
 	<!-- Get the ACARS Database ID -->
 	<function>
 		<name>ACARS_ID</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>int ACARSID(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>int ACARSID(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
-	
+
 	<!-- Get the Event Database ID -->
 	<function>
 		<name>EventID</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>int eventID(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>int eventID(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
-	
+
 	<!-- Get the Flight Assignment Database ID -->
 	<function>
 		<name>AssignID</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>int assignID(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>int assignID(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 	
 	<!-- Get the Pilot Database ID -->
 	<function>
 		<name>PilotID</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>int pilotID(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>int pilotID(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 	
 	<!-- Check for ACARS Flight Report -->
 	<function>
 		<name>isACARS</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isACARS(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isACARS(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Draft Flight Report -->
 	<function>
 		<name>isDraft</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isDraft(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isDraft(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Microsoft Flight Simulator Flight Report -->
 	<function>
 		<name>isMSFS</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isMSFS(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isMSFS(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Check Flight -->
 	<function>
 		<name>isCheckFlight</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isCheckRide(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isCheckRide(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Charter Flight -->
 	<function>
 		<name>isCharter</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isCharter(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isCharter(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Academy Flight -->
 	<function>
 		<name>isAcademy</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>		
-		<function-signature>boolean isAcademy(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isAcademy(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Dispatch-planned Flight -->
 	<function>
 		<name>isDispatch</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isDispatch(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isDispatch(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Online Flight Report -->
 	<function>
 		<name>isOnline</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isOnline(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isOnline(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Historic Flight Report -->
 	<function>
 		<name>isHistoric</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isHistoric(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isHistoric(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check if Flight counts towards promotion -->
 	<function>
 		<name>isPromoLeg</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean promoLeg(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean promoLeg(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Return what equipment types a Flight counts towards promotion in -->
 	<function>
 		<name>promoEQTypes</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>java.lang.Stirng promoTypes(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>java.lang.Stirng promoTypes(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Get Online Flight Report network name-->
 	<function>
 		<name>network</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>java.lang.String network(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>java.lang.String network(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 	
 	<!-- Check for Unrated Equipment -->
 	<function>
 		<name>isRated</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean isRated(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean isRated(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 	
 	<!-- Check for Unknown Route flag -->
 	<function>
 		<name>routeWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean routeWarn(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean routeWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Excessive Range flag -->
 	<function>
 		<name>rangeWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean rangeWarn(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean rangeWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Suspicious Time flag -->
 	<function>
 		<name>timeWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean timeWarn(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean timeWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for ETOPS warning flag -->
 	<function>
 		<name>etopsWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean etopsWarn(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean etopsWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for excessive weight flag -->
 	<function>
 		<name>weightWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean weightWarn(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean weightWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for in-flight refueling warning flag -->
 	<function>
 		<name>refuelWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
-		<function-signature>boolean refuelWarn(org.deltava.beans.FlightReport)</function-signature>
+		<function-signature>boolean refuelWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
 	<!-- Check for Check Ride -->

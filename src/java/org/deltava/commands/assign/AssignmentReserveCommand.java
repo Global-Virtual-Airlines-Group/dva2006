@@ -4,8 +4,8 @@ package org.deltava.commands.assign;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to reserve a Flight Assignment.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

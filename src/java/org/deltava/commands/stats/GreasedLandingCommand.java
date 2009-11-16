@@ -4,7 +4,8 @@ package org.deltava.commands.stats;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -13,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display the smoothest landings.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

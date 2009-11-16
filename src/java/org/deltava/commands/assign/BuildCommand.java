@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;

@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 

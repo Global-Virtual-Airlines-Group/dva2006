@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.event.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.dao.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 

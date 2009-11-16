@@ -4,13 +4,13 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.flight.FlightReport;
 
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

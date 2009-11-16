@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.Course;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.ScheduleSearchCriteria;
 import org.deltava.beans.system.*;
 
@@ -25,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 2.5
+ * @version 2.7
  * @since 1.0
  */
 

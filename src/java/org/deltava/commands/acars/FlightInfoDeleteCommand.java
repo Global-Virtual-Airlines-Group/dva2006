@@ -4,9 +4,9 @@ package org.deltava.commands.acars;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.ACARSFlightReport;
 import org.deltava.beans.UserData;
 import org.deltava.beans.acars.FlightInfo;
+import org.deltava.beans.flight.ACARSFlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to delete ACARS Flight Info entries.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import static org.deltava.beans.FlightReport.*;
+import static org.deltava.beans.flight.FlightReport.*;
 import static org.deltava.beans.testing.Test.SCORED;
 
 import org.deltava.beans.stats.PerformanceMetrics;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 
