@@ -6,6 +6,8 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 

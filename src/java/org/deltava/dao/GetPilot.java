@@ -5,11 +5,12 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
@@ -18,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

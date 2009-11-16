@@ -4,8 +4,8 @@ package org.deltava.commands.assign;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.2
  */
 

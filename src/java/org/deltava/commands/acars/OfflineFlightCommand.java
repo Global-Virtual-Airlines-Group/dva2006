@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
@@ -220,25 +221,19 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 			// Loop through the eq types, not all may have the same minimum promotion stage length!!
 			if (promoEQ.contains(p.getEquipmentType())) {
-				boolean canPromote = (afr.getTime(1) > 3600) || (afr.getTime(1) > (afr.getTime(2) + afr.getTime(4)));
-				if (canPromote) {
-					for (Iterator<String> i = promoEQ.iterator(); i.hasNext(); ) {
-						String pType = i.next();
-						EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
-						if (pEQ == null)
-							i.remove();
-						else if (afr.getDistance() < pEQ.getPromotionMinLength()) {
-							log.info("Minimum " + pType + " flight length is "  +  pEQ.getPromotionMinLength() + ", distance=" + afr.getDistance());
-							comments.add("Minimum flight length for promotion to Captain in " + pType + " is "  +  pEQ.getPromotionMinLength() + " miles");
-							i.remove();
-						}
+				FlightPromotionHelper helper = new FlightPromotionHelper(afr);
+				for (Iterator<String> i = promoEQ.iterator(); i.hasNext(); ) {
+					String pType = i.next();
+					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
+					boolean isOK = helper.canPromote(pEQ);
+					if (!isOK) {
+						i.remove();
+						if (!StringUtils.isEmpty(helper.getLastComment()))
+							comments.add(helper.getLastComment());
 					}
-
-					afr.setCaptEQType(promoEQ);
-				} else {
-					log.info("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
-					comments.add("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
 				}
+				
+				afr.setCaptEQType(promoEQ);
 			}
 			
 			// Check if it's an Online Event flight

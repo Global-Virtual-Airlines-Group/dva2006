@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.1
  */
 

@@ -5,13 +5,14 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

@@ -4,14 +4,14 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

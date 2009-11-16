@@ -27,6 +27,9 @@ if (!validateCombo(form.cp, 'Chief Pilot')) return false;
 if (!validateNumber(form.stage, 1, 'Equipment Stage')) return false;
 if (!validateNumber(form.captLegs, 0, 'Flight Legs for Promotion')) return false;
 if (!validateNumber(form.captDistance, 0, 'Flight Distance for Promotion')) return false;
+if (!validateNumber(form.switchDistance, 0, 'Flight Distance for Time Acceleration')) return false;
+if (!validateNumber(form.maxAccel, 0, 'Flight Time with Time Acceleration')) return false;
+if (!validateNumber(form.min1X, 0, 'Flight time without Time Acceleration')) return false;
 if (!validateCheckBox(form.ranks, 2, 'Ranks')) return false;
 if (!validateCheckBox(form.pRatings, 1, 'Primary Rating')) return false;
 
@@ -102,6 +105,12 @@ return true;
 <tr>
  <td class="label">Flight Distance for Promotion</td>
  <td class="data"><el:text name="captDistance" size="3" max="4" idx="*" className="req" value="${eqType.promotionMinLength}" /> miles</td>
+</tr>
+<tr>
+ <td class="label">Time Acceleration</td>
+ <td class="data">Below <el:text name="switchDistance" size="2" max="5" idx="*" className="req" value="${eqType.promotionSwitchLength}" /> miles, no more
+ than <el:text name="maxAccel" size="2" max="5" idx="*" className="req" value="${eqType.maximumAccelTime}" /> seconds at 2X or above. Otherwise, at least
+ <el:text name="min1X" size="2" max="5" idx="*" className="req" value="${eqType.minimum1XTime}" /> seconds without time acceleration</td>
 </tr>
 <tr>
  <td class="label top">Captain Examinations</td>

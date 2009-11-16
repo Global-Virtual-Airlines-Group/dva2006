@@ -33,6 +33,10 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     private int _promotionLegs;
     private int _promotionHours;
     private int _promotionMinLength;
+    
+    private int _promotionSwitchLength;
+    private int _min1X;
+    private int _max2X;
 
     private final Collection<String> _ranks = new LinkedHashSet<String>();
     private final Collection<String> _primaryRatings = new TreeSet<String>();
@@ -51,12 +55,13 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      */
     public EquipmentType(String eqName) {
         super();
-        _name = eqName.trim();
+        setName(eqName);
     }
     
     /**
      * Returns the name of the equipment type program.
      * @return The equipment type name
+     * @see EquipmentType#setName(String)
      */
     public String getName() {
         return _name;
@@ -201,6 +206,36 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
+     * Returns the flight distance where accelerated time is limted, to where a minimum amount
+     * of 1X time is required.
+     * @return the flight distance
+     * @see EquipmentType#setPromotionSwitchLength(int)
+     */
+    public int getPromotionSwitchLength() {
+    	return _promotionSwitchLength;
+    }
+    
+    /**
+     * Returns the minimum amount of 1X time for a flight over the switch length in order to
+     * count for promotion to Captain.
+     * @return the minimum amount of time in seconds
+     * @see EquipmentType#setMinimum1XTime(int)
+     */
+    public int getMinimum1XTime() {
+    	return _min1X;
+    }
+    
+    /**
+     * Returns the maximum amount of accelerated time for a flight under the switch length in
+     * order to count for promotion to Captain.
+     * @return the maximum amount of time in seconds
+     * @see EquipmentType#setMaximumAccelTime(int)
+     */
+    public int getMaximumAccelTime() {
+    	return _max2X;
+    }
+    
+    /**
      * Returns wether flights counting towards promotion must be logged using ACARS.
      * @return TRUE if promotion legs must be logged using ACARS, otherwise FALSE
      * @see EquipmentType#setACARSPromotionLegs(boolean)
@@ -235,6 +270,16 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      */
     public Collection<AirlineInformation> getAirlines() {
     	return _airlines;
+    }
+    
+    /**
+     * Updates the equipment program name.
+     * @param name the name
+     * @throws NullPointerException if name is null
+     * @see EquipmentType#getName()
+     */
+    public void setName(String name) {
+        _name = name.trim();
     }
     
     /**
@@ -435,14 +480,10 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     /**
      * Sets the stage for this equipment type program
      * @param stage The stage number for this program
-     * @throws IllegalArgumentException if stage is negative
      * @see EquipmentType#getStage()
      */
     public void setStage(int stage) {
-        if (stage < 1)
-            throw new IllegalArgumentException("Stage cannot be negative");
-        
-        _stage = stage;
+        _stage = Math.max(1, stage);
     }
     
     /**
@@ -472,6 +513,36 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
      */
     public void setPromotionMinLength(int distance) {
     	_promotionMinLength = Math.max(0, distance);
+    }
+    
+    /**
+     * Sets the distance at which promotion eligibility switches from a maximum amount of
+     * accelerated time to a minimum amount of 1X time.
+     * @param distance the leg switch distance
+     * @see EquipmentType#getPromotionSwitchLength()
+     */
+    public void setPromotionSwitchLength(int distance) {
+    	_promotionSwitchLength = Math.max(0, distance);
+    }
+    
+    /**
+     * Sets the minimum amount of 1X time for a flight over the switch length in order to
+     * count for promotion to Captain.
+     * @param minTime the minimum amount of time in seconds
+     * @see EquipmentType#getMinimum1XTime()
+     */
+    public void setMinimum1XTime(int minTime) {
+    	_min1X = Math.max(0, minTime);
+    }
+    
+    /**
+     * Sets the maximum amount of accelerated time for a flight under the switch length in
+     * order to count for promotion to Captain.
+     * @param maxTime the maximum amount of time in seconds
+     * @see EquipmentType#getMaximumAccelTime()
+     */
+    public void setMaximumAccelTime(int maxTime) {
+    	_max2X = Math.max(0, maxTime);
     }
     
     /**

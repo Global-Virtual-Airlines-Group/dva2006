@@ -1,13 +1,13 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.Airport;
 
 /**
  * A comparator to sort Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 

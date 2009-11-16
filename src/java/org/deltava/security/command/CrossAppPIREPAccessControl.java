@@ -1,15 +1,15 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.security.SecurityContext;
 
 /**
- * An Access Controller
+ * An Access Controller for Flight Reports across Airlines.
  * @author Luke
- * @version 2.0
+ * @version 2.7
  * @since 2.0
  */
 

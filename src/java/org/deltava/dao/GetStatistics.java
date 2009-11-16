@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.*;
 
 import org.deltava.util.CalendarUtils;
@@ -13,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
