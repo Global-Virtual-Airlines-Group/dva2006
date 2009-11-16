@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save a Flight Assignment.
  * @author Luke
- * @version 2.1
+ * @version 2.8
  * @since 1.0
  */
 

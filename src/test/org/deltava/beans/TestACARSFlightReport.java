@@ -7,6 +7,7 @@ import org.junit.*;
 import org.hansel.*;
 import org.junit.runner.*;
 
+import org.deltava.beans.flight.ACARSFlightReport;
 import org.deltava.beans.schedule.Airline;
 
 @RunWith(CoverageRunner.class)

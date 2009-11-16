@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;

@@ -1,9 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -14,7 +15,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to delete Pilot Examinations and Check Rides.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 

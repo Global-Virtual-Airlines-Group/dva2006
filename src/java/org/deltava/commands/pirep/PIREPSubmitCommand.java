@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -73,10 +74,11 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
 			if (pTypeNames.contains(p.getEquipmentType())) {
+				FlightPromotionHelper helper = new FlightPromotionHelper(pirep);
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
-					String pName = i.next();
-					EquipmentType peq = eqdao.get(pName);
-					if ((peq == null) || (peq.getACARSPromotionLegs()))
+					String pType = i.next();
+					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
+					if (!helper.canPromote(pEQ))
 						i.remove();
 				}
 				

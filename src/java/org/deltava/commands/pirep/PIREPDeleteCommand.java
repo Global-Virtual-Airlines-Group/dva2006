@@ -1,9 +1,9 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
 
-import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -12,7 +12,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 

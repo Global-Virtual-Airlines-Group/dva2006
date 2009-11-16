@@ -1,8 +1,13 @@
 // Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans;
+package org.deltava.beans.flight;
 
 import java.util.*;
 
+import org.deltava.beans.CalendarEntry;
+import org.deltava.beans.Flight;
+import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.Person;
+import org.deltava.beans.ViewEntry;
 import org.deltava.beans.schedule.Airline;
 
 /**

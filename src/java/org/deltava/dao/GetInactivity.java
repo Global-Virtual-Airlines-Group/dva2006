@@ -5,14 +5,14 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.system.InactivityPurge;
 
 /**
  * A Data Access Object to read Inactivity purge entries. This DAO extends PilotReadDAO since it is used
  * to query pilots who may not have an Inactivity purge table entry, but are eligible for one.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

@@ -1,11 +1,11 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to build a flight assignment that consists of a single leg selected at random from the last
  * Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 2.2
  */
 

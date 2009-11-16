@@ -1,14 +1,15 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.*;
 
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 

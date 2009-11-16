@@ -4,7 +4,7 @@ package org.deltava.security.command;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.Airline;
 
 public class TestPIREPAccessControl extends AccessControlTestCase {

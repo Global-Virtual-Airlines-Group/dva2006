@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.system.TransferRequest;
 import org.deltava.beans.testing.*;
 
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.0
  */
 

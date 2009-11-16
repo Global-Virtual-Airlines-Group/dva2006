@@ -1,15 +1,16 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.List;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 

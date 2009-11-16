@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
@@ -19,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 

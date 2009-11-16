@@ -35,7 +35,8 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 		try {
 			startTransaction();
 			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, ACTIVE, C_LEGS, C_HOURS, "
-				+ "C_LEGS_ACARS, C_LEGS_DISTANCE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "C_LEGS_ACARS, C_LEGS_DISTANCE, C_SWITCH_DISTANCE, C_MIN_1X, C_MAX_ACCEL) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
@@ -46,6 +47,9 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 			_ps.setDouble(8, eq.getPromotionHours());
 			_ps.setBoolean(9, eq.getACARSPromotionLegs());
 			_ps.setInt(10, eq.getPromotionMinLength());
+			_ps.setInt(11, eq.getPromotionSwitchLength());
+			_ps.setInt(12, eq.getMinimum1XTime());
+			_ps.setInt(13, eq.getMaximumAccelTime());
 			executeUpdate(1);
 			
 			// Write the exams/ratings and commit
@@ -63,13 +67,15 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 	/**
 	 * Updates an existing Equipment Type profile in the database.
 	 * @param eq the EquipmentType bean
+	 * @param newName the new equipment type name, or null if the same
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void update(EquipmentType eq) throws DAOException {
+	public void update(EquipmentType eq, String newName) throws DAOException {
 		try {
 			startTransaction();
 			prepareStatementWithoutLimits("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, ACTIVE=?, C_LEGS=?, C_HOURS=?, "
-					+ "C_LEGS_ACARS=?, C_LEGS_DISTANCE=? WHERE (EQTYPE=?) LIMIT 1");
+					+ "C_LEGS_ACARS=?, C_LEGS_DISTANCE=?, C_SWITCH_DISTANCE=?, C_MIN_1X=?, C_MAX_ACCEL=?, EQTYPE=? "
+					+ "WHERE (EQTYPE=?) LIMIT 1");
 			
 			_ps.setInt(1, eq.getCPID());
 			_ps.setInt(2, eq.getStage());
@@ -79,15 +85,24 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 			_ps.setDouble(6, eq.getPromotionHours());
 			_ps.setBoolean(7, eq.getACARSPromotionLegs());
 			_ps.setInt(8, eq.getPromotionMinLength());
-			_ps.setString(9, eq.getName());
+			_ps.setInt(9, eq.getPromotionSwitchLength());
+			_ps.setInt(10, eq.getMinimum1XTime());
+			_ps.setInt(11, eq.getMaximumAccelTime());
+			_ps.setString(12, (newName == null) ? eq.getName() : newName);
+			_ps.setString(13, eq.getName());
 			executeUpdate(1);
+			
+			// Update the name if neccessary
+			String oldName = eq.getName();
+			if (newName != null)
+				eq.setName(newName);
 			
 			// Write the exams/ratings and commit
 			writeExams(eq);
 			writeRatings(eq);
 			writeAirlines(eq);
+			invalidate(oldName);
 			commitTransaction();
-			invalidate(eq.getName());
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);

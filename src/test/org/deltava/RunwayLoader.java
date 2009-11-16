@@ -8,8 +8,8 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.*;
 
-import org.deltava.beans.ACARSFlightReport;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.flight.ACARSFlightReport;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 

@@ -104,6 +104,9 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			eq.setPromotionLegs(StringUtils.parse(ctx.getParameter("captLegs"), 10));
 			eq.setPromotionMinLength(StringUtils.parse(ctx.getParameter("captDistance"), 0));
+			eq.setPromotionSwitchLength(StringUtils.parse(ctx.getParameter("switchDistance"), 0));
+			eq.setMaximumAccelTime(StringUtils.parse(ctx.getParameter("maxAccel"), 0));
+			eq.setMinimum1XTime(StringUtils.parse(ctx.getParameter("min1X"), 0));
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
@@ -139,7 +142,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 				wdao.create(eq);
 				ctx.setAttribute("isCreated", Boolean.TRUE, REQUEST);
 			} else
-				wdao.update(eq);
+				wdao.update(eq, ctx.getParameter("eqType"));
 
 			// Update pilot ratings
 			boolean updatePilots = Boolean.valueOf(ctx.getParameter("updateRatings")).booleanValue();

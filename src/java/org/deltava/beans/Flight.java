@@ -1,7 +1,7 @@
 // Copyright 2004, 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.text.DecimalFormat;
+import java.text.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.util.GeoUtils;
@@ -9,17 +9,13 @@ import org.deltava.util.GeoUtils;
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
 public abstract class Flight extends DatabaseBean implements RoutePair {
 
-    /**
-     * A number formatter used to add leading zeroes to the Flight Number.
-     * @see Flight#toString()
-     */
-    protected final DecimalFormat df = new DecimalFormat("#000");
+    private final NumberFormat df = new DecimalFormat("#000");
 
     private Airline _airline;
     private int _flightNumber;
@@ -144,14 +140,10 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Set the Flight Number for this flight
      * @param fNumber the Flight Number
-     * @throws IllegalArgumentException if the flight number is negative
      * @see Flight#getFlightNumber()
      */
     public void setFlightNumber(int fNumber) {
-        if (fNumber < 0)
-            throw new IllegalArgumentException("Flight Number cannot be negative");
-
-        _flightNumber = fNumber;
+        _flightNumber = Math.max(1, fNumber);
     }
 
     /**
@@ -170,7 +162,6 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Sets the equipment type for this flight.
      * @param eqType the aircraft type
-     * @see FlightReport#getEquipmentType()
      */
     public void setEquipmentType(String eqType) {
         _eqType = eqType;
@@ -179,7 +170,6 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Sets the Arrival Airport object for this flight.
      * @param a the Arrival Airport object
-     * @see FlightReport#getAirportA()
      */
     public void setAirportA(Airport a) {
         _airportA = a;
@@ -188,7 +178,6 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
     /**
      * Sets the Departure Airport object for this flight.
      * @param a the Departure Airport object
-     * @see FlightReport#getAirportD()
      */
     public void setAirportD(Airport a) {
         _airportD = a;

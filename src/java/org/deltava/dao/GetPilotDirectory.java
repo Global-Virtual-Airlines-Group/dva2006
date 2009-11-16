@@ -5,13 +5,14 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 

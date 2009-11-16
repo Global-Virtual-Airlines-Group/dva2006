@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,11 +6,11 @@ import java.sql.Connection;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.Pilot;
-import org.deltava.beans.FlightReport;
 import org.deltava.beans.UserData;
 import org.deltava.beans.UserDataMap;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.event.*;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 

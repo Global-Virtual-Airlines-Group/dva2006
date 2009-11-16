@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
@@ -14,8 +14,8 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge Draft Flight Reports from the database.
  * @author Luke
- * @version 1.0
- * @since
+ * @version 2.7
+ * @since 1.0
  */
 
 public class DraftPIREPPurgeTask extends Task {

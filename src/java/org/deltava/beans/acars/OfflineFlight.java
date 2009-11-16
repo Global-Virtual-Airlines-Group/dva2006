@@ -3,12 +3,12 @@ package org.deltava.beans.acars;
 
 import java.util.*;
 
-import org.deltava.beans.ACARSFlightReport;
+import org.deltava.beans.flight.ACARSFlightReport;
 
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.4
  */
 

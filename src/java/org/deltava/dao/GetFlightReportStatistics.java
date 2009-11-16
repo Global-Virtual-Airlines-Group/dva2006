@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.1
  */
 

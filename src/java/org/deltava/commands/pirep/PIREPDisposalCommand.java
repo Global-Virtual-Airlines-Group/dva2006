@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.flight.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -93,8 +94,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				throw securityException("Cannot dispose of Flight Report #" + fr.getID());
 			
 			// Load the comments
+			Collection<String> comments = new ArrayList<String>();
 			if (ctx.getParameter("dComments") != null)
-				fr.setComments(ctx.getParameter("dComments"));
+				comments.add(ctx.getParameter("dComments"));
 			
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
@@ -113,19 +115,15 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
 			if (pTypeNames.contains(p.getEquipmentType())) {
-				boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS);
+				FlightPromotionHelper helper = new FlightPromotionHelper(fr);
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
-					String pName = i.next();
-					EquipmentType peq = eqdao.get(pName);
-					if (peq == null) {
-						log.warn("Unknown equipment type - " + pName);
+					String pType = i.next();
+					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
+					boolean promoOK = helper.canPromote(pEQ);
+					if (!promoOK) {
 						i.remove();
-					} else if (peq.getACARSPromotionLegs() && !isACARS) {
-						log.warn("Flight " + fr.getID() + " not logged using ACARS - " + peq.getName() + " requires ACARS");					 
-						i.remove();
-					} else if (fr.getDistance() < eq.getPromotionMinLength()) {
-						log.warn("Minimum flight length is "  +  eq.getPromotionMinLength() + ", distance=" + fr.getDistance());
-						i.remove();
+						if (!StringUtils.isEmpty(helper.getLastComment()))
+							comments.add(helper.getLastComment());
 					}
 				}
 				
@@ -133,7 +131,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				fr.setCaptEQType(pTypeNames);
 				if (CollectionUtils.hasDelta(pTypeNames, fr.getCaptEQType()))
 					log.warn("Updating Promotion to Captain types - was " + fr.getCaptEQType() + ", now " + pTypeNames);
-			}
+			} else
+				fr.setCaptEQType(new HashSet<String>());
 			
 			// Check if the pilot is rated in the equipment type
 			@SuppressWarnings("unchecked")
@@ -144,6 +143,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				log.warn("NotRated was " + fr.hasAttribute(FlightReport.ATTR_NOTRATED) + ", now " + !isRated);
 				fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			}
+			
+			// Update comments
+			if (!comments.isEmpty())
+				fr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);

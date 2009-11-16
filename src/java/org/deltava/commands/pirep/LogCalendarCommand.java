@@ -4,7 +4,7 @@ package org.deltava.commands.pirep;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
