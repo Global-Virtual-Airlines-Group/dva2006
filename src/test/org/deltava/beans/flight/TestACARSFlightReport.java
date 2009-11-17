@@ -1,5 +1,5 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans;
+package org.deltava.beans.flight;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ import org.junit.*;
 import org.hansel.*;
 import org.junit.runner.*;
 
+import org.deltava.beans.AbstractBeanTestCase;
 import org.deltava.beans.flight.ACARSFlightReport;
 import org.deltava.beans.schedule.Airline;
 
