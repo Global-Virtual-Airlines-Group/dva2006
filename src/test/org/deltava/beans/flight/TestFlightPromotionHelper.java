@@ -158,4 +158,26 @@ public class TestFlightPromotionHelper extends TestCase {
 		assertFalse(helper.canPromote(eq1));
 		assertTrue(helper.canPromote(eq2));
 	}
+	
+	public void testDefault() {
+		
+		ACARSFlightReport p1 = new ACARSFlightReport(_a, 1, 1);
+		assertNotNull(p1);
+		p1.setAirportD(_atl);
+		p1.setAirportA(_bos);
+		p1.setAttribute(FlightReport.ATTR_ACARS, true);
+		p1.setTime(1, 600);
+		p1.setTime(2, 2600);
+		
+		EquipmentType eq = new EquipmentType("B747-400");
+		assertNotNull(eq);
+		assertFalse(eq.getACARSPromotionLegs());
+		assertEquals(0, eq.getPromotionMinLength());
+		assertEquals(0, eq.getPromotionSwitchLength());
+		assertEquals(0, eq.getMinimum1XTime());
+		assertEquals(0, eq.getMaximumAccelTime());
+		
+		FlightPromotionHelper helper = new FlightPromotionHelper(p1);
+		assertTrue(helper.canPromote(eq));
+	}
 }
