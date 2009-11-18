@@ -251,7 +251,7 @@ return true;
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </tr>
 </c:if>
-<c:if test="${!scoreCR && (access.canDispose || access.canViewComments) && (!empty pirep.comments)}">
+<c:if test="${!scoreCR && (access.canDispose || (access.canViewComments && (!empty pirep.comments)))}">
 <tr>
  <td class="label top">Reviewer Comments</td>
 <c:if test="${access.canDispose}">
