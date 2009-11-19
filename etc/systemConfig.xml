@@ -613,6 +613,7 @@
 	<!-- ACARS Server Properties -->
 	<acars>
 		<enabled type="Boolean">true</enabled>
+		<max_offline_size type="Integer">4096000</max_offline_size>
 
 		<!-- Live map settings -->
 		<livemap>
