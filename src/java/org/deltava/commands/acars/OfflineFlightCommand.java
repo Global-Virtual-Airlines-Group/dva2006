@@ -36,7 +36,6 @@ import org.gvagroup.common.SharedData;
 public class OfflineFlightCommand extends AbstractCommand {
 	
 	private static final Logger log = Logger.getLogger(OfflineFlightCommand.class);
-	private static final int MAX_XML_SIZE = 4096 * 1024;
 
 	/**
 	 * Executes the command.
@@ -107,7 +106,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				xml = new String(xmlF.getBuffer(), "UTF-8");
 			
 			// Sanity check the length
-			if (xml.length() > MAX_XML_SIZE)
+			if (xml.length() > SystemData.getInt("acars.max_offline_size", 4096000))
 				throw new IllegalArgumentException("XML too large - " + StringUtils.format(xml.length(), ctx.getUser().getNumberFormat()) + " bytes");
 		
 			// Validate the SHA
