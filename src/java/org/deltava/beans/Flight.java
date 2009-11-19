@@ -143,7 +143,7 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
      * @see Flight#getFlightNumber()
      */
     public void setFlightNumber(int fNumber) {
-        _flightNumber = Math.max(1, fNumber);
+        _flightNumber = Math.max(0, fNumber);
     }
 
     /**
