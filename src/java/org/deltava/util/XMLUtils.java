@@ -8,7 +8,7 @@ import org.jdom.output.XMLOutputter;
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 
@@ -99,5 +99,26 @@ public class XMLUtils {
 	 */
 	public static String format(Document doc) {
 		return format(doc, "UTF-8");
+	}
+	
+	/**
+	 * Removes invalid unicode characters from an XML element.
+	 * @param txt the string to process
+	 * @return the string with invalid unicode removed
+	 */
+	public static String stripInvalidUnicode(String txt) {
+		if (txt == null)
+			return null;
+		
+		StringBuilder buf = new StringBuilder();
+		for (int x = 0; x < txt.length(); x++) {
+			int c = txt.codePointAt(x);
+			if (c == 0x12)
+				buf.append('\'');
+			else if (c > 0x1A)
+				buf.append(txt.charAt(x));
+		}
+		
+		return buf.toString();
 	}
 }
