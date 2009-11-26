@@ -8,7 +8,7 @@ import org.deltava.beans.system.Issue;
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 1.0
  */
 
@@ -63,9 +63,10 @@ public final class IssueAccessControl extends AccessControl {
 		
 		// Check read access
 		_canRead = (_i.getSecurity() == Issue.SECURITY_STAFF) ? isStaff || isDev : true;
+		boolean canReopen = (!isOpen && isMine) || isDev;
 
 		// Set access control variables
-		_canComment = _canCreate && _canRead && (isOpen || isDev); // This locks out comments for closed issues by non-devs
+		_canComment = _canCreate && _canRead && (isOpen || canReopen);
 		_canEdit = _canRead && ((isMine && isOpen) || isDev);
 		_canResolve = isDev;
 		_canReassign = isDev && isOpen;
