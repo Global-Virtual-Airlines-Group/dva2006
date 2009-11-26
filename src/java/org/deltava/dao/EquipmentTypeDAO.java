@@ -9,7 +9,7 @@ import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Access Object for {@link EquipmentType} beans
+ * A Data Access Object for {@link EquipmentType} beans.
  * @author Luke
  * @version 2.7
  * @since 2.7
