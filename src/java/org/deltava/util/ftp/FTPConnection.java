@@ -8,7 +8,7 @@ import com.enterprisedt.net.ftp.*;
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -100,7 +100,7 @@ public class FTPConnection {
 	 */
 	public InputStream get(String fName, boolean saveToDisk) throws FTPClientException {
 		try {
-			if (saveToDisk)
+			if (!saveToDisk)
 				return new ByteArrayInputStream(_client.get(fName));
 
 			// Create a temp file
