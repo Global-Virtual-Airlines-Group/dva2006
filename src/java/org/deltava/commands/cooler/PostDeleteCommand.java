@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to delete an individual message post.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class PostDeleteCommand extends AbstractCommand {
 	         
 	         // If we only have one post, nuke the thread
 	         SetCoolerMessage wdao = new SetCoolerMessage(con);
-	         if (posts.size() == 1) {
+	         if (posts.size() == 0) {
 	        	 wdao.delete(threadID);
 	        	 
 	        	 // Set status and result
