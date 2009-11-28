@@ -103,7 +103,7 @@ public class AUSOTDownloadTask extends Task {
 			ctx.startTX();
 			
 			// Write the route data to the database
-			SetRoute wdao = new SetRoute(con);
+			SetOceanic wdao = new SetOceanic(con);
 			wdao.write(or);
 			for (Iterator<OceanicTrack> i = oTracks.iterator(); i.hasNext(); )
 				wdao.write(i.next());

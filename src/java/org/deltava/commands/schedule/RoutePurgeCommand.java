@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to purge Route data.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 
@@ -37,9 +37,9 @@ public class RoutePurgeCommand extends AbstractCommand {
 
 		// Get the DAO and purge the routes
 		try {
-			SetRoute dao = new SetRoute(ctx.getConnection());
+			SetOceanic dao = new SetOceanic(ctx.getConnection());
 			int rowsDeleted = dao.purgeOceanic(purgeDate);
-			ctx.setAttribute("rowsDeleted", new Integer(rowsDeleted), REQUEST);
+			ctx.setAttribute("rowsDeleted", Integer.valueOf(rowsDeleted), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
