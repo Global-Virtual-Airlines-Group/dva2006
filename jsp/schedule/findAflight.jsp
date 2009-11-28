@@ -17,6 +17,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
+<fmt:aptype var="useICAO" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -70,8 +71,8 @@ return true;
 function updateAirline(combo)
 {
 var f = document.forms[0];
-updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), false, getValue(f.airportD));
-updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), false, getValue(f.airportA));
+updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportD));
+updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportA));
 return true;
 }
 
