@@ -3,7 +3,6 @@ package org.deltava.commands.dispatch;
 
 import java.util.*;
 
-import org.deltava.beans.Person;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.comparators.AirportComparator;
@@ -18,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 2.2
  */
 
@@ -31,10 +30,7 @@ public class RoutePlotCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Determine if the user uses IATA/ICAO codes
-		Person usr = ctx.getUser();
-		boolean useIATA = (usr == null) ? false : (usr.getAirportCodeType() == Airport.IATA);
-		ctx.setAttribute("useIATA", Boolean.valueOf(useIATA), REQUEST);
+		// Set request attributes
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		

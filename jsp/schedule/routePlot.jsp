@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
@@ -137,15 +138,16 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
 <script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
 enableObject(f.routes, false);
 enableElement('SearchButton', false);
 
 // Load the airports
-updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
-window.setTimeout("updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportA))", 1250);
-window.setTimeout("updateAirports(f.airportL, 'airline=all', ${!useIATA}, getValue(f.airportL))", 1500);
+updateAirports(f.airportD, 'airline=all', ${useICAO}, getValue(f.airportD));
+window.setTimeout("updateAirports(f.airportA, 'airline=all', ${useICAO}, getValue(f.airportA))", 1250);
+window.setTimeout("updateAirports(f.airportL, 'airline=all', ${useICAO}, getValue(f.airportL))", 1500);
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});

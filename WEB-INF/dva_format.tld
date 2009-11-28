@@ -309,6 +309,18 @@
 	</tag>
 
 	<tag>
+		<description>Airport Type tag, used to write if we want ICAO or IATA codes</description>
+		<name>aptype</name>
+		<tag-class>org.deltava.taglib.format.AirportTypeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>		
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>GeoPosition tag, used to format geographic coordinates</description>
 		<name>geo</name>
 		<tag-class>org.deltava.taglib.format.GeoFormatTag</tag-class>
