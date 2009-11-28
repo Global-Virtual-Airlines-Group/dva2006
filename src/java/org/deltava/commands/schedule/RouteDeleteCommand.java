@@ -1,8 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.Date;
 import java.sql.Connection;
+
+import org.deltava.beans.navdata.OceanicTrackInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -14,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to delete Route data.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
@@ -34,21 +36,20 @@ public class RouteDeleteCommand extends AbstractCommand {
 			throw securityException("Cannot delete Oceanic Route");
 		
 		// Get the date/type
-		int routeType = StringUtils.parse((String) ctx.getCmdParameter(OPERATION, "0"), 0);
 		Date vd = StringUtils.parseDate((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
-
+		OceanicTrackInfo.Type rType = OceanicTrackInfo.Type.valueOf((String) ctx.getCmdParameter(OPERATION, "NAT"));
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the Route - we don't care what it is (so long as it exists)
 			GetOceanicRoute dao = new GetOceanicRoute(con);
-			Object route = dao.get(routeType, vd);
+			Object route = dao.get(rType, vd);
 			if (route == null)
 				throw notFoundException("Invalid Oceanic Route - " + ctx.getID());
 
 			// Get the DAO and delete the route
-			SetRoute wdao = new SetRoute(con);
-			wdao.deleteOceanic(routeType, vd);
+			SetOceanic wdao = new SetOceanic(con);
+			wdao.deleteOceanic(rType, vd);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
