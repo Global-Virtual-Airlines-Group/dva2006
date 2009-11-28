@@ -8,19 +8,19 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 /**
- * A Data Access Object to write Preferred Domestic/Oceanic Routes.
+ * A Data Access Object to write Oceanic Routes.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
-public class SetRoute extends DAO {
+public class SetOceanic extends DAO {
 
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
-	public SetRoute(Connection c) {
+	public SetOceanic(Connection c) {
 		super(c);
 	}
 
@@ -32,15 +32,12 @@ public class SetRoute extends DAO {
 	 */
 	public int purgeOceanic(java.util.Date sd) throws DAOException {
 		try {
-			// Init the prepared statement
-			if (sd == null) {
-				prepareStatement("DELETE FROM common.OCEANIC");
-			} else {
-				prepareStatement("DELETE FROM common.OCEANIC WHERE (VAILID_DATE < ?)");
+			if (sd != null) {
+				prepareStatement("DELETE FROM common.OCEANIC WHERE (VAILID_DATE<?)");
 				_ps.setTimestamp(1, createTimestamp(sd));
-			}
+			} else
+				prepareStatement("DELETE FROM common.OCEANIC");
 
-			// Purge the table
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -49,14 +46,14 @@ public class SetRoute extends DAO {
 
 	/**
 	 * Deletes an entry from the Oceanic Routes table.
-	 * @param routeType the route type code
+	 * @param routeType the route type
 	 * @param vd the validity date of the route
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteOceanic(int routeType, java.util.Date vd) throws DAOException {
+	public void deleteOceanic(OceanicTrackInfo.Type routeType, java.util.Date vd) throws DAOException {
 		try {
 			prepareStatement("DELETE FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
-			_ps.setInt(1, routeType);
+			_ps.setInt(1, routeType.ordinal());
 			_ps.setTimestamp(2, createTimestamp(vd));
 			executeUpdate(1);
 		} catch (SQLException se) {

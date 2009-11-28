@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -41,16 +41,16 @@ public class GetOceanicRoute extends GetNavAirway {
 
     /**
      * Returns a specific Oceanic Route.
-     * @param routeType the route Type code
+     * @param routeType the route Type
      * @param vd the validity date
      * @return the OceanicRoute
      * @throws DAOException if a JDBC error occurs
      */
-    public OceanicNOTAM get(int routeType, java.util.Date vd) throws DAOException {
+    public OceanicNOTAM get(OceanicTrackInfo.Type routeType, java.util.Date vd) throws DAOException {
     	try {
     		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND "
     				+ "(VALID_DATE=DATE(?)) LIMIT 1");
-    		_ps.setInt(1, routeType);
+    		_ps.setInt(1, routeType.ordinal());
     		_ps.setTimestamp(2, createTimestamp(vd));
     		
     		// Get the results and return the first element
