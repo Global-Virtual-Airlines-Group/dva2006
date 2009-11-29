@@ -125,8 +125,8 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetACARSRunways(null));
 		daoCaches.add(new GetACARSLog(null));
 		daoCaches.add(new GetIPLocation(null));
+		daoCaches.add(new GetWeather(null));
 		daoCaches.add(new GetFAWeather());
-		daoCaches.add(new GetNOAAWeather());
 		daoCaches.add(new org.deltava.dao.ipc.GetACARSPool());
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
@@ -147,7 +147,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("systemTime", new Long(System.currentTimeMillis()), REQUEST);
 		
 		// Calculate DAO usage count
-		ctx.setAttribute("daoUsageCount", new Long(org.deltava.dao.DAO.getQueryCount()), REQUEST);
+		ctx.setAttribute("daoUsageCount", Long.valueOf(org.deltava.dao.DAO.getQueryCount()), REQUEST);
 
 		// Get System properties
 		ctx.setAttribute("sys", System.getProperties(), REQUEST);

@@ -3,14 +3,15 @@ package org.deltava.service.wx;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.sql.Connection;
+
 import org.jdom.*;
 
-import org.deltava.beans.wx.WeatherDataBean;
+import org.deltava.beans.wx.TAF;
 import org.deltava.beans.navdata.AirportLocation;
 
-import org.deltava.dao.DAOException;
-import org.deltava.dao.GetNavData;
-
+import org.deltava.dao.*;
+import org.deltava.dao.wsdl.GetFAWeather;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -19,11 +20,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch Terminal Area Forecast data.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.3
  */
 
-public class TAFService extends WeatherDataService {
+public class TAFService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -35,19 +36,27 @@ public class TAFService extends WeatherDataService {
 
 		// Check if using FlightAware data services
 		boolean useFA = Boolean.valueOf(ctx.getParameter("fa")).booleanValue();
-		useFA &= SystemData.getBoolean("schedule.flightaware.enabled")
-				&& (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
+		useFA &= SystemData.getBoolean("schedule.flightaware.enabled") && (ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch"));
 
 		// Get the weather data
-		WeatherDataBean data = null;
+		TAF data = null;
 		try {
+			Connection con = ctx.getConnection();
+			
 			String code = ctx.getParameter("code");
-			GetNavData navdao = new GetNavData(ctx.getConnection());
-			AirportLocation al = navdao.getAirport(code);
-			if (useFA)
-				data = getFAData().getTAF(al);
-			else
-				data = getNOAAData(WeatherDataBean.Type.TAF, al);
+			if (useFA) {
+				GetNavData navdao = new GetNavData(ctx.getConnection());
+				AirportLocation al = navdao.getAirport(code);
+
+				// Get the TAF
+				GetFAWeather wxdao = new GetFAWeather();
+				wxdao.setUser(SystemData.get("schedule.flightaware.download.user"));
+				wxdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
+				data = wxdao.getTAF(al);
+			} else {
+				GetWeather wxdao = new GetWeather(con);
+				data = wxdao.getTAF(code);
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -65,7 +74,7 @@ public class TAFService extends WeatherDataService {
 		e.setAttribute("lat", StringUtils.format(data.getLatitude(), "##0.00000"));
 		e.setAttribute("lng", StringUtils.format(data.getLongitude(), "##0.00000"));
 		e.setAttribute("color", data.getIconColor());
-		e.setAttribute("type", data.getType());
+		e.setAttribute("type", data.getType().toString());
 		e.setAttribute("icao", data.getCode());
 		e.setAttribute("date", String.valueOf(data.getDate().getTime() / 1000));
 		re.addContent(e);

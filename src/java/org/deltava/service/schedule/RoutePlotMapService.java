@@ -15,7 +15,6 @@ import org.deltava.beans.wx.*;
 import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -49,7 +48,7 @@ public class RoutePlotMapService extends MapPlotService {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
 			GetACARSRunways acdao = new GetACARSRunways(con);
-			GetNOAAWeather wxdao = new GetNOAAWeather();
+			GetWeather wxdao = new GetWeather(con);
 			
 			// Translate IATA to ICAO codes
 			String airportDCode = txIATA(ctx.getParameter("airportD"));
@@ -63,10 +62,10 @@ public class RoutePlotMapService extends MapPlotService {
 			String route = ctx.getParameter("route");
 			
 			// Get the weather
-			METAR wxD = wxdao.getMETAR(aD);
+			METAR wxD = wxdao.getMETAR(airportDCode);
 			if (wxD != null)
 				wx.add(wxD);
-			METAR wxA = wxdao.getMETAR(aA);
+			METAR wxA = wxdao.getMETAR(airportACode);
 			if (wxA != null)
 				wx.add(wxA);
 

@@ -7,16 +7,16 @@ import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.AirportLocation;
 
-import org.deltava.util.cache.ExpiringCacheable;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.2
  */
 
-public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheable, Comparable<WeatherDataBean> {
+public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comparable<WeatherDataBean> {
 
 	private AirportLocation _pos;
 	private Date _createdOn;
@@ -113,7 +113,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheab
 	 * Returns the data type.
 	 * @return the data type
 	 */
-	public abstract String getType();
+	public abstract Type getType();
 	
 	/**
 	 * Sets the effective date of this weather data.
@@ -183,7 +183,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, ExpiringCacheab
 	}
 	
 	public String toString() {
-		StringBuilder buf = new StringBuilder(getType());
+		StringBuilder buf = new StringBuilder(getType().toString());
 		buf.append(' ');
 		buf.append(getCode());
 		buf.append(' ');
