@@ -155,4 +155,28 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<!-- METAR download -->
+	<task id="metar" enabled="true">
+		<class>org.deltava.tasks.METARDownloadTask</class>
+		<time>
+			<min>5</min>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+	
+	<!-- TAF download -->
+	<task id="taf" enabled="true">
+		<class>org.deltava.tasks.TAFDownloadTask</class>
+		<time>
+			<min>30</min>
+			<hour>5,11,17,23</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>
