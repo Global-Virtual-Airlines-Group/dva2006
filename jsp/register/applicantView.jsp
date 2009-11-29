@@ -118,6 +118,18 @@ return true;
  <td class="label">Applicant Status</td>
  <td class="data sec bld caps">${statusName}</td>
 </tr>
+<c:if test="${!empty nameMatches}">
+<tr>
+ <td class="label top" rowspan="2">Duplicate Users</td>
+ <td class="data bld caps"><span class="error"><fmt:int value="${fn:sizeof(nameMatches)}" /> DUPLICATE USER NAMES DETECTED - PLEASE VALIDATE</span></td>
+</tr>
+<tr>
+ <td class="data">
+<c:forEach var="dupe" items="${nameMatches}">
+${dupe.rank} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}">${dupe.pilotCode}</c:if><br />
+</c:forEach></td>
+</tr>
+</c:if>
 <c:if test="${(!empty questionnaire) && (!fn:pending(questionnaire))}">
 <tr>
  <td class="label">Questionnaire Score</td>
