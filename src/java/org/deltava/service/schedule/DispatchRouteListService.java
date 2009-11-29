@@ -19,7 +19,6 @@ import org.deltava.beans.wx.METAR;
 import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetNOAAWeather;
 import org.deltava.dao.wsdl.*;
 import org.deltava.service.*;
 
@@ -88,8 +87,8 @@ public class DispatchRouteListService extends WebService {
 			}
 			
 			// Get the arrival weather
-			GetNOAAWeather wxdao = new GetNOAAWeather();
-			METAR mA = wxdao.getMETAR(new AirportLocation(aA));
+			GetWeather wxdao = new GetWeather(con);
+			METAR mA = wxdao.getMETAR(aA.getICAO());
 			
 			// Fix the SID/STAR
 			GetNavRoute navdao = new GetNavRoute(con);

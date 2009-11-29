@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store airport METAR data.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 2.2
  */
 
@@ -269,19 +269,12 @@ public class METAR extends WeatherDataBean {
 		_remark = r;
 	}
 	
-	/**
-	 * Sets the expiration date of the bean (15 minutes after effective date).
-	 */
-	public Date getExpiryDate() {
-		return new Date(getDate().getTime() + 900000);
-	}
-	
 	public String getIconColor() {
 		return WHITE;
 	}
 	
-	public String getType() {
-		return "METAR";
+	public Type getType() {
+		return Type.METAR;
 	}
 	
 	public int hashCode() {

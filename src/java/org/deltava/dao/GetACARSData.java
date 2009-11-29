@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -253,6 +253,34 @@ public class GetACARSData extends DAO {
 		}
 	}
 
+	/**
+	 * Searches for a duplicate flight ID created at the same time by the same user.
+	 * @param id the ACARS flight ID
+	 * @return the duplicate flight ID, or zero if none found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getDuplicateID(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT F.ID, C.PILOT_ID WHERE (F.CON_ID=C.ID) AND (F.CREATED=(SELECT CREATED "
+				+ "FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND (C.PILOT_ID=(SELECT C.PILOT_ID FROM acars.CONS C, acars.FLIGHTS F "
+				+ "WHERE (C.ID=F.CON_ID) AND (F.ID=?) LIMIT 1)) AND (F.ID<>?) ORDER BY F.ID LIMIT 1");
+			_ps.setInt(1, id);
+			_ps.setInt(2, id);
+			_ps.setInt(3, id);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int dupeID = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return dupeID;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Returns information about a particular ACARS flight.
 	 * @param flightID the ACARS flight ID
