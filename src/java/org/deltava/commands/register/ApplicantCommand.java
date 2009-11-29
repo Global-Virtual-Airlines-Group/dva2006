@@ -183,7 +183,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -203,7 +202,17 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			ctx.setAttribute("eMailValid", Boolean.valueOf(avdao.isValid(a.getID())), REQUEST);
 			
-			// Check 
+			// Validate that the name is not a duplicate
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			Map<Integer, Pilot> matches = pdao.getByID(pdao.checkUnique(a, SystemData.get("airline.db")), "PILOTS");
+			for (Iterator<Integer> i = matches.keySet().iterator(); i.hasNext(); ) {
+				int id = i.next().intValue();
+				if (id == a.getPilotID())
+					i.remove();
+			}
+			
+			// Save duplicates
+			ctx.setAttribute("nameMatches", matches.values(), REQUEST);
 
 			// Do a soundex and netmask check on the applicant
 			soundexCheck(a, con, ctx);
