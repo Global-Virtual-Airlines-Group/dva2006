@@ -5,6 +5,10 @@ isLoading.innerHTML = ' - CLEARING...';
 
 // Remove airports/routes from the map
 map.clearOverlays();
+if (combo.selectedIndex == 0) {
+	isLoading.innerHTML = '';
+	return false;
+}
 
 // Get the new airline code
 var aCode = combo.options[combo.selectedIndex].value;
