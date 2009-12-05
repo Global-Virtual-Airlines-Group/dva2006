@@ -220,17 +220,19 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
 <c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
 </content:filter></td>
-<c:choose>
-<c:when test="${canEdit}">
- <td class="postEdit"><el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd></td>
-</c:when>
-<c:when test="${access.canDelete && (postCount > 1)}">
- <td class="postEdit"><el:cmd className="pri error small" url="postkill" link="${thread}" op="${msg.hexID}">KILL POST</el:cmd></td>
-</c:when>
-</c:choose>
+<c:if test="${access.canReply || canEdit || (access.canDelete && (postCount > 1))}">
+<td class="postEdit">
+<c:if test="${canEdit}">
+<el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd>&nbsp; 
+</c:if>
+<c:if test="${access.canDelete && (postCount > 1)}">
+<el:cmd className="pri error small" url="postkill" link="${thread}" op="${msg.hexID}">KILL POST</el:cmd>&nbsp;
+</c:if>
+</td>
+</c:if>
 </tr>
 <tr>
- <td class="postBody" colspan="2"><span id="msgBody${msg.ID}"><fmt:msg value="${msg.body}" /></span>
+ <td class="postBody" colspan="2"><span id="msgBody${msg.ID}"><fmt:msg value="${msg.body}" bbCode="true" /></span>
 <c:if test="${isPilot && (pilot.hasSignature || pilot.hasDefaultSignature)}">
 <br />
 <c:choose>
