@@ -54,14 +54,16 @@
 		<resources>
 			<enabled type="Boolean">true</enabled>
 			<list name="categories" attr="category" unique="true">
-				<category>Routes</category>
+				<category>Route Planning</category>
 				<category>Charts</category>
 				<category>Aircraft</category>
-				<category>Flight Planners</category>
-				<category>Fuel Planners</category>
-				<category>Online Networks</category>
+				<category>Flight Planning</category>
+				<category>Fuel Planning</category>
+				<category>Online Forums and Networks</category>
 				<category>Scenery</category>
-				<category>Weather</category>
+				<category>Utlities</category>
+				<category>Weather Planning</category>
+				<category>Weather Software</category>
 				<category>Other</category>
 			</list>
 		</resources>
