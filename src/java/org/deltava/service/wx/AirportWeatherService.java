@@ -57,11 +57,13 @@ public class AirportWeatherService extends WebService {
 		AirportLocation al = null;
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Get the airport
+			GetNavData navdao = new GetNavData(con);
+			al = navdao.getAirport(code);
+			
+			// Get the weather
 			if (useFA) {
-				// Get the airport
-				GetNavData navdao = new GetNavData(con);
-				al = navdao.getAirport(code);
-				
 				GetFAWeather dao = new GetFAWeather();
 				dao.setUser(SystemData.get("schedule.flightaware.download.user"));
 				dao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
@@ -101,7 +103,18 @@ public class AirportWeatherService extends WebService {
 				Element te = new Element("tab");
 				te.setAttribute("name", wx.getType().toString());
 				te.setAttribute("type", wx.getType().toString());
-				te.addContent(new CDATA(wx.getData()));
+
+				// Convert newlines to <br>
+				if (wx.getType() == WeatherDataBean.Type.TAF) {
+					StringBuilder buf = new StringBuilder();
+					List<String> data = StringUtils.split(wx.getData(), "\n");
+					for (Iterator<String> i = data.iterator(); i.hasNext(); )
+						buf.append(i.next());
+					
+					te.addContent(new CDATA(buf.toString()));
+				} else 
+					te.addContent(new CDATA(wx.getData()));
+				
 				e.addContent(te);
 			}
 		}
