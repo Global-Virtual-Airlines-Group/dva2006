@@ -205,7 +205,7 @@ public class GetNOAAWeather extends DAO {
 					TAF t = new TAF();
 					t.setAmended(isAmended);
 					t.setDate(dt);
-					t.setData(XMLUtils.stripInvalidUnicode(buf.toString()));
+					t.setData(buf.toString());
 					
 					// Get the code
 					String code = null;
