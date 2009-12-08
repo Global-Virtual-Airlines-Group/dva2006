@@ -85,7 +85,7 @@
 <c:set var="pilot" value="${pilots[exam.pilotID]}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
- <td class="bld"><el:cmd url="profile" linkID="${fn:hex(exam.pilotID)}">${pilot.name}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td>${pilot.rank}, ${pilot.equipmentType}</td>
  <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>

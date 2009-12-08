@@ -24,7 +24,7 @@
 function viewImage(x, y)
 {
 var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/${fn:hex(question.ID)}', 'questionImage', flags);
+var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
 return true;
 }
 </script></c:if>
@@ -77,7 +77,7 @@ return true;
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels) <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels)</span> <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <c:if test="${fn:isRoutePlot(question)}">

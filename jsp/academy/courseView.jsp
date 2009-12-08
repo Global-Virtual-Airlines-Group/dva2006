@@ -239,7 +239,7 @@ return true;
 </c:if>
 <c:if test="${access.canSchedule}">
  <el:cmdbutton ID="FlightLogButton" url="insflight" linkID="0&amp;courseID=${course.ID}" op="edit" label="LOG FLIGHT" />
- <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
+ <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${course.hexID}" label="INSTRUCTION SESSION" />
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton ID="DeleteButton" url="coursedelete" link="${course}" label="DELETE COURSE" />

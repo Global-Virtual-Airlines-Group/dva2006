@@ -91,7 +91,7 @@ return true;
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" /></td>
 </tr>
 </el:table>
-<c:if test="${empty flight}"><el:text name="courseID" type="hidden" value="${fn:hex(course.ID)}" /></c:if>
+<c:if test="${empty flight}"><el:text name="courseID" type="hidden" value="${course.hexID}" /></c:if>
 </el:form>
 <br />
 <content:copyright />
