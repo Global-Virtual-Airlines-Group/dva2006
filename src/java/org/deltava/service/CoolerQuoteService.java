@@ -36,7 +36,7 @@ public class CoolerQuoteService extends WebService {
 		
 		// Get the thread and post ID
 		int threadID = StringUtils.parse(ctx.getParameter("id"), 0);
-		int postID = StringUtils.parse(ctx.getParameter("post"), 0);
+		int postID = StringUtils.parse(ctx.getParameter("post"), 0) - 1;
 		
 		Document doc = new Document();
 		try {
