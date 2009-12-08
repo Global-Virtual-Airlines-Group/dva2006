@@ -3,6 +3,9 @@
 	<!-- Server health check -->
 	<service id="healthcheck" class="org.deltava.service.HealthCheckService" />
 
+	<!-- Water Cooler Services -->
+	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
+
 	<!-- RSS Feeds -->
 	<service id="cooler_rss" class="org.deltava.service.rss.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.rss.EventSyndicationService" />
