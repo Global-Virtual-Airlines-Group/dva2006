@@ -11,7 +11,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -185,13 +185,15 @@ public class SetACARSLog extends DAO {
 			_ps.setBoolean(1, true);
 			_ps.setBoolean(2, true);
 			_ps.setInt(3, flightID);
-			executeUpdate(0);
+			boolean hasInfo = (executeUpdate(0) > 0);
 			
 			// Update archive log
-			prepareStatementWithoutLimits("INSERT INTO acars.ARCHIVE_UPDATES (ID, ARCHIVED) VALUES (?, NOW()) ON "
-					+" DUPLICATE KEY UPDATE ARCHIVED=NOW()");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
+			if (hasInfo) {
+				prepareStatementWithoutLimits("INSERT INTO acars.ARCHIVE_UPDATES (ID, ARCHIVED) VALUES (?, NOW()) ON "
+						+" DUPLICATE KEY UPDATE ARCHIVED=NOW()");
+				_ps.setInt(1, flightID);
+				executeUpdate(0);
+			}
 
 			// Commit the transaction
 			commitTransaction();
