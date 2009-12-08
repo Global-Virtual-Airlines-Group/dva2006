@@ -261,9 +261,9 @@ public class GetACARSData extends DAO {
 	 */
 	public int getDuplicateID(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.ID, C.PILOT_ID WHERE (F.CON_ID=C.ID) AND (F.CREATED=(SELECT CREATED "
-				+ "FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND (C.PILOT_ID=(SELECT C.PILOT_ID FROM acars.CONS C, acars.FLIGHTS F "
-				+ "WHERE (C.ID=F.CON_ID) AND (F.ID=?) LIMIT 1)) AND (F.ID<>?) ORDER BY F.ID LIMIT 1");
+			prepareStatementWithoutLimits("SELECT F.ID, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) AND "
+				+ "(F.CREATED=(SELECT CREATED FROM acars.FLIGHTS WHERE (ID=?) LIMIT 1)) AND (C.PILOT_ID=(SELECT C.PILOT_ID "
+				+ "FROM acars.CONS C, acars.FLIGHTS F WHERE (C.ID=F.CON_ID) AND (F.ID=?) LIMIT 1)) AND (F.ID<>?) ORDER BY F.ID LIMIT 1");
 			_ps.setInt(1, id);
 			_ps.setInt(2, id);
 			_ps.setInt(3, id);
