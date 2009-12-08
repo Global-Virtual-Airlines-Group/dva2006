@@ -70,6 +70,55 @@ function openEmoticons()
 var w = window.open('emoticons.do', 'emoticonHelp', 'height=320,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes');
 return true;
 }
+<c:if test="${access.canReply && !doEdit}">
+function postQuote(postID)
+{
+var f = document.forms[0];
+if (f.msgText.value.length > 0) {
+	f.msgText.focus();
+	return false;
+}
+	
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+
+	// Parse the XML
+	var xml = xmlreq.responseXML;
+	if (!xml) return false;
+	var xe = xml.documentElement;
+	var aes = xe.getElementsByTagName("author");
+	var ae = (aes.length == 0) ? null : aes[0];
+	var bds = xe.getElementsByTagName("body");
+	if (bds.length == 0) return false;
+
+	// Create the opening
+	var quote = '[quote';
+	if (ae) {
+		var name = ae.firstChild;
+		quote += '=' + name.data;
+	}
+
+	quote += ']';
+
+	// Add the body
+	var be = bds[0];
+	var body = be.firstChild;
+	quote += body.data;
+	quote += '[/quote]'
+	quote += '\r\n\r\n';
+
+	// Save in the field
+	f.msgText.value += quote;
+	f.msgText.focus();
+	return true;
+} // function
+
+xmlreq.send(null);
+return true;	
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -222,6 +271,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </content:filter></td>
 <c:if test="${access.canReply || canEdit || (access.canDelete && (postCount > 1))}">
 <td class="postEdit">
+<c:if test="${access.canReply && !doEdit}">
+<a href="javascript:void postQuote(${postIdx})">QUOTE</a>&nbsp;
+</c:if>
 <c:if test="${canEdit}">
 <el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd>&nbsp; 
 </c:if>
