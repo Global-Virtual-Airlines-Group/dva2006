@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 public class DatabaseIDService extends WebService {
 
 	/**
-	 * Executes the Web Service, writing ACARS flight data in KML format.
+	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
