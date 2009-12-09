@@ -11,7 +11,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2004.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 2.4
  */
 
@@ -46,8 +46,11 @@ public class FS9Generator extends FlightPlanGenerator {
 		for (Iterator<NavigationDataBean> i = waypoints.iterator(); i.hasNext();) {
 			NavigationDataBean nd = i.next();
 			ctx.print("waypoint." + String.valueOf(waypointIdx) + "=");
-			if (nd.getRegion() != null)
+			
+			// Display region only if we have one and it's not the first/last waypoint 
+			if ((nd.getRegion() != null) && (waypointIdx > 0) && i.hasNext())
 				ctx.print(nd.getRegion());
+			
 			ctx.print(", ");
 			ctx.print(nd.getCode());
 			ctx.print(", ,");
