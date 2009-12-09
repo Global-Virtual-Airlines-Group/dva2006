@@ -34,7 +34,7 @@ public class SetACARSLog extends DAO {
 	 */
 	public void deleteConnection(long id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM acars.CONS WHERE (ID=?)");
+			prepareStatement("DELETE FROM acars.CONS WHERE (ID=CONV(?,10,16))");
 			_ps.setLong(1, id);
 			executeUpdate(0);
 		} catch (SQLException se) {
@@ -146,7 +146,7 @@ public class SetACARSLog extends DAO {
 	 */
 	public void closeConnections(Collection<Long> ids) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE acars.CONS SET ENDDATE=NOW() WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE acars.CONS SET ENDDATE=NOW() WHERE (ID=CONV(?,10,16))");
 			for (Iterator<Long> i = ids.iterator(); i.hasNext(); ) {
 				long id = i.next().longValue();
 				_ps.setLong(1, id);

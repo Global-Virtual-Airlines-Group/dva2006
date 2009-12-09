@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class SetACARSData extends DAO {
 	public void createConnection(ConnectionEntry ce) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO acars.CONS (ID, PILOT_ID, DATE, REMOTE_ADDR, REMOTE_HOST, "
-					+ "CLIENT_BUILD, DISPATCH) VALUES (?, ?, ?, INET_ATON(?), ?, ?, ?)");
+					+ "CLIENT_BUILD, DISPATCH) VALUES (CONV(?,10,16), ?, ?, INET_ATON(?), ?, ?, ?)");
 			_ps.setLong(1, ce.getID());
 			_ps.setInt(2, ce.getPilotID());
 			_ps.setTimestamp(3, createTimestamp(ce.getStartTime()));

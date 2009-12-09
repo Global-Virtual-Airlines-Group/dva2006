@@ -363,7 +363,7 @@ public class GetACARSData extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
 					+ "acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-					+ "WHERE (F.CON_ID=C.ID) AND (C.ID=?) ORDER BY F.CREATED DESC LIMIT 1");
+					+ "WHERE (F.CON_ID=C.ID) AND (C.ID=CONV(?,10,16)) ORDER BY F.CREATED DESC LIMIT 1");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
@@ -404,7 +404,7 @@ public class GetACARSData extends DAO {
 			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
 					+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, COUNT(DISTINCT F.ID), COUNT(P.REPORT_TIME) "
 					+ "FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON "
-					+ "(F.ID=P.FLIGHT_ID) WHERE (C.ID=?) GROUP BY C.ID LIMIT 1");
+					+ "(F.ID=P.FLIGHT_ID) WHERE (C.ID=CONV(?,10,16)) GROUP BY C.ID LIMIT 1");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
@@ -476,7 +476,8 @@ public class GetACARSData extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		List<FlightInfo> results = new ArrayList<FlightInfo>();
 		while (rs.next()) {
-			FlightInfo info = new FlightInfo(rs.getInt(1), rs.getLong(2));
+			long conID = Long.parseLong(rs.getString(2), 16);
+			FlightInfo info = new FlightInfo(rs.getInt(1), conID);
 			info.setStartTime(rs.getTimestamp(3));
 			info.setEndTime(rs.getTimestamp(4));
 			info.setFlightCode(rs.getString(5));
@@ -519,7 +520,7 @@ public class GetACARSData extends DAO {
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
 		while (rs.next()) {
 			boolean isDispatch = rs.getBoolean(9);
-			long id = rs.getLong(1);
+			long id = Long.parseLong(rs.getString(1), 16);
 			ConnectionEntry entry = isDispatch ? new DispatchConnectionEntry(id) : new ConnectionEntry(id);
 			entry.setPilotID(rs.getInt(2));
 			entry.setStartTime(rs.getTimestamp(3));
