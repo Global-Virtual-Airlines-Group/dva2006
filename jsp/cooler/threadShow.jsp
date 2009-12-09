@@ -263,13 +263,14 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <a href="aim:goim?screenname=${pilot.IMHandle['AOL']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle['AOL']}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
 </c:if>
 </el:showaddr></td>
- <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
+<c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
+ <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator,HR">
  from ${msg.remoteHost} (${msg.remoteAddr}
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
 <c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
 </content:filter></td>
-<c:if test="${access.canReply || canEdit || (access.canDelete && (postCount > 1))}">
+<c:if test="${showPostTools}">
 <td class="postEdit">
 <c:if test="${access.canReply && !doEdit}">
 <a href="javascript:void postQuote(${postIdx})">QUOTE</a>&nbsp;
