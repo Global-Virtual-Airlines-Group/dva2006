@@ -24,6 +24,23 @@ public class GetFlightReportStatistics extends DAO {
 	
 	private int _dayFilter;
 
+	public class DispatchScheduleRoute extends ScheduleRoute {
+		
+		private int _inactiveRoutes;
+		
+		protected DispatchScheduleRoute(Airline a, Airport ad, Airport aa) {
+			super(a, ad, aa);
+		}
+		
+		public int getInactiveRoutes() {
+			return _inactiveRoutes;
+		}
+		
+		public void setInactiveRoutes(int cnt) {
+			_inactiveRoutes = cnt; 
+		}
+	}
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -52,9 +69,10 @@ public class GetFlightReportStatistics extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.AIRPORT_D, P.AIRPORT_A, COUNT(DISTINCT P.ID) AS CNT, "
-				+ "COUNT(DISTINCT R.ID) AS RCNT FROM PIREPS P LEFT JOIN acars.ROUTES R ON "
-				+ "(P.AIRPORT_D=R.AIRPORT_D) AND (P.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=?) ");
-		buf.append("WHERE (P.STATUS=?) ");
+			+ "(SELECT COUNT(DISTINCT R.ID) FROM acars.ROUTES R WHERE (R.ACTIVE=?) AND (R.AIRPORT_D=P.AIRPORT_D) "
+			+ "AND (R.AIRPORT_A=P.AIRPORT_A)) AS RCNT, (SELECT COUNT(DISTINCT R.ID) FROM acars.ROUTES R WHERE "
+			+ "(R.ACTIVE=?) AND (R.AIRPORT_D=P.AIRPORT_D) AND (R.AIRPORT_A=P.AIRPORT_A)) AS IRCNT FROM PIREPS P "
+			+ "LEFT JOIN acars.ROUTES R ON (P.AIRPORT_D=R.AIRPORT_D) AND (P.AIRPORT_A=R.AIRPORT_A) WHERE (P.STATUS=?) ");
 		if (!allFlights)
 			buf.append("AND ((P.ATTR & ?) > 0) ");
 		if (_dayFilter > 0)
@@ -68,6 +86,7 @@ public class GetFlightReportStatistics extends DAO {
 			int pos = 0;
 			prepareStatement(buf.toString());
 			_ps.setBoolean(++pos, true);
+			_ps.setBoolean(++pos, false);
 			_ps.setInt(++pos, FlightReport.OK);
 			if (!allFlights)
 				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
@@ -79,9 +98,10 @@ public class GetFlightReportStatistics extends DAO {
 			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				ScheduleRoute rp = new ScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+				DispatchScheduleRoute rp = new DispatchScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
 				rp.setFlights(rs.getInt(3));
 				rp.setRoutes(rs.getInt(4));
+				rp.setInactiveRoutes(rs.getInt(5));
 				results.add(rp);
 			}
 			
