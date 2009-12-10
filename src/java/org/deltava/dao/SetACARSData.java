@@ -60,11 +60,11 @@ public class SetACARSData extends DAO {
 			if (info.getID() == 0)
 				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, "
 					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, ROUTE, REMARKS, FSVERSION, OFFLINE, "
-					+ "PIREP, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "PIREP, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CONV(?,10,16))");
 			else
 				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
 					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, CON_ID=? WHERE (ID=?)");
+					+ "FSVERSION=?, OFFLINE=?, PIREP=?, CON_ID=CONV(?,10,16) WHERE (ID=?)");
 			
 			// Write the flight info record
 			_ps.setString(1, info.getFlightCode());
