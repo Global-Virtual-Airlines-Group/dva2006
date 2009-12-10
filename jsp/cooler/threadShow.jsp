@@ -276,10 +276,10 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <a href="javascript:void postQuote(${postIdx})">QUOTE</a>&nbsp;
 </c:if>
 <c:if test="${canEdit}">
-<el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd>&nbsp; 
+<el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT</el:cmd>&nbsp; 
 </c:if>
 <c:if test="${access.canDelete && (postCount > 1)}">
-<el:cmd className="pri error small" url="postkill" link="${thread}" op="${msg.hexID}">KILL POST</el:cmd>&nbsp;
+<el:cmd className="pri error small" url="postkill" link="${thread}" op="${msg.hexID}">DELETE</el:cmd>&nbsp;
 </c:if>
 </td>
 </c:if>

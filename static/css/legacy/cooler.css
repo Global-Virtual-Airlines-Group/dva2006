@@ -56,7 +56,7 @@ TD.postBody {
 }
 
 TD.postEdit {
-	min-width: 90px;
+	width: 180px;
 	text-align: center;
 	background-color: #F7F7FF;
 	height: 19px;
