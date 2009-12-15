@@ -14,6 +14,13 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<script language="JavaScript" type="text/javascript">
+function sort()
+{
+document.forms[0].submit();
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -24,14 +31,19 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="pirepqueue.do" method="post" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="pirepqueue">
 <!-- Table Header Bar-->
+<tr class="title">
+ <td colspan="4" class="left caps"><content:airline /> PENDING FLIGHT REPORT QUEUE</td>
+ <td colspan="3" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sort()" /></td>
+</tr>
 <tr class="title">
  <td width="10%">DATE</td>
  <td width="10%">INFO</td>
  <td width="15%">FLIGHT NUMBER</td>
  <td width="15%">PILOT NAME</td>
- <td width="25%">AIRPORTS</td>
+ <td width="30%">AIRPORTS</td>
  <td width="10%">EQUIPMENT</td>
  <td>DURATION</td>
 </tr>
@@ -110,6 +122,7 @@
 </view:table>
 <br />
 <content:copyright />
+</el:form>
 </content:region>
 </content:page>
 <content:googleAnalytics />
