@@ -74,10 +74,6 @@ return true;
 function postQuote(postID)
 {
 var f = document.forms[0];
-if (f.msgText.value.length > 0) {
-	f.msgText.focus();
-	return false;
-}
 	
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
@@ -110,6 +106,10 @@ xmlreq.onreadystatechange = function() {
 	quote += '\r\n\r\n';
 
 	// Save in the field
+	var isEmpty = (f.msgText.value.length == 0);
+	if (!isEmpty)
+		f.msgText.value += '\r\n';
+
 	f.msgText.value += quote;
 	f.msgText.focus();
 	return true;
