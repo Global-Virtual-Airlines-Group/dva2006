@@ -163,7 +163,7 @@
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
 		<echo message="Pre-compiling JSP files" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
 	    	compilerTargetVM="1.6" compilerSourceVM="1.6" trimSpaces="false"
 			outputDir="${java.io.tmpdir}/src/jsp" />
