@@ -149,6 +149,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				fr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
 			// Set message context objects
+			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			ctx.setAttribute("pilot", p, REQUEST);
 			mctx.addData("flightLength", new Double(fr.getLength() / 10.0));
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
@@ -168,13 +169,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 			   upd.setAuthorID(ctx.getUser().getID());
 			   upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
+			   upds.add(upd);
 			   
 			   // Log Century Club name
 			   ctx.setAttribute("centuryClub", ccLevels.get("CC" + pirepCount), REQUEST);
-			   
-			   // Write the Status Update
-			   SetStatusUpdate swdao = new SetStatusUpdate(con);
-			   swdao.write(upd);
 			}
 			
 			// If we're approving and have not assigned a Pilot Number yet, assign it
@@ -182,6 +180,12 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   SetPilot pwdao = new SetPilot(con);
 			   pwdao.assignID(p, SystemData.get("airline.db"));
 			   ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
+			   
+			   // Create status update
+			   StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+			   upd.setAuthorID(ctx.getUser().getID());
+			   upd.setDescription("Assigned Pilot ID " + p.getPilotCode());
+			   upds.add(upd);
 			}
 			
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
@@ -207,6 +211,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			   ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
+			
+			// Write status updates (if any)
+			SetStatusUpdate swdao = new SetStatusUpdate(con);
+			swdao.write(upds);
 			
 			// Commit the transaction
 			ctx.commitTX();
