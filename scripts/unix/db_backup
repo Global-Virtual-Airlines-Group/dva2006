@@ -39,6 +39,7 @@ rm *.sql
 # Dump e-mail data
 echo `date +%H:%M:%S`' Writing e-mail configuration'
 $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` postfix | $arc_util > postfix.sql.bz2
+$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` rcmail | $arc_util > rcmail.sql.bz2
 
 # Dump TeamSpeak data
 echo `date +%H:%M:%S`' Writing TeamSpeak configuration'
