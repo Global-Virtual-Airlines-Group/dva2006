@@ -14,10 +14,11 @@ if (combo.selectedIndex == 0) {
 var aCode = combo.options[combo.selectedIndex].value;
 
 // Check if we have cached airports
-var aps = airports[aCode];
+aps = airports[aCode];
 if (aps) {
 	addMarkers(map, 'aps');
 	isLoading.innerHTML = '';
+	delete aps;
 	return true;
 }
 
@@ -80,9 +81,13 @@ function showRoutes()
 var isLoading = getElement('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 
+// Get the airline code
+var aCombo = getElement("airlineCode");
+var aCode = aCombo.options[aCombo.selectedIndex].value;
+
 // Build the XML Requester
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "rmap_routes.ws?icao=" + this.icao, true);
+xmlreq.open("GET", "rmap_routes.ws?icao=" + this.icao + "&airline=" + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var isLoading = getElement('isLoading');
@@ -93,8 +98,6 @@ xmlreq.onreadystatechange = function() {
 	var xdoc = xmlreq.responseXML;
 	var wsdata = xdoc.documentElement;
 	var rts = wsdata.getElementsByTagName("route");
-	var aCombo = getElement("airlineCode");
-	var aCode = aCombo.options[aCombo.selectedIndex].value;
 	var routeCount = 0;
 	for (var x = 0; x < rts.length; x++) {
 		var rt = rts[x];

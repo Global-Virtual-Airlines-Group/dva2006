@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -211,9 +211,30 @@ public class GetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ScheduleEntry> getFlights(Airport a) throws DAOException {
+		return getFlights(a, null);
+	}
+	
+	/**
+	 * Returns all flights from a particular airport with a particular airline, sorted by Airline and Flight Number.
+	 * @param a the origin Airport bean
+	 * @param al the Airline bean
+	 * @return a Collection of ScheduleEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleEntry> getFlights(Airport a, Airline al) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM SCHEDULE WHERE (AIRPORT_D=?) ");
+		if (al != null)
+			sqlBuf.append("AND (AIRLINE=?)");
+		sqlBuf.append("ORDER BY AIRLINE, FLIGHT, LEG");
+		
 		try {
-			prepareStatement("SELECT * FROM SCHEDULE WHERE (AIRPORT_D=?) ORDER BY AIRLINE, FLIGHT, LEG");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, a.getIATA());
+			if (al != null)
+				_ps.setString(2, al.getCode());
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

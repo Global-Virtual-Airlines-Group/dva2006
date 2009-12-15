@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display scheduled routes out of a particular Airport. 
  * @author Luke
- * @version 2.3
+ * @version 2.7
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class RouteService extends WebService {
 		Collection<ScheduleEntry> flights = null;
 		try {
 			GetSchedule dao = new GetSchedule(ctx.getConnection());
-			flights = dao.getFlights(a);
+			flights = dao.getFlights(a, SystemData.getAirline(ctx.getParameter("airline")));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
