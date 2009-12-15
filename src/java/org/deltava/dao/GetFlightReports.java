@@ -11,6 +11,7 @@ import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -120,7 +121,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns all Flight Reports in particular statuses.
 	 * @param status a Collection of Integer status codes
@@ -128,11 +129,22 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getByStatus(Collection<Integer> status) throws DAOException {
+		return getByStatus(status, null);
+	}
+
+	/**
+	 * Returns all Flight Reports in particular statuses.
+	 * @param status a Collection of Integer status codes
+	 * @param orderBy the ORDER BY SQL statement
+	 * @return a List of FlightReports in the specified statuses
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getByStatus(Collection<Integer> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR "
-				+ "LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
-				+ "(PR.ID=APR.ID) WHERE (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
+				+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
+				+ "ON (PR.ID=APR.ID) WHERE (P.ID=PR.PILOT_ID) AND (");
 		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
 			Integer st = i.next();
 			sqlBuf.append("(PR.STATUS=");
@@ -142,8 +154,9 @@ public class GetFlightReports extends DAO {
 				sqlBuf.append(" OR ");
 		}
 
-		sqlBuf.append(") ORDER BY PR.DATE, PR.SUBMITTED, PR.ID");
-
+		sqlBuf.append(") ORDER BY ");
+		sqlBuf.append(StringUtils.isEmpty(orderBy) ? "PR.DATE, PR.SUBMITTED, PR.ID" : orderBy);
+		
 		try {
 			prepareStatement(sqlBuf.toString());
 			return execute();

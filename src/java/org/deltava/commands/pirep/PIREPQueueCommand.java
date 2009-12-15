@@ -9,6 +9,8 @@ import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
@@ -19,8 +21,11 @@ import org.deltava.dao.*;
 
 public class PIREPQueueCommand extends AbstractViewCommand {
 	
-	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), 
-			Integer.valueOf(FlightReport.HOLD));
+	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
+	
+	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", 
+		"PR.EQTYPE, PR.DATE, PR.SUBMITTED"};
+	private static final List<?> SORT_OPTS = ComboUtils.fromArray(new String[] {"Submission Date", "Pilot Name", "Equipment Type"}, SORT_CODES);
 
     /**
      * Executes the command.
@@ -31,6 +36,9 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 		
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
+        if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
+        	vc.setSortType(SORT_CODES[0]);
+        
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -40,7 +48,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection<FlightReport> pireps = dao.getByStatus(PENDING);
+			Collection<FlightReport> pireps = dao.getByStatus(PENDING, vc.getSortType());
 			dao.getCaptEQType(pireps);
 			
 			// Get the Pilot IDs
@@ -86,6 +94,9 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save sort options
+		ctx.setAttribute("sortTypes", SORT_OPTS, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
