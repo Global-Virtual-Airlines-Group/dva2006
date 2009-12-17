@@ -27,9 +27,9 @@ AS,8992,9124,deltadirects.csv,Alaska Airlines
 CZ,104,105,airfrancedirects.csv,China Southern
 CES,114,115,airfrancedirects.csv,China Eastern
 KE,261,262,airfrancedirects.csv,Korean Air Lines
-JAL,271,271,airfrancedirects.csv,Japan Air Lines
-JAL,280,280,airfrancedirects.csv,Japan Air Lines
-JAL,295,296,airfrancedirects.csv,Japan Air Lines
+JL,271,271,airfrancedirects.csv,Japan Air Lines
+JL,280,280,airfrancedirects.csv,Japan Air Lines
+JL,295,296,airfrancedirects.csv,Japan Air Lines
 AM,432,432,airfrancedirects.csv,AeroMexico
 AM,437,437,airfrancedirects.csv,AeroMexico
 IGNORE,563,564,airfrancedirects.csv,Middle East Airlines (IGNORE)
@@ -50,15 +50,15 @@ IGNORE,2277,2278,airfrancedirects.csv,Air Caledonie (IGNORE)
 IGNORE,2291,2292,airfrancedirects.csv,Air Caledonie (IGNORE)
 FIN,2298,2299,airfrancedirects.csv,Finn Air
 IGNORE,2444,2445,airfrancedirects.csv,Aeroflot (IGNORE)
-AUA,2638,2639,airfrancedirects.csv,Austrian Airlines
+OS,2638,2639,airfrancedirects.csv,Austrian Airlines
 IGNORE,2694,2695,airfrancedirects.csv,Malev (IGNORE)
 IGNORE,2729,2736,airfrancedirects.csv,Portugalia (IGNORE)
-AUA,2738,2739,airfrancedirects.csv,Austrian Airlines
+OS,2738,2739,airfrancedirects.csv,Austrian Airlines
 IGNORE,2740,2742,airfrancedirects.csv,Portugalia (IGNORE)
 IGNORE,2744,2745,airfrancedirects.csv,Aeroflot (IGNORE)
 IGNORE,2788,2789,airfrancedirects.csv,TAROM (IGNORE)
 IGNORE,2794,2795,airfrancedirects.csv,Malev (IGNORE)
-AUA,2838,2839,airfrancedirects.csv,Austrian Airlines
+OS,2838,2839,airfrancedirects.csv,Austrian Airlines
 IGNORE,2888,2889,airfrancedirects.csv,TAROM (IGNORE)
 IGNORE,2944,2945,airfrancedirects.csv,Aeroflot (IGNORE)
 AT,3312,3329,airfrancedirects.csv,Royal Air Maroc
@@ -71,7 +71,7 @@ IGNORE,3380,3381,airfrancedirects.csv,Tunis Air (IGNORE)
 IGNORE,3388,3389,airfrancedirects.csv,Tunis Air (IGNORE)
 IGNORE,3394,3395,airfrancedirects.csv,Malev (IGNORE)
 AT,3396,3397,airfrancedirects.csv,Royal Air Maroc
-AUA,3430,3435,airfrancedirects.csv,Austrian Airlines
+OS,3430,3435,airfrancedirects.csv,Austrian Airlines
 IGNORE,4313,4313,airfrancedirects.csv,Delta Virtual Airlines
 IGNORE,4408,4435,airfrancedirects.csv,Portugalia (IGNORE)
 IGNORE,4602,4611,airfrancedirects.csv,LuxAir (IGNORE)
@@ -81,7 +81,7 @@ OK,6300,6331,airfrancedirects.csv,Czech Air Lines
 JAL,8014,8024,airfrancedirects.csv,Japan Air Lines
 IGNORE,8028,8054,airfrancedirects.csv,TAM (IGNORE)
 IGNORE,8084,8085,airfrancedirects.csv,Air Tahiti Nui (IGNORE)
-QF,8087,8098,airfrancedirects.csv,Quantas
+QF,8087,8098,airfrancedirects.csv,Qantas
 AM,8100,8149,airfrancedirects.csv,AeroMexico
 IGNORE,8185,8185,airfrancedirects.csv,Delta Virtual Airlines
 IGNORE,8192,8199,airfrancedirects.csv,TACA (IGNORE)
