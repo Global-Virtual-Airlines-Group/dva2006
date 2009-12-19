@@ -70,7 +70,8 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			dao.setEffectiveDate(CalendarUtils.getInstance(null, true).getTime());
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
-			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setMainlineCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setCodeshareCodes((List) SystemData.getObject("schedule.innovata.codeshare_codes"));
 			dao.setBufferSize(131072);
 			ctx.release();
 
@@ -91,7 +92,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			
 			// Save the status
 			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
-			swdao.write(dao.getInvalidAirports(), dao.getInvalidEQ(), msgs);
+			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), msgs);
 
 			// Save the cache status
 			ctx.setAttribute("innovataCache", Boolean.valueOf(isCached), REQUEST);
