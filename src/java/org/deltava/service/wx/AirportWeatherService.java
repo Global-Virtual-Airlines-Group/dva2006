@@ -83,7 +83,7 @@ public class AirportWeatherService extends WebService {
 		} finally {
 			ctx.release();
 		}
-
+		
 		// Create the XML document
 		Document doc = new Document();
 		Element re = new Element("weather");
@@ -99,6 +99,10 @@ public class AirportWeatherService extends WebService {
 			e.setAttribute("icao", al.getCode());
 			e.setAttribute("tabs", String.valueOf(wxBeans.size()));
 			for (WeatherDataBean wx : wxBeans) {
+				if (wx == null)
+					continue;
+				
+				// Create the element
 				wx.setAirport(al);
 				Element te = new Element("tab");
 				te.setAttribute("name", wx.getType().toString());
