@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.zip.*;
 import java.text.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
@@ -27,7 +28,8 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private Collection<Airline> _airlines;
 
-	private static final List<String> CODES = Arrays.asList(new String[] { "AF", "DL", "JM", "KL", "AM" });
+	private static final List<String> CODES = Arrays.asList("AF", "DL", "JM", "KL", "AM");
+	private static final List<String> CS_CODES = Arrays.asList("AF", "DL");
 
 	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -88,7 +90,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Build the file name
 		java.util.Date d = new java.util.Date();
-		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM yy") + ".zip");
+		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM dd") + ".zip");
 		assertTrue(f.exists());
 		ZipFile zip = new ZipFile(f);
 		assertTrue(zip.entries().hasMoreElements());
@@ -97,16 +99,21 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Get output file
 		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + ".csv");
-		if (of.exists())
-			return;
 		
 		// Create the output file
 		PrintWriter out = new PrintWriter(of);
+		
+		// Get the effective date
+		long now = System.currentTimeMillis();
+		//java.util.Date effD = StringUtils.parseDate("02/20/2010", "MM/dd/yyyy");
+		//long now = effD.getTime();
+		
+		// Airline counts
+		Map<String, AtomicInteger> aCount = new TreeMap<String, AtomicInteger>();
 
 		// Load the File
 		int rowCount = 0;
 		Collection<String> neededCodes = new LinkedHashSet<String>();
-		long now = System.currentTimeMillis();
 		LineNumberReader lr = new LineNumberReader(new InputStreamReader(zip.getInputStream(ze)), 40960);
 		lr.readLine();
 		while (lr.ready()) {
@@ -133,9 +140,9 @@ public class TestInnovataGlobalLoad extends TestCase {
 			String code = entries.get(0).toUpperCase();
 			boolean isMainLine = CODES.contains(code);
 			boolean isCodeShare = false;
-			if (isOK && _aCodes.contains(code) && !isMainLine && !CODES.contains(entries.get(3))) {
+			if (isOK && !isMainLine && !CODES.contains(entries.get(3))) {
 				String csInfo = entries.get(50);
-				for (Iterator<String> i = CODES.iterator(); i.hasNext() && !isCodeShare;) {
+				for (Iterator<String> i = CS_CODES.iterator(); i.hasNext() && !isCodeShare;) {
 					String mlCode = i.next();
 					isCodeShare |= (csInfo.indexOf(mlCode) != -1);
 				}
@@ -146,6 +153,14 @@ public class TestInnovataGlobalLoad extends TestCase {
 				neededCodes.add(code);
 				out.println(data);
 				rowCount++;
+				
+				// Add the count
+				AtomicInteger cnt = aCount.get(code);
+				if (cnt == null)
+					aCount.put(code, new AtomicInteger(1));
+				else
+					cnt.incrementAndGet();
+				
 				// Log data
 				if ((rowCount % 100) == 0)
 					log.info(rowCount + " entries added");
@@ -156,9 +171,12 @@ public class TestInnovataGlobalLoad extends TestCase {
 		}
 
 		// Close the streams
-		log.info(StringUtils.listConcat(neededCodes, ", "));
 		lr.close();
 		out.close();
+		
+		// Log the counts
+		log.info(StringUtils.listConcat(neededCodes, ", "));
+		log.info(aCount);
 	}
 
 	public void testLoadDAO() throws Exception {
@@ -177,7 +195,8 @@ public class TestInnovataGlobalLoad extends TestCase {
 		GetFullSchedule dao = new GetFullSchedule(new FileInputStream(f));
 		dao.setEffectiveDate(new java.util.Date());
 		dao.setAircraft(acdao.getAircraftTypes());
-		dao.setPrimaryCodes(CODES);
+		dao.setMainlineCodes(CODES);
+		dao.setCodeshareCodes(CS_CODES);
 
 		// Load the legs
 		dao.load();
