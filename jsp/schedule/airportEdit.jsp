@@ -8,7 +8,12 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
+<c:if test="${!empty airport}">
 <title><content:airline /> Schedule - ${airport.IATA}</title>
+</c:if>
+<c:if test="${empty airport}">
+<title><content:airline /> Schedule - New Airport</title>
+</c:if>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -86,7 +91,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Airlines</td>
- <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
+ <td class="data"><el:check name="airline" idx="*" width="195" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -119,7 +124,7 @@ return true;
  <td colspan="2">AIRPORT INFORMATION</td>
 </tr>
 <tr>
- <td colspan="2" class="mid"><iframe id="airportLookup" width="97%" height="280" scrolling="auto" src="http://www.airrouting.com/scripts/airportLoc.asp?RequestLocation=${apCode}"></iframe></td>
+ <td colspan="2" class="mid"><iframe id="airportLookup" width="97%" height="280" scrolling="auto" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
 </tr>
 </c:if>
 </c:if>
