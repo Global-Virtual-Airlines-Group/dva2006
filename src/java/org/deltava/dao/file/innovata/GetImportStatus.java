@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -10,13 +10,14 @@ import org.deltava.dao.file.DAO;
 /**
  * A Data Access Object to load Innovata Schedule import status. 
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
 public class GetImportStatus extends DAO {
 	
 	private final Collection<String> _airports = new LinkedHashSet<String>();
+	private final Collection<String> _airlines = new LinkedHashSet<String>();
 	private final Collection<String> _eq = new LinkedHashSet<String>();
 	private final Collection<String> _msgs = new ArrayList<String>();
 
@@ -42,6 +43,8 @@ public class GetImportStatus extends DAO {
 					String code = tkns.nextToken();
 					if ("airport".equals(code))
 						_airports.add(tkns.nextToken().toUpperCase());
+					else if ("airline".equals(code))
+						_airlines.add(tkns.nextToken().toUpperCase());
 					else if ("eq".equals(code))
 						_eq.add(tkns.nextToken().toUpperCase());
 				} else
@@ -60,6 +63,14 @@ public class GetImportStatus extends DAO {
 	 */
 	public Collection<String> getUnknownAirports() {
 		return _airports;
+	}
+	
+	/**
+	 * Returns all invalid airline codes from the previous import.
+	 * @return a Collection of IATA airline codes
+	 */
+	public Collection<String> getUnknownAirlines() {
+		return _airlines;
 	}
 	
 	/**

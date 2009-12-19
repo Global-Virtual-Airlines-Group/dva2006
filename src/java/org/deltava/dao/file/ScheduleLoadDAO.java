@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	
 	protected final Collection<String> _invalidEQ = new TreeSet<String>();
 	protected final Collection<String> _invalidAP = new TreeSet<String>();
+	protected final Collection<String> _invalidAL = new TreeSet<String>();
 	protected final Map<Airline, Collection<Airport>> _unsvcAirports = new TreeMap<Airline, Collection<Airport>>();
 	
 	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
@@ -112,6 +113,14 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 */
 	public Collection<String> getInvalidAirports() {
 		return _invalidAP;
+	}
+	
+	/**
+	 * Returns any invalid IATA airline codes encountered during the import.
+	 * @return a sorted Collection of IATA airline codes
+	 */
+	public Collection<String> getInvalidAirlines() {
+		return _invalidAL;
 	}
 
 	/**

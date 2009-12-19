@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to save Innovata Schedule import status.
  * @author Luke
- * @version 1.0
+ * @version 2.7
  * @since 1.0
  */
 
@@ -29,27 +29,32 @@ public class SetImportStatus extends WriteBuffer {
 
 	/**
 	 * Saves the latest Innovata schedule download status.
+	 * @param al a Collection of unknown IATA airlinecodes
 	 * @param airports a Collection of unknown IATA airport codes
 	 * @param eq a Collection of unknown IATA equipment codes
 	 * @param msgs any other import messages
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public void write(Collection<String> airports, Collection<String> eq, Collection<String> msgs) throws DAOException {
+	public void write(Collection<String> al, Collection<String> airports, Collection<String> eq, Collection<String> msgs) throws DAOException {
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(_f));
 			
 			// Write messages
-			for (Iterator<String> i = msgs.iterator(); i.hasNext(); )
-				out.println(i.next());
+			for (String msg : msgs)
+				out.println(msg);
+			
+			// Write airlines
+			for (String a : al)
+				out.println("airline=" + a);
 			
 			// Write airports
-			for (Iterator<String> i = airports.iterator(); i.hasNext(); )
-				out.println("airport=" + i.next());
+			for (String ap : airports)
+				out.println("airport=" + ap);
 			
 			// Write equipment
-			for (Iterator<String> i = eq.iterator(); i.hasNext(); )
-				out.println("eq=" + i.next());
-				
+			for (String eqType : eq)
+				out.println("eq=" + eqType);
+			
 			out.close();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
