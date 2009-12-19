@@ -454,6 +454,11 @@
 				<code>NW</code>
 			</list>
 
+			<!-- Codeshare codes - only load codeshares of these airlines -->
+			<list name="codeshare_codes" attr="code" unique="true">
+				<code>DL</code>
+			</list>
+
 			<!-- FTP download data -->
 			<download>
 				<host>67.97.212.90</host>
