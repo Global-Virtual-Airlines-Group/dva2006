@@ -36,6 +36,14 @@
  <td class="data"><fmt:list value="${eqTypes}" delim=", " /></td>
 </tr>
 </c:if>
+<c:if test="${!empty airlines}">
+<tr>
+ <td class="label top">Invalid Airlines</td>
+ <td class="data"><c:forEach var="code" items="${airlines}">
+Invalid Airline Code - <el:cmd url="airline" linkID="${code}" op="edit" target="_new" className="bld">${code}</el:cmd><br /> 
+</c:forEach></td>
+</tr>
+</c:if>
 <c:if test="${!empty airports}">
 <tr>
  <td class="label top">Invalid Airports</td>

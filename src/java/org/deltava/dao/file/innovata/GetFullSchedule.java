@@ -12,6 +12,8 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.ScheduleLoadDAO;
 
+import org.deltava.util.CollectionUtils;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -34,6 +36,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private final Collection<String> _mlCodes = new HashSet<String>();
+	private final Collection<String> _csCodes = new HashSet<String>();
 
 	/**
 	 * Initializes the Data Access Object.
@@ -69,12 +72,29 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Sets primary airline codes.
-	 * @param codes the primary airline codes
+	 * Sets main line airline codes. These will automatically be included, and by default code shares
+	 * of flights with these codes will be included.
+	 * @param codes the main line airline codes
+	 * @see GetFullSchedule#setCodeshareCodes(Collection)
 	 */
-	public void setPrimaryCodes(Collection<String> codes) {
+	public void setMainlineCodes(Collection<String> codes) {
 		_mlCodes.clear();
 		_mlCodes.addAll(codes);
+		_csCodes.clear();
+		_csCodes.addAll(codes);
+	}
+	
+	/**
+	 * Sets code share airline codes. Flights with a code share code including one or more of these
+	 * airlines will be included.
+	 * @param codes the code share airline codes
+	 * @see GetFullSchedule#setMainlineCodes(Collection)
+	 */
+	public void setCodeshareCodes(Collection<String> codes) {
+		if (codes != null) {
+			_csCodes.clear();
+			_csCodes.addAll(CollectionUtils.union(_mlCodes, codes));
+		}
 	}
 
 	private boolean include(CSVTokens entries) {
@@ -91,8 +111,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		}
 
 		// Check codeshare operation
-		boolean isCS = "1".equals(entries.get(48));
-		if (isCS)
+		if ("1".equals(entries.get(48)))
 			return false;
 
 		// Check for Train/Bus
@@ -107,9 +126,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		String code = entries.get(0).toUpperCase();
 		boolean isMainLine = _mlCodes.contains(code);
 		boolean isCodeShare = false;
-		if (_aCodes.contains(code) && !isMainLine && !_mlCodes.contains(code) && !_mlCodes.contains(entries.get(3))) {
+		if (!isMainLine && !_mlCodes.contains(entries.get(3))) {
 			String csInfo = entries.get(50);
-			for (Iterator<String> i = _mlCodes.iterator(); i.hasNext() && !isCodeShare;) {
+			for (Iterator<String> i = _csCodes.iterator(); i.hasNext() && !isCodeShare;) {
 				String mlCode = i.next();
 				isCodeShare |= (csInfo.indexOf(mlCode) != -1);
 			}
@@ -205,6 +224,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 			} else if (a == null) {
 				isOK = false;
+				_invalidAL.add(entries.get(0));
 				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0) + " (" + flightCode + ")");
 				_errors.add("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
 			} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {

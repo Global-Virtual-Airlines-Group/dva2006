@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 1.0
  */
 
@@ -71,7 +71,8 @@ public class ScheduleImportTask extends Task {
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setEffectiveDate(CalendarUtils.getInstance(null, true).getTime());
-			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setMainlineCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setCodeshareCodes((List) SystemData.getObject("schedule.innovata.codeshare_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
 			dao.setBufferSize(131072);
@@ -97,7 +98,7 @@ public class ScheduleImportTask extends Task {
 
 			// Save error conditions
 			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
-			swdao.write(dao.getInvalidAirports(), dao.getInvalidEQ(), dao.getErrorMessages());
+			swdao.write(dao.getInvalidAirlines(), dao.getInvalidAirports(), dao.getInvalidEQ(), dao.getErrorMessages());
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 			entries = null;
