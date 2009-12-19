@@ -103,12 +103,10 @@ public class AirlineCommand extends AbstractFormCommand {
 				// Get the DAO and the Airline
 				GetAirline dao = new GetAirline(con);
 				Airline a = dao.get(aCode);
-				if (a == null)
-					throw notFoundException("Invalid Airline - " + aCode);
-
-				// Save the airline in the request
-				ctx.setAttribute("airline", a, REQUEST);
-				ctx.setAttribute("altCodes", StringUtils.listConcat(a.getCodes(), "\n"), REQUEST);
+				if (a != null) {
+					ctx.setAttribute("airline", a, REQUEST);
+					ctx.setAttribute("altCodes", StringUtils.listConcat(a.getCodes(), "\n"), REQUEST);
+				}
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
@@ -126,11 +124,10 @@ public class AirlineCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the Airline. <i>NOT IMPLEMENTED </i>
+	 * Callback method called when reading the Airline. Redirects to Edit.
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }
