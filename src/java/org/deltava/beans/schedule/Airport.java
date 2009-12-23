@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
  */
 
 public class Airport implements java.io.Serializable, Comparable<Airport>, ComboAlias, ViewEntry, 
-	GeospaceLocation, MarkerMapEntry, IconMapEntry {
+	ICAOAirport, MarkerMapEntry, IconMapEntry {
 
 	public static final int IATA = 0;
 	public static final int ICAO = 1;
