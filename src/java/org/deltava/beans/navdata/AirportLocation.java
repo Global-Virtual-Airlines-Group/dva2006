@@ -1,19 +1,18 @@
 // Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
-import org.deltava.beans.GeospaceLocation;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 
-public class AirportLocation extends NavigationDataBean implements GeospaceLocation {
+public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 
 	private int _altitude;
 
@@ -37,6 +36,13 @@ public class AirportLocation extends NavigationDataBean implements GeospaceLocat
 		setName(a.getName());
 		setAltitude(a.getAltitude());
 		setRegion(a.getRegion());
+	}
+	
+	/**
+	 * Returns the Airport's ICAO code.
+	 */
+	public String getICAO() {
+		return getCode();
 	}
 
 	/**
