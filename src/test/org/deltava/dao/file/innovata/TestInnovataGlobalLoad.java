@@ -28,8 +28,8 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private Collection<Airline> _airlines;
 
-	private static final List<String> CODES = Arrays.asList("AF", "DL", "JM", "KL", "AM");
-	private static final List<String> CS_CODES = Arrays.asList("AF", "DL");
+	private static final List<String> CODES = Arrays.asList("AF", "DL", "JM", "KL", "AM", "NW");
+	private static final List<String> CS_CODES = Arrays.asList("AF");
 
 	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -75,6 +75,11 @@ public class TestInnovataGlobalLoad extends TestCase {
 			Airline a = i.next();
 			_aCodes.addAll(a.getCodes());
 		}
+		
+		// Load Database information
+		log.info("Loading Cross-Application data");
+		GetUserData uddao = new GetUserData(_c);
+		SystemData.add("apps", uddao.getAirlines(true));
 	}
 
 	protected void tearDown() throws Exception {
@@ -99,14 +104,15 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Get output file
 		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + ".csv");
+		if (of.exists())
+			return;
 		
 		// Create the output file
 		PrintWriter out = new PrintWriter(of);
 		
 		// Get the effective date
 		long now = System.currentTimeMillis();
-		//java.util.Date effD = StringUtils.parseDate("02/20/2010", "MM/dd/yyyy");
-		//long now = effD.getTime();
+		//long now = StringUtils.parseDate("02/20/2010", "MM/dd/yyyy").getTime();
 		
 		// Airline counts
 		Map<String, AtomicInteger> aCount = new TreeMap<String, AtomicInteger>();
@@ -177,6 +183,39 @@ public class TestInnovataGlobalLoad extends TestCase {
 		// Log the counts
 		log.info(StringUtils.listConcat(neededCodes, ", "));
 		log.info(aCount);
+	}
+	
+	public void testParseCSV() throws Exception {
+
+		// Build the file name
+		java.util.Date d = new java.util.Date();
+		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM dd") + ".zip");
+		assertTrue(f.exists());
+		ZipFile zip = new ZipFile(f);
+		assertTrue(zip.entries().hasMoreElements());
+		ZipEntry ze = zip.entries().nextElement();
+		assertNotNull(ze);
+
+		// Get the DAO
+		GetAircraft acdao = new GetAircraft(_c);
+		GetFullSchedule dao = new GetFullSchedule(zip.getInputStream(ze));
+		dao.setEffectiveDate(new java.util.Date());
+		dao.setAircraft(acdao.getAircraftTypes());
+		dao.setMainlineCodes(CODES);
+		dao.setCodeshareCodes(CS_CODES);
+		
+		// Load the legs
+		Collection<CSVTokens> tkns = dao.load();
+		
+		// Get output file
+		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + "2.csv");
+		PrintWriter out = new PrintWriter(of);
+		for (Iterator<CSVTokens> i = tkns.iterator(); i.hasNext(); ) {
+			CSVTokens tkn = i.next();
+			out.println(tkn.toString());
+		}
+		
+		out.close();
 	}
 
 	public void testLoadDAO() throws Exception {
