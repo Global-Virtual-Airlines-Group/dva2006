@@ -48,6 +48,12 @@ public class GetWeather extends WeatherDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public METAR getMETAR(String code) throws DAOException {
+		
+		// Check the cache
+		METAR m = _wxCache.get(code);
+		if (m != null)
+			return m;
+		
 		try {
 			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, ND.LATITUDE, ND.LONGITUDE FROM common.METARS M LEFT "
 				+ "JOIN common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (M.AIRPORT=?) LIMIT 1");
@@ -55,7 +61,6 @@ public class GetWeather extends WeatherDAO {
 			_ps.setString(2, code);
 			
 			// Load the METAR
-			METAR m = null;
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
 				String data = rs.getString(2);
@@ -84,6 +89,12 @@ public class GetWeather extends WeatherDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TAF getTAF(String code) throws DAOException {
+		
+		// Check the cache
+		TAF t = _tafCache.get(code);
+		if (t != null)
+			return t;
+		
 		try {
 			prepareStatementWithoutLimits("SELECT T.DATE, T.AMENDED, T.DATA, ND.LATITUDE, ND.LONGITUDE FROM common.TAFS T "
 				+ "LEFT JOIN common.NAVDATA ND ON (T.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (T.AIRPORT=?) LIMIT 1");
@@ -91,7 +102,6 @@ public class GetWeather extends WeatherDAO {
 			_ps.setString(2, code);
 
 			// Load the TAF
-			TAF t = null;
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
 				t = new TAF();
