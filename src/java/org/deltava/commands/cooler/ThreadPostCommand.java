@@ -151,6 +151,8 @@ public class ThreadPostCommand extends AbstractCommand {
 						}
 					} else
 						ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
+				} catch (IllegalArgumentException iae) {
+					ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
 				} catch (MalformedURLException mue) {
 					ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
 				} catch (IOException ie) {
