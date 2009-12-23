@@ -47,19 +47,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Initializes the Data Access Object with a preloaded set of tokens.
-	 * @param tokens the tokens
-	 */
-	public GetFullSchedule(Collection<CSVTokens> tokens) {
-		this((InputStream) null);
-		for (Iterator<CSVTokens> i = tokens.iterator(); i.hasNext();) {
-			CSVTokens tkn = i.next();
-			if (include(tkn))
-				_data.add(tkn);
-		}
-	}
-	
-	/**
 	 * Initializes the list of airlines.
 	 * @param airlines a Collection of Airline beans
 	 */
