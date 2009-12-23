@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans. 
  * @author Luke
- * @version 2.4
+ * @version 2.7
  * @since 2.2
  */
 
@@ -51,7 +51,7 @@ public class RoutePlanService extends WebService {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
 			
 			// Load the SID
-			TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.SID, ctx.getParameter("sid"));
 			if (sid != null)
 				routePoints.addAll(sid.getWaypoints());
 			
@@ -62,7 +62,7 @@ public class RoutePlanService extends WebService {
 			}
 			
 			// Load the STAR
-			TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
+			TerminalRoute star = dao.getRoute(aA, TerminalRoute.STAR, ctx.getParameter("star"));
 			if (star != null)
 				routePoints.addAll(star.getWaypoints());
 			

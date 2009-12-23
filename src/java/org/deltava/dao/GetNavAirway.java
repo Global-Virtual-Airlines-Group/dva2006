@@ -123,7 +123,7 @@ public class GetNavAirway extends GetNavData {
 	 * @return a TerminalRoute bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public TerminalRoute getRoute(Airport a, int type, String name) throws DAOException {
+	public TerminalRoute getRoute(ICAOAirport a, int type, String name) throws DAOException {
 
 		// Check the cache
 		TerminalRoute tr = _rCache.get(name);
@@ -184,9 +184,9 @@ public class GetNavAirway extends GetNavData {
 	 * @param wp the waypoint
 	 * @param rwy the runway name, or null
 	 * @return the TerminalRoute, or null if none found
-	 * @see GetNavAirway#getBestRoute(Airport, int, String, String, Runway)
+	 * @see GetNavAirway#getBestRoute(ICAOAirport, int, String, String, Runway)
 	 */
-	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, Runway rwy) throws DAOException {
+	public TerminalRoute getBestRoute(ICAOAirport a, int type, String name, String wp, Runway rwy) throws DAOException {
 		return getBestRoute(a, type, name, wp, (rwy == null) ? "ALL" : "RW" + rwy.getName());
 	}
 	
@@ -199,7 +199,7 @@ public class GetNavAirway extends GetNavData {
 	 * @param rwy the Runway bean, or null
 	 * @return the TerminalRoute, or null if none found
 	 */
-	public TerminalRoute getBestRoute(Airport a, int type, String name, String wp, String rwy) throws DAOException {
+	public TerminalRoute getBestRoute(ICAOAirport a, int type, String name, String wp, String rwy) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
