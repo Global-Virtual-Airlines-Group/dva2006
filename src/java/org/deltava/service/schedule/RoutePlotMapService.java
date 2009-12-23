@@ -95,7 +95,7 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Check if we have a SID
 			List<String> wps = StringUtils.split(route, " ");
-			TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.SID, ctx.getParameter("sid"));
 			if (sid != null) {
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(sid.getWaypoints(wps.get(0)));
@@ -109,8 +109,8 @@ public class RoutePlotMapService extends MapPlotService {
 				routePoints.addAll(points);
 			}
 
-			// Check if we have a STAR
-			TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
+			// Check if we have a STAR - ensure aD is passed in
+			TerminalRoute star = dao.getRoute(aA, TerminalRoute.STAR, ctx.getParameter("star"));
 			if (star != null) {
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
