@@ -22,6 +22,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 
 	private static final Cache<CacheableLong> _coolerStatsCache = new ExpiringCache<CacheableLong>(100, 1800);
 	private static final Cache<CacheableLong> _cache = new ExpiringCache<CacheableLong>(2, 1800);
+	private static final Cache<AirlineTotals> _aCache = new ExpiringCache<AirlineTotals>(1, 1800);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -30,104 +31,117 @@ public class GetStatistics extends DAO implements CachingDAO {
 	public GetStatistics(Connection c) {
 		super(c);
 	}
-	
+
+	/**
+	 * Returns the cache status.
+	 */
 	public CacheInfo getCacheInfo() {
 		CacheInfo info = new CacheInfo(_cache);
+		info.add(_aCache);
 		info.add(_coolerStatsCache);
 		return info;
 	}
-	
+
 	/**
-	 * Returns Airline Totals.
+	 * Returns Airline Totals. This method is synchronized <i>across all instances</i> because of the expense of the
+	 * database queries.
 	 * @return the AirlineTotals for this airline
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public AirlineTotals getAirlineTotals() throws DAOException {
 
-		AirlineTotals result = new AirlineTotals(System.currentTimeMillis());
-		try {
-			// Create prepared statement
-			prepareStatement("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), "
-				+ "SUM(IF((P.ATTR & ?) > 0, 1, 0)), ROUND(SUM(IF((P.ATTR & ?) > 0, P.FLIGHT_TIME, 0)), 1), "
-				+ "SUM(IF((P.ATTR & ?) > 0, P.DISTANCE, 0)), COUNT(AP.ACARS_ID), "
-				+ "ROUND(SUM(IF(AP.ACARS_ID, P.FLIGHT_TIME, 0)), 1), SUM(IF(AP.ACARS_ID, P.DISTANCE, 0)) "
-				+ "FROM PIREPS P LEFT JOIN ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.STATUS=?)");
-			_ps.setQueryTimeout(10);
-			_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(4, FlightReport.OK);
+		synchronized (GetStatistics.class) {
+			// Check the cache
+			AirlineTotals result = _aCache.get(AirlineTotals.class);
+			if (result != null)
+				return result;
 
-			// Count all airline totals
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				result.setTotalLegs(rs.getInt(1));
-				result.setTotalHours(rs.getDouble(2));
-				result.setTotalMiles(rs.getLong(3));
-				result.setOnlineLegs(rs.getInt(4));
-				result.setOnlineHours(rs.getDouble(5));
-				result.setOnlineMiles(rs.getLong(6));
-				result.setACARSLegs(rs.getInt(7));
-				result.setACARSHours(rs.getDouble(8));
-				result.setACARSMiles(rs.getInt(9));
+			result = new AirlineTotals(System.currentTimeMillis());
+			try {
+				// Create prepared statement
+				prepareStatement("SELECT COUNT(P.ID), ROUND(SUM(P.FLIGHT_TIME), 1), SUM(P.DISTANCE), "
+						+ "SUM(IF((P.ATTR & ?) > 0, 1, 0)), ROUND(SUM(IF((P.ATTR & ?) > 0, P.FLIGHT_TIME, 0)), 1), "
+						+ "SUM(IF((P.ATTR & ?) > 0, P.DISTANCE, 0)), COUNT(AP.ACARS_ID), "
+						+ "ROUND(SUM(IF(AP.ACARS_ID, P.FLIGHT_TIME, 0)), 1), SUM(IF(AP.ACARS_ID, P.DISTANCE, 0)) "
+						+ "FROM PIREPS P LEFT JOIN ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.STATUS=?)");
+				_ps.setQueryTimeout(10);
+				_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
+				_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
+				_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
+				_ps.setInt(4, FlightReport.OK);
+
+				// Count all airline totals
+				ResultSet rs = _ps.executeQuery();
+				if (rs.next()) {
+					result.setTotalLegs(rs.getInt(1));
+					result.setTotalHours(rs.getDouble(2));
+					result.setTotalMiles(rs.getLong(3));
+					result.setOnlineLegs(rs.getInt(4));
+					result.setOnlineHours(rs.getDouble(5));
+					result.setOnlineMiles(rs.getLong(6));
+					result.setACARSLegs(rs.getInt(7));
+					result.setACARSHours(rs.getDouble(8));
+					result.setACARSMiles(rs.getInt(9));
+				}
+
+				rs.close();
+				_ps.close();
+
+				// Get MTD/YTD start dates
+				Calendar c = CalendarUtils.getInstance(null, true);
+				c.set(Calendar.DAY_OF_MONTH, 1);
+				Calendar yc = CalendarUtils.getInstance(null, true);
+				yc.set(Calendar.DAY_OF_YEAR, 1);
+
+				// Count MTD/YTD totals
+				prepareStatement("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
+						+ "SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
+						+ "SUM(IF((DATE >= ?), DISTANCE, 0)) FROM PIREPS WHERE (DATE >= ?) AND (STATUS=?)");
+				_ps.setQueryTimeout(10);
+				_ps.setTimestamp(1, new Timestamp(c.getTimeInMillis()));
+				_ps.setTimestamp(2, new Timestamp(c.getTimeInMillis()));
+				_ps.setTimestamp(3, new Timestamp(c.getTimeInMillis()));
+				_ps.setTimestamp(4, new Timestamp(yc.getTimeInMillis()));
+				_ps.setTimestamp(5, new Timestamp(yc.getTimeInMillis()));
+				_ps.setTimestamp(6, new Timestamp(yc.getTimeInMillis()));
+				_ps.setTimestamp(7, new Timestamp(yc.getTimeInMillis()));
+				_ps.setInt(8, FlightReport.OK);
+
+				// Do the query
+				rs = _ps.executeQuery();
+				if (rs.next()) {
+					result.setMTDLegs(rs.getInt(1));
+					result.setMTDHours(rs.getDouble(2));
+					result.setMTDMiles(rs.getInt(3));
+					result.setYTDLegs(rs.getInt(4));
+					result.setYTDHours(rs.getDouble(5));
+					result.setYTDMiles(rs.getInt(6));
+				}
+
+				rs.close();
+				_ps.close();
+
+				// Get Pilot Totals
+				prepareStatement("SELECT COUNT(ID), SUM(CASE STATUS WHEN ? THEN 1 WHEN ? THEN 1 END) FROM PILOTS");
+				_ps.setQueryTimeout(8);
+				_ps.setInt(1, Pilot.ACTIVE);
+				_ps.setInt(2, Pilot.ON_LEAVE);
+				rs = _ps.executeQuery();
+				rs.next();
+				result.setTotalPilots(rs.getInt(1));
+				result.setActivePilots(rs.getInt(2));
+				rs.close();
+				_ps.close();
+			} catch (SQLException se) {
+				throw new DAOException(se);
 			}
-			
-			rs.close();
-			_ps.close();
-			
-			// Get MTD/YTD start dates
-			Calendar c = CalendarUtils.getInstance(null, true);
-			c.set(Calendar.DAY_OF_MONTH, 1);
-			Calendar yc = CalendarUtils.getInstance(null, true);
-			yc.set(Calendar.DAY_OF_YEAR, 1);
 
-			// Count MTD/YTD totals
-			prepareStatement("SELECT SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
-				+ "SUM(IF((DATE >= ?), DISTANCE, 0)), SUM(IF((DATE >= ?), 1, 0)), ROUND(SUM(IF((DATE >= ?), FLIGHT_TIME, 0))), "
-				+ "SUM(IF((DATE >= ?), DISTANCE, 0)) FROM PIREPS WHERE (DATE >= ?) AND (STATUS=?)");
-			_ps.setQueryTimeout(10);
-			_ps.setTimestamp(1, new Timestamp(c.getTimeInMillis()));
-			_ps.setTimestamp(2, new Timestamp(c.getTimeInMillis()));
-			_ps.setTimestamp(3, new Timestamp(c.getTimeInMillis()));
-			_ps.setTimestamp(4, new Timestamp(yc.getTimeInMillis()));
-			_ps.setTimestamp(5, new Timestamp(yc.getTimeInMillis()));
-			_ps.setTimestamp(6, new Timestamp(yc.getTimeInMillis()));
-			_ps.setTimestamp(7, new Timestamp(yc.getTimeInMillis()));
-			_ps.setInt(8, FlightReport.OK);
-			
-			// Do the query
-			rs = _ps.executeQuery();
-			if (rs.next()) {
-				result.setMTDLegs(rs.getInt(1));
-				result.setMTDHours(rs.getDouble(2));
-				result.setMTDMiles(rs.getInt(3));
-				result.setYTDLegs(rs.getInt(4));
-				result.setYTDHours(rs.getDouble(5));
-				result.setYTDMiles(rs.getInt(6));
-			}
-			
-			rs.close();
-			_ps.close();
-
-			// Get Pilot Totals
-			prepareStatement("SELECT COUNT(ID), SUM(CASE STATUS WHEN ? THEN 1 WHEN ? THEN 1 END) FROM PILOTS");
-			_ps.setQueryTimeout(8);
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
-			rs = _ps.executeQuery();
-			rs.next();
-			result.setTotalPilots(rs.getInt(1));
-			result.setActivePilots(rs.getInt(2));
-			rs.close();
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
+			// Return totals
+			_aCache.add(result);
+			return result;
 		}
-
-		// Return totals
-		return result;
 	}
-	
+
 	/**
 	 * Returns the number of active Pilots in an Airline.
 	 * @param dbName the database name
@@ -135,21 +149,21 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getActivePilots(String dbName) throws DAOException {
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
-		
+
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, Pilot.ACTIVE);
 			_ps.setInt(2, Pilot.ON_LEAVE);
-			
+
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			int result = rs.next() ? rs.getInt(1) : 0;
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -158,7 +172,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns membership data by percentiles.
 	 * @param splitInto the number of segments to divide into
@@ -166,19 +180,19 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, java.util.Date> getMembershipQuantiles(int splitInto) throws DAOException {
-		
+
 		// Build the percentiles to divide into
 		Collection<Float> keys = new ArrayList<Float>();
 		float portion = (100.0f / splitInto);
 		for (int x = 1; x <= splitInto; x++)
 			keys.add(new Float(x * portion));
-		
+
 		try {
 			// Get total Active Pilots
 			prepareStatementWithoutLimits("SELECT COUNT(*) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
 			_ps.setInt(1, Pilot.ACTIVE);
 			_ps.setInt(2, Pilot.ON_LEAVE);
-			
+
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
 			int totalSize = (rs.next()) ? rs.getInt(1) : 0;
@@ -186,12 +200,12 @@ public class GetStatistics extends DAO implements CachingDAO {
 			_ps.close();
 			if (totalSize == 0)
 				return Collections.emptyMap();
-			
+
 			// Build the quantiles
 			Map<Integer, java.util.Date> results = new LinkedHashMap<Integer, java.util.Date>();
-			for (Iterator<Float> i = keys.iterator(); i.hasNext(); ) {
+			for (Iterator<Float> i = keys.iterator(); i.hasNext();) {
 				float key = Math.max(99, i.next().floatValue());
-					
+
 				// Prepare the statement
 				setQueryStart(Math.round(totalSize * key / 100));
 				prepareStatementWithoutLimits("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) "
@@ -203,20 +217,20 @@ public class GetStatistics extends DAO implements CachingDAO {
 				rs = _ps.executeQuery();
 				if (rs.next())
 					results.put(Integer.valueOf(Math.round(key)), rs.getDate(1));
-				
+
 				// Clean up
 				rs.close();
 				_ps.close();
 			}
-			
+
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
-	 * Returns membership Join date statistics. 
+	 * Returns membership Join date statistics.
 	 * @return a Collection of MembershipTotals beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -237,7 +251,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 				mt.setCount(rs.getInt(3));
 				results.add(mt);
 			}
-				
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -292,7 +306,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.put(new Integer(rs.getInt(1)), Long.valueOf(rs.getInt(2)));
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();

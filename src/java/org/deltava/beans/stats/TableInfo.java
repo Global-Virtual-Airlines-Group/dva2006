@@ -4,14 +4,14 @@ package org.deltava.beans.stats;
 /**
  * A system bean to store JDBC table data.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
 public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
 
     private String _tableName;
-    private int _rows;
+    private long _rows;
     private long _dataLength;
     private long _idxLength;
     
@@ -37,9 +37,9 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     /**
      * Returns the number of rows in the table.
      * @return the number of rows
-     * @see TableInfo#setRows(int) 
+     * @see TableInfo#setRows(long) 
      */
-    public int getRows() {
+    public long getRows() {
         return _rows;
     }
     
@@ -72,40 +72,28 @@ public class TableInfo implements java.io.Serializable, Comparable<TableInfo> {
     /**
      * Updates the number of rows in the table.
      * @param rows the number of rows
-     * @throws IllegalArgumentException if rows is negative
      * @see TableInfo#getRows()
      */
-    public void setRows(int rows) {
-        if (rows < 0)
-            throw new IllegalArgumentException("Rows cannot be negative");
-        
-        _rows = rows;
+    public void setRows(long rows) {
+        _rows = Math.max(0, rows);
     }
     
     /**
      * Updates the size of the table.
      * @param tableSize the size of the table in bytes
-     * @throws IllegalArgumentException if tableSize is negative
      * @see TableInfo#getSize()
      */
     public void setSize(long tableSize) {
-        if (tableSize < 0)
-            throw new IllegalArgumentException("Table Size cannot be negative");
-      
-        _dataLength = tableSize;
+        _dataLength = Math.max(0, tableSize);
     }
     
     /**
      * Updates the size of the table's indices.
      * @param idxSize the size of the indices in bytes
-     * @throws IllegalArgumentException if idxSize is negative
      * @see TableInfo#getIndexSize()
      */
     public void setIndexSize(long idxSize) {
-        if (idxSize < 0)
-            throw new IllegalArgumentException("Table Index Size cannot be negative");
-        
-        _idxLength = idxSize;
+        _idxLength = Math.max(0, idxSize);
     }
     
     /**
