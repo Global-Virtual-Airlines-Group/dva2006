@@ -4,102 +4,75 @@ package org.deltava.commands.stats;
 import java.util.*;
 import java.sql.Connection;
 
-
+import org.deltava.beans.stats.*;
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 
-import org.deltava.dao.GetStatistics;
-import org.deltava.dao.GetTableStatus;
-import org.deltava.dao.DAOException;
-
-import org.deltava.beans.stats.AirlineTotals;
-import org.deltava.beans.stats.TableInfo;
-
-import org.deltava.util.cache.ExpiringCache;
 import org.deltava.util.system.SystemData;
 
 /**
  * A web site command to display Airline Total statistics.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
 public class AirlineTotalsCommand extends AbstractCommand {
 
-	private ExpiringCache<AirlineTotals> _cache;
-    private final Collection<TableInfo> _tableStatus = new TreeSet<TableInfo>();
-    
-    /**
-     * Initializes the command.
-     * @param id the command ID
-     * @param cmdName the command Name
-     * @throws CommandException if initialization fails
-     */
-    public void init(String id, String cmdName) throws CommandException {
-    	super.init(id, cmdName);
-    	_cache = new ExpiringCache<AirlineTotals>(1, SystemData.getInt("cache.stats") * 60);
-    }
-    
-    /**
-     * Execute the command.
-     * @param ctx the Command context
-     * @throws CommandException if an unhandled error occrurs. Login failures are not considered errors.
-     */
-    public void execute(CommandContext ctx) throws CommandException {
-        
-        synchronized (this) {
-        	AirlineTotals totals = _cache.get(AirlineTotals.class);
-            if (totals == null) {
-               _tableStatus.clear();
-               
-                try {
-                    Connection con = ctx.getConnection();
-                    
-                    // Get the Statistics DAO
-                    GetStatistics dao = new GetStatistics(con);
-                    totals = dao.getAirlineTotals();
-                    _cache.add(totals);
-                    
-                    // Get the Table Status for our database and common
-                    GetTableStatus dao2 = new GetTableStatus(con);
-                    _tableStatus.addAll(dao2.getStatus("common"));
-                    _tableStatus.addAll(dao2.getStatus("exams"));
-                    _tableStatus.addAll(dao2.getStatus("events"));
-                    _tableStatus.addAll(dao2.getStatus("acars"));
-                    _tableStatus.addAll(dao2.getStatus("geoip"));
-                    _tableStatus.addAll(dao2.getStatus("postfix"));
-                    _tableStatus.addAll(dao2.getStatus("teamspeak"));
-                    _tableStatus.addAll(dao2.getStatus(SystemData.get("airline.db").toLowerCase()));
-                } catch (DAOException de) {
-                    throw new CommandException(de);
-                } finally {
-                    ctx.release();
-                }
-            }
-            
-            // Calculate database size
-            long dbSize = 0;
-            long dbRows = 0;
-            for (Iterator<TableInfo> i = _tableStatus.iterator(); i.hasNext(); ) {
-            	TableInfo info = i.next();
-            	dbSize += info.getSize();
-            	dbSize += info.getIndexSize();
-            	dbRows += info.getRows();
-            }
-            
-            // Save database size
-            totals.setDBRows(dbRows);
-            totals.setDBSize(dbSize);
+	/**
+	 * Execute the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occrurs. Login failures are not considered errors.
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-            // Save the results in the request
-            ctx.setAttribute("totals", totals, REQUEST);
-            ctx.setAttribute("tableStatus", _tableStatus, REQUEST);
-            ctx.setAttribute("effectiveDate", new Date(totals.getEffectiveDate()), REQUEST);
-        }
-        
-        // Forward to the JSP
-        CommandResult result = ctx.getResult();
-        result.setURL("/jsp/stats/airlineTotals.jsp");
-        result.setSuccess(true);
-    }
+		AirlineTotals totals = null;
+		Collection<TableInfo> tableStatus = new ArrayList<TableInfo>();
+		try {
+			Connection con = ctx.getConnection();
+
+			// Get the Statistics DAO
+			GetStatistics dao = new GetStatistics(con);
+			totals = dao.getAirlineTotals();
+
+			// Get the Table Status for our database and common
+			GetTableStatus tsdao = new GetTableStatus(con);
+			tableStatus.addAll(tsdao.getStatus("common"));
+			tableStatus.addAll(tsdao.getStatus("exams"));
+			tableStatus.addAll(tsdao.getStatus("events"));
+			tableStatus.addAll(tsdao.getStatus("acars"));
+			tableStatus.addAll(tsdao.getStatus("geoip"));
+			tableStatus.addAll(tsdao.getStatus("postfix"));
+			tableStatus.addAll(tsdao.getStatus("teamspeak"));
+			tableStatus.addAll(tsdao.getStatus(SystemData.get("airline.db").toLowerCase()));
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Calculate database size
+		long dbSize = 0;
+		long dbRows = 0;
+		for (Iterator<TableInfo> i = tableStatus.iterator(); i.hasNext();) {
+			TableInfo info = i.next();
+			dbSize += info.getSize();
+			dbSize += info.getIndexSize();
+			dbRows += info.getRows();
+		}
+
+		// Save database size
+		totals.setDBRows(dbRows);
+		totals.setDBSize(dbSize);
+
+		// Save the results in the request
+		ctx.setAttribute("totals", totals, REQUEST);
+		ctx.setAttribute("tableStatus", tableStatus, REQUEST);
+		ctx.setAttribute("effectiveDate", new Date(totals.getEffectiveDate()), REQUEST);
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/stats/airlineTotals.jsp");
+		result.setSuccess(true);
+	}
 }
