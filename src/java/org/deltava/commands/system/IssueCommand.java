@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to manipulate issues.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 
@@ -72,7 +72,8 @@ public class IssueCommand extends AbstractFormCommand {
 				
 				// Update the subject
 				i.setSubject(ctx.getParameter("subject"));
-				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security")));
+				if (ctx.getParameter("security") != null)
+					i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security")));
 			}
 
 			// Update the issue from the request
