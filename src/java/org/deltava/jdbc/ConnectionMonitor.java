@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A daemon to monitor JDBC connections.
  * @author Luke
- * @version 2.2
+ * @version 2.7
  * @since 1.0
  */
 
@@ -84,7 +84,10 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 
 			// Check if the entry has timed out
 			if (!cpe.isActive()) {
-				if (log.isDebugEnabled())
+				if (cpe.inUse()) {
+					log.warn("Inactive connection " + cpe + " in use!");
+					cpe.free();
+				} else if (log.isDebugEnabled())
 					log.debug("Skipping inactive connection " + cpe);
 			} else if (cpe.inUse() && isStale) {
 				log.error("Releasing stale Connection " + cpe, cpe.getStackInfo());
@@ -92,11 +95,13 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 			} else if (cpe.isDynamic() && !cpe.inUse()) {
 				if (isStale)
 					log.warn("Releasing dynamic Connection " + cpe, cpe.getStackInfo());
-				else if (log.isDebugEnabled())
-					log.debug("Releasing dynamic Connection " + cpe);
+				else
+					log.info("Releasing dynamic Connection " + cpe);
 				
 				cpe.close();
-			} else if (!cpe.inUse() && !cpe.checkConnection()) {
+			} else if (cpe.inUse())
+				log.info("Connection " + cpe + " in use");
+			else if (!cpe.inUse() && !cpe.checkConnection()) {
 				log.warn("Reconnecting Connection " + cpe);
 				cpe.close();
 

@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A user-configurable JDBC Connection Pool.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  * @see ConnectionPoolEntry
  * @see ConnectionMonitor
@@ -368,7 +368,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 */
 	public Collection<ConnectionInfo> getPoolInfo() {
 		Collection<ConnectionInfo> results = new ArrayList<ConnectionInfo>(_cons.size());
-		for (Iterator<ConnectionPoolEntry> i = new ArrayList<ConnectionPoolEntry>(_cons.values()).iterator(); i.hasNext();) {
+		for (Iterator<ConnectionPoolEntry> i = getEntries().iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = i.next();
 			results.add(new ConnectionInfo(cpe));
 		}

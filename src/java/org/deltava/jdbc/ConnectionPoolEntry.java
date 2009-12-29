@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
- * @version 2.6
+ * @version 2.7
  * @since 1.0
  */
 
@@ -120,6 +120,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 			// empty
 		} finally {
 			_connected = false;
+			_inUse = false;
 			_c = null;
 		}
 	}
@@ -133,7 +134,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 		// Reset auto-commit property
 		try {
-			if (_c.getAutoCommit() != _autoCommit) {
+			if ((_c != null) && (_c.getAutoCommit() != _autoCommit)) {
 				log.info("Resetting autoCommit to " + String.valueOf(_autoCommit));
 				_c.setAutoCommit(_autoCommit);
 				_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
