@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -317,11 +317,12 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
-			+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, TAKEOFF_FUEL, "
-			+ "LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, LANDING_G, LANDING_N1, "
-			+ "LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TIME_0X, TIME_1X, TIME_2X, "
-			+ "TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD) VALUES "
-			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, "
+			+ "TAKEOFF_LNG, TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, "
+			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_G, LANDING_N1, LANDING_HDG, LANDING_LAT, "
+			+ "LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
+			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD) VALUES "
+			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			// Since we are writing to multiple tables, this is designd as a transaction
@@ -343,28 +344,36 @@ public class SetFlightReport extends DAO {
 			_ps.setInt(8, afr.getTakeoffDistance());
 			_ps.setInt(9, afr.getTakeoffSpeed());
 			_ps.setDouble(10, afr.getTakeoffN1());
-			_ps.setInt(11, afr.getTakeoffWeight());
-			_ps.setInt(12, afr.getTakeoffFuel());
-			_ps.setTimestamp(13, createTimestamp(afr.getLandingTime()));
-			_ps.setInt(14, afr.getLandingDistance());
-			_ps.setInt(15, afr.getLandingSpeed());
-			_ps.setInt(16, afr.getLandingVSpeed());
-			_ps.setDouble(17, afr.getLandingG());
-			_ps.setDouble(18, afr.getLandingN1());
-			_ps.setInt(19, afr.getLandingWeight());
-			_ps.setInt(20, afr.getLandingFuel());
-			_ps.setTimestamp(21, createTimestamp(afr.getEndTime()));
-			_ps.setInt(22, afr.getGateWeight());
-			_ps.setInt(23, afr.getGateFuel());
-			_ps.setInt(24, afr.getTime(0));
-			_ps.setInt(25, afr.getTime(1));
-			_ps.setInt(26, afr.getTime(2));
-			_ps.setInt(27, afr.getTime(4));
-			_ps.setString(28, afr.getFDE());
-			_ps.setString(29, afr.getAircraftCode());
-			_ps.setBoolean(30, afr.getHasReload());
-			_ps.setInt(31, afr.getClientBuild());
-			_ps.setInt(32, afr.getBeta());
+			_ps.setInt(11, afr.getTakeoffHeading());
+			_ps.setDouble(12, afr.getTakeoffLocation().getLatitude());
+			_ps.setDouble(13, afr.getTakeoffLocation().getLongitude());
+			_ps.setInt(14, afr.getTakeoffLocation().getAltitude());
+			_ps.setInt(15, afr.getTakeoffWeight());
+			_ps.setInt(16, afr.getTakeoffFuel());
+			_ps.setTimestamp(17, createTimestamp(afr.getLandingTime()));
+			_ps.setInt(18, afr.getLandingDistance());
+			_ps.setInt(19, afr.getLandingSpeed());
+			_ps.setInt(20, afr.getLandingVSpeed());
+			_ps.setDouble(21, afr.getLandingG());
+			_ps.setDouble(22, afr.getLandingN1());
+			_ps.setInt(23, afr.getLandingHeading());
+			_ps.setDouble(24, afr.getLandingLocation().getLatitude());
+			_ps.setDouble(25, afr.getLandingLocation().getLongitude());
+			_ps.setInt(26, afr.getLandingLocation().getAltitude());
+			_ps.setInt(27, afr.getLandingWeight());
+			_ps.setInt(28, afr.getLandingFuel());
+			_ps.setTimestamp(29, createTimestamp(afr.getEndTime()));
+			_ps.setInt(30, afr.getGateWeight());
+			_ps.setInt(31, afr.getGateFuel());
+			_ps.setInt(32, afr.getTime(0));
+			_ps.setInt(33, afr.getTime(1));
+			_ps.setInt(34, afr.getTime(2));
+			_ps.setInt(35, afr.getTime(4));
+			_ps.setString(36, afr.getFDE());
+			_ps.setString(37, afr.getAircraftCode());
+			_ps.setBoolean(38, afr.getHasReload());
+			_ps.setInt(39, afr.getClientBuild());
+			_ps.setInt(40, afr.getBeta());
 			executeUpdate(1);
 
 			// Commit the transaction

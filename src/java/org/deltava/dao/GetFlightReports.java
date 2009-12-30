@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -577,7 +577,7 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 53);
+		boolean hasACARS = (md.getColumnCount() >= 61);
 		boolean hasComments = (md.getColumnCount() >= 21);
 
 		// Iterate throught the results
@@ -586,8 +586,8 @@ public class GetFlightReports extends DAO {
 
 			// Build the PIREP as a standard one, or an ACARS pirep
 			Airline a = SystemData.getAirline(rs.getString(6));
-			FlightReport p = (isACARS) ? new ACARSFlightReport(a, rs.getInt(7), rs.getInt(8)) : new FlightReport(a, rs
-					.getInt(7), rs.getInt(8));
+			int flight = rs.getInt(7); int leg = rs.getInt(8);
+			FlightReport p = (isACARS) ? new ACARSFlightReport(a, flight, leg) : new FlightReport(a, flight, leg);
 
 			// Populate the data
 			p.setID(rs.getInt(1));
@@ -624,28 +624,32 @@ public class GetFlightReports extends DAO {
 				ap.setTakeoffDistance(rs.getInt(30));
 				ap.setTakeoffSpeed(rs.getInt(31));
 				ap.setTakeoffN1(rs.getDouble(32));
-				ap.setTakeoffWeight(rs.getInt(33));
-				ap.setTakeoffFuel(rs.getInt(34));
-				ap.setLandingTime(rs.getTimestamp(35));
-				ap.setLandingDistance(rs.getInt(36));
-				ap.setLandingSpeed(rs.getInt(37));
-				ap.setLandingVSpeed(rs.getInt(38));
-				ap.setLandingG(rs.getDouble(39));
-				ap.setLandingN1(rs.getDouble(40));
-				ap.setLandingWeight(rs.getInt(41));
-				ap.setLandingFuel(rs.getInt(42));
-				ap.setEndTime(rs.getTimestamp(43));
-				ap.setGateWeight(rs.getInt(44));
-				ap.setGateFuel(rs.getInt(45));
-				ap.setTime(0, rs.getInt(46));
-				ap.setTime(1, rs.getInt(47));
-				ap.setTime(2, rs.getInt(48));
-				ap.setTime(4, rs.getInt(49));
-				ap.setFDE(rs.getString(50));
-				ap.setAircraftCode(rs.getString(51));
-				ap.setHasReload(rs.getBoolean(52));
-				ap.setClientBuild(rs.getInt(53));
-				ap.setBeta(rs.getInt(54));
+				ap.setTakeoffHeading(rs.getInt(33));
+				ap.setTakeoffLocation(new GeoPosition(rs.getDouble(34), rs.getDouble(35), rs.getInt(36)));
+				ap.setTakeoffWeight(rs.getInt(37));
+				ap.setTakeoffFuel(rs.getInt(38));
+				ap.setLandingTime(rs.getTimestamp(39));
+				ap.setLandingDistance(rs.getInt(40));
+				ap.setLandingSpeed(rs.getInt(41));
+				ap.setLandingVSpeed(rs.getInt(42));
+				ap.setLandingG(rs.getDouble(43));
+				ap.setLandingN1(rs.getDouble(44));
+				ap.setLandingHeading(rs.getInt(45));
+				ap.setLandingLocation(new GeoPosition(rs.getDouble(46), rs.getDouble(47), rs.getInt(48)));
+				ap.setLandingWeight(rs.getInt(49));
+				ap.setLandingFuel(rs.getInt(50));
+				ap.setEndTime(rs.getTimestamp(51));
+				ap.setGateWeight(rs.getInt(52));
+				ap.setGateFuel(rs.getInt(53));
+				ap.setTime(0, rs.getInt(54));
+				ap.setTime(1, rs.getInt(55));
+				ap.setTime(2, rs.getInt(56));
+				ap.setTime(4, rs.getInt(57));
+				ap.setFDE(rs.getString(58));
+				ap.setAircraftCode(rs.getString(59));
+				ap.setHasReload(rs.getBoolean(60));
+				ap.setClientBuild(rs.getInt(61));
+				ap.setBeta(rs.getInt(62));
 			}
 
 			// Add the flight report to the results

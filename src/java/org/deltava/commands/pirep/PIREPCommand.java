@@ -11,7 +11,6 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.servinfo.PositionData;
 
@@ -29,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -467,47 +466,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Get the runway data
 					GetNavRoute navdao = new GetNavRoute(con);
 					navdao.setEffectiveDate(fr.getDate());
-					SetACARSData awdao = new SetACARSData(con);
-					if (!info.hasRunwayData()) {
-						List<RouteEntry> tdEntries = ardao.getTakeoffLanding(info.getID(), info.getArchived());
-						if (tdEntries.size() > 2) {
-							int ofs = 0; RouteEntry entry = tdEntries.get(0);
-							GeoPosition adPos = new GeoPosition(info.getAirportD());
-							while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
-								ofs++;
-								entry = tdEntries.get(ofs);
-							}
-						
-							// Trim out spurious takeoff entries
-							if (ofs > 0)
-								tdEntries.subList(0, ofs - 1).clear();
-							if (tdEntries.size() > 2)
-								tdEntries.subList(1, tdEntries.size() - 1).clear();
-						}
-						
-						if (tdEntries.size() == 2) {
-							// Load the departure runway
-							Runway r = navdao.getBestRunway(info.getAirportD().getICAO(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
-							if (r != null) {
-								int dist = GeoUtils.distanceFeet(r, tdEntries.get(0));
-								info.setRunwayD(new RunwayDistance(r, dist));
-							}
-							
-							// Load the arrival runway
-							r = navdao.getBestRunway(afr.getAirportA().getICAO(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
-							if (r != null) {
-								int dist = GeoUtils.distanceFeet(r, tdEntries.get(1));
-								info.setRunwayA(new RunwayDistance(r, dist));
-							}
-							
-							// Write the runway data
-							synchronized (this) {
-								if (info.hasRunwayData()) {
-									awdao.writeRunways(info.getID(), info.getRunwayD(), info.getRunwayA());
-								}
-							}
-						}
-					}
 					
 					// Split the route
 					List<String> wps = StringUtils.split(info.getRoute(), " ");
@@ -515,6 +473,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					wps.remove(info.getAirportA().getICAO());
 					
 					// Check the SID
+					SetACARSData awdao = new SetACARSData(con);
 					if ((info.getSID() == null) && (wps.size() > 2)) {
 						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.SID, wps.get(0), wps.get(1), info.getRunwayD());
 						if (sid != null) {

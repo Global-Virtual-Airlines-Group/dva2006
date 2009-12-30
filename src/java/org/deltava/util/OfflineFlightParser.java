@@ -207,6 +207,24 @@ public class OfflineFlightParser {
 		} catch (IllegalArgumentException iae) {
 			// empty
 		}
+		
+		// Set the takeoff position if present
+		afr.setTakeoffHeading(StringUtils.parse(ie.getChildTextTrim("takeoffHeading"), -1));
+		if (afr.getTakeoffHeading() > -1) {
+			double lat = parse(ie.getChildTextTrim("takeoffLatitude"));
+			double lng = parse(ie.getChildTextTrim("takeoffLongitude"));
+			GeoPosition loc = new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("takeoffAltitude"), 0));
+			afr.setTakeoffLocation(loc);
+		}
+		
+		// Set the landing position if present
+		afr.setLandingHeading(StringUtils.parse(ie.getChildTextTrim("landingHeading"), -1));
+		if (afr.getLandingHeading() > -1) {
+			double lat = parse(ie.getChildTextTrim("landingLatitude"));
+			double lng = parse(ie.getChildTextTrim("landingLongitude"));
+			GeoPosition loc = new GeoPosition(lat, lng, StringUtils.parse(ie.getChildTextTrim("landingAltitude"), 0));
+			afr.setLandingLocation(loc);
+		}
 
 		// Load the 0X/1X/2X/4X times
 		afr.setTime(0, StringUtils.parse(ie.getChildTextTrim("time0X"), 0));
