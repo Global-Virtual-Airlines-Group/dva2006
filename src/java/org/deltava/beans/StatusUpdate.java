@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * A bean to track pilot promotions and general comments.
  * @author Luke
- * @version 2.2
+ * @version 2.8
  * @since 1.0
  */
 
@@ -28,15 +28,15 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	public static final int CERT_ADD = 13;
 	public static final int SR_CAPTAIN = 14;
 	public static final int SUSPENDED = 15;
+	public static final int LOA = 16;
 	
 	public static final String[] TYPES = {"Comment", "Promotion", "Rank Change", "Added Rating", "Pilot Recognition",
 			"Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", "Promotion", "Airline Transfer",
-			"Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain", "Account Suspended"};
+			"Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain", "Account Suspended", "Leave of Absence"};
 
 	private int _type;
-	
 	private int _authorID;
-	private Date _createdOn;
+	private Date _createdOn = new Date();
 	private String _desc;
 	
 	/**
@@ -48,7 +48,6 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 		super();
 		setID(pilotID);
 		setType(type);
-		_createdOn = new Date();
 	}
 	
 	/**
