@@ -1,21 +1,23 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
+import java.util.Date;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
+import org.deltava.util.CalendarUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 1.0
+ * @version 2.8
  * @since 1.0
  */
 
@@ -30,7 +32,6 @@ public class LeaveCommand extends AbstractCommand {
 
 		// Get the pilot ID
 		int id = (ctx.getID() == 0) ? ctx.getUser().getID() : ctx.getID();
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -45,6 +46,15 @@ public class LeaveCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanTakeLeave())
 				throw securityException("Insufficient Access to place Pilot On Leave");
+			
+			// Calculate the LOA expiry date
+			Date loaExpiry = CalendarUtils.adjust(null, SystemData.getInt("users.inactive_leave_days", 180));
+			ctx.setAttribute("loaExpires", loaExpiry, REQUEST);
+			
+			// Create status update record
+			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.LOA); 
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setDescription("Leave of absence until " + StringUtils.format(loaExpiry, "MM/dd/yyyy"));
 
 			// Start the transaction
 			ctx.startTX();
@@ -53,10 +63,14 @@ public class LeaveCommand extends AbstractCommand {
 			SetPilot wdao = new SetPilot(con);
 			wdao.onLeave(p.getID());
 			p.setStatus(Pilot.ON_LEAVE);
-
+			
 			// Add an inactivity table entry
 			SetInactivity idao = new SetInactivity(con);
 			idao.setInactivity(p.getID(), SystemData.getInt("users.inactive_leave_days", 180), true);
+			
+			// Write the status updat
+			SetStatusUpdate sudao = new SetStatusUpdate(con);
+			sudao.write(upd);
 
 			// Commit the transaction
 			ctx.commitTX();
