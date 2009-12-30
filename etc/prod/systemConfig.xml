@@ -475,8 +475,8 @@
 
 			<!-- Codeshare codes - only load codeshares of these airlines -->
 			<list name="codeshare_codes" attr="code" unique="true">
-				<code>AF</code>
 				<code>DL</code>
+				<code>NW</code>
 			</list>
 
 			<!-- FTP download data -->
