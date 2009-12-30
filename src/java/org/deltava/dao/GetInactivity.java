@@ -12,7 +12,7 @@ import org.deltava.beans.system.InactivityPurge;
  * A Data Access Object to read Inactivity purge entries. This DAO extends PilotReadDAO since it is used
  * to query pilots who may not have an Inactivity purge table entry, but are eligible for one.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -83,24 +83,26 @@ public class GetInactivity extends PilotReadDAO {
 	/**
 	 * Returns the IDs of Pilots who have not participated in the period prior to the Inactivity warning.
 	 * @param loginDays the number of days since their last login
-	 * @param activityDays the number of days to check for Flight Reports or Cooler posts
+	 * @param activityDays the number of days to check for Flight Reports, Cooler posts or Examinations
 	 * @param minPosts the minimum number of Cooler posts
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getRepeatInactive(int loginDays, int activityDays, int minPosts) throws DAOException {
 		try {
-			prepareStatement("SELECT P.ID, COUNT(F.ID) AS FLIGHTS, COUNT(CP.POST_ID) AS POSTS FROM PILOTS P LEFT JOIN "
-					+ "PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?) AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))) LEFT JOIN "
-					+ "common.COOLER_POSTS CP ON ((P.ID=CP.AUTHOR_ID) AND (CP.CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))) "
-					+ "WHERE (P.STATUS=?) AND P.LAST_LOGIN < DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY P.ID HAVING (FLIGHTS=0) "
-					+ "AND (POSTS<?)");
+			prepareStatement("SELECT P.ID, COUNT(F.ID) AS FLIGHTS, COUNT(CP.POST_ID) AS POSTS, COUNT(E.ID) AS EXAMS FROM PILOTS P "
+					+ "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?) AND (F.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))) "
+					+ "LEFT JOIN common.COOLER_POSTS CP ON ((P.ID=CP.AUTHOR_ID) AND (CP.CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))) "
+					+ "LEFT JOIN exams.EXAMS E ON ((E.PILOT_ID=P.ID) AND (E.CREATED_ON > DATE_SUB(NOW(), INTERVAL ? DAY))) WHERE "
+					+ "(P.STATUS=?) AND P.LAST_LOGIN < DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY P.ID HAVING (FLIGHTS=0) AND "
+					+ "(POSTS<?) AND (EXAMS=0)");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, activityDays);
 			_ps.setInt(3, activityDays);
-			_ps.setInt(4, Pilot.ACTIVE);
-			_ps.setInt(5, loginDays);
-			_ps.setInt(6, minPosts);
+			_ps.setInt(4, activityDays);
+			_ps.setInt(5, Pilot.ACTIVE);
+			_ps.setInt(6, loginDays);
+			_ps.setInt(7, minPosts);
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);

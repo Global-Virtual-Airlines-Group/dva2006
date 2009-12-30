@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 
@@ -167,11 +167,9 @@ public class InactivityUpdateTask extends Task {
 					ctx.commitTX();
 
 					// Send notification message
-					if (!noWarn) {
-						Mailer mailer = new Mailer(isTest ? null : taskBy);
-						mailer.setContext(mctxt);
-						mailer.send(p);
-					}
+					Mailer mailer = new Mailer(isTest ? null : taskBy);
+					mailer.setContext(mctxt);
+					mailer.send(p);
 				} else {
 					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
 					iwdao.delete(ip.getID());
