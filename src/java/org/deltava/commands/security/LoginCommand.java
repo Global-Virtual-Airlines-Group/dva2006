@@ -214,6 +214,11 @@ public class LoginCommand extends AbstractCommand {
 			// Save login hostname/IP address forever
 			SetSystemData sysdao = new SetSystemData(con);
 			sysdao.login(SystemData.get("airline.db"), p.getID(), ctx.getRequest().getRemoteAddr(), p.getLoginHost());
+			
+			// Clear LOA if done today
+			SetStatusUpdate sudao = new SetStatusUpdate(con);
+			if (returnToActive)
+				sudao.clearLOA(p.getID());
 
 			// Check if we've surpassed the notificaton interval
 			if (returnToActive) {
@@ -224,7 +229,6 @@ public class LoginCommand extends AbstractCommand {
 
 			// Mark as returned from leave
 			if (returnToActive) {
-				SetStatusUpdate sudao = new SetStatusUpdate(con);
 				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 				upd.setAuthorID(p.getID());
 				upd.setDescription("Returned from Leave of Absence");
