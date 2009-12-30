@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
@@ -24,12 +25,13 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.ACARSClientInfo;
+import org.gvagroup.acars.ACARSFlags;
 import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 2.4
  */
 
@@ -294,6 +296,63 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (!comments.isEmpty())
 				afr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
+			// If we don't have takeoff/touchdown points from Build 97+, derive them
+			if (afr.getTakeoffHeading() == -1) {
+				List<RouteEntry> tdEntries = new ArrayList<RouteEntry>();
+				for (Iterator<RouteEntry> i = flight.getPositions().iterator(); i.hasNext(); ) {
+					RouteEntry re = i.next();
+					if (re.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN))
+						tdEntries.add(re);
+				}
+					
+				if (tdEntries.size() > 2) {
+					int ofs = 0;
+					RouteEntry entry = tdEntries.get(0);
+					GeoPosition adPos = new GeoPosition(inf.getAirportD());
+					while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
+						ofs++;
+						entry = tdEntries.get(ofs);
+					}
+
+					// Trim out spurious takeoff entries
+					if (ofs > 0)
+						tdEntries.subList(0, ofs - 1).clear();
+					if (tdEntries.size() > 2)
+						tdEntries.subList(1, tdEntries.size() - 1).clear();
+				
+					// Save the entry points
+					if (tdEntries.size() > 0) {
+						afr.setTakeoffLocation(tdEntries.get(0));
+						afr.setTakeoffHeading(tdEntries.get(0).getHeading());
+						if (tdEntries.size() > 1) {
+							afr.setLandingLocation(tdEntries.get(1));
+							afr.setLandingHeading(tdEntries.get(1).getHeading());
+						}
+					}
+				}
+			}
+			
+			// Load the departure runway
+			GetNavAirway navdao = new GetNavAirway(con);
+			Runway rD = null;
+			if (afr.getTakeoffHeading() > -1) {
+				Runway r = navdao.getBestRunway(inf.getAirportD(), afr.getFSVersion(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
+				if (r != null) {
+					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
+					rD = new RunwayDistance(r, dist);
+				}
+			}
+
+			// Load the arrival runway
+			Runway rA = null;
+			if (afr.getLandingHeading() > -1) {
+				Runway r = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), afr.getLandingLocation(), afr.getLandingHeading());
+				if (r != null) {
+					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
+					rA = new RunwayDistance(r, dist);
+				}
+			}
+			
 			// Turn off auto-commit
 			ctx.startTX();
 
@@ -303,6 +362,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			awdao.createFlight(inf);
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
+			awdao.writeRunways(inf.getID(), rD, rA);
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
 			
 			// Dump the positions

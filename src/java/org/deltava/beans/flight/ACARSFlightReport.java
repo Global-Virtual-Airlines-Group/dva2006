@@ -3,20 +3,23 @@ package org.deltava.beans.flight;
 
 import java.util.*;
 
-import org.deltava.beans.Flight;
-import org.deltava.beans.acars.ConnectionEntry;
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.*;
 
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
 public class ACARSFlightReport extends FlightReport {
 	
-    private final Map<String, Date> _stateChangeTimes = new HashMap<String, Date>();
+	private enum StateChange {
+		START, TAXI_OUT, TAKEOFF, LAND, END
+	}
+	
+    private final Map<StateChange, Date> _stateChangeTimes = new HashMap<StateChange, Date>();
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     
     private int _taxiWeight;
@@ -27,6 +30,8 @@ public class ACARSFlightReport extends FlightReport {
     private double _takeoffN1;
     private int _takeoffWeight;
     private int _takeoffFuel;
+    private int _takeoffHdg = -1;
+    private GeospaceLocation _takeoffPos = new GeoPosition(0, 0);
     
     private int _landingDistance;
     private int _landingSpeed;
@@ -35,6 +40,8 @@ public class ACARSFlightReport extends FlightReport {
     private double _landingN1;
     private int _landingWeight;
     private int _landingFuel;
+    private int _landingHdg = -1;
+    private GeospaceLocation _landingPos = new GeoPosition(0, 0);
     
     private int _gateWeight;
     private int _gateFuel;
@@ -68,7 +75,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setStartTime(Date)
      */
     public Date getStartTime() {
-        return _stateChangeTimes.get("START_TIME");
+        return _stateChangeTimes.get(StateChange.START);
     }
     
     /**
@@ -77,7 +84,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setTaxiTime(Date)
      */
     public Date getTaxiTime() {
-        return _stateChangeTimes.get("TAXI_TIME");
+        return _stateChangeTimes.get(StateChange.TAXI_OUT);
     }
     
     /**
@@ -104,7 +111,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setTakeoffTime(Date)
      */
     public Date getTakeoffTime() {
-        return _stateChangeTimes.get("TAKEOFF_TIME");
+        return _stateChangeTimes.get(StateChange.TAKEOFF);
     }
     
     /**
@@ -156,12 +163,30 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Returns the heading at takeoff.
+     * @return the takeoff heading in degrees
+     * @see ACARSFlightReport#setTakeoffHeading(int)
+     */
+    public int getTakeoffHeading() {
+    	return _takeoffHdg;
+    }
+    
+    /**
+     * Returns the position at takeoff.
+     * @return the takeoff position
+     * @see ACARSFlightReport#setTakeoffLocation(GeospaceLocation)
+     */
+    public GeospaceLocation getTakeoffLocation() {
+    	return _takeoffPos;
+    }
+    
+    /**
      * Returns the date/time that the aircraft touched down.
      * @return the date/time of touchdown
      * @see ACARSFlightReport#setLandingTime(Date)
      */
     public Date getLandingTime() {
-        return _stateChangeTimes.get("LAND_TIME");
+        return _stateChangeTimes.get(StateChange.LAND);
     }
     
     /**
@@ -229,13 +254,31 @@ public class ACARSFlightReport extends FlightReport {
     public int getLandingFuel() {
         return _landingFuel;
     }
+    
+    /**
+     * Returns the heading at touchdown.
+     * @return the touchdown heading in degrees
+     * @see ACARSFlightReport#setLandingHeading(int)
+     */
+    public int getLandingHeading() {
+    	return _landingHdg;
+    }
+    
+    /**
+     * Returns the position at touchdown.
+     * @return the touchdown heading
+     * @see ACARSFlightReport#setLandingLocation(GeospaceLocation)
+     */
+    public GeospaceLocation getLandingLocation() {
+    	return _landingPos;
+    }
 
     /**
      * Returns the end date/time of the flight.
      * @return the date/time the flight ended at the gate
      */
     public Date getEndTime() {
-        return _stateChangeTimes.get("END_TIME");
+        return _stateChangeTimes.get(StateChange.END);
     }
 
     /**
@@ -350,7 +393,7 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Returns the ACARS client build number.
      * @return the client build number
-     * @see ConnectionEntry#setClientBuild(int)
+     * @see org.deltava.beans.acars.ConnectionEntry#setClientBuild(int)
      */
     public int getClientBuild() {
        return _clientBuild;
@@ -359,7 +402,7 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Returns the ACARS beta build number.
      * @return the beta number
-     * @see ConnectionEntry#setBeta(int)
+     * @see org.deltava.beans.acars.ConnectionEntry#setBeta(int)
      */
     public int getBeta() {
  	   return _beta;
@@ -371,7 +414,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getEndTime()
      */
     public void setStartTime(Date dt) {
-        _stateChangeTimes.put("START_TIME", dt);
+        _stateChangeTimes.put(StateChange.START, dt);
     }
     
     /**
@@ -380,7 +423,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTaxiTime()
      */
     public void setTaxiTime(Date dt) {
-        _stateChangeTimes.put("TAXI_TIME", dt);
+        _stateChangeTimes.put(StateChange.TAXI_OUT, dt);
     }
 
     /**
@@ -407,7 +450,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTakeoffTime()
      */
     public void setTakeoffTime(Date dt) {
-        _stateChangeTimes.put("TAKEOFF_TIME", dt);
+        _stateChangeTimes.put(StateChange.TAKEOFF, dt);
     }
 
     /**
@@ -457,12 +500,31 @@ public class ACARSFlightReport extends FlightReport {
     }
 
     /**
+     * Updates the heading at takeoff.
+     * @param hdg the takeoff heading in degrees
+     * @see ACARSFlightReport#getTakeoffHeading()
+     */
+    public void setTakeoffHeading(int hdg) {
+    	_takeoffHdg = hdg;
+    }
+
+    /**
+     * Updates the position at takeoff.
+     * @param loc the takeoff location
+     * @see ACARSFlightReport#getTakeoffLocation()
+     */
+    public void setTakeoffLocation(GeospaceLocation loc) {
+    	if (loc != null)
+    		_takeoffPos = loc;
+    }
+    
+    /**
      * Updates the landing date/time.
      * @param dt the date/time the aircraft touched down
      * @see ACARSFlightReport#getLandingTime()
      */
     public void setLandingTime(Date dt) {
-        _stateChangeTimes.put("LAND_TIME", dt);
+        _stateChangeTimes.put(StateChange.LAND, dt);
     }
     
     /**
@@ -531,12 +593,31 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Updates the heading at touchdown.
+     * @param hdg the touchdown heading in degrees
+     * @see ACARSFlightReport#getLandingHeading() 
+     */
+    public void setLandingHeading(int hdg) {
+    	_landingHdg = hdg;
+    }
+    
+    /**
+     * Updates the position at touchdown.
+     * @param loc the position
+     * @see ACARSFlightReport#getLandingLocation()
+     */
+    public void setLandingLocation(GeospaceLocation loc) {
+    	if (loc != null)
+    		_landingPos = loc;
+    }
+    
+    /**
      * Updates the end time of the flight.
      * @param dt the date/time the flight ended
      * @see ACARSFlightReport#getEndTime()
      */
     public void setEndTime(Date dt) {
-        _stateChangeTimes.put("END_TIME", dt);
+        _stateChangeTimes.put(StateChange.END, dt);
     }
     
     /**
@@ -601,7 +682,7 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the ACARS client build number.
      * @param ver the build number
-     * @see ConnectionEntry#getClientBuild()
+     * @see org.deltava.beans.acars.ConnectionEntry#getClientBuild()
      */
     public void setClientBuild(int ver) {
        _clientBuild = ver;
@@ -610,7 +691,7 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the ACARS beta build number.
      * @param beta the beta number
-     * @see ConnectionEntry#getBeta()
+     * @see org.deltava.beans.acars.ConnectionEntry#getBeta()
      */
     public void setBeta(int beta) {
  	   _beta = Math.max(0, beta);
