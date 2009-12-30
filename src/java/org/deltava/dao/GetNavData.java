@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.ICAOAirport;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
@@ -15,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -202,20 +203,20 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	}
 	
 	/**
-	 * Returns the likeliest runway for a takeoff or landing 
-	 * @param airportCode the airport ICAO code
+	 * Returns the likeliest runway for a takeoff or landing. 
+	 * @param a the Airport
 	 * @param simVersion the Flight Simulator Version
 	 * @param loc the takeoff/landing location
 	 * @param hdg the takeoff/landing heading in degrees 
 	 * @return a Runway, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Runway getBestRunway(String airportCode, int simVersion, GeoLocation loc, int hdg) throws DAOException {
+	public Runway getBestRunway(ICAOAirport a, int simVersion, GeoLocation loc, int hdg) throws DAOException {
 		Map<String, Runway> results = new LinkedHashMap<String, Runway>();
 		try {
 			if (simVersion > 0) {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
-				_ps.setString(1, airportCode.toUpperCase());
+				_ps.setString(1, a.getICAO());
 				_ps.setInt(2, Math.max(2004, simVersion));
 				
 				ResultSet rs = _ps.executeQuery();
@@ -234,7 +235,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 			
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, NavigationDataBean.RUNWAY);
-			_ps.setString(2, airportCode.toUpperCase());
+			_ps.setString(2, a.getICAO());
 			Collection<NavigationDataBean> r2 = execute();
 			for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
 				NavigationDataBean nd = i.next();
