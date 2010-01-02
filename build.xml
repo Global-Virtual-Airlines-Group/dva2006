@@ -405,6 +405,7 @@
 
 	<!-- Package source code -->
 	<target name="put_source">
+		<mkdir dir="${java.io.tmpdir}/src" />
 		<tar destfile="${java.io.tmpdir}/src/golgotha.tar" longfile="fail">
 			<tarfileset uid="500" group="gva" dir="${basedir}">
 				<include name="src/java/**/*.java" />
