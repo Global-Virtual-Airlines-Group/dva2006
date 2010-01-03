@@ -184,6 +184,31 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:forEach>
 </el:table>
 </c:if>
+<c:if test="${!empty toLand}">
+<!-- Latest Takeoffs/Landings -->
+<center><div style="width:530px;">
+<el:table className="view" space="default" pad="default">
+<tr class="title caps left">
+ <td colspan="3">LATEST <content:airline /> FLIGHT DEPARTURES AND ARRIVALS</td>
+</tr>
+<c:forEach var="tl" items="${fn:keys(toLand)}">
+<c:set var="info" value="${toLand[tl]}" scope="page" />
+<tr>
+ <td class="priB">${info.flightCode}</td>
+ <td class="secB">${info.equipmentType}</td>
+<c:if test="${tl.isTakeoff}">
+ <td class="left">Departed from ${info.airportD.name} (<fmt:airport airport="${info.airportD}" />)
+ at <fmt:date date="${tl.date}" /></td>
+</c:if>
+<c:if test="${!tl.isTakeoff}">
+ <td class="left">Arrived at ${info.airportA.name} (<fmt:airport airport="${info.airportAD}" />)
+ at <fmt:date date="${tl.date}" /></td>
+</c:if>
+</tr>
+</c:forEach>
+</el:table>
+</div></center>
+</c:if>
 <c:if test="${!empty latestPilots}">
 <!-- Latest Pilot Hires -->
 <center><div style="width:530px;">
