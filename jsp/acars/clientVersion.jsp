@@ -61,6 +61,10 @@ return true;
  <td class="data"><el:text className="req" name="latestDispatch" idx="*" size="3" max="4" value="${latestDispatch}" /></td>
 </tr>
 <tr>
+ <td class="label">Minimum Viewer Build</td>
+ <td class="data"><el:text className="req" name="latestViewer" idx="*" size="3" max="4" value="${latestViewer}" /></td>
+</tr>
+<tr>
  <td class="label">Client Builds without Dispatch</td>
  <td class="data"><el:text name="noDispatch" idx="*" size="12" max="24" value="${fn:splice(noDispatch, ',')}" /></td>
 </tr>
