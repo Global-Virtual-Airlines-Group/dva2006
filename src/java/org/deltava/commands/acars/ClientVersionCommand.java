@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to control minimum ACARS client versions.
  * @author Luke
- * @version 2.3
+ * @version 2.8
  * @since 1.0
  */
 
@@ -58,6 +58,7 @@ public class ClientVersionCommand extends AbstractCommand {
 			ctx.setAttribute("noDispatch", cInfo.getNoDispatchBuilds(), REQUEST);
 			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
 			ctx.setAttribute("latestDispatch", Integer.valueOf(cInfo.getMinimumDispatchBuild()), REQUEST);
+			ctx.setAttribute("latestViewer", Integer.valueOf(cInfo.getMinimumViewerBuild()), REQUEST);
 			
 			// Redirect to the JSP
 			result.setURL("/jsp/acars/clientVersion.jsp");
@@ -68,6 +69,7 @@ public class ClientVersionCommand extends AbstractCommand {
 		// Get the minimum/latest client builds
 		cInfo.setLatest(StringUtils.parse(ctx.getParameter("latestBuild"), cInfo.getLatest()));
 		cInfo.setMinimumDispatchBuild(StringUtils.parse(ctx.getParameter("latestDispatch"), cInfo.getMinimumDispatchBuild()));
+		cInfo.setMinimumViewerBuild(StringUtils.parse(ctx.getParameter("latestViewer"), cInfo.getMinimumDispatchBuild()));
 		for (Iterator<String> i = versions.iterator(); i.hasNext(); ) {
 			String ver = i.next();
 			String paramName = "min_" + ver.replace('.', '_') + "_build";
