@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,11 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
 public class TransferProcessCommand extends AbstractCommand {
+	
+	private static final Collection<String> STAFF_RANKS = Arrays.asList(Ranks.RANK_ACP, Ranks.RANK_CP);
 
 	/**
 	 * Executes the command.
@@ -92,6 +94,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			
 			// Get the available ranks
 			Collection<String> eqRanks = newEQ.getRanks();
+			eqRanks.removeAll(STAFF_RANKS);
 			if (!isSC)
 				eqRanks.remove(Ranks.RANK_SC);
 			if (!hasCaptExam || !hasLegs)

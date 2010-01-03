@@ -119,13 +119,13 @@ return true;
 <tr>
  <td class="label">Promotion to Captain</td>
  <td class="data">Examination Status <b>${captExam ? 'PASSED' : 'NOT PASSED'}</b>, Flight Legs completed
- = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps">ELIGIBLE FOR PROMOTION
+ = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps"> ELIGIBLE FOR PROMOTION
  TO CAPTAIN</span></c:if></td>
 </tr>
 </c:if>
 <tr>
  <td class="label top">Equipment Ratings</td>
- <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" newLine="true" className="small" checked="${newRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="ratings" idx="*" cols="8" width="120" newLine="true" className="small" checked="${newRatings}" options="${allEQ}" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canAssignRide}">
