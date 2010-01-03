@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.acars.*;
 
 import org.deltava.commands.*;
 
@@ -22,7 +23,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 
@@ -37,9 +38,11 @@ public class HomeCommand extends AbstractCommand {
 	private static final int CENTURY_CLUB = 2;
 	private static final int PROMOTIONS = 3;
 	private static final int ACARS_USERS = 4;
+	private static final int ACARS_TOLAND = 5;
 
 	// Dynamic content choices
-	private static final int[] DYN_CHOICES = { NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS };
+	private static final int[] DYN_CHOICES = { NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, 
+		ACARS_USERS, ACARS_TOLAND };
 
 	/**
 	 * Executes the command.
@@ -138,6 +141,22 @@ public class HomeCommand extends AbstractCommand {
 				// Online ACARS Users
 				case ACARS_USERS:
 					ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(false)), REQUEST);
+					break;
+					
+				// Latest takeoffs and landings
+				case ACARS_TOLAND:
+					GetACARSData afdao = new GetACARSData(con);
+					GetACARSTakeoffs todao = new GetACARSTakeoffs(con);
+					todao.setQueryMax(10);
+					Map<TakeoffLanding, FlightInfo> toLand = new LinkedHashMap<TakeoffLanding, FlightInfo>();
+					for (Iterator<TakeoffLanding> i = todao.getLatest().iterator(); i.hasNext(); ) {
+						TakeoffLanding tl = i.next();
+						FlightInfo fl = afdao.getInfo(tl.getID());
+						if (fl != null)
+							toLand.put(tl, fl);
+					}
+					
+					ctx.setAttribute("acarsTOLAND", toLand, REQUEST);
 					break;
 
 				// Latest Hires
