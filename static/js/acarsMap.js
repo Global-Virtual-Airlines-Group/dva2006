@@ -105,7 +105,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Focus on the map
 	if (isLoading)
-		isLoading.innerHTML = '';
+		isLoading.innerHTML = ' - ' + (ac.length + dc.length) + ' CONNECTIONS';
 
 	return true;
 } // function
