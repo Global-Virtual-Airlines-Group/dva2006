@@ -11,7 +11,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -132,6 +132,22 @@ public class SetACARSLog extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM acars.COMMAND_STATS WHERE (CMDDATE < DATE_SUB(NOW(), "
 					+ "INTERVAL ? HOUR))");
+			_ps.setInt(1, hours);
+			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Purges old ACARS takeoff and landing logs older than a specified number of hours.
+	 * @param hours the number of hours
+	 * @return the number of entries purged
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purgeTakeoffs(int hours) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM acars.TOLAND WHERE (EVENT_DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))");
 			_ps.setInt(1, hours);
 			return executeUpdate(0);
 		} catch (SQLException se) {
