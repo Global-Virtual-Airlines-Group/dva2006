@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge old ACARS log data.
  * @author Luke
- * @version 2.4
+ * @version 2.8
  * @since 1.0
  */
 
@@ -56,6 +56,9 @@ public class ACARSDataPurgeTask extends Task {
 
 			// Purge old stats
 			log.warn("Purged " + wdao.purgeLogs(statsPurge) + " command statistics entries");
+			
+			// Purge old takeoffs
+			log.warn("Purged " + wdao.purgeTakeoffs(flightPurge) + " takeoff/landing entries");
 
 			// Get connections
 			GetACARSLog dao = new GetACARSLog(con);

@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -319,15 +319,15 @@ public class OfflineFlightCommand extends AbstractCommand {
 						tdEntries.subList(0, ofs - 1).clear();
 					if (tdEntries.size() > 2)
 						tdEntries.subList(1, tdEntries.size() - 1).clear();
+				}
 				
-					// Save the entry points
-					if (tdEntries.size() > 0) {
-						afr.setTakeoffLocation(tdEntries.get(0));
-						afr.setTakeoffHeading(tdEntries.get(0).getHeading());
-						if (tdEntries.size() > 1) {
-							afr.setLandingLocation(tdEntries.get(1));
-							afr.setLandingHeading(tdEntries.get(1).getHeading());
-						}
+				// Save the entry points
+				if (tdEntries.size() > 0) {
+					afr.setTakeoffLocation(tdEntries.get(0));
+					afr.setTakeoffHeading(tdEntries.get(0).getHeading());
+					if (tdEntries.size() > 1) {
+						afr.setLandingLocation(tdEntries.get(1));
+						afr.setLandingHeading(tdEntries.get(1).getHeading());
 					}
 				}
 			}
