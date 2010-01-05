@@ -13,14 +13,14 @@ public interface VersionInfo {
     public static final int MAJOR = 2;
     public static final int MINOR = 8;
     
-    public static final int BUILD = 278;
+    public static final int BUILD = 279;
     // public static final int RELEASE_CANDIDATE = 1;
     public static final boolean FINAL = false;
     
     //public static final String BUILD_DATE="$BUILD";
     
-    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2009 Global Virtual Airlines Group. All Rights Reserved.";
-    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2009 <a rel=\"external\" class=\"small\" href=\"http://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
+    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2010 Global Virtual Airlines Group. All Rights Reserved.";
+    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2010 <a rel=\"external\" class=\"small\" href=\"http://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
     
     public static final String APPNAME = "(Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
     public static final String USERAGENT = "Golgotha/" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + "-b" + String.valueOf(BUILD);
