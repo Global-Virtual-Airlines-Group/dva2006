@@ -93,7 +93,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
 			
 			// Get the available ranks
-			Collection<String> eqRanks = newEQ.getRanks();
+			Collection<String> eqRanks = new LinkedHashSet<String>(newEQ.getRanks());
 			eqRanks.removeAll(STAFF_RANKS);
 			if (!isSC)
 				eqRanks.remove(Ranks.RANK_SC);
