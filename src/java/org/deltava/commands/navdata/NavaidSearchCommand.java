@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -26,11 +26,20 @@ public class NavaidSearchCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Check for POST
+		CommandResult result = ctx.getResult();
+		String code = ctx.getParameter("navaidCode");
+		if (code == null) {
+			result.setURL("/jsp/navdata/navaidInfo.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
 		Collection<NavigationDataBean> results = null;
 		try {
 			GetNavData dao = new GetNavData(ctx.getConnection());
-			NavigationDataMap ndMap = dao.get(ctx.getParameter("navaidCode"));
+			NavigationDataMap ndMap = dao.get(code);
 			if (ndMap == null)
 				ndMap = new NavigationDataMap();
 
@@ -65,10 +74,10 @@ public class NavaidSearchCommand extends AbstractCommand {
 
 		// Save options and "show surrounding" setting
 		ctx.setAttribute("options", options, REQUEST);
+		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("showSurroundingNavaids", Boolean.valueOf(ctx.getParameter("showSurrounding")), SESSION);
 
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/navdata/navaidInfo.jsp");
 		result.setSuccess(true);
 	}

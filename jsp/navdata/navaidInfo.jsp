@@ -12,6 +12,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
+<content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
 <content:js name="markermanager" />
@@ -112,6 +113,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="navsearch.do" method="post" validate="return validate(this)">
+<c:if test="${doSearch}">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">NAVIGATION AID SEARCH<span id="isLoading" /></td>
@@ -134,11 +136,12 @@ return true;
 </tr>
 </c:if>
 </el:table>
+</c:if>
 
 <!-- Search Bar -->
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="2">NEW SEARCH</td>
+ <td colspan="2">NEW NAVIGATION AID SEARCH</td>
 </tr>
 <tr>
  <td class="label">Navigation Aid Code</td>
@@ -175,6 +178,5 @@ var sMarkers = new MarkerManager(map, {borderPadding:24});
 document.forms[0].navaid.selectedIndex = 0;
 zoomTo(document.forms[0].navaid);
 </script></c:if>
-<content:googleAnalytics />
 </body>
 </map:xhtml>
