@@ -13,13 +13,6 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
-function validate(form)
-{
-if (!validateText(form.navaidCode, 2, 'Navigation Aid Code')) return false;
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -48,7 +41,6 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="navsearch.do" method="post" validate="return validate(this)">
 <el:table ID="pilotCenter" className="form" pad="default" space="default">
 
 <!-- Pilot Information -->
@@ -360,9 +352,8 @@ every day.</td>
  and the world.</td>  
 </tr>
 <tr>
- <td class="mid bld">Navigation Aids</td>
- <td class="data">You can search for a particular Airport, VOR, NDB or Intersection.
-<el:text name="navaidCode" size="4" max="5" value="" />&nbsp;<el:button ID="NavSearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
+ <td class="mid"><el:cmd className="bld" url="navsearch">Navigation Aids</el:cmd></td>
+ <td class="data">You can search the DAFIF database for a particular Airport, VOR, NDB or Intersection.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
@@ -833,8 +824,6 @@ create, edit or delete TeamSpeak 2 voice channels.</td>
 </content:filter>
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>
-</el:form>
-<br />
 <content:copyright />
 </content:region>
 </content:page>
