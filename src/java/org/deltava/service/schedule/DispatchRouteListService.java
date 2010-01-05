@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 2.2
  */
 
@@ -110,7 +110,9 @@ public class DispatchRouteListService extends WebService {
 					// Find the most popular runway based on weather
 					GetACARSRunways ardao = new GetACARSRunways(con);
 					List<Runway> rwys = ardao.getPopularRunways(aD, aA, false);
-					Collections.sort(rwys, new RunwayComparator(mA.getWindDirection()));
+					if (mA != null)
+						Collections.sort(rwys, new RunwayComparator(mA.getWindDirection()));
+					
 					String popRwy = rwys.isEmpty() ? null : "RW" + rwys.get(0).getName();
 					String arrRwy = (tkns.size() < 3) ? popRwy : tkns.get(2);
 
