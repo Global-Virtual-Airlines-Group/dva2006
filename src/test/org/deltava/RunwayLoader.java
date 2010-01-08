@@ -22,9 +22,10 @@ public class RunwayLoader extends TestCase {
 	
 	private static Logger log;
 
-	//private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/dva";
-	private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/dva";
-	private static final String JDBC_URL2 = "jdbc:mysql://polaris.sce.net/dva";
+	private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/dva";
+	//private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/dva";
+	//private static final String JDBC_URL2 = "jdbc:mysql://polaris.sce.net/dva";
+	private static final String JDBC_URL2 = JDBC_URL;
 
 	private Connection _c;
 	private Connection _c2;
@@ -40,11 +41,11 @@ public class RunwayLoader extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());
-		_c2 = DriverManager.getConnection(JDBC_URL2, "luke", "14072");
+		_c2 = DriverManager.getConnection(JDBC_URL2, "luke", "test");
 		assertNotNull(_c2);
 		
 		// Load the airports/time zones
@@ -124,7 +125,7 @@ public class RunwayLoader extends TestCase {
 			
 			// Load the runways
 			boolean newData = false;
-			Runway rwyD = navdao.getBestRunway(info.getAirportD().getICAO(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
+			Runway rwyD = navdao.getBestRunway(info.getAirportD(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
 			if ((rwyD != null) && ((info.getRunwayD() == null) || (!rwyD.getCode().equals(info.getRunwayD().getCode())))) {
 				if (info.getRunwayD() != null)
 					log.warn("For Flight " + info.getID() + " runwayD was " + info.getRunwayD().getCode() + ", now" + rwyD.getCode());
@@ -136,7 +137,7 @@ public class RunwayLoader extends TestCase {
 				}
 			}
 			
-			Runway rwyA = navdao.getBestRunway(afr.getAirportA().getICAO(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
+			Runway rwyA = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
 			if ((rwyA != null) && ((info.getRunwayA() == null) || (!rwyA.getCode().equals(info.getRunwayA().getCode())))) {
 				if (info.getRunwayA() != null)
 					log.warn("For Flight " + info.getID() + " runwayA was " + info.getRunwayA().getCode() + ", now" + rwyA.getCode());
