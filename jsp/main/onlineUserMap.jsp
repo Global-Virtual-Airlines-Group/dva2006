@@ -47,7 +47,7 @@
 <script language="JavaScript" type="text/javascript">
 // Create the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GSmallMapControl());
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 
 // Mark each pilot's position in hashmap

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to list logged in users.
  * @author Luke
- * @version 2.5
+ * @version 2.8
  * @since 1.0
  */
 
@@ -76,7 +76,7 @@ public class UserListCommand extends AbstractCommand {
     				}
     			} else if (usr.getAddressInfo() != null)
     				markers.add(new PilotLocation(usr.getPerson(), usr.getAddressInfo()));
-    			else
+    			else if (loc != null)
     				markers.add(new PilotLocation(usr.getPerson(), loc));
     		}
     		
