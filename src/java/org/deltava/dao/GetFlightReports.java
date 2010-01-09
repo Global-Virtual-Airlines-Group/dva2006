@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -486,11 +486,14 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, S.TIME_D, S.TIME_A FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".SCHEDULE S ON (S.AIRLINE=PR.AIRLINE) AND (S.FLIGHT=PR.FLIGHT) AND (S.LEG=PR.LEG) AND "
+				+ "(S.AIRPORT_D=PR.AIRPORT_D) AND (S.AIRPORT_A=PR.AIRPORT_A) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
 		if ((airportD != null) && (airportA != null))
@@ -577,23 +580,32 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 61);
-		boolean hasComments = (md.getColumnCount() >= 21);
+		boolean hasACARS = (md.getColumnCount() >= 62);
+		boolean hasComments = (md.getColumnCount() >= 22);
+		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() >= 24));
 
 		// Iterate throught the results
 		while (rs.next()) {
-			boolean isACARS = (hasACARS) && (rs.getInt(23) != 0);
+			int status = rs.getInt(4);
+			boolean isACARS = (hasACARS && (rs.getInt(23) != 0));
+			boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
 			// Build the PIREP as a standard one, or an ACARS pirep
 			Airline a = SystemData.getAirline(rs.getString(6));
 			int flight = rs.getInt(7); int leg = rs.getInt(8);
-			FlightReport p = (isACARS) ? new ACARSFlightReport(a, flight, leg) : new FlightReport(a, flight, leg);
+			FlightReport p = null;
+			if (isACARS)
+				p = new ACARSFlightReport(a, flight, leg);
+			else if (isDraft)
+				p = new DraftFlightReport(a, flight, leg);
+			else
+				p = new FlightReport(a, flight, leg);
 
 			// Populate the data
 			p.setID(rs.getInt(1));
 			p.setDatabaseID(FlightReport.DBID_PILOT, rs.getInt(2));
 			p.setRank(rs.getString(3));
-			p.setStatus(rs.getInt(4));
+			p.setStatus(status);
 			p.setDate(expandDate(rs.getDate(5)));
 			p.setAirportD(SystemData.getAirport(rs.getString(9)));
 			p.setAirportA(SystemData.getAirport(rs.getString(10)));
@@ -610,6 +622,13 @@ public class GetFlightReports extends DAO {
 			p.setDatabaseID(FlightReport.DBID_ASSIGN, rs.getInt(21));
 			if (hasComments)
 				p.setComments(rs.getString(22));
+			
+			// Load scheduled times
+			if (isDraft) {
+				DraftFlightReport dp = (DraftFlightReport) p;
+				dp.setTimeD(rs.getTimestamp(23));
+				dp.setTimeA(rs.getTimestamp(24));
+			}
 
 			// Load ACARS pirep data
 			if (isACARS) {
