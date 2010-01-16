@@ -22,12 +22,12 @@ var addrDiv = getElement('loginAddrs');
 if (!addrDiv) return false;
 
 // Toggle the visibility
-var s = addrDiv.style;
-s.visibility = (s.visibility == 'collapse') ? 'visible' : 'collapse';
+var isHidden = (addrDiv.style.display == 'none');
+displayObject(addrDiv, isHidden);
 
 // Update the link
 var addrLink = getElement('addrDivLink');
-addrLink.innerHTML = (s.visibility == 'collapse') ? 'SHOW' : 'HIDE';
+addrLink.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';
 return true;
 }
 </script></c:if>
@@ -182,7 +182,7 @@ return true;
 </tr>
 <content:filter roles="HR">
 <c:if test="${!empty loginAddrs}">
-<tr id="loginAddrs" style="visibility:collapse;">
+<tr id="loginAddrs" style="display:none;">
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data"><c:forEach var="loginAddr" items="${loginAddrs}">
 ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.loginCount}" /> logins<br /></c:forEach></td>
