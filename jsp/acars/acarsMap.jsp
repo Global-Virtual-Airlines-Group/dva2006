@@ -108,7 +108,8 @@ return true;
 <el:form action="acarsMap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4"><content:airline /> LIVE ACARS MAP<span id="isLoading" /></td>
+ <td colspan="4"><content:airline /> LIVE ACARS MAP<span id="isLoading"></span>
+<span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void zoomTo(this)" /></span></td>
 </tr>
 <tr>
  <td class="label">Map Options</td>
