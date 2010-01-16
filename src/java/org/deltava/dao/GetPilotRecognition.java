@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -26,6 +26,15 @@ public class GetPilotRecognition extends PilotReadDAO {
 	 */
 	public GetPilotRecognition(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Invalidates a portion of the Promotion Queue cache.
+	 * @param eqType the equipment type
+	 */
+	public static void invalidate(String eqType) {
+		_promoCache.remove(eqType);
+		_promoCache.remove("ALL");
 	}
 
     /**
