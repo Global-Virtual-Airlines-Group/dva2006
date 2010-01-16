@@ -17,6 +17,9 @@ xmlreq.onreadystatechange = function() {
 	removeMarkers(map, 'dcPositions');
 	acPositions.length = 0;
 	dcPositions.length = 0;
+	displayObject(getElement('userSelect'), false);
+	var cbo = document.forms[0].usrID;
+	cbo.options.length = 1;
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
@@ -48,6 +51,13 @@ xmlreq.onreadystatechange = function() {
 				var label = tab.firstChild;
 				mrk.tabs.push(new GInfoWindowTab(tab.getAttribute("name"), label.data));
 			}
+		}
+
+		// Add the user ID
+		if (a.getAttribute("pilotID") != null) {
+			var o = new Option(a.getAttribute("pilotID"));
+			o.ll = mrk.getLatLng();  
+			cbo.add(o, null);
 		}
 
 		// Set the the click handler
@@ -84,6 +94,13 @@ xmlreq.onreadystatechange = function() {
 			}
 		}
 
+		// Add the user ID
+		if (d.getAttribute("pilotID") != null) {
+			var o = new Option(d.getAttribute("pilotID") + " (Dispatcher)");
+			o.ll = mrk.getLatLng();  
+			cbo.add(o, null);
+		}
+
 		// Set the the click handler
 		GEvent.bind(mrk, 'click', mrk, clickDispatch);
 		dcPositions.push(mrk);
@@ -104,6 +121,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Focus on the map
+	displayObject(getElement('userSelect'), (cbo.options.length > 1));
 	if (isLoading)
 		isLoading.innerHTML = ' - ' + (ac.length + dc.length) + ' CONNECTIONS';
 
@@ -228,7 +246,7 @@ var radiusPt = p.fromLatLngToPixel(l2, map.getZoom());
 // Build the circle
 var pts = [];
 var radius = Math.floor(Math.sqrt(Math.pow((centerPt.x-radiusPt.x),2) + Math.pow((centerPt.y-radiusPt.y),2))); 
-for (var a = 0 ; a < 361 ; a+=5 ) {
+for (var a = 0 ; a < 361 ; a+=5) {
     var aRad = (Math.PI / 180) * a;
     var y = centerPt.y + radius * Math.sin(aRad);
     var x = centerPt.x + radius * Math.cos(aRad);
@@ -239,4 +257,15 @@ for (var a = 0 ; a < 361 ; a+=5 ) {
 var bColor = marker.isBusy ? '#C02020' : '#20C060';
 var fColor = marker.isBusy ? '#802020' : '#208040';
 return new GPolygon(pts, bColor, 1, 0.65, fColor, marker.isBusy ? 0.1 : 0.2); 
+}
+
+function zoomTo(combo)
+{
+var opt = combo.options[combo.selectedIndex];
+if ((!opt) || (opt.ll == null)) return false;
+
+// Zoom to the marker
+map.setZoom(9);
+map.panTo(opt.ll);
+return true;
 }
