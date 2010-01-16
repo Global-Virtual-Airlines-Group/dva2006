@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
@@ -35,6 +35,15 @@ public class GetPilotRecognition extends PilotReadDAO {
 	public static void invalidate(String eqType) {
 		_promoCache.remove(eqType);
 		_promoCache.remove("ALL");
+	}
+	
+	/**
+	 * Returns cache information.
+	 */
+	public CacheInfo getCacheInfo() {
+		CacheInfo info = super.getCacheInfo();
+		info.add(_promoCache);
+		return info;
 	}
 
     /**

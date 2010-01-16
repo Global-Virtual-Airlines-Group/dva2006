@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 
@@ -121,7 +121,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetTableStatus(null));
 		daoCaches.add(new GetSystemData(null));
 		daoCaches.add(new GetUserData(null));
-		daoCaches.add(new GetPilot(null));
+		daoCaches.add(new GetPilotRecognition(null));
 		daoCaches.add(new GetLibrary(null));
 		daoCaches.add(new GetACARSRunways(null));
 		daoCaches.add(new GetACARSLog(null));
