@@ -40,9 +40,7 @@
  <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="issues" op="Open">Issue Tracker</el:cmd></content:subitem>
-<content:filter roles="Developer">
  <content:subitem><el:cmd url="issues" link="${user}">My Issues</el:cmd></content:subitem>
-</content:filter>
 </content:submenu>
 
 <content:submenu title="Pilot's Lounge" width="170">
