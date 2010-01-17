@@ -224,7 +224,7 @@ body {
 	margin-right: 0px;
 	font-family: verdana, tahoma, sans-serif;
 	font-size: 9pt;
-	behavior: url(csshover.htc);
+	behavior: url(/css/csshover3.htc);
 }
 
 .BUTTON, .cmdButton {
