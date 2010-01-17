@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -8,11 +8,12 @@ import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.CalendarUtils;
 
 /**
- * A Web Site Command to display a pilot's log book in a Calendar. 
+ * A Web Site Command to display a Pilot's log book in a Calendar. 
  * @author Luke
- * @version 2.2
+ * @version 2.8
  * @since 2.2
  */
 
@@ -30,8 +31,9 @@ public class LogCalendarCommand extends AbstractCalendarCommand {
         if ((id == 0) && ctx.isAuthenticated())
         	id = ctx.getUser().getID();
 		
-		// Initialize the calendar context
+		// Initialize the calendar context, reset the time component since PIREPS doesn't store a time
 		CalendarContext cctx = initCalendar(ctx);
+		Calendar cld = CalendarUtils.getInstance(cctx.getStartDate(), true);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -41,7 +43,7 @@ public class LogCalendarCommand extends AbstractCalendarCommand {
             
             // Get the flight reports
             GetFlightReports prdao = new GetFlightReports(con);
-            Collection<FlightReport> pireps = prdao.getLogbookCalendar(id, cctx.getStartDate(), cctx.getDays());
+            Collection<FlightReport> pireps = prdao.getLogbookCalendar(id, cld.getTime(), cctx.getDays());
             prdao.getCaptEQType(pireps);
 			ctx.setAttribute("pireps", pireps, REQUEST);
 		} catch (DAOException de) {
