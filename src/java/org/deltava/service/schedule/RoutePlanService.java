@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans. 
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 2.2
  */
 
@@ -36,6 +36,8 @@ public class RoutePlanService extends WebService {
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		String alt = ctx.getParameter("cruiseAlt");
+		if (!StringUtils.isEmpty(alt) && (alt.startsWith("FL")))
+			alt = alt.substring(2) + "00";
 		if (StringUtils.parse(alt, -1) < 1000)
 			alt = "35000";
 		
