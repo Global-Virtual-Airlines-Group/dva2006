@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 
@@ -209,23 +209,14 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Shut down the JDBC connection pool
 		ThreadUtils.sleep(2000);
 		_jdbcPool.close();
-
-		// Deregister JDBC divers
-		SharedData.purge(SystemData.get("airline.code"));
-		for (Enumeration<Driver> en = DriverManager.getDrivers(); en.hasMoreElements();) {
-			Driver driver = en.nextElement();
-			if (driver.getClass().getClassLoader() == getClass().getClassLoader()) {
-				try {
-					DriverManager.deregisterDriver(driver);
-					log.info("Deregistered JDBC driver " + driver.getClass().getName());
-				} catch (Exception ex) {
-					log.error("Error dregistering " + driver.getClass(), ex);
-				}
-			}
-		}
+		JDBCUtils.cleanMySQLTimer();
+		JDBCUtils.deregisterDrivers();
+		java.beans.Introspector.flushCaches();
 
 		// Close the Log4J manager
+		SharedData.purge(SystemData.get("airline.code"));
 		log.error("Shut down " + SystemData.get("airline.code"));
+		ThreadUtils.sleep(200);
 		LogManager.shutdown();
 	}
 
