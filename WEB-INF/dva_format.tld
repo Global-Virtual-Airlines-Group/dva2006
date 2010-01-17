@@ -25,7 +25,7 @@
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.Number</type>
+			<type>java.lang.Long</type>
 		</attribute>
 	</tag>
 
@@ -48,7 +48,7 @@
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.Number</type>
+			<type>java.lang.Float</type>
 		</attribute>
 	</tag>
 
@@ -71,7 +71,7 @@
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.Number</type>
+			<type>java.lang.Float</type>
 		</attribute>
 		<attribute>
 			<name>units</name>

@@ -1,4 +1,4 @@
-// Copyright 2004, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.DecimalFormat;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.JspException;
 /**
  * A JSP tag to support the rendering of formatted integer values.
  * @author Luke
- * @version 2.4
+ * @version 2.8
  * @since 1.0
  */
 
@@ -31,6 +31,14 @@ public class IntegerFormatTag extends NumberFormatTag {
      */
     public void release() {
         super.release(DEFAULT_PATTERN);
+    }
+    
+    /**
+     * Sets the value to format. <i>This is a nasty hack for Tomcat 6.0.18+ EL casting.</i>
+     * @param value the value to format
+     */
+    public void setValue(Long value) {
+        super.setValue(value);
     }
     
     /**
