@@ -40,6 +40,14 @@ return true;
 <c:if test="${isACARS}">
 <content:sysdata var="imgPath" name="path.img" />
 <content:js name="acarsFlightMap" />
+<script language="JavaScript" type="text/javascript">
+function zoomTo(lat, lng)
+{
+map.setZoom(10);
+map.panTo(new GLatLng(lat, lng));
+return true;
+}
+</script>
 </c:if>
 </head>
 <content:copyright visible="false" />

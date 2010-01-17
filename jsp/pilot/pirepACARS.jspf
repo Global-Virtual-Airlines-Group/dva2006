@@ -70,7 +70,8 @@
 <c:when test="${fromEnd < 1}"> <span class="bld error"><fmt:int value="${fromEnd * -1}" /> feet past end</span>)</c:when>
 <c:when test="${fromEnd < 1000}"> <span class="bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
 <c:otherwise> takeoff run <fmt:int value="${rwy.distance}" /> feet)</c:otherwise>
-</c:choose></td>
+</c:choose>
+ <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a></td>
 </tr>
 </c:if>
 <tr>
@@ -110,7 +111,8 @@
 <c:when test="${fromEnd < 2500}"> <span class="pri bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
 <c:when test="${rwy.distance > 2500}"> <span class="bld"><fmt:int value="${rwy.distance}" /> feet from threshold</span>)</c:when>
 <c:otherwise> <fmt:int value="${rwy.distance}" /> feet from threshold)</c:otherwise>
-</c:choose></td>
+</c:choose>
+ <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a></td>
 </tr>
 </c:if>
 <tr>
