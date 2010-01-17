@@ -56,7 +56,7 @@ xmlreq.onreadystatechange = function() {
 		// Add the user ID
 		if (a.getAttribute("pilotID") != null) {
 			var o = new Option(a.getAttribute("pilotID"));
-			o.ll = mrk.getLatLng();  
+			o.mrk = mrk;  
 			cbo.add(o, null);
 		}
 
@@ -97,7 +97,7 @@ xmlreq.onreadystatechange = function() {
 		// Add the user ID
 		if (d.getAttribute("pilotID") != null) {
 			var o = new Option(d.getAttribute("pilotID") + " (Dispatcher)");
-			o.ll = mrk.getLatLng();  
+			o.mrk = mrk;  
 			cbo.add(o, null);
 		}
 
@@ -262,10 +262,11 @@ return new GPolygon(pts, bColor, 1, 0.65, fColor, marker.isBusy ? 0.1 : 0.2);
 function zoomTo(combo)
 {
 var opt = combo.options[combo.selectedIndex];
-if ((!opt) || (opt.ll == null)) return false;
+if ((!opt) || (opt.mrk == null)) return false;
 
 // Zoom to the marker
 map.setZoom(9);
-map.panTo(opt.ll);
+map.panTo(opt.mrk.getLatLng());
+GEvent.trigger(opt.mrk, "click");
 return true;
 }
