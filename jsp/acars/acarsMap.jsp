@@ -107,16 +107,17 @@ return true;
 <content:region id="main">
 <el:form action="acarsMap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
-<tr class="title caps">
- <td colspan="4"><content:airline /> LIVE ACARS MAP<span id="isLoading"></span>
-<span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void zoomTo(this)" /></span></td>
+<tr class="title">
+ <td colspan="2" class="caps"><content:airline /> LIVE ACARS MAP<span id="isLoading"></span></td>
+ <td colspan="2" class="right"><span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void zoomTo(this)" /></span></td>
 </tr>
 <tr>
  <td class="label">Map Options</td>
  <td class="data" colspan="3"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
-<el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" />&nbsp;
-<el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" />&nbsp;
-<el:box name="showRoute" idx="*" value="1" label="Show Flight Plan" checked="false" /></span></td>
+<el:box name="autoRefresh" idx="*" value="true" label="Automatically Refresh Map" checked="true" />&nbsp;
+<el:box name="showInfo" idx="*" value="true" label="Show Flight Data" checked="true" />&nbsp;
+<el:box name="showRoute" idx="*" value="true" label="Show Flight Plan" checked="false" />
+<el:box name="zoomTo" idx="*" value="true" label="Zoom to Pilot" checked="false" /></span></td>
 </tr>
 <tr>
  <td class="label">Aircraft Legend</td>

@@ -19,7 +19,10 @@ xmlreq.onreadystatechange = function() {
 	dcPositions.length = 0;
 	displayObject(getElement('userSelect'), false);
 	var cbo = document.forms[0].usrID;
-	cbo.options.length = 1;
+	if (cbo) {
+		selectedPilot = cbo.options[combo.selectedIndex].value;
+		cbo.options.length = 1;
+	}
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
@@ -54,10 +57,13 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Add the user ID
-		if (a.getAttribute("pilotID") != null) {
-			var o = new Option(a.getAttribute("pilotID"));
+		var id = a.getAttribute('pilotID');
+		if ((id != null) && (cbo != null)) {
+			var o = new Option(id);
 			o.mrk = mrk;  
 			cbo.add(o, null);
+			if (selectedPilot == id)
+				cbo.selectedIndex = (cbo.options.length - 1);
 		}
 
 		// Set the the click handler
@@ -95,10 +101,13 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Add the user ID
-		if (d.getAttribute("pilotID") != null) {
-			var o = new Option(d.getAttribute("pilotID") + " (Dispatcher)");
+		var id = d.getAttribute("pilotID");
+		if ((id != null) && (cbo != null)) {
+			var o = new Option(id + " (Dispatcher)", id);
 			o.mrk = mrk;  
 			cbo.add(o, null);
+			if (selectedPilot == id)
+				cbo.selectedIndex = (cbo.options.length - 1);
 		}
 
 		// Set the the click handler
@@ -121,7 +130,8 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Focus on the map
-	displayObject(getElement('userSelect'), (cbo.options.length > 1));
+	if (cbo)
+		displayObject(getElement('userSelect'), (cbo.options.length > 1));
 	if (isLoading)
 		isLoading.innerHTML = ' - ' + (ac.length + dc.length) + ' CONNECTIONS';
 
@@ -264,8 +274,12 @@ function zoomTo(combo)
 var opt = combo.options[combo.selectedIndex];
 if ((!opt) || (opt.mrk == null)) return false;
 
-// Zoom to the marker
-map.setZoom(9);
+// Check if we zoom or just pan
+var f = document.forms[0];
+if (f.zoomTo.checked)
+	map.setZoom(9);
+
+// Pan to the marker
 map.panTo(opt.mrk.getLatLng());
 GEvent.trigger(opt.mrk, "click");
 return true;
