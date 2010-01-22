@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Helper class to check wether content has been aded into this request.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -85,6 +85,14 @@ public class ContentHelper {
      */
     public static boolean isFirefox(PageContext ctx) {
         return (ctx.getRequest().getAttribute("browser$mozilla") != null);
+    }
+    
+    /**
+     * Detects if the browser is Mozilla Firefox.
+     * @return TRUE if the browser is Firefox 3.6, otherwise FALSE
+     */
+    public static boolean isFirefox36(PageContext ctx) {
+        return (ctx.getRequest().getAttribute("browser$ff36") != null);
     }
     
     /**

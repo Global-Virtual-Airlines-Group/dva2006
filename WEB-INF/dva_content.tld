@@ -193,6 +193,12 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>ff36</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
 			<name>opera</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class BrowserTypeFilter implements Filter {
 	private static final int MSIE8 = 3;
 	private static final int WEBKIT = 4;
 	private static final int OPERA = 5;
+	private static final int FF36 = 6;
 
 	private String _defaultCode;
 	private static final String[] MOZILLA_IDENT = { "Firefox", "Gecko" };
@@ -34,6 +35,7 @@ public class BrowserTypeFilter implements Filter {
 	private static final String[] MSIE_IDENT = { "MSIE" };
 	private static final String[] WEBKIT_IDENT = { "WebKit", "Chrome", "Safari" };
 	private static final String[] OPERA_IDENT = { "Opera" };
+	private static final String[] FF36_IDENT = { "Firefox/3.6" };
 
 	private static final int WINDOWS = 1;
 	private static final int MAC = 2;
@@ -68,6 +70,12 @@ public class BrowserTypeFilter implements Filter {
 		// Set request attributes based on the browser type
 		switch (getBrowserType(userAgent)) {
 		case MOZILLA:
+			req.setAttribute("browser$ff", Boolean.TRUE);
+			req.setAttribute("browser$mozilla", Boolean.TRUE);
+			break;
+			
+		case FF36:
+			req.setAttribute("browser$ff36", Boolean.TRUE);
 			req.setAttribute("browser$mozilla", Boolean.TRUE);
 			break;
 			
@@ -127,6 +135,12 @@ public class BrowserTypeFilter implements Filter {
 		for (int x = 0; x < WEBKIT_IDENT.length; x++) {
 			if (userAgent.indexOf(WEBKIT_IDENT[x]) != -1)
 				return WEBKIT;
+		}
+		
+		// Check for Gecko/Firefox
+		for (int x = 0; x < FF36_IDENT.length; x++) {
+			if (userAgent.indexOf(FF36_IDENT[x]) != -1)
+				return FF36;
 		}
 
 		// Check for Gecko/Firefox
