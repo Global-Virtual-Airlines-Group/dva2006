@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -14,13 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge Draft Flight Reports from the database.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 1.0
  */
 
 public class DraftPIREPPurgeTask extends Task {
 
-	private static final Collection<Integer> DRAFT = Collections.singleton(new Integer(FlightReport.DRAFT));
+	private static final Collection<Integer> DRAFT = Collections.singleton(Integer.valueOf(FlightReport.DRAFT));
 
 	/**
 	 * Initializes the Task.
@@ -38,7 +38,7 @@ public class DraftPIREPPurgeTask extends Task {
 		int purgeDays = SystemData.getInt("users.pirep.draft_purge", 30);
 		Calendar cld = Calendar.getInstance();
 		cld.add(Calendar.DAY_OF_MONTH, (purgeDays * -1));
-		log.info("Purging draft Flight Reports before " + cld.getTime());
+		log.warn("Purging draft Flight Reports before " + cld.getTime());
 
 		try {
 			Connection con = ctx.getConnection();
@@ -56,7 +56,7 @@ public class DraftPIREPPurgeTask extends Task {
 			SetFlightReport wdao = new SetFlightReport(con);
 			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
-				log.info("Deleting flight " + fr.getFlightCode() + " Date=" + fr.getDate());
+				log.warn("Deleting flight " + fr.getFlightCode() + " Date=" + fr.getDate());
 				wdao.delete(fr.getID());
 			}
 		} catch (DAOException de) {
