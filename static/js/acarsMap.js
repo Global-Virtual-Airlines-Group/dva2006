@@ -20,7 +20,7 @@ xmlreq.onreadystatechange = function() {
 	displayObject(getElement('userSelect'), false);
 	var cbo = document.forms[0].usrID;
 	if (cbo) {
-		selectedPilot = cbo.options[combo.selectedIndex].value;
+		selectedPilot = cbo.options[cbo.selectedIndex].value;
 		cbo.options.length = 1;
 	}
 
@@ -276,7 +276,7 @@ if ((!opt) || (opt.mrk == null)) return false;
 
 // Check if we zoom or just pan
 var f = document.forms[0];
-if (f.zoomTo.checked)
+if (f.zoomToPilot.checked)
 	map.setZoom(9);
 
 // Pan to the marker
