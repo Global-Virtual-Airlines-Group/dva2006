@@ -55,7 +55,7 @@ return true;
 <!-- Touchdown Speed statistics -->
 <el:table className="form" space="default" pad="default">
 <tr class="title">
- <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${pilot.ACARSLegs}" /> LANDINGS</td>
+ <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${pilot.ACARSLegs}" /> LANDINGS USING ACARS</td>
 </tr>
 <c:set var="hasBar" value="false" scope="page" />
 <c:forEach var="vs" items="${fn:keys(landingStats)}">
