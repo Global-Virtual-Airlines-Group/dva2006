@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to filter content based on the browser type.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -22,6 +22,7 @@ public class BrowserFilterTag extends TagSupport {
 	private boolean _showMoz;
 	private boolean _showWebKit;
 	private boolean _showOpera;
+	private boolean _showFF36;
 	
 	/**
 	 * Marks this content as visible to all Internet Explorer users.
@@ -86,7 +87,16 @@ public class BrowserFilterTag extends TagSupport {
 	 * @param showMoz TRUE if the content should be shown to Mozilla users, otherwise FALSE
 	 */
 	public void setMozilla(boolean showMoz) {
+		_showFF36 = showMoz;
 		_showMoz = showMoz;
+	}
+	
+	/**
+	 * Marks this content as visible to Firefox 3.6 users.
+	 * @param showFF36 TRUE if the content should be shown to Firefox 3.6 users, otherwise FALSE
+	 */
+	public void setFf36(boolean showFF36) {
+		_showFF36 = showFF36;
 	}
 	
 	/**
@@ -99,6 +109,8 @@ public class BrowserFilterTag extends TagSupport {
 		else if (ContentHelper.isIE7(pageContext) && _showIE7)
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isIE8(pageContext) && _showIE8)
+			return EVAL_BODY_INCLUDE;
+		else if (ContentHelper.isFirefox36(pageContext) && _showFF36)
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
 			return EVAL_BODY_INCLUDE;
@@ -129,6 +141,7 @@ public class BrowserFilterTag extends TagSupport {
 		_showIE7 = false;
 		_showIE8 = false;
 		_showMoz = false;
+		_showFF36 = false;
 		_showWebKit = false;
 		_showOpera = false;
 	}
