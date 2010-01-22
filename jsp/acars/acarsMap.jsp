@@ -117,7 +117,7 @@ return true;
 <el:box name="autoRefresh" idx="*" value="true" label="Automatically Refresh Map" checked="true" />&nbsp;
 <el:box name="showInfo" idx="*" value="true" label="Show Flight Data" checked="true" />&nbsp;
 <el:box name="showRoute" idx="*" value="true" label="Show Flight Plan" checked="false" />
-<el:box name="zoomTo" idx="*" value="true" label="Zoom to Pilot" checked="false" /></span></td>
+<el:box name="zoomToPilot" idx="*" value="true" label="Zoom to Pilot" checked="false" /></span></td>
 </tr>
 <tr>
  <td class="label">Aircraft Legend</td>
