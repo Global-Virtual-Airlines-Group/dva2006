@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -8,12 +8,14 @@ import org.deltava.beans.Pilot;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 2.6
+ * @version 2.8
  * @since 2.1
  */
 
@@ -56,6 +58,12 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			Pilot p = pdao.get(userID);
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + userID);
+			
+			// Load legs
+			if (p.getACARSLegs() < 0) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			}
 			
 			// Get the Flight Report statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
