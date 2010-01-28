@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator X.
  * @author Luke
- * @version 2.4
+ * @version 2.8
  * @since 2.4
  */
 
@@ -22,6 +22,7 @@ public class FSXGenerator extends FlightPlanGenerator {
 	 * @param waypoints a Collection of waypoints
 	 * @return the generated flight plan file
 	 */
+	@Override
 	public byte[] generate(Collection<NavigationDataBean> waypoints) {
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -38,6 +39,10 @@ public class FSXGenerator extends FlightPlanGenerator {
 		ctx.println("destination_id=" + _aA.getICAO() + ", " + GeoUtils.formatFS9(_aA) + ", " + StringUtils.format(_aA.getAltitude(), "000000.00") + ",");
 		ctx.println("departure_name=" + _aD.getName());
 		ctx.println("destination_name=" + _aA.getName());
+		if (_sid != null)
+			ctx.println("sid=" + _sid.getCode());
+		if (_star != null)
+			ctx.println("star=" + _star.getCode());
 		
 		// Write the route entries
 		int waypointIdx = 0;
