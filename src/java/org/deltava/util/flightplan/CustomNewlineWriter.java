@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.io.*;
 /**
  * A PrintWriter to use custom linefeed characters. 
  * @author Luke
- * @version 2.4
+ * @version 2.8
  * @since 2.4
  */
 
@@ -19,7 +19,7 @@ class CustomNewlineWriter extends PrintWriter {
 	 * @param out the output stream to write to
 	 * @param newLine the line break string
 	 */
-	public CustomNewlineWriter(OutputStream out, String newLine) {
+	CustomNewlineWriter(OutputStream out, String newLine) {
 		super(out);
 		_newLine = newLine;
 	}

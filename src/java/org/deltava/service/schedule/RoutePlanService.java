@@ -47,6 +47,19 @@ public class RoutePlanService extends WebService {
 		else if (aA == null)
 			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
 		
+		// Get the Flight Plan generator
+		FlightPlanGenerator fpgen = null;
+		if ("FSX".equals(ctx.getParameter("simVersion")))
+			fpgen = new FSXGenerator();
+		else if ("XP9".equals(ctx.getParameter("simVersion")))
+			fpgen = new XP9Generator();
+		else
+			fpgen = new FS9Generator();
+		
+		// Update the flight plan
+		fpgen.setAirports(aD, aA);
+		fpgen.setCruiseAltitude(alt);
+		
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		routePoints.add(new AirportLocation(aD));
 		try {
@@ -54,8 +67,10 @@ public class RoutePlanService extends WebService {
 			
 			// Load the SID
 			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.SID, ctx.getParameter("sid"));
-			if (sid != null)
+			if (sid != null) {
 				routePoints.addAll(sid.getWaypoints());
+				fpgen.setSID(sid);
+			}
 			
 			// Add the route waypoints
 			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
@@ -65,8 +80,10 @@ public class RoutePlanService extends WebService {
 			
 			// Load the STAR
 			TerminalRoute star = dao.getRoute(aA, TerminalRoute.STAR, ctx.getParameter("star"));
-			if (star != null)
+			if (star != null) {
 				routePoints.addAll(star.getWaypoints());
+				fpgen.setSTAR(star);
+			}
 			
 			// Add the destination airport
 			routePoints.add(new AirportLocation(aA));
@@ -75,18 +92,6 @@ public class RoutePlanService extends WebService {
 		} finally {
 			ctx.release();
 		}
-		
-		// Get the Flight Plan generator
-		FlightPlanGenerator fpgen = null;
-		boolean isFSX = "FSX".equals(ctx.getParameter("simVersion"));
-		if (isFSX)
-			fpgen = new FSXGenerator();
-		else
-			fpgen = new FS9Generator();
-		
-		// Write the flight plan
-		fpgen.setAirports(aD, aA);
-		fpgen.setCruiseAltitude(alt);
 		
 		// Flush the output buffer
 		try {

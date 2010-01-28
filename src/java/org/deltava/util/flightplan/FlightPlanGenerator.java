@@ -1,15 +1,15 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.util.Collection;
 
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.navdata.NavigationDataBean;
 
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 2.4
+ * @version 2.8
  * @since 2.4
  */
 
@@ -31,6 +31,16 @@ public abstract class FlightPlanGenerator {
 	protected String _altitude;
 	
 	/**
+	 * The standard departure route.
+	 */
+	protected TerminalRoute _sid;
+	
+	/**
+	 * The standard terminal arrival route.
+	 */
+	protected TerminalRoute _star;
+	
+	/**
 	 * Sets the departure and arrival Airports for the flight.
 	 * @param aD the departure Airport
 	 * @param aA the arrival Airport
@@ -46,6 +56,22 @@ public abstract class FlightPlanGenerator {
 	 */
 	public void setCruiseAltitude(String alt) {
 		_altitude = alt;
+	}
+	
+	/**
+	 * Updates the deprature route.
+	 * @param sid the departure route bean
+	 */
+	public void setSID(TerminalRoute sid) {
+		_sid = sid;
+	}
+	
+	/**
+	 * Updates the arrival route.
+	 * @param star the arrival route bean
+	 */
+	public void setSTAR(TerminalRoute star) {
+		_star = star;
 	}
 
 	/**
