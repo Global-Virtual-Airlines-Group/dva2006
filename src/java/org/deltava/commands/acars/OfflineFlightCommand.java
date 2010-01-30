@@ -360,10 +360,12 @@ public class OfflineFlightCommand extends AbstractCommand {
 			SetACARSData awdao = new SetACARSData(con);
 			awdao.createConnection(ce);
 			awdao.createFlight(inf);
+			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			awdao.writeRunways(inf.getID(), rD, rA);
-			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
+			if (inf.isDispatchPlan())
+				awdao.writeDispatch(inf.getID(), inf.getDispatcherID(), inf.getRouteID());
 			
 			// Dump the positions
 			if (!CollectionUtils.isEmpty(flight.getPositions()))
