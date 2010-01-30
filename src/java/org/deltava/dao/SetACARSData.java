@@ -94,6 +94,36 @@ public class SetACARSData extends DAO {
 	}
 	
 	/**
+	 * Flags a flight after the fact as being plotted by a Dispatcher.
+	 * @param flightID the Flight ID
+	 * @param dispatcherID the Dispatcher's database ID (or zero for auto-dispatch)
+	 * @param routeID the Route's database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeDispatch(int flightID, int dispatcherID, int routeID) throws DAOException {
+		try {
+			startTransaction();
+			
+			// Write the route
+			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_DISPATCH (ID, ROUTE_ID, DISPATCHER_ID) VALUES (?, ?, ?)");
+			_ps.setInt(1, flightID);
+			_ps.setInt(2, routeID);
+			_ps.setInt(3, dispatcherID);
+			executeUpdate(0);
+			
+			// Update the flight info
+			prepareStatementWithoutLimits("UPDATE acars.FLIGHTS SET DISPATCH_PLAN=? WHERE (ID=?) LIMIT 1");
+			_ps.setBoolean(1, true);
+			_ps.setInt(2, flightID);
+			executeUpdate(0);
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Writes the runways used on a Flight to the database.
 	 * @param flightID the Flight ID
 	 * @param rwyD the departure Runway
