@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 2.8
  * @since 2.4
  */
 
@@ -101,6 +101,9 @@ public class OfflineFlightParser {
 		inf.setFSVersion(StringUtils.parse(ie.getChildTextTrim("fs_ver"), 2004));
 		inf.setOffline(Boolean.valueOf(ie.getChildTextTrim("offline")).booleanValue());
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
+		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
+		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
+		inf.setRouteID(StringUtils.parse(ie.getChildTextTrim("dispatchRouteID"), 0));
 		result.setSID(ie.getChildTextTrim("sid"));
 		result.setSTAR(ie.getChildTextTrim("star"));
 		result.setInfo(inf);
@@ -113,7 +116,7 @@ public class OfflineFlightParser {
 				Element pe = (Element) i.next();
 				String dt = pe.getChildTextTrim("date");
 				if (dt.indexOf('.') == -1)
-					dt = dt + ".000";
+					dt += ".000";
 
 				// Build a position entry
 				try {
@@ -153,6 +156,7 @@ public class OfflineFlightParser {
 		// Build the PIREP entry
 		ACARSFlightReport afr = new ACARSFlightReport(al, flight, leg);
 		afr.setAttribute(FlightReport.ATTR_ACARS, true);
+		afr.setAttribute(FlightReport.ATTR_DISPATCH, inf.isDispatchPlan());
 		afr.setFSVersion(inf.getFSVersion());
 		afr.setStatus(FlightReport.SUBMITTED);
 		afr.setSubmittedOn(new Date());
