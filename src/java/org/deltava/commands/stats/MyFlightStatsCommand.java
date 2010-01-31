@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 2.8
+ * @version 3.0
  * @since 2.1
  */
 
@@ -67,7 +67,7 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			
 			// Get the Flight Report statistics
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
-			vc.setResults(stdao.getPIREPStatistics(userID, labelType, vc.getSortType(), true));
+			vc.setResults(stdao.getPIREPStatistics(userID, labelType, vc.getSortType(), true, false));
 			
 			// Get the DAO and the landing statistics
 			stdao.setDayFilter(daysBack);

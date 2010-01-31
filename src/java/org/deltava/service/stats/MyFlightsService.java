@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -17,11 +17,13 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to an Ampie Flash chart.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 2.1
  */
 
 public class MyFlightsService extends WebService {
+	
+	private static final int MAX_ENTRIES = 8;
 
 	/**
 	 * Executes the Web Service.
@@ -52,7 +54,7 @@ public class MyFlightsService extends WebService {
 		Collection<FlightStatsEntry> results = null;
 		try {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			results = stdao.getPIREPStatistics(userID, labelType, sortType, true);
+			results = stdao.getPIREPStatistics(userID, labelType, sortType, true, false);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -64,8 +66,15 @@ public class MyFlightsService extends WebService {
 		Element re = new Element("pie");
 		doc.setRootElement(re);
 		
+		// Create element for "everything else"
+		Element ee = new Element("slice");
+		ee.setAttribute("title", "All Others");
+		ee.setAttribute("alpha", "75");
+		
 		// Create the entries
+		int entryCount = 0; double eeValue = 0;
 		for (FlightStatsEntry entry : results) {
+			entryCount++;
 			Element e = new Element("slice");
 			e.setAttribute("title", entry.getLabel());
 			e.setAttribute("alpha", "75");
@@ -73,39 +82,68 @@ public class MyFlightsService extends WebService {
 			// Set value
 			switch (sortCode) {
 				case 1:
-					e.setText(String.valueOf(entry.getMiles()));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(String.valueOf(entry.getMiles()));
+					else
+						eeValue += entry.getMiles();
 					break;
 					
 				case 2:
-					e.setText(StringUtils.format(entry.getHours(), "##0.0"));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(StringUtils.format(entry.getHours(), "##0.0"));
+					else
+						eeValue += entry.getHours();
 					break;
 					
 				case 3:
-					e.setText(StringUtils.format(entry.getAvgHours(), "##0.0"));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(StringUtils.format(entry.getAvgHours(), "##0.0"));
+					else
+						eeValue += entry.getAvgHours();
 					break;
 					
 				case 4:
-					e.setText(StringUtils.format(entry.getAvgMiles(), "##0.0"));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(StringUtils.format(entry.getAvgMiles(), "##0.0"));
+					else
+						eeValue += entry.getAvgMiles();
 					break;
 					
 				case 6:
-					e.setText(String.valueOf(entry.getACARSLegs()));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(String.valueOf(entry.getACARSLegs()));
+					else
+						eeValue += entry.getACARSLegs();
 					break;
 					
 				case 7:
-					e.setText(String.valueOf(entry.getOnlineLegs()));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(String.valueOf(entry.getOnlineLegs()));
+					else
+						eeValue += entry.getOnlineLegs();
 					break;
 					
 				case 8:
-					e.setText(String.valueOf(entry.getHistoricLegs()));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(String.valueOf(entry.getHistoricLegs()));
+					else
+						eeValue += entry.getHistoricLegs();
 					break;
 
 				default:
-					e.setText(String.valueOf(entry.getLegs()));
+					if (entryCount <= MAX_ENTRIES)
+						e.setText(String.valueOf(entry.getLegs()));
+					else
+						eeValue += entry.getLegs();
 			}
 
-			re.addContent(e);
+			if (entryCount <= MAX_ENTRIES)
+				re.addContent(e);
 		}
+		
+		// Add the "everything else" entry
+		ee.setText(String.valueOf(eeValue));
+		re.addContent(ee);
 
 		// Dump the XML to the output stream
 		try {

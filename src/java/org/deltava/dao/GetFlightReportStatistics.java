@@ -386,10 +386,11 @@ public class GetFlightReportStatistics extends DAO {
 	 * @param groupBy the &quot;GROUP BY&quot; column name
 	 * @param orderBy the &quot;ORDER BY&quot; column name
 	 * @param descSort TRUE if a descending sort, otherwise FALSE
+	 * @param activeOnly TRUE if active pilots only, otherwise FALSE
 	 * @return a List of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort) throws DAOException {
+	public List<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort, boolean activeOnly) throws DAOException {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -409,6 +410,11 @@ public class GetFlightReportStatistics extends DAO {
 		
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
+		if (activeOnly && sqlBuf.toString().contains("P."))
+			sqlBuf.append("AND (P.STATUS=?) ");
+		else
+			activeOnly = false;
+		
 		sqlBuf.append("GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(orderBy);
 		if (descSort)
@@ -416,14 +422,17 @@ public class GetFlightReportStatistics extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.ATTR_ACARS);
-			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(3, FlightReport.ATTR_HISTORIC);
-			_ps.setInt(4, FlightReport.ATTR_DISPATCH);
-			_ps.setInt(5, FlightReport.OK);
+			int param = 0;
+			_ps.setInt(++param, FlightReport.ATTR_ACARS);
+			_ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(++param, FlightReport.ATTR_HISTORIC);
+			_ps.setInt(++param, FlightReport.ATTR_DISPATCH);
+			_ps.setInt(++param, FlightReport.OK);
 			if (pilotID != 0)
-				_ps.setInt(6, pilotID);
-
+				_ps.setInt(++param, pilotID);
+			if (activeOnly)
+				_ps.setInt(++param, Pilot.ACTIVE);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
