@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display sorted Flight Report statistics.
  * @author Luke
- * @version 2.3
+ * @version 3.0
  * @since 1.0
  */
 
@@ -38,13 +38,14 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 		else if (GROUP_CODE[6].equals(labelType))
 			labelType = MONTH_SQL;
 		
+		boolean activeOnly = Boolean.valueOf(ctx.getParameter("activeOnly")).booleanValue();
 		try {
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(ctx.getConnection());
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 
 			// Save the statistics in the request
-			List<FlightStatsEntry> results = dao.getPIREPStatistics(0, labelType, vc.getSortType(), true); 
+			List<FlightStatsEntry> results = dao.getPIREPStatistics(0, labelType, vc.getSortType(), true, activeOnly); 
 			vc.setResults(results);
 			
 			// Save pilot ID flag
