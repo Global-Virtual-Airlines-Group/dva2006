@@ -67,6 +67,12 @@ return true;
  <td colspan="${cspan}" class="data">${pilot.ACARSRestrictionName}</td>
 </tr>
 </c:if>
+<c:if test="${empty pilot.pilotCode}">
+<tr>
+ <td class="label">ACARS User ID</td>
+ <td colspan="${cspan}" class="data"><i>No Pilot ID assigned.</i> Use <span class="bld">${pilot.ID}</span> as a temporary ACARS User ID.</td>
+</tr>
+</c:if>
 <c:if test="${access.canChangeRoles && (!empty pilot.roles)}">
 <tr>
  <td class="label">Security Roles</td>
