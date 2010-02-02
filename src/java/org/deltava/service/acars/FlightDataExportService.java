@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ public class FlightDataExportService extends WebService {
 
 		// Write the CSV header
 		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-		ctx.println("WindSpeed,WindHdg,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,WARN");
+		ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,WARN");
 
 		// Format the ACARS data
 		for (Iterator<RouteEntry> i = routeData.iterator(); i.hasNext();) {
@@ -88,6 +88,8 @@ public class FlightDataExportService extends WebService {
 			ctx.print(StringUtils.format(entry.getWindSpeed(), "##0"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getWindHeading(), "000"));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getVisibility(), "#0.00"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getFuelFlow(), "###0"));
 			ctx.print(",");
@@ -128,13 +130,5 @@ public class FlightDataExportService extends WebService {
 
 		// Write success code
 		return SC_OK;
-	}
-
-	/**
-	 * Returns if the Web Service requires authentication.
-	 * @return TRUE
-	 */
-	public final boolean isSecure() {
-		return true;
 	}
 }
