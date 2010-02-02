@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -36,6 +36,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	private double _mach;
 	private int _wSpeed;
 	private int _wHdg;
+	private double _viz;
 	private int _fuelFlow;
 	private int _flaps;
 	private int _flags;
@@ -203,6 +204,14 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	public int getWindHeading() {
 		return _wHdg;
 	}
+	
+	/**
+	 * Returns the visibility.
+	 * @return the visibility in miles
+	 */
+	public double getVisibility() {
+		return _viz;
+	}
 
 	/**
 	 * Returns the aircraft's airspeed.
@@ -344,12 +353,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @see RouteEntry#setAOA(double)
 	 */
 	public void setAOA(double aoa) {
-		if (aoa < -100)
-			_aoa = -99.9;
-		else if (aoa > 100)
-			_aoa = 99.9;
-		else
-			_aoa = aoa;
+		_aoa = Math.max(-99.9, Math.min(99.9, aoa));
 	}
 
 	/**
@@ -364,14 +368,10 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	/**
 	 * Updates the aircraft's pitch angle.
 	 * @param p the pitch in degrees
-	 * @throws IllegalArgumentException if p is < -90 or > 90
 	 * @see RouteEntry#getPitch()
 	 */
 	public void setPitch(double p) {
-		if ((p < -90) || (p > 90))
-			throw new IllegalArgumentException("Pitch angle cannot be < -90 or > 90 degrees");
-
-		_pitch = p;
+		_pitch = Math.max(-90, Math.min(90, p));
 	}
 
 	/**
@@ -558,8 +558,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @see RouteEntry#setWindSpeed(int)
 	 */
 	public void setWindSpeed(int speed) {
-		if (speed >= 0)
-			_wSpeed = speed;
+		_wSpeed = Math.max(0, speed);
 	}
 
 	/**
@@ -573,6 +572,14 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 			_wHdg = hdg;
 	}
 
+	/**
+	 * Sets the visibility.
+	 * @param viz the visibility in miles
+	 */
+	public void setVisibility(double viz) {
+		_viz = Math.max(0, viz);
+	}
+	
 	/**
 	 * Marks this route entry as having a notable flight parameter.
 	 * @return TRUE if the entry should be noted, otherwise FALSE
