@@ -72,7 +72,7 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE LIVERY PROFILE" />
-<c:if test="${!empty livery}"> <el:cmdbutton url="liverydelete" link="${livery}" label="DELETE LIVERY" /></c:if></td>
+<c:if test="${!empty livery}"> <el:cmdbutton url="liverydelete" linkID="${livery}" label="DELETE LIVERY" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
