@@ -484,7 +484,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					}
 					
 					// Check the STAR
-					if ((info.getSID() == null) && (wps.size() > 2)) {
+					if ((info.getSTAR() == null) && (wps.size() > 2)) {
 						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1), wps.get(wps.size() - 2), info.getRunwayA());
 						if (star != null) {
 							wps.remove(wps.size() - 1);
