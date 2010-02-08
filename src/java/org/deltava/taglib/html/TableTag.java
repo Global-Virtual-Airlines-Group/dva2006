@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2010 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support HTML tables and options not rendered properly in CSS.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -29,11 +29,10 @@ public class TableTag extends ElementTag {
      * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setSpace(String cSpacing) {
-        if (DEFAULT.equalsIgnoreCase(cSpacing)) {
+        if (DEFAULT.equalsIgnoreCase(cSpacing))
             setNumericAttr("cellspacing", SystemData.getInt("html.table.spacing", 0), 0);
-        } else {
+        else
             setNumericAttr("cellspacing", Integer.parseInt(cSpacing), 0);
-        }
     }
 
     /**
@@ -42,11 +41,10 @@ public class TableTag extends ElementTag {
      * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setPad(String cPadding) {
-        if (DEFAULT.equalsIgnoreCase(cPadding)) {
+        if (DEFAULT.equalsIgnoreCase(cPadding))
             setNumericAttr("cellpadding", SystemData.getInt("html.table.padding", 0), 0);
-        } else {
+        else
             setNumericAttr("cellpadding", Integer.parseInt(cPadding), 0);
-        }
     }
     
     /**
@@ -55,6 +53,14 @@ public class TableTag extends ElementTag {
      */
     public void setWidth(String width) {
         _data.setAttribute("width", width);
+    }
+    
+    /**
+     * Associates a CSS style with this table.
+     * @param style the CSS
+     */
+    public void setStyle(String style) {
+    	_data.setAttribute("style", style);
     }
 
     /**
@@ -80,10 +86,10 @@ public class TableTag extends ElementTag {
             _out.print(_data.close());
         } catch (Exception e) {
             throw new JspException(e);
+        } finally {
+        	release();	
         }
         
-        // Clear state and return
-        release();
         return EVAL_PAGE;
     }
 }
