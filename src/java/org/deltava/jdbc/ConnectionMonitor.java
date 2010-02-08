@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A daemon to monitor JDBC connections.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -91,7 +91,7 @@ class ConnectionMonitor implements java.io.Serializable, Runnable {
 					log.debug("Skipping inactive connection " + cpe);
 			} else if (cpe.inUse() && isStale) {
 				log.error("Releasing stale Connection " + cpe, cpe.getStackInfo());
-				_pool.release(cpe.getConnection());
+				_pool.release(cpe.getWrapper());
 			} else if (cpe.isDynamic() && !cpe.inUse()) {
 				if (isStale)
 					log.warn("Releasing dynamic Connection " + cpe, cpe.getStackInfo());

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -167,12 +167,22 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 	/**
 	 * Returns the connection object behind this ConnectionPoolEntry. This is package protected since it should only be
-	 * accessed by the equals() method or the connection pool itself
+	 * accessed by the equals() method or the connection pool itself.
 	 * @return the JDBC Connection
 	 * @see ConnectionPoolEntry#equals(Object)
 	 */
 	Connection getConnection() {
 		return _c.getConnection();
+	}
+	
+	/**
+	 * Returns the connection wrapper behind this ConnectionPoolEntry. This is package protected since it should only be
+	 * accessed by the conection monitor
+	 * @return the ConnectionWrapper
+	 * @see ConnectionMonitor#checkPool()
+	 */
+	Connection getWrapper() {
+		return _c;
 	}
 
 	/**
