@@ -79,7 +79,6 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </c:if>
 </c:forEach>
 </el:table>
-<br />
 </c:if>
 <c:if test="${!empty latestNews}">
 <!-- Latest News -->
@@ -95,7 +94,6 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </tr>
 </c:forEach>
 </el:table>
-<br />
 </c:if>
 <c:if test="${!empty acarsPool}">
 <content:filter roles="HR"><c:set var="isHR" value="${true}" scope="page" /></content:filter>
@@ -129,8 +127,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </c:if>
 <c:if test="${!empty centuryClub}">
 <!-- Latest Century Club members -->
-<center><div style="width:510px;">
-<el:table className="view" space="default" pad="default">
+<el:table className="view mid" space="default" pad="default" style="width:510px;">
 <tr class="title caps left">
  <td colspan="2">OUR NEWEST CENTURY CLUB MEMBERS</td>
 </tr>
@@ -142,12 +139,10 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </tr>
 </c:forEach>
 </el:table>
-</div></center>
 </c:if>
 <c:if test="${!empty promotions}">
 <!-- Latest Pilot Promotions -->
-<center><div style="width:510px;">
-<el:table className="view" space="default" pad="default">
+<el:table className="view mid" space="default" pad="default" style="width:510px;">
 <tr class="title caps left">
  <td colspan="2"><content:airline /> CONGRATULATES</td>
 </tr>
@@ -159,7 +154,6 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </tr>
 </c:forEach>
 </el:table>
-</div></center>
 </c:if>
 <c:if test="${!empty futureEvents}">
 <!-- Future Online Events -->
@@ -186,33 +180,30 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 <c:if test="${!empty toLand}">
 <!-- Latest Takeoffs/Landings -->
-<center><div style="width:530px;">
-<el:table className="view" space="default" pad="default">
+<el:table className="view mid" space="default" pad="default" style="width:790px;">
 <tr class="title caps left">
- <td colspan="3">LATEST <content:airline /> FLIGHT DEPARTURES AND ARRIVALS</td>
+ <td colspan="3">LATEST <content:airline /> ACARS FLIGHT DEPARTURES AND ARRIVALS</td>
 </tr>
 <c:forEach var="tl" items="${fn:keys(toLand)}">
 <c:set var="info" value="${toLand[tl]}" scope="page" />
 <tr>
- <td class="priB">${info.flightCode}</td>
- <td class="secB">${info.equipmentType}</td>
+ <td class="priB" style="width:115px;">${info.flightCode}</td>
+ <td class="secB" style="width:145px;">${info.equipmentType}</td>
 <c:if test="${tl.isTakeoff}">
  <td class="left">Departed from ${info.airportD.name} (<fmt:airport airport="${info.airportD}" />)
  at <fmt:date date="${tl.date}" /></td>
 </c:if>
 <c:if test="${!tl.isTakeoff}">
- <td class="left">Arrived at ${info.airportA.name} (<fmt:airport airport="${info.airportAD}" />)
+ <td class="left">Arrived at ${info.airportA.name} (<fmt:airport airport="${info.airportA}" />)
  at <fmt:date date="${tl.date}" /></td>
 </c:if>
 </tr>
 </c:forEach>
 </el:table>
-</div></center>
 </c:if>
 <c:if test="${!empty latestPilots}">
 <!-- Latest Pilot Hires -->
-<center><div style="width:530px;">
-<el:table className="view" space="default" pad="default">
+<el:table className="view mid" space="default" pad="default" style="width:530px;">
 <tr class="title caps left">
  <td colspan="2"><content:airline /> WELCOMES OUR NEWEST PILOTS</td>
 </tr>
@@ -223,9 +214,8 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </tr>
 </c:forEach>
 </el:table>
-</div></center>
-<br />
 </c:if>
+<br />
 If you have questions or comments, please direct them to our Corporate Offices at 
 <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
 <br />
