@@ -156,7 +156,7 @@ public class HomeCommand extends AbstractCommand {
 							toLand.put(tl, fl);
 					}
 					
-					ctx.setAttribute("acarsTOLAND", toLand, REQUEST);
+					ctx.setAttribute("toLand", toLand, REQUEST);
 					break;
 
 				// Latest Hires

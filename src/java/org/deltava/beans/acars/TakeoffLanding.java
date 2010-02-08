@@ -51,4 +51,12 @@ public class TakeoffLanding extends DatabaseBean {
 	public void setDate(Date dt) {
 		_eventTime = dt;
 	}
+	
+    public int hashCode() {
+    	return (getHexID() + _isTakeoff).hashCode();
+    }
+    
+    public boolean equals(Object o) {
+    	return (o instanceof TakeoffLanding) && (compareTo(o) == 0) && (_isTakeoff == (((TakeoffLanding) o)._isTakeoff)); 
+    }
 }
