@@ -1,77 +1,82 @@
 /* Cascading Style Sheet for Table Views */
 
-TABLE.view {
+table.view {
 	width: 100%;
 }
 
-TABLE.view TR.title {
+table.mid {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+table.view tr.title {
 	font-size: 9pt;
 	background-color: #0000A1;
-	font-family: Tahoma, Verdana;
+	font-family: tahoma, verdana;
 	vertical-align: middle;
 	color: #ffffff;
 	font-weight: bold;
 }
 
-TABLE.view TR {
+table.view tr {
 	font-size: 9pt;
-	background-color: #EFEFEF;
-	font-family: Tahoma, Verdana;
+	background-color: #efefef;
+	font-family: tahoma, verdana;
 	vertical-align: middle;
 	text-align: center;
 }
 
-TD.priB {
-	background-color: #0000A1;
-	color: #FFFFFF;
+td.priB {
+	background-color: #0000a1;
+	color: #ffffff;
 	font-weight: bold;
 }
 
-TD.secB {
+td.secB {
 	background-color: #008080;
-	color: #FFFFFF;
+	color: #ffffff;
 	font-weight: bold;
 }
 
-TD.def {
-	background-color: #EFEFEF;
+td.def {
+	background-color: #efefef;
 	color: #000000;
 }
 
 /* Table row classes for view legends */
-TABLE.view *.opt1 {
-	background-color: #EFEFBF;
+table.view *.opt1 {
+	background-color: #efFefbf;
 }
 
-TABLE.view *.opt2 {
-	background-color: #A0FFD8;
+table.view *.opt2 {
+	background-color: #a0ffd8;
 }
 
-TABLE.view *.opt3 {
-	background-color: #B0E0FF;
+table.view *.opt3 {
+	background-color: #b0e0ff;
 }
 
-TABLE.view *.opt4 {
-	background-color: #C8C0FF;
+table.view *.opt4 {
+	background-color: #c8c0ff;
 }
 
-TABLE.view *.warn {
-	background-color: #FFEFC0;
+table.view *.warn {
+	background-color: #ffefc0;
 }
 
-TABLE.view *.err {
-	background-color: #FFC0C0;
+table.view *.err {
+	background-color: #ffc0c0;
 }
 
-*.title :link, *.title :visited, *.title A {
+*.title :link, *.title :visited, *.title a {
 	font-size: 9pt;	
-	font-family: Tahoma, Verdana;
+	font-family: tahoma, verdana;
 	font-weight: bold;
 	text-decoration: underline;
-	color: #FFFFFF;
+	color: #ffffff;
 }
 
-TABLE.view TR :link, TABLE.view TR :visited {
+table.view tr :link, table.view tr :visited {
 	color: inherit;
 	text-decoration: none;
 }
