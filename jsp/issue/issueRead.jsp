@@ -56,7 +56,7 @@ return true;
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><el:profile location="${authorLoc}" className="bld plain">${author.name}</el:profile><c:if test="${!empty pilot.pilotCode}"> <b>(${author.pilotCode})</b></c:if>
+ <td class="data"><el:profile location="${authorLoc}" className="bld plain">${author.name}</el:profile><c:if test="${!empty author.pilotCode}"> <b>(${author.pilotCode})</b></c:if>
  on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
