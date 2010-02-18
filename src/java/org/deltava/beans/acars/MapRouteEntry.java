@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	private String _flightNumber;
 	private Airport _airportD;
 	private Airport _airportA;
+	private OnlineNetwork _network;
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
 
@@ -52,6 +53,10 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	
 	public void setAirportA(Airport a) {
 		_airportA = a;
+	}
+	
+	public void setNetwork(OnlineNetwork network) {
+		_network = network;
 	}
 
 	public final String getIconColor() {
@@ -94,7 +99,14 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(_airportA.getName());
 		buf.append(" (");
 		buf.append(_airportA.getICAO());
-		buf.append(")<br /><br />");
+		buf.append(")<br />");
+		if (_network != null) {
+			buf.append("Flight operated online using <span class=\"sec bld caps\">");
+			buf.append(_network.toString());
+			buf.append("</span><br />");
+		}
+		
+		buf.append("<br />");
 		buf.append(super.getInfoBox());
 		return buf.toString();
 	}
