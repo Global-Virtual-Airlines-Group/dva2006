@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Schedule Task to automatically release Flight Assignments.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class AssignmentPurgeTask extends Task {
 	protected void execute(TaskContext ctx) {
 
 		// Get the inactivity cutoff time
-		int inactiveDays = SystemData.getInt("users.inactive_assign");
+		int inactiveDays = SystemData.getInt("users.pirep.assign_purge", 14);
 		Calendar cld = Calendar.getInstance();
 		cld.add(Calendar.DATE, inactiveDays * -1);
 		log.info("Executing");
@@ -62,7 +62,7 @@ public class AssignmentPurgeTask extends Task {
 						log.warn("Deleting Assignment " + a.getID() + " reserved by " + usr.getName());
 						wdao.delete(a);
 					}
-				} else
+				} else if (log.isDebugEnabled())
 					log.debug("Skipping Assignment " + a.getID() + ", assigned on " + a.getAssignDate());
 			}
 		} catch (DAOException de) {
