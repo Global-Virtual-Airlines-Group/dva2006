@@ -618,7 +618,6 @@
 		<inactive_days type="Integer">45</inactive_days>
 		<inactive_leave_days type="Integer">180</inactive_leave_days>
 		<inactive_new_days type="Integer">21</inactive_new_days>
-		<inactive_assign type="Integer">10</inactive_assign>
 		<selcal>
 			<max type="Integer">3</max>
 			<reserve type="Integer">14</reserve>
@@ -633,6 +632,7 @@
 			<maxHeld type="Integer">3</maxHeld>
 			<pad_hours type="Double">0.5</pad_hours>
 			<draft_purge type="Integer">30</draft_purge>
+			<assign_purge type="Integer">14</assign_purge>
 			<acars_only type="Boolean">false</acars_only>
 		</pirep>
 		
