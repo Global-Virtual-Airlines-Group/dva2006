@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.apache.log4j.Logger;
@@ -8,7 +8,7 @@ import org.deltava.beans.EquipmentType;
 /**
  * A utility class to determine whether a Flight counts for promotion to Captain in a particular Equipment Type program.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 2.7
  */
 
@@ -49,13 +49,16 @@ public class FlightPromotionHelper {
 
 		ACARSFlightReport afr = (_fr instanceof ACARSFlightReport) ? (ACARSFlightReport) _fr : null;
 		if ((afr == null) && eq.getACARSPromotionLegs()) {
-			log.info(eq.getName() + " requires flights using ACARS");
-			_comment = eq.getName() + " requires flights using ACARS";
+			log.info(eq.getName() + " requires flights using ACARS for promotion");
+			_comment = eq.getName() + " requires flights using ACARS for promotion";
 			return false;
 		} else if (_fr.getDistance() < eq.getPromotionMinLength()) {
 			log.info("Minimum " + eq.getName() + " flight length is "  +  eq.getPromotionMinLength() + ", distance=" + _fr.getDistance());
 			_comment = "Minimum flight length for promotion to Captain in " + eq.getName() + " is "  +  eq.getPromotionMinLength() + " miles";
 			return false;
+		} else if (_fr.hasAttribute(FlightReport.ATTR_CHARTER)) {
+			log.info("Charter flights not eligible for promotion");
+			_comment = "Charter flights not eligible for promotion";
 		} else if ((afr != null) && (_fr.getDistance() < eq.getPromotionSwitchLength()) && ((afr.getTime(2) + afr.getTime(4)) > eq.getMaximumAccelTime())) {
 			log.info("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
 			_comment = "Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4));
