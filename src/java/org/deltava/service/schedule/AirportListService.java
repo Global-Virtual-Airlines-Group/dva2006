@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -39,7 +39,6 @@ public class AirportListService extends WebService {
 	}
 
 	private class AirlineFilter implements AirportFilter {
-
 		private Airline _a;
 
 		AirlineFilter(Airline a) {
@@ -53,7 +52,6 @@ public class AirportListService extends WebService {
 	}
 
 	private class AirportListFilter implements AirportFilter {
-
 		private final Collection<String> _airportCodes = new HashSet<String>();
 
 		AirportListFilter(Collection<Airport> airports) {
@@ -80,7 +78,7 @@ public class AirportListService extends WebService {
 		// Figure out what kind of search we are doing
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		try {
-			AirportFilter filter = null;
+			AirportFilter filter = new NonFilter();
 			Connection con = ctx.getConnection();
 
 			String al = ctx.getParameter("airline");
