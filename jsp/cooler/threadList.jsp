@@ -60,12 +60,12 @@ return true;
 </tr>
 
 <!-- Table Thread Data -->
+<c:set var="cutoffDate" value="${!empty sessionScope.coolerThreadReadOverride ? sessionScope.coolerThreadReadOverride : user.lastLogoff}" scope="page" />
 <c:forEach var="thread" items="${viewContext.results}">
 <c:set var="author" value="${pilots[thread.authorID]}" scope="page" />
 <c:set var="authorLoc" value="${userData[thread.authorID]}" scope="page" />
 <c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="page" />
 <c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="page" />
-<c:set var="cutoffDate" value="${!empty sessionScope.coolerThreadReadOverride ? sessionScope.coolerThreadReadOverride : user.lastLogoff}" scope="page" />
 <c:set var="isThreadNew" value="${(thread.lastUpdatedOn > cutoffDate) && ((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="page" />
 <view:row entry="${thread}" className="${isThreadNew ? 'opt1' : null}">
  <td class="left">
