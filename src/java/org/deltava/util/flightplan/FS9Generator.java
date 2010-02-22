@@ -34,7 +34,7 @@ public class FS9Generator extends FlightPlanGenerator {
 		ctx.println("title=" + _aD.getICAO() + " to " + _aA.getICAO());
 		ctx.println("description=" + _aD.getICAO() + ", " + _aA.getICAO());
 		ctx.println("type=IFR");
-		ctx.println("routetype=0");
+		ctx.println("routetype=3");
 		ctx.println("cruising_altitude=" + _altitude);
 		ctx.println("departure_id=" + _aD.getICAO() + ", " + GeoUtils.formatFS9(_aD) + ", +000000.00,");
 		ctx.println("departure_name=" + _aD.getName());

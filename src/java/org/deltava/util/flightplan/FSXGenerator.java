@@ -33,7 +33,7 @@ public class FSXGenerator extends FlightPlanGenerator {
 		ctx.println("title=" + _aD.getICAO() + " to " + _aA.getICAO());
 		ctx.println("description=" + _aD.getICAO() + ", " + _aA.getICAO());
 		ctx.println("type=IFR");
-		ctx.println("routetype=0");
+		ctx.println("routetype=3");
 		ctx.println("cruising_altitude=" + _altitude);
 		ctx.println("departure_id=" + _aD.getICAO() + ", " + GeoUtils.formatFS9(_aD) + ", +" + StringUtils.format(_aD.getAltitude(), "000000.00") + ",");
 		ctx.println("destination_id=" + _aA.getICAO() + ", " + GeoUtils.formatFS9(_aA) + ", " + StringUtils.format(_aA.getAltitude(), "000000.00") + ",");
