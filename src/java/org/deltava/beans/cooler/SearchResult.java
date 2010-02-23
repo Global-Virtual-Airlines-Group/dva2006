@@ -92,6 +92,10 @@ public class SearchResult implements Comparable<SearchResult> {
 		return (o2 instanceof SearchResult) ? (getID() == ((SearchResult) o2).getID()) : false; 
 	}
 	
+	public int hashCode() {
+		return getID();
+	}
+	
 	public String toString() {
 		StringBuilder buf = new StringBuilder("SearchResult-");
 		buf.append(getID());
