@@ -43,7 +43,7 @@ public class TestSearchIndex extends TestCase {
 		TermQuery tq = new TermQuery(new Term("body", "acars"));
 		TopDocs docs = _is.search(tq, 100);
 		assertNotNull(docs);
-		ScoreDoc[] sdocs = docs.scoreDocs;;
+		ScoreDoc[] sdocs = docs.scoreDocs;
 		assertNotNull(sdocs);
 		assertTrue(sdocs.length > 0);
 	}
@@ -66,7 +66,7 @@ public class TestSearchIndex extends TestCase {
 		
 		TopDocs docs = _is.search(bq, 100);
 		assertNotNull(docs);
-		ScoreDoc[] sdocs = docs.scoreDocs;;
+		ScoreDoc[] sdocs = docs.scoreDocs;
 		assertNotNull(sdocs);
 		assertTrue(sdocs.length > 0);
 	}
@@ -93,7 +93,7 @@ public class TestSearchIndex extends TestCase {
 		
 		TopDocs docs = _is.search(bq, 100);
 		assertNotNull(docs);
-		ScoreDoc[] sdocs = docs.scoreDocs;;
+		ScoreDoc[] sdocs = docs.scoreDocs;
 		assertNotNull(sdocs);
 		assertTrue(sdocs.length > 0);
 	}
@@ -113,7 +113,7 @@ public class TestSearchIndex extends TestCase {
 		
 		TopDocs docs = _is.search(bq, 100);
 		assertNotNull(docs);
-		ScoreDoc[] sdocs = docs.scoreDocs;;
+		ScoreDoc[] sdocs = docs.scoreDocs;
 		assertNotNull(sdocs);
 		assertTrue(sdocs.length > 0);
 	}

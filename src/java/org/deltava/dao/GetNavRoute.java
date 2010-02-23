@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 2.6
  */
 
@@ -65,6 +65,10 @@ public class GetNavRoute extends GetOceanicRoute {
 		
 		public String toString() {
 			return _route;
+		}
+		
+		public int hashCode() {
+			return _route.hashCode();
 		}
 		
 		public boolean equals(Object o) {
