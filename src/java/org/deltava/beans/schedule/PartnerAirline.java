@@ -1,10 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 /**
  * A bean to store codeshare flight number data.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -91,6 +91,10 @@ public class PartnerAirline {
 			return _a.getCode().equals(o2);
 		
 		return false;
+	}
+	
+	public int hashCode() {
+		return _a.hashCode();
 	}
 	
 	/**

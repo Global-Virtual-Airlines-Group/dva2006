@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 2.2
  */
 
@@ -176,6 +176,10 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 		if (tmpResult == 0)
 			tmpResult = _createdOn.compareTo(o.getCreatedOn());
 		return (tmpResult == 0) ? getType().compareTo(o.getType()) : tmpResult;
+	}
+	
+	public int hashCode() {
+		return toString().hashCode();
 	}
 	
 	public boolean equals(Object o) {

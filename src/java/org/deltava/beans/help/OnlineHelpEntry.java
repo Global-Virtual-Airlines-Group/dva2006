@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 /**
  * A class for storing Online Help entries.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -64,6 +64,10 @@ public class OnlineHelpEntry implements java.io.Serializable, Comparable<OnlineH
      */
     public int compareTo(OnlineHelpEntry he2) {
         return _title.compareTo(he2._title);
+    }
+    
+    public int hashCode() {
+    	return _title.hashCode();
     }
 
     /**
