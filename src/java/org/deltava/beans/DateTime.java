@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 /**
  * A class for storing Date/Time objects with Time Zone information.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -107,6 +107,10 @@ public class DateTime implements java.io.Serializable, Comparable<DateTime> {
 	 */
 	public boolean equals(Object o2) {
 		return (o2 instanceof DateTime) ? (compareTo((DateTime) o2) == 0) : false;
+	}
+	
+	public int hashCode() {
+		return getUTC().hashCode();
 	}
 	
 	/**
