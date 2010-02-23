@@ -41,7 +41,7 @@
 		<class>org.deltava.tasks.AUSOTDownloadTask</class>
 		<time>
 			<min>0</min>
-			<hour>8</hour>
+			<hour>8,20</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
@@ -64,8 +64,8 @@
 	<task id="assignpurge" enabled="true">
 		<class>org.deltava.tasks.AssignmentPurgeTask</class>
 		<time>
-			<min>0</min>
-			<hour>12</hour>
+			<min>5</min>
+			<hour>8</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
@@ -85,7 +85,7 @@
 	</task>
 
 	<!-- Purge old FlightAware routes -->
-	<task id="purgeroutecache" enabled="false">
+	<task id="purgeroutecache" enabled="true">
 		<class>org.deltava.tasks.CachedRouteUpdateTask</class>	
 		<time>
 			<min>30</min>		
@@ -113,7 +113,7 @@
 		<class>org.deltava.tasks.CommandLogPurgeTask</class>
 		<time>
 			<min>0</min>
-			<hour>6</hour>
+			<hour>6,18</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
