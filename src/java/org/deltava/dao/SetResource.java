@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to write Web Resources to a database.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public class SetResource extends DAO {
 	 */
 	public void write(Resource r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, "
+			prepareStatement("REPLACE INTO common.RESOURCES (ID, URL, TITLE, DOMAIN, REMARKS, CATEGORY, "
 					+ "CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getURL());
@@ -59,7 +59,7 @@ public class SetResource extends DAO {
 	 */
 	public void hit(int id) throws DAOException {
 		try {
-			prepareStatement("UPDATE RESOURCES SET HITCOUNT=HITCOUNT+1 WHERE (ID=?)");
+			prepareStatement("UPDATE common.RESOURCES SET HITCOUNT=HITCOUNT+1 WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -74,7 +74,7 @@ public class SetResource extends DAO {
 	 */
 	public void delete(int id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM RESOURCES WHERE (ID=?)");
+			prepareStatement("DELETE FROM common.RESOURCES WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {

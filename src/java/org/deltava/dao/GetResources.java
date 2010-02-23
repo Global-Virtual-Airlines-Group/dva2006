@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to load Web Resource data.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class GetResources extends DAO {
 	 */
 	public Resource get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM RESOURCES WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM common.RESOURCES WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Get first result
@@ -52,7 +52,7 @@ public class GetResources extends DAO {
 	public Collection<Resource> getAll(String catName, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RESOURCES ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.RESOURCES ");
 		if (catName != null)
 			sqlBuf.append("WHERE (CATEGORY=?) ");
 		
@@ -81,7 +81,7 @@ public class GetResources extends DAO {
 	public Collection<Resource> getAll(String catName, int id, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RESOURCES WHERE ((ISPUBLIC=?) OR (AUTHOR=?)) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.RESOURCES WHERE ((ISPUBLIC=?) OR (AUTHOR=?)) ");
 		if (catName != null)
 			sqlBuf.append("AND (CATEGORY=?) ");
 		
