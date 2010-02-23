@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to purge cached FlightAware routes from the database.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 2.6
  */
 
@@ -61,6 +61,13 @@ public class CachedRouteUpdateTask extends Task {
 				ScheduleRoute rp = i.next();
 				if (rp.getFlights() < 2)
 					break;
+				
+				// Ensure the route includes one US airport
+				boolean isUS = rp.getAirportD().getICAO().startsWith("K") || rp.getAirportA().getICAO().startsWith("K");
+				if (!isUS) {
+					log.warn(rp.getAirportD() + " to " + rp.getAirportA() + " not a US route, skipping");
+					continue;
+				}
 				
 				// Get the average age - if over 45 days load new routes
 				int avgAge = rcdao.getAverageAge(rp.getAirportD(), rp.getAirportA());
