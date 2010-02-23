@@ -6,7 +6,7 @@ import javax.servlet.http.*;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import static org.deltava.commands.CommandContext.SU_ATTR_NAME;;
+import static org.deltava.commands.CommandContext.SU_ATTR_NAME;
 
 /**
  * A JSP tag to filter out content that is displayed for superusers only.
