@@ -21,7 +21,7 @@ public class CommandResult implements java.io.Serializable {
 	private long _backEndTime;
 	private ResultType _resultCode = ResultType.FORWARD;
 	private int _httpCode;
-	private final long _startTime = System.currentTimeMillis();;
+	private final long _startTime = System.currentTimeMillis();
 
 	/**
 	 * Create a new CommandResult forwarding the Controller to a new servlet.
