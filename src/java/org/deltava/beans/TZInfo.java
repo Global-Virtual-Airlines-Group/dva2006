@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.text.*;
 /**
  * A class for dealing with Time Zones.
  * @author Luke
- * @version 2.1
+ * @version 3.0
  * @since 1.0
  */
 
@@ -181,12 +181,11 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	 * Compares this Time Zone to another TimeZone by comparing the JVM time zone ID.
 	 */
 	public boolean equals(Object o2) {
-		try {
-			TZInfo tz2 = (TZInfo) o2;
-			return _tz.getID().equals(tz2.getID());
-		} catch (Exception e) {
-			return false;
-		}
+		return (o2 instanceof TZInfo) && (_tz.getID().equals(((TZInfo) o2)._tz.getID()));
+	}
+	
+	public int hashCode() {
+		return _tz.getID().hashCode();
 	}
 
 	protected static void reset() {
