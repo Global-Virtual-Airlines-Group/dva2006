@@ -41,6 +41,11 @@ return true;
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${availableEQ}" className="req" firstEntry="-" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data">Don't see an equipment program listed? <el:cmd url="promoeligibility" className="sec bld">Click Here</el:cmd>
+ to see what equipment programs you are eligible to switch to or request additional ratings.</td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->

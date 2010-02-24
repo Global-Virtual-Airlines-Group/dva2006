@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -14,28 +14,26 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
 public class TestingHistoryHelper {
-
+	
 	private static final Logger log = Logger.getLogger(TestingHistoryHelper.class);
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
-	private static final int CP_STAGE = 4;
-	private static final String[] CAPT_RANKS = { Ranks.RANK_C, Ranks.RANK_SC };
+	private static final int CP_STAGE = 5;
+	private static final List<String> CAPT_RANKS = Arrays.asList(Ranks.RANK_C, Ranks.RANK_SC);
 	
 	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
 	private Pilot _usr;
 	private EquipmentType _myEQ;
-	private boolean _debugLog;
-
 	private final SortedSet<Test> _tests = new TreeSet<Test>();
-	private Collection<FlightReport> _pireps;
+	private final Collection<FlightReport> _pireps = new ArrayList<FlightReport>();
 	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
-
+	
 	/**
 	 * Initializes the helper.
 	 * @param p the Pilot bean
@@ -47,14 +45,10 @@ public class TestingHistoryHelper {
 		super();
 		_usr = p;
 		_myEQ = myEQ;
-		_pireps = pireps;
+		if (pireps != null)
+			_pireps.addAll(pireps);
 		if (tests != null)
 			_tests.addAll(tests);
-	}
-
-	private void log(String msg) {
-		if (_debugLog)
-			log.warn(msg);
 	}
 
 	/**
@@ -71,14 +65,6 @@ public class TestingHistoryHelper {
 	 */
 	public void setEquipmentTypes(Collection<EquipmentType> eqTypes) {
 		_allEQ.addAll(eqTypes);
-	}
-
-	/**
-	 * Toggles the debugging log.
-	 * @param isDebug TRUE if the log is active, otherwise FALSE
-	 */
-	public void setDebug(boolean isDebug) {
-		_debugLog = isDebug;
 	}
 
 	/**
@@ -124,7 +110,7 @@ public class TestingHistoryHelper {
 			return true;
 
 		// Check if we're already a captain
-		if ((StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1) && (stage == _myEQ.getStage()))
+		if ((CAPT_RANKS.contains(_usr.getRank())) && (stage == _myEQ.getStage()))
 			return true;
 
 		// Iterate through the equipment types in a stage
@@ -193,102 +179,77 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if the user is eligible to take a particular Examination.
+	 * Checks if the user is eligible to take a particular Examination.
 	 * @param ep the Examination to take
-	 * @return TRUE if the user can take the Examination, otherwise FALSE
+	 * @throws IneligibilityException if one is not eligible
 	 */
-	public boolean canWrite(ExamProfile ep) {
+	public void canWrite(ExamProfile ep) throws IneligibilityException {
 		// If the exam isn't active, we cannot write it
-		if (!ep.getActive()) {
-			log(ep.getName() + " inactive");
-			return false;
-		}
+		if (!ep.getActive())
+			throw new IneligibilityException(ep.getName() + " inactive");
 
 		// If it's the Initial Questionnaire, uh uh
-		if (_qName.equals(ep.getName())) {
-			log(ep.getName() + " is the Questionnaire");
-			return false;
-		}
+		if (_qName.equals(ep.getName()))
+			throw new IneligibilityException(ep.getName() + " is the Questionnaire");
 
 		// If it's part of the Flight Academy, no
 		if (ep.getAcademy())
-			return false;
+			throw new IneligibilityException(ep.getName() + " is a Flight Academy examination");
 
 		// Check if we've passed or submitted the exam
-		if (hasPassed(Collections.singleton(ep.getName())) || hasSubmitted(ep.getName())) {
-			log(ep.getName() + " is passed / submitted");
-			return false;
-		}
+		if (hasPassed(Collections.singleton(ep.getName())) || hasSubmitted(ep.getName()))
+			throw new IneligibilityException(ep.getName() + " is passed / submitted");
 
 		// Check if it's the FO exam for the current program
-		if (_myEQ.getExamNames(Ranks.RANK_FO).contains(ep.getName())) {
-			log(ep.getName() + " is FO exam for " + _myEQ.getName());
-			return false;
-		}
+		if (_myEQ.getExamNames(Ranks.RANK_FO).contains(ep.getName()))
+			throw new IneligibilityException(ep.getName() + " is FO exam for " + _myEQ.getName());
 
 		// Check if we are in the proper equipment program
 		if (!StringUtils.isEmpty(ep.getEquipmentType())) {
-			if (!ep.getEquipmentType().equals(_usr.getEquipmentType())) {
-				log(ep.getName() + " eqType=" + ep.getEquipmentType() + ", our eqType=" + _usr.getEquipmentType());
-				return false;
-			}
+			if (!ep.getEquipmentType().equals(_usr.getEquipmentType()))
+				throw new IneligibilityException(ep.getName() + " eqType=" + ep.getEquipmentType() + ", our eqType=" + _usr.getEquipmentType());
 
 			// If the exam is limited to a specific equipment program, require 1/2 the legs required for promotion
-			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs())) {
-				log(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
-				return false;
-			}
+			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs()))
+				throw new IneligibilityException(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
 		}
 
 		// Check if we've reached the proper minimum stage
-		if (ep.getMinStage() > getMaxCheckRideStage()) {
-			log(ep.getName() + " minStage=" + ep.getMinStage() + ", our maxCheckRideStage=" + getMaxCheckRideStage());
-			return false;
-		}
+		if (ep.getMinStage() > getMaxCheckRideStage())
+			throw new IneligibilityException(ep.getName() + " minStage=" + ep.getMinStage() + ", our maxCheckRideStage=" + getMaxCheckRideStage());
 
 		// If the exam is a higher stage than us, require Captan's rank in the stage below
-		if ((ep.getStage() > getMaxCheckRideStage()) && !isCaptainInStage(ep.getStage() - 1)) {
-			log(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage()
+		if ((ep.getStage() > getMaxCheckRideStage()) && !isCaptainInStage(ep.getStage() - 1))
+			throw new IneligibilityException(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage()
 					+ ", not Captain in stage " + (ep.getStage() - 1));
-			return false;
-		}
 
 		// Check if we've been locked out of exams
-		return !_usr.getNoExams();
+		if (_usr.getNoExams())
+			throw new IneligibilityException("Testing Center locked out");
 	}
 
 	/**
 	 * Returns if a user has met all the requirements for switching to a particular equipment program.
 	 * @param eq the EquipmentType bean
-	 * @return TRUE if the user can switch to the equipment program, otherwise FALSE
+	 * @throws IneligibilityException if the user cannot switch to the program
 	 */
-	public boolean canSwitchTo(EquipmentType eq) {
+	public void canSwitchTo(EquipmentType eq) throws IneligibilityException {
 
 		// Check if we're not already in that program
-		if (_usr.getEquipmentType().equals(eq.getName())) {
-			log("Already in " + eq.getName() + " program");
-			return false;
-		}
+		if (_usr.getEquipmentType().equals(eq.getName()))
+			throw new IneligibilityException("Already in " + eq.getName() + " program");
 		
 		// If it's not in our airline, don't allow it
-		if (!SystemData.get("airline.code").equals(eq.getOwner().getCode())) {
-			log(eq.getName() + " is a " + eq.getOwner().getName() + " program");
-			return false;
-		}
+		if (!SystemData.get("airline.code").equals(eq.getOwner().getCode()))
+			throw new IneligibilityException(eq.getName() + " is a " + eq.getOwner().getName() + " program");
 
 		// Check if we've passed the FO exam for that program
-		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO))) {
-			log("Haven't passed " + eq.getExamNames(Ranks.RANK_FO));
-			return false;
-		}
+		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)))
+			throw new IneligibilityException("Haven't passed " + eq.getExamNames(Ranks.RANK_FO));
 
 		// Check if we have a checkride in that equipment
-		if (!hasCheckRide(eq)) {
-			log("No " + eq.getName() + " check ride");
-			return false;
-		}
-
-		return true;
+		if (!hasCheckRide(eq))
+			throw new IneligibilityException("Haven't passed " + eq.getName() + " check ride");
 	}
 
 	/**
@@ -303,28 +264,29 @@ public class TestingHistoryHelper {
 	/**
 	 * Returns if a user can request a Check Ride to move to a particular equipment program.
 	 * @param eq the EquipmentType bean
-	 * @return TRUE if the user can request a check ride, otherwise FALSE
+	 * @throws IneligibilityException if the user cannot request a check ride
 	 */
-	public boolean canRequestCheckRide(EquipmentType eq) {
+	public void canRequestCheckRide(EquipmentType eq) throws IneligibilityException {
 
 		// Make sure we're a captain in the previous stage if the stage is higher than our own
 		if ((eq.getStage() > getMaxCheckRideStage()) && (!isCaptainInStage(eq.getStage() - 1)))
-			return false;
+			throw new IneligibilityException("Must be Captain in Stage " + (eq.getStage() - 1));
 
 		// Check if we've passed the FO/CAPT exam for that program
 		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)) && !hasPassed(eq.getExamNames(Ranks.RANK_C)))
-			return false;
+			throw new IneligibilityException("Has not passed FO/Captain Examination");
 
 		// Make sure we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName()))
-			return false;
+			throw new IneligibilityException("Already in " + eq.getName() + " program");
 
 		// Check if we don't have a checkride in that equipment program
 		if (hasCheckRide(eq))
-			return false;
+			throw new IneligibilityException("Has already passed Check Ride");
 
 		// If we require a checkride, ensure we have a minimum number of legs
-		return canRequestSwitch();
+		if (!canRequestSwitch())
+			throw new IneligibilityException("Has not completed " + (_myEQ.getPromotionLegs() / 2) + " legs for promotion");
 	}
 	
 	/**
@@ -334,9 +296,7 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the user is missing any ratings, otherwise FALSE
 	 */
 	public boolean canRequestRatings(EquipmentType eq) {
-		Collection<String> ratings = new HashSet<String>(eq.getPrimaryRatings());
-		ratings.addAll(eq.getSecondaryRatings());
-		Collection<String> extraRatings = CollectionUtils.getDelta(ratings, _usr.getRatings());
+		Collection<String> extraRatings = CollectionUtils.getDelta(eq.getRatings(), _usr.getRatings());
 		return !extraRatings.isEmpty();
 	}
 
@@ -444,7 +404,7 @@ public class TestingHistoryHelper {
 
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
-		log("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
+		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
 		return (timeInterval < (lockoutHours * 3600));
 	}
 }

@@ -446,6 +446,11 @@ to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="promoeligibility">Review Promotion Eligibility</el:cmd></td>
+ <td class="data">You can review the different Equipment programs at <content:airline /> to see what you ned in order to switch
+ programs or request additional equipment type ratings.</td>
+</tr>
+<tr>
 <c:if test="${(pilot.legs >= 5) && !pilot.noExams && !examLockout}">
  <td class="mid"><el:cmd className="bld" url="testcenter">Testing Center</el:cmd></td>
 </c:if>
