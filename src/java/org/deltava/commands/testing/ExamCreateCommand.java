@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new Pilot Examination.
  * @author Luke
- * @version 2.2
+ * @version 3.0
  * @since 1.0
  */
 
@@ -74,8 +74,11 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			}
 
 			// Check if we can take the exam
-            if (!testHistory.canWrite(ep))
-				throw securityException("Cannot take " + examName);
+			try {
+            	testHistory.canWrite(ep);
+			} catch (IneligibilityException ie) {
+				throw securityException("Cannot take " + examName + " - " + ie.getMessage());
+			}
             
             // Check if we have a pending Transfer Request
 			GetTransferRequest txdao = new GetTransferRequest(con);
