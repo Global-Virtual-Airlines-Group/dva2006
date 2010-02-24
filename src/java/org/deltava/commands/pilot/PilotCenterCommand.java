@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -127,7 +127,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Initialize the testing history helper and check for test lockout
 			TestingHistoryHelper testHistory = initTestHistory(p, con);
-			testHistory.setDebug(ctx.isSuperUser());
 			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
@@ -157,18 +156,26 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				Collection<EquipmentType> needFOExamEQ = new TreeSet<EquipmentType>();
 				for (Iterator<EquipmentType> i = activeEQ.iterator(); i.hasNext();) {
 					EquipmentType eq = i.next();
-					if (!testHistory.canSwitchTo(eq) && !testHistory.canRequestCheckRide(eq)) {
+					try {
+						testHistory.canSwitchTo(eq);
+						testHistory.canRequestCheckRide(eq);
+					} catch (IneligibilityException ie) {
 						Collection<String> eNames = eq.getExamNames(Ranks.RANK_FO);
 						if (!testHistory.hasPassed(eNames)) {
 							for (Iterator<String> ei = eNames.iterator(); ei.hasNext(); ) {
 								String examName = ei.next();
 								ExamProfile ep = exams.get(examName);
-								if ((ep != null) && (testHistory.canWrite(ep)))
-									needFOExamEQ.add(eq);
+								if (ep != null) {
+									try {
+										testHistory.canWrite(ep);
+									} catch (IneligibilityException iee) {
+										needFOExamEQ.add(eq);
+									}
+								}
 							}
 						}
 						
-						i.remove();
+						i.remove();	
 					}
 				}
 
@@ -193,8 +200,11 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// See if we can write any examinations
 			for (Iterator<ExamProfile> i = exams.values().iterator(); i.hasNext();) {
 				ExamProfile ep = i.next();
-				if (!testHistory.canWrite(ep))
+				try {
+					testHistory.canWrite(ep);
+				} catch (IneligibilityException ie) {
 					i.remove();
+				}
 			}
 			
 			// If we have an e-mail box and mail is enabled, check for new mail

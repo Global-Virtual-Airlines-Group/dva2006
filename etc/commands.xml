@@ -1182,7 +1182,13 @@
 		<class>org.deltava.commands.testing.TestingCenterCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="promoeligibility">
+		<name>Promotion Eligibility</name>
+		<class>org.deltava.commands.testing.PromotionEligibilityCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="checkride">
 		<name>Check Ride</name>
 		<class>org.deltava.commands.testing.CheckRideCommand</class>

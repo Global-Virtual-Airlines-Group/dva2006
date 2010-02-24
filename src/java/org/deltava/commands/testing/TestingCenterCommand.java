@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -42,7 +42,6 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 
 			// Initialize the Testing History
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
-			testHistory.setDebug(ctx.isSuperUser());
 			boolean examsLocked = testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 			if (examsLocked)
 				throw securityException("Testing Center locked out");
@@ -70,8 +69,11 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 				// Remove all examinations that we have passed or require a higher stage than us
 				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
 					ExamProfile ep = i.next();
-					if (!testHistory.canWrite(ep))
+					try {
+						testHistory.canWrite(ep);
+					} catch (IneligibilityException ie) {
 						i.remove();
+					}
 				}
 			}
 

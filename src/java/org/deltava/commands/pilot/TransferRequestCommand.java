@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.TransferRequest;
-import org.deltava.beans.testing.TestingHistoryHelper;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -52,10 +52,14 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			Map<String, EquipmentType> activeEQ = CollectionUtils.createMap(eqdao.getAvailable(SystemData.get("airline.code")), "name");
 			for (Iterator<EquipmentType> i = activeEQ.values().iterator(); i.hasNext(); ) {
 				EquipmentType eq = i.next();
-				if (!testHistory.canSwitchTo(eq) && !testHistory.canRequestCheckRide(eq))
+				try {
+					testHistory.canSwitchTo(eq);
+					testHistory.canRequestCheckRide(eq);
+					if (isRating && !testHistory.canRequestRatings(eq))
+						i.remove();
+				} catch (IneligibilityException ie) {
 					i.remove();
-				else if (isRating && !testHistory.canRequestRatings(eq))
-					i.remove();
+				}
 			}
 
 			// If we're just doing a GET, then redirect to the JSP
@@ -83,11 +87,18 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			// Populate the transfer request
 			EquipmentType eq = activeEQ.get(eqType);
 			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
-			txreq.setStatus(testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
 			if (!eq.getOwner().equals(SystemData.get("airline.code")))
 				txreq.setRatingOnly(true);
 			else
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
+			
+			// Set status to approved if we can transfter
+			try {
+				testHistory.canSwitchTo(eq);
+				txreq.setStatus(TransferRequest.OK);
+			} catch (IneligibilityException ie) {
+				txreq.setStatus(TransferRequest.PENDING);
+			}
 
 			// Save the transfer request
 			SetTransferRequest wdao = new SetTransferRequest(con);
