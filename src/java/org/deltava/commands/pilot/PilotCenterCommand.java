@@ -159,6 +159,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					try {
 						testHistory.canSwitchTo(eq);
 						testHistory.canRequestCheckRide(eq);
+						i.remove();	
 					} catch (IneligibilityException ie) {
 						Collection<String> eNames = eq.getExamNames(Ranks.RANK_FO);
 						if (!testHistory.hasPassed(eNames)) {
@@ -174,8 +175,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 								}
 							}
 						}
-						
-						i.remove();	
 					}
 				}
 
