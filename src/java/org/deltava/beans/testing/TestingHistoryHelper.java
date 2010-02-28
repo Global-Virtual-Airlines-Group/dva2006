@@ -123,7 +123,8 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the highest stage Examination this user has passed. This will return 4
+	 * Returns the highest stage Examination this user has passed. This will return 4 if the user
+	 * is a Chief Pilot or an Assistant Chief Pilot.
 	 * @return the stage number of the highest examination, or 1 if none passed
 	 * @see Test#getStage()
 	 */
