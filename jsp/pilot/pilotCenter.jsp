@@ -406,10 +406,11 @@ examination(s) in order to be eligible for promotion to Captain</i>.</td></c:whe
 following equipment types upon successful completion of the First Officer's examination for these 
 equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c:if>
 <c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br />
-<c:if test="${isFO && !captPromote}">
+<c:if test="${isFO && !captPromote && (eqType.stage == eqSwitchMaxStage)}">
 <br />
-<i>You will not be eligible for equipment type transfers or additional ratings in higher stage equipment type 
-programs until you become eligible for promotion to Captain in the ${eqType.name} program.</i><br />
+<i>You will not be eligible for equipment type transfers or additional ratings in equipment type programs 
+ in Stage <fmt:int value="${eqSwitchMaxStage}" /> or above until you become eligible for promotion to Captain
+ in the ${eqType.name} or another Stage <fmt:int value="${eqType.stage}" /> equipment program.</i><br />
 </c:if>
 <c:if test="${promoteLegs < (eqType.promotionLegs / 2)}">
 <br />
