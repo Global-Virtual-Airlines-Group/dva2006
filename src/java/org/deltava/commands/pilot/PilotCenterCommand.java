@@ -127,6 +127,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Initialize the testing history helper and check for test lockout
 			TestingHistoryHelper testHistory = initTestHistory(p, con);
+			ctx.setAttribute("eqSwitchMaxStage", Integer.valueOf(testHistory.getMaxCheckRideStage()), REQUEST);
 			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
@@ -158,9 +159,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					EquipmentType eq = i.next();
 					try {
 						testHistory.canSwitchTo(eq);
-						testHistory.canRequestCheckRide(eq);
-						i.remove();	
+						if (!testHistory.hasCheckRide(eq))
+							testHistory.canRequestCheckRide(eq);
 					} catch (IneligibilityException ie) {
+						i.remove();	
 						Collection<String> eNames = eq.getExamNames(Ranks.RANK_FO);
 						if (!testHistory.hasPassed(eNames)) {
 							for (Iterator<String> ei = eNames.iterator(); ei.hasNext(); ) {
@@ -169,8 +171,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 								if (ep != null) {
 									try {
 										testHistory.canWrite(ep);
-									} catch (IneligibilityException iee) {
 										needFOExamEQ.add(eq);
+									} catch (IneligibilityException iee) {
+										// empty
 									}
 								}
 							}
