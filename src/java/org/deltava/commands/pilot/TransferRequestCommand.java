@@ -53,9 +53,15 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			for (Iterator<EquipmentType> i = activeEQ.values().iterator(); i.hasNext(); ) {
 				EquipmentType eq = i.next();
 				try {
-					testHistory.canSwitchTo(eq);
-					if (!testHistory.hasCheckRide(eq))
+					boolean checkSwitch = true;
+					if (!testHistory.hasCheckRide(eq)) {
 						testHistory.canRequestCheckRide(eq);
+						checkSwitch = false;
+					}
+					
+					if (checkSwitch)
+						testHistory.canSwitchTo(eq);
+					
 					if (isRating && !testHistory.canRequestRatings(eq))
 						i.remove();
 				} catch (IneligibilityException ie) {

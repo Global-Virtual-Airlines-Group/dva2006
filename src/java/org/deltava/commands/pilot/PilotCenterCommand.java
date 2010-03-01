@@ -158,9 +158,14 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				for (Iterator<EquipmentType> i = activeEQ.iterator(); i.hasNext();) {
 					EquipmentType eq = i.next();
 					try {
-						testHistory.canSwitchTo(eq);
-						if (!testHistory.hasCheckRide(eq))
+						boolean checkSwitch = true;
+						if (!testHistory.hasCheckRide(eq)) {
 							testHistory.canRequestCheckRide(eq);
+							checkSwitch = false;
+						}
+						
+						if (checkSwitch)
+							testHistory.canSwitchTo(eq);
 					} catch (IneligibilityException ie) {
 						i.remove();	
 						Collection<String> eNames = eq.getExamNames(Ranks.RANK_FO);
