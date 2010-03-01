@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.Date;
@@ -10,13 +10,12 @@ import org.deltava.beans.ViewEntry;
  * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
  * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
 public class TransferRequest extends DatabaseBean implements ViewEntry {
 
-	public static final int NEW = 0;
 	public static final int PENDING = 1;
 	public static final int ASSIGNED = 2;
 	public static final int OK = 3;
