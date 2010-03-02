@@ -1,9 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.commands.*;
@@ -14,18 +12,14 @@ import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.common.*;
-
 /**
- * A Web Site Command to lock out a user.
+ * A Web Site Command to retire a User. 
  * @author Luke
  * @version 3.0
- * @since 1.0
+ * @since 3.0
  */
 
-public class SuspendUserCommand extends AbstractCommand {
-	
-	private static final Logger log = Logger.getLogger(SuspendUserCommand.class);
+public class RetireUserCommand extends AbstractCommand {
 
 	/**
 	 * Execute the command.
@@ -34,9 +28,6 @@ public class SuspendUserCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
-		// Get the result
-		CommandResult result = ctx.getResult();
 		
 		Pilot usr = null;
 		try {
@@ -52,26 +43,18 @@ public class SuspendUserCommand extends AbstractCommand {
 			PilotAccessControl access = new PilotAccessControl(ctx, usr);
 			access.validate();
 			if (!access.getCanInactivate())
-				throw securityException("Cannot Suspend Pilot");
+				throw securityException("Cannot Retire Pilot");
 			
 			// Save the pilot in the request
 			ctx.setAttribute("pilot", usr, REQUEST);
 			
-			// If no comment, redirect to the form
-			if (ctx.getParameter("comment") == null) {
-				ctx.release();
-				result.setURL("/jsp/admin/userSuspend.jsp");
-				result.setSuccess(true);
-				return;
-			}
-				
 			// Update the pilot status
-			usr.setStatus(Pilot.SUSPENDED);
+			usr.setStatus(Pilot.RETIRED);
 			
 			// Log the change
-			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.SUSPENDED);
+			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.STATUS_CHANGE);
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setDescription(ctx.getParameter("comment"));
+			upd.setDescription("User Retired");
 			
 			// Start the transaction
 			ctx.startTX();
@@ -102,16 +85,12 @@ public class SuspendUserCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-
-		// Block the user
-		UserPool.block(usr);
-		log.warn(ctx.getUser().getName() + " suspended user " + usr.getName());
 		
 		// Notify other web applications
-		EventDispatcher.send(UserEvent.UserSuspend(usr.getID()));
-		ctx.setAttribute("isBlocked", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("statusUpdated", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
+		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/pilot/pilotUpdate.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);

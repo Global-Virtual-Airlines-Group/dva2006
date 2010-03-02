@@ -122,18 +122,19 @@ return true;
 </tr>
 
 <!-- Pilot Data -->
-<c:if test="${access.canChangeStatus}">
+<c:if test="${access.canChangeStatus || access.canChangeRoles}">
 <tr>
  <td class="label">First / Last Name</td>
  <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
 <el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
 </tr>
-</c:if>
-<c:if test="${access.canChangeStatus}">
 <tr>
- <td class="label top">Pilot Status</td>
- <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${pilot.statusName}" /><br />
-<el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
+ <td class="label">Pilot Status</td>
+ <td colspan="${cspan}" class="data"><span class="pri bld">${pilot.statusName}</span></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td colspan="${cspan}" class="data"><el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /></td>
 </tr>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 2.4
+ * @version 3.0
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public class PilotAccessControl extends AccessControl {
 	private boolean _canChangeMailProfile;
 	private boolean _canViewExams;
 	private boolean _canTransfer;
-	private boolean _canSuspend;
+	private boolean _canInactivate;
 	private boolean _canActivate;
 
 	/**
@@ -75,7 +75,7 @@ public class PilotAccessControl extends AccessControl {
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
 		_canTransfer = _canChangeStatus && (status != Pilot.TRANSFERRED);
-		_canSuspend = _canChangeStatus && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE)); 
+		_canInactivate = _canChangeStatus && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE));
 		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || 
 				(status == Pilot.SUSPENDED));
 
@@ -143,11 +143,11 @@ public class PilotAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns if the Pilot can be suspended/blocked.
-	 * @return TRUE if the Pilot can be blocked, otherwise FALSE
+	 * Returns if the Pilot can be suspended/inactivated.
+	 * @return TRUE if the Pilot can be inactivated, otherwise FALSE
 	 */
-	public boolean getCanSuspend() {
-		return _canSuspend;
+	public boolean getCanInactivate() {
+		return _canInactivate;
 	}
 	
 	/**

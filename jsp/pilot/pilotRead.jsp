@@ -277,8 +277,9 @@ Applicant profile for ${pilot.name}.</td>
 <content:filter roles="HR">
  <el:cmdbutton url="statuscomment" link="${pilot}" label="COMMENT" />
 </content:filter>
-<c:if test="${access.canSuspend}">
+<c:if test="${access.canInactivate}">
  <el:cmdbutton url="suspend" link="${pilot}" label="SUSPEND" />
+ <el:cmdbutton url="retire" link="${pilot}" label="RETIRE" />
 </c:if>
 <content:filter roles="Admin">
  <el:cmdbutton url="su" link="${pilot}" label="SWITCH TO USER" />

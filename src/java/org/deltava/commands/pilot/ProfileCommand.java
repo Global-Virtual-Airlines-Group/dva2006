@@ -191,20 +191,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					p.setNotifyOption(Person.NOTIFY_CODES[x], false);
 
 			// Determine if we are changing the pilot's status
-			String newStatus = ctx.getParameter("status");
-			if (p_access.getCanChangeStatus() && (newStatus != null)) {
-				if (!p.getStatusName().equals(newStatus)) {
-					p.setStatus(newStatus);
-					ctx.setAttribute("statusUpdated", Boolean.TRUE, REQUEST);
-
-					// Write the Status Update entry
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
-					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Status changed to " + p.getStatusName());
-					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
-				}
-
+			if (p_access.getCanChangeStatus() || p_access.getCanChangeRoles()) {
 				// Check Discussion Forum access
 				boolean coolerPostsLocked = Boolean.valueOf(ctx.getParameter("noCooler")).booleanValue();
 				if (coolerPostsLocked != p.getNoCooler()) {
@@ -502,7 +489,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Update the pilot name
 			boolean nameChanged = (!p.getFirstName().equals(ctx.getParameter("firstName")))
 					|| (!p.getLastName().equals(ctx.getParameter("lastName")));
-			if (p_access.getCanChangeStatus() && nameChanged) {
+			if ((p_access.getCanChangeStatus() || p_access.getCanChangeRoles()) && nameChanged) {
 				Pilot p2 = p.cloneExceptID();
 				p2.setFirstName(ctx.getParameter("firstName"));
 				p2.setLastName(ctx.getParameter("lastName"));
