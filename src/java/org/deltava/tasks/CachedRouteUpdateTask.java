@@ -63,7 +63,8 @@ public class CachedRouteUpdateTask extends Task {
 					break;
 				
 				// Ensure the route includes one US airport
-				boolean isUS = rp.getAirportD().getICAO().startsWith("K") || rp.getAirportA().getICAO().startsWith("K");
+				boolean isUS = rp.getAirportD().getICAO().startsWith("K") || rp.getAirportD().getICAO().startsWith("P");
+				isUS |= rp.getAirportA().getICAO().startsWith("K") || rp.getAirportA().getICAO().startsWith("P");
 				if (!isUS) {
 					log.warn(rp.getAirportD() + " to " + rp.getAirportA() + " not a US route, skipping");
 					continue;
