@@ -92,6 +92,12 @@
 		<roles>HR</roles>	
 	</command>
 
+	<comamnd id="retire">
+		<name>Retire Pilot</name>
+		<class>org.deltava.commands.security.RetireUserCommand</class>
+		<roles>HR</roles>	
+	</comamnd>
+
 	<command id="suspend">
 		<name>Suspend Pilot</name>
 		<class>org.deltava.commands.security.SuspendUserCommand</class>
