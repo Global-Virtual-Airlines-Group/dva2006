@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -43,13 +43,13 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 			_ps.setInt(3, eq.getStage());
 			_ps.setString(4, StringUtils.listConcat(eq.getRanks(), ","));
 			_ps.setBoolean(5, eq.getActive());
-			_ps.setInt(7, eq.getPromotionLegs());
-			_ps.setDouble(8, eq.getPromotionHours());
-			_ps.setBoolean(9, eq.getACARSPromotionLegs());
-			_ps.setInt(10, eq.getPromotionMinLength());
-			_ps.setInt(11, eq.getPromotionSwitchLength());
-			_ps.setInt(12, eq.getMinimum1XTime());
-			_ps.setInt(13, eq.getMaximumAccelTime());
+			_ps.setInt(6, eq.getPromotionLegs());
+			_ps.setDouble(7, eq.getPromotionHours());
+			_ps.setBoolean(8, eq.getACARSPromotionLegs());
+			_ps.setInt(9, eq.getPromotionMinLength());
+			_ps.setInt(10, eq.getPromotionSwitchLength());
+			_ps.setInt(11, eq.getMinimum1XTime());
+			_ps.setInt(12, eq.getMaximumAccelTime());
 			executeUpdate(1);
 			
 			// Write the exams/ratings and commit
