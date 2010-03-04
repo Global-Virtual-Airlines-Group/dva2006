@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Exam Question profiles.
  * @author Luke
- * @version 2.3
+ * @version 3.0
  * @since 1.0
  */
 
@@ -139,27 +139,19 @@ public class QuestionProfile extends Question implements ViewEntry {
 	/**
 	 * Updates the total number of times this Question has been answered correctly.
 	 * @param count the number of correct answers
-	 * @throws IllegalArgumentException if count is negative
 	 * @see QuestionProfile#getCorrectAnswers()
 	 */
 	public void setCorrectAnswers(int count) {
-		if (count < 0)
-			throw new IllegalArgumentException("Answers cannot be negative");
-
-		_correctAnswers = count;
+		_correctAnswers = Math.max(0, count);
 	}
 
 	/**
 	 * Updates the total number of times this Question has been included in an Examination.
 	 * @param count the number of times included
-	 * @throws IllegalArgumentException if count is negative
 	 * @see QuestionProfile#getTotalAnswers()
 	 */
 	public void setTotalAnswers(int count) {
-		if (count < 0)
-			throw new IllegalArgumentException("Answers cannot be negative");
-
-		_totalAnswers = count;
+		_totalAnswers = Math.max(0, count);
 	}
 	
     /**
