@@ -75,7 +75,7 @@ public class PilotAccessControl extends AccessControl {
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
 		_canTransfer = _canChangeStatus && (status != Pilot.TRANSFERRED);
-		_canInactivate = _canChangeStatus && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE));
+		_canInactivate = _canChangeStatus && !_isOurs && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE));
 		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || 
 				(status == Pilot.SUSPENDED));
 
