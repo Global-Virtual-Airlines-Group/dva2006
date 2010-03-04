@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class CommandFactory {
 			return Collections.singleton("*");
 
 		// Build the roles
-		Collection<String> results = new HashSet<String>();
+		Collection<String> results = new TreeSet<String>();
 		results.addAll(StringUtils.split(roleNames, ","));
 		return results;
 	}
@@ -49,7 +49,7 @@ public class CommandFactory {
 		// Gracefully fail if no commands found
 		if (configXML == null) {
 			log.warn("No Commands loaded");
-			return new HashMap<String, Command>();
+			return Collections.emptyMap();
 		}
 
 		// Get the file
@@ -62,8 +62,7 @@ public class CommandFactory {
 			doc = builder.build(is);
 			is.close();
 		} catch (JDOMException je) {
-			IOException ie = new IOException("XML Parse Error in " + configXML, je);
-			throw ie;
+			throw new IOException("XML Parse Error in " + configXML, je);
 		}
 
 		// Get the root element
@@ -87,7 +86,8 @@ public class CommandFactory {
 				try {
 					Class<?> c = Class.forName(cmdClassName);
 					cmd = (Command) c.newInstance();
-					log.debug("Loaded command " + cmdID);
+					if (log.isDebugEnabled())
+						log.debug("Loaded command " + cmdID);
 
 					// init the command
 					cmd.init(cmdID, e.getChildTextTrim("name"));
@@ -95,7 +95,8 @@ public class CommandFactory {
 
 					// Save the command in the map
 					results.put(cmdID.toLowerCase(), cmd);
-					log.debug("Initialized command " + cmdID);
+					if (log.isDebugEnabled())
+						log.debug("Initialized command " + cmdID);
 				} catch (CommandException ce) {
 					log.error("Error initializing " + cmdID + " - " + ce.getMessage());
 				} catch (ClassNotFoundException cnfe) {
