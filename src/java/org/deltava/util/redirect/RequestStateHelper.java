@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.redirect;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class to save and restore servlet request state.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -68,9 +68,12 @@ public class RequestStateHelper {
 		Enumeration<?> attrs = req.getAttributeNames();
 		while (attrs.hasMoreElements()) {
 			String attrName = (String) attrs.nextElement();
-			rc.setAttribute(attrName, req.getAttribute(attrName));
-			if (log.isDebugEnabled())
-				log.debug("Saving attribute " + attrName);
+			Object o = req.getAttribute(attrName);
+			if (!(o instanceof Cookie)) {
+				rc.setAttribute(attrName, o);
+				if (log.isDebugEnabled())
+					log.debug("Saving attribute " + attrName);
+			}
 		}
 
 		// Get the current HTTP session
