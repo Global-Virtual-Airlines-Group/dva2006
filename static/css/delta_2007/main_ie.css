@@ -10,7 +10,7 @@ div#header {
 
 /* Formatting for header title caption */
 h1.header {
-	font-family: Trebuchet MS, Verdana, Tahoma, sans-serif;
+	font-family: Trebuchet MS, verdana, tahoma, sans-serif;
 	font-size: 26px;
 	color: #1a4876;
 	text-align: center;
@@ -196,7 +196,7 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 
 /* Result page Header */
 .updateHdr {
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
 	background-color: #1A4876;
@@ -210,7 +210,7 @@ table {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
 }
@@ -218,8 +218,8 @@ table {
 body {
 	scrollbar-face-color: #000080;
 	scrollbar-track-color: #303030;
-	scrollbar-arrow-color: #FFFFFF;
-	color: #1A4876;
+	scrollbar-arrow-color: #ffffff;
+	color: #1a4876;
 	margin-left: 2px;
 	margin-right: 0px;
 	font-family: verdana, tahoma, sans-serif;
@@ -229,11 +229,11 @@ body {
 
 .BUTTON, .cmdButton {
 	background-color: #003366;
-	color: #FFFFFF;
-	font-family: Verdana, Tahoma, sans-serif;
+	color: #ffffff;
+	font-family: verdana, tahoma, sans-serif;
 	font-size: 8pt;
 	text-transform: uppercase;
-	border: 2px outset #CFCFFF;
+	border: 2px outset #cfcfff;
 	font-weight: normal;
 }
 
@@ -254,7 +254,7 @@ a:hover {
 }
 
 .pri {
-	color: #1A4876;
+	color: #1a4876;
 }
 
 .sec {
@@ -270,11 +270,11 @@ a:hover {
 }
 
 .error {
-	color: #E02010;
+	color: #e02010;
 }
 
 .warn {
-	color: #FF8040;
+	color: #ff8040;
 }
 
 .small, *.small a, a.small {
@@ -310,15 +310,8 @@ a.plain {
 	text-decoration: none;
 }
 
-/* This is an IE-only hack for required SELECT elements */
-SELECT.req {
-	background: #fff8fa;
-	border: 1px solid #e00404;
-	color: #9f0303;
-}
-
 /* Google Maps infobox font */
 .mapInfoBox {
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	font-size: 8pt;
 }

@@ -1,4 +1,4 @@
-/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009 Global Virtual Airlines Group. */
+/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. */
 
 table.form, table.bar {
 	table-layout: auto;
@@ -83,13 +83,15 @@ input.radio, input.check {
 	font-size: 8pt;
 }
 
-select.req {
-	border: 1px solid #c01933;
-}
-
 input.req, input.req {
 	background: #fff8fa;
 	border: 1px solid #c01933;
+}
+
+select.req {
+	border: 1px solid #c01933;
+	color: #efe8ea;
+	background: #8f1414;
 }
 
 *.label :link, *.label :visited {
