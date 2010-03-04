@@ -25,9 +25,14 @@ if (!validateCombo(form.owner, 'Owner')) return false;
 if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
 
 // Validate multiple choice
+<c:if test="${empty question}">
 if ((form.isMultiChoice) && (form.isMultiChoice.checked)) {
 	if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
 }
+</c:if>
+<c:if test="${!empty question && isMC}">
+if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
+</c:if>
 
 setSubmit();
 disableButton('SaveButton');
@@ -59,8 +64,9 @@ var choices = f.answerChoices.value.split('\n');
 f.correctChoice.options.length = 1;
 f.correctChoice.options.length = choices.length + 1;
 for (var x = 0; x < choices.length; x++) {
-	f.correctChoice.options[x + 1] = new Option(choices[x], choices[x]);
-	if (choices[x] == oldAnswer)
+	var c = choices[x].replace('\r','');
+	f.correctChoice.options[x + 1] = new Option(c, c);
+	if (c == oldAnswer)
 		f.correctChoice.selectedIndex = x + 1;
 }
 
@@ -112,7 +118,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Pilot Examinations</td>
- <td class="data"><el:check name="examNames" idx="*" cols="5" width="190" newLine="true" className="small" checked="${question.pools}" options="${examNames}" /></td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="200" newLine="true" className="small" checked="${question.pools}" options="${examNames}" /></td>
 </tr>
 <c:if test="${!empty question}">
 <tr>
@@ -131,7 +137,7 @@ return true;
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels) <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels)</span> <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 </c:if>
@@ -160,7 +166,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Correct Answer</td>
- <td class="data"><el:combo name="correctChoice" size="1" idx="*" options="${question.choices}" firstEntry="-" value="${question.correctAnswer}" /></td>
+ <td class="data"><el:combo name="correctChoice" size="1" idx="*" className="req" options="${question.choices}" firstEntry="-" value="${question.correctAnswer}" /></td>
 </tr>
 </c:if>
 </el:table>
