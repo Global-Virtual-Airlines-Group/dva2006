@@ -92,11 +92,11 @@
 		<roles>HR</roles>	
 	</command>
 
-	<comamnd id="retire">
+	<command id="retire">
 		<name>Retire Pilot</name>
 		<class>org.deltava.commands.security.RetireUserCommand</class>
 		<roles>HR</roles>	
-	</comamnd>
+	</command>
 
 	<command id="suspend">
 		<name>Suspend Pilot</name>
