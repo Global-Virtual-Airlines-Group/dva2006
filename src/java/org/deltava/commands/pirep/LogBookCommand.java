@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -28,8 +28,8 @@ public class LogBookCommand extends AbstractViewCommand {
 	
     // List of query columns we can order by
     private static final String[] SORT_CODE = {"DATE DESC, PR.SUBMITTED DESC", "EQTYPE", "DISTANCE DESC", "AIRPORT_D",
-    	"AIRPORT_A", "FLIGHT_TIME DESC"};
-    private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Origin", "Destination", "Flight Time"};
+    	"AIRPORT_A", "FLIGHT_TIME DESC", "AIRLINE, DATE DESC"};
+    private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Origin", "Destination", "Flight Time", "Airline"};
     private static final List<ComboAlias> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
 
     /**
