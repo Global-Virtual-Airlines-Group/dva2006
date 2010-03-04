@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store multiple-choice question data.
  * @author Luke
- * @version 2.3
+ * @version 3.0
  * @since 1.0
  */
 
@@ -38,7 +38,6 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	/**
 	 * Adds a choice to the available choices.
 	 * @param choice the choice text
-	 * @throws NullPointerException if choice is null
 	 * @see MultiChoiceQuestionProfile#setChoices(Collection)
 	 * @see MultiChoiceQuestionProfile#getChoices()
 	 */
@@ -59,6 +58,17 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 		_choices.clear();
 		for (Iterator<String> i = choices.iterator(); i.hasNext(); )
 			addChoice(i.next());
+	}
+	
+	/**
+	 * Sets the correct answer to this question.
+	 * @param answer the correct answer
+	 */
+	public void setCorrectAnswer(String answer) {
+		if (!StringUtils.isEmpty(answer)) {
+			String tmp = answer.trim().replace("\n", "");
+			super.setCorrectAnswer(tmp.replace("\r", ""));
+		}
 	}
 	
 	/**
