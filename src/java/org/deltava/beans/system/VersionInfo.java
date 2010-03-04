@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
@@ -13,7 +13,7 @@ public interface VersionInfo {
     public static final int MAJOR = 3;
     public static final int MINOR = 0;
     
-    public static final int BUILD = 287;
+    public static final int BUILD = 288;
     // public static final int RELEASE_CANDIDATE = 1;
     public static final boolean FINAL = false;
     
