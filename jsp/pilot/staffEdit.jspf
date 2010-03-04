@@ -28,7 +28,7 @@
 <tr>
  <td class="label">Sort Order</td>
  <td colspan="${cspan}" class="data"><el:text name="staffSort" idx="*" value="${staff.sortOrder}" className="req" size="1" max="1" />
- <span class="small"><input type="checkbox" name="removeStaff" value="true" />Remove Staff Profile</span></td>
+ <el:box name="removeStaff" value="true" label="Remove Staff Profile" /></td>
 </tr>
 </c:if>
 </c:if>
