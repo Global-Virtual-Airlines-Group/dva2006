@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -97,6 +97,8 @@ public class EquipmentCommand extends AbstractFormCommand {
 			// Get the DAO and the existing equipment type profile
 			GetEquipmentType rdao = new GetEquipmentType(con);
 			EquipmentType eq = isNew ? new EquipmentType(ctx.getParameter("eqType")) : rdao.get(eqType, SystemData.get("airline.db"));
+			if (isNew)
+				eq.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			
 			// Update the equipment type profile from the request
 			eq.setCPID(StringUtils.parse(ctx.getParameter("cp"), 0));
