@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -24,11 +24,14 @@ public class InsertCSSTag extends InsertContentTag {
 	 * Default CSS scheme name.
 	 */
 	static final String DEFAULT_SCHEME = "legacy";
+	
+	private static final String DEFAULT_SUFFIX = "ff";
 
 	private String _host;
 	private String _scheme;
 	private boolean _browserSpecific;
 	private String _ie7suffix;
+	private String _defaultSuffix = DEFAULT_SUFFIX;
 
 	/**
 	 * Sets whether to include a brower-specific Cascading Style Sheet.
@@ -62,7 +65,15 @@ public class InsertCSSTag extends InsertContentTag {
 	public void setIe7suffix(String suffix) {
 		_ie7suffix = suffix;
 	}
-
+	
+	/**
+	 * Overrideds the file suffix to use for unknown browsers.
+	 * @param suffix
+	 */
+	public void setDefaultSuffix(String suffix) {
+		_defaultSuffix = suffix;
+	}
+	
 	/**
 	 * Gets the scheme in use, or DEFAULT_SCHEME if none specified
 	 * @return the scheme name
@@ -110,6 +121,8 @@ public class InsertCSSTag extends InsertContentTag {
 				buf.append(_ie7suffix);
 			else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext) || ContentHelper.isIE8(pageContext))
 				buf.append("ie");
+			else
+				buf.append(_defaultSuffix);
 		}
 
 		buf.append(".css");
@@ -152,5 +165,6 @@ public class InsertCSSTag extends InsertContentTag {
 		_scheme = null;
 		_host = null;
 		_ie7suffix = null;
+		_defaultSuffix = DEFAULT_SUFFIX;
 	}
 }
