@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,18 +9,22 @@ import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.*;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 2.1
  */
 
-public class GetFlightReportStatistics extends DAO {
+public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	
-	private static final int MIN_ACARS_CLIENT = 61;
+	private static final Cache<CacheableCollection<LandingStatistics>> _cache =
+		new ExpiringCache<CacheableCollection<LandingStatistics>>(64, 3600);
+	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache =
+		new ExpiringCache<CacheableCollection<FlightStatsEntry>>(16, 900);
 	
 	private int _dayFilter;
 
@@ -41,6 +45,29 @@ public class GetFlightReportStatistics extends DAO {
 		}
 	}
 	
+	private class StatsCacheKey {
+		private String _eqType;
+		private int _minCount;
+		
+		StatsCacheKey(String eqType, int minCount) {
+			super();
+			_eqType = eqType;
+			_minCount = minCount;
+		}
+		
+		public String toString() {
+			return _eqType + "$" + _minCount;
+		}
+		
+		public int hashCode() {
+			return toString().hashCode();
+		}
+		
+		public boolean equals(Object o) {
+			return ((o instanceof StatsCacheKey) && (toString().equals(String.valueOf(o))));
+		}
+	}
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -58,6 +85,15 @@ public class GetFlightReportStatistics extends DAO {
 		_dayFilter = Math.max(0, days);
 	}
 
+	/**
+	 * Returns cache statistics.
+	 */
+	public CacheInfo getCacheInfo() {
+		CacheInfo result = new CacheInfo(_cache);
+		result.add(_statCache);
+		return result;
+	}
+	
 	/**
 	 * Returns the most popular route pairs filed by Pilots.
 	 * @param noRoutes TRUE to include pairs without dispatch routes only, otherwise FALSE
@@ -123,6 +159,12 @@ public class GetFlightReportStatistics extends DAO {
 	 */
 	public Collection<LandingStatistics> getLandings(String eqType, int minLandings) throws DAOException {
 		
+		// Check the cache
+		StatsCacheKey key = new StatsCacheKey(eqType, minLandings);
+		CacheableCollection<LandingStatistics> results = _cache.get(key);
+		if (results != null)
+			return results;
+		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, "
 				+ "COUNT(PR.ID) AS CNT, ROUND(SUM(PR.FLIGHT_TIME),1) AS HRS, AVG(APR.LANDING_VSPEED) AS VS, "
@@ -141,7 +183,7 @@ public class GetFlightReportStatistics extends DAO {
 			int pos = 0;
 			prepareStatement(buf.toString());
 			_ps.setBoolean(++pos, false);
-			_ps.setInt(++pos, MIN_ACARS_CLIENT);
+			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(++pos, FlightReport.OK);
 			if (eqType != null)
 				_ps.setString(++pos, eqType);
@@ -150,7 +192,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(++pos, minLandings);
 			
 			// Execute the query
-			Collection<LandingStatistics> results = new ArrayList<LandingStatistics>();
+			results = new CacheableList<LandingStatistics>(key);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				LandingStatistics ls = new LandingStatistics(rs.getString(2), null);
@@ -171,6 +213,7 @@ public class GetFlightReportStatistics extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
+			_cache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -184,6 +227,12 @@ public class GetFlightReportStatistics extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<LandingStatistics> getLandings(int pilotID) throws DAOException {
+		
+		// Check the cache
+		StatsCacheKey key = new StatsCacheKey("$PILOT", pilotID);
+		CacheableCollection<LandingStatistics> results = _cache.get(key);
+		if (results != null)
+			return results;
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(APR.ID) AS CNT, "
@@ -201,14 +250,14 @@ public class GetFlightReportStatistics extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, false);
-			_ps.setInt(2, MIN_ACARS_CLIENT);
+			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(3, pilotID);
 			_ps.setInt(4, FlightReport.OK);
 			if (_dayFilter > 0)
 				_ps.setInt(5, _dayFilter);
 			
 			// Execute the query
-			Collection<LandingStatistics> results = new ArrayList<LandingStatistics>();
+			results = new CacheableList<LandingStatistics>(key);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
@@ -229,6 +278,7 @@ public class GetFlightReportStatistics extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
+			_cache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -299,6 +349,11 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(orderBy);
 		
+		// Check the cache
+		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
+		if (results != null)
+			return results;
+		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, 2006);
@@ -309,7 +364,7 @@ public class GetFlightReportStatistics extends DAO {
 			_ps.setInt(6, FlightReport.OK);
 			
 			// Execute the query
-			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
+			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
@@ -324,6 +379,7 @@ public class GetFlightReportStatistics extends DAO {
 			// Clean up and return
 			rs.close();
 			_ps.close();
+			_statCache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -337,10 +393,10 @@ public class GetFlightReportStatistics extends DAO {
 	 * @param groupBy the &quot;GROUP BY&quot; column name
 	 * @param orderBy the &quot;ORDER BY&quot; column name
 	 * @param descSort TRUE if a descending sort, otherwise FALSE
-	 * @return a List of FlightStatsEntry beans
+	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightStatsEntry> getEQPIREPStatistics(String eqType, String groupBy, String orderBy, boolean descSort) throws DAOException {
+	public Collection<FlightStatsEntry> getEQPIREPStatistics(String eqType, String groupBy, String orderBy, boolean descSort) throws DAOException {
 		
 		// Build the SQL statemnet
 		boolean isPilot = groupBy.startsWith("P.");
@@ -362,6 +418,11 @@ public class GetFlightReportStatistics extends DAO {
 		if (descSort)
 			sqlBuf.append(" DESC");
 		
+		// Check the cache
+		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
+		if (results != null)
+			return results;
+		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.ATTR_ACARS);
@@ -374,7 +435,11 @@ public class GetFlightReportStatistics extends DAO {
 			if (_dayFilter > 0)
 				_ps.setInt(8, _dayFilter);
 			
-			return execute();
+			// Do the query
+			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
+			results.addAll(execute());
+			_statCache.add(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -387,10 +452,10 @@ public class GetFlightReportStatistics extends DAO {
 	 * @param orderBy the &quot;ORDER BY&quot; column name
 	 * @param descSort TRUE if a descending sort, otherwise FALSE
 	 * @param activeOnly TRUE if active pilots only, otherwise FALSE
-	 * @return a List of FlightStatsEntry beans
+	 * @return a Collection of FlightStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort, boolean activeOnly) throws DAOException {
+	public Collection<FlightStatsEntry> getPIREPStatistics(int pilotID, String groupBy, String orderBy, boolean descSort, boolean activeOnly) throws DAOException {
 
 		// Get the SQL statement to use
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -419,6 +484,11 @@ public class GetFlightReportStatistics extends DAO {
 		sqlBuf.append(orderBy);
 		if (descSort)
 			sqlBuf.append(" DESC");
+		
+		// Check the cache
+		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
+		if (results != null)
+			return results;
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -433,7 +503,11 @@ public class GetFlightReportStatistics extends DAO {
 			if (activeOnly)
 				_ps.setInt(++param, Pilot.ACTIVE);
 			
-			return execute();
+			// Get the results
+			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
+			results.addAll(execute());
+			_statCache.add(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

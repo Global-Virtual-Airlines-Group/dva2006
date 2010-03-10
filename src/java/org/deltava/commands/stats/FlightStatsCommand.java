@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.deltava.beans.stats.FlightStatsEntry;
 
@@ -22,7 +22,7 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 	/**
 	 * Execute the command.
 	 * @param ctx the Command context
-	 * @throws CommandException if an unhandled error occurs.
+	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
@@ -45,11 +45,11 @@ public class FlightStatsCommand extends AbstractStatsCommand {
 			dao.setQueryMax(vc.getCount());
 
 			// Save the statistics in the request
-			List<FlightStatsEntry> results = dao.getPIREPStatistics(0, labelType, vc.getSortType(), true, activeOnly); 
+			Collection<FlightStatsEntry> results = dao.getPIREPStatistics(0, labelType, vc.getSortType(), true, activeOnly); 
 			vc.setResults(results);
 			
 			// Save pilot ID flag
-			boolean hasID = !results.isEmpty() && (results.get(0).getPilotIDs() > 0);
+			boolean hasID = !results.isEmpty() && (results.iterator().next().getPilotIDs() > 0);
 			ctx.setAttribute("hasPilotID", Boolean.valueOf(hasID), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
