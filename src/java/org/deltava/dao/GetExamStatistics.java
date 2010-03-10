@@ -74,10 +74,11 @@ public class GetExamStatistics extends DAO {
 	 * Returns check ride statistics.
 	 * @param label the label SQL
 	 * @param subLabel the sub-label SQL
+	 * @param academyOnly TRUE if only Flight Academy check rides are included, otherwise FALSE 
 	 * @return a Collection of ExamStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ExamStatsEntry> getCheckrideStatistics(String label, String subLabel) throws DAOException {
+	public Collection<ExamStatsEntry> getCheckrideStatistics(String label, String subLabel, boolean academyOnly) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -86,11 +87,16 @@ public class GetExamStatistics extends DAO {
 		sqlBuf.append(subLabel);
 		sqlBuf.append("AS SUBLBL, SUM(C.PASS) AS PS, COUNT(C.ID) AS CNT FROM CHECKRIDES C, ");
 		sqlBuf.append(SystemData.get("airline.db"));
-		sqlBuf.append(".PILOTS P WHERE (P.ID=C.GRADED_BY) AND (C.CREATED<>C.GRADED) AND (C.STATUS=?) GROUP BY LBL, SUBLBL");
+		sqlBuf.append(".PILOTS P WHERE (P.ID=C.GRADED_BY) AND (C.CREATED<>C.GRADED) AND (C.STATUS=?) ");
+		if (academyOnly)
+			sqlBuf.append("AND (C.ACADEMY=?) ");
+		sqlBuf.append("GROUP BY LBL, SUBLBL");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, Test.SCORED);
+			if (academyOnly)
+				_ps.setBoolean(2, true);
 			
 			// Execute the query
 			Collection<ExamStatsEntry> results = new ArrayList<ExamStatsEntry>();
