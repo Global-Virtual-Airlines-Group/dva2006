@@ -125,6 +125,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
 	 */
 	public static final int ATTR_ONLINE_MASK = 0x0E;
+	
+	/**
+	 * Minimum ACARS client version for inclusion in statistics aggregation.
+	 */
+	public static final int MIN_ACARS_CLIENT = 61;
 
 	public static final String DBID_PILOT = "$PILOT$";
 	public static final String DBID_DISPOSAL = "$DISPOSALPILOTID$";

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,16 +11,14 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
 public class GetFlightReportRecognition extends GetFlightReports implements CachingDAO {
 	
-	private static final int MIN_ACARS_CLIENT = 61;
-	
 	private static final Cache<CacheableList<FlightReport>> _cache = 
-		new ExpiringCache<CacheableList<FlightReport>>(16, 600);
+		new ExpiringCache<CacheableList<FlightReport>>(16, 1800);
 	
 	private int _dayFilter;
 
@@ -66,7 +64,7 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, MIN_ACARS_CLIENT);
+			_ps.setInt(1, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(2, FlightReport.OK);
 			if (_dayFilter > 0)
 				_ps.setInt(3, _dayFilter);
@@ -103,7 +101,7 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, MIN_ACARS_CLIENT);
+			_ps.setInt(1, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(2, FlightReport.OK);
 			if (_dayFilter > 0)
 				_ps.setInt(3, _dayFilter);
@@ -142,7 +140,7 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, eqType);
-			_ps.setInt(2, MIN_ACARS_CLIENT);
+			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
 			_ps.setInt(3, FlightReport.OK);
 			if (_dayFilter > 0)
 				_ps.setInt(4, _dayFilter);
@@ -176,7 +174,7 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			int pos = 0;
 			prepareStatement(buf.toString());
 			_ps.setInt(++pos, FlightReport.OK);
-			_ps.setInt(++pos, MIN_ACARS_CLIENT);
+			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
 			if (_dayFilter > 0)
 				_ps.setInt(++pos, _dayFilter);
 			
