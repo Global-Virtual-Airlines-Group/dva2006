@@ -17,6 +17,7 @@ public class ExamStatsEntry implements ViewEntry {
 	
 	private int _total;
 	private int _passed;
+	private int _users;
 
 	/**
 	 * Initializes the bean.
@@ -63,6 +64,15 @@ public class ExamStatsEntry implements ViewEntry {
 	}
 	
 	/**
+	 * Returns the total number of distinct users in this time period.
+	 * @return the number of users
+	 * @see ExamStatsEntry#setUsers(int)
+	 */
+	public int getUsers() {
+		return _users;
+	}
+	
+	/**
 	 * Updates the entry sub-label.
 	 * @param label the sub-label
 	 */
@@ -86,6 +96,15 @@ public class ExamStatsEntry implements ViewEntry {
 	 */
 	public void setPassed(int cnt) {
 		_passed = Math.max(0, cnt);
+	}
+	
+	/**
+	 * Updates the total number of users in this time period.
+	 * @param cnt the number of users
+	 * @see ExamStatsEntry#getUsers()
+	 */
+	public void setUsers(int cnt) {
+		_users = Math.max(0, cnt); 
 	}
 	
 	@Override
