@@ -163,7 +163,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		StatsCacheKey key = new StatsCacheKey(eqType, minLandings);
 		CacheableCollection<LandingStatistics> results = _cache.get(key);
 		if (results != null)
-			return results;
+			return results.clone();
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT P.ID, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME, "
@@ -214,7 +214,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			rs.close();
 			_ps.close();
 			_cache.add(results);
-			return results;
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -232,7 +232,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		StatsCacheKey key = new StatsCacheKey("$PILOT", pilotID);
 		CacheableCollection<LandingStatistics> results = _cache.get(key);
 		if (results != null)
-			return results;
+			return results.clone();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.EQTYPE, COUNT(APR.ID) AS CNT, "
@@ -279,7 +279,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			rs.close();
 			_ps.close();
 			_cache.add(results);
-			return results;
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -352,7 +352,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		// Check the cache
 		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
 		if (results != null)
-			return results;
+			return results.clone();
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -380,7 +380,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			rs.close();
 			_ps.close();
 			_statCache.add(results);
-			return results;
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -421,7 +421,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		// Check the cache
 		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
 		if (results != null)
-			return results;
+			return results.clone();
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -439,7 +439,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
 			results.addAll(execute());
 			_statCache.add(results);
-			return results;
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -488,7 +488,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		// Check the cache
 		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
 		if (results != null)
-			return results;
+			return results.clone();
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -507,7 +507,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
 			results.addAll(execute());
 			_statCache.add(results);
-			return results;
+			return results.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
