@@ -1,4 +1,4 @@
-// Copyright 2006, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.LinkedHashSet;
@@ -25,9 +25,22 @@ public class CacheableSet<E> extends LinkedHashSet<E> implements CacheableCollec
 	}
 	
 	/**
+	 * Copy constructor.
+	 * @param cc the original CacheableCollection
+	 */
+	public CacheableSet(CacheableCollection<E> cc) {
+		this(cc.cacheKey());
+		addAll(cc);
+	}
+	
+	/**
 	 * Returns the cache key.
 	 */
 	public Object cacheKey() {
 		return _key;
+	}
+	
+	public CacheableSet<E> clone() {
+		return new CacheableSet<E>(this);
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,13 +11,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load mySQL table status.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
 public class GetTableStatus extends DAO implements CachingDAO {
 	
-	private static final Cache<CacheableCollection<TableInfo>> _cache = new ExpiringCache<CacheableCollection<TableInfo>>(12, 1800);
+	private static final Cache<CacheableCollection<TableInfo>> _cache = new ExpiringCache<CacheableCollection<TableInfo>>(16, 1800);
 	
 	/**
      * Initializes the Data Access Object.
@@ -46,7 +46,7 @@ public class GetTableStatus extends DAO implements CachingDAO {
     	dbName = formatDBName(dbName);
     	CacheableCollection<TableInfo> results = _cache.get(dbName);
     	if (results != null)
-    		return results;
+    		return results.clone();
     	
         try {
             prepareStatementWithoutLimits("SHOW TABLE STATUS FROM " + dbName);
@@ -71,6 +71,6 @@ public class GetTableStatus extends DAO implements CachingDAO {
 
         // Add to cache and return
         _cache.add(results);
-        return results;
+        return results.clone();
     }
 }
