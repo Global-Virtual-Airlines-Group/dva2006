@@ -1513,6 +1513,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="examstats">
+		<name>Exam/Check Ride Statistics</name>
+		<class>org.deltava.commands.stats.ExamStatsCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="cmdstats">
 		<name>Command Statistics</name>
 		<class>org.deltava.commands.system.CommandStatsCommand</class>
