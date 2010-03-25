@@ -27,6 +27,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>caption</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -167,6 +172,11 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>external</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -201,6 +211,11 @@
 		</attribute>
 		<attribute>
 			<name>label</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
@@ -370,6 +385,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>onClick</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -442,6 +462,11 @@
 		</attribute>
 		<attribute>
 			<name>ID</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
@@ -536,6 +561,11 @@
 			<name>name</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>idx</name>
@@ -638,6 +668,11 @@
 		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>style</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
