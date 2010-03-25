@@ -349,11 +349,6 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		sqlBuf.append(" GROUP BY LABEL ORDER BY ");
 		sqlBuf.append(orderBy);
 		
-		// Check the cache
-		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
-		if (results != null)
-			return results.clone();
-		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, 2006);
@@ -363,8 +358,15 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			_ps.setInt(5, 2000);
 			_ps.setInt(6, FlightReport.OK);
 			
+			// Check the cache
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(_ps.toString());
+			if (results != null) {
+				_ps.close();
+				return results.clone();
+			}
+			
 			// Execute the query
-			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
+			results = new CacheableList<FlightStatsEntry>(_ps.toString());
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
@@ -418,11 +420,6 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		if (descSort)
 			sqlBuf.append(" DESC");
 		
-		// Check the cache
-		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
-		if (results != null)
-			return results.clone();
-		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.ATTR_ACARS);
@@ -435,8 +432,15 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			if (_dayFilter > 0)
 				_ps.setInt(8, _dayFilter);
 			
+			// Check the cache
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(_ps.toString());
+			if (results != null) {
+				_ps.close();
+				return results.clone();
+			}
+			
 			// Do the query
-			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
+			results = new CacheableList<FlightStatsEntry>(_ps.toString());
 			results.addAll(execute());
 			_statCache.add(results);
 			return results.clone();
@@ -484,11 +488,6 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		sqlBuf.append(orderBy);
 		if (descSort)
 			sqlBuf.append(" DESC");
-		
-		// Check the cache
-		CacheableCollection<FlightStatsEntry> results = _statCache.get(sqlBuf.toString());
-		if (results != null)
-			return results.clone();
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -503,8 +502,15 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			if (activeOnly)
 				_ps.setInt(++param, Pilot.ACTIVE);
 			
+			// Check the cache
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(_ps.toString());
+			if (results != null) {
+				_ps.close();
+				return results.clone();
+			}
+			
 			// Get the results
-			results = new CacheableList<FlightStatsEntry>(sqlBuf.toString());
+			results = new CacheableList<FlightStatsEntry>(_ps.toString());
 			results.addAll(execute());
 			_statCache.add(results);
 			return results.clone();
