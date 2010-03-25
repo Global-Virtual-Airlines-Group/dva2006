@@ -17,16 +17,16 @@
 <script language="JavaScript" type="text/javascript">
 function selectAC(combo)
 {
-var idx = combo.selectedIndex - 1;
-if (idx < 0) {
+if (combo.selectedIndex < 1) {
 	document.fName = null;
+	showObject(getElement('installerInfo'), false);
 	return false;
 }
 
 // Get the code
 var code = combo.options[combo.selectedIndex].value;
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "fleetlib.ws?code=" + code, true);
+xmlreq.open('GET', 'fleetlib.ws?code=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -47,13 +47,17 @@ xmlreq.onreadystatechange = function() {
 	document.fName = info.getAttribute('filename');
 	getElement('FleetPic').src = info.getAttribute('img');
 	getElement('divName').innerHTML = info.getAttribute('title');
-	getElement('divSize').innerHTML = info.getAttribute('size') + ' bytes';
+	var dt = info.getAttribute('date');
+	if (dt)
+		getElement('divDT').innerHTML = dt;
+	getElement('divSize').innerHTML = info.getAttribute('size');
 	getElement('FSVersions').innerHTML = (versions.length == 0) ? '' : (verDesc + '.');
 
 	// Load the description
 	var descE = info.getElementsByTagName('desc')[0].firstChild;
 	getElement('divDesc').innerHTML = descE.data;
 	combo.disabled = false;
+	showObject(getElement('installerInfo'), true);
 	return true;
 }
 
@@ -84,14 +88,14 @@ return true;
 <el:form action="fleetlibrary.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
- <td class="caps">FLEET LIBRARY</td>
+ <td class="caps"><content:airline /> FLEET LIBRARY</td>
  <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="< INSTALLER >" options="${fleet}" onChange="void selectAC(this)" /></td>
 </tr>
 <tr>
  <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" caption="Fleet Library" /></td>
- <td class="top"><div id="divName" class="pri bld"></div>
-<div id="divSize" class="sec bld"></div><br />
-<div id="FSVersions" class="pri bld small"></div><br />
+ <td id="installerInfo" class="top" style="visibility:hidden;"><span id="divName" class="pri bld"></span><br /><br />
+<span class="sec bld"><span id="divSize"></span> bytes, last modified on <span id="divDT"></span></span><br />
+<span id="FSVersions" class="pri bld small"></span><br />
 <div id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 
 you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
 aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to 
