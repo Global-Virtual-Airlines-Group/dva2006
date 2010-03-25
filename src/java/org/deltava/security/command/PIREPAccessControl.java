@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.*;
+import org.deltava.beans.Pilot;
 import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.security.SecurityContext;
@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -73,7 +73,8 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean isHeld = (status == FlightReport.HOLD);
 
 		// Check if held by us
-		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID()));
+		final int disposalID = _pirep.getDatabaseID(FlightReport.DBID_DISPOSAL);
+		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && ((disposalID == _ctx.getUser().getID())) || (disposalID == 0));
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
