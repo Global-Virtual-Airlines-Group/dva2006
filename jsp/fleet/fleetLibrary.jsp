@@ -92,24 +92,24 @@ return true;
  <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="< INSTALLER >" options="${fleet}" onChange="void selectAC(this)" /></td>
 </tr>
 <tr>
- <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" caption="Fleet Library" /></td>
- <td id="installerInfo" class="top" style="visibility:hidden;"><span id="divName" class="pri bld"></span><br /><br />
-<span class="sec bld"><span id="divSize"></span> bytes, last modified on <span id="divDT"></span></span><br />
-<span id="FSVersions" class="pri bld small"></span><br />
-<div id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 
+ <td colspan="2"><el:img ID="FleetPic" style="float:left; margin:4px;" x="164" y="314" src="blank.png" caption="Fleet Library" />
+ <div id="installerInfo" class="top" style="visibility:hidden; margin:4px;"><span id="divName" class="pri bld"></span><br /><br />
+<span class="sec bld"><span id="divSize"></span>&nbsp;bytes, last modified on <span id="divDT"></span></span><br />
+<span id="FSVersions" class="pri bld small"></span><br /><br />
+<span id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 
 you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
 aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to 
 download a sound package and an operating manual from the <content:airline /> Document Library.<br />
 <br />
-Select a Fleet Installer from the list above.</div>
-</td>
+Select a Fleet Installer from the list above.</span>
+</div></td>
 </tr>
 </el:table>
 
 <!-- Download Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="DownloadButton" className="BUTTON" label="DOWNLOAD INSTALLER" onClick="void download(document.fileName)" /></td>
+ <td><el:button ID="DownloadButton" className="BUTTON" label="DOWNLOAD INSTALLER" onClick="void download()" /></td>
 </tr>
 </el:table>
 </el:form>

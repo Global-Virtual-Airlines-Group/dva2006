@@ -56,14 +56,6 @@ public class TableTag extends ElementTag {
     }
     
     /**
-     * Associates a CSS style with this table.
-     * @param style the CSS
-     */
-    public void setStyle(String style) {
-    	_data.setAttribute("style", style);
-    }
-
-    /**
      * Opens this TABLE element by writing a &gt;TABLE&lt; tag.
      * @throws JspException if an error occurs
      */
