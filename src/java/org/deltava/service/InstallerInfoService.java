@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Fleet Library Information.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -59,6 +59,12 @@ public class InstallerInfoService extends WebService {
 		// If no installer found, return a 404 error
 		if (i == null)
 			throw new ServiceException(SC_NOT_FOUND, code + " not found");
+		
+		// Get the format strings
+		String dFmt = ctx.isAuthenticated() ? ctx.getUser().getDateFormat() : SystemData.get("date_format");
+		String nFmt = ctx.isAuthenticated() ? ctx.getUser().getNumberFormat() : "#,##0";
+		if (nFmt.contains("."))
+			nFmt = nFmt.substring(0, nFmt.indexOf('.'));
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -71,9 +77,11 @@ public class InstallerInfoService extends WebService {
 		le.setAttribute("code", i.getCode());
 		le.setAttribute("filename", i.getFileName());
 		le.setAttribute("title", i.getName());
-		le.setAttribute("size", StringUtils.format(i.getSize(), "#,#00"));
+		le.setAttribute("size", StringUtils.format(i.getSize(), nFmt));
+		if (i.getLastModified() != null)
+			le.setAttribute("date", StringUtils.format(i.getLastModified(), dFmt));
 		le.setAttribute("version", i.getVersion());
-		le.setAttribute("dl", StringUtils.format(i.getDownloadCount(), "#,##0"));
+		le.setAttribute("dl", StringUtils.format(i.getDownloadCount(), nFmt));
 		le.setAttribute("img", "/" + SystemData.get("path.img") + "/fleet/" + i.getImage());
 		Element e = new Element("desc");
 		e.addContent(new CDATA(i.getDescription()));
