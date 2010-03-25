@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -8,12 +8,12 @@ import org.deltava.beans.help.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.HelpDeskAccessControl;
+import org.deltava.security.command.*;
 
 /**
- * A Web Site Command to display Flight Academy Issues.
+ * A Web Site Command to display Help Desk Issues.
  * @author Luke
- * @version 2.1
+ * @version 3.0
  * @since 1.0
  */
 
@@ -37,9 +37,25 @@ public class IssueListCommand extends AbstractViewCommand {
 			// Get the DAO and the issue list
 			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
-			idao.setQueryMax(vc.getCount());
+			idao.setQueryMax(Math.round(vc.getCount() * 1.275f));
+			
+			// Load issues
 			Collection<Issue> results = isActive ? idao.getActive() : idao.getAll();
-			vc.setResults(results);
+			for (Iterator<Issue> ii = results.iterator(); ii.hasNext(); ) {
+				Issue i = ii.next();
+				HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
+				try {
+					ac.validate();
+				} catch (AccessControlException ace) {
+					ii.remove();
+				}
+			}
+			
+			// Trim issues
+			if (results.size() > vc.getCount()) {
+				List<Issue> iList = new ArrayList<Issue>(results);
+				iList.remove(iList.subList(vc.getCount(), iList.size()));
+			}
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
@@ -53,6 +69,9 @@ public class IssueListCommand extends AbstractViewCommand {
 			// Load Pilot IDs
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			
+			// Save issues
+			vc.setResults(results);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
