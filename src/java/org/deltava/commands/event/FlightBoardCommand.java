@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -82,14 +82,14 @@ public class FlightBoardCommand extends AbstractCommand {
 				Pilot usr = i.next();
 
 				// Update the departure airport
-				if (navaids.contains(usr.getAirportD().getICAO())) {
+				if (navaids.contains(usr.getAirportD().getICAO()) && !usr.getAirportD().hasPosition()) {
 					AirportLocation al = (AirportLocation) navaids.get(usr.getAirportD().getICAO());
 					usr.getAirportD().setName(al.getName());
 					usr.getAirportD().setLocation(al.getLatitude(), al.getLongitude());
 				}
 
 				// Update the arrival airport
-				if (navaids.contains(usr.getAirportA().getICAO())) {
+				if (navaids.contains(usr.getAirportA().getICAO()) && !usr.getAirportA().hasPosition()) {
 					AirportLocation al = (AirportLocation) navaids.get(usr.getAirportA().getICAO());
 					usr.getAirportA().setName(al.getName());
 					usr.getAirportA().setLocation(al.getLatitude(), al.getLongitude());
