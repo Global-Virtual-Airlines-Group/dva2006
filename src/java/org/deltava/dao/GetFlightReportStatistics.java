@@ -95,6 +95,14 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	}
 	
 	/**
+	 * Helper method to extract a cache key from a prepared statment.
+	 */
+	private String getCacheKey(String ps) {
+		int ofs = ps.indexOf("SELECT");
+		return (ofs == -1) ? ps : ps.substring(ofs);
+	}
+	
+	/**
 	 * Returns the most popular route pairs filed by Pilots.
 	 * @param noRoutes TRUE to include pairs without dispatch routes only, otherwise FALSE
 	 * @param allFlights TRUE to include Flight Reports without ACARS, otherwise FALSE
@@ -359,14 +367,15 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			_ps.setInt(6, FlightReport.OK);
 			
 			// Check the cache
-			CacheableCollection<FlightStatsEntry> results = _statCache.get(_ps.toString());
+			String cacheKey = getCacheKey(_ps.toString());
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
 			if (results != null) {
 				_ps.close();
 				return results.clone();
 			}
 			
 			// Execute the query
-			results = new CacheableList<FlightStatsEntry>(_ps.toString());
+			results = new CacheableList<FlightStatsEntry>(cacheKey);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
@@ -433,14 +442,15 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				_ps.setInt(8, _dayFilter);
 			
 			// Check the cache
-			CacheableCollection<FlightStatsEntry> results = _statCache.get(_ps.toString());
+			String cacheKey = getCacheKey(_ps.toString());
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
 			if (results != null) {
 				_ps.close();
 				return results.clone();
 			}
 			
 			// Do the query
-			results = new CacheableList<FlightStatsEntry>(_ps.toString());
+			results = new CacheableList<FlightStatsEntry>(cacheKey);
 			results.addAll(execute());
 			_statCache.add(results);
 			return results.clone();
@@ -503,14 +513,15 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				_ps.setInt(++param, Pilot.ACTIVE);
 			
 			// Check the cache
-			CacheableCollection<FlightStatsEntry> results = _statCache.get(_ps.toString());
+			String cacheKey = getCacheKey(_ps.toString());
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
 			if (results != null) {
 				_ps.close();
 				return results.clone();
 			}
 			
 			// Get the results
-			results = new CacheableList<FlightStatsEntry>(_ps.toString());
+			results = new CacheableList<FlightStatsEntry>(cacheKey);
 			results.addAll(execute());
 			_statCache.add(results);
 			return results.clone();
