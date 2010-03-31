@@ -448,7 +448,7 @@ to withdraw this Transfer Request.</span></c:if></td>
 </c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="promoeligibility">Review Promotion Eligibility</el:cmd></td>
- <td class="data">You can review the different Equipment programs at <content:airline /> to see what you ned in order to switch
+ <td class="data">You can review the different Equipment programs at <content:airline /> to see what you need in order to switch
  programs or request additional equipment type ratings.</td>
 </tr>
 <tr>
