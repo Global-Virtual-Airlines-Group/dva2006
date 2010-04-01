@@ -71,7 +71,10 @@
 <c:when test="${fromEnd < 1000}"> <span class="bld"><fmt:int value="${fromEnd}" /> feet from end</span>)</c:when>
 <c:otherwise> takeoff run <fmt:int value="${rwy.distance}" /> feet)</c:otherwise>
 </c:choose>
- <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a></td>
+<c:if test="${(pirep.takeoffLocation.latitude != 0.0) && (pirep.takeoffLocation.longitude != 0.0)}">
+ <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
+<c:if test="${access.canDispose && (!empty dRunways)}"> <i>Change Runway to</i> <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -112,7 +115,10 @@
 <c:when test="${rwy.distance > 2500}"> <span class="bld"><fmt:int value="${rwy.distance}" /> feet from threshold</span>)</c:when>
 <c:otherwise> <fmt:int value="${rwy.distance}" /> feet from threshold)</c:otherwise>
 </c:choose>
- <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a></td>
+<c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
+ <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
+<c:if test="${access.canDispose && (!empty aRunways)}"> <i>Change Runway to</i> <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if></td>
 </tr>
 </c:if>
 <tr>

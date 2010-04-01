@@ -990,6 +990,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="updrwy">
+		<name>PIREP Update Runway</name>	
+		<class>org.deltava.commands.pirep.UpdateRunwayCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
 	<command id="pirepdelete">
 		<name>PIREP Delete</name>
 		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>

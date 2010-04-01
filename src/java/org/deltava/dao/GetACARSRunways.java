@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,13 +12,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 2.6
  */
 
 public class GetACARSRunways extends DAO implements CachingDAO {
 	
-	private static final Cache<CacheableCollection<Runway>> _cache = new AgingCache<CacheableCollection<Runway>>(256);
+	private static final Cache<CacheableList<Runway>> _cache = new AgingCache<CacheableList<Runway>>(256);
 
 	private class RunwayCacheKey {
 		private String _key;
@@ -42,7 +42,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 		}
 	}
 	
-	private class SelectableRunway extends Runway implements Comparable<NavigationDataBean> {
+	private class SelectableRunway extends Runway {
 		private int _useCount;
 		
 		SelectableRunway(double lat, double lng) {
@@ -58,7 +58,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 		}
 		
 		public int hashCode() {
-			return (getCode() + " RW" + getName()).hashCode();
+			return getComboAlias().hashCode();
 		}
 		
 		public boolean equals(Object o) {
@@ -103,9 +103,9 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 		
 		// Build the cache key
 		RunwayCacheKey key = new RunwayCacheKey(aD, aA, isTakeoff);
-		Collection<Runway> rwys = _cache.get(key);
+		CacheableList<Runway> rwys = _cache.get(key);
 		if (rwys != null)
-			return new ArrayList<Runway>(rwys);
+			return rwys.clone();
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT R.RUNWAY, R.ICAO, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE, ND.HDG, "
@@ -127,8 +127,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 			
 			// Execute the Query
 			int max = 0;
-			CacheableCollection<Runway> results = new CacheableSet<Runway>(key);
-			assert (results instanceof LinkedHashSet<?>);
+			Collection<Runway> results = new LinkedHashSet<Runway>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				SelectableRunway r = new SelectableRunway(rs.getDouble(3), rs.getDouble(4));
@@ -148,8 +147,10 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 			_ps.close();
 			
 			// Add to the cache and return
-			_cache.add(results);
-			return new ArrayList<Runway>(results);
+			rwys = new CacheableList<Runway>(key);
+			rwys.addAll(results);
+			_cache.add(rwys);
+			return rwys.clone();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

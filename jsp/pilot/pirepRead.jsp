@@ -21,7 +21,7 @@
 <map:api version="2" />
 <map:vml-ie />
 </c:if>
-<c:if test="${scoreCR}">
+<c:if test="${scoreCR || access.canDispose}">
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -43,7 +43,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 function zoomTo(lat, lng)
 {
-map.setZoom(10);
+map.setZoom(11);
 map.panTo(new GLatLng(lat, lng));
 return true;
 }
@@ -67,7 +67,7 @@ return true;
 <form method="post" action="pirepscore.do?id=${pirep.hexID}" onsubmit="return validate(this)">
 </c:when>
 <c:when test="${access.canDispose}">
-<form method="post" action="pirep.do?id=${pirep.hexID}">
+<form method="post" action="pirep.do?id=${pirep.hexID}" onsubmit="return validate(this)">
 </c:when>
 <c:when test="${isACARS}">
 <form method="get" action="pirep.do?id=${pirep.hexID}" onsubmit="return false">
