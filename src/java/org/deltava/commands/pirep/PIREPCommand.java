@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -10,12 +10,13 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
+import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetVRouteData;
@@ -28,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.8
+ * @version 3.0
  * @since 1.0
  */
 
@@ -517,6 +518,25 @@ public class PIREPCommand extends AbstractFormCommand {
 					if (info.getRunwayA() != null)
 						route.add(info.getRunwayA());
 					route.add(info.getAirportA());
+					
+					// Load departure and arrival runways
+					if (ac.getCanDispose()) {
+						Collection<Runway> dRwys = navdao.getRunways(info.getAirportD().getICAO());
+						if (info.getRunwayD() != null) {
+							RunwayComparator rcmp = new RunwayComparator(info.getRunwayD().getHeading());	
+							dRwys = CollectionUtils.sort(dRwys, Collections.reverseOrder(rcmp));	
+						}
+					
+						Collection<Runway> aRwys = navdao.getRunways(info.getAirportA().getICAO());
+						if (info.getRunwayA() != null) {
+							RunwayComparator rcmp = new RunwayComparator(info.getRunwayA().getHeading());	
+							aRwys = CollectionUtils.sort(aRwys, Collections.reverseOrder(rcmp));	
+						}
+					
+						// Save runway choices
+						ctx.setAttribute("dRunways", dRwys, REQUEST);
+						ctx.setAttribute("aRunways", aRwys, REQUEST);
+					}
 					
 					// Save ACARS route, stripping out excessive bits
 					ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 50), REQUEST);
