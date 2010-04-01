@@ -278,7 +278,7 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 		
 		// Check for text / subject search
 		if (hasQuery) {
-			buf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (?))  ");
+			buf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (? IN NATURAL LANGUAGE MODE)) ");
 			if (criteria.getSearchSubject())
 				buf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
 			else
