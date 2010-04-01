@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 2.8
+ * @version 3.0
  * @since 1.0
  */
 
@@ -188,6 +188,9 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Runway getRunway(String airportCode, String rwyCode) throws DAOException {
+		if ((rwyCode != null) && rwyCode.startsWith("RW"))
+			rwyCode = rwyCode.substring(2);
+		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?) AND (NAME=?)");
 			_ps.setInt(1, NavigationDataBean.RUNWAY);
@@ -197,6 +200,32 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 			// Execute the query
 			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Runways for a particular Airport.
+	 * @param airportCode the airport ICAO code
+	 * @return a Collection Runway beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Runway> getRunways(String airportCode) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
+			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setString(2, airportCode.toUpperCase());
+
+			// Execute the query
+			List<NavigationDataBean> results = execute();
+			List<Runway> runways = new ArrayList<Runway>();
+			for (NavigationDataBean nd : results) {
+				if (nd instanceof Runway)
+					runways.add((Runway) nd);
+			}
+			
+			return runways;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

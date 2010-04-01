@@ -1,16 +1,17 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store runway information.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
-public class Runway extends NavigationFrequencyBean {
+public class Runway extends NavigationFrequencyBean implements ComboAlias {
 
 	private int _length;
 	private int _heading;
@@ -88,6 +89,13 @@ public class Runway extends NavigationFrequencyBean {
 	public int getIconCode() {
 		return 60;
 	}
+	
+	/**
+	 * Compares two Runways by comparing their airport and runway codes.
+	 */
+	public boolean equals(Runway r2) {
+		return getComboAlias().equals(r2.getComboAlias());
+	}
 
 	/**
 	 * Returns the default Google Maps infobox text.
@@ -112,5 +120,20 @@ public class Runway extends NavigationFrequencyBean {
 		buf.append(getHTMLPosition());
 		buf.append("</span>");
 		return buf.toString();
+	}
+	
+	public String getComboName() {
+		StringBuilder buf = new StringBuilder("Runway ");
+		buf.append(getName());
+		buf.append(" (");
+		buf.append(getLength());
+		buf.append(" feet - ");
+		buf.append(getHeading());
+		buf.append(" degrees)");
+		return buf.toString();
+	}
+	
+	public String getComboAlias() {
+		return getCode() + " RW" + getName();
 	}
 }
