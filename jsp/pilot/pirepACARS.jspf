@@ -213,10 +213,15 @@
 </tr>
 <tr>
  <td class="label">Check Ride Status</td>
- <td class="data sec bld" colspan="${cspan}"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
+ <td class="data bld" colspan="${cspan}"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Report Status</td>
+ <td class="data" colspan="${cspan}"><el:check name="frApprove" type="radio" options="${frApprove}" idx="*" />
+ <span class="small">The Flight Report can be approved independently of the Check Ride, if approvable as a regular (non-Check Ride) flight.</span></td>
 </tr>
 <tr class="title mid">
- <td colspan="${cspan + 1}"><el:button ID="CRButton" type="submit" className="BUTTON" label="APPROVE FLIGHT / SCORE CHECK RIDE" /></td>
+ <td colspan="${cspan + 1}"><el:button ID="CRButton" type="submit" className="BUTTON" label="PROCESS FLIGHT REPORT / SCORE CHECK RIDE" /></td>
 </tr>
 </c:if>
 <c:if test="${!scoreCR}">
