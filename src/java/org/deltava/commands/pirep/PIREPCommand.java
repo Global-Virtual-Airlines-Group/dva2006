@@ -46,14 +46,17 @@ public class PIREPCommand extends AbstractFormCommand {
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
 
 	// Check ride approval values
-	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" },
+	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASSED", "UNSATISFACTORY" },
 			new String[] { "true", "false" });
+	private static final List<ComboAlias> frApprove = ComboUtils.fromArray(new String[] { "APPROVED", "UNSATISFACTORY" },
+			new String[] { String.valueOf(FlightReport.OK), String.valueOf(FlightReport.REJECTED) });
 
 	/**
 	 * Initialize the command.
 	 * @param id the Command ID
 	 * @param cmdName the name of the Command
 	 */
+	@Override
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 		for (int x = 2; x < 189; x++)
@@ -557,8 +560,10 @@ public class PIREPCommand extends AbstractFormCommand {
 
 						// Save the access controller
 						ctx.setAttribute("crAccess", crAccess, REQUEST);
-						if (crAccess.getCanScore())
+						if (crAccess.getCanScore()) {
 							ctx.setAttribute("crPassFail", crApprove, REQUEST);
+							ctx.setAttribute("frApprove", frApprove, REQUEST);
+						}
 
 						// Allow Examiner to score the PIREP even if they otherwise couldn't
 						boolean canScoreCR = crAccess.getCanScore() && (cr.getStatus() == Test.SUBMITTED);
