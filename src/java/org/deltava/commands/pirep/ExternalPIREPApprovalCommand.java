@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.deltava.beans.*;
+import org.deltava.beans.flight.ACARSFlightReport;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.system.TransferRequest;
 import org.deltava.beans.testing.*;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 2.0
  */
 
@@ -38,8 +39,12 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
 		
-		// Get the checkride approval
+		// Get the checkride / flight approval
 		boolean crApproved = Boolean.valueOf(ctx.getParameter("crApprove")).booleanValue();
+		int pirepStatus = StringUtils.parse(ctx.getParameter("frApprove"), FlightReport.SUBMITTED);
+		if ((pirepStatus != FlightReport.OK) && (pirepStatus != FlightReport.REJECTED))
+			throw notFoundException("Invalid Flight Report status - " + pirepStatus);
+		
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -77,7 +82,9 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			mctx.setTemplate(mtdao.get(crApproved ? "CRPASS" : "CRFAIL"));
 			
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted
-			int pirepCount = p.getLegs() + 1;
+			int pirepCount = p.getLegs();
+			if (pirepStatus == FlightReport.OK)
+				pirepCount++;
 			
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -100,24 +107,23 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			
 			// Get the PIREP write DAO and approve the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(ud.getDB(), ctx.getUser(), fr, FlightReport.OK);
+			wdao.dispose(ud.getDB(), ctx.getUser(), fr, pirepStatus);
 			
 			// Update the checkride
 			SetExam ewdao = new SetExam(con);
 			ewdao.write(cr);
 			
 			// Archive the Position data
-			SetACARSLog acdao = new SetACARSLog(con);
-			acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
-			ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
+			if (fr instanceof ACARSFlightReport) {
+				SetACARSLog acdao = new SetACARSLog(con);
+				acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
+			}
 			
 			// If we are approving the checkride, then approve the transfer request
 			if (txreq != null) {
 				mctx.addData("txReq", txreq);
-				if (cr.getPassFail())
-					txreq.setStatus(TransferRequest.OK);
-				else
-					txreq.setStatus(TransferRequest.PENDING);
+				txreq.setStatus(cr.getPassFail() ? TransferRequest.OK : TransferRequest.PENDING);
 
 				// Write the transfer request
 				SetTransferRequest txwdao = new SetTransferRequest(con);
@@ -126,7 +132,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			
 			// If we're approving and we have hit a century club milestone, log it
 			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
-			if (ccLevels.containsKey("CC" + pirepCount)) {
+			if (ccLevels.containsKey("CC" + pirepCount) && (pirepStatus == FlightReport.OK)) {
 				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
@@ -143,7 +149,8 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Save the flight report/checkride in the request and the Message Context
-			ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
+			ctx.setAttribute("isApprove", Boolean.valueOf(pirepStatus == FlightReport.OK), REQUEST);
+			ctx.setAttribute("isReject", Boolean.valueOf(pirepStatus == FlightReport.REJECTED), REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 			mctx.addData("pirep", fr);
