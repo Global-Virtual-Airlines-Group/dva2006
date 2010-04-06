@@ -41,10 +41,6 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 		// Get the checkride approval
 		boolean crApproved = Boolean.valueOf(ctx.getParameter("crApprove")).booleanValue();
-		int pirepStatus = StringUtils.parse(ctx.getParameter("frApprove"), FlightReport.SUBMITTED);
-		if ((pirepStatus != FlightReport.OK) && (pirepStatus != FlightReport.REJECTED))
-			throw notFoundException("Invalid Flight Report status - " + pirepStatus);
-		
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -92,7 +88,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
 			int pirepCount = rdao.getCount(p.getID());
-			if (pirepStatus == FlightReport.OK)
+			if (crApproved)
 				pirepCount++;
 
 			// Set message context objects
@@ -108,13 +104,16 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			cr.setStatus(Test.SCORED);
+			
+			// Update the flight report
 			if (ctx.getParameter("dComments") != null)
-				cr.setComments(ctx.getParameter("dComments"));
+				fr.setComments(ctx.getParameter("dComments"));
 
 			// Start a JDBC transaction
 			ctx.startTX();
 
 			// Get the PIREP write DAO and perform the operation
+			int pirepStatus = crApproved ? FlightReport.OK : FlightReport.REJECTED;
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, pirepStatus);
 
@@ -141,7 +140,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// If we're approving and we have hit a century club milestone, log it
 			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
-			if (ccLevels.containsKey("CC" + pirepCount) && (pirepStatus == FlightReport.OK)) {
+			if (ccLevels.containsKey("CC" + pirepCount) && crApproved) {
 				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
@@ -158,8 +157,8 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Save the flight report/checkride in the request and the Message Context
-			ctx.setAttribute("isApprove", Boolean.valueOf(pirepStatus == FlightReport.OK), REQUEST);
-			ctx.setAttribute("isReject", Boolean.valueOf(pirepStatus == FlightReport.REJECTED), REQUEST);
+			ctx.setAttribute("isApprove", Boolean.valueOf(crApproved), REQUEST);
+			ctx.setAttribute("isReject", Boolean.valueOf(!crApproved), REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 			mctx.addData("pirep", fr);
