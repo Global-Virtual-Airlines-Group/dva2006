@@ -1,16 +1,19 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 import org.deltava.beans.navdata.Runway;
 
 /**
  * A comparator to sort Runways based on appropriateness based on a wind heading. 
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 2.6
  */
 
-public class RunwayComparator implements java.util.Comparator<Runway> {
+public class RunwayComparator implements Comparator<Runway>, Serializable {
 	
 	private int _hdg;
 

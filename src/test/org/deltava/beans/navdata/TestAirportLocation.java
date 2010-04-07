@@ -35,7 +35,7 @@ public class TestAirportLocation extends AbstractBeanTestCase {
       assertEquals(_a.getLatitude(), _a.getPosition().getLatitude(), 0.0001);
       assertEquals(_a.getLongitude(), _a.getPosition().getLongitude(), 0.0001);
       
-      checkProperty("altitude", new Integer(580));
+      checkProperty("altitude", Integer.valueOf(580));
       checkProperty("code", "TST");
       checkProperty("name", "Test Airport");
       
@@ -44,10 +44,10 @@ public class TestAirportLocation extends AbstractBeanTestCase {
    }
    
    public void testValidation() {
-      validateInput("type", new Integer(-1), IllegalArgumentException.class);
-      validateInput("type", new Integer(11), IllegalArgumentException.class);
-      validateInput("altitude", new Integer(-301), IllegalArgumentException.class);
-      validateInput("altitude", new Integer(29001), IllegalArgumentException.class);
+      validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+      validateInput("type", Integer.valueOf(11), IllegalArgumentException.class);
+      validateInput("altitude", Integer.valueOf(-301), IllegalArgumentException.class);
+      validateInput("altitude", Integer.valueOf(29001), IllegalArgumentException.class);
    }
    
    public void testComparator() {

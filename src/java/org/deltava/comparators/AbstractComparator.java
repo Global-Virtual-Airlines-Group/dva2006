@@ -1,6 +1,7 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.deltava.util.StringUtils;
@@ -9,11 +10,11 @@ import org.deltava.util.StringUtils;
  * Implements common comparator functions.
  * NOTE: Most comparators in this package <b>impose orderings that are inconsistent with equals</b>.
  * @author Luke
- * @version 2.1
+ * @version 3.0
  * @since 1.0
  */
 
-public abstract class AbstractComparator<T> implements Comparator<T> {
+public abstract class AbstractComparator<T> implements Comparator<T>, Serializable {
 
     /**
      * Are we doing a reverse sort?

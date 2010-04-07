@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy Training videos.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -78,13 +78,13 @@ public class VideoCommand extends AbstractFormCommand {
 			// Check if we're uploading to ensure that the file does not already exist
 			if (isNew && (v != null)) {
 				throw new CommandException("Document " + fName + " already exists");
-			} else if (isNew) {
+			} else if (isNew || (v == null)) {
 				File f = new File(SystemData.get("path.video"), fName);
 				video = new TrainingVideo(f.getPath());
 				video.setAuthorID(ctx.getUser().getID());
 				video.setSize(f.length());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
-			} else if (v != null) {
+			} else {
 				video = new TrainingVideo(v);
 				video.setCertifications(dao.getCertifications(fName));
 			}

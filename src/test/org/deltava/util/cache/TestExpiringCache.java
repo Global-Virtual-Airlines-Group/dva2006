@@ -43,7 +43,7 @@ public class TestExpiringCache extends TestCase {
 		Cacheable o1 = new CacheableLong(Integer.valueOf(1), 1);
 		_cache.add(o1);
 		assertEquals(1, _cache.size());
-		Cacheable o2 = _cache.get(new Integer(1));
+		Cacheable o2 = _cache.get(Integer.valueOf(1));
 		assertNotNull(o2);
 		assertSame(o1, o2);
 	}

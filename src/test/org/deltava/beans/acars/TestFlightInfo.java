@@ -34,7 +34,7 @@ public class TestFlightInfo extends AbstractBeanTestCase {
    public void testProperties() {
       assertEquals(1, _info.getID());
       assertEquals(_conID, _info.getConnectionID());
-      checkProperty("pilotID", new Integer(1234));
+      checkProperty("pilotID", Integer.valueOf(1234));
       checkProperty("startTime", new Date());
       checkProperty("endTime", new Date());
       _info.setEndTime(null);
@@ -44,7 +44,7 @@ public class TestFlightInfo extends AbstractBeanTestCase {
       checkProperty("equipmentType", "B727-200");
       checkProperty("offline", Boolean.TRUE);
       checkProperty("remarks", "Test remarks");
-      checkProperty("FSVersion", new Integer(2004));
+      checkProperty("FSVersion", Integer.valueOf(2004));
       
       Airport a = new Airport("ATL", "KATL", "Atlanta GA");
       checkProperty("airportA", a);
@@ -60,9 +60,9 @@ public class TestFlightInfo extends AbstractBeanTestCase {
    
    public void testValidation() {
       validateInput("connectionID", new Long(-1), IllegalArgumentException.class);
-      validateInput("pilotID", new Integer(-1), IllegalArgumentException.class);
-      validateInput("FSVersion", new Integer(-1), IllegalArgumentException.class);
-      validateInput("FSVersion", new Integer(2010), IllegalArgumentException.class);
+      validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
+      validateInput("FSVersion", Integer.valueOf(-1), IllegalArgumentException.class);
+      validateInput("FSVersion", Integer.valueOf(2010), IllegalArgumentException.class);
       
       long now = System.currentTimeMillis();
       _info.setStartTime(new Date(now));

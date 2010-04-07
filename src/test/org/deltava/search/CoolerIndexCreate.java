@@ -79,7 +79,7 @@ public class CoolerIndexCreate extends TestCase {
 			MessageThread mt = new MessageThread(rs.getString(3));
 			mt.setID(rs.getInt(1));
 			mt.setChannel(rs.getString(2));
-			threads.put(new Integer(mt.getID()), mt);
+			threads.put(Integer.valueOf(mt.getID()), mt);
 			threadCount++;
 		}
 
@@ -96,7 +96,7 @@ public class CoolerIndexCreate extends TestCase {
 		ps.setFetchSize(2000);
 		rs = ps.executeQuery();
 		while (rs.next())
-			IDs.put(new Integer(rs.getInt(1)), rs.getString(2));
+			IDs.put(Integer.valueOf(rs.getInt(1)), rs.getString(2));
 		
 		// Clean up
 		rs.close();
@@ -118,7 +118,7 @@ public class CoolerIndexCreate extends TestCase {
 		boolean doMore = rs.next();
 		while (doMore) {
 			int id = rs.getInt(1);
-			MessageThread mt = threads.get(new Integer(id));
+			MessageThread mt = threads.get(Integer.valueOf(id));
 			if (mt != null) {
 				Document doc = new Document();
 				doc.add(new Field("id", NumberTools.longToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -127,7 +127,7 @@ public class CoolerIndexCreate extends TestCase {
 				doc.add(new Field("channel", mt.getChannel(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				
 				// Load author
-				Integer userID = new Integer(rs.getInt(2));
+				Integer userID = Integer.valueOf(rs.getInt(2));
 				Pilot usr = pilots.get(userID);
 				if (usr == null) {
 					String db = IDs.get(userID);

@@ -41,16 +41,16 @@ public class TestAirline extends TestCase {
 		assertEquals("DAL", _a.getCode());
 		try {
 			Airline a2 = new Airline(null, "DAL");
-			fail("Expected NullPointerException");
 			assertNotNull(a2);
+			fail("Expected NullPointerException");
 		} catch (NullPointerException npe) { 
 			// empty
 		}
 		
 		try {
 			Airline a2 = new Airline("DAL", null);
-			fail("Expected NullPointerException");
 			assertNotNull(a2);
+			fail("Expected NullPointerException");
 		} catch (NullPointerException npe) {
 			// empty
 		}

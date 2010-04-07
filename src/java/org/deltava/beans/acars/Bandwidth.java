@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store ACARS bandwidth statistics. 
  * @author Luke
- * @version 2.1
+ * @version 3.0
  * @since 2.1
  */
 
@@ -52,7 +52,7 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	 * @return the window end date/time
 	 */
 	public Date getEndDate() {
-		return new Date(_startDate.getTime() + (_interval * 60000));
+		return new Date(_startDate.getTime() + (_interval * 60000L));
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -120,11 +120,11 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         try {
             results = (Collection<Object>) Class.forName(className).newInstance();
         } catch (Exception e) {
-        	// empty
+        	results = new ArrayList<Object>();
         }
 
         // Get all elements with the given attribute name
-        for (Iterator i = root.getChildren(root.getAttributeValue("attr")).iterator(); i.hasNext();) {
+        for (Iterator<?> i = root.getChildren(root.getAttributeValue("attr")).iterator(); i.hasNext();) {
             Element e = (Element) i.next();
             results.add(getElementWithType(e));
         }

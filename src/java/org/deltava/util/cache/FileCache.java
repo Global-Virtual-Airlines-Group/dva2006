@@ -1,20 +1,24 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 /**
  * A cache for File handles.
  * @author Luke
- * @version 2.2
+ * @version 3.0
  * @since 2.2
  */
 
 public class FileCache extends Cache<CacheableFile> {
 	
+	private static final Logger log = Logger.getLogger(FileCache.class);
+	
 	private long _maxAge;
 	
-	protected class FileCacheEntry extends CacheEntry<CacheableFile> {
+	protected static class FileCacheEntry extends CacheEntry<CacheableFile> {
 		
 		public FileCacheEntry(CacheableFile f) {
 			super(f);
@@ -58,8 +62,10 @@ public class FileCache extends Cache<CacheableFile> {
 	public final void remove(Object key) {
 		FileCacheEntry entry = (FileCacheEntry) _cache.get(key);
 		_cache.remove(key);
-		if (entry != null)
-			entry.getData().delete();
+		if (entry != null) {
+			if (!entry.getData().delete())
+				log.warn("Cannot delete " + entry.getData().getAbsolutePath());
+		}
 	}
 	
 	/**
@@ -68,8 +74,10 @@ public class FileCache extends Cache<CacheableFile> {
 	public final void clear() {
 		for (Iterator<CacheEntry<CacheableFile>> i = _cache.values().iterator(); i.hasNext(); ) {
 			CacheEntry<CacheableFile> entry = i.next();
-			if (entry.getData().exists())
-				entry.getData().delete();
+			if (entry.getData().exists()) {
+				if (!entry.getData().delete())
+					log.warn("Cannot delete " + entry.getData().getAbsolutePath());
+			}
 			
 			i.remove();
 		}
@@ -80,7 +88,7 @@ public class FileCache extends Cache<CacheableFile> {
 	 * @param age the age in minutes or 0 for no expiration
 	 */
 	public void setMaxAge(int age) {
-		_maxAge = Math.max(0, age) * 60000;
+		_maxAge = Math.max(0, age) * 60000L;
 	}
 	
 	/**

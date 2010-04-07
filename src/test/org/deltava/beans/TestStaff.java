@@ -28,28 +28,28 @@ public class TestStaff extends AbstractBeanTestCase {
         assertEquals("John", _s.getFirstName());
         assertEquals("Smith", _s.getLastName());
         checkProperty("title", "CEO");
-        checkProperty("sortOrder", new Integer(2));
+        checkProperty("sortOrder", Integer.valueOf(2));
         checkProperty("EMail", "luke@sce.net");
         checkProperty("body", "John is a pilot.");
-        checkProperty("ID", new Integer(8012));
+        checkProperty("ID", Integer.valueOf(8012));
     }
     
     public void testValidation() {
-        validateInput("sortOrder", new Integer(0), IllegalArgumentException.class);
+        validateInput("sortOrder", Integer.valueOf(0), IllegalArgumentException.class);
         validateInput("title", null, NullPointerException.class);
-        validateInput("ID", new Integer(0), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(0), IllegalArgumentException.class);
         try {
             Staff s2 = new Staff(null, "Smith");
-            fail("NullPointerException expected");
             assertNull(s2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }
         
         try {
             Staff s2 = new Staff("John", null);
-            fail("NullPointerException expected");
             assertNull(s2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }

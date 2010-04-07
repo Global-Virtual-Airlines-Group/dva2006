@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  */
 
@@ -369,6 +369,8 @@ public class GetACARSData extends DAO {
 			// Get the first entry, or null
 			List<FlightInfo> results = executeFlightInfo();
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
+			if (info == null)
+				return null;
 
 			// Get the terminal routes
 			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());

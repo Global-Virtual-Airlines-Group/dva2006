@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -34,7 +34,7 @@ public class UsageTracker implements Runnable {
 	public void run() {
 		log.info("Started");
 		while (!Thread.currentThread().isInterrupted()) {
-			long sleepTime = (_interval * 60000);
+			long sleepTime = (_interval * 60000L);
 			try {
 				File f = new File(_dataFile);
 				GetServInfo sidao = new GetServInfo(new FileInputStream(f));

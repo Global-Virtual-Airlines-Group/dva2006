@@ -66,7 +66,7 @@ public class NewThreadListCommand extends AbstractViewCommand {
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
 
 			// Get either by channel or all; now filter by role
-			Set<Integer> pilotIDs = new HashSet<Integer>();
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			List<MessageThread> threads = dao2.getSince(p.getLastLogoff(), true);
 			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
 				MessageThread thread = i.next();

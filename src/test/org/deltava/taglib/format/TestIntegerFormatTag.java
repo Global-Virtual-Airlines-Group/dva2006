@@ -30,7 +30,7 @@ public class TestIntegerFormatTag extends AbstractTagTestCase {
         _ctx.initialize(null, new CustomRequestWrapper(hreq), _rsp, "", false, 8192, false);
         
         _tag.setPageContext(_ctx);
-        _tag.setValue(new Integer(1));
+        _tag.setValue(Integer.valueOf(1));
         assertEvalPage(_tag.doEndTag());
         assertEquals("01", _jspOut.toString());
     }

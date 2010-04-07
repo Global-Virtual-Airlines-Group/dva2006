@@ -54,7 +54,7 @@ public class IssueListCommand extends AbstractViewCommand {
 			// Trim issues
 			if (results.size() > vc.getCount()) {
 				List<Issue> iList = new ArrayList<Issue>(results);
-				iList.remove(iList.subList(vc.getCount(), iList.size()));
+				iList.removeAll(iList.subList(vc.getCount(), iList.size()));
 			}
 			
 			// Get Author IDs

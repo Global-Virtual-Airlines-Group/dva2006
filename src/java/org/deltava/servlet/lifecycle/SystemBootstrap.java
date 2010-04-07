@@ -26,13 +26,13 @@ import org.gvagroup.common.SharedData;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 2.8
+ * @version 3.0
  * @since 1.0
  */
 
 public class SystemBootstrap implements ServletContextListener, Thread.UncaughtExceptionHandler {
 
-	private static Logger log;
+	private Logger log;
 
 	private ConnectionPool _jdbcPool;
 	private final ThreadGroup _daemonGroup = new ThreadGroup("System Daemons");
@@ -44,7 +44,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	public SystemBootstrap() {
 		super();
 		PropertyConfigurator.configure(getClass().getResource("/etc/log4j.properties"));
-		SystemBootstrap.log = Logger.getLogger(SystemBootstrap.class);
+		log = Logger.getLogger(SystemBootstrap.class);
 		log.info("Initialized log4j");
 
 		// Force headless AWT operation

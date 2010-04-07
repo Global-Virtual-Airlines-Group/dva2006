@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -18,13 +18,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to log Flight Academy instruction flights.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
 public class InstructionFlightCommand extends AbstractFormCommand {
 	
-	private static Collection<String> _flightTimes;
+	private Collection<String> _flightTimes;
 	
 	/**
 	 * Initialize the command.

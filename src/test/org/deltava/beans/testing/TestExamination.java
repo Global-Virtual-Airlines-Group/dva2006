@@ -29,19 +29,19 @@ public class TestExamination extends AbstractBeanTestCase {
     public void testProperties() {
         assertEquals("737 First Officer", _exam.getName());
         assertEquals(org.deltava.beans.testing.Test.EXAM, _exam.getType());
-        checkProperty("ID", new Integer(123));
-        checkProperty("pilotID", new Integer(123));
-        checkProperty("scorerID", new Integer(123));
+        checkProperty("ID", Integer.valueOf(123));
+        checkProperty("pilotID", Integer.valueOf(123));
+        checkProperty("scorerID", Integer.valueOf(123));
         checkProperty("firstName", "John");
         checkProperty("lastName", "Smith");
-        checkProperty("size", new Integer(20));
-        checkProperty("score", new Integer(0));
-        checkProperty("stage", new Integer(3));
+        checkProperty("size", Integer.valueOf(20));
+        checkProperty("score", Integer.valueOf(0));
+        checkProperty("stage", Integer.valueOf(3));
         checkProperty("date", new Date());
         checkProperty("expiryDate", new Date());
         checkProperty("submittedOn", new Date());
         checkProperty("scoredOn", new Date());
-        checkProperty("passFail", new Boolean (true));
+        checkProperty("passFail", Boolean.TRUE);
     }
     
     public void testQuestions() {
@@ -72,26 +72,26 @@ public class TestExamination extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("ID", new Integer(0), IllegalArgumentException.class);
-        validateInput("ID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("pilotID", new Integer(0), IllegalArgumentException.class);
-        validateInput("pilotID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("scorerID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("score", new Integer(-1), IllegalArgumentException.class);
-        validateInput("score", new Integer(101), IllegalArgumentException.class);
-        validateInput("stage", new Integer(-1), IllegalArgumentException.class);
-        validateInput("size", new Integer(0), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("pilotID", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("scorerID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(101), IllegalArgumentException.class);
+        validateInput("stage", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("size", Integer.valueOf(0), IllegalArgumentException.class);
         try {
             Examination e2 = new Examination(null);
-            fail("NullPointerException expected");
             assertNull(e2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }
         
         _exam.addQuestion(new Question("Why?"));
         assertEquals(1, _exam.getSize());
-        validateInput("size", new Integer(2), IllegalStateException.class);
+        validateInput("size", Integer.valueOf(2), IllegalStateException.class);
     }
     
     public void testComparator() {

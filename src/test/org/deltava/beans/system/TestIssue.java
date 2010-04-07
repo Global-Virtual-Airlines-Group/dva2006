@@ -30,18 +30,18 @@ public class TestIssue extends AbstractBeanTestCase {
 		assertEquals(1, _i.getID());
 		assertEquals("Subject", _i.getSubject());
 		checkProperty("description", "blah blah blah");
-		checkProperty("type", new Integer(1));
-		checkProperty("area", new Integer(2));
-		checkProperty("status", new Integer(1));
-		checkProperty("priority", new Integer(3));
-		checkProperty("createdBy", new Integer(123));
-		checkProperty("assignedTo", new Integer(124));
-		checkProperty("majorVersion", new Integer(3));
-		checkProperty("minorVersion", new Integer(1));
+		checkProperty("type", Integer.valueOf(1));
+		checkProperty("area", Integer.valueOf(2));
+		checkProperty("status", Integer.valueOf(1));
+		checkProperty("priority", Integer.valueOf(3));
+		checkProperty("createdBy", Integer.valueOf(123));
+		checkProperty("assignedTo", Integer.valueOf(124));
+		checkProperty("majorVersion", Integer.valueOf(3));
+		checkProperty("minorVersion", Integer.valueOf(1));
 		checkProperty("createdOn", new Date());
 		checkProperty("resolvedOn", new Date());
 		checkProperty("lastCommentOn", new Date());
-		checkProperty("commentCount", new Integer(23));
+		checkProperty("commentCount", Integer.valueOf(23));
 		_i.setResolvedOn(null);
 		_i.setLastCommentOn(null);
 		
@@ -52,18 +52,18 @@ public class TestIssue extends AbstractBeanTestCase {
 	}
 	
 	public void testValidation() {
-		validateInput("type", new Integer(-1), IllegalArgumentException.class);
-		validateInput("type", new Integer(6), IllegalArgumentException.class);
-		validateInput("area", new Integer(-1), IllegalArgumentException.class);
-		validateInput("area", new Integer(6), IllegalArgumentException.class);
-		validateInput("status", new Integer(-1), IllegalArgumentException.class);
-		validateInput("status", new Integer(6), IllegalArgumentException.class);
-		validateInput("priority", new Integer(-1), IllegalArgumentException.class);
-		validateInput("priority", new Integer(6), IllegalArgumentException.class);
-		validateInput("commentCount", new Integer(-1), IllegalArgumentException.class);
+		validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("type", Integer.valueOf(6), IllegalArgumentException.class);
+		validateInput("area", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("area", Integer.valueOf(6), IllegalArgumentException.class);
+		validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("status", Integer.valueOf(6), IllegalArgumentException.class);
+		validateInput("priority", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("priority", Integer.valueOf(6), IllegalArgumentException.class);
+		validateInput("commentCount", Integer.valueOf(-1), IllegalArgumentException.class);
 		
-		validateInput("majorVersion", new Integer(-1), IllegalArgumentException.class);
-		validateInput("minorVersion", new Integer(-1), IllegalArgumentException.class);
+		validateInput("majorVersion", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("minorVersion", Integer.valueOf(-1), IllegalArgumentException.class);
 		
 		validateInput("type", "XXXX", IllegalArgumentException.class);
 		validateInput("area", "XXXX", IllegalArgumentException.class);
@@ -76,7 +76,7 @@ public class TestIssue extends AbstractBeanTestCase {
 		validateInput("priority", null, IllegalArgumentException.class);
 		
 		_i.addComment(new IssueComment(1, "Comment"));
-		validateInput("commentCount", new Integer(2), IllegalStateException.class);
+		validateInput("commentCount", Integer.valueOf(2), IllegalStateException.class);
 		
 		try {
 			_i.setCreatedOn(null);

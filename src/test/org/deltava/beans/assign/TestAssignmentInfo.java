@@ -32,11 +32,11 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
     public void testProperties() {
         assertEquals("B737-300", _info.getEquipmentType());
         assertEquals(AssignmentInfo.AVAILABLE, _info.getStatus());
-        checkProperty("pilotID", new Integer(0));
-        checkProperty("pilotID", new Integer(8012));
-        checkProperty("eventID", new Integer(0));
-        checkProperty("eventID", new Integer(1234));
-        checkProperty("status", new Integer(AssignmentInfo.RESERVED));
+        checkProperty("pilotID", Integer.valueOf(0));
+        checkProperty("pilotID", Integer.valueOf(8012));
+        checkProperty("eventID", Integer.valueOf(0));
+        checkProperty("eventID", Integer.valueOf(1234));
+        checkProperty("status", Integer.valueOf(AssignmentInfo.RESERVED));
         checkProperty("assignDate", new Date());
         checkProperty("completionDate", new Date());
         _info.setStatus("Complete");
@@ -74,9 +74,9 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("eventID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("status", new Integer(-1), IllegalArgumentException.class);
-        validateInput("status", new Integer(21), IllegalArgumentException.class);
+        validateInput("eventID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("status", Integer.valueOf(21), IllegalArgumentException.class);
         validateInput("status", "X", IllegalArgumentException.class);
     }
     

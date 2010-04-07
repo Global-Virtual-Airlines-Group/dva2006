@@ -26,15 +26,15 @@ public class TestCheckRide extends AbstractBeanTestCase {
         assertEquals(org.deltava.beans.testing.Test.CHECKRIDE, _cr.getType());
         setBean(_cr);
         checkProperty("fileName", "video.vid");
-        checkProperty("ID", new Integer(123));
-        checkProperty("pilotID", new Integer(123));
-        checkProperty("scorerID", new Integer(123));
+        checkProperty("ID", Integer.valueOf(123));
+        checkProperty("pilotID", Integer.valueOf(123));
+        checkProperty("scorerID", Integer.valueOf(123));
         checkProperty("firstName", "John");
         checkProperty("lastName", "Smith");
-        checkProperty("score", new Integer(1));
-        checkProperty("score", new Integer(0));
-        checkProperty("stage", new Integer(3));
-        checkProperty("size", new Integer(3124));
+        checkProperty("score", Integer.valueOf(1));
+        checkProperty("score", Integer.valueOf(0));
+        checkProperty("stage", Integer.valueOf(3));
+        checkProperty("size", Integer.valueOf(3124));
         checkProperty("date", new Date());
         checkProperty("submittedOn", new Date());
         checkProperty("scoredOn", new Date());
@@ -54,20 +54,20 @@ public class TestCheckRide extends AbstractBeanTestCase {
     public void testValidation() {
         _cr = new CheckRide("Concorde Video");
         setBean(_cr);
-        validateInput("ID", new Integer(0), IllegalArgumentException.class);
-        validateInput("ID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("pilotID", new Integer(0), IllegalArgumentException.class);
-        validateInput("pilotID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("scorerID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("score", new Integer(-1), IllegalArgumentException.class);
-        validateInput("score", new Integer(51), IllegalArgumentException.class);
-        validateInput("score", new Integer(101), IllegalArgumentException.class);
-        validateInput("stage", new Integer(-1), IllegalArgumentException.class);
-        validateInput("size", new Integer(-1), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("pilotID", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("scorerID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(51), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(101), IllegalArgumentException.class);
+        validateInput("stage", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("size", Integer.valueOf(-1), IllegalArgumentException.class);
         try {
             CheckRide cr2 = new CheckRide(null);
-            fail("NullPointerException expected");
             assertNotNull(cr2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }

@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.gallery;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A class to store Image Gallery images.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -179,7 +179,7 @@ public class Image extends ImageBean implements ComboAlias {
 		if (_votes == null)
 			_votes = new HashMap<Integer, Vote>();
 
-		_votes.put(new Integer(v.getAuthorID()), v);
+		_votes.put(Integer.valueOf(v.getAuthorID()), v);
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class Image extends ImageBean implements ComboAlias {
 		if (p == null)
 			return false;
 
-		return isPopulated() ? _votes.containsKey(new Integer(p.getID())) : false;
+		return isPopulated() ? _votes.containsKey(Integer.valueOf(p.getID())) : false;
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class Image extends ImageBean implements ComboAlias {
 	 * @see Person
 	 */
 	public int myScore(Person p) {
-		Vote v = isPopulated() ? _votes.get(new Integer(p.getID())) : null;
+		Vote v = isPopulated() ? _votes.get(Integer.valueOf(p.getID())) : null;
 		return (v == null) ? -1 : v.getScore();
 	}
 
@@ -261,7 +261,7 @@ public class Image extends ImageBean implements ComboAlias {
 		if (!isPopulated())
 			return _score;
 
-		int tmpResult = 0;
+		double tmpResult = 0;
 		for (Iterator<Vote> i = _votes.values().iterator(); i.hasNext();) {
 			Vote v = i.next();
 			tmpResult += v.getScore();

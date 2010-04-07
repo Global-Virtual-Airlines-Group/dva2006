@@ -28,44 +28,44 @@ public class TestAirlineTotals extends AbstractBeanTestCase {
 
 	public void testProperties() {
 		checkProperty("YTDHours", new Double(100.0));
-		checkProperty("YTDLegs", new Integer(52));
-		checkProperty("YTDMiles", new Integer(5311));
+		checkProperty("YTDLegs", Integer.valueOf(52));
+		checkProperty("YTDMiles", Integer.valueOf(5311));
 		checkProperty("MTDHours", new Double(101.0));
-		checkProperty("MTDLegs", new Integer(53));
-		checkProperty("MTDMiles", new Integer(5312));
+		checkProperty("MTDLegs", Integer.valueOf(53));
+		checkProperty("MTDMiles", Integer.valueOf(5312));
 		checkProperty("OnlineMiles", new Long(131250));
 		checkProperty("OnlineHours", new Double(31100.0));
-		checkProperty("OnlineLegs", new Integer(1552));
+		checkProperty("OnlineLegs", Integer.valueOf(1552));
 		checkProperty("ACARSHours", new Double(105.0));
-		checkProperty("ACARSLegs", new Integer(1253));
-		checkProperty("ACARSMiles", new Integer(255312));
+		checkProperty("ACARSLegs", Integer.valueOf(1253));
+		checkProperty("ACARSMiles", Integer.valueOf(255312));
 		checkProperty("TotalMiles", new Long(231250));
 		checkProperty("TotalHours", new Double(41100.0));
-		checkProperty("TotalLegs", new Integer(2552));
-		checkProperty("TotalPilots", new Integer(2510));
-		checkProperty("ActivePilots", new Integer(714));
-		checkProperty("DBRows", new Integer(163123));
+		checkProperty("TotalLegs", Integer.valueOf(2552));
+		checkProperty("TotalPilots", Integer.valueOf(2510));
+		checkProperty("ActivePilots", Integer.valueOf(714));
+		checkProperty("DBRows", Integer.valueOf(163123));
 		checkProperty("DBSize", new Long(12163123));
 	}
 	
 	public void testValidation() {
 		validateInput("YTDHours", new Double(-1), IllegalArgumentException.class);
-		validateInput("YTDLegs", new Integer(-1), IllegalArgumentException.class);
+		validateInput("YTDLegs", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("MTDHours", new Double(-1), IllegalArgumentException.class);
-		validateInput("MTDLegs", new Integer(-1), IllegalArgumentException.class);
+		validateInput("MTDLegs", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("OnlineMiles", new Long(-1), IllegalArgumentException.class);
 		validateInput("OnlineHours", new Double(-1), IllegalArgumentException.class);
-		validateInput("OnlineLegs", new Integer(-1), IllegalArgumentException.class);
-		validateInput("ACARSMiles", new Integer(-1), IllegalArgumentException.class);
+		validateInput("OnlineLegs", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("ACARSMiles", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("ACARSHours", new Double(-1), IllegalArgumentException.class);
-		validateInput("ACARSLegs", new Integer(-1), IllegalArgumentException.class);
+		validateInput("ACARSLegs", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("TotalMiles", new Long(-1), IllegalArgumentException.class);
 		validateInput("TotalHours", new Double(-1), IllegalArgumentException.class);
-		validateInput("TotalLegs", new Integer(-1), IllegalArgumentException.class);
-		validateInput("TotalPilots", new Integer(-1), IllegalArgumentException.class);
-		validateInput("ActivePilots", new Integer(-1), IllegalArgumentException.class);
+		validateInput("TotalLegs", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("TotalPilots", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("ActivePilots", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("DBSize", new Long(-1), IllegalArgumentException.class);
-		validateInput("DBRows", new Integer(-1), IllegalArgumentException.class);
+		validateInput("DBRows", Integer.valueOf(-1), IllegalArgumentException.class);
 	}
 	
 	public void testAirlineAge() {

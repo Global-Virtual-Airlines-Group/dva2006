@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
 import java.util.Date;
@@ -8,13 +8,13 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store Flight Academy Issue comments.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
 public class IssueComment extends DatabaseBean {
 	
-	private int _authorID;
+	private int _authorID = 0;
 	private Date _createdOn;
 	private boolean _faq;
 	private String _body;

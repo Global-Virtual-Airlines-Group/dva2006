@@ -249,7 +249,7 @@ public class TestPlotPositions extends TestCase {
 		Statement s = c.createStatement();
 		ResultSet rs = s.executeQuery("SELECT ID FROM IDS");
 		while (rs.next())
-			_IDwork.add(new Integer(rs.getInt(1)));
+			_IDwork.add(Integer.valueOf(rs.getInt(1)));
 
 		rs.close();
 		s.close();

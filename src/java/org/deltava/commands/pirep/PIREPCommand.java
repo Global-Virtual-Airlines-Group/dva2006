@@ -140,8 +140,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check for historic aircraft
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft aInfo = acdao.get(fr.getEquipmentType());
-			fr.setAttribute(FlightReport.ATTR_HISTORIC, (aInfo != null) && (aInfo.getHistoric()));
-			fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > aInfo.getRange()));
+			if (aInfo != null) {
+				fr.setAttribute(FlightReport.ATTR_HISTORIC, aInfo.getHistoric());
+				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > aInfo.getRange()));
+			}
 
 			// Figure out what network the flight was flown on and ensure we have an ID
 			String net = ctx.getParameter("network");

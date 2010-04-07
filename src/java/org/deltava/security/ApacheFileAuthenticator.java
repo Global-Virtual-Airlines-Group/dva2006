@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.*;
  * An Authenticator to authenticate users using an Apache-style password file. This authenticator only supports SHA
  * hashing of the password, not MD5 or crypt().
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -88,7 +88,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 		// Get the user
 		String userID = getID(usr);
 		if (userID == null)
-			throw new SecurityException("Cannot authenticate " + userID + " - User not found");
+			throw new SecurityException("Cannot authenticate " + usr.getName() + " - User not found");
 
 		// Create the password hash
 		MessageDigester md = new MessageDigester("SHA-1");

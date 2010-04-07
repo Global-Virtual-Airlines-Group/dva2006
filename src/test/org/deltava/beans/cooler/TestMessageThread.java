@@ -31,12 +31,12 @@ public class TestMessageThread extends AbstractBeanTestCase {
         checkProperty("channel", "ChannelName");
         checkProperty("lastUpdatedOn", new Date());
         checkProperty("stickyUntil", new Date(System.currentTimeMillis() + 50));
-        checkProperty("ID", new Integer(1212));
-        checkProperty("authorID", new Integer(1213));
-        checkProperty("lastUpdateID", new Integer(1215));
-        checkProperty("views", new Integer(12));
-        checkProperty("postCount", new Integer(12));
-        checkProperty("image", new Integer(234));
+        checkProperty("ID", Integer.valueOf(1212));
+        checkProperty("authorID", Integer.valueOf(1213));
+        checkProperty("lastUpdateID", Integer.valueOf(1215));
+        checkProperty("views", Integer.valueOf(12));
+        checkProperty("postCount", Integer.valueOf(12));
+        checkProperty("image", Integer.valueOf(234));
         checkProperty("locked", Boolean.valueOf(true));
         checkProperty("hidden", Boolean.valueOf(true));
         checkProperty("stickyInChannelOnly", Boolean.valueOf(true));
@@ -59,12 +59,12 @@ public class TestMessageThread extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("views", new Integer(-1), IllegalArgumentException.class);
-        validateInput("postCount", new Integer(-1), IllegalArgumentException.class);
-        validateInput("image", new Integer(-1), IllegalArgumentException.class);
+        validateInput("views", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("postCount", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("image", Integer.valueOf(-1), IllegalArgumentException.class);
         
         _t.addPost(new Message(123));
-        validateInput("postCount", new Integer(1), IllegalStateException.class);
+        validateInput("postCount", Integer.valueOf(1), IllegalStateException.class);
         
         _t.setLastUpdatedOn(null);
         _t.setStickyUntil(null);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -255,7 +255,7 @@ public class GeoUtils {
 		double distD = Math.toDegrees(Math.acos(p1 + p2));
 		
 		// Convert to miles and return
-		return new Long(StrictMath.round(distD * GeoLocation.DEGREE_MILES * 5280)).intValue();
+		return (int) StrictMath.round(distD * GeoLocation.DEGREE_MILES * 5280);
 	}
 	
 	/**

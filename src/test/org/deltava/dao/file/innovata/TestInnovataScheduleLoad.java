@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
 public class TestInnovataScheduleLoad extends TestCase {
 
 	private static final Logger log = Logger.getLogger("TestInnovataSched");
-	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
+	private final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
 	private static Map<String, Airport> _apMap = new HashMap<String, Airport>();
 	private static Map<String, Airline> _alMap = new TreeMap<String, Airline>();

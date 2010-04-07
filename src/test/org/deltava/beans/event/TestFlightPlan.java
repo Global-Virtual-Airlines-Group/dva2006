@@ -30,7 +30,7 @@ public class TestFlightPlan extends AbstractBeanTestCase {
     public void testProperties() {
         checkProperty("airportD", new Airport("ATL", "KATL", "Atlanta GA"));
         checkProperty("airportA", new Airport("CLT", "KCLT", "Charlotte NC"));
-        checkProperty("type", new Integer(FlightPlan.FSNAV));
+        checkProperty("type", Integer.valueOf(FlightPlan.FSNAV));
         _fp.setType("Squawkbox 3.x");
         assertEquals(FlightPlan.SB3, _fp.getType());
         assertEquals("Squawkbox 3.x", _fp.getTypeName());
@@ -39,8 +39,8 @@ public class TestFlightPlan extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("type", new Integer(-1), IllegalArgumentException.class);
-        validateInput("type", new Integer(FlightPlan.PLAN_TYPE.length), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(FlightPlan.PLAN_TYPE.length), IllegalArgumentException.class);
         validateInput("type", "X", IllegalArgumentException.class);
     }
     

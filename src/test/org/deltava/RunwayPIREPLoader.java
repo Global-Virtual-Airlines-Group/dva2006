@@ -63,7 +63,7 @@ public class RunwayPIREPLoader extends TestCase {
 		
 		Collection<Integer> IDs = new LinkedHashSet<Integer>();
 		while (rs.next())
-			IDs.add(new Integer(rs.getInt(1)));
+			IDs.add(Integer.valueOf(rs.getInt(1)));
 		
 		rs.close();
 		s.close();
@@ -101,6 +101,7 @@ public class RunwayPIREPLoader extends TestCase {
 		}
 		
 		rs.close();
+		rps.close();
 		tps.close();
 		lps.close();
 		_c.commit();

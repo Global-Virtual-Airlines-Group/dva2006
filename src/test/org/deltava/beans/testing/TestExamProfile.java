@@ -27,12 +27,12 @@ public class TestExamProfile extends AbstractBeanTestCase {
     public void testProperties() {
         assertEquals("737 Captain", _exam.getName());
         assertEquals(_exam.getName(), _exam.toString());
-        checkProperty("size", new Integer(3));
-        checkProperty("stage", new Integer(3));
+        checkProperty("size", Integer.valueOf(3));
+        checkProperty("stage", Integer.valueOf(3));
         checkProperty("equipmentType", "B737-800");
-        checkProperty("minStage", new Integer(2));
-        checkProperty("time", new Integer(60));
-        checkProperty("passScore", new Integer(75));
+        checkProperty("minStage", Integer.valueOf(2));
+        checkProperty("time", Integer.valueOf(60));
+        checkProperty("passScore", Integer.valueOf(75));
         assertFalse(_exam.getActive());
         assertEquals("warn", _exam.getRowClassName());
         _exam.setActive(true);
@@ -46,12 +46,12 @@ public class TestExamProfile extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("size", new Integer(0), IllegalArgumentException.class);
-        validateInput("stage", new Integer(0), IllegalArgumentException.class);
-        validateInput("minStage", new Integer(-1), IllegalArgumentException.class);
-        validateInput("time", new Integer(0), IllegalArgumentException.class);
-        validateInput("passScore", new Integer(-1), IllegalArgumentException.class);
-        validateInput("passScore", new Integer(101), IllegalArgumentException.class);
+        validateInput("size", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("stage", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("minStage", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("time", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("passScore", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("passScore", Integer.valueOf(101), IllegalArgumentException.class);
     }
     
     public void testComparator() {

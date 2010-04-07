@@ -27,10 +27,10 @@ public class TestCommandResult extends AbstractBeanTestCase {
     public void testProperties() {
         assertEquals("URL", _cr.getURL());
         checkProperty("backEndTime", new Long(123));
-        checkProperty("time", new Integer(12354));
+        checkProperty("time", Integer.valueOf(12354));
         checkProperty("URL", "URL");
-        checkProperty("result", new Integer(2));
-        checkProperty("httpCode", new Integer(302));
+        checkProperty("result", Integer.valueOf(2));
+        checkProperty("httpCode", Integer.valueOf(302));
         checkProperty("success", Boolean.valueOf(true));
         _cr.complete();
         assertTrue(_cr.getTime() >= 0);
@@ -46,9 +46,9 @@ public class TestCommandResult extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("time", new Integer(-1), IllegalArgumentException.class);
+        validateInput("time", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("backEndTime", new Long(-1), IllegalArgumentException.class);
-        validateInput("result", new Integer(-1), IllegalArgumentException.class);
-        validateInput("httpCode", new Integer(302), IllegalStateException.class);
+        validateInput("result", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("httpCode", Integer.valueOf(302), IllegalStateException.class);
     }
 }

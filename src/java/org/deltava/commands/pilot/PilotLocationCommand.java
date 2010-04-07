@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 2.5
+ * @version 3.0
  * @since 1.0
  */
 
@@ -138,8 +138,8 @@ public class PilotLocationCommand extends AbstractCommand {
 			} else {
 				// Convert the geoPosition into degrees, minutes, seconds
 				if (gp != null) {
-					int latS = new Double(GeoPosition.getSeconds(gp.getLatitude())).intValue();
-					int lngS = new Double(GeoPosition.getSeconds(gp.getLongitude())).intValue();
+					int latS = (int) GeoPosition.getSeconds(gp.getLatitude());
+					int lngS = (int) GeoPosition.getSeconds(gp.getLongitude());
 					ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
 					ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
 					ctx.setAttribute("latS", Integer.valueOf(latS), REQUEST);
