@@ -43,12 +43,12 @@ public class TestNotice extends AbstractBeanTestCase {
 	}
 	
 	public void testProperties() {
-	    checkProperty("authorID", new Integer(123));
+	    checkProperty("authorID", Integer.valueOf(123));
 	    checkProperty("date", new Date());
 	}
 	
 	public void testValidation() {
-	    validateInput("authorID", new Integer(0), IllegalArgumentException.class);
+	    validateInput("authorID", Integer.valueOf(0), IllegalArgumentException.class);
 	}
 	
 	public void testComparator() {

@@ -38,8 +38,8 @@ public class TestOceanicNOTAM extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("type", new Integer(-1), IllegalArgumentException.class);
-        validateInput("type", new Integer(11), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(11), IllegalArgumentException.class);
         validateInput("type", null, IllegalArgumentException.class);
         validateInput("type", "XXXXX", IllegalArgumentException.class);
         validateInput("source", null, NullPointerException.class);

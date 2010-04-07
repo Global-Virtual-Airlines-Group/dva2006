@@ -72,7 +72,7 @@ public class RunwayLoader extends TestCase {
 		s.setFetchSize(3000);
 		ResultSet rs = s.executeQuery("SELECT DISTINCT ID FROM acars.IDS ORDER BY ID");
 		while (rs.next())
-			IDs.add(new Integer(rs.getInt(1)));
+			IDs.add(Integer.valueOf(rs.getInt(1)));
 		
 		rs.close();
 		s.close();

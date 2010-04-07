@@ -111,9 +111,9 @@ public class ComboUtils {
      */
     public static List<ComboAlias> fromMap(Map<String, Object> names) {
         List<ComboAlias> results = new ArrayList<ComboAlias>(names.size());
-        for (Iterator<String> i = names.keySet().iterator(); i.hasNext(); ) {
-            String name = i.next();
-            results.add(new ComboAliasImpl(name, names.get(name).toString()));
+        for (Iterator<Map.Entry<String, Object>> i = names.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<String, Object> me = i.next();
+            results.add(new ComboAliasImpl(me.getKey(), me.getValue().toString()));
         }
         
         return results;

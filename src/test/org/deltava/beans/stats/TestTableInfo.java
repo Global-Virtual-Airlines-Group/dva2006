@@ -30,14 +30,14 @@ public class TestTableInfo extends AbstractBeanTestCase {
         checkProperty("size", new Long(123400));
         assertEquals(0, _info.getRows());
         assertEquals(0, _info.getAverageRowLength());
-        checkProperty("rows", new Integer(1234));
+        checkProperty("rows", Integer.valueOf(1234));
         checkProperty("indexSize", new Long(125632));
         assertEquals(100, _info.getAverageRowLength());
         assertEquals(_info.getName().hashCode(), _info.hashCode());
     }
     
     public void testValidation() {
-        validateInput("rows", new Integer(-1), IllegalArgumentException.class);
+        validateInput("rows", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("size", new Long(-1), IllegalArgumentException.class);
         validateInput("indexSize", new Long(-1), IllegalArgumentException.class);
     }

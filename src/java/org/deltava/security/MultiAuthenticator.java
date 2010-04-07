@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * An abstract Authenticator that supports multiple authenticators.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -169,7 +169,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 
 					dst.authenticate(usr, pwd);
 				} catch (SecurityException se) {
-					if (_dst.contains(usr)) {
+					if (dst.contains(usr)) {
 						log.warn("Updating password for " + usr.getName() + " in " + authName);
 						dst.updatePassword(usr, pwd);
 					} else {

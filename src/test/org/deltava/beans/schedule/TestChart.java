@@ -30,11 +30,11 @@ public class TestChart extends AbstractBeanTestCase {
     public void testProperties() throws IOException {
         assertEquals("ATL", _c.getAirport().getIATA());
         assertEquals("MACEY TWO ARRIVAL", _c.getName());
-        checkProperty("ID", new Integer(123));
-        checkProperty("size", new Integer(123400));
-        checkProperty("type", new Integer(5));
+        checkProperty("ID", Integer.valueOf(123));
+        checkProperty("size", Integer.valueOf(123400));
+        checkProperty("type", Integer.valueOf(5));
         assertEquals(Chart.TYPENAMES[5], _c.getTypeName());
-        checkProperty("imgType", new Integer(1));
+        checkProperty("imgType", Integer.valueOf(1));
         assertEquals(Chart.IMG_TYPE[1].toUpperCase(), _c.getImgTypeName());
         _c.setType(Chart.TYPES[Chart.GROUND]);
         assertEquals(Chart.GROUND, _c.getType());
@@ -63,17 +63,17 @@ public class TestChart extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("size", new Integer(0), IllegalArgumentException.class);
-        validateInput("type", new Integer(-1), IllegalArgumentException.class);
-        validateInput("type", new Integer(10), IllegalArgumentException.class);
-        validateInput("imgType", new Integer(-1), IllegalArgumentException.class);
-        validateInput("imgType", new Integer(3), IllegalArgumentException.class);
+        validateInput("size", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(10), IllegalArgumentException.class);
+        validateInput("imgType", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("imgType", Integer.valueOf(3), IllegalArgumentException.class);
         validateInput("type", "X", IllegalArgumentException.class);
         validateInput("type", null, IllegalArgumentException.class);
         try {
             Chart c2 = new Chart(null, new Airport("ATL", "KATL", "Atlanta GA"));
-            fail("NullPointerException expected");
             assertNull(c2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) { 
         	// empty
         }

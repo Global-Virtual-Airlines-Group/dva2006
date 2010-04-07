@@ -21,18 +21,18 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         assertEquals("CRJ-200", _eq.getName());
         assertTrue(_eq.getActive());
         assertEquals(_eq.getName(), _eq.toString());
-        checkProperty("CPID", new Integer(1234));
+        checkProperty("CPID", Integer.valueOf(1234));
         checkProperty("CPName", "CPNAME");
         checkProperty("CPEmail", "root@localhost");
-        checkProperty("stage", new Integer(5));
+        checkProperty("stage", Integer.valueOf(5));
         checkProperty("ACARSPromotionLegs", Boolean.TRUE);
         _eq.setActive(false);
         assertFalse(_eq.getActive());
     }
     
     public void testValidation() {
-        validateInput("CPID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("stage", new Integer(-1), IllegalArgumentException.class);
+        validateInput("CPID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("stage", Integer.valueOf(-1), IllegalArgumentException.class);
         try {
             _eq.addRank(null);
             fail("NullPointerException expected");

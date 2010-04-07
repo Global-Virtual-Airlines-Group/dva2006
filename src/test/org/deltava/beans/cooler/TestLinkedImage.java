@@ -37,7 +37,7 @@ public class TestLinkedImage extends AbstractBeanTestCase {
 	}
 	
 	public void testValidation() {
-		validateInput("ID", new Integer(-1), IllegalArgumentException.class);
+		validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
 		validateInput("URL", "crap", IllegalArgumentException.class);
 	}
 	

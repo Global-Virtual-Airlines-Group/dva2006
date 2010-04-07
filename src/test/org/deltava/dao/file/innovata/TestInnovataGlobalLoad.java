@@ -31,7 +31,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private static final List<String> CODES = Arrays.asList("AF", "DL", "JM", "KL", "AM", "NW");
 	private static final List<String> CS_CODES = Arrays.asList("AF");
 
-	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
+	private final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
 	@SuppressWarnings("unchecked")
 	protected void setUp() throws Exception {

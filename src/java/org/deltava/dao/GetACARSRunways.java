@@ -20,7 +20,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 	
 	private static final Cache<CacheableList<Runway>> _cache = new AgingCache<CacheableList<Runway>>(256);
 
-	private class RunwayCacheKey {
+	private static class RunwayCacheKey {
 		private String _key;
 		
 		RunwayCacheKey(Airport aD, Airport aA, boolean isTakeoff) {
@@ -42,7 +42,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 		}
 	}
 	
-	private class SelectableRunway extends Runway {
+	private static class SelectableRunway extends Runway {
 		private int _useCount;
 		
 		SelectableRunway(double lat, double lng) {

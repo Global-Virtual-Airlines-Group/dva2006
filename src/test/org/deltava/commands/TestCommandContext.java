@@ -65,8 +65,8 @@ public class TestCommandContext extends TestCase {
     	assertEquals("0xCRAP", _ctxt.getCmdParameter(Command.ID, null));
     	try {
     		int id = _ctxt.getID();
-    		fail("CommandException expected");
     		assertEquals(0, id);
+    		fail("CommandException expected");
     	} catch (CommandException ce) {
     		// empty
     	}
@@ -83,8 +83,8 @@ public class TestCommandContext extends TestCase {
     public void testConnectionPool() {
     	try {
     		Connection c = _ctxt.getConnection();
-    		fail("ConnectionPoolException expected");
     		assertNull(c);
+    		fail("ConnectionPoolException expected");
     	} catch (ConnectionPoolException cpe) {
     		// empty
     	}
@@ -99,8 +99,8 @@ public class TestCommandContext extends TestCase {
     	
     	try {
     		Connection c = _ctxt.getConnection();
-    		fail("ConnectionPoolException expected");
     		assertNull(c);
+    		fail("ConnectionPoolException expected");
     	} catch (ConnectionPoolException cpe) { 
     		// empty
     	}

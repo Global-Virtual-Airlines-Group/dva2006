@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store information about a scheduled task. 
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -39,11 +39,10 @@ public class TaskInfo implements Comparable<TaskInfo> {
       // Process run times
       Map<String, Collection<Integer>> runTimes = t.getRunTimes();
       _runTimes = new LinkedHashMap<String, Collection<Integer>>();
-      for (Iterator<String> i = runTimes.keySet().iterator(); i.hasNext(); ) {
-    	  String intervalType = i.next();
-    	  Collection<Integer> intervals = runTimes.get(intervalType);
-    	  if ((intervals != null) && (!intervals.contains(Task.ANY)))
-    		  _runTimes.put(intervalType, intervals);
+      for (Iterator<Map.Entry<String, Collection<Integer>>> i = runTimes.entrySet().iterator(); i.hasNext(); ) {
+    	  Map.Entry<String, Collection<Integer>> te = i.next();
+    	  if ((te.getValue() != null) && (!te.getValue().contains(Task.ANY)))
+    		  _runTimes.put(te.getKey(), te.getValue());
       }
    }
 

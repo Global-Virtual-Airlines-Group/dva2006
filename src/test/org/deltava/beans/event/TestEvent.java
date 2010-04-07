@@ -39,7 +39,7 @@ public class TestEvent extends AbstractBeanTestCase {
         checkProperty("signupDeadline", new Date(now));
         checkProperty("endTime", new Date());
         checkProperty("airportA", new Airport("ATL", "KATL", "Atlanta GA"));
-        checkProperty("network", new Integer(1));
+        checkProperty("network", Integer.valueOf(1));
         assertEquals(Event.COMPLETE, _e.getStatus());
         _e.setNetwork(OnlineNetwork.VATSIM);
         assertEquals(_e.getNetwork(), OnlineNetwork.VATSIM);
@@ -88,8 +88,8 @@ public class TestEvent extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("network", new Integer(-1), IllegalArgumentException.class);
-        validateInput("network", new Integer(11), IllegalArgumentException.class);
+        validateInput("network", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("network", Integer.valueOf(11), IllegalArgumentException.class);
         validateInput("network", "X", IllegalArgumentException.class);
         
         long now = System.currentTimeMillis();

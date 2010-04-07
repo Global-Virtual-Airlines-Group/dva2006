@@ -406,6 +406,6 @@ public class TestingHistoryHelper {
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
 		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
-		return (timeInterval < (lockoutHours * 3600));
+		return (timeInterval < (lockoutHours * 3600L));
 	}
 }

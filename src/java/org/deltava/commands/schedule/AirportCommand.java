@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -181,8 +181,8 @@ public class AirportCommand extends AbstractFormCommand {
 
 				// Convert the geoPosition into degrees, minutes, seconds
 				GeoPosition gp = a.getPosition();
-				int latS = new Double(GeoPosition.getSeconds(gp.getLatitude())).intValue();
-				int lngS = new Double(GeoPosition.getSeconds(gp.getLongitude())).intValue();
+				int latS = (int) GeoPosition.getSeconds(gp.getLatitude());
+				int lngS = (int) GeoPosition.getSeconds(gp.getLongitude());
 				
 				ctx.setAttribute("latD", Integer.valueOf(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
 				ctx.setAttribute("latM", Integer.valueOf(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);

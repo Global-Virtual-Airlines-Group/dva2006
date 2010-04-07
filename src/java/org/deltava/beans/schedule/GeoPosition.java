@@ -70,7 +70,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @return The degrees component of the position
 	 */
 	public static int getDegrees(double latlon) {
-		int deg = new Double(StrictMath.floor(latlon)).intValue();
+		int deg = (int) StrictMath.floor(latlon);
 		return (deg < 0) ? ++deg : deg; // Increment by 1 if we're below 0 since Math.floor(-11.0001) == -12.00
 	}
 
@@ -82,7 +82,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	public static int getMinutes(double latlon) {
 		latlon = Math.abs(latlon); // Strip out sign since minutes are always positive
 		latlon -= StrictMath.floor(latlon); // Strip out degrees
-		return new Double(StrictMath.floor(latlon * 60)).intValue(); // multiply by 60 so we get minutes
+		return (int) StrictMath.floor(latlon * 60); // multiply by 60 so we get minutes
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 		latlon -= StrictMath.floor(latlon); // Strip out degrees
 		latlon *= 60; // multiply by 60 so we get minutes
 		latlon -= StrictMath.floor(latlon); // Strip out minutes
-		return new Double(latlon * 60).intValue();
+		return (int) (latlon * 60);
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 		double distD = Math.toDegrees(Math.acos(p1 + p2));
 
 		// Convert to miles and return
-		return new Long(StrictMath.round(distD * DEGREE_MILES)).intValue();
+		return (int) StrictMath.round(distD * DEGREE_MILES);
 	}
 
 	/**

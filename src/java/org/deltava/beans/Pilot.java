@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
-public class Pilot extends Person implements Cacheable, ComboAlias {
+public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 
 	/**
 	 * Pilot status codes.

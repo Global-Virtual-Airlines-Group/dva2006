@@ -82,8 +82,8 @@ public class TestConnectionPool extends TestCase {
         assertEquals(_pool.getMaxSize(), _pool.getSize());
         try {
             Connection c3 = _pool.getConnection();
-            fail("ConectionPoolException expected");
             assertNotNull(c3);
+            fail("ConectionPoolException expected");
         } catch (ConnectionPoolException cpe) {
         	// empty
         }

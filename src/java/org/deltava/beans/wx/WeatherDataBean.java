@@ -1,6 +1,7 @@
 // Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.deltava.beans.*;
@@ -16,7 +17,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 2.2
  */
 
-public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comparable<WeatherDataBean> {
+public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comparable<WeatherDataBean>, Serializable {
 
 	private AirportLocation _pos;
 	private Date _createdOn;

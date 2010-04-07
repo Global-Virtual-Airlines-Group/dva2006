@@ -32,15 +32,15 @@ public class TestStatusUpdate extends AbstractBeanTestCase {
 		assertEquals(StatusUpdate.TYPES[StatusUpdate.INTPROMOTION], _upd.getTypeName());
 		checkProperty("firstName", "John");
 		checkProperty("lastName", "Smith");
-		checkProperty("authorID", new Integer(1234));
+		checkProperty("authorID", Integer.valueOf(1234));
 		checkProperty("description", "This is a test");
 		checkProperty("createdOn", new Date());
 	}
 	
 	public void testValidation() {
-		validateInput("ID", new Integer(0), IllegalArgumentException.class);
-		validateInput("type", new Integer(-1), IllegalArgumentException.class);
-		validateInput("type", new Integer(21), IllegalArgumentException.class);
+		validateInput("ID", Integer.valueOf(0), IllegalArgumentException.class);
+		validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("type", Integer.valueOf(21), IllegalArgumentException.class);
 	}
 	
 	public void testComparator() {

@@ -10,7 +10,7 @@ import org.deltava.beans.*;
 
 public class TestScheduleEntry extends AbstractBeanTestCase {
 
-	private static final DateFormat df = new SimpleDateFormat("HH:mm");
+	private final DateFormat df = new SimpleDateFormat("HH:mm");
 
 	private Airline _dva = new Airline("DVA", "Delta Virtual Airlines");
 	private Airline _afv = new Airline("AFV", "Aviation Francais Virtuel");
@@ -91,7 +91,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		checkProperty("equipmentType", "B767-300");
 		checkProperty("airportA", new Airport("ATL", "KATL", "Atlanta GA"));
 		checkProperty("airportD", new Airport("CLT", "KCLT", "Charlotte NC"));
-		checkProperty("length", new Integer(35));
+		checkProperty("length", Integer.valueOf(35));
 		checkProperty("historic", Boolean.valueOf(true));
 		checkProperty("canPurge", Boolean.valueOf(true));
 		assertTrue(_e.equals(new ScheduleEntry(_dva, 129, 1)));
@@ -106,11 +106,11 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	}
 
 	public void testValidation() {
-		validateInput("leg", new Integer(-1), IllegalArgumentException.class);
-		validateInput("leg", new Integer(9), IllegalArgumentException.class);
-		validateInput("flightNumber", new Integer(-1), IllegalArgumentException.class);
-		validateInput("ID", new Integer(1), UnsupportedOperationException.class);
-		validateInput("length", new Integer(-1), IllegalArgumentException.class);
+		validateInput("leg", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("leg", Integer.valueOf(9), IllegalArgumentException.class);
+		validateInput("flightNumber", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("ID", Integer.valueOf(1), UnsupportedOperationException.class);
+		validateInput("length", Integer.valueOf(-1), IllegalArgumentException.class);
 	}
 
 	public void testNullAirportLength() throws ParseException {

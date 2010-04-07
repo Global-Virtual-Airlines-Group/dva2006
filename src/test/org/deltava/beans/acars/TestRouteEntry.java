@@ -35,26 +35,26 @@ public class TestRouteEntry extends AbstractBeanTestCase {
       assertNotNull(_entry.getLocation());
       assertEquals(45.6789, _entry.getLocation().getLatitude(), 0.0001);
       assertEquals(-112.2334, _entry.getLocation().getLongitude(), 0.0001);
-      checkProperty("altitude", new Integer(30045));
-      checkProperty("heading", new Integer(241));
-      checkProperty("airSpeed", new Integer(251));
-      checkProperty("groundSpeed", new Integer(275));
-      checkProperty("verticalSpeed", new Integer(-175));
+      checkProperty("altitude", Integer.valueOf(30045));
+      checkProperty("heading", Integer.valueOf(241));
+      checkProperty("airSpeed", Integer.valueOf(251));
+      checkProperty("groundSpeed", Integer.valueOf(275));
+      checkProperty("verticalSpeed", Integer.valueOf(-175));
       checkProperty("n1", new Double(75.1));
       checkProperty("n2", new Double(85.1));
    }
    
    public void testValidation() {
-      validateInput("altitude", new Integer(-301), IllegalArgumentException.class);
-      validateInput("altitude", new Integer(100001), IllegalArgumentException.class);
-      validateInput("heading", new Integer(-1), IllegalArgumentException.class);
-      validateInput("heading", new Integer(361), IllegalArgumentException.class);
-      validateInput("airSpeed", new Integer(-21), IllegalArgumentException.class);
-      validateInput("airSpeed", new Integer(701), IllegalArgumentException.class);
-      validateInput("groundSpeed", new Integer(-21), IllegalArgumentException.class);
-      validateInput("groundSpeed", new Integer(1501), IllegalArgumentException.class);
-      validateInput("verticalSpeed", new Integer(-7001), IllegalArgumentException.class);
-      validateInput("verticalSpeed", new Integer(7001), IllegalArgumentException.class);
+      validateInput("altitude", Integer.valueOf(-301), IllegalArgumentException.class);
+      validateInput("altitude", Integer.valueOf(100001), IllegalArgumentException.class);
+      validateInput("heading", Integer.valueOf(-1), IllegalArgumentException.class);
+      validateInput("heading", Integer.valueOf(361), IllegalArgumentException.class);
+      validateInput("airSpeed", Integer.valueOf(-21), IllegalArgumentException.class);
+      validateInput("airSpeed", Integer.valueOf(701), IllegalArgumentException.class);
+      validateInput("groundSpeed", Integer.valueOf(-21), IllegalArgumentException.class);
+      validateInput("groundSpeed", Integer.valueOf(1501), IllegalArgumentException.class);
+      validateInput("verticalSpeed", Integer.valueOf(-7001), IllegalArgumentException.class);
+      validateInput("verticalSpeed", Integer.valueOf(7001), IllegalArgumentException.class);
       validateInput("n1", new Double(-0.1), IllegalArgumentException.class);
       validateInput("n1", new Double(115.1), IllegalArgumentException.class);
       validateInput("n2", new Double(-0.1), IllegalArgumentException.class);

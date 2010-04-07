@@ -31,8 +31,8 @@ public class TestQuestionProfile extends AbstractBeanTestCase {
         checkProperty("correctAnswer", "Because!");
         checkProperty("answer", "Because!");
         checkProperty("question", "Why Not?");
-        checkProperty("totalAnswers", new Integer(25));
-        checkProperty("correctAnswers", new Integer(23));
+        checkProperty("totalAnswers", Integer.valueOf(25));
+        checkProperty("correctAnswers", Integer.valueOf(23));
         
         assertFalse(_q.getActive());
         assertEquals("warn", _q.getRowClassName());
@@ -63,13 +63,13 @@ public class TestQuestionProfile extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-       validateInput("totalAnswers", new Integer(-1), IllegalArgumentException.class);
-       validateInput("correctAnswers", new Integer(-1), IllegalArgumentException.class);
-        validateInput("number", new Integer(0), UnsupportedOperationException.class);
+       validateInput("totalAnswers", Integer.valueOf(-1), IllegalArgumentException.class);
+       validateInput("correctAnswers", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("number", Integer.valueOf(0), UnsupportedOperationException.class);
         try {
             QuestionProfile qp2 = new QuestionProfile(null);
-            fail("NullPointerException expected");
             assertNotNull(qp2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }

@@ -29,13 +29,13 @@ public class TestIssueComment extends AbstractBeanTestCase {
 	public void testProperties() {
 		assertEquals(1, _ic.getID());
 		assertEquals("Comments", _ic.getComments());
-		checkProperty("createdBy", new Integer(45));
-		checkProperty("issueID", new Integer(45));
+		checkProperty("createdBy", Integer.valueOf(45));
+		checkProperty("issueID", Integer.valueOf(45));
 		checkProperty("createdOn", new Date());
 	}
 	
 	public void testValidation() {
-		validateInput("ID", new Integer(2), IllegalStateException.class);
+		validateInput("ID", Integer.valueOf(2), IllegalStateException.class);
 		try {
 			_ic.setCreatedOn(null);
 			fail("IllegalArgumentException expected");

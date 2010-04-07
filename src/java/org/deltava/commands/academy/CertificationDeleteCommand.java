@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.CertificationAccessControl;
 /**
  * A Web Site Command to delete Flight Academy certifications.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class CertificationDeleteCommand extends AbstractCommand {
 			GetAcademyCertifications dao = new GetAcademyCertifications(con);
 			Certification cert = dao.get(name);
 			if (cert == null)
-				throw notFoundException("Invalid Certification - " + cert);
+				throw notFoundException("Invalid Certification - " + name);
 			
 			// Check our access
 			CertificationAccessControl access = new CertificationAccessControl(ctx);

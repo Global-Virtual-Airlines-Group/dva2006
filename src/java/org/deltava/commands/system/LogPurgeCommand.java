@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.Date;
@@ -13,13 +13,13 @@ import org.deltava.dao.DAOException;
 /**
  * A Web Site Command to purge System Log entries.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
 public class LogPurgeCommand extends AbstractCommand {
 
-	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
+	private final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
 	/**
 	 * Executes the command.
@@ -57,7 +57,7 @@ public class LogPurgeCommand extends AbstractCommand {
 			int entriesDeleted = wdao.purge(logName, pd);
 
 			// Save the number of entries deleted
-			ctx.setAttribute("rowsDeleted", new Integer(entriesDeleted), REQUEST);
+			ctx.setAttribute("rowsDeleted", Integer.valueOf(entriesDeleted), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -28,20 +28,20 @@ public class TestResource extends AbstractBeanTestCase {
 	public void testProperties() {
 		assertEquals("http://localhost/test", _r.getURL());
 		checkProperty("description", "Description Text");
-		checkProperty("authorID", new Integer(1234));
-		checkProperty("lastUpdateID", new Integer(234));
-		checkProperty("hits", new Integer(3456));
+		checkProperty("authorID", Integer.valueOf(1234));
+		checkProperty("lastUpdateID", Integer.valueOf(234));
+		checkProperty("hits", Integer.valueOf(3456));
 		checkProperty("createdOn", new java.util.Date());
 		checkProperty("public", Boolean.TRUE);
 		assertEquals(_r.getURL(), _r.toString());
 	}
 	
 	public void testValidation() {
-		validateInput("authorID", new Integer(-1), IllegalArgumentException.class);
-		validateInput("authorID", new Integer(0), IllegalArgumentException.class);
-		validateInput("hits", new Integer(-1), IllegalArgumentException.class);
-		validateInput("lastUpdateID", new Integer(-1), IllegalArgumentException.class);
-		validateInput("lastUpdateID", new Integer(0), IllegalArgumentException.class);
+		validateInput("authorID", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("authorID", Integer.valueOf(0), IllegalArgumentException.class);
+		validateInput("hits", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("lastUpdateID", Integer.valueOf(-1), IllegalArgumentException.class);
+		validateInput("lastUpdateID", Integer.valueOf(0), IllegalArgumentException.class);
 		validateInput("URL", "CRAP", IllegalArgumentException.class);
 	}
 }

@@ -27,7 +27,7 @@ public class TestVote extends AbstractBeanTestCase {
     public void testProperties() {
         _v = new Vote(2, 0, 1);
         setBean(_v);
-        checkProperty("score", new Integer(5));
+        checkProperty("score", Integer.valueOf(5));
         assertEquals(1, _v.getImageID());
         assertEquals(2, _v.getAuthorID());
     }
@@ -49,9 +49,9 @@ public class TestVote extends AbstractBeanTestCase {
     public void testValidation() {
         _v = new Vote(1, 0, 1);
         setBean(_v);
-        validateInput("score", new Integer(-1), IllegalArgumentException.class);
-        validateInput("score", new Integer(11), IllegalArgumentException.class);
-        validateInput("authorID", new Integer(0), IllegalArgumentException.class);
-        validateInput("imageID", new Integer(0), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("score", Integer.valueOf(11), IllegalArgumentException.class);
+        validateInput("authorID", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("imageID", Integer.valueOf(0), IllegalArgumentException.class);
     }
 }

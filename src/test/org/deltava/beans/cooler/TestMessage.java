@@ -36,12 +36,12 @@ public class TestMessage extends AbstractBeanTestCase {
         checkProperty("createdOn", new Date());
         checkProperty("remoteAddr", "127.0.0.1");
         checkProperty("remoteHost", "localhost");
-        checkProperty("threadID", new Integer(1234));
+        checkProperty("threadID", Integer.valueOf(1234));
         checkProperty("body", "Message Body");
     }
     
     public void testValidation() {
-        validateInput("threadID", new Integer(0), IllegalArgumentException.class);
+        validateInput("threadID", Integer.valueOf(0), IllegalArgumentException.class);
     }
     
     public void testComparator() {
