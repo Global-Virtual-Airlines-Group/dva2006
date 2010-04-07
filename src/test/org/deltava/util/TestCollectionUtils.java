@@ -85,9 +85,9 @@ public class TestCollectionUtils extends TestCase {
 
 		Map<?, ?> m = CollectionUtils.createMap(ids, "ID");
 		assertEquals(ids.size() - 1, m.size());
-		assertTrue(m.containsKey(new Integer(1)));
-		assertTrue(m.containsKey(new Integer(2)));
-		assertTrue(m.containsKey(new Integer(10)));
+		assertTrue(m.containsKey(Integer.valueOf(1)));
+		assertTrue(m.containsKey(Integer.valueOf(2)));
+		assertTrue(m.containsKey(Integer.valueOf(10)));
 	}
 
 	public void testHasMatches() {

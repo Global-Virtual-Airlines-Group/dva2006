@@ -72,18 +72,18 @@ public class TestPerson extends AbstractBeanTestCase {
         checkProperty("equipmentType", "CRJ-200");
         checkProperty("location", "Southeastern US");
         checkProperty("homeAirport", "ATL");
-        checkProperty("airportCodeType", new Integer(1));
+        checkProperty("airportCodeType", Integer.valueOf(1));
         assertEquals(Airport.CODETYPES[_p.getAirportCodeType()], _p.getAirportCodeTypeName());
         _p.setAirportCodeType(Airport.CODETYPES[0]);
         assertEquals(0, _p.getAirportCodeType());
-        checkProperty("emailAccess", new Integer(1));
+        checkProperty("emailAccess", Integer.valueOf(1));
         checkProperty("legacyHours", new Double(238.1));
         checkProperty("createdOn", new Date());
         checkProperty("lastLogin", new Date());
         checkProperty("lastLogoff", new Date());
-        checkProperty("loginCount", new Integer(12));
+        checkProperty("loginCount", Integer.valueOf(12));
         checkProperty("loginHost", "localhost");
-        checkProperty("status", new Integer(2));
+        checkProperty("status", Integer.valueOf(2));
         checkProperty("dateFormat", "MM/dd/yyyy");
         checkProperty("timeFormat", "hh:mm:ss");
         checkProperty("numberFormat", "#,##0.0");
@@ -143,14 +143,14 @@ public class TestPerson extends AbstractBeanTestCase {
         validateInput("lastLogin", new Date(_p.getCreatedOn().getTime() - 1), IllegalStateException.class);
         validateInput("lastLogoff", new Date(_p.getCreatedOn().getTime() + 15000), IllegalArgumentException.class);
         validateInput("lastLogoff", new Date(_p.getCreatedOn().getTime() - 1), IllegalStateException.class);
-        validateInput("loginCount", new Integer(-1), IllegalArgumentException.class);
-        validateInput("ID", new Integer(-1), IllegalArgumentException.class);
+        validateInput("loginCount", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("airportCodeType", "XXX", IllegalArgumentException.class);
-        validateInput("airportCodeType", new Integer(-1), IllegalArgumentException.class);
-        validateInput("airportCodeType", new Integer(31), IllegalArgumentException.class);
-        validateInput("emailAccess", new Integer(-1), IllegalArgumentException.class);
-        validateInput("emailAccess", new Integer(11), IllegalArgumentException.class);
-        validateInput("status", new Integer(-1), IllegalArgumentException.class);
+        validateInput("airportCodeType", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("airportCodeType", Integer.valueOf(31), IllegalArgumentException.class);
+        validateInput("emailAccess", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("emailAccess", Integer.valueOf(11), IllegalArgumentException.class);
+        validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("legacyHours", new Double(-1), IllegalArgumentException.class);
     }
 }

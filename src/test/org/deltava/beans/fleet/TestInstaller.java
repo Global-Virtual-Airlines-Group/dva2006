@@ -40,8 +40,8 @@ public class TestInstaller extends AbstractBeanTestCase {
         checkProperty("name", "DC-8 Installer");
         checkProperty("description", "The DC-8 Installer");
         checkProperty("code", "DC8");
-        checkProperty("downloadCount", new Integer(3));
-        checkProperty("security", new Integer(1));
+        checkProperty("downloadCount", Integer.valueOf(3));
+        checkProperty("security", Integer.valueOf(1));
         
         assertEquals(_i.getName(), _i.cacheKey());
         assertEquals(_i.getName().hashCode(), _i.hashCode());
@@ -57,10 +57,10 @@ public class TestInstaller extends AbstractBeanTestCase {
     public void testValidation() {
        validateInput("size", new Long(120400), IllegalStateException.class);
         validateInput("description", null, NullPointerException.class);
-        validateInput("security", new Integer(-1), IllegalArgumentException.class);
-        validateInput("security", new Integer(31), IllegalArgumentException.class);
+        validateInput("security", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("security", Integer.valueOf(31), IllegalArgumentException.class);
         validateInput("security", "XXX", IllegalArgumentException.class);
-        validateInput("downloadCount", new Integer(-1), IllegalArgumentException.class);
+        validateInput("downloadCount", Integer.valueOf(-1), IllegalArgumentException.class);
         try {
             _i.setVersion(-1, 1, 2);
             fail("IllegalArgumentException expected");

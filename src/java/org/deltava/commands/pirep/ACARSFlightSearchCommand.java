@@ -92,7 +92,7 @@ public class ACARSFlightSearchCommand extends AbstractViewCommand {
 					try {
 						DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 						vc.setResults(dao.getByDate(df.parse(ctx.getParameter("flightDate"))));	
-					} catch (Exception e) {
+					} catch (ParseException e) {
 						vc.setResults(dao.getByDate(new Date()));
 					}
 					

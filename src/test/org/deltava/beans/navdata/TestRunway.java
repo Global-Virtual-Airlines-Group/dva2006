@@ -36,8 +36,8 @@ public class TestRunway extends AbstractBeanTestCase {
       assertEquals(_rwy.getLongitude(), _rwy.getPosition().getLongitude(), 0.0001);
       
       checkProperty("code", "TST");
-      checkProperty("heading", new Integer(92));
-      checkProperty("length", new Integer(8050));
+      checkProperty("heading", Integer.valueOf(92));
+      checkProperty("length", Integer.valueOf(8050));
       checkProperty("name", "Test VOR");
       checkProperty("frequency", "123.35");
       
@@ -46,12 +46,12 @@ public class TestRunway extends AbstractBeanTestCase {
    }
    
    public void testValidation() {
-      validateInput("type", new Integer(-1), IllegalArgumentException.class);
-      validateInput("type", new Integer(11), IllegalArgumentException.class);
-      validateInput("length", new Integer(0), IllegalArgumentException.class);
-      validateInput("length", new Integer(25001), IllegalArgumentException.class);
-      validateInput("heading", new Integer(-1), IllegalArgumentException.class);
-      validateInput("heading", new Integer(361), IllegalArgumentException.class);
+      validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+      validateInput("type", Integer.valueOf(11), IllegalArgumentException.class);
+      validateInput("length", Integer.valueOf(0), IllegalArgumentException.class);
+      validateInput("length", Integer.valueOf(25001), IllegalArgumentException.class);
+      validateInput("heading", Integer.valueOf(-1), IllegalArgumentException.class);
+      validateInput("heading", Integer.valueOf(361), IllegalArgumentException.class);
    }
    
    public void testComparator() {

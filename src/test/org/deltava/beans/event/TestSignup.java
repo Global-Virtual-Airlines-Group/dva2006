@@ -33,13 +33,13 @@ public class TestSignup extends AbstractBeanTestCase {
         assertEquals(1234, _s.getPilotID());
         checkProperty("remarks", "REMARKS");
         checkProperty("equipmentType", "B737-800");
-        checkProperty("ID", new Integer(123));
+        checkProperty("ID", Integer.valueOf(123));
         checkProperty("airportD", atl);
         checkProperty("airportA", jfk);
     }
     
     public void testValidation() {
-        validateInput("eventID", new Integer(0), IllegalArgumentException.class);
-        validateInput("pilotID", new Integer(0), IllegalArgumentException.class);
+        validateInput("eventID", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("pilotID", Integer.valueOf(0), IllegalArgumentException.class);
     }
 }

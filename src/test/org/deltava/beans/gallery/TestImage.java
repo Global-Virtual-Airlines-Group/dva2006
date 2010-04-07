@@ -34,16 +34,16 @@ public class TestImage extends AbstractBeanTestCase {
         assertEquals("description", _img.getDescription());
         checkProperty("name", "NewName");
         checkProperty("description", "NewDesc");
-        checkProperty("size", new Integer(131246));
-        checkProperty("width", new Integer(1280));
-        checkProperty("height", new Integer(1024));
-        checkProperty("type", new Integer(1));
-        checkProperty("ID", new Integer(116));
-        checkProperty("authorID", new Integer(117));
+        checkProperty("size", Integer.valueOf(131246));
+        checkProperty("width", Integer.valueOf(1280));
+        checkProperty("height", Integer.valueOf(1024));
+        checkProperty("type", Integer.valueOf(1));
+        checkProperty("ID", Integer.valueOf(116));
+        checkProperty("authorID", Integer.valueOf(117));
         checkProperty("createdOn", new Date());
         checkProperty("fleet", Boolean.valueOf(true));
         checkProperty("score", new Double(3.1));
-        checkProperty("voteCount", new Integer(16));
+        checkProperty("voteCount", Integer.valueOf(16));
         
         assertFalse(_img.hasVoted(null));
     }
@@ -55,13 +55,13 @@ public class TestImage extends AbstractBeanTestCase {
     
     public void testValidation() throws IOException {
         // Test parameter checking
-        validateInput("size", new Integer(-1), IllegalArgumentException.class);
-        validateInput("width", new Integer(-1), IllegalArgumentException.class);
-        validateInput("height", new Integer(-1), IllegalArgumentException.class);
-        validateInput("ID", new Integer(-1), IllegalArgumentException.class);
-        validateInput("type", new Integer(-1), IllegalArgumentException.class);
-        validateInput("type", new Integer(21), IllegalArgumentException.class);
-        validateInput("voteCount", new Integer(-1), IllegalArgumentException.class);
+        validateInput("size", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("width", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("height", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("ID", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("type", Integer.valueOf(21), IllegalArgumentException.class);
+        validateInput("voteCount", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("score", new Double(-1), IllegalArgumentException.class);
         validateInput("score", new Double(10.1), IllegalArgumentException.class);
 
@@ -70,8 +70,8 @@ public class TestImage extends AbstractBeanTestCase {
         _img.setType(1);
 
         // Test state checking
-        validateInput("size", new Integer(1235), IllegalStateException.class);
-        validateInput("type", new Integer(0), IllegalStateException.class);
+        validateInput("size", Integer.valueOf(1235), IllegalStateException.class);
+        validateInput("type", Integer.valueOf(0), IllegalStateException.class);
 
         // See what happens if we get the stream when the buffer is empty
         InputStream is = _img.getInputStream();
@@ -81,7 +81,7 @@ public class TestImage extends AbstractBeanTestCase {
         // Test exceptions if votes have been populated
         _img.addVote(new Vote(1, 2, 3));
         _img.addVote(new Vote(2, 3, 4));
-        validateInput("voteCount", new Integer(123), IllegalStateException.class);
+        validateInput("voteCount", Integer.valueOf(123), IllegalStateException.class);
         validateInput("score", new Double(1.2), IllegalStateException.class);
     }
 

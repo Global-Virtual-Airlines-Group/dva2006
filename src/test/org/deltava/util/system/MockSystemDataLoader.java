@@ -11,7 +11,7 @@ public class MockSystemDataLoader implements SystemDataLoader {
         results.put(SystemData.CFG_NAME, "test");
         results.put("stringVar", "STRING");
         results.put("boolVar", Boolean.valueOf(true));
-        results.put("intVar", new Integer(43));
+        results.put("intVar", Integer.valueOf(43));
         results.put("longVar", new Long(23));
         results.put("doubleVar", new Double(3.1415926));
         results.put("airline.code", "DVA");

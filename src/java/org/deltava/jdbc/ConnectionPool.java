@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * A user-configurable JDBC Connection Pool.
  * @author Luke
- * @version 2.7
+ * @version 3.0
  * @since 1.0
  * @see ConnectionPoolEntry
  * @see ConnectionMonitor
@@ -43,7 +43,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	private transient final Properties _props = new Properties();
 	private boolean _autoCommit = true;
 
-	public class ConnectionPoolFullException extends ConnectionPoolException {
+	public static class ConnectionPoolFullException extends ConnectionPoolException {
 		ConnectionPoolFullException() {
 			super("Connection Pool Full", false);
 			setForwardURL("/jsp/error/poolFull.jsp");

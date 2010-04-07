@@ -39,23 +39,23 @@ public class TestFlightReport extends AbstractBeanTestCase {
         assertEquals(1, _fr.getLeg());
         _fr.setAirline(new Airline("dvc", "Delta Virtual Connection"));
         assertEquals("DVC", _fr.getAirline().getCode());
-        checkProperty("ID", new Integer(123));
+        checkProperty("ID", Integer.valueOf(123));
         checkProperty("firstName", "John");
         checkProperty("lastName", "Smith");
         checkProperty("rank", "Captain");
         checkProperty("remarks", "REMARKS");
-        checkProperty("attributes", new Integer(1234));
+        checkProperty("attributes", Integer.valueOf(1234));
         checkProperty("createdOn", new Date(123456));
         checkProperty("submittedOn", new Date(123457));
         checkProperty("disposedOn", new Date(1234568));
         checkProperty("date", new Date(12345));
         checkProperty("equipmentType", "CRJ-200");
-        checkProperty("flightNumber", new Integer(_fr.getFlightNumber()));
-        checkProperty("leg", new Integer(_fr.getLeg()));
-        checkProperty("length", new Integer(21));
-        checkProperty("status", new Integer(2));
+        checkProperty("flightNumber", Integer.valueOf(_fr.getFlightNumber()));
+        checkProperty("leg", Integer.valueOf(_fr.getLeg()));
+        checkProperty("length", Integer.valueOf(21));
+        checkProperty("status", Integer.valueOf(2));
         assertEquals(FlightReport.STATUS[_fr.getStatus()], _fr.getStatusName());
-        checkProperty("FSVersion", new Integer(2002));
+        checkProperty("FSVersion", Integer.valueOf(2002));
         _fr.setFSVersion("FS2000");
         assertEquals(2000, _fr.getFSVersion());
         _fr.setStatus("Hold");
@@ -63,16 +63,16 @@ public class TestFlightReport extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("flightNumber", new Integer(-1), IllegalArgumentException.class);
-        validateInput("leg", new Integer(-1), IllegalArgumentException.class);
-        validateInput("leg", new Integer(0), IllegalArgumentException.class);
-        validateInput("leg", new Integer(6), IllegalArgumentException.class);
-        validateInput("length", new Integer(-1), IllegalArgumentException.class);
-        validateInput("length", new Integer(181), IllegalArgumentException.class);
-        validateInput("FSVersion", new Integer(-1), IllegalArgumentException.class);
+        validateInput("flightNumber", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("leg", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("leg", Integer.valueOf(0), IllegalArgumentException.class);
+        validateInput("leg", Integer.valueOf(6), IllegalArgumentException.class);
+        validateInput("length", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("length", Integer.valueOf(181), IllegalArgumentException.class);
+        validateInput("FSVersion", Integer.valueOf(-1), IllegalArgumentException.class);
         validateInput("FSVersion", "X", IllegalArgumentException.class);
-        validateInput("status", new Integer(-1), IllegalArgumentException.class);
-        validateInput("status", new Integer(21), IllegalArgumentException.class);
+        validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
+        validateInput("status", Integer.valueOf(21), IllegalArgumentException.class);
         validateInput("status", "X", IllegalArgumentException.class);
     }
     

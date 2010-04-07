@@ -65,7 +65,7 @@ public class TestDAO extends AbstractBeanTestCase {
         }
         
         assertEquals(1, _dao.getQueryTimeout());
-        validateInput("queryTimeout", new Integer(-1), IllegalArgumentException.class);
+        validateInput("queryTimeout", Integer.valueOf(-1), IllegalArgumentException.class);
         
         // Execute and check for failure
         try {

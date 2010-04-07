@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 2.8
+ * @version 3.0
  * @since 1.0
  */
 
@@ -180,7 +180,8 @@ public class BrowserTypeFilter implements Filter {
 	 * Helper method to search the ident stirngs and return the operating system.
 	 */
 	private int getOS(String userAgent) {
-
+		if (userAgent == null)
+			return UNKNOWN;
 		if (userAgent.indexOf("Windows") != -1)
 			return WINDOWS;
 		if (userAgent.indexOf("MAC OS") != -1)

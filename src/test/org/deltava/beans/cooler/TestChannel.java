@@ -30,11 +30,11 @@ public class TestChannel extends AbstractBeanTestCase {
         assertEquals("NAME", _c.getName());
         checkProperty("description", "DESC");
         checkProperty("lastSubject", "SUBJ");
-        checkProperty("viewCount", new Integer(234));
-        checkProperty("postCount", new Integer(123));
-        checkProperty("threadCount", new Integer(12));
-        checkProperty("lastThreadID", new Integer(1234));
-        checkProperty("lastThreadID", new Integer(0));
+        checkProperty("viewCount", Integer.valueOf(234));
+        checkProperty("postCount", Integer.valueOf(123));
+        checkProperty("threadCount", Integer.valueOf(12));
+        checkProperty("lastThreadID", Integer.valueOf(1234));
+        checkProperty("lastThreadID", Integer.valueOf(0));
         _c.setActive(true);
         assertTrue(_c.getActive());
         _c.setActive(false);
@@ -43,10 +43,10 @@ public class TestChannel extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-       validateInput("viewCount", new Integer(-1), IllegalArgumentException.class);
-       validateInput("threadCount", new Integer(-1), IllegalArgumentException.class);
-       validateInput("postCount", new Integer(-1), IllegalArgumentException.class);
-       validateInput("lastThreadID", new Integer(-1), IllegalArgumentException.class);
+       validateInput("viewCount", Integer.valueOf(-1), IllegalArgumentException.class);
+       validateInput("threadCount", Integer.valueOf(-1), IllegalArgumentException.class);
+       validateInput("postCount", Integer.valueOf(-1), IllegalArgumentException.class);
+       validateInput("lastThreadID", Integer.valueOf(-1), IllegalArgumentException.class);
     }
     
     public void testRoles() {

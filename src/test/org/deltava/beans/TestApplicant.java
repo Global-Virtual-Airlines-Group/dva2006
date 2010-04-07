@@ -31,10 +31,10 @@ public class TestApplicant extends AbstractBeanTestCase {
         checkProperty("legacyURL", "http://www.deltava.org/");
         checkProperty("legacyVerified", Boolean.valueOf(true));
         checkProperty("registerHostName", "localhost");
-        checkProperty("pilotID", new Integer(0));
+        checkProperty("pilotID", Integer.valueOf(0));
         
         _a.setStatus(Applicant.APPROVED);
-        checkProperty("pilotID", new Integer(2345));
+        checkProperty("pilotID", Integer.valueOf(2345));
         
         assertNotNull(_a.getRoles());
         assertEquals(1, _a.getRoles().size());
@@ -44,12 +44,12 @@ public class TestApplicant extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-    	validateInput("status", new Integer(-1), IllegalArgumentException.class);
-    	validateInput("status", new Integer(121), IllegalArgumentException.class);
+    	validateInput("status", Integer.valueOf(-1), IllegalArgumentException.class);
+    	validateInput("status", Integer.valueOf(121), IllegalArgumentException.class);
     	assertFalse(_a.getStatus() == Applicant.APPROVED);
-    	validateInput("pilotID", new Integer(123), IllegalStateException.class);
+    	validateInput("pilotID", Integer.valueOf(123), IllegalStateException.class);
     	 _a.setStatus(Applicant.APPROVED);
-    	validateInput("pilotID", new Integer(-1), IllegalArgumentException.class);
+    	validateInput("pilotID", Integer.valueOf(-1), IllegalArgumentException.class);
     	
     	try {
     		_a.addRole("any Role");

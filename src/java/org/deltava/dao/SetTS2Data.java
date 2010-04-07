@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,13 +12,13 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
  * @author Luke
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 
 public class SetTS2Data extends DAO {
 
-	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
+	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 
 	/**
 	 * Initializes the Data Access Object.

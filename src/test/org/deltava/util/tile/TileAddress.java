@@ -147,17 +147,17 @@ public class TileAddress implements Comparable<TileAddress> {
 	 */
 	public int compareTo(TileAddress addr2) {
 		// Compare the level
-		int tmpResult = new Integer(_level).compareTo(new Integer(addr2._level)) * -1;
+		int tmpResult = Integer.valueOf(_level).compareTo(Integer.valueOf(addr2._level)) * -1;
 		if (tmpResult != 0)
 			return tmpResult;
 		
 		// Compare the Y coordinates
-		tmpResult = new Integer(_y).compareTo(new Integer(addr2._y));
+		tmpResult = Integer.valueOf(_y).compareTo(Integer.valueOf(addr2._y));
 		if (tmpResult != 0)
 			return tmpResult;
 		
 		// Compare the X coordinates
-		return new Integer(_x).compareTo(new Integer(addr2._x));
+		return Integer.valueOf(_x).compareTo(Integer.valueOf(addr2._x));
 	}
 	
 	public boolean equals(Object o) {

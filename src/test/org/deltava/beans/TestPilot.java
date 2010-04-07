@@ -35,23 +35,23 @@ public class TestPilot extends AbstractBeanTestCase {
         assertEquals("", _p.getPilotCode());
         _p.setPilotCode(null);
         
-        checkProperty("ID", new Integer(123));
-        checkProperty("legs", new Integer(100));
+        checkProperty("ID", Integer.valueOf(123));
+        checkProperty("legs", Integer.valueOf(100));
         checkProperty("hours", new Double(323.3));
         checkProperty("miles", new Long(12345));
-        checkProperty("onlineLegs", new Integer(101));
+        checkProperty("onlineLegs", Integer.valueOf(101));
         checkProperty("onlineHours", new Double(323.4));
         checkProperty("lastFlight", new Date());
         checkProperty("hasSignature", Boolean.valueOf(true));
         checkProperty("showSignatures", Boolean.valueOf(true));
         checkProperty("showSSThreads", Boolean.valueOf(true));
 
-        checkProperty("status", new Integer(3));
+        checkProperty("status", Integer.valueOf(3));
         assertEquals(Pilot.STATUS[3], _p.getStatusName());
         _p.setStatus(Pilot.STATUS[2]);
         assertEquals(2, _p.getStatus());
         
-        checkProperty("airportCodeType", new Integer(Airport.ICAO));
+        checkProperty("airportCodeType", Integer.valueOf(Airport.ICAO));
         assertEquals(Airport.CODETYPES[Airport.ICAO], _p.getAirportCodeTypeName());
     }
     
@@ -63,7 +63,7 @@ public class TestPilot extends AbstractBeanTestCase {
     
     public void testCacheKey() {
     	_p.setID(123);
-    	assertEquals(new Integer(123), _p.cacheKey());
+    	assertEquals(Integer.valueOf(123), _p.cacheKey());
     }
     
     public void testRatings() {
@@ -158,12 +158,12 @@ public class TestPilot extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-    	validateInput("ID", new Integer(0), IllegalArgumentException.class);
-    	validateInput("status", new Integer(81), IllegalArgumentException.class);
+    	validateInput("ID", Integer.valueOf(0), IllegalArgumentException.class);
+    	validateInput("status", Integer.valueOf(81), IllegalArgumentException.class);
     	validateInput("status", "XXX", IllegalArgumentException.class);
-    	validateInput("legs", new Integer(-1), IllegalArgumentException.class);
+    	validateInput("legs", Integer.valueOf(-1), IllegalArgumentException.class);
     	validateInput("hours", new Double(-1.1), IllegalArgumentException.class);
-    	validateInput("onlineLegs", new Integer(-1), IllegalArgumentException.class);
+    	validateInput("onlineLegs", Integer.valueOf(-1), IllegalArgumentException.class);
     	validateInput("onlineHours", new Double(-1.1), IllegalArgumentException.class);
     	validateInput("miles", new Long(-1), IllegalArgumentException.class);
     	

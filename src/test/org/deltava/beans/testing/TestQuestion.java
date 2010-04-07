@@ -28,7 +28,7 @@ public class TestQuestion extends AbstractBeanTestCase {
         assertEquals("Why?", _q.getQuestion());
         checkProperty("correctAnswer", "Because!");
         checkProperty("answer", "Because!");
-        checkProperty("number", new Integer(1));
+        checkProperty("number", Integer.valueOf(1));
         assertFalse(_q.isCorrect());
         _q.setCorrect(true);
         assertTrue(_q.isCorrect());
@@ -54,12 +54,12 @@ public class TestQuestion extends AbstractBeanTestCase {
     }
     
     public void testValidation() {
-        validateInput("number", new Integer(0), IllegalArgumentException.class);
+        validateInput("number", Integer.valueOf(0), IllegalArgumentException.class);
         try {
         	String s = null;
             Question q2 = new Question(s);
-            fail("NullPointerException expected");
             assertNotNull(q2);
+            fail("NullPointerException expected");
         } catch (NullPointerException npe) {
         	// empty
         }
