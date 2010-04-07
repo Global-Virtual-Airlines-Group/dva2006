@@ -72,7 +72,7 @@ public class TestACARSArchive extends TestCase {
 		while ((ze != null) && ((zipSHA == null) || (zipXML == null))) {
 			String name = ze.getName().toLowerCase();
 			byte[] buf = new byte[(int) ze.getSize()];
-			zis.read(buf, 0, buf.length);
+			assertTrue(zis.read(buf, 0, buf.length) > 0);
 			if (name.endsWith(".xml")) {
 				zipXML = new String(buf, "UTF-8");
 				//zipXML = xml.substring(0, xml.length() - 1);
