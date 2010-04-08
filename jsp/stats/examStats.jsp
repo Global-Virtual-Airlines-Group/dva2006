@@ -116,7 +116,8 @@ return true;
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp /> <view:pgDn /><br /></view:scrollbar>
+<view:legend width="150" labels="All Passed,None Passed" classes="opt1,warn" /></td>
 </tr>
 </view:table>
 </c:if>

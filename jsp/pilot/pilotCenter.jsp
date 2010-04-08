@@ -787,7 +787,7 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 scoring delays, discussion forum participation rates and Flight Report logging.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="exam">Examination / Check Ride Statistics</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="examstats">Examination / Check Ride Statistics</el:cmd></td>
  <td class="data">You can view performance metrics on Pilot Examination and Check Ride scoring.</td>
 </tr>
 <tr>
