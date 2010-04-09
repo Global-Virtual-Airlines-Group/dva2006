@@ -137,38 +137,4 @@ public class ComboUtils {
 
         return results;
     }
-    
-    /**
-     * Checks through a list of ComboAlias objects and returns the name matching a given alias.
-     * @param choices the List of ComboAlias objects
-     * @param alias the alias to search for
-     * @return the first name matching the alias, or null if not found
-     * @see ComboUtils#getAlias(Collection, String)
-     */
-    public static String getName(Collection<ComboAlias> choices, String alias) {
-        for (Iterator<ComboAlias> i = choices.iterator(); i.hasNext(); ) {
-            ComboAlias ca = i.next();
-            if (ca.getComboAlias().equals(alias))
-                return ca.getComboName();
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Checks through a collection of ComboAlias objects and returns the alias matching a given name.
-     * @param choices a Collection of ComboAlias objects
-     * @param name the name to search for
-     * @return the first alias matching the name, or null if not found
-     * @see ComboUtils#getName(Collection, String)
-     */
-    public static String getAlias(Collection<ComboAlias> choices, String name) {
-        for (Iterator<ComboAlias> i = choices.iterator(); i.hasNext(); ) {
-            ComboAlias ca = i.next();
-            if (ca.getComboName().equals(name))
-                return ca.getComboAlias();
-        }
-        
-        return null;
-    }
 }
