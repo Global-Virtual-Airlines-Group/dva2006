@@ -16,7 +16,7 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:js name="markermanager" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -161,7 +161,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${!empty results}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Build the navaid list
 <map:markers var="navaids" items="${results}" />
 

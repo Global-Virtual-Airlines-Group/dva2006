@@ -42,7 +42,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${home}" />
 
 // Create the map

@@ -116,7 +116,7 @@
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 275, '8', '#ffffff', 'high');
 so.addVariable('preloader_color', '#999999');
 so.addVariable('path', '/');

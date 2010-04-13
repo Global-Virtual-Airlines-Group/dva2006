@@ -20,7 +20,7 @@
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 </c:if>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <c:if test="${exam.routePlot}">
 document.imgPath = '${imgPath}';
 </c:if>
@@ -131,7 +131,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />

@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function sortBy(combo)
 {
 var sortCode = combo.options[combo.selectedIndex].value;

@@ -17,7 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <c:set var="cspan" value="${!empty manuals ? 3 : 1}" scope="page" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <fmt:jsarray var="invalidDomains" items="${badDomains}" />
 
 function validate(form)

@@ -18,7 +18,7 @@
 <content:sysdata var="minPwd" name="security.password.min" />
 <content:sysdata var="defaultTFormat" name="time.time_format" />
 <content:sysdata var="defaultDFormat" name="time.date_format" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var hasSignature = ${pilot.hasSignature};
 
 function validate(form)
@@ -372,7 +372,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var f = document.forms[0];
 f.useDefaultSig.disabled = hasSignature;
 </script>

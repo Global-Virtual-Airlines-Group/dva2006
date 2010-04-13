@@ -23,7 +23,7 @@
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 var routeUpdated = false;
@@ -148,7 +148,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var f = document.forms[0];
 enableObject(f.routes, false);
 

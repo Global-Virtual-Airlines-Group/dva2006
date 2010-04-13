@@ -23,7 +23,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
 <c:set var="onLoad" value="showRemaining(10)" scope="page" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var expiry = ${exam.expiryDate.time};
 <c:if test="${exam.routePlot}">
 var rpInfo = [];
@@ -98,7 +98,7 @@ var timeOffset = (new Date().getTime() - ${currentTime});
 </c:if>
 <c:if test="${isRP}">
 <!-- Map #${q.number} -->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var info = { examID: '${exam.hexID}', exam: ${exam.ID}, idx: ${q.number}, distance: ${q.distance} };
 info.mapCenter = <map:point point="${q.midPoint}" />
 info.aD = <map:marker point="${q.airportD}" />

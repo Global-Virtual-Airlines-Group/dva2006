@@ -23,7 +23,7 @@
 <c:if test="${!isAssign}"><content:js name="airportRefresh" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -204,7 +204,7 @@ return cmdPost(f.action);
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var f = document.forms[0];
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
 

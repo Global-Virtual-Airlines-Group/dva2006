@@ -15,7 +15,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function setExamName(combo)
 {
 var opt = combo.options[combo.selectedIndex];

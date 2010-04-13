@@ -14,7 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function refresh(combo)
 {
 enableElement(combo, false);

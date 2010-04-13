@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -158,7 +158,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Set original assignee
 var f = document.forms[0];
 document.originalAssignee = f.assignedTo.selectedIndex;

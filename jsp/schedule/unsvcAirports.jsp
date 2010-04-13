@@ -11,7 +11,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;

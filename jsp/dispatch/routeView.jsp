@@ -96,7 +96,7 @@
 </content:region>
 </content:page>
 <c:if test="${fn:sizeof(waypoints) > 0}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="pnts" items="${waypoints}" />

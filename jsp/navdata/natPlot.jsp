@@ -20,7 +20,7 @@
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 function showTrackInfo(marker)
 {
@@ -195,7 +195,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Create the map
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty tileHost}">

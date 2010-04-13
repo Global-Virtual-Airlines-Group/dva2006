@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function update(combo)
 {
 self.location = '/liveries.do?airline=' + combo.options[combo.selectedIndex].value;

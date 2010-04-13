@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:rss title="${airlineName} Journals" path="/blog_rss.ws" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 <c:if test="${access.canComment}">

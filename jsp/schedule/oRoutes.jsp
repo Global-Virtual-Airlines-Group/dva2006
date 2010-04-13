@@ -17,7 +17,7 @@
 <content:js name="common" />
 <c:if test="${access.canDelete && (!empty viewContext.results)}">
 <content:js name="datePicker" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;

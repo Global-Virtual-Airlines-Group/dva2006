@@ -23,7 +23,7 @@
  <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
 </tr>
 </el:table>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 225, '8', '#ffffff', 'high');
 so.addVariable('preloader_color', '#999999');
 so.addVariable('path', '/');

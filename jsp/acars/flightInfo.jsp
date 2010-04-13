@@ -146,7 +146,7 @@
 </content:region>
 </content:page>
 <c:if test="${fn:sizeof(mapRoute) > 0}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var gRoute;
 var routePoints = [];
 var routeMarkers = [];

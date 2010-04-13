@@ -11,7 +11,7 @@
 <content:pics />
 <content:js name="common" />
 <content:sysdata var="imgDB" name="airline.db" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function selectAircraft(combo)
 {
 // Do nothing if nothing selected
@@ -64,7 +64,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var dList = getElement('fleetDescs').value.split(',');
 </script>
 <content:googleAnalytics />

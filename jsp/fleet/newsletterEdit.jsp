@@ -22,7 +22,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;

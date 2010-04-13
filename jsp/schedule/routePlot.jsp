@@ -24,7 +24,7 @@
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 var routeUpdated = false;
@@ -139,7 +139,7 @@ return true;
 </content:region>
 </content:page>
 <fmt:aptype var="useICAO" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var f = document.forms[0];
 enableObject(f.routes, false);
 enableElement('SearchButton', false);

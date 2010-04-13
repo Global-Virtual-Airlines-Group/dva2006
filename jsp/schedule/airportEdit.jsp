@@ -24,7 +24,7 @@
 <map:api version="2" />
 <map:vml-ie />
 </c:if>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -143,7 +143,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 

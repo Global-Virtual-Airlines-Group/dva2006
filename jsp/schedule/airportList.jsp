@@ -14,7 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function updateSort()
 {
 var f = document.forms[0];

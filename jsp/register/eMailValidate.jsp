@@ -13,7 +13,7 @@
 <content:js name="common" />
 <content:pics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <fmt:jsarray var="invalidDomains" items="${badDomains}" />
 
 function validate(form)

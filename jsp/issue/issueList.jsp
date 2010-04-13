@@ -14,7 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function doSort()
 {
 var f = document.forms[0];
