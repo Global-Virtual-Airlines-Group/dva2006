@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.Map;
@@ -14,16 +14,18 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
 public class InsertGoogleAPITag extends TagSupport {
 
 	public static final String USAGE_ATTR_NAME = "$googleMapUsage$";
+	private static final int API_VERSION = 2;
+	
 	private static final AtomicLong USAGE_COUNT = new AtomicLong();
 
-	private int _majorVersion = 2;
+	private int _majorVersion = API_VERSION;
 	private String _minorVersion;
 	private boolean _doCurrent = false;
 	private boolean _doStable = false;
@@ -66,6 +68,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	public void release() {
 		super.release();
 		_doCurrent = false;
+		_majorVersion = API_VERSION;
 		_minorVersion = null;
 	}
 
@@ -106,7 +109,7 @@ public class InsertGoogleAPITag extends TagSupport {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			out.print("<script language=\"JavaScript\" src=\"http://maps.google.com/maps?file=api&amp;v=");
+			out.print("<script type=\"text/javascript\" src=\"http://maps.google.com/maps?file=api&amp;v=");
 			out.print(String.valueOf(_majorVersion));
 			if (_doStable)
 				out.print(".s");
@@ -117,14 +120,15 @@ public class InsertGoogleAPITag extends TagSupport {
 
 			out.print("&amp;key=");
 			out.print(apiKey);
-			out.print("\" type=\"text/javascript\"></script>");
+			out.print("\"></script>");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
 		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME);
-		release();
 		return EVAL_PAGE;
 	}
 }
