@@ -524,7 +524,6 @@
 			<quota type="Integer">10240000</quota>
 			<server>mail.deltava.org</server>
 			<script>/usr/local/sbin/www/mailbox_create</script>
-			<newmail>/usr/local/sbin/www/sudonewmail</newmail>
 		</imap>
 	</smtp>
 
