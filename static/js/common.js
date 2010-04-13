@@ -81,6 +81,28 @@ combo.selectedIndex = -1;
 return false;
 }
 
+Array.prototype.remove = function(obj)
+{
+for (var x = 0; x < this.length; x++) {
+	if (this[x] == obj) {
+		this.splice(x, 1);
+		return true;
+	}
+}
+
+return false;
+};
+
+Array.prototype.indexOf = function(obj)
+{
+for (var x = 0; x < this.length; x++) {	
+	if (this[x] == obj)
+		return x;
+}
+
+return -1;
+}
+
 function checkSubmit()
 {
 if (document.isSubmit) {
