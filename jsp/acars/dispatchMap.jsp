@@ -23,7 +23,7 @@
 <c:if test="${!empty tileHost}">
 <script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,future_radar_ff" type="text/javascript"></script></c:if>
 <map:vml-ie />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
 document.tileHost = '${tileHost}';
 
@@ -67,7 +67,7 @@ return mrk;
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
  <el:button ID="AnimateButton" className="BUTTON" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Load the map
 map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl3D());

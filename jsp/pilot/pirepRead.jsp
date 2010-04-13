@@ -22,7 +22,7 @@
 <map:vml-ie />
 </c:if>
 <c:if test="${scoreCR || access.canDispose}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -42,7 +42,7 @@ return true;
 <c:if test="${isACARS}">
 <content:sysdata var="imgPath" name="path.img" />
 <content:js name="acarsFlightMap" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function zoomTo(lat, lng)
 {
 map.setZoom(11);
@@ -321,7 +321,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:region>
 </content:page>
 <c:if test="${googleMap}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 
 //Build the map

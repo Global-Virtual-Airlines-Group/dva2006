@@ -21,7 +21,7 @@
 </c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -128,7 +128,7 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${exam.routePlot}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var maps = [];
 <c:forEach var="q" items="${exam.questions}"><c:if test="${fn:isRoutePlot(q)}">
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />

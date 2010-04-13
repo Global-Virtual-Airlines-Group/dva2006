@@ -15,7 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;

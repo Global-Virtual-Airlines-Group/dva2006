@@ -14,7 +14,7 @@
 <content:pics />
 <content:js name="common" />
 <content:sysdata var="imgPath" name="path.img" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function selectAC(combo)
 {
 if (combo.selectedIndex < 1) {

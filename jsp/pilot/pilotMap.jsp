@@ -19,7 +19,7 @@
 <content:js name="progressBar" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var imgPath = '${imgPath}';
 function reloadMap()
 {
@@ -107,7 +107,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />

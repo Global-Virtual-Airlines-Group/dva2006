@@ -17,7 +17,7 @@
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function setAirportD(combo)
 {
 var ad = combo.options[combo.selectedIndex].value;

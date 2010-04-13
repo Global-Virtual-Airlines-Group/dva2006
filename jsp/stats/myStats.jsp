@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="swfobject" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -127,7 +127,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var so = new SWFObject('/${swfPath}/ampie.swf', 'piechart', '100%', 500, '8', '#ffffff', 'high');
 so.addVariable('preloader_color', '#999999');
 so.addVariable('path', '/');

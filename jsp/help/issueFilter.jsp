@@ -14,7 +14,7 @@
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function update(combo)
 {
 self.location = '/hdissuefilter.do?op=${param.op}&id=' + combo.options[combo.selectedIndex].value;

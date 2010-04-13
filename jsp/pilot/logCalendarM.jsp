@@ -14,7 +14,7 @@
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function switchType(combo)
 {
 var cType = combo.options[combo.selectedIndex].value;

@@ -25,7 +25,7 @@
 <content:pics />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -432,7 +432,7 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <c:if test="${!empty firstUnreadTime}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var postRow = getElement('post${firstUnreadTime.time}');
 postRow.scrollIntoView();
 </script></c:if>
