@@ -14,7 +14,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 function sort(combo)
 {
 var sortType = combo.options[combo.selectedIndex].value;

@@ -13,7 +13,7 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function updateSort()
 {
 document.forms[0].submit();

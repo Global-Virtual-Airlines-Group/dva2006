@@ -23,7 +23,7 @@
 <content:js name="acarsMapWX" />
 <content:js name="acarsMapFF" />
 </c:if>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 <c:if test="${!empty jetStreamImgs}">
@@ -263,7 +263,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${homeAirport}" />
 // Create the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});

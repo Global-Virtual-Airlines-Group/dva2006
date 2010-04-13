@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var dataFiles = ['pssstar.dat','psssid.dat'];
 
 function validate(form)

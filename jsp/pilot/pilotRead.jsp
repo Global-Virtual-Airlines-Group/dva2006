@@ -15,7 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <c:if test="${!empty loginAddrs}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function toggleLoginAddrs()
 {
 var addrDiv = getElement('loginAddrs');

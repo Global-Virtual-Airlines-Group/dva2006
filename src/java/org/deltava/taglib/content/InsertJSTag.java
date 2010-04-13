@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspWriter;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a JavaScript include file.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 1.0
  */
 
@@ -31,12 +31,11 @@ public class InsertJSTag extends InsertContentTag {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			out.print("<script language=\"JavaScript\" type=\"text/javascript\" src=\"");
-			if (!_resourceName.startsWith("http://")) {
+			out.print("<script type=\"text/javascript\" src=\"");
+			if (!_resourceName.startsWith("http://"))
 				out.print(SystemData.get("path.js") + "/" + _resourceName + ".js");
-			} else {
+			else
 				out.print(_resourceName);
-			}
 
 			out.print("\"></script>");
 		} catch (Exception e) {

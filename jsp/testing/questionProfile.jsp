@@ -20,7 +20,7 @@
 <map:vml-ie />
 </c:if>
 <c:if test="${question.size > 0}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function viewImage(x, y)
 {
 var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
@@ -120,7 +120,7 @@ return true;
 </content:page>
 <content:googleAnalytics />
 <c:if test="${fn:isRoutePlot(question)}">
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${question.midPoint}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl3D());

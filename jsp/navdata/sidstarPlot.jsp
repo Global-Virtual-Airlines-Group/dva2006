@@ -20,7 +20,7 @@
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
 
 function clickIcon()
@@ -152,7 +152,7 @@ return false;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 

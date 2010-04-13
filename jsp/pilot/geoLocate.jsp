@@ -17,7 +17,7 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:googleAnalytics eventSupport="true" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function updateLocation()
 {
 var f = document.forms[0];
@@ -189,7 +189,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});

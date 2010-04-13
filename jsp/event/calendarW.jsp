@@ -17,7 +17,7 @@
 <content:pics />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function switchType(combo)
 {
 var cType = combo.options[combo.selectedIndex].value;

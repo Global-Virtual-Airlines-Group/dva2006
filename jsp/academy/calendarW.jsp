@@ -16,7 +16,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function switchType(combo)
 {
 var cType = combo.options[combo.selectedIndex].value;

@@ -18,7 +18,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <fmt:aptype var="useICAO" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -265,7 +265,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 function initAirports()
 {
 var f = document.forms[0];

@@ -21,7 +21,7 @@
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:googleAnalytics eventSupport="true" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
 
 function validate(form)
@@ -262,7 +262,7 @@ return true;
 </content:region>
 </content:page>
 <c:set var="mapDistance" value="${(empty question) ? 300 : question.distance}" scope="page" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var doRunways = false;
 <map:point var="mapC" point="${mapCenter}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});

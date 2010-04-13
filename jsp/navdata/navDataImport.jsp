@@ -11,7 +11,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
 
 function validate(form)

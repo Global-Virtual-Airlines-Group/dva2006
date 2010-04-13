@@ -15,7 +15,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="hourCalc" />
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
