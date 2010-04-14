@@ -18,10 +18,13 @@
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
+<content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
+document.multiHost = ${multiHost};
+</c:if>
 function showTrackInfo(marker)
 {
 var label = getElement("trackLabel");
@@ -151,7 +154,7 @@ xmlreq.send(null);
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
+<map:wxList layers="sat" />
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -184,7 +187,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="small"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -214,18 +217,9 @@ GEvent.addListener(map, 'maptypechanged', updateMapText);
 var tracks = [];
 var points = [];
 resetTracks();
-<c:if test="${!empty tileHost}">
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById('copyright');
-cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
-cpos.apply(cp);
-mapTextElements.push(cp);
-map.getContainer().appendChild(cp);
 
 //Update text color
 GEvent.trigger(map, 'maptypechanged');
-</c:if></script>
+</script>
 </body>
 </map:xhtml>

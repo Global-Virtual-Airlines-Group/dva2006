@@ -303,7 +303,8 @@
 
 	<!-- Weather map tile sources -->	
 	<weather>
-		<tileHost>gima.weather.com</tileHost>
+		<tileHost>g%.imwx.com</tileHost>
+		<multiHost type="Boolean">true</multiHost>
 
 		<!-- Download locations -->
 		<url>

@@ -51,6 +51,18 @@
 	</tag>
 
 	<tag>
+		<description>Weather.com TileServer series list Tag, for inserting a JavaScript series list</description>	
+		<name>wxList</name>
+		<tag-class>org.deltava.taglib.googlemap.InsertWeatherTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>layers</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>MapDIV Tag, to generate a scalable DIV for a Map</description>
 		<name>div</name>
 		<tag-class>org.deltava.taglib.googlemap.MapDIVTag</tag-class>
