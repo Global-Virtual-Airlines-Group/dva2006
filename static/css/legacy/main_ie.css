@@ -32,6 +32,7 @@ div.navside div#navmenu {
 }
 
 div.navbar div#navmenu {
+	position: fixed;
 	width: 100%;
 	height: 19px;
 	margin: 0;
@@ -90,7 +91,7 @@ ul.menu:hover li.submenuTitle {
 
 ul.menu:hover ul.submenu li {
 	display: block;
-	opacity: .905;
+	border-top: 1px solid #9f9f9f;
 }
 
 ul.menu ul.submenu li a {
@@ -138,6 +139,8 @@ table#ieLayout td#main {
 .navbar div#main {
 	margin: 4px;
 	padding: 8px;
+	position: relative;
+	top: 18px;
 }
 
 .navside div#main {
