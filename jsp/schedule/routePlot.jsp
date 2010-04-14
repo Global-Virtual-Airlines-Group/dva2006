@@ -21,12 +21,14 @@
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
+<content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
 document.imgPath = '${imgPath}';
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
+document.multiHost = ${multiHost};</c:if>
 var routeUpdated = false;
 var getInactive = false;
 
@@ -38,7 +40,7 @@ if (!validateText(form.route, 3, 'Flight Route')) return false;
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
+<map:wxList layers="radar,eurorad,sat,windspeed,temp" />
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -109,7 +111,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="580" /><div id="copyright" class="small"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="580" /></td>
 </tr>
 <tr>
  <td class="label">Flight Route</td>
@@ -156,10 +158,14 @@ var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLIT
 getTileOverlay("radar", 0.45);
 getTileOverlay("eurorad", 0.45);
 getTileOverlay("sat", 0.35);
+getTileOverlay("temp", 0.25);
+getTileOverlay("windspeed", 0.35);
 var xPos = 70;
 map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
 map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
-map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
+map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
+map.addControl(new WXOverlayControl("Wind Speed", "windspeed", new GSize((xPos += 81), 7)));
+map.addControl(new WXClearControl(new GSize((xPos += 82), 7)));
 </c:if>
 map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
@@ -168,18 +174,9 @@ map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 GEvent.addListener(map, 'maptypechanged', updateMapText);
-<c:if test="${!empty tileHost}">
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById('copyright');
-cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
-cpos.apply(cp);
-mapTextElements.push(cp);
-map.getContainer().appendChild(cp);
 
 // Update text color
 GEvent.trigger(map, 'maptypechanged');
-</c:if></script>
+</script>
 </body>
 </map:xhtml>

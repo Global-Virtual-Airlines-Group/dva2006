@@ -17,6 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
+<content:sysdata var="multiHost" name="weather.multiHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="2" />
 <map:vml-ie />
@@ -26,7 +27,8 @@
 </c:if>
 <script type="text/javascript">
 document.imgPath = '${imgPath}';
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
+document.multiHost = ${multiHost};</c:if>
 
 function reloadData(isAuto)
 {
@@ -47,7 +49,7 @@ if (doRefresh && isAuto)
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,future_radar_ff" type="text/javascript"></script></c:if>
+<map:wxList layers="radar,eurorad,sat,temp,future_radar_ff" />
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
