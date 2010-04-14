@@ -6,7 +6,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 2.6
  */
 
@@ -45,7 +45,7 @@ public class MenuItemTag extends MenuElementTag {
 				out.print("<ul class=\"menuitem\"");
 				if (_width > 0)
 					out.print(" style=\"width:" + String.valueOf(_width) + "px;\"");
-				out.print("><li>");
+				out.print("><li><span>");
 			}
 		} catch (Exception e) {
 			throw new JspException(e);
@@ -62,7 +62,7 @@ public class MenuItemTag extends MenuElementTag {
 	public int doEndTag() throws JspException {
 		try {
 			if (!_renderTable)
-				pageContext.getOut().print("</li></ul>");
+				pageContext.getOut().print("</span></li></ul>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
