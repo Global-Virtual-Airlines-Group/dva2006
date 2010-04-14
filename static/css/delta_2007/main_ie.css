@@ -1,9 +1,9 @@
-/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. */
+/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
 div#header {
-	height:104px;
+	height: 104px;
 	left: 0px;
 	margin: 0;
 }
@@ -32,6 +32,7 @@ div.navside div#navmenu {
 }
 
 div.navbar div#navmenu {
+	position: fixed;
 	width: 100%;
 	height: 20px;
 	margin: 0;
@@ -52,15 +53,13 @@ ul.menuitem li {
 	background-color: #c01933;
 	color: #ffffff;
 	text-decoration: none;
-	margin: 2px;
-	padding: 1px;
 	display: block;
 }
 
 ul.menu ul.submenu {
 	list-style: none;
-	margin: 0;
-	padding: 0;
+	margin: 0px;
+	padding: 0px;
 	position: relative;
 }
 
@@ -91,7 +90,7 @@ ul.menu:hover li.submenuTitle {
 
 ul.menu:hover ul.submenu li {
 	display: block;
-	opacity: .925;
+	border-top: 1px solid #9f9f9f;
 }
 
 ul.menu ul.submenu li a {
@@ -138,6 +137,8 @@ table#ieLayout td#main {
 .navbar div#main {
 	margin: 4px;
 	padding: 8px;
+	position: relative;
+	top: 18px;
 }
 
 .navside div#main {
@@ -224,7 +225,6 @@ body {
 	margin-right: 0px;
 	font-family: verdana, tahoma, sans-serif;
 	font-size: 9pt;
-	behavior: url(/css/csshover3.htc);
 }
 
 .BUTTON, .cmdButton {
