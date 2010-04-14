@@ -83,7 +83,11 @@ input.radio, input.check {
 	font-size: 8pt;
 }
 
-input.req, input.req {
+tr.title input.check {
+	background-color: inherit;
+}
+
+input.req, textarea.req {
 	background: #fff8fa;
 	border: 1px solid #c01933;
 }
