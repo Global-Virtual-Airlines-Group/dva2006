@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.io.IOException;
@@ -8,7 +8,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 2.6
+ * @version 3.0
  * @since 2.6
  */
 
@@ -79,14 +79,14 @@ public class SubMenuTag extends MenuElementTag {
 					out.print("px;\"");
 				}
 				
-				out.print("><li class=\"submenuTitle\">");
+				out.print("><li class=\"submenuTitle\"><span>");
 			}
 			
 			out.print(_title);
 			if (_renderTable)
 				out.println("</td></tr>");
 			else
-				out.print("</li><li class=\"submenu\">");
+				out.print("</span></li><li class=\"submenu\">");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
