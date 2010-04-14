@@ -17,6 +17,7 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
+<content:sysdata var="multiHost" name="weather.multiHost" />
 <map:api version="2" />
 <map:vml-ie />
 <c:if test="${!empty tileHost}">
@@ -25,7 +26,8 @@
 </c:if>
 <script type="text/javascript">
 document.imgPath = '${imgPath}';
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
+document.multiHost = ${multiHost};</c:if>
 <c:if test="${!empty jetStreamImgs}">
 function setJSMapType(combo)
 {
@@ -206,7 +208,7 @@ this.isOpen = true;
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,windspeed,future_radar_ff" type="text/javascript"></script></c:if>
+<map:wxList layers="radar,sat,temp,windspeed,future_radar_ff" />
 </head>
 <content:copyright visible="false" />
 <body>

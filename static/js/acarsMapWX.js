@@ -23,31 +23,38 @@ return true;
 
 function getTileOverlay(name, tx)
 {
-var cpc = new GCopyrightCollection("Weather Imagery");
-var cp = new GCopyright(111, new GLatLngBounds(new GLatLng(-90, -180), new GLatLng(90, 180)), 0, "The Weather Channel")
+var cpc = new GCopyrightCollection('Weather Imagery');
+var cp = new GCopyright(111, new GLatLngBounds(new GLatLng(-90, -180), new GLatLng(90, 180)), 0, 'The Weather Channel')
 cpc.addCopyright(cp);
 
 var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name], {isPng:true, opacity:tx});
 newLayer.myBaseURL = 'http://' + document.tileHost + '/TileServer/imgs/' + name + '/u' + document.seriesDate[name] + '/';
 newLayer.getTileUrl = function(pnt, zoom) {
-var url = '';
-if (zoom > this.maxResolution())
-	return url;
-
+if (zoom > this.maxResolution()) return '';
+var url = this.myBaseURL;
 var masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
 
 // Get the tile numbers
-for (x = zoom; x > 0; x--) {
+for (var x = zoom; x > 0; x--) {
 	var digit1 = ((masks[x] & pnt.x) == 0) ? 0 : 1;
 	var digit2 = ((masks[x] & pnt.y) == 0) ? 0 : 2;
 	url = url + (digit1 + digit2);
 }
 
-return this.myBaseURL + url + '.png';
+// Check for multi-host
+if (document.multiHost) {
+	var lastDigit = url.charAt(url.length - 1);
+	var pos = url.indexOf('%');
+	if (pos > -1)
+		url = url.substr(0, pos) + lastDigit +  url.substr(pos + 1);
+}
+
+return url + '.png';
 }
 
 var ovLayer = new GTileLayerOverlay(newLayer);
 ovLayer.layerName = name;
+ovLayer.layerDate = new Date(parseInt(document.seriesDate[name]));
 document.wxLayers[name] = ovLayer;
 return ovLayer;
 }
@@ -80,16 +87,22 @@ WXOverlayControl.prototype.updateMap = function() {
 	var multiLayers = (this.layerNames instanceof Array);
 	if (multiLayers) {
 		map.wxData = [];
+		var layerInfo = [];
 		for (var x = 0; x < this.layerNames.length; x++) {
-			map.wxData.push(document.wxLayers[this.layerNames[x]]);
-			map.addOverlay(document.wxLayers[this.layerNames[x]]);
+			var layer = document.wxLayers[this.layerNames[x]];
+			map.wxData.push(layer);
+			map.addOverlay(layer);
+			layerInfo.push(layer.layerName + ' (' + fmtDate(new Date(layer.layerDate.getTime() - GMTOffset)) + ')');
 		}
 
 		gaEvent('WeatherMap', 'Show Weather', this.layerNames.join(' '));
+		setWXStatus('Showing ' + layerInfo.join(', '));
 	} else { 
-		map.wxData = document.wxLayers[this.layerNames];
-		map.addOverlay(map.wxData);
+		var layer = document.wxLayers[this.layerNames];
+		map.wxData = layer;
+		map.addOverlay(layer);
 		gaEvent('WeatherMap', 'Show Weather', this.layerNames);
+		setWXStatus('Showing ' + layer.layerName + ' (' + fmtDate(new Date(layer.layerDate.getTime() - GMTOffset)) + ')');
 	}
 
 	delete map.ffLayer;
@@ -152,7 +165,31 @@ if (multiLayers) {
 } else
 	map.removeOverlay(map.wxData);
 
+try {
+	if (animateSlices) {
+		for (var x = 0; x < animateSlices.length; x++)
+			map.removeOverlay(animateSlices[x]);
+	}
+} catch (err) { }
+
 delete map.wxData;
 delete map.ffLayer;
+setWXStatus('None');
 return true;
+}
+
+function setWXStatus(msg)
+{
+var sp = getElement('wxLoading');	
+if (sp)
+	sp.innerHTML = msg;
+
+return true;
+}
+
+function fmtDate(d)
+{
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return d.getDate() + "-" + months[d.getMonth()] + "-" + d.getFullYear() + "  " 
+	+ d.getHours() + ":" + ((d.getMinutes() < 10) ? "0" + d.getMinutes() : d.getMinutes());	
 }

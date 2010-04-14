@@ -20,12 +20,14 @@
 <content:js name="markermanager" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<c:if test="${!empty tileHost}">
-<script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,future_radar_ff" type="text/javascript"></script></c:if>
+<content:sysdata var="multiHost" name="weather.multiHost" />
 <map:vml-ie />
+<map:wxList layers="radar,eurorad,sat,temp,future_radar_ff" />
 <script type="text/javascript">
 document.imgPath = '${imgPath}';
+<c:if test="${!empty tileHost}">
 document.tileHost = '${tileHost}';
+document.multiHost = ${multiHost};</c:if>
 
 function updateZoomLevel(oldZoom, newZoom)
 {

@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <map:xhtml>
 <head>
 <title><content:airline /> ACARS Live Map</title>
@@ -17,17 +18,20 @@
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
+<content:sysdata var="multiHost" name="weather.multiHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="2" />
 <map:vml-ie />
 <c:if test="${!empty tileHost}">
 <content:js name="acarsMapWX" />
 <content:js name="acarsMapFF" />
+<content:js name="progressBar" />
 </c:if>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 document.imgPath = '${imgPath}';
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
-
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
+document.multiHost = ${multiHost};
+</c:if>
 function reloadData(isAuto)
 {
 // Get auto refresh
@@ -93,7 +97,7 @@ self.location = '/acars_map_earth.ws';
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=radar,sat,temp,future_radar_ff" type="text/javascript"></script></c:if>
+<map:wxList layers="radar,eurorad,sat,temp,future_radar_ff" />
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -128,11 +132,13 @@ return true;
 </tr>
 <tr>
  <td class="label">Dispatch Service</td>
- <td class="data" colspan="3"><span id="dispatchStatus" class="bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
+ <td class="data"><span id="dispatchStatus" class="bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
+ <td class="label">Weather Layer</td>
+ <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
  <td class="label top">Live Flight Map</td>
- <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="545" /><div id="copyright" class="small"></div></td>
+ <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </el:table>
 
@@ -153,7 +159,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 // Create the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -184,15 +190,17 @@ map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize
 map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
 </c:if>
 // Add map controls
-map.addControl(new GLargeMapControl3D());
+var mCtl = new GLargeMapControl3D();
+map.addControl(mCtl);
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.enableDoubleClickZoom();
-// map.enableContinuousZoom();
+map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+var progressBar = new ProgressbarControl(map, {width:225, color:'blue'});
 GEvent.addListener(map, 'maptypechanged', updateMapText);
 
-// Placeholder for route
+// Placeholders for route/positions
 var routeData;
 var routeWaypoints;
 var acPositions = [];
@@ -203,15 +211,6 @@ document.dispatchOnline = false;
 document.doRefresh = true;
 reloadData(true);
 <c:if test="${!empty tileHost}">
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById("copyright");
-cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
-cpos.apply(cp);
-mapTextElements.push(cp);
-map.getContainer().appendChild(cp);
-
 // Initialize FastForward elements
 var ffs = document.getElementById("ffSlices");
 var ffpos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(8, 30));
