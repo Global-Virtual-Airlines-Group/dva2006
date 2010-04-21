@@ -244,8 +244,11 @@ public class TestingHistoryHelper {
 	public void canSwitchTo(EquipmentType eq) throws IneligibilityException {
 
 		// Check if we're not already in that program
-		if (_usr.getEquipmentType().equals(eq.getName()))
-			throw new PromotionIneligibilityException("Already in " + eq.getName() + " program");
+		if (_usr.getEquipmentType().equals(eq.getName())) {
+			boolean reqRatings = canRequestRatings(eq);
+			if (!reqRatings)
+				throw new PromotionIneligibilityException("Already in " + eq.getName() + " program, no ratings to get");
+		}
 		
 		// If it's not in our airline, don't allow it
 		if (!SystemData.get("airline.code").equals(eq.getOwner().getCode()))
