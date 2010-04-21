@@ -40,7 +40,7 @@ public class IssueListCommand extends AbstractViewCommand {
 			idao.setQueryMax(Math.round(vc.getCount() * 1.275f));
 			
 			// Load issues
-			Collection<Issue> results = isActive ? idao.getActive() : idao.getAll();
+			List<Issue> results = new ArrayList<Issue>(isActive ? idao.getActive() : idao.getAll());
 			for (Iterator<Issue> ii = results.iterator(); ii.hasNext(); ) {
 				Issue i = ii.next();
 				HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
@@ -52,18 +52,16 @@ public class IssueListCommand extends AbstractViewCommand {
 			}
 			
 			// Trim issues
-			if (results.size() > vc.getCount()) {
-				List<Issue> iList = new ArrayList<Issue>(results);
-				iList.removeAll(iList.subList(vc.getCount(), iList.size()));
-			}
+			while (results.size() > vc.getCount())
+				results.remove(results.size() - 1);
 			
 			// Get Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
 				Issue is = i.next();
-				IDs.add(new Integer(is.getAuthorID()));
-				IDs.add(new Integer(is.getAssignedTo()));
-				IDs.add(new Integer(is.getLastCommentAuthorID()));
+				IDs.add(Integer.valueOf(is.getAuthorID()));
+				IDs.add(Integer.valueOf(is.getAssignedTo()));
+				IDs.add(Integer.valueOf(is.getLastCommentAuthorID()));
 			}
 			
 			// Load Pilot IDs
