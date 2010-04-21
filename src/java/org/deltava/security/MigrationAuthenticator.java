@@ -66,9 +66,9 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	}
 	
 	/**
-	 * Returns wether the destination Authenticator will accept a user.
+	 * Returns whether the destination Authenticator will accept a user.
 	 * @param usr the user bean
-	 * @return wether the destination Authenticator will accept the person
+	 * @return whether the destination Authenticator will accept the person
 	 */
 	public boolean accepts(Person usr) {
 		return dst.accepts(usr);

@@ -160,7 +160,7 @@ public class MyFlightsService extends WebService {
 	}
 	
 	   /**
-	    * Returns wether this web service requires authentication.
+	    * Returns whether this web service requires authentication.
 	    * @return TRUE always
 	    */
 	   public final boolean isSecure() {

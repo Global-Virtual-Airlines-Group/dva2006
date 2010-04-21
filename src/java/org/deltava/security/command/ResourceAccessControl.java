@@ -48,7 +48,7 @@ public class ResourceAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether a new Web Resource can be created.
+	 * Returns whether a new Web Resource can be created.
 	 * @return TRUE if a Resource can be created, otherwise FALSE
 	 */
 	public boolean getCanCreate() {
@@ -56,7 +56,7 @@ public class ResourceAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether the Web Resource can be edited.
+	 * Returns whether the Web Resource can be edited.
 	 * @return TRUE if the Resource can be edited, otherwise FALSE
 	 */
 	public boolean getCanEdit() {
@@ -64,7 +64,7 @@ public class ResourceAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether the Web Resource can be deleted.
+	 * Returns whether the Web Resource can be deleted.
 	 * @return TRUE if the Resource can be deleted, otherwise FALSE
 	 */
 	public boolean getCanDelete() {

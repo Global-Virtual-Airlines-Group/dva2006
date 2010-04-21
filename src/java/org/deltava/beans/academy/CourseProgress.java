@@ -32,7 +32,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	}
 	
 	/**
-	 * Returns wether this requirement has been completed.
+	 * Returns whether this requirement has been completed.
 	 * @return TRUE if the requirement is complete, otherwise FALSE
 	 * @see CourseProgress#setComplete(boolean)
 	 */
@@ -94,7 +94,7 @@ public class CourseProgress extends CertificationRequirement implements Authored
 	}
 
 	/**
-	 * Updates wether this requirement has been completed.
+	 * Updates whether this requirement has been completed.
 	 * @param done TRUE if the requirement is complete, otherwise FALSE
 	 * @see CourseProgress#getComplete()
 	 */

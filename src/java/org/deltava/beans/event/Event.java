@@ -214,7 +214,7 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
     }
     
     /**
-     * Returns wether Pilots may sign up for this Event.
+     * Returns whether Pilots may sign up for this Event.
      * @return TRUE if signups are permitted, otherwise FALSE
      * @see Event#setCanSignup(boolean)
      */
@@ -382,7 +382,7 @@ public class Event extends ImageBean implements ComboAlias, CalendarEntry {
 	}
     
     /**
-     * Returns wether a Pilot is signed up for this Online Event.
+     * Returns whether a Pilot is signed up for this Online Event.
      * @param pilotID the Pilot's database ID
      * @return TRUE if the Pilot has signed up, otherwise FALSE
      * @see Event#getSignups()

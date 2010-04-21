@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 
 /**
  * A class to control execution of Scheduled Tasks. This operates much like a Unix-style cron daemon in
- * that it checks wether a task should be executed once every 60 seconds.
+ * that it checks whether a task should be executed once every 60 seconds.
  * @author Luke
  * @version 2.6
  * @since 1.0

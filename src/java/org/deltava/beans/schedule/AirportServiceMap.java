@@ -30,7 +30,7 @@ public class AirportServiceMap {
 	}
 
 	/**
-	 * Queries wether a particular Airline serves a particular Airport.
+	 * Queries whether a particular Airline serves a particular Airport.
 	 * @param ap the Airport bean
 	 * @param a the Airline bean
 	 * @return TRUE if the Airline serves the Airport, otherwise FALSE

@@ -91,7 +91,7 @@ public class Entry extends DatabaseBean implements AuthoredBean, CalendarEntry {
 	}
 	
 	/**
-	 * Returns wether this blog entry is private.
+	 * Returns whether this blog entry is private.
 	 * @return TRUE if the entry is not visible to anyone other than the author, otherwise FALSE
 	 * @see Entry#setPrivate(boolean)
 	 */
@@ -100,7 +100,7 @@ public class Entry extends DatabaseBean implements AuthoredBean, CalendarEntry {
 	}
 	
 	/**
-	 * Returns wether new anonymous comments are locked out.
+	 * Returns whether new anonymous comments are locked out.
 	 * @return TRUE if no new comments can be created by anonymous users, otherwise FALSE
 	 * @see Entry#setLocked(boolean)
 	 */
@@ -172,7 +172,7 @@ public class Entry extends DatabaseBean implements AuthoredBean, CalendarEntry {
 	}
 	
 	/**
-	 * Updates wether this blog entry is private.
+	 * Updates whether this blog entry is private.
 	 * @param isPrivate TRUE if the entry is invisible to anyone other than the author, otherwise FALSE
 	 * @see Entry#getPrivate()
 	 */
@@ -181,7 +181,7 @@ public class Entry extends DatabaseBean implements AuthoredBean, CalendarEntry {
 	}
 	
 	/**
-	 * Updates wether the entry is locked.
+	 * Updates whether the entry is locked.
 	 * @param isLocked TRUE if no new anonymous comments may be entered, otherwise FALSE
 	 * @see Entry#getLocked()
 	 */

@@ -195,7 +195,7 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	}
 
 	/**
-	 * Returns wether a particular web application uses this aircraft type.
+	 * Returns whether a particular web application uses this aircraft type.
 	 * @param code the web application airline code
 	 * @return TRUE if the aircraft is used by this web application, otherwise FALSE
 	 * @see Aircraft#getApps()

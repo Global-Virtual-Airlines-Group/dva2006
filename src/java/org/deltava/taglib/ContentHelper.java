@@ -6,7 +6,7 @@ import java.util.*;
 import javax.servlet.jsp.PageContext;
 
 /**
- * A Helper class to check wether content has been aded into this request.
+ * A Helper class to check whether content has been aded into this request.
  * @author Luke
  * @version 2.8
  * @since 1.0

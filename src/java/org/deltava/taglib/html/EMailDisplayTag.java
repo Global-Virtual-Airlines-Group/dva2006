@@ -60,7 +60,7 @@ public class EMailDisplayTag extends TagSupport {
 				break;
 		}
 		
-		// Return depending on wether we can display
+		// Return depending on whether we can display
 		return canDisplay ? EVAL_BODY_INCLUDE : SKIP_BODY;
 	}
 }

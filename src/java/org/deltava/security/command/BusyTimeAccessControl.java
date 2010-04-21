@@ -47,7 +47,7 @@ public class BusyTimeAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether a new Instructor busy time entry can be created.
+	 * Returns whether a new Instructor busy time entry can be created.
 	 * @return TRUE if a new entry can be created, otherwise FALSE
 	 */
 	public boolean getCanCreate() {
@@ -55,7 +55,7 @@ public class BusyTimeAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether a new Instructor busy time entry can be created <i>for another Instructor</i>.
+	 * Returns whether a new Instructor busy time entry can be created <i>for another Instructor</i>.
 	 * @return TRUE if a new entry can be created for another instructor, otherwise FALSE
 	 */
 	public boolean getCanProxyCreate() {
@@ -63,7 +63,7 @@ public class BusyTimeAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether this Instructor busy time entry can be deleted.
+	 * Returns whether this Instructor busy time entry can be deleted.
 	 * @return TRUE if the entry can be deleted, otherwise FALSE
 	 */
 	public boolean getCanDelete() {

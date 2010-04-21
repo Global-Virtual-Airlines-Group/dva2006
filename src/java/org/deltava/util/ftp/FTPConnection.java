@@ -142,7 +142,7 @@ public class FTPConnection {
 	}
 
 	/**
-	 * Returns wether a particular file exists on the remote server.
+	 * Returns whether a particular file exists on the remote server.
 	 * @param dirName the remote directory name
 	 * @param fName the remote file name
 	 * @return TRUE if the file exists, otherwise FALSE

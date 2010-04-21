@@ -47,7 +47,7 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	}
 	
 	/**
-	 * Returns wether functional areas have been loaded.
+	 * Returns whether functional areas have been loaded.
 	 * @return TRUE if areas are present, otherwise FALSE
 	 */
 	public boolean hasAreas() {
