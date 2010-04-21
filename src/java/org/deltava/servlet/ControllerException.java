@@ -42,7 +42,7 @@ public abstract class ControllerException extends Exception {
     }
 	
 	/**
-	 * Returns wether the handling class should log this Exception's stack trace.
+	 * Returns whether the handling class should log this Exception's stack trace.
 	 * @return TRUE if the stack trace should be logged, otherwise FALSE
 	 * @see ControllerException#setLogStackDump(boolean)
 	 */
@@ -60,7 +60,7 @@ public abstract class ControllerException extends Exception {
 	}
 	
 	/**
-	 * Returns wether this exception to be logged as a warning, not an error.
+	 * Returns whether this exception to be logged as a warning, not an error.
 	 * @return TRUE if a warning, otherwise FALSE
 	 * @see ControllerException#setWarning(boolean)
 	 */
@@ -69,7 +69,7 @@ public abstract class ControllerException extends Exception {
 	}
 	
 	/**
-	 * Updates wether the handling class should log this Exception's stack trace.
+	 * Updates whether the handling class should log this Exception's stack trace.
 	 * @param doLog TRUE if the stack trace should be logged, otherwise FALSE
 	 * @see ControllerException#getLogStackDump()
 	 */

@@ -126,7 +126,7 @@ public class InstructionSession extends DatabaseBean implements ViewEntry, Instr
 	}
 	
 	/**
-	 * Returns wether the Pilot missed the Session.
+	 * Returns whether the Pilot missed the Session.
 	 * @return TRUE if the Pilot did not attend, otherwise FALSE
 	 * @see InstructionSession#setNoShow(boolean)
 	 */

@@ -336,7 +336,7 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
     }
     
     /**
-     * Sets wether this Pilot passed or failed the examination.
+     * Sets whether this Pilot passed or failed the examination.
      * @param passFail TRUE if the Pilot passed, otherwise FALSE
      * @see Test#getPassFail()
      */

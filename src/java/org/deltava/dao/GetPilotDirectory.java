@@ -143,7 +143,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	}
 	
 	/**
-	 * Checks wether a particular e-mail address is unique.
+	 * Checks whether a particular e-mail address is unique.
 	 * @param usr the Person to check for
 	 * @param dbName the database to check
 	 * @return a Collection of database IDs

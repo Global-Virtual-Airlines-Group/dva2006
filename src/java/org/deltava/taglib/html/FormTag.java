@@ -108,7 +108,7 @@ public class FormTag extends ElementTag {
     }
     
     /**
-     * Returns wether RFC1867 file uploads are permitted within this form.
+     * Returns whether RFC1867 file uploads are permitted within this form.
      * @return TRUE if file uploads are permitted, otherwise FALSE 
      */
     public boolean getAllowUpload() {

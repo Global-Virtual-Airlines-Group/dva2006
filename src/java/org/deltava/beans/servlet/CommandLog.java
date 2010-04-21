@@ -186,7 +186,7 @@ public class CommandLog implements Serializable, Comparable<CommandLog>, ViewEnt
 	}
 
 	/**
-	 * Marks wether this Command executed successfully.
+	 * Marks whether this Command executed successfully.
 	 * @param isOK TRUE if the Command completed successfully, otherwise FALSE
 	 * @see CommandLog#getSuccess()
 	 */

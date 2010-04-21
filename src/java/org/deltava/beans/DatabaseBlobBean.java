@@ -18,7 +18,7 @@ public abstract class DatabaseBlobBean extends DatabaseBean {
     protected byte[] _buffer;
     
     /**
-     * Returns wether the buffer has been populated.
+     * Returns whether the buffer has been populated.
      * @return TRUE if the buffer has any data, otherwise FALSE
      */
     public boolean isLoaded() {

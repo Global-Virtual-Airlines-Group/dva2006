@@ -11,7 +11,7 @@ package org.deltava.beans.schedule;
 public interface AirportFilter {
 
 	/**
-	 * Determines wether the Airport matches the criteria set by this Filter.
+	 * Determines whether the Airport matches the criteria set by this Filter.
 	 * @param a the Airport bean to examine
 	 * @return TRUE if the airport matches the criteria, otherwise FALSE
 	 */

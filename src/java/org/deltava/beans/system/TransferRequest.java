@@ -90,7 +90,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Returns wether the associated Check Ride has been submitted.
+	 * Returns whether the associated Check Ride has been submitted.
 	 * @return TRUE if the Check Ride was submitted or graded, otherwise FALSE
 	 * @see TransferRequest#setCheckRideSubmitted(boolean)
 	 */
@@ -130,7 +130,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Updates wether the associated Check Ride has been submitted
+	 * Updates whether the associated Check Ride has been submitted
 	 * @param isSubmitted TRUE if the Check Ride was submitted/graded, otherwise FALSE
 	 * @throws IllegalStateException if no Check Ride ID was supplied
 	 * @see TransferRequest#getCheckRideSubmitted()

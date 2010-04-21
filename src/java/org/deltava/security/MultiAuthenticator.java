@@ -209,7 +209,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	}
 
 	/**
-	 * Returns wether this Authenticator will accept a new User. This defaults to TRUE, although subclasses may override
+	 * Returns whether this Authenticator will accept a new User. This defaults to TRUE, although subclasses may override
 	 * this default.
 	 * @return TRUE always
 	 */

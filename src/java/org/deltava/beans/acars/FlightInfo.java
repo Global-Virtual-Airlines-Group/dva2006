@@ -463,7 +463,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	}
 
 	/**
-	 * Updates wether this flight has an associated Flight Report.
+	 * Updates whether this flight has an associated Flight Report.
 	 * @param hasPIREP TRUE if a Flight Report was filed, otherwise FALSE
 	 * @see FlightInfo#getHasPIREP()
 	 */

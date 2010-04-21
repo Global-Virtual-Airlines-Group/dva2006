@@ -15,7 +15,7 @@ public class ConnectionPoolException extends DAOException {
     /**
      * Creates a new exception with a given message.
      * @param msg the error message
-     * @param logDump TRUE wether the stack trace should be logged, otherwise FALSE
+     * @param logDump TRUE whether the stack trace should be logged, otherwise FALSE
      */
     public ConnectionPoolException(String msg, boolean logDump) {
         super(msg);

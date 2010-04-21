@@ -51,7 +51,7 @@ public class IssueComment extends DatabaseBean {
 	}
 
 	/**
-	 * Returns wether this Comment is an FAQ answer.
+	 * Returns whether this Comment is an FAQ answer.
 	 * @return TRUE if the Comment is an FAQ answer, otherwise FALSE
 	 * @see IssueComment#setFAQ(boolean)
 	 */
@@ -87,7 +87,7 @@ public class IssueComment extends DatabaseBean {
 	}
 	
 	/**
-	 * Updates wether this Comment is an FAQ answer.
+	 * Updates whether this Comment is an FAQ answer.
 	 * @param isFAQ TRUE if the Comment is an FAQ answer, otherwise FALSE
 	 * @see IssueComment#getFAQ()
 	 */

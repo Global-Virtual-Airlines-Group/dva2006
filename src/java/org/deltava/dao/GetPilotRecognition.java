@@ -64,7 +64,7 @@ public class GetPilotRecognition extends PilotReadDAO {
     }
     
     /**
-     * Returns wether there are Pilots eligible for promotion to Captain in a particular Equipment program.
+     * Returns whether there are Pilots eligible for promotion to Captain in a particular Equipment program.
      * @param eqType the equipment program, or null for all
      * @return the number of pilots
      * @throws DAOException if a JDBC error occurs

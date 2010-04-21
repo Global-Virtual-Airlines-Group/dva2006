@@ -32,7 +32,7 @@ public class Manual extends FleetEntry {
     }
     
     /**
-     * Returns wether the Manual should be shown on the Registration page.
+     * Returns whether the Manual should be shown on the Registration page.
      * @return TRUE if the Manual should be shown, otherwise FALSE
      */
     public boolean getShowOnRegister() {

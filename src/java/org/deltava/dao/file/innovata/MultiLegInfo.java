@@ -138,7 +138,7 @@ class MultiLegInfo implements Comparable<MultiLegInfo> {
 	}
 	
 	/**
-	 * Returns wether an authoritative airport list has been loaded.
+	 * Returns whether an authoritative airport list has been loaded.
 	 * @return TRUE if all airports are loaded, otherwise FALSE
 	 */
 	public boolean isAirportListLoaded() {
