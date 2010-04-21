@@ -134,7 +134,7 @@ public class DateFormatTag extends TagSupport {
 	}
 
 	/**
-	 * Overrides wether the time zone should be displayed.
+	 * Overrides whether the time zone should be displayed.
 	 * @param showZone TRUE if the time zone should be displayed, otherwise FALSE
 	 * @see DateTime#showZone(boolean)
 	 */

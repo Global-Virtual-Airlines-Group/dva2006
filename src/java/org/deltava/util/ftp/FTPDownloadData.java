@@ -75,7 +75,7 @@ public class FTPDownloadData {
 	}
 	
 	/**
-	 * Returns wether the file was downloaded, or is a cached local copy.
+	 * Returns whether the file was downloaded, or is a cached local copy.
 	 * @return TRUE if the file was cached on the local filesystem, otherwise FALSE
 	 */
 	public boolean isCached() {

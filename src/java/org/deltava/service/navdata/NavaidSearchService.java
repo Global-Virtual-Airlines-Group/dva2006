@@ -92,7 +92,7 @@ public class NavaidSearchService extends WebService {
 	}
 	
 	/**
-	 * Returns wether this web service requires authentication.
+	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
 	public boolean isSecure() {

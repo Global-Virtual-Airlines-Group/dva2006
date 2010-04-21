@@ -38,7 +38,7 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Returns wether the block is active.
+	 * Returns whether the block is active.
 	 * @return TRUE if the block is active, otherwise FALSE
 	 * @see RegistrationBlock#setActive(boolean)
 	 */
@@ -47,7 +47,7 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Returns wether the user should be informed that the registration attempt has been blocked. This can be used to
+	 * Returns whether the user should be informed that the registration attempt has been blocked. This can be used to
 	 * avoid providing feedback to spambots.
 	 * @return TRUE if feedback should be provided, otherwise FALSE
 	 * @see RegistrationBlock#setHasUserFeedback(boolean)
@@ -122,8 +122,8 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Marks wether the user should receive feedback if a registration attempt was rejected.
-	 * @param hasFeedback TRUE wether feedback should be given on rejection, otherwise FALSE
+	 * Marks whether the user should receive feedback if a registration attempt was rejected.
+	 * @param hasFeedback TRUE whether feedback should be given on rejection, otherwise FALSE
 	 * @see RegistrationBlock#getHasUserFeedback()
 	 */
 	public void setHasUserFeedback(boolean hasFeedback) {

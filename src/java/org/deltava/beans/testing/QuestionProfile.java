@@ -61,7 +61,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	}
 
 	/**
-	 * Returns wether this Question is active.
+	 * Returns whether this Question is active.
 	 * @return TRUE if the Question can be included in an Examination, otherwise FALSE
 	 * @see QuestionProfile#setActive(boolean)
 	 */

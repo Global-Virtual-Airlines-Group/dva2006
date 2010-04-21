@@ -8,7 +8,7 @@ import org.deltava.beans.DatabaseBean;
 import org.deltava.security.UserPool;
 
 /**
- * A JSP tag to filter content based upon wether a user is currently logged in.
+ * A JSP tag to filter content based upon whether a user is currently logged in.
  * @author Luke
  * @version 1.0
  * @since 1.0

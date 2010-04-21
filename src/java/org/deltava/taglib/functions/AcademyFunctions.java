@@ -14,7 +14,7 @@ import org.deltava.beans.academy.*;
 public class AcademyFunctions {
 
 	/**
-	 * Returns wether this object is an Instruction Flight.
+	 * Returns whether this object is an Instruction Flight.
 	 * @param ce the CalendarEntry
 	 * @return TRUE if the entry is an InstructionFlight bean, otherwise FALSE
 	 */
@@ -23,7 +23,7 @@ public class AcademyFunctions {
 	}
 	
 	/**
-	 * Returns wether this object is an Instruction Session.
+	 * Returns whether this object is an Instruction Session.
 	 * @param ce the CalendarEntry
 	 * @return TRUE if the entry is an InstructionSession bean, otherwise FALSE
 	 */
@@ -32,7 +32,7 @@ public class AcademyFunctions {
 	}
 	
 	/**
-	 * Returns wether this object is an Instructor busy time entry.
+	 * Returns whether this object is an Instructor busy time entry.
 	 * @param ce the CalendarEntry
 	 * @return TRUE if the entry is an InstructionBusy bean, otherwise FALSE
 	 */

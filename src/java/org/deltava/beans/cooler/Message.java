@@ -93,7 +93,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
     }
     
     /**
-     * Returns wether this message contains questionable content.
+     * Returns whether this message contains questionable content.
      * @return TRUE if there is questionable content, otherwise FALSE
      * @see Message#setContentWarning(boolean)
      */

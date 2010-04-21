@@ -54,7 +54,7 @@ public class OSFilterTag extends TagSupport {
 	}
 
 	/**
-	 * Determines wether the enclosed content should be rendered to the JSP output stream.
+	 * Determines whether the enclosed content should be rendered to the JSP output stream.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
 	public int doStartTag() {

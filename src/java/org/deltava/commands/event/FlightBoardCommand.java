@@ -31,7 +31,7 @@ public class FlightBoardCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the network name and wether we display a map
+		// Get the network name and whether we display a map
 		String networkName = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
 		boolean showMap = "map".equals(ctx.getCmdParameter(OPERATION, "false"));
 		OnlineNetwork network = OnlineNetwork.valueOf(SystemData.get("online.default_network"));

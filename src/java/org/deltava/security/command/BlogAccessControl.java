@@ -56,7 +56,7 @@ public class BlogAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether the user can create a new blog entry.
+	 * Returns whether the user can create a new blog entry.
 	 * @return TRUE if an entry can be created, otherwise FALSE
 	 */
 	public boolean getCanCreate() {
@@ -64,7 +64,7 @@ public class BlogAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether the user can edit the current blog entry.
+	 * Returns whether the user can edit the current blog entry.
 	 * @return TRUE if the entry can be edited, otherwise FALSE
 	 */
 	public boolean getCanEdit() {
@@ -72,7 +72,7 @@ public class BlogAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether the user can comment on the current blog entry.
+	 * Returns whether the user can comment on the current blog entry.
 	 * @return TRUE if the entry can be commented on, otherwise FALSE
 	 */
 	public boolean getCanComment() {
@@ -80,7 +80,7 @@ public class BlogAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether the user can delete the current blog entry.
+	 * Returns whether the user can delete the current blog entry.
 	 * @return TRUE if the entry can be deleted, otherwise FALSE
 	 */
 	public boolean getCanDelete() {

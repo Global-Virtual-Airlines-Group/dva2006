@@ -78,7 +78,7 @@ public class ThreadNotifications extends DatabaseBean implements Cacheable {
    }
    
    /**
-    * Returns wether a particular user is signed up to receive notifications.
+    * Returns whether a particular user is signed up to receive notifications.
     * @param id the Person's database ID
     * @return TRUE if the Person is signed up, otherwise FALSE
     */

@@ -223,7 +223,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	}
 	
 	/**
-	 * Returns wether a Pilot has voted in a particular Water Cooler poll.
+	 * Returns whether a Pilot has voted in a particular Water Cooler poll.
 	 * @param pilotID the Pilot's database ID
 	 * @return TRUE if the Pilot has voted, otherwise FALSE
 	 */
@@ -297,7 +297,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	}
 
 	/**
-	 * Updates wether the thread will be sticky in the current channel only.
+	 * Updates whether the thread will be sticky in the current channel only.
 	 * @param isSticky TRUE if the thread is stick in the current channel, otherwise FALSE
 	 * @see MessageThread#getStickyInChannelOnly()
 	 */
@@ -543,7 +543,7 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	}
 
 	/**
-	 * Selects a table row class based upon wether the thread is hidden or not.
+	 * Selects a table row class based upon whether the thread is hidden or not.
 	 * @return the row CSS class name
 	 */
 	public String getRowClassName() {

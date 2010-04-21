@@ -124,7 +124,7 @@ public class FileAuthenticator implements Authenticator {
 	}
 
 	/**
-	 * Checks wether this Authenticator will accept a User. The User must have a
+	 * Checks whether this Authenticator will accept a User. The User must have a
 	 * non-empty Directory name.
 	 * @param usr the user bean
 	 * @return TRUE if the Directory name is populated, otherwise FALSE

@@ -48,7 +48,7 @@ public class InactivityPurge extends DatabaseBean {
 	}
 
 	/**
-	 * Returns wether the Pilot has been marked of impending inactivity.
+	 * Returns whether the Pilot has been marked of impending inactivity.
 	 * @return TRUE if a notification message was sent, otherwise FALSE
 	 * @see InactivityPurge#setNotify(boolean)
 	 */

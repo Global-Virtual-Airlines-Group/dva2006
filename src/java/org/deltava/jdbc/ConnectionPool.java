@@ -150,7 +150,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	}
 
 	/**
-	 * Sets wether each the thread stack of each thread requesting a connection should be logged for debugging purposes.
+	 * Sets whether each the thread stack of each thread requesting a connection should be logged for debugging purposes.
 	 * This requires that a dummy exception be thrown on each connection reservation, which may have an adverse effect
 	 * upon system performance.
 	 * @param doLog TRUE if thread state should be logged, otherwise FALSE

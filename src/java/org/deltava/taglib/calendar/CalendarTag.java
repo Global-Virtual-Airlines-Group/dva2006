@@ -155,7 +155,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	}
 	
 	/**
-	 * Sets wether the days of the week should be displayed below the title bar.
+	 * Sets whether the days of the week should be displayed below the title bar.
 	 * @param showDOW TRUE if the days of the week should be displayed, otherwise FALSE
 	 */
 	public void setShowDaysOfWeek(boolean showDOW) {

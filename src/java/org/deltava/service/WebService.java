@@ -22,7 +22,7 @@ public abstract class WebService {
    public abstract int execute(ServiceContext ctx) throws ServiceException;
    
    /**
-    * Returns wether this web service requires authentication.
+    * Returns whether this web service requires authentication.
     * @return TRUE if authentication is required, otherwise FALSE
     */
    public boolean isSecure() {
@@ -30,7 +30,7 @@ public abstract class WebService {
    }
    
    /**
-    * Returns wether this web service calls are logged. High volume services like the Map/ServInfo route services
+    * Returns whether this web service calls are logged. High volume services like the Map/ServInfo route services
     * will not be logged.
     * @return TRUE if invocation logging should be performed by the servlet, otherwise FALSE  
     */

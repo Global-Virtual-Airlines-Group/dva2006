@@ -104,7 +104,7 @@ public class MessageTemplate implements Comparable<MessageTemplate>, Cacheable, 
     }
     
     /**
-     * Sets wether this message should be sent as HTML or plain text.
+     * Sets whether this message should be sent as HTML or plain text.
      * @param html TRUE if the message is HTML, otherwise FALSE
      * @see MessageTemplate#setIsHTML(boolean)
      */

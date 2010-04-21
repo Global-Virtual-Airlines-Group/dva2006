@@ -195,7 +195,7 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	}
 	
 	/**
-	 * Checks wether this Authenticator will accept a particular Person. The Person's Directory Name
+	 * Checks whether this Authenticator will accept a particular Person. The Person's Directory Name
 	 * field must be non-empty.
 	 * @param usr the user bean
 	 * @return TRUE if the Directory Name field is not empty, otherwise FALSE

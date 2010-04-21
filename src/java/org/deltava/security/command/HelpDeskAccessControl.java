@@ -68,7 +68,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether the user can create a new Help Desk Issue.
+	 * Returns whether the user can create a new Help Desk Issue.
 	 * @return TRUE if a new Issue can be created, otherwise FALSE
 	 */
 	public boolean getCanCreate() {
@@ -76,7 +76,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether the user can add a comment to this Issue.
+	 * Returns whether the user can add a comment to this Issue.
 	 * @return TRUE if a Comment can be created, otherwise FALSE
 	 */
 	public boolean getCanComment() {
@@ -84,7 +84,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether this Issue can have its status changed. 
+	 * Returns whether this Issue can have its status changed. 
 	 * @return TRUE if the status can be changed, otherwise FALSE
 	 */
 	public boolean getCanUpdateStatus() {
@@ -92,7 +92,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether this Issue can have its status changed to Closed. 
+	 * Returns whether this Issue can have its status changed to Closed. 
 	 * @return TRUE if the status can be changed, otherwise FALSE
 	 */
 	public boolean getCanClose() {
@@ -100,7 +100,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns wether this Issue can have its FAQ status or Comments changed.
+	 * Returns whether this Issue can have its FAQ status or Comments changed.
 	 * @return TRUE if the content can be modified, otherwise FALSE
 	 */
 	public boolean getCanUpdateContent() {

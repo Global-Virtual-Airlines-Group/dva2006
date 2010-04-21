@@ -122,7 +122,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	}
 	
 	/**
-	 * Returns wether this Resource is available to the public.
+	 * Returns whether this Resource is available to the public.
 	 * @return TRUE if all users can see this Resource, otherwise FALSE
 	 * @see Resource#setPublic(boolean)
 	 */
@@ -222,7 +222,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	}
 	
 	/**
-	 * Updates wether this Resource is available to the public.
+	 * Updates whether this Resource is available to the public.
 	 * @param isPublic TRUE if all users can see this Resource, otherwise FALSE
 	 * @see Resource#getPublic()
 	 */

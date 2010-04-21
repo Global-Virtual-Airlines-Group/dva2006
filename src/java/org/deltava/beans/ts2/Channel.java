@@ -232,7 +232,7 @@ public class Channel extends DatabaseBean implements Cacheable, ViewEntry {
 	}
 	
 	/**
-	 * Updates wether this Channel is the default channel. 
+	 * Updates whether this Channel is the default channel. 
 	 * @param isDefault TRUE if this is the default channel, otherwise FALSE
 	 * @see Channel#getDefault()
 	 */
@@ -241,7 +241,7 @@ public class Channel extends DatabaseBean implements Cacheable, ViewEntry {
 	}
 	
 	/**
-	 * Updates wether the Channel is hierarchical.
+	 * Updates whether the Channel is hierarchical.
 	 * @param isHierarchical TRUE if the channel is hierarchical, otherwise FALSE
 	 * @see Channel#getHierarchical()
 	 */
@@ -250,7 +250,7 @@ public class Channel extends DatabaseBean implements Cacheable, ViewEntry {
 	}
 	
 	/**
-	 * Updates wether the Channel is moderated.
+	 * Updates whether the Channel is moderated.
 	 * @param isModerated TRUE if the Channel is moderated, otherwise FALSE
 	 * @see Channel#getModerated()
 	 */

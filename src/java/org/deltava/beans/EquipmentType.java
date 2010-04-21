@@ -236,7 +236,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
-     * Returns wether flights counting towards promotion must be logged using ACARS.
+     * Returns whether flights counting towards promotion must be logged using ACARS.
      * @return TRUE if promotion legs must be logged using ACARS, otherwise FALSE
      * @see EquipmentType#setACARSPromotionLegs(boolean)
      */
@@ -245,7 +245,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
-     * Returns wether this equipment program is active.
+     * Returns whether this equipment program is active.
      * @return TRUE if the program is active, otherwise FALSE
      * @see EquipmentType#getActive()
      */
@@ -352,7 +352,7 @@ public class EquipmentType implements Cacheable, Comparable<EquipmentType>, Comb
     }
     
     /**
-     * Updates wether flights counting towards promotion must be logged using ACARS.
+     * Updates whether flights counting towards promotion must be logged using ACARS.
      * @param useACARS TRUE if flights must be logged using ACARS, otherwise FALSE
      * @see EquipmentType#setACARSPromotionLegs(boolean)
      */

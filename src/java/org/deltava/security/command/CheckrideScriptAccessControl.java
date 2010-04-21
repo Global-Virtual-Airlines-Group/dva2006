@@ -58,7 +58,7 @@ public class CheckrideScriptAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether a new Check Ride script can be created.
+	 * Returns whether a new Check Ride script can be created.
 	 * @return TRUE if a script can be created, otherwise FALSE
 	 */
 	public boolean getCanCreate() {
@@ -66,7 +66,7 @@ public class CheckrideScriptAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether the Check Ride script can be edited.
+	 * Returns whether the Check Ride script can be edited.
 	 * @return TRUE if the script can be edited, otherwise FALSE
 	 */
 	public boolean getCanEdit() {
@@ -74,7 +74,7 @@ public class CheckrideScriptAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Returns wether the Check Ride script can be deleted.
+	 * Returns whether the Check Ride script can be deleted.
 	 * @return TRUE if the script can be deleted, otherwise FALSE
 	 */
 	public boolean getCanDelete() {

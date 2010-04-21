@@ -176,7 +176,7 @@ public class UserData extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Utility method to query wether a table is a Pilot or Applicant table.
+	 * Utility method to query whether a table is a Pilot or Applicant table.
 	 * @param tableName the table name, in either TABLE or DB.TABLE format
 	 * @return TRUE if the table should be queried by a Pilot DAO, otherwise FALSE
 	 */

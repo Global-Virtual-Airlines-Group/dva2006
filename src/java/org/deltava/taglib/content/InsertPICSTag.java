@@ -30,7 +30,7 @@ public class InsertPICSTag extends TagSupport {
 	}
 
 	/**
-	 * Controls wether an ICRA content rating tag should be displayed.
+	 * Controls whether an ICRA content rating tag should be displayed.
 	 * @param doICRA TRUE if the rating tag should be shown, otherwise FALSE
 	 */
 	public void setIcra(boolean doICRA) {
@@ -38,7 +38,7 @@ public class InsertPICSTag extends TagSupport {
 	}
 
 	/**
-	 * Controls wether a SafeSurf content rating tag should be displayed.
+	 * Controls whether a SafeSurf content rating tag should be displayed.
 	 * @param doSafeSurf TRUE if the rating tag should be shown, otherwise FALSE
 	 */
 	public void setSafeSurf(boolean doSafeSurf) {

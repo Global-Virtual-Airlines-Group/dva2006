@@ -218,7 +218,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 * Reserve this Connection pool entry, and get the underlyig JDBC connection. This method is package private since
 	 * it only should be called by the ConnectionPool object. If the connection has been disconnected, then an attempt
 	 * to reconnect will be made.
-	 * @param logStack wether the current thread's stack state should be preserved
+	 * @param logStack whether the current thread's stack state should be preserved
 	 * @return the JDBC Connection object
 	 * @throws ConnectionPoolException if we cannot reconnect
 	 * @throws IllegalStateException if the connection is already reserved

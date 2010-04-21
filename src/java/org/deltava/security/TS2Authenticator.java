@@ -172,7 +172,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	}
 
 	/**
-	 * Returns wether this User can be added to this Authenticator. The user must have a non-empty pilot code and be
+	 * Returns whether this User can be added to this Authenticator. The user must have a non-empty pilot code and be
 	 * authorized to access at least one TeamSpeak 2 virtual server.
 	 * @param usr the user bean
 	 * @return TRUE if the User is a Pilot and has access to at least one server, otherwise FALSE

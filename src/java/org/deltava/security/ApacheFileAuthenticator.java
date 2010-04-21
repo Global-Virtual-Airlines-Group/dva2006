@@ -219,7 +219,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 		if ((useAlias) && (usr instanceof Applicant))
 			return null;
 		
-		// Determine wether we use the LDAP name
+		// Determine whether we use the LDAP name
 		boolean useLDAP = (usr instanceof Pilot) && useAlias; 
 		return useLDAP ? ((Pilot) usr).getLDAPName() : usr.getDN();
 	}

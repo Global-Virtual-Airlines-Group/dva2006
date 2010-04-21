@@ -68,7 +68,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    }
    
    /**
-    * Returns wether Pilots can be transferred into this Airline.
+    * Returns whether Pilots can be transferred into this Airline.
     * @return TRUE if Pilots can be transferred here, otherwise FALSE
     * @see AirlineInformation#setCanTransfer(boolean)
     */
@@ -97,7 +97,7 @@ public class AirlineInformation implements Comparable<AirlineInformation>, Combo
    }
    
    /**
-    * Updates wether Pilots can be transferred <i>into</i> this Airline.
+    * Updates whether Pilots can be transferred <i>into</i> this Airline.
     * @param doTransfer TRUE if Pilots can be transferred, otherwise FALSE
     * @see AirlineInformation#getCanTransfer()
     */

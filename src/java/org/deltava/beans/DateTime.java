@@ -123,7 +123,7 @@ public class DateTime implements java.io.Serializable, Comparable<DateTime> {
 	}
 	
 	/**
-	 * Sets wether to display the time zone abbreviation or not.
+	 * Sets whether to display the time zone abbreviation or not.
 	 * @param showZone TRUE if the time zone should be displayed, otherwise FALSE
 	 */
 	public void showZone(boolean showZone) {

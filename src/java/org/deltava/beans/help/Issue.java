@@ -89,7 +89,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	}
 	
 	/**
-	 * Returns wether the Issue is Public.
+	 * Returns whether the Issue is Public.
 	 * @return TRUE if the Issue is Public, otherwise FALSE
 	 * @see Issue#setPublic(boolean)
 	 */
@@ -98,7 +98,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	}
 	
 	/**
-	 * Returns wether the Issue is in the FAQ.
+	 * Returns whether the Issue is in the FAQ.
 	 * @return TRUE if the Issue is in the FAQ, otherwise FALSE
 	 * @see Issue#setFAQ(boolean)
 	 */

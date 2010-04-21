@@ -119,7 +119,7 @@ public class AirportTerminalRouteService extends WebService {
 	}
 
 	/**
-	 * Returns wether this web service requires authentication.
+	 * Returns whether this web service requires authentication.
 	 * @return TRUE always
 	 */
 	public final boolean isSecure() {
@@ -127,7 +127,7 @@ public class AirportTerminalRouteService extends WebService {
 	}
 
 	/**
-	 * Returns wether this web service calls are logged. High volume services like the Map/ServInfo route services will
+	 * Returns whether this web service calls are logged. High volume services like the Map/ServInfo route services will
 	 * not be logged.
 	 * @return TRUE if invocation logging should be performed by the servlet, otherwise FALSE
 	 */

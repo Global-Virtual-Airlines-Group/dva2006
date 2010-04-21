@@ -36,7 +36,7 @@ public class XMLRenderer {
 	}
 	
 	/**
-	 * Returns wether the element has a particular attribute.
+	 * Returns whether the element has a particular attribute.
 	 * @param name the attribute name
 	 * @return TRUE if the attribute exists, otherwise FALSE
 	 */

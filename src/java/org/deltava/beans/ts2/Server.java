@@ -116,7 +116,7 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	}
 
 	/**
-	 * Returns wether the server is active.
+	 * Returns whether the server is active.
 	 * @return TRUE if the server is active, otherwise FALSE
 	 * @see Server#setActive(boolean)
 	 */
@@ -307,7 +307,7 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	}
 
 	/**
-	 * Updates wether the Server is only available to logged in ACARS users.
+	 * Updates whether the Server is only available to logged in ACARS users.
 	 * @param isACARSOnly TRUE if the Server is accessible to ACARS-only users, otherwise FALSE
 	 * @see Server#getACARSOnly()
 	 */
@@ -316,7 +316,7 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	}
 
 	/**
-	 * Sets wether users to this Server automatically have voice privileges.
+	 * Sets whether users to this Server automatically have voice privileges.
 	 * @param autoVoice TRUE if voice privilegese automatically granted, otherwise FALSE
 	 * @see Server#getAutoVoice()
 	 */

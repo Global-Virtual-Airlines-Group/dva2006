@@ -18,7 +18,7 @@ public class RoleUtils {
     }
 
     /**
-     * Validates wether a user has access to a role-limited resource.
+     * Validates whether a user has access to a role-limited resource.
      * @param userRoles a Collection of the user's role names
      * @param rsrcRoles a Collection of the resource's restricted roles
      * @return TRUE if any member of userRoles is contained within rsrcRoles, otherwise FALSE

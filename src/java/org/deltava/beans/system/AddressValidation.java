@@ -48,7 +48,7 @@ public class AddressValidation extends DatabaseBean {
    }
    
    /**
-    * Returns wether the address is valid or not.
+    * Returns whether the address is valid or not.
     * @return TRUE if the address is valid, otherwise FALSE
     */
    public boolean getIsValid() {

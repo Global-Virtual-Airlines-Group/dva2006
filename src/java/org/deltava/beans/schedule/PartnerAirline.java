@@ -47,7 +47,7 @@ public class PartnerAirline {
 	}
 
 	/**
-	 * Returns wether a flight number maps to this Airline.
+	 * Returns whether a flight number maps to this Airline.
 	 * @param flightNumber the flight number
 	 * @return TRUE if the Airline serves this flight, otherwise FALSE
 	 */
@@ -64,7 +64,7 @@ public class PartnerAirline {
 	}
 	
 	/**
-	 * Returns wether this Partner Airline data applies to a particular import file.
+	 * Returns whether this Partner Airline data applies to a particular import file.
 	 * @param fileName the import file name
 	 * @return TRUE if this data applies to the import file, otherwise FALSE
 	 */

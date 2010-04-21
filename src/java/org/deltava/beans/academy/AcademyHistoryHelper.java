@@ -51,7 +51,7 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
-	 * Toggles wether the user can enroll in Inactive Courses.
+	 * Toggles whether the user can enroll in Inactive Courses.
 	 * @param doInactive TRUE if the usre can enroll in Inactive Courses, otherwise FALSE
 	 */
 	public void setAllowInactive(boolean doInactive) {
@@ -98,7 +98,7 @@ public class AcademyHistoryHelper {
 	}
 
 	/**
-	 * Returns wether a Pilot has completed a particular certification.
+	 * Returns whether a Pilot has completed a particular certification.
 	 * @param certName the Certification name
 	 * @return TRUE if the Certification was passed, otherwise FALSE
 	 */
@@ -108,7 +108,7 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
-	 * Returns wether a Pilot has started a particular course.
+	 * Returns whether a Pilot has started a particular course.
 	 * @param certName the Certification name
 	 * @return TRUE if a course entry exists and was not pased, otherwise FALSE
 	 */
@@ -147,7 +147,7 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
-	 * Returns wether a Pilot has completed a certification in a particular stage.
+	 * Returns whether a Pilot has completed a certification in a particular stage.
 	 * @param stage the stage number
 	 * @return TRUE if any Certification was passed, otherwise FALSE
 	 */
@@ -162,7 +162,7 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
-	 * Returns wether a Pilot has passed a particular Examination.
+	 * Returns whether a Pilot has passed a particular Examination.
 	 * @param examName the Examination name
 	 * @return TRUE if the examination has been passed, otherwise FALSE
 	 */
@@ -177,7 +177,7 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
-	 * Returns wether a Pilot has completed the requirements for a Flight Academy certifcation. 
+	 * Returns whether a Pilot has completed the requirements for a Flight Academy certifcation. 
 	 * @param certName the Certification name
 	 * @return TRUE if the certification has been granted or can be, otherwise FALSE
 	 */
@@ -216,7 +216,7 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
-	 * Returns wether a Pilot has completed all certifications in a particular stage.
+	 * Returns whether a Pilot has completed all certifications in a particular stage.
 	 * @param stage the stage number
 	 * @return TRUE if all Certification were passed, otherwise FALSE
 	 */
@@ -345,7 +345,7 @@ public class AcademyHistoryHelper {
 
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
-		log("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
+		log.info("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
 		return (timeInterval < (lockoutHours * 3600L));
 	}
 }

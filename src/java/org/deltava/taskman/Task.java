@@ -114,7 +114,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
     
     /**
-     * Returns wether the Scheduled Task can be executed at the present time.
+     * Returns whether the Scheduled Task can be executed at the present time.
      * @return TRUE if the Task can be executed, otherwise FALSE
      * @see Task#isRunnable(Calendar)
      * @see Task#setRunTimes(String, String)

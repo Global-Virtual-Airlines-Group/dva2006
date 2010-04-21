@@ -61,7 +61,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
-	 * Returns wether the certification is active.
+	 * Returns whether the certification is active.
 	 * @return TRUE if it is active, otherwise FALSE
 	 * @see Certification#setActive(boolean)
 	 */
@@ -70,7 +70,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
-	 * Returnes wether students are automatically enrolled in this Course.
+	 * Returnes whether students are automatically enrolled in this Course.
 	 * @return TRUE if students are automatically enrolled, otherwise FALSE
 	 * @see Certification#setAutoEnroll(boolean)
 	 */
@@ -220,7 +220,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
-	 * Updates wether the certification is active.
+	 * Updates whether the certification is active.
 	 * @param isActive TRUE if it is active, otherwise FALSE
 	 * @see Certification#getActive()
 	 */
@@ -229,7 +229,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
-	 * Updates wether students are automatically enrolled in this Course.
+	 * Updates whether students are automatically enrolled in this Course.
 	 * @param autoEnroll TRUE if students are automatically enrolled, otherwise FALSE
 	 * @see Certification#getAutoEnroll()
 	 */

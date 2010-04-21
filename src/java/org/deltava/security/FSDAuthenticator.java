@@ -166,7 +166,7 @@ public class FSDAuthenticator implements Authenticator {
 	}
 
 	/**
-	 * Checks wether this Authenticator accepts a User. The user must be a member of a role that maps to at least Level 1.
+	 * Checks whether this Authenticator accepts a User. The user must be a member of a role that maps to at least Level 1.
 	 * @param usr the user bean
 	 * @return TRUE if the User is a member of a Role mapping to at least Level 1, otherwise FALSE
 	 */

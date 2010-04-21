@@ -95,7 +95,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Returns wether the user is a Server Administrator.
+	 * Returns whether the user is a Server Administrator.
 	 * @return TRUE if the user is an Administrator, otherwise FALSE
 	 * @see Client#setServerAdmin(boolean)
 	 * @see Client#getServerOperator()
@@ -106,7 +106,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Returns wether the user is a Server Operator.
+	 * Returns whether the user is a Server Operator.
 	 * @return TRUE if the user is an Operator, otherwise FALSE
 	 * @see Client#setServerOperator(boolean)
 	 * @see Client#getServerAdmin()
@@ -117,7 +117,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Returns wether the user has automatic voice permissions.
+	 * Returns whether the user has automatic voice permissions.
 	 * @return TRUE if the user has voice permissions, otherwise FALSE
 	 * @see Client#setAutoVoice(boolean)
 	 * @see Client#getServerAdmin()
@@ -156,7 +156,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Returns wether the user is currently logged into ACARS.
+	 * Returns whether the user is currently logged into ACARS.
 	 * @return TRUE if the user is logged into ACARS, otherwise FALS
 	 * @see Client#setIsACARS(boolean)
 	 */
@@ -198,7 +198,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Updates wether the user is a Server Administrator.
+	 * Updates whether the user is a Server Administrator.
 	 * @param isAdmin TRUE if the user is an administrator, otherwise FALSE
 	 * @see Client#getServerAdmin()
 	 * @see Client#setServerOperator(boolean)
@@ -209,7 +209,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Updates wether the user is a Server Operator.
+	 * Updates whether the user is a Server Operator.
 	 * @param isOperator TRUE if the user is an operator, otherwise FALSE
 	 * @see Client#getServerOperator()
 	 * @see Client#setServerAdmin(boolean)
@@ -220,7 +220,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Updates wether the user is currently logged into ACARS.
+	 * Updates whether the user is currently logged into ACARS.
 	 * @param isLoggedIn TRUE if the user is logged in, otherwise FALSE
 	 * @see Client#getIsACARS()
 	 */
@@ -229,7 +229,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	}
 	
 	/**
-	 * Updates wether the user automatically receives voice permissions.
+	 * Updates whether the user automatically receives voice permissions.
 	 * @param autoVoice TRUE if automatic voice enabled, otherwise FALSE
 	 * @see Client#getAutoVoice()
 	 * @see Client#setServerAdmin(boolean)
