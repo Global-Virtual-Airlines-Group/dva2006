@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 2.4
+ * @version 3.0
  * @since 1.0
  */
 
@@ -62,7 +62,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			
 			// Update from the request
 			cert.setCode(ctx.getParameter("code"));
-			cert.setStage(Integer.parseInt(ctx.getParameter("stage")));
+			cert.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
 			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
@@ -131,7 +131,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			
 			// Get available examinations
 			GetExamProfiles exdao = new GetExamProfiles(con);
-			ctx.setAttribute("exams", exdao.getExamProfiles(true), REQUEST); 
+			ctx.setAttribute("exams", exdao.getExamProfiles(), REQUEST); 
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -156,7 +156,6 @@ public class CertificationCommand extends AbstractFormCommand {
 
 		// Get the certification name
 		String name = (String) ctx.getCmdParameter(ID, null);
-		
 		try {
 			Connection con = ctx.getConnection();
 			
