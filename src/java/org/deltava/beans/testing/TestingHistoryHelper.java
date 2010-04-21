@@ -34,6 +34,13 @@ public class TestingHistoryHelper {
 	private final Collection<FlightReport> _pireps = new ArrayList<FlightReport>();
 	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
 	
+	static class PromotionIneligibilityException extends IneligibilityException {
+		
+		PromotionIneligibilityException(String msg) {
+			super(msg);
+		}
+	}
+	
 	/**
 	 * Initializes the helper.
 	 * @param p the Pilot bean
@@ -187,46 +194,46 @@ public class TestingHistoryHelper {
 	public void canWrite(ExamProfile ep) throws IneligibilityException {
 		// If the exam isn't active, we cannot write it
 		if (!ep.getActive())
-			throw new IneligibilityException(ep.getName() + " inactive");
+			throw new PromotionIneligibilityException(ep.getName() + " inactive");
 
 		// If it's the Initial Questionnaire, uh uh
 		if (_qName.equals(ep.getName()))
-			throw new IneligibilityException(ep.getName() + " is the Questionnaire");
+			throw new PromotionIneligibilityException(ep.getName() + " is the Questionnaire");
 
 		// If it's part of the Flight Academy, no
 		if (ep.getAcademy())
-			throw new IneligibilityException(ep.getName() + " is a Flight Academy examination");
+			throw new PromotionIneligibilityException(ep.getName() + " is a Flight Academy examination");
 
 		// Check if we've passed or submitted the exam
 		if (hasPassed(Collections.singleton(ep.getName())) || hasSubmitted(ep.getName()))
-			throw new IneligibilityException(ep.getName() + " is passed / submitted");
+			throw new PromotionIneligibilityException(ep.getName() + " is passed / submitted");
 
 		// Check if it's the FO exam for the current program
 		if (_myEQ.getExamNames(Ranks.RANK_FO).contains(ep.getName()))
-			throw new IneligibilityException(ep.getName() + " is FO exam for " + _myEQ.getName());
+			throw new PromotionIneligibilityException(ep.getName() + " is FO exam for " + _myEQ.getName());
 
 		// Check if we are in the proper equipment program
 		if (!StringUtils.isEmpty(ep.getEquipmentType())) {
 			if (!ep.getEquipmentType().equals(_usr.getEquipmentType()))
-				throw new IneligibilityException(ep.getName() + " eqType=" + ep.getEquipmentType() + ", our eqType=" + _usr.getEquipmentType());
+				throw new PromotionIneligibilityException(ep.getName() + " eqType=" + ep.getEquipmentType() + ", our eqType=" + _usr.getEquipmentType());
 
 			// If the exam is limited to a specific equipment program, require 1/2 the legs required for promotion
 			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs()))
-				throw new IneligibilityException(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
+				throw new PromotionIneligibilityException(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
 		}
 
 		// Check if we've reached the proper minimum stage
 		if (ep.getMinStage() > getMaxCheckRideStage())
-			throw new IneligibilityException(ep.getName() + " minStage=" + ep.getMinStage() + ", our maxCheckRideStage=" + getMaxCheckRideStage());
+			throw new PromotionIneligibilityException(ep.getName() + " minStage=" + ep.getMinStage() + ", our maxCheckRideStage=" + getMaxCheckRideStage());
 
 		// If the exam is a higher stage than us, require Captan's rank in the stage below
 		if ((ep.getStage() > getMaxCheckRideStage()) && !isCaptainInStage(ep.getStage() - 1))
-			throw new IneligibilityException(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage()
+			throw new PromotionIneligibilityException(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage()
 					+ ", not Captain in stage " + (ep.getStage() - 1));
 
 		// Check if we've been locked out of exams
 		if (_usr.getNoExams())
-			throw new IneligibilityException("Testing Center locked out");
+			throw new PromotionIneligibilityException("Testing Center locked out");
 	}
 
 	/**
@@ -238,19 +245,19 @@ public class TestingHistoryHelper {
 
 		// Check if we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName()))
-			throw new IneligibilityException("Already in " + eq.getName() + " program");
+			throw new PromotionIneligibilityException("Already in " + eq.getName() + " program");
 		
 		// If it's not in our airline, don't allow it
 		if (!SystemData.get("airline.code").equals(eq.getOwner().getCode()))
-			throw new IneligibilityException(eq.getName() + " is a " + eq.getOwner().getName() + " program");
+			throw new PromotionIneligibilityException(eq.getName() + " is a " + eq.getOwner().getName() + " program");
 
 		// Check if we've passed the FO exam for that program
 		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)))
-			throw new IneligibilityException("Haven't passed " + eq.getExamNames(Ranks.RANK_FO));
+			throw new PromotionIneligibilityException("Haven't passed " + eq.getExamNames(Ranks.RANK_FO));
 
 		// Check if we have a checkride in that equipment
 		if (!hasCheckRide(eq))
-			throw new IneligibilityException("Haven't passed " + eq.getName() + " check ride");
+			throw new PromotionIneligibilityException("Haven't passed " + eq.getName() + " check ride");
 	}
 
 	/**
@@ -271,23 +278,23 @@ public class TestingHistoryHelper {
 
 		// Make sure we're a captain in the previous stage if the stage is higher than our own
 		if ((eq.getStage() > getMaxCheckRideStage()) && (!isCaptainInStage(eq.getStage() - 1)))
-			throw new IneligibilityException("Must be Captain in Stage " + (eq.getStage() - 1));
+			throw new PromotionIneligibilityException("Must be Captain in Stage " + (eq.getStage() - 1));
 
 		// Check if we've passed the FO/CAPT exam for that program
 		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)) && !hasPassed(eq.getExamNames(Ranks.RANK_C)))
-			throw new IneligibilityException("Has not passed FO/Captain Examination");
+			throw new PromotionIneligibilityException("Has not passed FO/Captain Examination");
 
 		// Make sure we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName()))
-			throw new IneligibilityException("Already in " + eq.getName() + " program");
+			throw new PromotionIneligibilityException("Already in " + eq.getName() + " program");
 
 		// Check if we don't have a checkride in that equipment program
 		if (hasCheckRide(eq))
-			throw new IneligibilityException("Has already passed Check Ride");
+			throw new PromotionIneligibilityException("Has already passed Check Ride");
 
 		// If we require a checkride, ensure we have a minimum number of legs
 		if (!canRequestSwitch())
-			throw new IneligibilityException("Has not completed " + (_myEQ.getPromotionLegs() / 2) + " legs for promotion");
+			throw new PromotionIneligibilityException("Has not completed " + (_myEQ.getPromotionLegs() / 2) + " legs for promotion");
 	}
 	
 	/**
@@ -320,7 +327,7 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns wether we could have promoted the user to Captain within an equipment program.
+	 * Returns whether we could have promoted the user to Captain within an equipment program.
 	 * @param eq the EquipmentType bean
 	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE
 	 */
