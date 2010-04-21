@@ -8,13 +8,13 @@ package org.deltava.beans.testing;
  * @since 3.0
  */
 
-public class IneligibilityException extends Exception {
+public abstract class IneligibilityException extends Exception {
 
 	/**
 	 * Creates the exception.
 	 * @param msg the ineligibility reason
 	 */
-	IneligibilityException(String msg) {
+	protected IneligibilityException(String msg) {
 		super(msg);
 	}
 }
