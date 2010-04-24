@@ -1,11 +1,11 @@
-/* Main Cascading Style Sheet (C) 2005, 2006, 2009 Global Virtual Airlines Group. */
+/* Main Cascading Style Sheet (C) 2005, 2006, 2009, 2010 Global Virtual Airlines Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
 div#header {
 	height: 104px;
 	right: 0px;
-	margin: 0;
+	margin: 0px;
 	border: 1px solid #ffffff;
 }
 
@@ -35,7 +35,7 @@ div.navside div#navmenu {
 div.navbar div#navmenu {
 	width: 100%;
 	height: 19px;
-	margin: 0;
+	margin: 0px;
 	background-color: #0000a1;
 }
 
@@ -43,8 +43,8 @@ ul.menu, ul.menuitem {
 	text-align: center;
 	text-decoration: none;
 	list-style: none;
-	margin: 0;
-	padding: 0;
+	margin: 0px;
+	padding: 0px;
 	float:left;
 }
 
@@ -59,9 +59,10 @@ ul.menuitem li {
 }
 
 ul.menu ul.submenu {
+	position: absolute;
 	list-style: none;
-	margin: 0;
-	padding: 0;
+	margin: 0px;
+	padding: 0px;
 }
 
 ul.menu li.submenuTitle {
