@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.*;
 
-import org.deltava.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPool;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.*;

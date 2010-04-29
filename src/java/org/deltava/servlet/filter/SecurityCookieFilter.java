@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import static org.deltava.commands.HTTPContext.*;
 import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.dao.*;
-import org.deltava.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -186,6 +186,8 @@ public class SecurityCookieFilter implements Filter {
 				addrInfo = ipdao.get(remoteAddr);
 			} catch (DAOException de) {
 				log.error("Error loading " + cData.getUserID() + " - " + de.getMessage(), de);
+			} catch (org.gvagroup.jdbc.ConnectionPoolException cpe) {
+				log.error(cpe.getMessage());
 			} finally {
 				_jdbcPool.release(con);
 			}

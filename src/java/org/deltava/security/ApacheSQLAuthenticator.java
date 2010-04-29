@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -6,18 +6,18 @@ import java.sql.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-
 import org.deltava.crypt.MessageDigester;
 
-import org.deltava.jdbc.*;
 import org.deltava.util.*;
+
+import org.gvagroup.jdbc.*;
 
 /**
  * An Authenticator to authenticate users against Apache2-style database tables. Unlike the {@link JDBCAuthenticator}
  * class, this uses the existing JDBC Connection Pool. Since this implements {@link SQLAuthenticator}, this behavior can
  * be overriden by providing a JDBC Connection to use.
  * @author Luke
- * @version 2.3
+ * @version 3.1
  * @since 1.0
  */
 

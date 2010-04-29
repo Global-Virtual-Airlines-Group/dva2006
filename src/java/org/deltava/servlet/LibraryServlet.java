@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.*;
 
-import org.deltava.jdbc.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.SecurityContext;
@@ -21,10 +20,12 @@ import org.deltava.security.command.FleetEntryAccessControl;
 import org.deltava.util.URLParser;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.jdbc.*;
+
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -94,6 +95,9 @@ public class LibraryServlet extends GenericServlet {
 				SetLibrary wdao = new SetLibrary(c);
 				wdao.download(entry.getFileName(), sctxt.getUser().getID());
 			}
+		} catch (ConnectionPoolException cpe) {
+			log.error("Error downloading " + url.getFileName() + " - " + cpe.getMessage());
+			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (ControllerException ce) {
 			String msg = "Error downloading " + url.getFileName() + " - " + ce.getMessage();
 			if (ce.isWarning())

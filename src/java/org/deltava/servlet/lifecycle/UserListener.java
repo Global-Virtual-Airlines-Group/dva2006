@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -12,14 +12,15 @@ import org.deltava.security.UserPool;
 import org.deltava.dao.SetPilotLogin;
 
 import org.deltava.commands.*;
-import org.deltava.jdbc.*;
 
 import org.deltava.util.system.SystemData;
+import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPoolException;
 
 /**
  * A servlet lifecycle event listener to handle user logins and logouts.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -65,7 +66,7 @@ public class UserListener implements HttpSessionListener {
 			SetPilotLogin pldao = new SetPilotLogin(con);
 			pldao.logout(p.getID());
 		} catch (ConnectionPoolException cpe) {
-			log.warn(cpe.getMessage(), cpe.getLogStackDump() ? cpe : null);
+			log.warn(cpe.getMessage());
 		} catch (Exception ex) {
 			log.error("Error logging session close - " + ex.getMessage(), ex);
 		} finally {

@@ -4,13 +4,15 @@ import java.sql.Connection;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+
+import org.gvagroup.jdbc.ConnectionPool;
 import org.hansel.CoverageDecorator;
 
 import javax.servlet.http.*;
 import com.kizna.servletunit.*;
 
 import org.deltava.beans.Pilot;
-import org.deltava.jdbc.*;
+import org.deltava.jdbc.ConnectionContext.ConnectionPoolException;
 
 import org.deltava.servlet.filter.CustomRequestWrapper;
 
