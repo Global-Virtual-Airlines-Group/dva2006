@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.Connection;
@@ -6,13 +6,15 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.commands.CommandContext;
-
+import org.deltava.dao.DAOException;
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.jdbc.*;
 
 /**
  * A Context object that allows fetching of connections from the connection pool.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -24,6 +26,19 @@ public abstract class ConnectionContext {
 	private Connection _con;
 	private boolean _autoCommit;
 	
+	public static class ConnectionPoolException extends DAOException {
+		
+		ConnectionPoolException(String msg) {
+			super(msg);
+			setLogStackDump(false);
+		}
+		
+		ConnectionPoolException(Throwable t) {
+			super(t);
+			setStackTrace(t.getStackTrace());
+		}
+	}
+	
     /**
      * Reserves a JDBC Connection from the connection pool.
      * @return a JDBC Connection
@@ -34,13 +49,18 @@ public abstract class ConnectionContext {
      */
     public Connection getConnection() throws ConnectionPoolException {
         if (_pool == null)
-            throw new ConnectionPoolException("No Connection Pool defined", false);
+            throw new ConnectionPoolException("No Connection Pool defined");
 
         // Check if a connection has already been reserved
         if (_con != null)
             throw new IllegalStateException("Connection already reserved");
 
-        _con = _pool.getConnection();
+        try {
+			_con = _pool.getConnection();
+		} catch (org.gvagroup.jdbc.ConnectionPoolException cpe) {
+			throw new ConnectionPoolException(cpe);
+		}
+		
         return _con;
     }
 

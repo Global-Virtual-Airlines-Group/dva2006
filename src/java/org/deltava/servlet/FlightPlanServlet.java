@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -12,17 +12,15 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.event.*;
 
 import org.deltava.dao.GetEvent;
-import org.deltava.dao.DAOException;
-import org.deltava.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPool;
 
-import org.deltava.util.URLParser;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.beans.system.VersionInfo;
 
 /**
  * A servlet to download Online Event flight plans.
  * @author Luke
- * @version 2.1
+ * @version 3.1
  * @since 1.0
  */
 
@@ -75,7 +73,7 @@ public class FlightPlanServlet extends GenericServlet {
         	// Get the DAO and the event
         	GetEvent dao = new GetEvent(c);
         	e = dao.get(eventID);
-        } catch (DAOException de) {
+        } catch (Exception de) {
         	log.error("Error retrieving Flight Plan - " + de.getMessage());
         } finally {
         	jdbcPool.release(c);

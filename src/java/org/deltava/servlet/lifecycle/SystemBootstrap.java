@@ -10,7 +10,6 @@ import org.apache.log4j.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-import org.deltava.jdbc.*;
 
 import org.deltava.mail.MailerDaemon;
 
@@ -22,11 +21,13 @@ import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.SharedData;
+import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPoolException;
 
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -199,6 +200,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				c = _jdbcPool.getConnection();
 				SetTS2Data ts2wdao = new SetTS2Data(c);
 				ts2wdao.clearActiveFlags();
+			} catch (ConnectionPoolException cpe) {
+				log.error(cpe.getMessage());
 			} catch (DAOException de) {
 				log.error(de.getMessage(), de);
 			} finally {

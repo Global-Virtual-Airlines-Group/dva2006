@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -15,14 +15,15 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
 
-import org.deltava.jdbc.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
+
+import org.gvagroup.jdbc.*;
 
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -123,7 +124,7 @@ public class ImageServlet extends BasicAuthServlet {
 				case IMG_CHART:
 					imgBuffer = dao.getChart(imgID);
 					rsp.setHeader("Cache-Control", "private");
-					rsp.setIntHeader("max-age", 300);
+					rsp.setIntHeader("max-age", 600);
 					break;
 
 				case IMG_GALLERY:
@@ -165,6 +166,8 @@ public class ImageServlet extends BasicAuthServlet {
 				default:
 					log.warn("Unknown image type - " + req.getRequestURI());
 			}
+		} catch (ConnectionPoolException cpe) {
+			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning()) {
 				log.warn("Error retrieving image - " + ce.getMessage());

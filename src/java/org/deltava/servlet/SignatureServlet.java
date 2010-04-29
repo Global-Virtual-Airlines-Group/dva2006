@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -9,14 +9,15 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.system.VersionInfo;
 
-import org.deltava.jdbc.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
+
+import org.gvagroup.jdbc.*;
 
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 2.6
  */
 
@@ -65,6 +66,8 @@ public class SignatureServlet extends GenericServlet {
 			// Get the retrieve image DAO
 			GetImage dao = new GetImage(c);
 			lastMod = dao.getSigModified(imgID, url.getLastPath());
+		} catch (ConnectionPoolException cpe) {
+			log.warn("Connection pool error - " + cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
 				log.warn("Error retrieving image data - " + ce.getMessage());
@@ -118,6 +121,8 @@ public class SignatureServlet extends GenericServlet {
 			// Get the retrieve image DAO
 			GetImage dao = new GetImage(c);
 			imgBuffer = dao.getSignatureImage(imgID, url.getLastPath());
+		} catch (ConnectionPoolException cpe) {
+			log.warn("Connection pool error - " + cpe.getMessage());
 		} catch (ControllerException ce) {
 			if (ce.isWarning())
 				log.warn("Error retrieving image - " + ce.getMessage());
