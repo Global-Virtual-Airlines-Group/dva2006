@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -12,7 +12,8 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Pilot;
 
 import org.deltava.dao.*;
-import org.deltava.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPoolException;
 
 import org.deltava.security.*;
 
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 1.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -76,6 +77,8 @@ public abstract class BasicAuthServlet extends GenericServlet {
 			log.warn("Authentication failure - " + se.getMessage());
 		} catch (DAOException de) {
 			log.warn("Data load failure - " + de.getMessage());
+		} catch (ConnectionPoolException cpe) {
+			log.warn("Connection pool error - " + cpe.getMessage());
 		} finally {
 			pool.release(con);
 		}

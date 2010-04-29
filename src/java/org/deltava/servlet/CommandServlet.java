@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -16,16 +16,17 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.jdbc.*;
 
 import org.deltava.util.*;
 import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
+import org.gvagroup.jdbc.ConnectionPool;
+import org.gvagroup.jdbc.ConnectionPoolException;
 
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -86,6 +87,8 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 							tlog.debug("Wrote command statistics");
 					} catch (DAOException de) {
 						tlog.warn("Error writing command result staitistics - " + de.getMessage());
+					} catch (ConnectionPoolException cpe) {
+						tlog.warn("Error writing command result staitistics - " + cpe.getMessage());
 					} finally {
 						pool.release(c);
 						_cmdLogPool.clear();

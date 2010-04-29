@@ -14,7 +14,6 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 import org.deltava.dao.wsdl.*;
-import org.deltava.jdbc.*;
 
 import org.deltava.taskman.TaskScheduler;
 
@@ -22,12 +21,13 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.*;
+import org.gvagroup.jdbc.*;
 import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
