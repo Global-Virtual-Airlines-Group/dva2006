@@ -20,7 +20,8 @@ import org.deltava.taskman.TaskScheduler;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.acars.*;
+import org.gvagroup.acars.ACARSAdminInfo;
+import org.gvagroup.ipc.PoolWorkerInfo;
 import org.gvagroup.jdbc.*;
 import org.gvagroup.common.SharedData;
 
@@ -74,7 +75,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(true)), REQUEST);
 
 			// Get the acars worker info data and save in the request
-			ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SharedData.get(SharedData.ACARS_DAEMON);
+			PoolWorkerInfo acarsInfo = (PoolWorkerInfo) SharedData.get(SharedData.ACARS_DAEMON);
 			ctx.setAttribute("workers", acarsInfo.getWorkers(), REQUEST);
 
 			// Save the ACARS statistics in the request
