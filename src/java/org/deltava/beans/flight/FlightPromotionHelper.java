@@ -8,7 +8,7 @@ import org.deltava.beans.EquipmentType;
 /**
  * A utility class to determine whether a Flight counts for promotion to Captain in a particular Equipment Type program.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 2.7
  */
 
@@ -61,11 +61,11 @@ public class FlightPromotionHelper {
 			_comment = "Charter flights not eligible for promotion";
 		} else if ((afr != null) && (_fr.getDistance() < eq.getPromotionSwitchLength()) && ((afr.getTime(2) + afr.getTime(4)) > eq.getMaximumAccelTime())) {
 			log.info("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
-			_comment = "Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4));
+			_comment = "Time at 1X = " + afr.getTime(1) + "sec, time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)) + "sec";
 			return false;
 		} else if ((afr != null) && (_fr.getDistance() >= eq.getPromotionSwitchLength()) && (afr.getTime(1) < eq.getMinimum1XTime())) {
 			log.info("Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)));
-			_comment = "Time at 1X = " + afr.getTime(1) + " time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4));
+			_comment = "Time at 1X = " + afr.getTime(1) + "sec, time at 2X/4X = " + (afr.getTime(2) + afr.getTime(4)) + "sec";
 			return false;
 		}
 
