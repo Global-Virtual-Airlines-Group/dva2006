@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -215,9 +215,9 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID "
+		StringBuilder buf = new StringBuilder("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID "
 				+ "FROM acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "WHERE (C.ID=F.CON_ID) ");
+				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (C.ID=F.CON_ID) ");
 		if (!terms.isEmpty()) {
 			buf.append("AND");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
@@ -256,10 +256,10 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	 */
 	public List<FlightInfo> getUnreportedFlights(int cutoff) throws DAOException {
 		try {
-			prepareStatement("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM acars.FLIGHTS F "
-					+ "LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
-					+ "WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) "
-					+ "ORDER BY F.CREATED");
+			prepareStatement("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM acars.FLIGHTS F "
+					+ "LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON "
+					+ "(F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) "
+					+ "AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED");
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, cutoff);

@@ -11,7 +11,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 1.0
  */
 
@@ -86,7 +86,7 @@ public class SetACARSLog extends DAO {
 			startTransaction();
 			
 			// Get IDs to purge
-			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON "
+			prepareStatementWithoutLimits("SELECT F.ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCHER FD ON "
 					+ "(F.ID=FD.ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) AND (F.CREATED < DATE_SUB(NOW(), "
 					+ "INTERVAL ? HOUR)) AND (IFNULL(FD.DISPATCHER_ID, ?)=?)");
 			_ps.setBoolean(1, false);
