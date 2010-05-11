@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -98,6 +98,10 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 				txreq.setRatingOnly(true);
 			else
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
+			
+			// If we're attempting to switch to our current program, request ratings only
+			if (txreq.getEquipmentType().equals(p.getEquipmentType()))
+				txreq.setRatingOnly(true);
 			
 			// Set status to approved if we can transfter
 			try {
