@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -289,9 +289,9 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
+			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM "
 					+ "acars.FLIGHTS F LEFT JOIN acars.CONS C ON (F.CON_ID=C.ID) LEFT JOIN acars.FLIGHT_DISPATCH FD "
-					+ "ON (F.ID=FD.ID) WHERE (F.ID=?) LIMIT 1");
+					+ "ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 
 			// Get the first entry, or null
@@ -361,9 +361,10 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(long conID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM "
-					+ "acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-					+ "WHERE (F.CON_ID=C.ID) AND (C.ID=CONV(?,10,16)) ORDER BY F.CREATED DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM "
+					+ "acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN "
+					+ "acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (F.CON_ID=C.ID) AND (C.ID=CONV(?,10,16)) "
+					+ "ORDER BY F.CREATED DESC LIMIT 1");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
