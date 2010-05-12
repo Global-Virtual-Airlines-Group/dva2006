@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,9 +7,9 @@ import java.util.*;
 import org.deltava.beans.acars.*;
 
 /**
- * A Data Access Object to read ther ACARS Dispatcher service calendar.
+ * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 2.4
+ * @version 3.1
  * @since 2.2
  */
 
@@ -55,9 +55,8 @@ public class GetDispatchCalendar extends GetACARSData {
 		try {
 			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM "
 					+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN "
-					+ "acars.FLIGHT_DISPATCH FDR ON (F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
-					+ "WHERE (F.ID=FD.ID) AND (FD.DISPATCHER_ID=?) AND (F.CREATED > ?) AND "
-					+ "(F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
+					+ "acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
+					+ "WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED > ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
 			_ps.setInt(1, ce.getPilotID());
 			_ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
@@ -78,9 +77,10 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public List<FlightInfo> getDispatchedFlights(int id, java.util.Date sd, int days) throws DAOException {
 		try {
-			prepareStatement("SELECT F.*, FD.ROUTE_ID, FD.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
-				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCH FD WHERE (C.ID=F.CON_ID) AND (F.ID=FD.ID) AND "
-				+ "(FD.DISPATCHER_ID=?) AND (F.CREATED > ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? DAY))");
+			prepareStatement("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
+				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FDR LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+				+ "WHERE (C.ID=F.CON_ID) AND (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED > ?) AND "
+				+ "(F.CREATED < DATE_ADD(?, INTERVAL ? DAY))");
 			_ps.setInt(1, id);
 			_ps.setTimestamp(2, createTimestamp(sd));
 			_ps.setTimestamp(3, createTimestamp(sd));
