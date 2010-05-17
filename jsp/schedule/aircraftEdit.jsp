@@ -130,7 +130,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Secondary Percentage</td>
- <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Secondary']}" className="req" />
+ <td class="data">Fill to <el:text name="sPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Secondary']}" className="req" />
  percent before filling Other tanks</td>
 </tr>
 <tr>

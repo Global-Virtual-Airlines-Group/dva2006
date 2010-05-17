@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.Cacheable;
  * secondary and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank
  * types.
  * @author Luke
- * @version 2.1
+ * @version 3.1
  * @since 1.0
  */
 
@@ -345,14 +345,10 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	/**
 	 * Updates the maximum range of the aircraft.
 	 * @param range the range in miles
-	 * @throws IllegalArgumentException if range is zero or negative
 	 * @see Aircraft#getRange()
 	 */
 	public void setRange(int range) {
-		if (range < 1)
-			throw new IllegalArgumentException("Invalid Range - " + range);
-
-		_maxRange = range;
+		_maxRange = Math.max(0, range);
 	}
 
 	/**
@@ -459,27 +455,19 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	/**
 	 * Updates the aircraft's base fuel load.
 	 * @param fuelAmt the amount of fuel in pounds
-	 * @throws IllegalArgumentException if fuelAmt is negative
 	 * @see Aircraft#getBaseFuel()
 	 */
 	public void setBaseFuel(int fuelAmt) {
-		if (fuelAmt < 0)
-			throw new IllegalArgumentException("Invalid Base Fuel - " + fuelAmt);
-
-		_baseFuel = fuelAmt;
+		_baseFuel = Math.max(0, fuelAmt);
 	}
 
 	/**
 	 * Updates the aircraft's taxi fuel load.
 	 * @param fuelAmt the amount of fuel in pounds
-	 * @throws IllegalArgumentException if fuelAmt is negative
 	 * @see Aircraft#getTaxiFuel()
 	 */
 	public void setTaxiFuel(int fuelAmt) {
-		if (fuelAmt < 0)
-			throw new IllegalArgumentException("Invalid Taxi Fuel - " + fuelAmt);
-
-		_taxiFuel = fuelAmt;
+		_taxiFuel = Math.max(0, fuelAmt);
 	}
 
 	/**
@@ -488,10 +476,7 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 * @see Aircraft#getFuelFlow()
 	 */
 	public void setFuelFlow(int flow) {
-		if (flow < 0)
-			throw new IllegalArgumentException("Invalid Fuel Flow - " + flow);
-
-		_fuelFlow = flow;
+		_fuelFlow = Math.max(0, flow);
 	}
 
 	/**
@@ -499,16 +484,13 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 * @param tankType the tank type
 	 * @param pct the percentage required to be filled before filling the next tank type
 	 * @throws IllegalArgumentException if tankType is invalid
-	 * @throws IllegalArgumentException if pct is negative or &gt; 100
 	 * @see Aircraft#getPct(int)
 	 */
 	public void setPct(int tankType, int pct) {
 		if ((tankType < 0) || (tankType > OTHER))
 			throw new IllegalArgumentException("Invalid tank type code - " + tankType);
-		else if ((pct < 0) || (pct > 100))
-			throw new IllegalArgumentException("Invalid percentage - " + pct);
 
-		_tankPct[tankType] = pct;
+		_tankPct[tankType] = Math.min(100, Math.max(0, pct));
 	}
 
 	/**
