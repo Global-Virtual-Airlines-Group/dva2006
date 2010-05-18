@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.Connection;
@@ -8,13 +8,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object used to cache signature image data. 
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 2.6
  */
 
 public abstract class PilotSignatureDAO extends DAO implements CachingDAO {
 	
-	protected static final Cache<CacheableLong> _sigCache = new AgingCache<CacheableLong>(1024);
+	protected static final Cache<CacheableLong> _sigCache = new AgingCache<CacheableLong>(512);
 
 	/**
 	 * Initialize the Data Access Object.
