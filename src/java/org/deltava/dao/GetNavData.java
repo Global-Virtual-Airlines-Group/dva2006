@@ -16,14 +16,14 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
 public class GetNavData extends DAO implements ClearableCachingDAO {
 	
 	private static final Logger log = Logger.getLogger(GetNavData.class);
-	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(4096);
+	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(5120);
 
 	/**
 	 * Initializes the Data Access Object.
