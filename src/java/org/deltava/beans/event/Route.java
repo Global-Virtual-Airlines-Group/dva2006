@@ -1,13 +1,13 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 /**
  * A class to store information about a Flight Route for an Online Event.
  * @author Luke
- * @version 2.1
+ * @version 3.1
  * @since 1.0
  */
 
@@ -55,6 +55,17 @@ public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
      */
     public Airport getAirportD() {
         return _airportD;
+    }
+    
+    /**
+     * Returns the distance between the Airports.
+     * @return the distance in miles
+     */
+    public int getDistance() {
+    	if ((_airportD == null) || (_airportA == null))
+    		throw new IllegalStateException("Airports not populated");
+
+    	return new GeoPosition(_airportD).distanceTo(_airportA);
     }
     
     /**
