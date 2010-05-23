@@ -4,8 +4,7 @@ import org.hansel.CoverageDecorator;
 
 import java.util.*;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
+import junit.framework.*;
 
 import org.deltava.beans.schedule.Airline;
 
@@ -13,9 +12,11 @@ public class TestExpiringCache extends TestCase {
 
 	private ExpiringCache<Cacheable> _cache;
 	private ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> _entry;
+	private ExpiringCache<Cacheable>.ExpiringNullCacheEntry<Cacheable> _nullEntry;
 
 	public static Test suite() {
-		return new CoverageDecorator(TestExpiringCache.class, new Class[] { ExpiringCache.class, ExpiringCache.ExpiringCacheEntry.class });
+		return new CoverageDecorator(TestExpiringCache.class, new Class[] { ExpiringCache.class,
+				ExpiringCache.ExpiringCacheEntry.class });
 	}
 
 	protected void setUp() throws Exception {
@@ -37,6 +38,13 @@ public class TestExpiringCache extends TestCase {
 		_cache.setExpiration(1);
 		ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> entry2 = _cache.new ExpiringCacheEntry<Cacheable>(e2);
 		assertTrue(_entry.compareTo(entry2) > 0);
+	}
+
+	public void testNullCacheEntry() {
+		Object key = "$key";
+		_nullEntry = _cache.new ExpiringNullCacheEntry<Cacheable>(key);
+		assertEquals(key, _nullEntry.toString());
+		assertNull(_nullEntry.getData());
 	}
 
 	public void testClone() throws Exception {
@@ -89,12 +97,19 @@ public class TestExpiringCache extends TestCase {
 		assertEquals(1, _cache.size());
 	}
 
+	public void testNull() {
+		_cache.addNull("DVA");
+		assertEquals(1, _cache.size());
+		assertTrue(_cache.contains("DVA"));
+		assertNull(_cache.get("DVA"));
+	}
+
 	public void testLargeCache() {
 		Collection<Cacheable> entries = new ArrayList<Cacheable>();
-		for (int x = 0; x < 8192; x++)
+		for (int x = 0; x < 16384; x++)
 			entries.add(new CacheableLong(Integer.valueOf(x), x));
 
-		assertEquals(8192, entries.size());
+		assertEquals(16384, entries.size());
 		_cache.setMaxSize(entries.size());
 		assertEquals(entries.size(), _cache.getMaxSize());
 
@@ -108,7 +123,7 @@ public class TestExpiringCache extends TestCase {
 		_cache.setMaxSize(1);
 		assertEquals(0, _cache.size());
 		assertEquals(1, _cache.getMaxSize());
-		
+
 		// Add multiple
 		Collection<Airline> objs = new ArrayList<Airline>();
 		objs.add(new Airline("AF", "Air France"));

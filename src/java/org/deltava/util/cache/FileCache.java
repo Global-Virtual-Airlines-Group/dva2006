@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 /**
  * A cache for File handles.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 2.2
  */
 
@@ -53,6 +53,13 @@ public class FileCache extends Cache<CacheableFile> {
 		// Create the cache entry
 		FileCacheEntry e = new FileCacheEntry(obj);
 		_cache.put(obj.cacheKey(), e);
+	}
+	
+	/**
+	 * Not implemented.
+	 */
+	protected void addNullEntry(Object key) {
+		// NOOP
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -6,14 +6,19 @@ package org.deltava.util.cache;
  * that this cache does not purge an entry until the cache overflows, whereas an {@link ExpiringCache} invalidates data
  * based on age.
  * @author Luke
- * @version 2.2
+ * @version 3.1
  * @since 1.0
  */
 
 public class AgingCache<T extends Cacheable> extends Cache<T> {
 
 	protected long _lastCreationTime;
+	
+	private final AgingCacheEntry<T> NULL_ENTRY = new AgingNullCacheEntry<T>();
 
+	/**
+	 * A cache entry for Aging caches.
+	 */
 	protected class AgingCacheEntry<U extends Cacheable> extends CacheEntry<U> {
 
 		private long _createdOn;
@@ -31,7 +36,25 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 
 		public int compareTo(CacheEntry<U> e2) {
 			AgingCacheEntry<U> ae2 = (AgingCacheEntry<U>) e2;
-			return new Long(_createdOn).compareTo(new Long(ae2._createdOn));
+			return Long.valueOf(_createdOn).compareTo(Long.valueOf(ae2._createdOn));
+		}
+	}
+	
+	/**
+	 * A null cache entry for Aging caches.
+	 */
+	protected class AgingNullCacheEntry<U extends Cacheable> extends AgingCacheEntry<U> {
+		
+		AgingNullCacheEntry() {
+			super(null);
+		}
+		
+		public String toString() {
+			return "null";
+		}
+		
+		public int hashCode() {
+			return "null".hashCode();
 		}
 	}
 
@@ -49,6 +72,7 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	 * Adds an entry to the cache.
 	 * @param obj the entry to add to the cache
 	 */
+	@Override
 	protected void addEntry(T obj) {
 		if (obj == null)
 			return;
@@ -56,6 +80,19 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 		// Create the cache entry
 		AgingCacheEntry<T> e = new AgingCacheEntry<T>(obj);
 		_cache.put(obj.cacheKey(), e);
+	}
+	
+	/**
+	 * Adds a null entry to the cache.
+	 * @param key the entry key
+	 */
+	@Override
+	protected void addNullEntry(Object key) {
+		if (key == null)
+			return;
+		
+		// Create the cache entry
+		_cache.putIfAbsent(key, NULL_ENTRY);
 	}
 
 	/**

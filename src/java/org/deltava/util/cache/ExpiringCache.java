@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 2.5
+ * @version 3.1
  * @since 1.0
  */
 
@@ -42,7 +42,28 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 
 		public int compareTo(CacheEntry<U> e2) {
 			ExpiringCacheEntry<U> ee2 = (ExpiringCacheEntry<U>) e2;
-			return new Long(_expiryTime).compareTo(new Long(ee2._expiryTime));
+			return Long.valueOf(_expiryTime).compareTo(Long.valueOf(ee2._expiryTime));
+		}
+	}
+	
+	/**
+	 * A null cache entry for expiring caches.
+	 */
+	protected class ExpiringNullCacheEntry<U extends Cacheable> extends ExpiringCacheEntry<U> {
+		
+		private Object _cacheKey;
+		
+		public ExpiringNullCacheEntry(Object key) {
+			super(null);
+			_cacheKey = key;
+		}
+		
+		public String toString() {
+			return _cacheKey.toString();
+		}
+		
+		public int hashCode() {
+			return _cacheKey.hashCode();
 		}
 	}
 
@@ -129,6 +150,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 * with the earliest expiration date will be removed.
 	 * @param obj the entry to add to the cache
 	 */
+	@Override
 	protected void addEntry(T obj) {
 		if (obj == null)
 			return;
@@ -136,6 +158,20 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 		// Create the cache entry
 		ExpiringCacheEntry<T> e = new ExpiringCacheEntry<T>(obj);
 		_cache.put(obj.cacheKey(), e);
+	}
+	
+	/**
+	 * Adds a null entry to the cache.
+	 * @param key the entry key
+	 */
+	@Override
+	protected void addNullEntry(Object key) {
+		if (key == null)
+			return;
+		
+		// Create the cache entry
+		ExpiringCacheEntry<T> e = new ExpiringNullCacheEntry<T>(key);
+		_cache.putIfAbsent(key, e);
 	}
 
 	/**

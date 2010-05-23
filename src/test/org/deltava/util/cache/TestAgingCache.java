@@ -14,6 +14,7 @@ public class TestAgingCache extends TestCase {
    
    private AgingCache<Cacheable> _cache;
    private AgingCache<Cacheable>.AgingCacheEntry<Cacheable> _entry;
+   private AgingCache<Cacheable>.AgingNullCacheEntry<Cacheable> _nullEntry;
    
    public static Test suite() {
       return new CoverageDecorator(TestAgingCache.class, new Class[] { AgingCache.class, AgingCache.AgingCacheEntry.class } );
@@ -39,7 +40,12 @@ public class TestAgingCache extends TestCase {
       assertTrue(_entry.compareTo(entry2) < 0);
    }
    
-   public void testClone() throws Exception {
+   public void testNullCacheEntry() {
+	   _nullEntry = _cache.new AgingNullCacheEntry<Cacheable>();
+	   assertNull(_nullEntry.getData());
+   }
+   
+   public void testClone() {
       Cacheable o1 = new CacheableLong(Integer.valueOf(1), 1);
       _cache.add(o1);
       assertEquals(1, _cache.size());
@@ -66,12 +72,19 @@ public class TestAgingCache extends TestCase {
       assertSame(dva, _cache.get("DVA"));
    }
    
+   public void testNull() {
+	   _cache.addNull("DVA");
+	   assertEquals(1, _cache.size());
+	   assertTrue(_cache.contains("DVA"));
+	   assertNull(_cache.get("DVA"));
+   }
+   
    public void testLargeCache() {
 	   Collection<Cacheable> entries = new ArrayList<Cacheable>();
-	   for (int x = 0; x < 8192; x++)
+	   for (int x = 0; x < 16384; x++)
 		   entries.add(new CacheableLong(Integer.valueOf(x), x));
 	   
-	   assertEquals(8192, entries.size());
+	   assertEquals(16384, entries.size());
 	   _cache.setMaxSize(entries.size());
 	   assertEquals(entries.size(), _cache.getMaxSize());
 	   
