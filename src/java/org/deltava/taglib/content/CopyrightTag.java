@@ -1,7 +1,5 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
-
-import java.lang.reflect.Field;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -13,13 +11,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a copyright notice. This tag is a useful test to ensure that the tag libraries are being loaded.
  * @author Luke
- * @version 1.0
+ * @version 3.1
  * @since 1.0
  */
 
 public class CopyrightTag extends TagSupport {
 
-	private static int _rcBuild = -1;
 	private boolean _visible = true;
 
 	/**
@@ -40,10 +37,7 @@ public class CopyrightTag extends TagSupport {
 		jw.print(VersionInfo.TXT_COPYRIGHT);
 		jw.print(" (Build ");
 		jw.print(String.valueOf(VersionInfo.BUILD));
-		if (_rcBuild > 0) {
-			jw.print(" Release Candidate ");
-			jw.print(String.valueOf(_rcBuild));
-		} else if (VersionInfo.FINAL)
+		if (VersionInfo.FINAL)
 			jw.print("-FINAL");
 
 		jw.print(") -->");
@@ -56,10 +50,7 @@ public class CopyrightTag extends TagSupport {
 		jw.print(pageContext.getServletContext().getServletContextName());
 		jw.print(" ");
 		jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD);
-		if (_rcBuild > 0) {
-			jw.print(" Release Candidate ");
-			jw.print(String.valueOf(_rcBuild));
-		} else if (VersionInfo.FINAL)
+		if (VersionInfo.FINAL)
 			jw.print("-FINAL");
 
 		jw.print(")</div>");
@@ -71,29 +62,6 @@ public class CopyrightTag extends TagSupport {
 			jw.print(disclaimer);
 			jw.print("</span>");
 		}
-	}
-
-	/**
-	 * Checks for optional data in VersionInfo constants.
-	 * @return TagSupport.SKIP_BODY always
-	 * @throws JspException if an error occurs
-	 */
-	public int doStartTag() throws JspException {
-
-		// Get the release candidate
-		synchronized (CopyrightTag.class) {
-			if (_rcBuild >= 0)
-				return SKIP_BODY;
-
-			try {
-				Field f = VersionInfo.class.getField("RELEASE_CANDIDATE");
-				_rcBuild = f.getInt(null);
-			} catch (Exception e) {
-				_rcBuild = 0;
-			}
-		}
-
-		return SKIP_BODY;
 	}
 
 	/**
