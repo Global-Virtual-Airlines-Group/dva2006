@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -6,9 +6,10 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 /**
- * An an abstract class to store common cache operations.
+ * An an abstract class to store common cache operations. These caches can store null
+ * entries to prevent repeated uncached calls for invalid keys.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -48,7 +49,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * @return TRUE if the cache contains the key, otherwise FALSE
 	 */
 	public boolean contains(Object key) {
-		return _cache.containsKey(key);
+		return (key != null) && _cache.containsKey(key);
 	}
 
 	/**
@@ -149,10 +150,18 @@ public abstract class Cache<T extends Cacheable> {
 	}
 	
 	/**
-	 * Adds an entry to the cache.
-	 * @param entry
+	 * Adds an entry to the cache. Subclasses need to implement this method
+	 * to handle cache additions, the public method forces an overflow check. 
+	 * @param entry the entry to add
 	 */
 	protected abstract void addEntry(T entry);
+	
+	/**
+	 * Adds a null entry to the cache. Subclasses need to implement this method
+	 * to handle cache additions, the public method forces an overflow check.
+	 * @param key the entry key
+	 */
+	protected abstract void addNullEntry(Object key);
 
 	/**
 	 * Adds an entry to the cache.
@@ -160,6 +169,15 @@ public abstract class Cache<T extends Cacheable> {
 	 */
 	public final void add(T entry) {
 		addEntry(entry);
+		checkOverflow();
+	}
+	
+	/**
+	 * Adds a null entry to the cache.
+	 * @param key the entry key
+	 */
+	public final void addNull(String key) {
+		addNullEntry(key);
 		checkOverflow();
 	}
 
