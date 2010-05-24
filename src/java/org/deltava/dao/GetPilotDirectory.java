@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 1.0
  */
 
@@ -230,28 +230,6 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			if (appPilotID > 0)
 				_ps.setInt(3, appPilotID);
 
-			return executeIDs();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Searches for a Pilot name (or fragment thereof) and returns the database IDs of Pilots matching the name.
-	 * @param fullName the full name or fragment
-	 * @param doFragment TRUE if a partial match will be accepted, otherwise FALSE
-	 * @return a Collection of database IDs as Integers
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Integer> search(String fullName, boolean doFragment) throws DAOException {
-
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM common.PILOTNAMES WHERE (UPPER(CONCAT_WS(' ', FIRSTNAME, LASTNAME))");
-		sqlBuf.append(doFragment ? " LIKE ?)" : "=?)");
-
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, doFragment ? "%" + fullName.toUpperCase() + "%" : fullName.toUpperCase());
 			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
