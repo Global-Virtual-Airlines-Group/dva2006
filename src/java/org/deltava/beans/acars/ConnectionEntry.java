@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -9,11 +9,11 @@ import org.deltava.beans.system.IPAddressInfo;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 2.5
+ * @version 3.1
  * @since 1.0
  */
 
-public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, CalendarEntry {
+public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, TimeSpan, AuthoredBean {
 
    private long _id;
    private int _pilotID;
@@ -96,6 +96,10 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
     */
    public int getPilotID() {
       return (_usr != null) ? _usr.getID() : _pilotID;
+   }
+   
+   public int getAuthorID() {
+	   return getPilotID();
    }
    
    /**
@@ -457,6 +461,10 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Cal
       
       DatabaseBean.validateID(_pilotID, id);
       _pilotID = id;
+   }
+   
+   public void setAuthorID(int id) {
+	   setPilotID(id);
    }
    
    /**

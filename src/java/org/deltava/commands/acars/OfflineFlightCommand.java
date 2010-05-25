@@ -31,7 +31,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 2.4
  */
 
@@ -135,7 +135,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 		// Add connection fields from the request
 		ConnectionEntry ce = flight.getConnection();
-		ce.setPilotID(ctx.getUser().getID());
+		ce.setAuthorID(ctx.getUser().getID());
 		ce.setRemoteHost(ctx.getRequest().getRemoteHost());
 		ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		
