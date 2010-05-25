@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -8,6 +8,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.DispatchScheduleAccessControl;
@@ -15,12 +16,27 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 2.2
  */
 
 public class ServiceCalendarCommand extends AbstractCalendarCommand {
-
+	
+	private class ConnectionEntryComparator implements Comparator<DispatchConnectionEntry> {
+		
+		ConnectionEntryComparator() {
+			super();
+		}
+		
+		public int compare(DispatchConnectionEntry dce1, DispatchConnectionEntry dce2) {
+			int tmpResult = Integer.valueOf(dce1.getAuthorID()).compareTo(Integer.valueOf(dce2.getAuthorID()));
+			if (tmpResult == 0)
+				tmpResult = dce1.getStartTime().compareTo(dce2.getStartTime());
+			
+			return tmpResult;
+		}
+	}
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -30,17 +46,25 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 		
 		// Check if we load history
 		boolean noHistory = Boolean.valueOf(ctx.getParameter("noHistory")).booleanValue();
+		long now = System.currentTimeMillis();
 		
 		// Initialize the calendar context
 		CalendarContext cctx = initCalendar(ctx);
-		Collection<CalendarEntry> results = new ArrayList<CalendarEntry>();
+		List<CalendarEntry> entries = new ArrayList<CalendarEntry>();
+		List<DispatchConnectionEntry> conEntries = new ArrayList<DispatchConnectionEntry>();
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the entries
 			GetDispatchCalendar dcdao = new GetDispatchCalendar(con);
-			Collection<DispatchScheduleEntry> entries = dcdao.getCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
-			results.addAll(entries);
+			Collection<DispatchScheduleEntry> schedEntries = dcdao.getCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
+			for (Iterator<DispatchScheduleEntry> i = schedEntries.iterator(); i.hasNext(); ) {
+				DispatchScheduleEntry se = i.next();
+				if (se.getEndTime().getTime() >= now)
+					entries.add(se);		
+				else
+					i.remove();
+			}
 			
 			// Save Access Rights
 			Map<DispatchScheduleEntry, DispatchScheduleAccessControl> accessMap = new 
@@ -48,7 +72,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the Dispatcher IDs and calculate access
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<DispatchScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+			for (Iterator<DispatchScheduleEntry> i = schedEntries.iterator(); i.hasNext(); ) {
 				DispatchScheduleEntry e = i.next();
 				IDs.add(new Integer(e.getAuthorID()));
 				
@@ -77,13 +101,13 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 					// Prune out any entries with no flights and less than 2 minutes long
 					if (ce.getEndTime() != null) {
 						long conTime = (ce.getEndTime().getTime() - ce.getStartTime().getTime()) / 1000;
-						if (flights.isEmpty() && (conTime < 120))
-							i.remove();
-					}
+						if (!flights.isEmpty() || (conTime > 120))
+							conEntries.add(ce);
+					} else
+						conEntries.add(ce);
 				}
 				
 				// Save in the request
-				results.addAll(cons);
 				IDs.addAll(conIDs);
 			}
 			
@@ -98,8 +122,34 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			ctx.release();
 		}
 		
+		// Combine service entries if they aren't very separated
+		Collections.sort(conEntries, new ConnectionEntryComparator());
+		DispatchConnectionEntry lastEntry = null;
+		
+		for (Iterator<DispatchConnectionEntry> i = conEntries.iterator(); i.hasNext(); ) {
+			DispatchConnectionEntry ce = i.next();
+			if ((lastEntry != null) && ((ce.getAuthorID() != lastEntry.getAuthorID()) || (lastEntry.getEndTime() == null)))
+				lastEntry = null;
+			
+			if (lastEntry == null) {
+				lastEntry = ce;
+				entries.add(ce);
+			} else {
+				long timeDiff = (ce.getStartTime().getTime() - lastEntry.getEndTime().getTime()) / 1000;
+				if (timeDiff < 900) {
+					lastEntry.setEndTime(ce.getEndTime());
+					for (FlightInfo inf : ce.getFlights())
+						lastEntry.addFlight(inf);
+				} else {
+					lastEntry = ce;
+					entries.add(ce);	
+				}
+			}
+		}
+		
 		// Save in the request
-		ctx.setAttribute("entries", results, REQUEST);
+		Collections.sort(entries, new CalendarEntryComparator());
+		ctx.setAttribute("entries", entries, REQUEST);
 		
 		// Calculate our access to create new entries'
 		DispatchScheduleAccessControl ac = new DispatchScheduleAccessControl(ctx, null);
