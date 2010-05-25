@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * An ACARS Connection log entry for Dispatchers.
  * @author Luke
- * @version 2.4
+ * @version 3.1
  * @since 2.4
  */
 
@@ -52,5 +52,12 @@ public class DispatchConnectionEntry extends ConnectionEntry {
 	 */
 	public void addFlight(FlightInfo info) {
 		_flights.add(info);
+	}
+	
+	public String toString() {
+		StringBuilder buf = new StringBuilder(getDate().toString());
+		buf.append('-');
+		buf.append(getAuthorID());
+		return buf.toString();
 	}
 }

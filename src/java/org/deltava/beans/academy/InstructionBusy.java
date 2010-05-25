@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.Date;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to block off a Flight Academy Instructor's time.
  * @author Luke
- * @version 1.0
+ * @version 3.1
  * @since 1.0
  */
 
-public class InstructionBusy extends DatabaseBean implements CalendarEntry, ViewEntry, InstructorBean {
+public class InstructionBusy extends DatabaseBean implements TimeSpan, ViewEntry, InstructorBean {
 
 	private Date _startTime;
 	private Date _endTime;

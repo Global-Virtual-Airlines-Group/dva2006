@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -14,11 +14,11 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
-public class Event extends ImageBean implements ComboAlias, CalendarEntry {
+public class Event extends ImageBean implements ComboAlias, TimeSpan {
 
     public static final int OPEN = 0;
     public static final int CANCELED = 1;
