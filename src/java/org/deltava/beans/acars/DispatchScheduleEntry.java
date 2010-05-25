@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A bean to store Dispatcher schedule entries.
  * @author Luke
- * @version 2.2
+ * @version 3.1
  * @since 2.2
  */
 
-public class DispatchScheduleEntry extends DatabaseBean implements CalendarEntry, AuthoredBean {
+public class DispatchScheduleEntry extends DatabaseBean implements TimeSpan, AuthoredBean {
 	
 	private int _dispatcherID;
 	private Date _startTime;
@@ -110,6 +110,8 @@ public class DispatchScheduleEntry extends DatabaseBean implements CalendarEntry
 	 * @throws IllegalArgumentException if dt is before the start time
 	 */
 	public void setEndTime(Date dt) {
+		if (dt == null)
+			throw new NullPointerException("End date/time cannot be null");
 		if (dt.before(_startTime))
 			throw new IllegalArgumentException("End cannot be before start time");
 		

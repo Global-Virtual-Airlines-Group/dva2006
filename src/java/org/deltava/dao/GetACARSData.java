@@ -525,7 +525,7 @@ public class GetACARSData extends DAO {
 			boolean isDispatch = rs.getBoolean(9);
 			long id = Long.parseLong(rs.getString(1), 16);
 			ConnectionEntry entry = isDispatch ? new DispatchConnectionEntry(id) : new ConnectionEntry(id);
-			entry.setPilotID(rs.getInt(2));
+			entry.setAuthorID(rs.getInt(2));
 			entry.setStartTime(rs.getTimestamp(3));
 			entry.setEndTime(rs.getTimestamp(4));
 			entry.setRemoteAddr(rs.getString(5));
