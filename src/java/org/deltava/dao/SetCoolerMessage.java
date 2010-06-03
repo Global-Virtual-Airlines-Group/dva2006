@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 2.2
+ * @version 3.1
  * @since 1.0
  */
 
@@ -160,17 +160,29 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	}
 
 	/**
-	 * Marks a Message Thread has being viewed.
+	 * Marks a Message Thread as being viewed.
 	 * @param id the Message Thread ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void viewThread(int id) throws DAOException {
 		try {
+			startTransaction();
+			
+			// Lock the row
+			prepareStatementWithoutLimits("SELECT VIEWS FROM common.COOLER_THREADS WHERE (ID=?) LIMIT 1 FOR UPDATE");
+			_ps.setInt(1, id);
+			ResultSet rs = _ps.executeQuery();
+			rs.close();
+			_ps.close();
+			
+			// Update the row
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
 					+ "VIEWS=VIEWS+1, SORTDATE=IFNULL(STICKY, LASTUPDATE) WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			executeUpdate(1);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -288,6 +300,7 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			if (!rs.next()) {
 				rs.close();
 				_ps.close();
+				rollbackTransaction();
 				throw new DAOException("Message Thread is empty");
 			}
 
