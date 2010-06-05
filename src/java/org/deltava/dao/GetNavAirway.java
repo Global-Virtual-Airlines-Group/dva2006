@@ -139,10 +139,14 @@ public class GetNavAirway extends GetNavData {
 			parts.add("ALL");
 		else if (parts.size() != 3)
 			return null;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME");
+		sqlBuf.append(name.contains("%") ? " LIKE " : "=");
+		sqlBuf.append("?) AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
 
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME=?) "
-					+ "AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, a.getICAO());
 			_ps.setString(2, parts.get(0).toUpperCase());
 			_ps.setString(3, parts.get(1).toUpperCase());
