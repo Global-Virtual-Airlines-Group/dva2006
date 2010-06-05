@@ -15,7 +15,8 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	private Date _startDate;
 	private int _interval = 1;
 	
-	private int _cons; 
+	private int _cons;
+	private int _errors;
 	private int _msgsIn;
 	private int _msgsOut;
 	private long _bytesIn;
@@ -104,6 +105,14 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	}
 	
 	/**
+	 * Returns the number of write errors during the window.
+	 * @return the number of errors
+	 */
+	public int getErrors() {
+		return _errors;
+	}
+	
+	/**
 	 * Returns the maximum number of connections for the period.
 	 * @return the number of connections
 	 */
@@ -129,10 +138,18 @@ public class Bandwidth implements Comparable<Bandwidth> {
 	
 	/**
 	 * Updates the number of connections during the window.
-	 * @param cons the number of connections.
+	 * @param cons the number of connections
 	 */
 	public void setConnections(int cons) {
 		_cons = Math.max(0, cons);
+	}
+	
+	/**
+	 * Updates the number of errors during the window.
+	 * @param errors the number of errors
+	 */
+	public void setErrors(int errors) {
+		_errors = Math.max(0, errors);
 	}
 	
 	/**

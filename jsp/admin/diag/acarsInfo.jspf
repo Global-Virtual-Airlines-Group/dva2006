@@ -16,7 +16,8 @@
  <fmt:int value="${acarsBW.bytesIn}" /> bytes (<fmt:dec value="${acarsBW.bytesIn / 60}" /> bytes/sec) in,
  <fmt:int value="${acarsBW.bytesOut}" /> bytes (<fmt:dec value="${acarsBW.bytesOut / 60}" /> bytes/sec) out.
  <fmt:int value="${acarsBW.msgsIn}" /> msgs (<fmt:dec value="${acarsBW.msgsIn / 60}" /> msgs/sec) in,
- <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.</td>
+ <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.
+<c:if test="${acarsBW.writeErrors > 0}"><span class="error bld"><fmt:int value="${acarsBW.writeErrors}" /> errors.</span></c:if></td>
 </tr>
 <tr>
  <td class="label top">Bandwidth Graph</td>
@@ -72,7 +73,9 @@ so.write('flashcontent');
  <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferReads}" /> reads, 
 <fmt:dec value="${con.bytesIn / con.bufferReads}" fmt="###0.0" /> bytes / read, 
 <fmt:int value="${con.bufferWrites}" /> writes, <fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> 
-writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> bytes / write</td>
+writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> bytes / write
+<c:if test="${con.writeErrors > 0}">, <span class="error bld"><fmt:int value="${con.writeErrors}" /> errors</span></c:if>
+</td>
 </view:row>
 </c:forEach>
 </el:table>
