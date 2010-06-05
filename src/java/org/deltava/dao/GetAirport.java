@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -48,9 +48,9 @@ public class GetAirport extends DAO {
 	 */
 	public Airport get(String code) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORTS A "
-					+ "LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) WHERE "
-					+ "((A.ICAO=?) OR (A.IATA=?)) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR FROM common.AIRPORTS A "
+				+ "LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) LEFT JOIN "
+				+ "common.MAGVAR MV ON (A.ICAO=MV.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) LIMIT 1");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
 			_ps.setString(2, code.toUpperCase());
 			_ps.setString(3, code.toUpperCase());
@@ -68,6 +68,7 @@ public class GetAirport extends DAO {
 			a.setADSE(rs.getBoolean(7));
 			a.setAltitude(rs.getInt(8));
 			a.setRegion(rs.getString(9));
+			a.setMagVar(rs.getDouble(10));
 
 			// Close JDBC resources
 			rs.close();
@@ -103,9 +104,10 @@ public class GetAirport extends DAO {
 	public Collection<Airport> getByAirline(Airline al, String sortBy) throws DAOException {
 		
 		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT A.*, ND.ALTITUDE, ND.REGION, AA.CODE FROM common.AIRPORTS A "
-				+ "LEFT JOIN common.AIRPORT_AIRLINE AA ON (AA.APPCODE=?) AND (A.IATA=AA.IATA) LEFT JOIN "
-				+ "common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) WHERE ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT A.*, ND.ALTITUDE, ND.REGION, AA.CODE, MV.MAGVAR "
+				+ "FROM common.AIRPORTS A LEFT JOIN common.AIRPORT_AIRLINE AA ON (AA.APPCODE=?) AND "
+				+ "(A.IATA=AA.IATA) LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) "
+				+ "LEFT JOIN common.MAGVAR MV ON (A.ICAO=MV.ICAO) WHERE ");
 		sqlBuf.append((al == null) ? "(AA.CODE IS NULL)" : "(AA.CODE=?)");
 		if (!StringUtils.isEmpty(sortBy)) {
 			sqlBuf.append(" ORDER BY A.");
@@ -129,6 +131,7 @@ public class GetAirport extends DAO {
 				a.setADSE(rs.getBoolean(7));
 				a.setAltitude(rs.getInt(8));
 				a.setRegion(rs.getString(9));
+				a.setMagVar(rs.getDouble(10));
 				results.add(a);
 			}
 
@@ -202,8 +205,9 @@ public class GetAirport extends DAO {
 	public Map<String, Airport> getAll() throws DAOException {
 		Map<String, Airport> results = new HashMap<String, Airport>();
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION FROM common.AIRPORTS A "
-					+ "LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?)");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR FROM common.AIRPORTS A "
+				+ "LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) LEFT JOIN common.MAGVAR MV "
+				+ "ON (MV.ICAO=A.ICAO)");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
 			ResultSet rs = _ps.executeQuery();
 
@@ -215,6 +219,7 @@ public class GetAirport extends DAO {
 				a.setADSE(rs.getBoolean(7));
 				a.setAltitude(rs.getInt(8));
 				a.setRegion(rs.getString(9));
+				a.setMagVar(rs.getDouble(10));
 
 				// Save in the map
 				results.put(a.getIATA(), a);
