@@ -38,6 +38,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    private long _bytesIn;
    private int _bufferReads;
    private int _bufferWrites;
+   private int _errors;
    
    private FlightInfo _fInfo;
    private boolean _isHidden;
@@ -266,6 +267,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    }
    
    /**
+    * Returns the number of write errors on this connection.
+    * @return the number of errors
+    * @see ConnectionEntry#setWriteErrors(int)
+    */
+   public int getWriteErrors() {
+	   return _errors;
+   }
+   
+   /**
     * Updates the ACARS connection ID.
     * @param id the connection ID
     * @throws IllegalArgumentException if id is negative
@@ -375,6 +385,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    public void setBytes(long in, long out) {
 	   _bytesIn = in;
 	   _bytesOut = out;
+   }
+   
+   /**
+    * Updates the number of write errors on this connection.
+    * @param errors the number of errors
+    * @see ConnectionEntry#getWriteErrors()
+    */
+   public void setWriteErrors(int errors) {
+	   _errors = errors;
    }
    
    /**

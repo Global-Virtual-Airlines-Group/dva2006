@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.Bandwidth;
 /**
  * A Data Access Object to load ACARS bandwidth statistics. 
  * @author Luke
- * @version 2.2
+ * @version 3.1
  * @since 2.1
  */
 
@@ -103,6 +103,7 @@ public class GetACARSBandwidth extends DAO {
 			bw.setMaxConnections(rs.getInt(8));
 			bw.setMaxBytes(rs.getLong(9));
 			bw.setMaxMsgs(rs.getInt(10));
+			bw.setErrors(rs.getInt(11));
 			results.add(bw);
 		}
 		
