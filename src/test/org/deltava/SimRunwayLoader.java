@@ -94,7 +94,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				Document doc = null;
 				try {
 					filterAmpersands(xml);
-					doc = loadXML(xml);
+					doc = loadXML(new FileReader(xml));
 				} catch (Exception e) {
 					log.error(e.getMessage(), e);
 				}
@@ -136,7 +136,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		File[] xmls = rt.listFiles(new XMLFilter());
 		assertNotNull(xmls);
 		for (int x = 0; x < xmls.length; x++) {
-			Document doc = loadXML(xmls[x]);
+			Document doc = loadXML(new FileReader(xmls[x]));
 			assertNotNull(doc);
 			
 			// Get the airports

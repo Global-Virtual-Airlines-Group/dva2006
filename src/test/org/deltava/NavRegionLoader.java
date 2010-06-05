@@ -10,18 +10,13 @@ import org.apache.log4j.*;
 import org.jdom.*;
 import org.jdom.filter.ElementFilter;
 
-public class NavRegionLoader extends SceneryLoaderTestCase {
+public class NavRegionLoader extends BGLLoaderTestCase {
 	
 	private static final String JDBC_URL ="jdbc:mysql://polaris.sce.net/common";
 	private Connection _c;
 	
-	private static final String SCENERY_ROOT = "E:\\Program Files\\Flight Simulator X\\Scenery";
-	private static final String XML_PATH = "C:\\temp\\bgxml";
-	
-	private static final String BGLXML = "data/bglxml/bglxml.exe";
-	
 	private static final List<String> XML_ENAMES = Arrays.asList("Waypoint", "Vor", "Ndb");
-	
+
 	final class SceneryFilter implements FileFilter {
 		public boolean accept(File f) {
 			String fn = f.getName().toLowerCase();
@@ -34,11 +29,6 @@ public class NavRegionLoader extends SceneryLoaderTestCase {
 		super.setUp();
 		log = Logger.getLogger(NavRegionLoader.class);
 		
-		// Create the output directory
-		File xmlP = new File(XML_PATH);
-		if (!xmlP.exists())
-			xmlP.mkdirs();
-		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
 		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
@@ -48,55 +38,11 @@ public class NavRegionLoader extends SceneryLoaderTestCase {
 	
 	protected void tearDown() throws Exception {
 		_c.close();
-		LogManager.shutdown();
 		super.tearDown();
 	}
 
 	public void testConvertBGLs() throws Exception {
-		
-		// Check that we're running Windows and the file exists
-		assertTrue(System.getProperty("os.name").contains("Windows"));
-		File exe = new File(BGLXML);
-		assertTrue(exe.exists() && exe.isFile());
-		
-		File rt = new File(SCENERY_ROOT);
-		assertTrue(rt.isDirectory());
-		
-		Collection<File> bglFiles = getFiles(rt, new SceneryFilter());
-		assertNotNull(bglFiles);
-		
-		// Process the BGLs
-		for (Iterator<File> i = bglFiles.iterator(); i.hasNext(); ) {
-			File bgl = i.next();
-			String fRoot = bgl.getName().substring(0, bgl.getName().lastIndexOf('.'));
-			File xml = new File(XML_PATH, fRoot + ".xml");
-			
-			// Covert the BGL
-			log.info("Converting " + bgl.getName() + " to XML");
-			ProcessBuilder pb = new ProcessBuilder(exe.getAbsolutePath(), "-t", bgl.getPath(), xml.getPath());
-			Process p = pb.start();
-			int result = p.waitFor();
-			if (result != 0) {
-				InputStream is = new BufferedInputStream(p.getInputStream(), 512);
-				BufferedReader br = new BufferedReader(new InputStreamReader(is));
-				while (br.ready())
-					log.info(br.readLine());
-				
-				is.close();
-				fail("Cannot convert to XML");
-			}
-			
-			// Load the XML
-			Document doc = null;
-			try {
-				doc = loadXML(xml);
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
-			}
-			
-			// Process the document
-			assertNotNull(doc);
-		}
+		convertBGLs(new SceneryFilter());
 	}
 	
 	public void testLoadXML() throws Exception {
@@ -116,7 +62,7 @@ public class NavRegionLoader extends SceneryLoaderTestCase {
 		assertNotNull(xmls);
 		for (int x = 0; x < xmls.length; x++) {
 			log.info("Processing " + xmls[x].getName());
-			Document doc = loadXML(xmls[x]);
+			Document doc = loadXML(new FileReader(xmls[x]));
 			assertNotNull(doc);
 			
 			// Get the waypoints
