@@ -44,9 +44,10 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 		return files;
 	}
 	
-	protected Document loadXML(File f) throws IOException, JDOMException {
+	protected Document loadXML(Reader r) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
-		return builder.build(f);
+		builder.setValidation(false);
+		return builder.build(r);
 	}
 	
 	protected void filterAmpersands(File f) throws IOException {
