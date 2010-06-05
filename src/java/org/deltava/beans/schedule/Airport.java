@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private String _icao;
 	private String _name;
 	private int _alt;
+	private double _magVar;
 	private String _region;
 	private boolean _adseX;
 	
@@ -92,6 +93,14 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public void setTZ(String tzID) {
 		_tz = TZInfo.get(tzID);
+	}
+	
+	/**
+	 * Sets this airport's magnetic variation.
+	 * @param mv the magnetic variation in degrees
+	 */
+	public void setMagVar(double mv) {
+		_magVar = mv;
 	}
 	
 	/**
@@ -190,16 +199,24 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	}
 	
 	/**
-	 * Return this airport's time zone.
-	 * @return The Airport's time zone
+	 * Returns this airport's time zone.
+	 * @return the Airport's time zone
 	 */
 	public TZInfo getTZ() {
 		return _tz;
 	}
+	
+	/**
+	 * Returns this airport's magnetic variation.
+	 * @return the magnetic variation in degrees 
+	 */
+	public double getMagVar() {
+		return _magVar;
+	}
 
 	/**
 	 * Returns this airport's latitude and longitude.
-	 * @return A GeoPosition object containing the airport's position
+	 * @return a GeoPosition object containing the airport's position
 	 */
 	public GeoPosition getPosition() {
 		return _position;
@@ -207,7 +224,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 
 	/**
 	 * Return this airport's latitude.
-	 * @return This airport's latitude in degrees (and some fraction thereof)
+	 * @return this airport's latitude in degrees (and some fraction thereof)
 	 * @see GeoPosition#getLatitude()
 	 */
 	public final double getLatitude() {
