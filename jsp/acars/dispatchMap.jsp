@@ -16,7 +16,6 @@
 <content:js name="acarsMapWX" />
 <content:js name="acarsMapFF" />
 <content:googleAnalytics eventSupport="true" />
-<c:if test="${isDispatch}"><content:js name="dispatchMap" /></c:if>
 <content:js name="markermanager" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
@@ -61,6 +60,31 @@ GEvent.bind(mrk, 'click', mrk, clickIcon);
 return mrk;
 }
 </script>
+<c:if test="${isDispatch}">
+<script type="text/javascript">
+function mapZoom()
+{
+gaEvent('Dispatch', 'Zoom/Pan');
+var b = map.getBounds();
+window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
+return true;
+}
+
+function toggleObjects(mrks, visible)
+{
+if (mrks == null) return false;
+for (var idx = 0; idx < mrks.length; idx++)
+{
+	var m = mrks[idx];
+	if (visible)
+		m.show();
+	else if (!m.isSelected)
+		m.hide();
+}
+
+return true;
+}
+</script></c:if>
 </head>
 <body onunload="GUnload()">
 <el:form action="dispatchMap.do" method="post" validate="return false">
