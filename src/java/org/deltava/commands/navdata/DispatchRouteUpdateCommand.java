@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to ensure Dispatch Routes have the latest Terminal Route waypoints.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 2.6
  */
 
@@ -49,7 +49,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				if ((sid == null) && (rt.getSID() != null)) {
 					int pos = rt.getSID().indexOf('.');
 					String name = rt.getSID().substring(0, pos);
-					String newName = name.substring(0, name.length() - 1) + "%" + name.substring(pos);
+					String newName = name.substring(0, name.length() - 1) + "%" + rt.getSID().substring(pos);
 					sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, newName);
 					
 					// If we found a better SID, update what is in the route with this one
@@ -82,7 +82,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				if ((star == null) && (rt.getSTAR() != null)) {
 					int pos = rt.getSTAR().indexOf('.');
 					String name = rt.getSTAR().substring(0, pos);
-					String newName = name.substring(0, name.length() - 2) + "%" + name.substring(pos);
+					String newName = name.substring(0, name.length() - 2) + "%" + rt.getSTAR().substring(pos);
 					star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, newName);
 					
 					// If we found a better STAR, update what is in the route with this one
@@ -111,7 +111,10 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				
 				// Save the updated route
 				if (isUpdated) {
+					ctx.startTX();
 					rwdao.write(rt);
+					rwdao.activate(rt.getID(), rt.getActive());
+					ctx.commitTX();
 					updateCount++;
 				}
 			}
@@ -120,6 +123,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 			ctx.setAttribute("msgs", msgs, REQUEST);
 			ctx.setAttribute("updateCount", Integer.valueOf(updateCount), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
