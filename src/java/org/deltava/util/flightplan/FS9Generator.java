@@ -11,7 +11,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2004.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 2.4
  */
 
@@ -58,7 +58,7 @@ public class FS9Generator extends FlightPlanGenerator {
 			
 			ctx.print(", ");
 			ctx.print(nd.getCode());
-			ctx.print(", ,");
+			ctx.print(", , ");
 			ctx.print(nd.getCode());
 			switch (nd.getType()) {
 				case NavigationDataBean.AIRPORT:
