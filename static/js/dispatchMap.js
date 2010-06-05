@@ -27,7 +27,7 @@ return true;
 function toggleMarkers(mrks, visible)
 {
 if (mrks == null) return false;
-for (var idx in mrks)
+for (var idx = 0; idx < mrks.length; idx++)
 {
 	var m = mrks[idx];
 	if (visible)
