@@ -22,7 +22,7 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public SetCoolerMessage(Connection c) {
 		super(c);
 	}
-
+	
 	/**
 	 * Writes a new Post to the Water Cooler.
 	 * @param msg the Message post bean
@@ -167,13 +167,7 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public void viewThread(int id) throws DAOException {
 		try {
 			startTransaction();
-			
-			// Lock the row
-			prepareStatementWithoutLimits("SELECT VIEWS FROM common.COOLER_THREADS WHERE (ID=?) LIMIT 1 FOR UPDATE");
-			_ps.setInt(1, id);
-			ResultSet rs = _ps.executeQuery();
-			rs.close();
-			_ps.close();
+			lockThreadRow(id);
 			
 			// Update the row
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
@@ -197,11 +191,15 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 		invalidate(id);
 		GetCoolerChannels.invalidate(newChannel);
 		try {
+			startTransaction();
+			lockThreadRow(id);
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET CHANNEL=? WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, newChannel);
 			_ps.setInt(2, id);
 			executeUpdate(1);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -215,11 +213,15 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public void updateSubject(int id, String subj) throws DAOException {
 		invalidate(id);
 		try {
+			startTransaction();
+			lockThreadRow(id);
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET SUBJECT=? WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, subj);
 			_ps.setInt(2, id);
 			executeUpdate(1);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -234,13 +236,17 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public void moderateThread(int id, boolean doHide, boolean doLock) throws DAOException {
 		invalidate(id);
 		try {
+			startTransaction();
+			lockThreadRow(id);
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET HIDDEN=?, LOCKED=? WHERE "
 					+ "(ID=?) LIMIT 1");
 			_ps.setBoolean(1, doHide);
 			_ps.setBoolean(2, doLock);
 			_ps.setInt(3, id);
 			executeUpdate(1);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -318,6 +324,9 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			// Clear out the sticky date
 			if ((mt.getStickyUntil() != null) && (mt.getStickyUntil().getTime() < System.currentTimeMillis()))
 				mt.setStickyUntil(null);
+			
+			// Lock the thread
+			lockThreadRow(mt.getID());
 
 			// Update the thread entry
 			prepareStatement("UPDATE common.COOLER_THREADS SET POSTS=?, AUTHOR=?, LASTPOSTER=?, "
@@ -352,12 +361,16 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	public void unstickThread(int id) throws DAOException {
 		invalidate(id);
 		try {
+			startTransaction();
+			lockThreadRow(id);
 			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=NULL, STICKY_CHANNEL=?, "
 					+ "SORTDATE=LASTUPDATE WHERE (ID=?)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, id);
 			executeUpdate(0);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -379,6 +392,8 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 		
 		invalidate(id);
 		try {
+			startTransaction();
+			lockThreadRow(id);
 			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=?, STICKY_CHANNEL=?, "
 					+ "SORTDATE=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(sDate));
@@ -386,7 +401,9 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			_ps.setTimestamp(3, createTimestamp(sDate));
 			_ps.setInt(4, id);
 			executeUpdate(0);
+			commitTransaction();
 		} catch(SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -458,5 +475,16 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Helper method to lock a thread row.
+	 */
+	private void lockThreadRow(int id) throws SQLException {
+		prepareStatementWithoutLimits("SELECT VIEWS FROM common.COOLER_THREADS WHERE (ID=?) LIMIT 1 FOR UPDATE");
+		_ps.setInt(1, id);
+		ResultSet rs = _ps.executeQuery();
+		rs.close();
+		_ps.close();
 	}
 }
