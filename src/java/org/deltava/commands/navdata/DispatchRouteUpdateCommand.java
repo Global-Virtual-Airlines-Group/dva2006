@@ -49,8 +49,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				if ((sid == null) && (rt.getSID() != null)) {
 					int pos = rt.getSID().indexOf('.');
 					String name = rt.getSID().substring(0, pos);
-					String newName = name.substring(0, name.length() - 1) + "%" + rt.getSID().substring(pos);
-					sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, newName);
+					sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, rt.getSID(), true);
 					
 					// If we found a better SID, update what is in the route with this one
 					if (sid != null) {
@@ -82,8 +81,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				if ((star == null) && (rt.getSTAR() != null)) {
 					int pos = rt.getSTAR().indexOf('.');
 					String name = rt.getSTAR().substring(0, pos);
-					String newName = name.substring(0, name.length() - 2) + "%" + rt.getSTAR().substring(pos);
-					star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, newName);
+					star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, rt.getSTAR(), true);
 					
 					// If we found a better STAR, update what is in the route with this one
 					if (star != null) {

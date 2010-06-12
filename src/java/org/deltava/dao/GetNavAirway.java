@@ -124,6 +124,19 @@ public class GetNavAirway extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TerminalRoute getRoute(ICAOAirport a, int type, String name) throws DAOException {
+		return getRoute(a, type, name, false);
+	}
+	
+	/**
+	 * Retrieves a specifc SID/STAR.
+	 * @param a the Airport
+	 * @param type the route type
+	 * @param name the name of the Terminal Route, as NAME.TRANSITION.RWY
+	 * @param ignoreVersion TRUE if the sequence number should be ignored in favor of a newer or older version, otherwise FALSE 
+	 * @return a TerminalRoute bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public TerminalRoute getRoute(ICAOAirport a, int type, String name, boolean ignoreVersion) throws DAOException {
 
 		// Check the cache
 		TerminalRoute tr = _rCache.get(name);
@@ -132,7 +145,7 @@ public class GetNavAirway extends GetNavData {
 				return tr;
 		} else if (name == null)
 			return null;
-			
+		
 		// Split the name
 		List<String> parts = StringUtils.split(name, ".");
 		if (parts.size() == 2)
@@ -140,6 +153,15 @@ public class GetNavAirway extends GetNavData {
 		else if (parts.size() != 3)
 			return null;
 		
+		// If we're ignoring the version, then strip off the digit
+		if (ignoreVersion) {
+			String newName = parts.get(0);
+			if (Character.isDigit(newName.charAt(newName.length() - 2))) {
+				newName = newName.substring(0, newName.length() - 1) + "%";
+				parts.set(0, newName);
+			}
+		}
+			
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME");
 		sqlBuf.append(name.contains("%") ? " LIKE " : "=");

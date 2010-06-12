@@ -197,8 +197,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Get the SID/STAR data
 			GetNavRoute nvdao = new GetNavRoute(con);
-			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.SID, flight.getSID()));
-			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, flight.getSTAR()));
+			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.SID, flight.getSID(), true));
+			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, flight.getSTAR(), true));
 			
 			// Create comments field
 			Collection<String> comments = new ArrayList<String>();
