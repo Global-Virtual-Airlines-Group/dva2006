@@ -131,7 +131,7 @@ public class GetAirport extends DAO {
 				a.setADSE(rs.getBoolean(7));
 				a.setAltitude(rs.getInt(8));
 				a.setRegion(rs.getString(9));
-				a.setMagVar(rs.getDouble(10));
+				a.setMagVar(rs.getDouble(11));
 				results.add(a);
 			}
 
