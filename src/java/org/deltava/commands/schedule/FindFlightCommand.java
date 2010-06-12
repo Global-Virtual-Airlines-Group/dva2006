@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -73,8 +73,8 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 
 		// Populate the search criteria from the request
-		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0),
-				StringUtils.parse(ctx.getParameter("flightLeg"), 0));
+		int leg = Math.min(Math.max(1, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
+		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0), leg);
 		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
@@ -104,7 +104,7 @@ public class FindFlightCommand extends AbstractCommand {
 		// Check for descending sort
 		boolean isDesc = Boolean.valueOf(ctx.getParameter("sortDesc")).booleanValue();
 		if (isDesc)
-			sortType = sortType + " DESC";
+			sortType += " DESC";
 
 		// Save the search criteria in the session
 		ctx.setAttribute("fafCriteria", criteria, SESSION);
