@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 2.2
  */
 
@@ -52,7 +52,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			GetNavRoute dao = new GetNavRoute(con);
 			
 			// Check if we have a SID
-			TerminalRoute sid = dao.getRoute(rp.getAirportD(), TerminalRoute.SID, ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(rp.getAirportD(), TerminalRoute.SID, ctx.getParameter("sid"), true);
 			if (sid != null) {
 				rp.setSID(sid.getCode());
 				for (NavigationDataBean nd : sid.getWaypoints())
@@ -67,7 +67,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			}
 			
 			// Check if we have a STAR
-			TerminalRoute star = dao.getRoute(rp.getAirportA(), TerminalRoute.STAR, ctx.getParameter("star"));
+			TerminalRoute star = dao.getRoute(rp.getAirportA(), TerminalRoute.STAR, ctx.getParameter("star"), true);
 			if (star != null) {
 				rp.setSTAR(star.getCode());
 				for (NavigationDataBean nd : star.getWaypoints())
