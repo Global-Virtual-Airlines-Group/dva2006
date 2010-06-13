@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -80,8 +80,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 		
 		// Determine if we are editing the last post
 		boolean doEdit = Boolean.valueOf(ctx.getParameter("doEdit")).booleanValue();
-
-		Collection<Person> notifyList = new LinkedHashSet<Person>();
+		Map<UserData, Person> notifyList = new LinkedHashMap<UserData, Person>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -124,11 +123,17 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 				// Get the users to notify
 				UserDataMap udm = uddao.get(nt.getIDs());
-				notifyList.addAll(pdao.get(udm).values());
+				Map<Integer, Pilot> pilots = pdao.get(udm);
+				for (Iterator<Map.Entry<Integer, Pilot>> i = pilots.entrySet().iterator(); i.hasNext(); ) {
+					Map.Entry<Integer, Pilot> me = i.next();
+					UserData ud = udm.get(me.getKey());
+					if (ud != null)
+						notifyList.put(ud, me.getValue());
+				}
 
 				// Filter out users who can no longer read this thread
 				MultiUserSecurityContext sctx = new MultiUserSecurityContext(ctx);
-				for (Iterator<Person> i = notifyList.iterator(); i.hasNext();) {
+				for (Iterator<Person> i = notifyList.values().iterator(); i.hasNext();) {
 					Person usr = i.next();
 					sctx.setUser(usr);
 
@@ -152,10 +157,8 @@ public class ThreadReplyCommand extends AbstractCommand {
 			// Start the transaction
 			ctx.startTX();
 			
-			// Get the DAO
-			SetCoolerMessage wdao = new SetCoolerMessage(con);
-
 			// Add the response to the thread
+			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			if (!StringUtils.isEmpty(msg.getBody())) {
 				if (doEdit) {
 					ctx.setAttribute("isEdit", Boolean.TRUE, REQUEST);
@@ -190,7 +193,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 			}
 
 			// Add thread and save
-			threadIDs.put(new Integer(mt.getID()), new Date());
+			threadIDs.put(Integer.valueOf(mt.getID()), new Date());
 
 			// Save thread data
 			mctxt.addData("thread", mt);
@@ -207,9 +210,15 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 		// Send the notification messages
 		if (!notifyList.isEmpty()) {
-			Mailer mailer = new Mailer(null);
-			mailer.setContext(mctxt);
-			mailer.send(notifyList);
+			for (Iterator<Map.Entry<UserData, Person>> i = notifyList.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<UserData, Person> me = i.next();
+			
+				// Create the mailer
+				Mailer mailer = new Mailer(null);
+				mctxt.addData("url", "http://" + me.getKey().getDomain() + "/");
+				mailer.setContext(mctxt);
+				mailer.send(me.getValue());
+			}
 
 			// Save notification message count
 			ctx.setAttribute("notifyMsgs", Integer.valueOf(notifyList.size()), REQUEST);
