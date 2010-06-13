@@ -25,21 +25,13 @@
 <content:region id="main">
 <div class="updateHdr">Duplicate Registration Address</div>
 <br />
-Your IP Address ( <b>${pageContext.request.remoteAddr}</b> ) has been used within the past <fmt:int value="${addrInterval}" /> 
-days to register at the <content:airline /> web site, and the previous application is Pending or has already 
-been Approved. You cannot register again from this IP address.<br />
+Your IP Address ( <span class="sec bld">${pageContext.request.remoteAddr}</span> ) has been used within the past <fmt:int value="${addrInterval}" /> 
+days to register at the <content:airline /> web site, and the previous application is Pending or has already been Approved. You cannot register 
+again from this IP address.<br />
 <br />
-<span class="pri bld">If you are a former <content:airline /> Pilot who has been marked Retired or Inactive, 
-you do NOT need to register again.</span> To reactivate your membership at <content:airline />, please
-<el:cmd url="register" op="dupe" className="sec bld">Click Here</el:cmd>.<br />
+<span class="pri bld">If you are a former <content:airline /> Pilot who has been marked Retired or Inactive, you do NOT need to register again.</span><br />
 <br />
-
-<!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
-<tr>
- <td><el:cmdbutton ID="HomeButton" url="home" label="${airlineName} HOME PAGE" /></td>
-</tr>
-</el:table>
+To reactivate your membership at <content:airline />, please <el:cmd url="register" op="dupe" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
