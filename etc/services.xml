@@ -41,6 +41,7 @@
 	<service id="pilotmapclear" class="org.deltava.service.PilotLocationClearService" />
 	<service id="net_ids" class="org.deltava.service.OnlineIDService" />
 	<service id="id" class="org.deltava.service.DatabaseIDService" />
+	<service id="dupename" class="org.deltava.service.DuplicateNameService" />
 
 	<!-- Examination Services -->
 	<service id="answer" class="org.deltava.service.exam.TextService" />

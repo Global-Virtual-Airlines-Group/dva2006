@@ -48,10 +48,65 @@ setSubmit();
 disableButton('SaveButton');
 return true;
 }
+
+function checkUnique()
+{
+var f = document.forms[0];
+var fN = f.firstName.value;
+var lN = f.lastName.value;
+var eMail = f.email.value;
+if ((fN.length < 2) || (lN.length < 2)) return false;
+	
+// Create the AJAX request
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + eMail);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var dupes = (parseInt(xmlreq.responseText) > 0);
+	var rows = getElementsByClass('dupeFound');
+	for (var x = 0; x < rows.length; x++) {
+		displayObject(rows[x], dupes);
+		rows[x].focus();
+	}
+
+	// Disable form elements
+	for (var x = 0; x < f.elements.length; x++)
+		f.elements[x].disabled = true;
+
+	return true;
+}
+
+xmlreq.send(null);
+return true;
+}
+
+function resetUniqueCheck()
+{
+var rows = getElementsByClass('dupeFound');
+for (var x = 0; x < rows.length; x++)
+	displayObject(rows[x], false);
+
+var f = document.forms[0];
+for (var x = 0; x < f.elements.length; x++)
+	f.elements[x].disabled = false;
+
+return true;
+}
+
+function sendDupeInfo()
+{
+var f = document.forms[0];
+var fN = f.firstName.value;
+var lN = f.lastName.value;
+var eMail = f.email.value;
+var loc = '/register.do?op=dupe&firstName=' + fN + '&lastName=' + lN + '&email=' + eMail;
+self.location = loc;
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void resetUniqueCheck()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -61,17 +116,17 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="register.do" method="POST" validate="return validate(this)">
+<el:form action="register.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <c:if test="${!empty manuals}">
 <tr class="title caps">
  <td colspan="4">THANK YOU FOR YOUR INTEREST IN <content:airline />!</td>
 </tr>
 <tr>
- <td colspan="4" class="pri bld">You'll find that <content:airline /> is one of the friendliest and most sophisticated virtual airlines on the Internet
- today. Many aspects of our operations are significantly different from other virtual airlines, specifically in promotions, ratings and what flights are
- credited for hours. Please take a few moments to download and review some of our manuals to help determine if <content:airline /> is the right
- virtual airline for you.</td>
+ <td colspan="4" class="pri bld">You'll find that <content:airline /> is one of the largest yet friendliest and most sophisticated virtual airlines
+ on the Internet. Many aspects of our operations are significantly different from other virtual airlines, specifically in promotions, ratings and 
+ what flights are credited for hours. Please take a few moments to download and review some of our manuals to help determine if <content:airline />
+ is the right virtual airline for you.</td>
 </tr>
 
 <!-- Table Header Bar -->
@@ -97,8 +152,17 @@ return true;
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data" colspan="${cspan}"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" /></td>
+ <td class="data" colspan="${cspan}"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${param.firstName}" onBlur="void checkUnique()" />
+&nbsp;<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" onBlur="void checkUnique()" /></td>
+</tr>
+<tr class="dupeFound" style="display:none;">
+ <td colspan="2" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
+ already registered with us,<br />
+you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br />
+<br />
+<a href="javascript:void sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br />
+<br />
+<a href="javascript:void resetUniqueCheck()" class="sec">I've never registered with <content:airline /> before.</a></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
@@ -132,11 +196,8 @@ return true;
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data" colspan="${cspan}"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" /> 
-<span class="small"><i>Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</i></span>
-<c:if test="${notUnique}"><div class="small error">Another <content:airline /> Pilot or Applicant is currently registed with 
-this e-mail address.</div></c:if>
- </td>
+ <td class="data" colspan="${cspan}"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" onBlur="void checkUnique()" /> 
+<span class="small"><i>Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</i></span></td>
 </tr>
 <tr>
  <td class="label top">E-Mail Notifications</td>

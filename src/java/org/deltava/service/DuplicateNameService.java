@@ -1,0 +1,103 @@
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.service;
+
+import static javax.servlet.http.HttpServletResponse.*;
+
+import java.util.*;
+import java.io.IOException;
+import java.sql.Connection;
+
+import org.deltava.beans.Person;
+import org.deltava.beans.system.AirlineInformation;
+
+import org.deltava.dao.*;
+
+import org.deltava.util.StringUtils;
+
+/**
+ * A Web Service to check for duplicate pilot names.
+ * @author Luke
+ * @version 3.1
+ * @since 3.1
+ */
+
+public class DuplicateNameService extends WebService {
+
+	private class DupeUser extends Person {
+		
+		DupeUser(String fName, String lName) {
+			super(fName, lName);
+		}
+		
+		public String getStatusName() {
+			return "Invalid";
+		}
+		
+		public void addRole(String role) {
+			// empty;
+		}
+		
+		public boolean isInRole(String roleName) {
+			return false;
+		}
+		
+		public Collection<String> getRoles() {
+			return Collections.emptySet();
+		}
+		
+		public String getRowClassName() {
+			return null;
+		}
+	}
+	
+	/**
+	 * Executes the Web Service, returning Pilot names and IDs.
+	 * @param ctx the Web Service context
+	 * @return the HTTP status code
+	 * @throws ServiceException if an error occurs
+	 */
+	@Override
+	public int execute(ServiceContext ctx) throws ServiceException {
+		
+		// Get the name
+		String fName = ctx.getParameter("fName");
+		String lName = ctx.getParameter("lName");
+		if (StringUtils.isEmpty(fName) || StringUtils.isEmpty(lName))
+			return SC_NO_CONTENT;
+		
+		// Check if it's a duplicate
+		Collection<Integer> dupeResults = new HashSet<Integer>();
+		DupeUser usr = new DupeUser(fName, lName);
+		usr.setEmail(ctx.getParameter("eMail"));
+		try {
+			Connection con = ctx.getConnection();
+			GetUserData uddao = new GetUserData(con);
+			Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
+
+			// Check for unique name
+			GetApplicant adao = new GetApplicant(con);
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
+				AirlineInformation info = i.next();
+
+				// Check Pilots & Applicants
+				dupeResults.addAll(pdao.checkUnique(usr, info.getDB()));
+				dupeResults.addAll(adao.checkUnique(usr, info.getDB()));
+			}
+		} catch (DAOException de) {
+			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
+		}
+		
+		try {
+			ctx.getResponse().setContentType("text/plain");
+			ctx.println(String.valueOf(dupeResults.size()));
+			ctx.commit();
+		} catch (IOException ie) {
+			throw new ServiceException(SC_CONFLICT, "I/O Error");
+		}
+		
+		return SC_OK;
+	}
+}
