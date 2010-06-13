@@ -17,7 +17,7 @@
  <fmt:int value="${acarsBW.bytesOut}" /> bytes (<fmt:dec value="${acarsBW.bytesOut / 60}" /> bytes/sec) out.
  <fmt:int value="${acarsBW.msgsIn}" /> msgs (<fmt:dec value="${acarsBW.msgsIn / 60}" /> msgs/sec) in,
  <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.
-<c:if test="${acarsBW.writeErrors > 0}"><span class="error bld"><fmt:int value="${acarsBW.writeErrors}" /> errors.</span></c:if></td>
+<c:if test="${acarsBW.errors > 0}"><span class="error bld"><fmt:int value="${acarsBW.errors}" /> errors.</span></c:if></td>
 </tr>
 <tr>
  <td class="label top">Bandwidth Graph</td>
