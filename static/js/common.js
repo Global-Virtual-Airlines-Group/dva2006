@@ -128,12 +128,17 @@ return true;
 function cmdPost(url)
 {
 var form = document.forms[0];
+form.oldaction = form.action;
 form.action = url;
  
 // Execute the form validation - if any
 if (form.onsubmit) {
 	var submitOK = form.onsubmit();
-	if (!submitOK) return false;
+	if (!submitOK) {
+		form.action = form.oldaction;
+		delete form.oldaction;
+		return false;
+	}
 }
   
 setSubmit();
