@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.Date;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class LeaveCommand extends AbstractCommand {
 
 			// Update the Pilot's status
 			SetPilot wdao = new SetPilot(con);
-			wdao.onLeave(p.getID());
+			wdao.setStatus(p.getID(), Pilot.ON_LEAVE);
 			p.setStatus(Pilot.ON_LEAVE);
 			
 			// Add an inactivity table entry
