@@ -1,23 +1,22 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.comparators.PilotComparator;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search for duplicate Pilots.
  * @author Luke
- * @version 1.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -72,17 +71,28 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 		}
 
 		// Build the possible IDs
+		Collection<ComboAlias> pilotInfo = new LinkedHashSet<ComboAlias>(); 
 		Collection<String> pilotIDs = new LinkedHashSet<String>();
 		for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
 			Pilot usr = i.next();
-			if (!StringUtils.isEmpty(usr.getPilotCode()))
+			StringBuilder buf = new StringBuilder(usr.getName());
+			if (!StringUtils.isEmpty(usr.getPilotCode())) {
 				pilotIDs.add(usr.getPilotCode());
+				buf.append(" [ ");
+				buf.append(usr.getPilotCode());
+				buf.append(" ] ");
+			}
+
+			// Add the name option
+			String joinDate = StringUtils.format(usr.getCreatedOn(), ctx.getUser().getDateFormat());
+			pilotInfo.add(ComboUtils.fromString(buf.toString() +" (joined on " +  joinDate + ")", usr.getHexID()));
 		}
 
 		// Save the results in the request
 		ctx.setAttribute("results", results, REQUEST);
 		ctx.setAttribute("pilotCodes", pilotIDs, REQUEST);
-		ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
+		ctx.setAttribute("pilotChoices", pilotInfo, REQUEST);
+		ctx.setAttribute("maxResults", Integer.valueOf(maxResults), REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/roster/dupeSearch.jsp");

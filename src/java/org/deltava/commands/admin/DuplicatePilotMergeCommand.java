@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 2.3
+ * @version 3.1
  * @since 1.0
  */
 
@@ -40,6 +40,11 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 		// Create the messaging context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
+		
+		// Check if we're merging exams and flights
+		boolean mergeFlights = Boolean.valueOf(ctx.getParameter("mergeFlights")).booleanValue();
+		boolean mergeExams = Boolean.valueOf(ctx.getParameter("mergeExams")).booleanValue();
+		boolean mergeCRs = Boolean.valueOf(ctx.getParameter("mergeCRs")).booleanValue();
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -80,7 +85,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			ctx.startTX();
 			
 			// Get the roles
-			Collection<String> newRoles = new HashSet<String>(usr.getRoles());
+			Collection<String> newRoles = new TreeSet<String>(usr.getRoles());
 			
 			// Get the write DAOs
 			SetPilot pwdao = new SetPilot(con);
@@ -99,9 +104,42 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					su.setAuthorID(ctx.getUser().getID());
 					su.setDescription("Merged into " + usr.getName() + " (" + usr.getPilotCode() + ")");
 					sUpdates.add(su);
+					
+					// Merge flights
+					if (mergeFlights) {
+						int flightsMerged = mgdao.mergeFlights(p, usr);
+						if (flightsMerged > 0) {
+							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su.setAuthorID(ctx.getUser().getID());
+							su.setDescription("Merged " + flightsMerged + " Flights from " + p.getName() + " (" + p.getPilotCode() + ")");
+							sUpdates.add(su);
+						}
+					}
+					
+					// Merge exams
+					if (mergeExams) {
+						int examsMerged = mgdao.mergeExams(p, usr);
+						if (examsMerged > 0) {
+							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su.setAuthorID(ctx.getUser().getID());
+							su.setDescription("Merged " + examsMerged + " Examinations from " + p.getName() + " (" + p.getPilotCode() + ")");
+							sUpdates.add(su);
+						}
+					}
+					
+					// Merge check rides
+					if (mergeCRs) {
+						int ridesMerged = mgdao.mergeCheckRides(p, usr);
+						if (ridesMerged > 0) {
+							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su.setAuthorID(ctx.getUser().getID());
+							su.setDescription("Merged " + ridesMerged + " Check Rides from " + p.getName() + " (" + p.getPilotCode() + ")");
+							sUpdates.add(su);
+						}
+					}
 
 					// Migrate the data
-					mgdao.merge(p, usr);
+					mgdao.setStatus(p.getID(), Pilot.RETIRED);
 					oldNames.add(p.getName());
 				}
 				
@@ -161,6 +199,10 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("PWDRESET"));
+				
+				// Write the inactivity entry
+				SetInactivity iwdao = new SetInactivity(con);
+				iwdao.setInactivity(usr.getID(), 3, true);
 				
 				// Send a notification message
 				Mailer mailer = new Mailer(ctx.getUser());

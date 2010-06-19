@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to support writing Pilot object(s) to the database. This DAO contains helper methods that other
  * DAOs which write to the PILOTS table may access.
  * @author Luke
- * @version 1.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -104,5 +104,22 @@ public abstract class PilotWriteDAO extends PilotDAO {
 			_ps.setString(2, uid);
 		
 		executeUpdate(0);
+	}
+	
+	/**
+	 * Updates a Pilots' status in the database.
+	 * @param id the pilot database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setStatus(int id, int status) throws DAOException {
+		invalidate(id);
+		try {
+			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
+			_ps.setInt(1, status);
+			_ps.setInt(2, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }

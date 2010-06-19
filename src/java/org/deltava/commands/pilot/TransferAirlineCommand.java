@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -22,7 +22,8 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
- * @version 1.0
+ * @author Luke
+ * @version 3.1
  * @since 1.0
  */
 
@@ -154,7 +155,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 			// Change status at old airline to Transferred
 			p.setStatus(Pilot.TRANSFERRED);
-			wdao.setTransferred(p.getID());
+			wdao.setStatus(p.getID(), Pilot.TRANSFERRED);
 
 			// Save the new user
 			newUser.setStatus(Pilot.ACTIVE);
