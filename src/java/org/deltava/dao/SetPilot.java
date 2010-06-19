@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -33,23 +33,6 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public static void invalidate(int userID) {
 		PilotDAO.invalidate(userID);
-	}
-
-	/**
-	 * Marks a Pilot as &quot;On Leave&quot;.
-	 * @param id the Pilot database ID
-	 * @throws DAOException if a JDBC erorr occurs
-	 */
-	public void onLeave(int id) throws DAOException {
-		invalidate(id);
-		try {
-			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
-			_ps.setInt(1, Pilot.ON_LEAVE);
-			_ps.setInt(2, id);
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 
 	/**
@@ -80,7 +63,7 @@ public class SetPilot extends PilotWriteDAO {
 				+ "NOCOOLER=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
 
 		// Invalidate the cache entry
-		invalidate(p.getID());
+		PilotDAO.invalidate(p.getID());
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -197,7 +180,7 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void assignID(Pilot p, String db) throws DAOException {
-		invalidate(p.getID());
+		PilotDAO.invalidate(p.getID());
 		try {
 			startTransaction();
 			
@@ -229,7 +212,7 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void addRatings(Pilot p, Collection<String> ratings) throws DAOException {
-		invalidate(p.getID());
+		PilotDAO.invalidate(p.getID());
 		try {
 			writeRatings(p.getID(), ratings, SystemData.get("airline.db"), false);
 		} catch (SQLException se) {

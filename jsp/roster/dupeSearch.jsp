@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Duplicate Pilot Search</title>
@@ -19,17 +20,24 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 
-hasFirst = (form.firstName.value.length > 2) || (form.firstName2.value.length > 2);
-hasLast = (form.lastName.value.length > 2) || (form.lastName2.value.length > 2);
-if (hasFirst || hasLast) {
-	setSubmit();
-	disableButton('SearchButton');
-	return true;
+var act = form.action;
+if (act.indexOf('dupemerge.do') != -1) {
+	if (!validateCombo(form.id, 'Pilot to merge into')) return false;
+	if (!validateCombo(form.code, 'new Pilot Code')) return false;
+} else {
+	var hasFirst = (form.firstName.value.length > 2) || (form.firstName2.value.length > 2);
+	var hasLast = (form.lastName.value.length > 2) || (form.lastName2.value.length > 2);
+	if (!hasFirst && !hasLast) {
+		alert('Please provide at least one First or Last Name.');	
+		form.firstName.focus();	
+		return false;
+	}
 }
-	
-alert('Please provide at least one First or Last Name.');
-form.firstName.focus();
-return false;
+
+setSubmit();
+disableButton('SearchButton');
+disableButton('MergeButton');
+return true;
 }
 </script>
 </head>
@@ -94,7 +102,7 @@ return false;
  <td width="10%">&nbsp;</td>
  <td width="10%">PILOT ID</td>
  <td width="25%">PILOT NAME</td>
- <td width="15%">RANK</td>
+ <td width="20%">RANK</td>
  <td width="10%">JOINED ON</td>
  <td>FLIGHTS / HOURS</td>
 </tr>
@@ -119,14 +127,36 @@ return false;
 
 <!-- Table Legend Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" />
- MERGE INTO <el:combo name="id" idx="*" size="1" firstEntry="-" options="${results}" /> WITH
- PILOT CODE <el:combo name="code" idx="*" size="1" firstEntry="-" options="${pilotCodes}" />
- <el:cmdbutton url="dupemerge" post="true" label="MERGE" /></td>
+ <td colspan="6"><view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
 </view:table>
+<c:if test="${fn:sizeof(results) > 1}">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="2">MERGE SELECTED PILOTS</td>
+</tr>
+<tr>
+ <td class="label">Merge selected Pilots</td>
+ <td class="data">into <el:combo name="id" idx="*" size="1" firstEntry="-" options="${pilotChoices}" /> 
+ using Pilot Code <el:combo name="code" idx="*" size="1" firstEntry="-" options="${pilotCodes}" /></td>
+</tr>
+<tr>
+ <td class="label top">Merge Options</td>
+ <td class="data"><el:box name="mergeFlights" value="true" checked="true" label="Merge Flight Reports" /><br />
+<el:box name="mergeExams" value="true" checked="true" label="Merge Examinations" /><br />
+<el:box name="mergeCRs" value="true" checked="true" label="Merge Check Rides" /></td>
+</tr>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><el:cmdbutton ID="MergeButton" url="dupemerge" post="true" label="MERGE PILOTS" /></td>
+</tr>
+</el:table>
+</c:if>
 </c:if>
 </el:form>
 <br />
