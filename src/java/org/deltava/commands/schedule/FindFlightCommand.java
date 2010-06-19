@@ -73,7 +73,7 @@ public class FindFlightCommand extends AbstractCommand {
 		}
 
 		// Populate the search criteria from the request
-		int leg = Math.min(Math.max(1, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
+		int leg = Math.min(Math.max(0, StringUtils.parse(ctx.getParameter("flightLeg"), 0)), 8);
 		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0), leg);
 		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
