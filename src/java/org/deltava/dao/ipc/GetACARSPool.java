@@ -16,7 +16,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Data Access Object to cache IPC calls for ACARS Connection Pool data. 
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 2.3
  */
 
@@ -85,7 +85,7 @@ public class GetACARSPool implements CachingDAO {
 	private synchronized void reload() throws IllegalStateException {
 		
 		// Get the connection pool
-		ACARSAdminInfo<ACARSMapEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		ACARSAdminInfo<ACARSMapEntry> acarsPool = (ACARSAdminInfo<ACARSMapEntry>) SharedData.get(SharedData.ACARS_POOL);
 		if (acarsPool == null)
 			throw new IllegalStateException("No ACARS Connection Pool");
 

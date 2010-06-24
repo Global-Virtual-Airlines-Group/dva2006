@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 2.5
+ * @version 3.1
  * @since 1.0
  */
 
@@ -113,7 +113,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			boolean addImage = Boolean.valueOf(ctx.getParameter("addImage")).booleanValue();
 			if (addImage) {
 				@SuppressWarnings("unchecked")
-				Collection<LinkedImage> imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
+				Collection<LinkedImage> imgURLs = (Collection<LinkedImage>) ctx.getRequest().getSession().getAttribute("imageURLs");
 				if (imgURLs == null) {
 					imgURLs = new LinkedHashSet<LinkedImage>();
 					ctx.setAttribute("imageURLs", imgURLs, SESSION);

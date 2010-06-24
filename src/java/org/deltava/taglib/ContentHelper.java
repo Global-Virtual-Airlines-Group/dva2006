@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Helper class to check whether content has been aded into this request.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -33,9 +33,9 @@ public class ContentHelper {
 	public static void addContent(PageContext ctx, String contentType, String contentName) {
 
 		// Find the content name map
-		Set content = (Set) ctx.findAttribute(CONTENT_MAP_ATTR);
+		Set<String> content = (Set<String>) ctx.findAttribute(CONTENT_MAP_ATTR);
 		if (content == null) {
-			content = new HashSet();
+			content = new HashSet<String>();
 			ctx.setAttribute(CONTENT_MAP_ATTR, content, PageContext.PAGE_SCOPE);
 		}
 

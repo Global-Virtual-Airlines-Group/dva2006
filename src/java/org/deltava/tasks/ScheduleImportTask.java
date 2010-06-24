@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -71,8 +71,8 @@ public class ScheduleImportTask extends Task {
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setEffectiveDate(CalendarUtils.getInstance(null, true).getTime());
-			dao.setMainlineCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
-			dao.setCodeshareCodes((List) SystemData.getObject("schedule.innovata.codeshare_codes"));
+			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setCodeshareCodes((List<String>) SystemData.getObject("schedule.innovata.codeshare_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
 			dao.setBufferSize(131072);

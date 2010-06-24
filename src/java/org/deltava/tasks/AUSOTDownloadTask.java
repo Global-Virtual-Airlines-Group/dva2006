@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download AUSOT data.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 2.7
  */
 
@@ -86,7 +86,7 @@ public class AUSOTDownloadTask extends Task {
 				GeoLocation lastLoc = new GeoPosition(-26, 133);
 				for (Iterator<String> wi = e.getValue().iterator(); wi.hasNext(); ) {
 					String code = wi.next();
-					NavigationDataBean ndb = (lastLoc == null) ? ndmap.get(code) : ndmap.get(code, lastLoc);
+					NavigationDataBean ndb = ndmap.get(code, lastLoc);
 					if (ndb != null) {
 						NavigationDataBean nd = NavigationDataBean.create(ndb.getType(), ndb.getLatitude(), ndb.getLongitude());
 						nd.setCode(ndb.getCode());

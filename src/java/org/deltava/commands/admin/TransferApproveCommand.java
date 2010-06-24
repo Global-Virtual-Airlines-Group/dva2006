@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -96,7 +96,7 @@ public class TransferApproveCommand extends AbstractCommand {
 
 				// Check if we're doing a promotion or a rating change
 				@SuppressWarnings("unchecked")
-				RankComparator rCmp = new RankComparator((List) SystemData.getObject("ranks"));
+				RankComparator rCmp = new RankComparator((List<String>) SystemData.getObject("ranks"));
 				rCmp.setRank2(usr.getRank(), currentEQ.getStage());
 				rCmp.setRank1(rank, newEQ.getStage());
 				boolean eqChange = !usr.getEquipmentType().equals(newEQ.getName());
