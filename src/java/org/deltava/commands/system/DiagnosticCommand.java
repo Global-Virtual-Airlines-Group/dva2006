@@ -41,7 +41,6 @@ public class DiagnosticCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
-	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get system uptime and load average if running on Linux
@@ -71,7 +70,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		// Get ACARS server data
 		if (SystemData.getBoolean("acars.enabled") && SharedData.getApplications().contains("ACARS")) {
 			// Get the ACARS Connection pool data and save in the request
-			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+			ACARSAdminInfo<?> acarsPool = (ACARSAdminInfo<?>) SharedData.get(SharedData.ACARS_POOL);
 			ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(true)), REQUEST);
 
 			// Get the acars worker info data and save in the request

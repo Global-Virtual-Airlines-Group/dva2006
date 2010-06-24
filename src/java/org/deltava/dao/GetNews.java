@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to read System News entries.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -113,7 +113,6 @@ public class GetNews extends DAO {
 	/**
 	 * Helper method to iterate through the result set.
 	 */
-	@SuppressWarnings("unchecked")
 	private List<? extends News> execute() throws SQLException {
 
 		// Execute the query
@@ -121,7 +120,7 @@ public class GetNews extends DAO {
 		boolean isNOTAM = (rs.getMetaData().getColumnCount() > 7);
 
 		// Iterate through the results
-		List<News> results = new ArrayList();
+		List<News> results = new ArrayList<News>();
 		while (rs.next()) {
 			String authorName = rs.getString(1) + " " + rs.getString(2);
 
