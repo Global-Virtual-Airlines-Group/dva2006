@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.system.AirlineInformation;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -195,7 +195,7 @@ public final class SystemData implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Airport> getAirports() {
-		return (Map) getObject("airports");
+		return (Map<String, Airport>) getObject("airports");
 	}
 	
 	/**

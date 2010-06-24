@@ -54,7 +54,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Load JDBC properties
 		Properties p = new Properties();
-		p.putAll((Map) SystemData.getObject("jdbc.connectProperties"));
+		p.putAll((Map<String, String>) SystemData.getObject("jdbc.connectProperties"));
 		p.setProperty("user", SystemData.get("jdbc.user"));
 		p.setProperty("password", SystemData.get("jdbc.pwd"));
 

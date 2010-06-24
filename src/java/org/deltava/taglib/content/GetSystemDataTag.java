@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to stuff data from the SystemData singleton into the request.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -90,11 +90,11 @@ public class GetSystemDataTag extends TagSupport {
 	    
 	    // If the object is a map and MapValues is selected, get the values object
 	    if ((obj instanceof Map) && _doMapToList)
-	        obj = new LinkedHashSet(((Map) obj).values());
+	        obj = new LinkedHashSet<Object>(((Map<?, ?>) obj).values());
 	    
 	    // If we're a collection and Sort is selected, sort it
 	    if ((obj instanceof Collection) && _doSort) {
-	        List tmpResults = new ArrayList((Collection) obj);
+	        List<Comparable<? super Object>> tmpResults = new ArrayList<Comparable<? super Object>>((Collection<Comparable<? super Object>>) obj);
 	        Collections.sort(tmpResults);
 	        obj = tmpResults;
 	    }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to download and import Innovata LLC schedule data.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -70,8 +70,8 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			dao.setEffectiveDate(CalendarUtils.getInstance(null, true).getTime());
 			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(adao.getActive().values());
-			dao.setMainlineCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
-			dao.setCodeshareCodes((List) SystemData.getObject("schedule.innovata.codeshare_codes"));
+			dao.setMainlineCodes((List<String>) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setCodeshareCodes((List<String>) SystemData.getObject("schedule.innovata.codeshare_codes"));
 			dao.setBufferSize(131072);
 			ctx.release();
 

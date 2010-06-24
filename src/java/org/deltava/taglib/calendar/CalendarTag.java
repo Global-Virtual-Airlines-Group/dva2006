@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 2.2
+ * @version 3.1
  * @since 1.0
  */
 
@@ -142,6 +142,10 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		_contentClass = cName;
 	}
 	
+	/**
+	 * Sets the CSS class name for the forwad/backward scroll links.
+	 * @param cName the CSS class name
+	 */
 	public void setScrollClass(String cName) {
 		_scrollRowClass = cName;
 	}
@@ -162,6 +166,10 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		_showDaysOfWeek = showDOW;
 	}
 	
+	/**
+	 * Sets whether to display the forward/backward scroll tags.
+	 * @param showScroll TRUE if forward/back links are displayed, otherwise FALSE
+	 */
 	public void setScrollTags(boolean showScroll) {
 		_showScrollTags = showScroll;
 	}
@@ -330,7 +338,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 			return EVAL_PAGE;
 		
     	// Get the URL parameters
-        Map params = new HashMap(pageContext.getRequest().getParameterMap());
+        Map<String, Object> params = new HashMap<String, Object>(pageContext.getRequest().getParameterMap());
         params.keySet().removeAll(RESERVED_PARAMS);
         
         // Calculate the next page startDate
