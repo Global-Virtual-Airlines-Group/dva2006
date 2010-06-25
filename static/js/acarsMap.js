@@ -226,7 +226,7 @@ xreq.onreadystatechange = function() {
 		} // for
 
 		gaEvent('ACARS', 'Flight Route Info', marker.flight_id);
-		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7);
+		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7, { geodesic:true });
 		map.addOverlay(routeWaypoints);
 	}
 
