@@ -7,6 +7,7 @@ import org.deltava.beans.*;
 import org.deltava.util.cache.Cacheable;
 
 import org.deltava.util.GeoUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A bean to store aggregated network information.
@@ -164,7 +165,7 @@ public class NetworkInfo implements Cacheable {
     public void setPilotIDs(Map<String, Integer> idMap) {
     	
     	// Mash pilots + controllers together
-    	Set<NetworkUser> users = new HashSet<NetworkUser>(_pilots.values());
+    	Collection<NetworkUser> users = new HashSet<NetworkUser>(_pilots.values());
     	users.addAll(_controllers.values());
     	
     	// Assign database IDs to active Pilots
@@ -185,11 +186,7 @@ public class NetworkInfo implements Cacheable {
      * @see NetworkInfo#getVersion()
      */
     public void setVersion(String version) {
-        try {
-            _version = Integer.parseInt(version);
-        } catch (NumberFormatException nfe) {
-            _version = 7;
-        }
+    	_version = StringUtils.parse(version, 7);
     }
     
     /**
@@ -253,6 +250,19 @@ public class NetworkInfo implements Cacheable {
 	 */
     public void setExpired() {
     	_isExpired = true;
+    }
+    
+    /**
+     * Clones this NetworkInfo bean.
+     */
+    public NetworkInfo clone() {
+    	NetworkInfo ni2 = new NetworkInfo(_net);
+    	ni2._version = _version;
+    	ni2._isExpired = _isExpired;
+    	ni2._validDate = new Date(_validDate.getTime());
+    	ni2._pilots.putAll(_pilots);
+    	ni2._controllers.putAll(_controllers);
+    	return ni2;
     }
     
     /**

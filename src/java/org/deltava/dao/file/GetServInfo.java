@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -78,6 +78,7 @@ public class GetServInfo extends DAO {
 		public static final int DEP_LON = 32;
 		public static final int ARR_LAT = 33;
 		public static final int ARR_LON = 34;
+		public static final int HDG = 38;
 
 		private final List<String> _tkns = new ArrayList<String>();
 
@@ -149,7 +150,7 @@ public class GetServInfo extends DAO {
 		// Get from the cache if possible
 		NetworkInfo info = _infoCache.get(network);
 		if (info != null)
-			return info;
+			return info.clone();
 		
 		try {
 			LineNumberReader br = getReader();
@@ -235,8 +236,9 @@ public class GetServInfo extends DAO {
 										p.setAirportA(getAirport(si.get(SITokens.AIRPORT_A)));
 										p.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
 										p.setEquipmentCode(si.get(SITokens.EQCODE));
-										p.setAltitude(si.get(SITokens.ALT));
-										p.setGroundSpeed(si.get(SITokens.GSPEED));
+										p.setAltitude(StringUtils.parse(si.get(SITokens.ALT), 0));
+										p.setHeading(StringUtils.parse(si.get(SITokens.HDG), 0));
+										p.setGroundSpeed(StringUtils.parse(si.get(SITokens.GSPEED), 0));
 										p.setWayPoints(si.get(SITokens.ROUTE));
 
 										// Set departure airport position if unknown
