@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -94,7 +94,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				throw securityException("Cannot dispose of Flight Report #" + fr.getID());
 			
 			// Load the comments
-			Collection<String> comments = new ArrayList<String>();
+			Collection<String> comments = new LinkedHashSet<String>();
 			if (ctx.getParameter("dComments") != null)
 				comments.add(ctx.getParameter("dComments"));
 			
@@ -123,7 +123,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					if (!promoOK) {
 						i.remove();
 						if (!StringUtils.isEmpty(helper.getLastComment()))
-							comments.add(helper.getLastComment());
+							comments.add("Not eligible for promotion: " + helper.getLastComment());
 					}
 				}
 				
@@ -135,8 +135,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				fr.setCaptEQType(new HashSet<String>());
 			
 			// Check if the pilot is rated in the equipment type
-			@SuppressWarnings("unchecked")
-			boolean isRated = CollectionUtils.merge(p.getRatings(), eq.getRatings()).contains(fr.getEquipmentType());
+			Collection<String> allRatings = new HashSet<String>(p.getRatings());
+			allRatings.addAll(eq.getRatings());
+			boolean isRated = allRatings.contains(fr.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			if (fr.hasAttribute(FlightReport.ATTR_NOTRATED) != !isRated) {
 				log.warn("Updating NotRated flag for " + p.getName() + ", eq="  + fr.getEquipmentType() + " ratings = " + p.getRatings());
