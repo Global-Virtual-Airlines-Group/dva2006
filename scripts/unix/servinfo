@@ -1,6 +1,6 @@
 #!/bin/bash
 # ServInfo download script
-# (c) 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set the file to download to
 if [ -z "$2" ]; then
@@ -72,7 +72,7 @@ RandomLine=$((1 + ($UpperBound * $RANDOM) / (32767 + 1) ))
 MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network/urls")
 URLSize=$(echo -n "$MyURL" | wc -c | sed "s/ //g")
 URLSize=`expr $URLSize "-" 1`
-MyURL=$(echo -n "$MyURL" | cut -b 0-${URLSize})
+MyURL=$(echo -n "$MyURL" | cut -b 1-${URLSize})
 FileField=$(echo -n "$MyURL" | awk -F / '{print NF}')
 InfoFile=$(echo -n "$MyURL" | cut -d / -f $FileField)
 
