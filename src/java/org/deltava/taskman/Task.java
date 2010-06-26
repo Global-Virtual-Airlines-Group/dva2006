@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -175,7 +175,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
     	// Get the interval Collection
     	Collection<Integer> intervals = _runTimes.get(intervalType);
     	if (intervals == null) {
-    		intervals = new HashSet<Integer>();
+    		intervals = new TreeSet<Integer>();
     		_runTimes.put(intervalType, intervals);
     	} else
     		intervals.clear();
@@ -183,12 +183,20 @@ public abstract class Task implements Runnable, Comparable<Task> {
     	// Split the values
     	if (ALL_TIMES.equals(values))
     		intervals.add(ANY);
-    	else {
+    	else if (values.startsWith("*/")) {
+    		int interval = StringUtils.parse(values.substring(2), 0);
+    		if (interval != 0) {
+    			for (int m = 0; m < 60; m++) {
+    				if ((m % interval) == 0)
+    					intervals.add(Integer.valueOf(m));
+    			}
+    		}
+    	} else {
     		for (Iterator<String> i = StringUtils.split(values, ",").iterator(); i.hasNext(); ) {
     			String value = i.next();
     			int v = StringUtils.parse(value, -1);
     			if (v != -1)
-    				intervals.add(new Integer(v));
+    				intervals.add(Integer.valueOf(v));
     		}
     	}
     }
