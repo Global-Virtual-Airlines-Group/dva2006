@@ -1,13 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 import java.lang.reflect.Method;
 
 /**
- * A utility class for dealing with Collections and Lists.
+ * A utility class for dealing with Collections.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -59,21 +59,6 @@ public class CollectionUtils {
 		return l1;
 	}
 	
-	/**
-	 * Merges a number of Collections, stripping out duplicate etnries.
-	 * @param entries an array of Collections
-	 * @return a Collection of the unique entries across all Collections
-	 */
-	public static <T> Collection<T> merge(Collection<T>... entries) {
-		Collection<T> results = new LinkedHashSet<T>();
-		for (int x = 0; x < entries.length; x++) {
-			Collection<T> c = entries[x];
-			results.addAll(c);
-		}
-		
-		return results;
-	}
-
 	/**
 	 * Compares two Collections and strips the values present in the other. <i>Note that this method does NOT
 	 * preserve data; the Collections are altered via this method. </i>
@@ -138,8 +123,8 @@ public class CollectionUtils {
 				if (m == null)
 					m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), (Class []) null);
 				
-				Object key = m.invoke(obj, (Object []) null);
-				results.put((K) key, obj);
+				K key = (K) m.invoke(obj, (Object []) null);
+				results.put(key, obj);
 			} catch (Exception e) {
 				// empty
 			}
