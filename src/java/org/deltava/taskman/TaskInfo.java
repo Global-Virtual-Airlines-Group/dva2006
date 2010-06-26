@@ -6,11 +6,11 @@ import java.util.*;
 /**
  * A bean to store information about a scheduled task. 
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
-public class TaskInfo implements Comparable<TaskInfo> {
+public class TaskInfo implements java.io.Serializable, Comparable<TaskInfo> {
    
    private String _id;
    private String _name;
@@ -20,7 +20,7 @@ public class TaskInfo implements Comparable<TaskInfo> {
    private int _runCount;
    private boolean _enabled;
    
-   private Map<String, Collection<Integer>> _runTimes;
+   private final Map<String, Collection<Integer>> _runTimes = new LinkedHashMap<String, Collection<Integer>>();
 
    /**
     * Initializes the Task Information bean.
@@ -38,7 +38,6 @@ public class TaskInfo implements Comparable<TaskInfo> {
       
       // Process run times
       Map<String, Collection<Integer>> runTimes = t.getRunTimes();
-      _runTimes = new LinkedHashMap<String, Collection<Integer>>();
       for (Iterator<Map.Entry<String, Collection<Integer>>> i = runTimes.entrySet().iterator(); i.hasNext(); ) {
     	  Map.Entry<String, Collection<Integer>> te = i.next();
     	  if ((te.getValue() != null) && (!te.getValue().contains(Task.ANY)))
@@ -114,9 +113,13 @@ public class TaskInfo implements Comparable<TaskInfo> {
    }
    
    /**
-    * Compares two TaskInfo beans by comparing their next execution times.
+    * Compares two TaskInfo beans by comparing their next execution times and IDs.
     */
    public int compareTo(TaskInfo ti2) {
-      return _lastStart.compareTo(ti2._lastStart);
+      int tmpResult = _lastStart.compareTo(ti2._lastStart);
+      if (tmpResult == 0)
+    	  tmpResult = _id.compareTo(ti2._id);
+      
+      return tmpResult;
    }
 }
