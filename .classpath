@@ -21,9 +21,9 @@
 	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.40.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.13-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
