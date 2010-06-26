@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,12 +8,13 @@ import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.servinfo.PositionData;
 
-import org.deltava.util.system.SystemData;
-
 /**
- * A Data Access Object to load VATSIM data tracks. 
+ * A Data Access Object to load VATSIM/IVAO data tracks. This DAO can load from the ONLINE_TRACKS table
+ * in each Airline's database, which stores track data already associated with a Flight Report. It can also load "raw" metadta
+ * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
+ * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 2.4
+ * @version 3.1
  * @since 2.4
  */
 
@@ -28,28 +29,89 @@ public class GetOnlineTrack extends DAO {
 	}
 
 	/**
-	 * Fetches track data for a Pilot, for a flight between two airports in the time preceeding a specific date/time. 
+	 * Determines whethere there is an existing raw track ID for a particular flight for a particular Pilot. 
 	 * @param pilotID the Pilot's database ID
 	 * @param aD the departure Airport
 	 * @param aA the arrival Airport
 	 * @param net the OnlineNetwork to use
 	 * @param dt the date/time to search before
-	 * @param hours the number of hours to search before
+	 * @return the track ID, or zero if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getTrackID(int pilotID, OnlineNetwork net, java.util.Date dt, Airport aD, Airport aA) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT OT.ID FROM online.TRACKS OT WHERE (OT.USER_ID=?) AND (OT.AIRPORT_D=?) AND "
+					+ "(OT.AIRPORT_A=?) AND (OT.NETWORK=?) AND (OT.CREATED_ON > DATE_SUB(?, INTERVAL ? HOUR)) "
+					+ "ORDER BY OT.ID DESC LIMIT 1");
+			_ps.setInt(1, pilotID);
+			_ps.setString(2, aD.getICAO());
+			_ps.setString(3, aA.getICAO());
+			_ps.setString(4, net.toString());
+			_ps.setTimestamp(5, createTimestamp(dt));
+			_ps.setInt(6, 18);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int id = rs.next() ? rs.getInt(1) : 0;
+			rs.close();
+			_ps.close();
+			return id;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves the filed route for a particular raw track.
+	 * @param trackID the raw track database ID
+	 * @return the route, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public String getRoute(int trackID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT ROUTE FROM online.TRACKS WHERE (ID=?) LIMIT 1");
+			_ps.setInt(1, trackID);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			String route = rs.next() ? rs.getString(1) : null;
+			rs.close();
+			_ps.close();
+			return route;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Fetches raw track data for a Pilot, for a flight between two airports in the time preceeding a specific date/time. 
+	 * @param trackID the track ID
 	 * @return a Collection of PositionData beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<PositionData> getTrack(int pilotID, OnlineNetwork net, java.util.Date dt, int hours, Airport aD, Airport aA) throws DAOException {
+	public Collection<PositionData> getRaw(int trackID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM ONLINE_TRACK WHERE (PILOT_ID=?) AND (AIRPORT_D=?) AND "
-				+ "(AIRPORT_A=?) AND (NETWORK=?) AND (PIREP_ID=0) AND (DATE > DATE_SUB(?, INTERVAL ? HOUR) "
-				+ "ORDER BY DATE");
-			_ps.setInt(1, pilotID);
-			_ps.setString(2, aD.getIATA());
-			_ps.setString(3, aA.getIATA());
-			_ps.setString(4, net.toString());
-			_ps.setTimestamp(5, createTimestamp(dt));
-			_ps.setInt(6, hours);
-			return execute();
+			prepareStatementWithoutLimits("SELECT OD.*, OT.USER_ID FROM online.TRACKS OT, online.TRACKDATA OD WHERE "
+				+ "(OT.ID=?) AND (OT.ID=OD.ID) ORDER BY OD.REPORT_TIME");
+			_ps.setInt(1, trackID);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			List<PositionData> results = new ArrayList<PositionData>();
+			while (rs.next()) {
+				PositionData pd = new PositionData(rs.getTimestamp(2));
+				pd.setFlightID(rs.getInt(1));
+				pd.setPosition(rs.getDouble(3), rs.getDouble(4), rs.getInt(5));
+				pd.setHeading(rs.getInt(6));
+				pd.setAirSpeed(rs.getInt(7));
+				pd.setPilotID(rs.getInt(8));
+				results.add(pd);
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -65,34 +127,26 @@ public class GetOnlineTrack extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM ONLINE_TRACK WHERE (PIREP_ID=?) ORDER BY DATE");
 			_ps.setInt(1, pirepID);
-			return execute();
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			List<PositionData> results = new ArrayList<PositionData>();
+			while (rs.next()) {
+				PositionData pd = new PositionData(rs.getTimestamp(3));
+				pd.setPilotID(rs.getInt(1));
+				pd.setFlightID(rs.getInt(2));
+				pd.setPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6));
+				pd.setHeading(rs.getInt(7));
+				pd.setAirSpeed(rs.getInt(8));
+				results.add(pd);
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-	}
-	
-	/**
-	 * Helper method to parse position data result sets.
-	 */
-	public List<PositionData> execute() throws SQLException {
-		
-		ResultSet rs = _ps.executeQuery();
-		List<PositionData> results = new ArrayList<PositionData>();
-		while (rs.next()) {
-			PositionData pd = new PositionData(OnlineNetwork.valueOf(rs.getString(2)), rs.getTimestamp(4));
-			pd.setPilotID(rs.getInt(1));
-			pd.setFlightID(rs.getInt(3));
-			pd.setAirportD(SystemData.getAirport(rs.getString(5)));
-			pd.setAirportA(SystemData.getAirport(rs.getString(6)));
-			pd.setPosition(rs.getDouble(7), rs.getDouble(8), rs.getInt(9));
-			pd.setHeading(rs.getInt(10));
-			pd.setAirSpeed(rs.getInt(11));
-			results.add(pd);
-		}
-		
-		// Clean up and return
-		rs.close();
-		_ps.close();
-		return results;
 	}
 }

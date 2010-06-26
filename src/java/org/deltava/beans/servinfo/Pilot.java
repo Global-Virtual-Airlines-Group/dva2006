@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -9,9 +9,9 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.util.*;
 
 /**
- * A bean to store online pilot information.
+ * A bean to store online Pilot information.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class Pilot extends NetworkUser {
 
 	private int _altitude;
 	private int _gSpeed;
+	private int _hdg;
 	private String _eqCode;
 	private Airport _airportD;
 	private Airport _airportA;
@@ -58,7 +59,6 @@ public class Pilot extends NetworkUser {
 	 * Returns the current altitude.
 	 * @return the altitude in feet above Mean Sea Level
 	 * @see Pilot#setAltitude(int)
-	 * @see Pilot#setAltitude(String)
 	 */
 	public int getAltitude() {
 		return _altitude;
@@ -86,10 +86,18 @@ public class Pilot extends NetworkUser {
 	 * Returns the User's ground speed.
 	 * @return the ground speed in knots
 	 * @see Pilot#setGroundSpeed(int)
-	 * @see Pilot#setGroundSpeed(String)
 	 */
 	public int getGroundSpeed() {
 		return _gSpeed;
+	}
+	
+	/**
+	 * Returns the Pilot's heading.
+	 * @return the heading in degrees
+	 * @see Pilot#setHeading(int)
+	 */
+	public int getHeading() {
+		return _hdg;
 	}
 
 	/**
@@ -140,7 +148,6 @@ public class Pilot extends NetworkUser {
 	 * Updates the Pilot's altitude.
 	 * @param alt the altitude in feet above Mean Sea Level
 	 * @throws IllegalArgumentException if alt is &lt; -250 or &gt; 150,000 feet
-	 * @see Pilot#setAltitude(String)
 	 * @see Pilot#getAltitude()
 	 */
 	public void setAltitude(int alt) {
@@ -148,16 +155,6 @@ public class Pilot extends NetworkUser {
 			throw new IllegalArgumentException("Invalid Altitude - " + alt);
 
 		_altitude = alt;
-	}
-
-	/**
-	 * Updates the Pilot's altitude.
-	 * @param alt a String containing the altitude in feet above Mean Sea Level
-	 * @see Pilot#setAltitude(int)
-	 * @see Pilot#getAltitude()
-	 */
-	public void setAltitude(String alt) {
-		setAltitude(StringUtils.parse(alt, 0));
 	}
 
 	/**
@@ -200,7 +197,6 @@ public class Pilot extends NetworkUser {
 	 * Updates the Pilot's ground speed.
 	 * @param gSpeed the ground speed in knots
 	 * @throws IllegalArgumentException if gSpeed is negative or &gt; 4500
-	 * @see Pilot#setGroundSpeed(String)
 	 * @see Pilot#getGroundSpeed()
 	 */
 	public void setGroundSpeed(int gSpeed) {
@@ -211,13 +207,12 @@ public class Pilot extends NetworkUser {
 	}
 
 	/**
-	 * Updates the Pilot's ground speed.
-	 * @param gSpeed a String containing the ground speed in knots
-	 * @see Pilot#setGroundSpeed(int)
-	 * @see Pilot#getGroundSpeed()
+	 * Updates the Pilot's heading.
+	 * @param hdg the heading in degrees
+	 * @see Pilot#getHeading()
 	 */
-	public void setGroundSpeed(String gSpeed) {
-		setGroundSpeed(StringUtils.parse(gSpeed, 0));
+	public void setHeading(int hdg) {
+		_hdg = Math.max(0, Math.min(359, hdg));
 	}
 	
 	/**

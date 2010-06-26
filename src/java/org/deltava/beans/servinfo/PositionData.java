@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 2.4
+ * @version 3.1
  * @since 2.4
  */
 
@@ -24,18 +24,13 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	
 	private int _pilotID;
 	private int _pirepID;
-	private Airport _airportD;
-	private Airport _airportA;
-	private OnlineNetwork _net;
 
 	/**
 	 * Initializes the bean.
-	 * @param net the Online Network used
 	 * @param dt the date/time of the position entry 
 	 */
-	public PositionData(OnlineNetwork net, Date dt) {
+	public PositionData(Date dt) {
 		super();
-		_net = net;
 		_dt = dt;
 	}
 
@@ -85,14 +80,6 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	}
 	
 	/**
-	 * Returns the Online Network used.
-	 * @return the OnlineNetwork
-	 */
-	public OnlineNetwork getNetwork() {
-		return _net;
-	}
-	
-	/**
 	 * Returns the Pilot ID.
 	 * @return the Pilot's database ID
 	 */
@@ -106,22 +93,6 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	 */
 	public int getFlightID() {
 		return _pirepID;
-	}
-	
-	/**
-	 * Returns the departure Airport.
-	 * @return the departure Airport
-	 */
-	public Airport getAirportD() {
-		return _airportD;
-	}
-	
-	/**
-	 * Returns the arrival Airport.
-	 * @return the arrival Airport
-	 */
-	public Airport getAirportA() {
-		return _airportA;
 	}
 	
 	/**
@@ -167,22 +138,6 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 		_pirepID = Math.max(0, id);
 	}
 
-	/**
-	 * Updates the departure airport.
-	 * @param a the departure Airport
-	 */
-	public void setAirportD(Airport a) {
-		_airportD = a;
-	}
-	
-	/**
-	 * Updates the arrival airport.
-	 * @param a the arrival  Airport
-	 */
-	public void setAirportA(Airport a) {
-		_airportA = a;	
-	}
-
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><b>");
 		buf.append(StringUtils.format(_dt, "MM/dd/yyyy HH:mm:ss"));
@@ -190,9 +145,9 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("<br />Altitude: ");
 		buf.append(StringUtils.format(_pos.getAltitude(), "#,000"));
-		buf.append(" feet<br />Airspeed:");
+		buf.append(" feet<br />Speed: ");
 		buf.append(StringUtils.format(_aSpeed, "#,000"));
-		buf.append(" knots<br />Heading:");
+		buf.append(" knots<br />Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
 		buf.append(" degrees</span>");
 		return buf.toString();
@@ -208,6 +163,18 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	 * Compares two positions by comparing their date/time.
 	 */
 	public int compareTo(PositionData pd2) {
-		return _dt.compareTo(pd2._dt);
+		int tmpResult = _dt.compareTo(pd2._dt);
+		if (tmpResult == 0)
+			tmpResult = Integer.valueOf(_pilotID).compareTo(Integer.valueOf(pd2._pilotID));
+		
+		return tmpResult;
+	}
+	
+	public int hashCode() {
+		return (String.valueOf(_pilotID) + _dt.toString()).hashCode(); 
+	}
+	
+	public boolean equals(Object o) {
+		return ((o instanceof PositionData) && (compareTo((PositionData) o) == 0));
 	}
 }
