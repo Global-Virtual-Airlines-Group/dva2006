@@ -203,4 +203,16 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<!-- SevInfo track update -->
+	<task id="otrack" enabled="true">
+		<class>org.deltava.tasks.OnlineTrackTask</class>
+		<time>
+			<min>*/3</min>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>	
+	</task>
 </tasks>

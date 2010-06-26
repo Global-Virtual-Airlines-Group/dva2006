@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Airline Total statistics.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -44,6 +44,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
 			tableStatus.addAll(tsdao.getStatus("geoip"));
 			tableStatus.addAll(tsdao.getStatus("postfix"));
 			tableStatus.addAll(tsdao.getStatus("teamspeak"));
+			tableStatus.addAll(tsdao.getStatus("online"));
 			tableStatus.addAll(tsdao.getStatus(SystemData.get("airline.db").toLowerCase()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
