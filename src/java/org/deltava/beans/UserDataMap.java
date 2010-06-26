@@ -11,7 +11,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class UserDataMap extends LinkedHashMap<Integer, UserData> {
+public class UserDataMap extends HashMap<Integer, UserData> {
 
 	/**
 	 * Creates a new, empty UserDataCollection.
@@ -103,7 +103,7 @@ public class UserDataMap extends LinkedHashMap<Integer, UserData> {
 	 * @see UserDataMap#getIDs()
 	 */
 	public Collection<Integer> getAllIDs() {
-		Collection<Integer> results = new HashSet<Integer>(size());
+		Collection<Integer> results = new HashSet<Integer>();
 		for (Iterator<UserData> i = values().iterator(); i.hasNext();) {
 			UserData usr = i.next();
 			results.addAll(usr.getIDs());
