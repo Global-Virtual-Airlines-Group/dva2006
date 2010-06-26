@@ -201,7 +201,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, flight.getSTAR(), true));
 			
 			// Create comments field
-			Collection<String> comments = new ArrayList<String>();
+			Collection<String> comments = new LinkedHashSet<String>();
 			
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
@@ -230,7 +230,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 					if (!isOK) {
 						i.remove();
 						if (!StringUtils.isEmpty(helper.getLastComment()))
-							comments.add(helper.getLastComment());
+							comments.add("Not eligible for promotion: " + helper.getLastComment());
 					}
 				}
 				
