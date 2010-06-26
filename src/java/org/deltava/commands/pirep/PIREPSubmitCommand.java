@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -15,13 +15,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -64,8 +63,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("eqType", eq, REQUEST);
 			
 			// Check if the pilot is rated in the equipment type
-			@SuppressWarnings("unchecked")
-			boolean isRated = CollectionUtils.merge(p.getRatings(), eq.getRatings()).contains(pirep.getEquipmentType());
+			Collection<String> allRatings = new HashSet<String>(p.getRatings());
+			allRatings.addAll(eq.getRatings());
+			boolean isRated = allRatings.contains(pirep.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			pirep.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			if (!isRated)
