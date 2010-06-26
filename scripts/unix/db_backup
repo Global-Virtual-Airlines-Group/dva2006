@@ -3,7 +3,7 @@
 # (c) 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving/mysqldump options
-arc_util="pbzip2 -p2 -9 -c"
+arc_util="pbzip2 -p2 -9 -b20 -c"
 dump_opt="--single-transaction -e -K -n -q"
 dump_create_opt="--single-transaction -e -K -q"
 
@@ -49,6 +49,10 @@ $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` teamspeak | $arc_util > team
 # Dump GeoIP data
 echo `date +%H:%M:%S`' Writing GeoIP data'
 $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` geoip | $arc_util > geoip.sql.bz2
+
+# Dump online track data
+echo `date +%H:%M:%S`' Writing Online Track data'
+$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` online | $arc_util > online.sql.bz2
 
 # Dump Common data/Water Cooler/Events
 echo `date +%H:%M:%S`' Writing Common data'
