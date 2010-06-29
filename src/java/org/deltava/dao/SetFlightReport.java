@@ -263,12 +263,24 @@ public class SetFlightReport extends DAO {
 
 		// Write the comments into the database
 		if (!StringUtils.isEmpty(fr.getComments())) {
-			prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
 			_ps.setInt(1, fr.getID());
 			_ps.setString(2, fr.getComments());
 			executeUpdate(1);
 		} else {
-			prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
+			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?) LIMIT 1");
+			_ps.setInt(1, fr.getID());
+			executeUpdate(0);
+		}
+		
+		// Write the route into the database
+		if (!StringUtils.isEmpty(fr.getRoute())) {
+			prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ROUTE (ID, ROUTE) VALUES (?, ?)");
+			_ps.setInt(1, fr.getID());
+			_ps.setString(2, fr.getRoute());
+			executeUpdate(1);
+		} else {
+			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_ROUTE WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, fr.getID());
 			executeUpdate(0);
 		}
