@@ -229,6 +229,12 @@ return true;
  <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}">
  <i>(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</i></c:if></td>
 </tr>
+<c:if test="${!isACARS && (!empty pirep.route)}">
+<tr>
+ <td class="label">Flight Route</td>
+ <td class="data"><fmt:text value="${pirep.route}" /></td>
+</tr>
+</c:if>
 <c:if test="${!empty pirep.remarks}">
 <tr>
  <td class="label top">Pilot Comments</td>
@@ -242,16 +248,18 @@ return true;
 <c:if test="${googleMap}">
 <tr>
  <td class="label">Route Map Data</td>
- <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" />
+ <td class="data"><span class="bld">
+<c:if test="${isACARS || (!empty mapRoute)}"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!isACARS}" /> </c:if>
 <c:if test="${isACARS}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
-<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" /></c:if>
+<c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" />
+ <el:box name="showOMarkers" idx="*" onChange="void toggleMarkers(map, 'otMarkers', this)" label="Online Data" checked="false" /></c:if>
 </span></td>
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="vrouteAck" class="small"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </c:if>
 <c:if test="${!googleMap}">
@@ -352,6 +360,7 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 </c:if>
 <c:if test="${!empty onlineTrack}">
 <map:points var="onlinePoints" items="${onlineTrack}" />
+<map:markers var="otMarkers" items="${onlineTrack}" />
 <map:line var="otRoute" src="onlinePoints" color="#F06F4F" width="3" transparency="0.55" geodesic="true" />
 </c:if>
 <c:if test="${!empty mapRoute}">
@@ -368,15 +377,6 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
-</c:if>
-<c:if test="${!empty onlineTrack}">
-//Display the online track notice
-var ack = document.getElementById("vrouteAck");
-ack.innerHTML = 'Online track courtesy of vRoute.info'
-var apos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
-apos.apply(ack);
-mapTextElements.push(ack);
-map.getContainer().appendChild(ack);
 </c:if>
 <c:if test="${showGEarth}">
 // Google Earth plugin support

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 2.6
+ * @version 3.1
  * @since 1.0
  */
 
@@ -229,7 +229,9 @@ public class GetNavAirway extends GetNavData {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
-					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND (NAME=?) AND (WAYPOINT=?) ");
+					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND ");
+		buf.append(name.contains("%") ? "(NAME LIKE ?)" : "(NAME=?)");
+		buf.append(" AND (WAYPOINT=?) ");
 		if (rwy != null)
 			buf.append("AND ((RUNWAY=?) OR (RUNWAY=?))");
 		buf.append(" ORDER BY PRF, SEQ");

@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final Logger log = Logger.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
-	private static final Collection<?> _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
+	private static final Collection<ComboAlias> _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
 
 	// Month combolist values
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
@@ -106,7 +106,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (!isAssignment) {
 				if (ad == null)
 					ad = SystemData.getAirport(ctx.getParameter("airportDCode"));
-				
 				if (aa == null)
 					aa = SystemData.getAirport(ctx.getParameter("airportACode"));
 			}
@@ -136,6 +135,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setEquipmentType(ctx.getParameter("eq"));
 			fr.setRemarks(ctx.getParameter("remarks"));
 			fr.setFSVersion(ctx.getParameter("fsVersion"));
+			fr.setRoute(ctx.getParameter("route"));
 
 			// Check for historic aircraft
 			GetAircraft acdao = new GetAircraft(con);
@@ -428,6 +428,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
+			
+			// Get the Navdata DAO
+			GetNavRoute navdao = new GetNavRoute(con);
+			navdao.setEffectiveDate(fr.getDate());
 
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			boolean isACARS = (fr instanceof ACARSFlightReport);
@@ -466,10 +470,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					Aircraft acInfo = acdao.get(fr.getEquipmentType());
 					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
 						ctx.setAttribute("acInfo", acInfo, REQUEST);
-					
-					// Get the runway data
-					GetNavRoute navdao = new GetNavRoute(con);
-					navdao.setEffectiveDate(fr.getDate());
 					
 					// Split the route
 					List<String> wps = StringUtils.split(info.getRoute(), " ");
@@ -576,26 +576,45 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 			}
 			
-			// If it's not ACARS, try and find VRoute data for it
+			// Load the online track
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT)) {
 				GetOnlineTrack tdao = new GetOnlineTrack(con);
 				Collection<PositionData> pd = tdao.get(fr.getID());
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
-				if (pd.isEmpty() && fr.hasAttribute(FlightReport.ATTR_VATSIM) && (age < 86000)) {
-					GetVRouteData vddao = new GetVRouteData();
-					try {
-						pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
-					} catch (DAOException de) {
-						log.warn("Cannot download VRoute position data - " + de.getMessage());
+				if (pd.isEmpty() && (age < 86000)) {
+					int trackID = tdao.getTrackID(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
+					if ((trackID == 0) && fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
+						GetVRouteData vddao = new GetVRouteData();
+						try {
+							pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
+						} catch (DAOException de) {
+							log.warn("Cannot download VRoute position data - " + de.getMessage());
+						}
+					} else if (trackID != 0) {
+						pd = tdao.getRaw(trackID);
+						if (StringUtils.isEmpty(fr.getRoute()))
+							fr.setRoute(tdao.getRoute(trackID));
 					}
-						
+					
+					// Save the position and the route
 					synchronized (this) {
 						boolean hasDataLoaded = !tdao.get(fr.getID()).isEmpty();
 					
 						// Save the positions if we get them
 						if (!pd.isEmpty() && (age > 300) & !hasDataLoaded) {
+							ctx.startTX();
+							
+							// Move track data from the raw table
 							SetOnlineTrack twdao = new SetOnlineTrack(con);
 							twdao.write(fr.getID(), pd);
+							twdao.purge(trackID);
+							
+							// Save the route
+							SetFlightReport frwdao = new SetFlightReport(con);
+							frwdao.write(fr);
+							
+							// Commit
+							ctx.commitTX();
 						}
 					}
 				}
@@ -605,8 +624,57 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("onlineTrack", pd, REQUEST);
 			}
 			
-			// Display route for non-ACARS flights in Google Maps
-			if (!isACARS && (mapType != Pilot.MAP_FALLINGRAIN))
+			// If the PIREP has a route in it, load it here
+			if (!StringUtils.isEmpty(fr.getRoute()) && !isACARS) {
+				List<String> wps = StringUtils.split(fr.getRoute(), " ");
+				wps.remove(fr.getAirportD().getICAO());
+				wps.remove(fr.getAirportA().getICAO());
+				
+				// Build the route
+				Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
+				route.add(fr.getAirportD());
+
+				// Load the SID
+				if (wps.size() > 2) {
+					String name = wps.get(0);
+					if (!Character.isDigit(name.charAt(name.length() - 1)))
+						name += "%";
+					else
+						name = name.substring(0, name.length() - 1) + "%";
+					
+					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.SID, name, wps.get(1), (String) null);
+					if (sid != null) {
+						wps.remove(0);
+						if (!CollectionUtils.isEmpty(wps))
+							route.addAll(sid.getWaypoints(wps.get(0)));
+						else
+							route.addAll(sid.getWaypoints()); 
+					}
+				}
+				
+				route.addAll(navdao.getRouteWaypoints(StringUtils.listConcat(wps," "), fr.getAirportD()));
+				
+				// Load the STAR
+				if (wps.size() > 2) {
+					String name = wps.get(wps.size() - 1);
+					if (!Character.isDigit(name.charAt(name.length() - 1)))
+						name += "%";
+					else
+						name = name.substring(0, name.length() - 1) + "%";
+					
+					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.STAR, name, wps.get(wps.size() - 2), (String) null);
+					if (star != null) {
+						wps.remove(wps.size() - 1);
+						if (!CollectionUtils.isEmpty(wps))
+							route.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
+						else
+							route.addAll(star.getWaypoints());
+					}
+				}
+				
+				route.add(fr.getAirportA());
+				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);				
+			} else if (!isACARS && (mapType != Pilot.MAP_FALLINGRAIN))
 				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
 
 			// If we're set to use Google Maps, calculate the route
@@ -619,6 +687,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

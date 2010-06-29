@@ -147,6 +147,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	private String _remarks;
 	private String _comments; // made on disposition
 	private String _rank; // at time of flight
+	private String _route;
 
 	private final Collection<String> _captEQType = new TreeSet<String>();
 
@@ -210,6 +211,15 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 		return _remarks;
 	}
 
+	/**
+	 * Returns the filed Flight Route.
+	 * @return the route
+	 * @see FlightReport#setRoute(String)
+	 */
+	public String getRoute() {
+		return _route;
+	}
+	
 	/**
 	 * Returns the disposition comments for this Flight Report.
 	 * @return the disposition comments
@@ -384,6 +394,15 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 		_remarks = remarks;
 	}
 
+	/**
+	 * Updates the filed Flight Route.
+	 * @param rt the route
+	 * @see FlightReport#getRoute()
+	 */
+	public void setRoute(String rt) {
+		_route = rt;
+	}
+	
 	/**
 	 * Sets the disposition comments for this Flight Report.
 	 * @param comments the disposition comments

@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 2.8
+ * @version 3.1
  * @since 1.0
  */
 
@@ -74,6 +74,7 @@ public class GetFlightReports extends DAO {
 			// Get the primary equipment types
 			FlightReport fr = results.get(0);
 			fr.setCaptEQType(getCaptEQType(fr.getID(), dbName));
+			fr.setRoute(getRoute(fr.getID(), dbName));
 			return fr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -116,6 +117,7 @@ public class GetFlightReports extends DAO {
 			// Get the primary equipment types
 			ACARSFlightReport afr = (ACARSFlightReport) fr;
 			afr.setCaptEQType(getCaptEQType(afr.getID(), dbName));
+			afr.setRoute(getRoute(afr.getID(), dbName));
 			return afr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -481,8 +483,7 @@ public class GetFlightReports extends DAO {
 	 * @return a List of Draft FlightReports matching the above criteria
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName)
-			throws DAOException {
+	public List<FlightReport> getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
@@ -724,6 +725,26 @@ public class GetFlightReports extends DAO {
 		}
 	}
 
+	/**
+	 * Helper method to route data.
+	 */
+	private String getRoute(int id, String dbName) throws SQLException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ROUTE FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PIREP_ROUTE WHERE (ID=?) LIMIT 1");
+		
+		// Build the prepared statement and execute the query
+		prepareStatementWithoutLimits(sqlBuf.toString());
+		_ps.setInt(1, id);
+		ResultSet rs = _ps.executeQuery();
+		String rt = rs.next() ? rs.getString(1) : null;
+		rs.close();
+		_ps.close();
+		return rt;
+	}
+	
 	/**
 	 * Helper method to load data for flights counting towards promotion.
 	 */
