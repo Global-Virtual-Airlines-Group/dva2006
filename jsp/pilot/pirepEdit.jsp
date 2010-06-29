@@ -179,6 +179,12 @@ return cmdPost(f.action);
 <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" />
  minutes&nbsp;<el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
+<c:if test="${!isACARS}">
+<tr>
+ <td class="label top">Flight Route</td>
+ <td class="data"><el:textbox idx="*" name="route" width="80%" height="3">${pirep.route}</el:textbox></td>
+</tr>
+</c:if>
 <c:if test="${isACARS}">
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
 </c:if>
