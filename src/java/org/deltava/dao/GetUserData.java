@@ -220,9 +220,8 @@ public class GetUserData extends DAO implements CachingDAO {
 				sqlBuf.append(id.toString());
 				if (i.hasNext())
 					sqlBuf.append(',');
-			} else {
-				result.put(null, usr);
-			}
+			} else
+				result.put(id, usr);
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
