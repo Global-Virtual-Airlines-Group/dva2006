@@ -996,6 +996,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="updtd">
+		<name>PIREP Update Touchdown</name>
+		<class>org.deltava.commands.pirep.UpdateTouchdownCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
 	<command id="pirepdelete">
 		<name>PIREP Delete</name>
 		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>
