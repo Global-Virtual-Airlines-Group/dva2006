@@ -74,7 +74,9 @@
 <c:if test="${(pirep.takeoffLocation.latitude != 0.0) && (pirep.takeoffLocation.longitude != 0.0)}">
  <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
 <c:if test="${access.canDispose && (!empty dRunways)}"> <i>Change Runway to</i> <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if></td>
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if>
+<c:if test="${(pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}">
+ <el:cmdbutton url="updtd" link="${flightInfo}" label="RECALCULATE TAKEOFF POINT" "/></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -118,7 +120,9 @@
 <c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
  <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
 <c:if test="${access.canDispose && (!empty aRunways)}"> <i>Change Runway to</i> <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if></td>
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if>
+<c:if test="${(pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
+ <el:cmdbutton url="updtd" link="${flightInfo}" label="RECALCULATE TOUCHDOWN POINT" "/></c:if></td>
 </tr>
 </c:if>
 <tr>
