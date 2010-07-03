@@ -1,15 +1,15 @@
-// Copyright 2004, 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.assign;
 
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 /**
  * A class to store Flight Assignments.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -178,7 +178,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     public void addFlight(FlightReport fr) {
     	// Link to the pilot if one assigned
     	if (_pilotID != 0)
-    		fr.setDatabaseID(FlightReport.DBID_PILOT, _pilotID);
+    		fr.setDatabaseID(DatabaseID.PILOT, _pilotID);
     	
         _flights.add(fr);
     }

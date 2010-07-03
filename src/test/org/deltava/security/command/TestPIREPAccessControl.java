@@ -1,10 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airline;
 
 public class TestPIREPAccessControl extends AccessControlTestCase {
@@ -137,7 +136,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
    }
    
    public void testOurAccess() throws Exception {
-      _fr.setDatabaseID(FlightReport.DBID_PILOT, _user.getID());
+      _fr.setDatabaseID(DatabaseID.PILOT, _user.getID());
       assertEquals(FlightReport.DRAFT, _fr.getStatus());
       _user.addRole("Pilot");
       _ac.validate();

@@ -2,14 +2,14 @@
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.security.SecurityContext;
 
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class PIREPAccessControl extends AccessControl {
 		// Set role variables
 		final int status = _pirep.getStatus();
 		final boolean isPirep = _ctx.isUserInRole("PIREP");
-		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(FlightReport.DBID_PILOT) == _ctx.getUser().getID());
+		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(DatabaseID.PILOT) == _ctx.getUser().getID());
 		
 		// Set status variables
 		final boolean isDraft = (status == FlightReport.DRAFT);
@@ -73,7 +73,7 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean isHeld = (status == FlightReport.HOLD);
 
 		// Check if held by us
-		final int disposalID = _pirep.getDatabaseID(FlightReport.DBID_DISPOSAL);
+		final int disposalID = _pirep.getDatabaseID(DatabaseID.DISPOSAL);
 		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && ((disposalID == _ctx.getUser().getID())) || (disposalID == 0));
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
@@ -88,7 +88,7 @@ public class PIREPAccessControl extends AccessControl {
 		
 		// Get the flight assignment ID
 		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
-		final boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
+		final boolean isAssigned = (_pirep.getDatabaseID(DatabaseID.ASSIGN) > 0);
 		_canDelete = (_ourPIREP && !isAssigned && !isCheckRide && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && 
 				((isRejected && isAssigned) || !isAssigned));
 	}

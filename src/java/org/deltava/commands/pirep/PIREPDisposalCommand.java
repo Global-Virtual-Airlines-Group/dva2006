@@ -100,10 +100,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidateID(fr.getDatabaseID(FlightReport.DBID_PILOT));
-			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			GetPilot.invalidateID(fr.getDatabaseID(DatabaseID.PILOT));
+			p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
-			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
+			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
 			
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
 			int pirepCount = rdao.getCount(p.getID()) + 1;
@@ -190,7 +190,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			}
 			
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
-			int assignID = fr.getDatabaseID(FlightReport.DBID_ASSIGN);
+			int assignID = fr.getDatabaseID(DatabaseID.ASSIGN);
 			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assignID != 0)) {
 			   GetAssignment fadao = new GetAssignment(con);
 			   AssignmentInfo assign = fadao.get(assignID);
@@ -209,7 +209,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// If we're approving an ACARS PIREP, archive the position data
 			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (fr instanceof ACARSFlightReport)) {
 			   SetACARSLog acdao = new SetACARSLog(con);
-			   acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			   acdao.archivePositions(fr.getDatabaseID(DatabaseID.ACARS));
 			   ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 			
@@ -222,7 +222,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Invalidate the pilot again to reflect the new totals
 			if (opCode == FlightReport.OK)
-				GetPilot.invalidateID(fr.getDatabaseID(FlightReport.DBID_PILOT));
+				GetPilot.invalidateID(fr.getDatabaseID(DatabaseID.PILOT));
 			
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
