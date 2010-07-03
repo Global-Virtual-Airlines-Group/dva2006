@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store Flight statistics entries.
  * @author Luke
- * @version 2.3
+ * @version 3.1
  * @since 1.0
  */
 
@@ -16,7 +16,8 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	
 	private int _legs;
 	private int _acarsLegs;
-	private int _onlineLegs;
+	private int _vatsimLegs;
+	private int _ivaoLegs;
 	private int _historicLegs;
 	private int _dispatchLegs;
 	private double _hours;
@@ -95,10 +96,27 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	/**
 	 * Returns the number of Online legs linked to this entry. 
 	 * @return the number of legs flown online
-	 * @see FlightStatsEntry#setOnlineLegs(int)
 	 */
 	public int getOnlineLegs() {
-		return _onlineLegs;
+		return _vatsimLegs + _ivaoLegs;
+	}
+	
+	/**
+	 * Returns the number of IVAO legs linked to this entry. 
+	 * @return the number of legs flown on IVAO
+	 * @see FlightStatsEntry#setIVAOLegs(int)
+	 */
+	public int getIVAOLegs() {
+		return _ivaoLegs;
+	}
+	
+	/**
+	 * Returns the number of VATSIM legs linked to this entry. 
+	 * @return the number of legs flown on VATSIM
+	 * @see FlightStatsEntry#setVATSIMLegs(int)
+	 */
+	public int getVATSIMLegs() {
+		return _vatsimLegs;
 	}
 	
 	/**
@@ -197,12 +215,21 @@ public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 	}
 	
 	/**
-	 * Updates the number of Online legs linked to this entry.
-	 * @param legs the number of legs flown online
-	 * @see FlightStatsEntry#getOnlineLegs()
+	 * Updates the number of VATSIM legs linked to this entry.
+	 * @param legs the number of legs flown on VATSIM
+	 * @see FlightStatsEntry#getVATSIMLegs()
 	 */
-	public void setOnlineLegs(int legs) {
-		_onlineLegs = legs;
+	public void setVATSIMLegs(int legs) {
+		_vatsimLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of IVAO legs linked to this entry.
+	 * @param legs the number of legs flown on IVAO
+	 * @see FlightStatsEntry#getIVAOLegs()
+	 */
+	public void setIVAOLegs(int legs) {
+		_ivaoLegs = legs;
 	}
 	
 	/**

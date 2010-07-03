@@ -33,7 +33,7 @@ return true;
 <view:table className="view" pad="default" space="default" cmd="flightstats">
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS</td>
- <td colspan="6" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
+ <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" />
  <el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Pilots Only" /></td>
 </tr>
