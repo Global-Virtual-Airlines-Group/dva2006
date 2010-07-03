@@ -34,7 +34,7 @@ return true;
 <c:if test="${hasQImages}">
 function viewImage(id, x, y)
 {
-var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
 var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
 return true;
 }

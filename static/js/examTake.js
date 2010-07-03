@@ -84,8 +84,9 @@ if (txtbox.length == 1) {
 }
 
 // Create the AJAX request
+var d = new Date();
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum);
+xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum + '&date=' + d.getTime());
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
@@ -111,7 +112,7 @@ return true;
 
 function viewImage(id, x, y)
 {
-var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
 var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
 return true;
 }
@@ -121,7 +122,7 @@ function updateMap(rpq)
 // Generate an XMLHTTP request
 var d = new Date();
 var xmlreq = GXmlHttp.create();
-xmlreq.open("POST", "examplot.ws?id=" + rpq.examID + "&q=" + rpq.idx + "&date=" + d.getTime(), true);
+xmlreq.open('post', 'examplot.ws?id=' + rpq.examID + '&q=' + rpq.idx + '&date=' + d.getTime(), true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 var txtbox = getElementsById('A' + rpq.idx);
 if (!txtbox) return false;

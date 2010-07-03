@@ -72,11 +72,10 @@ for (var x = 0; x < choices.length; x++) {
 
 return true;
 }
-
 <c:if test="${question.size > 0}">
 function viewImage(x, y)
 {
-var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var flags = 'height=' + (y+45) + ',width=' + (x+45) + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
 var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
 return true;
 }
