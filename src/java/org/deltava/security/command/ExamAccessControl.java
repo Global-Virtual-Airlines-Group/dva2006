@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
  * @author Luke
- * @version 2.1
+ * @version 3.1
  * @since 1.0
  */
 
@@ -92,7 +92,7 @@ public class ExamAccessControl extends AccessControl {
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && isOurAirline && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin") && (isOurAirline || isOurUser);
-        _canScore = _canEdit || (isSubmitted && inScoreList);
+        _canScore = _canEdit || (isSubmitted && (inScoreList || (isHR && isOurAirline)));
         _canViewAnswers = isScored && (isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
         
         // Throw an exception if we cannot view
