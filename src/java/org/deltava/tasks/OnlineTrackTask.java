@@ -76,7 +76,7 @@ public class OnlineTrackTask extends Task {
 					Pilot p = pi.next();
 					if (!networkIDs.containsKey(String.valueOf(p.getID())))
 						continue;
-					else if ((p.getAirportD().getICAO().length() < 4) || (p.getAirportA().getICAO().length() < 4))
+					else if ((p.getAirportD().getICAO().length() != 4) || (p.getAirportA().getICAO().length() != 4))
 						continue;
 					
 					// Check if we've already opened a flight track for this Pilot
