@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -21,7 +21,7 @@ public class FlightReportFunctions {
 	 * @return the ACARS database ID
 	 */
     public static int ACARSID(FlightReport fr) {
-        return (fr == null) ? 0 : fr.getDatabaseID(FlightReport.DBID_ACARS);
+        return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.ACARS);
     }
     
     /**
@@ -30,7 +30,7 @@ public class FlightReportFunctions {
      * @return the Event database ID
      */
     public static int eventID(FlightReport fr) {
-        return (fr == null) ? 0 : fr.getDatabaseID(FlightReport.DBID_EVENT);
+        return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.EVENT);
     }
     
     /**
@@ -39,7 +39,7 @@ public class FlightReportFunctions {
      * @return the Assignment database ID 
      */
     public static int assignID(FlightReport fr) {
-        return (fr == null) ? 0 : fr.getDatabaseID(FlightReport.DBID_ASSIGN);
+        return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.ASSIGN);
     }
     
     /**
@@ -48,7 +48,7 @@ public class FlightReportFunctions {
      * @return the Pilot database ID
      */
     public static int pilotID(FlightReport fr) {
-    	return (fr == null) ? 0 : fr.getDatabaseID(FlightReport.DBID_PILOT);
+    	return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.PILOT);
     }
     
     /**
@@ -208,6 +208,16 @@ public class FlightReportFunctions {
      */
     public static boolean weightWarn(FlightReport fr) {
     	return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_WEIGHTWARN));
+    }
+    
+    /**
+     * Returns if any warnings have been set.
+     * @param fr the FlightReport
+     * @return TRUE if any warnings are set, otherwise FALSE
+     * @see FlightReport#ATTR_WARN_MASK
+     */
+    public static boolean hasWarn(FlightReport fr) {
+    	return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_WARN_MASK));
     }
     
     /**
