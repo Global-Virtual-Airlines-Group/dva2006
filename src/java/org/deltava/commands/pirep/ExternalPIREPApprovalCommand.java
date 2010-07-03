@@ -6,8 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.ACARSFlightReport;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.system.TransferRequest;
 import org.deltava.beans.testing.*;
 
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 2.0
  */
 
@@ -31,7 +30,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
-	 * @throws CommandException if an error (typically database) occurs
+	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		
@@ -93,7 +92,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			cr.setScoredOn(new Date());
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setSubmittedOn(fr.getSubmittedOn());
-			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 			cr.setStatus(Test.SCORED);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
@@ -113,7 +112,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			// Archive the Position data
 			if (fr instanceof ACARSFlightReport) {
 				SetACARSLog acdao = new SetACARSLog(con);
-				acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				acdao.archivePositions(fr.getDatabaseID(DatabaseID.ACARS));
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 			

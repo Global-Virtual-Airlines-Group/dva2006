@@ -117,9 +117,9 @@ public class TestFlightReport extends AbstractBeanTestCase {
     }
     
     public void testDatabaseIDs() {
-        assertEquals(0, _fr.getDatabaseID("EVENT"));
-        _fr.setDatabaseID("EVENT", 123);
-        assertEquals(123, _fr.getDatabaseID("EVENT"));
+        assertEquals(0, _fr.getDatabaseID(DatabaseID.EVENT));
+        _fr.setDatabaseID(DatabaseID.EVENT, 123);
+        assertEquals(123, _fr.getDatabaseID(DatabaseID.EVENT));
         try {
             _fr.setDatabaseID(null, 123);
             fail("NullPointerException expected");
@@ -128,7 +128,7 @@ public class TestFlightReport extends AbstractBeanTestCase {
         }
 
         try {
-            _fr.setDatabaseID("EVENT", -1);
+            _fr.setDatabaseID(DatabaseID.EVENT, -1);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException iae) {
         	// empty

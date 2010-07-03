@@ -1,16 +1,16 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.assign.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 /**
  * A Data Access Object to create and update Flight Assignments.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class SetAssignment extends DAO {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
-      sqlBuf.append(db.toLowerCase());
+      sqlBuf.append(formatDBName(db));
       sqlBuf.append(".ASSIGNMENTS (STATUS, EVENT_ID, PILOT_ID, ASSIGNED_ON, EQTYPE, REPEATS, RANDOM, "
     		  + "PURGEABLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -63,7 +63,7 @@ public class SetAssignment extends DAO {
          // Update the Flight Reports with the new database ID
          for (Iterator<FlightReport> i = a.getFlights().iterator(); i.hasNext();) {
             FlightReport fr = i.next();
-            fr.setDatabaseID(FlightReport.DBID_ASSIGN, a.getID());
+            fr.setDatabaseID(DatabaseID.ASSIGN, a.getID());
          }
 
          commitTransaction();

@@ -54,7 +54,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			ACARSFlightReport afr = prdao.getACARS(dbName, info.getID());
 
 			// Load the Pilot based on the connection/PIREP data
-			int pilotID = (conInfo == null) ? afr.getDatabaseID(FlightReport.DBID_PILOT) : conInfo.getPilotID();
+			int pilotID = (conInfo == null) ? afr.getDatabaseID(DatabaseID.PILOT) : conInfo.getPilotID();
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(pilotID);
 			if (usr == null)

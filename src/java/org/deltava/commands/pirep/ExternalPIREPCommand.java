@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 2.0
  */
 
@@ -68,7 +68,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 				throw notFoundException("Unknown Flight Report ID - " + cr.getFlightID());
 			
 			// Get the pilot who approved/rejected this PIREP
-			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
+			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
 			UserData dud = (disposalID == 0) ? null : uddao.get(disposalID);
 			Pilot dPilot = pdao.get(dud);
 			if (dPilot != null) {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -42,12 +42,12 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			
 			// Look for a transfer request
 			GetTransferRequest txdao = new GetTransferRequest(con);
-			TransferRequest tx = txdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			TransferRequest tx = txdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			int crID = (tx == null) ? 0 : tx.getCheckRideID();
 			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), 
+			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(fr.getDatabaseID(DatabaseID.PILOT), 
 					fr.getEquipmentType(), Test.NEW);
 			boolean newCR = (cr == null);
 			if (newCR) {
@@ -55,11 +55,11 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 				cr.setAircraftType(fr.getEquipmentType());
 				cr.setDate(fr.getDate());
-				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 				cr.setStatus(Test.SUBMITTED);
 				cr.setSubmittedOn(fr.getSubmittedOn());
 				cr.setScorerID(ctx.getUser().getID());
-				cr.setPilotID(fr.getDatabaseID(FlightReport.DBID_PILOT));
+				cr.setPilotID(fr.getDatabaseID(DatabaseID.PILOT));
 				
 				// Determine the equipment type based on the primary type
 				GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -70,7 +70,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				// Set the equipment type
 				cr.setEquipmentType(eqTypes.iterator().next());
 			} else if (cr.getStatus() == Test.NEW) {
-				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 				cr.setStatus(Test.SUBMITTED);
 				cr.setSubmittedOn(fr.getSubmittedOn());
 			} else if (cr.getStatus() == Test.SUBMITTED) {
@@ -80,7 +80,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 						throw securityException("Check Ride ACARS ID #" + cr.getFlightID() + " already has PIREP");
 				}
 						
-				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 				cr.setSubmittedOn(fr.getSubmittedOn());
 			} else if ((cr.getStatus() == Test.SCORED) && !cr.getPassFail()) {
 				newCR = true;
@@ -88,11 +88,11 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 				cr.setAircraftType(fr.getEquipmentType());
 				cr.setDate(fr.getDate());
-				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 				cr.setStatus(Test.SUBMITTED);
 				cr.setSubmittedOn(fr.getSubmittedOn());
 				cr.setScorerID(ctx.getUser().getID());
-				cr.setPilotID(fr.getDatabaseID(FlightReport.DBID_PILOT));
+				cr.setPilotID(fr.getDatabaseID(DatabaseID.PILOT));
 				
 				// Determine the equipment type based on the primary type
 				GetEquipmentType eqdao = new GetEquipmentType(con);

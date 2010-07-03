@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 2.1
  */
 
@@ -119,8 +119,8 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 			// Build the PIREP
 			FlightReport fr = new FlightReport(leg);
-			fr.setDatabaseID(FlightReport.DBID_PILOT, usr.getID());
-			fr.setDatabaseID(FlightReport.DBID_DISPOSAL, ctx.getUser().getID());
+			fr.setDatabaseID(DatabaseID.PILOT, usr.getID());
+			fr.setDatabaseID(DatabaseID.DISPOSAL, ctx.getUser().getID());
 			fr.setRank(usr.getRank());
 			fr.setDate(info.getAssignDate());
 			fr.setAttribute(FlightReport.ATTR_CHARTER, true);
@@ -135,7 +135,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
 
 			// Write the Flight leg
-			fr.setDatabaseID(FlightReport.DBID_ASSIGN, info.getID());
+			fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(fr);
 

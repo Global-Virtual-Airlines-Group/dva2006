@@ -51,8 +51,8 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Get the Pilot profile of the individual who flew this flight
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidateID(pirep.getDatabaseID(FlightReport.DBID_PILOT));
-			Pilot p = pdao.get(pirep.getDatabaseID(FlightReport.DBID_PILOT));
+			GetPilot.invalidateID(pirep.getDatabaseID(DatabaseID.PILOT));
+			Pilot p = pdao.get(pirep.getDatabaseID(DatabaseID.PILOT));
 
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -97,14 +97,14 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			pirep.setAttribute(FlightReport.ATTR_ACADEMY, isAcademy);
 			
 			// Check if it's an Online Event flight
-			if ((pirep.getDatabaseID(FlightReport.DBID_EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
+			if ((pirep.getDatabaseID(DatabaseID.EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
 				OnlineNetwork net = OnlineNetwork.VATSIM;
 				if (pirep.hasAttribute(FlightReport.ATTR_IVAO))
 					net = OnlineNetwork.IVAO;
 				
 				// Load the event ID
 				GetEvent evdao = new GetEvent(con);
-				pirep.setDatabaseID(FlightReport.DBID_EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), net));
+				pirep.setDatabaseID(DatabaseID.EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), net));
 			}
 
 			// Update the status of the PIREP
@@ -120,7 +120,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			}
 
 			// Check the schedule database and check the route pair
-			boolean isAssignment = (pirep.getDatabaseID(FlightReport.DBID_ASSIGN) != 0);
+			boolean isAssignment = (pirep.getDatabaseID(DatabaseID.ASSIGN) != 0);
 			int avgHours = sdao.getFlightTime(pirep.getAirportD(), pirep.getAirportA());
 			if ((avgHours == 0) && (!isAcademy) && (!isAssignment)) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);

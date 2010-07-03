@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.PIREPAccessControl;
 /**
  * A Web Site Command to delete Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
           // If this is an ACARS PIREP, delete the data
           if (fr instanceof ACARSFlightReport) {
              SetACARSLog awdao = new SetACARSLog(con);
-             awdao.deleteInfo(fr.getDatabaseID(FlightReport.DBID_ACARS));
+             awdao.deleteInfo(fr.getDatabaseID(DatabaseID.ACARS));
           }
           
           // Commit the transaction

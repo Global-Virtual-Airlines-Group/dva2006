@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.acars.DispatchRoute;
 
 import org.deltava.commands.*;
@@ -19,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -136,7 +136,7 @@ public class EventCommand extends AbstractCommand {
 					Collection<Integer> newIDs = new HashSet<Integer>();
 					for (Iterator<FlightReport> fi =flights.iterator(); fi.hasNext(); ) {
 						FlightReport fr = fi.next();
-						int pilotID = fr.getDatabaseID(FlightReport.DBID_PILOT);
+						int pilotID = fr.getDatabaseID(DatabaseID.PILOT);
 						if (!udm.contains(pilotID))
 							newIDs.add(new Integer(pilotID));
 					}

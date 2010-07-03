@@ -604,7 +604,7 @@ public class GetFlightReports extends DAO {
 
 			// Populate the data
 			p.setID(rs.getInt(1));
-			p.setDatabaseID(FlightReport.DBID_PILOT, rs.getInt(2));
+			p.setDatabaseID(DatabaseID.PILOT, rs.getInt(2));
 			p.setRank(rs.getString(3));
 			p.setStatus(status);
 			p.setDate(expandDate(rs.getDate(5)));
@@ -616,11 +616,11 @@ public class GetFlightReports extends DAO {
 			// Skip column #14 - we calculate this in the flight report
 			p.setLength(Math.round(rs.getFloat(15) * 10));
 			p.setRemarks(rs.getString(16));
-			p.setDatabaseID(FlightReport.DBID_DISPOSAL, rs.getInt(17));
+			p.setDatabaseID(DatabaseID.DISPOSAL, rs.getInt(17));
 			p.setSubmittedOn(rs.getTimestamp(18));
 			p.setDisposedOn(rs.getTimestamp(19));
-			p.setDatabaseID(FlightReport.DBID_EVENT, rs.getInt(20));
-			p.setDatabaseID(FlightReport.DBID_ASSIGN, rs.getInt(21));
+			p.setDatabaseID(DatabaseID.EVENT, rs.getInt(20));
+			p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(21));
 			if (hasComments)
 				p.setComments(rs.getString(22));
 			
@@ -635,7 +635,7 @@ public class GetFlightReports extends DAO {
 			if (isACARS) {
 				ACARSFlightReport ap = (ACARSFlightReport) p;
 				ap.setAttribute(FlightReport.ATTR_ACARS, true);
-				ap.setDatabaseID(FlightReport.DBID_ACARS, rs.getInt(24));
+				ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(24));
 				ap.setStartTime(rs.getTimestamp(25));
 				ap.setTaxiTime(rs.getTimestamp(26));
 				ap.setTaxiWeight(rs.getInt(27));

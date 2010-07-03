@@ -1,16 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserData;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -23,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -101,9 +98,9 @@ public class EventAssignCommand extends AbstractCommand {
 				// Create a Flight Report
 				FlightReport fr = new FlightReport(leg);
 				fr.setRank(usr.getRank());
-				fr.setDatabaseID(FlightReport.DBID_PILOT, s.getPilotID());
-				fr.setDatabaseID(FlightReport.DBID_ASSIGN, ai.getID());
-				fr.setDatabaseID(FlightReport.DBID_EVENT, e.getID());
+				fr.setDatabaseID(DatabaseID.PILOT, s.getPilotID());
+				fr.setDatabaseID(DatabaseID.ASSIGN, ai.getID());
+				fr.setDatabaseID(DatabaseID.EVENT, e.getID());
 				fr.setDate(e.getStartTime());
 				if (e.getNetwork() == OnlineNetwork.VATSIM)
 					fr.setAttribute(FlightReport.ATTR_VATSIM, true);

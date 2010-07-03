@@ -7,7 +7,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.Airline;
 
 public class TestAssignmentInfo extends AbstractBeanTestCase {
@@ -95,12 +95,12 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
         _info.addFlight(fr);
         assertEquals(1, _info.getFlights().size());
         assertSame(fr, _info.getFlights().iterator().next());
-        assertEquals(0, fr.getDatabaseID(FlightReport.DBID_PILOT));
+        assertEquals(0, fr.getDatabaseID(DatabaseID.PILOT));
         
         _info.setPilotID(1234);
         fr = new FlightReport(new Airline("DVA"), 129, 1);
         _info.addFlight(fr);
         assertEquals(2, _info.getFlights().size());
-        assertEquals(_info.getPilotID(), fr.getDatabaseID(FlightReport.DBID_PILOT));
+        assertEquals(_info.getPilotID(), fr.getDatabaseID(DatabaseID.PILOT));
     }
 }
