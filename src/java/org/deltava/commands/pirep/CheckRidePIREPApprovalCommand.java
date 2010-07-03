@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 1.0
  */
 
@@ -53,17 +53,17 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the DAO and the CheckRide
 			GetExam crdao = new GetExam(con);
-			CheckRide cr = crdao.getACARSCheckRide(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			CheckRide cr = crdao.getACARSCheckRide(fr.getDatabaseID(DatabaseID.ACARS));
 			if (cr == null)
-				cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.SUBMITTED);
+				cr = crdao.getCheckRide(fr.getDatabaseID(DatabaseID.PILOT), fr.getEquipmentType(), Test.SUBMITTED);
 			
 			// Get the Pilot object
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			UserData ud = uddao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			UserData ud = uddao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			p = pdao.get(ud);
 			if (p == null)
-				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
+				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
 
 			// Check our access levels
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
@@ -102,7 +102,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setScoredOn(new Date());
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setSubmittedOn(fr.getSubmittedOn());
-			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
 			cr.setStatus(Test.SCORED);
 			
 			// Update the flight report
@@ -120,7 +120,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// Archive the Position data
 			if (fr instanceof ACARSFlightReport) {
 				SetACARSLog acdao = new SetACARSLog(con);
-				acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				acdao.archivePositions(fr.getDatabaseID(DatabaseID.ACARS));
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 

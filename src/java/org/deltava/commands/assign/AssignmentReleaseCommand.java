@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
- * @version 2.7
+ * @version 3.1
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 					fwdao.delete(fr.getID());
 					flightsDeleted++;
 				} else {
-					fr.setDatabaseID(FlightReport.DBID_ASSIGN, 0);
+					fr.setDatabaseID(DatabaseID.ASSIGN, 0);
 					fwdao.write(fr);
 					flightsUpdated++;
 				}

@@ -122,6 +122,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	public static final int ATTR_WEIGHTWARN = 0x8000;
 
 	/**
+	 * Attribute mask for all warnings.
+	 */
+	public static final int ATTR_WARN_MASK = 0xF861;
+	
+	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
 	 */
 	public static final int ATTR_ONLINE_MASK = 0x0E;
@@ -130,12 +135,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Minimum ACARS client version for inclusion in statistics aggregation.
 	 */
 	public static final int MIN_ACARS_CLIENT = 61;
-
-	public static final String DBID_PILOT = "$PILOT$";
-	public static final String DBID_DISPOSAL = "$DISPOSALPILOTID$";
-	public static final String DBID_ASSIGN = "$ASSIGN$";
-	public static final String DBID_EVENT = "$EVENT$";
-	public static final String DBID_ACARS = "$ACARS$";
 
 	private Date _date;
 	private Date _submittedOn;
@@ -152,7 +151,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	private final Collection<String> _captEQType = new TreeSet<String>();
 
 	// Stores Integers pointing to other database IDs, see PIREPConstants
-	private final Map<String, Integer> _dbIds = new HashMap<String, Integer>();
+	private final Map<DatabaseID, Integer> _dbIds = new HashMap<DatabaseID, Integer>();
 
 	/**
 	 * Creates a new Flight Report object with a given flight.
@@ -271,9 +270,9 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * @param idType the datbase row ID type
 	 * @return the database row ID, or 0 if not found
 	 * @throws NullPointerException if idType is null
-	 * @see FlightReport#setDatabaseID(String, int)
+	 * @see FlightReport#setDatabaseID(DatabaseID, int)
 	 */
-	public int getDatabaseID(String idType) {
+	public int getDatabaseID(DatabaseID idType) {
 		Integer dbID = _dbIds.get(idType);
 		return (dbID == null) ? 0 : dbID.intValue();
 	}
@@ -575,20 +574,17 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 
 	/**
 	 * Sets the database row ID of a relatied database row. This row may be present in the <i>PILOTS </i>,
-	 * <i>ASSIGNMENTS </i>, <i>ACARS_PIREPS </i> or <i>EVENTS </i> table. <i>This is typically used by a DAO </i>
+	 * <i>ASSIGNMENTS </i>, <i>ACARS_PIREPS </i> or <i>EVENTS </i> table. <i>This is typically used by a DAO.</i>
 	 * @param idType the row ID type
 	 * @param id the database row ID
-	 * @throws NullPointerException if the idType is null
 	 * @throws IllegalArgumentException if the id is negative
-	 * @see FlightReport#getDatabaseID(String)
+	 * @see FlightReport#getDatabaseID(DatabaseID)
 	 */
-	public void setDatabaseID(String idType, int id) {
-		if (idType == null)
-			throw new NullPointerException("Database ID type cannot be null");
-		else if (id < 0)
+	public void setDatabaseID(DatabaseID idType, int id) {
+		if (id < 0)
 			throw new IllegalArgumentException(idType + " Datbase ID cannot be negative");
 
-		_dbIds.put(idType, new Integer(id));
+		_dbIds.put(idType, Integer.valueOf(id));
 	}
 
 	/**
@@ -597,7 +593,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 */
 	public int compareTo(Object o) {
 		FlightReport fr2 = (FlightReport) o;
-		int tmpResult = new Integer(getID()).compareTo(new Integer(fr2.getID()));
+		int tmpResult = Integer.valueOf(getID()).compareTo(Integer.valueOf(fr2.getID()));
 		if ((tmpResult == 0) && (_date != null) && (fr2.getDate() != null))
 			tmpResult = _date.compareTo(fr2.getDate());
 		return (tmpResult == 0) ? super.compareTo(fr2) : tmpResult;

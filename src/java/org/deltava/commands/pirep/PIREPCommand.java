@@ -81,7 +81,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Check if we are creating a new flight report or editing one with an assignment
 			boolean doCreate = (fr == null);
-			boolean isAssignment = !doCreate && (fr.getDatabaseID(FlightReport.DBID_ASSIGN) != 0);
+			boolean isAssignment = !doCreate && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0);
 
 			// Create the access controller and validate our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
@@ -93,7 +93,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Get the Pilot
 			GetPilot pdao = new GetPilot(con);
-			Pilot p = doCreate ? (Pilot) ctx.getUser() : pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			Pilot p = doCreate ? (Pilot) ctx.getUser() : pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 
 			// Get the airline/airports - don't allow updates if an assignment
 			Airline a = isAssignment ? fr.getAirline() : SystemData.getAirline(ctx.getParameter("airline"));
@@ -128,7 +128,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				fr = new FlightReport(a, StringUtils.parse(ctx.getParameter("flightNumber"), 1), StringUtils.parse(ctx.getParameter("flightLeg"), 1));
 
 			// Update the original PIREP with fields from the request
-			fr.setDatabaseID(FlightReport.DBID_PILOT, ctx.getUser().getID());
+			fr.setDatabaseID(DatabaseID.PILOT, ctx.getUser().getID());
 			fr.setRank(ctx.getUser().getRank());
 			fr.setAirportD(ad);
 			fr.setAirportA(aa);
@@ -299,7 +299,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Save the pilot info/PIREP in the request
 				GetPilot dao2 = new GetPilot(con);
-				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
+				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(DatabaseID.PILOT)), REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
 
 				// Set PIREP date and length
@@ -307,7 +307,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
-				if (fr.getDatabaseID(FlightReport.DBID_ASSIGN) == 0) {
+				if (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) {
 					for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
 						Airline a = i.next();
 						if (a.getActive() || (fr.getAirline().equals(a)))
@@ -384,12 +384,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 			
 			// Get the pilot
-			Pilot p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			Pilot p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
+				throw notFoundException("Invalid Pilot ID - " + fr.getDatabaseID(DatabaseID.PILOT));
 
 			// Get the pilot who approved/rejected this PIREP
-			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
+			int disposalID = fr.getDatabaseID(DatabaseID.DISPOSAL);
 			Pilot dPilot = (disposalID != 0) ? pdao.get(disposalID) : null;
 			if (dPilot != null) {
 				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getName();
@@ -398,16 +398,16 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
 
 			// If this PIREP was flown as part of an event, get its information
-			int eventID = fr.getDatabaseID(FlightReport.DBID_EVENT);
+			int eventID = fr.getDatabaseID(DatabaseID.EVENT);
 			if (eventID != 0) {
 				GetEvent evdao = new GetEvent(con);
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
 			}
 			
 			// If this PIREP is part of a flight assignment and a draft, load the assignment
-			if ((fr.getStatus() == FlightReport.DRAFT) && (fr.getDatabaseID(FlightReport.DBID_ASSIGN) != 0)) {
+			if ((fr.getStatus() == FlightReport.DRAFT) && (fr.getDatabaseID(DatabaseID.ASSIGN) != 0)) {
 				GetAssignment fadao = new GetAssignment(con);
-				AssignmentInfo assign = fadao.get(fr.getDatabaseID(FlightReport.DBID_ASSIGN));
+				AssignmentInfo assign = fadao.get(fr.getDatabaseID(DatabaseID.ASSIGN));
 				
 				// Check our access
 				AssignmentAccessControl aac = new AssignmentAccessControl(ctx, assign);
@@ -441,7 +441,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 				ACARSFlightReport afr = (ACARSFlightReport) fr;
-				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
+				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
 
 				// Get the route data from the DAFIF database
 				GetACARSData ardao = new GetACARSData(con);
@@ -582,7 +582,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				Collection<PositionData> pd = tdao.get(fr.getID());
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
-					int trackID = tdao.getTrackID(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
+					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
 					if ((trackID == 0) && fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
 						GetVRouteData vddao = new GetVRouteData();
 						try {

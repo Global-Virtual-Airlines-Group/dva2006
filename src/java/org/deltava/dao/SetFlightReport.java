@@ -100,7 +100,7 @@ public class SetFlightReport extends DAO {
 		}
 
 		// Invalidate the entry in the Pilot cache
-		PilotDAO.invalidate(pirep.getDatabaseID(FlightReport.DBID_PILOT));
+		PilotDAO.invalidate(pirep.getDatabaseID(DatabaseID.PILOT));
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class SetFlightReport extends DAO {
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
-		_ps.setInt(1, fr.getDatabaseID(FlightReport.DBID_PILOT));
+		_ps.setInt(1, fr.getDatabaseID(DatabaseID.PILOT));
 		_ps.setString(2, fr.getRank());
 		_ps.setInt(3, fr.getStatus());
 		_ps.setTimestamp(4, createTimestamp(fr.getDate()));
@@ -133,8 +133,8 @@ public class SetFlightReport extends DAO {
 		_ps.setDouble(14, (fr.getLength() / 10.0));
 		_ps.setString(15, fr.getRemarks());
 		_ps.setTimestamp(16, createTimestamp(fr.getSubmittedOn()));
-		_ps.setInt(17, fr.getDatabaseID(FlightReport.DBID_EVENT));
-		_ps.setInt(18, fr.getDatabaseID(FlightReport.DBID_ASSIGN));
+		_ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
+		_ps.setInt(18, fr.getDatabaseID(DatabaseID.ASSIGN));
 	}
 
 	/**
@@ -164,11 +164,11 @@ public class SetFlightReport extends DAO {
 		_ps.setInt(11, fr.getDistance());
 		_ps.setDouble(12, (fr.getLength() / 10.0));
 		_ps.setString(13, fr.getRemarks());
-		_ps.setInt(14, fr.getDatabaseID(FlightReport.DBID_DISPOSAL));
+		_ps.setInt(14, fr.getDatabaseID(DatabaseID.DISPOSAL));
 		_ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
 		_ps.setTimestamp(16, createTimestamp(fr.getDisposedOn()));
-		_ps.setInt(17, fr.getDatabaseID(FlightReport.DBID_ASSIGN));
-		_ps.setInt(18, fr.getDatabaseID(FlightReport.DBID_EVENT));
+		_ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
+		_ps.setInt(18, fr.getDatabaseID(DatabaseID.EVENT));
 		_ps.setInt(19, fr.getID());
 	}
 
@@ -347,7 +347,7 @@ public class SetFlightReport extends DAO {
 			// Write the ACARS fields
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, afr.getID());
-			_ps.setInt(2, afr.getDatabaseID(FlightReport.DBID_ACARS));
+			_ps.setInt(2, afr.getDatabaseID(DatabaseID.ACARS));
 			_ps.setTimestamp(3, createTimestamp(afr.getStartTime()));
 			_ps.setTimestamp(4, createTimestamp(afr.getTaxiTime()));
 			_ps.setInt(5, afr.getTaxiWeight());
