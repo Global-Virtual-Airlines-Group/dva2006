@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 3.0
+ * @version 3.1
  * @since 2.1
  */
 
@@ -24,7 +24,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	private static final Cache<CacheableCollection<LandingStatistics>> _cache =
 		new ExpiringCache<CacheableCollection<LandingStatistics>>(64, 3600);
 	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache =
-		new ExpiringCache<CacheableCollection<FlightStatsEntry>>(16, 900);
+		new ExpiringCache<CacheableCollection<FlightStatsEntry>>(16, 1800);
 	
 	private int _dayFilter;
 
@@ -503,7 +503,8 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			prepareStatement(sqlBuf.toString());
 			int param = 0;
 			_ps.setInt(++param, FlightReport.ATTR_ACARS);
-			_ps.setInt(++param, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(++param, FlightReport.ATTR_VATSIM);
+			_ps.setInt(++param, FlightReport.ATTR_IVAO);
 			_ps.setInt(++param, FlightReport.ATTR_HISTORIC);
 			_ps.setInt(++param, FlightReport.ATTR_DISPATCH);
 			_ps.setInt(++param, FlightReport.OK);
@@ -536,15 +537,16 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	private List<FlightStatsEntry> execute() throws SQLException {
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 		ResultSet rs = _ps.executeQuery();
-		boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 10);
+		boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 11);
 		while (rs.next()) {
 			FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
 			entry.setACARSLegs(rs.getInt(7));
-			entry.setOnlineLegs(rs.getInt(8));
-			entry.setHistoricLegs(rs.getInt(9));
-			entry.setDispatchLegs(rs.getInt(10));
+			entry.setVATSIMLegs(rs.getInt(8));
+			entry.setIVAOLegs(rs.getInt(9));
+			entry.setHistoricLegs(rs.getInt(10));
+			entry.setDispatchLegs(rs.getInt(11));
 			if (hasPilotIDs)
-				entry.setPilotIDs(rs.getInt(11));
+				entry.setPilotIDs(rs.getInt(12));
 			
 			results.add(entry);
 		}
@@ -556,25 +558,26 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	}
 	
 	/**
-	 * Private helper method to return SQL statement that doesn't involve joins on the <i>PILOTS </i> table.
+	 * Private helper method to return SQL statement that doesn't involve joins on the <i>PILOTS</i> table.
 	 */
 	private String getSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
 				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
-				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS,"
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM PIREPS F "
-				+ "WHERE (F.STATUS=?) ";
+				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
+				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM PIREPS F WHERE (F.STATUS=?) ";
 	}
 
 	/**
-	 * Private helper method to return SQL statement that involves a join on the <i>PILOTS </i> table.
+	 * Private helper method to return SQL statement that involves a join on the <i>PILOTS</i> table.
 	 */
 	private String getPilotJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, 1 AS PIDS "
-			+ "FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) ";
+			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, 1 AS PIDS FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) "
+			+ "AND (F.STATUS=?) ";
 	}
 	
 	/**
@@ -583,10 +586,10 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	private String getAirlineJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
-				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRLINES AL, PIREPS F WHERE (AL.CODE=F.AIRLINE) "
-				+ "AND (F.STATUS=?) ";
+				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRLINES AL, "
+				+ "PIREPS F WHERE (AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
 	}
 
 	/**
@@ -595,9 +598,9 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	private String getAirportJoinSQL(String apColumn) {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
-				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
-				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
-				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA="
-				+ apColumn + ") AND (F.STATUS=?) ";
+				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM common.AIRPORTS AP, "
+				+ "PIREPS F WHERE (AP.IATA=" + apColumn + ") AND (F.STATUS=?) ";
 	}
 }
