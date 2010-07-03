@@ -208,7 +208,7 @@
 	<task id="otrack" enabled="true">
 		<class>org.deltava.tasks.OnlineTrackTask</class>
 		<time>
-			<min>*/3</min>
+			<min>*/2</min>
 			<hour>*</hour>
 			<mday>*</mday>
 			<month>*</month>
