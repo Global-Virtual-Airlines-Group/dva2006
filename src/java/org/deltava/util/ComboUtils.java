@@ -8,7 +8,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * A utility class to generate combobox lists.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  * @see ComboAlias
  */
@@ -68,6 +68,21 @@ public class ComboUtils {
     public static List<ComboAlias> fromArray(String... names) {
         return fromList(Arrays.asList(names));
     }
+    
+    /**
+     * Create a list of ComboAlias objects from an array of Enumerations.
+     * @param names a variable number of enums
+     * @return a List of ComboAlias objects
+     */
+    public static List<ComboAlias> fromArray(Enum<?>... names) {
+        List<ComboAlias> results = new ArrayList<ComboAlias>(names.length);
+        for (int x = 0; x < names.length; x++) {
+        	Enum<?> e = names[x];
+        	results.add(new ComboAliasImpl(e.name()));
+        }
+    	
+    	return results;
+    }
 
     /**
      * Create a ComboAlias from a String. The name/alias will be the same.
@@ -89,14 +104,14 @@ public class ComboUtils {
     }
     
     /**
-     * Create a list of ComboAlias objects from a List of strings. The name/alias will be the same.
+     * Create a list of ComboAlias objects from a List of objects. The name/alias will be the same.
      * @param names a List of names
      * @return a List of ComboAlias objects
      */
-    public static List<ComboAlias> fromList(Collection<String> names) {
+    public static List<ComboAlias> fromList(Collection<?> names) {
         List<ComboAlias> results = new ArrayList<ComboAlias>(names.size());
-        for (Iterator<String> i = names.iterator(); i.hasNext(); )
-            results.add(new ComboAliasImpl(i.next()));
+        for (Iterator<?> i = names.iterator(); i.hasNext(); )
+            results.add(new ComboAliasImpl(String.valueOf(i.next())));
         
         return results;
     }
