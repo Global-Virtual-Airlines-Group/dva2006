@@ -43,7 +43,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -162,7 +162,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setDistanceType(ctx.getParameter("distanceUnits"));
-			p.setAirportCodeType(ctx.getParameter("airportCodeType"));
+			p.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 			p.setMapType(ctx.getParameter("mapType"));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
 			p.setViewCount(StringUtils.parse(ctx.getParameter("viewCount"), SystemData.getInt("html.table.viewSize")));
@@ -690,7 +690,7 @@ public class ProfileCommand extends AbstractFormCommand {
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("privacyOptions", ComboUtils.fromArray(PRIVACY_NAMES, PRIVACY_ALIASES), REQUEST);
-		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
+		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
 		ctx.setAttribute("mapTypes", ComboUtils.fromArray(Pilot.MAP_TYPES), REQUEST);
 		ctx.setAttribute("acarsRest", ComboUtils.fromArray(Pilot.RESTRICT), REQUEST);
 		ctx.setAttribute("distanceTypes", ComboUtils.fromArray(Person.DISTANCE_NAMES), REQUEST);

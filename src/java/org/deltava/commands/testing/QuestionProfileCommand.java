@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -185,7 +185,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("access", access, REQUEST);
 
 			// Determine if the user uses IATA/ICAO codes
-			boolean useIATA = (ctx.getUser().getAirportCodeType() == Airport.IATA);
+			boolean useIATA = (ctx.getUser().getAirportCodeType() == Airport.Code.IATA);
 			ctx.setAttribute("useIATA", Boolean.valueOf(useIATA), REQUEST);
 
 			// Get exam names
