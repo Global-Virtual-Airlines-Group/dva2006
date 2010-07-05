@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 2.2
+ * @version 3.2
  * @since 1.0
  */
 
@@ -137,7 +137,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 		// Save chart types and ICAO
 		ctx.setAttribute("chartTypes", cTypes, REQUEST);
-		ctx.setAttribute("doICAO", Boolean.valueOf(ctx.getUser().getAirportCodeType() == Airport.ICAO), REQUEST);
+		ctx.setAttribute("doICAO", Boolean.valueOf(ctx.getUser().getAirportCodeType() == Airport.Code.ICAO), REQUEST);
 
 		// Load the chart if not new
 		if (!isNew) {

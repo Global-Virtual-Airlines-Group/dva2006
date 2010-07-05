@@ -73,9 +73,9 @@ public class TestPerson extends AbstractBeanTestCase {
         checkProperty("location", "Southeastern US");
         checkProperty("homeAirport", "ATL");
         checkProperty("airportCodeType", Integer.valueOf(1));
-        assertEquals(Airport.CODETYPES[_p.getAirportCodeType()], _p.getAirportCodeTypeName());
-        _p.setAirportCodeType(Airport.CODETYPES[0]);
-        assertEquals(0, _p.getAirportCodeType());
+        assertEquals(_p.getAirportCodeType().toString(), _p.getAirportCodeTypeName());
+        _p.setAirportCodeType(Airport.Code.IATA);
+        assertEquals(0, _p.getAirportCodeType().ordinal());
         checkProperty("emailAccess", Integer.valueOf(1));
         checkProperty("legacyHours", new Double(238.1));
         checkProperty("createdOn", new Date());

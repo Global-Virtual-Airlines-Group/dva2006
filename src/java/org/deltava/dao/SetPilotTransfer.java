@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setString(28, p.getDateFormat());
 			_ps.setString(29, p.getTimeFormat());
 			_ps.setString(30, p.getNumberFormat());
-			_ps.setInt(31, p.getAirportCodeType());
+			_ps.setInt(31, p.getAirportCodeType().ordinal());
 			_ps.setInt(32, p.getDistanceType());
 			_ps.setInt(33, id);
 			executeUpdate(1);
