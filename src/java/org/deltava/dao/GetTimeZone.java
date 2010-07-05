@@ -1,23 +1,19 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.TZInfo;
 
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 1.0
+ * @version 3.2
  * @since 1.0
  */
 
 public class GetTimeZone extends DAO {
 
-    private static final Logger log = Logger.getLogger(GetTimeZone.class);
-    
     /**
      * Initializes the Data Access Object.
      * @param c the JDBC connection to use
@@ -28,27 +24,28 @@ public class GetTimeZone extends DAO {
 
     /**
      * Intiailizes all Time Zones from the database.
+     * @return the number of Time Zones loaded
      * @throws DAOException if a JDBC error occurs
      */
-    public void initAll() throws DAOException {
+    public int initAll() throws DAOException {
         try {
             prepareStatementWithoutLimits("SELECT CODE, NAME, ABBR FROM common.TZ");
             
             // Execute the query
+            int rowsLoaded = 0;
             ResultSet rs = _ps.executeQuery();
             while (rs.next()) {
             	String id = rs.getString(1);
                 TZInfo.init(id, rs.getString(2), rs.getString(3));
+                rowsLoaded++;
             }
             
             // Clean up after ourselves
             rs.close();
             _ps.close();
+            return rowsLoaded;
         } catch (SQLException se) {
             throw new DAOException(se);
         }
-        
-        // Log map size
-        log.info("Loaded " + TZInfo.getAll().size() + " time zones");
     }
 }
