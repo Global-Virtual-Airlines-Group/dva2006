@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 2.7
+ * @version 3.2
  * @since 1.0
  */
 
@@ -297,7 +298,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setDateFormat(rs.getString(35));
 			p.setTimeFormat(rs.getString(36));
 			p.setNumberFormat(rs.getString(37));
-			p.setAirportCodeType(rs.getInt(38));
+			p.setAirportCodeType(Airport.Code.values()[rs.getInt(38)]);
 			p.setDistanceType(rs.getInt(39));
 			p.setMapType(rs.getInt(40));
 			p.setNoExams(rs.getBoolean(41));

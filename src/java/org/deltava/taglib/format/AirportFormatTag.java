@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.security.Principal;
@@ -16,13 +16,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to selectively display airport codes.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0 
  */
 
 public class AirportFormatTag extends TagSupport {
 
-   private int _codeType = Airport.IATA;
+   private Airport.Code _codeType = Airport.Code.IATA;
    private Airport _airport;
 
    /**
@@ -46,15 +46,13 @@ public class AirportFormatTag extends TagSupport {
    /**
     * Sets the code type to display.
     * @param codeType a code type constant
-    * @see Airport#CODETYPES
     */
    public void setCode(String codeType) {
-      for (int x = 0; x < Airport.CODETYPES.length; x++) {
-         if (Airport.CODETYPES[x].equalsIgnoreCase(codeType)) {
-            _codeType = x;
-            return;
-         }
-      }
+	   try {
+		   _codeType = Airport.Code.valueOf(codeType.toUpperCase());
+	   } catch (Exception e) {
+		   // empty
+	   }
    }
 
    /**
@@ -64,7 +62,7 @@ public class AirportFormatTag extends TagSupport {
    public void release() {
       super.release();
       _airport = null;
-      _codeType = Airport.IATA;
+      _codeType = Airport.Code.IATA;
    }
 
    /**
@@ -96,12 +94,12 @@ public class AirportFormatTag extends TagSupport {
       JspWriter out = pageContext.getOut();
       try {
          switch (_codeType) {
-            case Airport.ICAO:
+            case ICAO:
                out.print(_airport.getICAO());
                break;
 
             default:
-            case Airport.IATA:
+            case IATA:
                out.print(_airport.getIATA());
          }
       } catch (Exception e) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 2.4
+ * @version 3.2
  * @since 1.0
  */
 
@@ -115,7 +115,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _nFormat = "#,##0.0";
 	private String _dFormat = "MM/dd/yyyy";
 	private String _tFormat = "hh:mm:ss";
-	private int _airportCodeType;
+	private Airport.Code _airportCodeType;
 	private int _distanceType;
 	private String _uiScheme;
 	private int _viewCount;
@@ -510,23 +510,21 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	/**
 	 * Returns the Person's preferred airport code type (IATA/ICAO).
 	 * @return the Airport Code type
-	 * @see Person#setAirportCodeType(int)
-	 * @see Person#setAirportCodeType(String)
+	 * @see Person#setAirportCodeType(Airport.Code)
 	 * @see Person#getAirportCodeTypeName()
 	 */
-	public int getAirportCodeType() {
+	public Airport.Code getAirportCodeType() {
 		return _airportCodeType;
 	}
 
 	/**
 	 * Returns the Person's preferred airport code type name (IATA/ICAO).
 	 * @return the Airport Code type name
-	 * @see Person#setAirportCodeType(int)
-	 * @see Person#setAirportCodeType(String)
+	 * @see Person#setAirportCodeType(Airport.Code)
 	 * @see Person#getAirportCodeType()
 	 */
 	public String getAirportCodeTypeName() {
-		return Airport.CODETYPES[_airportCodeType];
+		return _airportCodeType.toString();
 	}
 
 	/**
@@ -861,29 +859,14 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Updates the Person's preferred airport code type (IATA/ICAO).
-	 * @param code the Airport code type code
-	 * @see Person#setAirportCodeType(String)
+	 * @param code the Airport code type
 	 * @see Person#getAirportCodeType()
 	 * @see Person#getAirportCodeTypeName()
 	 */
-	public void setAirportCodeType(int code) {
-		if ((code < 0) || (code >= Airport.CODETYPES.length))
-			throw new IllegalArgumentException("Invalid Airport Code type -" + code);
-
+	public void setAirportCodeType(Airport.Code code) {
 		_airportCodeType = code;
 	}
 
-	/**
-	 * Updates the Person's preferred airport code type (IATA/ICAO).
-	 * @param codeName the Airport code type name
-	 * @see Person#setAirportCodeType(int)
-	 * @see Person#getAirportCodeType()
-	 * @see Person#getAirportCodeTypeName()
-	 */
-	public void setAirportCodeType(String codeName) {
-		setAirportCodeType(StringUtils.arrayIndexOf(Airport.CODETYPES, codeName, 0));
-	}
-	
 	/**
 	 * Returns the person's full name.
 	 */

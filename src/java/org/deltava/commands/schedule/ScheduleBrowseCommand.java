@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.Collections;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       ctx.setAttribute("airportD", aD, REQUEST);
       ctx.setAttribute("airportA", criteria.getAirportA(), REQUEST);
       if (ctx.isAuthenticated())
-    	  ctx.setAttribute("useICAO", Boolean.valueOf(ctx.getUser().getAirportCodeType() == Airport.ICAO), REQUEST);
+    	  ctx.setAttribute("useICAO", Boolean.valueOf(ctx.getUser().getAirportCodeType() == Airport.Code.ICAO), REQUEST);
       
       // Do the search
       try {

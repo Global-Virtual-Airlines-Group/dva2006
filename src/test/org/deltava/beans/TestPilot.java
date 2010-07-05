@@ -50,9 +50,6 @@ public class TestPilot extends AbstractBeanTestCase {
         assertEquals(Pilot.STATUS[3], _p.getStatusName());
         _p.setStatus(Pilot.STATUS[2]);
         assertEquals(2, _p.getStatus());
-        
-        checkProperty("airportCodeType", Integer.valueOf(Airport.ICAO));
-        assertEquals(Airport.CODETYPES[Airport.ICAO], _p.getAirportCodeTypeName());
     }
     
     public void testComboAlias() {

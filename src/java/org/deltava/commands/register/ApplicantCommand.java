@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
@@ -70,7 +70,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setDateFormat(ctx.getParameter("df"));
 			a.setTimeFormat(ctx.getParameter("tf"));
 			a.setNumberFormat(ctx.getParameter("nf"));
-			a.setAirportCodeType(ctx.getParameter("airportCodeType"));
+			a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 			a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			a.setUIScheme(ctx.getParameter("uiScheme"));
 			a.setHRComments(ctx.getParameter("HRcomments"));
@@ -118,7 +118,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Save the notification options
-		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
+		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 

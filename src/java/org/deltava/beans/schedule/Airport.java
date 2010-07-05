@@ -10,21 +10,20 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
 public class Airport implements java.io.Serializable, Comparable<Airport>, ComboAlias, ViewEntry, 
 	ICAOAirport, MarkerMapEntry, IconMapEntry {
 
-	public static final int IATA = 0;
-	public static final int ICAO = 1;
-
 	/**
-	 * Airport Code types.
+	 * Enumeration for Airport code types.
 	 */
-	public static final String[] CODETYPES = { "IATA", "ICAO" };
-
+	public enum Code {
+		IATA, ICAO;
+	}
+	
 	/**
 	 * Special airport object for "All Airports"
 	 */
@@ -44,6 +43,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
 	private TZInfo _tz = TZInfo.local();
+	private Country _country;
 	private final Collection<String> _aCodes = new TreeSet<String>();
 
 	/**
@@ -85,6 +85,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public void setTZ(TZInfo tz) {
 		_tz = tz;
+	}
+	
+	/**
+	 * Sets this airport's Country.
+	 * @param c the Country
+	 * @see Airport#getCountry()
+	 */
+	public void setCountry(Country c) {
+		_country = c;
 	}
 
 	/**
@@ -204,6 +213,14 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public TZInfo getTZ() {
 		return _tz;
+	}
+	
+	/**
+	 * Returns this airport's country.
+	 * @return the Country
+	 */
+	public Country getCountry() {
+		return _country;
 	}
 	
 	/**
