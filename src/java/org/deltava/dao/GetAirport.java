@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -63,12 +63,13 @@ public class GetAirport extends DAO {
 
 			// Create the airport object
 			Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+			a.setCountry(Country.get(rs.getString(5)));
 			a.setTZ(rs.getString(3));
-			a.setLocation(rs.getDouble(5), rs.getDouble(6));
-			a.setADSE(rs.getBoolean(7));
-			a.setAltitude(rs.getInt(8));
-			a.setRegion(rs.getString(9));
-			a.setMagVar(rs.getDouble(10));
+			a.setLocation(rs.getDouble(6), rs.getDouble(7));
+			a.setADSE(rs.getBoolean(8));
+			a.setAltitude(rs.getInt(9));
+			a.setRegion(rs.getString(10));
+			a.setMagVar(rs.getDouble(11));
 
 			// Close JDBC resources
 			rs.close();
@@ -126,12 +127,13 @@ public class GetAirport extends DAO {
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+				a.setCountry(Country.get(rs.getString(5)));
 				a.setTZ(rs.getString(3));
-				a.setLocation(rs.getDouble(5), rs.getDouble(6));
-				a.setADSE(rs.getBoolean(7));
-				a.setAltitude(rs.getInt(8));
-				a.setRegion(rs.getString(9));
-				a.setMagVar(rs.getDouble(11));
+				a.setLocation(rs.getDouble(6), rs.getDouble(7));
+				a.setADSE(rs.getBoolean(8));
+				a.setAltitude(rs.getInt(9));
+				a.setRegion(rs.getString(10));
+				a.setMagVar(rs.getDouble(12));
 				results.add(a);
 			}
 
@@ -215,11 +217,12 @@ public class GetAirport extends DAO {
 			while (rs.next()) {
 				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 				a.setTZ(rs.getString(3));
-				a.setLocation(rs.getDouble(5), rs.getDouble(6));
-				a.setADSE(rs.getBoolean(7));
-				a.setAltitude(rs.getInt(8));
-				a.setRegion(rs.getString(9));
-				a.setMagVar(rs.getDouble(10));
+				a.setCountry(Country.get(rs.getString(5)));
+				a.setLocation(rs.getDouble(6), rs.getDouble(7));
+				a.setADSE(rs.getBoolean(8));
+				a.setAltitude(rs.getInt(9));
+				a.setRegion(rs.getString(10));
+				a.setMagVar(rs.getDouble(11));
 
 				// Save in the map
 				results.put(a.getIATA(), a);

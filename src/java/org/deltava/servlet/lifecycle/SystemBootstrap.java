@@ -27,7 +27,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -126,7 +126,12 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			// Load time zones
 			log.info("Loading Time Zones");
 			GetTimeZone dao = new GetTimeZone(c);
-			dao.initAll();
+			log.info("Loaded " + dao.initAll() + " Time Zones");
+			
+			// Load country codes
+			log.info("Loading Country codes");
+			GetCountry cdao = new GetCountry(c);
+			log.info("Loaded " + cdao.initAll() + " Country codes");
 
 			// Load Database information
 			log.info("Loading Cross-Application data");
