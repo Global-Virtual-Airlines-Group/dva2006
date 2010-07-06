@@ -84,7 +84,10 @@ public class OnlineTrackTask extends Task {
 					int trackID = otdao.getTrackID(p.getPilotID(), network, info.getValidDate(), p.getAirportD(), p.getAirportA());
 					if (trackID == 0) {
 						String rt = StringUtils.listConcat(p.getWayPoints(), " ");
-						trackID = otwdao.writeTrack(p.getPilotID(), network, p.getAirportD(), p.getAirportA(), rt);
+						if (rt.startsWith("+"))
+							rt = rt.substring(1);
+						
+						trackID = otwdao.writeTrack(p.getPilotID(), network, p.getAirportD(), p.getAirportA(), rt.trim());
 					}
 					
 					// Create the position
