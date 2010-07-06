@@ -17,17 +17,18 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
 public class AirportCommand extends AbstractFormCommand {
-
+	
 	/**
 	 * Callback method called when saving the Airport.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the command results
@@ -75,6 +76,7 @@ public class AirportCommand extends AbstractFormCommand {
 			// Update the aiport from the request
 			a.setTZ(ctx.getParameter("tz"));
 			a.setAirlines(ctx.getParameters("airline"));
+			a.setCountry(Country.get(ctx.getParameter("country")));
 			a.setADSE(Boolean.valueOf(ctx.getParameter("hasADSE")).booleanValue());
 
 			// Build the airport latitude/longitude
@@ -140,6 +142,7 @@ public class AirportCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the Airport code
@@ -197,6 +200,7 @@ public class AirportCommand extends AbstractFormCommand {
 
 		// Save directions and time zones in request
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
+		ctx.setAttribute("countries", new TreeSet<Country>(Country.getAll()), REQUEST);
 		ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
 		ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
 
@@ -210,6 +214,7 @@ public class AirportCommand extends AbstractFormCommand {
 	 * Callback method called when reading the Airport. <i>NOT IMPLEMENTED - Edits the Airport</i>
 	 * @param ctx the Command context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}

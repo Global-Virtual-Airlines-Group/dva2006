@@ -25,13 +25,14 @@ return true;
 
 function validate(form)
 {
-var apCode = form.id.value.toUpperCase();
-if (apCode.length < 3) {
+var apCode = form.id;
+if (apCode.value.length < 3) {
 	alert('Please select a valid ICAO or IATA airport code.');
-	form.id.focus();
+	apCode.focus();
 	return false;
 }
 
+apCode.value = apCode.value.toUpperCase();
 return true;
 }
 </script>
@@ -50,13 +51,13 @@ return true;
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="11%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" /></td>
- <td width="14%">AIRPORT NAME</td>
- <td width="7%">IATA</td>
- <td width="7%">ICAO</td>
+ <td width="12%">AIRPORT NAME</td>
+ <td width="6%">IATA</td>
+ <td width="6%">ICAO</td>
  <td width="15%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" />
  <el:button ID="EditButton" type="submit" className="BUTTON" label="GO" /></td>
  <td width="10%">TIME ZONE</td>
- <td class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
+ <td colspan="2" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
  AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void updateSort()" /></td>
 </tr>
 
@@ -67,13 +68,14 @@ return true;
  <td class="bld">${airport.IATA}</td>
  <td class="bld">${airport.ICAO}</td>
  <td class="sec small" colspan="2">${airport.TZ}</td>
+ <td class="small">${airport.country}</td>
  <td><fmt:geo pos="${airport.position}" /></td>
 </tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 <el:text name="op" type="hidden" value="edit" />
