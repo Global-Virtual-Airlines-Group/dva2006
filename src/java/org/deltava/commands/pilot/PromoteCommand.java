@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 1.0
  */
 
@@ -90,6 +90,9 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set status attribute
+		ctx.setAttribute("isPromotion", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

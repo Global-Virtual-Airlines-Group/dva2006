@@ -117,6 +117,7 @@ The user account for ${pilot.name} has been Suspended.<br />
 <br />
 To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" op="read" className="sec bld">Click Here</el:cmd>.<br />
 To return to the Pilot Roster, <el:cmd url="roster" className="sec bld">Click Here</el:cmd>.<br />
+<c:if test="${isPromotion}">To return to the Promotion Queue, <el:cmd url="promoqueue" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <c:if test="${spUpdated}">To return to the Staff Roster, <el:cmd url="staff" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <br />
 <content:copyright />
