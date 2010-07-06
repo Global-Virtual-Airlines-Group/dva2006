@@ -10,7 +10,7 @@
 <title><content:airline /> Issue Updated</title>
 <content:pics />
 <content:css name="main" browserSpecific="true" />
-<meta http-equiv="refresh" content="3;url=/issue.do?id=0x<fmt:hex value="${issue.ID}" />&amp;op=read" />
+<meta http-equiv="refresh" content="3;url=/issue.do?id=${issue.hexID}&amp;op=read" />
 </head>
 <content:copyright visible="false" />
 <body>
