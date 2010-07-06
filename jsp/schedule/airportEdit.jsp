@@ -29,6 +29,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 6, 'Airport Name')) return false;
+if (!validateCombo(form.country, 'Country')) return false;
 if (!validateText(form.iata, 3, 'IATA Code')) return false;
 if (!validateText(form.icao, 4, 'ICAO Code')) return false;
 if (!validateCombo(form.tz, 'Time Zone')) return false;
@@ -60,8 +61,19 @@ return true;
  <td colspan="2">AIRPORT PROFILE</td>
 </tr>
 <tr>
- <td class="label">Airport Name</td>
+ <td class="label top" rowspan="2">Airport Name</td>
  <td class="data"><el:text name="name" idx="*" className="pri bld req" size="36" max="36" value="${airport.name}" /></td>
+</tr>
+<tr>
+ <td class="data small">The airport name should be in the following formats:<br />
+Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <i>(Chattanooga TN)</i><br /> 
+Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. <i>(New York-Kennedy NY)</i><br />
+Airports outside the United States or Canada, use &lt;City Name&gt;. <i>(Trondheim)</i><br />
+Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt;. <i>(Paris-Charles De Gaulle)</i></td>
+</tr>
+<tr>
+ <td class="label">Country</td>
+ <td class="data"><el:combo name="country" idx="*" className="req" options="${countries}" firstEntry="-" value="${airport.country}" /></td>
 </tr>
 <tr>
  <td class="label">IATA Code</td>
