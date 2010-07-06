@@ -12,7 +12,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:pics />
 <c:if test="${!isDelete}">
-<meta http-equiv="refresh" content="3;url=/thread.do?id=0x<fmt:hex value="${thread.ID}" />" />
+<meta http-equiv="refresh" content="3;url=/thread.do?id=${thread.hexID}" />
 </c:if>
 </head>
 <content:copyright visible="false" />
