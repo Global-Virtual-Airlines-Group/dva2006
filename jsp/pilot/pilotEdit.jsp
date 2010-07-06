@@ -253,7 +253,7 @@ return true;
 <tr>
  <td class="label top">Signature Image</td>
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
-<img alt="${forumName} Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
+<img alt="${forumName} Signature" src="/sig/${db}/${pilot.hexID}" /><br />
 <el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
 <content:filter roles="HR,Signature">
 <el:box name="isAuthSig" value="true" label="Authorized ${forumName} Signature Image" /><br /></content:filter>
