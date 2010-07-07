@@ -1,0 +1,137 @@
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.stats;
+
+import java.util.Arrays;
+import java.sql.Connection;
+
+import org.deltava.beans.stats.Accomplishment;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.AccomplishmentAccessControl;
+
+import org.deltava.util.StringUtils;
+
+/**
+ * A Web Site Command to handle Accomplishment profiles. 
+ * @author Luke
+ * @version 3.2
+ * @since 3.2
+ */
+
+public class AccomplishmentCommand extends AbstractFormCommand {
+
+	/**
+	 * Callback method called when saving the Accomplishment.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	@Override
+	protected void execSave(CommandContext ctx) throws CommandException {
+		
+		// Check if we're updating
+		boolean isNew = (ctx.getID() == 0);
+		try {
+			Connection con = ctx.getConnection();
+			
+			Accomplishment a = null;	
+			if (!isNew) {
+				GetAccomplishment dao = new GetAccomplishment(con);
+				a = dao.get(ctx.getID());
+				if (a == null)
+					throw notFoundException("Invalid Accomplishment - " + ctx.getID());
+				
+				a.setName(ctx.getParameter("name"));
+			} else
+				a = new Accomplishment(ctx.getParameter("name"));
+			
+			// Check our access
+			AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, a);
+			ac.validate();
+			boolean canExec = isNew ? ac.getCanCreate() : ac.getCanEdit();
+			if (!canExec)
+				throw securityException("Cannot " + (isNew ? "create" : "edit") + " Accomplishment profile");
+			
+			// Update fields
+			a.setValue(StringUtils.parse(ctx.getParameter("value"), 0));
+			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			a.setUnit(Accomplishment.Unit.valueOf(ctx.getParameter("units")));
+			a.setColor(StringUtils.parse("0x" + ctx.getParameter("color"), 0));
+			
+			// Write the accomplishment
+			SetAccomplishment wdao = new SetAccomplishment(con);
+			wdao.write(a);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(ResultType.REDIRECT);
+		result.setURL("accomplishments.do");
+		result.setSuccess(true);
+	}
+
+	/**
+	 * Callback method called when editing the Accomplishment.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	@Override
+	protected void execEdit(CommandContext ctx) throws CommandException {
+		
+		// Get the command results
+		CommandResult result = ctx.getResult();
+		ctx.setAttribute("units", Arrays.asList(Accomplishment.Unit.values()), REQUEST);
+		
+		// Get the Accomplishment code - if we're new, check if the airport exists
+		boolean isNew = (ctx.getID() == 0);
+		if (isNew) {
+			AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, null);
+			ac.validate();
+			if (!ac.getCanCreate())
+				throw securityException("Cannot create Accomplishment profile");
+			
+			// Forward to the JSP
+			result.setURL("/jsp/stats/accomplishmentEdit.jsp");
+			result.setSuccess(true);
+			return;
+		}
+		
+		try {
+			GetAccomplishment dao = new GetAccomplishment(ctx.getConnection());
+			Accomplishment a = dao.get(ctx.getID());
+			if (a == null)
+				throw notFoundException("Invalid Accomplishment - " + ctx.getID());
+			
+			// Check our security
+			AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, a);
+			ac.validate();
+			if (!ac.getCanEdit())
+				throw securityException("Cannot edit Accomplishment profile");
+			
+			// Save in request
+			ctx.setAttribute("ap", a, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Forward to the JSP
+		result.setURL("/jsp/stats/accomplishmentEdit.jsp");
+		result.setSuccess(true);
+	}
+
+	/**
+	 * Callback method called when reading the Accomplishment. <i>NOT IMPLEMENTED - Edits the Accomplishment</i>
+	 * @param ctx the Command context
+	 */
+	@Override
+	protected void execRead(CommandContext ctx) throws CommandException {
+		execEdit(ctx);
+	}
+}
