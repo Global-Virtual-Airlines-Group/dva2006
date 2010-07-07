@@ -1026,6 +1026,18 @@
 		<roles>HR,Signature</roles>
 	</command>
 
+	<command id="accomplishments">
+		<name>Accomplishment Profile List</name>
+		<class>org.deltava.commands.stats.AccomplishmentListCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+
+	<command id="accomplishment">
+		<name>Accomplishment Profile</name>
+		<class>org.deltava.commands.stats.AccomplishmentCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+
 	<command id="wxcenter">
 		<name>Weather Center</name>
 		<class>org.deltava.commands.main.WeatherCenterCommand</class>

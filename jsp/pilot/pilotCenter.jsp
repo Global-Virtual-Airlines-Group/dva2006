@@ -541,12 +541,19 @@ training session with a Flight Academy student.</td>
 <tr class="title caps">
  <td colspan="2">HUMAN RESOURCES</td>
 </tr>
-</content:filter>
-<content:filter roles="HR,PIREP,Operations">
 <tr>
  <td class="mid"><el:cmd className="bld" url="massmail">Group E-Mail</el:cmd></td>
  <td class="data">You can send an e-mail message to a group of pilots in a single equipment program,
  or to the entire airline.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="accomplishments">Pilot Accomplishments</el:cmd></td>
+<content:filter roles="!HR">
+ <td class="data">You can view, create and modify Pilot Accomplishment profiles.</td>
+</content:filter>
+<content:filter roles="HR">
+ <td class="data">You can view Pilot Accomplishment profiles.</td>
+</content:filter>
 </tr>
 </content:filter>
 <content:filter roles="HR,Operations">
