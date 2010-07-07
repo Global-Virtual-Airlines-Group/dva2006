@@ -327,6 +327,19 @@
 	</tag>
 
 	<tag>
+		<description>Accomplishment tag, used to format pilot Accomplishments</description>
+		<name>accomplish</name>
+		<tag-class>org.deltava.taglib.format.AccomplishmentTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>accomplish</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.stats.Accomplishment</type>
+		</attribute>
+	</tag>
+
+	<tag>
 		<description>GeoPosition tag, used to format geographic coordinates</description>
 		<name>geo</name>
 		<tag-class>org.deltava.taglib.format.GeoFormatTag</tag-class>
