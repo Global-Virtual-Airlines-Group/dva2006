@@ -19,10 +19,10 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 	 * Enumeration to track Accomplishment Units.
 	 */
 	public enum Unit implements ComboAlias {
-		LEGS("Flight Legs", 0), MILES("Flight Miles", 1), OLEGS("Online Legs", 2), HLEGS("Historic Legs", 3), 
-		ELEGS("Event Legs", 4), DLEGS("Dispatch Legs", 5), ALEGS("ACARS Legs", 6), 
-		AIRPORTS("Airports Visited", 7), AIRCRAFT("Aircraft Used", 8), COUNTRIES("Countries Visited", 9), 
-		STATES("States Visited", 10), MEMBERDAYS("Days since joining", 11);
+		LEGS("Flight Legs", 0), MILES("Flight Miles", 1), OLEGS("Online Legs", 2), VLEGS("VATSIM Legs", 3),
+		ILEGS("IVAO Legs", 4), HLEGS("Historic Legs", 5), ELEGS("Event Legs", 6), DLEGS("Dispatch Legs", 7),
+		ALEGS("ACARS Legs", 8), AIRPORTS("Airports Visited", 9), AIRCRAFT("Aircraft Used", 10), 
+		COUNTRIES("Countries Visited", 11), STATES("States Visited", 12), MEMBERDAYS("Days since joining", 13);
 			
 		private String _name;
 		private int _code;
