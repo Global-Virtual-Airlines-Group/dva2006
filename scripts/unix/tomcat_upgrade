@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # Tomcat upgrade script
-# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -21,7 +21,9 @@ cd /usr/local/apache-tomcat-$1
 
 # Clean out default webapps
 echo "Cleaning default installation"
-rm -Rd webapps
+rm -Rd webapps/docs
+rm -Rd webapps/examples
+rm -Rd webapps/ROOT
 rm temp/*
 rm LICENSE
 rm NOTICE
@@ -30,8 +32,11 @@ rm RUNNING.txt
 
 # Nuke bad stuff in bin
 echo "Removing Windows-specific files"
-rm bin/*.exe
 rm bin/*.bat
+
+# Create the logging symlink
+rm -Rd logs
+ln -s /var/log/tomcat logs
 
 # Copy over the work directory
 echo "Copying work directory"
@@ -39,11 +44,10 @@ cp -R /usr/local/tomcat/work/* work
 
 # Copy over common libraries
 echo "Copying libraries"
-cp -u /usr/local/tomcat/common/lib/* common/lib
+cp -u /usr/local/tomcat/lib/* lib
 
 # Copy over configuration files
 echo "Copying Tomcat configuration"
-rm conf/server-minimal.xml
 cp /usr/local/tomcat/conf/server.xml conf
 cp /usr/local/tomcat/conf/tomcat-users.xml conf
 cp /usr/local/tomcat/conf/logging.properties conf
@@ -52,7 +56,7 @@ cp /usr/local/tomcat/bin/catalina.sh bin
 # Change permissions
 echo "Changing file permissions"
 chown -R www:www *
-chown -R www:gva common/lib
+chown -R www:gva lib
 
 # Switch to /usr/local
 cd /usr/local
