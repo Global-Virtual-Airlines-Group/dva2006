@@ -7,7 +7,7 @@ import java.util.*;
  * A class to support a map of {@link UserData} beans. This class implements Map to allow it to be accessed directly via
  * JSP Expression Language.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -100,7 +100,6 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 	/**
 	 * Returns the database IDs across all databases for every user within this container.
 	 * @return a Collection of database IDs
-	 * @see UserDataMap#getIDs()
 	 */
 	public Collection<Integer> getAllIDs() {
 		Collection<Integer> results = new HashSet<Integer>();
@@ -110,16 +109,6 @@ public class UserDataMap extends HashMap<Integer, UserData> {
 		}
 
 		return results;
-	}
-
-	/**
-	 * Returns the database IDs contained within the map.
-	 * @return a Collection of Integers
-	 * @see UserDataMap#keySet()
-	 * @see UserDataMap#getAllIDs()
-	 */
-	public Collection<Integer> getIDs() {
-		return keySet();
 	}
 
 	/**
