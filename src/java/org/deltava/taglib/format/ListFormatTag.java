@@ -42,7 +42,7 @@ public class ListFormatTag extends TagSupport {
      * Sets the value to display if the Collection is empty.
      * @param e the value
      */
-    public void setEmptry(String e) {
+    public void setEmpty(String e) {
     	_empty = e;
     }
     
