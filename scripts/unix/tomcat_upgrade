@@ -33,6 +33,7 @@ rm RUNNING.txt
 # Nuke bad stuff in bin
 echo "Removing Windows-specific files"
 rm bin/*.bat
+rm bin/*.tar.gz
 
 # Create the logging symlink
 rm -Rd logs
@@ -57,6 +58,7 @@ cp /usr/local/tomcat/bin/catalina.sh bin
 echo "Changing file permissions"
 chown -R www:www *
 chown -R www:gva lib
+chmod 664 lib
 
 # Switch to /usr/local
 cd /usr/local
