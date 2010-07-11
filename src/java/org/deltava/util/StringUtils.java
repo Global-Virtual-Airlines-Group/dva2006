@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A common String utility class.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
@@ -114,6 +114,9 @@ public final class StringUtils {
 	 * @return the delimited value stirng
 	 */
 	public static String listConcat(Collection<?> values, String delim) {
+		if (values == null)
+			return "";
+		
 		StringBuilder buf = new StringBuilder(64);
 		for (Iterator<?> i = values.iterator(); i.hasNext();) {
 			buf.append(String.valueOf(i.next()));
@@ -367,5 +370,22 @@ public final class StringUtils {
 	 */
 	public static String nullTrim(String s) {
 		return isEmpty(s) ? null : s.trim();
+	}
+
+	/**
+	 * Trims a Collection of Strings, removing elements if the string is empty.
+	 * @param s the Collection of Strings to trim
+	 * @return a Collection of Strings
+	 * @see StringUtils#nullTrim(String)
+	 */
+	public static Collection<String> nullTrim(Collection<String> s) {
+		Collection<String> results = new ArrayList<String>();
+		for (String st : s) {
+			String s2 = nullTrim(st);
+			if (s2 != null)
+				results.add(s2);
+		}
+		
+		return results;
 	}
 }
