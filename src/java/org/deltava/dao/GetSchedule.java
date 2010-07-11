@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,16 +8,19 @@ import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 2.7
+ * @version 3.2
  * @since 1.0
  */
 
-public class GetSchedule extends DAO {
+public class GetSchedule extends DAO implements CachingDAO {
+	
+	private static final Cache<CacheableLong> _schedSizeCache = new ExpiringCache<CacheableLong>(2, 1800);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -25,6 +28,10 @@ public class GetSchedule extends DAO {
 	 */
 	public GetSchedule(Connection c) {
 		super(c);
+	}
+	
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_schedSizeCache);
 	}
 
 	/**
@@ -350,17 +357,23 @@ public class GetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getFlightCount() throws DAOException {
+		
+		// Check the cache
+		CacheableLong result = _schedSizeCache.get(GetSchedule.class);
+		if (result != null)
+			return (int) result.getValue();
+		
 		try {
 			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			int result = rs.next() ? rs.getInt(1) : 0;
+			result = new CacheableLong(GetSchedule.class, rs.next() ? rs.getInt(1) : 0);
 
 			// Clean up and return
 			rs.close();
 			_ps.close();
-			return result;
+			return (int) result.getValue();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
