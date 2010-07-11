@@ -58,12 +58,13 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
         Airport aO, aD;
         switch (_comparisonType) {
             case DATE:
-                if (f1.getStatus() == FlightReport.DRAFT) {
+                if (f1.getStatus() == FlightReport.DRAFT)
                     return -1;
-                } else if (f2.getStatus() == FlightReport.DRAFT) {
+                else if (f2.getStatus() == FlightReport.DRAFT)
                     return 1;
-                } else {
-                    return (f1.getStatus() == FlightReport.DRAFT) ? 1 : f1.getDate().compareTo(f2.getDate());
+                else {
+                	tmpResult = f1.getDate().compareTo(f2.getDate());
+                    return (tmpResult == 0) ? f1.compareTo(f2) : tmpResult;
                 }
 
             case LENGTH:
