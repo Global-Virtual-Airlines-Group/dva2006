@@ -119,7 +119,9 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetNavRoute(null));
 		daoCaches.add(new GetFlightReportStatistics(null));
 		daoCaches.add(new GetFlightReportRecognition(null));
+		daoCaches.add(new org.deltava.dao.GetSchedule(null));
 		daoCaches.add(new GetStatistics(null));
+		daoCaches.add(new GetAccomplishment(null));
 		daoCaches.add(new GetTableStatus(null));
 		daoCaches.add(new GetSystemData(null));
 		daoCaches.add(new GetUserData(null));
