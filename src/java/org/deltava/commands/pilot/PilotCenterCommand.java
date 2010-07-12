@@ -16,8 +16,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.*;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.ACARSClientInfo;
@@ -26,7 +25,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -35,7 +34,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 	/**
 	 * Executes the command
 	 * @param ctx the Command context
-	 * @throws CommandException if an error (typically database) occurs
+	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
@@ -109,10 +108,14 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					break;
 				}
 			}
-
+			
 			// Get online hours
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
 			prdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			
+			// Load Accomplishments
+			GetAccomplishment acdao = new GetAccomplishment(con);
+			ctx.setAttribute("accs", acdao.getByPilot(p.getID(), SystemData.get("airline.db")), REQUEST);
 
 			// Get the schedule size
 			GetSchedule sdao = new GetSchedule(con);

@@ -112,6 +112,16 @@ Your Assistant Chief Pilots are
 You are also qualified to file Flight Reports using the following aircraft:<br />
 <fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
+<c:if test="${!empty accs}">
+<tr>
+ <td class="mid bld">Accomplishments</td>
+ <td class="data">You have achieved the following Accomplishments:<br />
+<br />
+<c:forEach var="a" items="${accs}">
+<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
+</c:forEach></td>
+</tr>
+</c:if>
 <content:filter roles="HR,Examination,Operations">
 <tr>
  <td class="mid"><el:cmd url="prgroster" className="bld">Program Roster</el:cmd></td>
