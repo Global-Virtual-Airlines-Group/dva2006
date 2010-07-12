@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 2.2
  */
 
@@ -65,8 +65,12 @@ public class DispatchRouteListService extends WebService {
 		try {
 			Connection con = ctx.getConnection();
 			
+			// Load from the database
+			GetACARSRoute rdao = new GetACARSRoute(con);
+			routes.addAll(rdao.getRoutes(aD, aA, !getInactive));
+			
 			// Load flight aware routes
-			if (doFA) {
+			if (doFA && routes.isEmpty()) {
 				GetCachedRoutes rcdao = new GetCachedRoutes(con);
 				routes.addAll(rcdao.getRoutes(aD, aA));
 				
@@ -126,10 +130,6 @@ public class DispatchRouteListService extends WebService {
 					}
 				}
 			}
-			
-			// Load from the database
-			GetACARSRoute rdao = new GetACARSRoute(con);
-			routes.addAll(rdao.getRoutes(aD, aA, !getInactive));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
 		} finally {
