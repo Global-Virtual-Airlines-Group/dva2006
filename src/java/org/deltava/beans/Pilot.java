@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -64,6 +64,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	private final Collection<String> _ratings = new TreeSet<String>();
 	private final Collection<String> _roles = new TreeSet<String>();
 	private final Collection<String> _certs = new LinkedHashSet<String>();
+	private final Collection<Integer> _accIDs = new LinkedHashSet<Integer>();
 
 	private long _miles;
 	private Date _lastFlight;
@@ -295,6 +296,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	 */
 	public Collection<String> getCertifications() {
 		return _certs;
+	}
+	
+	/**
+	 * Returns the Pilot's Accomplishments.
+	 * @return a Collection of Accomplishment database IDs
+	 * @see Pilot#addAccomplishmentID(int)
+	 */
+	public Collection<Integer> getAccomplishmentIDs() {
+		return _accIDs;
 	}
 
 	/**
@@ -861,7 +871,16 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	public void addRoles(Collection<String> roles) {
 		_roles.addAll(roles);
 	}
-
+	
+	/**
+	 * Adds an Accomplishment to this Pilot.
+	 * @param id an Accomplishment database ID
+	 * @see Pilot#getAccomplishmentIDs()
+	 */
+	public void addAccomplishmentID(int id) {
+		_accIDs.add(Integer.valueOf(id));
+	}
+	
 	/**
 	 * Removes this Pilot's membership in a group fo security roles.
 	 * @param roles a Collection of role names
