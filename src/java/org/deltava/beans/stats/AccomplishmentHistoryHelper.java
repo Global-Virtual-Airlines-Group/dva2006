@@ -229,7 +229,7 @@ public class AccomplishmentHistoryHelper {
 			cnt.add(fr);
 			
 			// If we meet the criteria, return the date
-			if (has(a, cnt) == Result.MEET)
+			if (has(a, cnt) != Result.NOTYET)
 				return dt;
 		}
 		
