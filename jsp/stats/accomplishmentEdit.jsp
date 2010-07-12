@@ -26,10 +26,36 @@ setSubmit();
 disableButton('SaveButton');
 return true;
 }
+
+function showChoices()
+{
+var f = document.forms[0];
+var c = f.units.options[f.units.selectedIndex].value;
+switch (c) {
+case 'COUNTRIES':
+	displayObject(getElement('valueCountry'), true);
+	displayObject(getElement('valueState'), false);
+	displayObject(getElement('valueBox'), false);
+	break;
+
+case 'STATES':
+	displayObject(getElement('valueState'), true);
+	displayObject(getElement('valueCountry'), false);
+	displayObject(getElement('valueBox'), false);
+	break;
+
+default:
+	displayObject(getElement('valueBox'), true);
+	displayObject(getElement('valueState'), false);
+	displayObject(getElement('valueCountry'), false);
+}
+
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void showChoices()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -47,19 +73,32 @@ return true;
 </tr>
 <tr>
  <td class="label">Units</td>
- <td class="data"><el:combo name="units" idx="*" options="${units}" size="1" className="req" firstEntry="-" value="${ap.unit}" /></td>
+ <td class="data"><el:combo name="units" idx="*" options="${units}" size="1" className="req" firstEntry="-" value="${ap.unit}" onChange="void showChoices()" /></td>
 </tr>
 <tr>
  <td class="label">Number of Units</td>
- <td class="data"><el:text name="value" idx="*" size="5" max="8" className="bld req" value="${ap.value}" /></td>
+ <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" /></td>
 </tr>
 <tr>
  <td class="label">Water Cooler color</td>
- <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" /></td>
+ <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" />
+ <span class="small">Click on the text box for a color picker.</span></td>
+</tr>
+<tr id="valueBox">
+ <td class="label top">Valid Values</td>
+ <td class="data"><el:textbox name="choices" idx="*" width="80%" height="3">${fn:splice(ap.choices, ', ')}</el:textbox></td>
+</tr>
+<tr id="valueCountry" style="display:none;">
+ <td class="label top">Valid Countries</td>
+ <td class="data"><el:check name="countries" idx="*" width="190" cols="6" className="small" newLine="true" checked="${ap.choices}" options="${countries}"/></td>
+</tr>
+<tr id="valueState" style="display:none;">
+ <td class="label top">Valid States</td>
+ <td class="data"><el:check name="states" idx="*" width="120" cols="8" newLine="true" checked="${ap.choices}" options="${states}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" checked="${ap.active}" label="Accomplishment is Active" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" className="bld" checked="${ap.active}" label="Accomplishment is Active" /></td>
 </tr>
 </el:table>
 

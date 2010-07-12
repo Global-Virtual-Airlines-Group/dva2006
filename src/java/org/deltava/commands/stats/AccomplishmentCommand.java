@@ -4,14 +4,17 @@ package org.deltava.commands.stats;
 import java.util.Arrays;
 import java.sql.Connection;
 
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.stats.Accomplishment;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.comparators.CountryComparator;
+
 import org.deltava.security.command.AccomplishmentAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to handle Accomplishment profiles. 
@@ -59,6 +62,20 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			a.setUnit(Accomplishment.Unit.valueOf(ctx.getParameter("units")));
 			a.setColor(StringUtils.parse("0x" + ctx.getParameter("color"), 0));
 			
+			// Get choices
+			switch (a.getUnit()) {
+			case COUNTRIES:
+				a.setChoices(StringUtils.nullTrim(ctx.getParameters("countries")));
+				break;
+
+			case STATES:
+				a.setChoices(StringUtils.nullTrim(ctx.getParameters("states")));
+				break;
+				
+			default:
+				a.setChoices(StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ",")));
+			}
+			
 			// Write the accomplishment
 			SetAccomplishment wdao = new SetAccomplishment(con);
 			wdao.write(a);
@@ -86,6 +103,9 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 		// Get the command results
 		CommandResult result = ctx.getResult();
 		ctx.setAttribute("units", Arrays.asList(Accomplishment.Unit.values()), REQUEST);
+		ctx.setAttribute("states", Arrays.asList(State.values()), REQUEST);
+		ctx.setAttribute("countries", CollectionUtils.sort(Country.getAll(), 
+				new CountryComparator(CountryComparator.NAME)), REQUEST);
 		
 		// Get the Accomplishment code - if we're new, check if the airport exists
 		boolean isNew = (ctx.getID() == 0);

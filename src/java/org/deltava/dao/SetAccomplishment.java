@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 
 import org.deltava.beans.stats.Accomplishment;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to save Accomplishment profiles.
@@ -31,16 +32,19 @@ public class SetAccomplishment extends DAO {
 		try {
 			GetAccomplishment.invalidate();
 			if (a.getID() != 0) {
-				prepareStatementWithoutLimits("UPDATE ACCOMPLISHMENTS SET NAME=?, UNIT=?, VAL=?, COLOR=?, ACTIVE=? WHERE (ID=?)");
-				_ps.setInt(6, a.getID());
+				prepareStatementWithoutLimits("UPDATE ACCOMPLISHMENTS SET NAME=?, UNIT=?, VAL=?, COLOR=?, "
+						+ "CHOICES=?, ACTIVE=? WHERE (ID=?)");
+				_ps.setInt(7, a.getID());
 			} else
-				prepareStatementWithoutLimits("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, ACTIVE) VALUES (?, ?, ?, ?, ?)");
+				prepareStatementWithoutLimits("INSERT INTO ACCOMPLISHMENTS (NAME, UNIT, VAL, COLOR, CHOICES, "
+						+ "ACTIVE) VALUES (?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, a.getName());
 			_ps.setInt(2, a.getUnit().getCode());
 			_ps.setInt(3, a.getValue());
 			_ps.setInt(4, a.getColor());
-			_ps.setBoolean(5, a.getActive());
+			_ps.setString(5, a.getChoices().isEmpty() ? null : StringUtils.listConcat(a.getChoices(), ","));
+			_ps.setBoolean(6, a.getActive());
 			executeUpdate(1);
 			if (a.getID() == 0)
 				a.setID(getNewID());
@@ -49,10 +53,23 @@ public class SetAccomplishment extends DAO {
 		}
 	}
 	
+	/**
+	 * Records a Pilot accomplishment on the current date.
+	 * @param pilotID the Pilot's database ID
+	 * @param a the Accomplishment
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void achieve(int pilotID, Accomplishment a) throws DAOException {
 		achieve(pilotID, a, new java.util.Date());
 	}
 	
+	/**
+	 * Records a Pilot accomplishment.
+	 * @param pilotID the Pilot's database ID
+	 * @param a the Accomplishment
+	 * @param dt the date/time of the accomplishment
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void achieve(int pilotID, Accomplishment a, java.util.Date dt) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO PILOT_ACCOMPLISHMENTS (PILOT_ID, AC_ID, DATE) VALUES (?, ?, ?)");

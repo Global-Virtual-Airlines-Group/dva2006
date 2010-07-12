@@ -1,6 +1,8 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
+import java.util.*;
+
 import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -52,6 +54,7 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 	private String _name;
 	private Unit _unit;
 	private int _value;
+	private final Collection<String> _choices = new TreeSet<String>();
 	
 	private AirlineInformation _owner;
 	
@@ -138,6 +141,15 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 	}
 	
 	/**
+	 * Returns the choices for this Accomplishment. This limits the possible values used to count
+	 * towards this Accomplishment.
+	 * @return a Collection of Strings
+	 */
+	public Collection<String> getChoices() {
+		return new ArrayList<String>(_choices);
+	}
+	
+	/**
 	 * Returns the owning Airline of this Accomplishment.
 	 * @return the AirlineInformation bean for the owner Airline
 	 * @see Accomplishment#setOwner(AirlineInformation)
@@ -209,6 +221,16 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 	public void setPilots(int cnt) {
 		_pilots = Math.max(0, cnt);
 	}
+	
+	/**
+	 * Updates the choices for this Accomplishment.
+	 * @param choices a Collection of strings
+	 */
+	public void setChoices(Collection<String> choices) {
+		_choices.clear();
+		if (choices != null)
+			_choices.addAll(choices);
+	}
 
 	public int hashCode() {
 		return _name.hashCode();
@@ -220,14 +242,15 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 	}
 	
 	public boolean equals(Object o) {
-		return ((o instanceof Accomplishment) && (compareTo((Accomplishment) o) == 0));
+		return ((o instanceof Accomplishment) && (compareTo(o) == 0));
 	}
 	
 	public String getRowClassName() {
 		return _active ? null : "warn";
 	}
 	
-	public int compareTo(Accomplishment a2) {
+	public int compareTo(Object o) {
+		Accomplishment a2 = (Accomplishment) o;
 		int tmpResult = _unit.compareTo(a2._unit);
 		if (tmpResult == 0)
 			tmpResult = Integer.valueOf(_value).compareTo(Integer.valueOf(a2._value));
