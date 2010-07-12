@@ -26,15 +26,16 @@
 <!-- Table Header Bar-->
 <tr class="title caps">
 <c:if test="${access.canCreate}">
-<td width="15%">NAME</td>
+<td width="10%">NAME</td>
 <td width="15%"><el:cmdbutton url="accomplishment" op="edit" label="NEW ACCOMPLISHMENT" /></td>
 </c:if>
 <c:if test="${!access.canCreate}">
  <td colspan="2">NAME</td>
 </c:if>
- <td width="20%">UNITS</td>
- <td width="15%">VALUE</td>
+ <td width="12%">UNITS</td>
+ <td width="8%">VALUE</td>
  <td width="7%">PILOTS</td>
+ <td width="30%">CHOICES</td>
  <td>COLOR</td>
 </tr>
 
@@ -51,13 +52,14 @@
  <td class="sec bld">${a.unit.name}</td>
  <td class="bld"><fmt:int value="${a.value}" /></td>
  <td><fmt:int value="${a.pilots}" /></td>
+ <td class="small"><fmt:list value="${a.choices}" delim=", " empty="No Restrctions" /></td>
  <td><center><div style="width:90%; background-color:#${a.hexColor};">&nbsp;</div></center></td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 <content:copyright />

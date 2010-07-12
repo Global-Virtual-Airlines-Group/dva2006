@@ -444,7 +444,8 @@
 		<function-class>org.deltava.taglib.functions.NavDataFunctions</function-class>
 		<function-signature>boolean isVOR(org.deltava.beans.navdata.NavigationDataBean)</function-signature>
 	</function>
-	
+
+
 	<!-- Check if an e-mail address is valid -->
 	<function>
 		<name>isEMailValid</name>
@@ -507,5 +508,12 @@
 		<name>isAuthoredBean</name>
 		<function-class>org.deltava.taglib.functions.DataFunctions</function-class>
 		<function-signature>boolean isAuthoredBean(java.lang.Object)</function-signature>
+	</function>
+	
+	<!-- Filter Accomplishments -->
+	<function>
+		<name>accFilter</name>
+		<function-class>org.deltava.taglib.functions.AccomplishmentFunctions</function-class>
+		<function-signature>java.util.Collection filter(java.util.Collection)</function-signature>
 	</function>
 </taglib>

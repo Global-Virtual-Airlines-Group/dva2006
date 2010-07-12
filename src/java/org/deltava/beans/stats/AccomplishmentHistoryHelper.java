@@ -4,9 +4,10 @@ package org.deltava.beans.stats;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.flight.DatabaseID;
-import org.deltava.beans.flight.FlightReport;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.*;
+
+import org.deltava.comparators.FlightReportComparator;
 
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
@@ -25,7 +26,8 @@ public class AccomplishmentHistoryHelper {
 	}
 	
 	private Pilot _usr;
-	private final Collection<FlightReport> _pireps = new TreeSet<FlightReport>();
+	private final Collection<FlightReport> _pireps = 
+		new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
 	
 	private static class AccomplishmentCounter {
 
@@ -35,13 +37,43 @@ public class AccomplishmentHistoryHelper {
 		private int _onlineLegs;
 		private long _miles;
 
-		private final Collection<String> _airports = new HashSet<String>();
+		private final Collection<Airport> _airports = new HashSet<Airport>();
 		private final Collection<String> _eqTypes = new HashSet<String>();
-		private final Collection<String> _countries = new HashSet<String>();
-		private final Collection<String> _states = new HashSet<String>();
+		private final Collection<Country> _countries = new HashSet<Country>();
+		private final Collection<State> _states = new HashSet<State>();
 
 		AccomplishmentCounter() {
 			super();
+		}
+		
+		/**
+		 * Helper method to filter arbitrary choice lists.
+		 */
+		static <T> Collection<T> filter(Collection<T> values, Accomplishment a) {
+			if (a.getChoices().isEmpty())
+				return new ArrayList<T>(values);
+			
+			Collection<T> results = new ArrayList<T>(values.size());
+			for (T entry : values) {
+				if (entry instanceof Airport) {
+					Airport ap = (Airport) entry;
+					if ((a.getChoices().contains(ap.getIATA()) || (a.getChoices().contains(ap.getICAO()))))
+						results.add(entry);
+				} else if (entry instanceof State) {
+					State st = (State) entry;
+					if (a.getChoices().contains(st.name()))
+						results.add(entry);
+				} else if (entry instanceof Country) {
+					Country c = (Country) entry;
+					if (a.getChoices().contains(c.getCode()))
+						results.add(entry);
+				} else {
+					if (a.getChoices().contains(entry.toString()))
+						results.add(entry);
+				}
+			}
+			
+			return results;
 		}
 		
 		public void add(FlightReport fr) {
@@ -56,25 +88,30 @@ public class AccomplishmentHistoryHelper {
 		}
 		
 		private void add(Airport a) {
-			_airports.add(a.getIATA());
-			_countries.add(a.getCountry().getCode());
+			_airports.add(a);
+			_countries.add(a.getCountry());
 			if ("US".equals(a.getCountry().getCode())) {
 				String state = a.getName().substring(a.getName().lastIndexOf(' ') + 1);
-				if (state.length() == 2)
-					_states.add(state);
+				if (state.length() == 2) {
+					try {
+						_states.add(State.valueOf(state));	
+					} catch (Exception e) {
+						// empty
+					}
+				}
 			}
 		}
 		
-		public int getAirportCount() {
-			return _airports.size();
+		public Collection<Airport> getAirports() {
+			return _airports;
 		}
 		
-		public int getCountryCount() {
-			return _countries.size();
+		public Collection<Country> getCountries() {
+			return _countries;
 		}
 		
-		public int getStateCount() {
-			return _states.size();
+		public Collection<State> getStates() {
+			return _states;
 		}
 		
 		public int getEquipmentCount() {
@@ -115,10 +152,16 @@ public class AccomplishmentHistoryHelper {
 		_usr = p;
 		
 		// Only use approved PIREPs
-		for (FlightReport fr : flights) {
-			if (fr.getStatus() != FlightReport.OK)
-				continue;
-			
+		for (FlightReport fr : flights)
+			add(fr);
+	}
+	
+	/**
+	 * Adds a FlightReport to the totals. 
+	 * @param fr a FlightReport bean
+	 */
+	public void add(FlightReport fr) {
+		if (fr.getStatus() == FlightReport.OK) {
 			_pireps.add(fr);
 			_totals.add(fr);
 		}
@@ -154,13 +197,13 @@ public class AccomplishmentHistoryHelper {
 			case ELEGS:
 				return calc(cnt.getEventLegs(), a.getValue());
 			case AIRPORTS:
-				return calc(cnt.getAirportCount(), a.getValue());
+				return calc(AccomplishmentCounter.filter(cnt.getAirports(), a).size(), a.getValue());
 			case AIRCRAFT:
 				return calc(cnt.getEquipmentCount(), a.getValue());
 			case COUNTRIES:
-				return calc(cnt.getCountryCount(), a.getValue());
+				return calc(AccomplishmentCounter.filter(cnt.getCountries(), a).size(), a.getValue());
 			case STATES:
-				return calc(cnt.getStateCount(), a.getValue());
+				return calc(AccomplishmentCounter.filter(cnt.getStates(), a).size(), a.getValue());
 			case MEMBERDAYS:
 				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400000;
 				return calc(days, a.getValue());
