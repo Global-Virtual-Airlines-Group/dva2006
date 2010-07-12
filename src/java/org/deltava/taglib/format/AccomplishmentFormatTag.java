@@ -5,6 +5,7 @@ import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.stats.Accomplishment;
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to display a Pilot Accomplishment.
@@ -16,6 +17,7 @@ import org.deltava.beans.stats.Accomplishment;
 public class AccomplishmentFormatTag extends TagSupport {
 
 	private Accomplishment _a;
+	private String _class;
 	
 	/**
 	 * Sets the Accomplishment to display.
@@ -23,6 +25,22 @@ public class AccomplishmentFormatTag extends TagSupport {
 	 */
 	public void setAccomplish(Accomplishment a) {
 		_a = a;
+	}
+	
+	/**
+	 * Sets the CSS class name to use when displaying this Accomplishment. 
+	 * @param className the CSS class name
+	 */
+	public void setClassName(String className) {
+		_class = className;
+	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		super.release();
+		_class = null;
 	}
 	
 	/**
@@ -34,7 +52,14 @@ public class AccomplishmentFormatTag extends TagSupport {
 		try {
 			out.print("<span style=\"color:#");
 			out.print(Integer.toHexString(_a.getColor()).toLowerCase());
-			out.print(";\">");
+			out.print(";\"");
+			if (!StringUtils.isEmpty(_class)) {
+				out.print(" class=\"");
+				out.print(_class);
+				out.print('\"');
+			}
+			
+			out.print('>');
 			out.print(_a.getName());
 			out.print("</span>");
 		} catch (Exception e) {

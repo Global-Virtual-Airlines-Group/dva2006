@@ -342,6 +342,11 @@
 			<rtexprvalue>true</rtexprvalue>
 			<type>org.deltava.beans.stats.Accomplishment</type>
 		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
 
 	<tag>
