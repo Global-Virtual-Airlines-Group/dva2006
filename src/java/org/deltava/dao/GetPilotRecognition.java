@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 1.0
  */
 
@@ -46,22 +46,22 @@ public class GetPilotRecognition extends PilotReadDAO {
 		return info;
 	}
 
-    /**
-     * Returns members of the &quot;Century Club&quot;, with over 100 Flight Legs.
-     * @return the Pilot, or null if not found
-     * @throws DAOException if a JDBC error occurs
-     */
-    public List<Pilot> getCenturyClub() throws DAOException {
-        try {
-            prepareStatementWithoutLimits("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), " +
-                    "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID " +
-                    "HAVING (LEGS >= 100) ORDER BY LEGS DESC");
-            _ps.setInt(1, FlightReport.OK);
-            return execute();
-        } catch (SQLException se) {
-            throw new DAOException(se);
-        }
-    }
+	/**
+	 * Loads all pilots having achieved a particular Accomplishment.
+	 * @param id the Accomplishment database ID
+	 * @return a Collection of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Pilot> getByAccomplishment(int id) throws DAOException {
+		try {
+			prepareStatement("SELECT PILOT_ID FROM PILOT_ACCOMPLISHMENTS WHERE (AC_ID=?)");
+			_ps.setInt(1, id);
+			Collection<Integer> IDs = executeIDs();
+			return getByID(IDs, "PILOTS").values();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
     
     /**
      * Returns whether there are Pilots eligible for promotion to Captain in a particular Equipment program.

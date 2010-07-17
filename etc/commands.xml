@@ -1029,13 +1029,25 @@
 	<command id="accomplishments">
 		<name>Accomplishment Profile List</name>
 		<class>org.deltava.commands.stats.AccomplishmentListCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,Operations,PIREP</roles>
 	</command>
 
 	<command id="accomplishment">
 		<name>Accomplishment Profile</name>
 		<class>org.deltava.commands.stats.AccomplishmentCommand</class>
-		<roles>HR,PIREP</roles>
+		<roles>HR,Operations,PIREP</roles>
+	</command>
+
+	<command id="accalc">
+		<name>Pilot Accomplishment Recalculate</name>
+		<class>org.deltava.commands.stats.AccomplishmentCheckCommand</class>
+		<roles>HR,Operations</roles>
+	</command>
+
+	<command id="accdelete">
+		<name>Accomplishment Profile Delete</name>
+		<class>org.deltava.commands.stats.AccomplishmentDeleteCommand</class>
+		<roles>HR,Operations</roles>
 	</command>
 
 	<command id="wxcenter">

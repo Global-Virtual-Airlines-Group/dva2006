@@ -517,31 +517,6 @@ public class GetFlightReports extends DAO {
 	}
 
 	/**
-	 * Returns the number of approved Flight Reports for a particular Pilot.
-	 * @param pilotID the Pilot database ID
-	 * @return the number of approved Flight Reports
-	 * @throws DAOException if a JDBC error occuurs
-	 */
-	public int getCount(int pilotID) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, FlightReport.OK);
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int result = (rs.next()) ? rs.getInt(1) : 0;
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return result;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns the city pairs flown by a particular Pilot.
 	 * @param pilotID the Pilot database ID
 	 * @return a Collection of RoutePair beans

@@ -18,6 +18,7 @@ public class AccomplishmentAccessControl extends AccessControl {
 	
 	private boolean _canEdit;
 	private boolean _canCreate;
+	private boolean _canDelete;
 
 	/**
 	 * Initializes the Controller.
@@ -36,6 +37,7 @@ public class AccomplishmentAccessControl extends AccessControl {
 	public void validate() {
 		_canCreate = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations");
 		_canEdit = (_a != null) && (_ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations"));
+		_canDelete = (_canEdit && (_a.getPilots() == 0)) || _ctx.isUserInRole("Admin");
 	}
 
 	/**
@@ -52,5 +54,13 @@ public class AccomplishmentAccessControl extends AccessControl {
 	 */
 	public boolean getCanEdit() {
 		return _canEdit;
+	}
+
+	/**
+	 * Returns whether the user can delete thtis Accomplishment profile.
+	 * @return TRUE if the profile can be deleted, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
 	}
 }

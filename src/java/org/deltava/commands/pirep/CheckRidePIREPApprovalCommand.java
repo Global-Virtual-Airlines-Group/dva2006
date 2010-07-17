@@ -6,6 +6,8 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.stats.*;
+import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
 import org.deltava.beans.system.TransferRequest;
 import org.deltava.beans.testing.*;
 
@@ -13,8 +15,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.command.ExamAccessControl;
-import org.deltava.security.command.PIREPAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -86,11 +87,6 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctx.setTemplate(mtdao.get(crApproved ? "CRPASS" : "CRFAIL"));
 
-			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
-			int pirepCount = rdao.getCount(p.getID());
-			if (crApproved)
-				pirepCount++;
-
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
 			mctx.addData("flightLength", new Double(fr.getLength() / 10.0));
@@ -106,16 +102,53 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setStatus(Test.SCORED);
 			
 			// Update the flight report
+			int pirepStatus = crApproved ? FlightReport.OK : FlightReport.REJECTED;
+			fr.setStatus(pirepStatus);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
+			
+			// Load the flights for accomplishment purposes
+			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
+			if (fr.getStatus() == FlightReport.OK) {
+				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p, rdao.getByPilot(p.getID(), null));
+			
+				// Load accomplishments
+				GetAccomplishment accdao = new GetAccomplishment(con);
+				Collection<Accomplishment> accs = accdao.getAll();
+			
+				// Loop through each accomplishment and only save the ones we don't meet yet
+				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+					Accomplishment a = i.next();
+					if (acchelper.has(a) != Result.NOTYET)
+						i.remove();
+				}
+				
+				// Add the approved PIREP
+				acchelper.add(fr);
 
+				// See if we meet any accomplishments now
+				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+					Accomplishment a = i.next();
+					if (acchelper.has(a) == Result.MEET) {
+						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
+						upd.setAuthorID(ctx.getUser().getID());
+						upd.setDescription("Joined " + a.getName());
+						upds.add(upd);
+					} else
+						i.remove();
+				}
+				
+				// Log Accomplishments
+				if (!accs.isEmpty())
+					ctx.setAttribute("accomplishments", accs, REQUEST);
+			}
+			
 			// Start a JDBC transaction
 			ctx.startTX();
 
 			// Get the PIREP write DAO and perform the operation
-			int pirepStatus = crApproved ? FlightReport.OK : FlightReport.REJECTED;
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, pirepStatus);
+			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, fr.getStatus());
 
 			// Archive the Position data
 			if (fr instanceof ACARSFlightReport) {
@@ -138,19 +171,10 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				txwdao.update(txreq);
 			}
 
-			// If we're approving and we have hit a century club milestone, log it
-			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
-			if (ccLevels.containsKey("CC" + pirepCount) && crApproved) {
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
-				upd.setAuthorID(ctx.getUser().getID());
-				upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
-
-				// Log Century Club name
-				ctx.setAttribute("centuryClub", ccLevels.get("CC" + pirepCount), REQUEST);
-
-				// Write the Status Update
+			// Write the Status Updates
+			if (!upds.isEmpty()) {
 				SetStatusUpdate swdao = new SetStatusUpdate(con);
-				swdao.write(upd);
+				swdao.write(upds);
 			}
 
 			// Commit the transaction

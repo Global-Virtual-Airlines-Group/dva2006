@@ -88,12 +88,6 @@ return true;
  <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank}, ${pilot.equipmentType})</td>
 </tr>
 <content:filter roles="HR,PIREP,Examination">
-<c:if test="${access.canApprove && (pilot.legs % 100 == 99)}">
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data bld caps">Flight Report Approval will update Century Club status</td>
-</tr>
-</c:if>
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
