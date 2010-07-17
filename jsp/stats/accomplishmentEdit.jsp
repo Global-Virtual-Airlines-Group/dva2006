@@ -24,6 +24,7 @@ if (!validateText(form.color, 6, 'Water Cooloer label color')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 
@@ -96,6 +97,16 @@ return true;
  <td class="label top">Valid States</td>
  <td class="data"><el:check name="states" idx="*" width="120" cols="8" newLine="true" checked="${ap.choices}" options="${states}" /></td>
 </tr>
+<c:if test="${!empty ap}">
+<tr>
+ <td class="label">Pilots</td>
+ <td class="data">
+<c:choose>
+<c:when test="${ap.pilots == 0}"><span class="bld">No <content:airline /> Pilots have achieved this Accomplishment</span></c:when>
+<c:otherwise><span class="pri bld"><fmt:int value="${ap.pilots}" /> <content:airline /> Pilots have achieved this Accomplishment</span></c:otherwise>
+</c:choose></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" value="true" className="bld" checked="${ap.active}" label="Accomplishment is Active" /></td>
@@ -105,7 +116,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ACCOMPLISHMENT PROFILE" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ACCOMPLISHMENT PROFILE" />
+<c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="accdelete" link="${ap}" label="DELETE ACCOMPLISHMENT PROFILE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>

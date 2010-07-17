@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
+import org.deltava.beans.stats.Accomplishment;
 import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 
@@ -126,7 +127,7 @@ public class ThreadCommand extends AbstractCommand {
 			updateIDs.addAll(mt.getReportIDs());
 			UserDataMap udm = uddao.getByThread(mt.getID());
 			Collection<Integer> xdbIDs = udm.getAllIDs();
-			xdbIDs.removeAll(udm.getIDs());
+			xdbIDs.removeAll(udm.keySet());
 			udm.putAll(uddao.get(xdbIDs));
 			udm.putAll(uddao.get(updateIDs));
 			
@@ -140,8 +141,10 @@ public class ThreadCommand extends AbstractCommand {
 			GetFlightReports prdao = new GetFlightReports(con);
 			GetAcademyCourses acdao = new GetAcademyCourses(con);
 			
-			// Get the authors and online totals for each user
+			// Get the authors, accomploshments and online totals for each user
+			GetAccomplishment accdao = new GetAccomplishment(con);
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
+			Map<Integer, Collection<? extends Accomplishment>> accs = new HashMap<Integer, Collection<? extends Accomplishment>>();
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
 				String dbTableName = i.next();
 
@@ -150,6 +153,7 @@ public class ThreadCommand extends AbstractCommand {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
 					users.putAll(pilots);
+					accs.putAll(accdao.get(pilots, dbTableName));
 				} else {
 					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
 					users.putAll(applicants);
@@ -195,7 +199,7 @@ public class ThreadCommand extends AbstractCommand {
 			// Get statistics for all posters
 			if (ctx.isUserInRole("Moderator")) {
 				GetStatistics stdao = new GetStatistics(con);
-				ctx.setAttribute("postStats", stdao.getCoolerStatistics(udm.getIDs()), REQUEST);
+				ctx.setAttribute("postStats", stdao.getCoolerStatistics(udm.keySet()), REQUEST);
 			}
 			
 			// Get the thread notifications
@@ -235,6 +239,7 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 			ctx.setAttribute("pilots", users, REQUEST);
+			ctx.setAttribute("accomplishments", accs, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

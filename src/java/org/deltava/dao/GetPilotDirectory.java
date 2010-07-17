@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -47,8 +47,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 				return null;
 
 			// Add roles/ratings
-			addRatings(result, SystemData.get("airline.db"));
-			addRoles(result, SystemData.get("airline.db"));
+			loadChildRows(result, SystemData.get("airline.db"));
 
 			// Add the result to the cache and return
 			_cache.add(result);
@@ -92,8 +91,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 				return null;
 			
 			// Add roles/ratings
-			addRatings(result, SystemData.get("airline.db"));
-			addRoles(result, SystemData.get("airline.db"));
+			loadChildRows(result, SystemData.get("airline.db"));
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
