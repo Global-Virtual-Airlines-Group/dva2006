@@ -177,56 +177,12 @@ return true;
 <el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br /></el:showaddr>
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
-<c:choose>
-<c:when test="${pilot.legs >= 2000}">
-<font color="#2020AF"><b>${ccLevels['CC2000']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 1500}">
-<font color="#AF2020"><b>${ccLevels['CC1500']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 1400}">
-<font color="#AF2020"><b>${ccLevels['CC1400']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 1300}">
-<font color="#AF2020"><b>${ccLevels['CC1300']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 1200}">
-<font color="#AF2020"><b>${ccLevels['CC1200']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 1100}">
-<font color="#AF2020"><b>${ccLevels['CC1100']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 1000}">
-<font color="#AF2020"><b>${ccLevels['CC1000']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 900}">
-<font color="#6060BF"><b>${ccLevels['CC900']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 800}">
-<font color="#6060BF"><b>${ccLevels['CC800']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 700}">
-<font color="#6060BF"><b>${ccLevels['CC700']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 600}">
-<font color="#6060BF"><b>${ccLevels['CC600']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 500}">
-<font color="#8080AF"><b>${ccLevels['CC500']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 400}">
-<font color="#408090"><b>${ccLevels['CC400']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 300}">
-<font color="#308060"><b>${ccLevels['CC300']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 200}">
-<font color="#805020"><b>${ccLevels['CC200']}</b></font><br />
-</c:when>
-<c:when test="${pilot.legs >= 100}">
-<font color="#0000A1"><b>${ccLevels['CC100']}</b></font><br />
-</c:when>
-</c:choose>
+
+<!-- Pilot Accomplishments -->
+<c:set var="accs" value="${accomplishments[pilot.ID]}" scope="page" />
+<c:forEach var="ac" items="${fn:accFilter(accs)}">
+<fmt:accomplish className="bld" accomplish="${ac}" /><br />
+</c:forEach>
 <c:if test="${(!empty pilot.motto) || (!empty pilot.location)}">
 <br />
 <c:if test="${!empty pilot.motto}"><i>"${pilot.motto}"</i><br /></c:if>

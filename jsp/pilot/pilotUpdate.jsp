@@ -104,14 +104,22 @@ using this e-mail address.</li>
 <c:if test="${!empty addrValid}">
 <!-- E-Mail Address updated -->
 <br />
-The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change 
+<li>The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change 
 will not take effect until the address has been validated.</span> To validate the new e-mail 
-address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.<br />
+address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.</li>
 </c:if>
 <c:if test="${isBlocked}">
 <!-- User Suspended -->
 <br />
-The user account for ${pilot.name} has been Suspended.<br />
+<li>The user account for ${pilot.name} has been Suspended.</li>
+</c:if>
+<c:if test="${accomplishmentUpdate}">
+<!-- Accomplishment Update -->
+<br />
+The following new Pilot Accomplishments have been added to ${pilot.name}'s profile:<br />
+<c:forEach var="acc" items="${accs}">
+<li><fmt:accomplish accomplish="${acc}" /> on <fmt:date fmt="d" date="${acc.date}" /></li>
+</c:forEach>
 </c:if>
 </ul>
 <br />

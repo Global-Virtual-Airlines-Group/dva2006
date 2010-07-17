@@ -18,7 +18,6 @@
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="ccLevels" name="centuryClubLevels" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -28,7 +27,7 @@ and dedication, demonstrated by over one hundred logged flight legs. Over the ye
 &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more
 flights.<br />
 <br />
-<view:table className="view" pad="default" space="default" cmd="roster">
+<view:table className="view" pad="default" space="default" cmd="centuryclub">
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="5%">#</td>
@@ -42,23 +41,19 @@ flights.<br />
 </tr>
 
 <!-- Table Pilot Data -->
-<c:set var="level" value="${15000 / 1}" scope="page" />
 <c:set var="entryNumber" value="0" scope="page" />
-<c:forEach var="pilot" items="${roster}">
-
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
-<c:set var="pilotLevel" value="${pilot.legs - (pilot.legs % 100)}" scope="page" />
-<c:if test="${pilotLevel < level}">
+<c:forEach var="me" items="${roster}" >
+<c:set var="acc" value="${me.key}" scope="page" />
 <!-- Level Header Bar -->
-<c:set var="level" value="${pilotLevel}" scope="page" />
-<% request.setAttribute("ccLevel", "CC" + String.valueOf(request.getAttribute("pilotLevel"))); %>
 <tr class="title">
- <td colspan="8" class="caps left">${ccLevels[ccLevel]} - ${pilotLevel} FLIGHT LEGS</td>
+ <td colspan="8" class="caps left">${acc.name} - <fmt:int value="${acc.value}" /> ${acc.unit.name}</td>
 </tr>
-</c:if>
 
+<!-- Level Pilot Data -->
+<c:forEach var="pilot" items="${me.value}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
 <tr>
- <td class="sec bld">${entryNumber}</td>
+ <td class="sec bld"><fmt:int value="${entryNumber}" /></td>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
@@ -68,6 +63,9 @@ flights.<br />
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
 </tr>
 </c:forEach>
+</c:forEach>
+
+<!-- Bottom Bar -->
 <tr class="title">
  <td colspan="8">&nbsp;</td>
 </tr>

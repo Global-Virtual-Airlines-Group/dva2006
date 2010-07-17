@@ -81,4 +81,36 @@ public class SetAccomplishment extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Deletes a Pilot Accomplishment record from the database.
+	 * @param pilotID the Pilot's datbaase ID
+	 * @param a the Accomplishment
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clearAchievement(int pilotID, Accomplishment a) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) AND (AC_ID=?)");
+			_ps.setInt(1, pilotID);
+			_ps.setInt(2, a.getID());
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes an Accomplishment profile from the database.
+	 * @param id the Accomplishment database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(int id) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM ACCOMPLISHMENTS WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }

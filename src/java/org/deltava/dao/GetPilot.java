@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.flight.FlightReport;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 2.7
+ * @version 3.2
  * @since 1.0
  */
 
@@ -82,8 +82,7 @@ public class GetPilot extends PilotReadDAO {
 			result.setPilotCode(dbName.toUpperCase() + String.valueOf(result.getPilotNumber()));
 
 			// Add roles/ratings
-			addRatings(result, dbName);
-			addRoles(result, dbName);
+			loadChildRows(result, dbName);
 
 			// Add the result to the cache and return
 			_cache.add(result);

@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.stats.*;
+import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -21,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -105,9 +108,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			if (p == null)
 			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
 			
-			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
-			int pirepCount = rdao.getCount(p.getID()) + 1;
-			
 			// Load the pilot's equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
@@ -155,6 +155,42 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("flightLength", new Double(fr.getLength() / 10.0));
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), p.getDateFormat()));
 			mctx.addData("pilot", p);
+			fr.setStatus(opCode);
+			
+			// Load the flights for accomplishment purposes
+			if (opCode == FlightReport.OK) {
+				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p, rdao.getByPilot(p.getID(), null));
+				
+				// Load accomplishments
+				GetAccomplishment accdao = new GetAccomplishment(con);
+				Collection<Accomplishment> accs = accdao.getAll();
+				
+				// Loop through each accomplishment and only save the ones we don't meet yet
+				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+					Accomplishment a = i.next();
+					if (acchelper.has(a) != Result.NOTYET)
+						i.remove();
+				}
+				
+				// Add the approved PIREP
+				acchelper.add(fr);
+				
+				// See if we meet any accomplishments now
+				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+					Accomplishment a = i.next();
+					if (acchelper.has(a) == Result.MEET) {
+						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
+						upd.setAuthorID(ctx.getUser().getID());
+						upd.setDescription("Joined " + a.getName());
+						upds.add(upd);
+					} else
+						i.remove();
+				}
+				
+				// Log Accomplishments
+				if (!accs.isEmpty())
+					ctx.setAttribute("accomplishments", accs, REQUEST);
+			}
 			
 			// Start a JDBC transaction
 			ctx.startTX();
@@ -162,19 +198,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, opCode);
-			fr.setStatus(opCode);
-			
-			// If we're approving and we have hit a century club milestone, log it
-			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
-			if ((opCode == FlightReport.OK) && (ccLevels.containsKey("CC" + pirepCount))) {
-			   StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
-			   upd.setAuthorID(ctx.getUser().getID());
-			   upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
-			   upds.add(upd);
-			   
-			   // Log Century Club name
-			   ctx.setAttribute("centuryClub", ccLevels.get("CC" + pirepCount), REQUEST);
-			}
 			
 			// If we're approving and have not assigned a Pilot Number yet, assign it
 			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {

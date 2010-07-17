@@ -62,8 +62,7 @@ abstract class PilotReadDAO extends PilotDAO {
 				return null;
 
 			// Add roles/ratings
-			addRatings(p, SystemData.get("airline.db"));
-			addRoles(p, SystemData.get("airline.db"));
+			loadChildRows(p, SystemData.get("airline.db"));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -104,6 +103,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(), "ID");
 			loadRatings(results, dbName);
 			loadRoles(results, dbName);
+			loadAccomplishments(results, dbName);
 
 			// Add the result to the cache and return
 			_cache.addAll(results.values());
@@ -216,6 +216,7 @@ abstract class PilotReadDAO extends PilotDAO {
 				Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, "ID");
 				loadRatings(ucMap, dbName);
 				loadRoles(ucMap, dbName);
+				loadAccomplishments(ucMap, dbName);
 			} catch (SQLException se) {
 				log.error("Query = " + sqlBuf.toString());
 				throw new DAOException(se);
@@ -334,31 +335,58 @@ abstract class PilotReadDAO extends PilotDAO {
 		_ps.close();
 		return results;
 	}
-
+	
 	/**
-	 * Load the ratings for a Pilot.
+	 * Load the ratings, roles and accomplishment IDs for a Pilot.
 	 * @param p the Pilot bean
 	 * @param dbName the database Name
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected final void addRatings(Pilot p, String dbName) throws SQLException {
+	protected final void loadChildRows(Pilot p, String dbName) throws SQLException {
 		Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
 		tmpMap.put(new Integer(p.getID()), p);
 		loadRatings(tmpMap, dbName);
+		loadRoles(tmpMap, dbName);
+		loadAccomplishments(tmpMap, dbName);
 	}
 
 	/**
-	 * Load the security roles for a Pilot.
-	 * @param p the Pilot bean
+	 * Load the accomplishment IDs for a group of Pilots.
+	 * @param pilots the Map of Pilots, indexed by database ID
 	 * @param dbName the database Name
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected final void addRoles(Pilot p, String dbName) throws SQLException {
-		Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
-		tmpMap.put(new Integer(p.getID()), p);
-		loadRoles(tmpMap, dbName);
-	}
+	protected final void loadAccomplishments(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
+		if (pilots.isEmpty())
+			return;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, AC_ID FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID IN (");
+		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
 
+		sqlBuf.append("))");
+
+		// Execute the query
+		prepareStatementWithoutLimits(sqlBuf.toString());
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+			if (p != null)
+				p.addAccomplishmentID(rs.getInt(2));
+		}
+		
+		// Clean up and return
+		rs.close();
+		_ps.close();
+	}
+	
 	/**
 	 * Load the security roles for a group of Pilots.
 	 * @param pilots the Map of Pilots, indexed by database ID
@@ -382,10 +410,8 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		sqlBuf.append("))");
 
-		// Prepare the statement
+		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-
-		// Exeute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
@@ -421,10 +447,8 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		sqlBuf.append("))");
 
-		// Prepare the statement
+		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-
-		// Exeute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
