@@ -511,20 +511,9 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Returns the Person's preferred airport code type (IATA/ICAO).
 	 * @return the Airport Code type
 	 * @see Person#setAirportCodeType(Airport.Code)
-	 * @see Person#getAirportCodeTypeName()
 	 */
 	public Airport.Code getAirportCodeType() {
 		return _airportCodeType;
-	}
-
-	/**
-	 * Returns the Person's preferred airport code type name (IATA/ICAO).
-	 * @return the Airport Code type name
-	 * @see Person#setAirportCodeType(Airport.Code)
-	 * @see Person#getAirportCodeType()
-	 */
-	public String getAirportCodeTypeName() {
-		return _airportCodeType.toString();
 	}
 
 	/**
@@ -861,7 +850,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Updates the Person's preferred airport code type (IATA/ICAO).
 	 * @param code the Airport code type
 	 * @see Person#getAirportCodeType()
-	 * @see Person#getAirportCodeTypeName()
 	 */
 	public void setAirportCodeType(Airport.Code code) {
 		_airportCodeType = code;

@@ -138,7 +138,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
- <td class="data"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="${applicant.airportCodeTypeName}" /></td>
+ <td class="data"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="${applicant.airportCodeType}" /></td>
 </tr>
 <tr>
  <td class="label">Distance Units</td>

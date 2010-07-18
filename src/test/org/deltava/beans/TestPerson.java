@@ -72,8 +72,6 @@ public class TestPerson extends AbstractBeanTestCase {
         checkProperty("equipmentType", "CRJ-200");
         checkProperty("location", "Southeastern US");
         checkProperty("homeAirport", "ATL");
-        checkProperty("airportCodeType", Integer.valueOf(1));
-        assertEquals(_p.getAirportCodeType().toString(), _p.getAirportCodeTypeName());
         _p.setAirportCodeType(Airport.Code.IATA);
         assertEquals(0, _p.getAirportCodeType().ordinal());
         checkProperty("emailAccess", Integer.valueOf(1));

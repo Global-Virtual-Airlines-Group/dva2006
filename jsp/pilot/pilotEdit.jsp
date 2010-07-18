@@ -296,7 +296,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
- <td colspan="${cspan}" class="data"><el:check name="airportCodeType" type="radio" cols="2" options="${acTypes}" value="${pilot.airportCodeTypeName}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="airportCodeType" type="radio" cols="2" options="${acTypes}" value="${pilot.airportCodeType}" /></td>
 </tr>
 <tr>
  <td class="label">Distance Units</td>
