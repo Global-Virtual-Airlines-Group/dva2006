@@ -237,7 +237,7 @@ ${dupe.rank} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:if tes
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
- <td class="data bld">${applicant.airportCodeType == 0 ? 'IATA' : 'ICAO'}</td>
+ <td class="data bld">${applicant.airportCodeType}</td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
