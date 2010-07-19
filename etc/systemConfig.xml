@@ -428,13 +428,11 @@
 				<code>JM</code>
 				<code>KL</code>
 				<code>AM</code>
-				<code>NW</code>
 			</list>
 
 			<!-- Codeshare codes - only load codeshares of these airlines -->
 			<list name="codeshare_codes" attr="code" unique="true">
 				<code>DL</code>
-				<code>NW</code>
 			</list>
 
 			<!-- FTP download data -->
@@ -450,6 +448,7 @@
 				<purge type="Boolean">true</purge>
 				<markCanPurge type="Boolean">true</markCanPurge>
 				<isHistoric type="Boolean">false</isHistoric>
+				<minEntries type="Integer">250</minEntries>
 			</import>
 
 			<!-- downloaded file cache -->

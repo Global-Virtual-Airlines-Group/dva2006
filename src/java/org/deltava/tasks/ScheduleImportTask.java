@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -106,9 +106,12 @@ public class ScheduleImportTask extends Task {
 			ctx.release();
 		}
 		
-		// Return if aborted
-		if (entries == null)
+		// Return if insufficient records loaded
+		int minEntries = SystemData.getInt("schedule.innovata.import.minEntries", 100);
+		if (entries.size() < minEntries) {
+			log.warn("Insufficient Schedule entries downloaded, minimum " + minEntries + ", got " + entries.size());
 			return;
+		}
 
 		// Save the entries in the database
 		try {
