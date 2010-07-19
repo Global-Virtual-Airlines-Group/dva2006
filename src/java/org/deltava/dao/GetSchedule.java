@@ -373,6 +373,7 @@ public class GetSchedule extends DAO implements CachingDAO {
 			// Clean up and return
 			rs.close();
 			_ps.close();
+			_schedSizeCache.add(result);
 			return (int) result.getValue();
 		} catch (SQLException se) {
 			throw new DAOException(se);
