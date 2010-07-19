@@ -58,8 +58,8 @@ return true;
  <td class="data"><el:text name="IMAPPath" idx="*" size="36" max="64" value="${mb.mailDirectory}" /></td>
 </tr>
 <tr>
- <td class="label">Mailbox Aliases</td>
- <td class="data"><el:text name="IMAPAliases" idx="*" size="80" max="255" value="${fn:splice(mb.aliases, ', ')}" /></td>
+ <td class="label top">Mailbox Aliases</td>
+ <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="4">${fn:splice(mb.aliases, '\n')}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
