@@ -285,7 +285,7 @@ Applicant profile for ${pilot.name}.</td>
  <el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" />
 </c:if>
 <c:if test="${access.canChangeStatus}">
- <el:cmdbutton post="true" url="accalc" link="${pilot}" label="RECALCULATE ACCOMPLISHMENTS" />
+ <el:cmdbutton url="accalc" link="${pilot}" label="RECALCULATE ACCOMPLISHMENTS" />
 </c:if>
 <content:filter roles="Admin">
  <el:cmdbutton url="su" link="${pilot}" label="SWITCH TO USER" />
