@@ -157,6 +157,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("pilot", p);
 			fr.setStatus(opCode);
 			
+			// Start a JDBC transaction
+			ctx.startTX();
+			
 			// Load the flights for accomplishment purposes
 			if (opCode == FlightReport.OK) {
 				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p, rdao.getByPilot(p.getID(), null));
@@ -176,9 +179,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				acchelper.add(fr);
 				
 				// See if we meet any accomplishments now
+				SetAccomplishment acwdao = new SetAccomplishment(con);
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
 					if (acchelper.has(a) == Result.MEET) {
+						acwdao.achieve(p.getID(), a);
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Joined " + a.getName());
@@ -191,9 +196,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				if (!accs.isEmpty())
 					ctx.setAttribute("accomplishments", accs, REQUEST);
 			}
-			
-			// Start a JDBC transaction
-			ctx.startTX();
 			
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
