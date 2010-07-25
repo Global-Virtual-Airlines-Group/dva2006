@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.awt.Point;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 2.3
  */
 
@@ -49,7 +49,7 @@ public class SignatureApproveCommand extends AbstractCommand {
 				
 				// Save the data
 				SetSignatureImage swdao = new SetSignatureImage(con);
-				swdao.write(p, si.getWidth(), si.getHeight(), "png", isAuth);
+				swdao.write(p, si.getWidth(), si.getHeight(), "png", true);
 			}
 		} catch (Exception e) {
 			throw new CommandException(e);
