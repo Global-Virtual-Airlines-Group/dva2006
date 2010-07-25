@@ -21,6 +21,7 @@ public class DatedAccomplishment extends Accomplishment {
 	 */
 	public DatedAccomplishment(Date dt, Accomplishment a) {
 		super(a.getName());
+		setID(a.getID());
 		setUnit(a.getUnit());
 		setActive(a.getActive());
 		setValue(a.getValue());
