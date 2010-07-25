@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -42,9 +42,6 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 
 			// Initialize the Testing History
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
-			boolean examsLocked = testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
-			if (examsLocked)
-				throw securityException("Testing Center locked out");
 
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
@@ -53,6 +50,9 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			// Check if we have an examination open
 			GetExam exdao = new GetExam(con);
 			int activeExamID = exdao.getActiveExam(usr.getID());
+			
+			// Check if we failed an Examination recently
+			boolean failedExam = testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 
 			// Check if we have a Transfer Request open
 			GetTransferRequest txdao = new GetTransferRequest(con);
@@ -64,12 +64,16 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			} else if (activeExamID != 0) {
 				log.info("Pending Examination - no Examinations available for " + usr.getName());
 				allExams.clear();
-				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
+				ctx.setAttribute("examActive", Integer.valueOf(activeExamID), REQUEST);
+			} else if (failedExam) {
+				log.info("Recently failed exam - no Examinations available for " + usr.getName());
+				allExams.clear();
+				ctx.setAttribute("failedExam", Boolean.TRUE, REQUEST);
 			} else {
 				// Remove all examinations that we have passed or require a higher stage than us
 				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
-					ExamProfile ep = i.next();
 					try {
+						ExamProfile ep = i.next();
 						testHistory.canWrite(ep);
 					} catch (IneligibilityException ie) {
 						i.remove();
