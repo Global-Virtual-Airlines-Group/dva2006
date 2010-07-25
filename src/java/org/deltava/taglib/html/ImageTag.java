@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -26,16 +26,14 @@ public class ImageTag extends ElementTag {
      * @throws JspException if an error occurs
      */
     public int doEndTag() throws JspException {
-        
-        // Do a proper XHTML tag
         try {
             _out.print(_data.open(true, true));
         } catch (Exception e) {
             throw new JspException(e);
+        } finally {
+        	release();
         }
         
-        // Reset the parameters for next time
-        release();
         return EVAL_PAGE;
     }
     
