@@ -236,6 +236,10 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 		return _name.hashCode();
 	}
 	
+	public String toString() {
+		return _name;
+	}
+	
 	@Override
 	public Object cacheKey() {
 		return _owner.getDB() + "!!" + String.valueOf(getID());
