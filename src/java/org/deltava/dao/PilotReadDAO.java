@@ -50,8 +50,8 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.EXT FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
-					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
+				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
+				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, id);
 
@@ -85,7 +85,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT FROM ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -170,7 +170,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Init the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT FROM ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT, S.MODIFIED FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append('.');
 		sqlBuf.append(tableName);
@@ -318,13 +318,15 @@ abstract class PilotReadDAO extends PilotDAO {
 			}
 
 			// Check if this result set has a column 51, which is the signature extension
-			if (columnCount > 50)
+			if (columnCount > 50) {
 				p.setSignatureExtension(rs.getString(51));
+				p.setSignatureModified(rs.getTimestamp(52));
+			}
 
-			// CHeck if this result set has columns 52/53, which are online legs/hours
-			if (columnCount > 52) {
-				p.setOnlineLegs(rs.getInt(52));
-				p.setOnlineHours(rs.getDouble(53));
+			// CHeck if this result set has columns 53/54, which are online legs/hours
+			if (columnCount > 53) {
+				p.setOnlineLegs(rs.getInt(53));
+				p.setOnlineHours(rs.getDouble(54));
 			}
 
 			results.add(p);

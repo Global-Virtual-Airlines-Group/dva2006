@@ -169,8 +169,8 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getPilotsByRank(String rank) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.EXT FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
-					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANK=?) AND (P.STATUS=?) GROUP BY P.ID");
+				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
+				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANK=?) AND (P.STATUS=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setString(2, rank);
 			_ps.setInt(3, Pilot.ACTIVE);

@@ -1,6 +1,7 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
+import java.text.*;
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.Pilot;
@@ -10,11 +11,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to embed a Water Cooler signature tag.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 2.3
  */
 
 public class SignatureTag extends ImageTag {
+	
+	private final DateFormat _df = new SimpleDateFormat("yyyyMMddHHmm");
 	
 	private Pilot _usr;
 	private String _db;
@@ -70,6 +73,8 @@ public class SignatureTag extends ImageTag {
 
 		// Build the source and render
 		StringBuilder buf = new StringBuilder("/sig/");
+		buf.append(_df.format(_usr.getSignatureModified()));
+		buf.append('/');
 		buf.append((_db == null) ? SystemData.get("airline.db") : _db);
 		buf.append('/');
 		buf.append(_usr.getHexID());

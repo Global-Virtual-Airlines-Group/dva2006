@@ -17,7 +17,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Signature Image serving Servlet. This serves Water Cooler signature images.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 2.6
  */
 
@@ -151,7 +151,7 @@ public class SignatureServlet extends GenericServlet {
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength(imgBuffer.length);
 		rsp.setBufferSize(Math.min(65536, imgBuffer.length));
-		rsp.setIntHeader("max-age", 3600);
+		rsp.setDateHeader("Expires", System.currentTimeMillis() + (365L * 86400 * 1000));
 
 		// Dump the data to the output stream
 		try {
