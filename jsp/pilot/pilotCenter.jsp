@@ -103,9 +103,8 @@ Your Assistant Chief Pilot is
 <c:if test="${fn:sizeof(asstCP) > 1}">
 Your Assistant Chief Pilots are 
 </c:if>
-<c:forEach var="aCP" items="${asstCP}">
-<a class="bld" href="mailto:${aCP.email}">${aCP.name}</a>&nbsp;
-</c:forEach>.
+<c:forEach var="aCP" items="${asstCP}" varStatus="acpStatus">
+<a class="bld" href="mailto:${aCP.email}">${aCP.name}</a><c:if test="${!acpStatus.last}">, </c:if></c:forEach>.
 <br />
 </c:if>
 <br />
@@ -462,10 +461,10 @@ to withdraw this Transfer Request.</span></c:if></td>
  programs or request additional equipment type ratings.</td>
 </tr>
 <tr>
-<c:if test="${(pilot.legs >= 5) && !pilot.noExams && !examLockout}">
+<c:if test="${(pilot.legs >= 5) && !pilot.noExams}">
  <td class="mid"><el:cmd className="bld" url="testcenter">Testing Center</el:cmd></td>
 </c:if>
-<c:if test="${pilot.legs < 5 || pilot.noExams || examLockout}">
+<c:if test="${pilot.legs < 5 || pilot.noExams}">
  <td class="mid bld">Testing Center</td>
 </c:if>
  <td class="data">The <content:airline /> Testing Center is your single source for the written 
@@ -473,7 +472,7 @@ examinations needed for promotions and additional type ratings. Here you can see
 and their results, in addition to writing new aircraft tests.
 <c:if test="${examLockout}"><span class="sec bld">You completed a <content:airline /> pilot Examination 
 with an unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
-cannot access the Testing Center until this interval has passed.</span></c:if>
+cannot write a new Examination until this interval has passed.</span></c:if>
 <c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>

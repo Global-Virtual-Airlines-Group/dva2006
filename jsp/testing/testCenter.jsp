@@ -18,7 +18,6 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-
 if (!form.examName) return false;
 if (form.examName.selectedIndex == 0) {
 	alert('Please select the Examination you wish to take.');
@@ -41,6 +40,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="examLockoutHours" name="testing.lockout" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -120,6 +120,13 @@ return true;
  <td class="left" colspan="7">You currently are in the process of transferring between Equipment
  Programs. Until your Equipment Program Transfer has been completed, you cannot take any new
  examinations.</td>
+</tr>
+</c:when>
+<c:when test="${failedExam}">
+<tr>
+ <td class="left" colspan="7">You completed a <content:airline /> pilot Examination with an 
+ unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
+ cannot write a new Examination until this interval has passed.</td>
 </tr>
 </c:when>
 <c:otherwise>
