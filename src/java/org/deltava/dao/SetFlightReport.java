@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 1.0
  */
 
@@ -277,7 +277,19 @@ public class SetFlightReport extends DAO {
 		if (!StringUtils.isEmpty(fr.getRoute())) {
 			prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ROUTE (ID, ROUTE) VALUES (?, ?)");
 			_ps.setInt(1, fr.getID());
-			_ps.setString(2, fr.getRoute());
+			
+			// Strip out anything not a letter or digit
+			String rt = fr.getRoute().toUpperCase();
+			StringBuilder buf = new StringBuilder();
+			for (int x = 0; x < rt.length(); x++) {
+				char c = rt.charAt(x);
+				if (Character.isDigit(c) || Character.isLetter(c))
+					buf.append(c);
+				else if (Character.isWhitespace(c) || (c == '.'))
+					buf.append(' ');
+			}
+			
+			_ps.setString(2, buf.toString());
 			executeUpdate(1);
 		} else {
 			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_ROUTE WHERE (ID=?) LIMIT 1");
