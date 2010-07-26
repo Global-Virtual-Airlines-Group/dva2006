@@ -4,6 +4,8 @@ package org.deltava.beans;
 import java.util.*;
 import java.text.DecimalFormat;
 
+import org.deltava.beans.stats.DatedAccomplishmentID;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.Cacheable;
 
@@ -64,7 +66,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	private final Collection<String> _ratings = new TreeSet<String>();
 	private final Collection<String> _roles = new TreeSet<String>();
 	private final Collection<String> _certs = new LinkedHashSet<String>();
-	private final Collection<Integer> _accIDs = new LinkedHashSet<Integer>();
+	private final Collection<DatedAccomplishmentID> _accIDs = new TreeSet<DatedAccomplishmentID>();
 
 	private long _miles;
 	private Date _lastFlight;
@@ -93,7 +95,9 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 
 	private int _ACARSRestrict;
 	private int _mapType;
+	
 	private String _sigExt;
+	private Date _sigModified;
 
 	private final DecimalFormat _df = new DecimalFormat("##000");
 	private boolean _showNavBar;
@@ -300,10 +304,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	
 	/**
 	 * Returns the Pilot's Accomplishments.
-	 * @return a Collection of Accomplishment database IDs
-	 * @see Pilot#addAccomplishmentID(int)
+	 * @return a Collection of DatedAccomplishmentIDs
+	 * @see Pilot#addAccomplishmentID(DatedAccomplishmentID)
 	 */
-	public Collection<Integer> getAccomplishmentIDs() {
+	public Collection<DatedAccomplishmentID> getAccomplishmentIDs() {
 		return _accIDs;
 	}
 
@@ -473,6 +477,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	public String getSignatureExtension() {
 		return _sigExt;
 	}
+	
+	/**
+	 * Returns the last modification date of the Signature Image.
+	 * @return the last modified date/time, or null if none
+	 * @see Pilot#setSignatureModified(Date)
+	 */
+	public Date getSignatureModified() {
+		return _sigModified;
+	}
 
 	/**
 	 * Queries if the default signature image should be shown.
@@ -588,13 +601,22 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	 * Sets if this Pilot has a signature image available. <i>This method will clear the default signature flag</i>.
 	 * @param ext the Signature extension, or null
 	 * @see Pilot#getHasSignature()
-	 * @see Pilot#getHasDefaultSignature()
-	 * @see Pilot#setHasDefaultSignature(boolean)
+	 * @see Pilot#getSignatureExtension()
 	 */
 	public void setSignatureExtension(String ext) {
 		_sigExt = StringUtils.isEmpty(ext) ? null : ext.toLowerCase();
 		if (getHasSignature())
 			_showDefaultSignature = false;
+	}
+	
+	/**
+	 * Sets the last modified date the Pilot's signature image.
+	 * @param dt the last modified date/time
+	 * @see Pilot#getSignatureModified()
+	 * @see Pilot#getHasSignature()
+	 */
+	public void setSignatureModified(Date dt) {
+		_sigModified = dt;
 	}
 
 	/**
@@ -874,11 +896,11 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	
 	/**
 	 * Adds an Accomplishment to this Pilot.
-	 * @param id an Accomplishment database ID
+	 * @param id a DatedAccomplishmentID
 	 * @see Pilot#getAccomplishmentIDs()
 	 */
-	public void addAccomplishmentID(int id) {
-		_accIDs.add(Integer.valueOf(id));
+	public void addAccomplishmentID(DatedAccomplishmentID id) {
+		_accIDs.add(id);
 	}
 	
 	/**
