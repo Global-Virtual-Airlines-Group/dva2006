@@ -37,8 +37,13 @@ return true;
 <content:region id="main">
 <el:form method="post" action="issue.do" op="save" link="${issue}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
-<tr class="title">
- <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
+<tr class="title caps">
+<c:if test="${!empty issue}">
+ <td colspan="2"><content:airline /> DEVELOPMENT ISSUE #${issue.ID} - ${issue.subject}</td>
+</c:if>
+<c:if test="${empty issue}">
+ <td colspan="2">NEW <content:airline /> DEVELOPMENT ISSUE</td>
+</c:if>
 </tr>
 
 <!-- Issue Data -->
@@ -101,7 +106,8 @@ return true;
 <c:if test="${empty issue}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="small sec"><el:box name="emailIssue" value="true" idx="*" label="Send Issue via E-Mail" /></td>
+ <td class="small sec"><el:box name="emailIssue" value="true" checked="true" idx="*" label="Send Issue via E-Mail" /></td>
+</tr>
 </c:if>
 
 <c:if test="${!empty issue}">
