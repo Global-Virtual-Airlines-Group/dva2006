@@ -115,7 +115,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			
 			// Load Accomplishments
 			GetAccomplishment acdao = new GetAccomplishment(con);
-			ctx.setAttribute("accs", acdao.getByPilot(p.getID(), SystemData.get("airline.db")), REQUEST);
+			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
 
 			// Get the schedule size
 			GetSchedule sdao = new GetSchedule(con);

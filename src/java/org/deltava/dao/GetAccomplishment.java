@@ -23,8 +23,6 @@ import org.deltava.util.system.SystemData;
 public class GetAccomplishment extends DAO implements CachingDAO {
 	
 	private static final Cache<Accomplishment> _cache = new ExpiringCache<Accomplishment>(32, 3600);
-	private static final Cache<CacheableSet<DatedAccomplishment>> _dtCache = 
-		new ExpiringCache<CacheableSet<DatedAccomplishment>>(256, 1800);
 
 	/**
 	 * Intiailizes the Data Access Object.
@@ -36,9 +34,7 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 
 	@Override
 	public CacheInfo getCacheInfo() {
-		CacheInfo info = new CacheInfo(_cache);
-		info.add(_dtCache);
-		return info;
+		return new CacheInfo(_cache);
 	}
 	
 	/**
@@ -180,45 +176,23 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 	}
 	
 	/**
-	 * Retrieves Accomplishments for a particular Pilot
-	 * @param pilotID the Pilot's database ID
+	 * Retrieves Accomplishments for a particular Pilot.
+	 * @param p the Pilot
 	 * @param dbName the database name
 	 * @return a Collection of DatedAccomplishment beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<DatedAccomplishment> getByPilot(int pilotID, String dbName) throws DAOException {
-		
-		// Check the cache
-		CacheableSet<DatedAccomplishment> results = _dtCache.get(Integer.valueOf(pilotID));
-		if (results != null)
-			return results.clone();
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT AC_ID, DATE FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) ORDER BY DATE");
-		
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, pilotID);
-			
-			// Execute the Query
-			results = new CacheableSet<DatedAccomplishment>(Integer.valueOf(pilotID));
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Accomplishment a = get(rs.getInt(1), dbName);
-				if (a != null)
-					results.add(new DatedAccomplishment(rs.getDate(2), a));
+	public Collection<DatedAccomplishment> getByPilot(Pilot p, String dbName) throws DAOException {
+		Collection<DatedAccomplishment> results = new TreeSet<DatedAccomplishment>();
+		for (DatedAccomplishmentID id : p.getAccomplishmentIDs()) {
+			Accomplishment a = get(id.getID(), dbName);
+			if (a != null) {
+				DatedAccomplishment da = new DatedAccomplishment(id.getDate(), a);
+				results.add(da);
 			}
-			
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			_dtCache.add(results);
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
 		}
+		
+		return results;
 	}
 	
 	/**
@@ -232,9 +206,9 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 		Map<Integer, Collection<DatedAccomplishment>> results = new HashMap<Integer, Collection<DatedAccomplishment>>();
 		for (Iterator<Map.Entry<Integer, Pilot>> i = pilots.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<Integer, Pilot> me = i.next();
-			Collection<Integer> IDs = me.getValue().getAccomplishmentIDs();
+			Collection<DatedAccomplishmentID> IDs = me.getValue().getAccomplishmentIDs();
 			if (!IDs.isEmpty()) {
-				Collection<DatedAccomplishment> accs = getByPilot(me.getKey().intValue(), dbName);
+				Collection<DatedAccomplishment> accs = getByPilot(me.getValue(), dbName);
 				results.put(me.getKey(), accs);
 			}
 		}
