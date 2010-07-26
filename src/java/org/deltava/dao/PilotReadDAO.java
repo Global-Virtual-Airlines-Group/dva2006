@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.stats.DatedAccomplishmentID;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
@@ -363,7 +364,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			return;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, AC_ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, AC_ID, DATE FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID IN (");
 		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
@@ -381,7 +382,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		while (rs.next()) {
 			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
 			if (p != null)
-				p.addAccomplishmentID(rs.getInt(2));
+				p.addAccomplishmentID(new DatedAccomplishmentID(rs.getTimestamp(3), rs.getInt(2)));
 		}
 		
 		// Clean up and return

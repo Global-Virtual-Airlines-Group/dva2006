@@ -32,7 +32,6 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		Collection<DatedAccomplishment> newAccs = new TreeSet<DatedAccomplishment>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -61,11 +60,12 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			
 			// Clear the user's accomplishments
 			SetAccomplishment awdao = new SetAccomplishment(con);
-			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p.getID(), SystemData.get("airline.db")), "ID");
+			Map<Integer, DatedAccomplishment> pAccs = CollectionUtils.createMap(adao.getByPilot(p, SystemData.get("airline.db")), "ID");
 			for (Accomplishment a : pAccs.values())
 				awdao.clearAchievement(p.getID(), a);
 			
 			// Instantiate the helper and loop through
+			Collection<DatedAccomplishment> newAccs = new TreeSet<DatedAccomplishment>();
 			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p, flights);
 			for (Accomplishment a : accs) {
 				Date dt = helper.achieved(a);
@@ -86,6 +86,10 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			
 			// Commit
 			ctx.commitTX();
+			
+			// Write status variable
+			ctx.setAttribute("pilot", p, REQUEST);
+			ctx.setAttribute("accs", newAccs, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -93,9 +97,8 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Set status variables
+		// Set status variable
 		ctx.setAttribute("accomplishUpdate", Boolean.TRUE, REQUEST);
-		ctx.setAttribute("accs", newAccs, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
