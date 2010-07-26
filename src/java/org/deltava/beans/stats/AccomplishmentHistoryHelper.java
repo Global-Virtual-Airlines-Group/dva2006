@@ -39,8 +39,8 @@ public class AccomplishmentHistoryHelper {
 
 		private final Collection<Airport> _airports = new HashSet<Airport>();
 		private final Collection<String> _eqTypes = new HashSet<String>();
-		private final Collection<Country> _countries = new HashSet<Country>();
-		private final Collection<State> _states = new HashSet<State>();
+		private final Collection<Country> _countries = new TreeSet<Country>();
+		private final Collection<State> _states = new TreeSet<State>();
 
 		AccomplishmentCounter() {
 			super();
