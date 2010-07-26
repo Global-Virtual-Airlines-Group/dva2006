@@ -850,6 +850,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			Collection<Course> courses = fadao.getByPilot(p.getID());
 			ctx.setAttribute("courses", courses, REQUEST);
 			
+			// Get Accomplishments
+			GetAccomplishment acdao = new GetAccomplishment(con);
+			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
+			
 			// Load instructor IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
@@ -894,8 +898,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 			
 			// Load if signature validated
-			GetImage imgdao = new GetImage(con);
-			ctx.setAttribute("sigAuthorized", Boolean.valueOf(imgdao.isSignatureAuthorized(p.getID())), REQUEST);
+			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Signature")) {
+				GetImage imgdao = new GetImage(con);
+				ctx.setAttribute("sigAuthorized", Boolean.valueOf(imgdao.isSignatureAuthorized(p.getID())), REQUEST);
+			}
 
 			// Save the pilot profile and ratings in the request
 			ctx.setAttribute("pilot", p, REQUEST);

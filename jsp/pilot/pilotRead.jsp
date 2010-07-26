@@ -246,6 +246,14 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 Applicant profile for ${pilot.name}.</td>
 </tr>
 </c:if>
+<c:if test="${!empty accs}">
+<tr>
+ <td class="label top">Pilot Accomplishments</td>
+ <td colspan="${cspan}" class="data"><c:forEach var="a" items="${accs}">
+<fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
+</c:forEach></td>
+</tr>
+</c:if>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 <%@ include file="/jsp/pilot/pilotCourses.jspf" %>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
