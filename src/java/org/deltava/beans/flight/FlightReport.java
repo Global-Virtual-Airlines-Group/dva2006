@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -124,7 +124,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	/**
 	 * Attribute mask for all warnings.
 	 */
-	public static final int ATTR_WARN_MASK = 0xF861;
+	public static final int ATTR_WARN_MASK = 0xB861;
 	
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
@@ -150,7 +150,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 
 	private final Collection<String> _captEQType = new TreeSet<String>();
 
-	// Stores Integers pointing to other database IDs, see PIREPConstants
+	// Stores Integers pointing to other database IDs
 	private final Map<DatabaseID, Integer> _dbIds = new HashMap<DatabaseID, Integer>();
 
 	/**
