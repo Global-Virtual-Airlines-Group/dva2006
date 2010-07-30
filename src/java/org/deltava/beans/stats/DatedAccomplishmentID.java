@@ -11,7 +11,7 @@ import java.util.Date;
  * @since 3.2
  */
 
-public class DatedAccomplishmentID implements Comparable<DatedAccomplishmentID> {
+public class DatedAccomplishmentID implements java.io.Serializable, Comparable<DatedAccomplishmentID> {
 
 	private int _id;
 	private Date _dt;
