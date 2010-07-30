@@ -2,7 +2,7 @@
 # VATSIM Usage tracker script
 
 JAVA_HOME=/usr/local/java
-CPATH=log4j-1.2.15.jar:jdom-1.1.1.jar:mysql-connector-java-5.1.10-bin.jar
+CPATH=log4j-1.2.16.jar:jdom-1.1.1.jar:mysql-connector-java-5.1.13-bin.jar
 INFO=/var/cache/servinfo/vatsim.info
 
 # Start the JVM
