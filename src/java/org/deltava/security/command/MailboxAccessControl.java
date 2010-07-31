@@ -1,7 +1,7 @@
 // Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.system.EMailConfiguration;
+import org.deltava.beans.system.IMAPConfiguration;
 
 import org.deltava.security.SecurityContext;
 
@@ -14,7 +14,7 @@ import org.deltava.security.SecurityContext;
 
 public class MailboxAccessControl extends AccessControl {
 
-	private EMailConfiguration _cfg;
+	private IMAPConfiguration _cfg;
 
 	private boolean _canCreate;
 	private boolean _canEdit;
@@ -25,7 +25,7 @@ public class MailboxAccessControl extends AccessControl {
 	 * @param ctx the command context
 	 * @param cfg the IMAP configuration bean
 	 */
-	public MailboxAccessControl(SecurityContext ctx, EMailConfiguration cfg) {
+	public MailboxAccessControl(SecurityContext ctx, IMAPConfiguration cfg) {
 		super(ctx);
 		_cfg = cfg;
 	}

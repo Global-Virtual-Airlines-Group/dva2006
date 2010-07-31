@@ -44,7 +44,12 @@
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td><el:cmd url="imap" link="${mb}" className="plain">${mb.address}</el:cmd></td>
+<c:if test="${mb.quota == 0}">
+ <td class="small"><i>NONE</i></td>
+</c:if>
+<c:if test="${mb.quota > 0}">
  <td class="small"><fmt:int value="${mb.quota / 1024}" />K</td>
+</c:if>
 <c:if test="${!empty mb.aliases}">
  <td class="left small">${fn:splice(mb.aliases, ', ')}</td>
 </c:if>

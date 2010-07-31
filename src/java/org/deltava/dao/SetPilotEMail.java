@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.system.EMailConfiguration;
+import org.deltava.beans.system.IMAPConfiguration;
 
 /**
  * A Data Access Object to update Pilot IMAP data.
@@ -45,7 +45,7 @@ public class SetPilotEMail extends DAO {
 	 * @param name the Pilot name 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(EMailConfiguration cfg, String name) throws DAOException {
+	public void write(IMAPConfiguration cfg, String name) throws DAOException {
 		try {
 			startTransaction();
 			
@@ -74,7 +74,7 @@ public class SetPilotEMail extends DAO {
 	 * @param name the Pilot name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void update(EMailConfiguration cfg, String name) throws DAOException {
+	public void update(IMAPConfiguration cfg, String name) throws DAOException {
 		try {
 			startTransaction();
 			

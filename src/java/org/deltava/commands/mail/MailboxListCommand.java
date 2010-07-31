@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.EMailConfiguration;
+import org.deltava.beans.system.IMAPConfiguration;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -36,12 +36,12 @@ public class MailboxListCommand extends AbstractViewCommand {
         	GetPilotEMail idao = new GetPilotEMail(con);
         	idao.setQueryStart(vc.getStart());
         	idao.setQueryMax(vc.getCount());
-        	Collection<EMailConfiguration> results = idao.getAll();
+        	Collection<IMAPConfiguration> results = idao.getAll();
         	
         	// Load the IDs
         	Collection<Integer> IDs = new HashSet<Integer>();
-        	for (Iterator<EMailConfiguration> i = results.iterator(); i.hasNext(); ) {
-        		EMailConfiguration cfg = i.next();
+        	for (Iterator<IMAPConfiguration> i = results.iterator(); i.hasNext(); ) {
+        		IMAPConfiguration cfg = i.next();
         		IDs.add(new Integer(cfg.getID()));
         	}
         	
@@ -50,8 +50,8 @@ public class MailboxListCommand extends AbstractViewCommand {
         	UserDataMap udm = uddao.get(IDs);
         	
         	// Trim out anyone who isn't part of our airline
-        	for (Iterator<EMailConfiguration> i = results.iterator(); i.hasNext(); ) {
-        		EMailConfiguration cfg = i.next();
+        	for (Iterator<IMAPConfiguration> i = results.iterator(); i.hasNext(); ) {
+        		IMAPConfiguration cfg = i.next();
         		UserData ud = udm.get(new Integer(cfg.getID()));
         		if ((ud == null) || (!ud.getDB().equals(SystemData.get("airline.db")))) {
         			i.remove();
