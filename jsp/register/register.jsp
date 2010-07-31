@@ -55,7 +55,7 @@ var f = document.forms[0];
 var fN = f.firstName.value;
 var lN = f.lastName.value;
 var eMail = f.email.value;
-if ((fN.length < 2) || (lN.length < 2)) return false;
+if ((fN.length < 2) || (lN.length < 2) || (document.uniqueCheck)) return false;
 	
 // Create the AJAX request
 var xmlreq = getXMLHttpRequest();
@@ -80,8 +80,9 @@ xmlreq.send(null);
 return true;
 }
 
-function resetUniqueCheck()
+function resetUniqueCheck(isPermanent)
 {
+document.uniqueCheck = isPermanent;
 var rows = getElementsByClass('dupeFound');
 for (var x = 0; x < rows.length; x++)
 	displayObject(rows[x], false);
@@ -106,7 +107,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void resetUniqueCheck()">
+<body onload="void resetUniqueCheck(false)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -162,7 +163,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 <br />
 <a href="javascript:void sendDupeInfo()" class="pri bld">I'm already a <content:airline /> Pilot. Reactivate my Account.</a><br />
 <br />
-<a href="javascript:void resetUniqueCheck()" class="sec">I've never registered with <content:airline /> before.</a></td>
+<a href="javascript:void resetUniqueCheck(true)" class="sec">I've never registered with <content:airline /> before.</a></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
