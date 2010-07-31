@@ -6,7 +6,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.system.EMailConfiguration;
+import org.deltava.beans.system.IMAPConfiguration;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -40,9 +40,9 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			
 			// Load the e-mail configuration
 			GetPilotEMail idao = new GetPilotEMail(con);
-			EMailConfiguration cfg = idao.getEMailInfo(p.getID());
+			IMAPConfiguration cfg = idao.getEMailInfo(p.getID());
 			if (cfg == null) {
-				cfg = new EMailConfiguration(p.getID(), "");
+				cfg = new IMAPConfiguration(p.getID(), "");
 				cfg.setMailDirectory(String.valueOf(p.getID()) + "/");
 				cfg.setActive(true);
 			}
@@ -50,6 +50,7 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			// Save in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("mb", cfg, REQUEST);
+			ctx.setAttribute("aliases", StringUtils.listConcat(cfg.getAliases(), "\n"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -90,10 +91,10 @@ public class IMAPMailboxCommand extends AbstractFormCommand {
 			
 			// Load the e-mail configuration
 			GetPilotEMail idao = new GetPilotEMail(con);
-			EMailConfiguration cfg = idao.getEMailInfo(usr.getID());
+			IMAPConfiguration cfg = idao.getEMailInfo(usr.getID());
 			isNew = (cfg == null);
 			if (cfg == null)
-				cfg = new EMailConfiguration(usr.getID(), ctx.getParameter("IMAPAddr"));
+				cfg = new IMAPConfiguration(usr.getID(), ctx.getParameter("IMAPAddr"));
 			else
 				cfg.setAddress(ctx.getParameter("IMAPAddr"));
 			

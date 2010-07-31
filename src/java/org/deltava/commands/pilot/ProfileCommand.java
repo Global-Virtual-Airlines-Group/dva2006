@@ -69,7 +69,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetPilotDirectory rdao = new GetPilotDirectory(con);
 			GetPilotEMail edao = new GetPilotEMail(con);
 			Pilot p = rdao.get(ctx.getID());
-			EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
+			IMAPConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
 
 			// Get the Staff Profile if it exists
 			GetStaff rsdao = new GetStaff(con);
@@ -707,7 +707,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// load the email configuration
 			GetPilotEMail edao = new GetPilotEMail(con);
-			EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
+			IMAPConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
 			if (emailCfg != null)
 				ctx.setAttribute("emailCfg", emailCfg, REQUEST);
 

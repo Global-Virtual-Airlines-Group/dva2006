@@ -220,7 +220,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// If we have an e-mail box and mail is enabled, check for new mail
 			if (SystemData.getBoolean("smtp.imap.enabled")) {
 				GetPilotEMail pedao = new GetPilotEMail(con);
-				EMailConfiguration mcfg = pedao.getEMailInfo(p.getID());
+				IMAPConfiguration mcfg = pedao.getEMailInfo(p.getID());
 				if ((mcfg != null) && (!StringUtils.isEmpty(SystemData.get("smtp.imap.newmail"))))
 					ctx.setAttribute("newMsgs", Integer.valueOf(pedao.hasNewMail(mcfg.getMailDirectory())), REQUEST);
 			}

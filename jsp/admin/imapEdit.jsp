@@ -59,7 +59,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Mailbox Aliases</td>
- <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="4">${fn:splice(mb.aliases, '\n')}</el:textbox></td>
+ <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="${(fn:sizeof(mb.aliases) > 4) ? fn:sizeof(mb.aliases) : 4}">${aliases}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -70,7 +70,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE EQUIPMENT PROGRAM" />
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE IMAP MAILBOX" />
 <c:if test="${!empty mb.address}">
  <el:cmdbutton ID="DeleteButton" url="imapdelete" link="${mb}" label="DELETE IMAP MAILBOX" /> 
 </c:if></td>
