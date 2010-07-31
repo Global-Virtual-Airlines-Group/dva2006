@@ -320,9 +320,9 @@ a.plain {
 
 /* This is an IE-only hack for required SELECT elements */
 select.req {
-	background: #fff8fa;
+	background: #9f0303;
 	border: 1px solid #e00404;
-	color: #9f0303;
+	color: #fff8fa;
 }
 
 /* Google Maps infobox font */
