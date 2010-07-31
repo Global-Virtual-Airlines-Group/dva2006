@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.deltava.beans.system.EMailConfiguration;
+import org.deltava.beans.system.IMAPConfiguration;
 
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
@@ -33,14 +33,14 @@ public class GetPilotEMail extends DAO {
     * @return the EMailConfiguration bean, or null if not found
     * @throws DAOException if a JDBC error occurs
     */
-   public EMailConfiguration getEMailInfo(int id) throws DAOException {
+   public IMAPConfiguration getEMailInfo(int id) throws DAOException {
        try {
            prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox "
         		   + "WHERE (ID=?) LIMIT 1");
            _ps.setInt(1, id);
            
            // Execute the query, return null if not found
-           List<EMailConfiguration> results = execute();
+           List<IMAPConfiguration> results = execute();
            return (results.isEmpty()) ? null : results.get(0);
        } catch (SQLException se) {
            throw new DAOException(se);
@@ -52,7 +52,7 @@ public class GetPilotEMail extends DAO {
     * @return a Collection of EMailConfiguration beans
     * @throws DAOException if a JDBC error occurs
     */
-   public Collection<EMailConfiguration> getAll() throws DAOException {
+   public Collection<IMAPConfiguration> getAll() throws DAOException {
       try {
          prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox "
         		 + "WHERE (ID>0)");
@@ -94,13 +94,13 @@ public class GetPilotEMail extends DAO {
    /**
     * Helper method to load EMail information.
     */
-   private List<EMailConfiguration> execute() throws SQLException {
+   private List<IMAPConfiguration> execute() throws SQLException {
       
       // Execute the Query
-      Map<String, EMailConfiguration> results = new HashMap<String, EMailConfiguration>();
+      Map<String, IMAPConfiguration> results = new HashMap<String, IMAPConfiguration>();
       ResultSet rs = _ps.executeQuery();
       while (rs.next()) {
-         EMailConfiguration result = new EMailConfiguration(rs.getInt(1), rs.getString(2));
+         IMAPConfiguration result = new IMAPConfiguration(rs.getInt(1), rs.getString(2));
          result.setMailDirectory(rs.getString(3));
          result.setQuota(rs.getInt(4));
          result.setActive(rs.getBoolean(5));
@@ -130,7 +130,7 @@ public class GetPilotEMail extends DAO {
       prepareStatementWithoutLimits(sqlBuf.toString());
       rs = _ps.executeQuery();
       while (rs.next()) {
-         EMailConfiguration cfg = results.get(rs.getString(1));
+         IMAPConfiguration cfg = results.get(rs.getString(1));
          if (cfg != null)
             cfg.addAlias(rs.getString(2));
       }
@@ -138,6 +138,6 @@ public class GetPilotEMail extends DAO {
       // Clean up and return
       rs.close();
       _ps.close();
-      return new ArrayList<EMailConfiguration>(results.values());
+      return new ArrayList<IMAPConfiguration>(results.values());
    }
 }
