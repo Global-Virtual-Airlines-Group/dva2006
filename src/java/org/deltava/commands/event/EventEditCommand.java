@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -101,8 +101,25 @@ public class EventEditCommand extends AbstractCommand {
 			for (Iterator<Airport> i = e.getAirports().iterator(); i.hasNext(); ) {
 				Airport a = i.next();
 				List<Chart> aCharts = cdao.getCharts(a);
-				if (!aCharts.isEmpty())
-				   charts.put(a, aCharts);
+				if (aCharts.isEmpty())
+					continue;
+				
+				// Remove SID charts from destinations, and STAR charts from origins
+				if (!e.isDestination(a)) {
+					for (Iterator<Chart> ci = aCharts.iterator(); ci.hasNext(); ) {
+						Chart ch = ci.next();
+						if (ch.getType() == Chart.STAR)
+							ci.remove();
+					}
+				} else if (!e.isOrigin(a)) {
+					for (Iterator<Chart> ci = aCharts.iterator(); ci.hasNext(); ) {
+						Chart ch = ci.next();
+						if (ch.getType() == Chart.SID)
+							ci.remove();
+					}
+				}
+				
+				charts.put(a, aCharts);
 			}
 			
 			// Get the selected charts
