@@ -15,6 +15,7 @@ import org.deltava.comparators.CountryComparator;
 import org.deltava.security.command.AccomplishmentAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Accomplishment profiles. 
@@ -72,6 +73,10 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 				a.setChoices(StringUtils.nullTrim(ctx.getParameters("states")));
 				break;
 				
+			case AIRLINES:
+				a.setChoices(StringUtils.nullTrim(ctx.getParameters("airlines")));
+				break;
+				
 			default:
 				a.setChoices(StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ",")));
 			}
@@ -102,6 +107,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 		
 		// Get the command results
 		CommandResult result = ctx.getResult();
+		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		ctx.setAttribute("units", Arrays.asList(Accomplishment.Unit.values()), REQUEST);
 		ctx.setAttribute("states", Arrays.asList(State.values()), REQUEST);
 		ctx.setAttribute("countries", CollectionUtils.sort(Country.getAll(), 

@@ -9,6 +9,8 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.FlightReportComparator;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
@@ -26,8 +28,7 @@ public class AccomplishmentHistoryHelper {
 	}
 	
 	private Pilot _usr;
-	private final Collection<FlightReport> _pireps = 
-		new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
+	private final Collection<FlightReport> _pireps = new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
 	
 	private static class AccomplishmentCounter {
 
@@ -38,7 +39,8 @@ public class AccomplishmentHistoryHelper {
 		private long _miles;
 
 		private final Collection<Airport> _airports = new HashSet<Airport>();
-		private final Collection<String> _eqTypes = new HashSet<String>();
+		private final Collection<Airline> _airlines = new HashSet<Airline>();
+		private final Collection<String> _eqTypes = new TreeSet<String>();
 		private final Collection<Country> _countries = new TreeSet<Country>();
 		private final Collection<State> _states = new TreeSet<State>();
 
@@ -46,40 +48,11 @@ public class AccomplishmentHistoryHelper {
 			super();
 		}
 		
-		/**
-		 * Helper method to filter arbitrary choice lists.
-		 */
-		static <T> Collection<T> filter(Collection<T> values, Accomplishment a) {
-			if (a.getChoices().isEmpty())
-				return new ArrayList<T>(values);
-			
-			Collection<T> results = new ArrayList<T>(values.size());
-			for (T entry : values) {
-				if (entry instanceof Airport) {
-					Airport ap = (Airport) entry;
-					if ((a.getChoices().contains(ap.getIATA()) || (a.getChoices().contains(ap.getICAO()))))
-						results.add(entry);
-				} else if (entry instanceof State) {
-					State st = (State) entry;
-					if (a.getChoices().contains(st.name()))
-						results.add(entry);
-				} else if (entry instanceof Country) {
-					Country c = (Country) entry;
-					if (a.getChoices().contains(c.getCode()))
-						results.add(entry);
-				} else {
-					if (a.getChoices().contains(entry.toString()))
-						results.add(entry);
-				}
-			}
-			
-			return results;
-		}
-		
 		public void add(FlightReport fr) {
 			_legs++;
 			_miles += fr.getDistance();
 			_eqTypes.add(fr.getEquipmentType());
+			_airlines.add(fr.getAirline());
 			add(fr.getAirportD());
 			add(fr.getAirportA());
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
@@ -114,8 +87,12 @@ public class AccomplishmentHistoryHelper {
 			return _states;
 		}
 		
-		public int getEquipmentCount() {
-			return _eqTypes.size();
+		public Collection<String> getEquipmentTypes() {
+			return _eqTypes;
+		}
+		
+		public Collection<Airline> getAirlines() {
+			return _airlines;
 		}
 		
 		public int getLegs() {
@@ -150,8 +127,6 @@ public class AccomplishmentHistoryHelper {
 	public AccomplishmentHistoryHelper(Pilot p, Collection<FlightReport> flights) {
 		super();
 		_usr = p;
-		
-		// Only use approved PIREPs
 		for (FlightReport fr : flights)
 			add(fr);
 	}
@@ -176,7 +151,51 @@ public class AccomplishmentHistoryHelper {
 	public Result has(Accomplishment a) {
 		return has(a, _totals);
 	}
+	
+	/**
+	 * Returns how far a pilot is towards a particular Accomplishment.
+	 * @param a the Accomplishment
+	 * @return the value achieved thus far
+	 */
+	public long getProgress(Accomplishment a) {
+		return progress(a, _totals);
+	}
 
+	/**
+	 * Returns how far a pilot is towards a particular Accomplishment.
+	 */
+	private long progress(Accomplishment a, AccomplishmentCounter cnt) {
+		
+		// Big switch based on types
+		switch (a.getUnit()) {
+			case LEGS:
+				return cnt.getLegs();
+			case MILES:
+				return cnt.getMiles();
+			case OLEGS:
+				return cnt.getOnlineLegs();
+			case HLEGS:
+				return cnt.getHistoricLegs();
+			case ELEGS:
+				return cnt.getEventLegs();
+			case AIRPORTS:
+				return AccomplishmentFilter.filter(cnt.getAirports(), a).size();
+			case AIRCRAFT:
+				return AccomplishmentFilter.filter(cnt.getEquipmentTypes(), a).size();
+			case COUNTRIES:
+				return AccomplishmentFilter.filter(cnt.getCountries(), a).size();
+			case STATES:
+				return AccomplishmentFilter.filter(cnt.getStates(), a).size();
+			case AIRLINES:
+				return AccomplishmentFilter.filter(cnt.getAirlines(), a).size();
+			case MEMBERDAYS:
+				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400000;
+				return days;
+			default:
+				return 0;
+		}
+	}
+	
 	/**
 	 * Determines whether a Pilot has achieved a particular Accomplishment using a specific set of totals.
 	 */
@@ -184,33 +203,53 @@ public class AccomplishmentHistoryHelper {
 		if (!a.getActive())
 			return Result.NOTYET;
 		
+		long value = progress(a, cnt);
+		if (value < a.getValue())
+			return Result.NOTYET;
+		
+		return (value == a.getValue()) ? Result.MEET : Result.EXCEED;
+	}
+	
+	/**
+	 * Returns missing elements from a particular Accomplishment.
+	 * @param a the Accomplishment bean
+	 * @return a Collection of missing objects
+	 */
+	public Collection<?> missing(Accomplishment a) {
+		if (has(a) != Result.NOTYET)
+			return Collections.emptySet();
+		
 		// Big switch based on types
+		Collection<Object> results = new LinkedHashSet<Object>();
+		Collection<String> codes = new TreeSet<String>();
 		switch (a.getUnit()) {
-			case LEGS:
-				return calc(cnt.getLegs(), a.getValue());
-			case MILES:
-				return calc(cnt.getMiles(), a.getValue());
-			case OLEGS:
-				return calc(cnt.getOnlineLegs(), a.getValue());
-			case HLEGS:
-				return calc(cnt.getHistoricLegs(), a.getValue());
-			case ELEGS:
-				return calc(cnt.getEventLegs(), a.getValue());
 			case AIRPORTS:
-				return calc(AccomplishmentCounter.filter(cnt.getAirports(), a).size(), a.getValue());
-			case AIRCRAFT:
-				return calc(cnt.getEquipmentCount(), a.getValue());
+				codes.addAll(AccomplishmentFilter.missing(_totals.getAirports(), a));
+				for (String code : codes)
+					results.add(SystemData.getAirport(code));
+				break;
+			
 			case COUNTRIES:
-				return calc(AccomplishmentCounter.filter(cnt.getCountries(), a).size(), a.getValue());
+				codes.addAll(AccomplishmentFilter.missing(_totals.getCountries(), a));
+				for (String code : codes)
+					results.add(Country.get(code));
+				break;
+			
 			case STATES:
-				return calc(AccomplishmentCounter.filter(cnt.getStates(), a).size(), a.getValue());
-			case MEMBERDAYS:
-				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400000;
-				return calc(days, a.getValue());
+				codes.addAll(AccomplishmentFilter.missing(_totals.getStates(), a));
+				for (String code : codes)
+					results.add(State.valueOf(code.toUpperCase()));
+				break;
 				
+			case AIRCRAFT:
+				results.addAll(AccomplishmentFilter.missing(_totals.getStates(), a));
+				break;
+		
 			default:
-				return Result.NOTYET;
+				return Collections.emptySet();
 		}
+		
+		return results;
 	}
 	
 	/**
@@ -234,15 +273,5 @@ public class AccomplishmentHistoryHelper {
 		}
 		
 		return null;
-	}
-	
-	/**
-	 * Helper method to convert comparison into three-value Result enum.
-	 */
-	private Result calc(long v1, long v2) {
-		if (v1 < v2)
-			return Result.NOTYET;
-		
-		return (v1 == v2) ? Result.MEET : Result.EXCEED;
 	}
 }

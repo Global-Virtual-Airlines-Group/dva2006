@@ -31,24 +31,26 @@ return true;
 function showChoices()
 {
 var f = document.forms[0];
+var rows = getElementsByClass('valueRow');
+for (var x = 0; x < rows.length; x++)
+	displayObject(rows[x], false);
+
 var c = f.units.options[f.units.selectedIndex].value;
 switch (c) {
 case 'COUNTRIES':
 	displayObject(getElement('valueCountry'), true);
-	displayObject(getElement('valueState'), false);
-	displayObject(getElement('valueBox'), false);
 	break;
 
 case 'STATES':
 	displayObject(getElement('valueState'), true);
-	displayObject(getElement('valueCountry'), false);
-	displayObject(getElement('valueBox'), false);
+	break;
+
+case 'AIRLINES':
+	displayObject(getElement('valueAirline'), true);
 	break;
 
 default:
 	displayObject(getElement('valueBox'), true);
-	displayObject(getElement('valueState'), false);
-	displayObject(getElement('valueCountry'), false);
 }
 
 return true;
@@ -85,17 +87,21 @@ return true;
  <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" />
  <span class="small">Click on the text box for a color picker.</span></td>
 </tr>
-<tr id="valueBox">
+<tr id="valueBox" style="display:none;" class="valueRow">
  <td class="label top">Valid Values</td>
  <td class="data"><el:textbox name="choices" idx="*" width="80%" height="3">${fn:splice(ap.choices, ', ')}</el:textbox></td>
 </tr>
-<tr id="valueCountry" style="display:none;">
+<tr id="valueCountry" style="display:none;" class="valueRow">
  <td class="label top">Valid Countries</td>
  <td class="data"><el:check name="countries" idx="*" width="190" cols="6" className="small" newLine="true" checked="${ap.choices}" options="${countries}"/></td>
 </tr>
-<tr id="valueState" style="display:none;">
+<tr id="valueState" style="display:none;" class="valueRow">
  <td class="label top">Valid States</td>
  <td class="data"><el:check name="states" idx="*" width="120" cols="8" newLine="true" checked="${ap.choices}" options="${states}" /></td>
+</tr>
+<tr id="valueAirline" style="display:none;" class="valueRow">
+ <td class="label top">Valid Airlines</td>
+ <td class="data"><el:check name="airlines" idx="*" width="200" cols="4" newLine="true" checked="${ap.choices}" options="${airlines}" /></td>
 </tr>
 <c:if test="${!empty ap}">
 <tr>
