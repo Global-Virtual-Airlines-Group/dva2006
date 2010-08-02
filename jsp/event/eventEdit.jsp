@@ -62,9 +62,9 @@ return true;
 <%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
 <content:sysdata var="defaultNetwork" name="online.default_network" />
-<content:sysdata var="sigX" name="online.banner_max.x" />
-<content:sysdata var="sigY" name="online.banner_max.y" />
-<content:sysdata var="sigSize" name="online.banner_max.size" />
+<content:sysdata var="bannerX" name="online.banner_max.x" />
+<content:sysdata var="bannerY" name="online.banner_max.y" />
+<content:sysdata var="bannerSize" name="online.banner_max.size" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="page" />
 
@@ -123,17 +123,17 @@ return true;
 </tr>
 <c:if test="${event.hasBanner}">
 <tr>
- <td class="label">Banner Image</td>
- <td class="data"><el:img caption="${event.name} Banner" src="/event/${event.hexID}" /><br />
+ <td class="label top">Banner Image</td>
+ <td class="data"><img alt="${event.name} Banner" src="/event/${event.hexID}" /><br />
 <el:box name="removeBannerImg" value="true" label="Remove Event Banner Image" /></td>
 </tr>
 </c:if>
 <tr>
- <td class="label">Upload Banner Image</td>
+ <td class="label top">Upload Banner Image</td>
  <td class="data"><el:file name="bannerImg" className="small" idx="*" size="80" max="144" /><br />
 <span class="small sec">The maximum size for a banner image is <fmt:int value="${bannerX}" />x<fmt:int value="${bannerY}" /> 
 pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</span>
-<content:hasmsg><br /><span class="bld error"><content:sysmsg /></span></content:hasmsg>></td>
+<content:hasmsg><br /><span class="bld error"><content:sysmsg /></span></content:hasmsg></td>
 </tr>
 <tr>
  <td class="label top">ATC Contact Addresses</td>
@@ -147,7 +147,7 @@ pixels, and the maximum file size is <fmt:int value="${bannerSize}" /> bytes.</s
  <td class="label top">Equipment Types</td>
  <td class="data"><span class="sec small">These should be unselected unless signups are restricted 
 to a specific set of equipment.</span><br />
-<el:check name="eqTypes" idx="*" cols="9" width="85" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
+<el:check name="eqTypes" idx="*" cols="9" width="95" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">AVAILABLE FLIGHT ROUTES</td>
@@ -202,7 +202,7 @@ to a specific set of equipment.</span><br />
 <c:set var="apCharts" value="${charts[chartAirport]}" scope="page" />
 <tr>
  <td class="label top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
- <td class="data"><el:check name="charts" cols="4" width="185" checked="${event.charts}" options="${apCharts}" newLine="true" className="small" /></td>
+ <td class="data"><el:check name="charts" cols="4" width="200" checked="${event.charts}" options="${apCharts}" newLine="true" className="small" /></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -213,11 +213,12 @@ to a specific set of equipment.</span><br />
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
- <el:button type="SUBMIT" className="BUTTON" label="SAVE ONLINE EVENT" />
-</c:if>
+ <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE ONLINE EVENT" />
+</c:if></td>
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>

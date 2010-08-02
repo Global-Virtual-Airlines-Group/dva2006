@@ -68,7 +68,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Online Network</td>
- <td colspan="5" class="data sec bld">${event.networkName}</td>
+ <td colspan="5" class="data pri bld">${event.networkName}</td>
 </tr>
 <c:if test="${fn:sizeof(event.airlines) > 1}">
 <tr>
