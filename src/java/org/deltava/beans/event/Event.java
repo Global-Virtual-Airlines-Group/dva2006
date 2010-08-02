@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -397,6 +397,39 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
        }
        
        return false;
+    }
+    
+    /**
+     * Returns if an Airport is a destination of any of the Routes.
+     * @param a the Airport bean
+     * @return TRUE if a destination for any Route, otherwise FALSE
+     * @see Event#isOrigin(Airport)
+     */
+    public boolean isDestination(Airport a) {
+    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = i.next();
+    		if (r.getAirportA().equals(a))
+    			return true;
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Returns if an Airport is an origin of any of the Routes.
+     * @param a the Airport bean
+     * @return TRUE if an origin for any Route, otherwise FALSE
+     * @throws NullPointerException if a is null
+     * @see Event#isDestination(Airport)
+     */
+    public boolean isOrigin(Airport a) {
+    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = i.next();
+    		if (r.getAirportD().equals(a))
+    			return true;
+    	}
+    	
+    	return false;
     }
     
     /**
