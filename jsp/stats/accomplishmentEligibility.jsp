@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Accomplishment Eligibility - ${pilot.name}</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="view" />
+<content:pics />
+<content:js name="common" />
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="3" class="left"><content:airline /> ACCOMPLISHMENT ELIGIBILITY FOR ${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+</tr>
+<!-- Table Header Bar -->
+<tr class="title caps">
+ <td width="15%">ACCOMPLISHMENT</td>
+ <td width="30%">REQUIREMENT</td>
+ <td>PROMOTION ELIGIBILITY</td>
+</tr>
+
+<!-- Table Data -->
+<c:forEach var="acc" items="${fn:keys(accs)}">
+<c:set var="msg" value="${accs[acc]}" scope="page" />
+<view:row entry="${msg}">
+ <td><fmt:accomplish accomplish="${acc}" /></td>
+ <td class="sec"><fmt:int value="${acc.value}" /> ${acc.unit.name}</td>
+<c:choose>
+<c:when test="${msg.achieved}">
+ <td class="pri bld">You achieved this Accomplishment on <fmt:date fmt="d" date="acc.date" />.</td>
+</c:when>
+<c:when test="${empty msg.missing}">
+
+
+</c:when>
+
+</c:choose>
+</view:row>
+</c:forEach>
+
+<!-- Bottom Bar -->
+<tr class="title">
+ <td colspan="3">&nbsp;</td>
+</tr> 
+</el:table>
+<content:copyright />
+</content:region>
+</content:page>
+<content:googleAnalytics />
+</body>
+</html>
