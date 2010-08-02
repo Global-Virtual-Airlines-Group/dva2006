@@ -1050,6 +1050,12 @@
 		<roles>HR,Operations</roles>
 	</command>
 
+	<command id="acceligibility">
+		<name>Pilot Accomplishment Eligibility</name>
+		<class>org.deltava.commands.stats.AccomplishmentEligibilityCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="wxcenter">
 		<name>Weather Center</name>
 		<class>org.deltava.commands.main.WeatherCenterCommand</class>

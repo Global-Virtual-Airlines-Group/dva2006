@@ -113,7 +113,7 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </tr>
 <c:if test="${!empty accs}">
 <tr>
- <td class="mid bld">Accomplishments</td>
+ <td class="mid"><el:cmd className="bld" url="acceligibility">Accomplishment Eligibility</el:cmd></td>
  <td class="data">You have achieved the following Accomplishments:<br />
 <br />
 <c:forEach var="a" items="${accs}">
