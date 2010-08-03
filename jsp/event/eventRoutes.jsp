@@ -83,7 +83,7 @@ return true;
 <el:box name="delete${route.routeID}" value="true" className="small bld" label="Delete this Route" /></td>
  <td class="label top">Maximum Signups</td>
  <td class="data top"><el:text name="maxSignups${route.routeID}" idx="*" className="req" size="2" max="3" value="${route.maxSignups}" />
- <i><fmt:int value="${route.signups}" /> Pilots signed up</i></td>
+ <span clas="ita"><fmt:int value="${route.signups}" /> Pilots signed up</span></td>
 </tr>
 </c:forEach>
 

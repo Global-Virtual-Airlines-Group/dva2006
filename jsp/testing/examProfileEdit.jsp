@@ -53,7 +53,7 @@ return true;
 <tr>
  <td class="label">Limit to Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="N/A" options="${eqTypes}" value="${eProfile.equipmentType}" />
- <span class="small"><i>This should be N/A for First Officer examinations.</i></span></td>
+ <span class="small ita">This should be N/A for First Officer Examinations.</span></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
@@ -85,7 +85,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Allowed Scorers</td>
- <td class="data"><i>Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</i><br /> 
+ <td class="data"><span class="ita">Unselect all Scorers to allow anyone with Examination scoring access to score this Examination.</span><br /> 
 <el:check name="scorerIDs" width="170" cols="5" options="${scorers}" className="small" checked="${eProfile.scorerIDs}" /></td>
 </tr>
 <tr>

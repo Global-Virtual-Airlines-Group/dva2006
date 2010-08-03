@@ -45,7 +45,7 @@
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td><el:cmd url="imap" link="${mb}" className="plain">${mb.address}</el:cmd></td>
 <c:if test="${mb.quota == 0}">
- <td class="small"><i>NONE</i></td>
+ <td class="small ita">NONE</td>
 </c:if>
 <c:if test="${mb.quota > 0}">
  <td class="small"><fmt:int value="${mb.quota / 1024}" />K</td>

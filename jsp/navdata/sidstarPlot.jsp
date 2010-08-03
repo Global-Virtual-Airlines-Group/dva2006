@@ -140,7 +140,7 @@ return false;
  <td class="label">Find Navigation Aid</td>
  <td class="data"><el:text name="navaidCode" size="6" max="6" idx="*" value="" />
  <el:button ID="FindButton" className="BUTTON" onClick="void findMarker(document.forms[0].navaidCode.value)" label="FIND" />
- <i>Double-Click on the waypoint to add it to the Terminal Route.</i></td>
+ <span class="ita">Double-Click on the waypoint to add it to the Terminal Route.</span></td>
 </tr>
 <tr class="title doPlot">
  <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ROUTE" />

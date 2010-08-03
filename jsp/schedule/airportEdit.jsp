@@ -66,10 +66,12 @@ return true;
 </tr>
 <tr>
  <td class="data small">The airport name should be in the following formats:<br />
-Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <i>(Chattanooga TN)</i><br /> 
-Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. <i>(New York-Kennedy NY)</i><br />
-Airports outside the United States or Canada, use &lt;City Name&gt;. <i>(Trondheim)</i><br />
-Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt;. <i>(Paris-Charles De Gaulle)</i></td>
+Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(Chattanooga TN)</span><br /> 
+Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. 
+ <span class="ita">(New York-Kennedy NY)</span><br />
+Airports outside the United States or Canada, use &lt;City Name&gt;-&lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br />
+Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt;-&lt;Country&gt;.
+ <span class="ita">(Paris-Charles De Gaulle France)</span></td>
 </tr>
 <tr>
  <td class="label">Country</td>

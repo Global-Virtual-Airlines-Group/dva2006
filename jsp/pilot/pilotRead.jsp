@@ -70,7 +70,7 @@ return true;
 <c:if test="${empty pilot.pilotCode}">
 <tr>
  <td class="label">ACARS User ID</td>
- <td colspan="${cspan}" class="data"><i>No Pilot ID assigned.</i> Use <span class="bld">${pilot.ID}</span> as a temporary ACARS User ID.</td>
+ <td colspan="${cspan}" class="data"><span class="ita">No Pilot ID assigned.</span> Use <span class="bld">${pilot.ID}</span> as a temporary ACARS User ID.</td>
 </tr>
 </c:if>
 <c:if test="${access.canChangeRoles && (!empty pilot.roles)}">
@@ -118,7 +118,7 @@ return true;
 <c:if test="${!empty pilot.motto}">
 <tr>
  <td class="label">Personal Motto</td>
- <td colspan="${cspan}" class="data"><i>${pilot.motto}</i></td>
+ <td colspan="${cspan}" class="data ita">${pilot.motto}</td>
 </tr>
 </c:if>
 

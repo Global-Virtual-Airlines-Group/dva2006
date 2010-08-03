@@ -22,7 +22,7 @@
 <content:region id="main">
 <div class="updateHdr">Flight Report Logging using ACARS</div>
 <br />
-<span class="bld"><i>Do you know that you can log all of your Flights here at <content:airline /> automatically?</i></span><br />
+<span class="bld ita">Do you know that you can log all of your Flights here at <content:airline /> automatically?</span><br />
 <br />
 Our ACARS package has successfully logged thousands of <content:airline /> flights and provides a wealth of information to
 Pilots about their route and flight data. Additionally, ACARS allows you to communicate with other <content:airline /> Pilots while

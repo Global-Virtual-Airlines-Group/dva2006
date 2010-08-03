@@ -198,7 +198,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data" colspan="${cspan}"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" onBlur="void checkUnique()" /> 
-<span class="small"><i>Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</i></span></td>
+<span class="small ita">Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</span></td>
 </tr>
 <tr>
  <td class="label top">E-Mail Notifications</td>
