@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.JSTag;
 /**
  * A JSP tag to add objects into a JavaScript array.
  * @author Luke
- * @version 2.4
+ * @version 3.2
  * @since 2.4
  */
 
@@ -50,7 +50,7 @@ public class JSArrayTag extends JSTag {
         		buf.append("null");
         	else {
         		buf.append('\'');
-        		buf.append(String.valueOf(obj));
+        		buf.append(String.valueOf(obj).replace("\'", "\\\'"));
         		buf.append('\'');
         	}
         	
