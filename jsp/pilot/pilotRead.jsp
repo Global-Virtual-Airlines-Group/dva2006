@@ -218,7 +218,7 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
  <td colspan="${cspan}" class="data sec"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours
 <content:filter roles="PIREP,HR">
  <el:cmd url="mystats" link="${pilot}" className="sec bld">Flight Statistics</el:cmd> 
- <el:cmd url="myroutemap" link="${pilot}" className="bld">Route Map</el:cmd></content:filter></td>
+ | <el:cmd url="myroutemap" link="${pilot}" className="bld">Route Map</el:cmd></content:filter></td>
 </tr>
 </c:if>
 <c:if test="${pilot.legacyHours > 0}">
@@ -251,7 +251,10 @@ Applicant profile for ${pilot.name}.</td>
  <td class="label top">Pilot Accomplishments</td>
  <td colspan="${cspan}" class="data"><c:forEach var="a" items="${accs}">
 <fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
-</c:forEach></td>
+</c:forEach>
+<c:if test="${access.canChangeStatus}"><br /><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
+<content:filter roles="HR"> | <el:cmd url="acceligibility" className="bld" link="${pilot}">Accomplishment Eligibility</el:cmd></content:filter>
+</c:if></td>
 </tr>
 </c:if>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
@@ -291,9 +294,6 @@ Applicant profile for ${pilot.name}.</td>
 </c:if>
 <c:if test="${access.canActivate}">
  <el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" />
-</c:if>
-<c:if test="${access.canChangeStatus}">
- <el:cmdbutton url="accalc" link="${pilot}" label="RECALCULATE ACCOMPLISHMENTS" />
 </c:if>
 <content:filter roles="Admin">
  <el:cmdbutton url="su" link="${pilot}" label="SWITCH TO USER" />

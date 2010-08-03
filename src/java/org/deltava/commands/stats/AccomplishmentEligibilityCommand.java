@@ -20,18 +20,20 @@ import org.deltava.dao.*;
 
 public class AccomplishmentEligibilityCommand extends AbstractCommand {
 
-	class EligibilityMessage implements ViewEntry {
+	public class EligibilityMessage implements ViewEntry {
 		private boolean _isOK;
 		private final List<Object> _missing = new ArrayList<Object>();
+		private long _progress;
 	
 		EligibilityMessage(boolean isOK) {
 			super();
 			_isOK = isOK;
 		}
 		
-		EligibilityMessage(Collection<?> missing) {
+		EligibilityMessage(long progress, Collection<?> missing) {
 			this(false);
 			_missing.addAll(missing);
+			_progress = progress;
 		}
 		
 		public String getRowClassName() {
@@ -40,6 +42,10 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 		
 		public boolean getAchieved() {
 			return _isOK;
+		}
+		
+		public long getProgress() {
+			return _progress;
 		}
 		
 		public Class<?> getMissingClass() {
@@ -64,14 +70,16 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
         if (id == 0)
         	id = ctx.getUser().getID();
         
+        ctx.setAttribute("isOurs", Boolean.valueOf(id == ctx.getUser().getID()), REQUEST);
+        
         try {
         	Connection con = ctx.getConnection();
         	
 			// Load the pilot
 			GetPilot pdao = new GetPilot(con);
-			Pilot p = pdao.get(ctx.getID());
+			Pilot p = pdao.get(id);
 			if (p == null)
-				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID - " + id);
 			
 			// Load all Accomplishment profiles
 			GetAccomplishment adao = new GetAccomplishment(con);
@@ -82,13 +90,14 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			Collection<FlightReport> flights = frdao.getByPilot(p.getID(), null);
 			
 			// Instantiate the helper and loop through
-			Map<Accomplishment, EligibilityMessage> accData = new TreeMap<Accomplishment, EligibilityMessage>();
+			Map<Accomplishment, EligibilityMessage> accData = new LinkedHashMap<Accomplishment, EligibilityMessage>();
 			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p, flights);
 			for (Accomplishment a : accs) {
 				Date dt = helper.achieved(a);
 				if (dt == null) {
 					Collection<?> missing = helper.missing(a);
-					accData.put(a, new EligibilityMessage(missing));
+					long progress = helper.getProgress(a);
+					accData.put(a, new EligibilityMessage(progress, missing));
 				} else
 					accData.put(new DatedAccomplishment(dt, a), new EligibilityMessage(true));
 			}
