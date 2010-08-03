@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,12 +11,13 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
 public class CheckTag extends FormElementTag {
 
+	private String _fieldName;
 	private String _labelClassName;
 	private int _width;
 	private int _cols;
@@ -41,13 +42,9 @@ public class CheckTag extends FormElementTag {
 	/**
 	 * Sets the width of the field in columns; afterwards the separator will be outputted.
 	 * @param columns the number of columns
-	 * @throws IllegalArgumentException if columns is negative
 	 */
 	public void setCols(int columns) {
-		if (columns < 0)
-			throw new IllegalArgumentException("Checkbox columns cannot be negative");
-
-		_cols = columns;
+		_cols = Math.max(1, columns);
 	}
 
 	/**
@@ -56,6 +53,15 @@ public class CheckTag extends FormElementTag {
 	 */
 	public void setWidth(int width) {
 		_width = width;
+	}
+	
+	/**
+	 * Sets the check box name, saving for the CSS class.
+	 */
+	@Override
+	public void setName(String name) {
+		super.setName(name);
+		_fieldName = name;
 	}
 
 	/**
@@ -74,8 +80,10 @@ public class CheckTag extends FormElementTag {
 		_data.setAttribute("onchange", jsEvent);
 	}
 
+	/**
+	 * Open the formatting SPAN and set the width.
+	 */
 	private void openSpanTag() throws Exception {
-		// Open the formatting SPAN and set the width
 		_out.print("<span");
 		if (_width > 0) {
 			_out.print(" style=\"");
@@ -88,13 +96,14 @@ public class CheckTag extends FormElementTag {
 		}
 
 		// Set the formatting class
+		_out.print(" class=\"cbox_span_");
+		_out.print(_fieldName);
 		if (_labelClassName != null) {
-			_out.print(" class=\"");
+			_out.print(' ');	
 			_out.print(_labelClassName);
-			_out.print("\"");
 		}
 
-		_out.print('>');
+		_out.print("\">");
 	}
 
 	/**
@@ -107,8 +116,7 @@ public class CheckTag extends FormElementTag {
 			return ca.getComboAlias().equals(vAlias) || ca.getComboName().equals(vAlias);
 		} else if (optValue instanceof ComboAlias) {
 			ComboAlias ca = (ComboAlias) optValue;
-			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(
-					String.valueOf(setValue)));
+			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(String.valueOf(setValue)));
 		} else
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
 	}
@@ -117,11 +125,7 @@ public class CheckTag extends FormElementTag {
 	 * Helper method to determine if a particular option is selected.
 	 */
 	private void renderOption(Object opt) throws Exception {
-
-		// Determine if we need to include the label in a span, and if this is a comboalias
-		boolean isCombo = (opt instanceof ComboAlias);
-		if ((_width > 0) || (_labelClassName != null))
-			openSpanTag();
+		openSpanTag();
 
 		// Determine if the option is selected
 		boolean isSelected = false;
@@ -132,12 +136,15 @@ public class CheckTag extends FormElementTag {
 			isSelected = checkOption(opt, _value);
 
 		_out.print(_data.open(false));
+		_out.print(" class=\"cbox_input_");
+		_out.print(_fieldName);
+		_out.print("\"");
 		if (isSelected)
 			_out.print(" checked=\"checked\"");
 
 		// Figure out how to render the choice
 		_out.print(" value=\"");
-		if (isCombo) {
+		if (opt instanceof ComboAlias) {
 			ComboAlias alias = (ComboAlias) opt;
 			_out.print(alias.getComboAlias());
 			_out.print("\" />");
@@ -148,9 +155,7 @@ public class CheckTag extends FormElementTag {
 			_out.print(opt.toString());
 		}
 
-		// Close the span tag if required
-		if ((_width > 0) || (_labelClassName != null))
-			_out.println("</span>");
+		_out.println("</span>");
 	}
 
 	public int doEndTag() throws JspException {
@@ -186,10 +191,10 @@ public class CheckTag extends FormElementTag {
 			}
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
-		// Release state and return
-		release();
 		return EVAL_PAGE;
 	}
 
