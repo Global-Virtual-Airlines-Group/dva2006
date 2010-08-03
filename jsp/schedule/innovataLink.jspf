@@ -7,9 +7,9 @@ custom timetable service provider to major airlines and travel vendors. Innovata
 provide a link to their	worldwide flight schedule search service should our members wish to use it when 
 planning their travel.<br />
 <br />
-<span class="small"><i>Please be aware that the <content:airline /> Flight Schedule is the only authorized source for 
+<span class="small ita">Please be aware that the <content:airline /> Flight Schedule is the only authorized source for 
 flight information. Flight Reports for flights found elsewhere, including the Innovata, LLC schedule 
-search below, may not be approved!</i></span><br />
+search below, may not be approved!</span><br />
 <br />
 <span class="mid"><a rel="external" href="${innovata_url}"><el:img caption="Innnovata LLC Schedule Search" src="innovata_schedule.png" border="0" /></a></span><br />
 <br />

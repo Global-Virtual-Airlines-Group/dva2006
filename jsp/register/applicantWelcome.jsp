@@ -39,8 +39,8 @@ the right program for you.<br />
 In order to complete the membership process at <content:airline />, we must have a valid e-mail address on file for 
 you. An e-mail message has been sent to you with a URL to click to validate your e-mail address. 
 <span class="error bld">It is critical that your e-mail provider is able to receive e-mail messages from the domain 
-<i>${ourDomain}</i> without any filtering. If you do not respond to the automated e-mail verification message, your 
-application to <content:airline /> cannot be approved!</span><br />
+<span class="ita">${ourDomain}</span> without any filtering. If you do not respond to the automated e-mail verification 
+message, your application to <content:airline /> cannot be approved!</span><br />
 <br />
 <c:if test="${!empty questionnaire}">
 <el:table className="bar" space="default" pad="default">

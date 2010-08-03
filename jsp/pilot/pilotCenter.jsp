@@ -68,15 +68,15 @@
 <c:if test="${!empty geoLocation}">
  <td class="data">You can update your location on the <content:airline /> Pilot Board.<br />
 <br />
-<i>For privacy reasons, your specific location will be altered by a random number of miles each time 
-the <content:airline /> Pilot Board is viewed.</i></td>
+<span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time 
+the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 <c:if test="${empty geoLocation}">
  <td class="data">You have not specified your geographic location. By doing so, you can add your 
 name to the <content:airline /> Pilot Board.<br />
 <br />
-<i>For privacy reasons, your specific location will be altered by a random number of miles each time 
-the <content:airline /> Pilot Board is viewed.</i></td>
+<span class="ita">For privacy reasons, your specific location will be altered by a random number of miles each time 
+the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 </tr>
 <c:if test="${access.canTakeLeave}">
@@ -217,7 +217,7 @@ To view statistics about your flights, <el:cmd className="sec bld" url="mystats"
 they have met the necessary requirements for a new Equipment Program. You can view these transfer 
 requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
 <br />
-<i>There are <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</i></c:if></td>
+<span class="ita">There are <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
@@ -393,8 +393,8 @@ Captain in the ${eqType.name} program.</td></c:when>
  <td class="data">You have completed the <fmt:int value="${eqType.promotionLegs}" /> Flight Legs in 
  the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
 <c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if> required for promotion to the rank of 
-Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld"><fmt:list value="${fn:examC(eqType)}" delim="," /></span> 
-examination(s) in order to be eligible for promotion to Captain</i>.</td></c:when>
+Captain in the ${eqType.name} program. <span class="ita">You still need to pass the <span class="pri bld"><fmt:list value="${fn:examC(eqType)}" delim="," /></span> 
+Examination(s) in order to be eligible for promotion to Captain</span>.</td></c:when>
 </c:choose>
 </tr>
 </c:if>
@@ -417,15 +417,15 @@ equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c
 <c:if test="${(isFO && !captPromote) || (promoteLegs < eqType.promotionLegs)}"><br />
 <c:if test="${isFO && !captPromote && (eqType.stage == eqSwitchMaxStage)}">
 <br />
-<i>You will not be eligible for equipment type transfers or additional ratings in equipment type programs 
+<span class="ita">You will not be eligible for equipment type transfers or additional ratings in equipment type programs 
  in Stage <fmt:int value="${eqSwitchMaxStage}" /> or above until you become eligible for promotion to Captain
- in the ${eqType.name} or another Stage <fmt:int value="${eqType.stage}" /> equipment program.</i><br />
+ in the ${eqType.name} or another Stage <fmt:int value="${eqType.stage}" /> equipment program.</span><br />
 </c:if>
 <c:if test="${promoteLegs < (eqType.promotionLegs / 2)}">
 <br />
-<i>You will not be eligible for equipment type transfers or additional ratings in new equipment type programs 
+<span class="ita">You will not be eligible for equipment type transfers or additional ratings in new equipment type programs 
 in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${eqType.promotionLegs / 2}" /> 
-of the <fmt:int value="${eqType.promotionLegs}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</i></c:if>
+of the <fmt:int value="${eqType.promotionLegs}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</span></c:if>
 </c:if>
 </td></tr>
 </c:if>
@@ -501,8 +501,8 @@ You are currently enrolled in the <el:cmd url="course" link="${course}" classNam
 Flight Academy course.</c:if>
 <c:if test="${pilot.legs < academyFlights}"><br />
 <br />
-<i>You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
-<fmt:int value="${academyFlights}" /> Flight legs.</i></c:if></td>
+<span class="ita">You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
+<fmt:int value="${academyFlights}" /> Flight legs.</span></c:if></td>
 </tr>
 <c:if test="${!empty course}">
 <tr>
@@ -639,21 +639,23 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="airlines">Update Airlines</el:cmd></td>
- <td class="data">You can modify the Airline profiles contained within the <content:airline /> Flight Schedule.</td>
+ <td class="data">You can modify the Airline profiles contained within the <content:airline /> Flight Schedule.
+ <span class="ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="airports">Update Airports</el:cmd></td>
- <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule.</td>
+ <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule.
+ <span class="ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="aircraftlist">Update Aircraft</el:cmd></td>
  <td class="data">You can update Aircraft profiles contained within the <content:airline /> Flight Schedule.
- <i>This information is shared between all web applications.</i></td>
+ <span class="ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="trouteplot">Plot SID/STAR</el:cmd></td>
  <td class="data">You can display and/or plot Standard Instrument Departures and Standard Terminal Arrival
- Routes.</td>
+ Routes. <span class="ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />
@@ -758,8 +760,8 @@ performed each time the Terminal Routes have been imported from AIRAC data.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarsversion">ACARS Client Versions</el:cmd></td>
  <td class="data">You can control which versions of the <content:airline /> ACARS client are allowed to 
-connect to the ACARS Server, as well as inform users of a new ACARS Client version. <i>The latest ACARS 
-build is Build <fmt:int value="${latestBuild}" />.</i></td>
+connect to the ACARS Server, as well as inform users of a new ACARS Client version. <span class="ita">The latest
+ACARS build is Build <fmt:int value="${latestBuild}" />.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarscmdstats">ACARS Command Log Statistics</el:cmd></td>

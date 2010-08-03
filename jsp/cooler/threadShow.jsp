@@ -185,7 +185,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:forEach>
 <c:if test="${(!empty pilot.motto) || (!empty pilot.location)}">
 <br />
-<c:if test="${!empty pilot.motto}"><i>"${pilot.motto}"</i><br /></c:if>
+<c:if test="${!empty pilot.motto}"><span class="ita">"${pilot.motto}"</span><br /></c:if>
 <c:if test="${!empty pilot.location}">${pilot.location}<br /></c:if>
 </c:if>
 <br />
@@ -329,7 +329,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td colspan="3">UPDATE NOTIFICATIONS</td>
 </tr>
 <tr class="pri bld mid">
- <td colspan="3">You will <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>receive an e-mail 
+ <td colspan="3">You will <c:if test="${!doNotify}"><span class="bld ita">NOT</span> </c:if>receive an e-mail 
 notification each time a reply is posted in this Thread.
 <el:cmdbutton url="notifytoggle" link="${thread}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
 <content:filter roles="Moderator">

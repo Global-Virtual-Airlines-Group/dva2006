@@ -24,7 +24,7 @@
 <c:if test="${!empty conInfo}"> 
 <content:filter roles="HR"> from ${conInfo.remoteHost}
 <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></content:filter></c:if>
-<c:if test="${pirep.hasReload}"> <span class="small"><i>(ACARS Flight Restore)</i></span></c:if></td>
+<c:if test="${pirep.hasReload}"> <span class="small ita">(ACARS Flight Restore)</span></c:if></td>
 </tr>
 </c:if>
 <content:filter roles="HR,Examination,PIREP,Dispatch">
@@ -73,7 +73,8 @@
 </c:choose>
 <c:if test="${(pirep.takeoffLocation.latitude != 0.0) && (pirep.takeoffLocation.longitude != 0.0)}">
  <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
-<c:if test="${access.canDispose && (!empty dRunways)}"> <i>Change Runway to</i> <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
+<c:if test="${access.canDispose && (!empty dRunways)}"> <span class="ita">Change Runway to</span> 
+ <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if>
 <c:if test="${(pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}">
  <el:cmdbutton url="updtd" link="${flightInfo}" label="RECALCULATE TAKEOFF POINT" /></c:if></td>
@@ -119,7 +120,8 @@
 </c:choose>
 <c:if test="${(pirep.landingLocation.latitude != 0.0) && (pirep.landingLocation.longitude != 0.0)}">
  <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
-<c:if test="${access.canDispose && (!empty aRunways)}"> <i>Change Runway to</i> <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
+<c:if test="${access.canDispose && (!empty aRunways)}"> <span class="ita">Change Runway to</span> 
+ <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if>
 <c:if test="${(pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
  <el:cmdbutton url="updtd" link="${flightInfo}" label="RECALCULATE TOUCHDOWN POINT" /></c:if></td>
