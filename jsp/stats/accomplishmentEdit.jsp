@@ -51,10 +51,12 @@ case 'AIRLINES':
 
 default:
 	displayObject(getElement('valueBox'), true);
+	break;
 }
 
 return true;
 }
+
 </script>
 </head>
 <content:copyright visible="false" />
@@ -83,7 +85,7 @@ return true;
  <td class="data"><el:text name="value" idx="*" size="7" max="8" className="bld req" value="${ap.value}" /></td>
 </tr>
 <tr>
- <td class="label">Water Cooler color</td>
+ <td class="label">Label color</td>
  <td class="data"><el:text name="color" idx="*" className="color bld req" size="6" max="8" value="${ap.hexColor}" />
  <span class="small">Click on the text box for a color picker.</span></td>
 </tr>
@@ -93,7 +95,9 @@ return true;
 </tr>
 <tr id="valueCountry" style="display:none;" class="valueRow">
  <td class="label top">Valid Countries</td>
- <td class="data"><el:check name="countries" idx="*" width="190" cols="6" className="small" newLine="true" checked="${ap.choices}" options="${countries}"/></td>
+ <td class="data"><el:check name="countries" idx="*" width="190" cols="5" className="small" newLine="true" checked="${ap.choices}" options="${activeCountries}"/>
+<div style="clear:both;"></div><hr />
+<el:check name="countries" idx="*" width="190" cols="5" className="small ita" newLine="true" checked="${ap.choices}" options="${inactiveCountries}"/></td>
 </tr>
 <tr id="valueState" style="display:none;" class="valueRow">
  <td class="label top">Valid States</td>

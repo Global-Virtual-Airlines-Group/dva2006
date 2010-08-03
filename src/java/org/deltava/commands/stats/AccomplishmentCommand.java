@@ -1,7 +1,7 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
-import java.util.Arrays;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
@@ -110,34 +110,34 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		ctx.setAttribute("units", Arrays.asList(Accomplishment.Unit.values()), REQUEST);
 		ctx.setAttribute("states", Arrays.asList(State.values()), REQUEST);
-		ctx.setAttribute("countries", CollectionUtils.sort(Country.getAll(), 
-				new CountryComparator(CountryComparator.NAME)), REQUEST);
 		
 		// Get the Accomplishment code - if we're new, check if the airport exists
 		boolean isNew = (ctx.getID() == 0);
-		if (isNew) {
-			AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, null);
-			ac.validate();
-			if (!ac.getCanCreate())
-				throw securityException("Cannot create Accomplishment profile");
-			
-			// Forward to the JSP
-			result.setURL("/jsp/stats/accomplishmentEdit.jsp");
-			result.setSuccess(true);
-			return;
-		}
-		
 		try {
-			GetAccomplishment dao = new GetAccomplishment(ctx.getConnection());
-			Accomplishment a = dao.get(ctx.getID());
-			if (a == null)
-				throw notFoundException("Invalid Accomplishment - " + ctx.getID());
+			Connection con = ctx.getConnection();
+			
+			GetAccomplishment dao = new GetAccomplishment(con);
+			Accomplishment a = null;
+			if (!isNew) {
+				a = dao.get(ctx.getID());
+				if (a == null)
+					throw notFoundException("Invalid Accomplishment - " + ctx.getID());
+			}
 			
 			// Check our security
 			AccomplishmentAccessControl ac = new AccomplishmentAccessControl(ctx, a);
 			ac.validate();
-			if (!ac.getCanEdit())
-				throw securityException("Cannot edit Accomplishment profile");
+			boolean canExec = isNew ? ac.getCanCreate() : ac.getCanEdit();
+			if (!canExec)
+				throw securityException("Cannot create/edit Accomplishment profile");
+			
+			// Load all countries
+			GetSchedule sdao = new GetSchedule(con);
+			Comparator<Country> ccmp = new CountryComparator(CountryComparator.NAME);
+			Collection<Country> activeCountries = CollectionUtils.sort(sdao.getCountries(), ccmp);
+			Collection<Country> inactiveCountries = CollectionUtils.getDelta(Country.getAll(), activeCountries);
+			ctx.setAttribute("inactiveCountries", CollectionUtils.sort(inactiveCountries, ccmp), REQUEST);
+			ctx.setAttribute("activeCountries", activeCountries, REQUEST);
 			
 			// Save in request
 			ctx.setAttribute("ap", a, REQUEST);
