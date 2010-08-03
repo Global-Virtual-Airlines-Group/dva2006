@@ -4,6 +4,7 @@ package org.deltava.beans.stats;
 import java.util.*;
 
 import org.deltava.beans.schedule.*;
+import org.deltava.util.CollectionUtils;
 
 /**
  * A utility class to filter Accomplishments.
@@ -73,13 +74,13 @@ class AccomplishmentFilter {
 		
 		Collection<String> results = new ArrayList<String>();
 		for (T entry : values) {
-			if (!matches(entry, a)) {
+			if (matches(entry, a)) {
 				if (entry instanceof Country)
 					results.add(((Country) entry).getCode());
 				else if (entry instanceof Airport)
 					results.add(((Airport) entry).getIATA());
 				else if (entry instanceof State)
-					results.add(((State) entry).getName());
+					results.add(((State) entry).toString());
 				else if (entry instanceof Airline)
 					results.add(((Airline) entry).getName());
 				else
@@ -87,6 +88,6 @@ class AccomplishmentFilter {
 			}
 		}
 		
-		return results;
+		return CollectionUtils.getDelta(a.getChoices(), results);
 	}
 }
