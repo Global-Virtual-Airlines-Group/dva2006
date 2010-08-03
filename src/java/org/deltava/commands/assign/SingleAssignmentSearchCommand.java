@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 2.7
+ * @version 3.2
  * @since 2.2
  */
 
@@ -84,6 +84,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			
 			// Load the schedule entries
 			GetSchedule sdao = new GetSchedule(con);
+			sdao.setQueryMax(criteria.getMaxResults());
 			List<ScheduleEntry> entries = sdao.search(criteria, "1");
 			String eqType = entries.isEmpty() ? "RANDOM" : entries.get(0).getEquipmentType();
 			AssignmentInfo ai = new AssignmentInfo(eqType);

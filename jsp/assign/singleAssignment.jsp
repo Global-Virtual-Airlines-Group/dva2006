@@ -38,7 +38,7 @@ return true;
 <el:form method="post" action="singleassign.do" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="4"><content:airline /> FLIGHT ASSIGNMENT SEARCH FROM ${criteria.airportD} (<fmt:airport airport="${criteria.airportD}" />)</td>
+ <td colspan="4"><content:airline /> FLIGHT ASSIGNMENT SEARCH FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</td>
 </tr>
 <tr>
  <td class="label">Equipment</td>
@@ -78,8 +78,8 @@ return true;
 </c:if>
 <c:if test="${empty entries}">
 <tr>
- <td colspan="6" class="pri bld caps">NO FLIGHTS MATCHING YOUR CRITERIA WERE FOUND FROM ${lastAirport.name}
- (<fmt:airport airport="${lastAirport}" />)</td>
+ <td colspan="6" class="pri bld caps">NO FLIGHTS MATCHING YOUR CRITERIA WERE FOUND FROM ${criteria.airportD.name}
+ (<fmt:airport airport="${criteria.airportD}" />)</td>
 </tr>
 </c:if>
 </el:table>
