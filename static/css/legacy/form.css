@@ -1,11 +1,7 @@
-/* Cascading Style Sheet for HTML Forms */
+/* Cascading Style Sheet for HTML Forms (C) 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. */
 
 table.form, table.bar {
 	table-layout: auto;
-	border-collapse: separate;
-	border-spacing: 3px 3px;
-	border-width: 4px 4px 4px 4px;
-	padding: 6px 6px 6px 6px;
 	width: 100%;
 }
 
