@@ -190,7 +190,7 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 	font-weight: bold;
 	font-size: 10pt;
 	background-color: #0000a1;
-	width: 99%;
+	width: 100%;
 	padding: 2px;
 	color: #ffffff;
 	text-transform: uppercase;
