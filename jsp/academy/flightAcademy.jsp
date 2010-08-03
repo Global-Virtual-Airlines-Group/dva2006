@@ -154,8 +154,8 @@ you may not enroll in any other Flight Academy courses.</td>
  you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
 Our exams are timed. You will see time remaining at the top of the examianation page. After starting
- you have 40 minutes to complete and submit the examianation. <i>After 40 minutes the examianation will
- be automatically submitted, regardless of number of questions answered</i>.<br />
+ you have 40 minutes to complete and submit the examianation. <span class="ita">After 40 minutes the
+ examianation will be automatically submitted, regardless of number of questions answered</span>.<br />
 <br />
 The <content:airline /> Flight Academy instructors score examianations within 72 hours of submission,
  and the results of your examination will be sent to you by email. Until it is scored, you will not be

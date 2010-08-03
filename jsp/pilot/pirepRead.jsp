@@ -221,7 +221,7 @@ return true;
 <tr>
  <td class="label">Logged Time</td>
  <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}">
- <i>(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</i></c:if></td>
+ <span class="ita">(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</span></c:if></td>
 </tr>
 <c:if test="${!isACARS && (!empty pirep.route)}">
 <tr>

@@ -40,8 +40,8 @@
 <c:if test="${!empty docs}">
 <tr>
  <td class="label top">Study Documents</td>
- <td class="data"><span class="sec bld"><i>To modify this list, please update the Documents in the 
-<content:airline /> Document Library.</i></span><br />
+ <td class="data"><span class="sec bld ita">To modify this list, please update the Documents in the 
+<content:airline /> Document Library.</span><br />
 <c:forEach var="doc" items="${docs}">
 <el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
 </c:forEach></td>

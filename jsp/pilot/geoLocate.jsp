@@ -169,8 +169,8 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
  <td class="label top">Zoom to</td>
  <td class="data"><el:text name="geoAddr" idx="*" size="64" max="96" value="" />
  <el:button ID="SearchButton" className="BUTTON" onClick="void geoLocate(document.forms[0].geoAddr)" label="SEARCH" /><br />
-<span class="small">You can type in a location or address to zoom to. <i>To protect your privacy, no
- address data will be sent to <content:airline />.</i></span></td>
+<span class="small">You can type in a location or address to zoom to. <span class="ita">To protect your privacy, no
+ address data will be sent to <content:airline />.</span></span></td>
 </tr>
 </el:table>
 

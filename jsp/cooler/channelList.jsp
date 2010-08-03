@@ -59,7 +59,7 @@
  in <el:cmd url="thread" linkID="${post.threadID}" className="bld">${post.subject}</el:cmd></td>
 </c:if>
 <c:if test="${channel.lastThreadID == 0}">
- <td colspan="4" class="right"><i>No Topics have been posted in this Channel</i></td>
+ <td colspan="4" class="right ita">No Topics have been posted in this Channel</td>
 </c:if>
 </tr>
 </c:forEach>

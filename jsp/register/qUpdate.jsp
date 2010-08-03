@@ -36,7 +36,7 @@ to validate your address. If you have not received this e-mail message, please f
 us at <a href="mailto:${infoEmail}" class="bld">${infoEmail}</a>.<br />
 <br />
 <span class="error bld">It is critical that your e-mail provider is able to receive e-mail messages 
-from the domain <i>${ourDomain}</i> without any filtering. If you do not respond to the automated 
+from the domain <span class="ita">${ourDomain}</span> without any filtering. If you do not respond to the automated 
 e-mail verification message, your application to <content:airline /> cannot be approved!</span><br />
 </c:if>
 <br />

@@ -201,7 +201,7 @@ return true;
 <c:if test="${!empty pilotLocation}">
 <tr>
  <td class="label">Location</td>
- <td colspan="${cspan}" class="data">${pilot.location} <span class="small"><i>(Set via Pilot Location Board)</i></span></td>
+ <td colspan="${cspan}" class="data">${pilot.location} <span class="small ita">(Set via Pilot Location Board)</span></td>
 </tr>
 </c:if>
 <c:if test="${!empty pilot.pilotCode}">

@@ -24,7 +24,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <content:airline /> uses TeamSpeak 2 for our private voice infrastructure. Teamspeak is a high-fidelity 
-<i>freeware</i> voice client that runs on 32-bit Windows, Apple Macintosh and Linux systems, and 
+<span class="ita">freeware</span> voice client that runs on 32-bit Windows, Apple Macintosh and Linux systems, and 
 <content:airline /> operates several TeamSpeak 2 servers for the use of our members.<br />
 <br />
 <el:table className="view" pad="default" space="default">

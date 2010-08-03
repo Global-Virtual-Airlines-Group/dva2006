@@ -67,8 +67,8 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><div class="error bld">SUBMISSION FAILURE - SHA-256 MISMATCH</div><br />
-<i>The content of the <content:airline /> ACARS XML data file that you have submitted does not match the cryptographic 
-signature contained in the SHA file.</i></td>
+<span class="ita">The content of the <content:airline /> ACARS XML data file that you have submitted does not match the
+ cryptographic signature contained in the SHA file.</span></td>
 </tr>
 </c:if>
 <content:hasmsg>

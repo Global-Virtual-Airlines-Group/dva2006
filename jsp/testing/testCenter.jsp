@@ -135,8 +135,8 @@ return true;
  you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
 Our exams are timed. You will see time remaining at the top of the examination page. After starting
- you have 40 minutes to complete and submit the examination. <i>After 40 minutes the examination will
- be automatically submitted, regardless of number of questions answered</i>.<br />
+ you have 40 minutes to complete and submit the examination. <span class="ita">After 40 minutes the 
+ examination will be automatically submitted, regardless of number of questions answered</span>.<br />
 <br />
 The specific program Chief Pilot or Assistant Chief Pilots score examianations within 72 hours of
  submission, and the results of your examination will be sent to you by email. Until it is scored,
