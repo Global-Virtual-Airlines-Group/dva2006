@@ -350,6 +350,31 @@ public class GetSchedule extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the Countries served by Airports in the Flight Schedule.
+	 * @return a Collection of Country beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Country> getCountries() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE "
+					+ "(A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)");
+			
+			// Execute the Query
+			Collection<Country> results = new LinkedHashSet<Country>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(Country.get(rs.getString(1)));
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns the size of the Flight Schedule.
