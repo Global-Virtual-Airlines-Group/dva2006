@@ -132,9 +132,7 @@ return ${access.canComment};
 </c:if>
 <c:if test="${access.canClose}">
  <el:cmdbutton ID="CloseButton" label="CLOSE ISSUE" url="hdclose" link="${issue}" />
-</c:if>
- <el:cmdbutton ID="ProfileButton" label="VIEW AUTHOR PROFILE" url="profile" link="${author}" /></td>
-</tr>
+</c:if></tr>
 </el:table>
 </el:form>
 <br />
