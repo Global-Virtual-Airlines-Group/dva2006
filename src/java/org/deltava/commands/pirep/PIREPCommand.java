@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -472,7 +472,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						ctx.setAttribute("acInfo", acInfo, REQUEST);
 					
 					// Split the route
-					List<String> wps = StringUtils.split(info.getRoute(), " ");
+					List<String> wps = StringUtils.nullTrim(StringUtils.split(info.getRoute(), " "));
 					wps.remove(info.getAirportD().getICAO());
 					wps.remove(info.getAirportA().getICAO());
 					
@@ -626,7 +626,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// If the PIREP has a route in it, load it here
 			if (!StringUtils.isEmpty(fr.getRoute()) && !isACARS) {
-				List<String> wps = StringUtils.split(fr.getRoute(), " ");
+				List<String> wps = StringUtils.nullTrim(StringUtils.split(fr.getRoute(), " "));
 				wps.remove(fr.getAirportD().getICAO());
 				wps.remove(fr.getAirportA().getICAO());
 				
