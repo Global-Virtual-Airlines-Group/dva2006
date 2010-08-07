@@ -70,6 +70,16 @@ public class TestGeoPosition extends AbstractBeanTestCase {
         assertEquals(20, GeoPosition.getSeconds(_gp.getLongitude()), 0.001);
     }
     
+    public void testStatic() {
+    	double lat = 54.0;
+    	assertEquals(54, GeoPosition.getDegrees(lat));
+    	assertEquals(0.0d, Math.abs(lat - GeoPosition.getDegrees(lat)), 0.0001);
+    	
+    	double lng = -50.0;
+    	assertEquals(-50, GeoPosition.getDegrees(lng));
+    	assertEquals(0.0d, Math.abs(lng - GeoPosition.getDegrees(lng)), 0.0001);
+    }
+    
     public void testMidPoint() {
        GeoPosition nyc = new GeoPosition(40.66972222, -73.94388889);
        GeoPosition lax = new GeoPosition(34.122222, -118.4111111);

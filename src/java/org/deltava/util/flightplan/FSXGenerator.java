@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator X.
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 2.4
  */
 
@@ -43,6 +43,8 @@ public class FSXGenerator extends FlightPlanGenerator {
 			ctx.println("sid=" + _sid.getCode());
 		if (_star != null)
 			ctx.println("star=" + _star.getCode());
+		if (!StringUtils.isEmpty(_route))
+			ctx.println("route=" + _route);
 		
 		// Write the route entries
 		int waypointIdx = 0;

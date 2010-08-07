@@ -7,11 +7,12 @@ import java.util.*;
 import org.deltava.beans.navdata.NavigationDataBean;
 
 import org.deltava.util.GeoUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2004.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 2.4
  */
 
@@ -45,6 +46,8 @@ public class FS9Generator extends FlightPlanGenerator {
 			ctx.println("sid=" + _sid.getCode());
 		if (_star != null)
 			ctx.println("star=" + _star.getCode());
+		if (!StringUtils.isEmpty(_route))
+			ctx.println("route=" + _route);
 
 		// Write the route entries
 		int waypointIdx = 0;
