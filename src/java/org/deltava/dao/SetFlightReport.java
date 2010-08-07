@@ -280,13 +280,16 @@ public class SetFlightReport extends DAO {
 			
 			// Strip out anything not a letter or digit
 			String rt = fr.getRoute().toUpperCase();
-			StringBuilder buf = new StringBuilder();
+			StringBuilder buf = new StringBuilder(); char lastChar = ' ';
 			for (int x = 0; x < rt.length(); x++) {
 				char c = rt.charAt(x);
-				if (Character.isDigit(c) || Character.isLetter(c))
+				if (Character.isDigit(c) || Character.isLetter(c)) {
 					buf.append(c);
-				else if (Character.isWhitespace(c) || (c == '.'))
+					lastChar = c;
+				} else if ((Character.isWhitespace(c) || (c == '.')) && !Character.isWhitespace(lastChar)) {
 					buf.append(' ');
+					lastChar = ' ';
+				}
 			}
 			
 			_ps.setString(2, buf.toString());
