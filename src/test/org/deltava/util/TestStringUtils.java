@@ -70,6 +70,11 @@ public class TestStringUtils extends TestCase {
        values = StringUtils.split("2,", ",");
        assertEquals(1, values.size());
        assertEquals("2", values.get(0));
+       
+       values = StringUtils.split("LFPO  D045O  D083Q  LFLC", " ");
+       assertEquals(7, values.size());
+       List<String> v2 = StringUtils.nullTrim(values);
+       assertEquals(4, v2.size());
     }
     
     public void testArrayIndexOf() {
@@ -95,6 +100,6 @@ public class TestStringUtils extends TestCase {
        assertEquals("Normal String", StringUtils.strip("Normal String", ","));
        assertEquals("Normal String", StringUtils.strip(",Normal,,, String,,", ","));
        assertNull(StringUtils.strip(null, "XXX"));
-       assertEquals("Normal Stirng", StringUtils.strip("Normal String", null));
+       assertEquals("Normal String", StringUtils.strip("Normal String", null));
     }
 }
