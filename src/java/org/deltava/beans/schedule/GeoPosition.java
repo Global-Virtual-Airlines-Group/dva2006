@@ -70,8 +70,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @return The degrees component of the position
 	 */
 	public static int getDegrees(double latlon) {
-		int deg = (int) StrictMath.floor(latlon);
-		return (deg < 0) ? ++deg : deg; // Increment by 1 if we're below 0 since Math.floor(-11.0001) == -12.00
+		return (int) latlon;
 	}
 
 	/**

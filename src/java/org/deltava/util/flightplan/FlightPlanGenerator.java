@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * An abstract class to describe flight plan generators for simulators and payware aircraft. 
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 2.4
  */
 
@@ -39,6 +39,11 @@ public abstract class FlightPlanGenerator {
 	 * The standard terminal arrival route.
 	 */
 	protected TerminalRoute _star;
+	
+	/**
+	 * The route waypoints as rendered in the flight plan for ACARS.
+	 */
+	protected String _route;
 	
 	/**
 	 * Sets the departure and arrival Airports for the flight.
@@ -72,6 +77,14 @@ public abstract class FlightPlanGenerator {
 	 */
 	public void setSTAR(TerminalRoute star) {
 		_star = star;
+	}
+	
+	/**
+	 * Sets the route text.
+	 * @param route the route text
+	 */
+	public void setRoute(String route) {
+		_route = route;
 	}
 
 	/**
