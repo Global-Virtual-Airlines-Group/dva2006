@@ -375,11 +375,11 @@ public final class StringUtils {
 	/**
 	 * Trims a Collection of Strings, removing elements if the string is empty.
 	 * @param s the Collection of Strings to trim
-	 * @return a Collection of Strings
+	 * @return a List of Strings
 	 * @see StringUtils#nullTrim(String)
 	 */
-	public static Collection<String> nullTrim(Collection<String> s) {
-		Collection<String> results = new ArrayList<String>();
+	public static List<String> nullTrim(Collection<String> s) {
+		List<String> results = new ArrayList<String>();
 		for (String st : s) {
 			String s2 = nullTrim(st);
 			if (s2 != null)
