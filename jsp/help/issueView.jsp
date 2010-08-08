@@ -48,11 +48,12 @@ function selectResponse()
 {
 var f = document.forms[0];
 var combo = f.rspTemplate;
+if (combo.selectedIndex == 0) return false;
 var name = combo.options[combo.selectedIndex].value;
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'hdrsptmp.ws?id=' + name);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
