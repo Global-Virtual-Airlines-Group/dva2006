@@ -340,8 +340,8 @@ public class GeoUtils {
 	public static <T extends GeoLocation> List<T> stripDetours(Collection<T> entries, int minDetour) {
 		LinkedList<T> locs = new LinkedList<T>(entries);
 		if (entries.size() > 3) {
-			GeoLocation lastP = locs.getFirst();
-			int distance = GeoUtils.distance(lastP, locs.getLast());
+			GeoLocation lastP = locs.getFirst(); GeoLocation dest = locs.getLast();
+			int distance = GeoUtils.distance(lastP, dest);
 			int distThreshold = Math.min(150, Math.max(minDetour, distance / 10));
 
 			// Strip out any points that are too far out of the way
@@ -350,13 +350,16 @@ public class GeoUtils {
 				GeoLocation gl = locs.get(x);
 				GeoLocation next = locs.get(x+1);
 
-				int d0 = distance(lastP, gl);
+ 				int d0 = distance(lastP, gl);
 				int d1 = distance(lastP, next);
 				int d2 = d0 + distance(gl, next);
+				int d3 = distance(lastP, dest);
 				
 				if (d2 > (d1 + distThreshold))
 					deletedItems.add(gl);
 				else if (d0 > (distance + distThreshold))
+					deletedItems.add(gl);
+				else if (d0 > (d3 + distThreshold))
 					deletedItems.add(gl);
 				else
 					lastP = gl;
