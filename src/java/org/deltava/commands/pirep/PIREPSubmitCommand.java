@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -142,6 +142,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Save the pirep in the request
 			ctx.setAttribute("pirep", pirep, REQUEST);
+			ctx.setAttribute("isOurs", Boolean.valueOf(pirep.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

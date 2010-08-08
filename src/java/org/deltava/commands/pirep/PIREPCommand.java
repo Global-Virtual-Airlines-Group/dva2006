@@ -203,6 +203,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Update the status for the JSP
 			ctx.setAttribute("pirep", fr, REQUEST);
 			ctx.setAttribute("isCreated", Boolean.valueOf(doCreate), REQUEST);
+			ctx.setAttribute("isOurs", Boolean.valueOf(fr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
