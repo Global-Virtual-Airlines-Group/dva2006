@@ -70,7 +70,7 @@ return true;
 <c:otherwise>
 <c:set var="dispatcher" value="${pilots[entry.pilotID]}" scope="page" />
 <div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />
-<fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> -<c:if test="${!empty entry.endTime}"> <fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" /></c:if>
+<fmt:date fmt="t" t="HH:mm" date="${entry.startTime}" /> -<fmt:date fmt="t" t="HH:mm" date="${entry.endTime}" default=" " />
 <c:if test="${entry.hasFlights}">
 <br /><span class="bld"><fmt:int value="${fn:sizeof(entry.flights)}" /> Flights dispatched</span></c:if></div>
 </c:otherwise>
