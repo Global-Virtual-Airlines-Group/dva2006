@@ -227,10 +227,7 @@ table {
 }
 
 body {
-	scrollbar-face-color: #000080;
-	scrollbar-track-color: #303030;
-	scrollbar-arrow-color: #FFFFFF;
-	color: #0000A1;	
+	color: #0000a1;	
 	margin-left: 2px;
 	margin-right: 0px;
 	margin-top: 1px;
@@ -241,7 +238,7 @@ body {
 
 .BUTTON, .cmdButton {
 	background-color: #000080;
-	color: #FFFFFF;
+	color: #ffffff;
 	font-family: tahoma, verdana;
 	font-size: 8pt;
 	text-transform: uppercase;
