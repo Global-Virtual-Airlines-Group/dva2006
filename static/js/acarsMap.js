@@ -2,12 +2,16 @@ function generateXMLRequest()
 {
 // Build the XML Requester
 var d = new Date();
+var dtime = d.getTime() - (d.getTime() % 3000);
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "acars_map.ws?time=" + d.getTime(), true);
+xmlreq.open('get', 'acars_map.ws?time=' + dtime, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var isLoading = getElement('isLoading');
-	if (isLoading)
+	if (isLoading && (xmlreq.status != 200)) {
+		isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
+		return false;
+	} else if (isLoading)
 		isLoading.innerHTML = ' - REDRAWING...';
 		
 	// Clean up the map - don't strip out the weather layer
@@ -29,8 +33,7 @@ xmlreq.onreadystatechange = function() {
 	if (!xml) return false;
 	var xe = xml.documentElement;
 	var ac = xe.getElementsByTagName("aircraft");
-	if (ac.length > 0)
-		gaEvent('ACARS', 'Aircraft Positions');
+	gaEvent('ACARS', 'Aircraft Positions');
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i]; var mrk = null;
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
@@ -57,10 +60,12 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Add the user ID
-		var id = a.getAttribute('pilotID');
-		if ((id != null) && (cbo != null)) {
-			var o = new Option(id);
-			o.mrk = mrk;  
+		var pns = a.getElementsByTagName('pilot');
+		if ((pns.length > 0) && (cbo != null)) {
+			var pn = pns[0];
+			var id = pn.getAttribute('id');	
+			var o = new Option(pn.firstChild.data + ' (' + id + ')', id);
+			o.mrk = mrk;
 			try {
 				cbo.add(o, null);
 			} catch (err) {
@@ -105,10 +110,12 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Add the user ID
-		var id = d.getAttribute("pilotID");
-		if ((id != null) && (cbo != null)) {
-			var o = new Option(id + " (Dispatcher)", id);
-			o.mrk = mrk; 
+		var pns = a.getElementsByTagName('pilot');
+		if ((pns.length > 0) && (cbo != null)) {
+			var pn = pns[0];
+			var id = pn.getAttribute('id');
+			var o = new Option(pn.firstChild.data + ' (' + id + '/Dispatcher)', id);
+			o.mrk = mrk;
 			try {
 				cbo.add(o, null);
 			} catch (err) {
@@ -209,7 +216,7 @@ var d = new Date();
 var xreq = GXmlHttp.create();
 xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id + "&time=" + d.getTime() + "&route=" + doRoute, true);
 xreq.onreadystatechange = function() {
-	if (xreq.readyState != 4) return false;
+	if ((xreq.readyState != 4) || (xreq.status != 200)) return false;
 
 	// Load the XML
 	var xdoc = xreq.responseXML;
@@ -289,6 +296,6 @@ if (f.zoomToPilot.checked)
 
 // Pan to the marker
 map.panTo(opt.mrk.getLatLng());
-GEvent.trigger(opt.mrk, "click");
+GEvent.trigger(opt.mrk, 'click');
 return true;
 }
