@@ -54,7 +54,14 @@ one of our volunteer staff will answer it soon.</td>
  You can search the Help Desk to see if other people have had the same Issue, and how it was resolved.</td>
  <td colspan="2"><el:cmdbutton url="hdsearch" label="HELP DESK SEARCH" /></td>
 </tr>
-
+<content:filter roles="HR">
+<!-- Response Templates -->
+<tr>
+ <td class="left" colspan="4">You can create and modify response templates to easily answer some of the more
+ commonly asked Help Desk questions.</td>
+ <td colspan="2"><el:cmdbutton url="rsptemplates" label="RESPONSE TEMPLATES" /></td>
+</tr>
+</content:filter>
 <!-- My Issues -->
 <tr class="title caps">
  <td class="left" colspan="6">MY ISSUES</td>

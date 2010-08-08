@@ -43,6 +43,34 @@ disableButton('EditButton');
 disableButton('CommentButton');</c:if>
 return ${access.canComment};
 }
+<c:if test="${access.canUseTemplate}">
+function selectResponse()
+{
+var f = document.forms[0];
+var combo = f.rspTemplate;
+var name = combo.options[combo.selectedIndex].value;
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'hdrsptmp.ws?id=' + name);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+
+	// Parse the XML
+	var xml = xmlreq.responseXML;
+	if (!xml) return false;
+	var xe = xml.documentElement;
+	var bds = xe.getElementsByTagName("body");
+	if (bds.length == 0) return false;
+	var body = bds[0].firstChild.data;
+
+	// Save in the box
+	f.body.value += body;
+	return true;
+} // function
+
+xmlreq.send(null);
+return true;	
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -112,7 +140,13 @@ return ${access.canComment};
 <!-- New Comment -->
 <tr>
  <td class="label top">New Comment</td>
- <td><el:textbox name="body" width="80%" height="6" idx="*" className="req"></el:textbox></td>
+ <td><div id="newComment" style="position:relative;"><el:textbox name="body" width="70%" height="6" idx="*" className="req"></el:textbox>
+<c:if test="${access.canUseTemplate}">
+<div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right">
+Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />
+<el:button ID="TemplateButton" className="BUTTON" onClick="void selectResponse()" label="USE" /></div>
+</c:if></div>
+ </td>
 </tr>
 </c:if>
 </el:table>
@@ -132,7 +166,9 @@ return ${access.canComment};
 </c:if>
 <c:if test="${access.canClose}">
  <el:cmdbutton ID="CloseButton" label="CLOSE ISSUE" url="hdclose" link="${issue}" />
-</c:if></tr>
+</c:if>
+ </td>
+</tr>
 </el:table>
 </el:form>
 <br />

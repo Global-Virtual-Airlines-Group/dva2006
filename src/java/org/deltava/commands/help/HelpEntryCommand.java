@@ -1,7 +1,5 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
-
-import java.sql.Connection;
 
 import org.deltava.beans.help.OnlineHelpEntry;
 
@@ -13,7 +11,7 @@ import org.deltava.security.command.HelpAccessControl;
 /**
  * A Web Site Command to update site Help entries.
  * @author Luke
- * @version 1.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -32,15 +30,13 @@ public class HelpEntryCommand extends AbstractFormCommand {
 		if (!access.getCanEdit())
 			throw securityException("Cannot edit Online Help Entry");
 		
+		// Create the entry from the request
+		OnlineHelpEntry entry = new OnlineHelpEntry(ctx.getParameter("id"), ctx.getParameter("body"));
+		entry.setSubject(ctx.getParameter("subject"));
+
+		// Save the entry
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Create the entry from the request
-			OnlineHelpEntry entry = new OnlineHelpEntry(ctx.getParameter("id"), ctx.getParameter("body"));
-			entry.setSubject(ctx.getParameter("subject"));
-			
-			// Save the entry
-			SetHelp wdao = new SetHelp(con);
+			SetHelp wdao = new SetHelp(ctx.getConnection());
 			wdao.write(entry);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -61,10 +57,7 @@ public class HelpEntryCommand extends AbstractFormCommand {
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO and the help entry
-			GetHelp dao = new GetHelp(con);
+			GetOnlineHelp dao = new GetOnlineHelp(ctx.getConnection());
 			ctx.setAttribute("help", dao.get(ctx.getParameter("id")), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -85,9 +78,8 @@ public class HelpEntryCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading a Help Entry. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

@@ -38,6 +38,7 @@
  <content:subitem><el:cmd url="hdissues" op="active">Active Issues</el:cmd></content:subitem>
 </content:filter>
 <content:filter roles="HR">
+ <content:subitem><el:cmd url="rsptemplates">Response Templates</el:cmd></content:subitem>
  <content:subitem><el:cmd url="hdissuefilter">By Assignee</el:cmd></content:subitem>
  <content:subitem><el:cmd url="hdissuefilter" op="author">By Author</el:cmd></content:subitem>
 </content:filter>

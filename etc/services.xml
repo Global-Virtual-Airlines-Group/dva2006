@@ -6,6 +6,9 @@
 	<!-- Water Cooler Services -->
 	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
 
+	<!-- Help Desk Services -->
+	<service id="hdrsptmp" class="org.deltava.service.IssueTemplateService" />
+
 	<!-- RSS Feeds -->
 	<service id="cooler_rss" class="org.deltava.service.rss.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.rss.EventSyndicationService" />

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 2.7
+ * @version 3.2
  * @since 1.0
  */
 
@@ -23,41 +23,6 @@ public class GetHelp extends DAO {
 	 */
 	public GetHelp(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Returns a particular Online Help Entry.
-	 * @param id the entry title
-	 * @return a HelpEntry bean, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public OnlineHelpEntry get(String id) throws DAOException {
-		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM HELP WHERE (ID=?)");
-			_ps.setString(1, id);
-
-			// Execute the query, return first result
-			List<OnlineHelpEntry> results = executeHelp();
-			setQueryMax(0);
-			return results.isEmpty() ? null : results.get(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns all Online Help Entries.
-	 * @return a Collection of OnlineHelpEntry beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<OnlineHelpEntry> getOnlineHelp() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM HELP ORDER BY ID");
-			return executeHelp();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
 	}
 
 	/**
@@ -293,25 +258,6 @@ public class GetHelp extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-	}
-
-	/**
-	 * Helper method to parse the result set.
-	 */
-	private List<OnlineHelpEntry> executeHelp() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
-		List<OnlineHelpEntry> results = new ArrayList<OnlineHelpEntry>();
-		while (rs.next())
-			results.add(new OnlineHelpEntry(rs.getString(1), rs.getString(2)));
-
-		// Clean up and return
-		rs.close();
-		_ps.close();
-		return results;
 	}
 
 	/**
