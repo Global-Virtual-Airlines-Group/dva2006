@@ -50,11 +50,6 @@ public class MapService extends WebService {
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
 			e.setAttribute("busy", String.valueOf(entry.isBusy()));
-			if (entry.getPilot() != null) {
-				Pilot p = entry.getPilot();
-				if (!StringUtils.isEmpty(p.getPilotCode()))
-					e.setAttribute("pilotID", p.getPilotCode());
-			}
 			
 			if (entry.isDispatch()) {
 				DispatchMapEntry dme = (DispatchMapEntry) entry;
@@ -82,6 +77,16 @@ public class MapService extends WebService {
 			} else {
 				e.setAttribute("tabs", "0");
 				e.addContent(new CDATA(entry.getInfoBox()));
+			}
+			
+			// Add pilot name
+			if (entry.getPilot() != null) {
+				Pilot p = entry.getPilot();
+				Element pe = XMLUtils.createElement("pilot", p.getName(), true);
+				if (!StringUtils.isEmpty(p.getPilotCode()))
+					pe.setAttribute("id", p.getPilotCode());
+
+				e.addContent(pe);
 			}
 			
 			re.addContent(e);

@@ -109,7 +109,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="acarsMap.do" method="post" validate="return false">
+<el:form action="acarsMap.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
  <td colspan="2" class="caps"><content:airline /> LIVE ACARS MAP<span id="isLoading"></span></td>
@@ -125,7 +125,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft Legend</td>
- <td class="data"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
+ <td class="data" width="45%"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
  <td class="label">Dispatcher Legend</td>
  <td class="data"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
