@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 1.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -237,6 +237,12 @@ public class IssueCommand extends AbstractFormCommand {
 			// Calculate access rights
 			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
 			ac.validate();
+			
+			// Load templates if necessary
+			if (ac.getCanUseTemplate()) {
+				GetHelpTemplate tmpdao = new GetHelpTemplate(con);
+				ctx.setAttribute("rspTemplates", tmpdao.getAll(), REQUEST);
+			}
 			
 			// Save in request
 			ctx.setAttribute("issue", i, REQUEST);

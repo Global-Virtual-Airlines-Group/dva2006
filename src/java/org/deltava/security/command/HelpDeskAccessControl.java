@@ -1,16 +1,15 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
 import org.deltava.beans.help.Issue;
 
-import org.deltava.commands.CommandException;
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for Help Desk Issues.
  * @author Luke
- * @version 2.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -23,6 +22,9 @@ public class HelpDeskAccessControl extends AccessControl {
 	private boolean _canComment;
 	private boolean _canUpdateStatus;
 	private boolean _canUpdateContent;
+	
+	private boolean _canUpdateTemplate;
+	private boolean _canUseTemplate;
 
 	/**
 	 * Initializes the Access Controller.
@@ -38,7 +40,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 * @throws AccessControlException if the Issue cannot be read
 	 */
-	public void validate() throws CommandException {
+	public void validate() throws AccessControlException {
 		validateContext();
 		
 		// Get the person object
@@ -46,16 +48,22 @@ public class HelpDeskAccessControl extends AccessControl {
 		if ((p == null) || (!p.isInRole("Pilot")))
 			throw new AccessControlException("Not Authorized");
 		
+		// Load roles
+		boolean isHR = _ctx.isUserInRole("HR");
+		boolean isHelpDesk = _ctx.isUserInRole("HelpDesk");
+		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
+		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Signature");
+		
+		// Calculate template rights
+		_canUpdateTemplate = isHR;
+		_canUseTemplate = isHR || isHelpDesk || isAcademy || isAdmin;
+		
 		// Calculate creation rights
 		_canCreate = true;
 		if (_i == null)
 			return;
 
 		// Calculate access rights
-		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isHelpDesk = _ctx.isUserInRole("HelpDesk");
-		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
-		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Signature");
 		boolean isMine = (_i.getAuthorID() == p.getID());
 		boolean isOpen = (_i.getStatus() == Issue.OPEN);
 		if (!_i.getPublic() && !isMine && !isAdmin && !isHelpDesk)
@@ -65,6 +73,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		_canUpdateStatus = isAdmin || isHelpDesk;
 		_canClose = _canUpdateStatus && (_i.getStatus() != Issue.CLOSED);
 		_canUpdateContent = isHR;
+		
 	}
 	
 	/**
@@ -105,5 +114,21 @@ public class HelpDeskAccessControl extends AccessControl {
 	 */
 	public boolean getCanUpdateContent() {
 		return _canUpdateContent;
+	}
+
+	/**
+	 * Returns whether the user can modify a Help Desk Response Template.
+	 * @return TRUE if a template can be modified, otherwise FALSE
+	 */
+	public boolean getCanUpdateTemplate() {
+		return _canUpdateTemplate;
+	}
+
+	/**
+	 * Returns whether the user can use a Help Desk Response Template.
+	 * @return TRUE if a template can be used, otherwise FALSE
+	 */
+	public boolean getCanUseTemplate() {
+		return _canUseTemplate;
 	}
 }
