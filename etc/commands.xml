@@ -1757,6 +1757,18 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="rsptemplates">
+		<name>Help Desk Response Templates</name>
+		<class>org.deltava.commands.help.ResponseTemplatesCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="rsptemplate">
+		<name>Help Desk Response Template</name>
+		<class>org.deltava.commands.help.ResponseTemplateCommand</class>
+		<roles>HR</roles>
+	</command>
+
 
 	<!-- ACARS log/data commands -->
 	<command id="acarsversion">

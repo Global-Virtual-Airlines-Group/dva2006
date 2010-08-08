@@ -1,14 +1,16 @@
 // Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.help;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A class for storing Online Help entries.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
-public class OnlineHelpEntry implements java.io.Serializable, Comparable<OnlineHelpEntry> {
+public class OnlineHelpEntry implements java.io.Serializable, Cacheable, Comparable<OnlineHelpEntry> {
 
     private String _title;
     private String _subject;
@@ -57,6 +59,10 @@ public class OnlineHelpEntry implements java.io.Serializable, Comparable<OnlineH
      */
     public void setSubject(String subj) {
     	_subject = subj.trim(); 
+    }
+    
+    public Object cacheKey() {
+    	return _title;
     }
     
     /**

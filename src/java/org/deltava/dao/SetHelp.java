@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.help.*;
 /**
  * A Data Access Object to update Online Help entries and Help Desk Issues.
  * @author Luke
- * @version 1.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -33,6 +33,22 @@ public class SetHelp extends DAO {
 			_ps.setString(1, entry.getTitle());
 			_ps.setString(2, entry.getSubject());
 			_ps.setString(3, entry.getBody());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a Help Desk response template to the database.
+	 * @param rsp the ResponseTemplate bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(ResponseTemplate rsp) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO HELPDESK_RSPTMP (TITLE, BODY) VALUES (?, ?)");
+			_ps.setString(1, rsp.getTitle());
+			_ps.setString(2, rsp.getBody());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -149,6 +165,21 @@ public class SetHelp extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM HELPDESK WHERE (ID=?)");
 			_ps.setInt(1, id);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes a Help Desk response template from the database.
+	 * @param title the template title
+	 * @throws DAOException if a JDBC error occurss
+	 */
+	public void deleteTemplate(String title) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM HELPDESK_RSPTMP WHERE (TITLE=?)");
+			_ps.setString(1, title);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
