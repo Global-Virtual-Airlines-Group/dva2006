@@ -78,6 +78,9 @@ public class RoutePlotMapService extends MapPlotService {
 				// Add popular departure runways
 				if (doRunways) {
 					Collection<Runway> popRunways = acdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
+					if (popRunways.isEmpty())
+						popRunways.addAll(acdao.getPopularRunways(SystemData.getAirport(airportDCode), null, true));
+					
 					Collection<String> sidRunways = dao.getSIDRunways(aD.getCode());
 					for (Runway r : popRunways) {
 						String code = "RW" + r.getName();
@@ -135,7 +138,7 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 
 		// Convert the points into a List
-		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
+		List<NavigationDataBean> points = GeoUtils.stripDetours(routePoints, 60);
 
 		// Convert points to an XML document
 		Document doc = formatPoints(points, true);
