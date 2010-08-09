@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +11,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 2.2
+ * @version 3.2
  * @since 1.0
  */
 
@@ -85,9 +85,10 @@ public class FormTag extends ElementTag {
             _out.println(_data.close());
         } catch(Exception e) {
             throw new JspException(e);
+        } finally {
+        	release();	
         }
         
-        release();
         return EVAL_PAGE;
     }
     
@@ -95,7 +96,7 @@ public class FormTag extends ElementTag {
      * Increments the current tab index, then returns the new value.
      * @return the new tab Index
      */
-    public int incTabIndex() {
+    int incTabIndex() {
         return ++_tabIndex;
     }
 
