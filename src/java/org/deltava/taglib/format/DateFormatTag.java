@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.util.Date;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support the display of formatted date/time values.
  * @author Luke
- * @version 1.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -211,9 +211,10 @@ public class DateFormatTag extends TagSupport {
 				out.print("</span>");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
-		release();
 		return EVAL_PAGE;
 	}
 }
