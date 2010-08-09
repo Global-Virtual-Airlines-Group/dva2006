@@ -1,18 +1,22 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
+
+import org.deltava.taglib.ContentHelper;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
 public class TextboxTag extends FormElementTag {
+	
+	private boolean _resize;
 
     /**
      * Creates a new textbox element tag.
@@ -26,6 +30,11 @@ public class TextboxTag extends FormElementTag {
      * @throws JspException if an error occurs
      */
     public int doStartTag() throws JspException {
+    	
+    	// If resizing, enable the Javascript
+    	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common"))
+    		_data.setAttribute("onkeyup", "void resize(this)");
+    	
         try {
             validateState();
             _out.print(_data.open(true));
@@ -50,6 +59,14 @@ public class TextboxTag extends FormElementTag {
         }
         
         return EVAL_PAGE;
+    }
+    
+    /**
+     * Releases the tag's state variables.
+     */
+    public void release() {
+    	super.release();
+    	_resize = false;
     }
     
     /**
@@ -119,6 +136,14 @@ public class TextboxTag extends FormElementTag {
      */
     public void setOnFocus(String jsCode) {
     	_data.setAttribute("onfocus", jsCode);
+    }
+    
+    /**
+     * Sets whether the textbox should have auto-resize code enabled.
+     * @param doResize TRUE if auto-resize enabled, otherwise FALSE
+     */
+    public void setResize(boolean doResize) {
+    	_resize = doResize;
     }
     
     /**
