@@ -601,6 +601,12 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>resize</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>		
+		</attribute>
+		<attribute>
 			<name>onBlur</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

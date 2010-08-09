@@ -66,6 +66,22 @@ if (e) e.style.display = isVisible ? '' : 'none';
 return true;
 }
 
+function resize(textbox)
+{
+if (!textbox) return false;
+if (!textbox.minRows) textbox.minRows = textbox.rows;
+
+var data = textbox.value.split('\n');
+var lines = data.length;
+for (var x = 0; x < data.length; x++) {
+    if ((textbox.cols > 0) && (data[x].length >= textbox.cols))
+        lines += Math.floor(data[x].length / textbox.cols);
+}
+
+textbox.rows = (lines < textbox.minRows) ? textbox.minRows : lines;
+return true;
+}
+
 function setCombo(combo, entryValue)
 {
 if (!combo) return false;
