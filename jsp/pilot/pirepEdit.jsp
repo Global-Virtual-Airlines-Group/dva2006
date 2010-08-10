@@ -182,7 +182,7 @@ return cmdPost(f.action);
 <c:if test="${!isACARS}">
 <tr>
  <td class="label top">Flight Route</td>
- <td class="data"><el:textbox idx="*" name="route" width="80%" height="3">${pirep.route}</el:textbox></td>
+ <td class="data"><el:textbox idx="*" name="route" width="80%" height="3" resize="true">${pirep.route}</el:textbox></td>
 </tr>
 </c:if>
 <c:if test="${isACARS}">
@@ -190,7 +190,7 @@ return cmdPost(f.action);
 </c:if>
 <tr>
  <td class="label top">Remarks</td>
- <td class="data"><el:textbox idx="*" name="remarks" width="80%" height="5">${pirep.remarks}</el:textbox></td>
+ <td class="data"><el:textbox idx="*" name="remarks" width="80%" height="3" resize="true">${pirep.remarks}</el:textbox></td>
 </tr>
 </el:table>
 

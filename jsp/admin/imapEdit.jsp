@@ -59,7 +59,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Mailbox Aliases</td>
- <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="${(fn:sizeof(mb.aliases) > 4) ? fn:sizeof(mb.aliases) : 4}">${aliases}</el:textbox></td>
+ <td class="data"><el:textbox name="IMAPAliases" idx="*" width="40%" height="${(fn:sizeof(mb.aliases) > 4) ? fn:sizeof(mb.aliases) : 4}" resize="true">${aliases}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

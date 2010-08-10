@@ -112,7 +112,7 @@ return true;
 <!-- Examination Comments -->
 <tr>
  <td class="label top">Scorer Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="80%" height="6">${exam.comments}</el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="3" resize="true">${exam.comments}</el:textbox></td>
 </tr>
 </el:table>
 

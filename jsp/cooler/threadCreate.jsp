@@ -153,7 +153,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Poll Options</td>
- <td class="data"><el:textbox name="pollOptions" idx="*" width="60" height="6"></el:textbox></td>
+ <td class="data"><el:textbox name="pollOptions" idx="*" width="60" height="4" resize="true"></el:textbox></td>
 </tr>
 </content:filter>
 
@@ -162,7 +162,7 @@ return true;
  <td colspan="2">NEW MESSAGE TEXT</td>
 </tr>
 <tr>
- <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="90%" className="req" height="8">${param.msgText}</el:textbox></td>
+ <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="90%" className="req" height="5" resize="true">${param.msgText}</el:textbox></td>
 </tr>
 
 <!-- Button Bar -->

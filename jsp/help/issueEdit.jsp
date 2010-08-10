@@ -89,7 +89,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Issue Description</td>
- <td class="data"><el:textbox name="body" width="80%" height="5" idx="7" className="req">${issue.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" width="90%" height="5" idx="7" className="req" resize="true">${issue.body}</el:textbox></td>
 </tr>
 <c:if test="${access.canUpdateStatus}">
 <tr>
