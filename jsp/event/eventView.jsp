@@ -35,10 +35,18 @@ disableButton('AssignButton');
 disableButton('BalanceButton');
 return true;
 }
+
+function resizeBriefing(maxRows)
+{
+var txt = document.forms[0].briefing;
+resize(txt);
+if (txt.rows > maxRows) txt.rows = maxRows;
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void resizeBriefing(20)">
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
@@ -103,7 +111,7 @@ return true;
 </c:if>
 <tr>
  <td class="label top">Flight Briefing</td>
- <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="8">${event.briefing}</el:textbox></td>
+ <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="90%" height="2">${event.briefing}</el:textbox></td>
 </tr>
 <c:if test="${!empty event.equipmentTypes}">
 <tr>
@@ -301,7 +309,7 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
  <td class="label">Flight Route</td>
  <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.activeRoutes}" firstEntry="-" className="req" /></td>
  <td class="label top" rowspan="2">Remarks</td> 
- <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="95%" height="2"></el:textbox></td>
+ <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="95%" height="2" resize="true"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>

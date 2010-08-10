@@ -161,7 +161,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label top">HR Comments</td>
- <td class="data"><el:textbox name="HRcomments" idx="*" width="80%" height="4">${applicant.HRComments}</el:textbox></td>
+ <td class="data"><el:textbox name="HRcomments" idx="*" width="80%" height="3" resize="true">${applicant.HRComments}</el:textbox></td>
 </tr>
 
 <!-- Legacy Hours -->

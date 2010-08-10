@@ -44,7 +44,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Reason for Suspension</td>
- <td class="data"><el:textbox name="comment" idx="*" width="80%" height="5" className="req" /></td>
+ <td class="data"><el:textbox name="comment" idx="*" width="90%" height="4" className="req" resize="true" /></td>
 </tr>
 </el:table>
 

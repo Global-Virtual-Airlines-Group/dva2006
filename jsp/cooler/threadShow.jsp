@@ -369,7 +369,7 @@ notification each time a reply is posted in this Thread.
  <fmt:text value="${thread.subject}" /></td>
 </tr>
 <tr class="mid">
- <td colspan="3"><el:textbox name="msgText" width="90%" height="8">${lastPost.body}</el:textbox></td>
+ <td colspan="3"><el:textbox name="msgText" width="90%" height="5" resize="true">${lastPost.body}</el:textbox></td>
 </tr>
 </c:if>
 

@@ -18,7 +18,7 @@
 </tr>
 <tr>
  <td class="label top">Biographical Profile</td>
- <td colspan="${cspan}" class="data"><el:textbox name="staffBody" idx="*" height="4" width="100" className="req">${staff.body}</el:textbox></td>
+ <td colspan="${cspan}" class="data"><el:textbox name="staffBody" idx="*" height="4" width="100" className="req" resize="true">${staff.body}</el:textbox></td>
 </tr>
 <c:if test="${access.canChangeRoles}">
 <tr>

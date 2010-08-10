@@ -91,7 +91,7 @@ return true;
 </tr>
 <tr id="valueBox" style="display:none;" class="valueRow">
  <td class="label top">Valid Values</td>
- <td class="data"><el:textbox name="choices" idx="*" width="80%" height="3">${fn:splice(ap.choices, ', ')}</el:textbox></td>
+ <td class="data"><el:textbox name="choices" idx="*" width="80%" height="3" resize="true">${fn:splice(ap.choices, ', ')}</el:textbox></td>
 </tr>
 <tr id="valueCountry" style="display:none;" class="valueRow">
  <td class="label top">Valid Countries</td>

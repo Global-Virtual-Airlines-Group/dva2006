@@ -43,7 +43,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Template Body</td>
- <td class="data"><el:textbox name="body" idx="*" className="req" width="80%" height="6">${template.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" idx="*" className="req" width="80%" height="4" resize="true">${template.body}</el:textbox></td>
 </tr>
 </el:table>
 

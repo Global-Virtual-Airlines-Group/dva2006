@@ -101,7 +101,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Issue Description</td>
- <td class="data"><el:textbox name="desc" width="80%" height="5" idx="*" className="req">${issue.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" width="80%" height="4" idx="*" className="req" resize="true">${issue.description}</el:textbox></td>
 </tr>
 <c:if test="${empty issue}">
 <tr>

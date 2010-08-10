@@ -51,7 +51,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Biographical Profile</td>
- <td class="data"><el:textbox name="staffBody" idx="*" height="4" width="80%"></el:textbox></td>
+ <td class="data"><el:textbox name="staffBody" idx="*" height="4" width="90%" resize="true"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">Sort Order</td>
