@@ -138,7 +138,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="3" resize="true"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -148,7 +148,7 @@ return true;
 <c:if test="${access.canReject}">
 <tr>
  <td class="label top">Rejection Commnents</td>
- <td class="data"><el:textbox name="rejectComments" idx="*" width="80%" height="4"></el:textbox></td>
+ <td class="data"><el:textbox name="rejectComments" idx="*" width="80%" height="3" resize="true"></el:textbox></td>
 </tr>
 </c:if>
 </el:table>

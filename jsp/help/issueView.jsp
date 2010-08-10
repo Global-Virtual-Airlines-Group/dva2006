@@ -141,7 +141,7 @@ return true;
 <!-- New Comment -->
 <tr>
  <td class="label top">New Comment</td>
- <td><div id="newComment" style="position:relative;"><el:textbox name="body" width="70%" height="6" idx="*" className="req"></el:textbox>
+ <td><div id="newComment" style="position:relative;"><el:textbox name="body" width="70%" height="4" idx="*" className="req" resize="true"></el:textbox>
 <c:if test="${access.canUseTemplate}">
 <div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right">
 Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />

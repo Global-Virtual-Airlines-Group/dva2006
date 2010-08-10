@@ -58,7 +58,7 @@ in <content:airline />!</td>
 </tr>
 <tr>
  <td class="label top">Other Information</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="90%" className="req" height="7"></el:textbox></td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="90%" className="req" height="4" resize="true"></el:textbox></td>
 </tr>
 </el:table>
 

@@ -206,7 +206,7 @@ return true;
 <!-- New Comment -->
 <tr>
  <td class="label top">New Comment</td>
- <td colspan="6" class="data"><el:textbox name="msgText" width="80%" height="6" idx="*" /></td>
+ <td colspan="6" class="data"><el:textbox name="msgText" width="80%" height="6" idx="*" resize="true" /></td>
 </tr>
 </c:if>
 </el:table>

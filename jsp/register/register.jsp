@@ -294,7 +294,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
  your application.</span></td>
 </tr>
 <tr>
- <td class="data" colspan="${cspan}"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
+ <td class="data" colspan="${cspan}"><el:textbox name="comments" idx="*" width="80%" height="4" resize="true"></el:textbox></td>
 </tr>
 </el:table>
 
