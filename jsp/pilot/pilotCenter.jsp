@@ -53,7 +53,7 @@
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
-  in ${ipAddrInfo.location}</c:if>.</td>
+ in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
@@ -109,7 +109,11 @@ Your Assistant Chief Pilots are
 </c:if>
 <br />
 You are also qualified to file Flight Reports using the following aircraft:<br />
-<fmt:list value="${pilot.ratings}" delim=", " /></td>
+<fmt:list value="${pilot.ratings}" delim=", " />
+<content:filter roles="Dispatch">
+<br />
+You are an ACARS Flight Dispatcher, and have dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided
+ Dispatch services for <fmt:dec value="${pilot.dispatchHours}" /> hours.</content:filter></td>
 </tr>
 <c:if test="${!empty accs}">
 <tr>
