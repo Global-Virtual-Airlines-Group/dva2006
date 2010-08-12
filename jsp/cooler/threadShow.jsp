@@ -162,6 +162,7 @@ return true;
 <c:set var="ipInfo" value="${addrInfo[msg.remoteAddr]}" scope="page" />
 <c:set var="isUnread" value="${fn:get(unread, postIdx)}" scope="page" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="page" />
+<c:set var="isDispatcher" value="${fn:contains(pilot.roles, 'Dispatch')}" scope="page" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="page" />
 <c:set var="postIdx" value="${postIdx + 1}" scope="page" />
 <c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="page" />
@@ -174,6 +175,7 @@ return true;
  <span class="bld caps">${pilot.rank}</span>, ${pilot.equipmentType}<br />
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
+<c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
 <el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br /></el:showaddr>
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
@@ -203,6 +205,10 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <b><fmt:dec fmt="#,##0.0" value="${pilot.eventHours}" /></b> hours event</span><br /></c:if>
 <c:if test="${pilot.totalLegs > pilot.legs}">
 <b><fmt:int fmt="#,##0" value="${pilot.totalLegs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.totalHours}" /></b> hours total<br /></c:if>
+<c:if test="${pilot.dispatchHours > 0}">
+<span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.dispatchFlights}" /></b> flights, <b><fmt:dec fmt="#,##0.0" value="${plot.dispatchHours}" /></b>
+ hours</span><br />
+</c:if>
 <content:filter roles="Moderator">
 <fmt:int fmt="#,##0" value="${postStats[pilot.ID]}" /> total posts<br />
 </content:filter>
@@ -212,7 +218,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:if>
 <c:if test="${!isPilot}">
 <span class="pri bld">${pilot.name}</span><br />
-<span class="caps">APPLICANT</span><br />
+APPLICANT<br />
 </c:if>
 <el:showaddr user="${pilot}">
 <c:if test="${!empty pilot.IMHandle['AOL']}">
