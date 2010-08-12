@@ -57,6 +57,37 @@ public class GetACARSDispatchStats extends DAO {
 	}
 	
 	/**
+	 * Returns all Dispatchers who provided service between two Dates.
+	 * @param startDate the start date/time
+	 * @param endDate the end date/time, or null for the current date
+	 * @return a Collection of Database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getDispatchers(java.util.Date startDate, java.util.Date endDate) throws DAOException {
+		if (endDate == null)
+			endDate = new java.util.Date();
+		
+		try {
+			prepareStatement("SELECT DISTINCT PILOT_ID FROM acars.CONS WHERE (DATE>=?) AND (DATE<=?) "
+				+ "AND (ENDDATE IS NOT NULL) AND (DISPATCH=?)");
+			_ps.setTimestamp(1, createTimestamp(startDate));
+			_ps.setTimestamp(2, createTimestamp(endDate));
+			_ps.setBoolean(3, true);
+			
+			Collection<Integer> results = new HashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Loads Dispatch totals for a group of Pilots.
 	 * @param pilots a Map of Pilots, keyed by database ID
 	 * @throws DAOException if a JDBC error occurs
