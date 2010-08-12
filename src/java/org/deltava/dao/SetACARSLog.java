@@ -11,7 +11,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -155,27 +155,6 @@ public class SetACARSLog extends DAO {
 		}
 	}
 	
-	/**
-	 * Marks connections as completed.
-	 * @param ids A collection of connection IDs
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void closeConnections(Collection<Long> ids) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("UPDATE acars.CONS SET ENDDATE=NOW() WHERE (ID=CONV(?,10,16))");
-			for (Iterator<Long> i = ids.iterator(); i.hasNext(); ) {
-				long id = i.next().longValue();
-				_ps.setLong(1, id);
-				_ps.addBatch();
-			}
-			
-			_ps.executeBatch();
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
 	/**
 	 * Moves ACARS position data from the live table to the archive.
 	 * @param flightID the ACARS Flight ID
