@@ -78,11 +78,13 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	private int _onlineLegs;
 	private int _eventLegs;
 	private int _totalLegs;
+	private int _dispatchFlights;
 	private double _hours;
 	private double _acarsHours;
 	private double _onlineHours;
 	private double _eventHours;
 	private double _totalHours;
+	private double _dispatchHours;
 	private int _eventSignups = -1; // Set to -1 which is uninitialized
 
 	private boolean _showSigs;
@@ -434,6 +436,24 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	 */
 	public int getTotalLegs() {
 		return _totalLegs;
+	}
+	
+	/**
+	 * Returns the total number of flights the user has Dispatched.
+	 * @return the number of dispatched flights
+	 * @see Pilot#setDispatchedFlights(int)
+	 */
+	public int getDispatchedFlights() {
+		return _dispatchFlights;
+	}
+
+	/**
+	 * Returns the number of hours spent providing Dispatch services.
+	 * @return the number of hours
+	 * @see Pilot#setDispatchHours(double)
+	 */
+	public double getDispatchHours() {
+		return _dispatchHours;
 	}
 
 	/**
@@ -818,6 +838,24 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	 */
 	public void setTotalLegs(int legs) {
 		_totalLegs = Math.max(0, legs);
+	}
+	
+	/**
+	 * Updates the number of flights the Pilot has dispactched as a Dispatcher.
+	 * @param legs the number of flights dispatched
+	 * @see Pilot#getDispatchedFlights()
+	 */
+	public void setDispatchedFlights(int legs) {
+		_dispatchFlights = Math.max(0, legs);
+	}
+	
+	/**
+	 * Updates the number of hours spent providng Dispatch services.
+	 * @param hours the number of hours providing service
+	 * @see Pilot#getDispatchHours()
+	 */
+	public void setDispatchHours(double hours) {
+		_dispatchHours = Math.max(0, hours);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
@@ -140,6 +140,7 @@ public class ThreadCommand extends AbstractCommand {
 			GetApplicant adao = new GetApplicant(con);
 			GetFlightReports prdao = new GetFlightReports(con);
 			GetAcademyCourses acdao = new GetAcademyCourses(con);
+			GetACARSDispatchStats dspstdao = new GetACARSDispatchStats(con);
 			
 			// Get the authors, accomploshments and online totals for each user
 			GetAccomplishment accdao = new GetAccomplishment(con);
@@ -152,6 +153,7 @@ public class ThreadCommand extends AbstractCommand {
 				if (UserData.isPilotTable(dbTableName)) {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
+					dspstdao.getDispatchTotals(pilots);
 					users.putAll(pilots);
 					accs.putAll(accdao.get(pilots, dbTableName));
 				} else {
