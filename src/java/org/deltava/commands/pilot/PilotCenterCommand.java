@@ -113,6 +113,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
 			prdao.getOnlineTotals(p, SystemData.get("airline.db"));
 			
+			// If we're a dispatcher, load dispatch totals
+			if (ctx.isUserInRole("Dispatch")) {
+				GetACARSDispatchStats dspstdao = new GetACARSDispatchStats(con);
+				dspstdao.getDispatchTotals(p);
+			}
+			
 			// Load Accomplishments
 			GetAccomplishment acdao = new GetAccomplishment(con);
 			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
