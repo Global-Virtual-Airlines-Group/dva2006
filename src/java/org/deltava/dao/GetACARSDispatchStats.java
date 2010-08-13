@@ -29,6 +29,9 @@ public class GetACARSDispatchStats extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getDispatchTotals(Pilot p) throws DAOException {
+		if (p.getDispatchFlights() >= 0)
+			return;
+		
 		try {
 			// Load hours
 			prepareStatement("SELECT SUM(UNIX_TIMESTAMP(ENDDATE)-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS FROM "
@@ -96,7 +99,7 @@ public class GetACARSDispatchStats extends DAO {
 		for (Iterator<Map.Entry<Integer, Pilot>> i = pilots.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<Integer, Pilot> me = i.next();
 			Pilot p = me.getValue();
-			if (p.getDispatchHours() < 0)
+			if (p.getDispatchFlights() < 0)
 				getDispatchTotals(p);
 		}
 	}
