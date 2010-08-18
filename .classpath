@@ -23,8 +23,8 @@
 	<classpathentry kind="lib" path="lib/deploy/jdom-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.40.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.13-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.41.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
