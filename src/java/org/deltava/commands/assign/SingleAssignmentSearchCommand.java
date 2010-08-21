@@ -85,7 +85,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			// Load the schedule entries
 			GetSchedule sdao = new GetSchedule(con);
 			sdao.setQueryMax(criteria.getMaxResults());
-			List<ScheduleEntry> entries = sdao.search(criteria, "1");
+			List<ScheduleEntry> entries = sdao.search(criteria);
 			String eqType = entries.isEmpty() ? "RANDOM" : entries.get(0).getEquipmentType();
 			AssignmentInfo ai = new AssignmentInfo(eqType);
 			if (!entries.isEmpty()) {

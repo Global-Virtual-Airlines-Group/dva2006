@@ -38,6 +38,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(null, 0, 0);
       criteria.setAirportD(aD);
       criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+      criteria.setSortBy("AIRPORT_D, AIRPORT_A");
       criteria.setDBName(SystemData.get("airline.db"));
       criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));
       
@@ -52,7 +53,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
          GetSchedule sdao = new GetSchedule(ctx.getConnection());
          sdao.setQueryStart(vc.getStart());
          sdao.setQueryMax(vc.getCount());
-         vc.setResults(sdao.search(criteria, "AIRPORT_D, AIRPORT_A"));
+         vc.setResults(sdao.search(criteria));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

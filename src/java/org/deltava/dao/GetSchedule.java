@@ -37,11 +37,10 @@ public class GetSchedule extends DAO implements CachingDAO {
 	/**
 	 * Searches the Schedule database for flights matching particular criteria.
 	 * @param criteria the search criteria. Null properties are ignored
-	 * @param sortBy orderBy column
 	 * @return a List of Flights
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<ScheduleEntry> search(ScheduleSearchCriteria criteria, String sortBy) throws DAOException {
+	public List<ScheduleEntry> search(ScheduleSearchCriteria criteria) throws DAOException {
 
 		// Build the conditions
 		final Collection<String> conditions = new LinkedHashSet<String>();
@@ -157,7 +156,7 @@ public class GetSchedule extends DAO implements CachingDAO {
 		if (criteria.getDispatchOnly())
 			buf.append(" HAVING (RCNT>0)");
 		buf.append(" ORDER BY ");
-		buf.append(sortBy);
+		buf.append(criteria.getSortBy());
 
 		// Prepare the satement and execute the query
 		try {
