@@ -246,13 +246,15 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 Applicant profile for ${pilot.name}.</td>
 </tr>
 </c:if>
-<c:if test="${!empty accs}">
+<c:if test="${(!empty accs) || access.canChangeStatus}">
 <tr>
  <td class="label top">Pilot Accomplishments</td>
- <td colspan="${cspan}" class="data"><c:forEach var="a" items="${accs}">
+ <td colspan="${cspan}" class="data"><c:if test="${!empty accs}">
+<c:forEach var="a" items="${accs}">
 <fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
-</c:forEach>
-<c:if test="${access.canChangeStatus}"><br /><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
+</c:forEach><br />
+</c:if>
+<c:if test="${access.canChangeStatus}"><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
 <content:filter roles="HR"> | <el:cmd url="acceligibility" className="bld" link="${pilot}">Accomplishment Eligibility</el:cmd></content:filter>
 </c:if></td>
 </tr>
