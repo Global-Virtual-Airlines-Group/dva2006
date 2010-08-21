@@ -111,8 +111,8 @@ Your Assistant Chief Pilots are
 You are also qualified to file Flight Reports using the following aircraft:<br />
 <fmt:list value="${pilot.ratings}" delim=", " />
 <content:filter roles="Dispatch">
-<br />
-You are an ACARS Flight Dispatcher, and have dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided
+<br /><br />
+You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided
  Dispatch services for <fmt:dec value="${pilot.dispatchHours}" /> hours.</content:filter></td>
 </tr>
 <c:if test="${!empty accs}">
