@@ -20,6 +20,7 @@ if (!validateText(form.body, 5, 'Template Reseponse')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 </script>
@@ -50,7 +51,9 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="UPDATE RESPONSE TEMPLATE" /></td>
+ <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="UPDATE RESPONSE TEMPLATE" />
+<c:if test="${(!empty template) && access.canUpdateTemplate}">
+ <el:cmdbutton ID="DeleteButton" url="rsptemplatedelete" post="true" linkID="${template.title}" label="DELETE RESPONSE TEMPLATE" /></c:if></td>
 </tr>
 </el:table>
 </el:form>
