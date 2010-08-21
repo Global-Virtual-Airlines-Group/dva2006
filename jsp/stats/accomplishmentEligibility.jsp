@@ -45,11 +45,13 @@
  <td class="pri bld left">${pilotName} achieved this Accomplishment on <fmt:date fmt="d" date="${acc.date}" />.</td>
 </c:when>
 <c:when test="${!empty msg.missing}">
- <td class="left">${pilotName} are missing the following ${acc.unit.name} required to achieve this Accomplishment: 
+ <td class="left">${pilotName} achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" /> ${acc.unit.name} required to
+ achieve this Accomplishment. The following ${acc.unit.name} are still required for this Accomplishment: 
 <c:forEach var="item" items="${msg.missing}" varStatus="missingStatus"><c:choose>
 <c:when test="${msg.missingClass.simpleName == 'State'}">${item.name}<c:if test="${!missingStatus.last}">, </c:if></c:when>
 <c:when test="${msg.missingClass.simpleName == 'Airport'}">${item.name} (<fmt:airport airport="${item}" />)<c:if test="${!missingStatus.last}">, </c:if></c:when>
 <c:when test="${msg.missingClass.simpleName == 'Country'}">${item.name}<c:if test="${!missingStatus.last}">, </c:if></c:when>
+<c:when test="${msg.missingClass.simpleName == 'Airline'}">${item.name}<c:if test="${!missingStatus.last}">, </c:if></c:when>
 <c:otherwise>${item}<c:if test="${!missingStatus.last}">, </c:if></c:otherwise>
 </c:choose></c:forEach>.</td> 
 </c:when>
