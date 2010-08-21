@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -85,6 +85,8 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			terms.add("(C.DATE > ?)");
 		if (criteria.getEndDate() != null)
 			terms.add("(C.DATE < ?)");
+		if (criteria.isDispatch())
+			terms.add("(C.DISPATCH=?)");
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
@@ -109,12 +111,12 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			int psOfs = 0;
 			if (criteria.getPilotID() != 0)
 				_ps.setInt(++psOfs, criteria.getPilotID());
-
 			if (criteria.getStartDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
-
 			if (criteria.getEndDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
+			if (criteria.isDispatch())
+				_ps.setBoolean(++psOfs, true);
 			
 			return executeConnectionInfo();
 		} catch (SQLException se) {
