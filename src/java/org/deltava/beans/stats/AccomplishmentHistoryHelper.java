@@ -4,6 +4,7 @@ package org.deltava.beans.stats;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
@@ -29,6 +30,7 @@ public class AccomplishmentHistoryHelper {
 	
 	private Pilot _usr;
 	private final Collection<FlightReport> _pireps = new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
+	private final Collection<DispatchConnectionEntry> _cons = new TreeSet<DispatchConnectionEntry>();
 	
 	private static class AccomplishmentCounter {
 
@@ -37,6 +39,9 @@ public class AccomplishmentHistoryHelper {
 		private int _eventLegs;
 		private int _onlineLegs;
 		private long _miles;
+		
+		private int _dspFlights;
+		private double _dspHours;
 
 		private final Collection<Airport> _airports = new HashSet<Airport>();
 		private final Collection<Airline> _airlines = new HashSet<Airline>();
@@ -58,6 +63,11 @@ public class AccomplishmentHistoryHelper {
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _eventLegs++;
+		}
+		
+		public void add(DispatchConnectionEntry dce) {
+			_dspHours += (dce.getTime() / 3600.0d);
+			_dspFlights += dce.getFlights().size();
 		}
 		
 		private void add(Airport a) {
@@ -114,6 +124,14 @@ public class AccomplishmentHistoryHelper {
 		public int getOnlineLegs() {
 			return _onlineLegs;
 		}
+		
+		public int getDispatchedFlights() {
+			return _dspFlights;
+		}
+		
+		public double getDispatchHours() {
+			return _dspHours;
+		}
 	}
 	
 	// Cache counters so we don't need to iterate through PIREPs for everything.
@@ -122,13 +140,10 @@ public class AccomplishmentHistoryHelper {
 	/**
 	 * Creates the bean.
 	 * @param p the Pilot
-	 * @param flights the Pilot's Flight Reports
 	 */
-	public AccomplishmentHistoryHelper(Pilot p, Collection<FlightReport> flights) {
+	public AccomplishmentHistoryHelper(Pilot p) {
 		super();
 		_usr = p;
-		for (FlightReport fr : flights)
-			add(fr);
 	}
 	
 	/**
@@ -139,6 +154,18 @@ public class AccomplishmentHistoryHelper {
 		if (fr.getStatus() == FlightReport.OK) {
 			_pireps.add(fr);
 			_totals.add(fr);
+		}
+	}
+	
+	/**
+	 * Adds a Dispatch connection to the totals.
+	 * @param ce a ConnectionEntry bean
+	 */
+	public void add(ConnectionEntry ce) {
+		if (ce.getDispatch() && (ce.getEndTime() != null)) {
+			DispatchConnectionEntry dce = (DispatchConnectionEntry) ce;
+			_totals.add(dce);
+			_cons.add(dce);
 		}
 	}
 	
@@ -188,6 +215,10 @@ public class AccomplishmentHistoryHelper {
 				return AccomplishmentFilter.filter(cnt.getStates(), a).size();
 			case AIRLINES:
 				return AccomplishmentFilter.filter(cnt.getAirlines(), a).size();
+			case DFLIGHTS:
+				return cnt.getDispatchedFlights();
+			case DHOURS:
+				return (long) cnt.getDispatchHours();
 			case MEMBERDAYS:
 				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400000;
 				return days;
@@ -244,6 +275,12 @@ public class AccomplishmentHistoryHelper {
 			case AIRCRAFT:
 				results.addAll(AccomplishmentFilter.missing(_totals.getStates(), a));
 				break;
+				
+			case AIRLINES:
+				codes.addAll(AccomplishmentFilter.missing(_totals.getAirlines(), a));
+				for (String code : codes)
+					results.add(SystemData.getAirline(code));
+				break;
 		
 			default:
 				return Collections.emptySet();
@@ -266,6 +303,16 @@ public class AccomplishmentHistoryHelper {
 		for (FlightReport fr : _pireps) {
 			Date dt = (fr.getSubmittedOn() == null) ? fr.getDate() : fr.getSubmittedOn();
 			cnt.add(fr);
+			
+			// If we meet the criteria, return the date
+			if (has(a, cnt) != Result.NOTYET)
+				return dt;
+		}
+		
+		// Loop through the connection entries
+		for (DispatchConnectionEntry dce : _cons) {
+			Date dt = dce.getEndTime();
+			cnt.add(dce);
 			
 			// If we meet the criteria, return the date
 			if (has(a, cnt) != Result.NOTYET)

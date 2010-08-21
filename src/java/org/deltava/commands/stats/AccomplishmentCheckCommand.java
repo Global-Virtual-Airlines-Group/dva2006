@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.*;
 
@@ -51,10 +52,21 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			GetAccomplishment adao = new GetAccomplishment(con);
 			Collection<Accomplishment> accs = adao.getAll();
 			
+			// Instantiate the helper
+			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p);
+
 			// Load the Pilot's Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
 			Collection<FlightReport> flights = frdao.getByPilot(p.getID(), null);
+			for (FlightReport fr : flights)
+				helper.add(fr);
 			
+			// Load the Pilot's Dispatch entries
+			GetACARSLog acdao = new GetACARSLog(con);
+			Collection<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID(), true));
+			for (ConnectionEntry ce : cons)
+				helper.add(ce);
+
 			// Start a transaction
 			ctx.startTX();
 			
@@ -64,9 +76,8 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			for (Accomplishment a : pAccs.values())
 				awdao.clearAchievement(p.getID(), a);
 			
-			// Instantiate the helper and loop through
+			// Loop through accomplishments
 			Collection<DatedAccomplishment> newAccs = new TreeSet<DatedAccomplishment>();
-			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p, flights);
 			for (Accomplishment a : accs) {
 				Date dt = helper.achieved(a);
 				if (dt != null) {

@@ -35,7 +35,7 @@ class AccomplishmentFilter {
 			return (a.getChoices().contains(c.getCode()));
 		} else if (entry instanceof Airline) {
 			Airline al = (Airline) entry;
-			return (a.getChoices().contains(al.getName()));
+			return (a.getChoices().contains(al.getCode()));
 		}
 
 		return (a.getChoices().contains(entry.toString()));
@@ -82,7 +82,7 @@ class AccomplishmentFilter {
 				else if (entry instanceof State)
 					results.add(((State) entry).toString());
 				else if (entry instanceof Airline)
-					results.add(((Airline) entry).getName());
+					results.add(((Airline) entry).getCode());
 				else
 					results.add(String.valueOf(entry));
 			}
