@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -107,6 +107,7 @@ public class FindFlightCommand extends AbstractCommand {
 			sortType += " DESC";
 
 		// Save the search criteria in the session
+		criteria.setSortBy(sortType);
 		ctx.setAttribute("fafCriteria", criteria, SESSION);
 
 		// Check if we're doing a new search or returning back existing criteria
@@ -120,7 +121,7 @@ public class FindFlightCommand extends AbstractCommand {
 				dao.setQueryMax(criteria.getMaxResults());
 
 				// Save results in the session - since other commands may reference these
-				ctx.setAttribute("fafResults", dao.search(criteria, sortType), SESSION);
+				ctx.setAttribute("fafResults", dao.search(criteria), SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 				
 				// Save destination airport list
