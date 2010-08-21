@@ -65,6 +65,9 @@ public class ResponseTemplateCommand extends AbstractFormCommand {
 		if (!ac.getCanUpdateTemplate())
 			throw securityException("Cannot update Help Desk response template");
 		
+		// Save access
+		ctx.setAttribute("access", ac, REQUEST);
+		
 		try {
 			GetHelpTemplate dao = new GetHelpTemplate(ctx.getConnection());
 			ResponseTemplate rsp = dao.get(ctx.getParameter("id"));
