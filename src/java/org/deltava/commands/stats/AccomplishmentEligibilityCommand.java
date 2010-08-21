@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.*;
 
@@ -85,13 +86,23 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			GetAccomplishment adao = new GetAccomplishment(con);
 			Collection<Accomplishment> accs = adao.getAll();
 			
+			// Instantiate the helper
+			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p);
+			
 			// Load the Pilot's Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
 			Collection<FlightReport> flights = frdao.getByPilot(p.getID(), null);
+			for (FlightReport fr : flights)
+				helper.add(fr);
 			
-			// Instantiate the helper and loop through
+			// Load the Pilot's dispatch connections
+			GetACARSLog acdao = new GetACARSLog(con);
+			Collection<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID(), true));
+			for (ConnectionEntry ce : cons)
+				helper.add(ce);
+
+			// Loop through accomplishments
 			Map<Accomplishment, EligibilityMessage> accData = new LinkedHashMap<Accomplishment, EligibilityMessage>();
-			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p, flights);
 			for (Accomplishment a : accs) {
 				Date dt = helper.achieved(a);
 				if (dt == null) {
