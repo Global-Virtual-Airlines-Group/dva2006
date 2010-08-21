@@ -89,7 +89,9 @@ public class AccomplishmentLoader extends TestCase {
 		for (Pilot p : pilots) {
 			log.info("Checking " + p.getName());
 			Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
-			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p, pireps);
+			AccomplishmentHistoryHelper helper = new AccomplishmentHistoryHelper(p);
+			for (FlightReport fr : pireps)
+				helper.add(fr);
 			
 			// Clear accomplishments
 			ps.setInt(1, p.getID());

@@ -110,7 +110,10 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// Load the flights for accomplishment purposes
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			if (fr.getStatus() == FlightReport.OK) {
-				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p, rdao.getByPilot(p.getID(), null));
+				Collection<FlightReport> flights = rdao.getByPilot(p.getID(), null);
+				AccomplishmentHistoryHelper acchelper = new AccomplishmentHistoryHelper(p);
+				for (FlightReport pirep : flights)
+					acchelper.add(pirep);
 			
 				// Load accomplishments
 				GetAccomplishment accdao = new GetAccomplishment(con);
