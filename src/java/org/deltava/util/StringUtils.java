@@ -379,6 +379,9 @@ public final class StringUtils {
 	 * @see StringUtils#nullTrim(String)
 	 */
 	public static List<String> nullTrim(Collection<String> s) {
+		if (s == null)
+			return null;
+		
 		List<String> results = new ArrayList<String>();
 		for (String st : s) {
 			String s2 = nullTrim(st);
