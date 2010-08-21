@@ -74,6 +74,17 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
 	   return _et;
    }
    
+   /**
+    * Returns the length of the connection.
+    * @return the length of the connection in seconds, or -1 if endTime is null
+    */
+   public long getTime() {
+	   if (_et == null)
+		   return -1;
+	   
+	   return (_et.getTime() - _st.getTime()) / 1000;
+   }
+   
    public Date getDate() {
 	   return _st;
    }
