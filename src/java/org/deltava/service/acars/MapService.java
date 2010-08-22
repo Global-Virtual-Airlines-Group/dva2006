@@ -76,7 +76,7 @@ public class MapService extends WebService {
 				}
 			} else {
 				e.setAttribute("tabs", "0");
-				e.addContent(new CDATA(entry.getInfoBox()));
+				e.addContent(XMLUtils.createElement("info", entry.getInfoBox(), true));
 			}
 			
 			// Add pilot name

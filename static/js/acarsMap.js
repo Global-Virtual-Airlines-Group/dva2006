@@ -97,8 +97,8 @@ xmlreq.onreadystatechange = function() {
 		mrk.isBusy = (d.getAttribute("busy") == 'true');
 		GEvent.bind(mrk, 'infowindowclose', mrk, function() { document.pauseRefresh = false; if (this.rangeCircle) this.rangeCircle.hide(); });
 		if (tabs == 0) {
-			var label = d.firstChild;
-			mrk.infoLabel = label.data;
+			var le = d.getElementsByTagName("info");
+			mrk.infoLabel = le[0].firstChild.data;
 		} else {
 			mrk.tabs = [];
 			var tbs = d.getElementsByTagName("tab");
@@ -110,7 +110,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Add the user ID
-		var pns = a.getElementsByTagName('pilot');
+		var pns = d.getElementsByTagName('pilot');
 		if ((pns.length > 0) && (cbo != null)) {
 			var pn = pns[0];
 			var id = pn.getAttribute('id');
