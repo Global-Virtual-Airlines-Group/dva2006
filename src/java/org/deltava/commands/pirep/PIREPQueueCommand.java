@@ -14,17 +14,19 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
 public class PIREPQueueCommand extends AbstractViewCommand {
 	
 	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
-	
+
+	private static final String MY_EQ_SORT = "IF(PR.EQTYPE=?,0,1), PR.DATE, PR.SUBMITTED, PR.ID";
 	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", 
-		"PR.EQTYPE, PR.DATE, PR.SUBMITTED"};
-	private static final List<?> SORT_OPTS = ComboUtils.fromArray(new String[] {"Submission Date", "Pilot Name", "Equipment Type"}, SORT_CODES);
+		"PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
+	private static final String[] SORT_NAMES = {"Submission Date", "Pilot Name", "Equipment Type", "My Program"};
+	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
     /**
      * Executes the command.
@@ -33,11 +35,15 @@ public class PIREPQueueCommand extends AbstractViewCommand {
      */
 	public void execute(CommandContext ctx) throws CommandException {
 		
+		// Build dynamic sort option
+		String mySort = MY_EQ_SORT.replace("?", "\'" + ctx.getUser().getEquipmentType() + "\'");
+		
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
         if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
-        	vc.setSortType(SORT_CODES[0]);
+        	vc.setSortType(ctx.isUserInRole("HR") ? SORT_CODES[0] : SORT_CODES[3]);
         
+        boolean isMyEQSort = (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == 3); 
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -47,7 +53,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection<FlightReport> pireps = dao.getByStatus(PENDING, vc.getSortType());
+			Collection<FlightReport> pireps = dao.getByStatus(PENDING, isMyEQSort ? mySort : vc.getSortType());
 			dao.getCaptEQType(pireps);
 			
 			// Get the Pilot IDs
@@ -78,7 +84,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(DatabaseID.DISPOSAL) == id)) {
 					myHeld.add(fr);
 					i.remove();
-				} else if (myEQ.getPrimaryRatings().contains(fr.getEquipmentType())) {
+				} else if (!isMyEQSort && myEQ.getPrimaryRatings().contains(fr.getEquipmentType())) {
 					myEQType.add(fr);
 					i.remove();
 				}
