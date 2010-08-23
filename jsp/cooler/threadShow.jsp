@@ -205,9 +205,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <b><fmt:dec fmt="#,##0.0" value="${pilot.eventHours}" /></b> hours event</span><br /></c:if>
 <c:if test="${pilot.totalLegs > pilot.legs}">
 <b><fmt:int fmt="#,##0" value="${pilot.totalLegs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.totalHours}" /></b> hours total<br /></c:if>
-<c:if test="${pilot.dispatchFlights >= 0}">
-<span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.dispatchFlights}" /></b> legs dispatched, <b><fmt:dec fmt="#,##0.0" value="${plot.dispatchHours}" /></b>
- hours logged</span><br />
+<c:if test="${(pilot.dispatchFlights > 0) || (pilot.dispatchHours > 0.1)}">
+<span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.dispatchFlights}" /></b> legs dispatched, <b><fmt:dec fmt="#,##0.0" value="${pilot.dispatchHours}" /></b>
+ hours</span><br />
 </c:if>
 <content:filter roles="Moderator">
 <fmt:int fmt="#,##0" value="${postStats[pilot.ID]}" /> total posts<br />

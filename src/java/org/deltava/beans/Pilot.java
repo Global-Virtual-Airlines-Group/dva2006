@@ -441,7 +441,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	/**
 	 * Returns the total number of flights the user has Dispatched.
 	 * @return the number of dispatched flights
-	 * @see Pilot#setDispatchedFlights(int)
+	 * @see Pilot#setDispatchFlights(int)
 	 */
 	public int getDispatchFlights() {
 		return _dispatchFlights;
@@ -845,7 +845,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 	 * @param legs the number of flights dispatched
 	 * @see Pilot#getDispatchFlights()
 	 */
-	public void setDispatchedFlights(int legs) {
+	public void setDispatchFlights(int legs) {
 		_dispatchFlights = Math.max(0, legs);
 	}
 	

@@ -221,6 +221,12 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
  | <el:cmd url="myroutemap" link="${pilot}" className="bld">Route Map</el:cmd></content:filter></td>
 </tr>
 </c:if>
+<c:if test="${(pilot.dispatchFlights > 0) || (pilot.dispatchHours > 0.1)}">
+<tr>
+ <td class="label">Dispatch Service</td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.dispatchFlights}" /> legs dispatched, <fmt:dec value="${pilot.dispatchHours}" /> hours</td>
+</tr>
+</c:if>
 <c:if test="${pilot.legacyHours > 0}">
 <tr>
  <td class="label">Legacy Hours</td>
@@ -252,9 +258,8 @@ Applicant profile for ${pilot.name}.</td>
  <td colspan="${cspan}" class="data"><c:if test="${!empty accs}">
 <c:forEach var="a" items="${accs}">
 <fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
-</c:forEach><br />
-</c:if>
-<c:if test="${access.canChangeStatus}"><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
+</c:forEach></c:if>
+<c:if test="${access.canChangeStatus}"><c:if test="${!empty accs}"><br /></c:if><el:cmd url="accalc" className="sec bld" link="${pilot}">Recalculate Accomplishments</el:cmd>
 <content:filter roles="HR"> | <el:cmd url="acceligibility" className="bld" link="${pilot}">Accomplishment Eligibility</el:cmd></content:filter>
 </c:if></td>
 </tr>
