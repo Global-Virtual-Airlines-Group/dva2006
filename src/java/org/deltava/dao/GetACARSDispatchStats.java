@@ -50,7 +50,7 @@ public class GetACARSDispatchStats extends DAO {
 			_ps.setInt(1, p.getID());
 			rs = _ps.executeQuery();
 			if (rs.next())
-				p.setDispatchedFlights(rs.getInt(1));
+				p.setDispatchFlights(rs.getInt(1));
 			
 			rs.close();
 			_ps.close();
