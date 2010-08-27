@@ -14,7 +14,7 @@ import org.deltava.beans.servinfo.PositionData;
  * feed to a common table shared between all Airlines, as well as to a local table that links the
  * raw data to a specific Flight Report. 
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 2.4
  */
 
@@ -60,6 +60,9 @@ public class SetOnlineTrack extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writePosition(PositionData pd) throws DAOException {
+		if ((pd.getLatitude() == 0) && (pd.getLongitude() == 0) && (pd.getAltitude() == 0))
+			return;
+		
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO online.TRACKDATA (ID, REPORT_TIME, LAT, LNG, ALT, HDG, SPEED) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
