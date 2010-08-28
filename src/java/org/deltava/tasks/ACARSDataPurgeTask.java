@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge old ACARS log data.
  * @author Luke
- * @version 2.8
+ * @version 3.2
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class ACARSDataPurgeTask extends Task {
 			log.warn("Purged " + wdao.purgeTakeoffs(flightPurge) + " takeoff/landing entries");
 
 			// Get connections
-			GetACARSLog dao = new GetACARSLog(con);
+			GetACARSPurge dao = new GetACARSPurge(con);
 			Collection<ConnectionEntry> cons = dao.getUnusedConnections(conPurge);
 
 			// Purge the connections

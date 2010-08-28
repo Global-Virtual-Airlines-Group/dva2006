@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to display empty ACARS log entries.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class EmptyLogEntriesCommand extends ACARSLogViewCommand {
          Connection con = ctx.getConnection();
          
          // Get the DAO
-         GetACARSLog dao = new GetACARSLog(con);
+         GetACARSPurge dao = new GetACARSPurge(con);
          dao.setQueryStart(vc.getStart());
          dao.setQueryMax(vc.getCount());
          
