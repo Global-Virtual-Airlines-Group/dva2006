@@ -95,8 +95,9 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 				}
 			}
 			
-			// Commit
+			// Commit and clear cache
 			ctx.commitTX();
+			GetPilot.invalidateID(p.getID());
 			
 			// Write status variable
 			ctx.setAttribute("pilot", p, REQUEST);
