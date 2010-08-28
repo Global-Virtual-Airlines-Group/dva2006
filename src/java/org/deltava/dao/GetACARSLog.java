@@ -125,27 +125,6 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 	}
 
 	/**
-	 * Returns all ACARS connection log entries with no associated Flight Info logs or text messages. A cutoff interval
-	 * is provided to prevent the accidental inclusion of flights still in progress.
-	 * @param cutoff the cutoff interval for connection entries, in hours
-	 * @return a List of ConnectionEntry beans sorted by date
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<ConnectionEntry> getUnusedConnections(int cutoff) throws DAOException {
-		try {
-			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, IFNULL(C.ENDDATE, DATE_ADD(C.DATE, INTERVAL 18 HOUR)) "
-					+ "AS ED, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, "
-					+ "COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM acars.CONS C LEFT JOIN "
-					+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) GROUP BY "
-					+ "C.ID HAVING (ED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (FC=0) AND (PC=0)");
-			_ps.setInt(1, cutoff);
-			return executeConnectionInfo();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Returns all ACARS text messages matching particular criteria.
 	 * @param criteria the ACARS log search criteria
 	 * @param searchStr text to search for in the message body, or null
@@ -243,28 +222,6 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 			if (criteria.getEndDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
 
-			return executeFlightInfo();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns all Flight Information entries without an associated Flight Report. A cutoff interval is provided to
-	 * prevent the accidental inclusion of flights still in progress.
-	 * @param cutoff the cutoff interval for flight entries, in hours
-	 * @return a List of InfoEntry beans sorted by date
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<FlightInfo> getUnreportedFlights(int cutoff) throws DAOException {
-		try {
-			prepareStatement("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM acars.FLIGHTS F "
-					+ "LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON "
-					+ "(F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (F.PIREP=?) AND (F.ARCHIVED=?) "
-					+ "AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED");
-			_ps.setBoolean(1, false);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, cutoff);
 			return executeFlightInfo();
 		} catch (SQLException se) {
 			throw new DAOException(se);
