@@ -41,7 +41,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
         if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
-        	vc.setSortType(ctx.isUserInRole("HR") ? SORT_CODES[0] : SORT_CODES[3]);
+        	vc.setSortType(SORT_CODES[0]);
         
         boolean isMyEQSort = (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == 3); 
 		try {
