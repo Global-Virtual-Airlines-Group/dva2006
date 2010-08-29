@@ -480,7 +480,8 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Check the SID
 					SetACARSData awdao = new SetACARSData(con);
 					if ((info.getSID() == null) && (wps.size() > 2)) {
-						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.SID, wps.get(0), wps.get(1), info.getRunwayD());
+						String name = wps.get(0);
+						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), info.getRunwayD());
 						if (sid != null) {
 							wps.remove(0);
 							info.setSID(sid);
@@ -490,7 +491,8 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Check the STAR
 					if ((info.getSTAR() == null) && (wps.size() > 2)) {
-						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1), wps.get(wps.size() - 2), info.getRunwayA());
+						String name = wps.get(wps.size() - 1);
+						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), info.getRunwayA());
 						if (star != null) {
 							wps.remove(wps.size() - 1);
 							info.setSTAR(star);
@@ -638,12 +640,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Load the SID
 				if (wps.size() > 2) {
 					String name = wps.get(0);
-					if (!Character.isDigit(name.charAt(name.length() - 1)))
-						name += "%";
-					else
-						name = name.substring(0, name.length() - 1) + "%";
-					
-					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.SID, name, wps.get(1), (String) null);
+					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
 					if (sid != null) {
 						wps.remove(0);
 						if (!CollectionUtils.isEmpty(wps))
@@ -658,12 +655,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Load the STAR
 				if (wps.size() > 2) {
 					String name = wps.get(wps.size() - 1);
-					if (!Character.isDigit(name.charAt(name.length() - 1)))
-						name += "%";
-					else
-						name = name.substring(0, name.length() - 1) + "%";
-					
-					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.STAR, name, wps.get(wps.size() - 2), (String) null);
+					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
 					if (star != null) {
 						wps.remove(wps.size() - 1);
 						if (!CollectionUtils.isEmpty(wps))
