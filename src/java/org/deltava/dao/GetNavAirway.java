@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -156,10 +156,8 @@ public class GetNavAirway extends GetNavData {
 		// If we're ignoring the version, then strip off the digit
 		if (ignoreVersion) {
 			String newName = parts.get(0);
-			if (Character.isDigit(newName.charAt(newName.length() - 2))) {
-				newName = newName.substring(0, newName.length() - 1) + "%";
-				parts.set(0, newName);
-			}
+			if (TerminalRoute.isNameValid(newName))
+				parts.set(0, TerminalRoute.makeGeneric(newName));
 		}
 			
 		// Build the SQL statement
