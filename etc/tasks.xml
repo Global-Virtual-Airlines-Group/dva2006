@@ -108,6 +108,18 @@
 		</time>
 	</task>
 
+	<!-- Purge/Archive orphaned ACARS position entries -->
+	<task id="acarspospurge" enabled="false">
+		<class>org.deltava.tasks.ACARSPositionPurgeTask</class>
+		<time>
+			<min>40</min>
+			<hour>2</hour>
+			<mday>*</mday>		
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+
 	<!-- Create Online Event Flight Assignments -->
 	<task id="eventassign" enabled="false">
 		<class>org.deltava.tasks.EventAssignTask</class>
