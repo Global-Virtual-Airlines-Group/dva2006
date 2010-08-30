@@ -47,7 +47,7 @@ public class ACARSDataPurgeTask extends Task {
 			Connection con = ctx.getConnection();
 
 			// Ensure all archived data is in the right place
-			SetACARSLog wdao = new SetACARSLog(con);
+			SetACARSPurge wdao = new SetACARSPurge(con);
 			wdao.synchronizeArchive();
 
 			// Remove old flights and position reports without a flight report
@@ -74,13 +74,11 @@ public class ACARSDataPurgeTask extends Task {
 						purgeCount++;
 						log.info("Purged Connection " + StringUtils.formatHex(ce.getID()));
 					} catch (DAOException de) {
-						log.error("Error purging Connection " + StringUtils.formatHex(ce.getID()) + " - "
-								+ de.getMessage());
+						log.error("Error purging Connection " + StringUtils.formatHex(ce.getID()) + " - " + de.getMessage());
 					}
 				}
 			}
 
-			// Log purge count
 			log.info("Purged " + purgeCount + " connection entries");
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
