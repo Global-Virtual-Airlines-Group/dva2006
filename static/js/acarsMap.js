@@ -262,24 +262,11 @@ return true;
 
 function getServiceRange(marker, range)
 {
-if (range == 0) return null;
-var p = map.getCurrentMapType().getProjection();
-var l2 = new GLatLng(marker.getLatLng().lat() + (range / 69.16), marker.getLatLng().lng());
-var centerPt = p.fromLatLngToPixel(marker.getLatLng(), map.getZoom()); 
-var radiusPt = p.fromLatLngToPixel(l2, map.getZoom());
-
-// Build the circle
-var pts = [];
-var radius = Math.floor(Math.sqrt(Math.pow((centerPt.x-radiusPt.x),2) + Math.pow((centerPt.y-radiusPt.y),2))); 
-for (var a = 0 ; a < 361 ; a+=5) {
-    var aRad = (Math.PI / 180) * a;
-    var y = centerPt.y + radius * Math.sin(aRad);
-    var x = centerPt.x + radius * Math.cos(aRad);
-    pts.push(p.fromPixelToLatLng(new GPoint(x,y), map.getZoom()));
-} 
+var pts = circle(marker, range);
+if (pts ==  null) return null;
 
 // Set border/fill colors
-var bColor = marker.isBusy ? '#C02020' : '#20C060';
+var bColor = marker.isBusy ? '#c02020' : '#20c060';
 var fColor = marker.isBusy ? '#802020' : '#208040';
 return new GPolygon(pts, bColor, 1, 0.65, fColor, marker.isBusy ? 0.1 : 0.2); 
 }
