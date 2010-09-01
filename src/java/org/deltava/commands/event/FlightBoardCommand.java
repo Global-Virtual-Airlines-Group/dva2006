@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the "who is online" page.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -32,11 +32,9 @@ public class FlightBoardCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the network name and whether we display a map
-		String networkName = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
-		boolean showMap = "map".equals(ctx.getCmdParameter(OPERATION, "false"));
 		OnlineNetwork network = OnlineNetwork.valueOf(SystemData.get("online.default_network"));
 		try {
-			network = OnlineNetwork.valueOf(networkName.toUpperCase());
+			network = OnlineNetwork.valueOf(ctx.getParameter("id").toUpperCase());
 		} catch (Exception e) {
 			// empty
 		}
@@ -51,13 +49,15 @@ public class FlightBoardCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and execute, and highlight our pilots
-			GetPilotOnline dao = new GetPilotOnline(con);
-			Map<String, Integer> idMap = dao.getIDs(network);
-			info.setPilotIDs(idMap);
+			if (!info.hasPilotIDs()) {
+				GetPilotOnline dao = new GetPilotOnline(con);
+				Map<String, Integer> idMap = dao.getIDs(network);
+				info.setPilotIDs(idMap);
+			}
 
 			// Get airports to load from DAFIF data and highlight our airline's code
 			List<?> codes = (List<?>) SystemData.getObject("online.highlightCodes");
-			Set<String> airportIDs = new HashSet<String>();
+			Collection<String> airportIDs = new HashSet<String>();
 			for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
 				Pilot usr = i.next();
 				for (Iterator<?> ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted());) {
@@ -110,7 +110,7 @@ public class FlightBoardCommand extends AbstractCommand {
 
 		// Forward to the display JSP
 		CommandResult result = ctx.getResult();
-		result.setURL(showMap ? "/jsp/event/flightBoardMap.jsp" : "/jsp/event/flightBoard.jsp");
+		result.setURL("/jsp/event/flightBoard.jsp");
 		result.setSuccess(true);
 	}
 }

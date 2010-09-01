@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.Date;
@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * A bean to store VATSIM registration data.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 2.6
  */
 
@@ -75,8 +75,8 @@ public class Certificate extends NetworkUser {
 		_active = active;
 	}
 
-	public int getType() {
-		return NetworkUser.PILOT;
+	public Type getType() {
+		return Type.PILOT;
 	}
 
 	public String getIconColor() {

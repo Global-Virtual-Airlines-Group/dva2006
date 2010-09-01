@@ -4,6 +4,7 @@ package org.deltava.beans.servinfo;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.navdata.NavigationDataBean;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.*;
@@ -11,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store online Pilot information.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -25,7 +26,9 @@ public class Pilot extends NetworkUser {
 	private Airport _airportA;
 	private String _comments;
 	private boolean _isHighlighted;
-	private String _wayPoints;
+	
+	private String _route;
+	private final Collection<NavigationDataBean> _wps = new LinkedHashSet<NavigationDataBean>();
 	
 	private String _rawData;
 
@@ -112,10 +115,10 @@ public class Pilot extends NetworkUser {
 
 	/**
 	 * Returns the User type.
-	 * @return NetworkUser.PILOT
+	 * @return NetworkUser.Type.PILOT
 	 */
-	public int getType() {
-		return NetworkUser.PILOT;
+	public final Type getType() {
+		return Type.PILOT;
 	}
 	
     /**
@@ -127,12 +130,20 @@ public class Pilot extends NetworkUser {
     }
 
 	/**
-	 * Returns the Pilot's filed waypoints.
-	 * @return a Collection of waypoint IDs
-	 * @see Pilot#setWayPoints(String)
+	 * Returns the Pilot's filed route.
+	 * @return the route
+	 * @see Pilot#setRoute(String)
 	 */
-	public Collection<String> getWayPoints() {
-	   return StringUtils.split(_wayPoints, " ");
+	public String getRoute() {
+	   return _route;
+	}
+	
+	/**
+	 * Returns if the waypoint collection has been populated.
+	 * @return TRUE if the waypoints have been loaded, otherwise FALSE
+	 */
+	public boolean isPopulated() {
+		return !_wps.isEmpty();
 	}
 	
 	/**
@@ -218,10 +229,27 @@ public class Pilot extends NetworkUser {
 	/**
 	 * Updates the Pilot's filed waypoints.
 	 * @param route a space-delimited string
-	 * @see Pilot#getWayPoints()
+	 * @throws NullPointerException if route is null
+	 * @see Pilot#getRoute()
 	 */
-	public void setWayPoints(String route) {
-	   _wayPoints = route;
+	public void setRoute(String route) {
+	   _route = route.trim().toUpperCase();
+	}
+	
+	/**
+	 * Adds a point to the collection of waypoints.
+	 * @param nd a NavigationDataBean
+	 */
+	public void addWaypoint(NavigationDataBean nd) {
+		_wps.add(nd);
+	}
+	
+	/**
+	 * Adds multiple waypoints to the collection of waypoints.
+	 * @param nds a Collection of NavigationDataBeans
+	 */
+	public void addWaypoints(Collection<NavigationDataBean> nds) {
+		_wps.addAll(nds);
 	}
 
 	/**
@@ -243,40 +271,41 @@ public class Pilot extends NetworkUser {
 	}
 	
     /**
-     * Sets the Controller's rating code. This is overriden to 1.
+     * Sets the Pilot's rating code. This is overriden to 1.
      */
     public final void setRating(int rating) {
     	super.setRating(1);
     }
 	
 	/**
-	 * Returns the flight route. 
+	 * Returns the flight waypoints. 
 	 * @return a List of GeoLocations
 	 */
-	public Collection<GeoLocation> getRoute() {
+	public Collection<GeoLocation> getWaypoints() {
 		
 		// Only generate a route if both airports have positions
 		Collection<GeoLocation> route = new ArrayList<GeoLocation>();
 		if ((_airportD.hasPosition()) && (_airportA.hasPosition())) {
 			route.add(_airportD);
-			route.add(_position);
+			if (!_wps.isEmpty())
+				route.addAll(_wps);
+			else
+				route.add(_position);
+			
 			route.add(_airportA);
 		}
 	
-		// return course
 		return route;
 	}
 	
 	/**
 	 * Returns the Google Maps icon color.
-	 * @return BLUE if isMember() is TRUE, GREEN if isHighlighted() is TRUE, otherwise WHITE
+	 * @return BLUE if isMember() is TRUE, YELLOW if isHighlighted() is TRUE, otherwise WHITE
 	 * @see Pilot#isHighlighted()
 	 */
 	public String getIconColor() {
 		if (_isHighlighted && (getPilotID() != 0))
 			return BLUE;
-		else if (getPilotID() != 0)
-			return GREEN;
 		else if (_isHighlighted)
 			return YELLOW;
 		
@@ -302,7 +331,9 @@ public class Pilot extends NetworkUser {
 		buf.append(StringUtils.format(_altitude, "#,##0"));
 		buf.append(" feet<br />Speed: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" knots</div>");
+		buf.append(" knots<br /><br />Network ID: ");
+		buf.append(String.valueOf(getID()));
+		buf.append("</div>");
 		return buf.toString();
 	}
 }

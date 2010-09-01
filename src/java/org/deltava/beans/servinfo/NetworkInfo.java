@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 2.4
+ * @version 3.2
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class NetworkInfo implements Cacheable {
     private Date _validDate;
     
     private boolean _isExpired;
+    private boolean _hasPilotIDs;
     
     private final Map<String, Pilot> _pilots = new TreeMap<String, Pilot>();
     private final Map<String, Controller> _controllers = new TreeMap<String, Controller>();
@@ -98,28 +99,29 @@ public class NetworkInfo implements Cacheable {
     		Controller c = i.next();
     		int maxDistance = 200;
     		switch (c.getFacility()) {
-    			case Controller.OBSERVER:
-    			case Controller.DEL:
+    			case OBS:
+    			case DEL:
     				maxDistance = 30;
     				break;
     				
-    			case Controller.GND:
+    			case GND:
     				maxDistance = 60;
     				break;
     				
-    			case Controller.TWR:
+    			case TWR:
+    			case ATIS:
     				maxDistance = 125;
     				break;
     				
-    			case Controller.APP:
+    			case APP:
     				maxDistance = 350;
     				break;
     				
-    			case Controller.CTR:
+    			case CTR:
     				maxDistance = 1500;
     				break;
     				
-    			case Controller.FSS:
+    			case FSS:
     				maxDistance = 2500;
     				break;
     		}
@@ -130,6 +132,15 @@ public class NetworkInfo implements Cacheable {
     	}
     	
     	return results;
+    }
+    
+    /**
+     * Returns whether the internal database IDs for Pilots and Controllers have been loaded.
+     * @return TRUE if loaded, otherwise FALSE
+     * @see NetworkInfo#setPilotIDs(Map)
+     */
+    public boolean hasPilotIDs() {
+    	return _hasPilotIDs;
     }
     
     /**
@@ -169,15 +180,15 @@ public class NetworkInfo implements Cacheable {
     	users.addAll(_controllers.values());
     	
     	// Assign database IDs to active Pilots
-    	for (Iterator<NetworkUser> i = users.iterator(); i.hasNext(); ) {
-    		NetworkUser usr = i.next();
+    	for (NetworkUser usr : users) {
     		String netID = String.valueOf(usr.getID());
-    		
     		if (idMap.containsKey(netID)) {
     			Integer id = idMap.get(netID);
     			usr.setPilotID(id.intValue());
     		}
     	}
+    	
+    	_hasPilotIDs = true;
     }
     
     /**

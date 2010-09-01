@@ -12,14 +12,13 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.GetServInfo;
 import org.deltava.taskman.*;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to download Online Tracks via the ServInfo feed from all
  * online network
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 3.1
  */
 
@@ -83,7 +82,7 @@ public class OnlineTrackTask extends Task {
 					ctx.startTX();
 					int trackID = otdao.getTrackID(p.getPilotID(), network, info.getValidDate(), p.getAirportD(), p.getAirportA());
 					if (trackID == 0) {
-						String rt = StringUtils.listConcat(p.getWayPoints(), " ");
+						String rt = p.getRoute();
 						if (rt.startsWith("+"))
 							rt = rt.substring(1);
 						
