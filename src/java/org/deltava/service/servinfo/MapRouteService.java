@@ -1,8 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
 import java.util.*;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -10,8 +11,10 @@ import org.jdom.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.servinfo.*;
 
+import org.deltava.dao.*;
 import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.service.*;
@@ -22,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 2.4
+ * @version 3.2
  * @since 1.0
  */
 
@@ -34,13 +37,14 @@ public class MapRouteService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the network name
 		String networkName = ctx.getParameter("network");
 		if (networkName == null)
 			networkName = SystemData.get("online.default_network");
-		
+
 		// Get the network
 		OnlineNetwork net = OnlineNetwork.valueOf(networkName.toUpperCase());
 
@@ -55,19 +59,91 @@ public class MapRouteService extends WebService {
 		}
 
 		// Get the Pilot
-		Pilot p = info.getPilot(ctx.getParameter("id"));
-		if (p == null) 
+		NetworkUser usr = info.get(StringUtils.parse(ctx.getParameter("id"), 0));
+		if (usr == null)
 			throw error(SC_NOT_FOUND, "Cannot find " + ctx.getParameter("id"), false);
+		else if (usr.getType() != NetworkUser.Type.PILOT)
+			throw error(SC_NOT_FOUND, usr.getName() + " is not a Pilot", false);
+
+		Pilot p = (Pilot) usr;
+		Collection<PositionData> trackInfo = new ArrayList<PositionData>();
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Load Track data
+			if (!info.hasPilotIDs()) {
+				GetPilotOnline podao = new GetPilotOnline(con);
+				info.setPilotIDs(podao.getIDs(net));
+				p = info.getPilot(p.getCallsign());
+			}
+			
+			// Load the online track
+			if (p.getPilotID() != 0) {
+				GetOnlineTrack otdao = new GetOnlineTrack(con);
+				int trackID = otdao.getTrackID(p.getID(), net, new Date(), p.getAirportD(), p.getAirportA());
+				if (trackID != 0)
+					trackInfo.addAll(otdao.getRaw(trackID));
+			}
+
+			// Populate the route if required
+			if (!p.isPopulated()) {
+				GetNavRoute navdao = new GetNavRoute(con);
+
+				// Split the route
+				List<String> wps = StringUtils.nullTrim(StringUtils.split(p.getRoute(), " "));
+				wps.remove(p.getAirportD().getICAO());
+				wps.remove(p.getAirportA().getICAO());
+
+				// Load the SID
+				if (wps.size() > 2) {
+					String name = wps.get(0);
+					TerminalRoute sid = navdao.getBestRoute(p.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
+					if (sid != null) {
+						wps.remove(0);
+						if (!CollectionUtils.isEmpty(wps))
+							p.addWaypoints(sid.getWaypoints(wps.get(0)));
+						else
+							p.addWaypoints(sid.getWaypoints());
+					}
+				}
+
+				p.addWaypoints(navdao.getRouteWaypoints(StringUtils.listConcat(wps, " "), p.getAirportD()));
+
+				// Load the STAR
+				if (wps.size() > 2) {
+					String name = wps.get(wps.size() - 1);
+					TerminalRoute star = navdao.getBestRoute(p.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
+					if (star != null) {
+						wps.remove(wps.size() - 1);
+						if (!CollectionUtils.isEmpty(wps))
+							p.addWaypoints(star.getWaypoints(wps.get(wps.size() - 1)));
+						else
+							p.addWaypoints(star.getWaypoints());
+					}
+				}
+			}
+		} catch (DAOException de) {
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+		} finally {
+			ctx.release();
+		}
 
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
 
-		// Generate the great circle route
-		for (Iterator<GeoLocation> i = p.getRoute().iterator(); i.hasNext();) {
-			GeoLocation loc = i.next();
-			Element e = new Element("navaid");
+		// Render the route
+		for (GeoLocation loc : p.getWaypoints()) {
+			Element e = new Element("waypoint");
+			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
+			e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
+			re.addContent(e);
+		}
+		
+		// Render the track
+		for (GeoLocation loc : trackInfo) {
+			Element e = new Element("track");
 			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
 			re.addContent(e);
@@ -75,8 +151,7 @@ public class MapRouteService extends WebService {
 
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

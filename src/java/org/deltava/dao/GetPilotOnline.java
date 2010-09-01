@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,14 +6,18 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 2.2
+ * @version 3.2
  * @since 1.0
  */
 
 public class GetPilotOnline extends PilotReadDAO {
+	
+	private static final Cache<CacheableMap<String, Integer>> _idCache = new ExpiringCache<CacheableMap<String, Integer>>(2, 1800);
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -21,6 +25,10 @@ public class GetPilotOnline extends PilotReadDAO {
 	 */
 	public GetPilotOnline(Connection c) {
 		super(c);
+	}
+	
+	public final CacheInfo getCacheInfo() {
+		return new CacheInfo(_idCache);
 	}
 
 	/**
@@ -36,6 +44,11 @@ public class GetPilotOnline extends PilotReadDAO {
 		if ((network != OnlineNetwork.VATSIM) && (network != OnlineNetwork.IVAO))
 			return Collections.emptyMap();
 		
+		// Check the cache
+		CacheableMap<String, Integer> results = _idCache.get(network);
+		if (results != null)
+			return new LinkedHashMap<String, Integer>(results); 
+		
 		try {
 			// Prepare the statement
 			String colName = network.toString() + "_ID";
@@ -45,7 +58,7 @@ public class GetPilotOnline extends PilotReadDAO {
 			_ps.setInt(2, Pilot.ON_LEAVE);
 			
 			// Execute the Query
-			Map<String, Integer> results = new HashMap<String, Integer>();
+			results = new CacheableMap<String, Integer>(network);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.put(rs.getString(2), new Integer(rs.getInt(1)));
@@ -53,7 +66,8 @@ public class GetPilotOnline extends PilotReadDAO {
 			// Clean up and return
 			rs.close();
 			_ps.close();
-			return results;
+			_idCache.add(results);
+			return new LinkedHashMap<String, Integer>(results); 
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -644,6 +644,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="flightboardmap">
+		<name>Online Flight Board Map</name>
+		<class>org.deltava.commands.event.FlightBoardMapCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="event">
 		<name>View Event</name>
 		<class>org.deltava.commands.event.EventCommand</class>
