@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -150,7 +150,7 @@ public class GetServInfo extends DAO {
 		// Get from the cache if possible
 		NetworkInfo info = _infoCache.get(network);
 		if (info != null)
-			return info.clone();
+			return info;
 		
 		try {
 			LineNumberReader br = getReader();
@@ -199,10 +199,16 @@ public class GetServInfo extends DAO {
 						while ((iData != null) && (iData.length() > 3) && (iData.charAt(0) != '!')) {
 							SITokens si = new SITokens(iData);
 							int id = StringUtils.parse(si.get(SITokens.ID), 0);
+							NetworkUser.Type usrType = NetworkUser.Type.PILOT;
+							try {
+								usrType = NetworkUser.Type.valueOf(si.get(SITokens.TYPE).toUpperCase());
+							} catch (Exception e) {
+								// empty
+							}
 
 							// Load the type
-							switch (NetworkUser.getType(si.get(SITokens.TYPE))) {
-								case NetworkUser.ATC:
+							switch (usrType) {
+								case ATC:
 									if (si.size() < SITokens.FACILITY)
 										break;
 									
@@ -213,8 +219,10 @@ public class GetServInfo extends DAO {
 										c.setFrequency(si.get(SITokens.FREQ));
 										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
 										c.setRating(StringUtils.parse(si.get(SITokens.RATING), 0));
-										if (c.getFacility() != Controller.ATIS)
-											c.setFacilityType(StringUtils.parse(si.get(SITokens.FACILITY), 0));
+										if (c.getFacility() != Facility.ATIS) {
+											int idx = StringUtils.parse(si.get(SITokens.FACILITY), 0);
+											c.setFacility(Facility.values()[idx]);
+										}
 										
 										info.add(c);
 									} catch (Exception e) {
@@ -224,7 +232,7 @@ public class GetServInfo extends DAO {
 									break;
 
 								default:
-								case NetworkUser.PILOT:
+								case PILOT:
 									if (si.size() < SITokens.ROUTE)
 										break;
 									
@@ -239,7 +247,7 @@ public class GetServInfo extends DAO {
 										p.setAltitude(StringUtils.parse(si.get(SITokens.ALT), 0));
 										p.setHeading(StringUtils.parse(si.get(SITokens.HDG), 0));
 										p.setGroundSpeed(StringUtils.parse(si.get(SITokens.GSPEED), 0));
-										p.setWayPoints(si.get(SITokens.ROUTE));
+										p.setRoute(si.get(SITokens.ROUTE));
 
 										// Set departure airport position if unknown
 										if (p.getAirportD().getPosition() == null) {

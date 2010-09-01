@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.StringUtils;
@@ -6,31 +6,13 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
 public class Controller extends NetworkUser {
    
-   /**
-    * Facility types.
-    */
-   private static final String[] FACILITIES = {"Observer", "Flight Service Station", "Clearance Delivery", "Ground", "Tower",
-         "Approach/Departure", "Center", "ATIS"};
-   
-   public static final int OBSERVER = 0;
-   public static final int FSS = 1;
-   public static final int DEL = 2;
-   public static final int GND = 3;
-   public static final int TWR = 4;
-   public static final int APP = 5;
-   public static final int DEP = 5;
-   public static final int CTR = 6;
-   public static final int ATIS = 7;
-   
-   private static final String[] FAC_COLORS = {WHITE, PURPLE, BLUE, ORANGE, GREEN, YELLOW, RED};
-   
-   private int _facility;
+   private Facility _type;
    private String _freq;
 
     /**
@@ -43,10 +25,10 @@ public class Controller extends NetworkUser {
 
     /**
      * Returns the user type.
-     * @return NetworkUser.ATC;
+     * @return NetworkUser.Type.ATC
      */
-    public int getType() {
-        return NetworkUser.ATC;
+    public final Type getType() {
+        return Type.ATC;
     }
     
     /**
@@ -61,23 +43,12 @@ public class Controller extends NetworkUser {
     /**
      * Returns the Controller's facility type code.
      * @return the facility code
-     * @see Controller#getFacilityType()
-     * @see Controller#setFacilityType(int)
+     * @see Controller#setFacility(Facility)
      */
-    public int getFacility() {
-       return _facility;
+    public Facility getFacility() {
+       return _type;
     }
     
-    /**
-     * Returns the Controller's facility type name.
-     * @return the facility type
-     * @see Controller#getFacility()
-     * @see Controller#setFacilityType(int)
-     */
-    public String getFacilityType() {
-       return FACILITIES[_facility];
-    }
-
     /**
      * Sets the user name.
      * @param name the controller name
@@ -102,20 +73,16 @@ public class Controller extends NetworkUser {
     public void setCallsign(String cs) {
     	super.setCallsign(cs);
     	if (getCallsign().endsWith("_ATIS"))
-    		setFacilityType(ATIS);
+    		setFacility(Facility.ATIS);
     }
     
     /**
      * Sets the Controller's facility type.
-     * @param type the facility type code
+     * @param ft the Facility
      * @see Controller#getFacility()
-     * @see Controller#getFacilityType()
      */
-    public void setFacilityType(int type) {
-       if ((type < 0) || (type >= FACILITIES.length))
-          throw new IllegalArgumentException("Invalid Controller facility - " + type);
-       
-       _facility = type;
+    public void setFacility(Facility ft) {
+    	_type = ft;
     }
     
     /**
@@ -131,10 +98,9 @@ public class Controller extends NetworkUser {
      * Returns the Google Maps icon color.
      * @return the color as defined by COLORS and faclity type
      * @see Controller#getFacility()
-     * @see Controller#getFacilityType()
      */
     public String getIconColor() {
-    	return FAC_COLORS[_facility];
+    	return _type.getColor();
     }
     
     /**
@@ -151,7 +117,7 @@ public class Controller extends NetworkUser {
 		buf.append("<br />Controller rating: ");
 		buf.append(getRatingName());
 		buf.append("<br /><br />Facility Type: ");
-		buf.append(getFacilityType());
+		buf.append(_type.getName());
 		buf.append("</span></div>");
 		return buf.toString();
     }

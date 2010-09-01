@@ -59,7 +59,7 @@ public class UsageTracker implements Runnable {
 						ps.setInt(1, usr.getID());
 						ps.setString(2, usr.getCallsign());
 						ps.setInt(3, _interval);
-						ps.setInt(4, (usr.getType() == NetworkUser.PILOT) ? 0 : usr.getRating());
+						ps.setInt(4, (usr.getType() == NetworkUser.Type.PILOT) ? 0 : usr.getRating());
 						ps.setInt(5, _interval);
 						ps.addBatch();
 					}

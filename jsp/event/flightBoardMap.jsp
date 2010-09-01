@@ -10,7 +10,7 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
-<title><content:airline /> Online Flight Map</title>
+<title><content:airline /> ${network} Online Flight Map</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -20,46 +20,15 @@
 <content:googleAnalytics eventSupport="true" />
 <map:api version="2" />
 <map:vml-ie />
+<content:js name="flightBoardMap" />
 <script type="text/javascript">
+document.imgPath = '${imgPath}';
+document.network = '${network}';
+
 function setNetwork(combo)
 {
 var net = combo.options[combo.selectedIndex].text;
-location.href = '/flightboard.do?id=' + net + '&op=map';
-return true;
-}
-
-function showRoute(pilotID)
-{
-// Get the network name
-var f = document.forms[0];
-var networkName = f.networkName.options[f.networkName.selectedIndex].text;
-
-// Try and load a cached route
-selectedRoute = allRoutes[pilotID];
-if (!selectedRoute) {
-	var request = GXmlHttp.create();
-	request.open("GET", "si_route.ws?network=" + networkName + "&id=" + pilotID, true);
-	request.onreadystatechange = function() {
-		if (request.readyState != 4) return false;
-		var points = [];
-		var xmlDoc = request.responseXML;
-		var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
-		for (var i = 0; i < navaids.length; i++) {
-			var nav = navaids[i];
-			points.push(new GLatLng(parseFloat(nav.getAttribute("lat")), parseFloat(nav.getAttribute("lng"))));
-		}
-
-		allRoutes[pilotID] = new GPolyline(points, '#4080AF', 2, 0.8, { geodesic:true });
-		selectedRoute = allRoutes[pilotID];
-		addMarkers(map, 'selectedRoute');
-		return true;
-	}
-
-	request.send(null);
-	return true;
-}
-
-addMarkers(map, 'selectedRoute');
+location.href = '/flightboardmap.do?id=' + net + '&op=map';
 return true;
 }
 </script>
@@ -76,16 +45,16 @@ return true;
 <el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
- <td width="40%" class="left">ONLINE PILOTS - ${netInfo.network} - VALID AS OF 
- <fmt:date date="${netInfo.validDate}" t="HH:mm" /></td>
+ <td width="40%" class="left">ONLINE PILOTS - ${network}<span id="isLoading"> - VALID AS OF <span id="validDate"></span></span></td>
  <td width="25%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
  <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
 </tr>
 <tr>
- <td colspan="3"><span class="pri bld">LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
+ <td colspan="2"><span class="pri bld">PILOT LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
  <map:legend color="yellow" className="small" legend="Our Airline" />
- <map:legend color="green" className="small" legend="Member Pilot" />
  <map:legend color="white" className="small" legend="${netInfo.network} Pilot" /></td>
+ <td><span class="pri bld">ATC LEGEND</span> <map:legend color="purple" className="small" legend="Oceanic" />
+ <map:legend color="red" className="small" legend="Center" /> <map:legend color="green" className="small" legend="Approach / Departure" /></td>
 </tr>
 <tr>
  <td colspan="3"><map:div ID="googleMap" x="100%" y="600" /></td>
@@ -103,25 +72,13 @@ map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
 map.addControl(new GOverviewMapControl());
 
-// Mark each pilot's position in hashmap
-var positions = [];
-<c:forEach var="pilot" items="${netInfo.pilots}">
-<map:marker var="gPosition" point="${pilot}" />
-GEvent.addListener(gPosition, 'click', function() { showRoute('${pilot.callsign}'); });
-positions.push(gPosition);
-</c:forEach>
-
-// Route cache
-var allRoutes = [];
-var selectedRoute;
-
 // Center the map and add positions
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
-addMarkers(map, 'positions');
+GEvent.addListener(map, 'infowindowclose', infoClose);
+updateMap();
 </script>
 </body>
 </map:xhtml>

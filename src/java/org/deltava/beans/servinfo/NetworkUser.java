@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.beans.*;
@@ -9,19 +9,19 @@ import org.deltava.util.*;
 /**
  * A bean to store network user information.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
 public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry, MarkerMapEntry {
 	
+	public enum Type {
+		PILOT, ATC;
+	}
+	
 	protected static final String[] RATINGS = {"", "Observer", "Student", "Senior Student", "Senior Student", "Controller",
 		"Senior Controller", "Senior Controller", "Instructor", "Senior Instructor", "Senior Instructor", "Supervisor", "Administrator"};
 
-    public static final int PILOT = 0;
-    public static final int ATC = 1;
-    public static final String[] CLIENTS = {"PILOT", "ATC"};
-    
     private String _callSign;
     private int _id;
     
@@ -43,7 +43,7 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
         setID(id);
     }
 
-    public abstract int getType();
+    public abstract Type getType();
     
     /**
      * Returns the user's callsign.
@@ -272,34 +272,24 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
     }
     
     /**
-     * Returns the user type from a text string obtained from a ServInfo data feed.
-     * @param userType the user Type (PILOT or ATC)
-     * @return the user type code
-     */
-    public static int getType(String userType) {
-       int result = StringUtils.arrayIndexOf(CLIENTS, userType);
-       return (result == -1) ? PILOT : result;
-    }
-    
-    /**
      * Compares this user to another network user by comparing the Network IDs.
      */
     public int compareTo(NetworkUser usr2) {
-        return _callSign.compareTo(usr2._callSign);
+        return Integer.valueOf(getID()).compareTo(Integer.valueOf(usr2.getID()));
     }
     
     /**
-     * Checks equality by comparing callsigns.
+     * Checks equality by comparing network IDs.
      */
     public final boolean equals(Object o2) {
-    	return (o2 instanceof NetworkUser) ? _callSign.equals(((NetworkUser) o2).getCallsign()) : false;
+    	return (o2 instanceof NetworkUser) ? (compareTo((NetworkUser) o2) == 0) : false;
     }
     
     /**
-     * Returns the callsign's hash code.
+     * Returns the Network ID's hash code.
      */
     public final int hashCode() {
-    	return _callSign.hashCode();
+    	return Integer.valueOf(getID()).hashCode();
     }
     
     /**

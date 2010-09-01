@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Online Flights</title>
+<title><content:airline /> ${netInfo.network} Online Flights</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:css name="form" />
@@ -31,12 +31,12 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="flightboard.do" method="POST" validate="return false">
+<el:form action="flightboard.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="flightboard">
 <tr class="title">
  <td colspan="4" class="left">ONLINE PILOTS - ${netInfo.network} - VALID AS OF 
  <fmt:date date="${netInfo.validDate}" /></td>
- <td><el:cmd url="flightboard" op="map" linkID="${network}">FLIGHT MAP</el:cmd></td>
+ <td><el:cmd url="flightboardmap" linkID="${network}">FLIGHT MAP</el:cmd></td>
  <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
 </tr>
 
@@ -73,7 +73,7 @@ return true;
   <td class="pri">${ctr.callsign}</td>
   <td>${ctr.ID}</td>
   <td class="bld">${ctr.name}</td>
-  <td class="sec">${ctr.facilityType}</td>
+  <td class="sec">${ctr.facility.name}</td>
   <td class="bld">${ctr.frequency}</td>
   <td colspan="2">${ctr.ratingName}</td>
 </view:row>
