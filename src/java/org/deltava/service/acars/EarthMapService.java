@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to render the ACARS Map in Google Earth.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -148,7 +148,7 @@ public class EarthMapService extends GoogleEarthService {
 		boolean noCompress = Boolean.valueOf(ctx.getParameter("noCompress")).booleanValue();
 		try {
 			if (noCompress) {
-				ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
+				ctx.setContentType("application/vnd.google-earth.kml+xml", "UTF-8");
 				ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kml");
 				ctx.print(XMLUtils.format(doc, "UTF-8"));
 				ctx.commit();

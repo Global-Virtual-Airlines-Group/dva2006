@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 2.3
  */
 
@@ -145,8 +145,7 @@ public class RoutePlotService extends MapPlotService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
