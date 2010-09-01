@@ -38,7 +38,7 @@
 <tr>
  <td class="label">Dispatcher</td>
 <c:if test="${!empty dispatcher}">
- <td class="data" colspan="${cspan}"><span class="ter bld">${dispatcher.name}</span> (${dispatcher.pilotCode})</td>
+ <td class="data" colspan="${cspan}"><span class="ter caps bld">${dispatcher.name}</span> (${dispatcher.pilotCode})</td>
 </c:if>
 <c:if test="${empty dispatcher}">
  <td class="data" colspan="${cspan}"><span class="ter caps bld"><content:airline /> Auto-Dispatch</span></td>
@@ -75,9 +75,7 @@
  <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
 <c:if test="${access.canDispose && (!empty dRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if>
-<c:if test="${(pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}">
- <el:cmdbutton url="updtd" link="${flightInfo}" label="RECALCULATE TAKEOFF POINT" /></c:if></td>
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -93,7 +91,9 @@
 </c:choose>
  <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />  lbs fuel
 <c:if test="${acLoaded && (pirep.takeoffWeight > acInfo.maxTakeoffWeight)}"> 
-<span class="small bld">(<fmt:int value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> lbs overweight)</span></c:if></td>
+<span class="small bld">(<fmt:int value="${pirep.takeoffWeight - acInfo.maxTakeoffWeight}" /> lbs overweight)</span></c:if>
+<c:if test="${access.canDispose && (pirep.takeoffLocation.latitude == 0.0) && (pirep.takeoffLocation.longitude == 0.0)}">
+ | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TAKEOFF POINT</el:cmd></c:if></td>
 </tr>
 <c:if test="${!empty flightInfo.altitude}">
 <tr>
@@ -122,9 +122,7 @@
  <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
 <c:if test="${access.canDispose && (!empty aRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if>
-<c:if test="${(pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
- <el:cmdbutton url="updtd" link="${flightInfo}" label="RECALCULATE TOUCHDOWN POINT" /></c:if></td>
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -141,7 +139,9 @@
 </c:choose>
  <fmt:int value="${pirep.landingWeight}" /> lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel
 <c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
- <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if></td>
+ <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if>
+<c:if test="${access.canDispose && (pirep.landingLocation.latitude == 0.0) && (pirep.landingLocation.longitude == 0.0)}">
+ | <el:cmd url="updtd" link="${flightInfo}">RECALCULATE TOUCHDOWN POINT</el:cmd></c:if></td>
 </tr>
 <tr>
  <td class="label">Arrival Time</td>
