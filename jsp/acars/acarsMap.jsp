@@ -137,8 +137,7 @@ return true;
  <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="label top">Live Flight Map</td>
- <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="550" /></td>
+ <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </el:table>
 
@@ -190,9 +189,9 @@ map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize
 map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
 </c:if>
 // Add map controls
-var mCtl = new GLargeMapControl3D();
-map.addControl(mCtl);
+map.addControl(new GLargeMapControl3D());
 map.addControl(new GMapTypeControl());
+map.addControl(new GOverviewMapControl());
 map.setCenter(mapC, ${zoomLevel});
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
