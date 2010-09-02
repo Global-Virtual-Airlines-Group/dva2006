@@ -61,14 +61,14 @@ xmlreq.onreadystatechange = function() {
 		atc[mrk.callsign] = mrk;
 		
 		// Add to ATC list
-		var o = new Overlay(mrk.callsign, mrk.callsign);
+		var o = new Option(mrk.callsign, mrk.callsign);
 		o.mrk = mrk;
 		try {
 			cbo.add(o, null);
 		} catch (err) {
 			cbo.add(o); // IE hack
 		}
-		if (selectedATC == id)
+		if (selectedATC == mrk.callsign)
 			cbo.selectedIndex = (cbo.options.length - 1);
 	}
 
