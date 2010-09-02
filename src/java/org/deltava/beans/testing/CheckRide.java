@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.EquipmentType;
@@ -6,7 +6,7 @@ import org.deltava.beans.EquipmentType;
 /**
  * A class to store Check Ride data.
  * @author Luke
- * @version 3.2
+ * @version 1.0
  * @since 1.0
  */
 
@@ -99,7 +99,7 @@ public class CheckRide extends Test {
      * @see CheckRide#getFlightID()
      */
     public void setFlightID(int id) {
-       if (id > 0)
+       if (id != 0)
           validateID(_acarsID, id);
        
        _acarsID = id;
