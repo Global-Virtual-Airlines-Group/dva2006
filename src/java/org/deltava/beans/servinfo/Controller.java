@@ -115,8 +115,11 @@ public class Controller extends NetworkUser {
 		buf.append(")<span class=\"small\"><br /><br />Network ID: ");
 		buf.append(String.valueOf(getID()));
 		buf.append("<br />Controller rating: ");
-		buf.append(getRatingName());
-		buf.append("<br /><br />Facility Type: ");
+		Rating r = getRating();
+		buf.append(r.getName());
+		buf.append(" (");
+		buf.append(r.toString());
+		buf.append(")<br /><br />Facility Type: ");
 		buf.append(_type.getName());
 		buf.append("</span></div>");
 		return buf.toString();
