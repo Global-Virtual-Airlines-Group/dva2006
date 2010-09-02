@@ -80,7 +80,7 @@ public class MapRouteService extends WebService {
 			// Load the online track
 			if (p.getPilotID() != 0) {
 				GetOnlineTrack otdao = new GetOnlineTrack(con);
-				int trackID = otdao.getTrackID(p.getID(), net, new Date(), p.getAirportD(), p.getAirportA());
+				int trackID = otdao.getTrackID(p.getPilotID(), net, new Date(), p.getAirportD(), p.getAirportA());
 				if (trackID != 0)
 					trackInfo.addAll(otdao.getRaw(trackID));
 			}
