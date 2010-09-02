@@ -218,7 +218,7 @@ public class GetServInfo extends DAO {
 										c.setName(si.get(SITokens.NAME));
 										c.setFrequency(si.get(SITokens.FREQ));
 										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
-										c.setRating(StringUtils.parse(si.get(SITokens.RATING), 0));
+										c.setRating(Rating.values()[StringUtils.parse(si.get(SITokens.RATING), 1)]);
 										if (c.getFacility() != Facility.ATIS) {
 											int idx = StringUtils.parse(si.get(SITokens.FACILITY), 0);
 											c.setFacility(Facility.values()[idx]);

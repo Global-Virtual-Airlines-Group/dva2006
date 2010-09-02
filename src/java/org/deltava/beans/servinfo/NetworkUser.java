@@ -19,15 +19,12 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
 		PILOT, ATC;
 	}
 	
-	protected static final String[] RATINGS = {"", "Observer", "Student", "Senior Student", "Senior Student", "Controller",
-		"Senior Controller", "Senior Controller", "Instructor", "Senior Instructor", "Senior Instructor", "Supervisor", "Administrator"};
-
     private String _callSign;
     private int _id;
     
     private String _firstName;
     private String _lastName;
-    private int _rating;
+    private Rating _rating;
     
     private int _databaseID;
 	protected GeoPosition _position;
@@ -140,25 +137,14 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
 	}
 	
     /**
-     * Returns the Controller's rating code.
-     * @return the rating code
-     * @see NetworkUser#getRatingName()
-     * @see NetworkUser#setRating(int)
+     * Returns the Controller's rating.
+     * @return the Rating
+     * @see NetworkUser#setRating(Rating)
      */
-    public int getRating() {
+    public Rating getRating() {
        return _rating;
     }
     
-    /**
-     * Returns the Controller's rating name.
-     * @return the rating name
-     * @see Controller#getRating()
-     * @see Controller#setRating(int)
-     */
-    public String getRatingName() {
-       return RATINGS[getRating()];
-    }
-
 	/**
 	 * Updates the User's position. This has a ServInfo hack where latitudes of -290 to -350 are mapped to
 	 * latitudes in the Northern Hemisphere.
@@ -189,7 +175,7 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
      * @see NetworkUser#getCallsign()
      */
     public void setCallsign(String cs) {
-        _callSign = cs.toUpperCase();
+        _callSign = cs.trim().toUpperCase();
     }
     
     /**
@@ -258,17 +244,12 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
     }
     
     /**
-     * Sets the Users's rating code.
-     * @param rating the rating code
-     * @throws IllegalArgumentException if rating is negative or invalid
+     * Sets the Users's rating.
+     * @param r the Rating
      * @see NetworkUser#getRating()
-     * @see NetworkUser#getRatingName()
      */
-    public void setRating(int rating) {
-       if ((rating < 0) || (rating >= RATINGS.length))
-             throw new IllegalArgumentException("Invalid rating - " + rating);
-       
-       _rating = rating;
+    public void setRating(Rating r) {
+       _rating = r;
     }
     
     /**
