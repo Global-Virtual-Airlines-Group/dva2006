@@ -1,6 +1,8 @@
 // Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
+import java.util.Collections;
+
 import org.deltava.beans.OnlineNetwork;
 
 import org.deltava.commands.*;
@@ -34,6 +36,7 @@ public class FlightBoardMapCommand extends AbstractCommand {
 		// Load the network names and save in the request
 		ctx.setAttribute("networks", SystemData.getObject("online.networks"), REQUEST);
 		ctx.setAttribute("network", network, REQUEST);
+		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 
 		// Forward to the display JSP
 		CommandResult result = ctx.getResult();

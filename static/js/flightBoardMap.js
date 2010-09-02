@@ -1,23 +1,34 @@
 // Mark each pilot/controller's position
-var pilots = [];
 var atc = [];
-var fir = [];
+var pilots = [];
 var selectedRoute;
 var selectedTrack;
 
-function updateMap()
+function updateMap(isAuto)
 {
-var f = document.forms[0];
-
 var d = new Date();
 var dtime = d.getTime() - (d.getTime() % 5000);
 var xmlreq = GXmlHttp.create();
 xmlreq.open('get', 'si_data.ws?network=' + document.network + '&time=' + dtime + '&atc=true', true);
 xmlreq.onreadystatechange = function() {
-	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	if (xmlreq.readyState != 4) return false;
+	var isLoading = getElement('isLoading');
+	if (xmlreq.status != 200) {
+		isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
+		return false;
+	}
+	
 	var xdoc = xmlreq.responseXML;
 	var re = xdoc.documentElement;
 	map.clearOverlays();
+	displayObject(getElement('userSelect'), false);
+	var cbo = getElement('usrID');
+	var selectedATC = cbo.options[cbo.selectedIndex].value;
+	cbo.options.length = 1;
+
+	// Display effective date
+	var dt = re.getAttribute('date');
+	isLoading.innerHTML = ' - VALID AS OF ' + new Date(dt);
 
 	// Display pilots
 	var wps = re.getElementsByTagName('pilot'); pilots.length = 0;
@@ -26,9 +37,10 @@ xmlreq.onreadystatechange = function() {
 		var ll = new GLatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
 		var mrk = googleMarker(document.imgPath, wp.getAttribute('color'), ll, wp.firstChild.data);
 		mrk.networkID = wp.getAttribute('id');
+		mrk.callsign = wp.getAttribute('callsign');
 		GEvent.addListener(mrk, 'click', function() { showRoute(this.networkID); });
 		map.addOverlay(mrk);
-		pilots.push(mrk);		
+		pilots[mrk.callsign] = mrk;		
 	}
 
 	// Display controllers
@@ -37,7 +49,8 @@ xmlreq.onreadystatechange = function() {
 		var cp = cps[i];
 		var ll = new GLatLng(parseFloat(cp.getAttribute('lat')), parseFloat(cp.getAttribute('lng')));
 		var mrk = googleMarker(document.imgPath, cp.getAttribute('color'), ll, cp.firstChild.data);
-		mrk.callsign = cp.getAttribute('id');
+		mrk.networkID = cp.getAttribute('id');
+		mrk.callsign = cp.getAttribute('callsign');
 		var type = cp.getAttribute('type');
 		if ((type == 'CTR') || (type == 'FSS'))
 			GEvent.addListener(mrk, 'click', function() { showFIR(this.callsign); });
@@ -45,10 +58,24 @@ xmlreq.onreadystatechange = function() {
 			GEvent.addListener(mrk, 'click', function() { showAPP(this); });
 		
 		map.addOverlay(mrk);
-		atc.push(mrk);
+		atc[mrk.callsign] = mrk;
+		
+		// Add to ATC list
+		var o = new Overlay(mrk.callsign, mrk.callsign);
+		o.mrk = mrk;
+		try {
+			cbo.add(o, null);
+		} catch (err) {
+			cbo.add(o); // IE hack
+		}
+		if (selectedATC == id)
+			cbo.selectedIndex = (cbo.options.length - 1);
 	}
 
-	window.setTimeout('void updateMap()', 90000);
+	displayObject(getElement('userSelect'), (cbo.options.length > 1));
+	if (isAuto)
+		window.setTimeout('void updateMap()', 90000);
+
 	return true;
 } // function
 
@@ -71,9 +98,20 @@ if (selectedTrack != null) {
 return true;
 }
 
+function zoomTo(combo)
+{
+var opt = combo.options[combo.selectedIndex];
+if ((!opt) || (opt.mrk == null)) return false;	
+
+//Pan to the marker
+map.panTo(opt.mrk.getLatLng());
+GEvent.trigger(opt.mrk, 'click');
+return true;
+}
+
 function showAPP(mrk)
 {
-var pts = circle(mrk, 55);
+var pts = circle(mrk, 60);
 if (pts == null) return false;
 selectedRoute = new GPolygon(pts, '#20c060', 1, 0.65, '#208040', 0.2); 
 map.addOverlay(selectedRoute);
