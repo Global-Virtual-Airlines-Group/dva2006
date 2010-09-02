@@ -123,10 +123,10 @@ public class Pilot extends NetworkUser {
 	
     /**
      * Returns the Pilot's rating code.
-     * @return 1 always
+     * @return Rating.OBS always
      */
-    public final int getRating() {
-       return 1;
+    public final Rating getRating() {
+       return Rating.OBS;
     }
 
 	/**
@@ -271,10 +271,10 @@ public class Pilot extends NetworkUser {
 	}
 	
     /**
-     * Sets the Pilot's rating code. This is overriden to 1.
+     * Sets the Pilot's rating code. This is overriden to OBS.
      */
-    public final void setRating(int rating) {
-    	super.setRating(1);
+    public final void setRating(Rating r) {
+    	super.setRating(Rating.OBS);
     }
 	
 	/**
