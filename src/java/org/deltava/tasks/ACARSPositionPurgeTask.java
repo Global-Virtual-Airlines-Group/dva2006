@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.ipc.GetACARSPool;
@@ -53,6 +54,8 @@ public class ACARSPositionPurgeTask extends Task {
 			// Get the DAOs
 			GetUserData uddao = new GetUserData(con);
 			GetFlightReports frdao = new GetFlightReports(con);
+			GetExam exdao = new GetExam(con);
+			SetExam exwdao = new SetExam(con);
 			
 			// Loop through the IDs
 			GetACARSData dao = new GetACARSData(con);
@@ -84,8 +87,18 @@ public class ACARSPositionPurgeTask extends Task {
 					ConnectionEntry ce = dao.getConnection(fInfo.getConnectionID());
 					UserData ud = uddao.get(ce.getAuthorID());
 					ACARSFlightReport afr = frdao.getACARS(ud.getDB(), id);
+					CheckRide cr = exdao.getACARSCheckRide(id);
 					if (afr == null) {
 						ctx.startTX();
+						if ((cr != null) && (cr.getFlightID() > 0)) {
+							cr.setFlightID(0);
+							if (cr.getStatus() == Test.SUBMITTED)
+								cr.setStatus(Test.NEW);
+							
+							exwdao.write(cr);
+							log.warn("Reset Check Ride" + cr.getID() + " for Flight ID " + id);
+						}
+						
 						wdao.deleteInfo(id);
 						int purgeCount = wdao.deletePositions(id);
 						ctx.commitTX();
