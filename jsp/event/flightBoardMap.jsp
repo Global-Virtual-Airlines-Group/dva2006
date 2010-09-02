@@ -45,9 +45,10 @@ return true;
 <el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
- <td width="40%" class="left">ONLINE PILOTS - ${network}<span id="isLoading"> - VALID AS OF <span id="validDate"></span></span></td>
- <td width="25%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
- <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
+ <td width="40%" class="left caps"><content:airline /> ${network} ONLINE PILOTS<span id="isLoading"></span></td>
+ <td width="15%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
+ <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" />
+<span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void zoomTo(this)" /></span></td>
 </tr>
 <tr>
  <td colspan="2"><span class="pri bld">PILOT LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
@@ -58,6 +59,13 @@ return true;
 </tr>
 <tr>
  <td colspan="3"><map:div ID="googleMap" x="100%" y="600" /></td>
+</tr>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr class="title">
+ <td><el:button ID="RefreshButton" className="BUTTON" onClick="void updateMap(false)" label="REFRESH ${network} DATA" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -78,7 +86,7 @@ map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'infowindowclose', infoClose);
-updateMap();
+updateMap(true);
 </script>
 </body>
 </map:xhtml>

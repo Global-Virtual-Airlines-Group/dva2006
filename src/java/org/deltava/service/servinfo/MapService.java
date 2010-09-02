@@ -86,6 +86,7 @@ public class MapService extends WebService {
 			
 			Element pe = new Element("pilot");
 			pe.setAttribute("id", String.valueOf(usr.getID()));
+			pe.setAttribute("callsign", usr.getCallsign());
 			pe.setAttribute("lat", StringUtils.format(usr.getLatitude(), "##0.00000"));
 			pe.setAttribute("lng", StringUtils.format(usr.getLongitude(), "##0.00000"));
 			pe.setAttribute("color", usr.getIconColor());
@@ -102,7 +103,8 @@ public class MapService extends WebService {
 					continue;
 			
 				Element ae = new Element("atc");
-				ae.setAttribute("id", usr.getCallsign());
+				ae.setAttribute("id", String.valueOf(usr.getID()));
+				ae.setAttribute("callsign", usr.getCallsign());
 				ae.setAttribute("type", String.valueOf(usr.getFacility()));
 				ae.setAttribute("lat", StringUtils.format(usr.getLatitude(), "##0.00000"));
 				ae.setAttribute("lng", StringUtils.format(usr.getLongitude(), "##0.00000"));
