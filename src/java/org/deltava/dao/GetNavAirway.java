@@ -72,7 +72,7 @@ public class GetNavAirway extends GetNavData {
 		// Split the name
 		StringTokenizer tkns = new StringTokenizer(name, ".");
 		int tkCount = tkns.countTokens();
-		if ((tkCount < 1) || (tkCount > 4))
+		if ((tkCount < 2) || (tkCount > 4))
 			return null;
 		
 		// Build the SQL statement
