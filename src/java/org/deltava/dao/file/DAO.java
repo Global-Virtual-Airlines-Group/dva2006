@@ -1,12 +1,13 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * An abstract class to support stream-based Data Access Objects.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -14,6 +15,8 @@ public abstract class DAO {
 
     private InputStream _is;
     private int _size = 10240;
+    
+    private final Charset cs = Charset.forName("UTF-8");
     
     /**
      * Initializes the Data Access Object with a particular input stream.
@@ -37,7 +40,7 @@ public abstract class DAO {
      * @return a BufferedReader
      */
     protected LineNumberReader getReader() {
-        return new LineNumberReader(new InputStreamReader(_is), _size);
+        return new LineNumberReader(new InputStreamReader(_is, cs), _size);
     }
     
     /**
