@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,9 +6,11 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.AirportComparator;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
@@ -20,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 2.4
+ * @version 3.2
  * @since 1.0
  */
 
@@ -35,8 +37,14 @@ public class EventSaveCommand extends AbstractCommand {
 
 		// Check if this is a new event
 		boolean isNew = (ctx.getID() == 0);
-		if (!isNew)
-			ctx.setAttribute("eventID", StringUtils.formatHex(ctx.getID()), REQUEST);
+		
+		// Save the airport list
+		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+		airports.addAll(SystemData.getAirports().values());
+		ctx.setAttribute("airports", airports, REQUEST);
+		
+		// Save network names
+		ctx.setAttribute("networks", SystemData.getObject("online.networks"), REQUEST);
 
 		// Initialize the messaging context
 		MessageContext mctxt = new MessageContext();
@@ -67,6 +75,9 @@ public class EventSaveCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanEdit())
 				throw securityException("Cannot edit Online Event");
+			
+			// Save access
+			ctx.setAttribute("access", access, REQUEST);
 
 			// Populate fields from the request
 			e.setNetwork(OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase()));
@@ -107,6 +118,10 @@ public class EventSaveCommand extends AbstractCommand {
 				mctxt.addData("route", r);
 				templateName = "EVENTCREATE";
 			}
+			
+			// Get aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 
 			// Parse the equipment types
 			Collection<String> eqTypes = ctx.getParameters("eqTypes");
@@ -168,6 +183,12 @@ public class EventSaveCommand extends AbstractCommand {
 				if (!imgOK) {
 					ctx.release();
 					
+					// Convert the dates to local time for the input fields
+					TZInfo tz = ctx.getUser().getTZ();
+					ctx.setAttribute("startTime", DateTime.convert(e.getStartTime(), tz), REQUEST);
+					ctx.setAttribute("endTime", DateTime.convert(e.getEndTime(), tz), REQUEST);
+					ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
+					
 					// Go to page
 					CommandResult result = ctx.getResult();
 					result.setURL("/jsp/event/eventEdit.jsp");
@@ -198,7 +219,6 @@ public class EventSaveCommand extends AbstractCommand {
 
 			// Get the DAO and save the event if we're not refreshing
 			if (isNew) {
-				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get(templateName));
 				mctxt.addData("event", e);
