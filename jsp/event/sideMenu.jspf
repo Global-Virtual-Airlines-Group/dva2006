@@ -30,6 +30,7 @@
 <c:if test="${access.canCreate}">
  <content:subitem><el:cmd url="eventedit">New Online Event</el:cmd></content:subitem>
 </c:if>
+ <content:subitem><el:cmd url="flightboardmap">Online Flights Map</el:cmd></content:subitem>
  <content:subitem><el:cmd url="flightboard">Online Flights</el:cmd></content:subitem>
 </content:submenu>
 
