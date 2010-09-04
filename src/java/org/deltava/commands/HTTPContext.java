@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -9,11 +9,12 @@ import org.deltava.beans.*;
 
 import org.deltava.jdbc.ConnectionContext;
 import org.deltava.security.SecurityContext;
+import org.deltava.util.StringUtils;
 
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 2.5
+ * @version 3.2
  * @since 2.4
  */
 
@@ -201,9 +202,9 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 		default:
 		case Command.ID:
 			String cmdID = _req.getParameter("id");
-			if (cmdID == null) {
+			if (StringUtils.isEmpty(cmdID))
 				return defaultValue;
-			} else if (cmdID.startsWith("0x")) {
+			else if (cmdID.startsWith("0x")) {
 				try {
 					return new Integer(Integer.parseInt(cmdID.substring(2), 16));
 				} catch (NumberFormatException nfe) {
