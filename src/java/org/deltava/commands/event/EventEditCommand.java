@@ -39,7 +39,7 @@ public class EventEditCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		
 		// Save the airport list
-		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		airports.addAll(SystemData.getAirports().values());
 		ctx.setAttribute("airports", airports, REQUEST);
 		
@@ -55,11 +55,9 @@ public class EventEditCommand extends AbstractCommand {
 			if (!access.getCanCreate())
 				throw securityException("Cannot create new Online Event");
 			
+			// Get aircraft types
 			try {
-				Connection con = ctx.getConnection();
-				
-				// Get aircraft types
-				GetAircraft acdao = new GetAircraft(con);
+				GetAircraft acdao = new GetAircraft(ctx.getConnection());
 				ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
@@ -151,7 +149,6 @@ public class EventEditCommand extends AbstractCommand {
 		ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
 		
 		// Forward to the JSP
-		ctx.setAttribute("eventID", StringUtils.formatHex(ctx.getID()), REQUEST);
 		result.setURL("/jsp/event/eventEdit.jsp");
 		result.setSuccess(true);
 	}
