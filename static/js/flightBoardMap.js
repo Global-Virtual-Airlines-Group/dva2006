@@ -3,6 +3,7 @@ var atc = [];
 var pilots = [];
 var selectedRoute;
 var selectedTrack;
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function updateMap(isAuto)
 {
@@ -27,8 +28,8 @@ xmlreq.onreadystatechange = function() {
 	cbo.options.length = 1;
 
 	// Display effective date
-	var dt = re.getAttribute('date');
-	isLoading.innerHTML = ' - VALID AS OF ' + new Date(dt);
+	var dt = new Date(parseInt(re.getAttribute('date')));
+	isLoading.innerHTML = ' - VALID AS OF ' + months[dt.getMonth()] + ' ' + dt.getDate() + ' ' + dt.getFullYear() + ' ' + dt.getHours() + ':' + dt.getMinutes();
 
 	// Display pilots
 	var wps = re.getElementsByTagName('pilot'); pilots.length = 0;
