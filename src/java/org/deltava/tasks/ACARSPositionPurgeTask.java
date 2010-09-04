@@ -96,7 +96,7 @@ public class ACARSPositionPurgeTask extends Task {
 								cr.setStatus(Test.NEW);
 							
 							exwdao.write(cr);
-							log.warn("Reset Check Ride" + cr.getID() + " for Flight ID " + id);
+							log.warn("Reset Check Ride " + cr.getID() + " for Flight ID " + id);
 						}
 						
 						wdao.deleteInfo(id);
