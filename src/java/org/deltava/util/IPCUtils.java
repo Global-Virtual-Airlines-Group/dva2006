@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.gvagroup.ipc.IPCInfo;
 /**
  * A utility class to handle deserializing IPC data.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class IPCUtils {
 	 */
 	public static Serializable reserialize(Serializable data) {
 		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(data);
 			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
@@ -55,7 +55,7 @@ public class IPCUtils {
 	}
 
 	/**
-	 * Deserializes
+	 * Deserializes shared data.
 	 * @param data the object that can pass serialized data
 	 * @return a Collection of beans
 	 */
@@ -87,13 +87,13 @@ public class IPCUtils {
 		Collection<byte[]> results = new ArrayList<byte[]>();
 		for (Iterator<? extends Serializable> i = data.iterator(); i.hasNext(); ) {
 			Serializable entry = i.next();
-			ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
 			try {
+				ByteArrayOutputStream bos = new ByteArrayOutputStream(256);
 				ObjectOutputStream oos = new ObjectOutputStream(bos);
 				oos.writeObject(entry);
 				results.add(bos.toByteArray());
 			} catch (IOException ie) {
-				log.error(ie.getClass().getSimpleName() + " - " + ie.getMessage(), ie);
+				log.error(ie.getClass().getSimpleName() + " - " + ie.getMessage());
 			}
 		}
 		
