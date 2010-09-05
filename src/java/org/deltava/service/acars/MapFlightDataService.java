@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -9,8 +9,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.FlightInfo;
-
+import org.deltava.beans.acars.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
@@ -18,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -60,6 +59,7 @@ public class MapFlightDataService extends WebService {
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
 		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext(); ) {
 			GeoLocation entry = i.next();
+			
 			Element e = null;
 			if (entry instanceof MarkerMapEntry) {
 				MarkerMapEntry me = (MarkerMapEntry) entry;
@@ -75,13 +75,18 @@ public class MapFlightDataService extends WebService {
 			
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			if (entry instanceof RouteEntry) {
+				RouteEntry rte = (RouteEntry) entry;
+				if (rte.getController() != null)
+					e.setAttribute("atcID", rte.getController().getCallsign());
+			}
+			
 			re.addContent(e);
 		}
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
