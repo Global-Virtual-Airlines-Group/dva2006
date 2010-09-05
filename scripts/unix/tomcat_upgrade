@@ -39,26 +39,21 @@ rm bin/*.tar.gz
 rm -Rd logs
 ln -s /var/log/tomcat logs
 
-# Copy over the work directory
-echo "Copying work directory"
-cp -R /usr/local/tomcat/work/* work
-
 # Copy over common libraries
 echo "Copying libraries"
-cp -u /usr/local/tomcat/lib/* lib
+cp -pu /usr/local/tomcat/lib/* lib
 
 # Copy over configuration files
 echo "Copying Tomcat configuration"
-cp /usr/local/tomcat/conf/server.xml conf
-cp /usr/local/tomcat/conf/tomcat-users.xml conf
-cp /usr/local/tomcat/conf/logging.properties conf
-cp /usr/local/tomcat/bin/catalina.sh bin
+cp /usr/local/tomcat/conf/* conf
+chgrp www conf/*
+chmod 640 conf/*
 
 # Change permissions
 echo "Changing file permissions"
-chown -R www:www *
-chown -R www:gva lib
-chmod 664 lib
+chgrp www temp work
+chgrp gva lib
+chmod 775 lib temp work
 
 # Switch to /usr/local
 cd /usr/local
