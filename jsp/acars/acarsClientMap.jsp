@@ -57,7 +57,7 @@ return true;
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
-<el:form action="acarsMap.do" method="post" validate="return false">
+<el:form action="acarsMap.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr>
  <td class="data"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
@@ -73,7 +73,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="510" /><div id="copyright" class="small"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="510" /></td>
 </tr>
 </el:table>
 <div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small">Select Time</span>
@@ -110,11 +110,13 @@ map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize
 map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
 </c:if>
 // Add map controls
-map.addControl(new GLargeMapControl3D());
+var mCtl = new GLargeMapControl3D();
+map.addControl(mCtl);
 map.addControl(new GMapTypeControl());
+map.addControl(new GOverviewMapControl());
 map.setCenter(mapC, ${zoomLevel});
 map.enableDoubleClickZoom();
-// map.enableContinuousZoom();
+map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 GEvent.addListener(map, 'maptypechanged', updateMapText);
 GEvent.addListener(map, 'maptypechanged', hideAllSlices);
@@ -129,15 +131,6 @@ var dcPositions = [];
 document.doRefresh = true;
 reloadData(true);
 <c:if test="${!empty tileHost}">
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById("copyright");
-cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
-cpos.apply(cp);
-mapTextElements.push(cp);
-map.getContainer().appendChild(cp);
-
 // Initialize FastForward elements
 var ffs = document.getElementById("ffSlices");
 var ffpos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(8, 30));
@@ -146,6 +139,7 @@ map.getContainer().appendChild(ffs);
 var ffl = document.getElementById("ffLabel");
 mapTextElements.push(ffl);
 
+//Update text color
 GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
 </body>
