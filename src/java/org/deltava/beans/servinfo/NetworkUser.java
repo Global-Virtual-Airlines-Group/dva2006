@@ -13,7 +13,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry, MarkerMapEntry {
+public abstract class NetworkUser implements java.io.Serializable, Comparable<NetworkUser>, ViewEntry, MarkerMapEntry {
 	
 	public enum Type {
 		PILOT, ATC;
@@ -40,6 +40,10 @@ public abstract class NetworkUser implements Comparable<NetworkUser>, ViewEntry,
         setID(id);
     }
 
+    /**
+     * Returns the user type.
+     * @return the Type
+     */
     public abstract Type getType();
     
     /**
