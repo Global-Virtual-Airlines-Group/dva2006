@@ -8,7 +8,9 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.servinfo.Controller;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 import static org.gvagroup.acars.ACARSFlags.*;
@@ -16,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 3.1
+ * @version 3.2
  * @since 1.0
  */
 
@@ -91,11 +93,13 @@ public class GetACARSData extends DAO {
 	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, R_ALT, HEADING, "
-				+ "PITCH, BANK, ASPEED, GSPEED, VSPEED, MACH, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUEL, FUELFLOW, "
-				+ "AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE, PHASE FROM acars.");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.REPORT_TIME, P.TIME_MS, P.LAT, P.LNG, P.B_ALT, P.R_ALT, P.HEADING, "
+				+ "P.PITCH, P.BANK, P.ASPEED, P.GSPEED, P.VSPEED, P.MACH, P.N1, P.N2, P.FLAPS, P.WIND_HDG, P.WIND_SPEED, P.FUEL, "
+				+ "P.FUELFLOW, P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, PA.COM1, PA.CALLSIGN, PA.NETWORK_ID "
+				+ "FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
-		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
+		sqlBuf.append(" P LEFT JOIN acars.POSITION_ATC PA ON (PA.FLIGHT_ID=P.FLIGHT_ID) AND (PA.REPORT_TIME=P.REPORT_TIME) "
+				+ "AND (PA.TIME_MS=P.TIME_MS) WHERE (P.FLIGHT_ID=?) ORDER BY P.REPORT_TIME, P.TIME_MS");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -134,6 +138,16 @@ public class GetACARSData extends DAO {
 					entry.setFrameRate(rs.getInt(24));
 					entry.setSimRate(rs.getInt(25));
 					entry.setPhase(rs.getInt(26));
+					
+					// Load ATC info
+					String atcID = rs.getString(28);
+					if (!StringUtils.isEmpty(atcID)) {
+						entry.setCOM1(rs.getString(27));
+						Controller ctr = new Controller(rs.getInt(29));
+						ctr.setCallsign(atcID);
+						entry.setController(ctr);
+					}
+					
 					results.add(entry);
 				}
 			}

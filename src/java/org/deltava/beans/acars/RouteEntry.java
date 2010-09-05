@@ -4,6 +4,7 @@ package org.deltava.beans.acars;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.servinfo.Controller;
 
 import org.deltava.util.StringUtils;
 
@@ -12,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 3.0
+ * @version 3.2
  * @since 1.0
  */
 
@@ -43,6 +44,9 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	private int _frameRate;
 	private int _simRate;
 	private int _fuelRemaining;
+	
+	private String _com1;
+	private Controller _atc;
 
 	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS , FLAG_AP_LNAV};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS", "LNAV" };
@@ -296,6 +300,24 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 */
 	public String getPhaseName() {
 		return PHASE_NAMES[_phase.getPhase()];
+	}
+	
+	/**
+	 * Returns the COM1 frequency.
+	 * @return the frequency
+	 * @see RouteEntry#setCOM1(String)
+	 */
+	public String getCOM1() {
+		return _com1;
+	}
+	
+	/**
+	 * Returns the Controller on COM1. 
+	 * @return a Controller bean, or null if none
+	 * @see RouteEntry#setController(Controller)
+	 */
+	public Controller getController() {
+		return _atc;
 	}
 
 	/**
@@ -581,6 +603,24 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	}
 	
 	/**
+	 * Sets the COM1 radio frequency.
+	 * @param com1 the frequency
+	 * @see RouteEntry#getCOM1()
+	 */
+	public void setCOM1(String com1) {
+		_com1 = com1;
+	}
+	
+	/**
+	 * Sets the controller on COM1.
+	 * @param atc a Controller bean
+	 * @see RouteEntry#getController()
+	 */
+	public void setController(Controller atc) {
+		_atc = atc;
+	}
+	
+	/**
 	 * Marks this route entry as having a notable flight parameter.
 	 * @return TRUE if the entry should be noted, otherwise FALSE
 	 */
@@ -745,7 +785,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 			buf.append("Autothrottle: IAS<br />");
 		else if (isFlagSet(FLAG_AT_MACH))
 			buf.append("Autothrottle: MACH<br />");
-
+		
 		// Add Pause/Stall/Warning flags
 		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
@@ -757,7 +797,16 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 			buf.append(warn);
 			buf.append("</span>");
 		}
-			
+		
+		// Add ATC info
+		if (_atc != null) {
+			buf.append("<br />COM1: ");
+			buf.append(_com1);
+			buf.append(" (");
+			buf.append(_atc.getCallsign());
+			buf.append(')');
+		}
+
 		buf.append("</span>");
 		return buf.toString();
 	}

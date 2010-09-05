@@ -346,6 +346,7 @@ var gRoute;
 var routePoints = [];
 var routeMarkers = [];
 getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
+GEvent.addListener(map, 'infowindowclose', function() { removeMarkers(map, 'selectedFIRs'); });
 </c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
