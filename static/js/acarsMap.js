@@ -63,8 +63,12 @@ xmlreq.onreadystatechange = function() {
 		var pns = a.getElementsByTagName('pilot');
 		if ((pns.length > 0) && (cbo != null)) {
 			var pn = pns[0];
-			var id = pn.getAttribute('id');	
-			var o = new Option(pn.firstChild.data + ' (' + id + ')', id);
+			var lbl = pn.firstChild.data;
+			var id = pn.getAttribute('id');
+			if (id != null)
+				lbl = lbl + ' (' + id + ')';
+
+			var o = new Option(lbl, id);
 			o.mrk = mrk;
 			try {
 				cbo.add(o, null);
