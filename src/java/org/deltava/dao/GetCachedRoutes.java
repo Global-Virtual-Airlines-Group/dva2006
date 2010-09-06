@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cached external routes from the database.
  * @author Luke
- * @version 2.6
+ * @version 3.2
  * @since 2.6
  */
 
@@ -85,7 +85,7 @@ public class GetCachedRoutes extends DAO {
 					}
 					
 					String last = wps.get(wps.size() - 1);
-					if (TerminalRoute.isNameValid(last)) {
+					if (TerminalRoute.isNameValid(last) && (wps.size() > 1)) {
 						rt.setSTAR(last + "." + wps.get(wps.size() - 2));
 						wps.remove(wps.size() - 1);
 					}
