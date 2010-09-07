@@ -139,18 +139,18 @@ function circle(ctr, radius)
 {
 if (radius == 0) return null;
 var p = map.getCurrentMapType().getProjection();
-var l2 = new GLatLng(ctr.getLatLng().lat() + (radius / 69.16), ctr.getLatLng().lng());
-var centerPt = p.fromLatLngToPixel(ctr.getLatLng(), map.getZoom()); 
+var l2 = new GLatLng(ctr.lat() + (radius / 69.16), ctr.lng());
+var centerPt = p.fromLatLngToPixel(ctr, map.getZoom()); 
 var radiusPt = p.fromLatLngToPixel(l2, map.getZoom());
 
 //Build the circle
 var pts = [];
 var radius = Math.floor(Math.sqrt(Math.pow((centerPt.x-radiusPt.x),2) + Math.pow((centerPt.y-radiusPt.y),2))); 
-for (var a = 0 ; a < 361 ; a+=5) {
+for (var a = 0; a < 361; a += 6) {
     var aRad = (Math.PI / 180) * a;
     var y = centerPt.y + radius * Math.sin(aRad);
     var x = centerPt.x + radius * Math.cos(aRad);
-    pts.push(p.fromPixelToLatLng(new GPoint(x,y), map.getZoom()));
+    pts.push(p.fromPixelToLatLng(new GPoint(x, y), map.getZoom()));
 } 
 
 return pts;
