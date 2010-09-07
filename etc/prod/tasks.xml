@@ -85,7 +85,7 @@
 	</task>
 
 	<!-- Purge old FlightAware routes -->
-	<task id="purgeroutecache" enabled="true">
+	<task id="purgeroutecache" enabled="false">
 		<class>org.deltava.tasks.CachedRouteUpdateTask</class>	
 		<time>
 			<min>30</min>		
