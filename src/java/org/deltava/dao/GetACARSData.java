@@ -9,6 +9,7 @@ import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.servinfo.Controller;
+import org.deltava.beans.servinfo.Facility;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -95,8 +96,8 @@ public class GetACARSData extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.REPORT_TIME, P.TIME_MS, P.LAT, P.LNG, P.B_ALT, P.R_ALT, P.HEADING, "
 				+ "P.PITCH, P.BANK, P.ASPEED, P.GSPEED, P.VSPEED, P.MACH, P.N1, P.N2, P.FLAPS, P.WIND_HDG, P.WIND_SPEED, P.FUEL, "
-				+ "P.FUELFLOW, P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, PA.COM1, PA.CALLSIGN, PA.NETWORK_ID "
-				+ "FROM acars.");
+				+ "P.FUELFLOW, P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, PA.COM1, PA.CALLSIGN, PA.LAT, PA.LNG, "
+				+ "PA.NETWORK_ID FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 		sqlBuf.append(" P LEFT JOIN acars.POSITION_ATC PA ON (PA.FLIGHT_ID=P.FLIGHT_ID) AND (PA.REPORT_TIME=P.REPORT_TIME) "
 				+ "AND (PA.TIME_MS=P.TIME_MS) WHERE (P.FLIGHT_ID=?) ORDER BY P.REPORT_TIME, P.TIME_MS");
@@ -143,9 +144,14 @@ public class GetACARSData extends DAO {
 					String atcID = rs.getString(28);
 					if (!StringUtils.isEmpty(atcID)) {
 						entry.setCOM1(rs.getString(27));
-						Controller ctr = new Controller(rs.getInt(29));
+						Controller ctr = new Controller(rs.getInt(31));
+						ctr.setPosition(rs.getDouble(29), rs.getDouble(30));
 						ctr.setCallsign(atcID);
-						entry.setController(ctr);
+						try {
+							ctr.setFacility(Facility.valueOf(atcID.substring(atcID.lastIndexOf('_') + 1)));
+						} finally {
+							entry.setController(ctr);
+						}
 					}
 					
 					results.add(entry);

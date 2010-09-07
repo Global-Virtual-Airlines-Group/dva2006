@@ -10,6 +10,8 @@ import org.jdom.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.servinfo.*;
+
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
@@ -33,8 +35,6 @@ public class MapFlightDataService extends WebService {
       
 		// Get the Flight ID
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
-		if (id < 1)
-			return SC_NOT_FOUND;
 		
 		// Get the DAO and the route data
 		Collection<GeoLocation> routePoints = null;
@@ -77,8 +77,19 @@ public class MapFlightDataService extends WebService {
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			if (entry instanceof RouteEntry) {
 				RouteEntry rte = (RouteEntry) entry;
-				if (rte.getController() != null)
-					e.setAttribute("atcID", rte.getController().getCallsign());
+				if (rte.getController() != null) {
+					Element ae = new Element("atc");
+					Controller ctr = rte.getController();
+					ae.setAttribute("id", ctr.getCallsign());
+					ae.setAttribute("type", String.valueOf(ctr.getFacility()));
+					if ((ctr.getFacility() != Facility.CTR) && (ctr.getFacility() != Facility.FSS)) {
+						ae.setAttribute("lat", StringUtils.format(ctr.getLatitude(), "##0.00000"));
+						ae.setAttribute("lng", StringUtils.format(ctr.getLongitude(), "##0.00000"));
+						ae.setAttribute("range", String.valueOf(ctr.getFacility().getRange()));
+					}
+					
+					e.addContent(ae);
+				}
 			}
 			
 			re.addContent(e);
@@ -89,12 +100,10 @@ public class MapFlightDataService extends WebService {
 			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
+			return SC_OK;
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
-      
-		// Return success code
-		return SC_OK;
    }
 
 	/**
