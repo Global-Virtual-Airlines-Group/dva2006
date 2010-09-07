@@ -97,6 +97,21 @@ combo.selectedIndex = -1;
 return false;
 }
 
+Element.prototype.getChild = function(name)
+{
+var children = this.getElementsByTagName(name);
+return (children.length == 0) ? null : children[0];
+};
+
+Element.prototype.getCDATA = function()
+{
+var child = this.firstChild;	
+while ((child != null) && (child.nodeType != 4))
+	child = child.nextSibling;
+
+return child;
+};
+
 Array.prototype.remove = function(obj)
 {
 for (var x = 0; x < this.length; x++) {
