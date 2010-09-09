@@ -266,7 +266,7 @@ return true;
 
 function getServiceRange(marker, range)
 {
-var pts = circle(marker, range);
+var pts = circle(marker.getLatLng(), range);
 if (pts ==  null) return null;
 
 // Set border/fill colors
