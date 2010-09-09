@@ -55,8 +55,10 @@ xmlreq.onreadystatechange = function() {
 		var type = cp.getAttribute('type');
 		if ((type == 'CTR') || (type == 'FSS'))
 			GEvent.addListener(mrk, 'click', function() { showFIR(this.callsign); });
-		else if (type == 'APP')
+		else if (type == 'APP') {
+			mrk.range = parseInt(cp.getAttribute('range'));
 			GEvent.addListener(mrk, 'click', function() { showAPP(this); });
+		}
 		
 		map.addOverlay(mrk);
 		atc[mrk.callsign] = mrk;
@@ -112,7 +114,7 @@ return true;
 
 function showAPP(mrk)
 {
-var pts = circle(mrk, 60);
+var pts = circle(mrk.getLatLng(), mrk.range);
 if (pts == null) return false;
 selectedRoute = new GPolygon(pts, '#20c060', 1, 0.65, '#208040', 0.2); 
 map.addOverlay(selectedRoute);
@@ -173,18 +175,18 @@ xmlreq.onreadystatechange = function() {
 
 	// Display route
 	var wpoints = [];
-	var wps = re.getElementsByTagName("waypoint");
+	var wps = re.getElementsByTagName('waypoint');
 	for (var i = 0; i < wps.length; i++) {
 		var wp = wps[i];
-		wpoints.push(new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng"))));
+		wpoints.push(new GLatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng'))));
 	}
 
 	// Display track
 	var tpoints = [];
-	var tps = re.getElementsByTagName("track");
+	var tps = re.getElementsByTagName('track');
 	for (var i = 0; i < tps.length; i++) {
 		var wp = tps[i];
-		tpoints.push(new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng"))));
+		tpoints.push(new GLatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng'))));
 	}
 
 	if (wpoints.length > 0) {
