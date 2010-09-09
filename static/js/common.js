@@ -103,7 +103,8 @@ var children = e.getElementsByTagName(name);
 return (children.length == 0) ? null : children[0];
 }
 
-Element.prototype.getChild = function(name) { return getChild(this, name); };
+if (window.Element != undefined)
+	Element.prototype.getChild = function(name) { return getChild(this, name); };
 
 getCDATA = function(e)
 {
@@ -114,7 +115,8 @@ while ((child != null) && (child.nodeType != 4))
 return child;
 };
 
-Element.prototype.getCDATA = function() { return getCDATA(this); };
+if (window.Element != undefined)
+	Element.prototype.getCDATA = function() { return getCDATA(this); };
 
 Array.prototype.remove = function(obj)
 {
