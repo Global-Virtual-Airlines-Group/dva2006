@@ -18,28 +18,37 @@ xmlreq.open('get', 'acars_pirep.ws?id=' + pirepID, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xmlDoc = xmlreq.responseXML;
-	var ac = xmlDoc.documentElement.getElementsByTagName("pos");
+	var ac = xmlDoc.documentElement.getElementsByTagName('pos');
 	for (var x = 0; x < ac.length; x++) {
 		var a = ac[x]; var mrk;
-		var label = a.firstChild;
-		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		if (a.getAttribute("icon")) {
-			mrk = googleIconMarker(a.getAttribute("pal"), a.getAttribute("icon"), p, label.data);
+		var label = a.getCDATA ? a.getCDATA() : getCDATA(a);
+		var p = new GLatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
+		if (a.getAttribute('icon')) {
+			mrk = googleIconMarker(a.getAttribute('pal'), a.getAttribute('icon'), p, label.data);
 			routeMarkers.push(mrk);
-		} else if (a.getAttribute("color")) {
-			mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
+		} else if (a.getAttribute('color')) {
+			mrk = googleMarker(imgPath, a.getAttribute('color'), p, label.data);
 			routeMarkers.push(mrk);
 		}	
 
-		if (a.getAttribute("atcID") && (mrk != null)) {
-			mrk.atcID = a.getAttribute("atcID");
-			GEvent.addListener(mrk, 'click', function() { showFIR(this.atcID); });
+		// Add ATC data
+		var ace = a.getChild ? a.getChild('atc') : getChild(a, 'atc');
+		if ((ace != null) && (mrk != null)) {
+			var type = ace.getAttribute('type');
+			if ((type != 'CTR') && (type != 'FSS')) {
+				var acp = new GLatLng(parseFloat(ace.getAttribute('lat')), parseFloat(ace.getAttribute('lng')));
+				mrk.pts = circle(acp, parseInt(ace.getAttribute('range')));
+				GEvent.addListener(mrk, 'click', function() { showAPP(this.pts); });
+			} else {
+				mrk.atcID = ace.getAttribute('id');
+				GEvent.addListener(mrk, 'click', function() { showFIR(this.atcID); });
+			}
 		}
 
 		routePoints.push(p);
 	}
 
-	gRoute = new GPolyline(routePoints,'#4080AF', 3, 0.85);
+	gRoute = new GPolyline(routePoints,'#4080af', 3, 0.85);
 	gaEvent('ACARS', 'Flight Data', pirepID);
 
 	// Enable checkboxes
@@ -50,6 +59,15 @@ xmlreq.onreadystatechange = function() {
 } // function
 
 xmlreq.send(null);
+return true;
+}
+
+function showAPP(cpts)
+{
+selectedFIRs.length = 0;
+var c = new GPolygon(cpts, '#efefff', 1, 0.85, '#7f7f80', 0.25);
+selectedFIRs.push(c);
+map.addOverlay(c);
 return true;
 }
 
@@ -111,7 +129,7 @@ if (kml != null)
 // Build the XML Requester
 
 var xmlreq = GXmlHttp.create();
-xmlreq.open("get", "acars_earth.ws?id=" + pirepID + "&noCompress=true&showRoute=" + showRoute, true);
+xmlreq.open('get', 'acars_earth.ws?id=' + pirepID + '&noCompress=true&showRoute=' + showRoute, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xml = xmlreq.responseText;
