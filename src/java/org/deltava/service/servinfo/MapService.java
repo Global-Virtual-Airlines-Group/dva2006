@@ -109,6 +109,7 @@ public class MapService extends WebService {
 				ae.setAttribute("lat", StringUtils.format(usr.getLatitude(), "##0.00000"));
 				ae.setAttribute("lng", StringUtils.format(usr.getLongitude(), "##0.00000"));
 				ae.setAttribute("color", usr.getIconColor());	
+				ae.setAttribute("range", String.valueOf(usr.getFacility().getRange()));
 				ae.addContent(new CDATA(usr.getInfoBox()));
 				re.addContent(ae);
 			}
