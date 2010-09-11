@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 2.3
+ * @version 3.2
  * @since 1.0
  */
 
@@ -50,6 +50,9 @@ public class FlightDataEarthService extends GoogleEarthService {
 		// Get the ACARS Flight IDs
 		Collection<Integer> IDs = new TreeSet<Integer>();
 		Collection<String> rawIDs = StringUtils.split(ctx.getParameter("id"), ",");
+		if (rawIDs == null)
+			return SC_NOT_FOUND;
+		
 		for (Iterator<String> i = rawIDs.iterator(); (IDs.size() <= maxFlights) && i.hasNext(); ) {
 			String rawID = i.next();
 			try {
