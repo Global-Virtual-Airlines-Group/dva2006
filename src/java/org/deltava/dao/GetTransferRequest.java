@@ -5,12 +5,12 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.testing.Test;
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 1.0
  */
 

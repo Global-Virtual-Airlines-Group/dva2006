@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.system.*; 
 import org.deltava.beans.testing.*;
 
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 

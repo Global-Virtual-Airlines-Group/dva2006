@@ -3,12 +3,12 @@ package org.deltava.dao;
 
 import java.sql.*;
 
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 /**
  * A Data Access Object to write equipment program Transfer Requests.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
