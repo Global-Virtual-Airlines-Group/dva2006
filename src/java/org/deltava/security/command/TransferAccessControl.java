@@ -1,14 +1,14 @@
 // Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for equipment program Transfer Requests.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 1.0
  */
 

@@ -6,9 +6,9 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.stats.*;
 import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
-import org.deltava.beans.system.TransferRequest;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 

@@ -6,7 +6,7 @@ import java.sql.Connection;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.EquipmentType;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 

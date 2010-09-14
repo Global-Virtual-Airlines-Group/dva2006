@@ -6,8 +6,8 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.stats.ProgramMetrics;
-import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 2.1
  */
 

@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 

@@ -5,8 +5,8 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.flight.*;
+import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 

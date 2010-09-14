@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.comparators.RankComparator;
 
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Approve equipment program Transfers.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
