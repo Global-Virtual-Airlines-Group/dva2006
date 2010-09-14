@@ -3,7 +3,7 @@ package org.deltava.commands.admin;
 
 import java.sql.Connection;
 
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to toggle the additional ratings flag on a Transfer Request.
  * @author Luke
- * @version 2.1
+ * @version 3.3
  * @since 2.1
  */
 

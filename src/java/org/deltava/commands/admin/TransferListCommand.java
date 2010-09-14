@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.UserDataMap;
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to list pending equipment program Transfer Requests.
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 1.0
  */
 

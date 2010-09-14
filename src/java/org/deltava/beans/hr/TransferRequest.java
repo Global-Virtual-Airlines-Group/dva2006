@@ -1,5 +1,5 @@
 // Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.system;
+package org.deltava.beans.hr;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import org.deltava.beans.ViewEntry;
  * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
  * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
