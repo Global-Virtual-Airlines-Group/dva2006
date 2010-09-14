@@ -44,8 +44,8 @@
 <el:table ID="pilotCenter" className="form" pad="default" space="default">
 
 <!-- Pilot Information -->
-<tr class="title">
- <td colspan="2">PILOT CENTER - <span class="caps">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></span></td>
+<tr class="title caps">
+ <td colspan="2">PILOT CENTER - ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <tr>
  <td width="350" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
