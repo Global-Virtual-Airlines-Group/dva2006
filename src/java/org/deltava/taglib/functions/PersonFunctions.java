@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 2.3
+ * @version 3.3
  * @since 1.0
  */
 
@@ -57,6 +57,16 @@ public class PersonFunctions {
 	 */
 	public static boolean isActive(Person usr) {
 		return isPilot(usr) && ((usr.getStatus() == Pilot.ACTIVE) || (usr.getStatus() == Pilot.ON_LEAVE));
+	}
+	
+	/**
+	 * Returns whether the Person is a member of a security role.
+	 * @param roleName the role name
+	 * @param usr the Person
+	 * @return TRUE if the Person is a member of the Role, otherwise FALSE
+	 */
+	public static boolean hasRole(String roleName, Person usr) {
+		return isPilot(usr) && usr.isInRole(roleName);
 	}
 	
 	/**
