@@ -446,6 +446,13 @@
 	</function>
 
 
+	<!-- Check if a user has a security role -->
+	<function>
+		<name>hasRole</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>boolean hasRole(java.lang.String, org.deltava.beans.Person)</function-signature>
+	</function>
+
 	<!-- Check if an e-mail address is valid -->
 	<function>
 		<name>isEMailValid</name>
