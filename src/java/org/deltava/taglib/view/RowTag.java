@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A JSP Tag to render view table rows with a specified CSS class.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -61,8 +61,11 @@ public class RowTag extends TagSupport {
 			
 			// Render the opening tag
 			out.print("<tr");
-			if (_className != null)
-				out.print(" class=\"" + _className + "\"");
+			if (_className != null) {
+				out.print(" class=\"");
+				out.print(_className);
+				out.print('\"');
+			}
 			
 			out.print('>');
 		} catch (Exception e) {
@@ -82,9 +85,10 @@ public class RowTag extends TagSupport {
 			pageContext.getOut().write("</tr>");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 		
-		release();
 		return EVAL_PAGE;
 	}
 }
