@@ -89,7 +89,7 @@ var xmlreq = getXMLHttpRequest();
 xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum + '&date=' + d.getTime());
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var time = parseInt(xmlreq.responseText);
 	if (!isNaN(time)) secondsLeft = time;
 	if (txtbox.length == 1) {
@@ -131,9 +131,9 @@ if (txtbox.length == 1) {
 	txtbox[0].style.border = '1px dashed #787980';
 }
 	
-//Build the update handler	
+// Build the update handler	
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	rpq.map.clearOverlays();
 
 	// Draw the markers and load the codes

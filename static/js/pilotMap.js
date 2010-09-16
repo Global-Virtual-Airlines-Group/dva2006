@@ -7,7 +7,7 @@ var f = document.forms[0];
 var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "pilotmap.ws", true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
