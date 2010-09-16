@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 3.1
  */
 
@@ -35,6 +35,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		int pirepID = 0;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -57,6 +58,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 				throw securityException("Cannot modify takeoff/touchdown points");
 			
 			// Load the takeoff/touchdown data
+			pirepID = afr.getID();
 			List<RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
 			if (tdEntries.size() > 2) {
 				int ofs = 0;
@@ -97,7 +99,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 		// Redirect back to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REDIRECT);
-		result.setURL("pirep", null, ctx.getID());
+		result.setURL("pirep", null, pirepID);
 		result.setSuccess(true);
 	}
 }
