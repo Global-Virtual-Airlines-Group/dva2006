@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import javax.servlet.http.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 2.4
+ * @version 3.3
  * @since 1.0
  * @see Command
  */
@@ -25,7 +25,6 @@ public class CommandContext extends HTTPContext {
 	public static final String INVALIDREQ_ATTR_NAME = "requestMapInvalid";
 	public static final String SYSMSG_ATTR_NAME ="system_message";
 
-	private final CacheControl _cache = new CacheControl();
 	private final CommandResult _result = new CommandResult(null);
 
 	/**
@@ -35,15 +34,6 @@ public class CommandContext extends HTTPContext {
 	 */
 	public CommandContext(HttpServletRequest req, HttpServletResponse rsp) {
 		super(req, rsp);
-	}
-
-	/**
-	 * Returns the cache control options for the HTTP response.
-	 * @return the cache control bean
-	 * @see CommandContext#setCacheHeaders()
-	 */
-	public CacheControl getCache() {
-		return _cache;
 	}
 
 	/**
@@ -86,19 +76,6 @@ public class CommandContext extends HTTPContext {
 			return Integer.parseInt(obj.toString());
 		} catch (Exception e) {
 			throw new CommandException("Invalid Database ID - " + obj, false);
-		}
-	}
-	
-	/**
-	 * Applies the current cache control strategy to the HTTP servlet response.
-	 * @see CommandContext#getCache()
-	 */
-	public void setCacheHeaders() {
-		HttpServletResponse rsp = getResponse();
-		rsp.setHeader("Cache-Control", _cache.isPublic() && !isAuthenticated() ? "public" : "private");
-		if (_cache.getMaxAge() != CacheControl.DEFAULT_CACHE) {
-			rsp.setIntHeader("max-age", _cache.getMaxAge());
-			rsp.setDateHeader("Expires", System.currentTimeMillis() + _cache.getMaxAge());
 		}
 	}
 }
