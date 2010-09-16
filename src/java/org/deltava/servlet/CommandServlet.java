@@ -26,7 +26,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -218,7 +218,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				log.debug("Executing " + req.getMethod() + " " + cmd.getName());
 
 			cmd.execute(ctxt);
-			ctxt.setCacheHeaders();
 			CommandResult result = ctxt.getResult();
 			result.complete();
 

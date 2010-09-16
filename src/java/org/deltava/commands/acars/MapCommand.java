@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a live ACARS Map.
  * @author Luke
- * @version 2.8
+ * @version 3.3
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class MapCommand extends AbstractCommand {
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 
 		// Set the cache
-		ctx.getCache().setMaxAge(120);
+		ctx.setExpiry(120);
 		
 		// Check if we're retrieving this from the ACARS client
 		boolean isACARSClient = Boolean.valueOf(ctx.getParameter("acarsClient")).booleanValue();
