@@ -10,7 +10,7 @@ import org.deltava.beans.Rank;
  * A helper class to score Nominations.
  * @author Luke
  * @version 3.3
- * @since 3.2
+ * @since 3.3
  */
 
 public class NominationScoreHelper {
@@ -40,11 +40,12 @@ public class NominationScoreHelper {
 	}
 	
 	/**
-	 * Adds a comment author.
-	 * @param p the Pilot
+	 * Adds comment authors.
+	 * @param authors a Collection of Pilots
 	 */
-	public void addAuthor(Pilot p) {
-		_authors.put(new Integer(p.getID()), p);
+	public void addAuthors(Collection<Pilot> authors) {
+		for (Pilot p : authors)
+			_authors.put(new Integer(p.getID()), p);
 	}
 	
 	/**

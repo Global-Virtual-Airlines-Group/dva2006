@@ -20,17 +20,17 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!form.pilot) return false;
-if (form.pilot.selectedIndex == 0) {
+if (!form.id) return false;
+if (form.id.selectedIndex == 0) {
 	alert('Please select the Pilot you wish to nominate.');
-	form.pilot.focus();
+	form.id.focus();
 	return false;
 }
 
 if (!validateText(form.body, 30, 'Nomination Comments')) return false;
 
 // Confirm
-var pilotName = form.pilot.options[form.pilot.selectedIndex].text;
+var pilotName = form.pilot.options[form.id.selectedIndex].text;
 if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Captain?')) return false;
 
 setSubmit();
@@ -47,16 +47,16 @@ return true;
 <content:sysdata var="maxNoms" name="users.sc.maxNominations" default="5" />
 <content:sysdata var="minFlights" name="users.sc.minFlights" default="5" />
 <content:sysdata var="minAge" name="users.sc.minAge" default="120" />
-<c:set var="cspan" value="${canSeeScore ? 7 : 6}" scope="page" />
+<c:set var="cspan" value="${canSeeScore ? 8 : 6}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="scnominate.do" op="save" method="post" validate="return validate(this)">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 
 <!-- Header Bar -->
 <tr class="title caps">
- <td colspan="${cspan}" class="left"><content:airline /> Q${qtr.yearQuarter} SENIOR CAPTAIN NOMINATIONS</td>
+ <td colspan="${cspan}" class="left"><content:airline /> ${qtr} SENIOR CAPTAIN NOMINATIONS</td>
 </tr>
 <tr>
  <td colspan="${cspan}" class="left">Promotion to the rank of <content:airline /> Senior Captain is the highest rank available
@@ -79,14 +79,15 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:if test="${showHeader}">
 <!-- Header Bar -->
 <tr class="title caps">
- <td width="25%">PILOT NAME</td>
+ <td width="20%">PILOT NAME</td>
  <td width="10%">EQUIPMENT TYPE</td>
- <td width="15%">JOINED ON</td>
+ <td width="10%">JOINED ON</td>
  <td width="15%">LEGS / HOURS</td>
  <td width="15%">ONLINE</td>
  <td width="15%">ACARS</td>
 <c:if test="${canSeeScore}">
- <td width="5%">SCORE</td>
+ <td>NOMINATED ON</td>
+ <td width="5%"">SCORE</td>
 </c:if>
 </tr>
 </c:if>
@@ -95,18 +96,19 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:forEach var="nomStatus" items="${fn:keys(allNoms)}">
 <c:set var="noms" value="${allNoms[nomStatus]}" scope="page" />
 <c:if test="${!empty noms}">
-<tr class="title caps left">
- <td colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS NOMINATED</td>
+<tr class="title caps">
+ <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS NOMINATED</td>
 </tr>
 <c:forEach var="nom" items="${noms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
 <tr>
- <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
  <td class="bld"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
  <td class="sec"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
  <td><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td class="small bld"><fmt:date fmt="d" date="${nom.createdOn}" /></td>
  <td class="pri bld"><fmt:int value="${nom.score}" /></td>
 </tr>
 <c:forEach var="nc" items="${nom.comments}">
@@ -121,18 +123,27 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </c:forEach>
 </content:filter>
 <c:if test="${!empty myEQNoms}">
-<tr class="title caps left">
- <td colspan="${cspan}"><fmt:int value="${fn:sizeof(myEQNoms)}" /> ${user.eqType} PILOTS NOMINATED</td>
+<tr class="title caps">
+ <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(myEQNoms)}" /> ${user.equipmentType} PILOTS NOMINATED</td>
 </tr>
 <c:forEach var="nom" items="${myEQNoms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
+<c:set var="ac" value="${acMap[nom]}" scope="page" />
 <view:row entry="${nom}">
+<c:choose>
+<c:when test="${ac.canUpdate || ac.canDispose}">
+ <td><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
+</c:when>
+<c:otherwise>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
+</c:otherwise>
+</c:choose>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
  <td class="bld"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
  <td class="sec"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
  <td><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+ <td class="small bld"><fmt:date fmt="d" date="${nom.createdOn}" /></td>
  <td class="pri bld"><fmt:int value="${nom.score}" /></td>
 </view:row>
 <c:forEach var="nc" items="${nom.comments}">
@@ -148,18 +159,28 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </c:if>
 <c:if test="${!empty myNoms}">
 <!-- My Nominations -->
-<tr class="title caps left">
- <td colspan="${cspan}">MY SENIOR CAPTAIN NOMINATIONS - <fmt:int value="${fn:sizeof(myNoms)}" /> PILOTS NOMINATED</td>
+<tr class="title caps">
+ <td class="left" colspan="${cspan}">MY SENIOR CAPTAIN NOMINATIONS - <fmt:int value="${fn:sizeof(myNoms)}" /> PILOTS NOMINATED</td>
 </tr>
 <c:forEach var="nom" items="${myNoms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
+<c:set var="ac" value="${acMap[nom]}" scope="page" />
 <tr>
+<c:choose>
+<c:when test="${ac.canUpdate || ac.canDispose}">
+ <td><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
+</c:when>
+<c:otherwise>
+ <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
+</c:otherwise>
+</c:choose>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
  <td class="bld"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
  <td class="sec"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
  <td><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
 <c:if test="${canSeeScore}">
+ <td class="small bld"><fmt:date fmt="d" date="${nom.createdOn}" /></td>
  <td class="pri bld"><fmt:int value="${nom.score}" /></td>
 </c:if>
 </tr>
@@ -197,13 +218,13 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
 </c:when>
 <c:otherwise>
 <!-- New Nomination form -->
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">NEW <content:airline /> SENIOR CAPTAIN NOMINATION</td>
 </tr>
 <tr>
  <td class="label">Pilot</td>
- <td class="data"><el:combo ID="selectPilot" name="pilot" idx="*" size="1" className="req" firstEntry="< SELECT PILOT >" options="${emptyList}" onChange="void setPilot(this)" />
+ <td class="data"><el:combo ID="selectPilot" name="id" idx="*" size="1" className="req" firstEntry="< SELECT PILOT >" options="${emptyList}" onChange="void setPilot(this)" />
  <el:text name="pilotSearch" idx="*" size="12" max="24" value="" onChange="void search(this.value)" />
 <span class="small ita">(Type the first few letters of an eligible Pilot's name to jump to them in the list.)</span></td>
 </tr>

@@ -158,7 +158,6 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		
 		// Save sort options
 		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
-		ctx.setAttribute("ranks", Rank.values(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
