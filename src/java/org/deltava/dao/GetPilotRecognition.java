@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.hr.*;
 
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
@@ -31,12 +32,14 @@ public class GetPilotRecognition extends PilotReadDAO {
 	}
 	
 	/**
-	 * Invalidates a portion of the Promotion Queue cache.
-	 * @param eqType the equipment type
+	 * Invalidates the Promotion Queue caches.
+	 * @param eqType the equipment type, or null to invalidate all
 	 */
 	public static void invalidate(String eqType) {
-		_promoCache.remove(eqType);
+		_scNomCache.clear();
 		_promoCache.remove("ALL");
+		if (eqType != null)
+			_promoCache.remove(eqType);
 	}
 	
 	/**
@@ -138,15 +141,19 @@ public class GetPilotRecognition extends PilotReadDAO {
     	
     	try {
     		prepareStatementWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) "
-    			+ "AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC FROM PILOTS P LEFT JOIN STATUS_UPDATES SU ON "
-    			+ "(P.ID=SU.PILOT_ID) AND (SU.TYPE=?) WHERE (P.RANK=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), "
-    			+ "INTERVAL ? DAY)) GROUP BY P.ID HAVING (SC=0) AND (LEGS>=?)");
+    			+ "AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC, IFNULL(N.STATUS, ?) AS NOMSTATUS FROM PILOTS P LEFT JOIN "
+    			+ "STATUS_UPDATES SU ON (P.ID=SU.PILOT_ID) AND (SU.TYPE=?) LEFT JOIN NOMINATIONS N ON (P.ID=N.ID) AND "
+    			+ "(N.QUARTER=?) WHERE (P.RANK=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), INTERVAL ? DAY)) "
+    			+ "GROUP BY P.ID HAVING (SC=0) AND (NOMSTATUS=?) AND (LEGS>=?)");
     		_ps.setInt(1, FlightReport.OK);
-    		_ps.setInt(2, StatusUpdate.SR_CAPTAIN);
-    		_ps.setString(3, Rank.C.getName());
-    		_ps.setInt(4, Pilot.ACTIVE);
-    		_ps.setInt(5, SystemData.getInt("users.sc.minAge", 90));
-    		_ps.setInt(6, SystemData.getInt("users.sc.minFlights", 5));
+    		_ps.setInt(2, Nomination.Status.PENDING.ordinal());
+    		_ps.setInt(3, StatusUpdate.SR_CAPTAIN);
+    		_ps.setInt(4, new Quarter().getYearQuarter());
+    		_ps.setString(5, Rank.C.getName());
+    		_ps.setInt(6, Pilot.ACTIVE);
+    		_ps.setInt(7, SystemData.getInt("users.sc.minAge", 90));
+    		_ps.setInt(8, Nomination.Status.PENDING.ordinal());
+    		_ps.setInt(9, SystemData.getInt("users.sc.minFlights", 5));
     		results = new CacheableSet<Integer>(GetPilotRecognition.class);
     		results.addAll(executeIDs());
     	} catch (SQLException se) {

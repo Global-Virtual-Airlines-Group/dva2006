@@ -1,0 +1,105 @@
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.admin;
+
+import java.util.Date;
+import java.sql.Connection;
+
+import org.deltava.beans.*;
+import org.deltava.beans.hr.Nomination;
+import org.deltava.beans.hr.Nomination.Status;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.NominationAccessControl;
+
+/**
+ * A Web Site Command to approve or reject Senior Captain nominations.
+ * @author Luke
+ * @version 3.3
+ * @since 3.3
+ */
+
+public class NominationDisposeCommand extends AbstractCommand {
+
+	/**
+	 * Executes the Command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	@Override
+	public void execute(CommandContext ctx) throws CommandException {
+		boolean isApproved = Boolean.valueOf(String.valueOf(ctx.getCmdParameter(Command.OPERATION, Boolean.FALSE))).booleanValue();
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Load the nomination
+			GetNominations ndao = new GetNominations(con);
+			Nomination n = ndao.get(ctx.getID());
+			if (n == null)
+				throw notFoundException("Cannot find Nomination - " + ctx.getID());
+			
+			// Load the pilot
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(n.getID());
+			ctx.setAttribute("pilot", p, REQUEST);
+			
+			// Check our access
+			NominationAccessControl access = new NominationAccessControl(ctx, n);
+			access.setPilot(p);
+			access.validate();
+			if (!access.getCanUpdate())
+				throw securityException("Cannot update Nomination");
+			
+			// Set status
+			n.setStatus(isApproved ? Status.APPROVED : Status.REJECTED);
+			StatusUpdate upd = new StatusUpdate(p.getID(), isApproved ? StatusUpdate.SR_CAPTAIN : StatusUpdate.COMMENT);
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setCreatedOn(new Date());
+			if (isApproved)
+				upd.setDescription("Promoted to " + Rank.SC);
+			else
+				upd.setDescription("Nomination to " + Rank.SC + " rejected");
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Save the nomination
+			SetNomination nwdao = new SetNomination(con);
+			nwdao.update(n);
+			
+			// If we've approved, update rank
+			if (isApproved) {
+				p.setRank(Rank.SC);
+				SetPilot pwdao = new SetPilot(con);
+				pwdao.write(p);
+				SetPilot.invalidate(p.getID());
+			}
+			
+			// Update Status
+			SetStatusUpdate suwdao = new SetStatusUpdate(con);
+			suwdao.write(upd);
+			
+			// Clear recognition cache
+			GetPilotRecognition.invalidate(null);
+			
+			// Commit
+			ctx.commitTX();
+		} catch (DAOException de) {
+			ctx.rollbackTX();
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Save status variables
+		ctx.setAttribute("isDisposed", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("isApproved", Boolean.valueOf(isApproved), REQUEST);
+		
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(ResultType.REQREDIRECT);
+		result.setURL("/jsp/admin/scNominateUpdate.jsp");
+		result.setSuccess(true);
+	}
+}

@@ -1,8 +1,7 @@
 function getPilots()
 {
-var d = new Date();
 var xmlreq = getXMLHttpRequest();	
-xmlreq.open('get', 'sceligible.ws?date=' + d.getTime());
+xmlreq.open('get', 'sceligible.ws');
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	
@@ -61,4 +60,3 @@ var f = document.forms[0];
 f.pilotSearch.value = '';
 return true;
 }
-	

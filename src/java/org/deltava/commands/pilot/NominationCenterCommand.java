@@ -49,7 +49,6 @@ public class NominationCenterCommand extends AbstractCommand {
 			ctx.setAttribute("myNoms", new ArrayList<Nomination>(allNoms) , REQUEST);
 			
 			// If we're in HR, load all pending nominations; if CP then show in my program
-			
 			if (ctx.isUserInRole("HR")) {
 				Map<Status, Collection<Nomination>> noms = new LinkedHashMap<Status, Collection<Nomination>>();
 				noms.put(Status.PENDING, ndao.getByStatus(Status.PENDING, qNow));
@@ -69,10 +68,16 @@ public class NominationCenterCommand extends AbstractCommand {
 			
 			// Fetch Pilot and Author IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
+			Map<Nomination, NominationAccessControl> acMap = new HashMap<Nomination, NominationAccessControl>();
 			for (Nomination n : allNoms) {
 				IDs.add(new Integer(n.getID()));
 				for (NominationComment nc : n.getComments())
 					IDs.add(new Integer(nc.getAuthorID()));
+				
+				// Calculate access
+				NominationAccessControl access = new NominationAccessControl(ctx, n);
+				access.validate();
+				acMap.put(n, access);
 			}
 			
 			// Load the pilot IDs
@@ -80,7 +85,10 @@ public class NominationCenterCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS");
 			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
+			
+			// Save status
 			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("acMap", acMap, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

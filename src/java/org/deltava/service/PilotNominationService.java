@@ -52,7 +52,7 @@ public class PilotNominationService extends WebService {
 		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
 			Pilot p = i.next();
 			Element pe = new Element("pilot");
-			pe.setAttribute("id", String.valueOf(p.getID()));
+			pe.setAttribute("id", p.getHexID());
 			pe.setAttribute("name", p.getName());
 			pe.setAttribute("code", p.getPilotCode());
 			re.addContent(pe);

@@ -82,6 +82,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute(HTTPContext.USER_ATTR_NAME, p, SESSION);
 			
+			// Calculate how long we've been a member
+			long pilotAge = (System.currentTimeMillis() - p.getCreatedOn().getTime()) / 86400000;
+			ctx.setAttribute("pilotAge", Integer.valueOf((int) pilotAge), REQUEST);
+			
 			// Check for manual PIREP ability
 			GetFlightReports frdao = new GetFlightReports(con);
 			int heldPIREPs = frdao.getHeld(p.getID(), SystemData.get("airline.db"));

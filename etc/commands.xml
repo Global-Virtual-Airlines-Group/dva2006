@@ -79,6 +79,18 @@
 		<class>org.deltava.commands.pilot.NominationCenterCommand</class>
 		<roles>Pilot</roles>
 	</command>
+	
+	<command id="scnominate">
+		<name>Senior Captain Nomination</name>	
+		<class>org.deltava.commands.admin.NominationCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="scnomdispose">
+		<name>Senior Captain Nomination Dispose</name>	
+		<class>org.deltava.commands.admin.NominationDisposeCommand</class>
+		<roles>HR</roles>
+	</command>
 
 	<command id="dupesearch">
 		<name>Duplicate Pilot Search</name>

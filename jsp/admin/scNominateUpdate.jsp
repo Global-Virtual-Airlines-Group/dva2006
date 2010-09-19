@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Senior Captain Nomination Updated</title>
+<content:css name="main" browserSpecific="true" />
+<content:pics />
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<c:choose>
+<c:when test="${isDisposed && isApproved}">
+<div class="updateHdr"><content:airline /> Senior Captain Nomination Approved</div>
+<br />
+${pilot.name} has been succesfully promoted to Senior Captain. The profile has been updated and in
+the future, each time ${pilot.name} achieves the pre-requisites for Captain in an equipment type
+program, they will be automatically to the rank of Senior Captain.<br />
+</c:when>
+<c:when test="${isDisposed}">
+<div class="updateHdr"><content:airline /> Senior Captain Nomination Rejected</div>
+<br />
+The nomination of ${pilot.name} for Senior Captain has been rejected. ${pilot.name} cannot be
+re-nominated for Senior Captain again during the current calendar quarter.<br />
+</c:when>
+<c:otherwise>
+<div class="updateHdr"><content:airline /> Senior Captain Nomination Created</div>
+<br />
+Thank you for nominating ${pilot.name} for the position of Senior Captain. Your contribution is
+critical to recognizing our members who go above and beyond to make <content:airline /> a better
+place for everyone.<br /> 
+</c:otherwise>
+</c:choose>
+<br />
+To return to the list of Senior Captain nominations, <el:cmd url="scnomcenter" className="sec bld">Click Here</el:cmd>.<br />
+<br />
+<content:copyright />
+</content:region>
+</content:page>
+<content:googleAnalytics />
+</body>
+</html>

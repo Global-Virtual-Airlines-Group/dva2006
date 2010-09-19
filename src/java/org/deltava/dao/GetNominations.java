@@ -9,8 +9,8 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to load Senior Captain nominations.
  * @author Luke
- * @version 3.2
- * @since 3.2
+ * @version 3.3
+ * @since 3.3
  */
 
 public class GetNominations extends DAO {
@@ -31,8 +31,8 @@ public class GetNominations extends DAO {
 	 */
 	public List<Nomination> getByAuthor(int authorID) throws DAOException {
 		try {
-			prepareStatement("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR), IF(NC.AUTHOR=?,1,0) AS MINE "
-				+ "FROM NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
+			prepareStatement("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR), SUM(IF(NC.AUTHOR=?,1,0)) "
+				+ "AS MINE FROM NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
 				+ "WHERE (N.QUARTER=?) GROUP BY N.ID HAVING (MINE>0) ORDER BY N.SCORE DESC, N.ID");
 			_ps.setInt(1, authorID);
 			_ps.setInt(2, new Quarter().getYearQuarter());
@@ -101,11 +101,11 @@ public class GetNominations extends DAO {
 	public Nomination get(int id, Quarter q) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT N.*, MIN(NC.CREATED) FROM NOMINATIONS N LEFT JOIN "
-			+ "NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) WHERE (N.ID=?) ");
+		StringBuilder buf = new StringBuilder("SELECT N.*, MIN(NC.CREATED) AS CREATED FROM NOMINATIONS N, "
+			+ "NOMINATION_COMMENTS NC WHERE (N.ID=?) AND (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER)");
 		if (q != null)
 			buf.append("AND (N.QUARTER=?) ");
-		buf.append("ORDER BY N.QUARTER DESC LIMIT 1");
+		buf.append("HAVING (CREATED IS NOT NULL) ORDER BY N.QUARTER DESC LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
@@ -120,6 +120,7 @@ public class GetNominations extends DAO {
 				n = new Nomination(rs.getInt(1));
 				n.setScore(rs.getInt(3));
 				n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
+				n.setCreatedOn(rs.getTimestamp(5));
 				
 				// Clean up
 				rs.close();
@@ -128,7 +129,7 @@ public class GetNominations extends DAO {
 				// Load comments
 				prepareStatementWithoutLimits("SELECT AUTHOR, CREATED, BODY FROM NOMINATION_COMMENTS WHERE (ID=?) AND (QUARTER=?)");
 				_ps.setInt(1, id);
-				_ps.setInt(2, q.getYearQuarter());
+				_ps.setInt(2, new Quarter(n.getCreatedOn()).getYearQuarter());
 				rs = _ps.executeQuery();
 				while (rs.next()) {
 					NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(3));

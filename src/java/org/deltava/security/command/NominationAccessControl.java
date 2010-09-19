@@ -2,6 +2,7 @@
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.Rank;
 import org.deltava.beans.hr.*;
 
 import org.deltava.security.SecurityContext;
@@ -18,9 +19,11 @@ import org.deltava.util.system.SystemData;
 public class NominationAccessControl extends AccessControl {
 
 	private Nomination _n;
+	private Pilot _p;
 	
 	private boolean _canNominate;
 	private boolean _canUpdate;
+	private boolean _canDispose;
 	private boolean _canDelete;
 	
 	/**
@@ -32,6 +35,14 @@ public class NominationAccessControl extends AccessControl {
 		super(ctx);
 		_n = n;
 	}
+	
+	/**
+	 * Sets the Pilot being nominated.
+	 * @param p the Pilot being nominated
+	 */
+	public void setPilot(Pilot p) {
+		_p = p;
+	}
 
     /**
      * Calculates access rights.
@@ -40,19 +51,24 @@ public class NominationAccessControl extends AccessControl {
 	@Override
 	public void validate() throws AccessControlException {
 		
-		Pilot p = (Pilot) _ctx.getUser();
-		int daysActive = (int) ((System.currentTimeMillis() - p.getCreatedOn().getTime()) / 86400 / 1000);
-		_canNominate = (p.getLegs() > SystemData.getInt("users.sc.minFlights", 5)) && 
+		Pilot usr = (Pilot) _ctx.getUser();
+		int daysActive = (int) ((System.currentTimeMillis() - usr.getCreatedOn().getTime()) / 86400 / 1000);
+		_canNominate = (usr.getLegs() > SystemData.getInt("users.sc.minFlights", 5)) && 
 			(daysActive > SystemData.getInt("users.sc.minAge", 120));
 		if (_n == null)
 			return;
 		
+		// Check if the Pilot isn't already a Senior Captain
+		if (_p != null)
+			_canNominate &= (_p.getRank() != Rank.SC) && (!_p.getRank().isCP());
+		
 		// Check if we've nominated someone already
 		for (NominationComment nc : _n.getComments())
-			_canNominate &= (nc.getAuthorID() != p.getID());
+			_canNominate &= (nc.getAuthorID() != usr.getID());
 		
 		// Check other access
 		_canUpdate = _ctx.isUserInRole("HR");
+		_canDispose = _canUpdate && (_n.getStatus() == Nomination.Status.PENDING);
 		_canDelete = _ctx.isUserInRole("Admin");
 	}
 	
@@ -70,6 +86,14 @@ public class NominationAccessControl extends AccessControl {
 	 */
 	public boolean getCanUpdate() {
 		return _canUpdate;
+	}
+	
+	/**
+	 * Returns if the user can approve or reject this Nomination.
+	 * @return TRUE if the nomation can be rejected or approved, otherwise FALSE
+	 */
+	public boolean getCanDispose() {
+		return _canDispose;
 	}
 	
 	/**
