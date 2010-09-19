@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to ensure Dispatch Routes have the latest Terminal Route waypoints.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 2.6
  */
 
@@ -27,6 +27,8 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		boolean saveChanges = Boolean.valueOf(String.valueOf(ctx.getCmdParameter(OPERATION, null))).booleanValue();
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute navdao = new GetNavRoute(con);
@@ -108,25 +110,26 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				}
 				
 				// Save the updated route
-				if (isUpdated) {
+				if (isUpdated) updateCount++;
+				if (isUpdated && saveChanges) {
 					ctx.startTX();
 					rwdao.write(rt);
 					rwdao.activate(rt.getID(), rt.getActive());
 					ctx.commitTX();
-					updateCount++;
 				}
 			}
 			
 			// Save status messages
 			ctx.setAttribute("msgs", msgs, REQUEST);
 			ctx.setAttribute("updateCount", Integer.valueOf(updateCount), REQUEST);
+			ctx.setAttribute("isPreview", Boolean.valueOf(!saveChanges), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/navdata/dspRouteUpdate.jsp");
