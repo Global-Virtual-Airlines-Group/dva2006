@@ -162,7 +162,7 @@ public class GetNavAirway extends GetNavData {
 			
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME");
-		sqlBuf.append(name.contains("%") ? " LIKE " : "=");
+		sqlBuf.append(parts.get(0).contains("%") ? " LIKE " : "=");
 		sqlBuf.append("?) AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
 
 		try {

@@ -32,6 +32,8 @@ ${msg}<br />
 </c:forEach>
 </c:if>
 <br />
+<c:if test="${isPreview}"><span class="pri bld">This is a preview.</span> To save these changes to the database, 
+ <el:cmd url="dsptrouteupdate" op="save" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
