@@ -31,7 +31,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">SYSTEM INFORMATION</td>
 </tr>

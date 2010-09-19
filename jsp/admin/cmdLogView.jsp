@@ -23,7 +23,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="cmdlog.do" method="post" validate="return true">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> WEB SITE COMMAND LOG</td>
 </tr>
@@ -38,14 +38,14 @@
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH LOG" /></td>
 </tr>
 </el:table>
 </el:form>
 <c:if test="${doSearch}">
-<view:table className="view" space="default" pad="default" cmd="cmdlog">
+<view:table className="view" cmd="cmdlog">
 <tr class="title caps">
  <td colspan="6" class="left">COMMAND LOG RESULTS</td>
 </tr>

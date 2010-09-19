@@ -58,7 +58,7 @@ return true;
 
 <!-- Main Body Frame -->
 <el:form action="acarsMap.do" method="get" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr>
  <td class="data"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
 <el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" />&nbsp;

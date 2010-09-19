@@ -37,7 +37,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="void window.focus()">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <!-- Table Header Bars -->
 <tr class="title caps">
  <td class="mid">EMOTICON</td>

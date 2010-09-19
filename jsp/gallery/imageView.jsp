@@ -39,7 +39,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="imgvote.do" link="${img}" method="POST" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left">${img.name}</td>
 </tr>
@@ -68,7 +68,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title mid">
  <td>&nbsp;
 <c:if test="${access.canVote}">

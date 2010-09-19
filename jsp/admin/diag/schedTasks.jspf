@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <!-- Scheduled Task Pool Data Table -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="6" class="left">SCHEDULED TASK INFORMATION</td>
 </tr>

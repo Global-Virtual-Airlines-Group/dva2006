@@ -70,7 +70,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="validate.do" link="${person}" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <c:choose>
 <c:when test="${validationFailure}">
 <tr class="title caps">

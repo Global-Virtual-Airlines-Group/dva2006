@@ -27,7 +27,7 @@
 <%@ include file="/jsp/admin/diag/acarsInfo.jspf" %>
 <c:if test="${!empty acarsCmdStats}">
 <!-- ACARS Server Command Statistics -->
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td class="left caps" colspan="6">ACARS SERVER STATISTICS</td>
 </tr>

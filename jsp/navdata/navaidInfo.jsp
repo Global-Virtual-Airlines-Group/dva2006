@@ -114,7 +114,7 @@ return true;
 <content:region id="main">
 <el:form action="navsearch.do" method="post" validate="return validate(this)">
 <c:if test="${doSearch}">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">NAVIGATION AID SEARCH<span id="isLoading" /></td>
 </tr>
@@ -139,7 +139,7 @@ return true;
 </c:if>
 
 <!-- Search Bar -->
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">NEW NAVIGATION AID SEARCH</td>
 </tr>
@@ -150,7 +150,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="NEW NAVIGATION DATA SEARCH" /></td>
 </tr>

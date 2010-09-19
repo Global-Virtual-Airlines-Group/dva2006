@@ -25,7 +25,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" space="default" pad="default" cmd="events">
+<view:table className="view" cmd="events">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="10%">DATE</td>

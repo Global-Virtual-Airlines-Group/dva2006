@@ -48,7 +48,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="emailupd.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left">UPDATE E-MAIL ADDRESS</td>
 </tr>

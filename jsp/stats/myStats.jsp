@@ -43,7 +43,7 @@ return true;
 <content:region id="main">
 <el:form action="mystats.do" method="post" validate="return validate(this)">
 <!-- All Flight Report statistics -->
-<view:table className="view" pad="default" space="default" cmd="mystats">
+<view:table className="view" cmd="mystats">
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
  <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void update()" />
@@ -53,7 +53,7 @@ return true;
 </view:table>
 
 <!-- Touchdown Speed statistics -->
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${pilot.ACARSLegs}" /> LANDINGS USING ACARS</td>
 </tr>

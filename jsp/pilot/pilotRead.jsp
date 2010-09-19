@@ -46,10 +46,10 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
+ <td colspan="${cspan + 1}">${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
 <c:if test="${access.canEdit}"> - <el:cmd url="profile" op="edit" link="${pilot}">EDIT PROFILE</el:cmd></c:if></td>
 </tr>
 
@@ -271,7 +271,7 @@ Applicant profile for ${pilot.name}.</td>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td>
 <c:if test="${!crossDB}">

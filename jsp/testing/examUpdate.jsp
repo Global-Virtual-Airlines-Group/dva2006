@@ -37,7 +37,7 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 <div class="updateHdr">Examination Scored</div>
 <br />
 This ${exam.name} Pilot Examination for ${pilot.name} has been successfully scored.<c:if test="${!autoScore}"> An e-mail
-message has been sent to ${pilot.rank} ${pilot.lastName} notifying him or her of the scoring of this Examination.</c:if><br />
+message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring of this Examination.</c:if><br />
 <br />
 To view the Pilot Profile, <el:profile location="${usrLoc}" className="sec bld">Click Here</el:profile>.<br />
 To return to the Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />

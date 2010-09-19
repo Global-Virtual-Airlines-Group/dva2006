@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">${route.typeName} ROUTES FOR <fmt:date fmt="d" date="${route.date}" /></td>
 </tr>
@@ -35,7 +35,7 @@
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canDelete}">

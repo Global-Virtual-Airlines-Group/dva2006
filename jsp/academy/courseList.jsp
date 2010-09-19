@@ -40,7 +40,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="courses.do" method="post" validate="return validate(this)">
-<view:table className="view" space="default" pad="default" cmd="courses">
+<view:table className="view" cmd="courses">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> FLIGHT ACADEMY COURSES</td>
  <td colspan="4" class="right">SORT BY <el:combo ID="stCombo" name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void setType()" />

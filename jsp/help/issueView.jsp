@@ -85,7 +85,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="hdcomment.do" link="${issue}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
 </tr>
@@ -153,7 +153,7 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td>
 <c:if test="${access.canUpdateStatus}">

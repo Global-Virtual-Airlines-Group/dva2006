@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="15%">CERTIFICATION</td>

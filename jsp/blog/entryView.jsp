@@ -40,7 +40,7 @@ return ${access.canComment};
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="blogcomment.do" method="post" link="${entry}" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">${entry.title} - <fmt:date fmt="d" date="${entry.date}" /></td>
 </tr>
@@ -88,7 +88,7 @@ return ${access.canComment};
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="submit" className="BUTTON" label="SUBMIT COMMENT" />

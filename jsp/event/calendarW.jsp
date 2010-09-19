@@ -35,7 +35,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="eventcalendar.do" method="get" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td width="80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" tzName="local" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void switchType(this)" /></td>

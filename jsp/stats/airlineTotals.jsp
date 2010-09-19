@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRLINE STATISTICS AS OF <fmt:date date="${effectiveDate}" d="EEEE MMMM dd yyyy" /></td>
 </tr>
@@ -87,7 +87,7 @@
 </el:table>
 <br />
 <!-- Database Information Table -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td width="35%">TABLE NAME</td>
  <td width="15%">ROWS</td>

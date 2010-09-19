@@ -24,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ACADEMY INSTRUCTION SESSION</td>
 </tr>
@@ -32,7 +32,7 @@
 <tr>
  <td class="label">Pilot Name</td>
  <td class="data"><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd>
- <span class="bld">(${pilot.pilotCode})</span>, ${pilot.rank}, ${pilot.equipmentType}</td>
+ <span class="bld">(${pilot.pilotCode})</span>, ${pilot.rank.name}, ${pilot.equipmentType}</td>
 </tr>
 </c:if>
 <c:if test="${!empty ins}">
@@ -71,7 +71,7 @@
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td> 
  <el:cmdbutton ID="CalendarButton" url="academycalendar" label="INSTRUCTION CALENDAR" />

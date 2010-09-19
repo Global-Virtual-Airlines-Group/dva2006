@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="qprofiles.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="qprofiles">
+<view:table className="view" cmd="qprofiles">
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="8%">&nbsp;</td>

@@ -82,7 +82,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="threadpost.do" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps">New ${forumName} Discusion Thread</td>
 </tr>

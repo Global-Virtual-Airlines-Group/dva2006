@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="suspend.do" link="${pilot}" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps">NEW STATUS COMMENT FOR ${pilot.name}</td>
 </tr>
@@ -49,7 +49,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SUSPEND USER" /></td>
 </tr>

@@ -118,7 +118,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="register.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <c:if test="${!empty manuals}">
 <tr class="title caps">
  <td colspan="4">THANK YOU FOR YOUR INTEREST IN <content:airline />!</td>
@@ -299,7 +299,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SUBMIT REGISTRATION" /></td>
 </tr>

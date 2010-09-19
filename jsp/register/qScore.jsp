@@ -42,7 +42,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="qscore.do" link="${exam}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Exam Title Bar -->
 <tr class="title caps">
  <td colspan="2">INITIAL QUESTIONNAIRE - ${applicant.name}</td>
@@ -91,7 +91,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canScore}">

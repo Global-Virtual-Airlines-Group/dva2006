@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="sysdatareload.do" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">SYSTEM CONFIGURATION DATA RELOAD</td>
 </tr>
@@ -59,7 +59,7 @@ Schedule Database Reloaded</c:if></td>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="ReloadButton" type="SUBMIT" className="BUTTON" label="RELOAD SYSTEM CONFIGURATION" /></td>
 </tr>

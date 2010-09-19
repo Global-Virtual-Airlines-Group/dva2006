@@ -61,7 +61,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
 <c:if test="${!empty notams}">
 <!-- New NOTAMs since last login -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="3">THE FOLLOWING NOTAMS HAVE GONE INTO EFFECT SINCE YOUR LAST LOGIN</td>
 </tr>
@@ -82,7 +82,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </c:if>
 <c:if test="${!empty latestNews}">
 <!-- Latest News -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <c:forEach var="entry" items="${latestNews}">
 <tr>
  <td class="priB" width="20%"><fmt:date fmt="d" date="${entry.date}" /></td>
@@ -98,7 +98,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:if test="${!empty acarsPool}">
 <content:filter roles="HR"><c:set var="isHR" value="${true}" scope="page" /></content:filter>
 <!-- Current ACARS server connections -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps left">
  <td colspan="4">CURRENTLY FLYING USING <content:airline /> ACARS</td>
 </tr>
@@ -127,7 +127,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </c:if>
 <c:if test="${!empty centuryClub}">
 <!-- Latest Century Club members -->
-<el:table className="view mid" space="default" pad="default" style="width:510px;">
+<el:table className="view mid" style="width:510px;">
 <tr class="title caps left">
  <td colspan="2">OUR NEWEST CENTURY CLUB MEMBERS</td>
 </tr>
@@ -142,7 +142,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </c:if>
 <c:if test="${!empty promotions}">
 <!-- Latest Pilot Promotions -->
-<el:table className="view mid" space="default" pad="default" style="width:510px;">
+<el:table className="view mid" style="width:510px;">
 <tr class="title caps left">
  <td colspan="2"><content:airline /> CONGRATULATES</td>
 </tr>
@@ -157,7 +157,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </c:if>
 <c:if test="${!empty futureEvents}">
 <!-- Future Online Events -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps left">
  <td colspan="4">UPCOMING <content:airline /> ONLINE EVENTS</td>
 </tr>
@@ -180,7 +180,7 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 <c:if test="${!empty toLand}">
 <!-- Latest Takeoffs/Landings -->
-<el:table className="view mid" space="default" pad="default" style="width:790px;">
+<el:table className="view mid" style="width:790px;">
 <tr class="title caps left">
  <td colspan="3">LATEST <content:airline /> ACARS FLIGHT DEPARTURES AND ARRIVALS</td>
 </tr>
@@ -203,14 +203,14 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 <c:if test="${!empty latestPilots}">
 <!-- Latest Pilot Hires -->
-<el:table className="view mid" space="default" pad="default" style="width:530px;">
+<el:table className="view mid" style="width:530px;">
 <tr class="title caps left">
  <td colspan="2"><content:airline /> WELCOMES OUR NEWEST PILOTS</td>
 </tr>
 <c:forEach var="pilot" items="${latestPilots}">
 <tr>
  <td class="priB mid">${pilot.pilotCode}</td>
- <td class="def mid">${pilot.rank} ${pilot.name} (${pilot.equipmentType})</td>
+ <td class="def mid">${pilot.rank.name} ${pilot.name} (${pilot.equipmentType})</td>
 </tr>
 </c:forEach>
 </el:table>

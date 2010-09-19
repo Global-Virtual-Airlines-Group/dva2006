@@ -20,8 +20,8 @@ public class TestTableTag extends AbstractTagTestCase {
     public void testAttributes() throws Exception {
         _tag.setID("TableID");
         _tag.setClassName("tableClass");
-        _tag.setSpace("2");
-        _tag.setPad("5");
+        _tag.setSpace(2);
+        _tag.setPad(5);
         
         assertEvalBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -37,9 +37,6 @@ public class TestTableTag extends AbstractTagTestCase {
     }
     
     public void testDefaults() throws Exception {
-        _tag.setSpace("default");
-        _tag.setPad("default");
-        
         assertEvalBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
         
@@ -53,8 +50,7 @@ public class TestTableTag extends AbstractTagTestCase {
     
     public void testValidation() throws Exception {
         _tag.setID("idTable");
-        _tag.setSpace("-1");
-        _tag.setPad("XXXX");
+        _tag.setSpace(-1);
         
         assertEvalBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());

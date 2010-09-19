@@ -29,7 +29,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="users.do" method="get" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td class="caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>

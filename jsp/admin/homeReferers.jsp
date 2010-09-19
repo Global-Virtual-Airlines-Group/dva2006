@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="referers">
+<view:table className="view" cmd="referers">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="30%" class="left">HOME PAGE REFERERS</td>

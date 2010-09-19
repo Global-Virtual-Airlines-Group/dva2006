@@ -30,11 +30,13 @@
 			<name>space</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>pad</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>cmd</name>

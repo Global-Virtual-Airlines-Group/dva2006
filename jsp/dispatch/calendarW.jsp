@@ -48,7 +48,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="dspentry.do" op="save" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td width="80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" tzName="local" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void switchType(this)" /></td>

@@ -40,7 +40,7 @@ counts for 30% of the ordering) and the standard deviation of those speeds (20%)
 runway threshold (30% if available) and the standard deviation of those distances (the remaining 20%). If no 
 threshold displacement data is available <br />
 <br />
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> LANDING STATISTICS</td>
@@ -71,7 +71,7 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 <tr>
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld">${pilot.name}</td>
- <td>${pilot.rank}, ${pilot.equipmentType}</td>
+ <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td><fmt:int value="${entry.legs}" /></td>
  <td><fmt:dec value="${entry.hours}" /></td>
  <td class="pri bld"><fmt:dec value="${entry.averageSpeed}" fmt="#0.00" /> ft/min</td>

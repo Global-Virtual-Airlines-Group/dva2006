@@ -138,7 +138,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="geolocate.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT LOCATION <span id="isLoading" /></td>
 </tr>
@@ -175,7 +175,7 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE LOCATION" />
 <c:if test="${!empty location}">

@@ -41,7 +41,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="eprofile.do" linkID="${eProfile.name}" op="save" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Exam Title Bar -->
 <tr class="title caps">
  <td colspan="2">EXAMINATION PROFILE - ${examName}</td>
@@ -97,7 +97,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE EXAMINATION PROFILE" /></td>
 </tr>

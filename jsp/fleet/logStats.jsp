@@ -34,7 +34,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="fleetstats.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">FLEET INSTALLER SYSTEM DATA STATISTICS</td>
 </tr>
@@ -49,7 +49,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLEET INSTALLER STATISTICS" /></td>
 </tr>
@@ -57,7 +57,7 @@ return true;
 </el:form>
 
 <c:if test="${!empty stats}">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="65%">STATISTICS LABEL</td>

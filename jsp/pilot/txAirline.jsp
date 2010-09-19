@@ -34,13 +34,13 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="txairline.do" method="post" link="${pilot}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">INTER-AIRLINE PILOT TRANSFER FOR ${pilot.name}</td>
 </tr>
 <tr>
  <td class="label">Current Rank / Program</td>
- <td class="data">${pilot.rank}, <span class="sec">${pilot.equipmentType}</span></td>
+ <td class="data">${pilot.rank.name}, <span class="sec">${pilot.equipmentType}</span></td>
 </tr>
 <tr>
  <td class="label">New Airline</td>
@@ -56,7 +56,7 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank}" /></td>
+ <td class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank.name}" /></td>
 </tr>
 </c:if>
 <tr>
@@ -66,7 +66,7 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button type="submit" className="BUTTON" label="${!empty eqTypes ? 'TRANSFER PILOT' : 'SELECT AIRLINE'}" /></td>
 </tr>

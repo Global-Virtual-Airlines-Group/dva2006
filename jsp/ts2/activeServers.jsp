@@ -27,7 +27,7 @@
 <span class="ita">freeware</span> voice client that runs on 32-bit Windows, Apple Macintosh and Linux systems, and 
 <content:airline /> operates several TeamSpeak 2 servers for the use of our members.<br />
 <br />
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="5" class="left">AVAILABLE TEAMSPEAK 2 SERVERS</td>
 </tr>

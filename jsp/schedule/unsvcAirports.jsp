@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="usvcairports.do" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> UNSERVICED AIRPORTS</td>
 </tr>
@@ -62,7 +62,7 @@ The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer 
 
 <!-- Button bar -->
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="ReloadButton" type="SUBMIT" className="BUTTON" label="UPDATE AIRPORTS" /></td>
 </tr>

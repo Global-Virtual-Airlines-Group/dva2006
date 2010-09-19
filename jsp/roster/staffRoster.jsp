@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="staff">
+<view:table className="view" cmd="staff">
 <tr class="title">
  <td colspan="5" class="left caps"><content:airline /> STAFF ROSTER</td>
 </tr>

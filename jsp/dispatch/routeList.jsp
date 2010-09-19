@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="dsproutes.do" method="post" validate="return false">
-<view:table className="view" space="default" pad="default" cmd="dsproutes">
+<view:table className="view" cmd="dsproutes">
 <!-- Table Header Bar -->
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> ACARS DISPATCHER ROUTES<c:if test="${!empty author}"> - ${author.name}</c:if></td>

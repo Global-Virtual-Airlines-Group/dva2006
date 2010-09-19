@@ -2,9 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:if test="${!empty statusUpdates}">
-<content:filter roles="HR">
-<c:set var="isHR" value="${true}" scope="page" />
-</content:filter>
+<content:attr attr="isHR" value="true" roles="HR" />
 
 <!-- Pilot Status History -->
 <tr class="title caps">

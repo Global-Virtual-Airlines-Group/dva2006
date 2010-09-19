@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="staff">
+<view:table className="view" cmd="staff">
 <tr class="title caps">
  <td class="left" colspan="5">${forumName} CHANNELS</td>
 </tr>
@@ -53,7 +53,7 @@
  <td><fmt:int value="${channel.viewCount}" /></td>
 <c:set var="post" value="${posts[channel.lastThreadID]}" scope="page" />
 <c:set var="author" value="${authors[post.authorID]}" scope="page" />
- <td class="right"><span class="small">${author.rank}</span> <span class="pri bld small">${author.name}</span>
+ <td class="right"><span class="small">${author.rank.name}</span> <span class="pri bld small">${author.name}</span>
  <span class="small"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
  <fmt:date date="${post.createdOn}" /></span><br />
  in <el:cmd url="thread" linkID="${post.threadID}" className="bld">${post.subject}</el:cmd></td>

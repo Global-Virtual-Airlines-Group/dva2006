@@ -30,7 +30,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="roster.do" method="post" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="roster">
+<view:table className="view" cmd="roster">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> PILOT ROSTER</td>
@@ -56,7 +56,7 @@ return true;
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
- <td class="pri bld">${pilot.rank}</td>
+ <td class="pri bld">${pilot.rank.name}</td>
  <td class="sec">${pilot.homeAirport}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
  <td><fmt:dec value="${pilot.hours}" /></td>

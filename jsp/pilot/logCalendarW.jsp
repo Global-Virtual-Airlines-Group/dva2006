@@ -32,9 +32,9 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="logcalendar.do" link="${pilot}" method="get" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
- <td width="80%" class="caps">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td width="80%" class="caps">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
 </tr>
 </el:table>

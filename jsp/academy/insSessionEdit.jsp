@@ -36,14 +36,14 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="isession.do" link="${session}" op="save" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ACADEMY INSTRUCTION SESSION</td>
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
  <td class="data"><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd>
- <span class="bld">(${pilot.pilotCode})</span>, ${pilot.rank}, ${pilot.equipmentType}</td>
+ <span class="bld">(${pilot.pilotCode})</span>, ${pilot.rank.name}, ${pilot.equipmentType}</td>
 </tr>
 <tr>
  <td class="label">Instructor Name</td>
@@ -83,7 +83,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE INSTRUCTION SESSION" /></td>
 </tr>

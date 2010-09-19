@@ -165,7 +165,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="pacotplot.do" method="get" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PACIFIC ROUTE PLOTTER<span id="isLoading" /></td>
 </tr>

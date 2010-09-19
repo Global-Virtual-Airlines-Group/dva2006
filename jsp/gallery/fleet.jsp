@@ -40,7 +40,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="fleet.do" method="get" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLEET GALLERY</td>
 </tr>

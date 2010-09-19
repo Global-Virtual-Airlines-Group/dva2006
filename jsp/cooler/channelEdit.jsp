@@ -39,7 +39,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="chprofile.do" method="post" linkID="${channel.name}" op="save" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">WATER COOLER CHANNEL PROFILE</td>
 </tr>
@@ -71,7 +71,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="SAVE CHANNEL PROFILE" />
 <c:if test="${(!empty channel) && access.canDelete}">

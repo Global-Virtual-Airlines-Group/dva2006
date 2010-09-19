@@ -26,7 +26,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarslogf.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT INFORMATION LOG<c:if test="${!empty startDate}"> BETWEEN <fmt:date date="${startDate}" /> 
  - <fmt:date date="${endDate}" /></c:if></td>
@@ -50,7 +50,7 @@
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT INFORMATION LOG" /></td>
 </tr>
@@ -60,7 +60,7 @@
 <c:choose>
 <c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
-<view:table className="view" space="default" pad="default" cmd="acarslogf">
+<view:table className="view" cmd="acarslogf">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="8%">ID</td>
@@ -103,7 +103,7 @@
 </view:table>
 </c:when>
 <c:when test="${doSearch}">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr>
  <td class="pri bld">No Flights matching your search criteria were found in the ACARS log database.</td>
 </tr>
