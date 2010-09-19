@@ -91,7 +91,7 @@ public class RatingCheck extends TestCase {
 			helper.setEquipmentTypes(eqdao.getAll());
 			
 			// Create a dummy FO exam(s) for the hired in program
-			for (Iterator<String> i = ieq.getExamNames(Ranks.RANK_FO).iterator(); i.hasNext(); ) {
+			for (Iterator<String> i = ieq.getExamNames(Rank.FO).iterator(); i.hasNext(); ) {
 				String foExam = i.next();
 				if (!StringUtils.isEmpty(foExam) && !helper.hasPassed(Collections.singleton(foExam))) {
 					Examination ex = new Examination(foExam);

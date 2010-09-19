@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
  * A Data Access Object to load Pilot IDs for Pilots who meet the entrance
  * qualifications for an Equipment Type program.
  * @author Luke
- * @version 2.3
+ * @version 3.3
  * @since 2.3
  */
 
@@ -53,7 +53,7 @@ public class GetExamQualifications extends DAO {
 			_ps.close();
 			
 			// Build the SQL statement
-			Collection<String> examNames = eq.getExamNames(Ranks.RANK_FO);
+			Collection<String> examNames = eq.getExamNames(Rank.FO);
 			StringBuilder buf = new StringBuilder("SELECT PILOT_ID, COUNT(ID) AS CNT FROM exams.EXAMS "
 					+ "WHERE (STATUS=?) AND (PASS=?) AND (");
 			for (Iterator<String> i = examNames.iterator(); i.hasNext(); ) {

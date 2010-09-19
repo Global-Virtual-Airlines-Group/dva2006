@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -580,7 +580,7 @@ public class GetFlightReports extends DAO {
 			// Populate the data
 			p.setID(rs.getInt(1));
 			p.setDatabaseID(DatabaseID.PILOT, rs.getInt(2));
-			p.setRank(rs.getString(3));
+			p.setRank(Rank.fromName(rs.getString(3)));
 			p.setStatus(status);
 			p.setDate(expandDate(rs.getDate(5)));
 			p.setAirportD(SystemData.getAirport(rs.getString(9)));

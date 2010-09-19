@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -276,7 +276,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setLegacyHours(rs.getDouble(11));
 			p.setHomeAirport(rs.getString(12));
 			p.setEquipmentType(rs.getString(13));
-			p.setRank(rs.getString(14));
+			p.setRank(Rank.fromName(rs.getString(14)));
 			p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(15));
 			p.setNetworkID(OnlineNetwork.IVAO, rs.getString(16));
 			p.setCreatedOn(rs.getTimestamp(17));

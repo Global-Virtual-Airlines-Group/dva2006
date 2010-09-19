@@ -8,16 +8,18 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
 public class GetPilotRecognition extends PilotReadDAO {
 	
+	private static final Cache<CacheableSet<Integer>> _scNomCache = new ExpiringCache<CacheableSet<Integer>>(1, 3600);
 	private static final Cache<CacheableLong> _promoCache = new ExpiringCache<CacheableLong>(4, 900);
 
 	/**
@@ -43,6 +45,7 @@ public class GetPilotRecognition extends PilotReadDAO {
 	public CacheInfo getCacheInfo() {
 		CacheInfo info = super.getCacheInfo();
 		info.add(_promoCache);
+		info.add(_scNomCache);
 		return info;
 	}
 
@@ -111,7 +114,7 @@ public class GetPilotRecognition extends PilotReadDAO {
           _ps.setInt(2, EquipmentType.EXAM_CAPT);
           _ps.setBoolean(3, true);
           _ps.setInt(4, Pilot.ACTIVE);
-          _ps.setString(5, Ranks.RANK_FO);
+          _ps.setString(5, Rank.FO.getName());
           _ps.setInt(6, EquipmentType.EXAM_CAPT);
           if (eqType != null)
         	  _ps.setString(7, eqType);
@@ -119,5 +122,38 @@ public class GetPilotRecognition extends PilotReadDAO {
        } catch (SQLException se) {
           throw new DAOException(se);
        }
+    }
+    
+    /**
+     * Returns Pilots eligible for promotion to Senior Captain.
+     * @return a Collection of database IDs
+     * @throws DAOException if a JDBC error occurs
+     */
+    public Collection<Integer> getNominationEligible() throws DAOException {
+    	
+    	// Check the cache
+    	CacheableSet<Integer> results = _scNomCache.get(GetPilotRecognition.class);
+    	if (results != null)
+    		return results.clone();
+    	
+    	try {
+    		prepareStatementWithoutLimits("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (P.ID=F.PILOT_ID) "
+    			+ "AND (F.STATUS=?)) AS LEGS, COUNT(SU.PILOT_ID) AS SC FROM PILOTS P LEFT JOIN STATUS_UPDATES SU ON "
+    			+ "(P.ID=SU.PILOT_ID) AND (SU.TYPE=?) WHERE (P.RANK=?) AND (P.STATUS=?) AND (P.CREATED < DATE_SUB(CURDATE(), "
+    			+ "INTERVAL ? DAY)) GROUP BY P.ID HAVING (SC=0) AND (LEGS>=?)");
+    		_ps.setInt(1, FlightReport.OK);
+    		_ps.setInt(2, StatusUpdate.SR_CAPTAIN);
+    		_ps.setString(3, Rank.C.getName());
+    		_ps.setInt(4, Pilot.ACTIVE);
+    		_ps.setInt(5, SystemData.getInt("users.sc.minAge", 90));
+    		_ps.setInt(6, SystemData.getInt("users.sc.minFlights", 5));
+    		results = new CacheableSet<Integer>(GetPilotRecognition.class);
+    		results.addAll(executeIDs());
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
+    	
+    	_scNomCache.add(results);
+    	return results.clone();
     }
 }

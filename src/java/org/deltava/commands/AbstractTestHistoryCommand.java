@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 2.7
+ * @version 3.3
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Create a dummy FO exam(s) for the hired in program
 		if (ieq != null) {
-			for (Iterator<String> i = ieq.getExamNames(Ranks.RANK_FO).iterator(); i.hasNext(); ) {
+			for (Iterator<String> i = ieq.getExamNames(Rank.FO).iterator(); i.hasNext(); ) {
 				String foExam = i.next();
 				if (!StringUtils.isEmpty(foExam) && !helper.hasPassed(Collections.singleton(foExam))) {
 					Examination ex = new Examination(foExam);

@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command for users to view Promotion Eligibility. 
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 3.0
  */
 
@@ -88,7 +88,7 @@ public class PromotionEligibilityCommand extends AbstractTestHistoryCommand {
             	}
             	
             	// Check if we've passed the FO exams
-            	Collection<String> examNames = eq.getExamNames(Ranks.RANK_FO); 
+            	Collection<String> examNames = eq.getExamNames(Rank.FO); 
             	if (!testHistory.hasPassed(examNames)) {
             		Collection<String> msgs = new ArrayList<String>();
             		for (String examName : examNames) {

@@ -103,7 +103,7 @@ return true;
 <content:attr attr="isHR" value="true" roles="HR" />
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
-<content:sysdata var="ranks" name="ranks" />
+<content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />

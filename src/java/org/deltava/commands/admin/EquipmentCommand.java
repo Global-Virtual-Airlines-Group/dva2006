@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -45,7 +45,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 			
 			// Get the Chief Pilots
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("chiefPilots", pdao.getPilotsByRank(Ranks.RANK_CP), REQUEST);
+			ctx.setAttribute("chiefPilots", pdao.getPilotsByRank(Rank.CP), REQUEST);
 			
 			// Get the DAO and execute
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -127,8 +127,8 @@ public class EquipmentCommand extends AbstractFormCommand {
 			}
 			
 			// Update examination names
-			eq.setExamNames(Ranks.RANK_FO, ctx.getParameters("examFO"));
-			eq.setExamNames(Ranks.RANK_C, ctx.getParameters("examC"));
+			eq.setExamNames(Rank.FO, ctx.getParameters("examFO"));
+			eq.setExamNames(Rank.C, ctx.getParameters("examC"));
 			
 			// Determine who is missing the ratings
 			GetPilot pdao = new GetPilot(con);

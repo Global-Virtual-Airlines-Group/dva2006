@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -122,14 +122,14 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 		
 		// Write the FO exams
 		_ps.setInt(3, EquipmentType.EXAM_FO);
-		for (Iterator<String> i = eq.getExamNames(Ranks.RANK_FO).iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = eq.getExamNames(Rank.FO).iterator(); i.hasNext(); ) {
 			_ps.setString(2, i.next());
 			_ps.addBatch();
 		}
 		
 		// Write the Captain exams
 		_ps.setInt(3, EquipmentType.EXAM_CAPT);
-		for (Iterator<String> i = eq.getExamNames(Ranks.RANK_C).iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = eq.getExamNames(Rank.C).iterator(); i.hasNext(); ) {
 			_ps.setString(2, i.next());
 			_ps.addBatch();
 		}

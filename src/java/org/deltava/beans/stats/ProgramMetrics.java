@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store equipment program-specific statistics.
  * @author Luke
- * @version 2.1
+ * @version 3.3
  * @since 2.1
  */
 
@@ -19,7 +19,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 
 	private EquipmentType _eq;
 	
-	private final Map<String, Integer> _rankCounts = new LinkedHashMap<String, Integer>();
+	private final Map<Rank, Integer> _rankCounts = new LinkedHashMap<Rank, Integer>();
 	private final Map<Date, Integer> _hireCounts = new LinkedHashMap<Date, Integer>();
 	private final Map<String, Integer> _statusCounts = new TreeMap<String, Integer>();
 	
@@ -62,7 +62,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 	/**
 	 * Helper method to increment rank count.
 	 */
-	private void addRank(String rank) {
+	private void addRank(Rank rank) {
 		Integer cnt = _rankCounts.get(rank);
 		if (cnt != null) {
 			_rankCounts.put(rank, Integer.valueOf(cnt.intValue() + 1));
@@ -105,7 +105,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 		return _size;
 	}
 	
-	public Map<String, Integer> getRankCounts() {
+	public Map<Rank, Integer> getRankCounts() {
 		return _rankCounts;
 	}
 	

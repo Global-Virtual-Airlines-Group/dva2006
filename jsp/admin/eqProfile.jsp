@@ -44,7 +44,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="ranks" name="ranks" />
+<content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 

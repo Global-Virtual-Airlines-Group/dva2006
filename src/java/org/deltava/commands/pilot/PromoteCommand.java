@@ -14,7 +14,7 @@ import org.deltava.security.command.PilotAccessControl;
 /**
  * A Web Site Command to promote a Pilot to Captain.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -45,12 +45,12 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			TestingHistoryHelper testHistory = initTestHistory(usr, con);
 			
 			// Make sure we are a First Officer
-			if (!Ranks.RANK_FO.equals(usr.getRank()))
+			if (Rank.FO != usr.getRank())
 				throw new CommandException(usr.getName() + " is not a First Officer", false);
 			
 			// Make sure we have passed the examination
 			EquipmentType eq = testHistory.getEquipmentType();
-			if (!testHistory.hasPassed(eq.getExamNames(Ranks.RANK_C)))
+			if (!testHistory.hasPassed(eq.getExamNames(Rank.C)))
 				throw new CommandException(usr.getName() + " has not passed Captain's exams", false);
 			
 			// Make sure we have the legs
@@ -60,7 +60,7 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			// Determine if we can jump to SC
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
 			boolean isSC = sudao.isSeniorCaptain(usr.getID());
-			usr.setRank(isSC ? Ranks.RANK_SC : Ranks.RANK_C);
+			usr.setRank(isSC ? Rank.SC : Rank.C);
 			
 			// Create the status update bean
 			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.INTPROMOTION);

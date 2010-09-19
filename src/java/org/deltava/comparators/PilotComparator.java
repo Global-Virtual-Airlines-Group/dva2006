@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 2.7
+ * @version 3.3
  * @since 1.0
  */
 
@@ -26,9 +26,6 @@ public class PilotComparator extends PersonComparator<Pilot> {
     public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code",
             "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status", "Last Flight"};
     
-    private static final String[] RANKS = {"Trainee", Ranks.RANK_FO, Ranks.RANK_C, "Senior Captain",
-            "Assistant Chief Pilot", Ranks.RANK_CP};
-    
     /**
      * Creates a new comparator with a specified comparison type code.
      * @param comparisonType the comparison type code
@@ -45,15 +42,6 @@ public class PilotComparator extends PersonComparator<Pilot> {
     public PilotComparator(String comparisonType) {
         super(TYPES);
         setComparisonType(comparisonType);
-    }
-    
-    private int getRankValue(String rank) {
-        for (int x = 0; x < RANKS.length; x++) {
-            if (RANKS[x].equals(rank))
-                return x;
-        }
-        
-        return - 1;
     }
     
     private int comparePilotCodes(int pc1, int pc2) {
@@ -86,7 +74,7 @@ public class PilotComparator extends PersonComparator<Pilot> {
         		    break;
         		    
         		case RANK :
-        		    tmpResult = Integer.valueOf(getRankValue(p1.getRank())).compareTo(Integer.valueOf(getRankValue(p2.getRank())));
+        		    tmpResult = p1.getRank().compareTo(p2.getRank());
         		    break;
         		    
         		case LEGS :

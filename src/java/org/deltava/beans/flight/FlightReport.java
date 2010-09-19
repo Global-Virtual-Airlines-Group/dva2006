@@ -3,17 +3,13 @@ package org.deltava.beans.flight;
 
 import java.util.*;
 
-import org.deltava.beans.CalendarEntry;
-import org.deltava.beans.Flight;
-import org.deltava.beans.OnlineNetwork;
-import org.deltava.beans.Person;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
 
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -145,7 +141,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	private int _attr;
 	private String _remarks;
 	private String _comments; // made on disposition
-	private String _rank; // at time of flight
+	private Rank _rank; // at time of flight
 	private String _route;
 
 	private final Collection<String> _captEQType = new TreeSet<String>();
@@ -183,9 +179,9 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	/**
 	 * Returns the Pilot's rank at the time of the Flight.
 	 * @return the Pilot's rank
-	 * @see FlightReport#getRank()
+	 * @see FlightReport#setRank(Rank)
 	 */
-	public String getRank() {
+	public Rank getRank() {
 		return _rank;
 	}
 
@@ -379,7 +375,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * @see FlightReport#getRank()
 	 * @see Person#getRank()
 	 */
-	public void setRank(String rank) {
+	public void setRank(Rank rank) {
 		_rank = rank;
 	}
 

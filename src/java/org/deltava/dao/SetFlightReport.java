@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -118,7 +118,7 @@ public class SetFlightReport extends DAO {
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
 		_ps.setInt(1, fr.getDatabaseID(DatabaseID.PILOT));
-		_ps.setString(2, fr.getRank());
+		_ps.setString(2, fr.getRank().getName());
 		_ps.setInt(3, fr.getStatus());
 		_ps.setTimestamp(4, createTimestamp(fr.getDate()));
 		_ps.setString(5, fr.getAirline().getCode());

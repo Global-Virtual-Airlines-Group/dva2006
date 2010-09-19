@@ -1,0 +1,84 @@
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao;
+
+import java.sql.*;
+
+import org.deltava.beans.hr.*;
+
+/**
+ * A Data Access Object to write Senior Captain Nominations to the database.
+ * @author Luke
+ * @version 3.2
+ * @since 3.2
+ */
+
+public class SetNomination extends DAO {
+
+	/**
+	 * Initializes the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
+	public SetNomination(Connection c) {
+		super(c);
+	}
+
+	/**
+	 * Writes a Nomination to the database. This can handle UPDATEs and INSERTs.
+	 * @param n the Nomination bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Nomination n) throws DAOException {
+		try {
+			if (n.getID() != 0) {
+				prepareStatement("UPDATE NOMINATIONS SET SCORE=?, STATUS=? WHERE (QUARTER=?) AND (ID=?)");
+				_ps.setInt(4, n.getID());
+			} else
+				prepareStatement("INSERT INTO NOMINATIONS (SCORE, STATUS, QUARTER) VALUES(?, ?, ?)");
+			
+			_ps.setInt(1, n.getScore());
+			_ps.setInt(2, n.getStatus().ordinal());
+			_ps.setInt(3, new Quarter(n.getCreatedOn()).getYearQuarter());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a NominationComment to the database.
+	 * @param id the Nomination database ID
+	 * @param nc the NominationComment bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(int id, NominationComment nc) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO NOMINATION_COMMENTS (ID, QUARTER, AUTHOR, CREATED, BODY) "
+				+ "VALUES (?, ?, ?, ?, ?)");
+			_ps.setInt(1, id);
+			_ps.setInt(2, new Quarter(nc.getCreatedOn()).getYearQuarter());
+			_ps.setInt(3, nc.getID());
+			_ps.setTimestamp(4, createTimestamp(nc.getCreatedOn()));
+			_ps.setString(5, nc.getBody());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Resolves all pending Nominations by setting them to a particular status.
+	 * @param newStatus the new Nomination status
+	 * @return the number of Nominations updated
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int updatePending(Nomination.Status newStatus) throws DAOException {
+		try {
+			prepareStatement("UPDATE NOMINATIONS SET STATUS=? WHERE (STATUS=?)");
+			_ps.setInt(1, newStatus.ordinal());
+			_ps.setInt(2, Nomination.Status.PENDING.ordinal());
+			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+}

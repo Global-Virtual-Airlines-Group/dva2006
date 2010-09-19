@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class SetApplicant extends PilotWriteDAO {
 						+ "AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, "
 						+ "HR_COMMENTS=? WHERE (ID=?)");
 				_ps.setString(31, a.getEquipmentType());
-				_ps.setString(32, a.getRank());
+				_ps.setString(32, a.getRank().getName());
 				_ps.setString(33, a.getHRComments());
 				_ps.setInt(34, a.getID());
 			}
@@ -154,7 +154,7 @@ public class SetApplicant extends PilotWriteDAO {
 			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANK=?, EQTYPE=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setInt(2, a.getPilotID());
-			_ps.setString(3, a.getRank());
+			_ps.setString(3, a.getRank().getName());
 			_ps.setString(4, a.getEquipmentType());
 			_ps.setInt(5, a.getID());
 			executeUpdate(1);
