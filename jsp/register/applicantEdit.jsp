@@ -53,7 +53,7 @@ return cmdPost(f.action);
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
-<content:sysdata var="ranks" name="ranks" />
+<content:enum var="ranks" className="org.deltava.beans.Rank" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

@@ -134,15 +134,6 @@
 		<time_format>HH:mm</time_format>
 	</time>
 	
-	<!-- pilot ranks -->
-	<list name="ranks" attr="rank" unique="true">
-		<rank>First Officer</rank>
-		<rank>Captain</rank>
-		<rank>Senior Captain</rank>
-		<rank>Assistant Chief Pilot</rank>
-		<rank>Chief Pilot</rank>
-	</list>
-
 	<!-- Staff functional areas -->
 	<list name="staff.departments" attr="dept" unqiue="true">
 		<dept>Senior Staff</dept>
@@ -590,6 +581,14 @@
 			<assign_purge type="Integer">14</assign_purge>
 			<draft_purge type="Integer">30</draft_purge>
 		</pirep>
+
+		<!-- Senior Captain settings -->
+		<sc>
+			<minFlights type="Integer">10</minFlights>
+			<minAge type="Integer">90</minAge>
+		
+			<maxNominations type="Integer">3</maxNominations>
+		</sc>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
 		<tasks_by>DVA2570</tasks_by>

@@ -1,60 +1,37 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import java.util.*;
+import org.deltava.beans.Rank;
 
 /**
  * A Comparator to compare pilot rank/equipment program changes. This isn't a true comparator since it
  * doesn't implement {@link java.util.Comparator}, but it returns similar values.
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 1.0
  */
 
 public class RankComparator {
 
-   private final List<String> _ranks = new ArrayList<String>();
-   
    private RankStage _rs1;
    private RankStage _rs2;
    
-   public RankComparator(Collection<String> ranks) {
-      super();
-      _ranks.addAll(ranks); 
-   }
-   
    protected class RankStage implements Comparable<RankStage> {
       
-      private String _rank;
+      private Rank _rank;
       private int _stage;
       
-      RankStage(String rank, int stage) {
+      RankStage(Rank rank, int stage) {
          super();
          _rank = rank;
          _stage = stage;
       }
       
+      // Compare stages, and only ranks if stages are equal
       public int compareTo(RankStage rs2) {
-         // Compare stages, and only ranks if stages are equal
          int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(rs2._stage));
-         return (tmpResult == 0) ? compareRanks(_rank, rs2._rank) : tmpResult;
+         return (tmpResult == 0) ? _rank.compareTo(rs2._rank) : tmpResult;
       }
-   }
-   
-   /**
-    * Compares two ranks.
-    * @param r1 the first rank
-    * @param r2 the second rank
-    * @return -1 if r1 < r2, 1 if r2 > r1, otherwise 0
-    * @see Comparable#compareTo(Object)
-    */
-   public int compareRanks(String r1, String r2) {
-      if (_ranks.isEmpty())
-         throw new IllegalStateException("Ranks not Populated");
-      
-      int ofs1 = _ranks.indexOf(r1);
-      int ofs2 = _ranks.indexOf(r2);
-      return Integer.valueOf(ofs1).compareTo(Integer.valueOf(ofs2));
    }
    
    /**
@@ -62,7 +39,7 @@ public class RankComparator {
     * @param rank the rank
     * @param stage the stage
     */
-   public void setRank1(String rank, int stage) {
+   public void setRank1(Rank rank, int stage) {
       _rs1 = new RankStage(rank, stage);
    }
    
@@ -71,7 +48,7 @@ public class RankComparator {
     * @param rank the rank
     * @param stage the stage
     */
-   public void setRank2(String rank, int stage) {
+   public void setRank2(Rank rank, int stage) {
       _rs2 = new RankStage(rank, stage);
    }
    

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -93,7 +93,7 @@ public class PilotActivationCommand extends AbstractCommand {
 
 			// Update the pilot status
 			p.setEmail(ctx.getParameter("eMail"));
-			p.setRank(ctx.getParameter("rank"));
+			p.setRank(Rank.fromName(ctx.getParameter("rank")));
 			p.setStatus(Pilot.ACTIVE);
 
 			// Reset the password

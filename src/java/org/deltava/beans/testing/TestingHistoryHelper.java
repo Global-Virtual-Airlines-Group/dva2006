@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public class TestingHistoryHelper {
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
 	private static final int CP_STAGE = 5;
-	private static final List<String> CAPT_RANKS = Arrays.asList(Ranks.RANK_C, Ranks.RANK_SC);
+	private static final List<Rank> CAPT_RANKS = Arrays.asList(Rank.C, Rank.SC);
 	
 	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
@@ -113,7 +113,7 @@ public class TestingHistoryHelper {
 	public boolean isCaptainInStage(int stage) {
 		
 		// Check for staff member
-		if (Ranks.RANK_ACP.equals(_usr.getRank()) || Ranks.RANK_CP.equals(_usr.getRank()))
+		if (_usr.getRank().isCP())
 			return true;
 
 		// Check if we're already a captain
@@ -138,7 +138,7 @@ public class TestingHistoryHelper {
 	public int getMaxExamStage() {
 
 		// Check for staff member
-		if (Ranks.RANK_ACP.equals(_usr.getRank()) || Ranks.RANK_CP.equals(_usr.getRank()))
+		if (_usr.getRank().isCP())
 			return CP_STAGE;
 
 		int maxStage = 1;
@@ -209,7 +209,7 @@ public class TestingHistoryHelper {
 			throw new PromotionIneligibilityException(ep.getName() + " is passed / submitted");
 
 		// Check if it's the FO exam for the current program
-		if (_myEQ.getExamNames(Ranks.RANK_FO).contains(ep.getName()))
+		if (_myEQ.getExamNames(Rank.FO).contains(ep.getName()))
 			throw new PromotionIneligibilityException(ep.getName() + " is FO exam for " + _myEQ.getName());
 
 		// Check if we are in the proper equipment program
@@ -255,8 +255,8 @@ public class TestingHistoryHelper {
 			throw new PromotionIneligibilityException(eq.getName() + " is a " + eq.getOwner().getName() + " program");
 
 		// Check if we've passed the FO exam for that program
-		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)))
-			throw new PromotionIneligibilityException("Haven't passed " + eq.getExamNames(Ranks.RANK_FO));
+		if (!hasPassed(eq.getExamNames(Rank.FO)))
+			throw new PromotionIneligibilityException("Haven't passed " + eq.getExamNames(Rank.FO));
 
 		// Check if we have a checkride in that equipment
 		if (!hasCheckRide(eq))
@@ -284,7 +284,7 @@ public class TestingHistoryHelper {
 			throw new PromotionIneligibilityException("Must be Captain in Stage " + (eq.getStage() - 1));
 
 		// Check if we've passed the FO/CAPT exam for that program
-		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)) && !hasPassed(eq.getExamNames(Ranks.RANK_C)))
+		if (!hasPassed(eq.getExamNames(Rank.FO)) && !hasPassed(eq.getExamNames(Rank.C)))
 			throw new PromotionIneligibilityException("Has not passed FO/Captain Examination");
 
 		// Make sure we're not already in that program
@@ -322,7 +322,7 @@ public class TestingHistoryHelper {
 	public boolean canPromote(EquipmentType eq) {
 
 		// Check if we're a First Officer
-		if (!_usr.getRank().equals(Ranks.RANK_FO))
+		if (_usr.getRank() != Rank.FO)
 			return false;
 
 		// Check if we're otherwise eligible
@@ -337,7 +337,7 @@ public class TestingHistoryHelper {
 	public boolean promotionEligible(EquipmentType eq) {
 
 		// Check if we've passed the examinations
-		if (!hasPassed(eq.getExamNames(Ranks.RANK_C)))
+		if (!hasPassed(eq.getExamNames(Rank.C)))
 			return false;
 
 		// Check if we've got enough flight legs in the primary equipment type

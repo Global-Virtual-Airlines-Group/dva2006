@@ -10,7 +10,7 @@ import org.deltava.beans.flight.FlightReport;
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -126,7 +126,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots in a particular equipment type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, String rank) throws DAOException {
+	public List<Pilot> getPilotsByEQ(EquipmentType eq, String sortBy, boolean showActive, Rank rank) throws DAOException {
 		
 		// Build the SQL statement
 		String dbName = formatDBName(eq.getOwner().getDB());
@@ -152,7 +152,7 @@ public class GetPilot extends PilotReadDAO {
 			if (showActive)
 				_ps.setInt(++pos, Pilot.ACTIVE);
 			if (rank != null)
-				_ps.setString(++pos, rank);
+				_ps.setString(++pos, rank.getName());
 			
 			return execute();
 		} catch (SQLException se) {
@@ -166,13 +166,13 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of active Pilots with a particular rank
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> getPilotsByRank(String rank) throws DAOException {
+	public List<Pilot> getPilotsByRank(Rank rank) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 				+ "MAX(F.DATE), S.EXT, S.MODIFIED FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) "
 				+ "LEFT JOIN SIGNATURES S ON (P.ID=S.ID) WHERE (P.RANK=?) AND (P.STATUS=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
-			_ps.setString(2, rank);
+			_ps.setString(2, rank.getName());
 			_ps.setInt(3, Pilot.ACTIVE);
 			return execute();
 		} catch (SQLException se) {

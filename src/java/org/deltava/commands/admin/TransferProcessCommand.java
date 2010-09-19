@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 
 public class TransferProcessCommand extends AbstractCommand {
 	
-	private static final Collection<String> STAFF_RANKS = Arrays.asList(Ranks.RANK_ACP, Ranks.RANK_CP);
+	private static final Collection<Rank> STAFF_RANKS = Arrays.asList(Rank.ACP, Rank.CP);
 
 	/**
 	 * Executes the command.
@@ -76,7 +76,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			
 			// Check if the user has passed the Captain's examination
 			TestingHistoryHelper testHistory = new TestingHistoryHelper(usr, currEQ, exdao.getExams(usr.getID()), null);
-			boolean hasCaptExam = testHistory.hasPassed(newEQ.getExamNames(Ranks.RANK_C));
+			boolean hasCaptExam = testHistory.hasPassed(newEQ.getExamNames(Rank.C));
 
 			// Check how many legs the user has completed
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
@@ -93,12 +93,12 @@ public class TransferProcessCommand extends AbstractCommand {
 			ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
 			
 			// Get the available ranks
-			Collection<String> eqRanks = new LinkedHashSet<String>(newEQ.getRanks());
+			Collection<Rank> eqRanks = new LinkedHashSet<Rank>(newEQ.getRanks());
 			eqRanks.removeAll(STAFF_RANKS);
 			if (!isSC)
-				eqRanks.remove(Ranks.RANK_SC);
+				eqRanks.remove(Rank.SC);
 			if (!hasCaptExam || !hasLegs)
-				eqRanks.remove(Ranks.RANK_C);
+				eqRanks.remove(Rank.C);
 			ctx.setAttribute("newRanks", eqRanks, REQUEST);
 
 			// Determine new equipment ratings if approved

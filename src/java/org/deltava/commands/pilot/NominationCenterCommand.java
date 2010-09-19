@@ -1,0 +1,101 @@
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.pilot;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.Pilot;
+import org.deltava.beans.hr.*;
+import org.deltava.beans.hr.Nomination.Status;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.NominationAccessControl;
+
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to display Senior Captain nominations.
+ * @author Luke
+ * @version 3.3
+ * @since 3.3
+ */
+
+public class NominationCenterCommand extends AbstractCommand {
+
+	/**
+	 * Executes the Command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	@Override
+	public void execute(CommandContext ctx) throws CommandException {
+
+		// Check if we can nominate someone
+		NominationAccessControl ac = new NominationAccessControl(ctx, null);
+		ac.validate();
+		if (!ac.getCanNominate())
+			throw securityException("Cannot create Nomination");
+		
+		Quarter qNow = new Quarter();
+		try {
+			Connection con = ctx.getConnection();
+			Collection<Nomination> allNoms = new LinkedHashSet<Nomination>();
+			
+			// Check our nomination count
+			GetNominations ndao = new GetNominations(con);
+			allNoms.addAll(ndao.getByAuthor(ctx.getUser().getID()));
+			ctx.setAttribute("myNoms", new ArrayList<Nomination>(allNoms) , REQUEST);
+			
+			// If we're in HR, load all pending nominations; if CP then show in my program
+			
+			if (ctx.isUserInRole("HR")) {
+				Map<Status, Collection<Nomination>> noms = new LinkedHashMap<Status, Collection<Nomination>>();
+				noms.put(Status.PENDING, ndao.getByStatus(Status.PENDING, qNow));
+				noms.put(Status.APPROVED, ndao.getByStatus(Status.APPROVED, qNow));
+				noms.put(Status.REJECTED, ndao.getByStatus(Status.REJECTED, qNow));
+				for (Iterator<Collection<Nomination>> i = noms.values().iterator(); i.hasNext(); ) {
+					Collection<Nomination> nm = i.next();
+					allNoms.addAll(nm);
+				}
+				
+				ctx.setAttribute("allNoms", noms, REQUEST);
+			} else if (ctx.getUser().getRank().isCP()) {
+				Collection<Nomination> myEQNoms = ndao.getByEQType(ctx.getUser().getEquipmentType());
+				allNoms.addAll(myEQNoms);
+				ctx.setAttribute("myEQNoms", myEQNoms, REQUEST);
+			}
+			
+			// Fetch Pilot and Author IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Nomination n : allNoms) {
+				IDs.add(new Integer(n.getID()));
+				for (NominationComment nc : n.getComments())
+					IDs.add(new Integer(nc.getAuthorID()));
+			}
+			
+			// Load the pilot IDs
+			GetPilot pdao = new GetPilot(con);
+			GetFlightReports frdao = new GetFlightReports(con);
+			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS");
+			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
+			ctx.setAttribute("pilots", pilots, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Save status variables
+		ctx.setAttribute("qtr", qNow, REQUEST);
+		ctx.setAttribute("access", ac, REQUEST);
+		ctx.setAttribute("canSeeScore", Boolean.valueOf(ctx.getUser().getRank().isCP() || ctx.isUserInRole("HR")), REQUEST);
+		ctx.setAttribute("emptyList", Collections.emptySet(), REQUEST);
+		
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/admin/scNominateCenter.jsp");
+		result.setSuccess(true);
+	}
+}

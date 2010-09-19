@@ -30,8 +30,6 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		"P.LAST_LOGIN", "P.RANK", "LEGS", "LASTFLIGHT"};
 	private static final List<?> SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Hire Date",
 			"Logins", "Last Login", "Rank", "Flight Legs", "Last Flight"}, SORT_CODE);
-	private static final List<String> RANKS = Arrays.asList(Ranks.RANK_FO, Ranks.RANK_C, Ranks.RANK_SC,
-			Ranks.RANK_ACP);
 
 	/**
 	 * Executes the command.
@@ -54,9 +52,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		String eqType = ctx.getParameter("eqType");
 		if (eqType == null)
 			eqType = ctx.getUser().getEquipmentType();
-		String rank  = ctx.getParameter("rank");
-		if (!RANKS.contains(rank))
-			rank = null;
+		Rank rank = Rank.fromName(ctx.getParameter("rank"));
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -162,7 +158,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 		
 		// Save sort options
 		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
-		ctx.setAttribute("ranks", RANKS, REQUEST);
+		ctx.setAttribute("ranks", Rank.values(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

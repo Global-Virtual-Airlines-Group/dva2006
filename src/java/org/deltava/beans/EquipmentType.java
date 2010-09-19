@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -40,11 +40,11 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
     private int _min1X;
     private int _max2X;
 
-    private final Collection<String> _ranks = new LinkedHashSet<String>();
+    private final Collection<Rank> _ranks = new TreeSet<Rank>();
     private final Collection<String> _primaryRatings = new TreeSet<String>();
     private final Collection<String> _secondaryRatings = new TreeSet<String>();
     
-    private final Map<String, Collection<String>> _examNames = new HashMap<String, Collection<String>>();
+    private final Map<Rank, Collection<String>> _examNames = new HashMap<Rank, Collection<String>>();
     
     private AirlineInformation _owner;
     private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
@@ -109,10 +109,10 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
     /**
      * Return the list of available ranks in this program.
      * @return An <i>unsorted</i> list of available ranks
-     * @see EquipmentType#addRank(String)
+     * @see EquipmentType#addRank(Rank)
      * @see EquipmentType#addRanks(String, String)
      */
-    public Collection<String> getRanks() {
+    public Collection<Rank> getRanks() {
         return _ranks;
     }
     
@@ -157,9 +157,9 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      * @param rank The rank to be promoted <i>into</i>. Use Ranks.ENTRY for an entrance exam.
      * @return The names of the examinations
      * @see EquipmentType#getExamNames()
-     * @see EquipmentType#setExamNames(String, Collection)
+     * @see EquipmentType#setExamNames(Rank, Collection)
      */
-    public Collection<String> getExamNames(String rank) {
+    public Collection<String> getExamNames(Rank rank) {
     	Collection<String> names = _examNames.get(rank);
     	return (names == null) ? new HashSet<String>() : names;
     }
@@ -167,8 +167,8 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
     /**
      * Returns all exams associated with this equipment program.
      * @return a Collection of exam names
-     * @see EquipmentType#getExamNames(String)
-     * @see EquipmentType#setExamNames(String, Collection)
+     * @see EquipmentType#getExamNames(Rank)
+     * @see EquipmentType#setExamNames(Rank, Collection)
      */
     public Collection<String> getExamNames() {
     	Collection<String> names = new LinkedHashSet<String>();
@@ -290,9 +290,8 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      * @see EquipmentType#getRanks()
      * @see EquipmentType#addRanks(String, String)
      */
-    public void addRank(String rank) {
-        if (rank != null)
-        	_ranks.add(rank);
+    public void addRank(Rank rank) {
+        _ranks.add(rank);
     }
     
     /**
@@ -300,13 +299,19 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      * @param ranks A token-delimited string of ranks
      * @param delim A token delimieter for the ranks parameter
      * @throws NullPointerException if the list string is null
-     * @see EquipmentType#addRank(String)
+     * @see EquipmentType#addRank(Rank)
      * @see EquipmentType#getRanks()
      */
     public void addRanks(String ranks, String delim) {
         StringTokenizer rankTokens = new StringTokenizer(ranks, delim);
-        while (rankTokens.hasMoreTokens())
-            addRank(rankTokens.nextToken());
+        while (rankTokens.hasMoreTokens()) {
+        	try {
+        		Rank r = Rank.fromName(rankTokens.nextToken());
+        		addRank(r);
+        	} catch (IllegalArgumentException iae) {
+        		// empty
+        	}
+        }
     }
     
     /**
@@ -315,7 +320,11 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      */
     public void setRanks(Collection<String> ranks) {
     	_ranks.clear();
-    	_ranks.addAll(ranks);
+    	for (String rank : ranks) {
+    		Rank r = Rank.fromName(rank);
+    		if (r != null)
+    			addRank(r);
+    	}
     }
 
     /**
@@ -413,11 +422,11 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      * Adds an examination required for promotion into a particular rank.
      * @param rank The rank to be promoted <i>into</i>
      * @param examName The name of the examination
-     * @see Ranks
-     * @see EquipmentType#setExamNames(String, Collection)
-     * @see EquipmentType#getExamNames(String)
+     * @see Rank
+     * @see EquipmentType#setExamNames(Rank, Collection)
+     * @see EquipmentType#getExamNames(Rank)
      */
-    public void addExam(String rank, String examName) {
+    public void addExam(Rank rank, String examName) {
     	Collection<String> eNames = _examNames.get(rank);
     	if (eNames == null) {
     		eNames = new LinkedHashSet<String>();
@@ -431,11 +440,11 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      * Set the examinations required for promotion into a particular rank.
      * @param rank The rank to be promoted <i>into</i>
      * @param examNames The name of the examinations
-     * @see Ranks
-     * @see EquipmentType#addExam(String, String)
-     * @see EquipmentType#getExamNames(String)
+     * @see Rank
+     * @see EquipmentType#addExam(Rank, String)
+     * @see EquipmentType#getExamNames(Rank)
      */
-    public void setExamNames(String rank, Collection<String> examNames) {
+    public void setExamNames(Rank rank, Collection<String> examNames) {
     	Collection<String> eNames = _examNames.get(rank);
     	if (eNames == null) {
     		eNames = new LinkedHashSet<String>();

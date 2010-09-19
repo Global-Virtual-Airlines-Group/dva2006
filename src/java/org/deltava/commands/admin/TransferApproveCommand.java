@@ -15,10 +15,7 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.TransferAccessControl;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
-
-import org.deltava.util.system.SystemData;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to Approve equipment program Transfers.
@@ -85,18 +82,17 @@ public class TransferApproveCommand extends AbstractCommand {
 					throw notFoundException("Invalid Equipment Program - " + eqType + " / " + usr.getEquipmentType());
 				
 				// Get the available ranks
-				Collection<String> eqRanks = newEQ.getRanks();
+				Collection<Rank> eqRanks = newEQ.getRanks();
 				if (!isSC)
-					eqRanks.remove(Ranks.RANK_SC);
+					eqRanks.remove(Rank.SC);
 
 				// Validate the rank
-				String rank = ctx.getParameter("rank");
+				Rank rank = Rank.fromName(ctx.getParameter("rank"));
 				if (!eqRanks.contains(rank))
 					throw notFoundException("Invalid Rank - " + rank);
 
 				// Check if we're doing a promotion or a rating change
-				@SuppressWarnings("unchecked")
-				RankComparator rCmp = new RankComparator((List<String>) SystemData.getObject("ranks"));
+				RankComparator rCmp = new RankComparator();
 				rCmp.setRank2(usr.getRank(), currentEQ.getStage());
 				rCmp.setRank1(rank, newEQ.getStage());
 				boolean eqChange = !usr.getEquipmentType().equals(newEQ.getName());

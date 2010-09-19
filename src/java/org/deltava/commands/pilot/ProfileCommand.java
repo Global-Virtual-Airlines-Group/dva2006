@@ -43,7 +43,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -256,7 +256,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				newRatings = new LinkedHashSet<String>(p.getRatings());
 
 			// Determine if we are promoting the pilot
-			String newRank = ctx.getParameter("rank");
+			Rank newRank = Rank.fromName(ctx.getParameter("rank"));
 			String newEQ = ctx.getParameter("eqType");
 			if (p_access.getCanPromote() && (newRank != null) && (newEQ != null)) {
 				boolean eqChange = !p.getEquipmentType().equals(newEQ);
@@ -275,8 +275,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						throw notFoundException("Unknown Equipment Type program - " + newEQ);
 
 					// Figure out if this is truly a promotion
-					@SuppressWarnings("unchecked")
-					RankComparator rcmp = new RankComparator((java.util.List<String>) SystemData.getObject("ranks"));
+					RankComparator rcmp = new RankComparator();
 					rcmp.setRank2(p.getRank(), eq1.getStage());
 					rcmp.setRank1(newRank, eq2.getStage());
 
@@ -289,7 +288,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Check if we're going to Senior Captain for the first time
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
-					boolean newSC = ((newRank.equals(Ranks.RANK_SC)) && !sudao.isSeniorCaptain(p.getID()));
+					boolean newSC = ((newRank == Rank.SC) && !sudao.isSeniorCaptain(p.getID()));
 
 					// Write the status update
 					if (rcmp.compare() > 0) {

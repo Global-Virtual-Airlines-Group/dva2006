@@ -50,7 +50,7 @@ public class GetProgramStatistics extends DAO {
 				Pilot p = new Pilot("x", "x");
 				p.setID(rs.getInt(1));
 				p.setEquipmentType(eqType.getName());
-				p.setRank(rs.getString(2));
+				p.setRank(Rank.fromName(rs.getString(2)));
 				p.setStatus(rs.getInt(3));
 				p.setCreatedOn(rs.getTimestamp(4));
 				pm.addPilot(p);

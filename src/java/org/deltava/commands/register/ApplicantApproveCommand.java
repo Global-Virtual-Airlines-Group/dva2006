@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -13,8 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
-import org.deltava.security.SQLAuthenticator;
+import org.deltava.security.*;
 import org.deltava.security.command.ApplicantAccessControl;
 
 import org.deltava.util.*;
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to hire new Applicants as Pilots. 
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -62,7 +61,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Check if we're posting to this command from applicantView, in which case we update eqType/rank
 			if (ctx.getParameter("eqType") != null) {
 				a.setEquipmentType(ctx.getParameter("eqType"));
-				a.setRank(ctx.getParameter("rank"));
+				a.setRank(Rank.fromName(ctx.getParameter("rank")));
 			}
 			
 			// Get the Equipment Type hired into
