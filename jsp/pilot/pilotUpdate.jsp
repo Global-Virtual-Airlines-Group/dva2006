@@ -24,7 +24,7 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Profile Updated</div>
 <br />
-The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.<br />
+The Pilot Profile for ${pilot.rank.name} ${pilot.name} has been successfully updated.<br />
 <br />
 <content:hasmsg>
 <div class="error bld"><content:sysmsg /></div><br />
@@ -68,11 +68,11 @@ matching <content:airline /> Pilots or Applicants with the same name or e-mail a
 </c:if>
 <c:if test="${rankUpdated && !isPromotion}">
 <!-- Updated Pilot Equipment Type and Rank -->
-<li>${pilot.firstName} has been transfered to the ${pilot.equipmentType} program as a <b>${pilot.rank}</b>.</li>
+<li>${pilot.firstName} has been transfered to the ${pilot.equipmentType} program as a <b>${pilot.rank.name}</b>.</li>
 </c:if>
 <c:if test="${isPromotion}">
 <!-- Updated Pilot Rank -->
-<li>${pilot.firstName} has been promoted, and is now a <b>${pilot.rank}</b> in the ${pilot.equipmentType} program.</li>
+<li>${pilot.firstName} has been promoted, and is now a <b>${pilot.rank.name}</b> in the ${pilot.equipmentType} program.</li>
 </c:if>
 <c:if test="${pwdUpdate}">
 <!-- Updated Password -->

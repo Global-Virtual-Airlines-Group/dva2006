@@ -32,13 +32,13 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarsinfo.do" method="post" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT INFORMATION - FLIGHT #<fmt:int value="${info.ID}" /></td>
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data">${pilot.rank} <span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
+ <td class="data">${pilot.rank.name} <span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
  <td class="label">ACARS Client Build</td>
  <td class="data">Build <fmt:int value="${conInfo.clientBuild}" /></td>
 </tr>
@@ -134,7 +134,7 @@
 
 <!-- Button Bar -->
 <content:filter roles="Admin"><c:if test="${empty pirep}">
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton url="acarsdelf" link="${info}" label="DELETE FLIGHT INFORMATION ENTRY" /></td>
 </tr>

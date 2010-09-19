@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="txrequests.do" method="post" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="txrequests">
+<view:table className="view" cmd="txrequests">
 <!-- Top Header Bar -->
 <tr class="title caps">
  <td colspan="3" class="left"><content:airline /> EQUIPMENT TRANSFER REQUESTS</td>
@@ -56,7 +56,7 @@ return true;
 <view:row entry="${txreq}">
  <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>
- <td class="sec bld">${pilot.rank}</td>
+ <td class="sec bld">${pilot.rank.name}</td>
  <td>${pilot.equipmentType}</td>
  <td class="pri bld">${txreq.equipmentType}</td>
  <td class="sec"><fmt:date fmt="d" date="${txreq.date}" /></td>

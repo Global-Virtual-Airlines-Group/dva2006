@@ -43,7 +43,7 @@ you. An e-mail message has been sent to you with a URL to click to validate your
 message, your application to <content:airline /> cannot be approved!</span><br />
 <br />
 <c:if test="${!empty questionnaire}">
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton url="questionnaire" link="${questionnaire}" label="INITIAL QUESTIONNAIRE" /></td>
 </tr>

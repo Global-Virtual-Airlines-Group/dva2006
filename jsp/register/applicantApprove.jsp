@@ -21,7 +21,7 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Hired</div>
 <br />
-${applicant.name} has been hired as a <content:airline /> pilot, as a ${applicant.rank} in the
+${applicant.name} has been hired as a <content:airline /> pilot, as a ${applicant.rank.name} in the
 ${eqType.name} (Stage ${eqType.stage}) program. An e-mail message has been sent to ${applicant.email}.<br />
 <br />
 To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" link="${applicant}">Click Here</el:cmd>.<br />

@@ -27,7 +27,7 @@ written examinations and check rides and gain promotions in rank, and transfers 
 programs. Please join us in congratulating these <content:airline /> members who have achieved the
 following accomplishments:<br />
 <br />
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Table Header Row -->
 <tr class="title caps">
  <td width="12%">DATE</td>

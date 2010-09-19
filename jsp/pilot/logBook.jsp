@@ -24,15 +24,15 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="logbook.do" method="post" validate="return true">
-<view:table className="view" pad="default" space="default" cmd="logbook">
+<view:table className="view" cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
 <c:if test="${access.canPreApprove}">
- <td colspan="4" class="caps left">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="4" class="caps left">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
  <td colspan="2"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
 </c:if>
 <c:if test="${!access.canPreApprove}">
- <td colspan="6" class="caps left">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="6" class="caps left">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </c:if>
 </tr>
 

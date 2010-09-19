@@ -68,7 +68,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="accomplishment.do" method="post" link="${ap}" op="save" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT ACCOMPLISHMENT PROFILE<c:if test="${!empty ap}"> - ${ap.name}</c:if></td>
 </tr>
@@ -124,7 +124,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ACCOMPLISHMENT PROFILE" />
 <c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="accdelete" link="${ap}" label="DELETE ACCOMPLISHMENT PROFILE" /></c:if></td>

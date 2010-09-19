@@ -71,7 +71,7 @@ return false;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarsprsearch.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT REPORTS</td>
 </tr>
@@ -94,7 +94,7 @@ return false;
 </el:form>
 <c:if test="${doSearch}">
 <el:form action="acarsprsearch.do" method="get" validate="return showMap(this)">
-<view:table className="view" space="default" pad="default" cmd="acarsprsearch">
+<view:table className="view" cmd="acarsprsearch">
 <c:if test="${empty viewContext.results}">
 <!-- Search Results -->
 <tr class="title">

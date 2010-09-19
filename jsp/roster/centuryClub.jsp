@@ -27,7 +27,7 @@ and dedication, demonstrated by over one hundred logged flight legs. Over the ye
 &quot;Century Club&quot; has expanded into a number of levels as our pilots have logged more
 flights.<br />
 <br />
-<view:table className="view" pad="default" space="default" cmd="centuryclub">
+<view:table className="view" cmd="centuryclub">
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="5%">#</td>
@@ -57,7 +57,7 @@ flights.<br />
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
- <td class="pri bld">${pilot.rank}</td>
+ <td class="pri bld">${pilot.rank.name}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
  <td><fmt:dec value="${pilot.hours}" /></td>
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>

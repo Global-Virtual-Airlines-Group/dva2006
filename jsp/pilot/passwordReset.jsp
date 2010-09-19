@@ -38,7 +38,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="pwdreset.do" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="left">PASSWORD RESET</td>
 </tr>
@@ -61,7 +61,7 @@ return true;
 <c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="page" />
 <tr>
  <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" /></td>
- <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank}, ${pilot.equipmentType})
+ <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank.name}, ${pilot.equipmentType})
 <content:filter roles="HR"> <el:link url="mailto:${pilot.email}">${pilot.email}</el:link></content:filter></td>
 </tr>
 </c:if></c:forEach>
@@ -74,7 +74,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" className="BUTTON" label="RESET PASSWORD" type="submit" /></td>
 </tr>

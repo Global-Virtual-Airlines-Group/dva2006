@@ -106,7 +106,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="apphire.do" method="post" link="${applicant}" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICANT</td>
 </tr>
@@ -126,7 +126,7 @@ return true;
 <tr>
  <td class="data">
 <c:forEach var="dupe" items="${nameMatches}">
-${dupe.rank} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}">${dupe.pilotCode}</c:if><br />
+${dupe.rank.name} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:if test="${!empty dupe.pilotCode}">${dupe.pilotCode}</c:if><br />
 </c:forEach></td>
 </tr>
 </c:if>
@@ -151,7 +151,7 @@ ${dupe.rank} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:if tes
 <c:if test="${applicant.pilotID > 0}">
 <tr>
  <td class="label">Hired as</td>
- <td class="data">${applicant.rank}, ${applicant.equipmentType}</td>
+ <td class="data">${applicant.rank.name}, ${applicant.equipmentType}</td>
 </tr>
 </c:if>
 <c:if test="${!empty homeAirport}">
@@ -342,7 +342,7 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank}" /></td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank.name}" /></td>
 </tr>
 <tr>
  <td class="label top">Equipment Program Sizes</td>
@@ -355,7 +355,7 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canApprove}">

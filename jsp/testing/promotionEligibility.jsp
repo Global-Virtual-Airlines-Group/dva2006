@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="3" class="left"><content:airline /> PROMOTION ELIGIBILITY FOR ${pilot.name} <c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>

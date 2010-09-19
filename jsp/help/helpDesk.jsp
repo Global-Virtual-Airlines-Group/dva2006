@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td class="left" colspan="6"><content:airline /> HELP DESK</td>
 </tr>

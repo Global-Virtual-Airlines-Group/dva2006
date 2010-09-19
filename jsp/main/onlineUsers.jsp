@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="users.do" method="get" validate="return false">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td colspan="4" class="left caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
@@ -56,7 +56,7 @@ return true;
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td class="pri">${pilot.rank}</td>
+ <td class="pri">${pilot.rank.name}</td>
  <td class="sec">${pilot.equipmentType}</td>
 <c:choose>
 <c:when test="${isHR && (!empty session.addressInfo)}">

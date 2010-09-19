@@ -43,7 +43,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="flightboard.do" method="get" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td width="40%" class="left caps"><content:airline /> ${network} ONLINE PILOTS<span id="isLoading"></span></td>
  <td width="15%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
@@ -63,7 +63,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr class="title">
  <td><el:button ID="RefreshButton" className="BUTTON" onClick="void updateMap(false)" label="REFRESH ${network} DATA" /></td>
 </tr>

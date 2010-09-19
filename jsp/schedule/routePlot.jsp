@@ -52,7 +52,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="routeplan.ws" method="post" target="_new" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER</td>
 </tr>
@@ -128,7 +128,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
  <el:button ID="SaveButton" type="submit" className="BUTTON" label="DOWNLOAD FLIGHT PLAN" />

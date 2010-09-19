@@ -45,7 +45,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="chart.do" method="post" link="${chart}" op="save" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
 <c:if test="${!empty chart}">
  <td colspan="2">APPROACH CHART - ${chart.name} (<fmt:airport airport="${chart.airport}" />)</td>
@@ -80,7 +80,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHART" />
 <c:if test="${access.canDelete && (!empty chart)}">

@@ -46,7 +46,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="aircraft.do" method="post" linkID="${aircraft.name}" op="save" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRCRAFT PROFILE</td>
 </tr>
@@ -140,7 +140,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE AIRCRAFT PROFILE" /></td>
 </tr>

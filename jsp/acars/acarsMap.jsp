@@ -110,7 +110,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarsMap.do" method="get" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="caps"><content:airline /> LIVE ACARS MAP<span id="isLoading"></span></td>
  <td colspan="2" class="right"><span id="userSelect" style="display:none;"> ZOOM TO <el:combo ID="usrID" name="usrID" idx="*" options="${emptyList}" firstEntry="-" onChange="void zoomTo(this)" /></span></td>
@@ -142,7 +142,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr class="title">
  <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
 <el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;

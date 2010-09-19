@@ -43,7 +43,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="msgtemplate.do" linkID="${empty template ? null : template.name}" op="save" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Template Title Bar -->
 <tr class="title caps">
  <td colspan="2">E-MAIL MESSAGE TEMPLATE</td>
@@ -78,7 +78,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>
 <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE MESSAGE TEMPLATE" />

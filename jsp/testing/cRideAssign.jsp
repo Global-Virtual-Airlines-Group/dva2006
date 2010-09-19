@@ -39,7 +39,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="nakedassign.do" method="post" link="${pilot}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">CHECK RIDE - ${pilot.name}</td>
 </tr>
@@ -62,7 +62,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /> 
 <el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" /></td>

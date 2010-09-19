@@ -37,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Question Title Bar -->
 <tr class="title caps">
  <td colspan="2">${fn:isMultiChoice(question) ? 'MULTIPLE CHOICE ' : ''}EXAMINATION QUESTION PROFILE</td>
@@ -106,7 +106,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" />
 <c:if test="${access.canDelete && (question.totalAnswers == 0)}">

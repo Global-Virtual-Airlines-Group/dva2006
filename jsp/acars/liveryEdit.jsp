@@ -34,7 +34,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="livery.do" method="post" linkID="${empty livery ? '' : livery}" op="save" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> ACARS MULTI-PLAYER LIVERY PROFILE</td>
 </tr>
@@ -69,7 +69,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE LIVERY PROFILE" />
 <c:if test="${!empty livery}"> <el:cmdbutton url="liverydelete" linkID="${livery}" label="DELETE LIVERY" /></c:if></td>

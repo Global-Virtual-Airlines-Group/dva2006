@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- View Header Bar -->
 <tr class="title caps">
  <td width="10%">ID</td>
@@ -47,7 +47,7 @@
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td class="pri">${pilot.rank}</td>
+ <td class="pri">${pilot.rank.name}</td>
  <td class="bld">${pilot.equipmentType}</td>
  <td class="small"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
  <td><fmt:int value="${pilot.legs}" /></td>

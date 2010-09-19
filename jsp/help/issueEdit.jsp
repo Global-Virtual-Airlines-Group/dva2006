@@ -54,7 +54,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="hdissue.do" op="save" link="${issue}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
 <c:if test="${!empty issue}">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
@@ -143,7 +143,7 @@ return true;
 
 <!-- Button Bar -->
 <c:if test="${access.canUpdateStatus || (empty issue && access.canCreate)}">
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
 <c:if test="${access.canUpdateStatus}">

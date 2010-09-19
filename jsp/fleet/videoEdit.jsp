@@ -48,7 +48,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="tvideo.do" linkID="${video.fileName}" op="save" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
 <c:choose>
 <c:when test="${!empty video}">
@@ -113,7 +113,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><c:if test="${access.canEdit || access.canCreate}">
 <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE VIDEO" />

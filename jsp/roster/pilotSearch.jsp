@@ -45,7 +45,7 @@ return false;
 <content:region id="main">
 <el:form action="pilotsearch.do" method="post" validate="return validate(this)">
 <!-- Search Criteria -->
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT SEARCH</td>
 </tr>
@@ -78,7 +78,7 @@ return false;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="SUBMIT" className="BUTTON" label="PILOT SEARCH" /></td>
 </tr>
@@ -86,7 +86,7 @@ return false;
 
 <!-- Search Results -->
 <c:if test="${!noResults}">
-<view:table className="view" pad="default" space="default" cmd="">
+<view:table className="view" cmd="">
 <tr class="title caps">
  <td colspan="8" class="left">SEARCH RESULTS</td>
 </tr>

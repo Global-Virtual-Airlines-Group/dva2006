@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="schedimport.do" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD - STEP ONE</td>
 </tr>
@@ -48,7 +48,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD FLIGHT SCHEDULE DATA" /></td>
 </tr>

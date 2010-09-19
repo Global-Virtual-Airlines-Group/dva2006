@@ -41,7 +41,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="cmdstatpurge.do" method="post" validate="return validate(this)">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title">
  <td colspan="4" class="caps">COMMAND INVOCATION STATISTICS</td>

@@ -115,10 +115,10 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="profile.do" link="${pilot}" op="save" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="${cspan + 1}">${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 
 <!-- Pilot Data -->
@@ -163,11 +163,11 @@ return true;
 <tr>
  <td class="label">Rank / Equipment</td>
 <c:if test="${access.canChangeStatus}">
- <td colspan="${cspan}" class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank}" />
+ <td colspan="${cspan}" class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank.name}" />
  <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${pilot.equipmentType}" /></td>
 </c:if>
 <c:if test="${!access.canChangeStatus}">
- <td colspan="${cspan}" class="data">${pilot.rank}, <span class="bld">${pilot.equipmentType}</span></td>
+ <td colspan="${cspan}" class="data">${pilot.rank.name}, <span class="bld">${pilot.equipmentType}</span></td>
 </c:if> 
 </tr>
 <tr>
@@ -360,7 +360,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
 <c:if test="${access.canEdit}">
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE PROFILE" /></td>

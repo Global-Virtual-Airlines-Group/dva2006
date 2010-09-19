@@ -38,7 +38,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="selcals.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="selcals">
+<view:table className="view" cmd="selcals">
 <tr class="title">
  <td class="left caps" colspan="4"><content:airline /> SELCAL CODES</td>
  <td class="right" colspan="3">AIRCRAFT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void filterBy(this)" />
@@ -79,7 +79,7 @@ return true;
 <c:if test="${!empty sc.reservedOn}">
  <td><fmt:date fmt="d" date="${sc.reservedOn}" /></td>
  <td><fmt:date fmt="d" date="${releaseDate}" /></td>
- <td>${pilot.rank} <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
+ <td>${pilot.rank.name} <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
 </c:if>
 <c:if test="${empty sc.reservedOn}">
  <td colspan="3" class="left ter bld caps">SELCAL CODE IS CURRENTLY AVAILABLE</td>

@@ -34,7 +34,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="rsptemplate.do" op="save" linkID="${template.title}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2"><content:airline /> HELP DESK RESPONSE TEMPLATE</td>
 </tr>
@@ -49,7 +49,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="UPDATE RESPONSE TEMPLATE" />
 <c:if test="${(!empty template) && access.canUpdateTemplate}">

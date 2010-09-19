@@ -58,7 +58,7 @@ return cmdPost(f.action);
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="applicant.do" link="${applicant}" op="save" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICATION</td>
 </tr>
@@ -210,7 +210,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" className="req" firstEntry="-" value="${applicant.rank}" /></td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" className="req" firstEntry="-" value="${applicant.rank.name}" /></td>
 </tr>
 <tr>
  <td class="label top">Equipment Program Sizes</td>
@@ -223,7 +223,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>
 <c:if test="${access.canApprove}">

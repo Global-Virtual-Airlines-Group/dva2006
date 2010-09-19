@@ -71,7 +71,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="eventsave.do" method="post" link="${event}" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
 <c:if test="${empty event}">
  <td colspan="2">NEW <content:airline /> ONLINE EVENT</td>
@@ -209,7 +209,7 @@ to a specific set of equipment.</span><br />
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">

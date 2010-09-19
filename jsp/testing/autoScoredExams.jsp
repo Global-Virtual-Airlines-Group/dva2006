@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="autoscoredexams.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="autoscoredexams">
+<view:table className="view" cmd="autoscoredexams">
 <tr class="title">
  <td colspan="3" class="left caps">AUTOMATICALLY SCORED EXAMINATIONS</td>
  <td colspan="4" class="right">EXAMINATION <el:combo name="examName" size="1" idx="*" options="${examNames}" firstEntry="All Exams" value="${param.examName}" onChange="void setExam(this)" /></td>
@@ -67,7 +67,7 @@ return true;
 </c:choose>
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td>${pilot.rank}, ${pilot.equipmentType}</td>
+ <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>
  <td class="sec"><fmt:int value="${exam.stage}" /></td>

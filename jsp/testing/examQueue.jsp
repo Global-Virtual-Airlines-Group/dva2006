@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="examqueue">
+<view:table className="view" cmd="examqueue">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="25%">EXAMINATION NAME</td>
@@ -39,7 +39,7 @@
 <view:row entry="${exam}">
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td>${pilot.rank}, ${pilot.equipmentType}</td>
+ <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>
  <td class="sec"><fmt:int value="${exam.stage}" /></td>

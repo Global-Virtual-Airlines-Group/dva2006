@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="crscript.do" op="save" linkID="${script.equipmentType}" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Title Bar -->
 <tr class="title caps">
  <td colspan="2">CHECK RIDE SCRIPT</td>
@@ -56,7 +56,7 @@ return true;
 </el:table>
 
 <!-- Button bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHECK RIDE SCRIPT" />
 <c:if test="${access.canDelete}">

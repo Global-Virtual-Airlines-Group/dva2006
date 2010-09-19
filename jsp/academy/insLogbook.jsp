@@ -32,9 +32,9 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="inslogbook.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="inslogbook">
+<view:table className="view" cmd="inslogbook">
 <tr class="title">
- <td colspan="7" class="caps left">PILOT LOGBOOK<c:if test="${!empty pilot}"> FOR ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</c:if></td>
+ <td colspan="7" class="caps left">PILOT LOGBOOK<c:if test="${!empty pilot}"> FOR ${pilot.rank.name} ${pilot.name} (${pilot.pilotCode})</c:if></td>
 </tr>
 
 <!-- Table Header Bar-->
