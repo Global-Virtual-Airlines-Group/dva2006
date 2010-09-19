@@ -29,7 +29,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="dashboard.do" method="post" validate="return true">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td colspan="2" class="left">STATISTICS DASHBOARD</td>
  <td colspan="2">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /></td>

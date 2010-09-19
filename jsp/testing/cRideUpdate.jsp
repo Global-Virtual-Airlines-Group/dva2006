@@ -24,7 +24,7 @@
 <div class="updateHdr">Check Ride Scored</div>
 <br />
 This ${checkRide.equipmentType} for ${pilot.name} has been successfully scored. An e-mail
-message has been sent to ${pilot.rank} ${pilot.lastName} notifying him or her of the scoring
+message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring
 of this Check Ride.<br />
 <br />
 To view the Pilot Profile, <el:cmd url="profile" link="${pilot}">Click here</el:cmd>.<br />

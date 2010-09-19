@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="singleassign.do" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4"><content:airline /> FLIGHT ASSIGNMENT SEARCH FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</td>
 </tr>
@@ -49,7 +49,7 @@ return true;
 </el:table>
 
 <!-- Search Results -->
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="6" class="left">PROPOSED FLIGHT FROM ${criteria.airportD.name} (<fmt:airport airport="${criteria.airportD}" />)</td> 
 </tr>
@@ -85,7 +85,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr class="title">
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FOR FLIGHTS" />&nbsp;
 <el:cmdbutton ID="BuildButton" url="singlebuild" label="BUILD FLIGHT ASSIGNMENT" /></td>

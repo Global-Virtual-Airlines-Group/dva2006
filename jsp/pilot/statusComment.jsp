@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="statuscomment.do" link="${pilot}" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 <tr class="title">
  <td colspan="${cspan + 1}" class="left caps">NEW STATUS COMMENT FOR ${pilot.name}</td>
@@ -44,7 +44,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE COMMENT" /></td>
 </tr>

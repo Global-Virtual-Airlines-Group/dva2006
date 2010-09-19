@@ -45,7 +45,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="newexam.do" method="post" validate="return validate(this)">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Examination Title Bar -->
 <tr class="title caps">
  <td>&nbsp;</td>

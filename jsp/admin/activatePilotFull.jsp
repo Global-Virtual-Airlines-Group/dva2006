@@ -29,7 +29,7 @@ the Airline above its maximum size, to a total of <fmt:int value="${airlineSize 
 <br />
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton ID="ActivateButton" url="activate" link="${pilot}" op="force" label="ACTIVATE PILOT" /></td>
 </tr>

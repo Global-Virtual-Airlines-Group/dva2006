@@ -40,7 +40,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarsoffline.do" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> ACARS OFFLINE FLIGHT REPORT SUBMISSION</td>
 </tr>
@@ -95,7 +95,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT FLIGHT REPORT" /></td>
 </tr>

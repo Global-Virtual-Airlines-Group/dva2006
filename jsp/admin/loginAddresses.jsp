@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="loginaddrs.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">SEARCH USER LOGIN ADDRESSES</td>
 </tr>
@@ -64,7 +64,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH USER LOGINS" /></td>
 </tr>
@@ -72,7 +72,7 @@ return true;
 </el:form>
 
 <c:if test="${doSearch}">
-<view:table className="view" pad="default" space="default" cmd="loginaddrs">
+<view:table className="view" cmd="loginaddrs">
 <tr class="title caps">
  <td colspan="6" class="left">SEARCH RESULTS<c:if test="${!empty addrs}"> - <fmt:int value="${fn:sizeof(addrs)}" /> RESULTS</c:if></td>
 </tr>

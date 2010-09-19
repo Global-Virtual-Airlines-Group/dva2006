@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="10%">&nbsp;</td>

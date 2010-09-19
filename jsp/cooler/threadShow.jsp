@@ -134,7 +134,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="threadReply.do" link="${thread}" method="post" validate="return validate(this)">
-<el:table className="thread form" pad="default" space="default">
+<el:table className="thread form">
 <!-- Thread Header -->
 <tr class="title">
  <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
@@ -172,7 +172,7 @@ return true;
 <c:if test="${isPilot}">
  <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span><br /></c:if>
- <span class="bld caps">${pilot.rank}</span>, ${pilot.equipmentType}<br />
+ <span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
@@ -262,7 +262,7 @@ APPLICANT<br />
 <c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
 <el:table className="${pilotLoc.airlineCode}_defaultSig" pad="0"><tr>
  <td valign="bottom" class="sig" style="background-image: url(http://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
- <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
+ <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank.name}, ${pilot.equipmentType}</span></div>
  </td>
 </tr></el:table>
 </c:when> 

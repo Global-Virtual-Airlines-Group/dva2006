@@ -51,7 +51,7 @@ return true;
 <content:region id="main">
 <el:form action="dupesearch.do" method="post" validate="return validate(this)">
 <!-- Search Criteria -->
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">DUPLICATE PILOT SEARCH</td>
 </tr>
@@ -76,7 +76,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="SUBMIT" className="BUTTON" label="PILOT SEARCH" /></td>
 </tr>
@@ -84,7 +84,7 @@ return true;
 
 <!-- Search Results -->
 <c:if test="${!noResults}">
-<view:table className="view" pad="default" space="default" cmd="">
+<view:table className="view" cmd="">
 <tr class="title caps">
  <td colspan="7" class="left">SEARCH RESULTS</td>
 </tr>
@@ -113,7 +113,7 @@ return true;
  <td><el:box name="sourceID" idx="*" value="${pilot.hexID}" label="" /></td>
  <td class="bld">${pilot.pilotCode}</td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td class="small">${pilot.rank}, ${pilot.equipmentType}</td>
+ <td class="small">${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
 <c:if test="${pilot.legs > 0}">
  <td><el:cmd url="logbook" op="log" link="${pilot}"><fmt:int value="${pilot.legs}" /> legs</el:cmd>, 
@@ -133,7 +133,7 @@ return true;
 </c:choose>
 </view:table>
 <c:if test="${fn:sizeof(results) > 1}">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">MERGE SELECTED PILOTS</td>
 </tr>
@@ -151,7 +151,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton ID="MergeButton" url="dupemerge" post="true" label="MERGE PILOTS" /></td>
 </tr>

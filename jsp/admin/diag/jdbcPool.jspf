@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <content:sysdata var="jdbcStackLog" name="jdbc.log_stack" />
 <!-- JDBC Connection Pool Data Table -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="8" class="left">JDBC CONNECTION INFORMATION</td>
 </tr>

@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="airlines">
+<view:table className="view" cmd="airlines">
 
 <!-- Table Header Bar -->
 <tr class="title">

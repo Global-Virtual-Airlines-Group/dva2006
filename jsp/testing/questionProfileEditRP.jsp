@@ -149,7 +149,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="qprofile.do" link="${question}" op="save" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Question Title Bar -->
 <tr class="title caps">
  <td colspan="2">EXAMINATION ROUTE PLOTTING QUESTION PROFILE</td>
@@ -249,7 +249,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE QUESTION" />
 <c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>

@@ -49,7 +49,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="fleetlib.do" linkID="${entry.fileName}" op="save" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
 <c:choose>
 <c:when test="${!empty entry}">
@@ -120,7 +120,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit || access.canCreate}">

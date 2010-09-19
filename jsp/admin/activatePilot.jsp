@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="activate.do" method="POST" link="${pilot}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">PILOT REACTIVATION - ${pilot.name}</td>
 </tr>
@@ -43,7 +43,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" value="${pilot.rank}" /></td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" value="${pilot.rank.name}" /></td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
@@ -52,7 +52,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="ActivateButton" type="submit" className="BUTTON" label="REACTIVATE PILOT" /></td>
 </tr>

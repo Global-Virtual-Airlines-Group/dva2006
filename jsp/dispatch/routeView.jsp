@@ -29,7 +29,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4">ACARS DISPATCH ROUTE - ROUTE #<fmt:int value="${route.ID}" /></td>
 </tr>
@@ -85,7 +85,7 @@
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;<c:if test="${access.canDelete}"><el:cmdbutton url="dsproutedelete" link="${route}" label="DELETE DISPATCHER ROUTE" /></c:if>
 <c:if test="${access.canDisable}"> <el:cmdbutton url="dsproutetoggle" link="${route}" label="${route.active ? 'DISABLE ROUTE' : 'ENABLE ROUTE'}" /></c:if>

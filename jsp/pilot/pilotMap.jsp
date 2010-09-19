@@ -74,7 +74,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="pilotboard.do" method="get" validate="return false">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
 </tr>
@@ -96,7 +96,7 @@ return true;
 
 <content:filter roles="Pilot">
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton url="geolocate" label="UPDATE MY LOCATION" /></td>
 </tr>

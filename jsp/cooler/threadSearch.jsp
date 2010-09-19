@@ -48,7 +48,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="coolersearch.do" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps">${forumName} Search</td>
 </tr>
@@ -76,7 +76,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH ${forumName}" /></td>
 </tr>
@@ -85,7 +85,7 @@ return true;
 <c:if test="${doSearch}">
 <!-- Search Results -->
 <c:if test="${!empty viewContext.results}">
-<view:table className="view" pad="default" space="default" cmd="coolersearch">
+<view:table className="view" cmd="coolersearch">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="1" class="left caps">${forumName} SEARCH RESULTS</td>
@@ -126,7 +126,7 @@ return true;
 </view:table>
 </c:if>
 <c:if test="${empty viewContext.results}">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="pri bld caps">
  <td>No <content:airline /> ${forumName} Discussion Threads matching your criteria were found.</td>
 </tr>

@@ -35,7 +35,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="dupeinfo.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">Duplicate Registration</td>
 </tr>
@@ -63,7 +63,7 @@ in <content:airline />!</td>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT MESSAGE" /></td>
 </tr>

@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="caps">ADD NEW DISPATCHER SERVICE TIME</td>
 </tr>
@@ -25,7 +25,7 @@
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE NEW DISPATCHER SERVICE TIME" /></td>
 </tr>

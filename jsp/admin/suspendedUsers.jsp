@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="suspendedusers">
+<view:table className="view" cmd="suspendedusers">
 <tr class="title">
  <td colspan="7" class="left caps"><content:airline /> SUSPENDED PILOT LIST</td>
 </tr>

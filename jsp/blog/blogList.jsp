@@ -24,7 +24,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" space="default" pad="default" cmd="blog">
+<view:table className="view" cmd="blog">
 <c:if test="${!showAll}">
 <c:set var="author" value="${authors[authorID]}" scope="page" />
 <tr class="title caps">

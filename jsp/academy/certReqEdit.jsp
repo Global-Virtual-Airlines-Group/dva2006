@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="certreqs.do" linkID="${cert.name}" op="save" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">FLIGHT ACADEMY CERTIFICATION REQUIREMENTS - ${cert.name}</td>
 </tr>
@@ -81,7 +81,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr class="title">
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CERTIFICATION REQUIREMENTS" /></td>
 </tr>

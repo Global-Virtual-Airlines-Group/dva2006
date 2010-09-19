@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="routeimport.do" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">FAA PREFERRED ROUTE DATA UPLOAD</td>
 </tr>
@@ -47,7 +47,7 @@ This is a total of 14 tokens, and we are only importing #1, #2, #3, #13 and #14.
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD PREFERRED ROUTE DATA" /></td>
 </tr>

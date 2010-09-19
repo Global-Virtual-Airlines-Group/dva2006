@@ -65,7 +65,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="enroll.do" method="post" validate="return validate(this)">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Course History Title Bar -->
 <tr class="title caps">
  <td width="45%">COURSE NAME</td>

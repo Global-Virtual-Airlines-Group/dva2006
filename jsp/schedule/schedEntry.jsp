@@ -110,7 +110,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="sched.do" method="post" linkID="${entry.flightCode}" op="save" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
 <c:if test="${empty entry}"> <td colspan="2">NEW <content:airline /> SCHEDULE ENTRY</td></c:if>
 <c:if test="${!empty entry}"> <td colspan="2">FLIGHT ${entry.flightCode}</td></c:if>
@@ -162,7 +162,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE SCHEDULE ENTRY" />
 <c:if test="${!empty entry}">&nbsp;<el:cmdbutton ID="DeleteButton" url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>

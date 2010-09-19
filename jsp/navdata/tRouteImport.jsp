@@ -44,7 +44,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="trouteimport.do" method="post" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">PSS AIRAC SID / STAR DATA UPLOAD</td>
 </tr>
@@ -60,7 +60,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD AIRAC SID/STAR DATA" /></td>
 </tr>

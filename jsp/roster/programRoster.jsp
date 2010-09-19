@@ -21,11 +21,12 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:enum var="ranks" className="org.deltava.beans.Rank" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="prgroster.do" method="post" validate="return true">
-<view:table className="view" space="default" pad="default" cmd="prgroster">
+<view:table className="view" cmd="prgroster">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> ${eqtype.name} PROGRAM METRICS</td>
  <td colspan="4" class="right">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${param.sortType}" />
@@ -52,7 +53,7 @@
 <tr>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.pilotCode}</el:cmd></td>
  <td>${pilot.name}</td>
- <td class="sec bld">${pilot.rank}</td>
+ <td class="sec bld">${pilot.rank.name}</td>
  <td class="small"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
  <td class="pri small"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
  <td class="sec small"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
@@ -66,7 +67,7 @@
 </tr>
 </view:table>
 <c:if test="${!empty examQueue}">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${fn:sizeof(examQueue)}" /> EXAMS</td>
 </tr>
@@ -86,7 +87,7 @@
 <tr>
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
- <td>${pilot.rank}, ${pilot.equipmentType}</td>
+ <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
  <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>
  <td class="sec"><fmt:int value="${exam.stage}" /></td>
@@ -95,7 +96,7 @@
 </el:table>
 </c:if>
 <c:if test="${!empty crQueue}">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${fn:sizeof(crQueue)}" /> CHECK RIDES</td>
 </tr>
@@ -127,7 +128,7 @@
 </el:table>
 </c:if>
 <c:if test="${!empty txQueue}">
-<view:table className="view" pad="default" space="default" cmd="prgroster">
+<view:table className="view" cmd="prgroster">
 <tr class="title">
  <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${fn:sizeof(txQueue)}" /> TRANSFERS</td>
 </tr>
@@ -147,7 +148,7 @@
 <view:row entry="${txreq}">
  <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>
- <td class="sec bld">${pilot.rank}</td>
+ <td class="sec bld">${pilot.rank.name}</td>
  <td>${pilot.equipmentType}</td>
  <td class="sec"><fmt:date fmt="d" date="${txreq.date}" /></td>
 </view:row>
@@ -155,7 +156,7 @@
 </view:table>
 </c:if>
 <c:if test="${!empty promoQueue}">
-<view:table className="view" pad="default" space="default" cmd="prgroster">
+<view:table className="view" cmd="prgroster">
 <tr class="title">
  <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${fn:sizeof(promoQueue)}" /> PILOTS</td>
 </tr>
@@ -191,7 +192,7 @@
 </view:table>
 </c:if>
 <!-- Flight Report Statistics -->
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title caps">
  <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)</td>
 </tr>
@@ -240,7 +241,7 @@
 </el:table>
 
 <!-- Membership Statistics -->
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td class="left" colspan="2">STATUS TOTALS - <fmt:int value="${metrics.size}" /> PILOTS</td>
 </tr>
@@ -260,7 +261,7 @@
 <c:forEach var="rnk" items="${fn:keys(metrics.rankCounts)}">
 <c:set var="rnkCount" value="${metrics.rankCounts[rnk]}" scope="page" />
 <tr>
- <td class="label">${rnk}</td>
+ <td class="label">${rnk.name}</td>
  <td class="data"><span style="float: left; width: 96px;"><fmt:int value="${rnkCount}" /> pilots</span>
  <el:img y="12" x="${(rnkCount * 650) / maxCount}" src="cooler/bar_blue.png" caption="${rnkCount} Pilots" /></td>
 </tr>

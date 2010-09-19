@@ -44,7 +44,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="dsprsearch.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <!-- Table Header Bar -->
 <tr class="title">
  <td colspan="6" class="left caps"><content:airline /> ACARS DISPATCHER ROUTE SEARCH</td>
@@ -60,14 +60,14 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr class="title">
  <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH DISPATCHER ROUTES" /></td>
 </tr>
 </el:table>
 <c:if test="${doSearch}">
 <br />
-<view:table className="view" space="default" pad="default" cmd="dspsearch">
+<view:table className="view" cmd="dspsearch">
 <tr class="title caps">
  <td colspan="8" class="left">DISPATCH ROUTE SEARCH RESULTS</td>
 </tr>

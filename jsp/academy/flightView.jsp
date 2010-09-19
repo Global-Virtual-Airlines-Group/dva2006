@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">FLIGHT ACADEMY FLIGHT FLOWN ON <fmt:date fmt="d" date="${flight.date}" /> 
 by ${pilot.name}</td>
@@ -32,7 +32,7 @@ by ${pilot.name}</td>
 <!-- PIREP Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data">${pilot.pilotCode} (${pilot.rank}, ${pilot.equipmentType})</td>
+ <td class="data">${pilot.pilotCode} (${pilot.rank.name}, ${pilot.equipmentType})</td>
 </tr>
 <content:filter roles="Instructor,HR,PIREP">
 <tr>
@@ -61,7 +61,7 @@ by ${pilot.name}</td>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton url="insflight" link="${flight}" op="edit" label="EDIT FLIGHT REPORT" />
  <el:cmdbutton url="profile" link="${pilot}" label="VIEW PILOT PROFILE" /></td>

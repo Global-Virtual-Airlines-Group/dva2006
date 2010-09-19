@@ -90,7 +90,7 @@ return cmdPost(f.action);
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="pirep.do" link="${pirep}" op="save" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title caps">
 <c:if test="${!empty pirep}">
@@ -104,7 +104,7 @@ return cmdPost(f.action);
 <!-- PIREP Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data">${pilot.pilotCode} (${pilot.rank})</td>
+ <td class="data">${pilot.pilotCode} (${pilot.rank.name})</td>
 </tr>
 <tr>
  <td class="label">Status</td>
@@ -195,7 +195,7 @@ return cmdPost(f.action);
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" />
 <c:if test="${access.canSubmitIfEdit}">

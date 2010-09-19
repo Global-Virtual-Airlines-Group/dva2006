@@ -16,7 +16,7 @@ f.submit();
 return true;
 }
 </script>
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="caps">ADD NEW BUSY TIME</td>
 </tr>
@@ -54,7 +54,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE NEW BUSY TIME" /></td>
 </tr>

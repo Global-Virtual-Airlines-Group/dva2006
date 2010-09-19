@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="issues.do" method="post" validate="return true">
-<view:table className="view" pad="default" space="default" cmd="issues">
+<view:table className="view" cmd="issues">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> DEVELOPMENT ISSUE LIST</td>

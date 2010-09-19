@@ -55,7 +55,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarsdelc.do" method="post" validate="return validate(this)">
-<view:table className="view" space="default" pad="default" cmd="acarsempty">
+<view:table className="view" cmd="acarsempty">
 <!-- View Header Bar -->
 <tr class="title">
  <td colspan="4" class="left">EMPTY ACARS CONNECTION ENTRIES</td>

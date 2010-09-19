@@ -40,7 +40,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="memberstats.do" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT STATISTICS</td>
  <td class="right">QUANTILES <el:text name="quantiles" idx="*" size="2" max="2" value="${quantileCount}" /></td>

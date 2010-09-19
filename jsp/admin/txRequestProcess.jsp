@@ -50,7 +50,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="${cmdName}.do" method="post" link="${txReq}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">EQUIPMENT TRANSFER REQUEST - ${pilot.name}</td>
 </tr>
@@ -60,7 +60,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Current Rank</td>
- <td class="data">${pilot.rank}, ${pilot.equipmentType} (Stage <fmt:int value="${currentEQ.stage}" />)</td>
+ <td class="data">${pilot.rank.name}, ${pilot.equipmentType} (Stage <fmt:int value="${currentEQ.stage}" />)</td>
 </tr>
 <tr>
  <td class="label">Transfer Status</td>
@@ -154,7 +154,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" />
 <c:if test="${!empty checkRide}">

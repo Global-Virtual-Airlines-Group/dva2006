@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="appfind.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">Applicant E-Mail Address Validation</td>
 </tr>
@@ -62,7 +62,7 @@ return true;
 </el:form>
 <c:if test="${doSearch}">
 <br />
-<view:table className="view" pad="default" space="default" cmd="appfind">
+<view:table className="view" cmd="appfind">
 <!-- Search Results -->
 <c:if test="${!empty applicants}">
 <tr class="title caps">

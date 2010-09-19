@@ -35,7 +35,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="applicants.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="applicants">
+<view:table className="view" cmd="applicants">
 <tr class="title caps">
  <td class="left" colspan="3"><content:airline /> PILOT APPLICATIONS</td>
  <td class="right" colspan="3">AIRLINE SIZE - <fmt:int value="${airlineSize}" /> PILOTS, MAX <fmt:int value="${maxSize}" /></td>
@@ -68,7 +68,7 @@ return true;
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
 <c:if test="${applicant.pilotID > 0}">
- <td class="sec small">${applicant.rank}, ${applicant.equipmentType}</td>
+ <td class="sec small">${applicant.rank.name}, ${applicant.equipmentType}</td>
 </c:if>
 <c:if test="${applicant.pilotID == 0}">
  <td>N/A</td>

@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="chart.do" method="get" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td width="50%" class="caps">${chart.name} AT ${chart.airport.name} (<fmt:airport airport="${chart.airport}" />)</td>
  <td class="right">SELECT CHART <el:combo name="chart" size="1" idx="1" options="${charts}" value="${chart}" onChange="void setChart(this)" /></td>
@@ -49,7 +49,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton url="chart" link="${chart}" op="print" label="VIEW PRINTER-FRIENDLY PAGE" />
 <c:if test="${access.canEdit}">

@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="issue.do" op="save" link="${issue}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
 <c:if test="${!empty issue}">
  <td colspan="2"><content:airline /> DEVELOPMENT ISSUE #${issue.ID} - ${issue.subject}</td>
@@ -135,7 +135,7 @@ return true;
 
 <!-- Button Bar -->
 <c:if test="${access.canEdit}">
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE ISSUE" /></td>
 </tr>

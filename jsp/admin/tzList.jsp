@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="tzones">
+<view:table className="view" cmd="tzones">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="30%">TIME ZONE NAME</td>

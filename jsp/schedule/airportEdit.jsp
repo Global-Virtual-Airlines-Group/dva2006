@@ -56,7 +56,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="airport.do" method="post" linkID="${isNew ? '' : airport.IATA}" op="save" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">AIRPORT PROFILE</td>
 </tr>
@@ -145,7 +145,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE AIRPORT PROFILE" />&nbsp;
 <el:cmdbutton ID="DeleteButton" url="airportdelete" linkID="${airport.IATA}" label="DELETE AIRPORT" /></td>

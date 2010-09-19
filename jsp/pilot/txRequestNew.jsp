@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="txrequest.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">NEW ${reqType} REQUEST</td>
 </tr>
@@ -49,7 +49,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT ${reqType} REQUEST" /></td>
 </tr>

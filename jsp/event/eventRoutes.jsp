@@ -57,7 +57,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="eventroutes.do" link="${event}" op="save" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4">FLIGHT ROUTES FOR ${event.name}</td>
 </tr>
@@ -116,7 +116,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE FLIGHT ROUTES" />
  <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" />

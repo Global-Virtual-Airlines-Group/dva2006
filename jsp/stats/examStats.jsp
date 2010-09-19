@@ -59,7 +59,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="examstats.do" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4"><content:airline /> EXAMINATION / CHECK RIDE STATISTICS</td>
 </tr>
@@ -84,14 +84,14 @@ return true;
 </el:table>
 
 <!-- Table Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button type="submit" ID="SearchButton" className="BUTTON" label="SEARCH EXAMIANTIONS / CHECK RIDES" /></td>
 </tr>
 </el:table>
 
 <c:if test="${doSearch}">
-<view:table className="view" pad="default" space="default" cmd="examstats">
+<view:table className="view" cmd="examstats">
 <!-- Table Header bar -->
 <tr class="title caps">
  <td width="30%">LABEL</td>

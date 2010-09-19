@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title caps">
  <td class="left" colspan="6">MULTIPLE <content:airline /> ONLINE EVENTS</td>
 </tr>

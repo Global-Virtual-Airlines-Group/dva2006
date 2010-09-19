@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="imaplist">
+<view:table className="view" cmd="imaplist">
 <tr class="title caps">
  <td colspan="5" class="left"><content:airline /> STAFF IMAP MAILBOXES</td>
 </tr>

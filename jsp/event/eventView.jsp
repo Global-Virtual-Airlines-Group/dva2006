@@ -64,7 +64,7 @@ return true;
 <c:set var="formValidate" value="return false" scope="page" />
 </c:if>
 <el:form action="${formAction}" method="post" link="${event}" validate="${formValidate}">
-<el:table className="form view" pad="default" space="default">
+<el:table className="form view">
 <tr class="title caps">
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
  <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
@@ -326,7 +326,7 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSignup}">

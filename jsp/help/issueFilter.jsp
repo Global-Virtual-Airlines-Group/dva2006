@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="hdissuefilter.do" method="post" validate="return false">
-<view:table className="view" space="default" pad="default" cmd="hdissuefilter">
+<view:table className="view" cmd="hdissuefilter">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> HELP DESK</td>
  <td colspan="3" class="right"><el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Issues Only" />

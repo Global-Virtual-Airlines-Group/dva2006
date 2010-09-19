@@ -39,7 +39,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="blogentry.do" method="post" op="save" link="${entry}" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><c:if test="${empty entry}">NEW </c:if>JOURNAL ENTRY</td>
 </tr>
@@ -65,7 +65,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE JOURNAL ENTRY" /></td>
 </tr>

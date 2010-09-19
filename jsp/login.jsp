@@ -71,7 +71,7 @@ your first and last name or your User ID and password. Your browser must be able
 in order to log into the site.<br />
 <br />
 <el:form method="post" action="login.do" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">USER LOGIN</td>
 </tr>
@@ -97,7 +97,7 @@ in order to log into the site.<br />
 <c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="page" />
 <tr>
  <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" checked="${pilotCode == pilot.hexID}" /></td>
- <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank}, ${pilot.equipmentType})</td>
+ <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank.name}, ${pilot.equipmentType})</td>
 </tr>
 </c:if></c:forEach>
 </c:if>
@@ -107,7 +107,7 @@ in order to log into the site.<br />
 </tr>
 </content:hasmsg>
 </el:table>
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SubmitButton" className="BUTTON" label="LOG IN" type="submit" /></td>
 </tr>

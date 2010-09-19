@@ -51,7 +51,7 @@ This <content:airline /> Flight Assigment has been successfully released.<br />
 <c:when test="${isReserve}">
 <div class="updateHdr">Flight Assignment Reserved</div>
 <br />
-This <content:airline /> Flight Assigment has been successfully reserved by ${pilot.rank} ${pilot.name}.<br />
+This <content:airline /> Flight Assigment has been successfully reserved by ${pilot.rank.name} ${pilot.name}.<br />
 <br />
 <fmt:int value="${fn:sizeof(assign.flights)}" /> draft Flight Reports have been pre-populated within
 our database.<br />

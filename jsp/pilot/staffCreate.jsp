@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="newstaff.do" link="${pilot}" method="post" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- Staff Profile Title Bar -->
 <tr class="title caps">
  <td colspan="2">NEW STAFF PROFILE - ${pilot.name}</td>
@@ -60,7 +60,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE STAFF PROFILE" /></td>
 </tr>

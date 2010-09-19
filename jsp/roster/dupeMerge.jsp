@@ -24,7 +24,7 @@ The following Pilots' Examinations, Check Rides and Flight Reports have been mer
 <br />
 <c:forEach var="usr" items="${oldPilots}">
 <el:cmd url="profile" link="${usr}" className="bld">${usr.name}</el:cmd> <c:if test="${!empty usr.pilotCode}">
-<span class="sec bld">${usr.pilotCode}</span> </c:if>(${usr.rank}, ${usr.equipmentType})<br />
+<span class="sec bld">${usr.pilotCode}</span> </c:if>(${usr.rank.name}, ${usr.equipmentType})<br />
 </c:forEach>
 <br />
 <c:if test="${updatePwd}">${pilot.name}'s password has been successfully reset.<br />

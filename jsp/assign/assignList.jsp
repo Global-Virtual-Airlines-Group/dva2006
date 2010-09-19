@@ -43,7 +43,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="assignments.do" method="GET" validate="return false">
-<view:table className="view" space="default" pad="default" cmd="assignments">
+<view:table className="view" cmd="assignments">
 <!-- Table Select Bar -->
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT ASSIGNMENTS</td>

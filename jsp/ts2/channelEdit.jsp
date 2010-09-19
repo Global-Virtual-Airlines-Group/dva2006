@@ -38,7 +38,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="ts2channel.do" op="save" link="${channel}" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td class="caps" colspan="2">TEAMSPEAK 2 VOICE CHANNEL</td>
 </tr>
@@ -78,7 +78,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE CHANNEL" />
 <c:if test="${!empty channel}">

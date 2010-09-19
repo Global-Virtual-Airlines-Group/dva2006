@@ -35,7 +35,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="hdsearch.do" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2"><content:airline /> HELP DESK SEARCH</td>
 </tr>
@@ -58,7 +58,7 @@ return true;
 
 <!-- Search Results Table -->
 <c:if test="${doSearch}">
-<view:table className="view" pad="default" space="default" cmd="hdsearch">
+<view:table className="view" cmd="hdsearch">
 <tr class="title caps">
  <td colspan="6" class="left">SEARCH RESULTS</td>
 </tr>

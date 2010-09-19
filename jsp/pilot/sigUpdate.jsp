@@ -37,7 +37,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="sigupdate.do" method="post" link="${pilot}" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left">${forumName} SIGNATURE IMAGE UPDATE - ${pilot.name}</td>
 </tr>
@@ -61,7 +61,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE SIGNATURE IMAGE" /></td>
 </tr>

@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_diag.tld" prefix="diag" %>
 
 <!-- DAO Cache Data Table -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td colspan="7" class="left">DATA ACCESS LAYER CACHE INFORMATION</td>
 </tr>

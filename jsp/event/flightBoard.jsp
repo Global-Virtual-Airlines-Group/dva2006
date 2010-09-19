@@ -32,7 +32,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="flightboard.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="flightboard">
+<view:table className="view" cmd="flightboard">
 <tr class="title">
  <td colspan="4" class="left">ONLINE PILOTS - ${netInfo.network} - VALID AS OF <fmt:date date="${netInfo.validDate}" /></td>
  <td><el:cmd url="flightboardmap" linkID="${network}">FLIGHT MAP</el:cmd></td>

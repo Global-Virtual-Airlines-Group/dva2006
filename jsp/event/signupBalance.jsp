@@ -35,7 +35,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="eventbalance.do" link="${event}" method="post" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">EVENT SIGNUP REBALANCING FOR ${event.name}</td>
 </tr>
@@ -51,7 +51,7 @@ return true;
 <tr>
  <td class="label mid"><el:box name="signupID" value="${pilot.hexID}" label="" /></td>
  <td class="data"><el:profile location="${pilotLoc}"><span class="pri bld">${pilot.name}</span></el:profile>
-<c:if test="${!empty pilot.pilotCode}"> (<span class="sec bld">${pilot.pilotCode})</span></c:if> ${pilot.rank}, ${pilot.equipmentType}</td>
+<c:if test="${!empty pilot.pilotCode}"> (<span class="sec bld">${pilot.pilotCode})</span></c:if> ${pilot.rank.name}, ${pilot.equipmentType}</td>
 </tr>
 </c:forEach>
 <c:if test="${empty routeSignups}">
@@ -63,7 +63,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><span style="color:#ffffff" class="bld">MOVE TO ROUTE</span> <el:combo name="routeID" idx="*" firstEntry="-" options="${event.routes}" />
  <el:button ID="SaveButton" type="submit" className="BUTTON" label="MOVE" /></td>

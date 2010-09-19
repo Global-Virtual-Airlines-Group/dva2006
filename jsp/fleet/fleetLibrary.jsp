@@ -86,7 +86,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="fleetlibrary.do" method="get" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title">
  <td class="caps"><content:airline /> FLEET LIBRARY</td>
  <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="< INSTALLER >" options="${fleet}" onChange="void selectAC(this)" /></td>
@@ -107,7 +107,7 @@ Select a Fleet Installer from the list above.</span>
 </el:table>
 
 <!-- Download Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="DownloadButton" className="BUTTON" label="DOWNLOAD INSTALLER" onClick="void download()" /></td>
 </tr>

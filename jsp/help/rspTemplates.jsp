@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="rsptemplates">
+<view:table className="view" cmd="rsptemplates">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="25%">TEMPLATE NAME</td>

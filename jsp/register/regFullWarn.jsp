@@ -38,7 +38,7 @@ will contact you at the email address on your application when there is an openi
 <br />
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr>
  <td><el:cmdbutton ID="RegisterButton" url="register" op="force" label="REGISTER AT ${airlineName}" />
  <el:cmdbutton ID="HomeButton" url="home" label="NO THANKS" /></td>

@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty acarsBW}">
 <content:sysdata var="swfPath" name="path.swf" />
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2">ACARS SERVER BANDWIDTH USAGE</td>
 </tr>
@@ -36,7 +36,7 @@ so.write('flashcontent');
 
 </c:if>
 <c:if test="${!empty acarsPool}">
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS</td>
 </tr>
@@ -82,7 +82,7 @@ writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.
 </c:if>
 <c:if test="${!empty workers}">
 <!-- ACARS Server Worker threads -->
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <tr class="title">
  <td class="left caps" colspan="4">ACARS WORKER THREAD INFORMATION</td>
 </tr>

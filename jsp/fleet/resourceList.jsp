@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="resources.do" method="post" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="resources">
+<view:table className="view" cmd="resources">
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> WEB RESOURCES</td>
  <td class="right" colspan="4"><c:if test="${access.canCreate}"><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></c:if>

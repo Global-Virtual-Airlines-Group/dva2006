@@ -36,7 +36,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="applicants.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="applicants">
+<view:table className="view" cmd="applicants">
 <tr class="title caps">
  <td class="left" colspan="3"><content:airline /> PILOT APPLICATIONS</td>
  <td class="right" colspan="3">AIRLINE SIZE - <fmt:int value="${airlineSize}" /> PILOTS, MAX <fmt:int value="${maxSize}" /></td>

@@ -220,7 +220,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="wxcenter.do" method="get" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER</td>
 </tr>

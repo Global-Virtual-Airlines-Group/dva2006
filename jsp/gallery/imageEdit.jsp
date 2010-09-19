@@ -43,7 +43,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="imgsave.do" method="post" link="${img}" allowUpload="true" validate="return validate(this)">
-<el:table className="form" space="default" pad="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> IMAGE GALLERY ENTRY</td>
 </tr>
@@ -75,7 +75,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="bar">
 <tr class="title">
  <td>
 <c:if test="${access.canEdit}">

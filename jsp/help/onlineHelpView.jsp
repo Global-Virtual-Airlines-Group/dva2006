@@ -13,7 +13,7 @@
 <content:copyright visible="false" />
 <body>
 <el:form action="help.do" op="read" method="get" linkID="${help.title}" validate="return false">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td><content:airline /> ONLINE HELP</td>
 </tr>

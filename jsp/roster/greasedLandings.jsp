@@ -45,7 +45,7 @@ return true;
 The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the 
 smoothest landings, and the greaser pilots who made them:<br />
 <br />
-<el:table className="view" pad="default" space="default">
+<el:table className="view">
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> GREASED LANDING CLUB</td>

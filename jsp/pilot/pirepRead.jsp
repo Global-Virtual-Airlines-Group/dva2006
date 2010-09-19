@@ -75,7 +75,7 @@ return true;
 <form method="get" action="pirep.do?id=${pirep.hexID}" onsubmit="return false">
 </c:when>
 </c:choose>
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title">
  <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON 
@@ -85,7 +85,7 @@ return true;
 <!-- Pirep Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank}, ${pilot.equipmentType})</td>
+ <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank.name}, ${pilot.equipmentType})</td>
 </tr>
 <content:filter roles="HR,PIREP,Examination">
 <tr>
@@ -277,7 +277,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td>
 <c:if test="${access.canSubmit}">

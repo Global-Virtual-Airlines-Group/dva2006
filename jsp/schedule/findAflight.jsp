@@ -96,7 +96,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <tr class="title caps">
  <td colspan="4"><content:airline /> SCHEDULE SEARCH</td>
 </tr>
@@ -159,7 +159,7 @@ return true;
 </el:form>
 <c:if test="${!empty fafResults}">
 <el:form method="post" action="buildassign.do" validate="return buildValidate(this)">
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
  <td colspan="8" class="left">FLIGHT SCHEDULE SEARCH RESULTS</td>
@@ -217,7 +217,7 @@ return true;
 </content:hasmsg>
 <c:if test="${!empty buildAssign}">
 <br />
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <!-- Flight Assignment Data -->
 <tr class="caps title left">
  <td colspan="5">FLIGHT ASSIGNMENT</td>
@@ -253,7 +253,7 @@ return true;
 
 <c:if test="${doSearch && (empty fafResults)}">
 <!-- No Search Results Found -->
-<el:table className="view" space="default" pad="default">
+<el:table className="view">
 <tr class="title caps">
  <td class="mid">No Flights matching your Search Criteria were found.</td>
 </tr>

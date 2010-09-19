@@ -42,7 +42,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="insflight.do" link="${flight}" op="save" validate="return validate(this)">
-<el:table className="form" pad="default" space="default">
+<el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title caps">
 <c:if test="${!empty flight}">
@@ -56,7 +56,7 @@ return true;
 <!-- PIREP Data -->
 <tr>
  <td class="label">Student Pilot</td>
- <td class="data">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td class="data">${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <tr>
  <td class="label">Instructor</td>
@@ -86,7 +86,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" pad="default" space="default">
+<el:table className="bar">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" /></td>
 </tr>

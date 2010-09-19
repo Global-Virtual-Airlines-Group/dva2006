@@ -41,7 +41,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarserrors.do" method="post" validate="return validate(this)">
-<view:table className="view" space="default" pad="default" cmd="acarserrors">
+<view:table className="view" cmd="acarserrors">
 <!-- View Header Bar -->
 <tr class="title">
  <td colspan="2" class="left">ACARS CLIENT ERROR LOGS</td>
