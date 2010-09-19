@@ -28,7 +28,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		boolean saveChanges = Boolean.valueOf(String.valueOf(ctx.getCmdParameter(OPERATION, null))).booleanValue();
+		boolean saveChanges = "save".equals(ctx.getCmdParameter(OPERATION, null));
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute navdao = new GetNavRoute(con);
