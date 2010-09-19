@@ -37,22 +37,26 @@
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
+<content:sysdata var="scMaxNoms" name="users.sc.maxNominations" default="5" />
+<content:sysdata var="scMinFlights" name="users.sc.minFlights" default="5" />
+<content:sysdata var="scMinAge" name="users.sc.minAge" default="120" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:table ID="pilotCenter" className="form" pad="default" space="default">
+<el:table ID="pilotCenter" className="form">
 
 <!-- Pilot Information -->
 <tr class="title caps">
- <td colspan="2">PILOT CENTER - ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+ <td colspan="2">PILOT CENTER - ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 <tr>
  <td width="350" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
  <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
- You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
- You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
+ You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited 
+ <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
+You are visiting today from <span class="bld">${pageContext.request.remoteHost}</span> (${pageContext.request.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
  in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
@@ -92,7 +96,7 @@ the <content:airline /> Pilot Board is viewed.</span></td>
  <td class="mid">&nbsp;
 <c:if test="${!empty acImage}"><el:img src="${acImage}" caption="${pilot.equipmentType}" /></c:if>
  </td>
- <td class="data">You are a <span class="pri bld">${pilot.rank}</span> in the <span class="sec bld">${pilot.equipmentType}</span>
+ <td class="data">You are a <span class="pri bld">${pilot.rank.name}</span> in the <span class="sec bld">${pilot.equipmentType}</span>
  program. <span class="pri bld">(Stage ${eqType.stage})</span><br />
 <br />
 Your Chief Pilot is <a class="bld" href="mailto:${eqType.CPEmail}">${eqType.CPName}</a>.<br />
@@ -343,13 +347,11 @@ departing today.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="pri bld" url="charts" linkID="${pilot.homeAirport}">Approach Charts</el:cmd></td>
- <td class="data">We have airport, instrument approach, departure and arrival charts airports served by <content:airline />,
- Continental and Northwest Airlines.</td>
+ <td class="data">We have airport, instrument approach, departure and arrival charts airports served by <content:airline />.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
- <td class="data">Our servers automatically download North Atlantic and Pacific Track information 
-every day.</td>
+ <td class="data">Our servers automatically download North Atlantic and Pacific Track information every day.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd><br />
@@ -480,6 +482,15 @@ cannot write a new Examination until this interval has passed.</span></c:if>
 <c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
+<c:if test="${(pilot.legs >= scMinFlights) && (pilotAge >= scMinAge)}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="scnomcenter">Senior Captain Nominations</el:cmd></td>
+ <td class="data">Promotion to the rank of Senior Captain is the highest individual achievement a <content:airline />
+ pilot can obtain. You can nominate up to <fmt:int value="${scMaxNoms}" /> individuals for promotion to
+ Senior captain each calendar quarter. Please note that the final decision on promotions to Senior Captain
+ is the exclusive perogative of the <content:airline /> Senior Staff.</td>
+</tr>
+</c:if>
 
 <c:if test="${academyEnabled}">
 <!-- Flight Academy Section -->
@@ -577,6 +588,13 @@ training session with a Flight Academy student.</td>
  that qualify for promotion to Captain.</td>
 </tr>
 </content:filter>
+<content:filter roles="HR,Operations,PIREP">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="scnomcenter">Senior Captain Nominations</el:cmd></td>
+ <td class="data">You can view the status of <content:airline /> Senior Captain nominations for the current
+ calendar quarter here.</td>
+</tr>
+</content:filter>
 <content:filter roles="HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
@@ -644,22 +662,22 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="airlines">Update Airlines</el:cmd></td>
  <td class="data">You can modify the Airline profiles contained within the <content:airline /> Flight Schedule.
- <span class="ita">This information is shared between all web applications.</span></td>
+ <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="airports">Update Airports</el:cmd></td>
  <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule.
- <span class="ita">This information is shared between all web applications.</span></td>
+ <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="aircraftlist">Update Aircraft</el:cmd></td>
  <td class="data">You can update Aircraft profiles contained within the <content:airline /> Flight Schedule.
- <span class="ita">This information is shared between all web applications.</span></td>
+ <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="trouteplot">Plot SID/STAR</el:cmd></td>
  <td class="data">You can display and/or plot Standard Instrument Departures and Standard Terminal Arrival
- Routes. <span class="ita">This information is shared between all web applications.</span></td>
+ Routes. <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />

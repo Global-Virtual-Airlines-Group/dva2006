@@ -8,8 +8,8 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to write Senior Captain Nominations to the database.
  * @author Luke
- * @version 3.2
- * @since 3.2
+ * @version 3.3
+ * @since 3.3
  */
 
 public class SetNomination extends DAO {
@@ -23,21 +23,35 @@ public class SetNomination extends DAO {
 	}
 
 	/**
-	 * Writes a Nomination to the database. This can handle UPDATEs and INSERTs.
+	 * Writes a new Nomination to the database.
 	 * @param n the Nomination bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(Nomination n) throws DAOException {
+	public void create(Nomination n) throws DAOException {
 		try {
-			if (n.getID() != 0) {
-				prepareStatement("UPDATE NOMINATIONS SET SCORE=?, STATUS=? WHERE (QUARTER=?) AND (ID=?)");
-				_ps.setInt(4, n.getID());
-			} else
-				prepareStatement("INSERT INTO NOMINATIONS (SCORE, STATUS, QUARTER) VALUES(?, ?, ?)");
-			
+			prepareStatementWithoutLimits("INSERT INTO NOMINATIONS (SCORE, STATUS, QUARTER, ID) VALUES(?, ?, ?, ?)");
 			_ps.setInt(1, n.getScore());
 			_ps.setInt(2, n.getStatus().ordinal());
 			_ps.setInt(3, new Quarter(n.getCreatedOn()).getYearQuarter());
+			_ps.setInt(4, n.getID());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates a Nomination in the database.
+	 * @param n the Nomination bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void update(Nomination n) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE NOMINATIONS SET SCORE=?, STATUS=? WHERE (QUARTER=?) AND (ID=?)");
+			_ps.setInt(1, n.getScore());
+			_ps.setInt(2, n.getStatus().ordinal());
+			_ps.setInt(3, new Quarter(n.getCreatedOn()).getYearQuarter());
+			_ps.setInt(4, n.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

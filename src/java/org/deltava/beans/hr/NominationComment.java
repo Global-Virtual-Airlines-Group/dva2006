@@ -8,8 +8,8 @@ import org.deltava.beans.*;
 /**
  * A bean to track Senior Captain nomination comments.
  * @author Luke
- * @version 3.2
- * @since 3.2
+ * @version 3.3
+ * @since 3.3
  */
 
 public class NominationComment extends DatabaseBean implements AuthoredBean {

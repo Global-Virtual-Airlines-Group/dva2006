@@ -9,8 +9,8 @@ import org.deltava.beans.*;
  * A bean to track Senior Captain nominations. The first nomination is tracked in the Nomination and
  * {@link NominationComment} beans, with further nominations resulting in another NominationComment.
  * @author Luke
- * @version 3.2
- * @since 3.2
+ * @version 3.3
+ * @since 3.3
  */
 
 public class Nomination extends DatabaseBean implements ViewEntry {
@@ -20,7 +20,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	}
 
 	private Date _created;
-	private Status _status;
+	private Status _status = Status.PENDING;
 	
 	private int _score;
 	private int _commentCount;
@@ -34,7 +34,8 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 */
 	public Nomination(int id) {
 		super();
-		setID(id);
+		if (id > 0)
+			setID(id);
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 */
 	public void addComment(NominationComment nc) {
 		_comments.add(nc);
-		if (nc.getCreatedOn().before(_created))
+		if ((_created == null) || nc.getCreatedOn().before(_created))
 			_created = nc.getCreatedOn();
 	}
 	
