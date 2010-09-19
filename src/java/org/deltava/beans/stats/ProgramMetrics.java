@@ -19,7 +19,7 @@ public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 
 	private EquipmentType _eq;
 	
-	private final Map<Rank, Integer> _rankCounts = new LinkedHashMap<Rank, Integer>();
+	private final Map<Rank, Integer> _rankCounts = new TreeMap<Rank, Integer>();
 	private final Map<Date, Integer> _hireCounts = new LinkedHashMap<Date, Integer>();
 	private final Map<String, Integer> _statusCounts = new TreeMap<String, Integer>();
 	
