@@ -93,7 +93,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private final Map<String, String> _imHandles = new TreeMap<String, String>();
 
 	private String _eqType;
-	private String _rank;
+	private Rank _rank;
 	private String _location;
 	private String _homeAirport;
 	private TZInfo _tz;
@@ -242,9 +242,9 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	/**
 	 * Return the Person's rank. In the case of an Applicant not yet hired this will be null.
 	 * @return the rank, or null
-	 * @see Person#setRank(String)
+	 * @see Person#setRank(Rank)
 	 */
-	public String getRank() {
+	public Rank getRank() {
 		return _rank;
 	}
 
@@ -627,7 +627,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @param rank the new Rank, or null if not hired
 	 * @see Person#getRank()
 	 */
-	public void setRank(String rank) {
+	public void setRank(Rank rank) {
 		_rank = rank;
 	}
 

@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -450,7 +450,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setLegacyVerified(rs.getBoolean(14));
 			a.setHomeAirport(rs.getString(15));
 			a.setEquipmentType(rs.getString(16));
-			a.setRank(rs.getString(17));
+			a.setRank(Rank.fromName(rs.getString(17)));
 			a.setNotifyOption(Person.FLEET, rs.getBoolean(18));
 			a.setNotifyOption(Person.EVENT, rs.getBoolean(19));
 			a.setNotifyOption(Person.NEWS, rs.getBoolean(20));

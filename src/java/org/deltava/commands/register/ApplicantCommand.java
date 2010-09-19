@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 
 			// Save hire fields
 			a.setEquipmentType(ctx.getParameter("eqType"));
-			a.setRank(ctx.getParameter("rank"));
+			a.setRank(Rank.fromName(ctx.getParameter("rank")));
 
 			// Set Notification Options
 			Collection<String> notifyOptions = ctx.getParameters("notifyOption");

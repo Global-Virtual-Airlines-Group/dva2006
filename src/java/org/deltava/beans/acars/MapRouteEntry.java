@@ -13,7 +13,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	}
 	
 	public final String getInfoBox() {
-		StringBuilder buf = new StringBuilder(_usr.getRank());
+		StringBuilder buf = new StringBuilder(_usr.getRank().getName());
 		buf.append(", ");
 		buf.append(_usr.getEquipmentType());
 		buf.append("<br />");

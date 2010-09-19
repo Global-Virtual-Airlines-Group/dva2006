@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -160,7 +160,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Save the new user
 			newUser.setStatus(Pilot.ACTIVE);
 			newUser.setEquipmentType(ctx.getParameter("eqType"));
-			newUser.setRank(ctx.getParameter("rank"));
+			newUser.setRank(Rank.fromName(ctx.getParameter("rank")));
 			if (!isExisting) {
 				wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
 				

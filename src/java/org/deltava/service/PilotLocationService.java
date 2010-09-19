@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -19,11 +19,13 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Pilot Locations on a map.
  * @author Luke
- * @version 2.5
+ * @version 3.3
  * @since 1.0
  */
 
 public class PilotLocationService extends WebService {
+	
+	private final Random rnd = new Random();
 
 	/**
 	 * Executes the Web Service.
@@ -31,11 +33,11 @@ public class PilotLocationService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		boolean isHR = ctx.isUserInRole("HR");
 
 		// Calculate the random location adjuster (between -1.5 and +1.5)
-		Random rnd = new Random();
 		double rndAmt = ((rnd.nextDouble() * 3) - 1) / GeoLocation.DEGREE_MILES;
 
 		// Get active pilots and their locations
@@ -74,7 +76,7 @@ public class PilotLocationService extends WebService {
 				// Build the element
 				Element e = XMLUtils.createElement("pilot", loc.getInfoBox(), true);
 				e.setAttribute("id", String.valueOf(usr.getID()));
-				e.setAttribute("rank", usr.getRank());
+				e.setAttribute("rank", usr.getRank().getName());
 				e.setAttribute("eqType", usr.getEquipmentType());
 				e.setAttribute("minZoom", "1");
 				e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
@@ -86,8 +88,8 @@ public class PilotLocationService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setExpiry(1800);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 2.7
+ * @version 3.3
  * @since 1.0
  */
 
@@ -407,11 +407,11 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				switch (rs.getInt(2)) {
 					default:
 					case EquipmentType.EXAM_FO:
-						eq.addExam(Ranks.RANK_FO, rs.getString(3));
+						eq.addExam(Rank.FO, rs.getString(3));
 						break;
 						
 					case EquipmentType.EXAM_CAPT:
-						eq.addExam(Ranks.RANK_C, rs.getString(3));
+						eq.addExam(Rank.C, rs.getString(3));
 						break;
 				}
 			}

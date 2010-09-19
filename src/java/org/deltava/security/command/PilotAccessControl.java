@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Pilot profile operations.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -81,8 +81,7 @@ public class PilotAccessControl extends AccessControl {
 
 		// Check Promotion access
 		boolean isSameProgram = _ctx.getUser().getEquipmentType().equals(_p.getEquipmentType());
-		boolean isCP = Ranks.RANK_CP.equals(_ctx.getUser().getRank()) || Ranks.RANK_ACP.equals(_ctx.getUser().getRank());
-		_canPromote = (isHR || (isCP && isSameProgram));
+		_canPromote = (isHR || (_ctx.getUser().getRank().isCP() && isSameProgram));
 
 		// Check if there is a staff profile in the request
 		Object sProfile = _ctx.getRequest().getAttribute("staff");

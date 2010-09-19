@@ -141,7 +141,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
-			ctx.setAttribute("asstCP", pdao.getPilotsByEQ(testHistory.getEquipmentType(), null, true, Ranks.RANK_ACP), REQUEST);
+			ctx.setAttribute("asstCP", pdao.getPilotsByEQ(testHistory.getEquipmentType(), null, true, Rank.ACP), REQUEST);
 
 			// Save the pilot's equipment program and check if we can get promoted to Captain
 			ctx.setAttribute("eqType", testHistory.getEquipmentType(), REQUEST);
@@ -149,7 +149,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Count how many legs completed towards Promtion
 			int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
-			ctx.setAttribute("isFO", Boolean.valueOf(Ranks.RANK_FO.equals(p.getRank())), REQUEST);
+			ctx.setAttribute("isFO", Boolean.valueOf(Rank.FO == p.getRank()), REQUEST);
 			ctx.setAttribute("promoteLegs", Integer.valueOf(promoLegs), REQUEST);
 
 			// Get Exam profiles
@@ -178,7 +178,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 							testHistory.canSwitchTo(eq);
 					} catch (IneligibilityException ie) {
 						i.remove();	
-						Collection<String> eNames = eq.getExamNames(Ranks.RANK_FO);
+						Collection<String> eNames = eq.getExamNames(Rank.FO);
 						if (!testHistory.hasPassed(eNames)) {
 							for (Iterator<String> ei = eNames.iterator(); ei.hasNext(); ) {
 								String examName = ei.next();

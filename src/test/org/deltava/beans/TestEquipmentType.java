@@ -49,9 +49,9 @@ public class TestEquipmentType extends AbstractBeanTestCase {
     public void testRanks() {
         assertNotNull(_eq.getRanks());
         assertEquals(0, _eq.getRanks().size());
-        _eq.addRank(Ranks.RANK_FO);
+        _eq.addRank(Rank.FO);
         assertEquals(1, _eq.getRanks().size());
-        assertTrue(_eq.getRanks().contains(Ranks.RANK_FO));
+        assertTrue(_eq.getRanks().contains(Rank.FO));
         
         _eq.addRanks("Senior Captain,Chief Pilot", ",");
         assertEquals(4, _eq.getRanks().size());
