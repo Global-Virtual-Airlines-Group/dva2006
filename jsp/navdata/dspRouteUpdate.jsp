@@ -31,6 +31,7 @@ No <content:airline /> ACARS Dispatch Routes have had their SID or STAR updated.
 ${msg}<br />
 </c:forEach>
 </c:if>
+<hr />
 <br />
 <c:if test="${isPreview}"><span class="pri bld">This is a preview.</span> To save these changes to the database, 
  <el:cmd url="dsptrouteupdate" op="save" className="sec bld">Click Here</el:cmd>.<br /></c:if>
