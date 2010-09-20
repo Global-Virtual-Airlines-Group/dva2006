@@ -29,6 +29,11 @@ public class NominationCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
+		
+		// Check if enabled
+		if (!SystemData.getBoolean("users.sc.active"))
+			throw securityException("Nominations not active");
+		
 		try {
 			Connection con = ctx.getConnection();
 
