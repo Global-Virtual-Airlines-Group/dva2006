@@ -611,6 +611,15 @@
 			<assign_purge type="Integer">14</assign_purge>
 			<acars_only type="Boolean">false</acars_only>
 		</pirep>
+
+		<!-- Senior Captain settings -->
+		<sc>
+			<active type="Boolean">true</active>
+			<minFlights type="Integer">5</minFlights>
+			<minAge type="Integer">120</minAge>
+		
+			<maxNominations type="Integer">3</maxNominations>
+		</sc>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
 		<tasks_by>DVA2570</tasks_by>

@@ -584,8 +584,9 @@
 
 		<!-- Senior Captain settings -->
 		<sc>
-			<minFlights type="Integer">10</minFlights>
-			<minAge type="Integer">90</minAge>
+			<active type="Boolean">true</active>
+			<minFlights type="Integer">5</minFlights>
+			<minAge type="Integer">120</minAge>
 		
 			<maxNominations type="Integer">3</maxNominations>
 		</sc>

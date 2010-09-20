@@ -37,6 +37,7 @@
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 <content:sysdata var="hasIMAP" name="smtp.imap.enabled" />
+<content:sysdata var="hasSC" name="users.sc.active" default="false" />
 <content:sysdata var="scMaxNoms" name="users.sc.maxNominations" default="5" />
 <content:sysdata var="scMinFlights" name="users.sc.minFlights" default="5" />
 <content:sysdata var="scMinAge" name="users.sc.minAge" default="120" />
@@ -482,7 +483,7 @@ cannot write a new Examination until this interval has passed.</span></c:if>
 <c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
-<c:if test="${(pilot.legs >= scMinFlights) && (pilotAge >= scMinAge)}">
+<c:if test="${hasSC && (pilot.legs >= scMinFlights) && (pilotAge >= scMinAge)}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="scnomcenter">Senior Captain Nominations</el:cmd></td>
  <td class="data">Promotion to the rank of Senior Captain is the highest individual achievement a <content:airline />
@@ -589,11 +590,13 @@ training session with a Flight Academy student.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Operations,PIREP">
+<c:if test="${hasSC}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="scnomcenter">Senior Captain Nominations</el:cmd></td>
  <td class="data">You can view the status of <content:airline /> Senior Captain nominations for the current
  calendar quarter here.</td>
 </tr>
+</c:if>
 </content:filter>
 <content:filter roles="HR">
 <tr>
