@@ -61,7 +61,7 @@ public class NominationScoreHelper {
 			
 			if (author.getID() == _n.getID())
 				score += 1;
-			else if (author.hasRating("HR"))
+			else if (author.isInRole("HR"))
 				score += 30;
 			else if (Rank.SC == author.getRank())
 				score += 10;
