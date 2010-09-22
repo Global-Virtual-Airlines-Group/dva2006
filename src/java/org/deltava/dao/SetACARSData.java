@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -278,7 +278,7 @@ public class SetACARSData extends DAO {
 
 			// Write the Route
 			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR (ID, TYPE, NAME, TRANSITION, "
-					+ "RUNWAY) VALUES (?, ?, ?, ?, ?)");
+				+ "RUNWAY) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, tr.getType());
 			_ps.setString(3, tr.getName());
@@ -287,8 +287,8 @@ public class SetACARSData extends DAO {
 			executeUpdate(1);
 
 			// Write the route data
-			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, LATITUDE, "
-					+ "LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, WPTYPE, "
+				+ "LATITUDE, LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, tr.getType());
 			LinkedList<NavigationDataBean> wps = tr.getWaypoints();
@@ -296,17 +296,16 @@ public class SetACARSData extends DAO {
 				NavigationDataBean ai = wps.get(x);
 				_ps.setInt(3, x + 1);
 				_ps.setString(4, ai.getCode());
-				_ps.setDouble(5, ai.getLatitude());
-				_ps.setDouble(6, ai.getLongitude());
-				_ps.setString(7, ai.getRegion());
+				_ps.setInt(5, ai.getType());
+				_ps.setDouble(6, ai.getLatitude());
+				_ps.setDouble(7, ai.getLongitude());
+				_ps.setString(8, ai.getRegion());
 				_ps.addBatch();
 			}
 
 			// Write and clean up
 			_ps.executeBatch();
 			_ps.close();
-
-			// Commit
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
