@@ -22,6 +22,7 @@ public class NominationAccessControl extends AccessControl {
 	private Pilot _p;
 	
 	private boolean _canNominate;
+	private boolean _canObject;
 	private boolean _canUpdate;
 	private boolean _canDispose;
 	private boolean _canDelete;
@@ -67,6 +68,7 @@ public class NominationAccessControl extends AccessControl {
 			_canNominate &= (nc.getAuthorID() != usr.getID());
 		
 		// Check other access
+		_canObject = _canNominate && (_ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("PIREP"));
 		_canUpdate = _ctx.isUserInRole("HR");
 		_canDispose = _canUpdate && (_n.getStatus() == Nomination.Status.PENDING);
 		_canDelete = _ctx.isUserInRole("Admin");
@@ -78,6 +80,14 @@ public class NominationAccessControl extends AccessControl {
 	 */
 	public boolean getCanNominate() {
 		return _canNominate;
+	}
+	
+	/**
+	 * Returns if the user can provide negative comments to the nomination.
+	 * @return TRUE if the user can object, otherwise FALSE
+	 */
+	public boolean getCanObject() {
+		return _canObject;
 	}
 	
 	/**
