@@ -14,6 +14,7 @@ import org.deltava.beans.*;
 
 public class NominationComment extends DatabaseBean implements AuthoredBean {
 	
+	private boolean _support = true;
 	private Date _created;
 	private String _body;
 
@@ -46,6 +47,15 @@ public class NominationComment extends DatabaseBean implements AuthoredBean {
 	public String getBody() {
 		return _body;
 	}
+	
+	/**
+	 * Returns whether this comment is in support of the nomination.
+	 * @return TRUE if in support, otherwise FALSE
+	 * @see NominationComment#setSupport(boolean)
+	 */
+	public boolean getSupport() {
+		return _support;
+	}
 
 	@Override
 	public int getAuthorID() {
@@ -73,6 +83,15 @@ public class NominationComment extends DatabaseBean implements AuthoredBean {
 	 */
 	public void setCreatedOn(Date dt) {
 		_created = dt;
+	}
+	
+	/**
+	 * Marks whether this comment is in support of the nomination.
+	 * @param isSupport TRUE if in support, otherwise FALSE
+	 * @see NominationComment#getSupport()
+	 */
+	public void setSupport(boolean isSupport) {
+		_support = isSupport;
 	}
 	
 	public int compareTo(Object o2) {

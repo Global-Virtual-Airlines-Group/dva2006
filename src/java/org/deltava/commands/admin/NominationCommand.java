@@ -4,13 +4,14 @@ package org.deltava.commands.admin;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.NominationAccessControl;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -63,6 +64,8 @@ public class NominationCommand extends AbstractFormCommand {
 			NominationComment nc = new NominationComment(ctx.getUser().getID(), ctx.getParameter("body"));
 			nc.setAuthorID(ctx.getUser().getID());
 			nc.setCreatedOn(new Date());
+			if (!isNew && access.getCanObject())
+				nc.setSupport(Boolean.valueOf(ctx.getParameter("support")).booleanValue());
 			n.addComment(nc);
 			
 			// Load the authors IDs
@@ -142,21 +145,24 @@ public class NominationCommand extends AbstractFormCommand {
 			ctx.setAttribute("nom", n, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 			
+			// Load nominee's status history
+			GetStatusUpdate sudao = new GetStatusUpdate(con);
+			Collection<StatusUpdate> updates = sudao.getByUser(n.getID(), SystemData.get("airline.db"));
+			ctx.setAttribute("statusUpdates", updates, REQUEST);
+			
 			// Get pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(n.getID()));
 			for (NominationComment nc : n.getComments())
 				IDs.add(new Integer(nc.getAuthorID()));
+			for (StatusUpdate upd : updates)
+				IDs.add(new Integer(upd.getAuthorID()));
 			
 			// Load Pilots
 			GetFlightReports frdao = new GetFlightReports(con);
 			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS");
 			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
-			ctx.setAttribute("pilots", pilots, REQUEST);
-			
-			// Load nominee's status history
-			GetStatusUpdate sudao = new GetStatusUpdate(con);
-			ctx.setAttribute("statusUpdates", sudao.getByUser(n.getID(), SystemData.get("airline.db")), REQUEST);
+			ctx.setAttribute("authors", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

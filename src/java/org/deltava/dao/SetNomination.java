@@ -66,13 +66,14 @@ public class SetNomination extends DAO {
 	 */
 	public void write(int id, NominationComment nc) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO NOMINATION_COMMENTS (ID, QUARTER, AUTHOR, CREATED, BODY) "
-				+ "VALUES (?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO NOMINATION_COMMENTS (ID, QUARTER, AUTHOR, SUPPORT, CREATED, BODY) "
+				+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
 			_ps.setInt(2, new Quarter(nc.getCreatedOn()).getYearQuarter());
 			_ps.setInt(3, nc.getID());
-			_ps.setTimestamp(4, createTimestamp(nc.getCreatedOn()));
-			_ps.setString(5, nc.getBody());
+			_ps.setBoolean(4, nc.getSupport());
+			_ps.setTimestamp(5, createTimestamp(nc.getCreatedOn()));
+			_ps.setString(6, nc.getBody());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
