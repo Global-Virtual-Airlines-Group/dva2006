@@ -8,8 +8,7 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.servinfo.Controller;
-import org.deltava.beans.servinfo.Facility;
+import org.deltava.beans.servinfo.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -19,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
