@@ -127,13 +127,15 @@ public class GetNominations extends DAO {
 				_ps.close();
 				
 				// Load comments
-				prepareStatementWithoutLimits("SELECT AUTHOR, CREATED, BODY FROM NOMINATION_COMMENTS WHERE (ID=?) AND (QUARTER=?)");
+				prepareStatementWithoutLimits("SELECT AUTHOR, SUPPORT, CREATED, BODY FROM NOMINATION_COMMENTS "
+					+ "WHERE (ID=?) AND (QUARTER=?)");
 				_ps.setInt(1, id);
 				_ps.setInt(2, new Quarter(n.getCreatedOn()).getYearQuarter());
 				rs = _ps.executeQuery();
 				while (rs.next()) {
-					NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(3));
-					nc.setCreatedOn(rs.getTimestamp(2));
+					NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));
+					nc.setSupport(rs.getBoolean(2));
+					nc.setCreatedOn(rs.getTimestamp(3));
 					n.addComment(nc);
 				}
 			}

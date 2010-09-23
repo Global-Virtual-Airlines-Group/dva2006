@@ -148,7 +148,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </view:row>
 <c:forEach var="nc" items="${nom.comments}">
 <c:set var="author" value="${pilots[nc.authorID]}" scope="page" />
-<c:if test="${!fn:hasRole('HR', author)}">
+<c:if test="${!fn:hasRole('HR', author) || !nc.support}">
 <tr>
  <td class="bld">${author.name}</td>
  <td colspan="${cspan - 1}" class="small left"><fmt:msg value="${nc.body}" /></td>

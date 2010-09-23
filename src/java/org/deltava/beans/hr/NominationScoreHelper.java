@@ -53,24 +53,28 @@ public class NominationScoreHelper {
 	 * @return the score
 	 */
 	public int getScore() {
-		int score = 0;
+		int total = 0;
 		for (NominationComment nc : _n.getComments()) {
 			Pilot author = _authors.get(new Integer(nc.getAuthorID()));
 			if (author == null)
 				continue;
-			
+
+			int score = 5;
 			if (author.getID() == _n.getID())
-				score += 1;
+				score = 1;
 			else if (author.isInRole("HR"))
-				score += 30;
+				score = 30;
 			else if (Rank.SC == author.getRank())
-				score += 10;
+				score = 10;
 			else if (author.getRank().isCP())
-				score += 15;
+				score = 15;
+			
+			if (nc.getSupport())
+				total += score;
 			else
-				score += 5;
+				total -= score;
 		}
 		
-		return score;
+		return Math.max(0, total);
 	}
 }

@@ -76,10 +76,13 @@ return true;
  <td colspan="${cspan + 1}"><fmt:int value="${nom.commentCount}" /> NOMINATION COMMENTS</td>
 </tr>
 <c:forEach var="nc" items="${nom.comments}">
-<c:set var="author" value="${pilots[nc.authorID]}" scope="page" />
+<c:set var="author" value="${authors[nc.authorID]}" scope="page" />
 <tr>
  <td class="label top">${author.name} (${author.pilotCode}) <fmt:date date="${nc.createdOn}" t="HH:mm" /></td>
- <td colspan="${cspan}" class="data top"><fmt:msg value="${nc.body}" /></td>
+ <td colspan="${cspan}" class="data top">
+<c:if test="${!nc.support}"><span class="small error bld">DOES NOT SUPPORT THIS NOMINATION</span><br />
+<hr /></c:if>
+<fmt:msg value="${nc.body}" /></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -88,6 +91,12 @@ return true;
 <tr class="title caps">
  <td colspan="${cspan + 1}">NEW <content:airline /> SENIOR CAPTAIN NOMINATION - ${pilot.name}</td>
 </tr>
+<c:if test="${access.canObject}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td colspan="${cspan}" class="data"><el:box name="support" idx="*" value="true" checked="true" label="I support this Nomination" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label top">Comments</td>
  <td colspan="${cspan}" class="data"><el:textbox name="body" idx="*" width="90%" resize="true" height="5"></el:textbox></td>
