@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,13 +12,13 @@ import org.deltava.util.cache.Cacheable;
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
  * @author Luke
- * @version 2.1
+ * @version 3.3
  * @since 1.0
  */
 
 public class NavigationDataMap implements java.io.Serializable, Cacheable {
    
-   private final Map<String, Set<NavigationDataBean>> _entries = new HashMap<String, Set<NavigationDataBean>>();
+   private final Map<String, SortedSet<NavigationDataBean>> _entries = new HashMap<String, SortedSet<NavigationDataBean>>();
    private Object _key;
 
    /**
@@ -51,7 +51,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
          _entries.put(nd.getCode(), new TreeSet<NavigationDataBean>());
       
       // Get the set and add the bean
-      Set<NavigationDataBean> beans = _entries.get(nd.getCode());
+      Collection<NavigationDataBean> beans = _entries.get(nd.getCode());
       beans.add(nd);
    }
    
@@ -76,10 +76,10 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
    /**
     * Returns all entries with a given code.
     * @param code the navigation aid code
-    * @return a Set of entries, which may be empty
+    * @return a SortedSet of entries, which may be empty
     */
-   public Set<NavigationDataBean> getEntries(String code) {
-      return contains(code) ? _entries.get(code.toUpperCase()) : new HashSet<NavigationDataBean>();
+   public SortedSet<NavigationDataBean> getEntries(String code) {
+      return contains(code) ? _entries.get(code.toUpperCase()) : new TreeSet<NavigationDataBean>();
    }
    
    /**
@@ -90,8 +90,8 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataMap#get(String, GeoLocation) 
     */
    public NavigationDataBean get(String code) {
-      Set<NavigationDataBean> codes = getEntries(code);
-      return codes.isEmpty() ? null : (NavigationDataBean) codes.iterator().next();
+	   Collection<NavigationDataBean> codes = getEntries(code);
+      return codes.isEmpty() ? null : codes.iterator().next();
    }
 
    /**
@@ -103,9 +103,9 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataMap#get(String)
     */
    public NavigationDataBean get(String code, GeoLocation loc) {
-      Set<NavigationDataBean> codes = new TreeSet<NavigationDataBean>(new GeoComparator(loc));
+      Collection<NavigationDataBean> codes = new TreeSet<NavigationDataBean>(new GeoComparator(loc));
       codes.addAll(getEntries(code));
-      return codes.isEmpty() ? null : (NavigationDataBean) codes.iterator().next();
+      return codes.isEmpty() ? null : codes.iterator().next();
    }
    
    /**
@@ -114,7 +114,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     */
    public Collection<NavigationDataBean> getAll() {
       List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
-      for (Iterator<Set <NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); )
+      for (Iterator<? extends Set<NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); )
          results.addAll(i.next());
       
       return results;
@@ -135,7 +135,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataMap#filter(int)
     */
    public void filter(Collection<Integer> types) {
-	   for (Iterator<Set <NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); ) {
+	   for (Iterator<? extends Set<NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); ) {
 		   Set<NavigationDataBean> subEntries = i.next();
 		   for (Iterator<NavigationDataBean> i2 = subEntries.iterator(); i2.hasNext(); ) {
 			   NavigationDataBean nd = i2.next();

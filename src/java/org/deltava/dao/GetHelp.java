@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -203,7 +203,7 @@ public class GetHelp extends DAO {
 				}
 
 				// Execute the Query
-				sqlBuf.append(")");
+				sqlBuf.append(')');
 				prepareStatementWithoutLimits(sqlBuf.toString());
 				ResultSet rs = _ps.executeQuery();
 				while (rs.next()) {

@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 /**
  * A class for storing Date/Time objects with Time Zone information.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -105,10 +105,13 @@ public class DateTime implements java.io.Serializable, Comparable<DateTime> {
 	 * Calculates equality by comparing UTC times. Different local date/times that map to the same UTC time
 	 * will be considered equal by this method.
 	 */
-	public boolean equals(Object o2) {
-		return (o2 instanceof DateTime) ? (compareTo((DateTime) o2) == 0) : false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		return (o instanceof DateTime) ? (compareTo((DateTime) o) == 0) : false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return getUTC().hashCode();
 	}
@@ -137,6 +140,7 @@ public class DateTime implements java.io.Serializable, Comparable<DateTime> {
 	 * @see java.text.DateFormat#format(java.util.Date)
 	 * @see TZInfo#getAbbr()
 	 */
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_df.format(_dt.getTime()));
 		if ((_showZone) && (_tz.getAbbr() != null)) {

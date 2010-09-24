@@ -1,3 +1,4 @@
+// Copyright 2004, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -5,12 +6,13 @@ import java.util.*;
 /**
  * A utility class to parse URLs.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
+
 public class URLParser {
 
-    private LinkedList<String> _elements = new LinkedList<String>();
+    private final LinkedList<String> _elements = new LinkedList<String>();
     private String _ext;
     
     /**
@@ -63,7 +65,7 @@ public class URLParser {
      * @return the last element before the file name, or an empty string if not present
      */
     public String getLastPath() {
-        return (_elements.size() == 1) ? "" : (String) _elements.get(_elements.size() - 2);
+        return (_elements.size() == 1) ? "" : _elements.get(_elements.size() - 2);
     }
     
     /**

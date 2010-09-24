@@ -1,7 +1,5 @@
 package org.deltava.beans.help;
 
-import org.deltava.beans.help.OnlineHelpEntry;
-
 import org.hansel.CoverageDecorator;
 
 import junit.framework.Test;

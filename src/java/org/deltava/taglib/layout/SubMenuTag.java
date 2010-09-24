@@ -8,7 +8,7 @@ import javax.servlet.jsp.*;
 /**
  * A JSP tag to render a top level menu item in a JSP tag.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 2.6
  */
 
@@ -49,7 +49,7 @@ public class SubMenuTag extends MenuElementTag {
 		if (_width > 0)
 			out.print(" style=\"width:" + String.valueOf(_width) + "px;\"");
 		
-		out.println(">");
+		out.println('>');
 	}
 	
 	/**

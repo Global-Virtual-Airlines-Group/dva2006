@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to purge cached FlightAware routes from the database.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 2.6
  */
 
@@ -63,8 +63,8 @@ public class CachedRouteUpdateTask extends Task {
 					break;
 				
 				// Ensure the route includes one US airport
-				boolean isUS = rp.getAirportD().getICAO().startsWith("K") || rp.getAirportD().getICAO().startsWith("P");
-				isUS |= rp.getAirportA().getICAO().startsWith("K") || rp.getAirportA().getICAO().startsWith("P");
+				boolean isUS = (rp.getAirportD().getICAO().charAt(0) == 'K') || (rp.getAirportD().getICAO().charAt(0) == 'P');
+				isUS |= (rp.getAirportA().getICAO().charAt(0) == 'K') || (rp.getAirportA().getICAO().charAt(0) == 'P');
 				if (!isUS) {
 					log.warn(rp.getAirportD() + " to " + rp.getAirportA() + " not a US route, skipping");
 					continue;

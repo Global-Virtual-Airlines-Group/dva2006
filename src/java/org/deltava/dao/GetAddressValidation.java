@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AddressValidation;
 /**
  * A Data Access Object to read e-mail address validation entries.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class GetAddressValidation extends DAO {
 
 			// Run the query, if empty return null
 			List<AddressValidation> results = execute();
-			return results.isEmpty() ? null : (AddressValidation) results.get(0);
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -62,10 +62,8 @@ public class GetAddressValidation extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM EMAIL_VALIDATION WHERE (HASH=?) LIMIT 1");
 			_ps.setString(1, hashCode);
-
-			// Run the query, if empty return null
 			List<AddressValidation> results = execute();
-			return results.isEmpty() ? null : (AddressValidation) results.get(0);
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -81,10 +79,8 @@ public class GetAddressValidation extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM EMAIL_VALIDATION WHERE (EMAIL=?) LIMIT 1");
 			_ps.setString(1, eMail);
-
-			// Run the query, if empty return null
 			List<AddressValidation> results = execute();
-			return results.isEmpty() ? null : (AddressValidation) results.get(0);
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

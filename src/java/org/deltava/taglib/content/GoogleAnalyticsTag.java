@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to embed Google analytics data.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -89,9 +89,9 @@ public class GoogleAnalyticsTag extends TagSupport {
 			out.print(_jsVar);
 			out.print("._trackPageview(");
 			if (_virtualURL != null) {
-				out.print("'");
+				out.print('\'');
 				out.print(_virtualURL);
-				out.print("'");
+				out.print('\'');
 			}
 			
 			out.println(");");
@@ -116,7 +116,7 @@ public class GoogleAnalyticsTag extends TagSupport {
 				out.print(_jsVar);
 				out.println("._trackEvent(category, action, label, count);");
 				out.println("return true;");
-				out.println("}");
+				out.println('}');
 			}
 			
 			out.println("</script>");
