@@ -4,7 +4,6 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
-import org.deltava.beans.stats.TableInfo;
 
 public class TestTableInfo extends AbstractBeanTestCase {
 

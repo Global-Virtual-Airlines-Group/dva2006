@@ -58,7 +58,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 			// Execute the query and get the result
 			List<Pilot> results = execute();
-			p = (results.size() == 0) ? null : (Pilot) results.get(0);
+			p = (results.size() == 0) ? null : results.get(0);
 			if (p == null)
 				return null;
 

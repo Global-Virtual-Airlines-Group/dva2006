@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to render the Internet Explorer VML behavior style for Google Maps.
  * @author Luke
- * @version 2.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -26,7 +26,7 @@ public class IEVMLStyleTag extends TagSupport {
          out.println("<style type=\"text/css\">");
          out.println("v\\:* {");
          out.println("\tbehavior:url(#default#VML);");
-         out.println("}");
+         out.println('}');
          out.println("</style>");
       } catch (Exception e) {
          throw new JspException(e);

@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -134,7 +134,7 @@ public class GeoUtils {
 		buf.append(GeoPosition.getMinutes(loc.getLongitude()));
 		buf.append("' ");
 		buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLongitude()), "#.00"));
-		buf.append("\"");
+		buf.append('\"');
 		return buf.toString();
 	}
 

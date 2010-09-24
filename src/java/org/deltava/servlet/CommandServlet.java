@@ -151,7 +151,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		URLParser parser = new URLParser(rawURL);
 		try {
 			String cmdName = parser.getName().toLowerCase();
-			if (cmdName.startsWith("/"))
+			if (cmdName.charAt(0) == '/')
 				cmdName = cmdName.substring(1);
 
 			return _cmds.get(cmdName);

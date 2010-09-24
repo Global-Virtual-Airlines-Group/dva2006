@@ -5,7 +5,6 @@ import java.util.*;
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.NetworkInfo;
 
-import org.deltava.dao.file.GetServInfo;
 import org.deltava.util.system.SystemData;
 
 public class TestServInfo extends AbstractURLConnectionTestCase {

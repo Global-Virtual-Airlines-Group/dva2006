@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Flight Plan Generator for X-Plane 9.
  * @author Luke
- * @version 2.8
+ * @version 3.3
  * @since 2.8
  */
 
@@ -28,10 +28,10 @@ public class XP9Generator extends FlightPlanGenerator {
 		PrintWriter ctx = new CustomNewlineWriter(out, "\r\n");
 		
 		// Write header
-		ctx.println("I");
+		ctx.println('I');
 		ctx.println("3 version");
-		ctx.println("4");
-		ctx.println("1");
+		ctx.println('4');
+		ctx.println('1');
 		
 		// Write navaids
 		for (Iterator<NavigationDataBean> i = waypoints.iterator(); i.hasNext(); ) {

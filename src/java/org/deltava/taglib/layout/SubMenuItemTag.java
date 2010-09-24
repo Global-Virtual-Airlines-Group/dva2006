@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to render CSS sub-menu items.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 2.6
  */
 
@@ -53,7 +53,7 @@ public class SubMenuItemTag extends MenuElementTag {
 			if (_renderTable) {
 				out.print("<tr class=\"submenu");
 				if (!StringUtils.isEmpty(_className)) {
-					out.print(" ");
+					out.print(' ');
 					out.print(_className);
 				}
 				

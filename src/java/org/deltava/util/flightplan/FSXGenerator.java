@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator X.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 2.4
  */
 
@@ -69,10 +69,10 @@ public class FSXGenerator extends FlightPlanGenerator {
 			ctx.print(", +000000.00,");
 			if (nd.isInTerminalRoute()) {
 				String aw = nd.getAirway();
-				ctx.print(" ");
+				ctx.print(' ');
 				ctx.println(aw.substring(0, aw.indexOf('.')));
 			} else if (nd.getAirway() != null) {
-				ctx.print(" ");
+				ctx.print(' ');
 				ctx.println(nd.getAirway());
 			} else
 				ctx.println("");

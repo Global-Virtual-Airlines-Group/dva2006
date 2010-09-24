@@ -1,4 +1,3 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -69,7 +68,7 @@ public abstract class SQLTestCase extends TestCase {
 		BufferedReader br = new BufferedReader(new FileReader(ddlFile));
 		while (br.ready()) {
 			buf.append(br.readLine());
-			buf.append("\n");
+			buf.append('\n');
 		}
 
 		// Close the file

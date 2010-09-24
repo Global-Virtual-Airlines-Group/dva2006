@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 			// Execute the query and get the result
 			List<Pilot> results = execute();
-			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
+			Pilot result = (results.size() == 0) ? null : results.get(0);
 			if (result == null)
 				return null;
 
@@ -86,7 +86,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 			// Execute the query and get return value
 			List<Pilot> results = execute();
-			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
+			Pilot result = (results.size() == 0) ? null : results.get(0);
 			if (result == null)
 				return null;
 			

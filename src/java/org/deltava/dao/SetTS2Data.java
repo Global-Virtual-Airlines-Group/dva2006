@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -278,7 +278,7 @@ public class SetTS2Data extends DAO {
 				sqlBuf.append(" OR ");
 		}
 
-		sqlBuf.append(")");
+		sqlBuf.append(')');
 
 		try {
 			prepareStatement(sqlBuf.toString());

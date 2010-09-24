@@ -3,7 +3,6 @@ package org.deltava.beans.system;
 import junit.framework.Test;
 
 import org.deltava.beans.AbstractBeanTestCase;
-import org.deltava.beans.system.MessageTemplate;
 import org.hansel.CoverageDecorator;
 
 public class TestMessageTemplate extends AbstractBeanTestCase {

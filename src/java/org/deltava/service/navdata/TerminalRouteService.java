@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS dispatch clients.
  * @author Luke
- * @version 2.3
+ * @version 3.3
  * @since 2.0
  */
 
@@ -70,13 +70,13 @@ public class TerminalRouteService extends DispatchDataService {
 				for (Iterator<NavigationDataBean> ii = tr.getWaypoints().iterator(); ii.hasNext(); ) {
 					NavigationDataBean ai = ii.next();
 					pw.print(ai.getCode());
-					pw.print(",");
+					pw.print(',');
 					pw.print(df.format(ai.getLatitude()));
-					pw.print(",");
+					pw.print(',');
 					pw.print(df.format(ai.getLongitude()));
-					pw.print(",");
+					pw.print(',');
 					pw.print(String.valueOf(ai.getType()));
-					pw.print(",");
+					pw.print(',');
 					pw.println((ai.getRegion() == null) ? "" : ai.getRegion());
 				}
 			

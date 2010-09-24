@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -138,7 +138,7 @@ public class CheckTag extends FormElementTag {
 		_out.print(_data.open(false));
 		_out.print(" class=\"cbox_input_");
 		_out.print(_fieldName);
-		_out.print("\"");
+		_out.print('\"');
 		if (isSelected)
 			_out.print(" checked=\"checked\"");
 

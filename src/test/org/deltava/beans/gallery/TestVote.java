@@ -15,10 +15,6 @@ public class TestVote extends AbstractBeanTestCase {
         return new CoverageDecorator(TestVote.class, new Class[] { Vote.class });
     }
     
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
     protected void tearDown() throws Exception {
         _v = null;
         super.tearDown();

@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -348,7 +348,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * @return TRUE if the position has been set, otherwise FALSE
 	 */
 	public boolean hasPosition() {
-		return (_position != null) && (_position.getLatitude() != 0) && (_position.getLongitude() != 0.0);
+		return (_position != null) && (_position.getLatitude() != 0.0d) && (_position.getLongitude() != 0.0d);
 	}
 	
    /**
@@ -431,7 +431,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		StringBuilder buf = new StringBuilder(_name);
 		buf.append(" (");
 		buf.append(_iata);
-		buf.append(")");
+		buf.append(')');
 		return buf.toString();
 	}
 }
