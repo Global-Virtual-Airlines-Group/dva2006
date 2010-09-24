@@ -83,7 +83,7 @@ public class OnlineTrackTask extends Task {
 					int trackID = otdao.getTrackID(p.getPilotID(), network, info.getValidDate(), p.getAirportD(), p.getAirportA());
 					if (trackID == 0) {
 						String rt = p.getRoute();
-						if (rt.startsWith("+"))
+						if ((rt.length() > 0) && (rt.charAt(0) == '+'))
 							rt = rt.substring(1);
 						
 						trackID = otwdao.writeTrack(p.getPilotID(), network, p.getAirportD(), p.getAirportA(), rt.trim());

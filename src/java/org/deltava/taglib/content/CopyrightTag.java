@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a copyright notice. This tag is a useful test to ensure that the tag libraries are being loaded.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -31,9 +31,9 @@ public class CopyrightTag extends TagSupport {
 		JspWriter jw = pageContext.getOut();
 		jw.print("<!-- ");
 		jw.print(pageContext.getServletContext().getServletContextName());
-		jw.print(" ");
+		jw.print(' ');
 		jw.print(VersionInfo.APPNAME);
-		jw.print(" ");
+		jw.print(' ');
 		jw.print(VersionInfo.TXT_COPYRIGHT);
 		jw.print(" (Build ");
 		jw.print(String.valueOf(VersionInfo.BUILD));
@@ -48,7 +48,7 @@ public class CopyrightTag extends TagSupport {
 		jw.println("<hr />");
 		jw.print("<div class=\"small\">");
 		jw.print(pageContext.getServletContext().getServletContextName());
-		jw.print(" ");
+		jw.print(' ');
 		jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD);
 		if (VersionInfo.FINAL)
 			jw.print("-FINAL");
@@ -76,7 +76,7 @@ public class CopyrightTag extends TagSupport {
 			else
 				displayCopyrightComment();
 		} catch (Exception e) {
-			throw new JspException("Error writing " + getClass().getName(), e);
+			throw new JspException(e);
 		} finally {
 			release();
 		}

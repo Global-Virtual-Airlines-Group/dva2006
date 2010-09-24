@@ -5,8 +5,6 @@ import java.util.Date;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.StatusUpdate;
-
 public class TestStatusUpdate extends AbstractBeanTestCase {
 
 	private StatusUpdate _upd;

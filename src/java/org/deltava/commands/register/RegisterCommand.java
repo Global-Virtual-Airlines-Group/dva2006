@@ -32,7 +32,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -278,7 +278,7 @@ public class RegisterCommand extends AbstractCommand {
 				} catch (Exception e) {
 					buf.append(wc.getValue());
 				} finally {
-					buf.append("\n");
+					buf.append('\n');
 				}
 			}
 			if (fn != null) {

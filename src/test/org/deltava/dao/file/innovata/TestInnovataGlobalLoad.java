@@ -14,7 +14,6 @@ import org.apache.log4j.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.innovata.GetFullSchedule;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;

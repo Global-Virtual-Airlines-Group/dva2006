@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -121,7 +121,7 @@ public class GetPilotEMail extends DAO {
       StringBuilder sqlBuf = new StringBuilder("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
       for (Iterator<String> i = results.keySet().iterator(); i.hasNext(); ) {
          String addr = i.next();
-         sqlBuf.append("\'");
+         sqlBuf.append('\'');
          sqlBuf.append(addr);
          sqlBuf.append(i.hasNext() ? "\'," : "\'))");
       }
