@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import java.util.Date;
@@ -9,10 +9,12 @@ import org.deltava.beans.wx.*;
 import org.deltava.dao.*;
 import org.deltava.util.cache.*;
 
+import com.flightaware.flightxml.soap.FlightXML2.*;
+
 /**
  * Loads weather data from FlightAware via SOAP.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 2.2
  */
 
@@ -58,7 +60,8 @@ public class GetFAWeather extends FlightAwareDAO implements CachingDAO {
 			return result;
 
 		try {
-			String data = getStub().METAR(loc.getCode());
+			MetarResults rsp = getStub().metar(new MetarRequest(loc.getCode()));
+			String data = rsp.getMetarResult();
 			result = MetarParser.parse(data);
 			result.setData(data);
             result.setDate(new Date());
@@ -86,8 +89,9 @@ public class GetFAWeather extends FlightAwareDAO implements CachingDAO {
 			return result;
 
 		try {
+			TafResults rsp = getStub().taf(new TafRequest(loc.getCode()));
 			result = new TAF();
-			result.setData(getStub().TAF(loc.getCode()));
+			result.setData(rsp.getTafResult());
 			result.setDate(new Date());
 			_fCache.add(result);
 			return result;

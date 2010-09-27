@@ -1,0 +1,1669 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:FlightXML2="http://flightxml.flightaware.com/soap/FlightXML2" targetNamespace="http://flightxml.flightaware.com/soap/FlightXML2">
+    <!--FlightXML2 by FlightAware-->
+    <!--This WSDL requires a SOAP client compatible with Document/Literal wrapped syntax.-->
+    <types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://flightxml.flightaware.com/soap/FlightXML2">
+            <s:element name="AircraftTypeRequest" type="FlightXML2:AircraftTypeRequest"/>
+            <s:complexType name="AircraftTypeRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="type" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AircraftTypeResults" type="FlightXML2:AircraftTypeResults"/>
+            <s:complexType name="AircraftTypeResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="AircraftTypeResult" type="FlightXML2:AircraftTypeStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AircraftTypeStruct" type="FlightXML2:AircraftTypeStruct"/>
+            <s:complexType name="AircraftTypeStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="manufacturer" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="type" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="description" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AirlineInfoRequest" type="FlightXML2:AirlineInfoRequest"/>
+            <s:complexType name="AirlineInfoRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airlineCode" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AirlineInfoResults" type="FlightXML2:AirlineInfoResults"/>
+            <s:complexType name="AirlineInfoResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="AirlineInfoResult" type="FlightXML2:AirlineInfoStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AirlineInfoStruct" type="FlightXML2:AirlineInfoStruct"/>
+            <s:complexType name="AirlineInfoStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="name" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="shortname" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="callsign" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="location" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="country" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="url" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="phone" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AirportInfoRequest" type="FlightXML2:AirportInfoRequest"/>
+            <s:complexType name="AirportInfoRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airportCode" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AirportInfoResults" type="FlightXML2:AirportInfoResults"/>
+            <s:complexType name="AirportInfoResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="AirportInfoResult" type="FlightXML2:AirportInfoStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AirportInfoStruct" type="FlightXML2:AirportInfoStruct"/>
+            <s:complexType name="AirportInfoStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="name" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="location" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="longitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="latitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="timezone" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AllAirlinesRequest" type="FlightXML2:AllAirlinesRequest"/>
+            <s:complexType name="AllAirlinesRequest">
+                <s:sequence/>
+            </s:complexType>
+            <s:element name="AllAirlinesResults" type="FlightXML2:AllAirlinesResults"/>
+            <s:complexType name="AllAirlinesResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="AllAirlinesResult" type="FlightXML2:ArrayOfString"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AllAirportsRequest" type="FlightXML2:AllAirportsRequest"/>
+            <s:complexType name="AllAirportsRequest">
+                <s:sequence/>
+            </s:complexType>
+            <s:element name="AllAirportsResults" type="FlightXML2:AllAirportsResults"/>
+            <s:complexType name="AllAirportsResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="AllAirportsResult" type="FlightXML2:ArrayOfString"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfCountAirlineOperationsStruct" type="FlightXML2:ArrayOfCountAirlineOperationsStruct"/>
+            <s:complexType name="ArrayOfCountAirlineOperationsStruct">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="FlightXML2:CountAirlineOperationsStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfFlightRouteStruct" type="FlightXML2:ArrayOfFlightRouteStruct"/>
+            <s:complexType name="ArrayOfFlightRouteStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="FlightXML2:FlightRouteStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfMetarStruct" type="FlightXML2:ArrayOfMetarStruct"/>
+            <s:complexType name="ArrayOfMetarStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="metar" type="FlightXML2:MetarStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfRoutesBetweenAirportsExStruct" type="FlightXML2:ArrayOfRoutesBetweenAirportsExStruct"/>
+            <s:complexType name="ArrayOfRoutesBetweenAirportsExStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="FlightXML2:RoutesBetweenAirportsExStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfRoutesBetweenAirportsStruct" type="FlightXML2:ArrayOfRoutesBetweenAirportsStruct"/>
+            <s:complexType name="ArrayOfRoutesBetweenAirportsStruct">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="FlightXML2:RoutesBetweenAirportsStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfString" type="FlightXML2:ArrayOfString"/>
+            <s:complexType name="ArrayOfString">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfTrackExStruct" type="FlightXML2:ArrayOfTrackExStruct"/>
+            <s:complexType name="ArrayOfTrackExStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="FlightXML2:TrackExStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrayOfTrackStruct" type="FlightXML2:ArrayOfTrackStruct"/>
+            <s:complexType name="ArrayOfTrackStruct">
+                <s:sequence>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="data" type="FlightXML2:TrackStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrivalFlightStruct" type="FlightXML2:ArrivalFlightStruct"/>
+            <s:complexType name="ArrivalFlightStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="aircrafttype" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualdeparturetime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originCity" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationCity" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrivalStruct" type="FlightXML2:ArrivalStruct"/>
+            <s:complexType name="ArrivalStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="arrivals" type="FlightXML2:ArrivalFlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrivedRequest" type="FlightXML2:ArrivedRequest"/>
+            <s:complexType name="ArrivedRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filter" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ArrivedResults" type="FlightXML2:ArrivedResults"/>
+            <s:complexType name="ArrivedResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ArrivedResult" type="FlightXML2:ArrivalStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="BlockIdentCheckRequest" type="FlightXML2:BlockIdentCheckRequest"/>
+            <s:complexType name="BlockIdentCheckRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="BlockIdentCheckResults" type="FlightXML2:BlockIdentCheckResults"/>
+            <s:complexType name="BlockIdentCheckResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="BlockIdentCheckResult" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="CountAirlineOperationsStruct" type="FlightXML2:CountAirlineOperationsStruct"/>
+            <s:complexType name="CountAirlineOperationsStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="icao" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="name" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="enroute" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="CountAirportOperationsRequest" type="FlightXML2:CountAirportOperationsRequest"/>
+            <s:complexType name="CountAirportOperationsRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="CountAirportOperationsResults" type="FlightXML2:CountAirportOperationsResults"/>
+            <s:complexType name="CountAirportOperationsResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="CountAirportOperationsResult" type="FlightXML2:CountAirportOperationsStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="CountAirportOperationsStruct" type="FlightXML2:CountAirportOperationsStruct"/>
+            <s:complexType name="CountAirportOperationsStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="enroute" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="departed" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="scheduled_departures" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="scheduled_arrivals" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="CountAllEnrouteAirlineOperationsRequest" type="FlightXML2:CountAllEnrouteAirlineOperationsRequest"/>
+            <s:complexType name="CountAllEnrouteAirlineOperationsRequest">
+                <s:sequence/>
+            </s:complexType>
+            <s:element name="CountAllEnrouteAirlineOperationsResults" type="FlightXML2:CountAllEnrouteAirlineOperationsResults"/>
+            <s:complexType name="CountAllEnrouteAirlineOperationsResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="CountAllEnrouteAirlineOperationsResult" type="FlightXML2:ArrayOfCountAirlineOperationsStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DecodeFlightRouteRequest" type="FlightXML2:DecodeFlightRouteRequest"/>
+            <s:complexType name="DecodeFlightRouteRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="faFlightID" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DecodeFlightRouteResults" type="FlightXML2:DecodeFlightRouteResults"/>
+            <s:complexType name="DecodeFlightRouteResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="DecodeFlightRouteResult" type="FlightXML2:ArrayOfFlightRouteStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DecodeRouteRequest" type="FlightXML2:DecodeRouteRequest"/>
+            <s:complexType name="DecodeRouteRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="route" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DecodeRouteResults" type="FlightXML2:DecodeRouteResults"/>
+            <s:complexType name="DecodeRouteResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="DecodeRouteResult" type="FlightXML2:ArrayOfFlightRouteStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DepartedRequest" type="FlightXML2:DepartedRequest"/>
+            <s:complexType name="DepartedRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filter" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DepartedResults" type="FlightXML2:DepartedResults"/>
+            <s:complexType name="DepartedResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="DepartedResult" type="FlightXML2:DepartureStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DepartureFlightStruct" type="FlightXML2:DepartureFlightStruct"/>
+            <s:complexType name="DepartureFlightStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="aircrafttype" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualdeparturetime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="estimatedarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originCity" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationCity" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="DepartureStruct" type="FlightXML2:DepartureStruct"/>
+            <s:complexType name="DepartureStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="departures" type="FlightXML2:DepartureFlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="EnrouteFlightStruct" type="FlightXML2:EnrouteFlightStruct"/>
+            <s:complexType name="EnrouteFlightStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="aircrafttype" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualdeparturetime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="estimatedarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_departuretime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originCity" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationCity" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="EnrouteRequest" type="FlightXML2:EnrouteRequest"/>
+            <s:complexType name="EnrouteRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filter" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="EnrouteResults" type="FlightXML2:EnrouteResults"/>
+            <s:complexType name="EnrouteResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="EnrouteResult" type="FlightXML2:EnrouteStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="EnrouteStruct" type="FlightXML2:EnrouteStruct"/>
+            <s:complexType name="EnrouteStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="enroute" type="FlightXML2:EnrouteFlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FleetArrivedRequest" type="FlightXML2:FleetArrivedRequest"/>
+            <s:complexType name="FleetArrivedRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="fleet" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FleetArrivedResults" type="FlightXML2:FleetArrivedResults"/>
+            <s:complexType name="FleetArrivedResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="FleetArrivedResult" type="FlightXML2:ArrivalStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FleetScheduledRequest" type="FlightXML2:FleetScheduledRequest"/>
+            <s:complexType name="FleetScheduledRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="fleet" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FleetScheduledResults" type="FlightXML2:FleetScheduledResults"/>
+            <s:complexType name="FleetScheduledResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="FleetScheduledResult" type="FlightXML2:ScheduledStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightExStruct" type="FlightXML2:FlightExStruct"/>
+            <s:complexType name="FlightExStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="faFlightID" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="aircrafttype" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_ete" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_time" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_departuretime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_airspeed_kts" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_airspeed_mach" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_altitude" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="route" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualdeparturetime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="estimatedarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="diverted" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originCity" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationCity" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightInfoExRequest" type="FlightXML2:FlightInfoExRequest"/>
+            <s:complexType name="FlightInfoExRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightInfoExResults" type="FlightXML2:FlightInfoExResults"/>
+            <s:complexType name="FlightInfoExResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="FlightInfoExResult" type="FlightXML2:FlightInfoExStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightInfoExStruct" type="FlightXML2:FlightInfoExStruct"/>
+            <s:complexType name="FlightInfoExStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="flights" type="FlightXML2:FlightExStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightInfoRequest" type="FlightXML2:FlightInfoRequest"/>
+            <s:complexType name="FlightInfoRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightInfoResults" type="FlightXML2:FlightInfoResults"/>
+            <s:complexType name="FlightInfoResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="FlightInfoResult" type="FlightXML2:FlightInfoStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightInfoStruct" type="FlightXML2:FlightInfoStruct"/>
+            <s:complexType name="FlightInfoStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="flights" type="FlightXML2:FlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightRouteStruct" type="FlightXML2:FlightRouteStruct"/>
+            <s:complexType name="FlightRouteStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="name" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="type" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="latitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="longitude" type="s:float"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="FlightStruct" type="FlightXML2:FlightStruct"/>
+            <s:complexType name="FlightStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="aircrafttype" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_ete" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_time" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_departuretime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_airspeed_kts" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_airspeed_mach" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_altitude" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="route" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualdeparturetime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="estimatedarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="actualarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="diverted" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originCity" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationCity" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="GetFlightIDRequest" type="FlightXML2:GetFlightIDRequest"/>
+            <s:complexType name="GetFlightIDRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="departureTime" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="GetFlightIDResults" type="FlightXML2:GetFlightIDResults"/>
+            <s:complexType name="GetFlightIDResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="GetFlightIDResult" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="GetHistoricalTrackRequest" type="FlightXML2:GetHistoricalTrackRequest"/>
+            <s:complexType name="GetHistoricalTrackRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="faFlightID" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="GetHistoricalTrackResults" type="FlightXML2:GetHistoricalTrackResults"/>
+            <s:complexType name="GetHistoricalTrackResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="GetHistoricalTrackResult" type="FlightXML2:ArrayOfTrackStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="GetLastTrackRequest" type="FlightXML2:GetLastTrackRequest"/>
+            <s:complexType name="GetLastTrackRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="GetLastTrackResults" type="FlightXML2:GetLastTrackResults"/>
+            <s:complexType name="GetLastTrackResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="GetLastTrackResult" type="FlightXML2:ArrayOfTrackStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="InFlightAircraftStruct" type="FlightXML2:InFlightAircraftStruct"/>
+            <s:complexType name="InFlightAircraftStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="faFlightID" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="prefix" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="type" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="suffix" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="timeout" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="timestamp" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="departureTime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="firstPositionTime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="arrivalTime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="longitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="latitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lowLongitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lowLatitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="highLongitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="highLatitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="groundspeed" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitude" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="heading" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitudeStatus" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="updateType" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitudeChange" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="waypoints" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="InFlightInfoRequest" type="FlightXML2:InFlightInfoRequest"/>
+            <s:complexType name="InFlightInfoRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="InFlightInfoResults" type="FlightXML2:InFlightInfoResults"/>
+            <s:complexType name="InFlightInfoResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="InFlightInfoResult" type="FlightXML2:InFlightAircraftStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="InFlightStruct" type="FlightXML2:InFlightStruct"/>
+            <s:complexType name="InFlightStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="aircraft" type="FlightXML2:InFlightAircraftStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="LatLongsToDistanceRequest" type="FlightXML2:LatLongsToDistanceRequest"/>
+            <s:complexType name="LatLongsToDistanceRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="lat1" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lon1" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lat2" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lon2" type="s:float"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="LatLongsToDistanceResults" type="FlightXML2:LatLongsToDistanceResults"/>
+            <s:complexType name="LatLongsToDistanceResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="LatLongsToDistanceResult" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="LatLongsToHeadingRequest" type="FlightXML2:LatLongsToHeadingRequest"/>
+            <s:complexType name="LatLongsToHeadingRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="lat1" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lon1" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lat2" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="lon2" type="s:float"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="LatLongsToHeadingResults" type="FlightXML2:LatLongsToHeadingResults"/>
+            <s:complexType name="LatLongsToHeadingResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="LatLongsToHeadingResult" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MapFlightExRequest" type="FlightXML2:MapFlightExRequest"/>
+            <s:complexType name="MapFlightExRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="faFlightID" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="mapHeight" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="mapWidth" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="layer_on" type="s:string"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="layer_off" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="show_data_blocks" type="s:boolean"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="show_airports" type="s:boolean"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="airports_expand_view" type="s:boolean"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="latlon_box" type="s:float"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MapFlightExResults" type="FlightXML2:MapFlightExResults"/>
+            <s:complexType name="MapFlightExResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="MapFlightExResult" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MapFlightRequest" type="FlightXML2:MapFlightRequest"/>
+            <s:complexType name="MapFlightRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="mapHeight" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="mapWidth" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MapFlightResults" type="FlightXML2:MapFlightResults"/>
+            <s:complexType name="MapFlightResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="MapFlightResult" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MetarExRequest" type="FlightXML2:MetarExRequest"/>
+            <s:complexType name="MetarExRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="startTime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MetarExResults" type="FlightXML2:MetarExResults"/>
+            <s:complexType name="MetarExResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="MetarExResult" type="FlightXML2:ArrayOfMetarStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MetarRequest" type="FlightXML2:MetarRequest"/>
+            <s:complexType name="MetarRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MetarResults" type="FlightXML2:MetarResults"/>
+            <s:complexType name="MetarResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="MetarResult" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="MetarStruct" type="FlightXML2:MetarStruct"/>
+            <s:complexType name="MetarStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="time" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="cloud_friendly" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="cloud_altitude" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="cloud_type" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="conditions" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="pressure" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="temp_air" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="temp_dewpoint" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="temp_relhum" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="visibility" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="wind_friendly" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="wind_direction" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="wind_speed" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="wind_speed_gust" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="raw_data" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="NTafRequest" type="FlightXML2:NTafRequest"/>
+            <s:complexType name="NTafRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="NTafResults" type="FlightXML2:NTafResults"/>
+            <s:complexType name="NTafResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="NTafResult" type="FlightXML2:TafStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RoutesBetweenAirportsExRequest" type="FlightXML2:RoutesBetweenAirportsExRequest"/>
+            <s:complexType name="RoutesBetweenAirportsExRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="maxDepartureAge" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="maxFileAge" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RoutesBetweenAirportsExResults" type="FlightXML2:RoutesBetweenAirportsExResults"/>
+            <s:complexType name="RoutesBetweenAirportsExResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="RoutesBetweenAirportsExResult" type="FlightXML2:ArrayOfRoutesBetweenAirportsExStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RoutesBetweenAirportsExStruct" type="FlightXML2:RoutesBetweenAirportsExStruct"/>
+            <s:complexType name="RoutesBetweenAirportsExStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="count" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="route" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filedAltitude_min" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filedAltitude_max" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="last_departuretime" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RoutesBetweenAirportsRequest" type="FlightXML2:RoutesBetweenAirportsRequest"/>
+            <s:complexType name="RoutesBetweenAirportsRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RoutesBetweenAirportsResults" type="FlightXML2:RoutesBetweenAirportsResults"/>
+            <s:complexType name="RoutesBetweenAirportsResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="RoutesBetweenAirportsResult" type="FlightXML2:ArrayOfRoutesBetweenAirportsStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RoutesBetweenAirportsStruct" type="FlightXML2:RoutesBetweenAirportsStruct"/>
+            <s:complexType name="RoutesBetweenAirportsStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="count" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="route" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filedAltitude" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ScheduledFlightStruct" type="FlightXML2:ScheduledFlightStruct"/>
+            <s:complexType name="ScheduledFlightStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="aircrafttype" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filed_departuretime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="estimatedarrivaltime" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="origin" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destination" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="originCity" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationName" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="destinationCity" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ScheduledRequest" type="FlightXML2:ScheduledRequest"/>
+            <s:complexType name="ScheduledRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="filter" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ScheduledResults" type="FlightXML2:ScheduledResults"/>
+            <s:complexType name="ScheduledResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ScheduledResult" type="FlightXML2:ScheduledStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ScheduledStruct" type="FlightXML2:ScheduledStruct"/>
+            <s:complexType name="ScheduledStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="next_offset" type="s:int"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="scheduled" type="FlightXML2:ScheduledFlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchBirdseyeInFlightRequest" type="FlightXML2:SearchBirdseyeInFlightRequest"/>
+            <s:complexType name="SearchBirdseyeInFlightRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="query" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchBirdseyeInFlightResults" type="FlightXML2:SearchBirdseyeInFlightResults"/>
+            <s:complexType name="SearchBirdseyeInFlightResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="SearchBirdseyeInFlightResult" type="FlightXML2:InFlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchBirdseyePositionsRequest" type="FlightXML2:SearchBirdseyePositionsRequest"/>
+            <s:complexType name="SearchBirdseyePositionsRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="query" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="uniqueFlights" type="s:boolean"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchBirdseyePositionsResults" type="FlightXML2:SearchBirdseyePositionsResults"/>
+            <s:complexType name="SearchBirdseyePositionsResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="SearchBirdseyePositionsResult" type="FlightXML2:ArrayOfTrackExStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchCountRequest" type="FlightXML2:SearchCountRequest"/>
+            <s:complexType name="SearchCountRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="query" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchCountResults" type="FlightXML2:SearchCountResults"/>
+            <s:complexType name="SearchCountResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="SearchCountResult" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchRequest" type="FlightXML2:SearchRequest"/>
+            <s:complexType name="SearchRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="query" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="howMany" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="offset" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SearchResults" type="FlightXML2:SearchResults"/>
+            <s:complexType name="SearchResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="SearchResult" type="FlightXML2:InFlightStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SetMaximumResultSizeRequest" type="FlightXML2:SetMaximumResultSizeRequest"/>
+            <s:complexType name="SetMaximumResultSizeRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="max_size" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="SetMaximumResultSizeResults" type="FlightXML2:SetMaximumResultSizeResults"/>
+            <s:complexType name="SetMaximumResultSizeResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="SetMaximumResultSizeResult" type="s:int"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TafRequest" type="FlightXML2:TafRequest"/>
+            <s:complexType name="TafRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TafResults" type="FlightXML2:TafResults"/>
+            <s:complexType name="TafResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="TafResult" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TafStruct" type="FlightXML2:TafStruct"/>
+            <s:complexType name="TafStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="airport" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="timeString" type="s:string"/>
+                    <s:element maxOccurs="unbounded" minOccurs="1" name="forecast" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TailOwnerRequest" type="FlightXML2:TailOwnerRequest"/>
+            <s:complexType name="TailOwnerRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ident" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TailOwnerResults" type="FlightXML2:TailOwnerResults"/>
+            <s:complexType name="TailOwnerResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="TailOwnerResult" type="FlightXML2:TailOwnerStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TailOwnerStruct" type="FlightXML2:TailOwnerStruct"/>
+            <s:complexType name="TailOwnerStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="owner" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="location" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="location2" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="website" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TrackExStruct" type="FlightXML2:TrackExStruct"/>
+            <s:complexType name="TrackExStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="faFlightID" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="timestamp" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="latitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="longitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="groundspeed" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitude" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitudeStatus" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="updateType" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitudeChange" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="TrackStruct" type="FlightXML2:TrackStruct"/>
+            <s:complexType name="TrackStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="timestamp" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="latitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="longitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="groundspeed" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitude" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitudeStatus" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="updateType" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="altitudeChange" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ZipcodeInfoRequest" type="FlightXML2:ZipcodeInfoRequest"/>
+            <s:complexType name="ZipcodeInfoRequest">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="zipcode" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ZipcodeInfoResults" type="FlightXML2:ZipcodeInfoResults"/>
+            <s:complexType name="ZipcodeInfoResults">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="ZipcodeInfoResult" type="FlightXML2:ZipcodeInfoStruct"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="ZipcodeInfoStruct" type="FlightXML2:ZipcodeInfoStruct"/>
+            <s:complexType name="ZipcodeInfoStruct">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="latitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="longitude" type="s:float"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="city" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="state" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="county" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </types>
+    <message name="AircraftTypeIn">
+        <part name="parameters" element="FlightXML2:AircraftTypeRequest"/>
+    </message>
+    <message name="AircraftTypeOut">
+        <part name="parameters" element="FlightXML2:AircraftTypeResults"/>
+    </message>
+    <message name="AirlineInfoIn">
+        <part name="parameters" element="FlightXML2:AirlineInfoRequest"/>
+    </message>
+    <message name="AirlineInfoOut">
+        <part name="parameters" element="FlightXML2:AirlineInfoResults"/>
+    </message>
+    <message name="AirportInfoIn">
+        <part name="parameters" element="FlightXML2:AirportInfoRequest"/>
+    </message>
+    <message name="AirportInfoOut">
+        <part name="parameters" element="FlightXML2:AirportInfoResults"/>
+    </message>
+    <message name="AllAirlinesIn">
+        <part name="parameters" element="FlightXML2:AllAirlinesRequest"/>
+    </message>
+    <message name="AllAirlinesOut">
+        <part name="parameters" element="FlightXML2:AllAirlinesResults"/>
+    </message>
+    <message name="AllAirportsIn">
+        <part name="parameters" element="FlightXML2:AllAirportsRequest"/>
+    </message>
+    <message name="AllAirportsOut">
+        <part name="parameters" element="FlightXML2:AllAirportsResults"/>
+    </message>
+    <message name="ArrivedIn">
+        <part name="parameters" element="FlightXML2:ArrivedRequest"/>
+    </message>
+    <message name="ArrivedOut">
+        <part name="parameters" element="FlightXML2:ArrivedResults"/>
+    </message>
+    <message name="BlockIdentCheckIn">
+        <part name="parameters" element="FlightXML2:BlockIdentCheckRequest"/>
+    </message>
+    <message name="BlockIdentCheckOut">
+        <part name="parameters" element="FlightXML2:BlockIdentCheckResults"/>
+    </message>
+    <message name="CountAirportOperationsIn">
+        <part name="parameters" element="FlightXML2:CountAirportOperationsRequest"/>
+    </message>
+    <message name="CountAirportOperationsOut">
+        <part name="parameters" element="FlightXML2:CountAirportOperationsResults"/>
+    </message>
+    <message name="CountAllEnrouteAirlineOperationsIn">
+        <part name="parameters" element="FlightXML2:CountAllEnrouteAirlineOperationsRequest"/>
+    </message>
+    <message name="CountAllEnrouteAirlineOperationsOut">
+        <part name="parameters" element="FlightXML2:CountAllEnrouteAirlineOperationsResults"/>
+    </message>
+    <message name="DecodeFlightRouteIn">
+        <part name="parameters" element="FlightXML2:DecodeFlightRouteRequest"/>
+    </message>
+    <message name="DecodeFlightRouteOut">
+        <part name="parameters" element="FlightXML2:DecodeFlightRouteResults"/>
+    </message>
+    <message name="DecodeRouteIn">
+        <part name="parameters" element="FlightXML2:DecodeRouteRequest"/>
+    </message>
+    <message name="DecodeRouteOut">
+        <part name="parameters" element="FlightXML2:DecodeRouteResults"/>
+    </message>
+    <message name="DepartedIn">
+        <part name="parameters" element="FlightXML2:DepartedRequest"/>
+    </message>
+    <message name="DepartedOut">
+        <part name="parameters" element="FlightXML2:DepartedResults"/>
+    </message>
+    <message name="EnrouteIn">
+        <part name="parameters" element="FlightXML2:EnrouteRequest"/>
+    </message>
+    <message name="EnrouteOut">
+        <part name="parameters" element="FlightXML2:EnrouteResults"/>
+    </message>
+    <message name="FleetArrivedIn">
+        <part name="parameters" element="FlightXML2:FleetArrivedRequest"/>
+    </message>
+    <message name="FleetArrivedOut">
+        <part name="parameters" element="FlightXML2:FleetArrivedResults"/>
+    </message>
+    <message name="FleetScheduledIn">
+        <part name="parameters" element="FlightXML2:FleetScheduledRequest"/>
+    </message>
+    <message name="FleetScheduledOut">
+        <part name="parameters" element="FlightXML2:FleetScheduledResults"/>
+    </message>
+    <message name="FlightInfoIn">
+        <part name="parameters" element="FlightXML2:FlightInfoRequest"/>
+    </message>
+    <message name="FlightInfoOut">
+        <part name="parameters" element="FlightXML2:FlightInfoResults"/>
+    </message>
+    <message name="FlightInfoExIn">
+        <part name="parameters" element="FlightXML2:FlightInfoExRequest"/>
+    </message>
+    <message name="FlightInfoExOut">
+        <part name="parameters" element="FlightXML2:FlightInfoExResults"/>
+    </message>
+    <message name="GetFlightIDIn">
+        <part name="parameters" element="FlightXML2:GetFlightIDRequest"/>
+    </message>
+    <message name="GetFlightIDOut">
+        <part name="parameters" element="FlightXML2:GetFlightIDResults"/>
+    </message>
+    <message name="GetHistoricalTrackIn">
+        <part name="parameters" element="FlightXML2:GetHistoricalTrackRequest"/>
+    </message>
+    <message name="GetHistoricalTrackOut">
+        <part name="parameters" element="FlightXML2:GetHistoricalTrackResults"/>
+    </message>
+    <message name="GetLastTrackIn">
+        <part name="parameters" element="FlightXML2:GetLastTrackRequest"/>
+    </message>
+    <message name="GetLastTrackOut">
+        <part name="parameters" element="FlightXML2:GetLastTrackResults"/>
+    </message>
+    <message name="InFlightInfoIn">
+        <part name="parameters" element="FlightXML2:InFlightInfoRequest"/>
+    </message>
+    <message name="InFlightInfoOut">
+        <part name="parameters" element="FlightXML2:InFlightInfoResults"/>
+    </message>
+    <message name="LatLongsToDistanceIn">
+        <part name="parameters" element="FlightXML2:LatLongsToDistanceRequest"/>
+    </message>
+    <message name="LatLongsToDistanceOut">
+        <part name="parameters" element="FlightXML2:LatLongsToDistanceResults"/>
+    </message>
+    <message name="LatLongsToHeadingIn">
+        <part name="parameters" element="FlightXML2:LatLongsToHeadingRequest"/>
+    </message>
+    <message name="LatLongsToHeadingOut">
+        <part name="parameters" element="FlightXML2:LatLongsToHeadingResults"/>
+    </message>
+    <message name="MapFlightIn">
+        <part name="parameters" element="FlightXML2:MapFlightRequest"/>
+    </message>
+    <message name="MapFlightOut">
+        <part name="parameters" element="FlightXML2:MapFlightResults"/>
+    </message>
+    <message name="MapFlightExIn">
+        <part name="parameters" element="FlightXML2:MapFlightExRequest"/>
+    </message>
+    <message name="MapFlightExOut">
+        <part name="parameters" element="FlightXML2:MapFlightExResults"/>
+    </message>
+    <message name="MetarIn">
+        <part name="parameters" element="FlightXML2:MetarRequest"/>
+    </message>
+    <message name="MetarOut">
+        <part name="parameters" element="FlightXML2:MetarResults"/>
+    </message>
+    <message name="MetarExIn">
+        <part name="parameters" element="FlightXML2:MetarExRequest"/>
+    </message>
+    <message name="MetarExOut">
+        <part name="parameters" element="FlightXML2:MetarExResults"/>
+    </message>
+    <message name="NTafIn">
+        <part name="parameters" element="FlightXML2:NTafRequest"/>
+    </message>
+    <message name="NTafOut">
+        <part name="parameters" element="FlightXML2:NTafResults"/>
+    </message>
+    <message name="RoutesBetweenAirportsIn">
+        <part name="parameters" element="FlightXML2:RoutesBetweenAirportsRequest"/>
+    </message>
+    <message name="RoutesBetweenAirportsOut">
+        <part name="parameters" element="FlightXML2:RoutesBetweenAirportsResults"/>
+    </message>
+    <message name="RoutesBetweenAirportsExIn">
+        <part name="parameters" element="FlightXML2:RoutesBetweenAirportsExRequest"/>
+    </message>
+    <message name="RoutesBetweenAirportsExOut">
+        <part name="parameters" element="FlightXML2:RoutesBetweenAirportsExResults"/>
+    </message>
+    <message name="ScheduledIn">
+        <part name="parameters" element="FlightXML2:ScheduledRequest"/>
+    </message>
+    <message name="ScheduledOut">
+        <part name="parameters" element="FlightXML2:ScheduledResults"/>
+    </message>
+    <message name="SearchIn">
+        <part name="parameters" element="FlightXML2:SearchRequest"/>
+    </message>
+    <message name="SearchOut">
+        <part name="parameters" element="FlightXML2:SearchResults"/>
+    </message>
+    <message name="SearchBirdseyeInFlightIn">
+        <part name="parameters" element="FlightXML2:SearchBirdseyeInFlightRequest"/>
+    </message>
+    <message name="SearchBirdseyeInFlightOut">
+        <part name="parameters" element="FlightXML2:SearchBirdseyeInFlightResults"/>
+    </message>
+    <message name="SearchBirdseyePositionsIn">
+        <part name="parameters" element="FlightXML2:SearchBirdseyePositionsRequest"/>
+    </message>
+    <message name="SearchBirdseyePositionsOut">
+        <part name="parameters" element="FlightXML2:SearchBirdseyePositionsResults"/>
+    </message>
+    <message name="SearchCountIn">
+        <part name="parameters" element="FlightXML2:SearchCountRequest"/>
+    </message>
+    <message name="SearchCountOut">
+        <part name="parameters" element="FlightXML2:SearchCountResults"/>
+    </message>
+    <message name="SetMaximumResultSizeIn">
+        <part name="parameters" element="FlightXML2:SetMaximumResultSizeRequest"/>
+    </message>
+    <message name="SetMaximumResultSizeOut">
+        <part name="parameters" element="FlightXML2:SetMaximumResultSizeResults"/>
+    </message>
+    <message name="TafIn">
+        <part name="parameters" element="FlightXML2:TafRequest"/>
+    </message>
+    <message name="TafOut">
+        <part name="parameters" element="FlightXML2:TafResults"/>
+    </message>
+    <message name="TailOwnerIn">
+        <part name="parameters" element="FlightXML2:TailOwnerRequest"/>
+    </message>
+    <message name="TailOwnerOut">
+        <part name="parameters" element="FlightXML2:TailOwnerResults"/>
+    </message>
+    <message name="ZipcodeInfoIn">
+        <part name="parameters" element="FlightXML2:ZipcodeInfoRequest"/>
+    </message>
+    <message name="ZipcodeInfoOut">
+        <part name="parameters" element="FlightXML2:ZipcodeInfoResults"/>
+    </message>
+    <portType name="FlightXML2Soap">
+        <operation name="AircraftType">
+            <input message="FlightXML2:AircraftTypeIn"/>
+            <output message="FlightXML2:AircraftTypeOut"/>
+        </operation>
+        <operation name="AirlineInfo">
+            <input message="FlightXML2:AirlineInfoIn"/>
+            <output message="FlightXML2:AirlineInfoOut"/>
+        </operation>
+        <operation name="AirportInfo">
+            <input message="FlightXML2:AirportInfoIn"/>
+            <output message="FlightXML2:AirportInfoOut"/>
+        </operation>
+        <operation name="AllAirlines">
+            <input message="FlightXML2:AllAirlinesIn"/>
+            <output message="FlightXML2:AllAirlinesOut"/>
+        </operation>
+        <operation name="AllAirports">
+            <input message="FlightXML2:AllAirportsIn"/>
+            <output message="FlightXML2:AllAirportsOut"/>
+        </operation>
+        <operation name="Arrived">
+            <input message="FlightXML2:ArrivedIn"/>
+            <output message="FlightXML2:ArrivedOut"/>
+        </operation>
+        <operation name="BlockIdentCheck">
+            <input message="FlightXML2:BlockIdentCheckIn"/>
+            <output message="FlightXML2:BlockIdentCheckOut"/>
+        </operation>
+        <operation name="CountAirportOperations">
+            <input message="FlightXML2:CountAirportOperationsIn"/>
+            <output message="FlightXML2:CountAirportOperationsOut"/>
+        </operation>
+        <operation name="CountAllEnrouteAirlineOperations">
+            <input message="FlightXML2:CountAllEnrouteAirlineOperationsIn"/>
+            <output message="FlightXML2:CountAllEnrouteAirlineOperationsOut"/>
+        </operation>
+        <operation name="DecodeFlightRoute">
+            <input message="FlightXML2:DecodeFlightRouteIn"/>
+            <output message="FlightXML2:DecodeFlightRouteOut"/>
+        </operation>
+        <operation name="DecodeRoute">
+            <input message="FlightXML2:DecodeRouteIn"/>
+            <output message="FlightXML2:DecodeRouteOut"/>
+        </operation>
+        <operation name="Departed">
+            <input message="FlightXML2:DepartedIn"/>
+            <output message="FlightXML2:DepartedOut"/>
+        </operation>
+        <operation name="Enroute">
+            <input message="FlightXML2:EnrouteIn"/>
+            <output message="FlightXML2:EnrouteOut"/>
+        </operation>
+        <operation name="FleetArrived">
+            <input message="FlightXML2:FleetArrivedIn"/>
+            <output message="FlightXML2:FleetArrivedOut"/>
+        </operation>
+        <operation name="FleetScheduled">
+            <input message="FlightXML2:FleetScheduledIn"/>
+            <output message="FlightXML2:FleetScheduledOut"/>
+        </operation>
+        <operation name="FlightInfo">
+            <input message="FlightXML2:FlightInfoIn"/>
+            <output message="FlightXML2:FlightInfoOut"/>
+        </operation>
+        <operation name="FlightInfoEx">
+            <input message="FlightXML2:FlightInfoExIn"/>
+            <output message="FlightXML2:FlightInfoExOut"/>
+        </operation>
+        <operation name="GetFlightID">
+            <input message="FlightXML2:GetFlightIDIn"/>
+            <output message="FlightXML2:GetFlightIDOut"/>
+        </operation>
+        <operation name="GetHistoricalTrack">
+            <input message="FlightXML2:GetHistoricalTrackIn"/>
+            <output message="FlightXML2:GetHistoricalTrackOut"/>
+        </operation>
+        <operation name="GetLastTrack">
+            <input message="FlightXML2:GetLastTrackIn"/>
+            <output message="FlightXML2:GetLastTrackOut"/>
+        </operation>
+        <operation name="InFlightInfo">
+            <input message="FlightXML2:InFlightInfoIn"/>
+            <output message="FlightXML2:InFlightInfoOut"/>
+        </operation>
+        <operation name="LatLongsToDistance">
+            <input message="FlightXML2:LatLongsToDistanceIn"/>
+            <output message="FlightXML2:LatLongsToDistanceOut"/>
+        </operation>
+        <operation name="LatLongsToHeading">
+            <input message="FlightXML2:LatLongsToHeadingIn"/>
+            <output message="FlightXML2:LatLongsToHeadingOut"/>
+        </operation>
+        <operation name="MapFlight">
+            <input message="FlightXML2:MapFlightIn"/>
+            <output message="FlightXML2:MapFlightOut"/>
+        </operation>
+        <operation name="MapFlightEx">
+            <input message="FlightXML2:MapFlightExIn"/>
+            <output message="FlightXML2:MapFlightExOut"/>
+        </operation>
+        <operation name="Metar">
+            <input message="FlightXML2:MetarIn"/>
+            <output message="FlightXML2:MetarOut"/>
+        </operation>
+        <operation name="MetarEx">
+            <input message="FlightXML2:MetarExIn"/>
+            <output message="FlightXML2:MetarExOut"/>
+        </operation>
+        <operation name="NTaf">
+            <input message="FlightXML2:NTafIn"/>
+            <output message="FlightXML2:NTafOut"/>
+        </operation>
+        <operation name="RoutesBetweenAirports">
+            <input message="FlightXML2:RoutesBetweenAirportsIn"/>
+            <output message="FlightXML2:RoutesBetweenAirportsOut"/>
+        </operation>
+        <operation name="RoutesBetweenAirportsEx">
+            <input message="FlightXML2:RoutesBetweenAirportsExIn"/>
+            <output message="FlightXML2:RoutesBetweenAirportsExOut"/>
+        </operation>
+        <operation name="Scheduled">
+            <input message="FlightXML2:ScheduledIn"/>
+            <output message="FlightXML2:ScheduledOut"/>
+        </operation>
+        <operation name="Search">
+            <input message="FlightXML2:SearchIn"/>
+            <output message="FlightXML2:SearchOut"/>
+        </operation>
+        <operation name="SearchBirdseyeInFlight">
+            <input message="FlightXML2:SearchBirdseyeInFlightIn"/>
+            <output message="FlightXML2:SearchBirdseyeInFlightOut"/>
+        </operation>
+        <operation name="SearchBirdseyePositions">
+            <input message="FlightXML2:SearchBirdseyePositionsIn"/>
+            <output message="FlightXML2:SearchBirdseyePositionsOut"/>
+        </operation>
+        <operation name="SearchCount">
+            <input message="FlightXML2:SearchCountIn"/>
+            <output message="FlightXML2:SearchCountOut"/>
+        </operation>
+        <operation name="SetMaximumResultSize">
+            <input message="FlightXML2:SetMaximumResultSizeIn"/>
+            <output message="FlightXML2:SetMaximumResultSizeOut"/>
+        </operation>
+        <operation name="Taf">
+            <input message="FlightXML2:TafIn"/>
+            <output message="FlightXML2:TafOut"/>
+        </operation>
+        <operation name="TailOwner">
+            <input message="FlightXML2:TailOwnerIn"/>
+            <output message="FlightXML2:TailOwnerOut"/>
+        </operation>
+        <operation name="ZipcodeInfo">
+            <input message="FlightXML2:ZipcodeInfoIn"/>
+            <output message="FlightXML2:ZipcodeInfoOut"/>
+        </operation>
+    </portType>
+    <binding name="FlightXML2Soap" type="FlightXML2:FlightXML2Soap">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AircraftType">
+            <soap:operation soapAction="FlightXML2:AircraftType" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="AirlineInfo">
+            <soap:operation soapAction="FlightXML2:AirlineInfo" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="AirportInfo">
+            <soap:operation soapAction="FlightXML2:AirportInfo" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="AllAirlines">
+            <soap:operation soapAction="FlightXML2:AllAirlines" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="AllAirports">
+            <soap:operation soapAction="FlightXML2:AllAirports" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Arrived">
+            <soap:operation soapAction="FlightXML2:Arrived" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="BlockIdentCheck">
+            <soap:operation soapAction="FlightXML2:BlockIdentCheck" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="CountAirportOperations">
+            <soap:operation soapAction="FlightXML2:CountAirportOperations" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="CountAllEnrouteAirlineOperations">
+            <soap:operation soapAction="FlightXML2:CountAllEnrouteAirlineOperations" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="DecodeFlightRoute">
+            <soap:operation soapAction="FlightXML2:DecodeFlightRoute" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="DecodeRoute">
+            <soap:operation soapAction="FlightXML2:DecodeRoute" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Departed">
+            <soap:operation soapAction="FlightXML2:Departed" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Enroute">
+            <soap:operation soapAction="FlightXML2:Enroute" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="FleetArrived">
+            <soap:operation soapAction="FlightXML2:FleetArrived" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="FleetScheduled">
+            <soap:operation soapAction="FlightXML2:FleetScheduled" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="FlightInfo">
+            <soap:operation soapAction="FlightXML2:FlightInfo" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="FlightInfoEx">
+            <soap:operation soapAction="FlightXML2:FlightInfoEx" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="GetFlightID">
+            <soap:operation soapAction="FlightXML2:GetFlightID" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="GetHistoricalTrack">
+            <soap:operation soapAction="FlightXML2:GetHistoricalTrack" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="GetLastTrack">
+            <soap:operation soapAction="FlightXML2:GetLastTrack" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="InFlightInfo">
+            <soap:operation soapAction="FlightXML2:InFlightInfo" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="LatLongsToDistance">
+            <soap:operation soapAction="FlightXML2:LatLongsToDistance" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="LatLongsToHeading">
+            <soap:operation soapAction="FlightXML2:LatLongsToHeading" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="MapFlight">
+            <soap:operation soapAction="FlightXML2:MapFlight" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="MapFlightEx">
+            <soap:operation soapAction="FlightXML2:MapFlightEx" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Metar">
+            <soap:operation soapAction="FlightXML2:Metar" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="MetarEx">
+            <soap:operation soapAction="FlightXML2:MetarEx" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="NTaf">
+            <soap:operation soapAction="FlightXML2:NTaf" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="RoutesBetweenAirports">
+            <soap:operation soapAction="FlightXML2:RoutesBetweenAirports" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="RoutesBetweenAirportsEx">
+            <soap:operation soapAction="FlightXML2:RoutesBetweenAirportsEx" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Scheduled">
+            <soap:operation soapAction="FlightXML2:Scheduled" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Search">
+            <soap:operation soapAction="FlightXML2:Search" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="SearchBirdseyeInFlight">
+            <soap:operation soapAction="FlightXML2:SearchBirdseyeInFlight" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="SearchBirdseyePositions">
+            <soap:operation soapAction="FlightXML2:SearchBirdseyePositions" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="SearchCount">
+            <soap:operation soapAction="FlightXML2:SearchCount" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="SetMaximumResultSize">
+            <soap:operation soapAction="FlightXML2:SetMaximumResultSize" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Taf">
+            <soap:operation soapAction="FlightXML2:Taf" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="TailOwner">
+            <soap:operation soapAction="FlightXML2:TailOwner" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="ZipcodeInfo">
+            <soap:operation soapAction="FlightXML2:ZipcodeInfo" style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="FlightXML2">
+        <documentation>FlightXML2 Web Services</documentation>
+        <port name="FlightXML2Soap" binding="FlightXML2:FlightXML2Soap">
+            <soap:address location="http://flightxml.flightaware.com/soap/FlightXML2/op"/>
+        </port>
+    </service>
+</definitions>
+
