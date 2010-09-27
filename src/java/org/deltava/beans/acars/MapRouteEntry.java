@@ -19,7 +19,7 @@ import org.gvagroup.acars.ACARSFlags;
 
 public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	
-	private static final List<String> TAB_NAMES = Arrays.asList("Pilot", "Flight Data");
+	private static final List<String> TAB_NAMES = Collections.unmodifiableList(Arrays.asList("Pilot", "Flight Data"));
 
 	private String _eqType;
 	private String _flightNumber;
@@ -28,6 +28,7 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	private OnlineNetwork _network;
 	private boolean _checkRide;
 	private boolean _dispatchRoute;
+	private String _phaseName;
 
 	public MapRouteEntry(Date dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl);
@@ -57,6 +58,10 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 	
 	public void setNetwork(OnlineNetwork network) {
 		_network = network;
+	}
+	
+	public void setPhaseName(String phase) {
+		_phaseName = phase;
 	}
 
 	public final String getIconColor() {
@@ -158,6 +163,11 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(")<br /><br />ACARS Flight <b>");
 		buf.append(StringUtils.format(getID(), "#,##0"));
 		buf.append("</b>");
+		if (isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
+			buf.append("Flight Phase: ");
+			buf.append(_phaseName);
+		}
+		
 		if (_checkRide || _dispatchRoute || _busy) {
 			buf.append("<br />");
 			if (_checkRide) buf.append("<span class=\"pri bld\">CHECK RIDE</span> ");
