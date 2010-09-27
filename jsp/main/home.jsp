@@ -96,11 +96,11 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 </el:table>
 </c:if>
 <c:if test="${!empty acarsPool}">
-<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="page" /></content:filter>
+<content:attr attr="isHR" roles="HR" value="true" />
 <!-- Current ACARS server connections -->
 <el:table className="view">
 <tr class="title caps left">
- <td colspan="4">CURRENTLY FLYING USING <content:airline /> ACARS</td>
+ <td colspan="5">CURRENTLY FLYING USING <content:airline /> ACARS</td>
 </tr>
 <c:forEach var="con" items="${acarsPool}">
 <c:if test="${!con.userHidden || isHR}">
@@ -110,14 +110,15 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:when test="${!empty con.flightInfo.flightCode}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
  <td class="small bld">${con.flightInfo.equipmentType}</td>
+ <td class="small sec">${con.position.phaseName}</td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
 - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
 </c:when>
 <c:when test="${con.dispatch}">
- <td colspan="3" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
+ <td colspan="4" class="pri bld mid">PROVIDING ACARS DISPATCHER SERVICES</td>
 </c:when>
 <c:otherwise>
- <td colspan="3" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
+ <td colspan="4" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
 </c:otherwise>
 </c:choose>
 </tr>
