@@ -1,9 +1,9 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import java.util.*;
 
-import com.flightaware.directflight.soap.DirectFlight.*;
+import com.flightaware.flightxml.soap.FlightXML2.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 2.2
  */
 
@@ -30,12 +30,14 @@ public class GetFARoutes extends FlightAwareDAO {
 		Collection<ExternalRoute> results = new LinkedHashSet<ExternalRoute>();
 		try {
 			// Do the SOAP call
-            RoutesBetweenAirportsStruct[] data = getStub().routesBetweenAirports(aD.getICAO(), aA.getICAO());
+			RoutesBetweenAirportsRequest req = new RoutesBetweenAirportsRequest(aD.getICAO(), aA.getICAO());
+            RoutesBetweenAirportsResults rsp = getStub().routesBetweenAirports(req);
+            RoutesBetweenAirportsStruct[] data = rsp.getRoutesBetweenAirportsResult();
             
             // Loop through the results
             for (int x = 0; (data != null) && (x < data.length); x++) {
             	RoutesBetweenAirportsStruct r = data[x];
-            	int altitude = r.getFiledAltitude().intValue();
+            	int altitude = r.getFiledAltitude();
             	ExternalRoute rt = new ExternalRoute();
             	rt.setAirportD(aD);
             	rt.setAirportA(aA);

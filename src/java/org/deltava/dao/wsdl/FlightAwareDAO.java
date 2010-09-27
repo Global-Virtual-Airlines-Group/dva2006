@@ -1,14 +1,14 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import javax.xml.rpc.ServiceException;
 
-import com.flightaware.directflight.soap.DirectFlight.*;
+import com.flightaware.flightxml.soap.FlightXML2.*;
 
 /**
  * An abstract class to describe FlightAware WSDL Data Access Objects. 
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 2.2
  */
 
@@ -39,9 +39,9 @@ abstract class FlightAwareDAO {
 	 * @return a SOAP stub object
 	 * @throws ServiceException if something bad happens
 	 */
-	protected DirectFlightSoap getStub() throws ServiceException {
-        DirectFlightLocator locator = new DirectFlightLocator();
-        DirectFlightSoapStub df = (DirectFlightSoapStub) locator.getDirectFlightSoap();
+	protected final FlightXML2Soap getStub() throws ServiceException {
+		FlightXML2Locator locator = new FlightXML2Locator();
+		FlightXML2SoapStub df = (FlightXML2SoapStub) locator.getFlightXML2Soap();
         df.setUsername(_userID);
         df.setPassword(_password);
         return df;
