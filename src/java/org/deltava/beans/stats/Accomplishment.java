@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to define Pilot accomplishments.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 3.2
  */
 
@@ -25,7 +25,8 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 		ILEGS("IVAO Legs", 4), HLEGS("Historic Legs", 5), ELEGS("Event Legs", 6), DLEGS("Dispatch Legs", 7),
 		ALEGS("ACARS Legs", 8), AIRPORTS("Airports Visited", 9), AIRCRAFT("Aircraft Used", 10), 
 		COUNTRIES("Countries Visited", 11), STATES("States Visited", 12), MEMBERDAYS("Days since joining", 13),
-		AIRLINES("Airlines", 14), DFLIGHTS("Flights Dispatched", 15), DHOURS("Dispatch Hours", 16);
+		AIRLINES("Airlines", 14), DFLIGHTS("Flights Dispatched", 15), DHOURS("Dispatch Hours", 16),
+		EQLEGS("Legs in Aircraft", 17);
 			
 		private String _name;
 		private int _code;
