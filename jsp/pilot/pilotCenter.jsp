@@ -120,16 +120,19 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchFlights}" /> flights and provided
  Dispatch services for <fmt:dec value="${pilot.dispatchHours}" /> hours.</content:filter></td>
 </tr>
-<c:if test="${!empty accs}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="acceligibility">Accomplishment Eligibility</el:cmd></td>
+<c:if test="${empty accs}">
+ <td class="data">You have not achieved any Pilot Accomplishments yet.</td>
+</c:if>
+<c:if test="${!empty accs}">
  <td class="data">You have achieved the following Accomplishments:<br />
 <br />
 <c:forEach var="a" items="${accs}">
 <fmt:accomplish accomplish="${a}" className="bld" />, (<fmt:int value="${a.value}" /> ${a.unit.name}) on <span class="bld"><fmt:date date="${a.date}" fmt="d" /></span><br />
 </c:forEach></td>
-</tr>
 </c:if>
+</tr>
 <content:filter roles="HR,Examination,Operations">
 <tr>
  <td class="mid"><el:cmd url="prgroster" className="bld">Program Roster</el:cmd></td>
