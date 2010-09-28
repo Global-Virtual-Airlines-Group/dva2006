@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 3.2
  */
 
@@ -32,6 +32,23 @@ public class AccomplishmentHistoryHelper {
 	private final Collection<FlightReport> _pireps = new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
 	private final Collection<DispatchConnectionEntry> _cons = new TreeSet<DispatchConnectionEntry>();
 	
+	private static class MutableInteger {
+		private int _value;
+		
+		MutableInteger(int value) {
+			super();
+			_value = value;
+		}
+		
+		public void inc() {
+			_value++;
+		}
+		
+		public int getValue() {
+			return _value;
+		}
+	}
+	
 	private static class AccomplishmentCounter {
 
 		private int _legs;
@@ -45,9 +62,9 @@ public class AccomplishmentHistoryHelper {
 
 		private final Collection<Airport> _airports = new HashSet<Airport>();
 		private final Collection<Airline> _airlines = new HashSet<Airline>();
-		private final Collection<String> _eqTypes = new TreeSet<String>();
 		private final Collection<Country> _countries = new TreeSet<Country>();
 		private final Collection<State> _states = new TreeSet<State>();
+		private final Map<String, MutableInteger> _eqLegs = new TreeMap<String, MutableInteger>();
 
 		AccomplishmentCounter() {
 			super();
@@ -56,13 +73,17 @@ public class AccomplishmentHistoryHelper {
 		public void add(FlightReport fr) {
 			_legs++;
 			_miles += fr.getDistance();
-			_eqTypes.add(fr.getEquipmentType());
 			_airlines.add(fr.getAirline());
 			add(fr.getAirportD());
 			add(fr.getAirportA());
 			if (fr.hasAttribute(FlightReport.ATTR_HISTORIC)) _historicLegs++;
 			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)) _onlineLegs++;
 			if (fr.getDatabaseID(DatabaseID.EVENT) != 0) _eventLegs++;
+			MutableInteger eqLegs = _eqLegs.get(fr.getEquipmentType());
+			if (eqLegs == null)
+				_eqLegs.put(fr.getEquipmentType(), new MutableInteger(1));
+			else
+				eqLegs.inc();
 		}
 		
 		public void add(DispatchConnectionEntry dce) {
@@ -98,7 +119,7 @@ public class AccomplishmentHistoryHelper {
 		}
 		
 		public Collection<String> getEquipmentTypes() {
-			return _eqTypes;
+			return _eqLegs.keySet();
 		}
 		
 		public Collection<Airline> getAirlines() {
@@ -131,6 +152,10 @@ public class AccomplishmentHistoryHelper {
 		
 		public double getDispatchHours() {
 			return _dspHours;
+		}
+		
+		public int getEquipmentLegs(String eqType) {
+			return _eqLegs.containsKey(eqType) ? _eqLegs.get(eqType).getValue() : 0;
 		}
 	}
 	
@@ -219,6 +244,12 @@ public class AccomplishmentHistoryHelper {
 				return cnt.getDispatchedFlights();
 			case DHOURS:
 				return (long) cnt.getDispatchHours();
+			case EQLEGS:
+				int totalLegs = 0;
+				for (String eqType : a.getChoices())
+					totalLegs += cnt.getEquipmentLegs(eqType);
+				
+				return totalLegs;
 			case MEMBERDAYS:
 				long days = (System.currentTimeMillis() - _usr.getCreatedOn().getTime()) / 86400000;
 				return days;
@@ -273,7 +304,7 @@ public class AccomplishmentHistoryHelper {
 				break;
 				
 			case AIRCRAFT:
-				results.addAll(AccomplishmentFilter.missing(_totals.getStates(), a));
+				results.addAll(AccomplishmentFilter.missing(_totals.getEquipmentTypes(), a));
 				break;
 				
 			case AIRLINES:
