@@ -9,7 +9,7 @@ import org.deltava.beans.system.IPAddressInfo;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -41,6 +41,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    private int _errors;
    
    private FlightInfo _fInfo;
+   private String _flightPhase;
    private boolean _isHidden;
    private long _bytesOut;
    
@@ -197,6 +198,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    }
    
    /**
+    * Returns the flight phase.
+    * @return the phase of flight
+    * @see ConnectionEntry#setFlightPhase(String)
+    */
+   public String getFlightPhase() {
+	   return _flightPhase;
+   }
+   
+   /**
     * Returns the number of ACARS messages sent by the client.
     * @return the number of messages
     */
@@ -324,6 +334,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
     */
    public void setFlightInfo(FlightInfo info) {
 	   _fInfo = info;
+   }
+   
+   /**
+    * Sets the flight phase
+    * @param phase the phase of flight
+    * @see ConnectionEntry#getFlightPhase()
+    */
+   public void setFlightPhase(String phase) {
+	   _flightPhase = phase;
    }
    
    /**
