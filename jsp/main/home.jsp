@@ -110,7 +110,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:when test="${!empty con.flightInfo.flightCode}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
  <td class="small bld">${con.flightInfo.equipmentType}</td>
- <td class="small sec">${con.position.phaseName}</td>
+ <td class="small sec">${con.flightPhase}</td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
 - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
 </c:when>
