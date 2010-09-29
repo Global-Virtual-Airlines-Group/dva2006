@@ -6,7 +6,7 @@
 <c:set var="acLoaded" value="${!empty acInfo}" scope="page" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
- <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS DATA</td>
+ <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS FLIGHT DATA</td>
 </tr>
 <c:if test="${fn:ACARS_ID(pirep) > 0}">
 <tr>
@@ -159,7 +159,7 @@
 <c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="page" />
 <tr>
  <td class="label">Flight Time</td>
- <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, block time
+ <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, total time
  <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
 </tr>
 <c:set var="times" value="${pirep.times}" scope="page" />
@@ -228,7 +228,7 @@
 <c:if test="${!scoreCR}">
 <tr>
  <td class="label top">Check Ride Instructions</td>
- <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>
+ <td class="data" colspan="${cspan}"><fmt:msg value="${checkRide.comments}" /></td>
 </tr>
 </c:if>
 </c:if>
