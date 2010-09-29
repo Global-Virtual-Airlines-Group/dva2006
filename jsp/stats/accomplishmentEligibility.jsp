@@ -45,7 +45,7 @@
  <td class="pri bld left">${pilotName} achieved this Accomplishment on <fmt:date fmt="d" date="${acc.date}" />.</td>
 </c:when>
 <c:when test="${acc.unit == 'EQLEGS'}">
- <td class="left">${pilotName} has achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" /> Flight Legs in the
+ <td class="left">${pilotName} achieved <fmt:int value="${msg.progress}" /> of the <fmt:int value="${acc.value}" /> Flight Legs in the
 <fmt:list value="${acc.choices}" delim=", " /> required to achieve this Accomplishment.</td>
 </c:when>
 <c:when test="${!empty msg.missing}">
