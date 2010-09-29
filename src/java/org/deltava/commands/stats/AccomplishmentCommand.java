@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 3.2
  */
 
@@ -77,6 +77,11 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 				a.setChoices(StringUtils.nullTrim(ctx.getParameters("airlines")));
 				break;
 				
+			case AIRCRAFT:
+			case EQLEGS:
+				a.setChoices(StringUtils.nullTrim(ctx.getParameters("eqTypes")));
+				break;
+				
 			default:
 				a.setChoices(StringUtils.nullTrim(StringUtils.split(ctx.getParameter("choices"), ",")));
 			}
@@ -130,6 +135,10 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			boolean canExec = isNew ? ac.getCanCreate() : ac.getCanEdit();
 			if (!canExec)
 				throw securityException("Cannot create/edit Accomplishment profile");
+			
+			// Get the aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 			
 			// Load all countries
 			GetSchedule sdao = new GetSchedule(con);

@@ -49,6 +49,11 @@ case 'AIRLINES':
 	displayObject(getElement('valueAirline'), true);
 	break;
 
+case 'AIRCRAFT':
+case 'EQLEGS':
+	displayObject(getElement('valueEQType'), true);
+	break;
+
 default:
 	displayObject(getElement('valueBox'), true);
 	break;
@@ -106,6 +111,10 @@ return true;
 <tr id="valueAirline" style="display:none;" class="valueRow">
  <td class="label top">Valid Airlines</td>
  <td class="data"><el:check name="airlines" idx="*" width="200" cols="4" newLine="true" checked="${ap.choices}" options="${airlines}" /></td>
+</tr>
+<tr id="valueEQType" style="display:none;" class="valueRow">
+ <td class="label top">Valid Equipment</td>
+ <td class="data"><el:check name="eqTypes" idx="*" width="105" cols="7" newLine="true" checked="${ap.choices}" options="${allEQ}" /></td>
 </tr>
 <c:if test="${!empty ap}">
 <tr>
