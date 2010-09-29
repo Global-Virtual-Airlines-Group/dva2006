@@ -164,8 +164,9 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(StringUtils.format(getID(), "#,##0"));
 		buf.append("</b>");
 		if (isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
-			buf.append("Flight Phase: ");
+			buf.append("<br />Flight Phase: <b>");
 			buf.append(_phaseName);
+			buf.append("</b>");
 		}
 		
 		if (_checkRide || _dispatchRoute || _busy) {
