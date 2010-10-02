@@ -90,7 +90,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Issue Description</td>
- <td class="data"><fmt:msg value="${issue.description}" /></td>
+ <td class="data"><fmt:msg value="${issue.description}" bbCode="true" /></td>
 </tr>
 
 <!-- Issue Comments -->
@@ -108,7 +108,7 @@ return true;
 <tr>
  <td class="label top">${author.name} (${author.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
- <td class="data top"><fmt:msg value="${comment.comments}" /></td>
+ <td class="data top"><fmt:msg value="${comment.comments}" bbCode="true" /></td>
 </tr>
 </c:forEach>
 </c:if>
