@@ -112,7 +112,7 @@ return true;
 </c:if>
 <tr>
  <td class="label top">Issue Description</td>
- <td class="data"><fmt:msg value="${issue.body}" /></td>
+ <td class="data"><fmt:msg value="${issue.body}" bbCode="true" /></td>
 </tr>
 
 <!-- Issue Comments -->
@@ -132,7 +132,7 @@ return true;
  <fmt:date date="${comment.createdOn}" t="HH:mm" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.time}" checked="false" label="Delete" /><br />
 <el:radio name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
- <td class="data top"><fmt:msg value="${comment.body}" /></td>
+ <td class="data top"><fmt:msg value="${comment.body}" bbCode="true" /></td>
 </tr>
 </c:forEach>
 </c:if>
