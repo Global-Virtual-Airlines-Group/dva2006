@@ -358,8 +358,11 @@ public class GetSchedule extends DAO {
 			// Execute the query
 			Flight f = null;
 			ResultSet rs = _ps.executeQuery();
-			if (rs.next())
+			if (rs.next()) {
 				f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+				f.setAirportD(airportD);
+				f.setAirportA(airportA);
+			}
 			
 			// Clean up
 			rs.close();
