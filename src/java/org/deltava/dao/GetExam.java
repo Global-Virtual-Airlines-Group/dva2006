@@ -280,14 +280,14 @@ public class GetExam extends DAO {
 	public Collection<Examination> getAutoScored(String examName) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), "
-				+ "EP.STAGE, EP.ACADEMY, EP.AIRLINE, P.FIRSTNAME, P.LASTNAME FROM exams.EXAMS E, exams.EXAMQUESTIONS Q, "
-				+ "PILOTS P, exams.EXAMINFO EP WHERE (P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND (E.AUTOSCORE=?) "
-				+ "AND (E.ID=Q.EXAM_ID) AND (EP.AIRLINE=?) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT STRAIGHT_JOIN E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), "
+			+ "EP.STAGE, EP.ACADEMY, EP.AIRLINE, P.FIRSTNAME, P.LASTNAME FROM exams.EXAMS E, exams.EXAMQUESTIONS Q, "
+			+ "PILOTS P, exams.EXAMINFO EP WHERE (P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND (E.AUTOSCORE=?) AND "
+			+ "(E.ID=Q.EXAM_ID) AND (EP.AIRLINE=?) ");
 		if (examName != null)
 			sqlBuf.append("AND (E.NAME=?) ");
 		
-		sqlBuf.append("GROUP BY E.ID ORDER BY E.CREATED_ON DESC");
+		sqlBuf.append("GROUP BY E.ID DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
