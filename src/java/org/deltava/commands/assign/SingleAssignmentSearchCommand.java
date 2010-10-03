@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.assign.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 2.2
  */
 
@@ -91,7 +91,9 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			if (!entries.isEmpty()) {
 				ScheduleEntry entry = entries.get(0);
 				ai.addAssignment(new AssignmentLeg(entry));
-				FlightReport fr = new FlightReport(entry);
+				DraftFlightReport fr = new DraftFlightReport(entry);
+				fr.setTimeD(entry.getTimeD());
+				fr.setTimeA(entry.getTimeA());
 				fr.setAttribute(FlightReport.ATTR_HISTORIC, entry.getHistoric());
 				ai.addFlight(fr);
 			}
