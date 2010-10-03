@@ -129,7 +129,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("accs", acdao.getByPilot(p, SystemData.get("airline.db")), REQUEST);
 
 			// Get the schedule size
-			GetSchedule sdao = new GetSchedule(con);
+			GetScheduleInfo sdao = new GetScheduleInfo(con);
 			ctx.setAttribute("scheduleSize", Integer.valueOf(sdao.getFlightCount()), REQUEST);
 
 			// Get the PIREP disposal queue sizes

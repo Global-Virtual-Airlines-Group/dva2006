@@ -8,7 +8,6 @@ import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -18,10 +17,8 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetSchedule extends DAO implements CachingDAO {
+public class GetSchedule extends DAO {
 	
-	private static final Cache<CacheableLong> _schedSizeCache = new ExpiringCache<CacheableLong>(2, 1800);
-
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -29,10 +26,7 @@ public class GetSchedule extends DAO implements CachingDAO {
 	public GetSchedule(Connection c) {
 		super(c);
 	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_schedSizeCache);
-	}
+
 
 	/**
 	 * Searches the Schedule database for flights matching particular criteria.
@@ -326,14 +320,66 @@ public class GetSchedule extends DAO implements CachingDAO {
 	
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
-	 * @param airportD the origin airport IATA code
-	 * @param airportA the destination airport IATA code
+	 * @param airportD the origin Airport
+	 * @param airportA the destination Airport
 	 * @return the average time between the two airports in hours <i>multiplied by 10</i>, or 0 if no flights found
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
 	public int getFlightTime(Airport airportD, Airport airportA) throws DAOException {
 		return getFlightTime(airportD, airportA, SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Returns the lowest flight/leg number between two airports. 
+	 * @param airportD the origin Airport
+	 * @param airportA the destination Airport
+	 * @param dbName the database name
+	 * @return a Flight bean with the Airline, Flight and Leg number or null if none found
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if airportD or airportA are null
+	 */
+	public Flight getFlightNumber(Airport airportD, Airport airportA, String dbName) throws DAOException {
+		
+		// Build the SQL Statement
+		String db = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, AI.CODE FROM ");
+		sqlBuf.append(db);
+		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRPORT_D=?) "
+			+ "AND (S.AIRPORT_A=?) AND (S.ACADEMY=?) ORDER BY IF (S.AIRLINE=AI.CODE, 1, 0), FLIGHT LIMIT 1");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setString(1, db);
+			_ps.setString(2, airportD.getIATA());
+			_ps.setString(3, airportA.getIATA());
+			_ps.setBoolean(4, false);
+			
+			// Execute the query
+			Flight f = null;
+			ResultSet rs = _ps.executeQuery();
+			if (rs.next())
+				f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return f;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the lowest flight/leg number between two airports. 
+	 * @param airportD the origin Airport
+	 * @param airportA the destination Airport
+	 * @return a Flight bean with the Airline, Flight and Leg number
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if airportD or airportA are null
+	 */
+	public Flight getFlightNumber(Airport airportD, Airport airportA) throws DAOException {
+		return getFlightNumber(airportD, airportA, SystemData.get("airline.db"));
 	}
 
 	/**
@@ -350,60 +396,6 @@ public class GetSchedule extends DAO implements CachingDAO {
 		}
 	}
 	
-	/**
-	 * Returns the Countries served by Airports in the Flight Schedule.
-	 * @return a Collection of Country beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Country> getCountries() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE "
-					+ "(A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)");
-			
-			// Execute the Query
-			Collection<Country> results = new LinkedHashSet<Country>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(Country.get(rs.getString(1)));
-			
-			// Clean up
-			rs.close();
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns the size of the Flight Schedule.
-	 * @return the number of legs
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getFlightCount() throws DAOException {
-		
-		// Check the cache
-		CacheableLong result = _schedSizeCache.get(GetSchedule.class);
-		if (result != null)
-			return (int) result.getValue();
-		
-		try {
-			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			result = new CacheableLong(GetSchedule.class, rs.next() ? rs.getInt(1) : 0);
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			_schedSizeCache.add(result);
-			return (int) result.getValue();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
 	/**
 	 * Helper method to query the database.
 	 */
