@@ -10,8 +10,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
-import org.deltava.util.CollectionUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -144,9 +143,10 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<Integer> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-				+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
-				+ "ON (PR.ID=APR.ID) WHERE (P.ID=PR.PILOT_ID) AND (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.*, ER.EQTYPE FROM "
+			+ "PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS "
+			+ "APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND "
+			+ "(ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
 		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
 			Integer st = i.next();
 			sqlBuf.append("(PR.STATUS=");
@@ -161,6 +161,7 @@ public class GetFlightReports extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, EquipmentType.PRIMARY_RATING);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

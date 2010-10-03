@@ -14,7 +14,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -22,7 +22,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 	
 	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
 
-	private static final String MY_EQ_SORT = "IF(PR.EQTYPE=?,0,1), PR.DATE, PR.SUBMITTED, PR.ID";
+	private static final String MY_EQ_SORT = "IF(ER.EQTYPE=?,0,1), PR.DATE, PR.SUBMITTED, PR.ID";
 	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", 
 		"PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
 	private static final String[] SORT_NAMES = {"Submission Date", "Pilot Name", "Equipment Type", "My Program"};
