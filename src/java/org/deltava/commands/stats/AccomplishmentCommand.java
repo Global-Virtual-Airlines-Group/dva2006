@@ -141,7 +141,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 			
 			// Load all countries
-			GetSchedule sdao = new GetSchedule(con);
+			GetScheduleInfo sdao = new GetScheduleInfo(con);
 			Comparator<Country> ccmp = new CountryComparator(CountryComparator.NAME);
 			Collection<Country> activeCountries = CollectionUtils.sort(sdao.getCountries(), ccmp);
 			Collection<Country> inactiveCountries = CollectionUtils.getDelta(Country.getAll(), activeCountries);

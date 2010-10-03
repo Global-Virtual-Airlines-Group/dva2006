@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,16 +6,19 @@ import java.util.*;
 
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
-public class GetScheduleInfo extends DAO {
+public class GetScheduleInfo extends DAO implements CachingDAO {
+	
+	private static final Cache<CacheableLong> _schedSizeCache = new ExpiringCache<CacheableLong>(2, 1800);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -23,6 +26,10 @@ public class GetScheduleInfo extends DAO {
 	 */
 	public GetScheduleInfo(Connection c) {
 		super(c);
+	}
+	
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_schedSizeCache);
 	}
 
 	/**
@@ -132,6 +139,60 @@ public class GetScheduleInfo extends DAO {
 			rs.close();
 			_ps.close();
 			return svcMap;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the size of the Flight Schedule.
+	 * @return the number of legs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getFlightCount() throws DAOException {
+		
+		// Check the cache
+		CacheableLong result = _schedSizeCache.get(GetSchedule.class);
+		if (result != null)
+			return (int) result.getValue();
+		
+		try {
+			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			result = new CacheableLong(GetSchedule.class, rs.next() ? rs.getInt(1) : 0);
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			_schedSizeCache.add(result);
+			return (int) result.getValue();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the Countries served by Airports in the Flight Schedule.
+	 * @return a Collection of Country beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Country> getCountries() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT A.COUNTRY FROM common.AIRPORTS A, SCHEDULE S WHERE "
+					+ "(A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)");
+			
+			// Execute the Query
+			Collection<Country> results = new LinkedHashSet<Country>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(Country.get(rs.getString(1)));
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
