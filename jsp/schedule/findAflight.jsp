@@ -219,17 +219,18 @@ return true;
 <br />
 <el:table className="view">
 <!-- Flight Assignment Data -->
-<tr class="caps title left">
- <td colspan="5">FLIGHT ASSIGNMENT</td>
+<tr class="caps title">
+ <td colspan="6" class="left">FLIGHT ASSIGNMENT</td>
 </tr>
 
 <!-- Flight Assignment Header Bar -->
 <tr class="caps title">
  <td width="20%">FLIGHT NUMBER</td>
- <td width="15%">EQUIPMENT</td>
- <td width="40%">AIRPORTS</td>
+ <td width="10%">EQUIPMENT</td>
+ <td>AIRPORTS</td>
+ <td width="10%">DEPARTS</td>
+ <td width="10%">ARRIVES</td>
  <td width="10%">DISTANCE</td>
- <td>DURATION</td>
 </tr>
 
 <!-- Flighrt Assignment Legs -->
@@ -239,12 +240,19 @@ return true;
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+<c:if test="${param.showUTCTimes}">
+ <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeD.UTC}" /> UTC</td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${utc}" date="${flight.dateTimeA.UTC}" /> UTC</td>
+</c:if>
+<c:if test="${!param.showUTCTimes}"> 
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
+</c:if>
  <td class="sec"><fmt:distance value="${flight.distance}" /></td>
- <td><fmt:dec value="${flight.length / 10}" /> hours</td>
 </tr>
 </c:forEach>
 <tr class="title">
- <td colspan="5"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
+ <td colspan="6"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
 <el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="ClearButton" url="resetassign" label="CLEAR FLIGHT ASSIGNMENT" /></td>
 </tr>

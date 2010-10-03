@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 2.3
+ * @version 3.3
  * @since 1.0
  */
 
@@ -143,10 +143,7 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param length the length in hours multiplied by ten
 	 */
 	public void setLength(int length) {
-		if (length < 0)
-			throw new IllegalArgumentException("Flight Length cannot be negative");
-
-		_length = length;
+		_length = Math.max(0, length);
 	}
 
 	/**
@@ -164,13 +161,9 @@ public class ScheduleSearchCriteria extends Flight {
 	/**
 	 * Sets the maximum number of schedule entries to return.
 	 * @param results the number of entries
-	 * @throws IllegalArgumentException if results is negative
 	 */
 	public void setMaxResults(int results) {
-		if (results < 0)
-			throw new IllegalArgumentException("Result Size cannot be negative");
-
-		_maxResults = results;
+		_maxResults = Math.max(1, results);
 	}
 
 	/**

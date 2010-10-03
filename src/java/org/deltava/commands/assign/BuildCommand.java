@@ -1,11 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 2.7
+ * @version 3.3
  * @since 1.0
  */
 
@@ -72,11 +72,14 @@ public class BuildCommand extends AbstractCommand {
 			for (Iterator<Flight> i = fList.iterator(); i.hasNext();) {
 				Flight f = i.next();
 				info.addAssignment(new AssignmentLeg(f));
-				FlightReport fr = new FlightReport(f);
+				DraftFlightReport fr = new DraftFlightReport(f);
 				
 				// Copy arrival/departure times
 				if (f instanceof ScheduleEntry) {
 					ScheduleEntry se = (ScheduleEntry) f;
+					fr.setTimeD(se.getTimeD());
+					fr.setTimeA(se.getTimeA());
+					fr.setAttribute(FlightReport.ATTR_HISTORIC, se.getHistoric());
 					StringBuilder buf = new StringBuilder("Scheduled departure at ");
 					buf.append(StringUtils.format(se.getTimeD(), ctx.getUser().getTimeFormat()));
 					buf.append(' ');

@@ -3,19 +3,29 @@ package org.deltava.beans.flight;
 
 import java.util.Date;
 
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.schedule.ScheduleEntry;
 
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 2.8
+ * @version 3.3
  * @since 2.8
  */
 
 public class DraftFlightReport extends FlightReport {
 	
-	private Date _timeD;
-	private Date _timeA;
+	private DateTime _timeD;
+	private DateTime _timeA;
+	
+	/**
+	 * Creates a new Flight Report object with a given Flight.
+	 * @param f the Flight bean
+	 */
+	public DraftFlightReport(Flight f) {
+		super(f);
+	}
 
 	/**
 	 * Creates a new Flight Report object with a given flight.
@@ -36,7 +46,27 @@ public class DraftFlightReport extends FlightReport {
 	 * @return the departure date/time
 	 */
 	public Date getTimeD() {
+		return _timeD.getDate();
+	}
+	
+	/**
+	 * Returns the departure time of the flight, with full timezone information. The date component of this value can be
+	 * ignored.
+	 * @return the full departure time of the flight
+	 * @see ScheduleEntry#getDateTimeA()
+	 */
+	public DateTime getDateTimeD() {
 		return _timeD;
+	}
+
+	/**
+	 * Returns the arrival time of the flight, with full timezone information. The date component of this value can be
+	 * ignored.
+	 * @return the full arrival time of the flight
+	 * @see ScheduleEntry#getDateTimeD()
+	 */
+	public DateTime getDateTimeA() {
+		return _timeA;
 	}
 	
 	/**
@@ -45,7 +75,7 @@ public class DraftFlightReport extends FlightReport {
 	 * @return the arrival date/time
 	 */
 	public Date getTimeA() {
-		return _timeA;
+		return _timeA.getDate();
 	}
 	
 	/**
@@ -54,7 +84,8 @@ public class DraftFlightReport extends FlightReport {
 	 * @param dt the departure date/time
 	 */
 	public void setTimeD(Date dt) {
-		_timeD = dt;
+		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportD().getTZ();
+		_timeD = new DateTime(dt, tz);
 	}
 	
 	/**
@@ -63,6 +94,7 @@ public class DraftFlightReport extends FlightReport {
 	 * @param dt the arrival date/time
 	 */
 	public void setTimeA(Date dt) {
-		_timeA = dt;
+		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportA().getTZ();
+		_timeA = new DateTime(dt, tz);
 	}
 }
