@@ -1,24 +1,26 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 1.0
  */
 
-public class Certification implements java.io.Serializable, ViewEntry, Comparable<Certification> {
+public class Certification implements java.io.Serializable, ComboAlias, ViewEntry, Comparable<Certification> {
 	
 	public static final int REQ_ANY = 0;
 	public static final int REQ_ANYPRIOR = 1;
 	public static final int REQ_ALLPRIOR = 2;
+	public static final int REQ_SPECIFIC = 3;
 	
-	public static final String[] REQ_NAMES = {"No Pre-Requisite", "Any Prior Stage Certification", "All Prior Stage Certifications"};
+	public static final String[] REQ_NAMES = {"No Pre-Requisite", "Any Prior Stage Certification", "All Prior Stage Certifications",
+		"Specific Certification"};
 
 	private String _name;
 	private String _code;
@@ -29,6 +31,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	private boolean _active;
 	private boolean _autoEnroll;
 	
+	private String _certReq;
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
 	private final Collection<String> _examNames = new HashSet<String>();
 	
@@ -108,6 +111,15 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
+	 * Returns the specific Certification pre-requisite.
+	 * @return the Certification code, or null if none
+	 * @see Certification#setReqCert(String)
+	 */
+	public String getReqCert() {
+		return _certReq;
+	}
+	
+	/**
 	 * Returns the number of Requirements for this Certification.
 	 * @return the number of requirements
 	 * @see Certification#setReqCount(int)
@@ -164,7 +176,6 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 * Updates the number of requirements for this Certification.
 	 * @param count the number of requirements
 	 * @throws IllegalStateException if requirement text already loaded
-	 * @throws IllegalArgumentException if count is negative
 	 * @see Certification#getReqCount()
 	 * @see Certification#getRequirements()
 	 * @see Certification#addRequirement(CertificationRequirement)
@@ -172,10 +183,8 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	public void setReqCount(int count) {
 		if (!_reqs.isEmpty())
 			throw new IllegalStateException("Requirements already loaded");
-		else if (count < 0)
-			throw new IllegalArgumentException("Invalid Requirement count - " + count);
 			
-		_reqCount = count;
+		_reqCount = Math.max(0, count);
 	}
 	
 	/**
@@ -248,7 +257,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
-	 * Updates  the pre-requisite code.
+	 * Updates the pre-requisite code.
 	 * @param reqCode the code
 	 * @throws IllegalArgumentException if the code is invalid
 	 * @see Certification#getReqs()
@@ -257,10 +266,27 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 		if ((reqCode < 0) || (reqCode >= REQ_NAMES.length))
 			throw new IllegalArgumentException("Invalid Requirement code - " + reqCode);
 		
-		if (_stage > 1)
-			_preReqs = reqCode;
-		else
-			_preReqs = Certification.REQ_ANY;
+		_preReqs = (_stage > 1) ? reqCode : REQ_ANY;
+	}
+	
+	/**
+	 * Sets the pre-requisite certification (if any).
+	 * @param certCode the pre-requisite Certification code
+	 * @throws IllegalStateException if getReqs() != REQ_SPECIFIC
+	 */
+	public void setReqCert(String certCode) {
+		if ((_preReqs != REQ_SPECIFIC) && (certCode != null))
+			throw new IllegalStateException("Specific Certification pre-requisite not set");
+		
+		_certReq = (certCode == null) ? null : certCode.toUpperCase();
+	}
+	
+	public String getComboName() {
+		return _name;
+	}
+	
+	public String getComboAlias() {
+		return _code;
 	}
 	
 	/**
@@ -277,6 +303,10 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	public int compareTo(Certification c2) {
 		int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(c2._stage));
 		return (tmpResult == 0) ? _name.compareTo(c2._name) : tmpResult;
+	}
+	
+	public int hashCode() {
+		return _code.hashCode();
 	}
 	
 	/**

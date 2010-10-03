@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -35,6 +35,7 @@ public class AcademyHistoryHelper {
 		super();
 		_courses.putAll(CollectionUtils.createMap(courses, "name"));
 		_certs.putAll(CollectionUtils.createMap(allCerts, "name"));
+		_certs.putAll(CollectionUtils.createMap(allCerts, "code"));
 	}
 
 	private void log(String msg) {
@@ -279,6 +280,15 @@ public class AcademyHistoryHelper {
 			case Certification.REQ_ALLPRIOR :
 				if (!hasAll(c.getStage() - 1)) {
 					log("Missing Stage " + c.getStage() + " cert for " + c.getName());
+					return false;
+				}
+				
+				break;
+				
+			case Certification.REQ_SPECIFIC:
+				Certification prCert = _certs.get(c.getReqCert());
+				if (!hasPassed(prCert.getName())) {
+					log("Missing pre-requisite " + prCert.getName() + " cert for " + c.getName());
 					return false;
 				}
 				

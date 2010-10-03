@@ -13,12 +13,25 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
+function showReqCert(combo)
+{
+var opt = combo.options[combo.selectedIndex];
+displayObject(getElement('reqCertRow'), (opt.text == 'Specific Certification'));
+return true;	
+}
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 10, 'Certification Name')) return false;
 if (!validateNumber(form.stage, 1, 'Certification Stage')) return false;
 if (!validateCombo(form.preReqs, 'Examination Prerequisites')) return false;
+
+// Check specific cert
+var reqCertRow = getElement('reqCertRow');
+if (reqCertRow.style.display != 'none') {
+	if (!validateCombo(form.preReqCert, 'Specific Certification Prerequisite')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
@@ -53,7 +66,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><el:combo name="preReqs" className="req" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="preReqs" className="req" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" onChange="void showReqCert(this)" firstEntry="-" /></td>
+</tr>
+<tr id="reqCertRow" style="display:none;">
+ <td class="label">Certification</td>
+ <td class="data"><el:combo name="reqCert" className="req" size="1" value="${cert.reqCert}" options="${allCerts}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label top">Required Examinations</td>
