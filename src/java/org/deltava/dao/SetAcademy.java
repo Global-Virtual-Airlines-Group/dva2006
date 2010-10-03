@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to write Flight Academy data to the database.
  * @author Luke
- * @version 2.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -33,14 +33,15 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL) "
-					+ "VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, REQCERT, ACTIVE, "
+				+ "AUTO_ENROLL) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
-			_ps.setBoolean(5, c.getActive());
-			_ps.setBoolean(6, c.getAutoEnroll());
+			_ps.setString(5, c.getReqCert());
+			_ps.setBoolean(6, c.getActive());
+			_ps.setBoolean(7, c.getAutoEnroll());
 			executeUpdate(1);
 			
 			// Write the exams
@@ -65,13 +66,15 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Write the profile
-			prepareStatement("UPDATE exams.CERTS SET NAME=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=? WHERE (NAME=?)");
+			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, STAGE=?, PREREQ=?, REQCERT=?, ACTIVE=?, "
+				+ "AUTO_ENROLL=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setInt(2, c.getStage());
 			_ps.setInt(3, c.getReqs());
-			_ps.setBoolean(4, c.getActive());
-			_ps.setBoolean(5, c.getAutoEnroll());
-			_ps.setString(6, name);
+			_ps.setString(4, c.getReqCert());
+			_ps.setBoolean(5, c.getActive());
+			_ps.setBoolean(6, c.getAutoEnroll());
+			_ps.setString(7, name);
 			executeUpdate(1);
 			
 			// Clear the exams
