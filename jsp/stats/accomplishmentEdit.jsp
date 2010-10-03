@@ -20,7 +20,7 @@ if (!checkSubmit()) return false;
 if (!validateText(form.name, 6, 'Accomplishment Name')) return false;
 if (!validateCombo(form.units, 'Units of Measurement')) return false;
 if (!validateNumber(form.value, 0, 'Number of Units')) return false;
-if (!validateText(form.color, 6, 'Water Cooloer label color')) return false;
+if (!validateText(form.color, 6, 'Water Cooler label color')) return false;
 
 setSubmit();
 disableButton('SaveButton');
