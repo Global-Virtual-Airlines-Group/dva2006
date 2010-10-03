@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 3.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -66,6 +66,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
+			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			
 			// Load the examination names
 			Collection<String> eNames = ctx.getParameters("reqExams");
@@ -114,9 +115,12 @@ public class CertificationCommand extends AbstractFormCommand {
 			CertificationAccessControl access = new CertificationAccessControl(ctx);
 			access.validate();
 			
-			// Get the DAO and the certification
+			// Get the DAO and all certifications
+			GetAcademyCertifications dao = new GetAcademyCertifications(con);
+			Map<String, Certification> allCerts = CollectionUtils.createMap(dao.getAll(), "code");
+			
+			// Get the certification
 			if (name != null) {
-				GetAcademyCertifications dao = new GetAcademyCertifications(con);
 				Certification cert = dao.get(name);
 				if (cert == null)
 					throw notFoundException("Unknown Certification - " + name);
@@ -126,8 +130,12 @@ public class CertificationCommand extends AbstractFormCommand {
 					throw securityException("Cannot edit Certification");
 				
 				ctx.setAttribute("cert", cert, REQUEST);
+				allCerts.remove(cert.getCode());
 			} else if (!access.getCanCreate())
 				throw securityException("Cannot create Certification");
+			
+			// Load all certification names
+			ctx.setAttribute("allCerts", new TreeSet<Certification>(allCerts.values()), REQUEST);
 			
 			// Get available examinations
 			GetExamProfiles exdao = new GetExamProfiles(con);

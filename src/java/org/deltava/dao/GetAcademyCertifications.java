@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy Certifications. 
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -103,7 +103,7 @@ public class GetAcademyCertifications extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 6);
+		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 7);
 		
 		// Iterate through the results
 		List<Certification> results = new ArrayList<Certification>();
@@ -112,10 +112,12 @@ public class GetAcademyCertifications extends DAO {
 			cert.setCode(rs.getString(2));
 			cert.setStage(rs.getInt(3));
 			cert.setReqs(rs.getInt(4));
-			cert.setActive(rs.getBoolean(5));
-			cert.setAutoEnroll(rs.getBoolean(6));
+			cert.setActive(rs.getBoolean(6));
+			cert.setAutoEnroll(rs.getBoolean(7));
+			if (cert.getReqs() == Certification.REQ_SPECIFIC)
+				cert.setReqCert(rs.getString(5));
 			if (hasReqCount)
-				cert.setReqCount(rs.getInt(7));
+				cert.setReqCount(rs.getInt(8));
 			
 			results.add(cert);
 		}
