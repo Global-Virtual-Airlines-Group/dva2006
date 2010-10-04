@@ -603,8 +603,11 @@ public class GetFlightReports extends DAO {
 			// Load scheduled times
 			if (isDraft) {
 				DraftFlightReport dp = (DraftFlightReport) p;
-				dp.setTimeD(rs.getTimestamp(23));
-				dp.setTimeA(rs.getTimestamp(24));
+				Timestamp dts = rs.getTimestamp(23);
+				if (dts != null) {
+					dp.setTimeD(rs.getTimestamp(23));
+					dp.setTimeA(rs.getTimestamp(24));
+				}
 			}
 
 			// Load ACARS pirep data
