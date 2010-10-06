@@ -79,21 +79,4 @@ public class SetNomination extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
-	/**
-	 * Resolves all pending Nominations by setting them to a particular status.
-	 * @param newStatus the new Nomination status
-	 * @return the number of Nominations updated
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int updatePending(Nomination.Status newStatus) throws DAOException {
-		try {
-			prepareStatement("UPDATE NOMINATIONS SET STATUS=? WHERE (STATUS=?)");
-			_ps.setInt(1, newStatus.ordinal());
-			_ps.setInt(2, Nomination.Status.PENDING.ordinal());
-			return executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 }
