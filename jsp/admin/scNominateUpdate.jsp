@@ -3,6 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Senior Captain Nomination Updated</title>
@@ -30,6 +31,18 @@ program, they will be automatically to the rank of Senior Captain.<br />
 <br />
 The nomination of ${pilot.name} for Senior Captain has been rejected. ${pilot.name} cannot be
 re-nominated for Senior Captain again during the current calendar quarter.<br />
+</c:when>
+<c:when test="${isPurged}">
+<div class="updateHdr"><content:airline /> Senior Captain Nominations Purged</div>
+<br />
+The nominations of the following pilots have been rejected. These pilots cannot be re-nominated for
+Senior Captain again during the same calendar quarter in which they were nominated.<br />
+<br />
+<ul>
+<c:forEach var="pilot" items="${pilots}">
+<li><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></li>
+</c:forEach>
+</ul> 
 </c:when>
 <c:otherwise>
 <div class="updateHdr"><content:airline /> Senior Captain Nomination Created</div>
