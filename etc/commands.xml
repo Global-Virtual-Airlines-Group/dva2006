@@ -92,6 +92,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="scnompurge">
+		<name>Senior Captain Nomination Purge</name>	
+		<class>org.deltava.commands.admin.NominationPurgeCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="dupesearch">
 		<name>Duplicate Pilot Search</name>
 		<class>org.deltava.commands.admin.DuplicatePilotSearchCommand</class>

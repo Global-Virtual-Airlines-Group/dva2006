@@ -20,6 +20,16 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
+<content:filter roles="HR">
+var act = form.action;
+if (act.indexOf('scnompurge.do') != -1) {
+	if (!confirm('Are you sure you wish to purge all Senior Captain nominations?')) return false;
+	setSubmit();
+	disableButton('SaveButton');
+	disableButton('PurgeButton');
+	return true;
+}
+</content:filter>
 if (!form.id) return false;
 if (form.id.selectedIndex == 0) {
 	alert('Please select the Pilot you wish to nominate.');
@@ -35,6 +45,7 @@ if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Cap
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('PurgeButton');
 return true;	
 }
 </script>
@@ -237,7 +248,9 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE SENIOR CAPTAIN NOMINATION" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE SENIOR CAPTAIN NOMINATION" />
+<content:filter roles="HR">
+ <el:cmdbutton ID="PurgeButton" url="scnompurge" label="PURGE SENIOR CAPTAIN NOMINATIONS" /></content:filter></td>
 </tr>
 </el:table>
 </c:otherwise>

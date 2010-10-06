@@ -50,12 +50,20 @@ public class GetNominations extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Nomination> getByStatus(Nomination.Status status, Quarter q) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) "
+			+ "FROM NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
+			+ "WHERE (N.STATUS=?) ");
+		if (q != null)
+			sqlBuf.append("AND (N.QUARTER=?) ");
+		sqlBuf.append("GROUP BY N.ID ORDER BY N.SCORE DESC, N.ID");
+		
 		try {
-			prepareStatement("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) FROM NOMINATIONS N "
-				+ "LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) WHERE (N.STATUS=?) "
-				+ "AND (N.QUARTER=?) GROUP BY N.ID ORDER BY N.SCORE DESC, N.ID");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, status.ordinal());
-			_ps.setInt(2, q.getYearQuarter());
+			if (q != null)
+				_ps.setInt(2, q.getYearQuarter());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
