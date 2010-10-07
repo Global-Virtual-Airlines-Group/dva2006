@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display the Flight Academy.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -25,7 +25,6 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -44,7 +43,7 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			// Remove all examinations that we have passed or require a higher stage than us
 			if (activeExamID != 0) {
 				allExams.clear();
-				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
+				ctx.setAttribute("examActive", Integer.valueOf(activeExamID), REQUEST);
 			} else {
 				academyHistory.setDebug(ctx.isSuperUser());
 				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
@@ -55,7 +54,7 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			}
 
 			// Remove all of the certs that we cannot take
-			Collection<Certification> allCerts = new ArrayList<Certification>(academyHistory.getCertifications());
+			Collection<Certification> allCerts = new LinkedHashSet<Certification>(academyHistory.getCertifications());
 			for (Iterator<Certification> i = allCerts.iterator(); i.hasNext();) {
 				Certification cert = i.next();
 				if (!academyHistory.canTake(cert))

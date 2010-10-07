@@ -125,19 +125,22 @@ return true;
 <tr class="title caps">
  <td class="left" colspan="5">TRAINING COURSES</td>
 </tr>
-<tr>
 <c:if test="${!empty course}">
+<tr>
  <td class="left" colspan="5">You are currently enrolled in a Flight Academy training course, 
 <span class="pri bld">${course.name}</span>. Until you have completed or withdrawn from this course, 
 you may not enroll in any other Flight Academy courses.</td>
+</tr>
 </c:if>
 <c:if test="${empty course}">
+<tr>
  <td class="left" colspan="5">Please select a Flight Academy course from the list below. Make sure
  that you are prepared to enroll before clicking on &quot;Enroll.&quot;</td>
 </tr>
 <tr class="title">
  <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="< SELECT COURSE >" />
  <el:button ID="EnrollButton" type="submit" className="BUTTON" label="ENROLL IN COURSE" /></td>
+</tr>
 </c:if>
 <c:if test="${!empty exams}">
 <!-- Examination Section -->
