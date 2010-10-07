@@ -31,7 +31,7 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Certification get(String name) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM exams.CERTS WHERE (NAME=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM exams.CERTS WHERE (NAME=?) OR (ABBR=?) LIMIT 1");
 			_ps.setString(1, name);
 			
 			// Execute the query
