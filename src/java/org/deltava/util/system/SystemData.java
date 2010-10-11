@@ -14,7 +14,7 @@ import org.deltava.beans.system.AirlineInformation;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 3.1
+ * @version 3.3
  * @since 1.0
  */
 
@@ -259,5 +259,23 @@ public final class SystemData implements Serializable {
 	   
 	   Map<?, ?> apps = (Map<?, ?>) getObject("apps");
 	   return (AirlineInformation) apps.get(airlineCode.trim().toUpperCase());
+	}
+	
+	/**
+	 * Returns information about all virtual airlines on this server. The current virtual airline will
+	 * be the first member of this collection.
+	 * @return a Collection of AirlineInformation beans
+	 */
+	public static Collection<AirlineInformation> getApps() {
+		if (!_properties.containsKey("apps"))
+			throw new IllegalStateException("Applications not Loaded");
+		
+		Map<?, ?> apps = (Map<?, ?>) getObject("apps");
+		Collection<AirlineInformation> results = new LinkedHashSet<AirlineInformation>();
+		results.add(getApp(get("airline.code")));
+		for (Iterator<?> i = apps.values().iterator(); i.hasNext(); )
+			results.add((AirlineInformation) i.next());
+		
+		return results;
 	}
 }
