@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 2.2
  */
 
@@ -47,6 +47,9 @@ public class DispatchRouteListService extends WebService {
 		// Get the airports
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
+		
+		// Check if it's a US route
+		boolean isUS = (aD.getCountry() == Country.get("US")) || (aA.getCountry() == Country.get("US"));
 		
 		// Check if loading from FlightAware
 		boolean doFA = Boolean.valueOf(ctx.getParameter("external")).booleanValue() &&
@@ -75,7 +78,7 @@ public class DispatchRouteListService extends WebService {
 				routes.addAll(rcdao.getRoutes(aD, aA));
 				
 				// If we don't have anything in the cache, fetch more
-				if (routes.isEmpty() && hasFARole) {
+				if (routes.isEmpty() && hasFARole && isUS) {
 					GetFARoutes fwdao = new GetFARoutes();
 					fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
 					fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
@@ -88,6 +91,12 @@ public class DispatchRouteListService extends WebService {
 						rcwdao.write(faroutes);
 					}
 				}
+			}
+			
+			// Load PIREP routes
+			if (routes.isEmpty()) {
+				GetFlightReportRoutes frrdao = new GetFlightReportRoutes(con);
+				routes.addAll(frrdao.getRoutes(aD, aA));
 			}
 			
 			// Get the arrival weather
