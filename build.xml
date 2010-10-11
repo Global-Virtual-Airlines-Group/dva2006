@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
@@ -38,28 +39,28 @@
 		<delete file="${java.io.tmpdir}/golgotha_javadoc.tar" />
 
    		<!-- Load the SCP server properties -->
-    	<property name="path.javadoc" value="/home/deltava.org/www/javadoc" />
    		<loadproperties srcFile="data/build_doc.properties">
    			<filterchain>
 	   			<prefixlines prefix="javadoc." />
    			</filterchain>
    		</loadproperties>
+    	<property name="javadoc.ssh.port" value="22" />
 
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
-    		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
+    		host="${javadoc.ssh.server}" timeout="8500" failonerror="no" port="${javadoc.ssh.port}"
+    		command="rm -Rd ${javadoc.path}/*" />
 
     	<!-- Upload the JavaDoc archive -->
-    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" 
+    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" port="${javadoc.ssh.port}" 
     		password="${javadoc.ssh.pwd}" localfile="${java.io.tmpdir}/golgotha_javadoc.tar.bz2" />
 
     	<!-- Explode the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="12500" failonerror="no"
-    		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
+    		host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
+    		command="cd ${javadoc.path} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
 		<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    	    host="${javadoc.ssh.server}" timeout="12500" failonerror="no"
+    	    host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
     	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
 
     	<!-- Clean out the temp folder -->
@@ -194,12 +195,15 @@
 		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
 	</target>
 	
-	<target name="deploy" depends="compile,jspc">
+	<target name="deploy" depends="jspc">
 		<loadproperties srcFile="data/build_deploy.properties" />
+		<property name="webapp.dev.port" value="22" />
+		<property name="http.dev.port" value="22" />
+		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF"
-			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -210,7 +214,7 @@
 		
 		<!-- Upload the common JAR files to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}"
-			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<exclude name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
@@ -222,7 +226,7 @@
 
 		<!-- Upload the JAR files to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib"
-			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 	 		<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
 				<include name="golgotha_jsp.jar" />
@@ -242,7 +246,7 @@
 		
 		<!-- Upload the config file to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc"
-			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset dir="etc" includes="*.*">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -252,7 +256,8 @@
 		</scp>
 
 		<!-- Upload static content to the HTTP server -->
-		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" verbose="yes" trust="yes" password="${http.dev.pwd}">
+		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" 
+			port="${http.dev.port}" verbose="yes" trust="yes" password="${http.dev.pwd}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -308,10 +313,12 @@
 	<!-- Upload scripts to the app server -->
 	<target name="put_scripts">
 		<loadproperties srcFile="data/build_deploy.properties" />
+		<property name="webapp.ssh.port" value="22" />
+		<mkdir dir="../.local_data" />
 
 		<!-- Upload the scripts -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www" verbose="yes"
-			trust="yes" password="${webapp.ssh.pwd}">
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin/www"
+			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="scripts/${webapp.ssh.os}">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -322,12 +329,15 @@
 	</target>
 	
 	<!-- Production Deployment via SSH -->
-	<target name="prod_deploy" depends="compile,jspc">
+	<target name="prod_deploy" depends="jspc">
 		<loadproperties srcFile="data/build_deploy.properties" />
+		<property name="webapp.ssh.port" value="22" />
+		<property name="http.ssh.port" value="22" />
+		<mkdir dir="../.local_data" />
 
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}"
-				verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -338,7 +348,7 @@
 		
 		<!-- Upload the common JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
-			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<exclude name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
@@ -350,7 +360,7 @@
 
 		<!-- Upload the JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/lib"
-			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
 				<include name="golgotha_jsp.jar" />
@@ -370,7 +380,7 @@
 		
 		<!-- Upload the config file to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/classes/etc"
-			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="etc">
 				<include name="commands.xml" />
 				<include name="services.xml" />
@@ -393,7 +403,7 @@
 		
 		<!-- Upload static content to the HTTP server -->
 		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}"
-			verbose="yes" trust="yes" password="${http.ssh.pwd}">
+			port="${http.ssh.port}" verbose="yes" trust="yes" password="${http.ssh.pwd}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
 						<param name="algorithm.algorithm" value="MD5" />
@@ -467,8 +477,10 @@
 			
 		<!-- Upload to the web site -->
 		<loadproperties srcFile="data/build_deploy.properties" />
+		<property name="golgotha.ssh.port" value="22" />
+		
 		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes"
-				trust="yes" password="${golgotha.ssh.pwd}">
+			port="${golgotha.ssh.port}" trust="yes" password="${golgotha.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/src">
 				<include name="*.tar.gz" />
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
