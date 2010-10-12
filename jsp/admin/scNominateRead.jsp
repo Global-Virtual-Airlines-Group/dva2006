@@ -86,6 +86,8 @@ return true;
 </tr>
 </c:forEach>
 </c:if>
+<c:set var="showStatusToggle" value="true" scope="page" />
+<c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) > 10}" scope="page" />
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 <c:if test="${access.canNominate}">
 <tr class="title caps">
