@@ -114,7 +114,7 @@ return cmdPost(f.action);
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this, false)" className="req" firstEntry="< AIRLINE >" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this, false)" className="req" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -131,7 +131,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" className="req" firstEntry="< EQUIPMENT >" /></td>
+ <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" className="req" firstEntry="[ EQUIPMENT ]" /></td>
 </tr>
 <c:choose>
 <c:when test="${!isAssign}">
@@ -175,7 +175,7 @@ return cmdPost(f.action);
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" />
  minutes&nbsp;<el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>

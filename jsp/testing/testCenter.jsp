@@ -144,7 +144,7 @@ The specific program Chief Pilot or Assistant Chief Pilots score examianations w
  before you begin an examination!</span></td>
 </tr>
 <tr class="title">
- <td colspan="7">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="< SELECT EXAM >" />
+ <td colspan="7">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="[ SELECT EXAM ]" />
  <el:button ID="ExamButton" type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
 </tr>
 </c:otherwise>

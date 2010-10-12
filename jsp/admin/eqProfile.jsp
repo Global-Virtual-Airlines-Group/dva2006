@@ -65,7 +65,7 @@ return true;
 <!-- Equipment Profile Data -->
 <tr>
  <td class="label">Program Name</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="< NAME >" className="req" options="${allEQ}" value="${eqType.name}" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="[ NAME ]" className="req" options="${allEQ}" value="${eqType.name}" /></td>
 </tr>
 <tr>
  <td class="label">Chief Pilot</td>
