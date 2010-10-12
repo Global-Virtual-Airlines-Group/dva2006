@@ -57,6 +57,14 @@ public class NominationCommand extends AbstractFormCommand {
 			access.validate();
 			if (!access.getCanNominate())
 				throw securityException("Cannot nominate " + p.getName());
+			
+			// Count our nominations
+			if (isNew && !access.getCanNominateUnlimited()) {
+				int maxNoms = SystemData.getInt("users.sc.maxNominations", 5);
+				Collection<Nomination> myNoms = ndao.getByAuthor(ctx.getUser().getID());
+				if (myNoms.size() >= maxNoms)
+					throw securityException("Already nominated " + myNoms.size() + " pilots, max=" + maxNoms);
+			}
 
 			ctx.setAttribute("pilot", p, REQUEST);
 			
