@@ -22,6 +22,7 @@ public class NominationAccessControl extends AccessControl {
 	private Pilot _p;
 	
 	private boolean _canNominate;
+	private boolean _canNominateUnlimited;
 	private boolean _canObject;
 	private boolean _canUpdate;
 	private boolean _canDispose;
@@ -52,10 +53,15 @@ public class NominationAccessControl extends AccessControl {
 	@Override
 	public void validate() throws AccessControlException {
 		
+		// Check staff
+		boolean isStaff = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("PIREP") ||
+			_ctx.isUserInRole("Event") || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
+		
 		Pilot usr = (Pilot) _ctx.getUser();
 		int daysActive = (int) ((System.currentTimeMillis() - usr.getCreatedOn().getTime()) / 86400 / 1000);
-		_canNominate = (usr.getLegs() > SystemData.getInt("users.sc.minFlights", 5)) && 
+		_canNominate = isStaff || (usr.getLegs() > SystemData.getInt("users.sc.minFlights", 5)) && 
 			(daysActive > SystemData.getInt("users.sc.minAge", 120));
+		_canNominateUnlimited = usr.getRank().isCP() || isStaff;
 		if (_n == null)
 			return;
 		
@@ -80,6 +86,14 @@ public class NominationAccessControl extends AccessControl {
 	 */
 	public boolean getCanNominate() {
 		return _canNominate;
+	}
+	
+	/**
+	 * Returns if the user can make an unlimited number of Nominations. 
+	 * @return TRUE if nominations unlimited, otherwise FALSE
+	 */
+	public boolean getCanNominateUnlimited() {
+		return _canNominateUnlimited;
 	}
 	
 	/**
