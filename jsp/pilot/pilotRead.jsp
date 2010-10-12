@@ -267,6 +267,10 @@ Applicant profile for ${pilot.name}.</td>
 </c:if>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 <%@ include file="/jsp/pilot/pilotCourses.jspf" %>
+<content:authUser>
+<c:set var="showStatusToggle" value="true" scope="page" />
+<c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) >= 20}" scope="page" />
+</content:authUser>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 </el:table>
 

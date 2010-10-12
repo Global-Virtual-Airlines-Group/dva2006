@@ -56,7 +56,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport</td>
- <td class="data"><el:combo className="req" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${emptyList}" value="${chart.airport}" />
+ <td class="data"><el:combo className="req" name="airport" size="1" idx="*" firstEntry="[ SELECT AIRPORT ]" options="${emptyList}" value="${chart.airport}" />
  <el:text name="airportCode" idx="*" size="3" max="4" value="${chart.airport.ICAO}" onBlur="void setAirport(document.forms[0].airport, this.value)" /></td>
 </tr>
 <tr>
@@ -65,7 +65,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Chart Type</td>
- <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" className="req" firstEntry="< SELECT >" value="${chart.typeName}" /></td>
+ <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" className="req" firstEntry="[ SELECT TYPE ]" value="${chart.typeName}" /></td>
 </tr>
 <c:if test="${!empty chart}">
 <tr>

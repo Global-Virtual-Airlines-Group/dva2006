@@ -66,7 +66,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Category</td>
- <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="< SELECT >" /></td>
+ <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="[ CATEGORY ]" /></td>
 </tr>
 <tr>
  <td class="label top">Description</td>

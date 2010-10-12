@@ -60,11 +60,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Instructor</td>
- <td class="data"><el:combo name="instructor" size="1" idx="*" options="${instructors}" value="${ins.name}" className="req" firstEntry="< INSTRUCTOR >" /></td>
+ <td class="data"><el:combo name="instructor" size="1" idx="*" options="${instructors}" value="${ins.name}" className="req" firstEntry="[ INSTRUCTOR ]" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${flight.equipmentType}" className="req" firstEntry="< EQUIPMENT >" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${flight.equipmentType}" className="req" firstEntry="[ EQUIPMENT ]" /></td>
 </tr>
 <tr>
  <td class="label">Flown on</td>
@@ -75,7 +75,7 @@ return true;
 <c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
 <el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
