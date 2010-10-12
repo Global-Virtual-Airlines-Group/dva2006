@@ -215,7 +215,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data" colspan="${cspan}"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="< TIME ZONE >" value="${param.tz}" /></td>
+ <td class="data" colspan="${cspan}"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="[ TIME ZONE ]" value="${param.tz}" /></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>

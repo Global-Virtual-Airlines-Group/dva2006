@@ -89,7 +89,7 @@ return true;
 <el:table className="form">
 <tr class="title">
  <td class="caps"><content:airline /> FLEET LIBRARY</td>
- <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="< INSTALLER >" options="${fleet}" onChange="void selectAC(this)" /></td>
+ <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="[ INSTALLER ]" options="${fleet}" onChange="void selectAC(this)" /></td>
 </tr>
 <tr>
  <td colspan="2"><el:img ID="FleetPic" style="float:left; margin:4px;" x="164" y="314" src="blank.png" caption="Fleet Library" />

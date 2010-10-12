@@ -117,7 +117,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="< AIRLINE >" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 <tr>
  <td class="label top">Flight Number / Leg</td>
@@ -133,7 +133,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="< EQUIPMENT >" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="[ EQUIPMENT ]" /></td>
 </tr>
 <tr>
  <td class="label">Departing From</td>

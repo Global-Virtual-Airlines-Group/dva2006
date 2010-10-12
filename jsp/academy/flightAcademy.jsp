@@ -138,7 +138,7 @@ you may not enroll in any other Flight Academy courses.</td>
  that you are prepared to enroll before clicking on &quot;Enroll.&quot;</td>
 </tr>
 <tr class="title">
- <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="< SELECT COURSE >" />
+ <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />
  <el:button ID="EnrollButton" type="submit" className="BUTTON" label="ENROLL IN COURSE" /></td>
 </tr>
 </c:if>
@@ -166,7 +166,7 @@ The <content:airline /> Flight Academy instructors score examianations within 72
  an examination!</span></td>
 </tr>
 <tr class="title">
- <td colspan="5">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="< SELECT EXAM >" />
+ <td colspan="5">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="[ SELECT EXAM ]" />
  <el:cmdbutton ID="ExamButton" url="newacademyexam" post="true" label="NEW EXAMINATION" /></td>
 </c:if>
 </c:if>
