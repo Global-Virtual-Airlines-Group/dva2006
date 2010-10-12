@@ -78,10 +78,10 @@ has done to make <content:airline /> a better place. Since this is a qualitative
 requirements as to what a nomination should contain - it's up to you to best communicate how a member makes our virtual airline
 better.<br />
 <br />
-The thing to keep in mind is that you are limited to <fmt:int value="${maxNoms}" /> Senior Captain nominations per quarter,
-so please be judicious in who you nominate. This also isn't a popularity contest - promoting a member to Senior Captain is the
-prerogative of the <content:airline /> staff, and this process is designed to bring attention to people who otherwise might
-get missed. The modest, helpful type is just the person we're looking for!<br />
+Keep in mind that you are limited to <fmt:int value="${maxNoms}" /> Senior Captain nominations per quarter, so please be judicious
+in who you nominate. This also isn't a popularity contest - promoting a member to Senior Captain is the prerogative of the <content:airline /> 
+staff, and this process is designed to bring attention to people who otherwise might get missed. The modest, helpful type is just
+the person we're looking for!<br />
 <br />
 We look forward to your help in recognizing those who make <content:airline /> a better place for all its members!</td>
 </tr>
@@ -221,7 +221,8 @@ at least <fmt:int value="${minAge}" /> days. In order to best understand the qua
 virtual airline, it's best to have been a member for a while!<br /> 
 <br />
 </c:when>
-<c:when test="${(fn:sizeof(myNoms) >= maxNoms) && !canSeeScore}">
+<c:when test="${(fn:sizeof(myNoms) >= maxNoms) && !access.canNominateUnlimited}">
+<br />
 Sorry, but you have already nominated <fmt:int value="${maxNoms}" /> <content:airline /> pilots for promotion to
 Senior Captain this calendar quarter. In order to ensure that nominations are reserved for the most deserving
 individuals, we limit the number of nomnations that can be made every quarter.<br />
@@ -235,11 +236,15 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
 </tr>
 <tr>
  <td class="label">Pilot</td>
- <td class="data"><el:combo ID="selectPilot" name="id" idx="*" size="1" className="req" firstEntry="< SELECT PILOT >" options="${emptyList}" onChange="void setPilot(this)" />
+ <td class="data">
+<div id="rowSelectPilot" style="display:none;"><el:combo ID="selectPilot" name="id" idx="*" size="1" className="req" firstEntry="[ SELECT PILOT ]" options="${emptyList}" onChange="void setPilot(this)" />
  <el:text name="pilotSearch" idx="*" size="12" max="24" value="" onChange="void search(this.value)" />
-<span class="small ita">(Type the first few letters of an eligible Pilot's name to jump to them in the list.)</span></td>
+<span class="small ita">(Type the first few letters of an eligible Pilot's name to jump to them in the list.)</span></div>
+<div id="rowLoading" class="bld caps">LOADING ELIGIBLE PILOT LIST, PLEASE WAIT...</div>
+<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button ID="RefreshButton" className="BUTTON" label="RELOAD" onClick="void getPilots()" /></div>
+</td>
 </tr>
-<tr>
+<tr id="rowComments" style="display:none;">
  <td class="label top">Comments</td>
  <td class="data"><el:textbox name="body" idx="*" width="90%" resize="true" height="5"></el:textbox></td>
 </tr>
