@@ -3,35 +3,47 @@ function getPilots()
 var xmlreq = getXMLHttpRequest();	
 xmlreq.open('get', 'sceligible.ws');
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	
+	if ((xmlreq.readyState != 4) || (xmlreq.status == 0)) return false;
+	if (xmlreq.status != 200) {
+		displayObject(getElement('rowError'), true);
+		displayObject(getElement('rowLoading'), false);
+		var codeSpan = getElement('errorCode');
+		codeSpan.innerHTML = '(' + xmlreq.status + ')';
+		return false;
+	}
+
 	// Parse the XML
 	var cbo = getElement('selectPilot');
+	if (cbo == null) return false;
 	cbo.options.length = 1;
 	var xmlDoc = xmlreq.responseXML;
 	var pe = xmlDoc.documentElement.getElementsByTagName('pilot');
 	for (var x = 0; x < pe.length; x++) {
 		var p = pe[x];
 		var id = p.getAttribute('id');
-		var o = new Option(p.getAttribute('name') + ' (' + p.getAttribute('code') + ')', id);
+		var code = p.getAttribute('code');
+		var o = new Option(p.getAttribute('name') + ' (' + code + ')', id);
 		o.pilotID = id;
+		o.pilotCode = code;
 		try {
 			cbo.add(o, null);
 		} catch (err) {
 			cbo.add(o); // IE hack
 		}
 	}
-	
-	enableObject(cbo, true);
+
+	displayObject(getElement('rowSelectPilot'), true);
+	displayObject(getElement('rowLoading'), false);
+
+	// Initialize onkeyup
+	var txt = document.forms[0].pilotSearch;
+	if (txt != null) txt.onkeyup = txt.onchange;
 	return true;
 } // function
 	
-enableElement('selectPilot', false);
+displayObject(getElement('rowLoading'), true);
+displayObject(getElement('rowError'), false);
 xmlreq.send(null);
-
-// Initialize onkeyup
-var txt = document.forms[0].pilotSearch;
-txt.onkeyup = txt.onchange;
 return true;
 }
 
@@ -58,5 +70,6 @@ function setPilot(combo)
 {
 var f = document.forms[0];
 f.pilotSearch.value = '';
+displayObject(getElement('rowComments'), (combo.selectedIndex > 0));
 return true;
 }
