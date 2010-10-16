@@ -234,7 +234,7 @@ body {
 	font-size: 9pt;
 }
 
-.BUTTON, .cmdButton {
+.cmdButton, .button {
 	background-color: #003366;
 	color: #ffffff;
 	font-family: verdana, tahoma, sans-serif;

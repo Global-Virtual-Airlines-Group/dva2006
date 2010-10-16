@@ -214,17 +214,17 @@ body {
 	font: 11px verdana, tahoma, sans-serif;
 }
 
-.BUTTON, .cmdButton {
+.cmdButton, .button {
 	background-color: #003366;
-	color: #FFFFFF;
+	color: #ffffff;
 	font-family: verdana, tahoma, sans-serif;
 	font-size: 10px;
 	text-transform: uppercase;
-	border: 2px outset #CFCFFF;
+	border: 2px outset #cfcfff;
 	font-weight: normal;
 }
 
-.BUTTON:disabled, .cmdButton:disabled {
+.cmdButton:disabled, .button:disabled {
 	background-color: #002256;
 	color: #a0a0a0;
 }
@@ -242,7 +242,7 @@ a:hover {
 
 .mapInfoBox {
 	white-space: nowrap;
-	font-family: Verdana, Tahoma, sans-serif;
+	font-family: verdana, tahoma, sans-serif;
 	font-size: 8pt;
 }
 

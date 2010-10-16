@@ -1,7 +1,7 @@
-/* Dispatch Map Cascading Style Sheet (C) 2005, 2006, 2007, 2008 Global Virtual Airlines Group. */
+/* Dispatch Map Cascading Style Sheet (C) 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. */
 
 .mapInfoBox {
-	font-family: Tahoma, Verdana, sans-serif;
+	font-family: tahoma, verdana, sans-serif;
 	font-size: 8pt;
 }
 
@@ -13,24 +13,24 @@ BODY {
 	font-size: 9pt;
 }
 
-.BUTTON {
+.button {
 	background-color: #000080;
-	color: #FFFFFF;
-	font-family: Tahoma, Verdana;
+	color: #ffffff;
+	font-family: tahoma, verdana;
 	font-size: 8pt;
 	text-transform: uppercase;
-	border: 2px outset #CFCFFF;
+	border: 2px outset #cfcfff;
 	font-weight: normal;
 }
 
 a, a:visited {
-	color: #0000A1;
+	color: #0000a1;
 	text-decoration: underline;
 	font-size: 8pt;
 }
 
 a:hover {
-	color: #0080D1;
+	color: #0080d1;
 	text-decoration: underline;
 	font-size: 8pt;
 }
@@ -40,7 +40,7 @@ a:hover {
 }
 
 .pri {
-	color: #0000A1;
+	color: #0000a1;
 }
 
 .sec {
@@ -52,11 +52,11 @@ a:hover {
 }
 
 .error {
-	color: #E02010;
+	color: #e02010;
 }
 
 .warn {
-	color: #FF8040;
+	color: #ff8040;
 }
 
 .small {
