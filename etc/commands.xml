@@ -98,6 +98,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="scnomrescore">
+		<name>Senior Captain Nomination Rescore</name>
+		<class>org.deltava.commands.admin.NominationRescoreCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="dupesearch">
 		<name>Duplicate Pilot Search</name>
 		<class>org.deltava.commands.admin.DuplicatePilotSearchCommand</class>
