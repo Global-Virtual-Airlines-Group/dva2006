@@ -36,7 +36,13 @@ public class GetNominations extends DAO {
 				+ "WHERE (N.QUARTER=?) GROUP BY N.ID HAVING (MINE>0) ORDER BY N.SCORE DESC, N.ID");
 			_ps.setInt(1, authorID);
 			_ps.setInt(2, new Quarter().getYearQuarter());
-			return execute();
+			
+			// Load nominations and comments
+			List<Nomination> results = execute();
+			for (Nomination n : results)
+				loadComments(n);
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -64,7 +70,13 @@ public class GetNominations extends DAO {
 			_ps.setInt(1, status.ordinal());
 			if (q != null)
 				_ps.setInt(2, q.getYearQuarter());
-			return execute();
+			
+			// Load nominations and comments
+			List<Nomination> results = execute();
+			for (Nomination n : results)
+				loadComments(n);
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -83,7 +95,13 @@ public class GetNominations extends DAO {
 				+ "WHERE (N.ID=P.ID) AND (P.EQTYPE=?) AND (N.QUARTER=?) GROUP BY N.ID ORDER BY N.SCORE DESC, N.ID");
 			_ps.setString(1, eqType);
 			_ps.setInt(2, new Quarter().getYearQuarter());
-			return execute();
+			
+			// Load nominations and comments
+			List<Nomination> results = execute();
+			for (Nomination n : results)
+				loadComments(n);
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -135,17 +153,7 @@ public class GetNominations extends DAO {
 				_ps.close();
 				
 				// Load comments
-				prepareStatementWithoutLimits("SELECT AUTHOR, SUPPORT, CREATED, BODY FROM NOMINATION_COMMENTS "
-					+ "WHERE (ID=?) AND (QUARTER=?)");
-				_ps.setInt(1, id);
-				_ps.setInt(2, new Quarter(n.getCreatedOn()).getYearQuarter());
-				rs = _ps.executeQuery();
-				while (rs.next()) {
-					NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));
-					nc.setSupport(rs.getBoolean(2));
-					nc.setCreatedOn(rs.getTimestamp(3));
-					n.addComment(nc);
-				}
+				loadComments(n);
 			}
 			
 			rs.close();
@@ -192,5 +200,25 @@ public class GetNominations extends DAO {
 		rs.close();
 		_ps.close();
 		return results;
+	}
+
+	/**
+	 * Helper method to load Nomination comments.
+	 */
+	private void loadComments(Nomination n) throws SQLException {
+		prepareStatementWithoutLimits("SELECT AUTHOR, SUPPORT, CREATED, BODY FROM NOMINATION_COMMENTS "
+				+ "WHERE (ID=?) AND (QUARTER=?)");
+		_ps.setInt(1, n.getID());
+		_ps.setInt(2, new Quarter(n.getCreatedOn()).getYearQuarter());
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));
+			nc.setSupport(rs.getBoolean(2));
+			nc.setCreatedOn(rs.getTimestamp(3));
+			n.addComment(nc);
+		}
+
+		rs.close();
+		_ps.close();
 	}
 }
