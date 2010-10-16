@@ -5,6 +5,7 @@ import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.ViewEntry;
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP Tag to render view table rows with a specified CSS class.
@@ -16,7 +17,9 @@ import org.deltava.beans.ViewEntry;
 public class RowTag extends TagSupport {
 
 	private Object _entry;
+	
 	private String _className;
+	private String _style;
 	
 	/**
 	 * Overrides the CSS class name for the table row. 
@@ -24,6 +27,14 @@ public class RowTag extends TagSupport {
 	 */
 	public void setClassName(String cName) {
 		_className = cName;
+	}
+	
+	/**
+	 * Adds a CSS style for the table row.
+	 * @param css the style
+	 */
+	public void setStyle(String css) {
+		_style = css;
 	}
 	
 	/**
@@ -39,8 +50,8 @@ public class RowTag extends TagSupport {
 	 */
 	public void release() {
 		super.release();
-		_entry = null;
 		_className = null;
+		_style = null;
 	}
 	
 	/**
@@ -52,7 +63,6 @@ public class RowTag extends TagSupport {
 	 * @throws JspException if an I/O error occurs
 	 */
 	public int doStartTag() throws JspException {
-		
 		JspWriter out = pageContext.getOut();
 		try {
 			// Determine the CSS class name
@@ -61,9 +71,15 @@ public class RowTag extends TagSupport {
 			
 			// Render the opening tag
 			out.print("<tr");
-			if (_className != null) {
+			if (!StringUtils.isEmpty(_className)) {
 				out.print(" class=\"");
 				out.print(_className);
+				out.print('\"');
+			}
+			
+			if (!StringUtils.isEmpty(_style)) {
+				out.print(" style=\"");
+				out.print(_style);
 				out.print('\"');
 			}
 			
