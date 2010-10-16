@@ -207,10 +207,10 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 
 /* Result page Header */
 .updateHdr {
-	font-family: Tahoma, Verdana, sans-serif;
+	font-family: tahoma, verdana, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
-	background-color: #0000A1;
+	background-color: #0000a1;
 	width: 100%;
 	color: #ffffff;
 	text-transform: uppercase;
@@ -221,7 +221,7 @@ table {
 	table-layout: auto;
 	border-collapse: separate;
 	border-spacing: 3px 3px;
-	font-family: Tahoma, Verdana;
+	font-family: tahoma, verdana;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
 }
@@ -236,7 +236,7 @@ body {
 	behavior: url(/css/csshover3.htc);
 }
 
-.BUTTON, .cmdButton {
+.cmdButton, .button {
 	background-color: #000080;
 	color: #ffffff;
 	font-family: tahoma, verdana;
@@ -267,7 +267,7 @@ a:hover {
 }
 
 .pri {
-	color: #0000A1;
+	color: #0000a1;
 }
 
 .sec, .ok {
@@ -279,11 +279,11 @@ a:hover {
 }
 
 .error {
-	color: #E02010;
+	color: #e02010;
 }
 
 .warn {
-	color: #FF8040;
+	color: #ff8040;
 }
 
 .small, a.small, *.small a {
