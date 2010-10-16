@@ -51,7 +51,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT ${reqType} REQUEST" /></td>
+ <td><el:button ID="SubmitButton" type="submit" label="SUBMIT ${reqType} REQUEST" /></td>
 </tr>
 </el:table>
 <c:if test="${isRating}"><el:text name="ratingOnly" type="hidden" value="true" /></c:if>

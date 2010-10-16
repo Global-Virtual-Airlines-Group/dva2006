@@ -51,7 +51,7 @@ return true;
 <tr>
  <td class="label">Purge Date</td>
  <td class="data"><el:text name="purgeDate" idx="*" size="10" max="10" value="${param.purgeDate}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].purgeDate')" /></td>
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].purgeDate')" /></td>
 </tr>
 <c:if test="${!empty rowsDeleted}">
 <tr>
@@ -63,7 +63,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="PurgeButton" type="submit" className="BUTTON" label="PURGE SYSTEM LOG ENTRIES" /></td>
+ <td><el:button ID="PurgeButton" type="submit" label="PURGE SYSTEM LOG ENTRIES" /></td>
 </tr>
 </el:table>
 </el:form>

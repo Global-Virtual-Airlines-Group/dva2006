@@ -118,7 +118,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE FLIGHT ROUTES" />
+ <td><el:button ID="SaveButton" type="submit" label="UPDATE FLIGHT ROUTES" />
  <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" />
 <c:if test="${access.canBalance}">
  <el:cmdbutton ID="BalanceButton" url="eventbalance" link="${event}" label="BALANCE ROUTE SIGNUPS" />

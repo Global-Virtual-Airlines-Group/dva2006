@@ -47,18 +47,18 @@ return true;
  <td class="label">Start Date/Time</td>
  <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${param.startDate}" />&nbsp;
 <el:text name="startTime" idx="*" size="8" max="8" value="${param.startTime}" />&nbsp;
-<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
+<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
  <td class="label">End Date/Time</td>
  <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${param.endDate}" />&nbsp;
 <el:text name="endTime" idx="*" size="8" max="8" value="${param.endTime}" />&nbsp;
-<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH CONNECTION LOG" /></td>
+ <td><el:button ID="SearchButton" type="submit" label="SEARCH CONNECTION LOG" /></td>
 </tr>
 </el:table>
 </el:form>

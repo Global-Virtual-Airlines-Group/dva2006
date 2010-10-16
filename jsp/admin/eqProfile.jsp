@@ -133,7 +133,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE EQUIPMENT PROGRAM" />
+<el:button ID="SaveButton" type="submit" label="SAVE EQUIPMENT PROGRAM" />
 </c:if>
  </td>
 </tr>

@@ -65,7 +65,7 @@ in <content:airline />!</td>
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT MESSAGE" /></td>
+ <td><el:button ID="SubmitButton" type="submit" label="SUBMIT MESSAGE" /></td>
 </tr>
 </el:table>
 <el:text name="airline" type="hidden" value="${airline.name}" />

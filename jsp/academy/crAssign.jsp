@@ -53,7 +53,7 @@ return true;
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /> 
 <el:cmdbutton ID="CourseButton" url="course" link="${course}" label="VIEW COURSE" /> 
-<el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" /></td>
+<el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" /></td>
 </tr>
 </el:table>
 </el:form>

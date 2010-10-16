@@ -322,7 +322,7 @@ APPLICANT<br />
 &nbsp;<el:text name="stickyDate" idx="*" size="10" max="10" value="${fn:dateFmt(stickyDate, dateFmt)}" />
  at <el:text name="stickyTime" idx="*" size="4" max="5" value="${fn:dateFmt(stickyDate, 'HH:mm')}" />
 <c:if test="${dateFmt == 'MM/dd/yyyy'}">
- <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
+ <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" />
 </c:if>
 &nbsp;<el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" link="${thread}" />
 &nbsp;<span class="small">Your time zone is ${user.TZ.name}.</span></td>
@@ -382,8 +382,8 @@ notification each time a reply is posted in this Thread.
 <!-- Button Bar -->
 <c:if test="${access.canReply || access.canReport}">
 <tr class="buttons mid title">
- <td colspan="3"><c:if test="${access.canReply}"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
-&nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></c:if></td>
+ <td colspan="3"><c:if test="${access.canReply}"><el:button ID="SaveButton" label="SAVE RESPONSE" type="submit" />
+&nbsp;<el:button ID="EmoticonButton" onClick="void openEmoticons()" label="EMOTICONS" /></c:if></td>
 </tr>
 </c:if>
 </el:table>

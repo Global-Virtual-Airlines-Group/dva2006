@@ -227,9 +227,9 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td>
 <c:if test="${access.canApprove}">
-<el:button ID="HireButton" className="BUTTON" onClick="void hireApplicant()" label="HIRE APPLICANT" />
+<el:button ID="HireButton" onClick="void hireApplicant()" label="HIRE APPLICANT" />
 </c:if> 
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE APPLICANT" />
+<el:button ID="SaveButton" type="submit" label="UPDATE APPLICANT" />
 <c:if test="${access.canReject}">
 <el:cmdbutton ID="RejectButton" url="appreject" link="${applicant}" label="REJECT APPLICANT" />
 </c:if>

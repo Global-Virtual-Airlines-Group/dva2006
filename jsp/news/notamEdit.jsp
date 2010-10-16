@@ -65,7 +65,7 @@ return true;
 <tr>
  <td>
 <c:if test="${access.canSave}">
-<el:button type="SUBMIT" className="BUTTON" label="SAVE NOTAM" />
+<el:button type="submit" label="SAVE NOTAM" />
 </c:if>
 <c:if test="${access.canDelete}">
 <el:cmdbutton url="newsdelete" op="notam" link="${entry}" label="DELETE NOTAM" />

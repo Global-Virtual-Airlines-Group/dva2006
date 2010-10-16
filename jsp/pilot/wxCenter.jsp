@@ -231,7 +231,7 @@ return true;
 <tr>
  <td class="label">Airport Code</td>
  <td class="data"><el:text name="wxID" idx="*" className="bld" size="3" max="4" /> 
-  <el:button ID="FetchButton" onClick="loadWX(document.forms[0].wxID.value)" className="BUTTON" label="FETCH WEATHER" />
+  <el:button ID="FetchButton" onClick="loadWX(document.forms[0].wxID.value)" label="FETCH WEATHER" />
 <content:filter roles="Route,Dispatch"> <el:box name="useFA" value="true" checked="false" label="Use FlightAware Weather" /></content:filter></td>
 </tr>
 <tr>
@@ -259,7 +259,7 @@ return true;
 </el:table>
 <div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small bld">Select Time</span>
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
- <el:button ID="AnimateButton" className="BUTTON" label="ANIMATE" onClick="void animateFF()" /></div>
+ <el:button ID="AnimateButton" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
 <br />
 <content:copyright />

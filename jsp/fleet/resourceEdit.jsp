@@ -90,7 +90,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE WEB RESOURCE" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE WEB RESOURCE" />
 <c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="resourcedelete" link="${resource}" label="DELETE WEB RESOURCE" /></c:if></td>
 </tr>
 </el:table>

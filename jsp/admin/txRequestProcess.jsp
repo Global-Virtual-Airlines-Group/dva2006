@@ -161,10 +161,10 @@ return true;
  <el:cmdbutton ID="CheckRideButton" url="checkride" link="${checkRide}" label="VIEW CHECK RIDE" />
 </c:if>
 <c:if test="${access.canAssignRide}">
- <el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" />
+ <el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${access.canApprove}">
- <el:button ID="ApproveButton" type="submit" className="BUTTON" label="APPROVE TRANSFER" />
+ <el:button ID="ApproveButton" type="submit" label="APPROVE TRANSFER" />
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />

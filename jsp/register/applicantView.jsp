@@ -169,7 +169,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:i
 <tr>
  <td class="label">VATSIM ID#</td>
  <td class="data">${VATSIM_ID}
-<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" className="BUTTON" onClick="void checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /></c:if>
+<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" onClick="void checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /></c:if>
  </td>
 </tr>
 </c:if>
@@ -359,7 +359,7 @@ Stage <fmt:int value="${eqStage}" />: ${eqStagePref}<br /></c:forEach></td>
 <tr>
  <td>&nbsp;
 <c:if test="${access.canApprove}">
- <el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE APPLICANT" />
+ <el:button ID="HireButton" type="submit" label="HIRE APPLICANT" />
 </c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton ID="EditButton" url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" />

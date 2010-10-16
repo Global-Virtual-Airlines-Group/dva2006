@@ -81,7 +81,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td>
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE MESSAGE TEMPLATE" />
+<el:button ID="SaveButton" type="submit" label="SAVE MESSAGE TEMPLATE" />
 <c:if test="${access.canDelete}">
 &nbsp;<el:cmdbutton ID="DeleteButton" url="msgtemplatedelete" linkID="${template.name}" label="DELETE MESSAGE TEMPLATE" />
 </c:if>

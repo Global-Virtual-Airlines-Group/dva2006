@@ -51,7 +51,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" className="BUTTON" type="submit" label="UPDATE RESPONSE TEMPLATE" />
+ <td><el:button ID="SaveButton" type="submit" label="UPDATE RESPONSE TEMPLATE" />
 <c:if test="${(!empty template) && access.canUpdateTemplate}">
  <el:cmdbutton ID="DeleteButton" url="rsptemplatedelete" post="true" linkID="${template.title}" label="DELETE RESPONSE TEMPLATE" /></c:if></td>
 </tr>

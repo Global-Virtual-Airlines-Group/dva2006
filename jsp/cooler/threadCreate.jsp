@@ -99,13 +99,13 @@ return true;
  <td class="label">Sticky Until</td>
  <td class="data"><el:text name="stickyDate" idx="*" size="10" max="11" value="${param.stickyDate}" />
 <c:if test="${user.dateFormat == 'MM/dd/yyyy'}">
- <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></c:if></td>
+ <el:button label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></c:if></td>
 </tr>
 </content:filter>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="true" />&nbsp;
-<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
+<el:button ID="EmoticonButton" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
 <c:if test="${empty sessionScope.imageURLs}">
 <tr>
@@ -132,7 +132,7 @@ return true;
 <tr>
  <td class="label">Description</td>
  <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="${imgDesc}" /> 
-<el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void submitImage()" /></td>
+<el:button ID="LinkButton" label="LINK IMAGE" onClick="void submitImage()" /></td>
 </tr>
 <c:if test="${!empty sessionScope.imageURLs}">
 <tr>
@@ -169,7 +169,7 @@ return true;
 <tr class="title mid">
  <td colspan="2">
 <c:if test="${channelAccess.canPost}">
- <el:button ID="SaveButton" className="BUTTON" label="SAVE NEW THREAD" type="submit" />
+ <el:button ID="SaveButton" label="SAVE NEW THREAD" type="submit" />
 </c:if>
  </td>
 </tr>

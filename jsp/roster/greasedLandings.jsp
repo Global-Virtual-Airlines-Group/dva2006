@@ -52,7 +52,7 @@ smoothest landings, and the greaser pilots who made them:<br />
  <td class="right" colspan="4"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
 FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void update()" /> 
 IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void update()" />
-<el:button ID="SearchButton" type="submit" className="BUTTON" label="GO" /></td>
+<el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar-->

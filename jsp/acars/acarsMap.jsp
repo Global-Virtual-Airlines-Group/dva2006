@@ -144,15 +144,15 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
-<el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;
-<el:button ID="ClearButton" className="BUTTON" onClick="void clearSettings()" label="CLEAR SETTINGS" />&nbsp;
-<el:button ID="EarthButton" className="BUTTON" onClick="void showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
+ <td><el:button ID="RefreshButton" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
+<el:button ID="SettingsButton" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;
+<el:button ID="ClearButton" onClick="void clearSettings()" label="CLEAR SETTINGS" />&nbsp;
+<el:button ID="EarthButton" onClick="void showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
 <div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small bld">Select Time</span>
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
- <el:button ID="AnimateButton" className="BUTTON" label="ANIMATE" onClick="void animateFF()" /></div>
+ <el:button ID="AnimateButton" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
 <br />
 <content:copyright />

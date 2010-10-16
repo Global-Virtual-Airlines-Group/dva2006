@@ -115,7 +115,7 @@ return true;
  <td class="label">Saved Routes</td>
  <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void setRoute(this)" />
  <el:box name="external" value="true" className="small" label="Search FlightAware route database" />
- <el:button ID="SearchButton" className="BUTTON" onClick="void searchRoutes()" label="SEARCH" /></td>
+ <el:button ID="SearchButton" onClick="void searchRoutes()" label="SEARCH" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance" /></td>
@@ -141,8 +141,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
- <el:button ID="RouteSaveButton" type="submit" className="BUTTON" label="SAVE DISPATCH ROUTE" /></td>
+ <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
+ <el:button ID="RouteSaveButton" type="submit" label="SAVE DISPATCH ROUTE" /></td>
 </tr>
 </el:table>
 <el:text name="routeID" type="hidden" value="true" />

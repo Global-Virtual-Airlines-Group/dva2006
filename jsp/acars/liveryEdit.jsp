@@ -71,7 +71,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE LIVERY PROFILE" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE LIVERY PROFILE" />
 <c:if test="${!empty livery}"> <el:cmdbutton url="liverydelete" linkID="${livery}" label="DELETE LIVERY" /></c:if></td>
 </tr>
 </el:table>

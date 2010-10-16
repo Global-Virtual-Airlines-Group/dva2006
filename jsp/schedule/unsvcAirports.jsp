@@ -64,7 +64,7 @@ The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="ReloadButton" type="SUBMIT" className="BUTTON" label="UPDATE AIRPORTS" /></td>
+ <td><el:button ID="ReloadButton" type="submit" label="UPDATE AIRPORTS" /></td>
 </tr>
 </el:table>
 </el:form>

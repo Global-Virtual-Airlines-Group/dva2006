@@ -219,7 +219,7 @@ return true;
  <el:cmdbutton ID="EnrollButton" url="coursedispose" link="${course}" op="start" label="ENROLL STUDENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:button ID="CancelButton" onClick="validateCancel()" className="BUTTON" label="WITHDRAW" />
+ <el:button ID="CancelButton" onClick="validateCancel()" label="WITHDRAW" />
 </c:if>
 <c:if test="${access.canRestart}">
  <el:cmdbutton ID="ReturnButton" url="coursedispose" link="${course}" op="restart" label="RETURN" />
@@ -231,7 +231,7 @@ return true;
  <el:cmdbutton ID="AssignButton" url="courseassign" post="true" link="${course}" label="ASSIGN INSTRUCTOR" />
 </c:if>
 <c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
+ <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
 </c:if>
 <c:if test="${access.canUpdateProgress}">
  <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" link="${course}" label="UPDATE PROGRESS" />

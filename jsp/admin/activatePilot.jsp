@@ -54,7 +54,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="ActivateButton" type="submit" className="BUTTON" label="REACTIVATE PILOT" /></td>
+ <td><el:button ID="ActivateButton" type="submit" label="REACTIVATE PILOT" /></td>
 </tr>
 </el:table>
 <el:text name="op" type="hidden" value="force" />

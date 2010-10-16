@@ -66,7 +66,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td><span style="color:#ffffff" class="bld">MOVE TO ROUTE</span> <el:combo name="routeID" idx="*" firstEntry="-" options="${event.routes}" />
- <el:button ID="SaveButton" type="submit" className="BUTTON" label="MOVE" /></td>
+ <el:button ID="SaveButton" type="submit" label="MOVE" /></td>
 </tr>
 </el:table>
 </el:form>

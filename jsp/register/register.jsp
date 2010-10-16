@@ -301,7 +301,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SUBMIT REGISTRATION" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="SUBMIT REGISTRATION" /></td>
 </tr>
 </el:table>
 </el:form>

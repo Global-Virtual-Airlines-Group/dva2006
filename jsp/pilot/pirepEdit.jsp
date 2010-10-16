@@ -177,7 +177,7 @@ return cmdPost(f.action);
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" />
- minutes&nbsp;<el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
+ minutes&nbsp;<el:button ID="CalcButton" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
 <c:if test="${!isACARS}">
 <tr>
@@ -197,9 +197,9 @@ return cmdPost(f.action);
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT REPORT" />
 <c:if test="${access.canSubmitIfEdit}">
-&nbsp;<el:button ID="SubmitButton" onClick="void saveSubmit()" className="BUTTON" label="SUBMIT FLIGHT REPORT" />
+&nbsp;<el:button ID="SubmitButton" onClick="void saveSubmit()" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 </td>
 </tr>

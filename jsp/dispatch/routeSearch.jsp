@@ -62,7 +62,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH DISPATCHER ROUTES" /></td>
+ <td colspan="4"><el:button ID="SearchButton" type="submit" label="SEARCH DISPATCHER ROUTES" /></td>
 </tr>
 </el:table>
 <c:if test="${doSearch}">

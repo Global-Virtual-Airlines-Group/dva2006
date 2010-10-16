@@ -134,7 +134,7 @@ rpInfo[${q.number}] = info;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSubmit}">
-<el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT EXAMINATION" /></c:if>
+<el:button ID="SubmitButton" type="submit" label="SUBMIT EXAMINATION" /></c:if>
  </td>
 </tr>
 </el:table>

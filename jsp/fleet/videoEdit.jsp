@@ -116,7 +116,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td><c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE VIDEO" />
+<el:button ID="SaveButton" type="submit" label="SAVE VIDEO" />
 </c:if>
  </td>
 </tr>

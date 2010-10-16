@@ -92,14 +92,14 @@ return true;
  <td class="label">Event Starts on</td>
  <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" className="req" />
  at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" className="req" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
 &nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Event Ends on</td>
  <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" className="req" />
  at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" className="req" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
 &nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
@@ -118,7 +118,7 @@ return true;
  <td class="label">Signups Close at</td>
  <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" className="req" />
  at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
-&nbsp;<el:button ID="CloseCalendarButton" className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
+&nbsp;<el:button ID="CloseCalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <c:if test="${event.hasBanner}">
@@ -213,7 +213,7 @@ to a specific set of equipment.</span><br />
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
- <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE ONLINE EVENT" />
+ <el:button ID="SaveButton" type="submit" label="SAVE ONLINE EVENT" />
 </c:if></td>
 </tr>
 </el:table>

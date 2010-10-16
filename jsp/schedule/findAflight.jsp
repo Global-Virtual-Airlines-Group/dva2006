@@ -153,7 +153,7 @@ return true;
 </tr>
 </c:if>
 <tr class="title mid">
- <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT SCHEDULE" /></td>
+ <td colspan="4"><el:button ID="SearchButton" type="submit" label="SEARCH FLIGHT SCHEDULE" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -204,7 +204,7 @@ return true;
 </c:forEach>
 
 <tr class="title">
- <td colspan="8"><el:button ID="BuildButton" type="submit" className="BUTTON" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
+ <td colspan="8"><el:button ID="BuildButton" type="submit" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="BuildResetButton" url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>

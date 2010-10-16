@@ -95,7 +95,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canScore}">
- <td><el:button type="SUBMIT" className="BUTTON" label="SCORE QUESTIONNAIRE" /></td>
+ <td><el:button type="submit" label="SCORE QUESTIONNAIRE" /></td>
 </c:if>
  </td>
 </tr>

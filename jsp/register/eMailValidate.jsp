@@ -112,7 +112,7 @@ update your address and/or send a new validation e-mail.</td>
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="2"><el:button type="submit" ID="SubmitButton" className="BUTTON" label="VALIDATE ADDRESS" /> 
+ <td colspan="2"><el:button type="submit" ID="SubmitButton" label="VALIDATE ADDRESS" /> 
 <el:cmdbutton ID="ResendButton" url="appresendvalidate" link="${addr}" post="true" label="RESEND VALIDATION E-MAIL" /></td>
 </tr>
 </el:table>

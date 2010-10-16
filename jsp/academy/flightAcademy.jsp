@@ -139,7 +139,7 @@ you may not enroll in any other Flight Academy courses.</td>
 </tr>
 <tr class="title">
  <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />
- <el:button ID="EnrollButton" type="submit" className="BUTTON" label="ENROLL IN COURSE" /></td>
+ <el:button ID="EnrollButton" type="submit" label="ENROLL IN COURSE" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty exams}">

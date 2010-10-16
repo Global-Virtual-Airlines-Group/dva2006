@@ -65,7 +65,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr class="title">
- <td><el:button ID="RefreshButton" className="BUTTON" onClick="void updateMap(false)" label="REFRESH ${network} DATA" /></td>
+ <td><el:button ID="RefreshButton" onClick="void updateMap(false)" label="REFRESH ${network} DATA" /></td>
 </tr>
 </el:table>
 </el:form>

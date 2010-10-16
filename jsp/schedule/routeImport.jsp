@@ -49,7 +49,7 @@ This is a total of 14 tokens, and we are only importing #1, #2, #3, #13 and #14.
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD PREFERRED ROUTE DATA" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="UPLOAD PREFERRED ROUTE DATA" /></td>
 </tr>
 </el:table>
 </el:form>

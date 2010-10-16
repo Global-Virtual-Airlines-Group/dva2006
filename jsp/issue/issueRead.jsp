@@ -135,7 +135,7 @@ return true;
  <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" link="${issue}" />
 </c:if>
 <c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
+ <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
 </c:if>
  </td>
 </tr>

@@ -137,7 +137,7 @@ return true;
 <c:if test="${access.canEdit}">
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE ISSUE" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="UPDATE ISSUE" /></td>
 </tr>
 </el:table>
 </c:if>

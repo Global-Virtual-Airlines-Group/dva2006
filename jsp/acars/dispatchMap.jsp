@@ -91,7 +91,7 @@ return true;
 <map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="small"></div><div id="zoomLevel" class="small"></div>
 <div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small bld">Select Time</span>
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
- <el:button ID="AnimateButton" className="BUTTON" label="ANIMATE" onClick="void animateFF()" /></div>
+ <el:button ID="AnimateButton" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
 <script type="text/javascript">
 // Load the map
