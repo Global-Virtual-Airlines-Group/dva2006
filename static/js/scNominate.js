@@ -56,9 +56,11 @@ for (var x = 1; x < combo.options.length; x++) {
 	var txt = opt.text.substring(0, searchStr.length).toLowerCase();
 	if (txt == searchStr) {
 		combo.selectedIndex = x;
+		displayObject(getElement('rowComments'), true);
 		return true;
 	} else if (txt > searchStr) {
 		combo.selectedIndex = x;
+		displayObject(getElement('rowComments'), true);
 		return false;
 	}
 }
@@ -71,5 +73,34 @@ function setPilot(combo)
 var f = document.forms[0];
 f.pilotSearch.value = '';
 displayObject(getElement('rowComments'), (combo.selectedIndex > 0));
+return true;
+}
+
+function toggleComments(id)
+{
+var lnk = getElement('tc' + id);
+if (lnk == null) return false;
+
+var visible = false;
+var rows = getElementsByClass('nc-' + id);
+for (var x = 0; x < rows.length; x++) {
+	var row = rows[x];
+	visible = (row.style.display != 'none');
+	displayObject(row, !visible);
+}
+
+lnk.innerHTML = visible ? ' + ' : ' - ';
+return true;
+}
+
+function toggleAll()
+{
+var lnks = getElementsByClass('ncToggle');	
+for (var x = 0; x < lnks.length; x++) {
+	var lnk = lnks[x];
+	var linkID = lnk.id.substring(2);
+	lnk.onclick(linkID);
+}
+	
 return true;
 }
