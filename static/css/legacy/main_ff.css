@@ -186,7 +186,7 @@ table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 
 /* Result page Header */
 .updateHdr {
-	font-family: Tahoma, Verdana, sans-serif;
+	font-family: tahoma, verdana, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
 	background-color: #0000a1;
@@ -212,17 +212,17 @@ body {
 	font: 12px tahoma, verdana, sans-serif;
 }
 
-.BUTTON, .cmdButton {
+.cmdButton, .button {
 	background-color: #000080;
-	color: #FFFFFF;
-	font-family: Tahoma, Verdana;
+	color: #ffffff;
+	font-family: tahoma, verdana;
 	font-size: 8pt;
 	text-transform: uppercase;
-	border: 2px outset #CFCFFF;
+	border: 2px outset #cfcfff;
 	font-weight: normal;
 }
 
-.BUTTON:disabled, .cmdButton:disabled {
+.cmdButton:disabled, .button:disabled {
 	background-color: #002068;
 	color: #a0a0a0;
 }
