@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2010 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 2.6
+ * @version 3.3
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class XMLRenderer {
 	 * @param name the attribute name
 	 * @return TRUE if the attribute exists, otherwise FALSE
 	 */
-	public boolean hasElement(String name) {
+	public boolean hasAttribute(String name) {
 		return _attrs.containsKey(name.toLowerCase());
 	}
 	

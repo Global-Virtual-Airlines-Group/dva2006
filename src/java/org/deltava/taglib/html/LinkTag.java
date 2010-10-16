@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -6,7 +6,7 @@ import javax.servlet.jsp.JspException;
 /**
  * A JSP tag to generate an HTML link.
  * @author Luke
- * @version 1.0
+ * @version 3.3
  * @since 1.0
  */
 
@@ -43,9 +43,10 @@ public class LinkTag extends ElementTag {
             _out.print(_data.close());
         } catch(Exception e) {
             throw new JspException(e);
+        } finally {
+        	release();	
         }
         
-        release();
         return EVAL_PAGE;
     }
     
@@ -97,8 +98,8 @@ public class LinkTag extends ElementTag {
      * @throws IllegalStateException if neither a URL nor onClick are present
      */
     protected void validateLink() throws IllegalStateException {
-        boolean isOK = (_data.hasElement("href") || _data.hasElement("onclick"));
+        boolean isOK = (_data.hasAttribute("href") || _data.hasAttribute("onclick"));
         if (!isOK)
-            throw new IllegalStateException("HREF or onClick must be set");
+            throw new IllegalStateException("href or onClick must be set");
     }
 }
