@@ -109,7 +109,7 @@ Select a Fleet Installer from the list above.</span>
 <!-- Download Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="DownloadButton" className="BUTTON" label="DOWNLOAD INSTALLER" onClick="void download()" /></td>
+ <td><el:button ID="DownloadButton" label="DOWNLOAD INSTALLER" onClick="void download()" /></td>
 </tr>
 </el:table>
 </el:form>

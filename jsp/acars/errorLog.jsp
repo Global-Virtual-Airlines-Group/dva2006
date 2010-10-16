@@ -48,7 +48,7 @@ return true;
  <td colspan="4" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" onChange="void switchType(this)" />
  BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" />
  USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" />
- <el:button ID="SortButton" type="submit" className="BUTTON" label="GO" /></td>
+ <el:button ID="SortButton" type="submit" label="GO" /></td>
 </tr>
 
 <!-- View Legend Bar -->

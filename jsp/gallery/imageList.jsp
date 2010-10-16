@@ -46,10 +46,10 @@ return true;
 <!-- Table Sort Bar -->
 <tr class="title">
  <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />
- <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].imgDate')" /></td>
+ <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].imgDate')" /></td>
  <td colspan="2"><el:cmd url="fleetgallery" linkID="true">FLEET GALLERY</el:cmd></td>
  <td colspan="2">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" />
- <el:button ID="SubmitButton" type="submit" className="BUTTON" label="GO" /></td>
+ <el:button ID="SubmitButton" type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar -->

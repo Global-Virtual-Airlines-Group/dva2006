@@ -64,7 +64,7 @@ log in again.</td>
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="2"><el:button type="submit" ID="SubmitButton" className="BUTTON" label="UPDATE ADDRESS" /></td>
+ <td colspan="2"><el:button type="submit" ID="SubmitButton" label="UPDATE ADDRESS" /></td>
 </tr>
 </el:table>
 </el:form>

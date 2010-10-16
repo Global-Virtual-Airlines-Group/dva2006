@@ -145,7 +145,7 @@ return true;
 <c:if test="${access.canUpdateStatus || (empty issue && access.canCreate)}">
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
+ <td><el:button ID="SaveButton" type="submit" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
 <c:if test="${access.canUpdateStatus}">
  <el:cmdbutton ID="ConvertButton" post="true" url="hdconvert" link="${issue}" label="CONVERT ISSUE" />
 </c:if></td>

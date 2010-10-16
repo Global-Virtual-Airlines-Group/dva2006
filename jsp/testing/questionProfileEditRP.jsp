@@ -251,7 +251,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE QUESTION" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE QUESTION" />
 <c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="qpdelete" link="${question}" label="DELETE QUESTION" /></c:if></td>
 </tr>
 </el:table>

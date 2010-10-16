@@ -128,8 +128,8 @@ return true;
 <span class="small">You can search for an available flight number between 
 <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
 <el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" /></span>
-<el:button ID="FlightSearchButton" className="BUTTON" onClick="void getAvailableFlight()" label="SEARCH" /><br />
-You can search for the next available Flight Leg. <el:button ID="LegSearchButton" className="BUTTON" onClick="void getAvailableLeg()" label="SEARCH" /></c:if></td>
+<el:button ID="FlightSearchButton" onClick="void getAvailableFlight()" label="SEARCH" /><br />
+You can search for the next available Flight Leg. <el:button ID="LegSearchButton" onClick="void getAvailableLeg()" label="SEARCH" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
@@ -164,7 +164,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE SCHEDULE ENTRY" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE SCHEDULE ENTRY" />
 <c:if test="${!empty entry}">&nbsp;<el:cmdbutton ID="DeleteButton" url="sched_delete" linkID="${entry.flightCode}" label="DELETE ENTRY" /></c:if></td>
 </tr>
 </el:table>

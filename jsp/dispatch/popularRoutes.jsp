@@ -53,7 +53,7 @@ return true;
  <td colspan="5" class="right"><el:box name="noRoutes" idx="*" value="true" label="Show Pairs without Dispatch Routes" checked="${param.noRoutes}" />
  <el:box name="allFlights" idx="*" value="true" label="Inlcude non-ACARS Flights" checked="${param.allFlights}" />
  in the past <el:text name="days" idx="*" size="3" max="4" className="bld" value="${dayFilter}" /> Days 
- <el:button ID="UpdateButton" type="submit" className="BUTTON" label="GO" /></td>
+ <el:button ID="UpdateButton" type="submit" label="GO" /></td>
 </tr>
 <tr class="title caps">
  <td width="5%">#</td>
@@ -74,7 +74,7 @@ return true;
  <td class="pri bld"><fmt:int value="${entryNumber}" /></td>
 <c:choose>
 <c:when test="${access.canCreate}">
- <td><el:button onClick="javascript:void plot('${route.airportD.ICAO}', '${route.airportA.ICAO}')" className="BUTTON" label="PLOT ROUTE" /></td>
+ <td><el:button onClick="javascript:void plot('${route.airportD.ICAO}', '${route.airportA.ICAO}')" label="PLOT ROUTE" /></td>
  <td colspan="2">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) to ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
 </c:when>

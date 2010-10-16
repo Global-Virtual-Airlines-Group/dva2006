@@ -69,7 +69,7 @@ return true;
 <tr>
  <td class="label">Flown on</td>
  <td class="data"><el:text name="logDate" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(flight.date, 'MM/dd/yyyy')}" />
- <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].logDate')" /></td>
+ <el:button label="CALENDAR" onClick="void show_calendar('forms[0].logDate')" /></td>
 </tr>
 <c:set var="tmpH" value="${empty flight ? '' : (flight.length  / 10)}" scope="page" />
 <c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="page" />
@@ -77,7 +77,7 @@ return true;
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
-<el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
+<el:button ID="CalcButton" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
 <tr>
  <td class="label top">Remarks</td>
@@ -88,7 +88,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="SAVE FLIGHT REPORT" /></td>
 </tr>
 </el:table>
 <c:if test="${empty flight}"><el:text name="courseID" type="hidden" value="${course.hexID}" /></c:if>

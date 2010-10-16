@@ -91,8 +91,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE QUESTION SUB-POOLS" />
- <el:button ID="AddButton" onClick="void addPool()" className="BUTTON" label="ADD NEW SUB-POOL" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="UPDATE QUESTION SUB-POOLS" />
+ <el:button ID="AddButton" onClick="void addPool()" label="ADD NEW SUB-POOL" /></td>
 </tr>
 </el:table>
 <el:text name="addPool" type="hidden" value="" />

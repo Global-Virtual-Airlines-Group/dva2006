@@ -88,7 +88,7 @@ return true;
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE VERSIONS" /></td>
+ <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" label="UPDATE VERSIONS" /></td>
 </tr>
 </el:table>
 </el:form>

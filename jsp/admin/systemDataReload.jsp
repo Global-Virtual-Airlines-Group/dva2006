@@ -61,7 +61,7 @@ Schedule Database Reloaded</c:if></td>
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="ReloadButton" type="SUBMIT" className="BUTTON" label="RELOAD SYSTEM CONFIGURATION" /></td>
+ <td><el:button ID="ReloadButton" type="submit" label="RELOAD SYSTEM CONFIGURATION" /></td>
 </tr>
 </el:table>
 </el:form>

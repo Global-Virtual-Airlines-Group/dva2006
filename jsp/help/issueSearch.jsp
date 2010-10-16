@@ -52,7 +52,7 @@ return true;
  <td class="data"><el:box name="doComments" idx="*" className="sec" value="true" label="Search Issue comments" checked="${param.doComments}" /></td>
 </tr>
 <tr class="title mid">
- <td colspan="2"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH HELP DESK" /></td>
+ <td colspan="2"><el:button ID="SearchButton" type="submit" label="SEARCH HELP DESK" /></td>
 </tr>
 </el:table>
 

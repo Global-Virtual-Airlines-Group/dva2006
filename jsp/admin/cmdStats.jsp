@@ -77,7 +77,7 @@ return true;
 <!-- Bottom Row -->
 <tr class="title caps">
  <td colspan="8">PURGE ENTRIES MORE THAN <el:text name="purgeDays" idx="*" size="1" max="3" value="" />
- DAYS OLD <el:button ID="PurgeButton" type="submit" className="BUTTON" label="PURGE COMMAND LOG" /></td>
+ DAYS OLD <el:button ID="PurgeButton" type="submit" label="PURGE COMMAND LOG" /></td>
 </tr>
 </el:table>
 </el:form>

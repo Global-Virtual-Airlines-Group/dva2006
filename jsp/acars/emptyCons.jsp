@@ -65,7 +65,7 @@ return true;
 <!-- View Legend Bar -->
 <tr class="title caps">
  <td width="10%">ID</td>
- <td width="5%"><el:button onClick="void selectAll()" className="BUTTON" label="ALL" /></td>
+ <td width="5%"><el:button onClick="void selectAll()" label="ALL" /></td>
  <td width="15%">DATE/TIME</td>
  <td width="10%">PILOT CODE</td>
  <td width="20%">PILOT NAME</td>
@@ -90,8 +90,8 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><el:button onClick="void selectAll()" className="BUTTON" label="SELECT ALL" />
- <el:button type="submit" label="DELETE CONNECTIONS" className="BUTTON" /><view:scrollbar><br />
+ <td colspan="7"><el:button onClick="void selectAll()" label="SELECT ALL" />
+ <el:button type="submit" label="DELETE CONNECTIONS" /><view:scrollbar><br />
 <view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>

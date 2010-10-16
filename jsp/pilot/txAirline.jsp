@@ -68,7 +68,7 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button type="submit" className="BUTTON" label="${!empty eqTypes ? 'TRANSFER PILOT' : 'SELECT AIRLINE'}" /></td>
+ <td><el:button type="submit" label="${!empty eqTypes ? 'TRANSFER PILOT' : 'SELECT AIRLINE'}" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -50,7 +50,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD FLIGHT SCHEDULE DATA" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="UPLOAD FLIGHT SCHEDULE DATA" /></td>
 </tr>
 </el:table>
 </el:form>

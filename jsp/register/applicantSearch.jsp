@@ -56,7 +56,7 @@ return true;
 
 <!-- Button Bar -->
 <tr class="title caps">
- <td colspan="2" class="mid"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
+ <td colspan="2" class="mid"><el:button ID="SearchButton" type="submit" label="SEARCH" /></td>
 </tr>
 </el:table>
 </el:form>

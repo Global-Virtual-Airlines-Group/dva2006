@@ -79,7 +79,7 @@ return true;
 <tr class="title">
  <td>
 <c:if test="${access.canEdit}">
-<el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE IMAGE" />
+<el:button ID="SaveButton" type="submit" label="SAVE IMAGE" />
 </c:if>
 <c:if test="${access.canDelete}">
 <el:cmdbutton ID="DeleteButton" url="imgdelete" link="${img}" label="DELETE IMAGE" />

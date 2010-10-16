@@ -142,7 +142,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE MANUAL" />&nbsp;
+<el:button ID="SaveButton" type="submit" label="SAVE MANUAL" />&nbsp;
 </c:if>
 <c:if test="${access.canDelete}">
 <el:cmdbutton ID="DeleteButton" url="manualdelete" linkID="${entry.fileName}" label="DELETE MANUAL" />

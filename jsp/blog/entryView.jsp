@@ -91,7 +91,7 @@ return ${access.canComment};
 <el:table className="bar">
 <tr>
  <td><c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="submit" className="BUTTON" label="SUBMIT COMMENT" />
+ <el:button ID="CommentButton" type="submit" label="SUBMIT COMMENT" />
 </c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton ID="EditButton" url="blogentry" op="edit" link="${entry}" label="EDIT JOURNAL ENTRY" />

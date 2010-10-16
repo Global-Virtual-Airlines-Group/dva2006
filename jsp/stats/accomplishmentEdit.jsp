@@ -135,7 +135,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ACCOMPLISHMENT PROFILE" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE ACCOMPLISHMENT PROFILE" />
 <c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="accdelete" link="${ap}" label="DELETE ACCOMPLISHMENT PROFILE" /></c:if></td>
 </tr>
 </el:table>

@@ -330,7 +330,7 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSignup}">
- <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SIGN UP FOR THIS EVENT" />
+ <el:button ID="SaveButton" type="submit" label="SIGN UP FOR THIS EVENT" />
 </c:if>
 <c:if test="${access.canAddPlan}">
  <el:cmdbutton ID="PlanButton" url="eventplan" link="${event}" label="ADD FLIGHT PLAN" />

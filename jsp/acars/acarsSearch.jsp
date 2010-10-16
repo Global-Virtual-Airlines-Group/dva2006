@@ -85,10 +85,10 @@ return false;
 <c:if test="${!empty events}"><el:combo name="eventID" idx="*" size="1" options="${events}" value="${param.eventID}" /></c:if></td>
  <td class="label">Flight Date</td>
  <td class="data"><el:text name="flightDate" idx="*" size="8" max="10" value="${param.flightDate}" />
- <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].flightDate')" /></td>
+ <el:button label="CALENDAR" onClick="void show_calendar('forms[0].flightDate')" /></td>
 </tr>
 <tr class="title">
- <td colspan="4" class="mid"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHTS" /></td>
+ <td colspan="4" class="mid"><el:button ID="SearchButton" type="submit" label="SEARCH FLIGHTS" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -136,7 +136,7 @@ return false;
 
 <!--  Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar><el:button ID="MapButton" type="submit" className="BUTTON" label="DISPLAY USING GOOGLE EARTH" /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar><el:button ID="MapButton" type="submit" label="DISPLAY USING GOOGLE EARTH" /></td>
 </tr>
 </c:if>
 </view:table>

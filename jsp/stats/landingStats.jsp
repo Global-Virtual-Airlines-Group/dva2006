@@ -47,7 +47,7 @@ threshold displacement data is available <br />
  <td class="right" colspan="6">MINIMUM <el:text name="legCount" idx="*" size="1" max="2" value="${legCount}" /> 
 FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
 IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" />
-<el:button ID="SearchButton" type="submit" className="BUTTON" label="GO" /></td>
+<el:button ID="SearchButton" type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar-->
