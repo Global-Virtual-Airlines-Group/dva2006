@@ -21,6 +21,7 @@ public class NominationAccessControl extends AccessControl {
 	private Nomination _n;
 	private Pilot _p;
 	
+	private boolean _canRead;
 	private boolean _canNominate;
 	private boolean _canNominateUnlimited;
 	private boolean _canObject;
@@ -74,10 +75,11 @@ public class NominationAccessControl extends AccessControl {
 			_canNominate &= (nc.getAuthorID() != usr.getID());
 		
 		// Check other access
-		_canObject = _canNominate && (_ctx.isUserInRole("HR") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("PIREP"));
+		_canObject = _canNominate && _canNominateUnlimited;
 		_canUpdate = _ctx.isUserInRole("HR");
 		_canDispose = _canUpdate && (_n.getStatus() == Nomination.Status.PENDING);
 		_canDelete = _ctx.isUserInRole("Admin");
+		_canRead = _canObject || _canUpdate;
 	}
 	
 	/**
@@ -94,6 +96,14 @@ public class NominationAccessControl extends AccessControl {
 	 */
 	public boolean getCanNominateUnlimited() {
 		return _canNominateUnlimited;
+	}
+	
+	/**
+	 * Returns if the user can read this nomination.
+	 * @return TRUE if the nomination can be read, otherwise FALSE
+	 */
+	public boolean getCanRead() {
+		return _canRead;
 	}
 	
 	/**

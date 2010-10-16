@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Senior Captain Nomination Updated</title>
@@ -43,6 +44,19 @@ Senior Captain again during the same calendar quarter in which they were nominat
 <li><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></li>
 </c:forEach>
 </ul> 
+</c:when>
+<c:when test="${isRescored}">
+<div class="updateHdr"><content:airline /> Senior Captain Scores Recalculated</div>
+<br />
+All pending <content:airline /> Senior Captain nominations have been rescored.<c:if test="${!empty noms}"> The following nominations
+have had their score changed:<br />
+<br />
+<ul>
+<c:forEach var="nom" items="${noms}">
+<c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
+<li><el:cmd url="scnominate" link="${nom}">${pilot.name}</el:cmd> - score is now <span class="bld"><fmt:int value="${nom.score}" /></span></li>
+</c:forEach>
+</ul></c:if>
 </c:when>
 <c:otherwise>
 <div class="updateHdr"><content:airline /> Senior Captain Nomination Created</div>

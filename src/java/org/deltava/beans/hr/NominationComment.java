@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 3.3
  */
 
-public class NominationComment extends DatabaseBean implements AuthoredBean {
+public class NominationComment extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	private boolean _support = true;
 	private Date _created;
@@ -98,5 +98,9 @@ public class NominationComment extends DatabaseBean implements AuthoredBean {
 		NominationComment nc2 = (NominationComment) o2;
 		int tmpResult = _created.compareTo(nc2._created);
 		return (tmpResult == 0) ? Integer.valueOf(getID()).compareTo(Integer.valueOf(nc2.getID())) : tmpResult;
+	}
+	
+	public String getRowClassName() {
+		return _support ? null : "warn";
 	}
 }

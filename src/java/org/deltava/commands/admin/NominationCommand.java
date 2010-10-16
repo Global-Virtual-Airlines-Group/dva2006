@@ -142,7 +142,7 @@ public class NominationCommand extends AbstractFormCommand {
 			NominationAccessControl access = new NominationAccessControl(ctx, n);
 			access.setPilot(p);
 			access.validate();
-			if (!access.getCanUpdate())
+			if (!access.getCanRead())
 				throw securityException("Cannot update Nomination");
 			
 			// Load the equipment program
