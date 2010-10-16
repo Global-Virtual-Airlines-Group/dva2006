@@ -139,12 +139,12 @@ return false;
 <tr class="doPlot" style="visibility:hidden;">
  <td class="label">Find Navigation Aid</td>
  <td class="data"><el:text name="navaidCode" size="6" max="6" idx="*" value="" />
- <el:button ID="FindButton" className="BUTTON" onClick="void findMarker(document.forms[0].navaidCode.value)" label="FIND" />
+ <el:button ID="FindButton" onClick="void findMarker(document.forms[0].navaidCode.value)" label="FIND" />
  <span class="ita">Double-Click on the waypoint to add it to the Terminal Route.</span></td>
 </tr>
 <tr class="title doPlot">
- <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ROUTE" />
- <el:button ID="ToggleButton" className="BUTTON" onClick="void toggleRows(true)" label="NEW ROUTE" /></td>
+ <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" label="SAVE ROUTE" />
+ <el:button ID="ToggleButton" onClick="void toggleRows(true)" label="NEW ROUTE" /></td>
 </tr>
 </el:table>
 </el:form>

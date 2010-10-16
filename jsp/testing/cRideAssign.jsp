@@ -65,7 +65,7 @@ return true;
 <el:table className="bar">
 <tr>
  <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /> 
-<el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" /></td>
+<el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" /></td>
 </tr>
 </el:table>
 </el:form>

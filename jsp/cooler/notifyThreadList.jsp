@@ -92,7 +92,7 @@ return true;
 </view:row>
 </c:forEach>
 <tr class="title">
- <td colspan="6"><el:button type="submit" ID="UpdateButton" className="BUTTON" label="CLEAR NOTIFICATIONS" />
+ <td colspan="6"><el:button type="submit" ID="UpdateButton" label="CLEAR NOTIFICATIONS" />
  <view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>

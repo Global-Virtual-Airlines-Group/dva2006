@@ -73,7 +73,7 @@ return true;
  <td>&nbsp;
 <c:if test="${access.canVote}">
 FEEDBACK <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
-<el:button ID="VoteButton" type="submit" className="BUTTON" label="SUBMIT FEEDBACK" />
+<el:button ID="VoteButton" type="submit" label="SUBMIT FEEDBACK" />
 </c:if>
 <c:if test="${access.canEdit}">
 <el:cmdbutton ID="EditButton" url="image" link="${img}" op="edit" label="EDIT IMAGE" />

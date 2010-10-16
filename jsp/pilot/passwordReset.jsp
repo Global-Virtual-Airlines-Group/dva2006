@@ -76,7 +76,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" className="BUTTON" label="RESET PASSWORD" type="submit" /></td>
+ <td><el:button ID="SaveButton" label="RESET PASSWORD" type="submit" /></td>
 </tr>
 </el:table>
 </el:form>

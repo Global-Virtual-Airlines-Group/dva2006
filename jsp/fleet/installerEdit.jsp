@@ -124,7 +124,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE INSTALLER" />
+<el:button ID="SaveButton" type="submit" label="SAVE INSTALLER" />
 </c:if>
  </td>
 </tr>

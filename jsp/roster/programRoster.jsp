@@ -34,7 +34,7 @@
  PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" />
  RANK <el:combo name="rank" size="1" idx="*" options="${ranks}" firstEntry="All Pilots" value="${param.rank}" /></content:filter>
  <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" />
- <el:button type="submit" className="BUTTON" label="UPDATE" /></td>
+ <el:button type="submit" label="UPDATE" /></td>
 </tr>
 
 <!-- Table Header Bar -->

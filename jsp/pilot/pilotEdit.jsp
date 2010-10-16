@@ -284,7 +284,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
  <td class="label">Date/Time Format</td>
  <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}" className="req" size="15" max="25" />
  <el:text name="tf" value="${pilot.timeFormat}" className="req" size="9" max="9" />
- <el:button ID="DTDefaultButton" className="BUTTON" onClick="void setDefaultFormats()" label="RESET" /></td>
+ <el:button ID="DTDefaultButton" onClick="void setDefaultFormats()" label="RESET" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
@@ -363,7 +363,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <el:table className="bar">
 <tr>
 <c:if test="${access.canEdit}">
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE PROFILE" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="SAVE PROFILE" /></td>
 </c:if>
 </tr>
 </el:table>

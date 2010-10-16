@@ -80,7 +80,7 @@ return false;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="SUBMIT" className="BUTTON" label="PILOT SEARCH" /></td>
+ <td><el:button ID="SearchButton" type="submit" label="PILOT SEARCH" /></td>
 </tr>
 </el:table>
 

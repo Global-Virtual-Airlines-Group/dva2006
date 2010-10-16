@@ -60,7 +60,7 @@ return true;
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="3"><el:button className="BUTTON" onClick="void self.close()" label="CLOSE WINDOW" /></td>
+ <td colspan="3"><el:button onClick="void self.close()" label="CLOSE WINDOW" /></td>
 </tr>
 </el:table>
 <content:googleAnalytics />

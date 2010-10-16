@@ -152,7 +152,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="NEW NAVIGATION DATA SEARCH" /></td>
+ <td><el:button ID="SearchButton" type="submit" label="NEW NAVIGATION DATA SEARCH" /></td>
 </tr>
 </el:table>
 </el:form>

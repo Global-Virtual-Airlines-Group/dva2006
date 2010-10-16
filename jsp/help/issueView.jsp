@@ -145,7 +145,7 @@ return true;
 <c:if test="${access.canUseTemplate && (!empty rspTemplates)}">
 <div id="rspTemplateSelect" style="width:25%; position:absolute; top:1px; right:1px;" class="pri small bld right">
 Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="${rspTemplates}" />
-<el:button ID="TemplateButton" className="BUTTON" onClick="void selectResponse()" label="USE" /></div>
+<el:button ID="TemplateButton" onClick="void selectResponse()" label="USE" /></div>
 </c:if></div>
  </td>
 </tr>
@@ -160,7 +160,7 @@ Template <el:combo name="rspTemplate" className="small" firstEntry="-" options="
 <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="hdissue" op="edit" link="${issue}" />
 </c:if>
 <c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
+ <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
 </c:if>
 <c:if test="${access.canUpdateContent}">
  <el:cmdbutton ID="UpdateButton" label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" />

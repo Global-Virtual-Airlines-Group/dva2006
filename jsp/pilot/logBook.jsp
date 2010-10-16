@@ -43,7 +43,7 @@
  <td colspan="4" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
  <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" /> SORT BY
  <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
- <el:button type="submit" className="BUTTON" label="FILTER" /></td>
+ <el:button type="submit" label="FILTER" /></td>
 </tr>
 </c:if>
 

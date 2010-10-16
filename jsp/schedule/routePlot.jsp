@@ -100,7 +100,7 @@ return true;
 <tr>
  <td class="label">Saved Routes</td>
  <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void setRoute(this)" />
-<el:button ID="SearchButton" className="BUTTON" onClick="void searchRoutes()" label="SEARCH" /></td>
+<el:button ID="SearchButton" onClick="void searchRoutes()" label="SEARCH" /></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>
@@ -130,8 +130,8 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
- <el:button ID="SaveButton" type="submit" className="BUTTON" label="DOWNLOAD FLIGHT PLAN" />
+ <td><el:button ID="UpdateButton" onClick="void plotMap()" label="UPDATE ROUTE MAP" />
+ <el:button ID="SaveButton" type="submit" label="DOWNLOAD FLIGHT PLAN" />
 </td>
 </tr>
 </el:table>

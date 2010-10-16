@@ -109,7 +109,7 @@ in order to log into the site.<br />
 </el:table>
 <el:table className="bar">
 <tr>
- <td><el:button ID="SubmitButton" className="BUTTON" label="LOG IN" type="submit" /></td>
+ <td><el:button ID="SubmitButton" label="LOG IN" type="submit" /></td>
 </tr>
 </el:table>
 <el:text name="jsOK" type="hidden" value="" />

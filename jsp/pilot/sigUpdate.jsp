@@ -63,7 +63,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE SIGNATURE IMAGE" /></td>
+ <td><el:button ID="SaveButton" type="submit" label="UPDATE SIGNATURE IMAGE" /></td>
 </tr>
 </el:table>
 </el:form>

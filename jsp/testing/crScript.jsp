@@ -58,7 +58,7 @@ return true;
 <!-- Button bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHECK RIDE SCRIPT" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE CHECK RIDE SCRIPT" />
 <c:if test="${access.canDelete}">
  <el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" />
 </c:if></td>

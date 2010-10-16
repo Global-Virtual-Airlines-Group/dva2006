@@ -147,7 +147,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE AIRPORT PROFILE" />&nbsp;
+ <td><el:button ID="SaveButton" type="submit" label="SAVE AIRPORT PROFILE" />&nbsp;
 <el:cmdbutton ID="DeleteButton" url="airportdelete" linkID="${airport.IATA}" label="DELETE AIRPORT" /></td>
 </tr>
 </el:table>

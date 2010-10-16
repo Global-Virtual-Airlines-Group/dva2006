@@ -55,7 +55,7 @@ return true;
  <td width="6%">IATA</td>
  <td width="6%">ICAO</td>
  <td width="15%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" />
- <el:button ID="EditButton" type="submit" className="BUTTON" label="GO" /></td>
+ <el:button ID="EditButton" type="submit" label="GO" /></td>
  <td width="10%">TIME ZONE</td>
  <td colspan="2" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
  AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void updateSort()" /></td>
