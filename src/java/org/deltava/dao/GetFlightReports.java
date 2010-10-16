@@ -143,8 +143,8 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<Integer> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.*, ER.EQTYPE FROM "
-			+ "PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS "
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.*, GROUP_CONCAT(ER.EQTYPE) "
+			+ "FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS "
 			+ "APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND "
 			+ "(ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
 		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
@@ -156,7 +156,7 @@ public class GetFlightReports extends DAO {
 				sqlBuf.append(" OR ");
 		}
 
-		sqlBuf.append(") ORDER BY ");
+		sqlBuf.append(") GROUP BY PR.ID ORDER BY ");
 		sqlBuf.append(StringUtils.isEmpty(orderBy) ? "PR.DATE, PR.SUBMITTED, PR.ID" : orderBy);
 		
 		try {
