@@ -110,8 +110,8 @@ return true;
 <el:table className="bar">
 <tr>
  <td>
-<c:if test="${access.canNominate}"><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE SENIOR CAPTAIN NOMINATION" /></c:if>
-<c:if test="${access.canDispose}"><el:cmdbutton ID="ApproveButton" url="scnomdispose" link="${nom}" op="true" post="true" label="APPROVE NOMINATION" />
+<c:if test="${access.canNominate}"><el:button ID="SaveButton" type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" /></c:if>
+<c:if test="${access.canDispose}"><el:cmdbutton ID="ApproveButton" url="scnomdispose" link="${nom}" op="true" post="true" label="PROMOTE TO SENIOR CAPTAIN" />
  <el:cmdbutton ID="RejectButton" url="scnomdispose" link="${nom}" op="false" post="true" label="REJECT NOMINATION" /></c:if>
  <el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /></td>
 </tr>
