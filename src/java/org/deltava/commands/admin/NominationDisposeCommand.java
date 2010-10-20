@@ -42,6 +42,7 @@ public class NominationDisposeCommand extends AbstractCommand {
 			// Load the pilot
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(n.getID());
+			boolean isCaptain = (p.getRank() == Rank.C);
 			ctx.setAttribute("pilot", p, REQUEST);
 			
 			// Check our access
@@ -56,8 +57,10 @@ public class NominationDisposeCommand extends AbstractCommand {
 			StatusUpdate upd = new StatusUpdate(p.getID(), isApproved ? StatusUpdate.SR_CAPTAIN : StatusUpdate.COMMENT);
 			upd.setAuthorID(ctx.getUser().getID());
 			upd.setCreatedOn(new Date());
-			if (isApproved)
+			if (isApproved && isCaptain)
 				upd.setDescription("Promoted to " + Rank.SC);
+			else if (isApproved)
+				upd.setDescription("Promoted to " + Rank.SC + " upon Captain eligibility");
 			else
 				upd.setDescription("Nomination to " + Rank.SC + " rejected");
 			
@@ -69,7 +72,7 @@ public class NominationDisposeCommand extends AbstractCommand {
 			nwdao.update(n);
 			
 			// If we've approved, update rank
-			if (isApproved) {
+			if (isApproved && isCaptain) {
 				p.setRank(Rank.SC);
 				SetPilot pwdao = new SetPilot(con);
 				pwdao.write(p);

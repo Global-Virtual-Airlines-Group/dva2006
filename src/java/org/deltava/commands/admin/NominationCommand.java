@@ -12,6 +12,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.NominationAccessControl;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -68,8 +69,13 @@ public class NominationCommand extends AbstractFormCommand {
 
 			ctx.setAttribute("pilot", p, REQUEST);
 			
+			// Check for empty body
+			String body = ctx.getParameter("body");
+			if (StringUtils.isEmpty(body))
+				throw new IllegalArgumentException("Body cannot be empty");
+			
 			// Add comment
-			NominationComment nc = new NominationComment(ctx.getUser().getID(), ctx.getParameter("body"));
+			NominationComment nc = new NominationComment(ctx.getUser().getID(), body);
 			nc.setAuthorID(ctx.getUser().getID());
 			nc.setCreatedOn(new Date());
 			if (!isNew && access.getCanObject())
@@ -157,6 +163,14 @@ public class NominationCommand extends AbstractFormCommand {
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
 			Collection<StatusUpdate> updates = sudao.getByUser(n.getID(), SystemData.get("airline.db"));
 			ctx.setAttribute("statusUpdates", updates, REQUEST);
+			
+			// Load nominee's exam history
+			GetExam exdao = new GetExam(con);
+			ctx.setAttribute("exams", exdao.getExams(n.getID()), REQUEST);
+			
+			// Get Academy Certifications
+			GetAcademyCourses fadao = new GetAcademyCourses(con);
+			ctx.setAttribute("courses", fadao.getByPilot(n.getID()), REQUEST);
 			
 			// Get pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
