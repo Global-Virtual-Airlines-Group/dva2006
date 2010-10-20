@@ -30,9 +30,11 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	public Quarter(Date dt) {
 		super();
 		Calendar cld = Calendar.getInstance();
-		cld.setTime(dt);
+		if (dt != null)
+			cld.setTime(dt);
+		
 		_year = cld.get(Calendar.YEAR);
-		_qtr = ((cld.get(Calendar.MONTH) + 1) / 4) + 1;
+		_qtr = ((cld.get(Calendar.MONTH) + 1) / 3) + 1;
 	}
 	
 	/**
