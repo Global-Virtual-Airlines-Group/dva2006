@@ -31,44 +31,12 @@ disableButton('ResendButton');
 </c:if>
 return ${access.canApprove};
 }
-
-function toggleSoundex()
-{
-var link = getElement('soundexToggle');
-if (link == null) return;
-
-var isDisplayed = (link.innerHTML == 'COLLAPSE');
-link.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
-var rows = getElementsByClass('soundexUser');
-for (var y = 0; y < rows.length; y++) {
-	var row = rows[y];
-	row.style.display = isDisplayed ? 'none' : '';
-}
-
-return true;
-}
-
-function toggleNetMask()
-{
-var link = getElement('netMaskToggle');
-if (link == null) return;
-
-var isDisplayed = (link.innerHTML == 'COLLAPSE');
-link.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
-var rows = getElementsByClass('netMaskUser');
-for (var y = 0; y < rows.length; y++) {
-	var row = rows[y];
-	row.style.display = isDisplayed ? 'none' : '';
-}
-
-return true;
-}
 <c:if test="${access.canApprove}">
 function checkVATSIMData(id, name)
 {
 disableButton('ValidateButton');
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('GET', 'vatsim_info.ws?id=' + id + '&name=' + name);
+xmlreq.open('get', 'vatsim_info.ws?id=' + id + '&name=' + name);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	if ((xmlreq.status == 404) || (xmlreq.status == 500)) {
@@ -121,7 +89,7 @@ return true;
 <c:if test="${!empty nameMatches}">
 <tr>
  <td class="label top" rowspan="2">Duplicate Users</td>
- <td class="data bld caps"><span class="error"><fmt:int value="${fn:sizeof(nameMatches)}" /> DUPLICATE USER NAMES DETECTED - PLEASE VALIDATE</span></td>
+ <td class="data bld caps"><span class="error caps"><fmt:int value="${fn:sizeof(nameMatches)}" /> DUPLICATE USER NAMES DETECTED - PLEASE VALIDATE</span></td>
 </tr>
 <tr>
  <td class="data">

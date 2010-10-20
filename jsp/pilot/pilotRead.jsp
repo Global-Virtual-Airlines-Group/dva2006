@@ -16,7 +16,7 @@
 <content:js name="common" />
 <c:if test="${!empty loginAddrs}">
 <script type="text/javascript">
-function toggleLoginAddrs()
+function toggleLoginAddrs(lnk)
 {
 var addrDiv = getElement('loginAddrs');
 if (!addrDiv) return false;
@@ -26,8 +26,7 @@ var isHidden = (addrDiv.style.display == 'none');
 displayObject(addrDiv, isHidden);
 
 // Update the link
-var addrLink = getElement('addrDivLink');
-addrLink.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';
+lnk.innerHTML = (!isHidden) ? 'SHOW' : 'HIDE';
 return true;
 }
 </script></c:if>
@@ -37,7 +36,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
+<c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) || (!empty courses) ? 6 : 1}" scope="request" />
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="dbName" name="airline.db" />
 <content:filter roles="HR,Signature">
@@ -184,7 +183,7 @@ return true;
  <td class="label top">Logins</td>
  <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" />
 <content:filter roles="HR"> from <el:cmd url="loginaddrs" linkID="${pilot.loginHost}" op="net">${pilot.loginHost}</el:cmd>.
-<c:if test="${!empty loginAddrs}"><a id="addrDivLink" href="javascript:void toggleLoginAddrs()">SHOW</a></c:if></content:filter>
+<c:if test="${!empty loginAddrs}"><a href="javascript:void toggleLoginAddrs(this)">SHOW</a></c:if></content:filter>
 </td>
 </tr>
 <content:filter roles="HR">
@@ -265,11 +264,19 @@ Applicant profile for ${pilot.name}.</td>
 </c:if></td>
 </tr>
 </c:if>
+<content:authUser>
+<c:set var="showExamToggle" value="true" scope="page" />
+<c:set var="examCollapse" value="${fn:sizeof(exams) >= 10}" scope="page" />
+</content:authUser>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
+<content:authUser>
+<c:set var="showCourseToggle" value="true" scope="page" />
+<c:set var="courseCollapse" value="${fn:sizeof(courses) >= 10}" scope="page" />
+</content:authUser>
 <%@ include file="/jsp/pilot/pilotCourses.jspf" %>
 <content:authUser>
 <c:set var="showStatusToggle" value="true" scope="page" />
-<c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) >= 20}" scope="page" />
+<c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) >= 15}" scope="page" />
 </content:authUser>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 </el:table>
@@ -298,7 +305,7 @@ Applicant profile for ${pilot.name}.</td>
  <el:cmdbutton url="invalidate" link="${pilot}" label="INVALIDATE E-MAIL" />
 </content:filter>
 <content:filter roles="HR">
- <el:cmdbutton url="statuscomment" link="${pilot}" label="COMMENT" />
+ <el:cmdbutton url="statuscomment" link="${pilot}" key="C" label="COMMENT" />
 </content:filter>
 <c:if test="${access.canInactivate}">
  <el:cmdbutton url="suspend" link="${pilot}" label="SUSPEND" />
@@ -308,7 +315,7 @@ Applicant profile for ${pilot.name}.</td>
  <el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE" />
 </c:if>
 <content:filter roles="Admin">
- <el:cmdbutton url="su" link="${pilot}" label="SWITCH TO USER" />
+ <el:cmdbutton url="su" link="${pilot}" key="S" label="SWITCH TO USER" />
 </content:filter>
 </c:if>
 </td>
