@@ -22,7 +22,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 	
 	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
 
-	private static final String MY_EQ_SORT = "IF(INSTR(?,GROUP_CONCAT(ER.EQTYPE))=0,1,0), PR.DATE, PR.SUBMITTED, PR.ID";
+	private static final String MY_EQ_SORT = "IF(IFNULL(LOCATE(?,GROUP_CONCAT(ER.EQTYPE)),0)=0,1,0), PR.DATE, PR.SUBMITTED, PR.ID";
 	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", 
 		"PR.EQTYPE, PR.DATE, PR.SUBMITTED", "$MYEQ"};
 	private static final String[] SORT_NAMES = {"Submission Date", "Pilot Name", "Equipment Type", "My Program"};
@@ -76,15 +76,14 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			ctx.setAttribute("doScroll", Boolean.valueOf(pireps.size() >= vc.getCount()), REQUEST);
 			
 			// Split into my held PIREPs and my equipment PIREPs
-			int id = ctx.getUser().getID();
 			Collection<FlightReport> myEQType = new ArrayList<FlightReport>();
 			Collection<FlightReport> myHeld = new ArrayList<FlightReport>();
 			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
 				FlightReport fr = i.next();
-				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(DatabaseID.DISPOSAL) == id)) {
+				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(DatabaseID.DISPOSAL) == ctx.getUser().getID())) {
 					myHeld.add(fr);
 					i.remove();
-				} else if (!isMyEQSort && myEQ.getPrimaryRatings().contains(fr.getEquipmentType())) {
+				} else if (myEQ.getPrimaryRatings().contains(fr.getEquipmentType())) {
 					myEQType.add(fr);
 					i.remove();
 				}
