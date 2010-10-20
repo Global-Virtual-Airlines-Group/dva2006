@@ -108,12 +108,12 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:set var="noms" value="${allNoms[nomStatus]}" scope="page" />
 <c:if test="${!empty noms}">
 <tr class="title caps">
- <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS NOMINATED</td>
+ <td class="left" colspan="${cspan}"><fmt:int value="${fn:sizeof(noms)}" /> ${nomStatus} PILOTS - <a id="toggleAll" href="javascript:void toggleAll()">SHOW ALL COMMENTS</a></td>
 </tr>
 <c:forEach var="nom" items="${noms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
 <tr>
- <td><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
+ <td><a id="tc${nom.ID}" class="ncToggle plain" onclick="javascript:void toggleComments(${nom.ID})"> + </a><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
  <td class="bld"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
@@ -124,10 +124,10 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </tr>
 <c:forEach var="nc" items="${nom.comments}">
 <c:set var="author" value="${pilots[nc.authorID]}" scope="page" />
-<tr>
- <td class="bld">${author.name}</td>
- <td colspan="${cspan - 1}" class="small left"><fmt:msg value="${nc.body}" /></td>
-</tr>
+<view:row entry="${nc}" className="nc-${nom.ID}" style="display:none;">
+ <td colspan="${cspan}" class="small left"><span class="bld">${author.rank.name}</span> <span class="pri bld">${author.name}</span>
+ (${author.pilotCode}) - <fmt:msg value="${nc.body}" /></td>
+</view:row>
 </c:forEach>
 </c:forEach>
 </c:if>
@@ -142,7 +142,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:set var="ac" value="${acMap[nom]}" scope="page" />
 <view:row entry="${nom}">
 <c:choose>
-<c:when test="${ac.canUpdate || ac.canDispose}">
+<c:when test="${ac.canRead}">
  <td><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
 </c:when>
 <c:otherwise>
@@ -160,10 +160,10 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:forEach var="nc" items="${nom.comments}">
 <c:set var="author" value="${pilots[nc.authorID]}" scope="page" />
 <c:if test="${!fn:hasRole('HR', author) || !nc.support}">
-<tr>
- <td class="bld">${author.name}</td>
- <td colspan="${cspan - 1}" class="small left"><fmt:msg value="${nc.body}" /></td>
-</tr>
+<view:row entry="${nc}" className="nc-${nom.ID}">
+ <td colspan="${cspan}" class="small left"><span class="bld">${author.rank.name}</span> <span class="pri bld">${author.name}</span>
+ (${author.pilotCode}) - <fmt:msg value="${nc.body}" /></td>
+</view:row>
 </c:if>
 </c:forEach>
 </c:forEach>
@@ -198,10 +198,9 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:forEach var="nc" items="${nom.comments}">
 <c:set var="author" value="${pilots[nc.authorID]}" scope="page" />
 <c:if test="${author.ID == user.ID}">
-<tr>
- <td class="bld">${author.name}</td>
- <td colspan="${cspan - 1}" class="small left"><fmt:msg value="${nc.body}" /></td>
-</tr>
+<view:row entry="${nc}">
+ <td colspan="${cspan}" class="small left"><fmt:msg value="${nc.body}" /></td>
+</view:row>
 </c:if>
 </c:forEach>
 </c:forEach>
@@ -241,7 +240,7 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
  <el:text name="pilotSearch" idx="*" size="12" max="24" value="" onChange="void search(this.value)" />
 <span class="small ita">(Type the first few letters of an eligible Pilot's name to jump to them in the list.)</span></div>
 <div id="rowLoading" class="bld caps">LOADING ELIGIBLE PILOT LIST, PLEASE WAIT...</div>
-<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button ID="RefreshButton" className="BUTTON" label="RELOAD" onClick="void getPilots()" /></div>
+<div id="rowError" class="bld error caps" style="display:none;">ERROR LOADING ELIGIBLE PILOT LIST <span id="errorCode"></span> <el:button ID="RefreshButton" label="RELOAD" onClick="void getPilots()" /></div>
 </td>
 </tr>
 <tr id="rowComments" style="display:none;">
@@ -253,11 +252,13 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE SENIOR CAPTAIN NOMINATION" />
+ <td><el:button ID="SaveButton" type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" />
 <content:filter roles="HR">
- <el:cmdbutton ID="PurgeButton" url="scnompurge" label="PURGE SENIOR CAPTAIN NOMINATIONS" /></content:filter></td>
+ <el:cmdbutton ID="PurgeButton" url="scnompurge" label="PURGE SENIOR CAPTAIN NOMINATIONS" />
+ <el:cmdbutton ID="RescoreButton" url="scnomrescore" label="RESCORE SENIOR CAPTAIN NOMINATIONS" /></content:filter></td>
 </tr>
 </el:table>
+<el:text name="support" type="hidden" value="true" />
 </c:otherwise>
 </c:choose>
 </el:form>

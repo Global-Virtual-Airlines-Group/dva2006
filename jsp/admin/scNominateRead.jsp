@@ -38,6 +38,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="cspan" value="7" scope="page" />
+<content:attr attr="isHR" value="true" roles="HR" /> 
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -77,6 +78,7 @@ return true;
 </tr>
 <c:forEach var="nc" items="${nom.comments}">
 <c:set var="author" value="${authors[nc.authorID]}" scope="page" />
+<c:if test="${!fn:hasRole('HR', author) || nc.support || isHR}">
 <tr>
  <td class="label top">${author.name} (${author.pilotCode}) <fmt:date date="${nc.createdOn}" t="HH:mm" /></td>
  <td colspan="${cspan}" class="data top">
@@ -84,6 +86,7 @@ return true;
 <hr /></c:if>
 <fmt:msg value="${nc.body}" /></td>
 </tr>
+</c:if>
 </c:forEach>
 </c:if>
 <c:set var="showStatusToggle" value="true" scope="page" />
