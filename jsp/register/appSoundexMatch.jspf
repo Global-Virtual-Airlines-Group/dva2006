@@ -5,7 +5,7 @@
 <!-- Soundex Potential Match list -->
 <tr class="title caps">
  <td colspan="2"><fmt:int value="${fn:sizeof(soundexUsers)}" /> POTENTIAL MATCHING USERS -
- <a id="soundexToggle" href="javascript:void toggleSoundex()">EXPAND</a></td>
+ <span class="und" onclick="void toggleExpand(this, 'soundexUser')">EXPAND</span></td>
 </tr>
 <c:forEach var="person" items="${soundexUsers}">
 <c:set var="personLoc" value="${userData[person.ID]}" scope="page" />

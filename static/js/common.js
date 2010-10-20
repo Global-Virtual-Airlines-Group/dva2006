@@ -330,12 +330,25 @@ return req;
 function initLinks()
 {
 if (!document.getElementsByTagName) return false;
-var anchors = document.getElementsByTagName("a");
+var anchors = document.getElementsByTagName('a');
 for (var i = 0; i < anchors.length; i++) {
 	var anchor = anchors[i];
-	if (anchor.getAttribute("href") && anchor.getAttribute("rel") == "external") {
-		anchor.target = "_blank";
+	if (anchor.getAttribute('href') && anchor.getAttribute('rel') == 'external') {
+		anchor.target = '_blank';
 	}
+}
+
+return true;
+}
+
+function toggleExpand(lnk, className)
+{
+var isDisplayed = (lnk.innerHTML == 'COLLAPSE');
+lnk.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
+var rows = getElementsByClass(className);
+for (var y = 0; y < rows.length; y++) {
+	var row = rows[y];
+	row.style.display = isDisplayed ? 'none' : '';
 }
 
 return true;
