@@ -89,6 +89,12 @@ return true;
 </c:if>
 </c:forEach>
 </c:if>
+<c:set var="showExamToggle" value="true" scope="page" />
+<c:set var="examCollapse" value="${fn:sizeof(exams) >= 10}" scope="page" />
+<%@ include file="/jsp/pilot/pilotExams.jspf" %>
+<c:set var="showCourseToggle" value="true" scope="page" />
+<c:set var="courseCollapse" value="${fn:sizeof(courses) >= 10}" scope="page" />
+<%@ include file="/jsp/pilot/pilotCourses.jspf" %>
 <c:set var="showStatusToggle" value="true" scope="page" />
 <c:set var="statusCollapse" value="${fn:sizeof(statusUpdates) > 10}" scope="page" />
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
@@ -116,7 +122,7 @@ return true;
 <c:if test="${access.canNominate}"><el:button ID="SaveButton" type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" /></c:if>
 <c:if test="${access.canDispose}"><el:cmdbutton ID="ApproveButton" url="scnomdispose" link="${nom}" op="true" post="true" label="PROMOTE TO SENIOR CAPTAIN" />
  <el:cmdbutton ID="RejectButton" url="scnomdispose" link="${nom}" op="false" post="true" label="REJECT NOMINATION" /></c:if>
- <el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /></td>
+ <el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" key="V" label="VIEW PROFILE" /></td>
 </tr>
 </el:table>
 </el:form>

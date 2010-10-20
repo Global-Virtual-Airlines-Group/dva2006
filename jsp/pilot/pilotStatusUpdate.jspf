@@ -5,29 +5,12 @@
 <content:attr attr="isHR" value="true" roles="HR" />
 <c:if test="${showStatusToggle}">
 <c:set var="toggleLabel" value="${statusCollapse ? 'EXPAND' : 'COLLAPSE'}" scope="page" />
-<script type="text/javascript">
-function toggleStatusHistory()
-{
-var link = getElement('statusHistoryToggle');
-if (link == null) return;
-	
-var isDisplayed = (link.innerHTML == 'COLLAPSE');
-link.innerHTML = isDisplayed ? 'EXPAND' : 'COLLAPSE';
-var rows = getElementsByClass('statusUpd');
-for (var y = 0; y < rows.length; y++) {
-	var row = rows[y];
-	row.style.display = isDisplayed ? 'none' : '';
-}
-
-return true;	
-}
-</script>
 </c:if>
 
 <!-- Pilot Status History -->
 <tr class="title caps">
  <td colspan="${cspan + 1}">PROMOTION / STATUS HISTORY
-<c:if test="${showStatusToggle}"> - <a id="statusHistoryToggle" href="javascript:void toggleStatusHistory()">${toggleLabel}</a></c:if></td>
+<c:if test="${showStatusToggle}"> - <span class="und" onclick="void toggleExpand(this, 'statusUpd')">${toggleLabel}</span></c:if></td>
 </tr>
 <tr class="title mid caps statusUpd"<c:if test="${statusCollapse}"> style="display:none;"</c:if>>
  <td>DATE</td>

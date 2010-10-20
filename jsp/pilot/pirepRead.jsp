@@ -284,10 +284,10 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 <c:if test="${access.canApprove && (!scoreCR)}">
- <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" label="APPROVE FLIGHT" />
+ <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" key="A" label="APPROVE FLIGHT" />
 </c:if>
 <c:if test="${access.canHold}">
- <el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" label="HOLD" />
+ <el:cmdbutton url="dispose" link="${pirep}" op="hold" post="true" key="H" label="HOLD" />
 </c:if>
 <c:if test="${access.canRelease}">
  <el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" />
@@ -314,7 +314,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && (assignAccess.canRelease)}">
  <el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" />
 </c:if>
- <el:cmdbutton url="profile" link="${pilot}" label="VIEW PROFILE" />
+ <el:cmdbutton url="profile" link="${pilot}" key="V" label="VIEW PROFILE" />
  </td>
 </tr>
 </el:table>
