@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 3.2
+ * @version 3.3
  * @since 1.0
  */
 
@@ -146,29 +146,18 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Figure out what network the flight was flown on and ensure we have an ID
-			String net = ctx.getParameter("network");
-			if (!StringUtils.isEmpty(net)) {
-				try {
-					OnlineNetwork network = OnlineNetwork.valueOf(net.toUpperCase());
-					if (!p.hasNetworkID(network))
-						net = "";
-				} catch (Exception e) {
-					net = "";
-				}
+			OnlineNetwork net = null;
+			try {
+				net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
+				if (!p.hasNetworkID(net))
+					throw new IllegalStateException("No " + net + " ID");
+			} catch (Exception e) {
+				net = null;
+			} finally {
+				fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
+				fr.setAttribute(FlightReport.ATTR_IVAO, (net == OnlineNetwork.IVAO));
 			}
 			
-			// Set network attribute
-			if (OnlineNetwork.VATSIM.toString().equals(net)) {
-				fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-				fr.setAttribute(FlightReport.ATTR_IVAO, false);
-			} else if (OnlineNetwork.IVAO.toString().equals(net)) {
-				fr.setAttribute(FlightReport.ATTR_IVAO, true);
-				fr.setAttribute(FlightReport.ATTR_VATSIM, false);
-			} else {
-				fr.setAttribute(FlightReport.ATTR_VATSIM, false);
-				fr.setAttribute(FlightReport.ATTR_IVAO, false);
-			}
-
 			// Get the flight time
 			try {
 				double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
@@ -419,17 +408,20 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("assignAccess", aac, REQUEST);
 			}
 			
-			// Calculate the average time between the airports
-			if (ctx.isUserInRole("PIREP")) {
-				GetSchedule scdao = new GetSchedule(con);
-				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA())), REQUEST);
-			}
-
 			// Create the access controller and stuff it in the request
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
 			
+			// Calculate the average time between the airports
+			if (ac.getCanDispose()) {
+				GetSchedule scdao = new GetSchedule(con);
+				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA())), REQUEST);
+				
+				// Display user's networks
+				ctx.setAttribute("networks", ctx.getUser().getNetworks(), REQUEST);
+			}
+
 			// Get the Navdata DAO
 			GetNavRoute navdao = new GetNavRoute(con);
 			navdao.setEffectiveDate(fr.getDate());

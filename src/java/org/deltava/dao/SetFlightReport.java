@@ -67,15 +67,16 @@ public class SetFlightReport extends DAO {
 	 * @throws NullPointerException if pirep is null
 	 */
 	public void dispose(String db, Person usr, FlightReport pirep, int statusCode) throws DAOException {
-		db = formatDBName(db);
+		String dbName = formatDBName(db);
 		try {
 			startTransaction();
 
 			// Write the PIREP
-			prepareStatementWithoutLimits("UPDATE " + db + ".PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE " + dbName + ".PIREPS SET STATUS=?, ATTR=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
 			_ps.setInt(1, statusCode);
-			_ps.setInt(2, (usr == null) ? 0 : usr.getID());
-			_ps.setInt(3, pirep.getID());
+			_ps.setInt(2, pirep.getAttributes());
+			_ps.setInt(3, (usr == null) ? 0 : usr.getID());
+			_ps.setInt(4, pirep.getID());
 			executeUpdate(1);
 			
 			// Save the promotion equipment types
@@ -83,12 +84,12 @@ public class SetFlightReport extends DAO {
 
 			// Write the comments into the database
 			if (!StringUtils.isEmpty(pirep.getComments())) {
-				prepareStatement("REPLACE INTO " + db + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+				prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
 				_ps.setInt(1, pirep.getID());
 				_ps.setString(2, pirep.getComments());
 				executeUpdate(1);
 			} else {
-				prepareStatement("DELETE FROM " + db + ".PIREP_COMMENT WHERE (ID=?)");
+				prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
 				_ps.setInt(1, pirep.getID());
 				executeUpdate(0);
 			}

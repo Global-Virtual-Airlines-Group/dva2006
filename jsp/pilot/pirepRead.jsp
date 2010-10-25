@@ -61,25 +61,26 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<c:set var="act" value="pirep.do" scope="page" />
+<c:set var="lnk" value="${pirep}" scope="page" />
+<c:set var="validation" value="return validate(this)" scope="page" /> 
 <c:choose>
 <c:when test="${scoreCR && extPIREP}">
-<form method="post" action="extpirepscore.do?id=${checkRide.hexID}" onsubmit="return validate(this)">
+<c:set var="act" value="extpirepscore.do" scope="page" />
+<c:set var="lnk" value="${checkRide}" scope="page" />
 </c:when>
 <c:when test="${scoreCR}">
-<form method="post" action="pirepscore.do?id=${pirep.hexID}" onsubmit="return validate(this)">
+<c:set var="act" value="pirepscore.do" scope="page" />
 </c:when>
-<c:when test="${access.canDispose}">
-<form method="post" action="pirep.do?id=${pirep.hexID}" onsubmit="return validate(this)">
-</c:when>
-<c:when test="${isACARS}">
-<form method="get" action="pirep.do?id=${pirep.hexID}" onsubmit="return false">
+<c:when test="${!access.canDispose}">
+<c:set var="validation" value="return false" scope="page" />
 </c:when>
 </c:choose>
+<el:form action="${act}" method="post" link="${lnk}" validate="${validation}">
 <el:table className="form">
 <!-- PIREP Title Bar -->
 <tr class="title">
- <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON 
- <fmt:date fmt="d" date="${pirep.date}" /> by ${pilot.name}</td>
+ <td class="caps" colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by ${pilot.name}</td>
 </tr>
 
 <!-- Pirep Data -->
@@ -167,9 +168,15 @@ return true;
 </c:otherwise>
 </c:choose>
 </tr>
+<c:if test="${access.canDispose && fn:isOnline(pirep)}">
+<tr>
+ <td class="label">Online Flight</td>
+ <td class="data"><el:check type="radio" name="network" idx="*" width="70" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label top">Other Information</td>
- <td class="data"><c:if test="${fn:isOnline(pirep)}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
+ <td class="data"><c:if test="${fn:isOnline(pirep) && !access.canDispose}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
 <c:if test="${isACARS}">
 <div class="ok bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
 </c:if>
@@ -236,7 +243,7 @@ return true;
 </tr>
 </c:if>
 <c:if test="${isACARS}">
-<c:set var="cspan" value="${1}" scope="request" />
+<c:set var="cspan" value="1" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
 <c:if test="${googleMap}">
@@ -267,10 +274,10 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <tr>
  <td class="label top">Reviewer Comments</td>
 <c:if test="${access.canDispose}">
- <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
+ <td class="data"><el:textbox name="dComments" width="100" height="5">${pirep.comments}</el:textbox></td>
 </c:if>
 <c:if test="${!access.canDispose && access.canViewComments}">
- <td class="data"><fmt:text value="${pirep.comments}" /></td>
+ <td class="data"><fmt:msg value="${pirep.comments}" bbCode="true" /></td>
 </c:if>
 </tr>
 </c:if>
@@ -318,7 +325,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
-<c:if test="${scoreCR || isACARS || access.canDispose}"></form><br /></c:if>
+</el:form>
 <content:copyright />
 </content:region>
 </content:page>

@@ -198,6 +198,19 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				// Log Accomplishments
 				if (!accs.isEmpty())
 					ctx.setAttribute("accomplishments", accs, REQUEST);
+				
+				// Figure out what network the flight was flown on and ensure we have an ID
+				OnlineNetwork net = null;
+				try {
+					net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
+					if (!p.hasNetworkID(net))
+						throw new IllegalStateException("No " + net + " ID");
+				} catch (Exception e) {
+					net = null;
+				} finally {
+					fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
+					fr.setAttribute(FlightReport.ATTR_IVAO, (net == OnlineNetwork.IVAO));
+				}
 			}
 			
 			// Get the write DAO and update/dispose of the PIREP
