@@ -24,8 +24,8 @@ public class ChartLoader extends TestCase {
 	private static Logger log;
 	
 	private static final String JDBC_URL ="jdbc:mysql://localhost/common";
-	private static final String XML = "/home/luke/charts/charts.xml";
-	private static final String PDF_ROOT = "/home/luke/charts/published_pdfs";
+	private static final String XML = "/Users/luke/charts.xml";
+	private static final String PDF_ROOT = "/Volumes/MyAirplane_IFR/d-tpp/published_pdfs";
 	
 	private static final String[] TYPES = {"???", "IAP", "IAP", "STAR", "DP", "APD"};
 	
@@ -83,9 +83,18 @@ public class ChartLoader extends TestCase {
 		// Load the airports/time zones
 		GetTimeZone tzdao = new GetTimeZone(_c);
 		tzdao.initAll();
+		GetCountry cdao = new GetCountry(_c);
+		cdao.initAll();
 		GetAirport apdao = new GetAirport(_c);
 		airports.putAll(apdao.getAll());
 		assertFalse(airports.isEmpty());
+		for (Iterator<Map.Entry<String, Airport>> i = airports.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, Airport> me = i.next();
+			if (me.getValue().getCountry() != Country.get("US"))
+				i.remove();
+			else if (me.getKey().length() != 4)
+				i.remove();
+		}
 		
 		// Populate charts map
 		for (Iterator<Airport> i = airports.values().iterator(); i.hasNext(); ) {
