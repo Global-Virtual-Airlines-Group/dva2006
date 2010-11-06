@@ -25,10 +25,11 @@ if (!checkSubmit()) return false;
 
 // Check that at least one option was selected
 var eqOK = (form.eqType.selectedIndex > 0);
+var alOK = (form.airline.selectedIndex > 0);
 var adOK = (form.airportD.selectedIndex > 0);
 var aaOK = (form.airportA.selectedIndex > 0);
 
-if (eqOK || adOK || aaOK) {
+if (eqOK || adOK || aaOK || alOK) {
 	setSubmit();
 	disableButton('SearchButton');
 	disableButton('BuildButton');
@@ -38,7 +39,7 @@ if (eqOK || adOK || aaOK) {
 	return true;
 }
 
-alert('Please select at least an Aircraft type or a Departure/Arrival Airport.');
+alert('Please select at least an Airline, Aircraft Type or Departure/Arrival Airport.');
 return false;
 }
 <c:if test="${!empty fafResults}">
