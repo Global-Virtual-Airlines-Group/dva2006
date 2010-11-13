@@ -14,18 +14,23 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 1.0
  */
 
 public class InsertGoogleAPITag extends TagSupport {
 
-	public static final String USAGE_ATTR_NAME = "$googleMapUsage$";
-	private static final int API_VERSION = 2;
+	static final String USAGE_ATTR_NAME = "$googleMapUsage$";
+	static final String API_VER_ATTR_NAME = "$googleMapAPIVersion$";
+	
+	private static final int MIN_API_VERSION = 2;
+	
+	private static final String V2_API_URL = "http://maps.google.com/maps?file=api&amp;v=";
+	private static final String V3_API_URL = "http://maps.google.com/maps/api/js?sensor=false&amp;v=";
 	
 	private static final AtomicLong USAGE_COUNT = new AtomicLong();
 
-	private int _majorVersion = API_VERSION;
+	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
 	private boolean _doCurrent = false;
 	private boolean _doStable = false;
@@ -35,7 +40,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	 * @param ver the API major version
 	 */
 	public void setVersion(int ver) {
-		_majorVersion = ver;
+		_majorVersion = Math.max(MIN_API_VERSION, ver);
 	}
 
 	/**
@@ -68,7 +73,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	public void release() {
 		super.release();
 		_doCurrent = false;
-		_majorVersion = API_VERSION;
+		_majorVersion = MIN_API_VERSION;
 		_minorVersion = null;
 	}
 
@@ -82,6 +87,17 @@ public class InsertGoogleAPITag extends TagSupport {
 		if (value == 1)
 			pageContext.setAttribute(USAGE_ATTR_NAME, USAGE_COUNT, PageContext.APPLICATION_SCOPE);
 		
+		// Translate stable/release v3 to minor version
+		if ((_majorVersion == 3) && (_minorVersion == null)) {
+			if (_doStable) {
+				_minorVersion = "0";
+				_doStable = false;
+			} else if (!_doCurrent)
+				_minorVersion = "1";
+			else
+				_doCurrent = false;
+		}
+		
 		return super.doStartTag();
 	}
 
@@ -94,7 +110,7 @@ public class InsertGoogleAPITag extends TagSupport {
 
 		// Get the API keymap
 		Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
-		if ((apiKeys == null) || (apiKeys.isEmpty()))
+		if ((_majorVersion < 3) && (apiKeys == null) || (apiKeys.isEmpty()))
 			throw new JspException("Google Maps API keys not defined");
 
 		// Get the API key for this hostname
@@ -106,21 +122,48 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
 			return EVAL_PAGE;
-
+		
+		// Insert the API version
+		pageContext.setAttribute(API_VER_ATTR_NAME, Integer.valueOf(_majorVersion), PageContext.REQUEST_SCOPE);
+		
 		JspWriter out = pageContext.getOut();
 		try {
-			out.print("<script type=\"text/javascript\" src=\"http://maps.google.com/maps?file=api&amp;v=");
+			out.print("<script type=\"text/javascript\" src=\"");
+			out.print((_majorVersion == 3) ? V3_API_URL : V2_API_URL);
 			out.print(String.valueOf(_majorVersion));
-			if (_doStable)
+			if (_minorVersion != null) {
+				out.print('.');
+				out.print(_minorVersion);
+			} else if (_doStable)
 				out.print(".s");
 			else if (_doCurrent)
 				out.print(".x");
-			else if (_minorVersion != null)
-				out.print(_minorVersion);
 
-			out.print("&amp;key=");
-			out.print(apiKey);
-			out.print("\"></script>");
+			if (_majorVersion < 3) {
+				out.print("&amp;key=");
+				out.print(apiKey);
+			}
+			
+			out.println("\"></script>");
+			
+			// Init common code
+			out.println("<script type=\"text/javascript\">");
+			out.print("var golgotha = {maps: { IMG_PATH: \'");
+			out.print(SystemData.get("path.img"));		
+			out.print("\', API:");
+			out.print(String.valueOf(_majorVersion));
+			out.println("}};</script>");
+			
+			// Add JS support file
+			String jsFileName = "googleMapsV" + String.valueOf(_majorVersion);
+			out.print("<script type=\"text/javascript\" src=\"");
+			out.print(SystemData.get("path.js"));
+			out.print('/');
+			out.print(jsFileName);
+			out.println(".js\"></script>");
+			
+			// Mark as added
+			ContentHelper.addContent(pageContext, "JS", jsFileName);
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

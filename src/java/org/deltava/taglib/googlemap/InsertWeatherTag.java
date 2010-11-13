@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert weather.com Series List data into a JSP page. 
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 3.0
  */
 
@@ -45,7 +45,7 @@ public class InsertWeatherTag extends TagSupport {
 			throw new JspException("Google Maps API not loaded");
 		
 		// Check for Google Maps support JavaScript
-		if (!ContentHelper.containsContent(pageContext, "JS", "googleMaps"))
+		if (!ContentHelper.containsContent(pageContext, "JS", "googleMaps") && !ContentHelper.containsContent(pageContext, "JS", "googleMapsV3"))
 			throw new JspException("googleMaps.js not included in request");
 		
 		// Check for Google Maps support JavaScript

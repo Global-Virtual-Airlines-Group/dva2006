@@ -15,18 +15,14 @@
 <content:pics />
 <content:js name="common" />
 <c:if test="${exam.routePlot}">
-<content:js name="googleMaps" />
-<map:api version="2" />
-<map:vml-ie />
-</c:if>
+<map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="imgPath" name="path.img" />
 <script type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
 
-if (!confirm("Have you scored all Questions? Hit OK to submit.")) return false;
+if (!confirm('Have you scored all Questions? Hit OK to submit.')) return false;
 setSubmit();
 disableButton('ScoreButton');
 return true;
@@ -42,7 +38,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body<c:if test="${exam.routePlot}"> onunload="GUnload()"</c:if>>
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -134,20 +130,21 @@ var maps = [];
 <c:set var="answerRoute" value="${aRoutes[q.number]}" scope="page" />
 <c:set var="correctRoute" value="${cRoutes[q.number]}" scope="page" />
 <map:point var="mapC" point="${q.midPoint}" />
-var map = new GMap2(getElement("qMap${q.number}"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GSmallMapControl());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${q.distance}));
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-map.setMapType(G_PHYSICAL_MAP);
+
+// Create map
+var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+var mapOpts = {center:mapC, zoom:getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var map = new google.maps.Map(getElement('qMap${q.number}'), mapOpts);
+map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 <map:points var="crPoints" items="${correctRoute}" />
-<map:line var="crLine" src="crPoints" width="2" color="#AF7F7F" transparency="0.6" geodesic="true" />
-map.addOverlay(crLine);
+<map:line var="crLine" src="crPoints" width="2" color="#af7f7f" transparency="0.6" geodesic="true" />
+crLine.setMap(map);
 <c:if test="${fn:sizeof(answerRoute) > 2}">
 <map:points var="arPoints" items="${answerRoute}" />
 <map:line var="arLine" src="arPoints" width="2" color="#4080AF" transparency="0.8" geodesic="true" />
-map.addOverlay(arLine);
+arLine.setMap(map);
 <map:markers var="arMarkers" items="${answerRoute}" />
 addMarkers(map, 'arMarkers');
 </c:if>

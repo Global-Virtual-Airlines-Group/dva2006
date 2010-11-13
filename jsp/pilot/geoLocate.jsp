@@ -12,25 +12,21 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
-<content:sysdata var="imgPath" name="path.img" />
-<map:api version="2" />
-<map:vml-ie />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
 function updateLocation()
 {
-var f = document.forms[0];
-
 // Calculate latitude/longitude
+var f = document.forms[0];
 var lat = parseInt(f.latD.value) + (parseInt(f.latM.value) / 60) + (parseInt(f.latS.value) / 3600);
 lat *= (f.latDir.selectedIndex * -1);
 var lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) / 60) + (parseInt(f.lonS.value) / 3600);
 lng *= (f.lonDir.selectedIndex * -1);
 
-map.removeOverlay(usrLocation);
-usrLocation = googleMarker('${imgPath}','blue',new GLatLng(lat, lng),labelText);
-map.addOverlay(usrLocation);
+usrLocation.setMap(null);
+usrLocation = googleMarker('blue', new google.maps.LatLng(lat, lng), labelText);
+usrLocation.setMap(map);
 gaEvent('Pilot Map', 'Update Location');
 return true;
 }
@@ -43,24 +39,11 @@ if (addr.value.length < 3) return false;
 var isLoading = getElement('isLoading');
 isLoading.innerHTML = ' - SEARCHING...';
 disableButton('SearchButton');
-geoCoder.getLocations(addr.value, showResponse);
+geoCoder.geocode({address:addr.value}, showResponse);
 return true;
 }
 
-function buildIcon()
-{
-// Build the marker icon
-var icon = new GIcon();
-icon.image = '/${imgPath}/maps/point_blue.png';
-icon.shadow = '/${imgPath}/maps/shadow.png';
-icon.iconSize = new GSize(12, 20);
-icon.shadowSize = new GSize(22, 20);
-icon.iconAnchor = new GPoint(6, 20);
-icon.infoWindowAnchor = new GPoint(5, 1);
-return icon;
-}
-
-function showResponse(response)
+function showResponse(result, status)
 {
 var f = document.forms[0];
 var isLoading = getElement('isLoading');
@@ -68,52 +51,50 @@ isLoading.innerHTML = '';
 enableElement('SearchButton', true);
 
 // Check for failure
-if ((!response) || (response.Status.code != 200)) {
-	alert('Cannot find "' + f.geoAddr.value + '"!');
+if ((!result.geometry) || (status != google.maps.GeocoderStatus.OK)) {
+	alert('Cannot find "' + f.geoAddr.value + '" - ' + status + '!');
 	return false;
 }
 
 // Get the placemark
-var pm = response.Placemark[0];
-var p = point = new GLatLng(pm.Point.coordinates[1], pm.Point.coordinates[0]);
-var lbl = '<span class="small"><b>' + pm.address + '<\/b><br /><br /><a href="javascript:void setLatLon(null, new GPoint('
-	+ p.lng() + ',' +  p.lat() + '));">SET LOCATION</a></span>';
-var mrk = googleMarker('${imgPath}', 'white', p, lbl);
-GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(mrk); });
-map.addOverlay(mrk);
+var p = result.geometry.location;
+var lbl = '<span class="small"><b>' + result.address_components[0].long_name + '<\/b><br /><br /><a href="javascript:void setLatLon({latLng:new google.maps.LatLng('
+	+ p.toUrlValue() + ')});">SET LOCATION</a></span>';
+var mrk = googleMarker('white', p, lbl);
+mrk.setMap(map);
 map.setCenter(p, 14);
 gaEvent('Pilot Map', 'Geolocate');
 return true;
 }
 
-function setLatLon(overlay, geoPosition)
+function setLatLon(me)
 {
 var f = document.forms[0];
 if (usrLocation != null)
-	map.removeOverlay(usrLocation);
+	usrLocation.setMap(null);
 
 // Update Latitude
-var isSouth = (geoPosition.y < 0);
-f.latD.value = Math.abs((isSouth) ? Math.ceil(geoPosition.y) : Math.floor(geoPosition.y));
-var latF = Math.abs(geoPosition.y) - parseInt(f.latD.value);
+var p = me.latLng;
+var isSouth = (p.lat() < 0);
+f.latD.value = Math.abs((isSouth) ? Math.ceil(p.lat()) : Math.floor(p.lat()));
+var latF = Math.abs(p.lat()) - parseInt(f.latD.value);
 f.latM.value = Math.floor(latF * 60);
 f.latS.value = Math.floor((latF % (1/60)) * 3600);
 f.latDir.selectedIndex = (isSouth) ? 1 : 0;
 
 // Update Longitude
-var isWest = (geoPosition.x < 0);
-f.lonD.value = Math.abs((isWest) ? Math.ceil(geoPosition.x) : Math.floor(geoPosition.x));
-var lonF = Math.abs(geoPosition.x) - parseInt(f.lonD.value);
+var isWest = (p.lng() < 0);
+f.lonD.value = Math.abs((isWest) ? Math.ceil(p.lng()) : Math.floor(p.lng()));
+var lonF = Math.abs(p.lng()) - parseInt(f.lonD.value);
 f.lonM.value = Math.floor(lonF * 60);
 f.lonS.value = Math.floor((lonF % (1/60)) * 3600);
 f.lonDir.selectedIndex = (isWest) ? 1 : 0;
 
 // Build the marker
-var icon = buildIcon();
-usrLocation = new GMarker(geoPosition, {icon:icon, bouncy:true, draggable:true, bounceGravity:0.8});
-GEvent.addListener(usrLocation, "dragend", function() { setLatLon(usrLocation, usrLocation.getPoint()); } );
-map.addOverlay(usrLocation);
-map.closeInfoWindow();
+usrLocation = new google.maps.Marker({position:p, icon:myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
+google.maps.event.addListener(usrLocation, 'dragend', setLatLon);
+usrLocation.setMap(map);
+map.infoWindow.close();
 return true;
 }
 
@@ -130,7 +111,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -190,29 +171,30 @@ location within a 3 mile circle each time the Pilot Location Board is displayed.
 </content:region>
 </content:page>
 <script type="text/javascript">
-// Build the map
 <map:point var="mapC" point="${mapCenter}" />
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
-map.enableContinuousZoom();
-map.disableDoubleClickZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-var geoCoder = new GClientGeocoder();
+
+// Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center: mapC, zoom:getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
+// Build the map
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+var geoCoder = new google.maps.Geocoder();
+var myIcon = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_blue.png', null, null, null, golgotha.maps.PIN_SIZE);
 
 // Add user's location
 var usrLocation;
 var labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
 <c:if test="${!empty location}">
-var icon = buildIcon();
 <map:point var="usrLoc" point="${location}" />
-usrLocation = new GMarker(usrLoc, {icon:icon, draggable:true, bouncy:true, bounceGravity:0.8});
-GEvent.addListener(usrLocation, "dragend", function() { setLatLon(usrLocation, usrLocation.getPoint()); } );
-addMarkers(map, 'usrLocation');
+usrLocation = new google.maps.Marker({position:usrLoc, icon:myIcon, draggable:true, shadow:golgotha.maps.DEFAULT_SHADOW});
+google.maps.event.addListener(usrLocation, "dragend", setLatLon);
+usrLocation.setMap(map);
 </c:if>
-// Set onClick event for the map
-GEvent.addListener(map, 'dblclick', setLatLon);
+google.maps.event.addListener(map, 'dblclick', setLatLon);
 </script>
 </body>
 </map:xhtml>

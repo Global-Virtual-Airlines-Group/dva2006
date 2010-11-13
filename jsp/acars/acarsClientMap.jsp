@@ -8,28 +8,22 @@
 <map:xhtml>
 <head>
 <title><content:airline /> ACARS Live Map</title>
+<content:browserFilter ie8="true"><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /></content:browserFilter>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:js name="acarsMap" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="multiHost" name="weather.multiHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="2" />
-<map:vml-ie />
 <c:if test="${!empty tileHost}">
-<content:js name="acarsMapWX" />
-<content:js name="acarsMapFF" />
-</c:if>
+<content:js name="acarsMapWX" /></c:if>
 <script type="text/javascript">
-document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
 document.multiHost = ${multiHost};</c:if>
-
 function reloadData(isAuto)
 {
 // Get auto refresh
@@ -49,10 +43,10 @@ if (doRefresh && isAuto)
 return true;
 }
 </script>
-<map:wxList layers="radar,eurorad,sat,temp,future_radar_ff" />
+<map:wxList layers="radar,eurorad,sat,temp" />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
@@ -76,50 +70,43 @@ return true;
  <td class="data"><map:div ID="googleMap" x="100%" y="510" /></td>
 </tr>
 </el:table>
-<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small">Select Time</span>
+<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small mapTextLabel">Select Time</span>
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" /></div>
 </el:form>
 <content:copyright />
+<div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-// Create the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-<c:if test="${!empty tileHost}">
-//Load the tile overlays
-getTileOverlay("radar", 0.45);
-getTileOverlay("eurorad", 0.45);
-getTileOverlay("sat", 0.35);
-getTileOverlay("temp", 0.25);
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
-// Load the ff tile overlays
-var ffLayers = ["future_radar_ff"];
-for (var i = 0; i < ffLayers.length; i++) {
-	var layerName = ffLayers[i];
-	var dates = getFFSlices(layerName);
-	document.ffOptions[layerName] = getFFComboOptions(dates);
-	for (var x = 0; x < dates.length; x++)
-		getFFOverlay(layerName, 0.4, dates[x]);
-}
+// Create the map
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.getOptions = function() { return mapOpts; };
+<c:if test="${!empty tileHost}">
+// Load the tile overlays
+getTileOverlay('radar', 0.45);
+getTileOverlay('eurorad', 0.45);
+getTileOverlay('sat', 0.35);
+getTileOverlay('temp', 0.25);
 
 // Build the layer controls
-var xPos = 70;
-map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
-map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
-map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
-map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 82), 7)));
-map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
+
+// Display the copyright notice
+var d = new Date();
+var cp = document.getElementById('copyright');
+cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
 </c:if>
 // Add map controls
-var mCtl = new GLargeMapControl3D();
-map.addControl(mCtl);
-map.addControl(new GMapTypeControl());
-map.addControl(new GOverviewMapControl());
-map.setCenter(mapC, ${zoomLevel});
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-GEvent.addListener(map, 'maptypechanged', updateMapText);
-GEvent.addListener(map, 'maptypechanged', hideAllSlices);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+GEvent.addListener(map, 'maptypeid_changed', updateMapText);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
+google.maps.event.addListener(map, 'click', infoClose);
 
 // Placeholder for route
 var routeData;
@@ -130,17 +117,6 @@ var dcPositions = [];
 // Reload ACARS data
 document.doRefresh = true;
 reloadData(true);
-<c:if test="${!empty tileHost}">
-// Initialize FastForward elements
-var ffs = document.getElementById("ffSlices");
-var ffpos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(8, 30));
-ffpos.apply(ffs);
-map.getContainer().appendChild(ffs);
-var ffl = document.getElementById("ffLabel");
-mapTextElements.push(ffl);
-
-//Update text color
-GEvent.trigger(map, 'maptypechanged');
-</c:if></script>
+</script>
 </body>
 </map:xhtml>

@@ -9,23 +9,21 @@
 <map:xhtml>
 <head>
 <title><content:airline /> Weather Center</title>
+<content:browserFilter ie8="true"><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /></content:browserFilter>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="multiHost" name="weather.multiHost" />
-<map:api version="2" />
-<map:vml-ie />
 <c:if test="${!empty tileHost}">
 <content:js name="acarsMapWX" />
 <content:js name="acarsMapFF" />
+<content:js name="progressBar" />
 </c:if>
 <script type="text/javascript">
-document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
 document.multiHost = ${multiHost};</c:if>
 <c:if test="${!empty jetStreamImgs}">
@@ -84,42 +82,42 @@ useFA = f.useFA.checked;</content:filter>
 	
 //Build the XML Request
 var d = new Date();
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "airportWX.ws?fa=" + useFA + "&code=" + code + "&type=METAR,TAF&time=" + d.getTime(), true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'airportWX.ws?fa=' + useFA + '&code=' + code + '&type=METAR,TAF&time=' + d.getTime(), true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xdoc = xmlreq.responseXML.documentElement;
 
 	// Load the weather data
-	var wc = xdoc.getElementsByTagName("wx");
+	var wc = xdoc.getElementsByTagName('wx');
 	for (var i = 0; i < wc.length; i++) {
 		var wx = wc[i];
 
 		// Check for an existing marker
-		var code = wx.getAttribute("icao");
-		var wxType = wx.getAttribute("type");
+		var code = wx.getAttribute('icao');
+		var wxType = wx.getAttribute('type');
 		var mrk = wxMarkers[code];
 		if (mrk) {
 			if (mrk.isOpen)
-				mrk.closeInfoWindow();
+				map.infoWindow.close();
 
-			var tabs = parseInt(wx.getAttribute("tabs"));
+			var tabs = parseInt(wx.getAttribute('tabs'));
 			if (tabs == 0) {
 				delete mrk.tabs;
 				var label = wx.firstChild;
 				if (label)
-					mrk.infoLabel = label.data.replace(/\n/g, "<br />");
+					mrk.infoLabel = label.data.replace(/\n/g, '<br />');
 			} else {
 				mrk.tabs = [];
-				var tbs = wx.getElementsByTagName("tab");
+				var tbs = wx.getElementsByTagName('tab');
 				for (var x = 0; x < tbs.length; x++) {
 					var tab = tbs[x];
-					var tabType = tab.getAttribute("type");
+					var tabType = tab.getAttribute('type');
 					var label = tab.firstChild;
 					if (label) {
 						eval('mrk.' + tabType + ' = label.data');
-						var wxData = label.data.replace(/\n/g, "<br />");
-						mrk.tabs.push(new GInfoWindowTab(tab.getAttribute("name"), wxData));
+						var wxData = label.data.replace(/\n/g, '<br />');
+						mrk.tabs.push({name:tab.getAttribute('name'), content:wxData});
 					}
 				}
 			}
@@ -128,37 +126,36 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Create the marker
-		var p = new GLatLng(parseFloat(wx.getAttribute("lat")), parseFloat(wx.getAttribute("lng")));
-		if (wx.getAttribute("pal"))
-			mrk = googleIconMarker(wx.getAttribute("pal"), wx.getAttribute("icon"), p, null);
-		else if (wx.getAttribute("color"))
-			mrk = googleMarker(document.imgPath, wx.getAttribute("color"), p, null);
+		var p = new google.maps.LatLng(parseFloat(wx.getAttribute('lat')), parseFloat(wx.getAttribute('lng')));
+		if (wx.getAttribute('pal'))
+			mrk = googleIconMarker(wx.getAttribute('pal'), wx.getAttribute('icon'), p, null);
+		else if (wx.getAttribute('color'))
+			mrk = googleMarker(wx.getAttribute('color'), p, null);
 
 		mrk.code = code;
 		mrk.isOpen = false;
-		var tabs = parseInt(wx.getAttribute("tabs"));
+		var tabs = parseInt(wx.getAttribute('tabs'));
 		if (tabs == 0) {
 			var label = wx.firstChild;
 			if (label)
 				mrk.infoLabel = label.data;
 		} else {
 			mrk.tabs = [];
-			var tbs = wx.getElementsByTagName("tab");
+			var tbs = wx.getElementsByTagName('tab');
 			for (var x = 0; x < tbs.length; x++) {
 				var tab = tbs[x];
-				var tabType = tab.getAttribute("type");
+				var tabType = tab.getAttribute('type');
 				var label = tab.firstChild;
 				if (label) {
 					eval('mrk.' + tabType + ' = label.data');
-					var wxData = label.data.replace(/\n/g, "<br />");
-					mrk.tabs.push(new GInfoWindowTab(tab.getAttribute("name"), wxData));
+					var wxData = label.data.replace(/\n/g, '<br />');
+					mrk.tabs.push({name:tab.getAttribute('name'), content:wxData});
 				}
 			}
 		}
 
 		// Set the the click handlers
-		GEvent.bind(mrk, 'click', mrk, clickInfo);
-		GEvent.bind(mrk, 'infowindowclose', mrk, closeWindow);
+		google.maps.event.bind(mrk, 'click', mrk, clickInfo);
 
 		// Add the marker
 		wxMarkers[mrk.code] = mrk;
@@ -167,7 +164,7 @@ xmlreq.onreadystatechange = function() {
 
 	var mrk = wxMarkers[code];
 	if (mrk)
-		GEvent.trigger(mrk, 'click');
+		google.maps.event.trigger(mrk, 'click');
 
 	gaEvent('WeatherMap', 'Fetch TAF/METAR', code);
 	return true;
@@ -192,11 +189,14 @@ return true;
 function clickInfo()
 {
 // Display the info
-if (this.tabs)
-	this.openInfoWindowTabsHtml(this.tabs)
-else
-	this.openInfoWindowHtml(this.infoLabel);
+if (this.tabs) {
+	updateTab(this, 0, new google.maps.Size(325, 100));
+	map.infoWindow.marker = this;
+} else
+	map.infoWindow.setContent(this.infoLabel);
 
+map.infoWindow.open(map, this); 
+	
 // Copy the data to the fields
 var f = document.forms[0];
 f.wxID.value = this.code;
@@ -226,7 +226,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Weather Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div></td>
 </tr>
 <tr>
  <td class="label">Airport Code</td>
@@ -257,7 +257,7 @@ return true;
 </tr>
 </c:if>
 </el:table>
-<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small bld">Select Time</span>
+<div id="ffSlices" style="top:30px; right:7px; visibility:hidden;"><span id="ffLabel" class="small bld mapTextLabel">Select Time</span>
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
  <el:button ID="AnimateButton" label="ANIMATE" onClick="void animateFF()" /></div>
 </el:form>
@@ -267,18 +267,29 @@ return true;
 </content:page>
 <script type="text/javascript">
 <map:point var="mapC" point="${homeAirport}" />
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:5, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
+//Map marker codes
+var wxMarkers = [];
+
 // Create the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.getOptions = function() { return mapOpts; }; 
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function () { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
 <c:if test="${!empty tileHost}">
 // Load the tile overlays
-getTileOverlay("radar", 0.45);
-getTileOverlay("eurorad", 0.45);
-getTileOverlay("sat", 0.35);
-getTileOverlay("temp", 0.25);
-getTileOverlay("windspeed", 0.35);
+getTileOverlay('radar', 0.45);
+getTileOverlay('eurorad', 0.45);
+getTileOverlay('sat', 0.35);
+getTileOverlay('temp', 0.25);
+getTileOverlay('windspeed', 0.35);
 
 // Load the ff tile overlays
-var ffLayers = ["future_radar_ff"];
+var ffLayers = ['future_radar_ff'];
 for (var i = 0; i < ffLayers.length; i++) {
 	var layerName = ffLayers[i];
 	var dates = getFFSlices(layerName);
@@ -288,48 +299,28 @@ for (var i = 0; i < ffLayers.length; i++) {
 		getFFOverlay(layerName, 0.45, dates[x]);
 }
 
-// Build the layer controls
-var xPos = 70;
-map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
-map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
-map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
-map.addControl(new WXOverlayControl("Wind Speed", "windspeed", new GSize((xPos += 81), 7)));
-map.addControl(new FFOverlayControl("Future Radar", "future_radar_ff", new GSize((xPos += 81), 7)));
-map.addControl(new WXClearControl(new GSize((xPos += 91), 7)));
-</c:if>
-// Add map controls
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 5);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-GEvent.addListener(map, 'maptypechanged', updateMapText);
-GEvent.addListener(map, 'maptypechanged', hideAllSlices);
+//Build the layer controls
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new FFOverlayControl('Future Radar', 'future_radar_ff'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
+google.maps.event.addListener(map, 'maptypeid_changed', hideAllSlices);
 
-// Map marker codes
-var wxMarkers = [];
-
-<c:if test="${!empty tileHost}">
 // Display the copyright notice
 var d = new Date();
-var cp = document.getElementById("copyright");
+var cp = document.getElementById('copyright');
 cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(4, 16));
-cpos.apply(cp);
-mapTextElements.push(cp);
-map.getContainer().appendChild(cp);
 
 // Initialize FastForward elements
-var ffs = document.getElementById("ffSlices");
-var ffpos = new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(8, 30));
-ffpos.apply(ffs);
-map.getContainer().appendChild(ffs);
-var ffl = document.getElementById("ffLabel");
-mapTextElements.push(ffl);
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
+	addOverlay(map, 'ffSlices'); 
+	addOverlay(map, 'copyright'); 
+	google.maps.event.trigger(this, 'maptypeid_changed');
+});
 
 // Update text color
-GEvent.trigger(map, 'maptypechanged');</c:if>
+google.maps.event.trigger(map, 'maptypeid_changed');</c:if>
 
 // Load METAR for home airport
 loadWX('${homeAirport.ICAO}');

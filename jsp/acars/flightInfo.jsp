@@ -9,24 +9,21 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
-<title><content:airline /> ACARS Flight Data - <fmt:int value="${info.ID}" /></title>
+<title><content:airline /> ACARS Flight Data - Flight <fmt:int value="${info.ID}" /></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:js name="acarsFlightMap" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
@@ -104,7 +101,7 @@
 
 <c:if test="${!empty pirep}">
 <!-- ACARS PIREP data -->
-<c:set var="cspan" value="${3}" scope="page" />
+<c:set var="cspan" value="3" scope="page" />
 <c:set var="flightInfo" value="${info}" scope="page" />
 <%@include file="/jsp/pilot/pirepACARS.jspf" %>
 <c:if test="${!empty pirep.remarks}">
@@ -155,17 +152,16 @@ var routeMarkers = [];
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#A0400F" width="2" transparency="0.7" geodesic="true" />
+<map:line var="gfRoute" src="filedPoints" color="#a0400f" width="2" transparency="0.7" geodesic="true" />
 
 // Build the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-getACARSData(${info.ID}, '${imgPath}');
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center: mapC, zoom: getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+getACARSData(${info.ID});
 
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');

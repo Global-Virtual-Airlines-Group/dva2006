@@ -8,15 +8,13 @@
 <map:xhtml>
 <head>
 <title><content:airline /> North Atlantic Track Plotter</title>
+<content:browserFilter ie8="true"><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /></content:browserFilter>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
-<content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
@@ -55,8 +53,8 @@ for (var x = 0; x < f.showTracks.length; x++)
 	f.showTracks[x].checked = true;
 
 // Reset track data label
-var label = getElement("trackLabel");
-var data = getElement("trackData");
+var label = getElement('trackLabel');
+var data = getElement('trackData');
 if ((!label) || (!data))
 	return false;
 
@@ -71,20 +69,13 @@ var xtracks = tracks[checkbox.value];
 var trackPoints = points[checkbox.value];
 
 // Toggle the points
-for (var x = 0; x < trackPoints.length; x++) {
-	if (checkbox.checked)
-		trackPoints[x].show();
-	else
-		trackPoints[x].hide();
-}
+var markerMap = checkbox.checked ? map : null;
+for (var x = 0; x < trackPoints.length; x++)
+	trackPoints[x].setMap(markerMap);
 
 // Toggle the tracks
-for (var x = 0; x < xtracks.length; x++) {
-	if (checkbox.checked)
-		map.addOverlay(xtracks[x]);
-	else
-		map.removeOverlay(xtracks[x]);
-}
+for (var x = 0; x < xtracks.length; x++)
+	xtracks[x].setMap(markerMap);
 
 return true;
 }
@@ -98,17 +89,17 @@ if (f.date.selectedIndex == 0)
 	return;
 
 // Set map as loading
-var isLoading = getElement("isLoading");
+var isLoading = getElement('isLoading');
 if (isLoading)
 	isLoading.innerHTML = " - LOADING...";
 
 // Generate an XMLHTTP request
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "otrackinfo.ws?type=NAT&date=" + dt.text, true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'otrackinfo.ws?type=NAT&date=' + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	removeMarkers(map, 'allPoints');
-	removeMarkers(map, 'allTracks');
+	removeMarkers('allPoints');
+	removeMarkers('allTracks');
 	resetTracks();
 
 	// Get the XML document
@@ -122,23 +113,23 @@ xmlreq.onreadystatechange = function() {
 		for (var j = 0; j < waypoints.length; j++) {
 			var wp = waypoints[j];
 			var label = wp.firstChild;
-			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
+			var p = new google.maps.LatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 			trackPos.push(p);
 
 			// Create the map marker
-			var mrk = googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data);
+			var mrk = googleMarker(wp.getAttribute('color'), p, label.data);
 			mrk.title = track.getAttribute("code");
 			mrk.trackPoints = track.getAttribute("track");
 			mrk.showTrack = showTrackInfo;
-			GEvent.addListener(mrk, 'click', function() { mrk.showTrack(this); });
-			map.addOverlay(mrk);
+			google.maps.event.addListener(mrk, 'click', function() { mrk.showTrack(this); });
+			mrk.setMap(map);
 			points[trackType].push(mrk);
 			allPoints.push(mrk);
 		}
 
 		// Draw the route
-		var trackLine = new GPolyline(trackPos, track.getAttribute("color"), 2, 0.7, { geodesic:true });
-		map.addOverlay(trackLine);
+		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute("color"), strokeWeight:2, strokeOpacity:0.7, geodesic:true});
+		trackLine.setMap(map);
 		
 		// Save the route/points
 		tracks[trackType].push(trackLine);
@@ -159,7 +150,7 @@ return true;
 <map:wxList layers="sat" />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -199,22 +190,22 @@ return true;
 </content:region>
 </content:page>
 <script type="text/javascript">
+//Create map options
+var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
+var mapOpts = {center:new google.maps.LatLng(52.0, -35.0), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
 // Create the map
-var map = new GMap2(getElement('googleMap'), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+var map = new google.maps.Map(getElement("googleMap"), mapOpts);
+map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 <c:if test="${!empty tileHost}">
 // Build the sat layer control
-getTileOverlay("sat", 0.35);
-map.addControl(new WXOverlayControl("Infrared", "sat", new GSize(70, 7)));
-map.addControl(new WXClearControl(new GSize(142, 7)));
+getTileOverlay('sat', 0.35);
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
 </c:if>
-// Add map controls
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(new GLatLng(52.0, -35.0), 4);
-map.setMapType(G_SATELLITE_MAP);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-GEvent.addListener(map, 'maptypechanged', updateMapText);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
 
 // Create the tracks/waypoints
 var tracks = [];
@@ -222,7 +213,7 @@ var points = [];
 resetTracks();
 
 // Update text color
-GEvent.trigger(map, 'maptypechanged');
+google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
 </body>
 </map:xhtml>

@@ -3,20 +3,20 @@ function getRoutes(combo, useCache)
 var icao = combo.options[combo.selectedIndex].value;
 
 // Build the URL
-var url = "apsidstar.ws?airport=" + icao;
+var url = 'apsidstar.ws?airport=' + icao;
 if (!useCache) {
 	var d = new Date();
-	url += "&time=" + d.getTime();
+	url += '&time=' + d.getTime();
 }
 
 // Build the XML Requester
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", url, true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', url, true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	mm.clearMarkers();
-	removeMarkers(map, 'apMarker');
-	removeMarkers(map, 'routeTrack');
+	removeMarkers('apMarker');
+	removeMarkers('routeTrack');
 	var cbo = document.forms[0].tRoutes;
 	cbo.selectedIndex = 0;
 	cbo.options.length = 1;
@@ -24,32 +24,31 @@ xmlreq.onreadystatechange = function() {
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
-	if (!xml) return false;
 	var xe = xml.documentElement;
 
 	// Get the Airport and center on it
-	var icao = xe.getAttribute("icao");
+	var icao = xe.getAttribute('icao');
 	if (airports[icao] == null) {
-		var ap = xe.getElementsByTagName("airport")[0];
-		var apLoc = new GLatLng(parseFloat(ap.getAttribute('lat')), parseFloat(ap.getAttribute('lng')));
-		if (ap.getAttribute("pal"))
-			map.apMarker = googleIconMarker(ap.getAttribute("pal"), ap.getAttribute("icon"), apLoc, ap.firstChild.data);
+		var ap = xe.getElementsByTagName('airport')[0];
+		var apLoc = new google.maps.LatLng(parseFloat(ap.getAttribute('lat')), parseFloat(ap.getAttribute('lng')));
+		if (ap.getAttribute('pal'))
+			map.apMarker = googleIconMarker(ap.getAttribute('pal'), ap.getAttribute('icon'), apLoc, ap.firstChild.data);
 		else
-			map.apMarker = googleMarker(document.imgPath, ap.getAttribute("color"), apLoc, ap.firstChild.data);
+			map.apMarker = googleMarker(ap.getAttribute('color'), apLoc, ap.firstChild.data);
 
-		map.setCenter(apLoc, map.getZoom());
+		map.setCenter(apLoc);
 		airports[icao] = map.apMarker;
 		map.currentAirport = icao;
-		map.addOverlay(map.apMarker);
+		map.apMarker.setMap(map);
 	} else {
-		map.removeOverlay(map.apMarker);
+		map.apMarker.setMap(null);
 		map.apMarker = airports[icao];
 		map.currentAirport = icao;
-		map.addOverlay(map.apMarker);
+		map.apMarker.setMap(map);
 	}
 
 	// Get the routes
-	var rt = xe.getElementsByTagName("route");
+	var rt = xe.getElementsByTagName('route');
 	for (var i = 0; i < rt.length; i++) {
 		var tr = rt[i];
 		var id = tr.getAttribute('id');
@@ -62,22 +61,22 @@ xmlreq.onreadystatechange = function() {
 		var wps = tr.getElementsByTagName('waypoint');
 		for (var j = 0; j < wps.length; j++) {
 			var wp = wps[j];
-			var code = wp.getAttribute("code");
+			var code = wp.getAttribute('code');
 			if (waypoints[code] == null) {
 				var mrk = null;
-				var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-				if (wp.getAttribute("pal"))
-					mrk = googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, wp.firstChild.data);
+				var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+				if (wp.getAttribute('pal'))
+					mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, wp.firstChild.data);
 				else
-					mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+					mrk = googleMarker(wp.getAttribute('color'), p, wp.firstChild.data);
 
 				mrk.code = code;
-				GEvent.addListener(mrk, 'dblclick', toggleMarker);
+				google.maps.event.addListener(mrk, 'dblclick', toggleMarker);
 				waypoints[code] = mrk;
 
 				// Calculate the min zoom
 				mrk.minZoom = 5;
-				var type = wp.getAttribute("type");
+				var type = wp.getAttribute('type');
 				if (type == 'NDB')
 					mrk.minZoom = 8;
 				else if (type == 'Intersection')
@@ -106,36 +105,35 @@ var lng = map.getCenter().lng();
 var range = (map.getBounds().getNorthEast().lat() - map.getBounds().getSouthWest().lat()) * 69.16;
 
 // Build the XML Requester
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "navaidsearch.ws?lat=" + lat + "&lng=" + lng + "&range=" + Math.round(range), true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'navaidsearch.ws?lat=' + lat + '&lng=' + lng + '&range=' + Math.round(range), true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
-	if (!xml) return false;
 	var xe = xml.documentElement;
 
 	// Get the waypoints
-	var wps = xe.getElementsByTagName("waypoint");
+	var wps = xe.getElementsByTagName('waypoint');
 	for (var i = 0; i < wps.length; i++) {
 		var wp = wps[i];
-		var code = wp.getAttribute("code");
+		var code = wp.getAttribute('code');
 		if (waypoints[code] == null) {
 			var mrk = null;
-			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-			if (wp.getAttribute("pal"))
-				mrk = googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, wp.firstChild.data);
+			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+			if (wp.getAttribute('pal'))
+				mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, wp.firstChild.data);
 			else
-				mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+				mrk = googleMarker(wp.getAttribute('color'), p, wp.firstChild.data);
 
 			mrk.code = code;
-			GEvent.addListener(mrk, 'dblclick', toggleMarker);
+			google.maps.event.addListener(mrk, 'dblclick', toggleMarker);
 			waypoints[code] = mrk;
 
 			// Calculate the min zoom
 			mrk.minZoom = 5;
-			var type = wp.getAttribute("type");
+			var type = wp.getAttribute('type');
 			if (type == 'NDB')
 				mrk.minZoom = 8;
 			else if (type == 'Intersection')
@@ -154,7 +152,7 @@ function plotRoute(combo)
 {
 if (combo.selectedIndex == 0) {
 	mm.clearMarkers();
-	removeMarkers(map, 'routeTrack');
+	removeMarkers('routeTrack');
 	return;
 }
 
@@ -165,33 +163,33 @@ if (tr == null)	return;
 
 // Clear the marker manager
 mm.clearMarkers();
-removeMarkers(map, 'routeTrack');
+removeMarkers('routeTrack');
 
 // Plot the markers
 var track = [];
 if (tr.SID)
-	track.push(map.apMarker.getLatLng());
+	track.push(map.apMarker.getPosition());
 	
 for (var i = 0; i < tr.waypoints.length; i++) {
 	var mrk = tr.waypoints[i];
-	track.push(mrk.getLatLng());
+	track.push(mrk.getPosition());
 	mm.addMarker(mrk, mrk.minZoom);
 }
 
 if (!tr.SID)
-	track.push(map.apMarker.getLatLng());
+	track.push(map.apMarker.getPosition());
 
 // Display the route and the markers
 mm.refresh();
-routeTrack = new GPolyline(track, map.getCurrentMapType().getTextColor(), 2.0, 0.8);
-map.addOverlay(routeTrack);
+routeTrack = new google.maps.Polyline({path:track, strokeColor:map.getCurrentMapType().getTextColor(), strokeWeight:2, strokeOpacity:0.8});
+routeTrack.setMap(map);
 return true;
 }
 
 function toggleRows(show)
 {
 mm.clearMarkers();
-removeMarkers(map, 'routeTrack');
+removeMarkers('routeTrack');
 var rows = getElementsByClass('doPlot');
 for (var x = 0; x < rows.length; x++)
 	showObject(rows[x], show);
@@ -206,7 +204,7 @@ var mrk = waypoints[code.toUpperCase()];
 if (mrk != null) {
 	mm.addMarker(mrk, 2);
 	mm.refresh();
-	GEvent.trigger(mrk, 'click');
+	google.maps.event.trigger(mrk, 'click');
 } else
 	alert('Cannot find ' + code);
 

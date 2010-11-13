@@ -46,11 +46,11 @@ var oldCode = (combo.selectedIndex == -1) ? '' : combo.options[combo.selectedInd
 
 // Update the combobox choices
 combo.options.length = elements.length + 1;
-combo.options[0] = new Option("-", "");
+combo.options[0] = new Option('-', '');
 for (var i = 0; i < elements.length; i++) {
 	var e = elements[i];
-	var rLabel = e.getAttribute("label");
-	var rCode = e.getAttribute("code");
+	var rLabel = e.getAttribute('label');
+	var rCode = e.getAttribute('code');
 	combo.options[i+1] = new Option(rLabel, rCode);
 	if ((oldCode == rCode) || (oldCode == rLabel))
 		combo.selectedIndex = (i+1);
@@ -64,33 +64,37 @@ function plotMap(myParams)
 {
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("POST", "routeplot.ws", true);
+xmlreq.open('post', 'routeplot.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
 // Build the update handler	
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	map.clearOverlays();
 	
 	// Draw the markers and load the codes
 	var positions = [];
 	var codes = [];
 	var xdoc = xmlreq.responseXML.documentElement;
-	var waypoints = xdoc.getElementsByTagName("pos");
+	var waypoints = xdoc.getElementsByTagName('pos');
 	for (var i = 0; i < waypoints.length; i++) {
 		var wp = waypoints[i];
 		var label = wp.firstChild;
-		var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
+		var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
 		positions.push(p);
-		codes.push(wp.getAttribute("code"));
-		if (wp.getAttribute("pal"))
-			map.addOverlay(googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, label.data));
+		codes.push(wp.getAttribute('code'));
+		var mrk = null;
+		if (wp.getAttribute('pal'))
+			mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, label.data);
 		else
-			map.addOverlay(googleMarker(document.imgPath, wp.getAttribute("color"), p, label.data));
+			mrk = googleMarker(wp.getAttribute('color'), p, label.data);
+		
+		mrk.setMap(map);
 	} // for
 	
 	// Draw the route
-	map.addOverlay(new GPolyline(positions, '#4080AF', 2, 0.8));
+	var rt = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true});
+	rt.setMap(map);
 	
 	// Save the codes
 	var f = document.forms[0];
@@ -99,17 +103,18 @@ xmlreq.onreadystatechange = function() {
 
 	// Get the midpoint and center the map
 	var reCenter = (!f.noRecenter.checked);
-	var mps = xdoc.getElementsByTagName("midpoint");
+	var mps = xdoc.getElementsByTagName('midpoint');
 	var mpp = mps[0];
 	if (mpp && reCenter) {
-		var mp = new GLatLng(parseFloat(mpp.getAttribute("lat")), parseFloat(mpp.getAttribute("lng")));
-		map.setCenter(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+		var mp = new google.maps.LatLng(parseFloat(mpp.getAttribute('lat')), parseFloat(mpp.getAttribute('lng')));
+		map.setCenter(mp);
+		map.setZoom(getDefaultZoom(parseInt(mpp.getAttribute('distance'))));
 	}
 
 	// Set the distance
-	var dstE = getElement("rtDistance");
+	var dstE = getElement('rtDistance');
 	if (dstE != null) {
-		var dst = xdoc.getAttribute("distance");
+		var dst = xdoc.getAttribute('distance');
 		if (dst) {
 			if(dst > 0)
 				dstE.innerHTML = ' - ' + dst + ' miles';
@@ -119,15 +124,15 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Load the runways
-	var rws = xdoc.getElementsByTagName("runway");
+	var rws = xdoc.getElementsByTagName('runway');
 	updateRoutes(f.runway, rws);
-	showObject(getElement("runways"), (f.runway.options.length > 1));
+	showObject(getElement('runways'), (f.runway.options.length > 1));
 
 	// Load the SID/STAR list
-	updateRoutes(f.sid, xdoc.getElementsByTagName("sid"));
-	displayObject(getElement("sids"), (f.sid.options.length > 1));
-	updateRoutes(f.star, xdoc.getElementsByTagName("star"));
-	displayObject(getElement("stars"), (f.star.options.length > 1));
+	updateRoutes(f.sid, xdoc.getElementsByTagName('sid'));
+	displayObject(getElement('sids'), (f.sid.options.length > 1));
+	updateRoutes(f.star, xdoc.getElementsByTagName('star'));
+	displayObject(getElement('stars'), (f.star.options.length > 1));
 	return true;
 }
 
@@ -152,9 +157,9 @@ if (f.external)
 
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "dsproutes.ws?airportD=" + aD + "&airportA=" + aA + "&external=" + ext + "&runway=" + rwy, true);
+xmlreq.open('get', 'dsproutes.ws?airportD=' + aD + '&airportA=' + aA + '&external=' + ext + '&runway=' + rwy, true);
 
-//Build the update handler	
+// Build the update handler	
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	enableElement('SearchButton', true);
@@ -167,23 +172,23 @@ xmlreq.onreadystatechange = function() {
 	var xdoc = xmlreq.responseXML.documentElement;
 	var cbo = document.forms[0].routes;
 	enableObject(cbo, true);
-	var rts = xdoc.getElementsByTagName("route");
+	var rts = xdoc.getElementsByTagName('route');
 	cbo.options.length = rts.length + 1;
-	cbo.options[0] = new Option("-");
+	cbo.options[0] = new Option('-');
 	for (var x = 0; x < rts.length; x++) {
 		var rt = rts[x];
-		var rtw = rt.getElementsByTagName("waypoints");
-		var rtn = rt.getElementsByTagName("name");
+		var rtw = rt.getElementsByTagName('waypoints');
+		var rtn = rt.getElementsByTagName('name');
 		var oLabel = rtn[0].firstChild.data;
 		var oValue = rtw[0].firstChild.data;
 		var opt = new Option(oLabel, oValue);
-		opt.routeID = rt.getAttribute("id");
-		opt.SID = rt.getAttribute("sid");
-		opt.STAR = rt.getAttribute("star");
-		opt.altitude = rt.getAttribute("altitude");
-		opt.isExternal = rt.getAttribute("external");
+		opt.routeID = rt.getAttribute('id');
+		opt.SID = rt.getAttribute('sid');
+		opt.STAR = rt.getAttribute('star');
+		opt.altitude = rt.getAttribute('altitude');
+		opt.isExternal = rt.getAttribute('external');
 		cbo.options[x + 1] = opt;
-		var rtc = rt.getElementsByTagName("comments");
+		var rtc = rt.getElementsByTagName('comments');
 		var c = rtc[0].firstChild;
 		if ((c != null) && (c.data != null))
 			opt.comments = c.data;
@@ -244,7 +249,7 @@ if (rwyChanged) {
 
 if (airportsChanged) {
 	f.routes.options.length = 1;
-	f.routes.options[0] = new Option("No Routes Loaded", "");
+	f.routes.options[0] = new Option('No Routes Loaded', '');
 	f.routes.selectedIndex = 0;
 	f.route.value = '';
 	showObject(getElement('routeList'), false);

@@ -15,10 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <c:if test="${fn:isRoutePlot(question)}">
-<content:js name="googleMaps" />
-<map:api version="2" />
-<map:vml-ie />
-</c:if>
+<map:api version="3" /></c:if>
 <c:if test="${question.size > 0}">
 <script type="text/javascript">
 function viewImage(x, y)
@@ -122,21 +119,22 @@ return true;
 <c:if test="${fn:isRoutePlot(question)}">
 <script type="text/javascript">
 <map:point var="mapC" point="${question.midPoint}" />
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${question.distance}) - 1);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+
+// Create map
+var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+var mapOpts = {center:mapC, zoom:getDefaultZoom(${q.distance} - 1), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 <map:marker var="aD" point="${question.airportD}" />
 <map:marker var="aA" point="${question.airportA}" />
 <map:points var="routePoints" items="${route}" />
-<map:line var="rpLine" src="routePoints" color="#4080AF" width="2" transparency="0.65" geodesic="true" />
+<map:line var="rpLine" src="routePoints" color="#4080af" width="2" transparency="0.65" geodesic="true" />
 <map:markers var = "routeMarkers" items="${route}" />
-map.addOverlay(rpLine);
+rpLine.setMap(map);
 addMarkers(map, 'routeMarkers');
-map.addOverlay(aD);
+aD.setMap(map);
 </script>
 </c:if>
 </body>

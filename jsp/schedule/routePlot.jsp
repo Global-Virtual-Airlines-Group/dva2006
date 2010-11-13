@@ -9,24 +9,21 @@
 <map:xhtml>
 <head>
 <title><content:airline /> Route Plotter</title>
+<content:browserFilter ie8="true"><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /></content:browserFilter>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:js name="routePlot" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
-<content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
-document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
 document.multiHost = ${multiHost};</c:if>
 var routeUpdated = false;
@@ -43,7 +40,7 @@ return true;
 <map:wxList layers="radar,eurorad,sat,windspeed,temp" />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -151,32 +148,30 @@ updateAirports(f.airportD, 'airline=all', ${useICAO}, getValue(f.airportD));
 window.setTimeout("updateAirports(f.airportA, 'airline=all', ${useICAO}, getValue(f.airportA))", 1250);
 window.setTimeout("updateAirports(f.airportL, 'airline=all', ${useICAO}, getValue(f.airportL))", 1500);
 
-// Create the map
-var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-<c:if test="${!empty tileHost}">
-//Build the weather layer controls
-getTileOverlay("radar", 0.45);
-getTileOverlay("eurorad", 0.45);
-getTileOverlay("sat", 0.35);
-getTileOverlay("temp", 0.25);
-getTileOverlay("windspeed", 0.35);
-var xPos = 70;
-map.addControl(new WXOverlayControl("Radar", ["radar", "eurorad"], new GSize(xPos, 7)));
-map.addControl(new WXOverlayControl("Infrared", "sat", new GSize((xPos += 72), 7)));
-map.addControl(new WXOverlayControl("Temperature", "temp", new GSize((xPos += 72), 7)));
-map.addControl(new WXOverlayControl("Wind Speed", "windspeed", new GSize((xPos += 81), 7)));
-map.addControl(new WXClearControl(new GSize((xPos += 82), 7)));
-</c:if>
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(new GLatLng(38.88, -93.25), 4);
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-GEvent.addListener(map, 'maptypechanged', updateMapText);
+// Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
-// Update text color
-GEvent.trigger(map, 'maptypechanged');
+// Create the map
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+<c:if test="${!empty tileHost}">
+// Build the weather layer controls
+getTileOverlay('radar', 0.45);
+getTileOverlay('eurorad', 0.45);
+getTileOverlay('sat', 0.35);
+getTileOverlay('temp', 0.25);
+getTileOverlay('windspeed', 0.35);
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Wind Speed', 'windspeed'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
+</c:if>
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
 </body>
 </map:xhtml>

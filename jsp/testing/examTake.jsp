@@ -16,12 +16,8 @@
 <content:js name="common" />
 <content:js name="examTake" />
 <c:if test="${exam.routePlot}">
-<content:js name="googleMaps" />
-<map:api version="2" />
-<map:vml-ie />
-</c:if>
+<map:api version="3" /></c:if>
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="imgPath" name="path.img" />
 <c:set var="onLoad" value="showRemaining(10)" scope="page" />
 <script type="text/javascript">
 var expiry = ${exam.expiryDate.time};
@@ -29,35 +25,32 @@ var expiry = ${exam.expiryDate.time};
 var rpInfo = [];
 var rpQuestions = ${rpQuestions};
 var doRunways = false;
-document.imgPath = '${imgPath}';
 
 function initMaps()
 {
+var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 for (var x = 0; x < rpQuestions.length; x++) {
 	var idx = rpQuestions[x];
 	var info = rpInfo[idx];
-	info.map = new GMap2(getElement("qMap" + info.idx), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-	info.map.addControl(new GSmallMapControl());
-	info.map.addControl(new GMapTypeControl());
-	info.map.setCenter(info.mapCenter, getDefaultZoom(info.distance));
-	info.map.enableDoubleClickZoom();
-	info.map.enableContinuousZoom();
-	info.map.setMapType(G_PHYSICAL_MAP);
-	info.map.addOverlay(info.aD);
-	info.map.addOverlay(info.aA);
-	info.map.addOverlay(new GPolyline([info.aD.getLatLng(), info.aA.getLatLng()], '#4080AF', 1.75, 0.65, { geodesic:true }));
+	var mapOpts = {center:info.mapCenter, zoom:getDefaultZoom(info.distance), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+	info.map = new google.maps.Map(getElement('qMap' + info.idx), mapOpts);
+	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+	info.aD.setMap(info.map);
+	info.aA.setMap(info.map);
+	var rt = new google.maps.Polyline({path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true});
+	rt.setMap(info.map);
 }
 
 return true;
 }
 <c:set var="onLoad" value="initMaps(); ${onLoad}" scope="page" />
 </c:if>
-//Time offset between server and client clock
+// Time offset between server and client clock
 var timeOffset = (new Date().getTime() - ${currentTime});
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="${onLoad}"<c:if test="${exam.routePlot}"> onunload="GUnload()"</c:if>>
+<body onload="${onLoad}">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>

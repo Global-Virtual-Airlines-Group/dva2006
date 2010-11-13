@@ -11,25 +11,14 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
-<map:api version="2" />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
-<map:vml-ie />
-<content:sysdata var="imgPath" name="path.img" />
 <script type="text/javascript">
-var imgPath = '${imgPath}';
 function reloadMap()
 {
-if (allMarkers.length > 0) {
-	allMarkers.length = 0;
-	map.clearOverlays();
-}
-
-// Load the map
-addMarkers(map, 'hq');
 var xmlreq = generateXMLRequest();
 xmlreq.send(null);
 return true;
@@ -37,8 +26,8 @@ return true;
 <content:filter roles="HR">
 function deleteMarker(id)
 {
-var xmlreq = GXmlHttp.create();
-xmlreq.open("POST", "pilotmapclear.ws", true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('post', 'pilotmapclear.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
@@ -48,7 +37,7 @@ xmlreq.onreadystatechange = function() {
 		var mrk = allMarkers[x];
 		if (mrk.ID == id) {
 			allMarkers.splice(x, 1);
-			map.removeOverlay(mrk);
+			mrk.setMap(null);
 			return true;
 		}
 	}
@@ -64,7 +53,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -111,16 +100,22 @@ return true;
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:6, streetViewControl:false, scrollwheel:false, mapTypeControlOptions: mapTypes};
+
 var allMarkers = [];
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 6);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-var progressBar = new ProgressbarControl(map, {width:150, color:'blue'});
-reloadMap();
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+var pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
+pBar.getDiv().style.right = '4px';
+pBar.getDiv().style.top = '30px';
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	hq.setMap(map);
+	addOverlay(map, pBar.getDiv());
+	reloadMap();
+});
 </script>
 </body>
 </map:xhtml>

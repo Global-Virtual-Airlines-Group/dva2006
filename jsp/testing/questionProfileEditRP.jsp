@@ -15,15 +15,10 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:js name="routePlot" />
-<map:api version="2" />
-<map:vml-ie />
-<content:sysdata var="imgPath" name="path.img" />
 <content:googleAnalytics eventSupport="true" />
 <script type="text/javascript">
-document.imgPath = '${imgPath}';
-
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -140,7 +135,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()" onload="void updateCorrect()">
+<body onload="void updateCorrect()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -187,7 +182,7 @@ return true;
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels) <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels)</span> <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 </c:if>
@@ -265,13 +260,14 @@ return true;
 <script type="text/javascript">
 var doRunways = false;
 <map:point var="mapC" point="${mapCenter}" />
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GSmallMapControl());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${mapDistance}));
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-map.setMapType(G_PHYSICAL_MAP);
+
+// Create map
+var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
+var mapOpts = {center:mapC, zoom:getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 </script>
 </body>
 </map:xhtml>
