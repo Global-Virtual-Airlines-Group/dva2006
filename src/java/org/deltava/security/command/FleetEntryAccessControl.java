@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -6,9 +6,9 @@ import org.deltava.security.SecurityContext;
 import org.deltava.beans.fleet.LibraryEntry;
 
 /**
- * An Access Controller to support Fleet/File Library entry operations.
+ * An Access Controller to support Fleet/File/Document Library entry operations.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -17,9 +17,9 @@ public class FleetEntryAccessControl extends AccessControl {
    protected LibraryEntry _entry;
    
    protected boolean _canView;
-   private boolean _canEdit;
+   protected boolean _canEdit;
+   protected boolean _canCreate;
    private boolean _canDelete;
-   private boolean _canCreate;
 
    /**
     * Initializes the access controller.
@@ -50,7 +50,7 @@ public class FleetEntryAccessControl extends AccessControl {
 
       // Set access variables
       _canEdit = _ctx.isUserInRole("Fleet");
-      _canDelete = _ctx.isUserInRole("Admin") || _ctx.isUserInRole("HR");
+      _canDelete = _ctx.isUserInRole("HR");
       switch (_entry.getSecurity()) {
          case LibraryEntry.PUBLIC:
             _canView = true;

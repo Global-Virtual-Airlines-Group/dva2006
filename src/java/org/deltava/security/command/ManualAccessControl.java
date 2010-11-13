@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * An Access Controller for Document Library entries.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -48,6 +48,9 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 	 */
 	public void validate() {
 		super.validate();
+		_canCreate |= _ctx.isUserInRole("AcademyAdmin");
+		if (_entry == null)
+			return;
 
 		// If the entry has certifications attached, see if we have any courses.
 		Manual m = (Manual) _entry;
@@ -55,15 +58,19 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 			return;
 
 		// If we're an instructor/HR/Fleet, we're OK
-		if (_ctx.isUserInRole("Instructor") || _ctx.isUserInRole("HR") || _ctx.isUserInRole("Fleet"))
+		if (_ctx.isUserInRole("HR") || _ctx.isUserInRole("Fleet") || _ctx.isUserInRole("AcademyAdmin")) {
+			_canEdit = true;
 			return;
+		}
 
 		// Check if we have any active courses
-		for (Iterator<Course> i = _courses.iterator(); i.hasNext();) {
-			Course c = i.next();
-			if (c.getStatus() != Course.ABANDONED) {
-				if (m.getCertifications().contains(c.getName()))
-					return;
+		if (!CollectionUtils.isEmpty(_courses)) {
+			for (Iterator<Course> i = _courses.iterator(); i.hasNext();) {
+				Course c = i.next();
+				if (c.getStatus() != Course.ABANDONED) {
+					if (m.getCertifications().contains(c.getCode()))
+						return;
+				}
 			}
 		}
 
