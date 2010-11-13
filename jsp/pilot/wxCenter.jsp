@@ -155,7 +155,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handlers
-		google.maps.event.bind(mrk, 'click', mrk, clickInfo);
+		google.maps.event.addListener(mrk, 'click', clickInfo);
 
 		// Add the marker
 		wxMarkers[mrk.code] = mrk;
