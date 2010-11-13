@@ -204,7 +204,7 @@ return cmdPost(f.action);
 </td>
 </tr>
 </el:table>
-<el:text name="doSubmit" type="HIDDEN" value="" />
+<el:text name="doSubmit" type="hidden" value="" />
 </el:form>
 <br />
 <content:copyright />
@@ -215,12 +215,14 @@ var f = document.forms[0];
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
 
 initDateCombos(f.dateM, f.dateD, ((d == null) ? new Date() : d));
-f.airline.focus();
 if (f.airline.selectedIndex != 0) {
 	var aCode = getValue(f.airline);
 	updateAirports(f.airportD, 'airline=' + aCode, false, '${pirep.airportD.IATA}');
 	updateAirports(f.airportA, 'airline=' + aCode, false, '${pirep.airportA.IATA}');
 }
+
+f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
+f.airline.focus();
 </script>
 </body>
 </html>
