@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -106,6 +106,19 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			fr.setStatus(pirepStatus);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
+			
+			// Figure out what network the flight was flown on and ensure we have an ID
+			OnlineNetwork net = null;
+			try {
+				net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
+				if (!p.hasNetworkID(net))
+					throw new IllegalStateException("No " + net + " ID");
+			} catch (Exception e) {
+				net = fr.getNetwork();
+			} finally {
+				fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
+				fr.setAttribute(FlightReport.ATTR_IVAO, (net == OnlineNetwork.IVAO));
+			}
 			
 			// Load the flights for accomplishment purposes
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
