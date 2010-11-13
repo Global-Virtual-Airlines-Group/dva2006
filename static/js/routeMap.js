@@ -55,7 +55,7 @@ xmlreq.onreadystatechange = function() {
 			} catch (e) { }
 		}
 
-		google.maps.event.bind(mrk, 'click', mrk, mrk.infoShow);
+		google.maps.event.addListener(mrk, 'click', mrk.infoShow);
 		document.lastAirport = a;
 		aps.push(mrk);
 	}

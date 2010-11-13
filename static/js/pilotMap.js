@@ -45,7 +45,7 @@ while ((cnt < batchSize) && (a != null)) {
 	mrk.ID = parseInt(a.getAttribute('id'));
 
 	// Set the the click handler and add to the list
-	google.maps.event.bind(mrk, 'click', mrk, function() { map.infoWindow.setContent(this.infoLabel); map.infoWindow.open(map, this); } );
+	google.maps.event.addListener(mrk, 'click', function() { map.infoWindow.setContent(this.infoLabel); map.infoWindow.open(map, this); } );
 	allMarkers.push(mrk);
 	mrk.setMap(map);
 	cnt++;

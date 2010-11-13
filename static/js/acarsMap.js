@@ -76,7 +76,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handler
-		google.maps.event.bind(mrk, 'click', mrk, clickAircraft);
+		google.maps.event.addListener(mrk, 'click', clickAircraft);
 		acPositions.push(mrk);
 		mrk.setMap(map);
 	} // for
@@ -125,7 +125,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Set the the click handler
-		google.maps.event.bind(mrk, 'click', mrk, clickDispatch);
+		google.maps.event.addListener(mrk, 'click', clickDispatch);
 		dcPositions.push(mrk);
 		mrk.setMap(map);
 	} // for
