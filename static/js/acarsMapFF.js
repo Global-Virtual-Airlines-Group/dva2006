@@ -23,7 +23,7 @@ return dates;
 function getFFComboOptions(dates)
 {
 var results = [];
-results.push(new Option('< SELECT >', ''));
+results.push(new Option('[ SELECT ]', ''));
 for (var x = 0; x < dates.length; x++) {
 	var utc = dates[x];
 	var o = new Option(fmtDate(new Date(utc.getTime() - GMTOffset)), utc.getTime());
@@ -36,14 +36,10 @@ return results;
 
 function getFFOverlay(name, tx, date)
 {
-var cpc = new GCopyrightCollection('Weather Imagery');
-var cp = new GCopyright(111, new GLatLngBounds(new GLatLng(-90, -180), new GLatLng(90, 180)), 0, 'The Weather Channel')
-cpc.addCopyright(cp);
-
-var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name], {isPng:true, opacity:tx});
-newLayer.myBaseURL = 'http://' + document.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
-newLayer.getTileUrl = function(pnt, zoom) {
-if (zoom > this.maxResolution()) return '';
+var layerOpts = {minZoon:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
+layerOpts.myBaseURL = 'http://' + document.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
+layerOpts.getTileUrl = function(pnt, zoom) {
+if (zoom > this.maxZoom) return '';
 var url = this.myBaseURL;
 var masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
 
@@ -65,7 +61,9 @@ if (document.multiHost) {
 return url + '.png';
 }
 
-var ovLayer = new GTileLayerOverlay(newLayer);
+var ovLayer = new google.maps.ImageMapType(layerOpts);
+ovLayer.getTileUrl = layerOpts.getTileUrl;
+ovLayer.myBaseURL = layerOpts.myBaseURL;
 ovLayer.layerName = name;
 ovLayer.layerDate = date;
 ovLayer.isFF = true;
@@ -73,17 +71,22 @@ document.wxLayers[name + '!' + date.getTime()] = ovLayer;
 return ovLayer;
 }
 
-function FFOverlayControl(title, name, padding) {
+function FFOverlayControl(title, name) {
 	this.buttonTitle = title;
 	this.layerNames = name;
-	this.padding = padding;
+	
+	var container = document.createElement('div');
+	var btn = document.createElement('div');
+	this.setButtonStyle(btn);
+	container.appendChild(btn);
+	btn.appendChild(document.createTextNode(this.buttonTitle));
+	btn.layerNames = this.layerNames;
+	google.maps.event.addDomListener(btn, 'click', this.updateMap);
+	return container;
 }
 
 // Initialize from WXOverlayControl
-FFOverlayControl.prototype = new GControl();
-FFOverlayControl.prototype.initialize = WXOverlayControl.prototype.initialize;
 FFOverlayControl.prototype.setButtonStyle = WXOverlayControl.prototype.setButtonStyle;
-FFOverlayControl.prototype.getDefaultPosition = WXOverlayControl.prototype.getDefaultPosition; 
 FFOverlayControl.prototype.updateMap = function() {
 	clearWX();
 	map.ffLayer = this.layerNames;
@@ -95,43 +98,42 @@ FFOverlayControl.prototype.updateMap = function() {
 	for (var x = 0; x < options.length; x++)
 		f.ffSlice.options[x] = options[x];
 
-	var ffs = getElement('ffSlices');
-	if (ffs) ffs.style.visibility = 'visible';
+	showObject(getElement('copyright'), true);
+	showObject(getElement('ffSlices'), true);
 	return true;
 }
 
 function updateFF(combo)
 {
 if (map.wxData)
-	map.removeOverlay(map.wxData);
+	map.removeWeather(map.wxData);
 	
 var utc = combo.options[combo.selectedIndex].value;
 map.wxData = document.wxLayers[map.ffLayer + '!' + utc];
 if (map.wxData)
-	map.addOverlay(map.wxData);
+	map.addWeather(map.wxData);
 
 return true;
 }
 
 function getVisibleTiles()
 {
-var tiles = [];
 var bnds = map.getBounds();
-var p = map.getCurrentMapType().getProjection();
-var maxX = p.getWrapWidth(map.getZoom()) >> 8;
-var nw = new GLatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
-var se = new GLatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
+var nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
+var se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
 
 // Get the pixel points of the tiles
-var nwp = p.fromLatLngToPixel(nw, map.getZoom());
-var sep = p.fromLatLngToPixel(se, map.getZoom());
-var nwAddr = new GPoint((nwp.x >> 8), (nwp.y >> 8));
-var seAddr = new GPoint((sep.x >> 8), (sep.y >> 8));
+var p = map.getProjection();
+var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << map.getZoom()); nwp.y = Math.round(nwp.y << map.getZoom());
+var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << map.getZoom()); sep.y = Math.round(sep.y << map.getZoom());
+var nwAddr = new google.maps.Point((nwp.x >> 8), (nwp.y >> 8));
+var seAddr = new google.maps.Point((sep.x >> 8), (sep.y >> 8));
 
 // Load the tile addresses
+var tiles = [];
 for (var x = nwAddr.x; x <= seAddr.x; x++) {
 	for (var y = nwAddr.y; y <= seAddr.y; y++)
-		tiles.push(new GPoint(((x > maxX) ? (x - maxX) : x), y));
+		tiles.push(new google.maps.Point(x, y));
 }
 
 return tiles;
@@ -139,7 +141,7 @@ return tiles;
 
 function tileLoaded()
 {
-progressBar.updateLoader(1);
+pBar.setCurrent(pBar.getCurrent() + 1);
 var ov = this.layer;
 var imgs = ov.tileImages;
 imgs.remove(this.src);
@@ -150,7 +152,7 @@ if (loadSlices.length == 0) {
 	var btn = getElement('AnimateButton');
 	btn.value = 'STOP';
 	enableObject(btn, true);
-	progressBar.remove();
+	pBar.hide();
 	showSliceLayer(0);
 }
 
@@ -163,11 +165,10 @@ removeSlices();
 
 // Get the tiles
 var tilePoints = getVisibleTiles();
-progressBar.start(tilePoints.length * dates.length);
+pBar.start(tilePoints.length * dates.length);
 for (var x = 0; x < dates.length; x++) {
 	var dt = dates[x];
 	var ov = document.wxLayers[layerName + '!' + dt.getTime()];
-	var tileLayer = ov.getTileLayer();
 	ov.tileImages = [];
 	ov.isPreloaded = false;
 	for (var y = 0; y < tilePoints.length; y++) {
@@ -175,7 +176,7 @@ for (var x = 0; x < dates.length; x++) {
 		img.layer = ov;
 		img.onload = tileLoaded;
 		img.onerror = tileLoaded;
-		img.src = tileLayer.getTileUrl(tilePoints[y], map.getZoom());
+		img.src = ov.getTileUrl(tilePoints[y], map.getZoom());
 		ov.tileImages.push(img.src);
 	}
 	
@@ -190,23 +191,24 @@ function animateFF()
 {
 var f = document.forms[0];
 var btn = getElement('AnimateButton');
+var opts = map.getOptions();
 if (map.isAnimating) {
 	removeSlices();
 	btn.value = 'ANIMATE';
 	enableObject(btn, true);
 	enableObject(f.ffSlice, true);
-	progressBar.remove();
-	map.enableScrollWheelZoom();
-	map.enableDoubleClickZoom();
-	map.enableDragging();
-	map.addControl(mCtl);
+	pBar.hide();
+	opts.disableDoubleClickZoom = false;
+	opts.scrollwheel = true;
+	opts.dragging = true;
+	opts.navigationControl = true;
 	map.isAnimating = false;
 } else {
 	enableObject(f.ffSlice, false);
-	map.disableDragging();
-	map.disableDoubleClickZoom();
-	map.disableScrollWheelZoom();
-	map.removeControl(mCtl);
+	opts.dragging = false;
+	opts.scrollwheel = false;
+	opts.disableDoubleClickZoom = true;
+	opts.navigationControl = false;
 
 	// Preload the tiles for each tile layer
 	enableObject(btn, false);
@@ -214,6 +216,7 @@ if (map.isAnimating) {
 	preloadImages(map.ffLayer, document.ffSlices[map.ffLayer]);
 }
 
+map.setOptions(opts);
 return true;
 }
 
@@ -230,13 +233,12 @@ var ov = animateSlices[ofs];
 setWXStatus('Showing ' + ov.layerName + ' (' + fmtDate(new Date(ov.layerDate.getTime() - GMTOffset)) + ')');
 if (ov.isPreloaded) {
 	hideAllSlices();
-	ov.show();	
+	map.addWeather(ov);
 } else {
-	map.addOverlay(ov);
+	map.addWeather(ov);
 	hideAllSlices();
-	ov.show();
 	ov.isPreloaded = true;
-	timerInterval += 15;
+	//timerInterval += 15;
 }
 
 window.setTimeout('showSliceLayer(' + newOfs + ')', timerInterval);
@@ -246,7 +248,7 @@ return true;
 function removeSlices()
 {
 for (var x in animateSlices)
-	map.removeOverlay(animateSlices[x]);
+	map.removeWeather(animateSlices[x]);
 
 loadSlices.length = 0;
 animateSlices.length = 0;
@@ -258,7 +260,7 @@ function hideAllSlices()
 for (var x in animateSlices) {
 	var ov = animateSlices[x];
 	if (ov.isPreloaded)
-		ov.hide();
+		map.removeWeather(ov);
 }
 	
 return true;

@@ -4,7 +4,9 @@ var isLoading = getElement('isLoading');
 isLoading.innerHTML = ' - CLEARING...';
 
 // Remove airports/routes from the map
-map.clearOverlays();
+removeMarkers('aps');
+removeMarkers('routes');
+map.infoWindow.close();
 if (combo.selectedIndex == 0) {
 	isLoading.innerHTML = '';
 	return false;
@@ -18,33 +20,31 @@ aps = airports[aCode];
 if (aps) {
 	addMarkers(map, 'aps');
 	isLoading.innerHTML = '';
-	delete aps;
 	return true;
 }
 
 // Build the XML Requester
 isLoading.innerHTML = ' - LOADING...';
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "rmap_airports.ws?airline=" + aCode, true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'rmap_airports.ws?airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var isLoading = getElement('isLoading');
 	isLoading.innerHTML = ' - REDRAWING...';
-	var aps = [];
+	aps = [];
 	var f = document.forms[0];
 
 	// Parse the XML
 	var xdoc = xmlreq.responseXML;
 	var wsdata = xdoc.documentElement;
-	var els = wsdata.getElementsByTagName("airport");
+	var els = wsdata.getElementsByTagName('airport');
 	for (var x = 0; x < els.length; x++) {
 		var a = els[x];
-		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		var mrk = googleMarker(document.imgPath, a.getAttribute("color"), p, null);
-		mrk.icao = a.getAttribute("icao");
-		mrk.iata = a.getAttribute("iata");
+		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
+		var mrk = googleMarker(a.getAttribute('color'), p, null);
+		mrk.icao = a.getAttribute('icao');
+		mrk.iata = a.getAttribute('iata');
 		mrk.infoShow = showRoutes;
-		GEvent.addListener(mrk, 'infowindowclose', function() { removeMarkers(map, 'routes'); });
 		for (var nidx = a.childNodes.length; nidx > 0; nidx--) {
 			var nd = a.childNodes[nidx - 1];
 			try {
@@ -55,15 +55,13 @@ xmlreq.onreadystatechange = function() {
 			} catch (e) { }
 		}
 
-		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
+		google.maps.event.bind(mrk, 'click', mrk, mrk.infoShow);
 		document.lastAirport = a;
-
-		// Add to array and map
 		aps.push(mrk);
-		map.addOverlay(mrk);
 	}
 
 	// Save in the hashmap
+	addMarkers(map, 'aps');
 	airports[aCode] = aps;
 	isLoading.innerHTML = '';
 	gaEvent('Route Map', 'Airports', aCode);
@@ -82,42 +80,42 @@ var isLoading = getElement('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 
 // Get the airline code
-var aCombo = getElement("airlineCode");
+var aCombo = getElement('airlineCode');
 var aCode = aCombo.options[aCombo.selectedIndex].value;
+removeMarkers('routes');
+map.infoWindow.close();
 
 // Build the XML Requester
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "rmap_routes.ws?icao=" + this.icao + "&airline=" + aCode, true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var isLoading = getElement('isLoading');
 	isLoading.innerHTML = ' - REDRAWING...';
-	routes = [];
+		routes.length = 0;
 
 	// Parse the XML
 	var xdoc = xmlreq.responseXML;
 	var wsdata = xdoc.documentElement;
-	var rts = wsdata.getElementsByTagName("route");
-	var routeCount = 0;
+	var rts = wsdata.getElementsByTagName('route');
 	for (var x = 0; x < rts.length; x++) {
 		var rt = rts[x];
-		var al = rt.getAttribute("airline");
+		var al = rt.getAttribute('airline');
 		if (al == aCode) {
 			var positions = [];
 
 			// Get the positions
-			var pos = rt.getElementsByTagName("pos");
+			var pos = rt.getElementsByTagName('pos');
 			for (var i = 0; i < pos.length; i++) {
 				var pe = pos[i];
-				var p = new GLatLng(parseFloat(pe.getAttribute("lat")), parseFloat(pe.getAttribute("lng")));
+				var p = new google.maps.LatLng(parseFloat(pe.getAttribute('lat')), parseFloat(pe.getAttribute('lng')));
 				positions.push(p);
 			} // for
 
 			// Draw the line
-			var routeLine = new GPolyline(positions, '#4080AF', 2, 0.8, { geodesic: true });
-			map.addOverlay(routeLine);
+			var routeLine = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic: true});
+			routeLine.setMap(map);
 			routes.push(routeLine);
-			routeCount++;
 		}
 	}
 
@@ -130,8 +128,10 @@ xmlreq.onreadystatechange = function() {
 // Send the XMLHTTP request
 xmlreq.send(null);
 var showInfo = getElement('showInfo');
-if ((showInfo) && (showInfo.checked))
-	this.openInfoWindowHtml(this.infoLabel);
+if ((showInfo) && (showInfo.checked)) {
+	map.infoWindow.setContent(this.infoLabel);
+	map.infoWindow.open(map, this);
+}
 
 return true;
 }

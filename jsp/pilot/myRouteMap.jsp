@@ -12,13 +12,10 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
-<content:sysdata var="imgPath" name="path.img" />
-<map:api version="2" />
-<map:vml-ie />
+<map:api version="3" />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -44,15 +41,14 @@
 </content:page>
 <script type="text/javascript">
 <map:point var="mapC" point="${home}" />
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 3);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Create the routes
 var routes = [];
@@ -61,16 +57,16 @@ var routes = [];
 <c:choose>
 <c:when test="${fn:sizeof(route.points) > 2}">
 <map:points var="rtPoints" items="${route.points}" />
-var route = new GPolyline(rtPoints, '#4080AF', 1.5, 0.55, { geodesic:false, clickable:false });
+var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:false, clickable:false});
 </c:when>
 <c:otherwise>
 <map:point var="aD" point="${route.airportD}" />
 <map:point var="aA" point="${route.airportA}" />
-var route = new GPolyline([aD, aA], '#4080AF', 1.5, 0.55, { geodesic:true, clickable:false });
+var route = new google.maps.Polyline({path:[aD, aA], strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:true, clickable:false});
 </c:otherwise>
 </c:choose>
 
-map.addOverlay(route);
+route.setMap(map);
 routes.push(route);
 </c:forEach>
 
@@ -80,7 +76,7 @@ addMarkers(map, 'airports');
 
 // Add the home airport
 <map:marker var="airportH" point="${home}" color="white" marker="true" />
-map.addOverlay(airportH);
+airportH.setMap(map);
 </script>
 <content:googleAnalytics />
 </body>

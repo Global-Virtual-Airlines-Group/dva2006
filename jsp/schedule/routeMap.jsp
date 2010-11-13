@@ -13,14 +13,12 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:js name="routeMap" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -37,12 +35,11 @@
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo ID="airlineCode" name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="-" onChange="void updateAirports(this)" />
+ <td class="data"><el:combo ID="airlineCode" name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="[ SELECT AIRLINE ]" onChange="void updateAirports(this)" />
  <el:box ID="showInfo" name="showInfo" idx="*" value="true" className="small" label="Show Airport Information" checked="true" /></td>
 </tr>
 <tr>
- <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="540" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="530" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -52,20 +49,22 @@
 </content:page>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-document.imgPath = '${imgPath}';
+
+// Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, ${zoomLevel});
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); removeMarkers('routes'); });
+google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeMarkers('routes'); });
 
 // Routes/airports placeholder
-var routes;
+var routes = [];
 var airports = [];
+var aps = [];
 
 // Load airports
 updateAirports(document.forms[0].airlineCode);

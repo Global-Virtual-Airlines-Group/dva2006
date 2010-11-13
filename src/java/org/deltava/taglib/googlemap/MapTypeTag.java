@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -8,14 +8,15 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to set the base layer on a  Google Map.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 2.1
  */
 
 public class MapTypeTag extends GoogleMapEntryTag {
 	
 	private static final String[] MAP_CODES = {"MAP", "SAT", "TRN"};
-	private static final String[] MAP_OPTS = {"G_NORMAL_MAP", "G_SATELLITE_MAP", "G_PHYSICAL_MAP"};
+	private static final String[] V2_MAP_OPTS = {"G_NORMAL_MAP", "G_SATELLITE_MAP", "G_PHYSICAL_MAP"};
+	private static final String[] V3_MAP_OPTS = {"ROADMAP", "SATELLITE", "TERRAIN"};
 	
 	private static final String DEFAULT_TYPE = "G_SATELLITE_MAP";
 	
@@ -38,6 +39,7 @@ public class MapTypeTag extends GoogleMapEntryTag {
 		if (type == null)
 			return null;
 		
+		String[] MAP_OPTS = (getAPIVersion() == 3) ? V3_MAP_OPTS : V2_MAP_OPTS;
 		String mapType = type.toUpperCase();
 		int ofs = StringUtils.arrayIndexOf(MAP_OPTS, mapType, -1);
 		if (ofs != -1)
@@ -84,7 +86,11 @@ public class MapTypeTag extends GoogleMapEntryTag {
 		JspWriter out = pageContext.getOut();
 		try {
 			out.print(_mapVar);
-			out.print(".setMapType(");
+			if (getAPIVersion() == 3)
+				out.print(".setMapTypeId(google.maps.MapTypeId.");
+			else
+				out.print(".setMapType(");
+			
 			out.print((_mapType == null) ? _default : _mapType);
 			out.println(");");
 		} catch (Exception e) {

@@ -15,14 +15,10 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:sysdata var="imgPath" name="path.img" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
 <content:js name="flightBoardMap" />
 <script type="text/javascript">
-document.imgPath = '${imgPath}';
 document.network = '${network}';
 
 function setNetwork(combo)
@@ -34,7 +30,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -74,18 +70,18 @@ return true;
 </content:region>
 </content:page>
 <script type="text/javascript">
-// Create the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.addControl(new GOverviewMapControl());
+//Create map options
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center: new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
-// Center the map and add positions
-map.setCenter(new GLatLng(38.88, -93.25), 4);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-GEvent.addListener(map, 'infowindowclose', infoClose);
+// Create the map
+var map = new google.maps.Map(getElement("googleMap"), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
+
+// Add positions
 updateMap(true);
 </script>
 </body>

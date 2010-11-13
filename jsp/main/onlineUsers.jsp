@@ -77,7 +77,7 @@ return true;
 </c:forEach>
 <c:if test="${empty pilots}">
 <tr>
- <td colspan="6" class="pri bld">NO CURRENTLY LOGGED IN <content:airline /> USERS</td>
+ <td colspan="6" class="pri bld caps">NO CURRENTLY LOGGED IN <content:airline /> USERS</td>
 </tr>
 </c:if>
 <tr class="title">

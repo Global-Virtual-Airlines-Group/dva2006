@@ -12,20 +12,16 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="2" />
+<map:api version="3" />
 <content:js name="markermanager" />
-<content:js name="googleMaps" />
 <content:js name="sidstarPlot" />
 <content:googleAnalytics eventSupport="true" />
-<map:vml-ie />
-<content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
-document.imgPath = '${imgPath}';
-
 function clickIcon()
 {
-this.openInfoWindowHtml(this.infoLabel);
+map.infoWindow.setContent(this.infoLabel);
+map.infoWindow.open(map, this);
 return true;
 }
 
@@ -42,13 +38,13 @@ disableButton('SaveButton');
 
 // Build the HTTP request
 var xreq = getXMLHttpRequest();
-xreq.open("POST", "trouteupdate.ws", true);
-var body = "name=" + form.name.value + "&transition=" + form.transition.value;
-body += "&runway=" + form.runway.value + "&waypoints=" + form.route.value;
-body += "&icao=" + map.currentAirport + "&canPurge=" + form.canPurge.checked;
+xreq.open('post', 'trouteupdate.ws', true);
+var body = 'name=' + form.name.value + '&transition=' + form.transition.value;
+body += '&runway=' + form.runway.value + '&waypoints=' + form.route.value;
+body += '&icao=' + map.currentAirport + '&canPurge=' + form.canPurge.checked;
 for (var x = 0; x < form.type.length; x++) {
 	if (form.type[x].checked) {
-		body += "&type=" + form.type[x].value;
+		body += '&type=' + form.type[x].value;
 		break;
 	}
 }
@@ -76,16 +72,16 @@ xreq.onreadystatechange = function() {
 } // function
 
 // Set headers
-xreq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-xreq.setRequestHeader("Content-length", body.length);
-xreq.setRequestHeader("Connection", "close");
+xreq.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+xreq.setRequestHeader('Content-length', body.length);
+xreq.setRequestHeader('Connection', 'close');
 xreq.send(body);
 return false;
 }
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void showObject(getElement('ToggleButton'), true)" onunload="GUnload()">
+<body onload="void showObject(getElement('ToggleButton'), true)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -107,7 +103,7 @@ return false;
 </tr>
 <tr>
  <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld"></div></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 <tr class="title caps doPlot" style="visibility:hidden;">
  <td colspan="2">NEW TERMINAL ROUTE</td>
@@ -154,7 +150,15 @@ return false;
 </content:page>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+
+// Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:7, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
+//Create the map
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Global airport/waypoint markers
 var airports = [];
@@ -165,18 +169,13 @@ var routeTrack;
 var routes = [];
 
 // Add map controls
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 7);
 map.currentAirport = '${mapCenter.ICAO}';
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
 var mm = new MarkerManager(map, {maxZoom:14, borderPadding:32});
-GEvent.addListener(map, 'maptypechanged', updateMapText);
-GEvent.addListener(map, 'moveend', loadWaypoints);
-GEvent.trigger(map, 'maptypechanged');
-GEvent.trigger(map, 'moveend');
+google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'moveend', loadWaypoints);
+google.maps.event.trigger(map, 'maptypeid_changed');
+google.maps.event.trigger(map, 'moveend');
 getRoutes(document.forms[0].airport, true);
 </script>
 </body>

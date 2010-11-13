@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.JspException;
@@ -9,21 +9,13 @@ import org.deltava.taglib.*;
 /**
  * A JSP Tag to display IE/Google Map XHTML opening tags.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
 public class InsertXHTMLTag extends TagSupport {
 
-	private XMLRenderer _data;
-	
-	/**
-	 * Initializes the tag.
-	 */
-	public InsertXHTMLTag() {
-		super();
-		_data = new XMLRenderer("html");
-	}
+	private final XMLRenderer _data = new XMLRenderer("html");
 	
 	/**
 	 * Releases the tag's state variables.
@@ -46,7 +38,7 @@ public class InsertXHTMLTag extends TagSupport {
 		_data.setAttribute("lang", "en");
 		
 		// Set IE-specific attribute
-		if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext))
+		if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext) || ContentHelper.isIE8(pageContext))
 			_data.setAttribute("xmlns:v", "urn:schemas-microsoft-com:vml");
 		
 		// Render the tag
@@ -69,10 +61,10 @@ public class InsertXHTMLTag extends TagSupport {
             pageContext.getOut().print(_data.close());
         } catch (Exception e) {
             throw new JspException(e);
+        } finally {
+        	release();
         }
         
-        // Clear state and return
-        release();
         return EVAL_PAGE;
 	}
 }

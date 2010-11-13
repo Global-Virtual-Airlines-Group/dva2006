@@ -107,17 +107,32 @@ public class LineTag extends GoogleMapEntryTag {
 			}
 
 			// Generate the line
-			out.print("new GPolyline(");
-			out.print(_srcJsVarName);
-			out.print(",\'");
-			out.print(_color);
-			out.print("\',");
-			out.print(String.valueOf(_width));
-			out.print(',');
-			out.print(StringUtils.format(_transparency, "0.00"));
-			if (_useGC)
-				out.print(", { geodesic:true }");
-			out.print(");");
+			if (getAPIVersion() == 3) {
+				out.print("new google.maps.Polyline({");
+				if (_useGC)
+					out.print("geodesic:true, ");
+				out.print("path:new google.maps.MVCArray(");
+				out.print(_srcJsVarName);
+				out.print("), strokeColor:\'");
+				out.print(_color);
+				out.print("\', strokeOpacity:");
+				out.print(StringUtils.format(_transparency, "0.00"));
+				out.print(", strokeWidth:");
+				out.print(String.valueOf(_width));
+				out.print("})");
+			} else {
+				out.print("new GPolyline(");
+				out.print(_srcJsVarName);
+				out.print(",\'");
+				out.print(_color);
+				out.print("\',");
+				out.print(String.valueOf(_width));
+				out.print(',');
+				out.print(StringUtils.format(_transparency, "0.00"));
+				if (_useGC)
+					out.print(", { geodesic:true }");
+				out.print(");");
+			}
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {

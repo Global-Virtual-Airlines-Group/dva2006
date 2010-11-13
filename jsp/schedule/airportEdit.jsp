@@ -20,9 +20,7 @@
 <content:js name="common" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">
-<content:js name="googleMaps" />
-<map:api version="2" />
-<map:vml-ie />
+<map:api version="3" />
 </c:if>
 <script type="text/javascript">
 function validate(form)
@@ -47,7 +45,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body<c:if test="${googleMap}"> onunload="GUnload()"</c:if>>
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -161,14 +159,13 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <map:point var="mapC" point="${airport}" />
 <map:marker var="apMarker" point="${airport}" color="green" />
 
+//Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
 // Build the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 6);
-map.setMapType(G_SATELLITE_MAP);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 addMarkers(map, 'apMarker');
 </script>
 </c:if>
