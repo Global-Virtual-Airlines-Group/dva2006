@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.FleetEntryAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support editing Fleet/Document Library entries.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 		ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
 
 		boolean isNew = "NEW".equalsIgnoreCase(fName);
-		LibraryEntry entry = null;
+		LibraryEntry entry = null; FleetEntryAccessControl access = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -58,6 +58,7 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
 				
 				// If we're new, load all manual titles
+				access = new ManualAccessControl(ctx, null);
 				if (isNew) {
 					Collection<String> manualNames = new HashSet<String>();
 					Map<?, ?> airlines = (Map<?, ?>) SystemData.getObject("apps");
@@ -69,11 +70,15 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 					}
 					
 					ctx.setAttribute("manualNames", manualNames, REQUEST);
-				}
+				} else
+					access.setEntry(entry);
 			} else if (!isNew && ("newsletter".equals(docType)))
 				entry = dao.getNewsletter(fName, SystemData.get("airline.db"));
 			else if (!isNew)
 				entry = dao.getInstaller(fName, SystemData.get("airline.db"));
+			
+			if (access == null)
+				access = new FleetEntryAccessControl(ctx, entry);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -81,7 +86,6 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 		}
 
 		// Check our access level
-		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
 		access.validate();
 		if (isNew && !access.getCanCreate())
 			throw securityException("Cannot create Library Entry");

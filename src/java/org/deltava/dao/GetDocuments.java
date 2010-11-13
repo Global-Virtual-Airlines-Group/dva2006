@@ -232,7 +232,7 @@ public class GetDocuments extends GetLibrary {
 	private Collection<String> getCertifications(String fileName) throws SQLException {
 
 		// Prepare the statement
-		prepareStatementWithoutLimits("SELECT CERTNAME FROM exams.CERTDOCS WHERE (FILENAME=?) ORDER BY CERTNAME");
+		prepareStatementWithoutLimits("SELECT CERT FROM exams.CERTDOCS WHERE (FILENAME=?) ORDER BY CERT");
 		_ps.setString(1, fileName);
 
 		// Execute the Query

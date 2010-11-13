@@ -347,7 +347,7 @@
 	<command id="doclib">
 		<name>Manual Edit</name>
 		<class>org.deltava.commands.fleet.ManualCommand</class>
-		<roles>Fleet</roles>	
+		<roles>Fleet,Instructor,HR,AcademyAdmin</roles>	
 	</command>
 
 	<command id="manualdelete">
