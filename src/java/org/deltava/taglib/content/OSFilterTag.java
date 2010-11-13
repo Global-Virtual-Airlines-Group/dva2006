@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.tagext.TagSupport;
@@ -8,7 +8,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to filter content based on the client operating system.
  * @author Luke
- * @version 2.2
+ * @version 3.4
  * @since 2.2
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -17,6 +17,7 @@ public class OSFilterTag extends TagSupport {
 
 	private boolean _doWindows;
 	private boolean _doMacOS;
+	private boolean _doiOS;
 	private boolean _doLinux;
 	
 	/**
@@ -36,6 +37,14 @@ public class OSFilterTag extends TagSupport {
 	}
 	
 	/**
+	 * Sets whether the tag body should be displayed to a browser running iOS.
+	 * @param show TRUE if the body should be displayed, otherwise FALSE
+	 */
+	public void setIOS(boolean show) {
+		_doiOS = show;
+	}
+	
+	/**
 	 * Sets whether the tag body should be displayed to a browser running Linux.
 	 * @param show TRUE if the body should be displayed, otherwise FALSE
 	 */
@@ -49,6 +58,7 @@ public class OSFilterTag extends TagSupport {
 	public void release() {
 		super.release();
 		_doWindows = false;
+		_doiOS = false;
 		_doMacOS = false;
 		_doLinux = false;
 	}
@@ -61,6 +71,8 @@ public class OSFilterTag extends TagSupport {
 		if (_doWindows && ContentHelper.isWindows(pageContext))
 			return EVAL_BODY_INCLUDE;
 		else if (_doMacOS && ContentHelper.isMac(pageContext))
+			return EVAL_BODY_INCLUDE;
+		else if (_doiOS && ContentHelper.isIPad(pageContext))
 			return EVAL_BODY_INCLUDE;
 		else if (_doLinux && ContentHelper.isLinux(pageContext))
 			return EVAL_BODY_INCLUDE;

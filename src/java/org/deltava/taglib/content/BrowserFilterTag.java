@@ -9,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
 /**
  * A JSP tag to filter content based on the browser type.
  * @author Luke
- * @version 2.8
+ * @version 3.4
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
@@ -19,6 +19,7 @@ public class BrowserFilterTag extends TagSupport {
 	private boolean _showIE6;
 	private boolean _showIE7;
 	private boolean _showIE8;
+	private boolean _showIE9;
 	private boolean _showMoz;
 	private boolean _showWebKit;
 	private boolean _showOpera;
@@ -34,13 +35,12 @@ public class BrowserFilterTag extends TagSupport {
 		_showIE6 = showIE;
 		_showIE7 = showIE;
 		_showIE8 = showIE;
+		_showIE9 = showIE;
 	}
 	
 	/**
 	 * Marks this content as visible to Internet Explorer 5 and 6 users.
 	 * @param showIE TRUE if the content should be shown to IE5/IE6 users, otherwise FALSE
-	 * @see BrowserFilterTag#setIe7(boolean)
-	 * @see BrowserFilterTag#setIe8(boolean)
 	 */
 	public void setIe6(boolean showIE) {
 		_showIE6 = showIE;
@@ -49,8 +49,6 @@ public class BrowserFilterTag extends TagSupport {
 	/**
 	 * Marks this content as visible to Internet Explorer 7 users.
 	 * @param showIE TRUE if the content should be shown to IE7 users, otherwise FALSE
-	 * @see BrowserFilterTag#setIe6(boolean)
-	 * @see BrowserFilterTag#setIe8(boolean)
 	 */
 	public void setIe7(boolean showIE) {
 		_showIE7 = showIE;
@@ -59,11 +57,17 @@ public class BrowserFilterTag extends TagSupport {
 	/**
 	 * Marks this content as visible to Internet Explorer 8 users.
 	 * @param showIE TRUE if the content should be shown to IE8 users, otherwise FALSE
-	 * @see BrowserFilterTag#setIe6(boolean)
-	 * @see BrowserFilterTag#setIe7(boolean)
 	 */
 	public void setIe8(boolean showIE) {
 		_showIE8 = showIE;
+	}
+	
+	/**
+	 * Marks this content as visible to Internet Explorer 9 users.
+	 * @param showIE TRUE if the content should be shown to IE9 users, otherwise FALSE
+	 */
+	public void setIe9(boolean showIE) {
+		_showIE9 = showIE;
 	}
 	
 	/**
@@ -110,6 +114,8 @@ public class BrowserFilterTag extends TagSupport {
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isIE8(pageContext) && _showIE8)
 			return EVAL_BODY_INCLUDE;
+		else if (ContentHelper.isIE9(pageContext) && _showIE9)
+			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isFirefox36(pageContext) && _showFF36)
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
@@ -140,6 +146,7 @@ public class BrowserFilterTag extends TagSupport {
 		_showIE6 = false;
 		_showIE7 = false;
 		_showIE8 = false;
+		_showIE9 = false;
 		_showMoz = false;
 		_showFF36 = false;
 		_showWebKit = false;
