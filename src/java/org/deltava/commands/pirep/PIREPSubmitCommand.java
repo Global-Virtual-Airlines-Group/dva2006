@@ -15,12 +15,13 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -53,6 +54,18 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			GetPilot.invalidateID(pirep.getDatabaseID(DatabaseID.PILOT));
 			Pilot p = pdao.get(pirep.getDatabaseID(DatabaseID.PILOT));
+			
+			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
+			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep.getAirportD(), pirep.getAirportA(), SystemData.get("airline.db"));
+			if (!dFlights.isEmpty()) {
+				FlightReport fr = dFlights.get(0);
+				pirep.setID(fr.getID());
+				pirep.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
+				pirep.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
+				pirep.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
+				if (!StringUtils.isEmpty(fr.getComments()))
+					pirep.setComments(fr.getComments());
+			}
 
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", p, REQUEST);
