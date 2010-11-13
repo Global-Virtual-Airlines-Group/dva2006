@@ -54,6 +54,7 @@ public class MapCommand extends AbstractCommand {
 		// Check if we're retrieving this from the ACARS client
 		boolean isACARSClient = Boolean.valueOf(ctx.getParameter("acarsClient")).booleanValue();
 		ctx.setAttribute("isDispatch", Boolean.valueOf(ctx.getParameter("dispatchClient")), REQUEST);
+		ctx.setAttribute("mapAPIVersion", Integer.valueOf(StringUtils.parse(ctx.getParameter("api"), 2)), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

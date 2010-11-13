@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 
 import org.deltava.beans.GeoLocation;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to support Google Maps JSP tags.
  * @author Luke
- * @version 2.4
+ * @version 3.4
  * @since 1.0
  */
 
@@ -23,6 +24,8 @@ public abstract class GoogleMapEntryTag extends JSTag {
 	 * Internal name used to check for Google Maps API inclusion.
 	 */
 	static final String API_JS_NAME = "$googleAPI$";
+	
+	private int _apiVersion;
 
 	/**
 	 * Executed before the Tag is rendered. This will check for the presence of required JavaScript files in the
@@ -36,12 +39,25 @@ public abstract class GoogleMapEntryTag extends JSTag {
 		// Check for Google Maps API
 		if (!ContentHelper.containsContent(pageContext, "JS", API_JS_NAME))
 			throw new IllegalStateException("Google Maps API not included in request");
+		
+		// Get the API version
+		Integer rawVersion = (Integer) pageContext.getAttribute(InsertGoogleAPITag.API_VER_ATTR_NAME, PageContext.REQUEST_SCOPE);
+		_apiVersion = (rawVersion == null) ? 0 : rawVersion.intValue();
 
 		// Check for Google Maps support JavaScript
-		if (!ContentHelper.containsContent(pageContext, "JS", "googleMaps"))
+		String jsFileName = (_apiVersion == 3) ? "googleMapsV3" : "googleMapsV2"; 
+		if (!ContentHelper.containsContent(pageContext, "JS", jsFileName))
 			throw new IllegalStateException("googleMaps.js not included in request");
-
+		
 		return SKIP_BODY;
+	}
+	
+	/**
+	 * Returns the Google Maps API version used on this page.
+	 * @return the API major version
+	 */
+	protected int getAPIVersion() {
+		return _apiVersion;
 	}
 
 	/**
@@ -54,11 +70,18 @@ public abstract class GoogleMapEntryTag extends JSTag {
 	protected String generateMarker(GeoLocation loc, String color, String label) {
 
 		// Build the JS call
-		StringBuilder buf = new StringBuilder("googleMarker(\'");
-		buf.append(SystemData.get("path.img"));
-		buf.append("\',\'");
-		buf.append(color);
-		buf.append("\',new GLatLng(");
+		StringBuilder buf = new StringBuilder("googleMarker(");
+		if (_apiVersion < 3) {
+			buf.append("\'");
+			buf.append(SystemData.get("path.img"));
+			buf.append("\',\'");
+			buf.append(color);
+			buf.append("\',new GLatLng(");
+		} else {
+			buf.append('\'');
+			buf.append(color);
+			buf.append("\',new google.maps.LatLng(");
+		}
 
 		// Format latitude/longitude
 		buf.append(StringUtils.format(loc.getLatitude(), "##0.00000"));
@@ -93,7 +116,8 @@ public abstract class GoogleMapEntryTag extends JSTag {
 		buf.append(paletteCode);
 		buf.append(',');
 		buf.append(iconCode);
-		buf.append(",new GLatLng(");
+		buf.append(",new ");
+		buf.append((_apiVersion == 3) ? "google.maps.LatLng(" : "GLatLng(");
 
 		// Format latitude/longitude
 		buf.append(StringUtils.format(loc.getLatitude(), "##0.00000"));

@@ -15,16 +15,13 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
-<map:api version="2" />
-<map:vml-ie />
+<map:api version="3" />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
@@ -101,16 +98,17 @@
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="pnts" items="${waypoints}" />
 <map:markers var="mrks" items="${waypoints}" />
-<map:line var="route" src="pnts" color="#4080AF" width="2" transparency="0.7" geodesic="true" />
+<map:line var="route" src="pnts" color="#4080af" width="2" transparency="0.7" geodesic="true" />
 
-// Build the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${distance}));
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+//Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center: mapC, zoom:getDefaultZoom(${distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
+//Build the map
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Add the route and markers
 addMarkers(map, 'route');

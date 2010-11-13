@@ -16,11 +16,7 @@
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
 <c:if test="${googleMap}">
-<content:os windows="true"><c:set var="showGEarth" value="false" scope="request" /></content:os>
-<content:js name="googleMaps" />
-<map:api version="2" />
-<map:vml-ie />
-</c:if>
+<map:api version="3" /></c:if>
 <c:if test="${scoreCR || access.canDispose}">
 <script type="text/javascript">
 function validate(form)
@@ -40,20 +36,19 @@ return true;
 }
 </script></c:if>
 <c:if test="${isACARS}">
-<content:sysdata var="imgPath" name="path.img" />
 <content:js name="acarsFlightMap" />
 <script type="text/javascript">
 function zoomTo(lat, lng)
 {
 map.setZoom(11);
-map.panTo(new GLatLng(lat, lng));
+map.panTo(new google.maps.LatLng(lat, lng));
 return true;
 }
 </script>
 </c:if>
 </head>
 <content:copyright visible="false" />
-<body onload="initLinks()" onunload="GUnload()">
+<body onload="initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -333,37 +328,38 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 
-//Build the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-GEvent.addListener(map, 'maptypechanged', updateMapText);
+// Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
+// Build the map
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Build the route line and map center
 <c:if test="${!empty mapRoute}">
 <map:points var="routePoints" items="${mapRoute}" />
-<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.75" geodesic="true" />
+<map:line var="gRoute" src="routePoints" color="#4080af" width="3" transparency="0.75" geodesic="true" />
 </c:if>
 <c:if test="${empty mapRoute && isACARS}">
 var gRoute;
 var routePoints = [];
 var routeMarkers = [];
-getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
-GEvent.addListener(map, 'infowindowclose', function() { removeMarkers(map, 'selectedFIRs'); });
+getACARSData(${fn:ACARS_ID(pirep)});
+google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeMarkers('selectedFIRs'); });
 </c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.5" geodesic="true" />
+<map:line var="gfRoute" src="filedPoints" color="#80800f" width="2" transparency="0.5" geodesic="true" />
 </c:if>
 <c:if test="${!empty onlineTrack}">
 <map:points var="onlinePoints" items="${onlineTrack}" />
 <map:markers var="otMarkers" items="${onlineTrack}" />
-<map:line var="otRoute" src="onlinePoints" color="#F06F4F" width="3" transparency="0.55" geodesic="true" />
+<map:line var="otRoute" src="onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" />
 </c:if>
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
@@ -380,13 +376,9 @@ addMarkers(map, 'filedMarkers');
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
 </c:if>
-<c:if test="${showGEarth}">
-// Google Earth plugin support
-GEvent.addListener(map, 'maptypechanged', earthToggle);
-map.addMapType(G_SATELLITE_3D_MAP);
-map.getEarthInstance(getEarthInstanceCB);
-generateKMLRequest(${fn:ACARS_ID(pirep)}, true);
-</c:if>
+
+// Update text color
+google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
 </c:if>
 </body>

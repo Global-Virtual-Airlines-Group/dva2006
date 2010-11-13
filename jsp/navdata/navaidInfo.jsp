@@ -11,10 +11,8 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
 <content:js name="markermanager" />
 <script type="text/javascript">
 function validate(form)
@@ -35,9 +33,9 @@ if ((idx < 0) || (idx >= navaids.length))
 
 // Pan the map
 var mrk = navaids[idx];
-map.panTo(mrk.getLatLng());
+map.panTo(mrk.getPosition());
 loadWaypoints();
-GEvent.trigger(mrk, "click");
+google.maps.event.trigger(mrk, 'click');
 return true;
 }
 
@@ -59,30 +57,27 @@ var isLoading = getElement('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 
 //Build the XML Requester
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "navaidsearch.ws?airports=true&lat=" + lat + "&lng=" + lng + "&range=" + Math.round(range), true);
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'navaidsearch.ws?airports=true&lat=' + lat + '&lng=' + lng + '&range=' + Math.round(range), true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
-	if (!xml) return false;
 	var xe = xml.documentElement;
-
-	// Get the waypoints
-	var wps = xe.getElementsByTagName("waypoint");
+	var wps = xe.getElementsByTagName('waypoint');
 	for (var i = 0; i < wps.length; i++) {
 		var wp = wps[i];
-		var code = wp.getAttribute("code");
+		var code = wp.getAttribute('code');
 		if (code != '${param.navaidCode}') {
-			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-			if (wp.getAttribute("pal"))
-				mrk = googleIconMarker(wp.getAttribute("pal"), wp.getAttribute("icon"), p, wp.firstChild.data);
+			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+			if (wp.getAttribute('pal'))
+				mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, wp.firstChild.data);
 			else
-				mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, wp.firstChild.data);
+				mrk = googleMarker(wp.getAttribute('color'), p, wp.firstChild.data);
 
 			mrk.minZoom = 4;
-			var type = wp.getAttribute("type");
+			var type = wp.getAttribute('type');
 			if (type == 'NDB')
 				mrk.minZoom = 5;
 			else if (type == 'Airport')
@@ -105,7 +100,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -165,12 +160,14 @@ return true;
 // Build the navaid list
 <map:markers var="navaids" items="${results}" />
 
+//Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center: navaids[0].getPosition(), zoom: getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+
 // Build the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
-map.setCenter(navaids[0].getLatLng(), getDefaultZoom(110));
-<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 addMarkers(map, 'navaids');
 
 // Surrounding navads

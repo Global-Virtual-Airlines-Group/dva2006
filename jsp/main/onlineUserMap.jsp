@@ -14,14 +14,11 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:sysdata var="imgPath" name="path.img" />
-<content:js name="googleMaps" />
+<map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
-<map:api version="2" />
-<map:vml-ie />
 </head>
 <content:copyright visible="false" />
-<body onunload="GUnload()">
+<body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -45,19 +42,18 @@
 </content:region>
 </content:page>
 <script type="text/javascript">
-// Create the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-map.addControl(new GLargeMapControl3D());
-map.addControl(new GMapTypeControl());
+// Create map options
+var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
-// Mark each pilot's position in hashmap
-<map:markers var="positions" items="${pilots}" />
+// Create the map
+var map = new google.maps.Map(getElement("googleMap"), mapOpts);
+map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+map.infoWindow = new google.maps.InfoWindow({content: ''});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Center the map and add positions
-map.setCenter(new GLatLng(38.88, -93.25), 4);
-map.enableDoubleClickZoom();
-map.enableContinuousZoom();
-map.setMapType(G_PHYSICAL_MAP);
+<map:markers var="positions" items="${pilots}" />
 addMarkers(map, 'positions');
 </script>
 </body>
