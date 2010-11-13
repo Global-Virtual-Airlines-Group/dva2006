@@ -114,7 +114,7 @@ return true;
  <td class="data">Downloaded <b><fmt:int value="${entry.downloadCount}" /></b> times</td>
 </tr>
 </c:if>
-<content:filter roles="Instructor,HR">
+<content:filter roles="AcademyAdmin,Instructor,HR">
 <c:if test="${!empty certs}">
 <tr>
  <td class="label top">Flight Academy Certifications</td>

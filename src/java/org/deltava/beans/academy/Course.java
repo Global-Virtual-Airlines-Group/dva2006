@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store Flight Academy Course information.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	public static final String[] STATUS_NAMES = {"In Progress", "Abandoned", "Complete", "Pending"};
 	
 	private String _certName;
+	private String _code;
 	private int _pilotID;
 	private int _instructorID;
 	private int _status;
@@ -32,8 +33,8 @@ public class Course extends DatabaseBean implements ViewEntry {
 	private Date _endDate;
 	private Date _lastComment;
 	
-	private Map<Integer, CourseProgress> _progress;
-	private SortedSet<CourseComment> _comments;
+	private final Map<Integer, CourseProgress> _progress = new TreeMap<Integer, CourseProgress>();
+	private final SortedSet<CourseComment> _comments = new TreeSet<CourseComment>();
 
 	/**
 	 * Creates a new Course bean.
@@ -46,8 +47,6 @@ public class Course extends DatabaseBean implements ViewEntry {
 		super();
 		setName(name);
 		setPilotID(pilotID);
-		_progress = new TreeMap<Integer, CourseProgress>();
-		_comments = new TreeSet<CourseComment>();
 	}
 	
 	/**
@@ -57,6 +56,15 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 */
 	public String getName() {
 		return _certName;
+	}
+	
+	/**
+	 * Returns the certification code.
+	 * @return the code
+	 * @see Course#setCode(String)
+	 */
+	public String getCode() {
+		return _code;
 	}
 	
 	/**
@@ -181,6 +189,16 @@ public class Course extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
+	 * Updates the Certification code.
+	 * @param code the code
+	 * @throws NullPointerException if code is null
+	 * @see Course#getCode()
+	 */
+	public void setCode(String code) {
+		_code = code.toUpperCase();
+	}
+	
+	/**
 	 * Updates the database ID of the enrolled Pilot.
 	 * @param id the database ID
 	 * @throws IllegalArgumentException if id is zero or negative or changes
@@ -233,14 +251,10 @@ public class Course extends DatabaseBean implements ViewEntry {
 	/**
 	 * Updates this Course's stage.
 	 * @param stage the stage number
-	 * @throws IllegalArgumentException if stage is zero or negative
 	 * @see Course#getStage()
 	 */
 	public void setStage(int stage) {
-		if (stage < 1)
-			throw new IllegalArgumentException("Invalid stage - " + stage);
-		
-		_stage = stage;
+		_stage = Math.max(1, stage);
 	}
 	
 	/**

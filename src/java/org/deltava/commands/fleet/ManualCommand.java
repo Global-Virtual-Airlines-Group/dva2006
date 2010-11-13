@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.WriteBuffer;
 import org.deltava.mail.*;
 
-import org.deltava.security.command.FleetEntryAccessControl;
+import org.deltava.security.command.ManualAccessControl;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 2.4
+ * @version 3.4
  * @since 1.0
  */
 
@@ -71,7 +71,8 @@ public class ManualCommand extends LibraryEditCommand {
 			entry = dao.getManual(fName, SystemData.get("airline.db"));
 
 			// Check our access level
-			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
+			ManualAccessControl access = new ManualAccessControl(ctx, null);
+			access.setEntry(entry);
 			access.validate();
 			boolean ourAccess = (isNew) ? access.getCanCreate() : access.getCanEdit();
 			if (!ourAccess)
@@ -107,7 +108,7 @@ public class ManualCommand extends LibraryEditCommand {
 			// Get the pilots to notify
 			GetPilotNotify pdao = new GetPilotNotify(con);
 			pilots = pdao.getNotifications(Person.FLEET);
-
+			
 			// Start the transaction
 			ctx.startTX();
 

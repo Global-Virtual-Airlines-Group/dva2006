@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -32,7 +32,7 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Course get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.*, CR.STAGE FROM exams.COURSES C, exams.CERTS CR WHERE "
+			prepareStatementWithoutLimits("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE "
 					+ "(C.CERTNAME=CR.NAME) AND (C.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
@@ -59,7 +59,7 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Collection<Course> getByName(String name) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE FROM exams.COURSES C, exams.CERTS CR WHERE (C.CERTNAME=CR.NAME) "
+			prepareStatement("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE (C.CERTNAME=CR.NAME) "
 					+ "AND (C.NAME=?)");
 			_ps.setString(1, name);
 			return execute();
@@ -79,7 +79,7 @@ public class GetAcademyCourses extends DAO {
 			return Collections.emptyList();
 		
 		// Build SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE FROM exams.COURSES C, exams.CERTS CR, "
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR FROM exams.COURSES C, exams.CERTS CR, "
 				+ "exams.COURSERIDES CRR WHERE (C.CERTNAME=CR.NAME) AND (CRR.COURSE=C.ID) AND (CRR.CHECKRIDE IN (");
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
 			Integer id = i.next();
@@ -105,7 +105,7 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Collection<Course> getByPilot(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE, MAX(CC.CREATED) FROM exams.CERTS CR, exams.COURSES C "
+			prepareStatement("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) FROM exams.CERTS CR, exams.COURSES C "
 					+ "LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
 					+ "AND (C.PILOT_ID=?) GROUP BY C.ID ORDER BY C.STARTDATE");
 			_ps.setInt(1, pilotID);
@@ -124,9 +124,9 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Collection<Course> getByInstructor(int instructorID, String sortBy) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, exams.COURSES C "
-					+ "LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) AND "
-					+ "(C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY " + sortBy);
+			prepareStatement("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
+				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
+				+ "AND (C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY " + sortBy);
 			_ps.setInt(1, instructorID);
 			_ps.setInt(2, Course.PENDING);
 			_ps.setInt(3, Course.STARTED);
@@ -146,9 +146,9 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getCompleted(int pilotID, String sortBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
-				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.STATUS=?) "
-				+ "AND (C.CERTNAME=CR.NAME)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
+			+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.STATUS=?) AND "
+			+ "(C.CERTNAME=CR.NAME)");
 		if (pilotID != 0)
 			sqlBuf.append(" AND (C.PILOT_ID=?)");
 		
@@ -177,7 +177,7 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getByStatus(String sortBy, int status) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
 				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
 				+ "AND (C.STATUS=?) GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
@@ -253,7 +253,7 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getAll(String sortBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
 				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
 				+ "GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
@@ -273,7 +273,7 @@ public class GetAcademyCourses extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 8);
+		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 9);
 		
 		// Iterate through the results
 		List<Course> results = new ArrayList<Course>();
@@ -285,8 +285,9 @@ public class GetAcademyCourses extends DAO {
 			c.setStartDate(rs.getTimestamp(6));
 			c.setEndDate(rs.getTimestamp(7));
 			c.setStage(rs.getInt(8));
+			c.setCode(rs.getString(9));
 			if (hasLastChat)
-				c.setLastComment(rs.getTimestamp(9));
+				c.setLastComment(rs.getTimestamp(10));
 			
 			// Add to results
 			results.add(c);

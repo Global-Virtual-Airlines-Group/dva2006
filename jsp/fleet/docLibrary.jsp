@@ -18,9 +18,8 @@
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/header.jspf" %>
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:attr attr="isFleetMgr" value="true" roles="Fleet" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -49,11 +48,12 @@
  <td colspan="7" class="left">${airline.name}</td>
 </tr>
 <c:forEach var="doc" items="${docs[airline]}">
+<c:set var="ac" value="${accessMap[doc]}" scope="page" />
 <view:row entry="${doc}">
-<c:if test="${isFleetMgr}">
+<c:if test="${ac.canEdit}">
  <td class="pri bld"><el:cmd url="doclib" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
 </c:if>
-<c:if test="${!isFleetMgr}">
+<c:if test="${!ac.canEdit}">
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>

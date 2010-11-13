@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -77,18 +77,16 @@ public class SetLibrary extends DAO {
 			}
 			
 			// Write the certification names
-			prepareStatement("INSERT INTO exams.CERTDOCS (CERTNAME, FILENAME) VALUES (?, ?)");
-			_ps.setString(2, m.getFileName());
+			prepareStatement("INSERT INTO exams.CERTDOCS (FILENAME, CERT) VALUES (?, ?)");
+			_ps.setString(1, m.getFileName());
 			for (Iterator<String> i = m.getCertifications().iterator(); i.hasNext(); ) {
-				_ps.setString(1, i.next());
+				_ps.setString(2, i.next());
 				_ps.addBatch();
 			}
 			
 			// Execute the batch statement
 			_ps.executeBatch();
 			_ps.close();
-			
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
