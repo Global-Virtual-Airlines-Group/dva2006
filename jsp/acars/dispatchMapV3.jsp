@@ -47,7 +47,7 @@ function externalMarker(color, point, id)
 {
 var mrk = googleMarker(color, point, null);
 mrk.uniqueID = id;
-google.maps.event.bind(mrk, 'click', mrk, clickIcon);
+google.maps.event.addListener(mrk, 'click', clickIcon);
 return mrk;
 }
 
@@ -55,7 +55,7 @@ function externalIconMarker(palCode, iconCode, point, id)
 {
 var mrk = googleIconMarker(palCode, iconCode, point, null);
 mrk.uniqueID = id;
-google.maps.event.bind(mrk, 'click', mrk, clickIcon);
+google.maps.event.addListener(mrk, 'click', clickIcon);
 return mrk;
 }
 </script>
