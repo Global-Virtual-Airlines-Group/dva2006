@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 /**
  * A Helper class to check whether content has been aded into this request.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -53,6 +53,14 @@ public class ContentHelper {
 	public static boolean containsContent(PageContext ctx, String contentType, String contentName) {
 		Set<?> content = (Set<?>) ctx.findAttribute(CONTENT_MAP_ATTR);
 		return (content == null) ? false : content.contains(contentType + "$" + contentName);
+	}
+	
+	/**
+     * Detects if the browser is Microsoft Internet Explorer 9 or below.
+     * @return TRUE if the browser is Internet Explorer 9, otherwise FALSE
+     */
+	public static boolean isIE9(PageContext ctx) {
+		return (ctx.getRequest().getAttribute("browser$ie9") != null);
 	}
 	
 	/**
@@ -117,6 +125,14 @@ public class ContentHelper {
      */
     public static boolean isWindows(PageContext ctx) {
     	return (ctx.getRequest().getAttribute("os$windows") != null);
+    }
+    
+    /**
+     * Detects if the browser is running on iOS on an iPad.
+     * @return TRUE if running on iOS, otherwise FALSE
+     */
+    public static boolean isIPad(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("os$iOS") != null);
     }
     
     /**
