@@ -178,7 +178,7 @@ function updateTab(mrk, ofs, size)
 {
 if ((ofs < 0) || (ofs > mrk.tabs.length)) ofs = 0;
 var tab = mrk.tabs[ofs];
-var txt = '<div id="infoTab"';
+var txt = '<div class="infoTab"';
 if (!size) size = mrk.tabSize;
 if (size) {
 	txt += ' style="width:';
@@ -189,9 +189,9 @@ if (size) {
 	mrk.tabSize = size;
 }
 
-txt += '><span id="selectedTabContent">';
+txt += '><span class="selectedTabContent">';
 txt += tab.content;
-txt += '<br /><br />';
+txt += '</span><br /><br />';
 txt += renderTabChoices(mrk.tabs, ofs);
 txt += '</div>';
 map.infoWindow.setContent(txt);
@@ -200,7 +200,7 @@ return true;
 
 function renderTabChoices(tabs, selectedOfs)
 {
-var txt = '<span id="tabMenu">';
+var txt = '<span class="tabMenu">';
 for (var x = 0; x < tabs.length; x++) {
 	var tab = tabs[x];
 	if (x != selectedOfs) {
