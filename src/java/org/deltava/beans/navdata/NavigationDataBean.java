@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -226,9 +226,9 @@ public abstract class NavigationDataBean implements Cloneable, Comparable<Naviga
 	 * @see MapEntry#getInfoBox()
 	 */
 	protected String getHTMLTitle() {
-		StringBuilder buf = new StringBuilder("<b>");
+		StringBuilder buf = new StringBuilder("<span class=\"bld\">");
 		buf.append(getCode());
-		buf.append("</b>");
+		buf.append("</span>");
 		if ((_type != INT) && (!StringUtils.isEmpty(_name))) {
 			buf.append(' ');
 			buf.append(_name);
