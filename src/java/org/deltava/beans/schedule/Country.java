@@ -8,7 +8,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * A bean to store country names and ISO-3316 codes.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 3.2
  */
 
@@ -97,7 +97,10 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	}
 	
 	public boolean equals(Object o) {
-		return ((o instanceof Country) && ((Country) o).getCode().equals(_code));
+		if (o instanceof Country)
+			return ((Country) o).getCode().equals(_code);
+
+		return _code.equals(String.valueOf(o).toUpperCase());
 	}
 	
 	public int compareTo(Country c2) {
