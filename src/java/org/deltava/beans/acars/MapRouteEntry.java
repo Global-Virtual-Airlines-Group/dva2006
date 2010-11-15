@@ -83,9 +83,9 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(_usr.getEquipmentType());
 		buf.append("<br />");
 		if (!StringUtils.isEmpty(_flightNumber)) {
-			buf.append("<br />Flight <b>");
+			buf.append("<br />Flight <span class=\"bld\">");
 			buf.append(_flightNumber);
-			buf.append("</b> - <span class=\"sec bld\">");
+			buf.append("</span> - <span class=\"sec bld\">");
 		}
 
 		buf.append(_eqType);
@@ -139,9 +139,9 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(_usr.getEquipmentType());
 		buf.append("<br />");
 		if (!StringUtils.isEmpty(_flightNumber)) {
-			buf.append("<br />Flight <b>");
+			buf.append("<br />Flight <span class=\"bld\">");
 			buf.append(_flightNumber);
-			buf.append("</b> - <span class=\"sec bld\">");
+			buf.append("</span> - <span class=\"sec bld\">");
 		}
 
 		buf.append(_eqType);
@@ -160,13 +160,13 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(_airportA.getName());
 		buf.append(" (");
 		buf.append(_airportA.getICAO());
-		buf.append(")<br /><br />ACARS Flight <b>");
+		buf.append(")<br /><br />ACARS Flight <span class=\"bld\">");
 		buf.append(StringUtils.format(getID(), "#,##0"));
-		buf.append("</b>");
+		buf.append("</span>");
 		if (isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
-			buf.append("<br />Flight Phase: <b>");
+			buf.append("<br />Flight Phase: <span class=\"bld\">");
 			buf.append(_phaseName);
-			buf.append("</b>");
+			buf.append("</span>");
 		}
 		
 		if (_checkRide || _dispatchRoute || _busy) {

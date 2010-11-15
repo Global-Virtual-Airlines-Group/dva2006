@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store ServInfo data for historical purposes.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 2.4
  */
 
@@ -139,9 +139,9 @@ public class PositionData implements GeospaceLocation, MarkerMapEntry, Comparabl
 	}
 
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><b>");
+		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(StringUtils.format(_dt, "MM/dd/yyyy HH:mm:ss"));
-		buf.append("</b><br /><br />Position: ");
+		buf.append("</span><br /><br />Position: ");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("<br />Altitude: ");
 		buf.append(StringUtils.format(_pos.getAltitude(), "#,000"));

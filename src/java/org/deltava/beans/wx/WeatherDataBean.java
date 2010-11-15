@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 2.2
  */
 
@@ -157,9 +157,9 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 		}
 		
 		// Append the weather data
-		buf.append("<span class=\"mapInfoBox\"><b>");
+		buf.append("<span class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(getType());
-		buf.append(" Data</b>:<br />");
+		buf.append(" Data</span>:<br />");
 		buf.append(getData());
 		buf.append("</span>");
 		return buf.toString();

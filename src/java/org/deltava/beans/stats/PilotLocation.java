@@ -9,7 +9,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store pilot locations for displaying on a Google Map.
  * @author Luke
- * @version 2.8
+ * @version 3.4
  * @since 1.0
  */
 
@@ -97,9 +97,9 @@ public class PilotLocation implements MarkerMapEntry {
 	 * @return the info box text
 	 */
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><b>");
+		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(_usr.getName());
-		buf.append("</b> (");
+		buf.append("</span> (");
 		buf.append(_usr.getPilotCode());
 		buf.append(")<br />");
 		buf.append(_usr.getRank());
@@ -109,9 +109,9 @@ public class PilotLocation implements MarkerMapEntry {
 		
 		// Add motto if not empty
 		if (!StringUtils.isEmpty(_usr.getMotto())) {
-			buf.append('\"');
+			buf.append("<span class=\"ita\">\"");
 			buf.append(_usr.getMotto());
-			buf.append("\"<br />");
+			buf.append("\"</span><br />");
 		}
 
 		// Add Location		

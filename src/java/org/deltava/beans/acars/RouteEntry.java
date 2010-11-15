@@ -683,9 +683,9 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 */
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder(192);
-		buf.append("<span class=\"mapInfoBox\">Position: <b>");
+		buf.append("<span class=\"mapInfoBox\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
-		buf.append("</b><br />Altitude: ");
+		buf.append("</span><br />Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
 		buf.append(" feet");
 		if ((_radarAlt > 0) && (_radarAlt < 2500)) {
@@ -759,11 +759,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 
 		// Add afterburner if deployed
 		if (isFlagSet(FLAG_AFTERBURNER))
-			buf.append("<b><i>AFTERBURNER</i></b><br />");
-
-		// Add pushback flag if pushing back
-		if (isFlagSet(FLAG_PUSHBACK))
-			buf.append("<b><i>PUSHBACK</i></b><br />");
+			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
 
 		// Add Autopilot flags if set
 		if (isFlagSet(FLAG_AP_ANY)) {

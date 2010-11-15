@@ -28,7 +28,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 2.2
  */
 
@@ -49,11 +49,10 @@ public class DispatchRouteListService extends WebService {
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		
 		// Check if it's a US route
-		boolean isUS = (aD.getCountry() == Country.get("US")) || (aA.getCountry() == Country.get("US"));
+		boolean isUS = (aD.getCountry().equals("US")) || (aA.getCountry().equals("US"));
 		
 		// Check if loading from FlightAware
-		boolean doFA = Boolean.valueOf(ctx.getParameter("external")).booleanValue() &&
-			SystemData.getBoolean("schedule.flightaware.enabled");
+		boolean doFA = Boolean.valueOf(ctx.getParameter("external")).booleanValue() && SystemData.getBoolean("schedule.flightaware.enabled");
 		boolean hasFARole = ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch");
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("fullRoute")).booleanValue();
 		boolean getInactive = Boolean.valueOf(ctx.getParameter("getInactive")).booleanValue();
@@ -73,7 +72,7 @@ public class DispatchRouteListService extends WebService {
 			routes.addAll(rdao.getRoutes(aD, aA, !getInactive));
 			
 			// Load flight aware routes
-			if (doFA && routes.isEmpty()) {
+			if (doFA && hasFARole) {
 				GetCachedRoutes rcdao = new GetCachedRoutes(con);
 				routes.addAll(rcdao.getRoutes(aD, aA));
 				
@@ -206,8 +205,7 @@ public class DispatchRouteListService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

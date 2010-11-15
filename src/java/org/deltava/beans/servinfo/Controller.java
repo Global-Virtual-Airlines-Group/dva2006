@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -108,9 +108,9 @@ public class Controller extends NetworkUser {
 	 * @return HTML text
 	 */
     public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><b>");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
 		buf.append(getCallsign());
-		buf.append("</b> (");
+		buf.append("</span> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
 		buf.append(")<span class=\"small\"><br /><br />Network ID: ");
 		buf.append(String.valueOf(getID()));
