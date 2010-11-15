@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -380,9 +380,9 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><b>");
+      StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
       buf.append(_name);
-      buf.append("</b><br /><br />IATA Code: ");
+      buf.append("</span><br /><br />IATA Code: ");
       buf.append(_iata);
       buf.append("<br />ICAO Code: ");
       buf.append(_icao);
