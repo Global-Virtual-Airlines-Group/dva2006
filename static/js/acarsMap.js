@@ -198,6 +198,7 @@ if (isInfo && (this.tabs)) {
 	map.infoWindow.marker = this;
 	map.infoWindow.open(map, this);
 } else if (isInfo) {
+	map.infoWindow.marker = this;
 	map.infoWindow.setContent(this.infoLabel);
 	map.infoWindow.open(map, this);
 }
