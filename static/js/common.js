@@ -69,16 +69,19 @@ return true;
 function resize(textbox)
 {
 if (!textbox) return false;
-if (!textbox.minRows) textbox.minRows = textbox.rows;
+if (!textbox.minRows) {
+	textbox.minRows = textbox.rows;
+	textbox.minCols = Math.max(textbox.cols, 80);
+}
 
 var data = textbox.value.split('\n');
 var lines = data.length;
 for (var x = 0; x < data.length; x++) {
-    if ((textbox.cols > 0) && (data[x].length >= textbox.cols))
-        lines += Math.floor(data[x].length / textbox.cols);
+    if ((textbox.cols > 0) && (data[x].length >= textbox.minCols))
+        lines += Math.floor(data[x].length / textbox.minCols);
 }
 
-textbox.rows = (lines < textbox.minRows) ? textbox.minRows : lines;
+textbox.rows = Math.max(textbox.minRows, lines);
 return true;
 }
 
