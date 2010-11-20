@@ -552,7 +552,8 @@
 		<list name="versions" attr="version" sorted="true">
 			<version>2.2</version>
 			<version>3.0</version>
-			<version>3.3</version>
+			<version>3.4</version>
+			<version>3.5</version>
 		</list>
 		
 		<assignto type="Integer">043</assignto>
