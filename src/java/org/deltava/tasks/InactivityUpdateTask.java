@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 2.8
+ * @version 3.4
  * @since 1.0
  */
 
@@ -133,6 +133,7 @@ public class InactivityUpdateTask extends Task {
 					// Check if we have a flight academy entry
 					Course c = courses.get(id);
 					if (c != null) {
+						c = cdao.get(c.getID());
 						CourseComment cc = new CourseComment(c.getID(), upd.getAuthorID());
 						cc.setCreatedOn(upd.getCreatedOn());
 						cc.setText(upd.getDescription());
