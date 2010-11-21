@@ -285,6 +285,10 @@ a:hover {
 	text-transform: uppercase;
 }
 
+div.mid, span.mid {
+	margin: auto;	
+}
+
 .mid {
 	text-align: center;
 }
