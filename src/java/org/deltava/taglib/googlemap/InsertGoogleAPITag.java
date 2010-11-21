@@ -90,10 +90,10 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null)) {
 			if (_doStable) {
-				_minorVersion = "0";
+				_minorVersion = "1";
 				_doStable = false;
 			} else if (!_doCurrent)
-				_minorVersion = "1";
+				_minorVersion = "2";
 			else
 				_doCurrent = false;
 		}
