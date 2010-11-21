@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <content:sysdata var="innovata_url" name="schedule.innovata.popup.url" />
-<center><div style="width: 600px; border: 1px solid; padding: 12px; border-radius:14px;">
+<div class="mid" style="width: 600px; border: 1px solid; padding: 12px; border-radius:14px;">
 <content:airline /> Flight schedule data courtesy of <a rel="external" href="http://www.innovata-llc.com/">Innovata, LLC</a>, a 
 custom timetable service provider to major airlines and travel vendors. Innovata asked <content:airline /> to 
 provide a link to their	worldwide flight schedule search service should our members wish to use it when 
@@ -14,5 +14,5 @@ search below, may not be approved!</span><br />
 <br />
 <span class="mid"><a rel="external" href="${innovata_url}"><el:img caption="Innnovata LLC Schedule Search" src="innovata_schedule.png" border="0" /></a></span><br />
 <br />
-</div></center>
+</div>
 <br />

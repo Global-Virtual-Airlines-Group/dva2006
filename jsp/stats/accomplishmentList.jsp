@@ -53,7 +53,7 @@
  <td class="bld"><fmt:int value="${a.value}" /></td>
  <td><fmt:int value="${a.pilots}" /></td>
  <td class="small"><fmt:list value="${a.choices}" delim=", " empty="No Restrctions" /></td>
- <td><center><div style="width:90%; background-color:#${a.hexColor};">&nbsp;</div></center></td>
+ <td><div class="mid" style="width:90%; background-color:#${a.hexColor};">&nbsp;</div></td>
 </view:row>
 </c:forEach>
 
