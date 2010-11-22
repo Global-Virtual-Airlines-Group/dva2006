@@ -68,18 +68,21 @@ return true;
 <el:table className="view">
 <!-- Course History Title Bar -->
 <tr class="title caps">
- <td width="45%">COURSE NAME</td>
- <td width="10%">STAGE</td>
- <td width="15%">STATUS</td>
- <td width="15%">STARTED ON</td>
+ <td width="40%">COURSE NAME</td>
+ <td width="15%">INSTRUCTOR</td>
+ <td width="8%">STAGE</td>
+ <td width="14%">STATUS</td>
+ <td width="14%">STARTED ON</td>
  <td>COMPLETED ON</td>
 </tr>
 
 <c:if test="${!empty courses}">
 <!-- Flight Academy Course Data -->
 <c:forEach var="course" items="${courses}">
+<c:set var="ins" value="${pilots[course.instructorID]}" scope="page" />
 <view:row entry="${course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
+ <td class="sec bld">${(empty ins) ? 'Self-Directed' : ins.name}</td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>
  <td class="pri bld">${course.statusName}</td>
  <td><fmt:date fmt="d" date="${course.startDate}" /></td>
@@ -94,16 +97,16 @@ return true;
 </c:if>
 <c:if test="${empty courses}">
 <tr>
- <td colspan="5" class="pri bld">You have not enrolled in any Flight Academy courses.</td>
+ <td colspan="6" class="pri bld">You have not enrolled in any Flight Academy courses.</td>
 </tr>
 </c:if>
 
 <!-- Flight Academy Document Library Section -->
 <tr class="title caps">
- <td class="left" colspan="5">DOCUMENT LIBRARY</td>
+ <td class="left" colspan="6">DOCUMENT LIBRARY</td>
 </tr>
 <tr>
- <td class="left" colspan="3">The <content:airline /> Document Library contains all of
+ <td class="left" colspan="4">The <content:airline /> Document Library contains all of
  the materials needed to successfully complete written examinations, in addition to being a
  valuable resource for learning more about all aspects of our operations. All documents
  require Adobe Acrobat Reader 6.0 or above.</td>
@@ -112,10 +115,10 @@ return true;
 
 <!-- Help Desk -->
 <tr class="title caps">
- <td class="left" colspan="5">HELP DESK</td>
+ <td class="left" colspan="6">HELP DESK</td>
 </tr>
 <tr>
- <td class="left" colspan="3">The <content:airline /> Help Desk lets pilots and Flight Academy
+ <td class="left" colspan="4">The <content:airline /> Help Desk lets pilots and Flight Academy
  students communicate with our Instructors and Staff to quickly and easily resolve any issues, or
  answer questions about the Flight Academy.</td>
  <td colspan="2"><el:cmdbutton url="myhdissues" label="HELP DESK" /></td>
@@ -123,37 +126,41 @@ return true;
 
 <!-- New Course Section -->
 <tr class="title caps">
- <td class="left" colspan="5">TRAINING COURSES</td>
+ <td class="left" colspan="6">TRAINING COURSES</td>
 </tr>
 <c:if test="${!empty course}">
 <tr>
- <td class="left" colspan="5">You are currently enrolled in a Flight Academy training course, 
+ <td class="left" colspan="6">You are currently enrolled in a Flight Academy training course, 
 <span class="pri bld">${course.name}</span>. Until you have completed or withdrawn from this course, 
-you may not enroll in any other Flight Academy courses.</td>
+you may not enroll in any other <content:airline /> Flight Academy courses.</td>
 </tr>
 </c:if>
 <c:if test="${empty course}">
 <tr>
- <td class="left" colspan="5">Please select a Flight Academy course from the list below. Make sure
+ <td class="left" colspan="6">Please select a Flight Academy course from the list below. Make sure
  that you are prepared to enroll before clicking on &quot;Enroll.&quot;</td>
 </tr>
 <tr class="title">
- <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />
+ <td colspan="6">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />
  <el:button ID="EnrollButton" type="submit" label="ENROLL IN COURSE" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty exams}">
 <!-- Examination Section -->
 <tr class="title caps">
- <td class="left" colspan="5">EXAMINATIONS</td>
+ <td class="left" colspan="6">EXAMINATIONS</td>
 </tr>
-<c:if test="${examActive > 0}">
- <td class="left" colspan="4">You currently are in the process of taking a Pilot Examination.
+<c:choose>
+<c:when test="${examActive > 0}">
+<tr>
+ <td class="left" colspan="5">You currently are in the process of taking a Pilot Examination.
  Until this examination has been submitted and scored, you cannot take any new examinations.</td>
  <td><el:cmdbutton url="exam" linkID="${fn:hex(examActive)}" label="ACTIVE EXAM" /></td>
-</c:if>
-<c:if test="${empty examActive}">
- <td class="left" colspan="5">Please select a written examination from the list below. Make sure that
+</tr>
+</c:when>
+<c:otherwise>
+<tr>
+ <td class="left" colspan="6">Please select a written examination from the list below. Make sure that
  you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
 Our exams are timed. You will see time remaining at the top of the examianation page. After starting
@@ -166,11 +173,12 @@ The <content:airline /> Flight Academy instructors score examianations within 72
  an examination!</span></td>
 </tr>
 <tr class="title">
- <td colspan="5">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="[ SELECT EXAM ]" />
+ <td colspan="6">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="[ SELECT EXAM ]" />
  <el:cmdbutton ID="ExamButton" url="newacademyexam" post="true" label="NEW EXAMINATION" /></td>
-</c:if>
-</c:if>
 </tr>
+</c:otherwise>
+</c:choose>
+</c:if>
 </el:table>
 </el:form>
 <br />

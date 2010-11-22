@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty courses}">
 <c:if test="${showCourseToggle}">
 <c:set var="toggleLabel" value="${courseCollapse ? 'EXPAND' : 'COLLAPSE'}" scope="page" />
@@ -27,7 +28,17 @@
 <c:set var="ins" value="${authors[course.instructorID]}" scope="page" />
 <tr class="mid faCourse"<c:if test="${courseCollapse}"> style="display:none;"</c:if>>
  <td colspan="2" class="pri bld"><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
+<c:choose>
+<c:when test="${fn:isCourseActive(course) && (empty ins)}">
+ <td class="sec bld">Self-Directed</td>
+</c:when>
+<c:when test="${!empty ins}">
  <td class="bld">${ins.name}</td>
+</c:when>
+<c:otherwise>
+ <td>N/A</td>
+</c:otherwise>
+</c:choose>
  <td class="sec">${course.statusName}</td>
  <td><fmt:date date="${course.startDate}" fmt="d" /></td>
  <td class="bld"><fmt:date date="${course.endDate}" fmt="d" default="N/A" /></td>

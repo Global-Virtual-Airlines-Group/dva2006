@@ -1,23 +1,23 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 import java.util.Collections;
 
 import org.deltava.beans.EquipmentType;
-import org.deltava.beans.testing.CheckRideScript;
+import org.deltava.beans.testing.EquipmentRideScript;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.CheckrideScriptAccessControl;
+import org.deltava.security.command.EquipmentRideScriptAccessControl;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -40,9 +40,9 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 
 			// Get the DAO and the existing script
 			GetExamProfiles dao = new GetExamProfiles(con);
-			CheckRideScript sc = dao.getScript(id);
+			EquipmentRideScript sc = dao.getScript(id);
 			if (sc == null)
-				sc = new CheckRideScript(id);
+				sc = new EquipmentRideScript(id);
 
 			// Load the program and description
 			sc.setProgram(ctx.getParameter("programType"));
@@ -50,7 +50,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 			sc.setEquipmentType(ctx.getParameter("eqType"));
 
 			// Calculate our access
-			CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, sc);
+			EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, sc);
 			access.validate();
 			if (!access.getCanEdit())
 				throw securityException("Cannot save Check Ride script");
@@ -95,12 +95,12 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 			// Get the DAO and the script
 			GetExamProfiles dao = new GetExamProfiles(con);
 			if (id != null) {
-				CheckRideScript sc = dao.getScript(id);
+				EquipmentRideScript sc = dao.getScript(id);
 				if (sc == null)
 					throw notFoundException("Invalid Check Ride script - " + id);
 
 				// Calculate our access
-				CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, sc);
+				EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, sc);
 				access.validate();
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Check Ride script");
@@ -120,7 +120,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 				}
 			} else {
 				// Calculate our access
-				CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, null);
+				EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, null);
 				access.validate();
 				if (!access.getCanCreate())
 					throw securityException("Cannot create Check Ride script");
@@ -147,7 +147,6 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading the script.
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);

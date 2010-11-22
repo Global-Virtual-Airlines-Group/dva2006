@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public class TestingHistoryHelper {
 
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
 	private static final int CP_STAGE = 5;
-	private static final List<Rank> CAPT_RANKS = Arrays.asList(Rank.C, Rank.SC);
+	private static final List<Rank> CAPT_RANKS = Arrays.asList(Rank.C, Rank.SC, Rank.ACP, Rank.CP);
 	
 	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
@@ -160,7 +160,7 @@ public class TestingHistoryHelper {
 	public int getMaxCheckRideStage() {
 		int maxStage = _myEQ.getStage();
 		for (Test t : _tests) {
-			if ((t instanceof CheckRide) && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
+			if ((t instanceof CheckRide) && !t.getAcademy() && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 

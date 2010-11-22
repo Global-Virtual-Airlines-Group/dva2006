@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import org.deltava.beans.DatabaseBean;
@@ -7,12 +7,13 @@ import org.deltava.beans.DatabaseBean;
  * A bean to track Flight Academy Certification requirements. Each Certification has a number of
  * requirements that need to be completed before the Course is done.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
 public class CertificationRequirement extends DatabaseBean {
 
+	private String _examName;
 	private String _desc;
 	
 	/**
@@ -24,6 +25,14 @@ public class CertificationRequirement extends DatabaseBean {
 		super();
 		setID(sequenceID);
 	}
+
+	/**
+	 * Returns the examination associated with this certification requirement.
+	 * @return the examination name, or null if none
+	 */
+	public String getExamName() {
+		return _examName;
+	}
 	
 	/**
 	 * Returns the Requirement text.
@@ -31,6 +40,14 @@ public class CertificationRequirement extends DatabaseBean {
 	 */
 	public String getText() {
 		return _desc;
+	}
+	
+	/**
+	 * Sets the examination associated with this certification requirement.
+	 * @param examName the examination name
+	 */
+	public void setExamName(String examName) {
+		_examName = examName;
 	}
 	
 	/**

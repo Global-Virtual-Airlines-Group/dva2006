@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -209,16 +209,16 @@ public class GetExamProfiles extends DAO {
 	 * @return a CheckRideScript bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public CheckRideScript getScript(String eqType) throws DAOException {
+	public EquipmentRideScript getScript(String eqType) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM CR_DESCS WHERE (EQTYPE=?) LIMIT 1");
 			_ps.setString(1, eqType);
 
 			// Execute the Query - return null if nothing found
-			CheckRideScript result = null;
+			EquipmentRideScript result = null;
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
-				result = new CheckRideScript(rs.getString(1));
+				result = new EquipmentRideScript(rs.getString(1));
 				result.setProgram(rs.getString(2));
 				result.setDescription(rs.getString(3));
 			}
@@ -237,15 +237,15 @@ public class GetExamProfiles extends DAO {
 	 * @return a List of CheckRideScript beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CheckRideScript> getScripts() throws DAOException {
+	public List<EquipmentRideScript> getScripts() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM CR_DESCS");
 
 			// Execute the query
-			List<CheckRideScript> results = new ArrayList<CheckRideScript>();
+			List<EquipmentRideScript> results = new ArrayList<EquipmentRideScript>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				CheckRideScript sc = new CheckRideScript(rs.getString(1));
+				EquipmentRideScript sc = new EquipmentRideScript(rs.getString(1));
 				sc.setProgram(rs.getString(2));
 				sc.setDescription(rs.getString(3));
 				results.add(sc);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -160,6 +160,25 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Loads all Check Rides for a particular Flight Academy Course.
+	 * @param courseID the Course database ID
+	 * @return a List of CheckRide beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<CheckRide> getAcademyCheckRide(int courseID) throws DAOException {
+		try {
+			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
+				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
+				+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
+				+ "(CR.EQTYPE=EQ.EQTYPE) AND (CRR.COURSE=?) ORDER BY CR.CREATED DESC");
+			_ps.setInt(1, courseID);
+			return executeCheckride();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Loads a pending Pilot Check Ride for a particular equipment type.
@@ -171,10 +190,10 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int pilotID, String eqType, int status) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE FROM "
+			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
 					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
-					+ "ON (CR.ID=CF.ID) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.ACTYPE=?) "
-					+ "AND (CR.STATUS=?) LIMIT 1");
+					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
+					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.ACTYPE=?) AND (CR.STATUS=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
 			_ps.setInt(3, status);
@@ -190,10 +209,10 @@ public class GetExam extends DAO {
 	/**
 	 * Loads all Check Rides for a particular Pilot.
 	 * @param pilotID the pilot Database ID
-	 * @return a Collection of CheckRide beans
+	 * @return a List of CheckRide beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<CheckRide> getCheckRides(int pilotID) throws DAOException {
+	public List<CheckRide> getCheckRides(int pilotID) throws DAOException {
 		try {
 			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
 					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "

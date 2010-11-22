@@ -80,18 +80,24 @@ return true;
  <td colspan="6" class="data"><span class="sec bld">${course.statusName}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
-<c:if test="${access.canAssign}">
+<c:choose>
+<c:when test="${access.canAssignInstructor}">
 <tr>
  <td class="label">Instructor</td>
  <td colspan="6" class="data"><el:combo name="instructor" idx="*" size="1" options="${instructors}" value="${ins}" firstEntry="-" /></td>
 </tr>
-</c:if>
-<c:if test="${(!access.canAssign) && (!empty ins)}">
+</c:when>
+<c:when test="${fn:isCourseActive(course) && (!empty ins)}">
+ <td class="label">Instructor</td>
+ <td colspan="6" class="data pri bld caps">Self-Directed Flight Academy Course</td>
+</c:when>
+<c:when test="${!empty ins}">
 <tr>
  <td class="label">Instructor</td>
  <td colspan="6" class="data"><span class="pri bld">${ins.name}</span> (${ins.pilotCode})</td>
 </tr>
-</c:if>
+</c:when>
+</c:choose>
 <c:if test="${!empty course.endDate}">
 <tr>
  <td class="label">Completed on</td>
@@ -119,7 +125,7 @@ return true;
 </tr>
 </c:if>
 </c:if>
-<c:set var="cspan" value="${6}" scope="page" />
+<c:set var="cspan" value="6" scope="page" />
 <c:set var="forceExams" value="true" scope="page" />
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 
@@ -131,7 +137,7 @@ return true;
 <c:set var="lastUpd" value="${pilots[progress.authorID]}" scope="page" />
 <view:row entry="${progress}">
  <td class="label top">Entry #<fmt:int value="${progress.ID}" /></td>
- <td colspan="6" class="data"><fmt:text value="${progress.text}" />
+ <td colspan="6" class="data top"><fmt:text value="${progress.text}" />
 <c:if test="${progress.complete || access.canUpdateProgress}">
 <br /><hr />
 <c:if test="${progress.complete}">
@@ -224,10 +230,10 @@ return true;
 <c:if test="${access.canRestart}">
  <el:cmdbutton ID="ReturnButton" url="coursedispose" link="${course}" op="restart" label="RETURN" />
 </c:if>
-<c:if test="${access.canApprove && isComplete}">
+<c:if test="${access.canApprove}">
  <el:cmdbutton ID="ApproveButton" url="coursedispose" link="${course}" op="complete" label="AWARD CERTIFICATION" />
 </c:if>
-<c:if test="${access.canAssign}">
+<c:if test="${access.canAssignInstructor}">
  <el:cmdbutton ID="AssignButton" url="courseassign" post="true" link="${course}" label="ASSIGN INSTRUCTOR" />
 </c:if>
 <c:if test="${access.canComment}">
@@ -235,6 +241,8 @@ return true;
 </c:if>
 <c:if test="${access.canUpdateProgress}">
  <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" link="${course}" label="UPDATE PROGRESS" />
+</c:if>
+<c:if test="${access.canAssignCheckRide}">
  <el:cmdbutton ID="RideButton" url="courseride" link="${course}" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${access.canSchedule}">
