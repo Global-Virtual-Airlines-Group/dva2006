@@ -39,7 +39,10 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 This ${exam.name} Pilot Examination for ${pilot.name} has been successfully scored.<c:if test="${!autoScore}"> An e-mail
 message has been sent to ${pilot.rank.name} ${pilot.lastName} notifying him or her of the scoring of this Examination.</c:if><br />
 <br />
-To view the Pilot Profile, <el:profile location="${usrLoc}" className="sec bld">Click Here</el:profile>.<br />
+<c:if test="${!empty usrLoc}">
+To view the Pilot Profile, <el:profile location="${usrLoc}" className="sec bld">Click Here</el:profile>.<br /></c:if>
+<c:if test="${exam.academy}">
+To return to the Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 To return to the Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <content:filter roles="Examination">
 To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">Click Here</el:cmd>.<br /></content:filter>
