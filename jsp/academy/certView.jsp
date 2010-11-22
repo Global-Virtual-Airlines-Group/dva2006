@@ -47,11 +47,18 @@
 </c:forEach></td>
 </tr>
 </c:if>
+<c:if test="${cert.hasCheckRide}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data bld"><c:if test="${cert.active}"><span class="ter">CERTIFICATION IS AVAILABLE</span></c:if>
-<c:if test="${!cert.active}"><span class="warn">CERTIFICATION IS NOT AVAILABLE</span></c:if>
-<c:if test="${cert.autoEnroll}"><br /><span class="bld">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if></td>
+ <td class="data pri bld caps">This Certification requires a Check Ride
+<c:if test="${noScriptWarn}"><br /><span class="error">No Check Ride Script for this Certification exists</span></c:if></td>
+</tr>
+</c:if>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data bld"><c:if test="${cert.active}"><span class="ter caps">CERTIFICATION IS AVAILABLE</span></c:if>
+<c:if test="${!cert.active}"><span class="warn caps">CERTIFICATION IS NOT AVAILABLE</span></c:if>
+<c:if test="${cert.autoEnroll}"><br /><span class="bld caps">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if></td>
 </tr>
 
 <!-- Certification Requirements -->
@@ -59,13 +66,17 @@
  <td colspan="2">REQUIREMENTS FOR COMPLETION</td>
 </tr>
 <c:if test="${!empty cert.requirements}">
-<c:set var="reqNum" value="${0}" scope="page" />
+<c:set var="reqNum" value="0" scope="page" />
 <c:forEach var="req" items="${cert.requirements}">
 <c:set var="reqNum" value="${reqNum + 1}" scope="page" />
+<c:set var="hasExam" value="${!empty req.examName}" scope="page" />
 <tr>
- <td class="label">Requirement #<fmt:int value="${reqNum}" /></td>
+ <td class="label top" rowspan="${hasExam ? 2 : 1}">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><fmt:text value="${req.text}" /></td>
 </tr>
+<c:if test="${hasExam}">
+ <td class="data"><span class="small ita">Requires successful completion of the <span class="pri bld caps">${req.examName}</span> Examination</span></td>
+</c:if>
 </c:forEach>
 </c:if>
 <c:if test="${empty cert.requirements}">

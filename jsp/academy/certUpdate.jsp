@@ -43,7 +43,9 @@ has been deleted.<br />
 The reqirements for the <content:airline /> Flight Academy <span class="pri bld">${cert.name}</span> 
 Certification have been updated.<br />
 </c:if>
+<br />
 To view the list of Flight Academy certifications, <el:cmd url="certs" className="sec bld">Click Here</el:cmd>.<br />
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>

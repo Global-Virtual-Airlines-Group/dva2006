@@ -1,15 +1,17 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Iterator;
 
 import org.deltava.beans.academy.*;
+import org.deltava.beans.testing.*;
+
 import org.deltava.security.SecurityContext;
 
 /**
  * An Access Controller for Flight Academy Course profiles.
  * @author Luke
- * @version 2.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -22,6 +24,7 @@ public class CourseAccessControl extends AccessControl {
 	private boolean _canStart;
 	private boolean _canApprove;
 	private boolean _canAssign;
+	private boolean _canAssignCheckRide;
 	private boolean _canUpdateProgress;
 	private boolean _canSchedule;
 	private boolean _canDelete;
@@ -40,6 +43,7 @@ public class CourseAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 * @throws AccessControlException if the user cannot view the data 
 	 */
+	@Override
 	public void validate() throws AccessControlException {
 		validateContext();
 		if (!_ctx.isAuthenticated())
@@ -66,11 +70,17 @@ public class CourseAccessControl extends AccessControl {
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
-		_canApprove = (isHR || isExaminer) && isStarted && !isMine;
+		boolean isComplete = true;
 		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
 			CourseProgress cp = i.next();
-			_canApprove &= cp.getComplete();
+			isComplete &= cp.getComplete();
 		}
+		
+		// Check if we need a Check Ride
+		CheckRide cr = _c.getCheckRide();
+		boolean crComplete = !_c.getHasCheckRide() || ((cr != null) && cr.getPassFail());
+		_canAssignCheckRide = _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == Test.SCORED)));
+		_canApprove = crComplete && isComplete && (isHR || isExaminer) && isStarted && !isMine;
 	}
 
 	/**
@@ -125,8 +135,16 @@ public class CourseAccessControl extends AccessControl {
 	 * Returns if the user can assign an Instructor to this Course.
 	 * @return TRUE if an Instructor can be assigned, otherwise FALSE
 	 */
-	public boolean getCanAssign() {
+	public boolean getCanAssignInstructor() {
 		return _canAssign;
+	}
+	
+	/**
+	 * Returns if the user can assign a Check Ride for this Course.
+	 * @return TRUE if a Check Ride can be assigned, otherwise FALSE
+	 */
+	public boolean getCanAssignCheckRide() {
+		return _canAssignCheckRide;
 	}
 	
 	/**

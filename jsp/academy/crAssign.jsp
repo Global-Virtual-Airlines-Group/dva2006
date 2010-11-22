@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -15,7 +16,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.crType, 'Aircraft Type')) return false;
-if (!validateText(form.comments, 6, 'Check Ride Comments')) return false;
+<c:if test="${!isMine}">if (!validateText(form.comments, 6, 'Check Ride Comments')) return false;</c:if>
 
 setSubmit();
 disableButton('CourseButton');
@@ -40,19 +41,26 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="acType" idx="*" size="1" firstEntry="-" options="${actypes}" value="${param.acType}" /></td>
+ <td class="data"><el:combo name="acType" idx="*" size="1" className="req" options="${actypes}" value="${param.acType}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4" resize="true"></el:textbox></td>
+<c:if test="${!isMine}">
+ <td class="data"><el:textbox name="comments" idx="*" className="req" width="80%" height="4" resize="true">${rideScript.description}</el:textbox></td>
+</c:if>
+<c:if test="${isMine}">
+ <td class="data">This is a self-assigned <content:airline /> Flight Academy Check Ride. The specific requirements of this
+Check Ride will be displayed once you save the Check Ride.</td>
+</c:if>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /> 
-<el:cmdbutton ID="CourseButton" url="course" link="${course}" label="VIEW COURSE" /> 
+ <td>
+<c:if test="${!isMine}"><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" /> 
+<el:cmdbutton ID="CourseButton" url="course" link="${course}" label="VIEW COURSE" /> </c:if>
 <el:button ID="AssignButton" type="submit" label="ASSIGN CHECK RIDE" /></td>
 </tr>
 </el:table>

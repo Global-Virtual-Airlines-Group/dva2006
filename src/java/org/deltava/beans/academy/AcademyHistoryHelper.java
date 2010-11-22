@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -93,8 +93,20 @@ public class AcademyHistoryHelper {
 	public void addExams(Collection<Test> tests) {
 		for (Iterator<Test> i = tests.iterator(); i.hasNext(); ) {
 			Test t = i.next();
-			if (t.getAcademy())
+			if (t.getAcademy()) {
 				_tests.add(t);
+				if (t instanceof CheckRide) {
+					CheckRide cr = (CheckRide) t;
+					Course c = getCourse(cr.getCourseID());
+					if (c == null) 
+						continue;
+					
+					if (c.getCheckRide() == null)
+						c.setCheckRide(cr);
+					else if (c.getCheckRide().getDate().before(cr.getDate()))
+						c.setCheckRide(cr);
+				}
+			}
 		}
 	}
 
@@ -141,6 +153,15 @@ public class AcademyHistoryHelper {
 		for (Iterator<Course> i = _courses.values().iterator(); i.hasNext(); ) {
 			Course c = i.next();
 			if ((c.getStatus() == Course.STARTED) || (c.getStatus() == Course.PENDING))
+				return c;
+		}
+		
+		return null;
+	}
+	
+	private Course getCourse(int id) {
+		for (Course c : _courses.values()) {
+			if (c.getID() == id)
 				return c;
 		}
 		

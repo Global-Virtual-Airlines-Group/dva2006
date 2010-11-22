@@ -79,11 +79,21 @@ The Flight Academy Instructor Session with ${pilot.name} and ${ins.name} has bee
 Fleet Academy Instruction Calendar has been updated. An e-mail message has been sent to ${pilot.name} 
 with information about this session.<br />
 </c:if>
-<c:if test="${isAssign}">
+<c:if test="${isAssign && !isOurs}">
 <div class="updateHdr">Flight Academy Check Ride Assigned</div>
 <br />
 This <content:airline /> Fleet Academy ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
 and an e-mail message has been sent to the Pilot.<br />
+</c:if>
+<c:if test="${isAssign && isOurs}">
+<div class="updateHdr">Flight Academy Check Ride Assigned</div>
+<br />
+A <content:airline /> Flight Academy Check Ride has been created for you in the <span class="bld">${course.name}</span>
+Course. The description of the Check Ride is as follows:<br />
+<br />
+<fmt:text value="${rideScript.description}" /><br />
+<br />
+An e-mail message has been sent to you with a decription of the Check Ride.<br /> 
 </c:if>
 <c:if test="${isRideAlreadyAssigned}">
 <div class="updateHdr">Check Ride Pending</div>
@@ -94,7 +104,7 @@ be assigned while one is currently pending.<br />
 <c:if test="${flightUpdate}">
 <div class="updateHdr">Instruction Flight Log Updated</div>
 <br />
-
+The Instructor Flight log for ${ins.name} has been updated. <br />
 </c:if>
 <br />
 To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br />

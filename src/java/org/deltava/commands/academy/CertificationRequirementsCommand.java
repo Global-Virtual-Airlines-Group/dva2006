@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update Flight Academy Certification requirements.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		String name = (String) ctx.getCmdParameter(ID, "");
@@ -54,8 +55,14 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 					break;
 				}
 				
+				// Get the exam
+				String examName = ctx.getParameter("reqExam" + String.valueOf(reqNumber));
+				if (!cert.getExamNames().contains(examName))
+					examName = null;
+				
 				// Create the requirement bean
 				CertificationRequirement req = new CertificationRequirement(reqNumber);
+				req.setExamName(examName);
 				req.setText(txt);
 				reqs.add(req);
 			}
@@ -64,7 +71,7 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 			cert.setRequirements(reqs);
 			
 			// Get the DAO and update the Certification
-			SetAcademy wdao = new SetAcademy(con);
+			SetAcademyCertification wdao = new SetAcademyCertification(con);
 			wdao.update(cert, cert.getName());
 			
 			// Save the certification in the request
@@ -96,6 +103,7 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		String name = (String) ctx.getCmdParameter(ID, "");
@@ -129,11 +137,11 @@ public class CertificationRequirementsCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Method called when reading the form. <i>NOT IMPLEMENTED</i>
+	 * Method called when reading the form.
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

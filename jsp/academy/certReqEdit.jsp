@@ -39,7 +39,7 @@ return true;
 </tr>
 
 <!-- Existing Requirements -->
-<c:set var="reqNum" value="${0}" scope="page" />
+<c:set var="reqNum" value="0" scope="page" />
 <c:forEach var="req" items="${cert.requirements}">
 <c:set var="reqNum" value="${reqNum + 1}" scope="page" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
@@ -47,33 +47,28 @@ return true;
  <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
  <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" resize="true">${req.text}</el:textbox></td>
 </tr>
+<c:if test="${!empty cert.examNames}">
+<tr>
+ <td class="label">Examination</td>
+ <td class="data"><el:combo name="reqExam${reqNum}" idx="*" size="1" value="${req.examName}" options="${cert.examNames}" firstEntry="-" /></td>
+</tr>
+</c:if>
 </c:forEach>
 
 <!-- Additional Requirements -->
-<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
-<!-- Requirement #<fmt:int value="${reqNum}" /> -->
+<c:forEach var="addreqNum" begin="${reqNum + 1}" end="${reqNum + 5}" step="1">
+<!-- Requirement #${addreqNum} -->
 <tr>
- <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" resize="true" /></td>
+ <td class="label top">Requirement #<fmt:int value="${addreqNum}" /></td>
+ <td class="data"><el:textbox name="reqText${addreqNum}" idx="*" width="80%" height="5" resize="true" /></td>
 </tr>
-<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
-<!-- Requirement #<fmt:int value="${reqNum}" /> -->
+<c:if test="${!empty cert.examNames}">
 <tr>
- <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" resize="true" /></td>
+ <td class="label">Examination</td>
+ <td class="data"><el:combo name="reqExam${addreqNum}" idx="*" size="1" value="-" options="${cert.examNames}" firstEntry="-" /></td>
 </tr>
-<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
-<!-- Requirement #<fmt:int value="${reqNum}" /> -->
-<tr>
- <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" resize="true" /></td>
-</tr>
-<c:set var="reqNum" value="${reqNum + 1}" scope="page" />
-<!-- Requirement #<fmt:int value="${reqNum}" /> -->
-<tr>
- <td class="label top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" resize="true" /></td>
-</tr>
+</c:if>
+</c:forEach>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="doMore" idx="*" value="true" label="Add More Requirements" /></td>

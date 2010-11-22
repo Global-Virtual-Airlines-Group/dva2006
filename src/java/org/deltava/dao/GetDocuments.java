@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 2.4
+ * @version 3.4
  * @since 1.0
  */
 
@@ -194,7 +194,7 @@ public class GetDocuments extends GetLibrary {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT D.* FROM exams.CERTDOCS CD, ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".DOCS D WHERE (CD.FILENAME=D.FILENAME) AND (CD.CERTNAME=?) ORDER BY D.NAME");
+		sqlBuf.append(".DOCS D WHERE (CD.FILENAME=D.FILENAME) AND (CD.CERT=?) ORDER BY D.NAME");
 		
 		try {
 			prepareStatement(sqlBuf.toString());

@@ -1,21 +1,21 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 
-import org.deltava.beans.testing.CheckRideScript;
+import org.deltava.beans.testing.EquipmentRideScript;
 
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetExamProfiles;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.CheckrideScriptAccessControl;
+import org.deltava.security.command.EquipmentRideScriptAccessControl;
 
 /**
- * A Web Site Command to display Check Ride scripts. 
+ * A Web Site Command to display Equipment Program Check Ride scripts. 
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -28,7 +28,7 @@ public class CheckRideScriptsCommand extends AbstractCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
       
-      List<CheckRideScript> results = null;
+      List<EquipmentRideScript> results = null;
       try {
          GetExamProfiles dao = new GetExamProfiles(ctx.getConnection());
          results = dao.getScripts();
@@ -39,17 +39,17 @@ public class CheckRideScriptsCommand extends AbstractCommand {
       }
 
       // Create a map of access controllers
-      Map<String, CheckrideScriptAccessControl> accessMap = new HashMap<String, CheckrideScriptAccessControl>();
+      Map<String, EquipmentRideScriptAccessControl> accessMap = new HashMap<String, EquipmentRideScriptAccessControl>();
       
       // Check create access
-      CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, null);
+      EquipmentRideScriptAccessControl access = new EquipmentRideScriptAccessControl(ctx, null);
       access.validate();
       accessMap.put("NEW", access);
 
       // Check edit access
-      for (Iterator<CheckRideScript> i = results.iterator(); i.hasNext(); ) {
-         CheckRideScript sc = i.next();
-         access = new CheckrideScriptAccessControl(ctx, sc);
+      for (Iterator<EquipmentRideScript> i = results.iterator(); i.hasNext(); ) {
+    	  EquipmentRideScript sc = i.next();
+         access = new EquipmentRideScriptAccessControl(ctx, sc);
          access.validate();
          accessMap.put(sc.getEquipmentType(), access);
       }

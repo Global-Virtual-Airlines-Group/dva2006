@@ -7,9 +7,9 @@ import java.util.*;
 import org.deltava.beans.academy.*;
 
 /**
- * A Data Access Object to write Flight Academy data to the database.
+ * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -24,95 +24,6 @@ public class SetAcademy extends DAO {
 	}
 
 	/**
-	 * Writes a new Certification to the database.
-	 * @param c the Certification bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(Certification c) throws DAOException {
-		try {
-			startTransaction();
-			
-			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, REQCERT, ACTIVE, "
-				+ "AUTO_ENROLL) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, c.getName());
-			_ps.setString(2, c.getCode());
-			_ps.setInt(3, c.getStage());
-			_ps.setInt(4, c.getReqs());
-			_ps.setString(5, c.getReqCert());
-			_ps.setBoolean(6, c.getActive());
-			_ps.setBoolean(7, c.getAutoEnroll());
-			executeUpdate(1);
-			
-			// Write the exams
-			writeExams(c.getName(), c.getExamNames());
-			
-			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Updates an existing Flight Academy Certification profile.
-	 * @param c
-	 * @param name the Certification name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void update(Certification c, String name) throws DAOException {
-		try {
-			startTransaction();
-			
-			// Write the profile
-			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, STAGE=?, PREREQ=?, REQCERT=?, ACTIVE=?, "
-				+ "AUTO_ENROLL=? WHERE (NAME=?)");
-			_ps.setString(1, c.getName());
-			_ps.setInt(2, c.getStage());
-			_ps.setInt(3, c.getReqs());
-			_ps.setString(4, c.getReqCert());
-			_ps.setBoolean(5, c.getActive());
-			_ps.setBoolean(6, c.getAutoEnroll());
-			_ps.setString(7, name);
-			executeUpdate(1);
-			
-			// Clear the exams
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
-			
-			// Clear the requirements
-			prepareStatementWithoutLimits("DELETE FROM exams.CERTREQS WHERE (CERTNAME=?)");
-			_ps.setString(1, c.getName());
-			executeUpdate(0);
-			
-			// Write the exams
-			writeExams(c.getName(), c.getExamNames());
-			
-			// Write the requirements
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTREQS (CERTNAME, SEQ, REQENTRY) VALUES (?, ?, ?)");
-			_ps.setString(1, c.getName());
-			for (Iterator<CertificationRequirement> i = c.getRequirements().iterator(); i.hasNext(); ) {
-				CertificationRequirement req = i.next();
-				_ps.setInt(2, req.getID());
-				_ps.setString(3, req.getText());
-				_ps.addBatch();
-			}
-			
-			// Execute the batch transaction
-			_ps.executeBatch();
-			_ps.close();
-
-			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Writes a Flight Academy Course entry to the database. 
 	 * @param c the Course bean
 	 * @throws DAOException if a JDBC error occurs
@@ -122,10 +33,11 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Prepare the statement
-			if (c.getID() == 0)
-				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE) "
-						+ "VALUES (?, ?, ?, ?, ?)");
-			else {
+			if (c.getID() == 0) {
+				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE, HAS_CHECKRIDE) "
+						+ "VALUES (?, ?, ?, ?, ?, ?)");
+				_ps.setBoolean(6, c.getHasCheckRide());
+			} else {
 				prepareStatement("UPDATE exams.COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, "
 						+ "STARTDATE=?, ENDDATE=? WHERE (ID=?)");
 				_ps.setTimestamp(6, createTimestamp(c.getEndDate()));
@@ -143,7 +55,7 @@ public class SetAcademy extends DAO {
 			// Get the new database ID or clear course progress
 			if (c.getID() == 0)
 				c.setID(getNewID());
-			else {
+			else if (!c.getProgress().isEmpty()) {
 				prepareStatementWithoutLimits("DELETE FROM exams.COURSEPROGRESS WHERE (ID=?)");
 				_ps.setInt(1, c.getID());
 				executeUpdate(0);
@@ -212,14 +124,15 @@ public class SetAcademy extends DAO {
 	 */
 	public void updateProgress(CourseProgress cp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, COMPLETE, COMPLETED) "
-					+ "VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, EXAMNAME, COMPLETE, COMPLETED) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, cp.getCourseID());
 			_ps.setInt(2, cp.getID());
 			_ps.setInt(3, cp.getAuthorID());
 			_ps.setString(4, cp.getText());
-			_ps.setBoolean(5, cp.getComplete());
-			_ps.setTimestamp(6, createTimestamp(cp.getCompletedOn()));
+			_ps.setString(5, cp.getExamName());
+			_ps.setBoolean(6, cp.getComplete());
+			_ps.setTimestamp(7, createTimestamp(cp.getCompletedOn()));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -263,21 +176,6 @@ public class SetAcademy extends DAO {
 	}
 	
 	/**
-	 * Deletes a Flight Academy Certification from the database.
-	 * @param certName the certification name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void delete(String certName) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM exams.CERTS WHERE (NAME=?)");
-			_ps.setString(1, certName);
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Writes all Flight Academy certifications associated with a particular Video.
 	 * @param video the Video bean
 	 * @throws DAOException if a JDBC error occurs
@@ -308,24 +206,5 @@ public class SetAcademy extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		}
-	}
-	
-	/**
-	 * Helper method to write exam names.
-	 */
-	private void writeExams(String certName, Collection<String> exams) throws SQLException {
-
-		// Prepare the statement
-		prepareStatementWithoutLimits("INSERT INTO exams.CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)");
-		_ps.setString(1, certName);
-		for (Iterator<String> i = exams.iterator(); i.hasNext(); ) {
-			_ps.setString(2, i.next());
-			_ps.addBatch();
-		}
-		
-		// Execute the batch transaction
-		_ps.executeBatch();
-		_ps.close();
-		_ps = null;
 	}
 }

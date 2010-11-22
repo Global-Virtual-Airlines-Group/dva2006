@@ -13,7 +13,7 @@ import org.deltava.security.command.CertificationAccessControl;
 /**
  * A Web Site Command to delete Flight Academy certifications.
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -24,8 +24,8 @@ public class CertificationDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
 		String name = (String) ctx.getCmdParameter(ID, "");
 		try {
 			Connection con = ctx.getConnection();
@@ -46,7 +46,7 @@ public class CertificationDeleteCommand extends AbstractCommand {
 			ctx.setAttribute("cert", cert, REQUEST);
 			
 			// Get the write DAO and delete the Certification
-			SetAcademy wdao = new SetAcademy(con);
+			SetAcademyCertification wdao = new SetAcademyCertification(con);
 			wdao.delete(name);
 		} catch (DAOException de) {
 			throw new CommandException(de);

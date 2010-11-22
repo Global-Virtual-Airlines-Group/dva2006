@@ -7,9 +7,9 @@ import java.util.*;
 import org.deltava.beans.academy.*;
 
 /**
- * A Data Access Object to load Flight Academy Certifications. 
+ * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -98,13 +98,62 @@ public class GetAcademyCertifications extends DAO {
 	}
 	
 	/**
-	 * Helper method to parse result sets.
+	 * Loads a specific Flight Academy Check Ride script from the datbaase.
+	 * @param certName the Certification name
+	 * @return an AcademyRideScript bean, or null if none
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public AcademyRideScript getScript(String certName) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT * FROM exams.CERTRIDE_SCRIPTS WHERE (CERTNAME=?)");
+			_ps.setString(1, certName);
+			List<AcademyRideScript> results = executeScript();
+			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads all Flight Academy Check Ride scripts from the database.
+	 * @return a Collection of AcademyRideScript beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<AcademyRideScript> getScripts() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM exams.CERTRIDE_SCRIPTS");
+			return executeScript();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}		
+	}
+	
+	/**
+	 * Helper method to parse Check Ride script result sets.
+	 */
+	private List<AcademyRideScript> executeScript() throws SQLException {
+		ResultSet rs = _ps.executeQuery();
+		List<AcademyRideScript> results = new ArrayList<AcademyRideScript>();
+		while (rs.next()) {
+			AcademyRideScript sc = new AcademyRideScript(rs.getString(1));
+			sc.setDescription(rs.getString(2));
+			results.add(sc);
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+		return results;
+	}
+	
+	/**
+	 * Helper method to parse Certification result sets.
 	 */
 	private List<Certification> execute() throws SQLException {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 7);
+		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 8);
 		
 		// Iterate through the results
 		List<Certification> results = new ArrayList<Certification>();
@@ -115,10 +164,11 @@ public class GetAcademyCertifications extends DAO {
 			cert.setReqs(rs.getInt(4));
 			cert.setActive(rs.getBoolean(6));
 			cert.setAutoEnroll(rs.getBoolean(7));
+			cert.setHasCheckRide(rs.getBoolean(8));
 			if (cert.getReqs() == Certification.REQ_SPECIFIC)
 				cert.setReqCert(rs.getString(5));
 			if (hasReqCount)
-				cert.setReqCount(rs.getInt(8));
+				cert.setReqCount(rs.getInt(9));
 			
 			results.add(cert);
 		}
@@ -135,14 +185,15 @@ public class GetAcademyCertifications extends DAO {
 	private void loadRequirements(Certification cert) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatementWithoutLimits("SELECT SEQ, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
+		prepareStatementWithoutLimits("SELECT SEQ, EXAMNAME, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
 		_ps.setString(1, cert.getName());
 		
 		// Load the result set
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			CertificationRequirement cr = new CertificationRequirement(rs.getInt(1));
-			cr.setText(rs.getString(2));
+			cr.setExamName(rs.getString(2));
+			cr.setText(rs.getString(3));
 			cert.addRequirement(cr);
 		}
 		

@@ -26,10 +26,10 @@
 <tr class="title caps">
  <td width="15%">CERTIFICATION</td>
  <td width="5%">CODE</td>
- <td width="8%">STAGE</td>
+ <td width="6%">STAGE</td>
  <td width="17%">PREREQUISITES</td>
  <td width="10%">REQUIREMENTS</td>
- <td>EXAMINATIONS</td>
+ <td class="left">EXAMINATIONS</td>
 </tr>
 
 <!-- Table View data -->
@@ -40,7 +40,12 @@
  <td class="bld"><fmt:int value="${cert.stage}" /></td>
  <td class="sec bld">${cert.reqName}</td>
  <td><fmt:int value="${cert.reqCount}" /></td>
+<c:if test="${!empty cert.examNames}">
  <td class="left"><fmt:list value="${cert.examNames}" delim=", " /></td>
+</c:if>
+<c:if test="${empty cert.examNames}">
+ <td class="left">NONE</td>
+</c:if>
 </view:row>
 </c:forEach>
 

@@ -192,6 +192,29 @@ public class GetAcademyCourses extends DAO {
 	}
 	
 	/**
+	 * Returns all Flight Academy Courses ready for approval.
+	 * @return a Collection of Course beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Course> getCompletionQueue() throws DAOException {
+		try {
+			prepareStatement("SELECT C.*, CRT.STAGE, CRT.ABBR, MAX(CC.CREATED) AS LC, COUNT(CP.SEQ) AS REQCNT, "
+				+ "SUM(IF(CP.COMPLETE,1,0)) AS CREQCNT, CR.PASS FROM (exams.CERTS CRT, exams.COURSES C) LEFT JOIN "
+				+ "exams.COURSEPROGRESS CP ON (C.ID=CP.ID) LEFT JOIN exams.COURSERIDES CCR ON (C.ID=CCR.COURSE) LEFT JOIN "
+				+ "exams.CHECKRIDES CR ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) "
+				+ "WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) AND ((C.HAS_CHECKRIDE=?) OR ((C.HAS_CHECKRIDE=?) "
+				+ "AND (CR.PASS=?))) GROUP BY C.ID HAVING (REQCNT=CREQCNT) ORDER BY LC DESC");
+			_ps.setInt(1, Course.STARTED);
+			_ps.setBoolean(2, false);
+			_ps.setBoolean(3, true);
+			_ps.setBoolean(4, true);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Loads all Certifications obtained by a group of Pilots.
 	 * @param ids a Collection of database IDs
 	 * @return a Map of comma-delimited certifications, indexed by database ID
@@ -273,7 +296,7 @@ public class GetAcademyCourses extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 9);
+		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 10);
 		
 		// Iterate through the results
 		List<Course> results = new ArrayList<Course>();
@@ -284,10 +307,11 @@ public class GetAcademyCourses extends DAO {
 			c.setStatus(rs.getInt(5));
 			c.setStartDate(rs.getTimestamp(6));
 			c.setEndDate(rs.getTimestamp(7));
-			c.setStage(rs.getInt(8));
-			c.setCode(rs.getString(9));
+			c.setHasCheckRide(rs.getBoolean(8));
+			c.setStage(rs.getInt(9));
+			c.setCode(rs.getString(10));
 			if (hasLastChat)
-				c.setLastComment(rs.getTimestamp(10));
+				c.setLastComment(rs.getTimestamp(11));
 			
 			// Add to results
 			results.add(c);
@@ -337,8 +361,9 @@ public class GetAcademyCourses extends DAO {
 			CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
 			cp.setAuthorID(rs.getInt(3));
 			cp.setText(rs.getString(4));
-			cp.setComplete(rs.getBoolean(5));
-			cp.setCompletedOn(rs.getTimestamp(6));
+			cp.setExamName(rs.getString(5));
+			cp.setComplete(rs.getBoolean(6));
+			cp.setCompletedOn(rs.getTimestamp(7));
 			c.addProgress(cp);
 		}
 		

@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display the Flight Academy.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -60,6 +60,16 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 				if (!academyHistory.canTake(cert))
 					i.remove();
 			}
+			
+			// Get Instructor IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Course c : academyHistory.getCourses())
+				IDs.add(new Integer(c.getInstructorID()));
+			
+			// Load Instructors
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);
 
 			// Save the exams and certifications available
 			ctx.setAttribute("exams", allExams, REQUEST);

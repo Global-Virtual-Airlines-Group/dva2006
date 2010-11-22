@@ -2114,9 +2114,33 @@
 	<command id="courseride">
 		<name>Flight Academy Check Ride Assignment</name>
 		<class>org.deltava.commands.academy.CourseCheckRideCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="coursequeue">
+		<name>Flight Academy Course Completion Queue</name>
+		<class>org.deltava.commands.academy.CourseQueueCommand</class>
 		<roles>Instructor,AcademyAdmin,HR</roles>
 	</command>
-	
+
+	<command id="arscripts">
+		<name>Flight Academy Check Ride Scripts</name>
+		<class>org.deltava.commands.academy.RideScriptsCommand</class>
+		<roles>Instructor,AcademyAdmin,HR</roles>
+	</command>
+
+	<command id="arscript">
+		<name>Flight Academy Check Ride Script</name>
+		<class>org.deltava.commands.academy.RideScriptCommand</class>
+		<roles>Instructor,AcademyAdmin,HR</roles>
+	</command>
+
+	<command id="arscriptdelete">
+		<name>Flight Academy Check Ride Script Delete</name>
+		<class>org.deltava.commands.academy.RideScriptDeleteCommand</class>
+		<roles>AcademyAdmin,HR</roles>
+	</command>
+
 	<command id="insflight">
 		<name>Flight Academy Instruction Flight</name>
 		<class>org.deltava.commands.academy.InstructionFlightCommand</class>

@@ -1,10 +1,11 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.CourseProgress;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -16,7 +17,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -28,7 +29,6 @@ public class ExamSubmitCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -91,7 +91,6 @@ public class ExamSubmitCommand extends AbstractCommand {
 				ex.setPassFail(score >= ep.getPassScore());
 
 				// Get the Pilot profile
-
 				Pilot usr = pdao.get(ex.getPilotID());
 				ctx.setAttribute("pilot", usr, REQUEST);
 			} else {
@@ -123,14 +122,30 @@ public class ExamSubmitCommand extends AbstractCommand {
 					mailer.send(scorers);
 				}
 			}
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// If it's auto-scored and an academy exam, check if it matches any requirements
+			if (ex.getAutoScored() && ep.getAcademy() && ex.getPassFail()) {
+				GetAcademyProgress apdao = new GetAcademyProgress(con);
+				SetAcademy apwdao = new SetAcademy(con);
+				Collection<CourseProgress> progs = apdao.getRequirements(ex.getName(), ex.getPilotID());
+				for (CourseProgress cp : progs)
+					apwdao.complete(cp.getCourseID(), cp.getID());
+			}
 
 			// Write the examination to the database
 			SetExam wdao = new SetExam(con);
 			wdao.update(ex);
+			
+			// Commit
+			ctx.commitTX();
 
 			// Save the exam to the request
 			ctx.setAttribute("exam", ex, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

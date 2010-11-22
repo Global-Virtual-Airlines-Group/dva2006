@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to log Flight Academy instruction flights.
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 	 * @param id the Command ID
 	 * @param cmdName the name of the Command
 	 */
+	@Override
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 		
@@ -47,6 +48,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new entry
@@ -65,8 +67,15 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				flight = new InstructionFlight(1, StringUtils.parseHex(ctx.getParameter("courseID")));
 			}
 			
+			// Get the Instructor
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			Pilot ins = pdao.get(uddao.get(StringUtils.parse(ctx.getParameter("instructor"), 0)));
+			if (ins == null)
+				throw notFoundException("Invalid Instructor ID - " + ctx.getParameter("instructor"));
+			
 			// Update fields from the request
-			flight.setInstructorID(StringUtils.parseHex(ctx.getParameter("instructor")));
+			flight.setInstructorID(ins.getID());
 			flight.setComments(ctx.getParameter("comments"));
 			flight.setEquipmentType(ctx.getParameter("eqType"));
 			flight.setDate(parseDateTime(ctx, "log", "MM/dd/yyyy", "HH:mm"));
@@ -76,13 +85,16 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				float fTime = Float.parseFloat(ctx.getParameter("flightTime"));
 				flight.setLength(Math.round(fTime * 10));
 			} catch (NumberFormatException nfe) {
-				CommandException ce = new CommandException("Invalid Flight Time", false);
-				throw ce;
+				throw new CommandException("Invalid Flight Time", false);
 			}
 			
 			// Update the calendar
 			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
 			wdao.write(flight);
+			
+			// Save request attributes
+			ctx.setAttribute("flight", flight, REQUEST);
+			ctx.setAttribute("ins", ins, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -104,6 +116,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Check if we're creating a new entry
@@ -212,8 +225,8 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -238,8 +251,9 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(flight.getInstructorID()));
 			IDs.add(new Integer(c.getPilotID()));
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);
 
 			// Save flight/course data
 			ctx.setAttribute("flight", flight, REQUEST);

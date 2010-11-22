@@ -1,21 +1,21 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.testing.CheckRideScript;
+import org.deltava.beans.testing.EquipmentRideScript;
 
 import org.deltava.security.SecurityContext;
 
 /**
- * An access controller for Check Ride scripts
+ * An access controller for Equipment Program Check Ride scripts.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
-public class CheckrideScriptAccessControl extends AccessControl {
+public class EquipmentRideScriptAccessControl extends AccessControl {
 
-	private CheckRideScript _sc;
+	private EquipmentRideScript _sc;
 
 	private boolean _canCreate;
 	private boolean _canEdit;
@@ -26,7 +26,7 @@ public class CheckrideScriptAccessControl extends AccessControl {
 	 * @param ctx the security context
 	 * @param sc the CheckRideScript bean to validate
 	 */
-	public CheckrideScriptAccessControl(SecurityContext ctx, CheckRideScript sc) {
+	public EquipmentRideScriptAccessControl(SecurityContext ctx, EquipmentRideScript sc) {
 		super(ctx);
 		_sc = sc;
 	}
@@ -35,6 +35,7 @@ public class CheckrideScriptAccessControl extends AccessControl {
 	 * Calculates access rights.
 	 * @throws AccessControlException if we cannot read the script
 	 */
+	@Override
 	public void validate() throws AccessControlException {
 		validateContext();
 
@@ -46,12 +47,13 @@ public class CheckrideScriptAccessControl extends AccessControl {
 
 		// Check creation/deletion access
 		_canCreate = true;
-		_canDelete = isHR & isOps;
 		if (_sc == null) {
 			_canEdit = true;
 			return;
 		}
 
+		_canDelete = isHR || isOps;
+		
 		// Allow edits if we are in the same eq program
 		Pilot usr = (Pilot) _ctx.getUser();
 		_canEdit = isOps || isHR || (usr.getEquipmentType().equals(_sc.getProgram()));

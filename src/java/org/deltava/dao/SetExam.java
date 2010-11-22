@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 2.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -214,8 +214,7 @@ public class SetExam extends DAO {
 			executeUpdate(0);
 			
 			// Write the Flight Academy data
-			if (cr.getCourseID() != 0)
-				linkCheckRide(cr);
+			linkCheckRide(cr);
 
 			// Commit the transaction
 			commitTransaction();
@@ -241,7 +240,7 @@ public class SetExam extends DAO {
 			
 			// Execute the statement
 			_ps.setInt(1, cr.getID());
-			executeUpdate(1);
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

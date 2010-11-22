@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to enroll a Pilot in a Flight Academy course.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -24,11 +24,11 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the course name
 		String name = ctx.getParameter("courseName");
-		
 		Course c = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -55,16 +55,28 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			c = new Course(cert.getName(), ctx.getUser().getID());
 			c.setStatus(Course.PENDING);
 			c.setStartDate(new Date());
+			c.setHasCheckRide(cert.getHasCheckRide());
 			for (Iterator<CertificationRequirement> i = cert.getRequirements().iterator(); i.hasNext(); ) {
 				CertificationRequirement req = i.next();
 				CourseProgress cp = new CourseProgress(0, req.getID());
 				cp.setText(req.getText());
+				cp.setExamName(req.getExamName());
 				cp.setAuthorID(ctx.getUser().getID());
+				if (academyHistory.passedExam(req.getExamName())) {
+					cp.setComplete(true);
+					cp.setCompletedOn(c.getStartDate());
+				}
+				
 				c.addProgress(cp);
 			}
 
 			// Figure out if we have passed any stage 1 certs; if so, then immediately start
-			if (academyHistory.hasAny(1) && cert.getAutoEnroll()) {
+			boolean autoEnroll = cert.getAutoEnroll();
+			if (cert.getStage() > 1)
+				autoEnroll &= academyHistory.hasAny(1) ;
+			
+			// If this is an autoenroll stage 1, then get them directly in
+			if (autoEnroll) {
 				c.setStatus(Course.STARTED);
 				upd.setDescription("Enrolled in " + cert.getName());
 			}

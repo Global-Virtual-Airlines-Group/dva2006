@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class CertificationCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		
 		// Get the certification name
@@ -66,14 +67,22 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
+			cert.setHasCheckRide(Boolean.valueOf(ctx.getParameter("hasCR")).booleanValue());
 			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			
 			// Load the examination names
 			Collection<String> eNames = ctx.getParameters("reqExams");
 			cert.setExams(eNames);
 			
+			// Make sure that each requirement with an exam remains valid
+			for (Iterator<CertificationRequirement> i = cert.getRequirements().iterator(); i.hasNext(); ) {
+				CertificationRequirement req = i.next();
+				if (!cert.getExamNames().contains(req.getExamName()))
+					req.setExamName(null);
+			}
+			
 			// Get the write DAO and save the certification
-			SetAcademy wdao = new SetAcademy(con);
+			SetAcademyCertification wdao = new SetAcademyCertification(con);
 			if (name != null)
 				wdao.update(cert, name);
 			else
@@ -103,11 +112,11 @@ public class CertificationCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the certification name
 		String name = (String) ctx.getCmdParameter(ID, null);
-		
 		try {
 			Connection con = ctx.getConnection();
 
@@ -128,6 +137,12 @@ public class CertificationCommand extends AbstractFormCommand {
 				// Check our access
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit Certification");
+				
+				// Check if we have a check ride script
+				if (cert.getHasCheckRide()) {
+					AcademyRideScript sc = dao.getScript(cert.getName());
+					ctx.setAttribute("noScriptWarn", Boolean.valueOf(sc == null), REQUEST);
+				}
 				
 				ctx.setAttribute("cert", cert, REQUEST);
 				allCerts.remove(cert.getCode());
@@ -160,6 +175,7 @@ public class CertificationCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Get the certification name
@@ -177,9 +193,15 @@ public class CertificationCommand extends AbstractFormCommand {
 			CertificationAccessControl access = new CertificationAccessControl(ctx);
 			access.validate();
 			
+			// Check if we have a check ride script
+			if (cert.getHasCheckRide()) {
+				AcademyRideScript sc = dao.getScript(cert.getName());
+				ctx.setAttribute("noScriptWarn", Boolean.valueOf(sc == null), REQUEST);
+			}
+			
 			// Get associated documents
 			GetDocuments ddao = new GetDocuments(con);
-			ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), cert.getName()), REQUEST);
+			ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), cert.getCode()), REQUEST);
 
 			// Save in the request
 			ctx.setAttribute("cert", cert, REQUEST);

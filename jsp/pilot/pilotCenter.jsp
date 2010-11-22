@@ -543,6 +543,15 @@ training course.</td>
  awaiting scoring by a Flight Academy Examiner.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd url="arscripts" className="bld">Check Ride Scripts</el:cmd></td>
+ <td class="data">You can view <content:airline /> Flight Academy Check Ride scripts.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd url="coursequeue" className="bld">Completed Courses</el:cmd></td>
+ <td class="data">You can view <content:airline /> Flight Academy Courses that are ready for a Certification
+ to be granted, since all Course requirements have been met.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd url="certs" className="bld">Certification Profiles</el:cmd></td>
  <td class="data">You can view and/or modify Flight Academy certification profiles here, to change 
 the requirements, necessary examinations and prerequisites for each <content:airline /> Flight Academy 

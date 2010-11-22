@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -30,10 +30,11 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	
 	private boolean _active;
 	private boolean _autoEnroll;
+	private boolean _hasCR;
 	
 	private String _certReq;
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
-	private final Collection<String> _examNames = new HashSet<String>();
+	private final Collection<String> _examNames = new TreeSet<String>();
 	
 	/**
 	 * Creates a new Certification bean.
@@ -55,7 +56,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
-	 * Returns the certification code.
+	 * Returns the Certification code.
 	 * @return the code
 	 * @see Certification#setCode(String)
 	 */
@@ -64,7 +65,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
-	 * Returns whether the certification is active.
+	 * Returns whether the Certification is active.
 	 * @return TRUE if it is active, otherwise FALSE
 	 * @see Certification#setActive(boolean)
 	 */
@@ -73,12 +74,21 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
-	 * Returnes whether students are automatically enrolled in this Course.
+	 * Returns whether students are automatically enrolled in this Course.
 	 * @return TRUE if students are automatically enrolled, otherwise FALSE
 	 * @see Certification#setAutoEnroll(boolean)
 	 */
 	public boolean getAutoEnroll() {
 		return _autoEnroll;
+	}
+	
+	/**
+	 * Returns whether this Certification has a Check Ride associated with it.
+	 * @return TRUE if a Check Ride is required for completion, otherwise FALSE
+	 * @see Certification#setHasCheckRide(boolean)
+	 */
+	public boolean getHasCheckRide() {
+		return _hasCR;
 	}
 	
 	/**
@@ -244,6 +254,15 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public void setAutoEnroll(boolean autoEnroll) {
 		_autoEnroll = autoEnroll;
+	}
+	
+	/**
+	 * Updates whether this Certification requires a Check Ride.
+	 * @param hasCR TRUE if a Check Ride is required, otherwise FALSE
+	 * @see Certification#getHasCheckRide()
+	 */
+	public void setHasCheckRide(boolean hasCR) {
+		_hasCR = hasCR;
 	}
 
 	/**
