@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.ScheduleEntry;
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 2.8
  */
 
@@ -46,7 +46,7 @@ public class DraftFlightReport extends FlightReport {
 	 * @return the departure date/time
 	 */
 	public Date getTimeD() {
-		return _timeD.getDate();
+		return (_timeD == null) ? null : _timeD.getDate();
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class DraftFlightReport extends FlightReport {
 	 * @return the arrival date/time
 	 */
 	public Date getTimeA() {
-		return _timeA.getDate();
+		return (_timeA == null) ? null : _timeA.getDate();
 	}
 	
 	/**
