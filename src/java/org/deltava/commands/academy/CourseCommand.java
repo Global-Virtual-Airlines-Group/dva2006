@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 2.4
+ * @version 3.4
  * @since 1.0
  */
 
@@ -28,8 +28,8 @@ public class CourseCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -45,50 +45,44 @@ public class CourseCommand extends AbstractCommand {
 			AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
 			helper.setDebug(ctx.isSuperUser());
 			helper.addExams(exdao.getExams(c.getPilotID()));
-			ctx.setAttribute("isComplete", Boolean.valueOf(helper.hasCompleted(c.getName())), REQUEST);
 			
 			// Get the certification profile
 			Certification cert = cdao.get(c.getName());
 			if (cert == null)
 				throw notFoundException("Invalid Certification - " + c.getName());
 			
+			// Load our exams
+			List<CheckRide> rides = exdao.getAcademyCheckRide(c.getID());
+			c.setCheckRide(rides.isEmpty() ? null : rides.get(0));
+			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
 			
-			// Get Pilot IDs from comments
+			// Get Pilot IDs from comments/progress
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(c.getPilotID()));
 			IDs.add(new Integer(c.getInstructorID()));
-			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
-				CourseComment cc = i.next();
+			for (CourseComment cc : c.getComments())
 				IDs.add(new Integer(cc.getAuthorID()));
-			}
-			
-			// Get Pilot IDs from progress
-			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
-				CourseProgress cp = i.next();
+			for (CourseProgress cp : c.getProgress())
 				IDs.add(new Integer(cp.getAuthorID()));
-			}
 			
 			// Load documents/exams if its our course
 			if (access.getCanComment()) {
 				GetDocuments ddao = new GetDocuments(con);
-				ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), c.getName()), REQUEST);
+				ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), c.getCode()), REQUEST);
 				
 				// Get videos
 				GetVideos vdao = new GetVideos(con);
 				ctx.setAttribute("videos", vdao.getVideos(c.getName()), REQUEST);
 				
 				// Show exam status
-				Collection<Test> exams = new TreeSet<Test>();
+				Collection<Test> exams = new TreeSet<Test>(rides);
 				for (Iterator<Test> i = helper.getExams().iterator(); i.hasNext(); ) {
 					Test t = i.next();
-					if (cert.getExamNames().contains(t.getName())) {
+					if ((t.getType() == Test.EXAM) && (cert.getExamNames().contains(t.getName())))
 						exams.add(t);
-					} else if ((t instanceof CheckRide) && (t.getName().startsWith(cert.getName()))) {
-						exams.add(t);
-					}
 				}
 				
 				// Save examination status
@@ -115,7 +109,7 @@ public class CourseCommand extends AbstractCommand {
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
 			// If we can reassign, load instructors
-			if (access.getCanAssign()) {
+			if (access.getCanAssignInstructor()) {
 				GetPilotDirectory prdao = new GetPilotDirectory(con);
 				ctx.setAttribute("instructors", prdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
 			}

@@ -7,7 +7,7 @@
 <c:set var="certName" value="${empty cert ? 'New Certification' : cert.name}" scope="page" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>${certName}</title>
+<title><content:airline /> Flight Academy - ${certName}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -40,7 +40,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="showReqCert(document.forms[0].preReqs)">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -74,7 +74,15 @@ return true;
 </tr>
 <tr>
  <td class="label top">Required Examinations</td>
- <td class="data"><el:check name="reqExams" width="150" cols="4" className="small" newLine="true" checked="${cert.examNames}" options="${exams}" /></td>
+ <td class="data"><el:check name="reqExams" width="220" cols="4" className="small" newLine="true" checked="${cert.examNames}" options="${exams}" /></td>
+</tr>
+<tr>
+ <td class="label">Check Ride</td>
+ <td class="data"><el:box name="hasCR" idx="*" value="true" className="sec bld" label="This Certification requires a Check Ride" checked="${cert.hasCheckRide}" /></td>
+</tr>
+<tr id="noScriptWarn"<c:if test="${!noScriptWarn}">style="display:none;"</c:if>>
+ <td class="label">&nbsp;</td>
+ <td class="data"><span class="error bld caps">This Certification requires a Check Ride, but no Check Ride Script exists</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
