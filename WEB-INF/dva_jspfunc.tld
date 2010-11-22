@@ -409,6 +409,13 @@
 		<function-signature>boolean isBusy(org.deltava.beans.CalendarEntry)</function-signature>
 	</function>
 
+	<!-- Check if a Course is active -->
+	<function>
+		<name>isCourseActive</name>
+		<function-class>org.deltava.taglib.functions.AcademyFunctions</function-class>
+		<function-signature>boolean isActive(org.deltava.beans.academy.Course)</function-signature>
+	</function>
+
 
 	<!-- Check if a Navigation Database entry is an Airport -->
 	<function>
