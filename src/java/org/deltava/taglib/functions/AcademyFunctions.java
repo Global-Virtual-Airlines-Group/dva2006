@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.CalendarEntry;
@@ -7,7 +7,7 @@ import org.deltava.beans.academy.*;
 /**
  * A JSP Function Library to define FlightAcademy-related functions.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -38,5 +38,14 @@ public class AcademyFunctions {
 	 */
 	public static boolean isBusy(CalendarEntry ce) {
 		return (ce instanceof InstructionBusy);
+	}
+	
+	/**
+	 * Returns whether the Course is currently active.
+	 * @param c the Course
+	 * @return TRUE if the Course status is active, otherwise FALSE
+	 */
+	public static boolean isActive(Course c) {
+		return ((c != null) && (c.getStatus() == Course.STARTED));
 	}
 }
