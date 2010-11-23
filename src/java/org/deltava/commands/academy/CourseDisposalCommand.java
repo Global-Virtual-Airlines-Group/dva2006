@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,18 +6,20 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 2.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -138,6 +140,15 @@ public class CourseDisposalCommand extends AbstractCommand {
 					IDs.add(new Integer(is.getInstructorID()));
 					is.setStatus(InstructionSession.CANCELED);
 					cwdao.write(is);
+				}
+				
+				// Delete any unflown check rides
+				GetExam exdao = new GetExam(con);
+				SetExam exwdao = new SetExam(con);
+				List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
+				for (CheckRide cr : rides) {
+					if (cr.getStatus() == Test.NEW)
+						exwdao.delete(cr);
 				}
 				
 				// Load the pilots
