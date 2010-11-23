@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cached external routes from the database.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 2.6
  */
 
@@ -67,12 +67,11 @@ public class GetCachedRoutes extends DAO {
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				ExternalRoute rt = new ExternalRoute();
+				ExternalRoute rt = new ExternalRoute(rs.getString(5));
 				rt.setAirportD(SystemData.getAirport(rs.getString(1)));
 				rt.setAirportA(SystemData.getAirport(rs.getString(2)));
 				rt.setCreatedOn(rs.getTimestamp(3));
 				rt.setCruiseAltitude(rs.getString(4));
-				rt.setSource(rs.getString(5));
 				rt.setComments(rs.getString(6));
 				
 				// Get the SID/STAR out of the route
