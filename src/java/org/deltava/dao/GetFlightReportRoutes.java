@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load flight routes from approved Flight Reports. 
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 3.3
  */
 
@@ -52,7 +52,7 @@ public class GetFlightReportRoutes extends DAO {
 		// Build the SQL statement
 		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT PRT.ROUTE, PR.SUBMITTED, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) "
-				+ "AS PNAME, APR.ACARS_ID, F.CRUISE_ALT FROM ");
+				+ "AS PNAME, APR.ACARS_ID, F.CRUISE_ALT, COUNT(APR.ACARS_ID) AS CNT FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREP_ROUTE PRT, ");
 		sqlBuf.append(db);
@@ -62,7 +62,7 @@ public class GetFlightReportRoutes extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) WHERE "
 			+ "(PR.ID=PRT.ID) AND (P.ID=PR.PILOT_ID) AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.STATUS=?) "
-			+ "ORDER BY PR.SUBMITTED DESC");
+			+ "AND (F.CRUISE_ALT IS NOT NULL) GROUP BY PRT.ROUTE ORDER BY CNT DESC, PR.SUBMITTED");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -71,14 +71,19 @@ public class GetFlightReportRoutes extends DAO {
 			_ps.setInt(3, FlightReport.OK);
 			
 			// Execute the query
+			int maxCount = 0; boolean doMore = true; int id = 0;
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
 			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				ExternalRoute rt = new ExternalRoute();
+			while (rs.next() && doMore) {
+				ExternalRoute rt = new ExternalRoute("ACARS");
+				rt.setID(++id);
 				rt.setAirportD(aD);
 				rt.setAirportA(aA);
 				rt.setCreatedOn(rs.getTimestamp(2));
-				rt.setSource("ACARS Flight #" + rs.getInt(4) + " flown by " + rs.getString(3) + " on " + 
+				rt.setCruiseAltitude(rs.getString(5));
+				int useCount = rs.getInt(6);
+				maxCount = Math.max(maxCount, useCount);
+				rt.setComments("ACARS Flight #" + StringUtils.format(rs.getInt(4), "#,##0") + " by " + rs.getString(3) + " on " + 
 						StringUtils.format(rt.getCreatedOn(), "dd-MMM-yyyy"));
 				
 				// Get the SID/STAR out of the route
@@ -100,7 +105,10 @@ public class GetFlightReportRoutes extends DAO {
 				} else
 					rt.setRoute(rawRoute);
 
-				results.add(rt);
+				// Restrict to routes tht are at least 25% as popular as the most popular route, and we have at least 4
+				doMore = (useCount >= (maxCount >> 2)) && (results.size() < 4);
+				if (doMore)
+					results.add(rt);
 			}
 			
 			// Clean up

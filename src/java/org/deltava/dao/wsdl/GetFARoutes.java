@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 2.2
  */
 
@@ -26,7 +26,6 @@ public class GetFARoutes extends FlightAwareDAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public Collection<? extends FlightRoute> getRouteData(Airport aD, Airport aA) throws DAOException {
-
 		Collection<ExternalRoute> results = new LinkedHashSet<ExternalRoute>();
 		try {
 			// Do the SOAP call
@@ -38,12 +37,11 @@ public class GetFARoutes extends FlightAwareDAO {
             for (int x = 0; (data != null) && (x < data.length); x++) {
             	RoutesBetweenAirportsStruct r = data[x];
             	int altitude = r.getFiledAltitude();
-            	ExternalRoute rt = new ExternalRoute();
+            	ExternalRoute rt = new ExternalRoute("FlightAware");
             	rt.setAirportD(aD);
             	rt.setAirportA(aA);
             	rt.setCreatedOn(new Date());
             	rt.setCruiseAltitude((altitude < 1000) ? "FL" + String.valueOf(altitude) : String.valueOf(altitude));
-            	rt.setSource("FlightAware");
             	rt.setComments("Loaded from FlightAware on " + rt.getCreatedOn());
             	
             	// Try and parse SID/STAR
