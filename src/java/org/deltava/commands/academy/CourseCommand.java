@@ -52,7 +52,7 @@ public class CourseCommand extends AbstractCommand {
 				throw notFoundException("Invalid Certification - " + c.getName());
 			
 			// Load our exams
-			List<CheckRide> rides = exdao.getAcademyCheckRide(c.getID());
+			List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
 			c.setCheckRide(rides.isEmpty() ? null : rides.get(0));
 			
 			// Check our access

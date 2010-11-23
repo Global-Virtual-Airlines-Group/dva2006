@@ -8,6 +8,8 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.system.*;
+import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.Test;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -54,8 +56,10 @@ public class InactivityUpdateTask extends Task {
 			
 			// Initialize the DAOs
 			GetInactivity dao = new GetInactivity(con);
+			GetExam exdao = new GetExam(con);
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			SetAcademy cwdao = new SetAcademy(con);
+			SetExam exwdao = new SetExam(con);
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			SetPilot pwdao = new SetPilot(con);
 			SetInactivity iwdao = new SetInactivity(con);
@@ -138,6 +142,13 @@ public class InactivityUpdateTask extends Task {
 						cc.setCreatedOn(upd.getCreatedOn());
 						cc.setText(upd.getDescription());
 						log.warn("Removing " + p.getName() + " from " + c.getName() + " Flight Academy Course");
+						
+						// Delete a check ride if there is one
+						List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
+						for (CheckRide cr : rides) {
+							if (cr.getStatus() == Test.NEW)
+								exwdao.delete(cr);
+						}
 						
 						// Mark as abandoned and save comment
 						c.setStatus(Course.ABANDONED);

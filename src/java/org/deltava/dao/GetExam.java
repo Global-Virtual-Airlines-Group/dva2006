@@ -167,7 +167,7 @@ public class GetExam extends DAO {
 	 * @return a List of CheckRide beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CheckRide> getAcademyCheckRide(int courseID) throws DAOException {
+	public List<CheckRide> getAcademyCheckRides(int courseID) throws DAOException {
 		try {
 			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
 				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "

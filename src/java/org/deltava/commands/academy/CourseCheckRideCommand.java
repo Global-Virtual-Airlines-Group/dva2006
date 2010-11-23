@@ -58,7 +58,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			
 			// Load Check Rides for this Course
 			GetExam exdao = new GetExam(con);
-			List<CheckRide> exams = exdao.getAcademyCheckRide(c.getID());
+			List<CheckRide> exams = exdao.getAcademyCheckRides(c.getID());
 			c.setCheckRide(exams.isEmpty() ? null : exams.get(0));
 			
 			// Check our access
