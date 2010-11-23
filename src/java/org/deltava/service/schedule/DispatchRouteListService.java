@@ -108,7 +108,8 @@ public class DispatchRouteListService extends WebService {
 				if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
 					log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
 					List<String> tkns = StringUtils.split(rt.getSID(), ".");
-					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, tkns.get(0), tkns.get(1), rwy);
+					String sidName = TerminalRoute.makeGeneric(tkns.get(0));
+					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, sidName, tkns.get(1), rwy);
 					if (sid != null) {
 						log.info("Found " + sid.getCode());
 						rt.setSID(sid.getCode());
@@ -129,7 +130,8 @@ public class DispatchRouteListService extends WebService {
 					String arrRwy = (tkns.size() < 3) ? popRwy : tkns.get(2);
 
 					// Load the STAR - if we can't find based on the runway, try the most popular
-					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.get(0), tkns.get(1), arrRwy);
+					String starName = TerminalRoute.makeGeneric(tkns.get(0));
+					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, starName, tkns.get(1), arrRwy);
 					if (star == null)
 						star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.get(0), tkns.get(1), popRwy);
 					if (star != null) {
@@ -151,9 +153,13 @@ public class DispatchRouteListService extends WebService {
 		re.setAttribute("airportD", aD.getICAO());
 		re.setAttribute("airportA", aA.getICAO());
 		
-		// Save the routes
+		// Save the routes, stripping out duplicates
+		Collection<String> rts = new HashSet<String>();
 		for (Iterator<? extends FlightRoute> i = routes.iterator(); i.hasNext(); ) {
 			FlightRoute rt = i.next();
+			if (!rts.add(rt.getRoute()))
+				continue;
+			
 			boolean isExternal = (rt instanceof ExternalFlightRoute); 
 			StringBuilder buf = new StringBuilder();
 			Element rte = new Element("route");

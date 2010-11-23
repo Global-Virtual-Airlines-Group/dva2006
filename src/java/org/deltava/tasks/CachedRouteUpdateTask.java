@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to purge cached FlightAware routes from the database.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 2.6
  */
 
@@ -83,11 +83,10 @@ public class CachedRouteUpdateTask extends Task {
 						rcwdao.write(faroutes);
 					} else {
 						log.warn("Created dummy route between " + rp.getAirportD() + " and " + rp.getAirportA());
-						ExternalRoute rt = new ExternalRoute();
+						ExternalRoute rt = new ExternalRoute("Internal");
 						rt.setAirportD(rp.getAirportD());
 						rt.setAirportA(rp.getAirportA());
 						rt.setComments("Auto-generated dummy route");
-						rt.setSource("Internal");
 						rt.setCruiseAltitude("35000");
 						rt.setCreatedOn(new Date());
 						rt.setRoute(rp.getAirportD().getICAO() + " " + rp.getAirportA().getICAO());
