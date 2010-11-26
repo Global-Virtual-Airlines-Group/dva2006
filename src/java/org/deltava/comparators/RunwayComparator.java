@@ -1,19 +1,18 @@
 // Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import java.io.Serializable;
-import java.util.Comparator;
+import java.util.*;
 
 import org.deltava.beans.navdata.Runway;
 
 /**
  * A comparator to sort Runways based on appropriateness based on a wind heading. 
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 2.6
  */
 
-public class RunwayComparator implements Comparator<Runway>, Serializable {
+public class RunwayComparator implements Comparator<Runway>, java.io.Serializable {
 	
 	private int _hdg;
 
@@ -45,5 +44,17 @@ public class RunwayComparator implements Comparator<Runway>, Serializable {
 		// the one with the fewer uses will be smaller
 		int tmpResult = Integer.valueOf(hd2 / 60).compareTo(Integer.valueOf(hd1 / 60));
 		return (tmpResult == 0) ? r1.compareTo(r2) : tmpResult;
+	}
+	
+	/**
+	 * Returns this comparator's reverse.
+	 * @return a reverse RunwayComparator
+	 */
+	public Comparator<Runway> reverse() {
+		return Collections.reverseOrder(this);
+	}
+	
+	public String toString() {
+		return "RunwayComparator-" + String.valueOf(_hdg);
 	}
 }

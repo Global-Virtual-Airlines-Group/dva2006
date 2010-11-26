@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -26,7 +26,6 @@ public class GetSchedule extends DAO {
 	public GetSchedule(Connection c) {
 		super(c);
 	}
-
 
 	/**
 	 * Searches the Schedule database for flights matching particular criteria.
@@ -346,7 +345,7 @@ public class GetSchedule extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, AI.CODE FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRPORT_D=?) "
-			+ "AND (S.AIRPORT_A=?) AND (S.ACADEMY=?) ORDER BY IF (S.AIRLINE=AI.CODE, 1, 0), FLIGHT LIMIT 1");
+			+ "AND (S.AIRPORT_A=?) AND (S.ACADEMY=?) ORDER BY IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
