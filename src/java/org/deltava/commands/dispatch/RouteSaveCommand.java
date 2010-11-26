@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 2.2
  */
 
@@ -47,15 +47,17 @@ public class RouteSaveCommand extends AbstractCommand {
 			rp.setActive(true);
 		}
 		
+		List<String> wpCodes = StringUtils.split(ctx.getParameter("route"), " ");
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
 			
-			// Check if we have a SID
+			// Check if we have a SID - fix wonkiness if terminating the SID early 
 			TerminalRoute sid = dao.getRoute(rp.getAirportD(), TerminalRoute.SID, ctx.getParameter("sid"), true);
 			if (sid != null) {
 				rp.setSID(sid.getCode());
-				for (NavigationDataBean nd : sid.getWaypoints())
+				String transition = wpCodes.isEmpty() ? sid.getTransition() : wpCodes.get(0);
+				for (NavigationDataBean nd : sid.getWaypoints(transition))
 					rp.addWaypoint(nd, sid.getCode());
 			}
 			
@@ -66,11 +68,12 @@ public class RouteSaveCommand extends AbstractCommand {
 					rp.addWaypoint(nd, nd.getAirway());
 			}
 			
-			// Check if we have a STAR
+			// Check if we have a STAR - fix wonkiness if joining the STAR late
 			TerminalRoute star = dao.getRoute(rp.getAirportA(), TerminalRoute.STAR, ctx.getParameter("star"), true);
 			if (star != null) {
 				rp.setSTAR(star.getCode());
-				for (NavigationDataBean nd : star.getWaypoints())
+				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.get(wpCodes.size() - 1);
+				for (NavigationDataBean nd : star.getWaypoints(transition))
 					rp.addWaypoint(nd, star.getCode());
 			}
 			
