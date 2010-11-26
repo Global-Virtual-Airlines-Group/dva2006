@@ -103,7 +103,7 @@ cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.
 </c:if>
 // Add map controls
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-google.maps.eEvent.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
 google.maps.event.addListener(map, 'click', infoClose);
