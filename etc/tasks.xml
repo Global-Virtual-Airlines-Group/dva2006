@@ -193,7 +193,7 @@
 	</task>
 	
 	<!-- SevInfo track update -->
-	<task id="otrack" enabled="true">
+	<task id="otrack" enabled="false">
 		<class>org.deltava.tasks.OnlineTrackTask</class>
 		<time>
 			<min>*/3</min>
