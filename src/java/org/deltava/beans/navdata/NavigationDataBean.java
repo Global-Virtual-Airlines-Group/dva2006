@@ -15,7 +15,8 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Cloneable, Comparable<NavigationDataBean>, GeoLocation, MarkerMapEntry, IconMapEntry {
+public abstract class NavigationDataBean implements java.io.Serializable, Cloneable, Comparable<NavigationDataBean>, 
+	GeoLocation, MarkerMapEntry, IconMapEntry {
 
 	/**
 	 * Object type names.
