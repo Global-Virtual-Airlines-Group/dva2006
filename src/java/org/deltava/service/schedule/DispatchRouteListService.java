@@ -5,21 +5,13 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 import java.io.IOException;
-import java.sql.Connection;
 
 import org.jdom.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.acars.DispatchRoute;
-import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.wx.METAR;
-
-import org.deltava.comparators.RunwayComparator;
 
 import org.deltava.dao.*;
-import org.deltava.dao.wsdl.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
@@ -34,8 +26,6 @@ import org.deltava.util.system.SystemData;
 
 public class DispatchRouteListService extends WebService {
 	
-	private static final Logger log = Logger.getLogger(DispatchRouteListService.class);
-
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -48,14 +38,10 @@ public class DispatchRouteListService extends WebService {
 		Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		
-		// Check if it's a US route
-		boolean isUS = (aD.getCountry().equals("US")) || (aA.getCountry().equals("US"));
-		
 		// Check if loading from FlightAware
 		boolean doFA = Boolean.valueOf(ctx.getParameter("external")).booleanValue() && SystemData.getBoolean("schedule.flightaware.enabled");
 		boolean hasFARole = ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch");
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("fullRoute")).booleanValue();
-		boolean getInactive = Boolean.valueOf(ctx.getParameter("getInactive")).booleanValue();
 		
 		// Check for default runway
 		String rwy = ctx.getParameter("runway");
@@ -65,81 +51,27 @@ public class DispatchRouteListService extends WebService {
 		// Get the Data
 		Collection<FlightRoute> routes = new ArrayList<FlightRoute>();
 		try {
-			Connection con = ctx.getConnection();
+			RouteLoadHelper helper = new RouteLoadHelper(ctx.getConnection(), aD, aA);
+			helper.setPreferredRunway(rwy);
+			helper.loadDispatchRoutes();
 			
-			// Load from the database
-			GetACARSRoute rdao = new GetACARSRoute(con);
-			routes.addAll(rdao.getRoutes(aD, aA, !getInactive));
+			// Load cached routes
+			helper.loadCachedRoutes();
 			
 			// Load flight aware routes
-			if (doFA && hasFARole) {
-				GetCachedRoutes rcdao = new GetCachedRoutes(con);
-				routes.addAll(rcdao.getRoutes(aD, aA));
-				
-				// If we don't have anything in the cache, fetch more
-				if (routes.isEmpty() && hasFARole && isUS) {
-					GetFARoutes fwdao = new GetFARoutes();
-					fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
-					fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
-					Collection<? extends FlightRoute> faroutes = fwdao.getRouteData(aD, aA);
-					
-					// Save in the cache
-					if (!faroutes.isEmpty()) {
-						routes.addAll(faroutes);
-						SetCachedRoutes rcwdao = new SetCachedRoutes(con);
-						rcwdao.write(faroutes);
-					}
-				}
-			}
+			if (doFA && hasFARole && !helper.hasRoutes())
+				helper.loadFlightAwareRoutes(true);
 			
 			// Load PIREP routes
-			if (routes.isEmpty()) {
-				GetFlightReportRoutes frrdao = new GetFlightReportRoutes(con);
-				routes.addAll(frrdao.getRoutes(aD, aA));
-			}
+			if (!helper.hasRoutes())
+				helper.loadPIREPRoutes();
 			
-			// Get the arrival weather
-			GetWeather wxdao = new GetWeather(con);
-			METAR mA = wxdao.getMETAR(aA.getICAO());
+			// Get the weather
+			helper.loadWeather();
 			
 			// Fix the SID/STAR
-			GetNavRoute navdao = new GetNavRoute(con);
-			for (FlightRoute rt : routes) {
-				if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
-					log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
-					List<String> tkns = StringUtils.split(rt.getSID(), ".");
-					String sidName = TerminalRoute.makeGeneric(tkns.get(0));
-					TerminalRoute sid = navdao.getBestRoute(aD, TerminalRoute.SID, sidName, tkns.get(1), rwy);
-					if (sid != null) {
-						log.info("Found " + sid.getCode());
-						rt.setSID(sid.getCode());
-					}
-				}
-				
-				if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
-					log.info("Searching for best STAR for " + rt.getSTAR());
-					List<String> tkns = StringUtils.split(rt.getSTAR(), ".");
-					
-					// Find the most popular runway based on weather
-					GetACARSRunways ardao = new GetACARSRunways(con);
-					List<Runway> rwys = ardao.getPopularRunways(aD, aA, false);
-					if (mA != null)
-						Collections.sort(rwys, new RunwayComparator(mA.getWindDirection()));
-					
-					String popRwy = rwys.isEmpty() ? null : "RW" + rwys.get(0).getName();
-					String arrRwy = (tkns.size() < 3) ? popRwy : tkns.get(2);
-
-					// Load the STAR - if we can't find based on the runway, try the most popular
-					String starName = TerminalRoute.makeGeneric(tkns.get(0));
-					TerminalRoute star = navdao.getBestRoute(aA, TerminalRoute.STAR, starName, tkns.get(1), arrRwy);
-					if (star == null)
-						star = navdao.getBestRoute(aA, TerminalRoute.STAR, tkns.get(0), tkns.get(1), popRwy);
-					if (star != null) {
-						log.info("Found " + star.getCode()); 
-						rt.setSTAR(star.getCode());
-					}
-				}
-			}
+			helper.calculateBestTerminalRoute();
+			routes.addAll(helper.getRoutes());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), true);
 		} finally {

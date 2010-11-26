@@ -89,10 +89,8 @@ public class RoutePlotMapService extends MapPlotService {
 					}
 					
 					// Sort runways based on wind heading
-					if (wxD != null) {
-						RunwayComparator rcmp = new RunwayComparator(wxD.getWindDirection());
-						runways = CollectionUtils.sort(runways, Collections.reverseOrder(rcmp));
-					}
+					if ((wxD != null) && (wxD.getWindSpeed() > 0))
+						runways = CollectionUtils.sort(runways, new RunwayComparator(wxD.getWindDirection()).reverse());
 				}
 			}
 

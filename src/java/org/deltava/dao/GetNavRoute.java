@@ -4,11 +4,9 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.navdata.OceanicTrackInfo.Type;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.GeoComparator;
@@ -19,16 +17,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 2.6
  */
 
 public class GetNavRoute extends GetOceanicRoute {
 	
-	private static final Logger log = Logger.getLogger(GetNavRoute.class);
-	
 	private static final Cache<Route> _rCache = new AgingCache<Route>(1024);
-	private static final Collection<String> EMPTY = new ArrayList<String>(1) {{ add(null); }};
 	
 	private java.util.Date _effectiveDate;
 
@@ -150,7 +145,7 @@ public class GetNavRoute extends GetOceanicRoute {
 			
 			// Check if we're referencing a NAT route
 			if (wp.startsWith("NAT") || wp.startsWith("PACOT")) {
-				OceanicTrackInfo.Type rType = wp.startsWith("NAT") ? Type.NAT : Type.PACOT; 
+				OceanicTrackInfo.Type rType = wp.startsWith("NAT") ? OceanicTrackInfo.Type.NAT : OceanicTrackInfo.Type.PACOT; 
 				Map<String, ? extends Airway> tracks = getOceanicTracks(rType, _effectiveDate);
 				if (tracks.isEmpty())
 					tracks = getOceanicTracks(rType, null);
@@ -210,24 +205,18 @@ public class GetNavRoute extends GetOceanicRoute {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public PopulatedRoute populate(FlightRoute rt) throws DAOException {
-		return populate(rt, EMPTY, EMPTY);
-	}
-	
-	/**
-	 * Populates a flight route with waypoint beans and allows specific runways to be chosen for the SID/STAR.
-	 * @param rt the FlightRoute bean to populate
-	 * @param dRwys the departure runways in order of preference
-	 * @param aRwys the arrival runways in order of preference
-	 * @return a populated DispatchRoute
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public PopulatedRoute populate(FlightRoute rt, Collection<String> dRwys, Collection<String> aRwys) throws DAOException {
 
 		PopulatedRoute pr = null; 
 		if (rt instanceof ExternalFlightRoute) {
 			pr = new ExternalPopulatedRoute();
 			ExternalFlightRoute efr = (ExternalFlightRoute) pr;
 			efr.setSource(((ExternalFlightRoute) rt).getSource());
+		} else if (rt instanceof DispatchRoute) {
+			DispatchRoute dr = (DispatchRoute) rt;
+			DispatchRoute pdr = new DispatchRoute();
+			pdr.setUseCount(dr.getUseCount());
+			pdr.setDispatchBuild(dr.getDispatchBuild());
+			pr = pdr;
 		} else
 			pr = new PopulatedRoute();
 		
@@ -238,44 +227,36 @@ public class GetNavRoute extends GetOceanicRoute {
 		pr.setCreatedOn(rt.getCreatedOn());
 		pr.setCruiseAltitude(rt.getCruiseAltitude());
 		pr.setRoute(rt.getRoute());
+		if (rt.getID() > 0)
+			pr.setID(rt.getID());
 		
-		// Load the SID
+		// Load SID
+		List<String> wpCodes = StringUtils.split(pr.getRoute(), " ");
 		if (!StringUtils.isEmpty(rt.getSID()) && (rt.getSID().contains("."))) {
-			List<String> tkns = StringUtils.split(rt.getSID(), ".");
-			String rwyName = (tkns.size() > 2) ? tkns.get(2) : null;
-			if (!dRwys.contains(rwyName)) {
-				dRwys = new ArrayList<String>(dRwys);
-				dRwys.add(rwyName);
-			}
-			
-			for (Iterator<String> i = dRwys.iterator(); i.hasNext() && (StringUtils.isEmpty(pr.getSID())); ) {
-				String rwy = i.next();
-				log.info("Searching for best SID for " + rt.getSID() + " runway " + rwy);
-				TerminalRoute sid = getBestRoute(pr.getAirportD(), TerminalRoute.SID, tkns.get(0), tkns.get(1), rwy);
-				if (sid != null) {
-					log.info("Found " + sid.getCode());
-					pr.setSID(sid.getCode());
+			TerminalRoute sid = getRoute(rt.getSID()); 
+			if (sid != null) {
+				pr.setSID(rt.getSID());
+				String transition = wpCodes.isEmpty() ? sid.getTransition() : wpCodes.get(0);
+				for (NavigationDataBean nd : sid.getWaypoints(transition)) {
+					pr.addWaypoint(nd, sid.getCode());
+					wpCodes.remove(nd.getCode());
 				}
 			}
 		}
 		
 		// Load the route waypoints
-		List<NavigationDataBean> points = getRouteWaypoints(pr.getRoute(), pr.getAirportD());
+		List<NavigationDataBean> points = getRouteWaypoints(StringUtils.listConcat(wpCodes, " "), pr.getAirportD());
 		for (NavigationDataBean nd : points)
 			pr.addWaypoint(nd, nd.getAirway());
 		
-		// Load best STAR
+		// Load STAR
 		if (!StringUtils.isEmpty(rt.getSTAR()) && (rt.getSTAR().contains("."))) {
-			List<String> tkns = StringUtils.split(rt.getSTAR(), ".");
-			for (Iterator<String> i = aRwys.iterator(); i.hasNext() && (StringUtils.isEmpty(pr.getSTAR())); ) {
-				String rwy = i.next();
-				log.info("Searching for best STAR for " + rt.getSTAR() + " runway " + rwy);
-				TerminalRoute star = getBestRoute(pr.getAirportA(), TerminalRoute.STAR, tkns.get(0), tkns.get(1), rwy);
-				if (star != null) {
-					pr.setSTAR(star.getCode());
-					for (NavigationDataBean nd : star.getWaypoints())
-						pr.addWaypoint(nd, star.getCode());
-				}
+			TerminalRoute star = getRoute(rt.getSTAR());
+			if (star != null) {
+				pr.setSTAR(rt.getSTAR());
+				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.get(wpCodes.size() - 1);
+				for (NavigationDataBean nd : star.getWaypoints(transition))
+					pr.addWaypoint(nd, star.getCode());
 			}
 		}
 		

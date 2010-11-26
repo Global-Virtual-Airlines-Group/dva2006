@@ -81,7 +81,7 @@ return true;
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" value="${airportD}" onChange="void updateRoute(true, true)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
-<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" /></span></td>
+<span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
@@ -118,8 +118,7 @@ return true;
  <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance" /></td>
 </tr>
 <tr>
- <td class="label top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="580" /></td>
+ <td colspan="2" class="data"><map:div ID="googleMap" x="100%" y="580" /></td>
 </tr>
 <tr>
  <td class="label">Waypoints</td>
@@ -151,6 +150,7 @@ return true;
 <script type="text/javascript">
 var f = document.forms[0];
 enableObject(f.routes, false);
+enableElement('SearchButton', (f.airportD.selectedIndex > 0) && (f.airportA.selectedIndex > 0));
 
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
