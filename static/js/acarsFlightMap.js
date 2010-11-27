@@ -1,6 +1,3 @@
-// This stores the raw KML in case the plugin hasn't loaded yet
-var acarsDataQueue;
-
 // ATC positions
 var selectedFIRs = [];
 
@@ -59,6 +56,16 @@ xmlreq.send(null);
 return true;
 }
 
+function hideATC()
+{
+while (selectedFIRs.length > 0) {
+	var mrk = selectedFIRs.shift();
+	mrk.setMap(null);
+}
+
+return true;
+}
+
 function showAPP(ctr, range)
 {
 selectedFIRs.length = 0;
@@ -78,7 +85,7 @@ xmlreq.onreadystatechange = function() {
 	var re = xdoc.documentElement;
 	
 	// Loop through the FIRs
-	selectedFIRs.length = 0;
+	hideATC();
 	var fs = re.getElementsByTagName('fir');
 	if (fs.length == 0) return true;
 	for (var x = 0; x < fs.length; x++) {
