@@ -23,8 +23,10 @@ xmlreq.onreadystatechange = function() {
 	dcPositions.length = 0;
 	displayObject(getElement('userSelect'), false);
 	var cbo = document.forms[0].usrID;
-	selectedPilot = cbo.options[cbo.selectedIndex].value;
-	cbo.options.length = 1;
+	if (cbo != null) {
+		selectedPilot = cbo.options[cbo.selectedIndex].value;
+		cbo.options.length = 1;
+	}
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
