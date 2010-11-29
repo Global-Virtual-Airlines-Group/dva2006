@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return Oceanic Track data.
  * @author Luke
- * @version 2.7
+ * @version 3.4
  * @since 1.0
  */
 
@@ -49,34 +49,31 @@ public class OceanicPlotService extends WebService {
 			// empty
 		}
 
-		List<OceanicTrack> tracks = null;
+		DailyOceanicTracks tracks = null;
 		try {
 			GetOceanicRoute dao = new GetOceanicRoute(ctx.getConnection());
-			tracks = new ArrayList<OceanicTrack>(dao.getOceanicTracks(trackType, dt).values());
+			tracks = dao.getOceanicTracks(trackType, dt);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
 		
-		// Get the date from the tracks
-		if ((dt == null) && !tracks.isEmpty())
-			dt = tracks.get(0).getDate();
-		
 		// Add concorde routes if NAT
-		if (trackType == OceanicTrackInfo.Type.NAT)
-			tracks.addAll(OceanicTrack.CONC_ROUTES);
+		if (trackType == OceanicTrackInfo.Type.NAT) {
+			for (OceanicTrack ot : OceanicTrack.CONC_ROUTES)
+				tracks.addTrack(ot);
+		}
 
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
-		if (dt != null)
-			re.setAttribute("date", StringUtils.format(dt, "MM/dd/yyyy"));
+		re.setAttribute("date", StringUtils.format(tracks.getDate(), "MM/dd/yyyy"));
 
 		// Build the track data
 		final NumberFormat nf = new DecimalFormat("##0.0000");
-		for (Iterator<OceanicTrack> i = tracks.iterator(); i.hasNext();) {
+		for (Iterator<OceanicTrack> i = tracks.getTracks().iterator(); i.hasNext();) {
 			OceanicTrack ow = i.next();
 			boolean isEast = (ow.getDirection() == OceanicTrackInfo.Direction.EAST);
 			Element te = new Element("track");
@@ -99,8 +96,7 @@ public class OceanicPlotService extends WebService {
 
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
