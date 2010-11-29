@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.blog;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.BlogAccessControl;
 /**
  * A Web Site Command to save blog entries.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -44,16 +44,18 @@ public class BlogCommentCommand extends AbstractCommand {
 
 			// Create the comment from the request
 			String name = ctx.isAuthenticated() ? ctx.getUser().getName() : ctx.getParameter("name");
-			Comment c = new Comment(name, ctx.getParameter("body"));
-			c.setEmail(ctx.isAuthenticated() ? ctx.getUser().getEmail() : ctx.getParameter("eMail"));
-			c.setID(e.getID());
-			c.setDate(new java.util.Date());
-			c.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-			c.setRemoteHost(ctx.getRequest().getRemoteHost());
+			if (name != null) {
+				Comment c = new Comment(name, ctx.getParameter("body"));
+				c.setEmail(ctx.isAuthenticated() ? ctx.getUser().getEmail() : ctx.getParameter("eMail"));
+				c.setID(e.getID());
+				c.setDate(new java.util.Date());
+				c.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+				c.setRemoteHost(ctx.getRequest().getRemoteHost());
 
-			// Get the DAO and save the comment
-			SetBlog wdao = new SetBlog(con);
-			wdao.write(c);
+				// Get the DAO and save the comment
+				SetBlog wdao = new SetBlog(con);
+				wdao.write(c);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
