@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 2.7
+ * @version 3.4
  * @since 1.0
  */
 
@@ -115,10 +115,10 @@ public class GetOceanicRoute extends GetNavAirway {
      * Returns all of the oceanic route waypoints for a particular date.
      * @param routeType the route type
      * @param dt the date
-     * @return a Map of {@link OceanicTrack} beans, keyed by track code
+     * @return a {@link DailyOceanicTracks} bean
      * @throws DAOException if a JDBC error occurs
      */
-    public Map<String, OceanicTrack> getOceanicTracks(OceanicTrackInfo.Type routeType, java.util.Date dt) throws DAOException {
+    public DailyOceanicTracks getOceanicTracks(OceanicTrackInfo.Type routeType, java.util.Date dt) throws DAOException {
     	
     	// Build the SQL statement
     	StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND ");
@@ -137,7 +137,7 @@ public class GetOceanicRoute extends GetNavAirway {
     		
     		// Execute the query
     		OceanicTrack wp = null;
-    		Map<String, OceanicTrack> results = new TreeMap<String, OceanicTrack>();
+    		DailyOceanicTracks results = new DailyOceanicTracks(routeType, dt);
     		Map<String, NavigationDataBean> wps = new HashMap<String, NavigationDataBean>();
     		ResultSet rs = _ps.executeQuery();
     		while (rs.next()) {
@@ -145,7 +145,7 @@ public class GetOceanicRoute extends GetNavAirway {
     			if ((wp == null) || (!newTrack.equals(wp.getTrack()))) {
     				wp = new OceanicTrack(routeType, newTrack);
     				wp.setDate(rs.getTimestamp(2));
-    				results.put(wp.getCode(), wp);
+    				results.addTrack(wp);
     			}
     			
     			// Get the waypoint

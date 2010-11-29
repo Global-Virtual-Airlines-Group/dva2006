@@ -143,14 +143,35 @@ public class GetNavRoute extends GetOceanicRoute {
 			String wp = tkns.get(x);
 			aws.clear();
 			
-			// Check if we're referencing a NAT route
-			if (wp.startsWith("NAT") || wp.startsWith("PACOT")) {
+			// Check if we're referencing a NAT route. Even if we can't find a perfect route, find one that
+			// starts at the starting point, and replace the next point on the NAT with the endpoint of this NAT
+			if ((x > 0) && ((wp.startsWith("NAT") || wp.startsWith("PACOT")))) {
 				OceanicTrackInfo.Type rType = wp.startsWith("NAT") ? OceanicTrackInfo.Type.NAT : OceanicTrackInfo.Type.PACOT; 
-				Map<String, ? extends Airway> tracks = getOceanicTracks(rType, _effectiveDate);
-				if (tracks.isEmpty())
+				DailyOceanicTracks tracks = getOceanicTracks(rType, _effectiveDate);
+				if (tracks.size() == 0)
 					tracks = getOceanicTracks(rType, null);
-				if (tracks.containsKey(wp))
-					aws.add(tracks.get(wp));
+				
+				// Find either the specified NAT track, or the one that matches the waypoints
+				String prevWP = tkns.get(x - 1);
+				String nextWP = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : null;
+				OceanicTrack tr = tracks.getTrack(wp);
+				if ((tr == null) || (!tr.contains(prevWP) && !tr.contains(nextWP))) {
+					tr = tracks.find(prevWP, nextWP);
+					if (tr == null) {
+						tr = tracks.find(prevWP, null);
+						if ((tr != null) && tracks.contains(nextWP))
+							tkns.set(x+1, tr.getEnd().getCode());
+						else if ((tr != null) && (nextWP != null)) {
+							NavigationDataMap ndmap = get(nextWP);
+							NavigationDataBean nd = ndmap.get(wp, tr.getEnd());
+							if (nd != null)
+								tkns.set(x+1, nd.getCode());
+						}
+					}
+				}
+
+				if (tr != null)
+					aws.add(tr);
 			} else
 				aws.addAll(getAirways(wp));
 			
