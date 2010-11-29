@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * the same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway
  * sequence.
  * @author Luke
- * @version 2.4
+ * @version 3.4
  * @since 1.0
  */
 
@@ -25,7 +25,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	private boolean _highLevel;
 	private boolean _lowLevel;
 	
-	private final List<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
+	protected final LinkedList<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
 	
 	/**
 	 * Creates a new Airway bean.
@@ -120,13 +120,27 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 		_pos = new GeoPosition(lat / _waypoints.size(), lng / _waypoints.size());
 	}
 	
-	private int find(String code) {
+	/**
+	 * Finds a waypoint in this Airway.
+	 * @param code the waypoint code
+	 * @return the offset within the waypoints, or -1 if not found
+	 */
+	protected int find(String code) {
 		for (int pos = 0; pos < _waypoints.size(); pos++) {
 			if (_waypoints.get(pos).getCode().equalsIgnoreCase(code)) 
 				return pos;
 		}
 		
 		return -1;
+	}
+	
+	/**
+	 * Returns whether this Airway contains a particular waypoint.
+	 * @param code the waypoint code
+	 * @return TRUE if found, otherwise FALSE
+	 */
+	public boolean contains(String code) {
+		return (find(code) != -1);
 	}
 
 	/**
@@ -210,7 +224,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	 * Compares two airways by comparing their names and sequence numbers.
 	 */
 	public int compareTo(Airway a2) {
-		int tmpResult = getCode().compareTo(a2.getCode());
+		int tmpResult = _code.compareTo(a2._code);
 		return (tmpResult == 0) ? Integer.valueOf(_awseq).compareTo(Integer.valueOf(_awseq)) : tmpResult;
 	}
 	

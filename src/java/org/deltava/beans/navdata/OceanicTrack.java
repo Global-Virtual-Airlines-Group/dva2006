@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store Oceanic Track (NAT/PACOT) information.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -22,7 +22,6 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
 
 		ConcordeNAT(String track, String route) {
 			super(Type.NAT, track);
-			setDate(new Date());
 			for (Iterator<String> i = StringUtils.split(route, ",").iterator(); i.hasNext();) {
 				String wpCode = i.next();
 				Intersection wp = Intersection.parse(wpCode);
@@ -97,7 +96,7 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
     
 	/**
 	 * Returns whether the track is fixed from day to day.
-	 * @return FALSE
+	 * @return FALSE always
 	 */
 	public boolean isFixed() {
 		return false;
@@ -110,6 +109,24 @@ public class OceanicTrack extends Airway implements OceanicTrackInfo {
      */
     public String getTrack() {
     	return _trackID;
+    }
+    
+    /**
+     * Returns the first waypoint on this track.
+     * @return the first waypoint bean
+     * @see OceanicTrack#getEnd()
+     */
+    public NavigationDataBean getStart() {
+    	return _waypoints.getFirst();
+    }
+    
+    /**
+     * Returns the last waypoint on this track.
+     * @return the last waypoint bean
+     * @see OceanicTrack#getStart()
+     */
+    public NavigationDataBean getEnd() {
+    	return _waypoints.getLast();
     }
     
     /**
