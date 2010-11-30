@@ -15,7 +15,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to display the Online Event calendar.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -37,6 +37,9 @@ public class EventCalendarCommand extends AbstractCalendarCommand {
 			GetEvent dao = new GetEvent(con);
 			Collection<Event> events = dao.getEventCalendar(cctx.getStartDate(), cctx.getDays());
 			ctx.setAttribute("events", events, REQUEST);
+			
+			// Get future events
+			ctx.setAttribute("futureEvents", dao.getFutureEvents(), REQUEST);
 			
 			// Get the Pilot IDs from the signups
 			Set<Integer> pilotIDs = new HashSet<Integer>();
