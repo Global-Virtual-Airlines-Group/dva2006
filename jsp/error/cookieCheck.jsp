@@ -19,11 +19,12 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<b>Oops. It looks like your browser cannot accept cookies from our site.</b> Please
-go into your browser's preferences, and ensure that you can accept cookies from
-<span class="sec bld">${domain}</span>.<br />
+<div class="updateHdr">Cookies Disabled</div>
 <br />
-<el:cmd url="login">Click Here</el:cmd> to return to the login page.<br />
+Oops. It looks like your browser cannot accept cookies from our site. Please go into your browser's preferences, and
+ensure that you can accept cookies from <span class="sec bld">${domain}</span>.<br />
+<br />
+<el:cmd url="login" className="sec bld">Click Here</el:cmd> to return to the login page.<br />
 <br />
 <content:copyright />
 </content:region>
