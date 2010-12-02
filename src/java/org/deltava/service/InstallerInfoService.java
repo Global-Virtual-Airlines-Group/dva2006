@@ -2,6 +2,7 @@
 package org.deltava.service;
 
 import java.util.*;
+import java.net.URL;
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -9,6 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.beans.fleet.Installer;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.dao.*;
 
@@ -18,14 +20,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Fleet Library Information.
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 1.0
  */
 
 public class InstallerInfoService extends WebService {
 
 	/**
-	 * Executes the Web Service, returning an INI file for use with the Fleet Installers.
+	 * Executes the Web Service, returning an XML snippet for the Fleet Library page 
 	 * @param ctx the Web Service context
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
@@ -33,23 +35,24 @@ public class InstallerInfoService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the installer code
-	   String db = SystemData.get("airline.db");
+		String app = SystemData.get("airline.code");
 		String code = ctx.getParameter("code");
 		if (code == null)
 			throw new ServiceException(SC_BAD_REQUEST, "No Installer Code");
-		
+
 		// Check if we're using DB.CODE notation
 		if (code.indexOf('.') != -1) {
-		   StringTokenizer tkns = new StringTokenizer(code, ".");
-		   db = tkns.nextToken();
-		   code = tkns.nextToken();
+			StringTokenizer tkns = new StringTokenizer(code, ".");
+			app = tkns.nextToken();
+			code = tkns.nextToken();
 		}
 
 		// Get the DAO and do the search
+		AirlineInformation ai = SystemData.getApp(app);
 		Installer i = null;
 		try {
 			GetLibrary dao = new GetLibrary(ctx.getConnection());
-			i = dao.getInstallerByCode(code, db);
+			i = dao.getInstallerByCode(code, ai.getDB());
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -59,13 +62,13 @@ public class InstallerInfoService extends WebService {
 		// If no installer found, return a 404 error
 		if (i == null)
 			throw new ServiceException(SC_NOT_FOUND, code + " not found");
-		
+
 		// Get the format strings
 		String dFmt = ctx.isAuthenticated() ? ctx.getUser().getDateFormat() : SystemData.get("date_format");
 		String nFmt = ctx.isAuthenticated() ? ctx.getUser().getNumberFormat() : "#,##0";
 		if (nFmt.contains("."))
 			nFmt = nFmt.substring(0, nFmt.indexOf('.'));
-
+		
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
@@ -82,19 +85,18 @@ public class InstallerInfoService extends WebService {
 			le.setAttribute("date", StringUtils.format(i.getLastModified(), dFmt));
 		le.setAttribute("version", i.getVersion());
 		le.setAttribute("dl", StringUtils.format(i.getDownloadCount(), nFmt));
-		le.setAttribute("img", "/" + SystemData.get("path.img") + "/fleet/" + i.getImage());
-		Element e = new Element("desc");
-		e.addContent(new CDATA(i.getDescription()));
-		le.addContent(e);
-		for (Iterator<String> vi = i.getFSVersionNames().iterator(); vi.hasNext(); ) {
-			String version = vi.next();
+		le.addContent(XMLUtils.createElement("desc", i.getDescription(), true));
+		for (String version : i.getFSVersionNames())
 			le.addContent(XMLUtils.createElement("version", version));
-		}
-
+		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			int ofs = ctx.getRequest().getProtocol().indexOf('/');
+			String img = "/" + SystemData.get("path.img") + "/fleet/" + i.getImage();	
+			URL url = new URL(ctx.getRequest().getProtocol().substring(0, ofs), "www." + ai.getDomain(), img);
+			le.setAttribute("img", url.toString());
+			
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
