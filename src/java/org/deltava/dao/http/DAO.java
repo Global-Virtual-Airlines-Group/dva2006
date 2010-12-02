@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import javax.net.ssl.*;
  * DAOs create their own stream to a URL. This is used in situations where
  * request-specific data is encoded into the URL. 
  * @author Luke
- * @version 2.4
+ * @version 3.4
  * @since 2.4
  */
 
@@ -37,7 +37,7 @@ public abstract class DAO {
     	if (method != null)
     		_method = method.toUpperCase();
     }
-
+    
     /**
      * Opens a connection to a URL and returns a stream to the data.
      * @param url the URL to connect to
@@ -45,9 +45,18 @@ public abstract class DAO {
      * @throws IOException if an error occurs
      */
     protected InputStream getStream(String url) throws IOException {
-    	URL uri = new URL(url);
-    	HttpURLConnection urlcon = (HttpURLConnection) uri.openConnection();
-    	if ("https".equals(uri.getProtocol()) && (_sslCtxt != null)) {
+    	return getStream(new URL(url));
+    }
+
+    /**
+     * Opens a connection to a URL and returns a stream to the data.
+     * @param url the URL to connect to
+     * @return an InputStream to the data
+     * @throws IOException if an error occurs
+     */
+    protected InputStream getStream(URL url) throws IOException {
+    	HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
+    	if ("https".equals(url.getProtocol()) && (_sslCtxt != null)) {
     		HttpsURLConnection sslcon = (HttpsURLConnection) urlcon;
     		sslcon.setSSLSocketFactory(_sslCtxt.getSocketFactory());
     	}
