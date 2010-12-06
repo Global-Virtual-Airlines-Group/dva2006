@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A common String utility class.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -198,7 +198,17 @@ public final class StringUtils {
 			throw new IllegalArgumentException(pe);
 		}
 	}
-
+	
+	/**
+	 * Helper method to parse RFC3339 date strings.
+	 * @param dt the date/time string
+	 * @return a Date
+	 * @throws IllegalArgumentException if the date/time is not in RFC3339 format
+	 */
+	public static Date parseRFC3339Date(String dt) {
+		return parseDate(dt, "yyyy-MM-dd'T'HH:mm:ssZ");
+	}
+	
 	/**
 	 * Converts a number to a hexadecimal value by prepending &quot;0x&quot; and converting to hexadecimal.
 	 * @param value the number to convert
