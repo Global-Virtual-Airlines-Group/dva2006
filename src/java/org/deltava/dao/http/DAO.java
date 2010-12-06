@@ -21,6 +21,8 @@ public abstract class DAO {
 	private SSLContext _sslCtxt;
 	private String _method = "GET";
 	
+	private HttpURLConnection _urlcon;
+	
     /**
      * Overrides the context used to generate SSL context.
      * @param ctxt the SSLContext
@@ -39,34 +41,63 @@ public abstract class DAO {
     }
     
     /**
-     * Opens a connection to a URL and returns a stream to the data.
-     * @param url the URL to connect to
-     * @return an InputStream to the data
+     * Helper method to open the connection.
+     * @param url the URI to connect to
      * @throws IOException if an error occurs
      */
-    protected InputStream getStream(String url) throws IOException {
-    	return getStream(new URL(url));
+    protected void init(String url) throws IOException {
+    	if (_urlcon != null)
+    		return;
+    	
+    	URL u = new URL(url);
+    	_urlcon = (HttpURLConnection) u.openConnection();
+    	if ("https".equals(u.getProtocol()) && (_sslCtxt != null)) {
+    		HttpsURLConnection sslcon = (HttpsURLConnection) _urlcon;
+    		sslcon.setSSLSocketFactory(_sslCtxt.getSocketFactory());
+    	}
+    	
+    	// Set timeouts and other stuff
+		_urlcon.setConnectTimeout(2500);
+		_urlcon.setReadTimeout(4500);
+		_urlcon.setRequestMethod(_method);
+		_urlcon.setDefaultUseCaches(false);
+    }
+    
+    /**
+     * Returns the HTTP response code for this request.
+     * @return the response code
+     * @throws IOException if an error occured
+     */
+    protected int getResponseCode() throws IOException {
+    	if (_urlcon == null)
+    		throw new IllegalStateException("Not Initialized");
+    	
+    	return _urlcon.getResponseCode();
     }
 
     /**
-     * Opens a connection to a URL and returns a stream to the data.
-     * @param url the URL to connect to
+     * Retrieves an input stream to the URL.
      * @return an InputStream to the data
      * @throws IOException if an error occurs
      */
-    protected InputStream getStream(URL url) throws IOException {
-    	HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
-    	if ("https".equals(url.getProtocol()) && (_sslCtxt != null)) {
-    		HttpsURLConnection sslcon = (HttpsURLConnection) urlcon;
-    		sslcon.setSSLSocketFactory(_sslCtxt.getSocketFactory());
-    	}
-    		
-    	// Set timeouts
-		urlcon.setConnectTimeout(2500);
-		urlcon.setReadTimeout(4500);
-		urlcon.setRequestMethod(_method);
-
-		// Open the connection
-		return urlcon.getInputStream();
+    protected InputStream getIn() throws IOException {
+    	if (_urlcon == null)
+    		throw new IllegalStateException("Not Initialized");
+    	
+		return _urlcon.getInputStream();
+    }
+    
+    /**
+     * Retrieves an output stream to the URL.
+     * @return an OutputStream to the data
+     * @throws IOException if an error occurs
+     */
+    protected OutputStream getOut() throws IOException {
+    	if (_urlcon == null)
+    		throw new IllegalStateException("Not Initialized");
+    	
+    	_urlcon.setDoOutput(true);
+    	_urlcon.setRequestProperty ("Content-Type", "application/x-www-form-urlencoded");
+		return _urlcon.getOutputStream();
     }
 }
