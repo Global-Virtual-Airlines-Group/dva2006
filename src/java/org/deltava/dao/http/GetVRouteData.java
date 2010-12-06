@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load VATSIM track data from VRoute.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 2.4
  */
 
@@ -45,7 +45,8 @@ public class GetVRouteData extends DAO {
 		
 		String url = "http://data.vroute.net/services/flthistory.php?pid=" + id;
 		try {
-			LineNumberReader lr = new LineNumberReader(new InputStreamReader(getStream(url)));
+			init(url);
+			LineNumberReader lr = new LineNumberReader(new InputStreamReader(getIn()));
 			Collection<PositionData> results = new ArrayList<PositionData>();
 			while (lr.ready()) {
 				String data = lr.readLine();
