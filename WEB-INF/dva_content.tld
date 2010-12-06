@@ -308,7 +308,7 @@
 	</tag>
 
 	<tag>
-		<description>Enumeration values tag</description>
+		<description>Enumeration value(s) tag</description>
 		<name>enum</name>
 		<tag-class>org.deltava.taglib.content.EnumTag</tag-class>	
 		<body-content>empty</body-content>
@@ -320,6 +320,11 @@
 		<attribute>
 			<name>className</name>
 			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>item</name>
+			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
