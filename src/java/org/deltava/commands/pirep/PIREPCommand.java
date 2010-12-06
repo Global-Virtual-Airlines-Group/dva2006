@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -268,7 +268,8 @@ public class PIREPCommand extends AbstractFormCommand {
 					throw securityException("Cannot create new PIREP");
 
 				// Save the user object
-				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
+				ctx.setAttribute("pilot", usr, REQUEST);
+				ctx.setAttribute("networks", usr.getNetworks(), REQUEST);
 
 				// Get the active airlines
 				for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
@@ -288,9 +289,11 @@ public class PIREPCommand extends AbstractFormCommand {
 					throw securityException("Not Authorized");
 
 				// Save the pilot info/PIREP in the request
-				GetPilot dao2 = new GetPilot(con);
-				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(DatabaseID.PILOT)), REQUEST);
+				GetPilot pdao = new GetPilot(con);
+				Pilot p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
+				ctx.setAttribute("pilot", p, REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
+				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 
 				// Set PIREP date and length
 				cld.setTime(DateTime.convert(fr.getDate(), ctx.getUser().getTZ()));
@@ -340,7 +343,6 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("fsVersions", _fsVersions, REQUEST);
 
 		// Set basic lists for the JSP
-		ctx.setAttribute("networks", ctx.getUser().getNetworks(), REQUEST);
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 		ctx.setAttribute("months", months, REQUEST);
@@ -419,7 +421,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA())), REQUEST);
 				
 				// Display user's networks
-				ctx.setAttribute("networks", ctx.getUser().getNetworks(), REQUEST);
+				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 			}
 
 			// Get the Navdata DAO
