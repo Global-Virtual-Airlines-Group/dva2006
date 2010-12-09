@@ -20,14 +20,14 @@ import org.deltava.util.*;
 import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.common.SharedData;
+import org.gvagroup.common.*;
 import org.gvagroup.jdbc.ConnectionPool;
 import org.gvagroup.jdbc.ConnectionPoolException;
 
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -179,6 +179,15 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		} finally {
 			_jdbcPool.release(c);
 		}
+		
+		// Load facebook credentials
+		if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+			FacebookCredentials creds = new FacebookCredentials(SystemData.get("users.facebook.id"));
+			creds.setPageID(SystemData.get("users.facebook.pageID"));
+			creds.setPageToken(SystemData.get("users.facebook.pageToken"));
+			SharedData.addData(SharedData.FB_CREDS + SystemData.get("airline.code"), creds);
+			log.info("Loaded Facebook application credentials");
+		}
 
 		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
@@ -217,12 +226,15 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Shut down the JDBC connection pool
 		ThreadUtils.sleep(2000);
 		_jdbcPool.close();
-		JDBCUtils.cleanMySQLTimer();
-		JDBCUtils.deregisterDrivers();
-		java.beans.Introspector.flushCaches();
+		try {
+			JDBCUtils.cleanMySQLTimer();
+			JDBCUtils.deregisterDrivers();
+			java.beans.Introspector.flushCaches();
+		} finally {
+			SharedData.purge(SystemData.get("airline.code"));
+		}
 
 		// Close the Log4J manager
-		SharedData.purge(SystemData.get("airline.code"));
 		log.error("Shut down " + SystemData.get("airline.code"));
 		ThreadUtils.sleep(200);
 		LogManager.shutdown();

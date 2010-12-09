@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009,, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
- * @version 2.8
+ * @version 3.4
  * @since 1.0
  */
 
@@ -68,6 +68,9 @@ public class SetStatusUpdate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Collection<StatusUpdate> updates) throws DAOException {
+		if (updates.isEmpty())
+			return;
+		
 		try {
 			prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) "
 				+ "VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1 SECOND)");

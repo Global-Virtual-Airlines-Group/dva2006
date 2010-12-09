@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -159,6 +159,22 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			_ps.setInt(1, usr.getID());
 			_ps.setString(2, usr.getEmail());
 			return executeIDs();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns users from the current database based on their Instant Message address.
+	 * @param addr the address
+	 * @return a Map of Pilots, keyed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Pilot> getByIMAddress(String addr) throws DAOException {
+		try {
+			prepareStatement("SELECT ID FROM PILOT_IMADDR WHERE (ADDR=?)");
+			_ps.setString(1, addr);
+			return getByID(executeIDs(), "PILOTS");
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
