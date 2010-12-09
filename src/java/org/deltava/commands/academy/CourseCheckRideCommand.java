@@ -109,9 +109,6 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// If we're new, forward to the JSP
 			if (ctx.getParameter("acType") == null) {
 				ctx.release();
-				
-				// TODO: Put this in the request and the JSP needs to say its ours and won't be
-				// specified until we set the aircraft type
 				result.setURL("/jsp/academy/crAssign.jsp");
 				result.setSuccess(true);
 				return;
