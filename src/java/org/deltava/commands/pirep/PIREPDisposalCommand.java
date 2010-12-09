@@ -235,8 +235,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 					if (!p.hasNetworkID(net))
 						throw new IllegalStateException("No " + net + " ID for " + p.getName());
 				} catch (Exception e) {
-					log.warn(e.getMessage());
 					net = null;
+					if (!StringUtils.isEmpty(e.getMessage()))
+						log.warn(e.getMessage());
 				} finally {
 					fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
 					fr.setAttribute(FlightReport.ATTR_IVAO, (net == OnlineNetwork.IVAO));
