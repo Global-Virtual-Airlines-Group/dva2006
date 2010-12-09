@@ -52,7 +52,7 @@ return true;
 </c:if></script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -137,7 +137,7 @@ return true;
 <c:set var="lastUpd" value="${pilots[progress.authorID]}" scope="page" />
 <view:row entry="${progress}">
  <td class="label top">Entry #<fmt:int value="${progress.ID}" /></td>
- <td colspan="6" class="data top"><fmt:text value="${progress.text}" />
+ <td colspan="6" class="data top"><fmt:msg value="${progress.text}" />
 <c:if test="${progress.complete || access.canUpdateProgress}">
 <br /><hr />
 <c:if test="${progress.complete}">
