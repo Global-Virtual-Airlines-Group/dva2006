@@ -14,7 +14,7 @@
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
@@ -72,7 +72,7 @@
 <c:set var="hasExam" value="${!empty req.examName}" scope="page" />
 <tr>
  <td class="label top" rowspan="${hasExam ? 2 : 1}">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><fmt:text value="${req.text}" /></td>
+ <td class="data"><fmt:msg value="${req.text}" /></td>
 </tr>
 <c:if test="${hasExam}">
  <td class="data"><span class="small ita">Requires successful completion of the <span class="pri bld caps">${req.examName}</span> Examination</span></td>
