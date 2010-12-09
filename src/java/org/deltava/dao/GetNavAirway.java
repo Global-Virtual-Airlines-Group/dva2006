@@ -326,7 +326,7 @@ public class GetNavAirway extends GetNavData {
 	public Collection<TerminalRoute> getRoutes(String code, int type) throws DAOException {
 		List<TerminalRoute> results = null;
 		try {
-			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY, SEQ");
+			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY, SEQ");
 			_ps.setString(1, code.toUpperCase());
 			_ps.setInt(2, type);
 			results = executeSIDSTAR();
@@ -336,7 +336,7 @@ public class GetNavAirway extends GetNavData {
 
 		// Add to the cache and return
 		_rCache.addAll(results);
-		return new LinkedHashSet<TerminalRoute>(results);
+		return results;
 	}
 
 	/**
