@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%@ page session="false" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Facebook Authorization Error</title>
+<content:css name="main" browserSpecific="true" />
+<content:pics />
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+<%@include file="/jsp/main/header.jspf" %> 
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<div class="updateHdr">Facebook Authorization Failed</div>
+<br />
+Oops. The Facebook authorization attempt has failed. Here's the reason that Facebook gave us:<br />
+<br />
+<span class="error bld"><content:sysmsg /></span><br />
+<br />
+Please close this window and try the authorization attempt again.<br />
+<br />
+<content:copyright />
+</content:region>
+</content:page>
+<content:googleAnalytics />
+</body>
+</html>

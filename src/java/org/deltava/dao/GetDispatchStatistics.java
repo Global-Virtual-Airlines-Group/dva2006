@@ -9,7 +9,7 @@ import org.deltava.beans.Pilot;
 /**
  * A Data Access Object to load ACARS Dispatch statistics.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 3.2
  */
 

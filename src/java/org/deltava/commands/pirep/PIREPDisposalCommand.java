@@ -8,12 +8,13 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.AssignmentInfo;
+import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
-import org.deltava.beans.stats.AccomplishmentHistoryHelper.Result;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.PIREPAccessControl;
@@ -24,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -174,7 +175,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				// Loop through each accomplishment and only save the ones we don't meet yet
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
-					if (acchelper.has(a) != Result.NOTYET)
+					if (acchelper.has(a) != AccomplishmentHistoryHelper.Result.NOTYET)
 						i.remove();
 				}
 				
@@ -185,7 +186,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				SetAccomplishment acwdao = new SetAccomplishment(con);
 				for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
 					Accomplishment a = i.next();
-					if (acchelper.has(a) == Result.MEET) {
+					if (acchelper.has(a) == AccomplishmentHistoryHelper.Result.MEET) {
 						acwdao.achieve(p.getID(), a);
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 						upd.setAuthorID(ctx.getUser().getID());
@@ -196,16 +197,45 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				}
 				
 				// Log Accomplishments
-				if (!accs.isEmpty())
+				if (!accs.isEmpty()) {
 					ctx.setAttribute("accomplishments", accs, REQUEST);
+				
+					// Write Facebook update
+					if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+						MessageContext fbctxt = new MessageContext();
+						fbctxt.addData("user", p);
+						fbctxt.setTemplate(mtdao.get("FBACCOMPLISH"));
+						
+						// Write the post
+						SetFacebookData fbwdao = new SetFacebookData();
+						fbwdao.setWarnMode(true);
+						for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+							Accomplishment a = i.next();
+							fbctxt.addData("accomplish", a);
+							NewsEntry nws = new NewsEntry(fbctxt.getBody());
+							
+							// Write to user feed or app page
+							fbwdao.reset();
+							if (p.hasIM(IMAddress.FBTOKEN)) {
+								fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
+								fbwdao.write(nws);
+							} else {
+								fbwdao.setAppID(SystemData.get("users.facebook.pageID"));		
+								fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+								fbwdao.writeApp(nws);
+							}
+						}
+					}
+				}
 				
 				// Figure out what network the flight was flown on and ensure we have an ID
 				OnlineNetwork net = null;
 				try {
 					net = OnlineNetwork.valueOf(ctx.getParameter("network").toUpperCase());
 					if (!p.hasNetworkID(net))
-						throw new IllegalStateException("No " + net + " ID");
+						throw new IllegalStateException("No " + net + " ID for " + p.getName());
 				} catch (Exception e) {
+					log.warn(e.getMessage());
 					net = null;
 				} finally {
 					fr.setAttribute(FlightReport.ATTR_VATSIM, (net == OnlineNetwork.VATSIM));
@@ -228,6 +258,20 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   upd.setAuthorID(ctx.getUser().getID());
 			   upd.setDescription("Assigned Pilot ID " + p.getPilotCode());
 			   upds.add(upd);
+			   
+			   // Write Facebook update
+			   if (p.hasIM(IMAddress.FBTOKEN)) {
+				   MessageContext fbctxt = new MessageContext();
+				   fbctxt.addData("user", p);
+				   fbctxt.setTemplate(mtdao.get("FBIDASSIGNED"));
+				   NewsEntry nws = new NewsEntry(fbctxt.getBody());
+				   
+					// Write to user feed
+					SetFacebookData fbwdao = new SetFacebookData();
+					fbwdao.setWarnMode(true);
+					fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
+					fbwdao.write(nws);
+			   }
 			}
 			
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion

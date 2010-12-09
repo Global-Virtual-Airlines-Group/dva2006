@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Function Library for Pilot-related functions.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -84,5 +84,22 @@ public class PersonFunctions {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Returns whether a Person has a particular IM address.
+	 * @param usr the Person
+	 * @param imType the Instant Message type
+	 * @return TRUE if the Person has an address, otherwise FALSE
+	 */
+	public static boolean hasIM(Person usr, String imType) {
+		try {
+			IMAddress addr = IMAddress.valueOf(imType.toUpperCase());
+			return (usr == null) ? false : (usr.getIMHandle(addr) != null);
+		} catch (Exception e) {
+			// empty
+		}
+		
+		return false;
 	}
 }

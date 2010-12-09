@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -90,7 +90,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _email;
 	private int _emailAccess;
 
-	private final Map<String, String> _imHandles = new TreeMap<String, String>();
+	private final Map<IMAddress, String> _imHandles = new TreeMap<IMAddress, String>();
 
 	private String _eqType;
 	private Rank _rank;
@@ -298,31 +298,29 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @param service the IM service name
 	 * @return the IM handle, or null if not found
 	 * @throws NullPointerException if service is null
-	 * @see Person#getIMServices()
 	 * @see Person#getIMHandle()
-	 * @see Person#setIMHandle(String, String)
+	 * @see Person#setIMHandle(IMAddress, String)
 	 */
-	public String getIMHandle(String service) {
-		return _imHandles.get(service.toUpperCase());
+	public String getIMHandle(IMAddress service) {
+		return _imHandles.get(service);
 	}
 	
 	/**
 	 * Returns a Map containing this Person's Instant Messenger handles.
 	 * @return the Instant Messenger IDs
-	 * @see Person#getIMHandle(String)
+	 * @see Person#getIMHandle(IMAddress)
 	 */
-	public Map<String, String> getIMHandle() {
-		return new HashMap<String, String>(_imHandles);
+	public Map<IMAddress, String> getIMHandle() {
+		return new TreeMap<IMAddress, String>(_imHandles);
 	}
-
+	
 	/**
-	 * Returns the Person's registed Instant Messenger services.
-	 * @return a Collection of service names
-	 * @see Person#getIMHandle(String)
-	 * @see Person#setIMHandle(String, String)
+	 * Returns whether a Person has a specific Instant Messenger handle.
+	 * @param svc an IMAddress object
+	 * @return TRUE if the Person has an address for this service, otherwise FALSE
 	 */
-	public Collection<String> getIMServices() {
-		return new LinkedHashSet<String>(_imHandles.keySet());
+	public boolean hasIM(IMAddress svc) {
+		return _imHandles.containsKey(svc);
 	}
 
 	/**
@@ -687,14 +685,12 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Update this Person's Instant Messaging handle. If the handle is empty, it will be cleared.
-	 * @param service the messaging service
+	 * @param svc the messaging service
 	 * @param handle the new handle
 	 * @throws NullPointerException if service is null
-	 * @see Person#getIMHandle(String)
-	 * @see Person#getIMServices()
+	 * @see Person#getIMHandle(IMAddress)
 	 */
-	public void setIMHandle(String service, String handle) {
-		String svc = service.toUpperCase();
+	public void setIMHandle(IMAddress svc, String handle) {
 		if ((handle != null) && (!StringUtils.isEmpty(handle.trim())))
 			_imHandles.put(svc, handle);
 		else if (_imHandles.containsKey(svc))
@@ -854,7 +850,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public void setAirportCodeType(Airport.Code code) {
 		_airportCodeType = code;
 	}
-
+	
 	/**
 	 * Returns the person's full name.
 	 */

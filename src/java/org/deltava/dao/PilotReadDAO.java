@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -102,6 +102,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 			// Execute the query and get the result
 			Map<Integer, Pilot> results = CollectionUtils.createMap(execute(), "ID");
+			loadIMAddrs(results, dbName);
 			loadRatings(results, dbName);
 			loadRoles(results, dbName);
 			loadAccomplishments(results, dbName);
@@ -215,6 +216,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 				// Convert to a map and load ratings/roles
 				Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, "ID");
+				loadIMAddrs(ucMap, dbName);
 				loadRatings(ucMap, dbName);
 				loadRoles(ucMap, dbName);
 				loadAccomplishments(ucMap, dbName);
@@ -271,8 +273,8 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setDN(rs.getString(6));
 			p.setEmail(rs.getString(7));
 			p.setLocation(rs.getString(8));
-			p.setIMHandle(InstantMessage.AIM, rs.getString(9));
-			p.setIMHandle(InstantMessage.MSN, rs.getString(10));
+			//p.setIMHandle(IMAddress.AIM, rs.getString(9));
+			//p.setIMHandle(IMAddress.MSN, rs.getString(10));
 			p.setLegacyHours(rs.getDouble(11));
 			p.setHomeAirport(rs.getString(12));
 			p.setEquipmentType(rs.getString(13));
@@ -348,6 +350,7 @@ abstract class PilotReadDAO extends PilotDAO {
 	protected final void loadChildRows(Pilot p, String dbName) throws SQLException {
 		Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
 		tmpMap.put(new Integer(p.getID()), p);
+		loadIMAddrs(tmpMap, dbName);
 		loadRatings(tmpMap, dbName);
 		loadRoles(tmpMap, dbName);
 		loadAccomplishments(tmpMap, dbName);
@@ -428,9 +431,53 @@ abstract class PilotReadDAO extends PilotDAO {
 	}
 
 	/**
+	 * Load social media addresses for a group of Pilots.
+	 * @param pilots the Map of Pilots, indexed by database ID
+	 * @param dbName the database name
+	 * @throws SQLException if a JDBC error occurs
+	 */
+	protected final void loadIMAddrs(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
+		if (pilots.isEmpty())
+			return;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, TYPE, ADDR FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOT_IMADDR WHERE (ID IN (");
+		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append("))");
+		
+		// Execute the query
+		prepareStatementWithoutLimits(sqlBuf.toString());
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+			if (p != null) {
+				String imType = rs.getString(2);
+				try {
+					IMAddress addrType = IMAddress.valueOf(imType);
+					p.setIMHandle(addrType, rs.getString(3));
+				} catch (Exception e) {
+					log.warn("Unknown IM address type - " + imType);
+				}
+			}
+		}
+		
+		// Clean up and return
+		rs.close();
+		_ps.close();
+	}
+	
+	/**
 	 * Load the equipment ratings for a group of Pilots.
 	 * @param pilots the Map of Pilots, indexed by database ID
-	 * @param dbName the database Name
+	 * @param dbName the database name
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadRatings(Map<Integer, Pilot> pilots, String dbName) throws SQLException {

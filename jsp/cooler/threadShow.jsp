@@ -221,8 +221,10 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 APPLICANT<br />
 </c:if>
 <el:showaddr user="${pilot}">
-<c:if test="${!empty pilot.IMHandle['AOL']}">
-<a href="aim:goim?screenname=${pilot.IMHandle['AOL']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle['AOL']}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
+<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
+<c:set var="aimAddr" value="${pilot.IMHandle[imAddr]}" scope="page" />
+<c:if test="${!empty aimAddr}">
+<a href="aim:goim?screenname=${aimAddr}"><img border="0" src="http://big.oscar.aol.com/${aimAddr}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
 </c:if>
 </el:showaddr></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />

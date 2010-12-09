@@ -1,14 +1,16 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.fb.ProfileInfo;
 import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.GetFacebookData;
 import org.deltava.mail.*;
 
 import org.deltava.security.AddressValidationHelper;
@@ -19,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a registered Pilot's e-mail address.
  * @author Luke
- * @version 2.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -63,6 +65,25 @@ public class UpdateEmailCommand extends AbstractCommand {
 				ctx.setAttribute("dupeAddr", Boolean.TRUE, REQUEST);
 				result.setURL("/jsp/pilot/eMailUpdate.jsp");
 				return;
+			}
+			
+			// If the user has a Facebook account, validate through them
+			if (p.hasIM(IMAddress.FBTOKEN)) {
+				GetFacebookData fbdao = new GetFacebookData();
+				fbdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
+				ProfileInfo fbInfo = fbdao.getUserInfo();
+				if (addr.equals(fbInfo.getEMail())) {
+					p.setEmail(addr);
+					SetPilot pwdao = new SetPilot(con);
+					pwdao.write(p);
+					ctx.release();
+
+					// Set status update and redirect
+					ctx.setAttribute("fbValidate", Boolean.TRUE, REQUEST);
+					result.setType(ResultType.REQREDIRECT);
+					result.setURL("/jsp/pilot/eMailValid.jsp");
+					return;
+				}
 			}
 			
 			// Load the address validation object

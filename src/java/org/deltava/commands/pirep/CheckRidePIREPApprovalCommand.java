@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.stats.*;
@@ -13,6 +14,7 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.*;
@@ -155,8 +157,36 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				}
 				
 				// Log Accomplishments
-				if (!accs.isEmpty())
+				if (!accs.isEmpty()) {
 					ctx.setAttribute("accomplishments", accs, REQUEST);
+				
+					// Write Facebook update
+					if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+						MessageContext fbctxt = new MessageContext();
+						fbctxt.addData("user", p);
+						fbctxt.setTemplate(mtdao.get("FBACCOMPLISH"));
+						
+						// Write the entry
+						SetFacebookData fbwdao = new SetFacebookData();
+						fbwdao.setWarnMode(true);
+						for (Iterator<Accomplishment> i = accs.iterator(); i.hasNext(); ) {
+							Accomplishment a = i.next();
+							fbctxt.addData("accomplish", a);
+							NewsEntry nws = new NewsEntry(fbctxt.getBody());
+							fbwdao.reset();
+							
+							// Write to user feed or app page
+							if (p.hasIM(IMAddress.FBTOKEN)) {
+								fbwdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
+								fbwdao.write(nws);
+							} else {
+								fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
+								fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+								fbwdao.writeApp(nws);	
+							}
+						}
+					}
+				}
 			}
 			
 			// Start a JDBC transaction
@@ -188,10 +218,8 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			}
 
 			// Write the Status Updates
-			if (!upds.isEmpty()) {
-				SetStatusUpdate swdao = new SetStatusUpdate(con);
-				swdao.write(upds);
-			}
+			SetStatusUpdate swdao = new SetStatusUpdate(con);
+			swdao.write(upds);
 
 			// Commit the transaction
 			ctx.commitTX();

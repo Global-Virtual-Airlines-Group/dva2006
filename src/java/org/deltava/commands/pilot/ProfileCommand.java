@@ -43,7 +43,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -156,8 +156,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Update the profile with data from the request
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
 			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
-			p.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
-			p.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));
 			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
@@ -170,6 +168,13 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));
 			p.setShowNavBar(Boolean.valueOf(ctx.getParameter("showNavBar")).booleanValue());
+
+			// Update IM handles
+			for (IMAddress im : IMAddress.values()) {
+				if (im.getIsVisible())
+					p.setIMHandle(im, ctx.getParameter(im.toString() + "Handle"));
+			}
+
 			
 			// Set location
 			if (!StringUtils.isEmpty(ctx.getParameter("location")))

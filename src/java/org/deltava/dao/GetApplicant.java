@@ -441,8 +441,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setPilotID(rs.getInt(2)); // Status must be populated first
 			a.setEmail(rs.getString(6));
 			a.setLocation(rs.getString(7));
-			a.setIMHandle(InstantMessage.AIM, rs.getString(8));
-			a.setIMHandle(InstantMessage.MSN, rs.getString(9));
+			a.setIMHandle(IMAddress.AIM, rs.getString(8));
+			a.setIMHandle(IMAddress.MSN, rs.getString(9));
 			a.setNetworkID(OnlineNetwork.VATSIM, rs.getString(10));
 			a.setNetworkID(OnlineNetwork.IVAO, rs.getString(11));
 			a.setLegacyHours(rs.getDouble(12));

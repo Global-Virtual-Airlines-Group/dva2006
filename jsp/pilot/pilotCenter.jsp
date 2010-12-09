@@ -19,6 +19,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<c:set var="req" value="${pageContext.request}" scope="page" />
 <content:sysdata var="domain" name="airline.domain" />
 <content:sysdata var="maxHeld" name="users.pirep.maxHeld" default="5" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
@@ -41,6 +42,8 @@
 <content:sysdata var="scMaxNoms" name="users.sc.maxNominations" default="5" />
 <content:sysdata var="scMinFlights" name="users.sc.minFlights" default="5" />
 <content:sysdata var="scMinAge" name="users.sc.minAge" default="120" />
+<content:sysdata var="fbAuthURL" name="users.facebook.url.authorize" />
+<content:sysdata var="fbClientID" name="users.facebook.id" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
@@ -53,11 +56,11 @@
 </tr>
 <tr>
  <td width="350" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
- <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}.
+ <td class="data">Welcome back to <span class="pri bld"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> (<fmt:int value="${pilotAge}" /> days ago) and have visited 
  <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
-You are visiting today from <span class="bld">${pageContext.request.remoteHost}</span> (${pageContext.request.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
+You are visiting today from <span class="bld">${req.remoteHost}</span> (${req.remoteAddr})<c:if test="${!empty ipAddrInfo}">, 
  in ${ipAddrInfo.location}</c:if>.</td>
 </tr>
 <tr>
@@ -84,6 +87,35 @@ name to the <content:airline /> Pilot Board.<br />
 the <content:airline /> Pilot Board is viewed.</span></td>
 </c:if>
 </tr>
+<c:if test="${!empty fbClientID}">
+<c:choose>
+<c:when test="${fn:hasIM(pilot, 'FBTOKEN')}">
+<tr>
+ <td class="mid bld">Facebook Integration</td>
+ <td class="data"><content:airline /> can publish information to your Facebook news feed, including promotions and completion
+of Accomplishments.<c:if test="${acarsEnabled}"> Submitted flight reports using <content:airline /> will also be published to
+your Facebook news feed.</c:if></td>
+</tr>
+</c:when>
+<c:when test="${!empty fbPerms}">
+<c:set var="serverName" value="${req.serverName}" scope="page" />
+<c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
+<script type="text/javascript">
+function fbAuthorize()
+{
+var URLflags = 'height=340,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
+window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
+return true;
+}
+</script>
+<tr>
+ <td class="mid"><a class="bld" href="javascript:void fbAuthorize()">Authorize Us</a></td>
+ <td class="data">If you are a Facebook member, you can connect to Facebook and allow <content:airline /> to post updates about your virtual career to
+ your Facebook wall<c:if test="${acarsEnabled}">, as well as information about your flights flown using <content:airline /> ACARS</c:if>.</td>
+</tr>
+</c:when>
+</c:choose>
+</c:if>
 <c:if test="${access.canTakeLeave}">
 <content:sysdata var="inactivity_days" name="users.inactive_days" />
 <tr>

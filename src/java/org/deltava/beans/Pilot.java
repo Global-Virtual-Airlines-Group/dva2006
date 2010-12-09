@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -1077,12 +1077,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 		if (!StringUtils.isEmpty(getPilotCode()))
 			p2.setPilotCode(getPilotCode());
 
-		for (Iterator<String> i = getNotifyOptions().iterator(); i.hasNext();)
-			p2.setNotifyOption(i.next(), true);
-
-		for (Iterator<String> i = getIMServices().iterator(); i.hasNext();) {
-			String svc = i.next();
-			p2.setIMHandle(svc, getIMHandle(svc));
+		p2._notifyOptions.putAll(_notifyOptions);
+		for (Iterator<Map.Entry<IMAddress, String>> i = getIMHandle().entrySet().iterator(); i.hasNext();) {
+			Map.Entry<IMAddress, String> me = i.next();
+			p2.setIMHandle(me.getKey(), me.getValue());
 		}
 
 		return p2;

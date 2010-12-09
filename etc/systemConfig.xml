@@ -571,6 +571,26 @@
 		<user_cookie_age type="Integer">30</user_cookie_age>
 		<transfer_max type="Integer">30</transfer_max>
 
+		<facebook>
+			<id>93603160577</id>		
+			<pageID>105017132650</pageID>
+			<pageToken>93603160577|02faa99c85a2e78c9eaf8dff-521227914|105017132650|2P4YqopcOxromOY-JcQmO6TpZUg</pageToken>
+			<secret>79fd42ccde86c4d60055b6ddc8501a40</secret>
+			<img>http://www.deltava.org/img/fleet/dva_side.png</img>
+			<url>
+				<accessToken>https://graph.facebook.com/oauth/access_token</accessToken>
+				<authorize>https://graph.facebook.com/oauth/authorize</authorize>
+				<userInfo>https://graph.facebook.com/me</userInfo>
+				<feed>https://graph.facebook.com/me/feed</feed>
+			</url>
+			<list name="permissions" attr="perm" unique="true">
+				<perm>user_about_me</perm>
+				<perm>publish_stream</perm>
+				<perm>offline_access</perm>
+				<perm>email</perm>
+			</list>
+		</facebook>
+
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
 			<minDays type="Integer">45</minDays>

@@ -6,6 +6,9 @@
 	<!-- Water Cooler Services -->
 	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
 
+	<!-- Facebook Services -->
+	<service id="fbdeauth" class="org.deltava.service.FacebookDeauthorizeService" />
+
 	<!-- Help Desk Services -->
 	<service id="hdrsptmp" class="org.deltava.service.IssueTemplateService" />
 

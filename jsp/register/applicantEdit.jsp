@@ -84,13 +84,15 @@ return cmdPost(f.action);
  <td class="label">IVAO ID#</td>
  <td class="data"><el:text name="IVAO_ID" idx="*" value="${fn:networkID(applicant, 'IVAO')}" size="10" max="9" /></td>
 </tr>
+<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data"><el:text name="aimHandle" idx="*" size="14" max="36" value="${applicant.IMHandle['AOL']}" /></td>
+ <td class="data"><el:text name="aimHandle" idx="*" size="14" max="36" value="${applicant.IMHandle[imAddr]}" /></td>
 </tr>
+<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="MSN" />
 <tr>
  <td class="label">MSN Messenger</td>
- <td class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${applicant.IMHandle['MSN']}" /></td>
+ <td class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${applicant.IMHandle[imAddr]}" /></td>
 </tr>
 
 <!-- E-Mail Information -->

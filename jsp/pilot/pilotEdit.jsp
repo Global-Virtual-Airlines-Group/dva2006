@@ -207,7 +207,7 @@ return true;
 <c:if test="${!empty pilot.pilotCode}">
 <tr>
  <td class="label">Personal Motto</td>
- <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="32" max="36" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="36" max="62" /></td>
 </tr>
 </c:if>
 
@@ -233,14 +233,15 @@ return true;
  <td class="label top">E-Mail Notifications</td>
  <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
 </tr>
+<content:enum var="imTypes" className="org.deltava.beans.IMAddress" />
+<c:forEach var="imType" items="${imTypes}">
+<c:if test="${imType.isVisible}">
 <tr>
- <td class="label">AOL Instant Messenger</td>
- <td colspan="${cspan}" class="data"><el:text name="aimHandle" idx="*" size="10" max="32" value="${pilot.IMHandle['AOL']}" /></td>
+ <td class="label">${imType} Address</td>
+ <td colspan="${cspan}" class="data"><el:text name="${imType}Handle" idx="*" size="10" max="32" value="${pilot.IMHandle[imType]}" /></td>
 </tr>
-<tr>
- <td class="label">MSN Messenger</td>
- <td colspan="${cspan}" class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${pilot.IMHandle['MSN']}" /></td>
-</tr>
+</c:if>
+</c:forEach>
 <tr>
  <td class="label top">Privacy Options</td>
  <td colspan="${cspan}" class="data"><el:check type="radio" name="privacyOption" idx="*" cols="1" separator="<br />" options="${privacyOptions}" value="${pilot.emailAccess}" /></td>
