@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -280,6 +280,17 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		if (ctx.isUserInRole("Admin") && SystemData.getBoolean("acars.enabled")) {
 			ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
 			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
+		}
+		
+		// Set facebook requested permissions
+		if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+			@SuppressWarnings("unchecked")
+			List<String> perms = (List<String>) SystemData.getObject("users.facebook.permissions");
+			if (ctx.isUserInRole("Admin")) {
+				perms.add("manage_pages");
+				ctx.setAttribute("fbPerms", perms, REQUEST);
+			} else if (!ctx.isSuperUser())
+				ctx.setAttribute("fbPerms", perms, REQUEST);
 		}
 
 		// Figure out the image to display

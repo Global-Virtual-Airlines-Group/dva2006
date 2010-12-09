@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -59,8 +59,8 @@ public class SetPilot extends PilotWriteDAO {
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, "
 				+ "NAVBAR=?, VIEWSIZE=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, "
-				+ "MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, "
-				+ "NOCOOLER=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
+				+ "MAPTYPE=?, RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, "
+				+ "UID=?, MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		PilotDAO.invalidate(p.getID());
@@ -94,25 +94,24 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setInt(23, p.getAirportCodeType().ordinal());
 			_ps.setInt(24, p.getDistanceType());
 			_ps.setInt(25, p.getMapType());
-			_ps.setString(26, p.getIMHandle(InstantMessage.AIM));
-			_ps.setString(27, p.getIMHandle(InstantMessage.MSN));
-			_ps.setString(28, p.getRank().getName());
-			_ps.setString(29, p.getEquipmentType());
-			_ps.setInt(30, p.getStatus());
-			_ps.setBoolean(31, p.getNoExams());
-			_ps.setBoolean(32, p.getNoVoice());
-			_ps.setBoolean(33, p.getNoCooler());
-			_ps.setInt(34, p.getACARSRestriction());
-			_ps.setString(35, p.getLDAPName());
-			_ps.setString(36, p.getMotto());
-			_ps.setString(37, p.getFirstName());
-			_ps.setString(38, p.getLastName());
-			_ps.setInt(39, p.getID());
+			_ps.setString(26, p.getRank().getName());
+			_ps.setString(27, p.getEquipmentType());
+			_ps.setInt(28, p.getStatus());
+			_ps.setBoolean(29, p.getNoExams());
+			_ps.setBoolean(30, p.getNoVoice());
+			_ps.setBoolean(31, p.getNoCooler());
+			_ps.setInt(32, p.getACARSRestriction());
+			_ps.setString(33, p.getLDAPName());
+			_ps.setString(34, p.getMotto());
+			_ps.setString(35, p.getFirstName());
+			_ps.setString(36, p.getLastName());
+			_ps.setInt(37, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
 			writeRoles(p.getID(), p.getRoles(), db);
 			writeRatings(p.getID(), p.getRatings(), db, true);
+			writeIMAddrs(p.getID(), p.getIMHandle(), db, true);
 			writeAlias(p.getID(), p.getLDAPName());
 
 			// Commit the changes

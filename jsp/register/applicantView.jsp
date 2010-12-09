@@ -148,16 +148,18 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:i
  <td class="data">${IVAO_ID}</td>
 </tr>
 </c:if>
-<c:if test="${!empty applicant.IMHandle['AOL']}">
+<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
+<c:if test="${!empty applicant.IMHandle[imAddr]}">
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data">${applicant.IMHandle['AOL']}</td>
+ <td class="data">${applicant.IMHandle[imAddr]}</td>
 </tr>
 </c:if>
-<c:if test="${!empty applicant.IMHandle['MSN']}">
+<content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="MSN" />
+<c:if test="${!empty applicant.IMHandle[imAddr]}">
 <tr>
  <td class="label">MSN Messenger</td>
- <td class="data">${applicant.IMHandle['MSN']}</td>
+ <td class="data">${applicant.IMHandle[imAddr]}</td>
 </tr>
 </c:if>
 

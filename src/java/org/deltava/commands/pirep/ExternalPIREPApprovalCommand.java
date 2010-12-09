@@ -1,9 +1,8 @@
 // Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
-import java.sql.Connection;
 import java.util.Date;
-import java.util.Map;
+import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -15,13 +14,13 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.*;
+
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 2.0
  */
 
@@ -127,19 +126,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			}
 			
 			// If we're approving and we have hit a century club milestone, log it
-			Map<?, ?> ccLevels = (Map<?, ?>) SystemData.getObject("centuryClubLevels");
-			if (ccLevels.containsKey("CC" + pirepCount) && crApproved) {
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
-				upd.setAuthorID(ctx.getUser().getID());
-				upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
-
-				// Log Century Club name
-				ctx.setAttribute("centuryClub", ccLevels.get("CC" + pirepCount), REQUEST);
-
-				// Write the Status Update
-				SetStatusUpdate swdao = new SetStatusUpdate(con);
-				swdao.write(ud.getDB(), upd);
-			}
+			// FIXME: Accomplishments do not work across airlines
 			
 			// Commit the transaction
 			ctx.commitTX();

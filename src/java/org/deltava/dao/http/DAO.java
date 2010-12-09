@@ -100,4 +100,15 @@ public abstract class DAO {
     	_urlcon.setRequestProperty ("Content-Type", "application/x-www-form-urlencoded");
 		return _urlcon.getOutputStream();
     }
+  
+    /**
+     * Resets the connection for subsequent reuse.
+     */
+    public void reset() {
+    	if (_urlcon == null)
+    		return;
+    	
+   		_urlcon.disconnect();
+   		_urlcon = null;
+    }
 }

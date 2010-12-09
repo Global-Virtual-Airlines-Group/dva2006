@@ -136,18 +136,14 @@ return true;
  <td colspan="${cspan}" class="data error bld">E-MAIL ADDRESS INVALIDATED</td>
 </c:if>
 </tr>
-<c:if test="${!empty pilot.IMHandle['AOL']}">
+<c:forEach var="imAddr" items="${fn:keys(pilot.IMHandle)}">
+<c:if test="${imAddr.isVisible}">
 <tr>
- <td class="label">AOL Instant Messenger</td>
- <td colspan="${cspan}" class="data">${pilot.IMHandle['AOL']}</td>
+ <td class="label">${imAddr} Address</td>
+ <td colspan="${cspan}" class="data">${pilot.IMHandle[imAddr]}</td>
 </tr>
 </c:if>
-<c:if test="${!empty pilot.IMHandle['MSN']}">
-<tr>
- <td class="label">MSN Messenger</td>
- <td colspan="${cspan}" class="data">${pilot.IMHandle['MSN']}</td>
-</tr>
-</c:if>
+</c:forEach>
 </c:if>
 
 <c:if test="${!pilot.noVoice && !empty ts2Clients}"><content:filter roles="HR,Instructor">

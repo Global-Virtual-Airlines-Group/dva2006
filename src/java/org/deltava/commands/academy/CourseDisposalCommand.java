@@ -6,15 +6,18 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to change a Flight Academy Course's status.
@@ -109,16 +112,12 @@ public class CourseDisposalCommand extends AbstractCommand {
 				throw securityException("Cannot " + opName + " - Not Authorized");
 
 			// Get the Pilot
-			if (ctx.getUser().getID() != c.getPilotID()) {
-				GetPilot pdao = new GetPilot(con);
-				Pilot usr = pdao.get(c.getPilotID());
-				ctx.setAttribute("pilot", usr, REQUEST);
-				mctx.addData("pilot", usr);
+			GetPilot pdao = new GetPilot(con);
+			Pilot usr = pdao.get(c.getPilotID());
+			ctx.setAttribute("pilot", usr, REQUEST);
+			mctx.addData("pilot", usr);
+			if (ctx.getUser().getID() != c.getPilotID())
 				usrs.add(usr);
-			} else {
-				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-				mctx.addData("pilot", ctx.getUser());
-			}
 			
 			// Start a transaction
 			ctx.startTX();
@@ -152,13 +151,33 @@ public class CourseDisposalCommand extends AbstractCommand {
 				}
 				
 				// Load the pilots
-				GetPilot pdao = new GetPilot(con);
 				usrs.addAll(pdao.getByID(IDs, "PILOTS").values());
 			}
 			
 			// Write the Status Update
 			SetStatusUpdate uwdao = new SetStatusUpdate(con);
 			uwdao.write(upd);
+			
+			// Write Facebook update
+			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (opCode == Course.COMPLETE)) {
+				MessageContext fbctxt = new MessageContext();
+				fbctxt.addData("user", usr);
+				fbctxt.addData("course", c);
+				fbctxt.setTemplate(mtdao.get("FBCOURSECOMPLETE"));
+				NewsEntry nws = new NewsEntry(fbctxt.getBody());
+				
+				// Write to user feed or app page
+				SetFacebookData fbwdao = new SetFacebookData();
+				fbwdao.setWarnMode(true);
+				if (usr.hasIM(IMAddress.FBTOKEN)) {
+					fbwdao.setToken(usr.getIMHandle(IMAddress.FBTOKEN));
+					fbwdao.write(nws);
+				} else {
+					fbwdao.setAppID(SystemData.get("users.facebook.pageID"));
+					fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+					fbwdao.writeApp(nws);
+				}
+			}
 			
 			// Commit the transaction
 			ctx.commitTX();

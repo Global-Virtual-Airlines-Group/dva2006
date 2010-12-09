@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -37,11 +37,11 @@ public class SetPilotTransfer extends SetPilot {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS (FIRSTNAME, LASTNAME, STATUS, LDAP_DN, EMAIL, LOCATION, IMHANDLE, MSNHANDLE, "
-						+ "LEGACY_HOURS, HOME_AIRPORT, EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, "
-						+ "LAST_LOGOFF, TZ, FILE_NOTIFY, EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, UISCHEME, "
-						+ "VIEWSIZE, LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, ID) "
-						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(".PILOTS (FIRSTNAME, LASTNAME, STATUS, LDAP_DN, EMAIL, LOCATION, LEGACY_HOURS, HOME_AIRPORT, "
+				+ "EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, LAST_LOGOFF, TZ, FILE_NOTIFY, "
+				+ "EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, UISCHEME, VIEWSIZE, LOGINHOSTNAME, "
+				+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, ID) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -54,37 +54,36 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setString(4, p.getDN());
 			_ps.setString(5, p.getEmail());
 			_ps.setString(6, p.getLocation());
-			_ps.setString(7, p.getIMHandle(InstantMessage.AIM));
-			_ps.setString(8, p.getIMHandle(InstantMessage.MSN));
-			_ps.setDouble(9, p.getLegacyHours());
-			_ps.setString(10, p.getHomeAirport());
-			_ps.setString(11, p.getEquipmentType());
-			_ps.setString(12, p.getRank().getName());
-			_ps.setString(13, p.getNetworkID(OnlineNetwork.VATSIM));
-			_ps.setString(14, p.getNetworkID(OnlineNetwork.IVAO));
-			_ps.setTimestamp(15, createTimestamp(p.getCreatedOn()));
-			_ps.setInt(16, p.getLoginCount());
-			_ps.setTimestamp(17, createTimestamp(p.getLastLogin()));
-			_ps.setTimestamp(18, createTimestamp(p.getLastLogoff()));
-			_ps.setString(19, p.getTZ().getID());
-			_ps.setBoolean(20, p.getNotifyOption(Person.FLEET));
-			_ps.setBoolean(21, p.getNotifyOption(Person.EVENT));
-			_ps.setBoolean(22, p.getNotifyOption(Person.NEWS));
-			_ps.setBoolean(23, p.getNotifyOption(Person.PIREP));
-			_ps.setInt(24, p.getEmailAccess());
-			_ps.setString(25, p.getUIScheme());
-			_ps.setInt(26, p.getViewCount());
-			_ps.setString(27, p.getLoginHost());
-			_ps.setString(28, p.getDateFormat());
-			_ps.setString(29, p.getTimeFormat());
-			_ps.setString(30, p.getNumberFormat());
-			_ps.setInt(31, p.getAirportCodeType().ordinal());
-			_ps.setInt(32, p.getDistanceType());
-			_ps.setInt(33, id);
+			_ps.setDouble(7, p.getLegacyHours());
+			_ps.setString(8, p.getHomeAirport());
+			_ps.setString(9, p.getEquipmentType());
+			_ps.setString(10, p.getRank().getName());
+			_ps.setString(11, p.getNetworkID(OnlineNetwork.VATSIM));
+			_ps.setString(12, p.getNetworkID(OnlineNetwork.IVAO));
+			_ps.setTimestamp(13, createTimestamp(p.getCreatedOn()));
+			_ps.setInt(14, p.getLoginCount());
+			_ps.setTimestamp(15, createTimestamp(p.getLastLogin()));
+			_ps.setTimestamp(16, createTimestamp(p.getLastLogoff()));
+			_ps.setString(17, p.getTZ().getID());
+			_ps.setBoolean(18, p.getNotifyOption(Person.FLEET));
+			_ps.setBoolean(19, p.getNotifyOption(Person.EVENT));
+			_ps.setBoolean(20, p.getNotifyOption(Person.NEWS));
+			_ps.setBoolean(21, p.getNotifyOption(Person.PIREP));
+			_ps.setInt(22, p.getEmailAccess());
+			_ps.setString(23, p.getUIScheme());
+			_ps.setInt(24, p.getViewCount());
+			_ps.setString(25, p.getLoginHost());
+			_ps.setString(26, p.getDateFormat());
+			_ps.setString(27, p.getTimeFormat());
+			_ps.setString(28, p.getNumberFormat());
+			_ps.setInt(29, p.getAirportCodeType().ordinal());
+			_ps.setInt(30, p.getDistanceType());
+			_ps.setInt(31, id);
 			executeUpdate(1);
 
 			// Write the ratings - don't bother writing roles
 			writeRatings(id, ratings, dbName, false);
+			writeIMAddrs(id, p.getIMHandle(), dbName, false);
 
 			// Commit the transaction
 			commitTransaction();

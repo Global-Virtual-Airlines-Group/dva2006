@@ -30,6 +30,7 @@
 <content:sysdata var="partnerName" name="airline.partner.name" />
 <content:sysdata var="partnerURL" name="airline.partner.url" />
 <content:sysdata var="partnerLoc" name="airline.partner.location" />
+<content:sysdata var="fbClientID" name="users.facebook.id" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -220,7 +221,18 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 If you have questions or comments, please direct them to our Corporate Offices at 
 <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
 <br />
+<c:choose>
+<c:when test="${empty fbClientID}">
 <div class="mid"><a rel="external" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" border="0" /></a></div>
+</c:when>
+<c:otherwise>
+<div style="float:right; margin-right:70px;">
+<iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D${fbClientID}&amp;width=292&amp;colorscheme=light&amp;connections=0&amp;stream=false&amp;header=false&amp;height=62" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:62px;" allowTransparency="true"></iframe>
+</div>
+<div style="float:left; margin-left:70px;"><a rel="external" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" border="0" /></a></div>
+<div style="clear:both;"></div>
+</c:otherwise>
+</c:choose>
 <br />
 <content:copyright />
 </content:region>
