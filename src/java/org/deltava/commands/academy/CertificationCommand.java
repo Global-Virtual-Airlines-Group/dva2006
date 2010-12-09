@@ -77,7 +77,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			// Make sure that each requirement with an exam remains valid
 			for (Iterator<CertificationRequirement> i = cert.getRequirements().iterator(); i.hasNext(); ) {
 				CertificationRequirement req = i.next();
-				if (!cert.getExamNames().contains(req.getExamName()))
+				if ((req.getExamName() != null) && !cert.getExamNames().contains(req.getExamName()))
 					req.setExamName(null);
 			}
 			
