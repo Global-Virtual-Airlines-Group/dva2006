@@ -21,15 +21,14 @@
 </content:authUser>
 </c:if>
 
+<content:filter roles="Pilot">
 <content:submenu title="Online Help" width="170">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
-<content:filter roles="Pilot">
  <content:subitem><el:cmd url="myhdissues">My Issues</el:cmd></content:subitem>
 <c:if test="${access.canCreate}">
  <content:subitem><el:cmd url="hdissue" op="edit">New Issue</el:cmd></content:subitem>
 </c:if>
  <content:subitem><el:cmd url="hdsearch">Search Help Desk</el:cmd></content:subitem>
-</content:filter>
 <content:filter roles="HR,PIREP,Examination">
  <content:subitem><el:cmd url="pilotsearch">Pilot Search</el:cmd></content:subitem>
 </content:filter>
@@ -43,6 +42,7 @@
  <content:subitem><el:cmd url="hdissuefilter" op="author">By Author</el:cmd></content:subitem>
 </content:filter>
 </content:submenu>
+</content:filter>
 
 <content:submenu title="Our Airline" width="170">
  <content:subitem><el:link url="/">Home</el:link></content:subitem>
@@ -102,6 +102,7 @@
 <content:filter roles="Anonymous,HR">
  <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
 </content:filter>
+ <content:subitem><el:cmd url="privacy">Privacy Policy</el:cmd></content:subitem>
 </content:submenu>
 </content:menu>
 </content:region>
