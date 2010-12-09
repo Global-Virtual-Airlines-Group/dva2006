@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
+import org.deltava.util.StringUtils;
 
 /**
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
@@ -246,19 +247,17 @@ public final class SystemData implements Serializable {
 	
 	/**
 	 * Returns an Airline Information object, which is data about other virtual airlines on this server.
-	 * @param airlineCode the airline code
+	 * @param airlineCode the airline code, or null if the current airline
 	 * @return the AirlineInformation bean, or null if not found
 	 * @throws IllegalStateException if the &quot;apps&quot; property has not been added
 	 */
 	public static AirlineInformation getApp(String airlineCode) {
-	   if (airlineCode == null)
-			return null;
-	   
+		String code = StringUtils.isEmpty(airlineCode) ? get("airline.code") : airlineCode;
 	   if (!_properties.containsKey("apps"))
 			throw new IllegalStateException("Applications not Loaded");
 	   
 	   Map<?, ?> apps = (Map<?, ?>) getObject("apps");
-	   return (AirlineInformation) apps.get(airlineCode.trim().toUpperCase());
+	   return (AirlineInformation) apps.get(code.trim().toUpperCase());
 	}
 	
 	/**
