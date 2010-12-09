@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -37,9 +37,10 @@ public class TerminalRoute extends Airway implements ComboAlias {
    public static boolean isNameValid(String name) {
 	   if (StringUtils.isEmpty(name) || (name.length() < 4))
 		   return false;
-	   
+
+	   char sLast = name.charAt(name.length() - 2);
 	   char last = name.charAt(name.length() - 1);
-	   return Character.isDigit(last);
+	   return Character.isDigit(last) || (Character.isDigit(sLast) && Character.isLetter(last));
    }
    
    /**
@@ -52,7 +53,9 @@ public class TerminalRoute extends Airway implements ComboAlias {
 	   if (!isNameValid(name))
 		   return name;
 	   
-	   return name.substring(0, name.length() - 1) + "%";
+	   StringBuilder buf = new StringBuilder(name.substring(0, name.length() - 1));
+	   buf.append('%');
+	   return buf.toString();
    }
    
    /**
@@ -227,7 +230,9 @@ public class TerminalRoute extends Airway implements ComboAlias {
       int tmpResult = super.compareTo(a2);
       if (tmpResult == 0) {
     	  TerminalRoute tr2 = (TerminalRoute) a2;
-         tmpResult = _transition.compareTo(tr2.getTransition());
+    	  tmpResult = _transition.compareTo(tr2.getTransition());
+    	  if (tmpResult == 0)
+    		  tmpResult = _runway.compareTo(tr2._runway);
       }
       
       return tmpResult;
