@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to convert Dates into Quarters.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 3.3
  */
 
@@ -34,7 +34,7 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 			cld.setTime(dt);
 		
 		_year = cld.get(Calendar.YEAR);
-		_qtr = ((cld.get(Calendar.MONTH) + 1) / 3) + 1;
+		_qtr = (cld.get(Calendar.MONTH) / 3) + 1;
 	}
 	
 	/**
