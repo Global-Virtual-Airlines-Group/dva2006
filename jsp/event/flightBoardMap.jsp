@@ -32,8 +32,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/event/header.jspf" %> 
+<%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
