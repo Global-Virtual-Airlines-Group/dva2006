@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to get Pilot notification lists.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
-public class GetPilotNotify extends PilotReadDAO {
+public class GetPilotNotify extends GetPilot {
 
    /**
     * Initialize the Data Access Object.
@@ -28,10 +28,10 @@ public class GetPilotNotify extends PilotReadDAO {
       private String _name;
       private String _addr;
       
-      EMailNotificationImpl(String firstName, String lastName, String addr) {
+      protected EMailNotificationImpl(String firstName, String lastName, String addr) {
          super();
-         _name = firstName + " " + lastName;
          _addr = addr;
+         _name = firstName + " " + lastName;
       }
       
       public String getName() {
@@ -40,6 +40,10 @@ public class GetPilotNotify extends PilotReadDAO {
       
       public String getEmail() {
          return _addr;
+      }
+      
+      public int hashCode() {
+    	  return _addr.hashCode();
       }
    }
    
@@ -54,19 +58,19 @@ public class GetPilotNotify extends PilotReadDAO {
       
       // Figure out the database field
       String fieldName = "";
-      if (Person.EVENT.equals(notificationType)) {
+      if (Person.EVENT.equals(notificationType))
          fieldName = "EVENT_NOTIFY";
-      } else if (Person.FLEET.equals(notificationType)) {
+      else if (Person.FLEET.equals(notificationType))
          fieldName = "FILE_NOTIFY";
-      } else if (Person.NEWS.equals(notificationType)) {
+      else if (Person.NEWS.equals(notificationType))
          fieldName = "NEWS_NOTIFY";
-      } else {
+      else
          throw new IllegalArgumentException("Invalid notification type - " + notificationType);
-      }
       
       // Build the SQL statement
-      StringBuilder sqlBuf = new StringBuilder("SELECT FIRSTNAME, LASTNAME, EMAIL FROM PILOTS WHERE "
-            + "(STATUS=?) AND (" + fieldName + "=?) ORDER BY LASTNAME, FIRSTNAME");
+      StringBuilder sqlBuf = new StringBuilder("SELECT FIRSTNAME, LASTNAME, EMAIL FROM PILOTS WHERE (STATUS=?) AND (");
+      sqlBuf.append(fieldName);
+      sqlBuf.append("=?) ORDER BY LASTNAME, FIRSTNAME");
       
       try {
          prepareStatement(sqlBuf.toString());
@@ -76,10 +80,8 @@ public class GetPilotNotify extends PilotReadDAO {
          // Execute the query
          List<EMailAddress> results = new ArrayList<EMailAddress>();
          ResultSet rs = _ps.executeQuery();
-         while (rs.next()) {
-            EMailAddress email = new EMailNotificationImpl(rs.getString(1), rs.getString(2), rs.getString(3));
-            results.add(email);
-         }
+         while (rs.next())
+            results.add(new EMailNotificationImpl(rs.getString(1), rs.getString(2), rs.getString(3)));
          
          // Clean up and return
          rs.close();
