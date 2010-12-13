@@ -1,5 +1,5 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.admin;
+package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to rescore all Senior Captain nominations.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 3.3
  */
 
@@ -71,7 +71,7 @@ public class NominationRescoreCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REQREDIRECT);
-		result.setURL("/jsp/admin/scNominateUpdate.jsp");
+		result.setURL("/jsp/hr/scNominateUpdate.jsp");
 		result.setSuccess(true);
 	}
 }

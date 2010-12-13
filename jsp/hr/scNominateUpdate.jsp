@@ -45,6 +45,17 @@ Senior Captain again during the same calendar quarter in which they were nominat
 </c:forEach>
 </ul> 
 </c:when>
+<c:when test="${isPostponed}">
+<div class="updateHdr"><content:airline /> Senior Captain Nominations Postponed</div>
+<br />
+The nominations of the following pilots have been moved from previous Quarters into the current Quarter.<br /> 
+<br />
+<ul>
+<c:forEach var="pilot" items="${pilots}">
+<li><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></li>
+</c:forEach>
+</ul> 
+</c:when>
 <c:when test="${isRescored}">
 <div class="updateHdr"><content:airline /> Senior Captain Scores Recalculated</div>
 <br />
