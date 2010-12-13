@@ -1,5 +1,5 @@
 // Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.hr;
 
 import java.util.*;
 
@@ -9,13 +9,16 @@ import org.deltava.beans.Pilot;
 
 import org.deltava.dao.*;
 
+import org.deltava.service.ServiceContext;
+import org.deltava.service.ServiceException;
+import org.deltava.service.WebService;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to return database IDs for ACARS users without Pilot codes.
  * @author Luke
- * @version 2.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -65,7 +68,7 @@ public class DatabaseIDService extends WebService {
 
 		// Dump the text to the output stream
 		try {
-			ctx.getResponse().setContentType("text/plain");
+			ctx.setContentType("text/plain", "UTF-8");
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
