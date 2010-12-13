@@ -56,6 +56,8 @@ public class DailyOceanicTracks implements java.io.Serializable, Comparable<Dail
 	public void addTrack(OceanicTrack t) {
 		if (t.getType() != _type)
 			throw new IllegalArgumentException("Cannot add " + t.getTypeName() + " to " + getTypeName() + " collection");
+		if (_effectiveDate == null)
+			_effectiveDate = t.getDate();
 		
 		_tracks.put(t.getCode(), t);
 	}
