@@ -1,0 +1,91 @@
+// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.hr;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.hr.*;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.*;
+import org.deltava.util.StringUtils;
+
+/**
+ * A Web Site Command to short-list applicants for a Job Posting.
+ * @author Luke
+ * @version 3.4
+ * @since 3.4
+ */
+
+public class ShortListCommand extends AbstractCommand {
+
+	/**
+	 * Executes the Command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	@Override
+	public void execute(CommandContext ctx) throws CommandException {
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Load the Job Posting
+			GetJobs dao = new GetJobs(con);
+			JobPosting jp = dao.get(ctx.getID());
+			if (jp == null)
+				throw notFoundException("Unknown Job Posting - " + ctx.getID());
+			
+			// Validate our access
+			JobPostingAccessControl access = new JobPostingAccessControl(ctx, jp);
+			access.validate();
+			if (!access.getCanShortlist())
+				throw securityException("Cannot shortlist Job Posting " + jp.getID());
+			
+			// Start transaction
+			ctx.startTX();
+			
+			// Update status
+			SetJobs jwdao = new SetJobs(con);
+			jp.setStatus(JobPosting.SHORTLIST);
+			jwdao.write(jp);
+			
+			// Go through the applications and shortlist as necessary
+			Collection<String> slIDs = ctx.getParameters("sl");
+			Collection<Application> SL = new ArrayList<Application>();
+			for (Iterator<Application> i = jp.getApplications().iterator(); i.hasNext(); ) {
+				Application a = i.next();
+				boolean isSL = slIDs.contains(StringUtils.formatHex(a.getAuthorID()));
+				if (a.getStatus() == Application.NEW) {
+					a.setStatus(Application.SHORTLIST);
+					SL.add(a);
+				} else if (a.getShortlisted() && !isSL)
+					a.setStatus(Application.NEW);
+				else if (a.getShortlisted())
+					SL.add(a);
+					
+				jwdao.write(a);
+			}
+			
+			// Commit
+			ctx.commitTX();
+			
+			// Save status attributes
+			ctx.setAttribute("job", jp, REQUEST);
+			ctx.setAttribute("shortlist", SL, REQUEST);
+			ctx.setAttribute("isShortlisted", Boolean.TRUE, REQUEST);
+		} catch (DAOException de) {
+			ctx.rollbackTX();
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(ResultType.REQREDIRECT);
+		result.setURL("/jsp/hr/jobPostUpdate.jsp");
+		result.setSuccess(true);
+	}
+}

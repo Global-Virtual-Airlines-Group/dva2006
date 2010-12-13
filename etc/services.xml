@@ -7,7 +7,7 @@
 	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
 
 	<!-- Facebook Services -->
-	<service id="fbdeauth" class="org.deltava.service.FacebookDeauthorizeService" />
+	<service id="fbdeauth" class="org.deltava.service.hr.FacebookDeauthorizeService" />
 
 	<!-- Help Desk Services -->
 	<service id="hdrsptmp" class="org.deltava.service.IssueTemplateService" />
@@ -46,9 +46,10 @@
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
 	<service id="pilotmapclear" class="org.deltava.service.PilotLocationClearService" />
 	<service id="net_ids" class="org.deltava.service.OnlineIDService" />
-	<service id="id" class="org.deltava.service.DatabaseIDService" />
-	<service id="dupename" class="org.deltava.service.DuplicateNameService" />
-	<service id="sceligible" class="org.deltava.service.PilotNominationService" />
+	<service id="id" class="org.deltava.service.hr.DatabaseIDService" />
+	<service id="dupename" class="org.deltava.service.hr.DuplicateNameService" />
+	<service id="sceligible" class="org.deltava.service.hr.PilotNominationService" />
+	<service id="jobprofile" class="org.deltava.service.hr.JobProfileService" />
 
 	<!-- Examination Services -->
 	<service id="answer" class="org.deltava.service.exam.TextService" />

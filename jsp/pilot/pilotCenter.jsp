@@ -644,6 +644,11 @@ training session with a Flight Academy student.</td>
 </content:filter>
 <content:filter roles="HR">
 <tr>
+ <td class="mid"><el:cmd className="bld" url="careers">Career Opportunities</el:cmd></td>
+ <td class="data">You can view any open <content:airline /> volunteer staff Job Posting here, and create
+ new Job Postings for staff members and Pilots to view.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
  <td class="data">This section tracks applicants to <content:airline /> before they are hired on as Pilots.</td>
 </tr>

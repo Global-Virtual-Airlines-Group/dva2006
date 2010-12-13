@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Volunteer Staff Posting</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<content:js name="datePicker" />
+<content:pics />
+<script type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateText(form.title, 10, 'Job Title')) return false;
+if (!validateText(form.summary, 16, 'Job Summary')) return false;
+if (!validateText(form.body, 32, 'Job Description')) return false;
+if (!validateCombo(form.hireMgr, 'Hiring Manager')) return false;
+
+setSubmit();
+disableButton('SaveButton');
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<el:form action="job.do" op="save" link="${job}" method="post" validate="return validate(this)">
+<el:table className="form">
+<tr class="title caps">
+ <td colspan="2"><content:airline /> VOLUNTEER STAFF POSTING</td>
+</tr>
+<tr>
+ <td class="label">Job Title</td>
+ <td class="data"><el:text name="title" idx="*" className="bld req" size="32" max="48" value="${job.title}" /></td>
+</tr>
+<tr>
+ <td class="label top">Job Summary</td>
+ <td class="data"><el:text name="summary" idx="*" className="req" size="80" max="128" value="${job.summary}" /><br />
+<span class="small ita">(This is a brief description of the position that is posted on the careers page.)</span></td>
+</tr>
+<tr>
+ <td class="label">Minimum Legs</td>
+ <td class="data"><el:text name="minLegs" idx="*" size="2" max="3" value="${job.minLegs}" /></td>
+</tr>
+<tr>
+ <td class="label">Minimum Days Active</td>
+ <td class="data"><el:text name="minAge" idx="*" size="2" max="4" value="${job.minAge}" /> days since joining <content:airline /></td>
+</tr>
+<tr>
+ <td class="label">Posting Closes on</td>
+ <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(job.closesOn, 'MM/dd/yyyy')}" className="req" />
+&nbsp;<el:button label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" /></td>
+</tr>
+<tr>
+ <td class="label">Hiring Manager</td>
+ <td class="data"><el:combo name="hireMgr" idx="*" size="1" className="req" options="${hireMgrs}" firstEntry="[ SELECT ]" value="${job.hireManagerID}" /></td>
+</tr>
+<tr>
+ <td class="label">Posting Status</td>
+ <td class="data"><el:combo name="status" idx="*" options="${statuses}" value="${job.statusName}" /></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="staffOnly" idx="*" value="true" className="small" checked="${job.staffOnly}" label="Posting is visible to Staff members only" /></td>
+</tr>
+<tr>
+ <td class="label top">Description</td>
+ <td class="data"><el:textbox name="body" idx="*" width="90%" className="req" height="5" resize="true">${job.description}</el:textbox></td>
+</tr>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar">
+<tr>
+ <td><el:button ID="SaveButton" type="submit" label="SAVE JOB POSTING" /></td>
+</tr>
+</el:table>
+</el:form>
+<br />
+<content:copyright />
+</content:region>
+</content:page>
+<content:googleAnalytics />
+</body>
+</html>
