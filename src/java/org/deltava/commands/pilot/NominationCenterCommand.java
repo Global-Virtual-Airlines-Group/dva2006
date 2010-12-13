@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Senior Captain nominations.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 3.3
  */
 
@@ -51,7 +51,9 @@ public class NominationCenterCommand extends AbstractCommand {
 			// If we're in HR, load all pending nominations; if CP then show in my program
 			if (ctx.isUserInRole("HR")) {
 				Map<Status, Collection<Nomination>> noms = new LinkedHashMap<Status, Collection<Nomination>>();
-				noms.put(Status.PENDING, ndao.getByStatus(Status.PENDING, qNow));
+				Collection<Nomination> allPending = ndao.getByStatus(Status.PENDING, null);
+				Collection<Nomination> cqPending = ndao.getByStatus(Status.PENDING, qNow);
+				noms.put(Status.PENDING, allPending);
 				noms.put(Status.APPROVED, ndao.getByStatus(Status.APPROVED, qNow));
 				noms.put(Status.REJECTED, ndao.getByStatus(Status.REJECTED, qNow));
 				for (Iterator<Collection<Nomination>> i = noms.values().iterator(); i.hasNext(); ) {
@@ -60,6 +62,7 @@ public class NominationCenterCommand extends AbstractCommand {
 				}
 				
 				ctx.setAttribute("allNoms", noms, REQUEST);
+				ctx.setAttribute("prevQuarterPending", Boolean.valueOf(allPending.size() > cqPending.size()), REQUEST);
 			} else if (ctx.getUser().getRank().isCP()) {
 				Collection<Nomination> myEQNoms = ndao.getByEQType(ctx.getUser().getEquipmentType());
 				allNoms.addAll(myEQNoms);
@@ -103,7 +106,7 @@ public class NominationCenterCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/admin/scNominateCenter.jsp");
+		result.setURL("/jsp/hr/scNominateCenter.jsp");
 		result.setSuccess(true);
 	}
 }
