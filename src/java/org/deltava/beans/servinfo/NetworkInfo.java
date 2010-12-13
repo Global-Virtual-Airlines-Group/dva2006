@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class NetworkInfo implements Cacheable {
     
     private final Map<String, Pilot> _pilots = new TreeMap<String, Pilot>();
     private final Map<String, Controller> _controllers = new TreeMap<String, Controller>();
+    private final Map<String, Server> _servers = new TreeMap<String, Server>();
     
     /**
      * Initializes this bean for a particular network.
@@ -81,6 +82,14 @@ public class NetworkInfo implements Cacheable {
      */
     public Collection<Controller> getControllers() {
         return new LinkedHashSet<Controller>(_controllers.values());
+    }
+    
+    /**
+     * Returns the FSD servers on this network.
+     * @return a Collection of Server beans
+     */
+    public Collection<Server> getServers() {
+    	return new ArrayList<Server>(_servers.values());
     }
     
     /**
@@ -215,6 +224,7 @@ public class NetworkInfo implements Cacheable {
      * @see NetworkInfo#getControllers()
      * @see NetworkInfo#getController(String)
      * @see NetworkInfo#add(Pilot)
+     * @see NetworkInfo#add(Server)
      */
     public void add(Controller c) {
         _controllers.put(c.getCallsign(), c);
@@ -226,9 +236,21 @@ public class NetworkInfo implements Cacheable {
      * @see NetworkInfo#getPilots()
      * @see NetworkInfo#getPilot(String)
      * @see NetworkInfo#add(Controller)
+     * @see NetworkInfo#add(Server)
      */
     public void add(Pilot p) {
         _pilots.put(p.getCallsign(), p);
+    }
+    
+    /**
+     * Adds a server entry to the data.
+     * @param srv the Server bean
+     * @see NetworkInfo#getServers()
+     * @see NetworkInfo#add(Controller)
+     * @see NetworkInfo#add(Pilot)
+     */
+    public void add(Server srv) {
+    	_servers.put(srv.getName(), srv);
     }
     
     /**
@@ -273,6 +295,7 @@ public class NetworkInfo implements Cacheable {
     	ni2._validDate = new Date(_validDate.getTime());
     	ni2._pilots.putAll(_pilots);
     	ni2._controllers.putAll(_controllers);
+    	ni2._servers.putAll(_servers);
     	return ni2;
     }
     

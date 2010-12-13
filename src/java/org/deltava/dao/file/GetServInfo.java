@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
@@ -47,6 +47,26 @@ public class GetServInfo extends DAO {
 	 */
 	public GetServInfo(InputStream is) {
 		super(is);
+	}
+	
+	/**
+	 * Mutable integer class.
+	 */
+	private class MutableInteger {
+		private int _value;
+		
+		MutableInteger(int value) {
+			super();
+			_value = value;
+		}
+		
+		public void inc() {
+			_value++;
+		}
+		
+		public int getValue() {
+			return _value;
+		}
 	}
 
 	/**
@@ -157,24 +177,26 @@ public class GetServInfo extends DAO {
 			info = new NetworkInfo(network);
 
 			// Initialize date formatter
-			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+			Map<String, MutableInteger> serverCons = new HashMap<String, MutableInteger>();
 
 			String iData = br.readLine();
 			while ((iData != null) && (!Thread.currentThread().isInterrupted())) {
 				if ((iData.length() > 0) && (iData.charAt(0) == '!')) {
 					String sectionName = iData.substring(1, 8).toUpperCase();
-					log.debug("Loading Section " + sectionName);
+					if (log.isDebugEnabled())
+						log.debug("Loading Section " + sectionName);
 
 					// Parse the general section
-					if ("GENERAL".equalsIgnoreCase(sectionName)) {
+					if ("GENERAL".equals(sectionName)) {
 						do {
 							StringTokenizer tk = new StringTokenizer(iData, " = ");
 							if (tk.countTokens() == 2) {
 								String name = tk.nextToken();
 								String val = tk.nextToken();
-								if ("VERSION".equalsIgnoreCase(name)) {
+								if ("VERSION".equalsIgnoreCase(name))
 									info.setVersion(val);
-								} else if ("UPDATE".equalsIgnoreCase(name)) {
+								else if ("UPDATE".equalsIgnoreCase(name)) {
 									try {
 										info.setValidDate(df.parse(val));
 									} catch (ParseException pe) {
@@ -193,8 +215,8 @@ public class GetServInfo extends DAO {
 							// Get next line
 							iData = br.readLine();
 						} while ((iData != null) && (iData.indexOf(" = ") != -1));
-						// Parse the pilot/ATC list
-					} else if ("CLIENTS".equalsIgnoreCase(sectionName)) {
+					// Parse the pilot/ATC list
+					} else if ("CLIENTS".equals(sectionName)) {
 						iData = br.readLine();
 						while ((iData != null) && (iData.length() > 3) && (iData.charAt(0) != '!')) {
 							SITokens si = new SITokens(iData);
@@ -219,10 +241,18 @@ public class GetServInfo extends DAO {
 										c.setFrequency(si.get(SITokens.FREQ));
 										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
 										c.setRating(Rating.values()[StringUtils.parse(si.get(SITokens.RATING), 1)]);
+										c.setServer(si.get(SITokens.SERVER).toUpperCase());
 										if (c.getFacility() != Facility.ATIS) {
 											int idx = StringUtils.parse(si.get(SITokens.FACILITY), 0);
 											c.setFacility(Facility.values()[idx]);
 										}
+										
+										// Set server
+										MutableInteger srvCnt = serverCons.get(c.getServer());
+										if (srvCnt == null)
+											serverCons.put(c.getServer(), new MutableInteger(1));
+										else
+											srvCnt.inc();
 										
 										info.add(c);
 									} catch (Exception e) {
@@ -248,6 +278,7 @@ public class GetServInfo extends DAO {
 										p.setHeading(StringUtils.parse(si.get(SITokens.HDG), 0));
 										p.setGroundSpeed(StringUtils.parse(si.get(SITokens.GSPEED), 0));
 										p.setRoute(si.get(SITokens.ROUTE));
+										p.setServer(si.get(SITokens.SERVER).toUpperCase());
 
 										// Set departure airport position if unknown
 										if (p.getAirportD().getPosition() == null) {
@@ -270,6 +301,13 @@ public class GetServInfo extends DAO {
 												log.warn("Error pasing departure airport GeoPosition");
 											}
 										}
+										
+										// Set server
+										MutableInteger srvCnt = serverCons.get(p.getServer());
+										if (srvCnt == null)
+											serverCons.put(p.getServer(), new MutableInteger(1));
+										else
+											srvCnt.inc();
 
 										// Save raw data if we are calling this from the ServInfo web service
 										p.setRawData(iData);
@@ -279,6 +317,26 @@ public class GetServInfo extends DAO {
 									} catch (Exception e) {
 										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
 									}
+							}
+
+							// Read next line
+							iData = br.readLine();
+						}
+					} else if ("SERVERS".equals(sectionName)) {
+						iData = br.readLine();
+						while ((iData != null) && (iData.length() > 3) && (iData.charAt(0) != '!')) {
+							StringTokenizer tk = new StringTokenizer(iData, ":");
+							String name = tk.nextToken();
+							try {
+								Server srv = new Server(name);
+								srv.setAddress(tk.nextToken());
+								srv.setLocation(tk.nextToken());
+								srv.setComment(tk.nextToken());
+								MutableInteger srvCnt = serverCons.get(srv.getName());
+								srv.setConnections((srvCnt ==  null) ? 0 : srvCnt.getValue());
+								info.add(srv);
+							} catch (Exception e) {
+								log.info("Error parsing data for " + name + " - " + e.getMessage());
 							}
 
 							// Read next line
