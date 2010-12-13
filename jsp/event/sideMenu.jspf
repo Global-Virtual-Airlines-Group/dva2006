@@ -32,6 +32,7 @@
 </c:if>
  <content:subitem><el:cmd url="flightboardmap">Online Flights Map</el:cmd></content:subitem>
  <content:subitem><el:cmd url="flightboard">Online Flights</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="netservers">Network Servers</el:cmd></content:subitem>
 </content:submenu>
 
 <c:if test="${!empty futureEvents}">
@@ -105,6 +106,7 @@
  <content:subitem><el:cmd url="pwdreset">Password Reset</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="privacy">Privacy Policy</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="careers">Career Opportunities</el:cmd></content:subitem>
 </content:submenu>
 </content:menu>
 </content:region>
