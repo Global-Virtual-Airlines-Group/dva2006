@@ -1,5 +1,5 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -12,6 +12,9 @@ import org.deltava.beans.Pilot;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
+import org.deltava.service.ServiceContext;
+import org.deltava.service.ServiceException;
+import org.deltava.service.WebService;
 import org.deltava.util.XMLUtils;
 
 /**
@@ -38,7 +41,7 @@ public class PilotNominationService extends WebService {
 			GetPilotRecognition pdao = new GetPilotRecognition(ctx.getConnection());
 			pilots.addAll(pdao.getByID(pdao.getNominationEligible(), "PILOTS").values());
 		} catch (DAOException de) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}

@@ -1,5 +1,5 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -12,12 +12,15 @@ import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.dao.*;
 
+import org.deltava.service.ServiceContext;
+import org.deltava.service.ServiceException;
+import org.deltava.service.WebService;
 import org.deltava.util.StringUtils;
 
 /**
  * A Web Service to check for duplicate pilot names.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 3.1
  */
 
@@ -85,17 +88,17 @@ public class DuplicateNameService extends WebService {
 				dupeResults.addAll(adao.checkUnique(usr, info.getDB()));
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
 		
 		try {
-			ctx.getResponse().setContentType("text/plain");
+			ctx.setContentType("text/plain", "UTF-8");
 			ctx.println(String.valueOf(dupeResults.size()));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 		
 		return SC_OK;
