@@ -68,6 +68,7 @@
 		<roles>*</roles>
 	</command>
 
+	<!-- HR Commands -->
 	<command id="pilotsearch">
 		<name>Pilot Search</name>
 		<class>org.deltava.commands.pilot.PilotSearchCommand</class>
@@ -82,26 +83,68 @@
 	
 	<command id="scnominate">
 		<name>Senior Captain Nomination</name>	
-		<class>org.deltava.commands.admin.NominationCommand</class>
+		<class>org.deltava.commands.hr.NominationCommand</class>
 		<roles>Pilot</roles>
 	</command>
 	
 	<command id="scnomdispose">
 		<name>Senior Captain Nomination Dispose</name>	
-		<class>org.deltava.commands.admin.NominationDisposeCommand</class>
+		<class>org.deltava.commands.hr.NominationDisposeCommand</class>
 		<roles>HR</roles>
 	</command>
 
 	<command id="scnompurge">
 		<name>Senior Captain Nomination Purge</name>	
-		<class>org.deltava.commands.admin.NominationPurgeCommand</class>
+		<class>org.deltava.commands.hr.NominationPurgeCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="scnompostpone">
+		<name>Senior Captain Nomination Postpone</name>
+		<class>org.deltava.commands.hr.NominationPostponeCommand</class>
 		<roles>HR</roles>
 	</command>
 
 	<command id="scnomrescore">
 		<name>Senior Captain Nomination Rescore</name>
-		<class>org.deltava.commands.admin.NominationRescoreCommand</class>
+		<class>org.deltava.commands.hr.NominationRescoreCommand</class>
 		<roles>HR</roles>
+	</command>
+
+	<command id="careers">
+		<name>Job Postings</name>
+		<class>org.deltava.commands.hr.JobPostingsCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="job">
+		<name>Job Posting</name>
+		<class>org.deltava.commands.hr.JobPostingCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="jobcomment">
+		<name>Job Posting Comment</name>	
+		<class>org.deltava.commands.hr.JobCommentCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="jobapply">
+		<name>Job Application</name>
+		<class>org.deltava.commands.hr.ApplicationCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="jobsl">
+		<name>Job Shortlist</name>
+		<class>org.deltava.commands.hr.ShortListCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="jobapprove">
+		<name>Job Shortlist Approve</name>
+		<class>org.deltava.commands.hr.JobCompleteCommand</class>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="dupesearch">
@@ -689,6 +732,12 @@
 	<command id="flightboardmap">
 		<name>Online Flight Board Map</name>
 		<class>org.deltava.commands.event.FlightBoardMapCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="netservers">
+		<name>Online Network Servers</name>
+		<class>org.deltava.commands.event.NetworkServersCommand</class>
 		<roles>*</roles>
 	</command>
 
