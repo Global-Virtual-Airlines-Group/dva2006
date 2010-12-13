@@ -10,12 +10,13 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
 public class TextboxTag extends FormElementTag {
 	
+	private String _width;
 	private boolean _resize;
 
     /**
@@ -34,6 +35,19 @@ public class TextboxTag extends FormElementTag {
     	// If resizing, enable the Javascript
     	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common"))
     		_data.setAttribute("onkeyup", "void resize(this)");
+    	
+    	// If width set, adjust style as required
+    	if ((_width != null) && (_width.endsWith("%"))) {
+    		if (_data.hasAttribute("style")) {
+    			StringBuilder buf = new StringBuilder(_data.getAttribute("style"));
+    			buf.append("; width:");
+    			buf.append(_width);
+    			buf.append(';');
+    			_data.setAttribute("style", buf.toString());
+    		} else
+    			_data.setAttribute("style", "width:" + _width + ";");
+    	} else
+    		setNumericAttr("cols", StringUtils.parse(_width, 0), 0);	
     	
         try {
             validateState();
@@ -67,6 +81,7 @@ public class TextboxTag extends FormElementTag {
     public void release() {
     	super.release();
     	_resize = false;
+    	_width = null;
     }
     
     /**
@@ -74,10 +89,7 @@ public class TextboxTag extends FormElementTag {
      * @param width the width of the textbox in columns, or as a percentage
      */
     public void setWidth(String width) {
-    	if ((width != null) && (width.endsWith("%")))
-    		_data.setAttribute("style", "width:" + width + ";");
-    	else
-    		setNumericAttr("cols", StringUtils.parse(width, 0), 0);	
+    	_width = width;
     }
     
     /**
