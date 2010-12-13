@@ -1,18 +1,18 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 
 /**
  * A Flight Route that has its waypoints populated.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 2.6
  */
 
-public class PopulatedRoute extends FlightRoute {
+public class PopulatedRoute extends FlightRoute implements Route {
 	
 	private final Map<NavigationDataBean, String> _route = new LinkedHashMap<NavigationDataBean, String>(); 
 
@@ -27,8 +27,8 @@ public class PopulatedRoute extends FlightRoute {
 	 * Returns the waypoints on this route.
 	 * @return a Collection of NavigationDataBeans
 	 */
-	public Collection<NavigationDataBean> getWaypoints() {
-		return _route.keySet();
+	public LinkedList<NavigationDataBean> getWaypoints() {
+		return new LinkedList<NavigationDataBean>(_route.keySet());
 	}
 	
 	/**
@@ -41,12 +41,27 @@ public class PopulatedRoute extends FlightRoute {
 	}
 	
 	/**
+	 * Returns the number of waypoints.
+	 */
+	public int getSize() {
+		return _route.size();
+	}
+	
+	/**
 	 * Adds a waypoint to the route.
 	 * @param nd the waypoint
 	 * @param airway the airway it is on, or null
 	 */
 	public void addWaypoint(NavigationDataBean nd, String airway) {
 		_route.put(nd, (airway == null) ? "" : airway);
+	}
+	
+	/**
+	 * Adds a waypoint to the route.
+	 * @param nd the waypoint
+	 */
+	public void addWaypoint(NavigationDataBean nd) {
+		addWaypoint(nd, null);
 	}
 	
 	/**
