@@ -8,7 +8,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to write Senior Captain Nominations to the database.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 3.3
  */
 
@@ -75,6 +75,22 @@ public class SetNomination extends DAO {
 			_ps.setTimestamp(5, createTimestamp(nc.getCreatedOn()));
 			_ps.setString(6, nc.getBody());
 			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Moves a nomination forward into the current Quarter.
+	 * @param n the Nomination bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void adjustToCurrentQuarter(Nomination n) throws DAOException {
+		try {
+			prepareStatement("UPDATE NOMINATIONS SET QUARTER=? WHERE (ID=?) AND (QUARTER=?)");
+			_ps.setInt(1, new Quarter().getYearQuarter());
+			_ps.setInt(2, n.getID());
+			_ps.setInt(3, new Quarter(n.getCreatedOn()).getYearQuarter());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
