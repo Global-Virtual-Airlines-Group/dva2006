@@ -16,7 +16,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class Pilot extends NetworkUser {
+public class Pilot extends ConnectedUser {
 
 	private int _altitude;
 	private int _gSpeed;

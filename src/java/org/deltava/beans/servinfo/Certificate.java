@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * A bean to store VATSIM registration data.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 2.6
  */
 
@@ -79,14 +79,6 @@ public class Certificate extends NetworkUser {
 		return Type.PILOT;
 	}
 
-	public String getIconColor() {
-		return BLUE;
-	}
-
-	public String getInfoBox() {
-		return null;
-	}
-	
 	public String toString() {
 		StringBuilder buf = new StringBuilder(getID());
 		buf.append(' ');

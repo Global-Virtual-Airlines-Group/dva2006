@@ -1,33 +1,27 @@
 // Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
-import org.deltava.beans.*;
-import org.deltava.beans.schedule.GeoPosition;
-
 import org.deltava.util.*;
 
 /**
- * A bean to store network user information.
+ * A bean to store Online Network user information.
  * @author Luke
- * @version 3.2
+ * @version 3.4
  * @since 1.0
  */
 
-public abstract class NetworkUser implements java.io.Serializable, Comparable<NetworkUser>, ViewEntry, MarkerMapEntry {
+public abstract class NetworkUser implements java.io.Serializable, Comparable<NetworkUser> {
 	
 	public enum Type {
 		PILOT, ATC;
 	}
 	
-    private String _callSign;
     private int _id;
-    
     private String _firstName;
     private String _lastName;
     private Rating _rating;
     
     private int _databaseID;
-	protected GeoPosition _position;
     
     /**
      * Initializes the bean with a given network ID.
@@ -45,15 +39,6 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
      * @return the Type
      */
     public abstract Type getType();
-    
-    /**
-     * Returns the user's callsign.
-     * @return the callsign
-     * @see NetworkUser#setCallsign(String)
-     */
-    public String getCallsign() {
-        return _callSign;
-    }
     
     /**
      * Returns the Database ID of this network user.
@@ -104,42 +89,6 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
     	return _lastName;
     }
     
-	/**
-	 * Returns the User's current latitude.
-	 * @return the latitude in degrees
-	 * @see NetworkUser#getLongitude()
-	 * @see NetworkUser#getPosition()
-	 * @see NetworkUser#setPosition(double, double)
-	 * @see NetworkUser#setPosition(String, String)
-	 */
-	public final double getLatitude() {
-		return _position.getLatitude();
-	}
-	
-	/**
-	 * Returns the User's current longitude.
-	 * @return the longitude in degrees
-	 * @see NetworkUser#getLatitude() 
-	 * @see NetworkUser#getPosition()
-	 * @see NetworkUser#setPosition(double, double)
-	 * @see NetworkUser#setPosition(String, String)
-	 */
-	public final double getLongitude() {
-		return _position.getLongitude();
-	}
-
-	/**
-	 * Returns the User's current position.
-	 * @return a GeoPosition bean containing latitude and longitude
-	 * @see NetworkUser#getLatitude()
-	 * @see NetworkUser#getLongitude()
-	 * @see NetworkUser#setPosition(double, double)
-	 * @see NetworkUser#setPosition(String, String)
-	 */
-	public GeoLocation getPosition() {
-		return _position;
-	}
-	
     /**
      * Returns the Controller's rating.
      * @return the Rating
@@ -147,39 +96,6 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable<Ne
      */
     public Rating getRating() {
        return _rating;
-    }
-    
-	/**
-	 * Updates the User's position. This has a ServInfo hack where latitudes of -290 to -350 are mapped to
-	 * latitudes in the Northern Hemisphere.
-	 * @param lat the latitude in degrees
-	 * @param lon the longitude in degrees
-	 * @see NetworkUser#setPosition(String, String)
-	 * @see NetworkUser#getPosition()
-	 */
-	public void setPosition(double lat, double lon) {
-		_position = new GeoPosition(GeoUtils.normalize(lat, lon));
-	}
-
-	/**
-	 * Updates the User's position.
-	 * @param lat a String containing the latitude
-	 * @param lon a String containing the longitude
-	 * @see NetworkUser#setPosition(double, double)
-	 * @see NetworkUser#getPosition()
-	 */
-	public void setPosition(String lat, String lon) {
-		setPosition(StringUtils.parse(lat, 0.0d), StringUtils.parse(lon, 0.0d));
-	}
-	
-    /**
-     * Updates the user's callsign.
-     * @param cs the callsign
-     * @throws NullPointerException if cs is null
-     * @see NetworkUser#getCallsign()
-     */
-    public void setCallsign(String cs) {
-        _callSign = cs.trim().toUpperCase();
     }
     
     /**
