@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -59,6 +59,15 @@ public class XMLRenderer {
 	public void setAttribute(String name, String value) {
 		if (!StringUtils.isEmpty(name) && !StringUtils.isEmpty(value))
 			_attrs.put(name.toLowerCase(), value);
+	}
+	
+	/**
+	 * Gets an element attribute.
+	 * @param name the attribute name
+	 * @return the attribute value, or null if none
+	 */
+	public String getAttribute(String name) {
+		return _attrs.get(name.toLowerCase());
 	}
 	
 	/**
