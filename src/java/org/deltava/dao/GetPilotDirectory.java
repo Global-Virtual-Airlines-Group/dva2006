@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessDAO {
+public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 
 	/**
 	 * Initialize the Data Access Object.

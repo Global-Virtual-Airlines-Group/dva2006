@@ -14,11 +14,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
-public class GetPilotRecognition extends PilotReadDAO {
+public class GetPilotRecognition extends GetPilot {
 	
 	private static final Cache<CacheableSet<Integer>> _scNomCache = new ExpiringCache<CacheableSet<Integer>>(1, 3600);
 	private static final Cache<CacheableLong> _promoCache = new ExpiringCache<CacheableLong>(4, 900);
