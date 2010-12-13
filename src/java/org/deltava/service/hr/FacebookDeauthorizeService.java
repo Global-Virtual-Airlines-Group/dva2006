@@ -1,5 +1,5 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -20,6 +20,9 @@ import org.deltava.crypt.MessageDigester;
 
 import org.deltava.dao.*;
 
+import org.deltava.service.ServiceContext;
+import org.deltava.service.ServiceException;
+import org.deltava.service.WebService;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -41,12 +44,9 @@ public class FacebookDeauthorizeService extends WebService {
 	 */
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
-		
-		String raw = "jGY0K5M1Z2_ZZ1fdIS6Z8OC_u2NTOHS3-uS2-sfMK-U.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTI5MTU4NjkyMCwidXNlcl9pZCI6IjUyMTIyNzkxNCJ9";
-		
 		String userID = null;
 		try {
-			// String raw = ctx.getParameter("signed_request");
+			String raw = ctx.getParameter("signed_request");
 			int ofs = raw.indexOf('.');
 			Base64 b64 = new Base64(true);
 			String sig = MessageDigester.convert(b64.decode(raw.substring(0, ofs)));
@@ -70,7 +70,7 @@ public class FacebookDeauthorizeService extends WebService {
 			JSONObject payload = new JSONObject(jtk);
 			userID = payload.getString("user_id");
 		} catch (Exception e) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, e.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 		
 		try {
@@ -106,7 +106,7 @@ public class FacebookDeauthorizeService extends WebService {
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
 		}
