@@ -60,6 +60,15 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	public int getYearQuarter() {
 		return (_year * 10) + _qtr;
 	}
+	
+	/**
+	 * Returns whether a date is in this Quarter.
+	 * @param dt the date
+	 * @return TRUE if in the Quarter, otherwise FALSE
+	 */
+	public boolean contains(Date dt) {
+		return equals(new Quarter(dt));
+	}
 
 	public String toString() {
 		StringBuilder buf = new StringBuilder("Q");
@@ -71,6 +80,10 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	
 	public int hashCode() { 
 		return toString().hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		return (o instanceof Quarter) ? (compareTo((Quarter) o) == 0) : false;
 	}
 	
 	public int compareTo(Quarter q2) {
