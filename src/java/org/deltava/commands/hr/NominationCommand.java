@@ -1,5 +1,5 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.admin;
+package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 3.3
  */
 
@@ -119,7 +119,7 @@ public class NominationCommand extends AbstractFormCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REQREDIRECT);
-		result.setURL("/jsp/admin/scNominateUpdate.jsp");
+		result.setURL("/jsp/hr/scNominateUpdate.jsp");
 		result.setSuccess(true);
 	}
 
@@ -193,7 +193,7 @@ public class NominationCommand extends AbstractFormCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/admin/scNominateRead.jsp");
+		result.setURL("/jsp/hr/scNominateRead.jsp");
 		result.setSuccess(true);
 	}
 

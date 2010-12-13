@@ -1,5 +1,5 @@
 // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.admin;
+package org.deltava.commands.hr;
 
 import java.util.Date;
 import java.sql.Connection;
@@ -129,7 +129,7 @@ public class NominationDisposeCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(ResultType.REQREDIRECT);
-		result.setURL("/jsp/admin/scNominateUpdate.jsp");
+		result.setURL("/jsp/hr/scNominateUpdate.jsp");
 		result.setSuccess(true);
 	}
 }

@@ -46,6 +46,7 @@ if (!confirm('Are you sure you wish to nominate ' + pilotName + ' for Senior Cap
 setSubmit();
 disableButton('SaveButton');
 disableButton('PurgeButton');
+disableButton('PostponeButton');
 return true;	
 }
 </script>
@@ -255,6 +256,9 @@ individuals, we limit the number of nomnations that can be made every quarter.<b
  <td><el:button ID="SaveButton" type="submit" label="SAVE SENIOR CAPTAIN NOMINATION" />
 <content:filter roles="HR">
  <el:cmdbutton ID="PurgeButton" url="scnompurge" label="PURGE SENIOR CAPTAIN NOMINATIONS" />
+<c:if test="${prevQuarterPending}">
+ <el:cmdbutton ID="PostponeButton" url="scnompostpone" label="MOVE OLD PENDING NOMINATIONS" />
+</c:if>
  <el:cmdbutton ID="RescoreButton" url="scnomrescore" label="RESCORE SENIOR CAPTAIN NOMINATIONS" /></content:filter></td>
 </tr>
 </el:table>
