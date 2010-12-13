@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Controller extends NetworkUser {
+public class Controller extends ConnectedUser {
    
    private Facility _type;
    private String _freq;
@@ -68,7 +68,7 @@ public class Controller extends NetworkUser {
      * Updates the Controller's callsign.
      * @param cs the callsign
      * @throws NullPointerException if cs is null
-     * @see NetworkUser#getCallsign()
+     * @see ConnectedUser#getCallsign()
      */
     public void setCallsign(String cs) {
     	super.setCallsign(cs);
