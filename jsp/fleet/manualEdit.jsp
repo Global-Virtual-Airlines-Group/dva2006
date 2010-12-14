@@ -120,6 +120,7 @@ return true;
  <td class="label top">Flight Academy Certifications</td>
  <td class="data"><el:check name="certNames" width="150" cols="4" className="small" newLine="true" checked="${entry.certifications}" options="${certs}" /></td>
 </tr>
+<el:text type="hidden" name="hasCerts" value="true" readOnly="true" />
 </c:if>
 </content:filter>
 <tr>
