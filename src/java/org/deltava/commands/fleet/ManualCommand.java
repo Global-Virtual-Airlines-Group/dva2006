@@ -2,7 +2,7 @@
 package org.deltava.commands.fleet;
 
 import java.io.File;
-import java.util.List;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -91,12 +91,18 @@ public class ManualCommand extends LibraryEditCommand {
 			entry.setDescription(ctx.getParameter("desc"));
 			entry.setName(ctx.getParameter("title"));
 			entry.setVersion(StringUtils.parse(ctx.getParameter("version"), 1));
-			entry.addCertifications(ctx.getParameters("certNames"));
 			entry.setShowOnRegister(Boolean.valueOf(ctx.getParameter("showRegister")).booleanValue());
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
 			entry.setLastModified(new java.util.Date());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
+			
+			// Populate Flight Academy Certifications
+			boolean hasCerts = Boolean.valueOf(ctx.getParameter("hasCerts")).booleanValue();
+			if (hasCerts) {
+				Collection<String> certs = ctx.getParameters("certNames");
+				entry.addCertifications((certs == null) ? new HashSet<String>() : certs);	
+			}
 
 			// Get the message template
 			if (!noNotify) {
