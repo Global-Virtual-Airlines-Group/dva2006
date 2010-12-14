@@ -62,8 +62,8 @@ public class WeatherCenterCommand extends AbstractCommand {
 						URL url = new URL(baseURL.replace("%H", (x == 0) ? "anal" : ("h" + String.valueOf(x))));
 						HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 						urlcon.setRequestMethod("HEAD");
-						urlcon.setConnectTimeout(1250);
-						urlcon.setReadTimeout(2500);
+						urlcon.setConnectTimeout(750);
+						urlcon.setReadTimeout(1750);
 						urlcon.connect();
 						if (urlcon.getResponseCode() == HttpURLConnection.HTTP_OK) {
 							String name = (x == 0) ? "Current Analysis" : (String.valueOf(x) + " hour forecast"); 
