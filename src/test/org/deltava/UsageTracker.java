@@ -41,7 +41,7 @@ public class UsageTracker implements Runnable {
 				NetworkInfo info = sidao.getInfo(OnlineNetwork.VATSIM);
 				
 				// Get the pilots
-				Collection<NetworkUser> users = new ArrayList<NetworkUser>();
+				Collection<ConnectedUser> users = new ArrayList<ConnectedUser>();
 				users.addAll(info.getPilots());
 				users.addAll(info.getControllers());
 				
@@ -54,8 +54,8 @@ public class UsageTracker implements Runnable {
 					Connection c = DriverManager.getConnection(JDBC_URL);
 					PreparedStatement ps = c.prepareStatement("INSERT INTO USERSTATS (ID, DATE, CALLSIGN, USETIME, RATING) VALUES "
 							+ "(?, CURDATE(), ?, ?, ?) ON DUPLICATE KEY UPDATE USETIME=USETIME+?");
-					for (Iterator<NetworkUser> i = users.iterator(); i.hasNext(); ) {
-						NetworkUser usr = i.next();
+					for (Iterator<ConnectedUser> i = users.iterator(); i.hasNext(); ) {
+						ConnectedUser usr = i.next();
 						ps.setInt(1, usr.getID());
 						ps.setString(2, usr.getCallsign());
 						ps.setInt(3, _interval);
