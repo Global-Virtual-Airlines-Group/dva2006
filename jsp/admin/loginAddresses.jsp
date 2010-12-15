@@ -48,7 +48,7 @@ return true;
 <c:if test="${!empty addrInfo}">
 <tr>
  <td class="label">IP Address Info</td>
- <td class="data">${addrInfo.block} <el:flag countryCode="${addrInfo.countryCode}" caption="${addrInfo.country}" /> ${addrInfo.location}</td>
+ <td class="data">${addrInfo.block} <el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" /> ${addrInfo.location}</td>
 </tr>
 </c:if>
 <tr>

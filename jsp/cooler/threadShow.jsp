@@ -231,7 +231,7 @@ APPLICANT<br />
  <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${showPostTools ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator,HR">
  from ${msg.remoteHost} (${msg.remoteAddr}
-<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
+<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if>)
 <c:if test="${msg.contentWarning}"> <span class="error bld">CONTENT WARNING</span></c:if>
 </content:filter></td>
 <c:if test="${showPostTools}">

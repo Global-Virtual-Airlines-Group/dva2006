@@ -1,8 +1,8 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store IP address geo-location data. 
  * @author Luke
- * @version 2.5
+ * @version 3.4
  * @since 2.5
  */
 
@@ -22,8 +22,7 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	
 	private IPBlock _cidr;
 	
-	private String _countryCode;
-	private String _country;
+	private Country _country;
 	private String _region;
 	private String _city;
 	
@@ -32,7 +31,7 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	 */
 	public static final IPAddressInfo UNKNOWN = new IPAddressInfo("0.0.0.0") {
 		{
-			setCountryCode("US");
+			setCountry(Country.get("US"));
 			setBlock(new IPBlock("0.0.0.0/8"));
 		}
 	};
@@ -67,20 +66,11 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	
 	/**
 	 * Returns the country associated with this IP address.
-	 * @return the country name
-	 * @see IPAddressInfo#setCountry(String)
+	 * @return the Country
+	 * @see IPAddressInfo#setCountry(Country)
 	 */
-	public String getCountry() {
+	public Country getCountry() {
 		return _country;
-	}
-	
-	/**
-	 * Returns the ISO 3166-1 country code associated with this IP address.
-	 * @return the ISO 3166-1 country code
-	 * @see IPAddressInfo#setCountryCode(String)
-	 */
-	public String getCountryCode() {
-		return _countryCode;
 	}
 	
 	/**
@@ -114,7 +104,7 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 			buf.append(' ');
 		}
 		
-		buf.append(_countryCode);
+		buf.append(_country.getCode());
 		return buf.toString();
 	}
 	
@@ -127,22 +117,12 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	}
 	
 	/**
-	 * Updates the country associated with the IP address.
-	 * @param code the ISO 3166-1 country code
-	 * @throws NullPointerException if code is null
-	 * @see IPAddressInfo#getCountryCode()
-	 */
-	public void setCountryCode(String code) {
-		_countryCode = code.toUpperCase();
-	}
-	
-	/**
-	 * Updates the country name associated with this IP address.
-	 * @param country the country name
+	 * Updates the country associated with this IP address.
+	 * @param c the Country
 	 * @see IPAddressInfo#getCountry()
 	 */
-	public void setCountry(String country) {
-		_country = country;
+	public void setCountry(Country c) {
+		_country = c;
 	}
 	
 	/**

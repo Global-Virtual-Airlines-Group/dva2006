@@ -60,7 +60,7 @@ return true;
  <td class="sec">${pilot.equipmentType}</td>
 <c:choose>
 <c:when test="${isHR && (!empty session.addressInfo)}">
- <td class="small"><el:flag countryCode="${session.addressInfo.countryCode}" /> ${session.addressInfo.location}</td>
+ <td class="small"><el:flag countryCode="${session.addressInfo.country.code}" /> ${session.addressInfo.location}</td>
 </c:when>
 <c:otherwise>
  <td>${pilot.location}</td>
