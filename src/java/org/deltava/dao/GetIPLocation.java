@@ -1,8 +1,9 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.beans.schedule.Country;
 import org.deltava.beans.system.*;
 
 import org.deltava.util.*;
@@ -11,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 2.5
  */
 
@@ -43,31 +44,41 @@ public class GetIPLocation extends DAO implements CachingDAO {
 		
 		// Check the cache
 		long rawAddr = NetworkUtils.pack(addr) & 0xFFFFFF00;
-		NetworkUtils.NetworkType netType = NetworkUtils.getNetworkType(NetworkUtils.convertIP(rawAddr));
 		IPAddressInfo result = _cache.get(NetworkUtils.format(NetworkUtils.convertIP(rawAddr)));
 		if (result != null)
 			return result;
 		
 		try {
-			prepareStatementWithoutLimits("SELECT (SELECT ic.ip_cidr FROM geoip.ip_group_country ic WHERE (ic.ip_start <= ct.ip_start) "
-					+ "ORDER BY ic.ip_start DESC LIMIT 1) as cidr, ct.country_code, c.name, r.name, ct.city, ct.latitude, ct.longitude "
-					+ "FROM geoip.countries c, geoip.ip_group_city ct LEFT JOIN geoip.regions r ON ((r.country_code=ct.country_code) "
-					+ "AND (r.code=ct.region_code)) WHERE (ct.country_code=c.code) AND (ct.ip_start <= INET_ATON(?)) AND "
-					+ "(ct.ip_start >= (INET_ATON(?) & ?)) ORDER BY ct.ip_start DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT (SELECT ip_cidr FROM geoip.ip_group_country WHERE (ip_start <= INET_ATON(?)) "
+				+ "ORDER BY ip_start DESC LIMIT 1) AS cidr, (SELECT ip_start FROM geoip.ip_group_city where (ip_start <= INET_ATON(?)) "
+				+ "ORDER BY ip_start DESC LIMIT 1) AS ipblock");
 			_ps.setString(1, addr);
 			_ps.setString(2, addr);
-			_ps.setLong(3, netType.getMask());
 			
-			// Do the query
+			// Do the range start query
+			long ip_start = -1;
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
 				result = new IPAddressInfo(addr);
 				result.setBlock(new IPBlock(rs.getString(1)));
-				result.setCountryCode(rs.getString(2));
-				result.setCountry(rs.getString(3));
-				result.setRegion(rs.getString(4));
-				result.setCity(rs.getString(5));
-				result.setLocation(rs.getDouble(6), rs.getDouble(7));
+				ip_start = rs.getLong(2);
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			
+			// Load the IP info
+			prepareStatementWithoutLimits("SELECT l.country_code, l.city, r.name, l.latitude, l.longitude FROM geoip.ip_group_city ic, "
+				+ "geoip.locations l LEFT JOIN geoip.fips_regions r ON (l.region_code=r.code) AND (l.country_code=r.country_code) "
+				+ "WHERE (ic.location=l.id) AND (ic.ip_start >= ?) ORDER BY ic.ip_start LIMIT 1");
+			_ps.setLong(1, ip_start);
+			rs = _ps.executeQuery();
+			if (rs.next() && (result != null)) {
+				result.setCountry(Country.get(rs.getString(1)));
+				result.setCity(rs.getString(2));
+				result.setRegion(rs.getString(3));
+				result.setLocation(rs.getDouble(4), rs.getDouble(5));
 			}
 			
 			// Clean up
