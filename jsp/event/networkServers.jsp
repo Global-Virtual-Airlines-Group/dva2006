@@ -54,7 +54,7 @@ return true;
  <td class="pri bld">${srv.name}</td>
  <td class="bld">${srv.address}</td>
 <c:if test="${!empty ipInfo}">
- <td><el:flag countryCode="${ipInfo.countryCode}" caption="${ipInfo.location}" /> ${ipInfo.location}</td>
+ <td><el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</td>
 </c:if>
 <c:if test="${empty ipInfo}">
  <td>${srv.location}</td>
