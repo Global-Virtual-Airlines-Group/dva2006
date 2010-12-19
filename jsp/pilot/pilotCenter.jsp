@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Pilot Center - ${pilot.name}</title>
+<title><content:airline /> Pilot Center - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="common" />
@@ -90,11 +90,19 @@ the <content:airline /> Pilot Board is viewed.</span></td>
 <c:if test="${!empty fbClientID}">
 <c:choose>
 <c:when test="${fn:hasIM(pilot, 'FBTOKEN')}">
+<script type="text/javascript">
+function fbDeauthorize()
+{
+var URLflags = 'height=320,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
+window.open('/fbdeauth.do', 'fbAuth', URLflags);
+return true;
+}
+</script>
 <tr>
- <td class="mid bld">Facebook Integration</td>
+ <td class="mid"><a class="bld" href="javascript:void fbDeauthorize()">Disable Facebook Publishing</a></td>
  <td class="data"><content:airline /> can publish information to your Facebook news feed, including promotions and completion
-of Accomplishments.<c:if test="${acarsEnabled}"> Submitted flight reports using <content:airline /> will also be published to
-your Facebook news feed.</c:if></td>
+of Accomplishments.<c:if test="${acarsEnabled}"> Submitted flight reports using <content:airline /> ACARS will also be published
+to your Facebook news feed.</c:if></td>
 </tr>
 </c:when>
 <c:when test="${!empty fbPerms}">
