@@ -47,9 +47,10 @@ public class GetFacebookData extends FacebookDAO {
 			ProfileInfo inf = new ProfileInfo(jo.getString("id"));
 			inf.setFirstName(jo.getString("first_name"));
 			inf.setLastName(jo.getString("last_name"));
-			inf.setEMail(jo.getString("email"));
-			inf.setVerified(jo.getBoolean("verified"));
-			inf.setLastUpdated(StringUtils.parseRFC3339Date(jo.getString("updated_time")));
+			inf.setEMail(jo.optString("email", ""));
+			inf.setVerified(jo.optBoolean("verified", false));
+			if (jo.has("updated_time"))
+				inf.setLastUpdated(StringUtils.parseRFC3339Date(jo.getString("updated_time")));
 			return inf;
 		} catch (Exception e) {
 			if (_warnMode) {

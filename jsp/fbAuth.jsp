@@ -27,15 +27,21 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<c:choose>
+<c:when test="${fbAuth}">
 <div class="updateHdr">Facebook Authorization Complete</div>
 <br />
 The Facebook authorization has completed successfully. <content:airline /> can now publish news
 about your career with us to your Facebook news feed, and use Facebook to validate your e-mail address.<br />
+</c:when>
+<c:when test="${fbDeauth}">
+<div class="updateHdr">Facebook Credentials Removed</div>
 <br />
-<c:if test="${!empty fbToken}">
-The token is ${fbToken}<br />
+Your Facebook credentials have been removed from the database. <content:airline /> will no longer attempt to
+publish data to your Facebook news feed, or use Facebook to validate your e-mail address.<br />
+</c:when>
+</c:choose>
 <br />
-</c:if>
 <el:link url="javascript:void closeRefresh()" className="sec bld">Click Here</el:link> to close this window.<br />
 <br />
 <content:copyright />
