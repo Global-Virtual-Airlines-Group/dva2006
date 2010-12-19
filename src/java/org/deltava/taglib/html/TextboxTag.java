@@ -33,8 +33,17 @@ public class TextboxTag extends FormElementTag {
     public int doStartTag() throws JspException {
     	
     	// If resizing, enable the Javascript
-    	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common"))
+    	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common")) {
     		_data.setAttribute("onkeyup", "void resize(this)");
+    		StringBuilder buf = new StringBuilder();
+    		if (_data.hasAttribute("class")) {
+    			buf.append(_data.getAttribute("class"));
+    			buf.append(' ');
+    		}
+    		
+    		buf.append("resizable");
+    		_data.setAttribute("class", buf.toString());
+    	}
     	
     	// If width set, adjust style as required
     	if ((_width != null) && (_width.endsWith("%"))) {

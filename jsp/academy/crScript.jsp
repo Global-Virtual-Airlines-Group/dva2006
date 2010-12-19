@@ -27,7 +27,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void resizeAll()">
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
