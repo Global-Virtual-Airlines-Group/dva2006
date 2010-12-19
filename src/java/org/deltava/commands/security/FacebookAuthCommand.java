@@ -98,6 +98,9 @@ public class FacebookAuthCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Set status variable
+		ctx.setAttribute("fbAuth", Boolean.TRUE, REQUEST);
+		
 		// Forward to the JSP
 		result.setURL("/jsp/fbAuth.jsp");
 		result.setType(ResultType.REQREDIRECT);
