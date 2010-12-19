@@ -69,8 +69,6 @@ a delay in your Flight Report being approved.<br />
 is <fmt:distance value="${pirep.distance}" longUnits="true" />, and appears to exceed the maximum range of the ${pirep.equipmentType}.</span> 
 This may cause a delay in your Flight Report being approved.<br />
 </c:if>
-<br />
-To return to your log book, <el:cmd url="logbook" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isApprove}">
 <div class="updateHdr">Flight Report Approved</div>
