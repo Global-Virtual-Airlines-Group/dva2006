@@ -36,7 +36,7 @@
 <view:row entry="${sc}">
 <c:set var="ac" value="${access[sc.certificationName]}" scope="page" />
 <c:if test="${ac.canEdit}">
- <td><el:cmd url="arscript" linkID="${sc.certificationName}" op="edit">${sc.certificationName}</el:cmd></td>
+ <td><el:cmd url="arscript" linkID="${sc.certificationName}" className="pri bld" op="edit">${sc.certificationName}</el:cmd></td>
 </c:if>
 <c:if test="${!ac.canEdit}">
  <td class="pri bld">${sc.certificationName}</td>
