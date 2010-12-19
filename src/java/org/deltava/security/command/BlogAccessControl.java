@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.blog.Entry;
@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for blog entries.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -51,7 +51,7 @@ public class BlogAccessControl extends AccessControl {
 		
 		// Get access roles
 		_canEdit = (_ctx.isAuthenticated() && (id == _e.getAuthorID())) || _ctx.isUserInRole("Admin");
-		_canComment = _ctx.isAuthenticated() || (!_e.getLocked());
+		_canComment = _ctx.isAuthenticated() && !_e.getLocked();
 		_canDelete = _canEdit;
 	}
 
