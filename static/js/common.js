@@ -66,6 +66,15 @@ if (e) e.style.display = isVisible ? '' : 'none';
 return true;
 }
 
+function resizeAll()
+{
+var boxes = getElementsByClass('resizable');
+for (var x = 0; x < boxes.length; x++)
+	resize(boxes[x]);
+
+return true;
+}
+
 function resize(textbox)
 {
 if (!textbox) return false;
