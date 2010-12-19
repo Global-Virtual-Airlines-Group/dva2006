@@ -1,6 +1,6 @@
 #!/bin/bash
 # System daemon checking script
-# (c) 2005-2009 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2010 Global Virtual Airlines Group. All Rights Reserved.
 
 # Loop control variable
 ISALIVE=true;
@@ -232,8 +232,8 @@ do
 			then
 				logger -p local3.err "Site appears DOWN - healthcheck failed"
 				echo `date +%H:%M:%S`" Site appears DOWN - healthcheck failed" >> /var/cache/isalive.txt
-				cat /tmp/healthcheck.log >> //var/cache/isalive.txt
-				cat /tmp/healthcheck.out >> //var/cache/isalive.txt
+				cat /tmp/healthcheck.log >> /var/cache/isalive.txt
+				cat /tmp/healthcheck.out >> /var/cache/isalive.txt
 				kill -9 `cat /var/run/tomcat60.pid`
 				sleep 1.25
 				logger -p local3.err "Archiving Tomcat log"
