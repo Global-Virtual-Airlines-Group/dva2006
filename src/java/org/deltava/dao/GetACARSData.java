@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -148,6 +148,8 @@ public class GetACARSData extends DAO {
 						ctr.setCallsign(atcID);
 						try {
 							ctr.setFacility(Facility.valueOf(atcID.substring(atcID.lastIndexOf('_') + 1)));
+						} catch (IllegalArgumentException iae) {
+							ctr.setFacility(Facility.CTR);
 						} finally {
 							entry.setController(ctr);
 						}
