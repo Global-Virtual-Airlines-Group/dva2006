@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.ComboAlias;
@@ -7,11 +7,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airline databases.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
-public class AirlineInformation implements Comparable<AirlineInformation>, ComboAlias, Cacheable {
+public class AirlineInformation implements java.io.Serializable, Comparable<AirlineInformation>, ComboAlias, Cacheable {
    
    private String _code;
    private String _name;
