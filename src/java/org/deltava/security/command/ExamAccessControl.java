@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -71,7 +71,7 @@ public class ExamAccessControl extends AccessControl {
         // Set access variables
         boolean isHR = _ctx.isUserInRole("HR");
         boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
-        boolean isExam = isHR || (_t.getAcademy() ? _ctx.isUserInRole("Examiner") : _ctx.isUserInRole("Examination"));
+        boolean isExam = isHR || (_t.getAcademy() ? _ctx.isUserInRole("Instructor") : _ctx.isUserInRole("Examination"));
         
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);

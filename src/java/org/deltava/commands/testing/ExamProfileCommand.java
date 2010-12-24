@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Profiles.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -149,7 +149,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
          Collection<Pilot> scorers = new TreeSet<Pilot>(new PilotComparator(PersonComparator.LASTNAME));
          String dbName = (ep == null) ? SystemData.get("airline.db") : ep.getOwner().getDB();
          GetPilotDirectory pdao = new GetPilotDirectory(con);
-         scorers.addAll(pdao.getByRole("Examiner", dbName));
+         scorers.addAll(pdao.getByRole("Instructor", dbName));
          scorers.addAll(pdao.getByRole("Examination", dbName));
          ctx.setAttribute("scorers", scorers, REQUEST);
       } catch (DAOException de) {
