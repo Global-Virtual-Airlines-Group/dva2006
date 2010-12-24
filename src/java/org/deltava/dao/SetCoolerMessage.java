@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 3.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -173,7 +173,7 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET STICKY=IF(STICKY < NOW(), NULL, STICKY), "
 					+ "VIEWS=VIEWS+1, SORTDATE=IFNULL(STICKY, LASTUPDATE) WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
-			executeUpdate(1);
+			executeUpdate(0);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
