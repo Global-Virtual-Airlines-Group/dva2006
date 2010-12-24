@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Fleet Academy Instruction sessions.
  * @author Luke
- * @version 3.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class InstructionAccessControl extends AccessControl {
 		boolean isAcademyAdmin = _ctx.isUserInRole("AcademyAdmin");
 
 		// Set create rights
-		_canCreate = isHR || isAcademyAdmin || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examiner");
+		_canCreate = isHR || isAcademyAdmin || _ctx.isUserInRole("Instructor");
 		if ((_i == null) || (!_ctx.isAuthenticated()))
 			return;
 

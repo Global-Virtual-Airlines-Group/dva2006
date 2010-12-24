@@ -19,8 +19,8 @@ import org.deltava.util.*;
 
 public class JobPostingAccessControl extends AccessControl {
 	
-	private static final List<String> STAFF_ROLES = Arrays.asList("HR", "Instructor", "Examiner", "PIREP", 
-			"Examination", "Event", "AcademyAdmin", "Schedule");
+	private static final List<String> STAFF_ROLES = Arrays.asList("HR", "Instructor", "PIREP", "Examination", 
+			"Event", "AcademyAdmin", "Schedule");
 	
 	private JobPosting _jp;
 	
