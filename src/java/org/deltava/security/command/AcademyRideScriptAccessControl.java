@@ -38,15 +38,14 @@ public class AcademyRideScriptAccessControl extends AccessControl {
 	public void validate() throws AccessControlException {
 		validateContext();
 
-		// Do nothing if we are not in the exam role
-		boolean isINS = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examiner");
+		// Do nothing if we are not in the Academy admin role
 		boolean isAdmin = _ctx.isUserInRole("HR") || _ctx.isUserInRole("AcademyAdmin");
-		if (!isINS & !isAdmin)
+		if (!_ctx.isUserInRole("Instructor") && !isAdmin)
 			throw new AccessControlException("Cannot view Check Ride script");
 
 		// Check creation/deletion access
-		_canCreate = true;
-		_canEdit = true;
+		_canCreate = isAdmin;
+		_canEdit = isAdmin;
 		_canDelete = (_sc != null) && isAdmin;
 	}
 

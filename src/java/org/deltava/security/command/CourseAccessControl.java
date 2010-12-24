@@ -51,8 +51,7 @@ public class CourseAccessControl extends AccessControl {
 
 		// Define conditions
 		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isExaminer = _ctx.isUserInRole("AcademyAdmin") || _ctx.isUserInRole("Examiner");
-		boolean isINS = _ctx.isUserInRole("Instructor") || isExaminer;
+		boolean isINS = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		boolean isMine = (_ctx.getUser().getID() == _c.getPilotID());
 		boolean isStarted = (_c.getStatus() == Course.STARTED);
 		boolean isPending = (_c.getStatus() == Course.PENDING);
@@ -66,7 +65,7 @@ public class CourseAccessControl extends AccessControl {
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && isMine;
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
-		_canAssign = (isStarted || isPending) && (isHR || isINS);
+		_canAssign = (isStarted || isPending) && (isHR || _ctx.isUserInRole("AcademyAdmin"));
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
@@ -80,7 +79,7 @@ public class CourseAccessControl extends AccessControl {
 		CheckRide cr = _c.getCheckRide();
 		boolean crComplete = !_c.getHasCheckRide() || ((cr != null) && cr.getPassFail());
 		_canAssignCheckRide = _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == Test.SCORED)));
-		_canApprove = crComplete && isComplete && (isHR || isExaminer) && isStarted && !isMine;
+		_canApprove = crComplete && isComplete && (isHR || isINS) && isStarted && !isMine;
 	}
 
 	/**
