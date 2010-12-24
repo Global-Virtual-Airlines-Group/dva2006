@@ -95,7 +95,7 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	 * Returns the city, region and country (if available).
 	 * @return the location
 	 */
-	public String getLocationName() {
+	public String getLocation() {
 		StringBuilder buf = new StringBuilder(24);
 		if (!StringUtils.isEmpty(_city)) {
 			buf.append(_city);
