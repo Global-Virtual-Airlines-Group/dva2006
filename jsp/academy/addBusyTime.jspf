@@ -27,9 +27,7 @@ return true;
  <td class="data"><el:combo name="instructor" idx="*" size="1" className="req" firstEntry="-" options="${instructors}" /></td>
 </tr>
 </c:if>
-<content:authUser var="user">
-<c:set var="myTZ" value="user.TZ" scope="page" />
-</content:authUser>
+<c:set var="myTZ" value="${user.TZ}" scope="page" />
 <tr>
  <td class="label">Start Date/Time</td>
  <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="" className="req" /> at
