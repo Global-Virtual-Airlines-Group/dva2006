@@ -92,7 +92,7 @@ public class TransferApproveCommand extends AbstractCommand {
 					eqRanks.remove(Rank.SC);
 
 				// Validate the rank
-				if (!eqRanks.contains(rank))
+				if ((rank == null) || !eqRanks.contains(rank))
 					throw notFoundException("Invalid Rank - " + rank);
 
 				// Check if we're doing a promotion or a rating change
