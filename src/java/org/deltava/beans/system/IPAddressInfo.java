@@ -95,16 +95,19 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	 * Returns the city, region and country (if available).
 	 * @return the location
 	 */
-	public String getLocation() {
-		StringBuilder buf = new StringBuilder(_city);
-		if (buf.length() > 0)
+	public String getLocationName() {
+		StringBuilder buf = new StringBuilder(24);
+		if (!StringUtils.isEmpty(_city)) {
+			buf.append(_city);
 			buf.append(", ");
+		}
 		if (!StringUtils.isEmpty(_region)) {
 			buf.append(_region);
 			buf.append(' ');
 		}
+		if (_country != null)
+			buf.append(_country.getCode());
 		
-		buf.append(_country.getCode());
 		return buf.toString();
 	}
 	
