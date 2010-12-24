@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -270,13 +270,12 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	 */
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 		
-		boolean hasQuery = !StringUtils.isEmpty(criteria.getSearchTerm());
-
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT DISTINCT T.ID FROM common.COOLER_THREADS T, "
 				+ "common.COOLER_POSTSEARCH SIDX WHERE (SIDX.THREAD_ID=T.ID) ");
 		
 		// Check for text / subject search
+		boolean hasQuery = !StringUtils.isEmpty(criteria.getSearchTerm());
 		if (hasQuery) {
 			buf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (? IN NATURAL LANGUAGE MODE)) ");
 			if (criteria.getSearchSubject())
@@ -297,7 +296,7 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 		try {
 			prepareStatement(buf.toString());
 			int psOfs = 0;
-			if (!StringUtils.isEmpty(criteria.getSearchTerm())) {
+			if (hasQuery) {
 				_ps.setString(++psOfs, criteria.getSearchTerm());
 				if (criteria.getSearchSubject())
 					_ps.setString(++psOfs, criteria.getSearchTerm());
