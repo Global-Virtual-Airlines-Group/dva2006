@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -122,17 +123,22 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?))");
+		sqlBuf.append(".PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?))");
+		if (!StringUtils.isEmpty(p.getEmail()))
+			sqlBuf.append("OR (EMAIL=?)");
+		sqlBuf.append(')');
 		if (days > 0)
 			sqlBuf.append(" AND (CREATED > DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, p.getFirstName());
-			_ps.setString(2, p.getLastName());
-			_ps.setString(3, p.getEmail());
+			int param = 0;
+			_ps.setString(++param, p.getFirstName());
+			_ps.setString(++param, p.getLastName());
+			if (!StringUtils.isEmpty(p.getEmail()))
+				_ps.setString(++param, p.getEmail());
 			if (days > 0)
-				_ps.setInt(4, days);
+				_ps.setInt(++param, days);
 			
 			return executeIDs();
 		} catch (SQLException se) {
