@@ -537,15 +537,17 @@ be eligible to take written examinations once you have completed 5 flights.</spa
 </c:if>
 
 <c:if test="${academyEnabled}">
+<content:attr attr="isAcademyAdmin" value="true" roles="AcademyAdmin,AcademyAudit,Instructor,HR" />
+<c:set var="academyNoFlights" value="${(pilot.legs < academyFlights) && !isAcademyAdmin}" scope="page" />
 <!-- Flight Academy Section -->
 <tr class="title caps">
  <td colspan="2">FLIGHT ACADEMY</td>
 </tr>
 <tr>
-<c:if test="${pilot.legs >= academyFlights}">
+<c:if test="${!academyNoFlights}">
  <td class="mid"><el:cmd className="bld" url="academy">Flight Academy</el:cmd></td>
 </c:if>
-<c:if test="${pilot.legs < academyFlights}">
+<c:if test="${academyNoFlights}">
  <td class="mid bld">Flight Academy</td>
 </c:if>
  <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. 
@@ -558,7 +560,7 @@ You have completed or are enrolled in the following <content:airline /> Flight A
 <c:if test="${!empty course}"><br />
 You are currently enrolled in the <el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd> 
 Flight Academy course.</c:if>
-<c:if test="${pilot.legs < academyFlights}"><br />
+<c:if test="${academyNoFlights}"><br />
 <br />
 <span class="ita">You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
 <fmt:int value="${academyFlights}" /> Flight legs.</span></c:if></td>
@@ -571,7 +573,7 @@ training session with a Flight Academy instructor to meet online for test flight
 situations where a virtual Flight Instructor can asisst you in your development.</td>
 </tr>
 </c:if>
-<content:filter roles="HR,Instructor,AcademyAdmin">
+<content:filter roles="HR,Instructor,AcademyAdmin,AcademyAudit">
 <tr>
  <td class="mid"><el:cmd url="courses" className="bld">Active Courses</el:cmd></td>
  <td class="data">You can view Pilots currently enrolled within a <content:airline /> Flight Academy 

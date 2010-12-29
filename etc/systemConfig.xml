@@ -371,6 +371,7 @@
 		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
 			<role>AcademyAdmin</role>
+			<role>AcademyAudit</role>
 			<role>Blog</role>
 			<role>Charts</role>
 			<role>Developer</role>
