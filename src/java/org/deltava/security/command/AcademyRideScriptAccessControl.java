@@ -40,7 +40,7 @@ public class AcademyRideScriptAccessControl extends AccessControl {
 
 		// Do nothing if we are not in the Academy admin role
 		boolean isAdmin = _ctx.isUserInRole("HR") || _ctx.isUserInRole("AcademyAdmin");
-		if (!_ctx.isUserInRole("Instructor") && !isAdmin)
+		if (!_ctx.isUserInRole("Instructor") && !_ctx.isUserInRole("AcademyAudit") && !isAdmin)
 			throw new AccessControlException("Cannot view Check Ride script");
 
 		// Check creation/deletion access

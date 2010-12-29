@@ -55,7 +55,7 @@ public class CourseAccessControl extends AccessControl {
 		boolean isMine = (_ctx.getUser().getID() == _c.getPilotID());
 		boolean isStarted = (_c.getStatus() == Course.STARTED);
 		boolean isPending = (_c.getStatus() == Course.PENDING);
-		if (!isMine && !isINS && !isHR)
+		if (!isMine && !isINS && !isHR && !_ctx.isUserInRole("AcademyAudit"))
 			throw new AccessControlException("Not Authorized");
 		
 		// Assign access rights

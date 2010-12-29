@@ -2115,13 +2115,13 @@
 	<command id="certs">
 		<name>Academy Certifications</name>
 		<class>org.deltava.commands.academy.CertificationListCommand</class>
-		<roles>HR,Instructor,AcademyAdmin</roles>
+		<roles>HR,Instructor,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="cert">
 		<name>Academy Certification</name>
 		<class>org.deltava.commands.academy.CertificationCommand</class>
-		<roles>HR,Instructor,AcademyAdmin</roles>
+		<roles>HR,Instructor,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="certdelete">
@@ -2187,19 +2187,19 @@
 	<command id="coursequeue">
 		<name>Flight Academy Course Completion Queue</name>
 		<class>org.deltava.commands.academy.CourseQueueCommand</class>
-		<roles>Instructor,AcademyAdmin,HR</roles>
+		<roles>Instructor,AcademyAdmin,HR,AcademyAudit</roles>
 	</command>
 
 	<command id="arscripts">
 		<name>Flight Academy Check Ride Scripts</name>
 		<class>org.deltava.commands.academy.RideScriptsCommand</class>
-		<roles>Instructor,AcademyAdmin,HR</roles>
+		<roles>Instructor,AcademyAdmin,AcademyAudit,HR</roles>
 	</command>
 
 	<command id="arscript">
 		<name>Flight Academy Check Ride Script</name>
 		<class>org.deltava.commands.academy.RideScriptCommand</class>
-		<roles>Instructor,AcademyAdmin,HR</roles>
+		<roles>Instructor,AcademyAdmin,AcademyAudit,HR</roles>
 	</command>
 
 	<command id="arscriptdelete">
@@ -2217,13 +2217,13 @@
 	<command id="inslogbook">
 		<name>Flight Academy Instruction Logbook</name>
 		<class>org.deltava.commands.academy.InstructionLogbookCommand</class>
-		<roles>Instructor,AcademyAdmin,HR</roles>
+		<roles>Instructor,AcademyAdmin,AcademyAudit,HR</roles>
 	</command>
 
 	<command id="academyridequeue">
 		<name>Flight Academy Check Ride Queue</name>
 		<class>org.deltava.commands.academy.RideQueueCommand</class>
-		<roles>Instructor,AcademyAdmin,HR</roles>
+		<roles>Instructor,AcademyAdmin,AcademyAudit,HR</roles>
 	</command>
 
 	<command id="tvideolibrary">
