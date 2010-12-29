@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 3.3
+ * @version 3.4
  * @since 1.0
  */
 
@@ -320,18 +320,23 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS WHERE (STATUS=?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?))");
+		sqlBuf.append(".APPLICANTS WHERE (STATUS=?) AND (((FIRSTNAME=?) AND (LASTNAME=?))");
+		if (!StringUtils.isEmpty(p.getEmail()))
+			sqlBuf.append(" OR (EMAIL=?)");
+		sqlBuf.append(')');
 		if (days > 0)
 			sqlBuf.append(" AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Applicant.PENDING);
-			_ps.setString(2, p.getFirstName());
-			_ps.setString(3, p.getLastName());
-			_ps.setString(4, p.getEmail());
+			int param = 0;
+			_ps.setInt(++param, Applicant.PENDING);
+			_ps.setString(++param, p.getFirstName());
+			_ps.setString(++param, p.getLastName());
+			if (!StringUtils.isEmpty(p.getEmail()))
+				_ps.setString(++param, p.getEmail());
 			if (days > 0)
-				_ps.setInt(5, days);
+				_ps.setInt(++param, days);
 			
 			return executeIDs();
 		} catch (SQLException se) {

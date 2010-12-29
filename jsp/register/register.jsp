@@ -61,7 +61,7 @@ if ((fN.length < 2) || (lN.length < 2) || (document.uniqueCheck)) return false;
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'dupename.ws?fName=' + fN + '&lName=' + lN + "&eMail=" + eMail);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var dupes = (parseInt(xmlreq.responseText) > 0);
 	var rows = getElementsByClass('dupeFound');
 	for (var x = 0; x < rows.length; x++) {
@@ -71,7 +71,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Disable form elements
 	for (var x = 0; x < f.elements.length; x++)
-		f.elements[x].disabled = true;
+		f.elements[x].disabled = dupes;
 
 	return true;
 }
@@ -157,7 +157,7 @@ return true;
 &nbsp;<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" onBlur="void checkUnique()" /></td>
 </tr>
 <tr class="dupeFound" style="display:none;">
- <td colspan="2" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
+ <td colspan="${cspan + 1}" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
  already registered with us,<br />
 you can simply reactivate your old user account. This is a much faster and simpler process than re-registering.</span><br />
 <br />
@@ -211,7 +211,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 </tr>
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="125" options="${fsVersions}" value="FS2004" /></td>
+ <td class="data" colspan="${cspan}"><el:check type="radio" name="fsVersion" idx="*" width="125" options="${fsVersions}" value="FS2004" /></td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
