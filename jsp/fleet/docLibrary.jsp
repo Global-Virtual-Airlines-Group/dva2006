@@ -28,8 +28,8 @@
 <tr class="title caps">
  <td width="25%">TITLE</td>
  <td width="5%">&nbsp;</td>
- <td width="8%">SIZE</td>
- <td width="7%">UPDATED</td>
+ <td width="7%">SIZE</td>
+ <td width="8%">UPDATED</td>
  <td width="5%">VERSION</td>
 <c:choose>
 <c:when test="${access.canCreate}">
@@ -57,9 +57,9 @@
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
- <td class="sec small bld"><fmt:int value="${doc.size}" /></td>
+ <td class="sec bld"><fmt:int value="${doc.size / 1024}" />K</td>
  <td class="small"><fmt:date fmt="d" default="N/A" date="${doc.lastModified}" /></td>
- <td class="bld">${doc.version}</td>
+ <td class="bld"><fmt:int value="${doc.version}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>
