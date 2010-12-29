@@ -48,8 +48,8 @@
 
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="8500" failonerror="no" port="${javadoc.ssh.port}"
-    		command="rm -Rd ${javadoc.path}/*" />
+    		host="${javadoc.ssh.server}" timeout="15000" failonerror="no" port="${javadoc.ssh.port}"
+    		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
 
     	<!-- Upload the JavaDoc archive -->
     	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:/tmp" trust="yes" verbose="yes" port="${javadoc.ssh.port}" 
@@ -57,10 +57,10 @@
 
     	<!-- Explode the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
-    		command="cd ${javadoc.path} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
+    		host="${javadoc.ssh.server}" timeout="17500" failonerror="no" port="${javadoc.ssh.port}"
+    		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
 		<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    	    host="${javadoc.ssh.server}" timeout="12500" failonerror="no" port="${javadoc.ssh.port}"
+    	    host="${javadoc.ssh.server}" timeout="5000" failonerror="no" port="${javadoc.ssh.port}"
     	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
 
     	<!-- Clean out the temp folder -->
