@@ -68,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot</td>
- <td colspan="6" class="data">${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd>> (${pilot.pilotCode})
+ <td colspan="6" class="data">${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})
  - <el:cmd url="logbook" link="${pilot}">View Log Book</el:cmd></td>
 </tr>
 <tr>
