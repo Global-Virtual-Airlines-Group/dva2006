@@ -1,21 +1,23 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.BusyTimeAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to list busy time for a Flight Academy Instructor.
  * @author Luke
- * @version 2.1
+ * @version 3.4
  * @since 1.0
  */
 
@@ -54,8 +56,11 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 			ctx.setAttribute("accessMap", accessMap, REQUEST);
 			
 			// Get the Flight Instructors
+			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
+			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
+			for (AirlineInformation ai : uddao.getAirlines(true).values())
+				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
 
 			// Get the Pilot IDs from the sessions
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
@@ -64,8 +69,9 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 				pilotIDs.add(new Integer(s.getID()));
 			}
 
-			// Load the Pilot IDs
-			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
+			// Load the Pilots
+			ctx.setAttribute("pilots", pdao.get(uddao.get(pilotIDs)), REQUEST);
+			ctx.setAttribute("instructors", instructors, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

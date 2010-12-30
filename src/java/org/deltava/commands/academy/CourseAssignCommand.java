@@ -29,7 +29,6 @@ public class CourseAssignCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
 		Course c = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -52,8 +51,9 @@ public class CourseAssignCommand extends AbstractCommand {
 			// Get the instructor
 			Pilot ins = null;
 			if (id != 0) {
+				GetUserData uddao = new GetUserData(con);
 				GetPilot pdao = new GetPilot(con);
-				ins = pdao.get(id);
+				ins = pdao.get(uddao.get(id));
 				if (ins == null)
 					throw notFoundException("Invalid Pilot ID - " + ctx.getParameter("instructor"));
 				else if (!ins.isInRole("Instructor"))
