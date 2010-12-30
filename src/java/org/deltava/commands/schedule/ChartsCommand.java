@@ -35,7 +35,7 @@ public class ChartsCommand extends AbstractViewCommand {
         if ((aCode == null) || (aCode.length() < 3))
         	aCode = ctx.getUser().getHomeAirport();
         Airport a = SystemData.getAirport(aCode);
-        if (a != null)
+        if (a == null)
         	a = SystemData.getAirport("ATL");
         ctx.setAttribute("airport", a, REQUEST);
         
