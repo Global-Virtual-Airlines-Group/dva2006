@@ -51,8 +51,9 @@ public class CourseCheckRideCommand extends AbstractCommand {
 				throw notFoundException("Invalid Course - " + ctx.getID());
 			
 			// Load the Pilot object
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			p = pdao.get(c.getPilotID());
+			p = pdao.get(uddao.get(c.getPilotID()));
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + c.getPilotID());
 			

@@ -1,21 +1,23 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.BusyTimeAccessControl;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Flight Academy Instruction Calendar.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -56,10 +58,15 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			
 			// Save busy time
 			ctx.setAttribute("accessMap", accessMap, REQUEST);
-			
+
 			// Get the Flight Instructors
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
+			GetUserData uddao = new GetUserData(con);
+			GetPilotDirectory prdao = new GetPilotDirectory(con);
+			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
+			for (AirlineInformation ai : uddao.getAirlines(true).values())
+				instructors.addAll(prdao.getByRole("Instructor", ai.getDB()));
+			
+			ctx.setAttribute("instructors", instructors, REQUEST);
 			
 			// Get the Pilot IDs from the sessions
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
@@ -70,8 +77,8 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 					pilotIDs.add(new Integer(((InstructionSession) s).getPilotID()));
 			}
 			
-			// Load the Pilot IDs
-			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
+			// Load the Pilots
+			ctx.setAttribute("pilots", prdao.get(uddao.get(pilotIDs)), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

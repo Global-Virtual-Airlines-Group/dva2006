@@ -4,10 +4,13 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.system.AirlineInformation;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.CourseAccessControl;
@@ -105,13 +108,19 @@ public class CourseCommand extends AbstractCommand {
 			}
 			
 			// Load Pilot Information
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 			
 			// If we can reassign, load instructors
 			if (access.getCanAssignInstructor()) {
 				GetPilotDirectory prdao = new GetPilotDirectory(con);
-				ctx.setAttribute("instructors", prdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
+				Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
+				for (AirlineInformation ai : uddao.getAirlines(true).values())
+					instructors.addAll(prdao.getByRole("Instructor", ai.getDB()));
+				
+				ctx.setAttribute("instructors", instructors, REQUEST);
 			}
 			
 			// Save the course and the access controller

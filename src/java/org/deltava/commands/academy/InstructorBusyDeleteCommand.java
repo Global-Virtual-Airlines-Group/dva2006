@@ -1,8 +1,7 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.Date;
-import java.sql.Connection;
 
 import org.deltava.beans.academy.InstructionBusy;
 
@@ -16,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to delete an Instructor's busy time entry.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -39,11 +38,9 @@ public class InstructorBusyDeleteCommand extends AbstractCommand {
 		if (!ac.getCanDelete())
 			throw securityException("Cannot delete Instructor busy time entry");
 
+		// Get the DAO and delete the entry
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and delete the entry
-			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
+			SetAcademyCalendar wdao = new SetAcademyCalendar(ctx.getConnection());
 			wdao.deleteBusy(instructorID, sd);
 		} catch (DAOException de) {
 			throw new CommandException(de);
