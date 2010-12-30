@@ -1,7 +1,5 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
-
-import java.sql.Connection;
 
 import org.deltava.beans.academy.InstructionBusy;
 
@@ -16,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save a new busy time for a Flight Academy Instructor.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -46,11 +44,9 @@ public class InstructorBusySaveCommand extends AbstractCommand {
 		ib.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
 		ib.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 
+		// Get the DAO and write the entry
 		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the dao and write the entry
-			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
+			SetAcademyCalendar wdao = new SetAcademyCalendar(ctx.getConnection());
 			wdao.write(ib);
 		} catch (DAOException de) {
 			throw new CommandException(de);

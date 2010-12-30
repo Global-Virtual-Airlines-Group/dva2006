@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -14,12 +15,11 @@ import org.deltava.mail.*;
 import org.deltava.security.command.CourseAccessControl;
 
 import org.deltava.util.CollectionUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to post comments in a Flight Academy Course.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -64,8 +64,13 @@ public class CourseCommentCommand extends AbstractCommand {
 			mctxt.addData("course", c);
 			
 			// Get instructors
+			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pddao = new GetPilotDirectory(con);
-			Map<Integer, Pilot> ins = CollectionUtils.createMap(pddao.getByRole("Instructor", SystemData.get("airline.db")), "ID");
+			Map<Integer, Pilot> ins = new HashMap<Integer, Pilot>();
+			for (AirlineInformation ai : uddao.getAirlines(true).values()) {
+				Map<Integer, Pilot> usrs = CollectionUtils.createMap(pddao.getByRole("Instructor", ai.getDB()), "ID");
+				ins.putAll(usrs);
+			}
 			
 			// Get Pilot IDs from comments - only add instructors
 			Collection<Integer> IDs = new HashSet<Integer>();
@@ -79,13 +84,14 @@ public class CourseCommentCommand extends AbstractCommand {
 			
 			// Load Pilot Information
 			GetPilot pdao = new GetPilot(con);
-			addrs = new ArrayList<Pilot>(pdao.getByID(IDs, "PILOTS").values());
+			UserDataMap udm = uddao.get(IDs);
+			addrs = new ArrayList<Pilot>(pdao.get(udm).values());
 			
 			// Add additional instructors 
-			for (Iterator<Integer> i = ins.keySet().iterator(); i.hasNext(); ) {
-				Integer id = i.next();
-				if (!IDs.contains(id))
-					addrs.add(ins.get(id));
+			for (Iterator<Map.Entry<Integer, Pilot>> i = ins.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<Integer, Pilot> me = i.next();
+				if (!IDs.contains(me.getKey()))
+					addrs.add(me.getValue());
 			}
 
 			// Get the write DAO and write the comment

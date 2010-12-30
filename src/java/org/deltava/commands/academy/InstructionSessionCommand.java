@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,8 +6,11 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.PersonComparator;
+import org.deltava.comparators.PilotComparator;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
@@ -19,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0
  */
 
@@ -95,10 +98,11 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			noSend |= (s.getStatus() == InstructionSession.COMPLETE); 
 			
 			// Load the Pilot to send to
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			usr = pdao.get(c.getPilotID());
+			usr = pdao.get(uddao.get(c.getPilotID()));
 			ctx.setAttribute("pilot", usr, REQUEST);
-			mctx.addData("instructor", pdao.get(s.getInstructorID()));
+			mctx.addData("instructor", pdao.get(uddao.get(s.getInstructorID())));
 			
 			// Save the request
 			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
@@ -183,13 +187,17 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 					throw securityException("Cannot schedule Instruction Session");
 			}
 			
-			// Get Instructor Pilots
+			// Get the Pilot and Instructors
+			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
-			ctx.setAttribute("pilot", pdao.get(c.getPilotID()), REQUEST);
+			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
+			for (AirlineInformation ai : uddao.getAirlines(true).values())
+				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
 			
 			// Save in the request
 			ctx.setAttribute("course", c, REQUEST);
+			ctx.setAttribute("instructors", instructors, REQUEST);
+			ctx.setAttribute("pilot", pdao.get(uddao.get(c.getPilotID())), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -233,8 +241,9 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			IDs.add(new Integer(s.getInstructorID()));
 			
 			// Get the Pilots
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);
 			
 			// Get our access
 			InstructionAccessControl access = new InstructionAccessControl(ctx, s);

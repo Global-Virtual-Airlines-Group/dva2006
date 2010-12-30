@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,17 +6,18 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.InstructionFlight;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Instruction logbooks.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -51,7 +52,7 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(ctx.getID()));
+			IDs.add(Integer.valueOf(ctx.getID()));
 			for (Iterator<InstructionFlight> i = flights.iterator(); i.hasNext(); ) {
 				InstructionFlight flight = i.next();
 				IDs.add(new Integer(flight.getInstructorID()));
@@ -59,14 +60,20 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			}
 			
 			// Load the Pilot beans
+			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS"); 
+			Map<Integer, Pilot> pilots = pdao.get(uddao.get(IDs)); 
 			ctx.setAttribute("pilots", pilots, REQUEST);
-			Pilot ins = pilots.get(new Integer(ctx.getID()));
+			Pilot ins = pilots.get(Integer.valueOf(ctx.getID()));
 			ctx.setAttribute("ins", ins, REQUEST);
 			
 			// Load the instructor list
-			List<ComboAlias> insList = new ArrayList<ComboAlias>(pdao.getByRole("Instructor", SystemData.get("airline.db")));
+			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
+			for (AirlineInformation ai : uddao.getAirlines(true).values())
+				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
+			
+			// Sort and add
+			List<ComboAlias> insList = new ArrayList<ComboAlias>(instructors);
 			insList.add(0, ALL);
 			ctx.setAttribute("instructors", insList, REQUEST);
 		} catch (DAOException de) {
