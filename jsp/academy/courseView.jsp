@@ -68,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot</td>
- <td colspan="6" class="data">${pilot.rank.name} <span class="pri bld">${pilot.name}</span> (${pilot.pilotCode})
+ <td colspan="6" class="data">${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd>> (${pilot.pilotCode})
  - <el:cmd url="logbook" link="${pilot}">View Log Book</el:cmd></td>
 </tr>
 <tr>
@@ -144,7 +144,7 @@ return true;
 <span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /> (${lastUpd.name})</span>
 </c:if>
 <c:if test="${access.canUpdateProgress}">
-<el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Completed" />
+<el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Mark as Completed" />
 </c:if>
 </c:if>
 </td>
@@ -203,8 +203,8 @@ return true;
 <c:set var="author" value="${pilots[comment.authorID]}" scope="page" />
 <tr>
  <td class="label top">${author.name} (${author.pilotCode})<br />
-<fmt:date date="${comment.createdOn}" /></td>
- <td colspan="6" class="data"><fmt:msg value="${comment.text}" /></td>
+<fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
+ <td colspan="6" class="data top"><fmt:msg value="${comment.text}" /></td>
 </tr>
 </c:forEach>
 </c:if>
