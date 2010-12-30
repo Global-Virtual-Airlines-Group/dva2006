@@ -59,6 +59,11 @@ public class CourseDisposalCommand extends AbstractCommand {
 			if (c == null)
 				throw notFoundException("Invalid Course - " + ctx.getID());
 			
+			// Load our exams
+			GetExam exdao = new GetExam(con);
+			List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
+			c.setCheckRide(rides.isEmpty() ? null : rides.get(0));
+			
 			// Get the Message Template DAO
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			
@@ -95,7 +100,6 @@ public class CourseDisposalCommand extends AbstractCommand {
 					upd.setDescription("Obtained " + c.getName() + " Flight Academy certification");
 					
 					// Get our exams and init the academy helper
-					GetExam exdao = new GetExam(con);
 					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
 					AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
 					helper.addExams(exdao.getExams(c.getPilotID()));
@@ -109,7 +113,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// If we can't execute the command, stop
 			if (!canExec)
-				throw securityException("Cannot " + opName + " - Not Authorized");
+				throw securityException("Cannot " + opName + " Course - Not Authorized");
 
 			// Get the Pilot
 			GetPilot pdao = new GetPilot(con);
@@ -142,9 +146,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 				}
 				
 				// Delete any unflown check rides
-				GetExam exdao = new GetExam(con);
 				SetExam exwdao = new SetExam(con);
-				List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
 				for (CheckRide cr : rides) {
 					if (cr.getStatus() == Test.NEW)
 						exwdao.delete(cr);

@@ -70,7 +70,7 @@ public class CourseAccessControl extends AccessControl {
 		
 		// Check if we've met all of the requirements
 		boolean isComplete = true;
-		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
+		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); isComplete && i.hasNext(); ) {
 			CourseProgress cp = i.next();
 			isComplete &= cp.getComplete();
 		}
