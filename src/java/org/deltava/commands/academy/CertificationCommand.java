@@ -69,6 +69,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
 			cert.setHasCheckRide(Boolean.valueOf(ctx.getParameter("hasCR")).booleanValue());
 			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
+			cert.setDescription(ctx.getParameter("desc"));
 			
 			// Load the examination names
 			Collection<String> eNames = ctx.getParameters("reqExams");
@@ -114,9 +115,6 @@ public class CertificationCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-
-		// Get the certification name
-		String name = (String) ctx.getCmdParameter(ID, null);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -129,6 +127,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			Map<String, Certification> allCerts = CollectionUtils.createMap(dao.getAll(), "code");
 			
 			// Get the certification
+			String name = (String) ctx.getCmdParameter(ID, null);
 			if (name != null) {
 				Certification cert = dao.get(name);
 				if (cert == null)
@@ -177,14 +176,12 @@ public class CertificationCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-
-		// Get the certification name
-		String name = (String) ctx.getCmdParameter(ID, null);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the Certification
 			GetAcademyCertifications dao = new GetAcademyCertifications(con);
+			String name = (String) ctx.getCmdParameter(ID, null);
 			Certification cert = dao.get(name);
 			if (cert == null)
 				throw notFoundException("Unknown Certification - " + name);

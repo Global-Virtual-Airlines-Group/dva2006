@@ -60,6 +60,12 @@
 <c:if test="${!cert.active}"><span class="warn caps">CERTIFICATION IS NOT AVAILABLE</span></c:if>
 <c:if test="${cert.autoEnroll}"><br /><span class="bld caps">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if></td>
 </tr>
+<c:if test="${!empty cert.description}">
+<tr>
+ <td class="label top">Instructions</td>
+ <td class="data"><fmt:msg value="${cert.description}" /></td>
+</tr>
+</c:if>
 
 <!-- Certification Requirements -->
 <tr class="title caps">

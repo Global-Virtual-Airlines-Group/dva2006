@@ -89,6 +89,10 @@ return true;
  <td class="data"><el:box name="isActive" idx="*" value="true" label="Certification is Active" checked="${cert.active}" /><br />
 <el:box name="autoEnroll" idx="*" value="true" label="Auto-Enroll students in Course" checked="${cert.autoEnroll}" /></td>
 </tr>
+<tr>
+ <td class="label top">Instructions</td>
+ <td class="data"><el:textbox name="desc" idx="*" width="90%" height="5" resize="true">${cert.description}</el:textbox></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
