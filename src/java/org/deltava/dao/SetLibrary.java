@@ -53,11 +53,11 @@ public class SetLibrary extends DAO {
 		try {
 			startTransaction();
 			if (isNew)
-				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, FILENAME) "
-						+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, IGNORE_CERTS, "
+					+ "FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			else
-				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=? "
-						+ "WHERE (FILENAME=?)");
+				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=?, "
+					+ "IGNORE_CERTS=? WHERE (FILENAME=?)");
 
 			// Update the prepared statement
 			_ps.setString(1, m.getName());
@@ -66,7 +66,8 @@ public class SetLibrary extends DAO {
 			_ps.setInt(4, m.getSecurity());
 			_ps.setString(5, m.getDescription());
 			_ps.setBoolean(6, m.getShowOnRegister());
-			_ps.setString(7, m.getFileName());
+			_ps.setBoolean(7, m.getIgnoreCertifications());
+			_ps.setString(8, m.getFileName());
 			executeUpdate(1);
 			
 			// Clean out the certification names

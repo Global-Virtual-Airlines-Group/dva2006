@@ -254,7 +254,7 @@ public class GetDocuments extends GetLibrary {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
+		boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
 
 		// Iterate through the result set
 		List<Manual> results = new ArrayList<Manual>();
@@ -265,11 +265,12 @@ public class GetDocuments extends GetLibrary {
 			doc.setVersion(rs.getInt(4));
 			doc.setSecurity(rs.getInt(5));
 			doc.setShowOnRegister(rs.getBoolean(6));
-			doc.setDescription(rs.getString(7));
+			doc.setIgnoreCertifcations(rs.getBoolean(7));
+			doc.setDescription(rs.getString(8));
 			if (f.exists())
 				doc.setLastModified(new java.util.Date(f.lastModified()));
 			if (hasTotals)
-				doc.setDownloadCount(rs.getInt(8));
+				doc.setDownloadCount(rs.getInt(9));
 
 			// Add to results
 			results.add(doc);
@@ -303,7 +304,6 @@ public class GetDocuments extends GetLibrary {
 			if (hasTotals)
 				nws.setDownloadCount(rs.getInt(8));
 
-			// Add to results
 			results.add(nws);
 		}
 
