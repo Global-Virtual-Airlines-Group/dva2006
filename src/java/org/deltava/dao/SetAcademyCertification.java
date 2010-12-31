@@ -34,7 +34,7 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the certification entry
 			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, REQCERT, ACTIVE, "
-				+ "AUTO_ENROLL, HAS_CHECKRIDE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "AUTO_ENROLL, HAS_CHECKRIDE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -43,6 +43,7 @@ public class SetAcademyCertification extends DAO {
 			_ps.setBoolean(6, c.getActive());
 			_ps.setBoolean(7, c.getAutoEnroll());
 			_ps.setBoolean(8, c.getHasCheckRide());
+			_ps.setString(9, c.getDescription());
 			executeUpdate(1);
 			
 			// Write the exams
@@ -68,7 +69,7 @@ public class SetAcademyCertification extends DAO {
 			
 			// Write the profile
 			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, REQCERT=?, "
-				+ "ACTIVE=?, AUTO_ENROLL=?, HAS_CHECKRIDE=? WHERE (NAME=?)");
+				+ "ACTIVE=?, AUTO_ENROLL=?, HAS_CHECKRIDE=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
@@ -77,7 +78,8 @@ public class SetAcademyCertification extends DAO {
 			_ps.setBoolean(6, c.getActive());
 			_ps.setBoolean(7, c.getAutoEnroll());
 			_ps.setBoolean(8, c.getHasCheckRide());
-			_ps.setString(9, name);
+			_ps.setString(9, c.getDescription());
+			_ps.setString(10, name);
 			executeUpdate(1);
 			
 			// Clear the exams

@@ -125,6 +125,7 @@ public class CourseCommand extends AbstractCommand {
 			
 			// Save the course and the access controller
 			ctx.setAttribute("course", c, REQUEST);
+			ctx.setAttribute("cert", cert, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

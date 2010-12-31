@@ -104,6 +104,15 @@ return true;
  <td colspan="6" class="data"><fmt:date fmt="d" date="${course.endDate}" /></td>
 </tr>
 </c:if>
+<c:if test="${!empty cert.description}">
+<tr class="title caps">
+ <td colspan="7">COURSE INSTRUCTIONS - <span class="und" onclick="void toggleExpand(this, 'courseDesc')">COLLAPSE</span></td>
+</tr>
+<tr class="courseDesc">
+ <td class="label">&nbsp;</td>
+ <td class="data"><fmt:msg value="${cert.description}" /></td>
+</tr>
+</c:if>
 <c:if test="${(!empty docs) || (!empty videos)}">
 <tr class="title caps">
  <td colspan="7">FLIGHT ACADEMY TRAINING MATERIALS</td>
