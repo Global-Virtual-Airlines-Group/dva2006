@@ -32,6 +32,8 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private boolean _autoEnroll;
 	private boolean _hasCR;
 	
+	private String _desc;
+	
 	private String _certReq;
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
 	private final Collection<String> _examNames = new TreeSet<String>();
@@ -155,6 +157,14 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public Collection<String> getExamNames() {
 		return _examNames;
+	}
+	
+	/**
+	 * Returns the Certification description and instructions.
+	 * @return the description
+	 */
+	public String getDescription() {
+		return _desc;
 	}
 	
 	/**
@@ -298,6 +308,14 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 			throw new IllegalStateException("Specific Certification pre-requisite not set");
 		
 		_certReq = (certCode == null) ? null : certCode.toUpperCase();
+	}
+	
+	/**
+	 * Updates the certification description/instructions.
+	 * @param desc the description
+	 */
+	public void setDescription(String desc) {
+		_desc = desc;
 	}
 	
 	public String getComboName() {
