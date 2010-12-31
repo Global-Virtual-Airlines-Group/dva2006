@@ -196,6 +196,10 @@ public class CertificationCommand extends AbstractFormCommand {
 				ctx.setAttribute("noScriptWarn", Boolean.valueOf(sc == null), REQUEST);
 			}
 			
+			// If we have a specific pre-req, load it as well
+			if (cert.getReqs() == Certification.REQ_SPECIFIC)
+				ctx.setAttribute("preReqCert", dao.get(cert.getReqCert()), REQUEST);
+			
 			// Get associated documents
 			GetDocuments ddao = new GetDocuments(con);
 			ctx.setAttribute("docs", ddao.getByCertification(SystemData.get("airline.db"), cert.getCode()), REQUEST);
