@@ -308,7 +308,9 @@ public class AcademyHistoryHelper {
 				
 			case Certification.REQ_SPECIFIC:
 				Certification prCert = _certs.get(c.getReqCert());
-				if (!hasPassed(prCert.getName())) {
+				if (prCert == null)
+					log.warn("No Certification called " + c.getReqCert());
+				else if (!hasPassed(prCert.getName())) {
 					log("Missing pre-requisite " + prCert.getName() + " cert for " + c.getName());
 					return false;
 				}

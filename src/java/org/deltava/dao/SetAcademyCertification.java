@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.academy.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
@@ -33,18 +34,21 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, REQCERT, ACTIVE, "
-				+ "AUTO_ENROLL, HAS_CHECKRIDE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, "
+				+ "AUTO_ENROLL, HAS_CHECKRIDE, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
-			_ps.setString(5, c.getReqCert());
-			_ps.setBoolean(6, c.getActive());
-			_ps.setBoolean(7, c.getAutoEnroll());
-			_ps.setBoolean(8, c.getHasCheckRide());
-			_ps.setString(9, c.getDescription());
+			_ps.setBoolean(5, c.getActive());
+			_ps.setBoolean(6, c.getAutoEnroll());
+			_ps.setBoolean(7, c.getHasCheckRide());
+			_ps.setString(8, c.getDescription());
 			executeUpdate(1);
+			
+			// If we've got a pre-req, write it
+			if (c.getReqs() == Certification.REQ_SPECIFIC)
+				writePrereq(c.getName(), c.getReqCert());
 			
 			// Write the exams
 			writeExams(c.getName(), c.getExamNames());
@@ -68,19 +72,21 @@ public class SetAcademyCertification extends DAO {
 			startTransaction();
 			
 			// Write the profile
-			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, REQCERT=?, "
-				+ "ACTIVE=?, AUTO_ENROLL=?, HAS_CHECKRIDE=?, DESCRIPTION=? WHERE (NAME=?)");
+			prepareStatementWithoutLimits("UPDATE exams.CERTS SET NAME=?, ABBR=?, STAGE=?, PREREQ=?, ACTIVE=?, "
+				+ "AUTO_ENROLL=?, HAS_CHECKRIDE=?, DESCRIPTION=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
 			_ps.setInt(3, c.getStage());
 			_ps.setInt(4, c.getReqs());
-			_ps.setString(5, c.getReqCert());
-			_ps.setBoolean(6, c.getActive());
-			_ps.setBoolean(7, c.getAutoEnroll());
-			_ps.setBoolean(8, c.getHasCheckRide());
-			_ps.setString(9, c.getDescription());
-			_ps.setString(10, name);
+			_ps.setBoolean(5, c.getActive());
+			_ps.setBoolean(6, c.getAutoEnroll());
+			_ps.setBoolean(7, c.getHasCheckRide());
+			_ps.setString(8, c.getDescription());
+			_ps.setString(9, name);
 			executeUpdate(1);
+			
+			// Write the pre-requisite
+			writePrereq(c.getName(), c.getReqCert());
 			
 			// Clear the exams
 			prepareStatementWithoutLimits("DELETE FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
@@ -161,6 +167,22 @@ public class SetAcademyCertification extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Helper method to write specific Certification pre-requsite.
+	 */
+	private void writePrereq(String certName, String prereqAbbr) throws SQLException {
+		if (!StringUtils.isEmpty(prereqAbbr)) {
+			prepareStatementWithoutLimits("REPLACE INTO exams.CERTPREREQ (NAME, ABBR) VALUES (?, ?)");
+			_ps.setString(1, certName);
+			_ps.setString(2, prereqAbbr);
+			executeUpdate(1);
+		} else {
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTPREREQ WHERE (NAME=?)");
+			_ps.setString(1, certName);
+			executeUpdate(0);
 		}
 	}
 	
