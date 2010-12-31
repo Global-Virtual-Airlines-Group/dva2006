@@ -74,7 +74,7 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 			}
 		}
 
-		// If we got this far, then disable read access
-		_canView = false;
+		// If we got this far, then disable read access if not public
+		_canView = m.getIgnoreCertifications();
 	}
 }

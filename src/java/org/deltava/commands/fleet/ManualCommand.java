@@ -103,6 +103,10 @@ public class ManualCommand extends LibraryEditCommand {
 				Collection<String> certs = ctx.getParameters("certNames");
 				entry.addCertifications((certs == null) ? new HashSet<String>() : certs);	
 			}
+			
+			// Set public field
+			boolean ignoreCerts = Boolean.valueOf(ctx.getParameter("ignoreCerts")).booleanValue();
+			entry.setIgnoreCertifcations(ignoreCerts && (!entry.getCertifications().isEmpty()));
 
 			// Get the message template
 			if (!noNotify) {
