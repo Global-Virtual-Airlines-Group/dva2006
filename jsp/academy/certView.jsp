@@ -31,7 +31,8 @@
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data sec bld">${cert.reqName}</td>
+ <td class="data"><span class="sec bld">${cert.reqName}</span><c:if test="${!empty preReqCert}"> - 
+ <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
 </tr>
 <tr>
  <td class="label">Examinations</td>
@@ -63,7 +64,7 @@
 <c:if test="${!empty cert.description}">
 <tr>
  <td class="label top">Instructions</td>
- <td class="data"><fmt:msg value="${cert.description}" /></td>
+ <td class="data top"><fmt:msg value="${cert.description}" /></td>
 </tr>
 </c:if>
 
