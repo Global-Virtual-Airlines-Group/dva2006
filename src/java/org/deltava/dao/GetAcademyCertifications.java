@@ -31,7 +31,8 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Certification get(String name) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM exams.CERTS WHERE (NAME=?) OR (ABBR=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT C.*, CPR.ABBR FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
+				+" ON (C.NAME=CPR.NAME) WHERE (C.NAME=?) OR (C.ABBR=?) LIMIT 1");
 			_ps.setString(1, name);
 			_ps.setString(2, name);
 			
@@ -57,16 +58,13 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTREQS CR ON "
-					+ "(C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
+			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
+				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) "
+				+ "GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			_ps.setBoolean(1, true);
 			Collection<Certification> results = execute();
-			
-			// Load the exams
-			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
-				Certification c = i.next();
+			for (Certification c: results)
 				loadExams(c);
-			}
 			
 			return results;
 		} catch (SQLException se) { 
@@ -81,15 +79,12 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTREQS CR ON " 
-					+ "(C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
+			prepareStatement("SELECT C.*, CPR.ABBR, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTPREREQ CPR "
+				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME "
+				+ "ORDER BY C.STAGE, C.NAME");
 			Collection<Certification> results = execute();
-			
-			// Load the exams
-			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
-				Certification c = i.next();
+			for (Certification c: results)
 				loadExams(c);
-			}
 			
 			return results;
 		} catch (SQLException se) { 
@@ -162,12 +157,12 @@ public class GetAcademyCertifications extends DAO {
 			cert.setCode(rs.getString(2));
 			cert.setStage(rs.getInt(3));
 			cert.setReqs(rs.getInt(4));
-			cert.setActive(rs.getBoolean(6));
-			cert.setAutoEnroll(rs.getBoolean(7));
-			cert.setHasCheckRide(rs.getBoolean(8));
-			cert.setDescription(rs.getString(9));
+			cert.setActive(rs.getBoolean(5));
+			cert.setAutoEnroll(rs.getBoolean(6));
+			cert.setHasCheckRide(rs.getBoolean(7));
+			cert.setDescription(rs.getString(8));
 			if (cert.getReqs() == Certification.REQ_SPECIFIC)
-				cert.setReqCert(rs.getString(5));
+				cert.setReqCert(rs.getString(9));
 			if (hasReqCount)
 				cert.setReqCount(rs.getInt(10));
 			
@@ -184,8 +179,6 @@ public class GetAcademyCertifications extends DAO {
 	 * Helper method to load requirements.
 	 */
 	private void loadRequirements(Certification cert) throws SQLException {
-		
-		// Prepare the statement
 		prepareStatementWithoutLimits("SELECT SEQ, EXAMNAME, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
 		_ps.setString(1, cert.getName());
 		
@@ -207,8 +200,6 @@ public class GetAcademyCertifications extends DAO {
 	 * Helper method to load examinations.
 	 */
 	private void loadExams(Certification cert) throws SQLException {
-		
-		// Prepare the statement
 		prepareStatementWithoutLimits("SELECT EXAMNAME FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
 		_ps.setString(1, cert.getName());
 		
