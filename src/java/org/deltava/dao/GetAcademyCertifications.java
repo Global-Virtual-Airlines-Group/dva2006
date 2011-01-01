@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -45,6 +45,7 @@ public class GetAcademyCertifications extends DAO {
 			Certification cert = results.get(0);
 			loadRequirements(cert);
 			loadExams(cert);
+			loadRoles(cert);
 			return cert;
 		} catch (SQLException se) { 
 			throw new DAOException(se);
@@ -63,8 +64,10 @@ public class GetAcademyCertifications extends DAO {
 				+ "GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			_ps.setBoolean(1, true);
 			Collection<Certification> results = execute();
-			for (Certification c: results)
+			for (Certification c: results) {
 				loadExams(c);
+				loadRoles(c);
+			}
 			
 			return results;
 		} catch (SQLException se) { 
@@ -83,8 +86,10 @@ public class GetAcademyCertifications extends DAO {
 				+ "ON (C.NAME=CPR.NAME) LEFT JOIN exams.CERTREQS CR ON (C.NAME=CR.CERTNAME) GROUP BY C.NAME "
 				+ "ORDER BY C.STAGE, C.NAME");
 			Collection<Certification> results = execute();
-			for (Certification c: results)
+			for (Certification c: results) {
 				loadExams(c);
+				loadRoles(c);
+			}
 			
 			return results;
 		} catch (SQLException se) { 
@@ -190,6 +195,23 @@ public class GetAcademyCertifications extends DAO {
 			cr.setText(rs.getString(3));
 			cert.addRequirement(cr);
 		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+	
+	/**
+	 * Helper method to load roles.
+	 */
+	private void loadRoles(Certification cert) throws SQLException {
+		prepareStatementWithoutLimits("SELECT ROLE FROM exams.CERTROLES WHERE (CERTNAME=?)");
+		_ps.setString(1, cert.getName());
+		
+		// Load the result set
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			cert.addRole(rs.getString(1));
 		
 		// Clean up
 		rs.close();

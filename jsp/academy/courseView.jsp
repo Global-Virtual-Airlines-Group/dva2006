@@ -56,6 +56,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
+<c:set var="pilotLoc" value="${userData[course.pilotID]}" scope="page" />
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
 <c:set var="ins" value="${pilots[course.instructorID]}" scope="page" />
 
@@ -68,8 +69,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot</td>
- <td colspan="6" class="data">${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})
- - <el:cmd url="logbook" link="${pilot}">View Log Book</el:cmd></td>
+ <td colspan="6" class="data">${pilot.rank.name} <el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile> (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Stage</td>
@@ -80,6 +80,13 @@ return true;
  <td colspan="6" class="data"><span class="sec bld">${course.statusName}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
+<c:if test="${course.hasCheckRide}">
+<c:set var="cr" value="${course.checkRide}" scope="page" />
+<tr>
+ <td class="label">Check Ride</td>
+ <td colspan="6" class="data"><span class="pri bld caps">${cr.statusName}</span><c:if test="${cr.flightID > 0}"> - <el:cmd url="crview" link="${cr}">VIEW FLIGHT REPORT</el:cmd></c:if></td>
+</tr>
+</c:if>
 <c:choose>
 <c:when test="${access.canAssignInstructor}">
 <tr>

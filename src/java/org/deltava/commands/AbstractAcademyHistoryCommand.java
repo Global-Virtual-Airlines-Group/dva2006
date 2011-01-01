@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.Collection;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
  * A class to support Web Site Commands use a {@link AcademyHistoryHelper} object to determine what
  * Flight Academy examinations/courses a Pilot is eligible for.
  * @author Luke
- * @version 1.0
+ * @version 3.4
  * @since 1.0
  */
 
@@ -32,7 +32,8 @@ public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 		GetAcademyCertifications crdao = new GetAcademyCertifications(c);
 		Collection<Certification> allCerts = crdao.getAll();
 		AcademyHistoryHelper helper = new AcademyHistoryHelper(cdao.getByPilot(p.getID()), allCerts);
-		helper.setAllowInactive(p.isInRole("Instructor"));
+		helper.setRoles(p.getRoles());
+		helper.setAllowInactive(p.isInRole("Instructor") || p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit"));
 		
 		// Get the Pilot's examinations and check rides
 		GetExam exdao = new GetExam(c);
