@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -36,9 +36,8 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			// Init the history
 			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
 			
-			// Get the DAO and the certification
-			GetAcademyCertifications dao = new GetAcademyCertifications(con);
-			Certification cert = dao.get(name);
+			// Get the Certification
+			Certification cert = academyHistory.getCertification(name);
 			if (cert == null)
 				throw notFoundException("Unknown Certification - " + name);
 			

@@ -34,10 +34,18 @@
  <td class="data"><span class="sec bld">${cert.reqName}</span><c:if test="${!empty preReqCert}"> - 
  <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
 </tr>
+<c:if test="${!empty cert.examNames}">
 <tr>
  <td class="label">Examinations</td>
  <td class="data"><fmt:list value="${cert.examNames}" delim=", " /></td>
 </tr>
+</c:if>
+<c:if test="${!empty cert.roles}">
+<tr>
+ <td class="label">Enrollment Roles</td>
+ <td class="data"><fmt:list value="${cert.roles}" delim=", " /></td>
+</tr>
+</c:if>
 <c:if test="${!empty docs}">
 <tr>
  <td class="label top">Study Documents</td>

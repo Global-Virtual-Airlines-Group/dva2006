@@ -44,6 +44,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
+<content:sysdata var="roles" name="security.roles" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -71,6 +72,11 @@ return true;
 <tr id="reqCertRow" style="display:none;">
  <td class="label">Certification</td>
  <td class="data"><el:combo name="reqCert" className="req" size="1" value="${cert.reqCert}" options="${allCerts}" firstEntry="-" /></td>
+</tr>
+<tr>
+ <td class="label top">Enrollment Roles</td>
+ <td class="data"><span class="ita">Select any Security Roles required for this Certification to be available for enrollment by a particular Pilot.</span><br />
+<el:check name="enrollRoles" width="115" cols="7" newLine="true" checked="${cert.roles}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label top">Required Examinations</td>
