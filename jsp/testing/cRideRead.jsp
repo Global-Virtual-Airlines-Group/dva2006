@@ -37,7 +37,7 @@
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton ID="PIREPButton" url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data"><span class="sec bld"><fmt:int value="${checkRide.flightID}" /></span> - <el:cmd url="crview" link="${checkRide}">VIEW FLIGHT REPORT</el:cmd></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
