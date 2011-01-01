@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A utility class to help with security role filtering.
  * @author Luke
- * @version 2.6
+ * @version 3.4
  * @since 1.0 
  */
 
@@ -26,7 +26,7 @@ public class RoleUtils {
     public static boolean hasAccess(Collection<String> userRoles, Collection<String> rsrcRoles) {
 
         // If we have the admin role or the resource is unprotected, allow access
-        if (userRoles.contains("Admin") || rsrcRoles.contains("*"))
+        if (userRoles.contains("Admin") || rsrcRoles.isEmpty() || rsrcRoles.contains("*"))
             return true;
 
         // Check if we have any of the resource roles
