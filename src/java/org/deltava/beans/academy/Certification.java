@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -37,6 +37,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private String _certReq;
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
 	private final Collection<String> _examNames = new TreeSet<String>();
+	private final Collection<String> _enrollRoles = new TreeSet<String>();
 	
 	/**
 	 * Creates a new Certification bean.
@@ -154,9 +155,20 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 * Returns the Examinations linked with this Certification.
 	 * @return a Collection of Examination names
 	 * @see Certification#addExamName(String)
+	 * @see Certification#setExams(Collection)
 	 */
 	public Collection<String> getExamNames() {
 		return _examNames;
+	}
+	
+	/**
+	 * Returns the security roles required to enroll for this Certification.
+	 * @return a Collection of role names
+	 * @see Certification#addRole(String)
+	 * @see Certification#setRoles(Collection)
+	 */
+	public Collection<String> getRoles() {
+		return _enrollRoles;
 	}
 	
 	/**
@@ -222,6 +234,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 * @param name the Examination name
 	 * @see Certification#getExamNames()
 	 * @see Certification#setExams(Collection)
+	 * @throws NullPointerException if name is null
 	 */
 	public void addExamName(String name) {
 		_examNames.add(name.trim());
@@ -240,12 +253,38 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	}
 	
 	/**
+	 * Adds a security role allowed to enroll for this Certification.
+	 * @param roleName a security role name
+	 * @see Certification#getRoles()
+	 * @see Certification#setRoles(Collection)
+	 * @throws NullPointerException if roleName is null
+	 */
+	public void addRole(String roleName) {
+		_enrollRoles.add(roleName.trim());
+		_enrollRoles.remove("Pilot");
+	}
+	
+	/**
+	 * Clears and Updates the list of roles required to enroll.
+	 * @param roleNames a Collecton of security role names
+	 * @see Certification#addRole(String)
+	 * @see Certification#getRoles()
+	 */
+	public void setRoles(Collection<String> roleNames) {
+		_enrollRoles.clear();
+		if (roleNames != null) {
+			_enrollRoles.addAll(roleNames);
+			_enrollRoles.remove("Pilot");
+		}
+	}
+	
+	/**
 	 * Updates the stage number.
 	 * @param stage the stage
 	 * @see Certification#getStage()
 	 */
 	public void setStage(int stage) {
-		_stage = Math.max(0, stage);
+		_stage = Math.max(1, stage);
 	}
 	
 	/**

@@ -70,6 +70,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setHasCheckRide(Boolean.valueOf(ctx.getParameter("hasCR")).booleanValue());
 			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			cert.setDescription(ctx.getParameter("desc"));
+			cert.setRoles(ctx.getParameters("enrollRoles"));
 			
 			// Load the examination names
 			Collection<String> eNames = ctx.getParameters("reqExams");

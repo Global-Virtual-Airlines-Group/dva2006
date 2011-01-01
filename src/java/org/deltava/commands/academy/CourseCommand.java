@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class CourseCommand extends AbstractCommand {
+public class CourseCommand extends AbstractAcademyHistoryCommand {
 
 	/**
 	 * Executes the command.
@@ -36,27 +36,28 @@ public class CourseCommand extends AbstractCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the DAO and the Course
-			GetAcademyCourses dao = new GetAcademyCourses(con);
-			Course c = dao.get(ctx.getID());
+			// Get the Course
+			GetAcademyCourses cdao = new GetAcademyCourses(con);
+			Course c = cdao.get(ctx.getID());
 			if (c == null)
 				throw notFoundException("Invalid Course - " + ctx.getID());
+
+			// Load the user
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(uddao.get(c.getPilotID()));
+			if (p == null)
+				throw notFoundException("Invalid Pilot ID - " + c.getPilotID());
 			
-			// Get our exams and init the academy helper
-			GetExam exdao = new GetExam(con);
-			GetAcademyCertifications cdao = new GetAcademyCertifications(con);
-			AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
+			// Init the history and fully populate the Course
+			AcademyHistoryHelper helper = initHistory(p, con);
 			helper.setDebug(ctx.isSuperUser());
-			helper.addExams(exdao.getExams(c.getPilotID()));
-			
+			c = helper.getCourse(c.getID());
+
 			// Get the certification profile
-			Certification cert = cdao.get(c.getName());
+			Certification cert = helper.getCertification(c.getCode());
 			if (cert == null)
 				throw notFoundException("Invalid Certification - " + c.getName());
-			
-			// Load our exams
-			List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
-			c.setCheckRide(rides.isEmpty() ? null : rides.get(0));
 			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
@@ -81,11 +82,16 @@ public class CourseCommand extends AbstractCommand {
 				ctx.setAttribute("videos", vdao.getVideos(c.getName()), REQUEST);
 				
 				// Show exam status
-				Collection<Test> exams = new TreeSet<Test>(rides);
+				Collection<Test> exams = new TreeSet<Test>();
 				for (Iterator<Test> i = helper.getExams().iterator(); i.hasNext(); ) {
 					Test t = i.next();
 					if ((t.getType() == Test.EXAM) && (cert.getExamNames().contains(t.getName())))
 						exams.add(t);
+					else if (t.getType() == Test.CHECKRIDE) {
+						CheckRide cr = (CheckRide) t;
+						if (cr.getCourseID() == c.getID())
+							exams.add(t);
+					}
 				}
 				
 				// Save examination status
@@ -108,9 +114,8 @@ public class CourseCommand extends AbstractCommand {
 			}
 			
 			// Load Pilot Information
-			GetUserData uddao = new GetUserData(con);
-			GetPilot pdao = new GetPilot(con);
 			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("userData", udm, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 			
 			// If we can reassign, load instructors

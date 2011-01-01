@@ -78,7 +78,7 @@ public class CourseAccessControl extends AccessControl {
 		// Check if we need a Check Ride
 		CheckRide cr = _c.getCheckRide();
 		boolean crComplete = !_c.getHasCheckRide() || ((cr != null) && cr.getPassFail());
-		_canAssignCheckRide = isComplete && isPending && _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == Test.SCORED)));
+		_canAssignCheckRide = isComplete && isStarted && _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == Test.SCORED)));
 		_canApprove = crComplete && isComplete && (isHR || isINS) && isStarted && !isMine;
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -50,8 +50,9 @@ public class SetAcademyCertification extends DAO {
 			if (c.getReqs() == Certification.REQ_SPECIFIC)
 				writePrereq(c.getName(), c.getReqCert());
 			
-			// Write the exams
+			// Write the exams/roles
 			writeExams(c.getName(), c.getExamNames());
+			writeRoles(c.getName(), c.getRoles());
 			
 			// Commit the transaction
 			commitTransaction();
@@ -93,13 +94,19 @@ public class SetAcademyCertification extends DAO {
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
+			// Clear the roles
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTROLES WHERE (CERTNAME=?)");
+			_ps.setString(1, c.getName());
+			executeUpdate(0);
+			
 			// Clear the requirements
 			prepareStatementWithoutLimits("DELETE FROM exams.CERTREQS WHERE (CERTNAME=?)");
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
-			// Write the exams
+			// Write the exams/roles
 			writeExams(c.getName(), c.getExamNames());
+			writeRoles(c.getName(), c.getRoles());
 			
 			// Write the requirements
 			prepareStatementWithoutLimits("INSERT INTO exams.CERTREQS (CERTNAME, SEQ, EXAMNAME, REQENTRY) VALUES (?, ?, ?, ?)");
@@ -187,11 +194,26 @@ public class SetAcademyCertification extends DAO {
 	}
 	
 	/**
+	 * Helper method to write security role names.
+	 */
+	private void writeRoles(String certName, Collection<String> roles) throws SQLException {
+		prepareStatementWithoutLimits("INSERT INTO exams.CERTROLES (CERTNAME, ROLE) VALUES (?, ?)");
+		_ps.setString(1, certName);
+		for (Iterator<String> i = roles.iterator(); i.hasNext(); ) {
+			_ps.setString(2, i.next());
+			_ps.addBatch();			
+		}
+		
+		// Execute the batch transaction
+		_ps.executeBatch();
+		_ps.close();
+		_ps = null;
+	}
+	
+	/**
 	 * Helper method to write exam names.
 	 */
 	private void writeExams(String certName, Collection<String> exams) throws SQLException {
-
-		// Prepare the statement
 		prepareStatementWithoutLimits("INSERT INTO exams.CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)");
 		_ps.setString(1, certName);
 		for (Iterator<String> i = exams.iterator(); i.hasNext(); ) {

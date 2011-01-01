@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Date;
@@ -71,9 +71,10 @@ public class ExamAccessControl extends AccessControl {
         // Set access variables
         boolean isHR = _ctx.isUserInRole("HR");
         boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
+        boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAudit") || _ctx.isUserInRole("AcademyAdmin");
         boolean isExam = isHR;
         if (_t.getAcademy())
-        	isExam |= _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAudit") || _ctx.isUserInRole("AcademyAdmin");
+        	isExam |= isAcademy;
         else
         	isExam |= _ctx.isUserInRole("Examination");
         
@@ -97,7 +98,7 @@ public class ExamAccessControl extends AccessControl {
         _canEdit = isScored && isHR && isOurAirline && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin") && (isOurAirline || isOurUser);
         _canScore = _canEdit || (isSubmitted && (inScoreList || (isHR && isOurAirline)));
-        _canViewAnswers = isScored && (isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
+        _canViewAnswers = isScored && !(isExam || (_t.getAcademy() && isAcademy));
         
         // Throw an exception if we cannot view
         if (!_canRead)

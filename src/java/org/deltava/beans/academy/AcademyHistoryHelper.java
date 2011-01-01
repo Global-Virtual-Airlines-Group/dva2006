@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -6,7 +6,8 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.testing.*;
-import org.deltava.util.CollectionUtils;
+
+import org.deltava.util.*;
 
 /**
  * A utility class to extract information from a user's Flight Academy history.
@@ -19,6 +20,7 @@ public class AcademyHistoryHelper {
 	
 	private static final Logger log = Logger.getLogger(AcademyHistoryHelper.class);
 	
+	private final Collection<String> _roles = new HashSet<String>(); 
 	private boolean _debugLog;
 	private boolean _allowInactive;
 	
@@ -60,12 +62,30 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
+	 * Sets the User's roles.
+	 * @param roles a Collection of role names
+	 */
+	public void setRoles(Collection<String> roles) {
+		_roles.addAll(roles);
+	}
+	
+	/**
 	 * Returns the Pilot's examinations. This method is useful when we use this class and do not wish to call the
 	 * {@link org.deltava.dao.GetExam} DAO a second time.
 	 * @return a Collection of Test beans
 	 */
 	public Collection<Test> getExams() {
 		return _tests;
+	}
+	
+	/**
+	 * Retrieves a Certification. This method is useful when we use this class and do not wish to call the
+	 * {@link org.deltava.dao.GetAcademyCertifications} DAO a second time.
+	 * @param code the certification name or code
+	 * @return a Certification, or null if not found
+	 */
+	public Certification getCertification(String code) {
+		return _certs.get(code);
 	}
 	
 	/**
@@ -159,7 +179,12 @@ public class AcademyHistoryHelper {
 		return null;
 	}
 	
-	private Course getCourse(int id) {
+	/**
+	 * Retrieves a specific Course from the history.
+	 * @param id the Course database ID
+	 * @return a Course, or null if not found
+	 */
+	public Course getCourse(int id) {
 		for (Course c : _courses.values()) {
 			if (c.getID() == id)
 				return c;
@@ -286,6 +311,14 @@ public class AcademyHistoryHelper {
 		if (cr != null) {
 			log("Cannot take " + c.getName() + ", already enrolled in " + cr.getName());
 			return false;
+		}
+		
+		// Check security roles
+		if (!_roles.contains("AcademyAdmin") && !_roles.contains("AcademyAudit")) {
+			if (!RoleUtils.hasAccess(_roles, c.getRoles())) {
+				log("Cannot take " + c.getName() + ", needs role in " + c.getRoles());
+				return false;
+			}
 		}
 		
 		// Check the pre-reqs for the Certification
