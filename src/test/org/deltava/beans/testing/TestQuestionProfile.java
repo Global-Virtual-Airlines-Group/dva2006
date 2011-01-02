@@ -42,24 +42,24 @@ public class TestQuestionProfile extends AbstractBeanTestCase {
     }
     
     public void testExams() {
-        assertNotNull(_q.getPools());
-        assertEquals(0, _q.getPools().size());
+        assertNotNull(_q.getExams());
+        assertEquals(0, _q.getExams().size());
         
-        _q.addPool(new ExamSubPool("737 First Officer", "ALL"));
-        _q.addPool(new ExamSubPool("737 Captain", "ALL"));
-        _q.addPool(new ExamSubPool("737 First Officer", "ALL"));
-        _q.addPool(new ExamSubPool("CRJ First Officer", "ALL"));
+        _q.addExam("737 First Officer");
+        _q.addExam("737 Captain");
+        _q.addExam("737 First Officer");
+        _q.addExam("CRJ First Officer");
         
-        List<ExamSubPool> exams = new ArrayList<ExamSubPool>(_q.getPools());
+        List<String> exams = new ArrayList<String>(_q.getExams());
         assertEquals(3, exams.size());
-        assertTrue(_q.getPools().contains("737 First Officer"));
-        assertTrue(_q.getPools().contains("737 Captain"));
-        assertTrue(_q.getPools().contains("CRJ First Officer"));
+        assertTrue(_q.getExams().contains("737 First Officer"));
+        assertTrue(_q.getExams().contains("737 Captain"));
+        assertTrue(_q.getExams().contains("CRJ First Officer"));
         
-        exams.add(new ExamSubPool("757 First Officer", "ALL"));
-        _q.setPools(exams);
+        exams.add("757 First Officer");
+        _q.setExams(exams);
         assertEquals(4, exams.size());
-        assertTrue(_q.getPools().contains(exams.get(3)));
+        assertTrue(_q.getExams().contains(exams.get(3)));
     }
     
     public void testValidation() {

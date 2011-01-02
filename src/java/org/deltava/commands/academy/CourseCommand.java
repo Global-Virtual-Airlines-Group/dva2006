@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 3.4
+ * @version 3.5
  * @since 1.0
  */
 
@@ -49,10 +49,12 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + c.getPilotID());
 			
-			// Init the history and fully populate the Course
+			// Init the history and fully populate the Course with check ride
 			AcademyHistoryHelper helper = initHistory(p, con);
 			helper.setDebug(ctx.isSuperUser());
-			c = helper.getCourse(c.getID());
+			Course c2 = helper.getCourse(c.getID());
+			if (c2.getCheckRide() != null)
+				c.setCheckRide(c2.getCheckRide());
 
 			// Get the certification profile
 			Certification cert = helper.getCertification(c.getCode());
