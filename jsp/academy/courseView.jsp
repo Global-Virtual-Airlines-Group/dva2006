@@ -80,7 +80,7 @@ return true;
  <td colspan="6" class="data"><span class="sec bld">${course.statusName}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
-<c:if test="${course.hasCheckRide}">
+<c:if test="${!empty course.checkRide}">
 <c:set var="cr" value="${course.checkRide}" scope="page" />
 <tr>
  <td class="label">Check Ride</td>
