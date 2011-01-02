@@ -117,7 +117,7 @@ return true;
 </tr>
 <tr class="courseDesc">
  <td class="label">&nbsp;</td>
- <td class="data"><fmt:msg value="${cert.description}" /></td>
+ <td colspan="6" class="data"><fmt:msg value="${cert.description}" /></td>
 </tr>
 </c:if>
 <c:if test="${(!empty docs) || (!empty videos)}">
