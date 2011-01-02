@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create new Flight Academy Examinations.
  * @author Luke
- * @version 2.3
+ * @version 3.5
  * @since 1.0
  */
 
@@ -96,7 +96,6 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			ex.setExpiryDate(cld.getTime());
 
 			// Load the question pool for this examination
-			ep.setPools(epdao.getSubPools(ep.getName()));
 			GetExamQuestions eqdao = new GetExamQuestions(con);
 			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
 			if (qPool.isEmpty())

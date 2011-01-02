@@ -163,7 +163,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Pilot Examinations</td>
- <td class="data"><el:check name="examNames" idx="*" cols="5" width="190" newLine="true" className="small" checked="${question.pools}" options="${examNames}" /></td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="190" newLine="true" className="small" checked="${question.exams}" options="${examNames}" /></td>
 </tr>
 <c:if test="${!empty question}">
 <tr>

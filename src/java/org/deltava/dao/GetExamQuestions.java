@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 2.6
+ * @version 3.5
  * @since 2.1
  */
 
@@ -143,19 +143,13 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 			}
 			
 			// Get the exams for this question
-			prepareStatementWithoutLimits("SELECT ESP.* FROM exams.EXAM_QPOOLS ESP, exams.QE_INFO QE WHERE "
-					+ "(ESP.NAME=QE.EXAM_NAME) AND (ESP.ID=QE.SUBPOOL_ID) AND (QE.QUESTION_ID=?) ORDER BY "
-					+ "ESP.NAME, ESP.ID");
+			prepareStatementWithoutLimits("SELECT QE.EXAM_NAME FROM exams.QE_INFO QE WHERE (QE.QUESTION_ID=?)");
 			_ps.setInt(1, id);
 
 			// Populate the exam names
 			rs = _ps.executeQuery();
-			while (rs.next()) {
-				ExamSubPool esp = new ExamSubPool(rs.getString(1), rs.getString(3));
-				esp.setID(rs.getInt(2));
-				esp.setSize(rs.getInt(4));
-				qp.addPool(esp);
-			}
+			while (rs.next())
+				qp.addExam(rs.getString(1));
 
 			// Clean up and return
 			rs.close();
@@ -214,23 +208,17 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
 				+ "RQ.AIRPORT_A FROM exams.QE_INFO QE, exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON "
 				+ "(Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ "
-				+ "ON (Q.ID=RQ.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) AND "
-				+ "(QE.SUBPOOL_ID=?) GROUP BY Q.ID ORDER BY ");
+				+ "ON (Q.ID=RQ.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) GROUP BY "
+				+ "Q.ID ORDER BY ");
 		sqlBuf.append(isRandom ? "RAND()" : "Q.ID");
 		sqlBuf.append(" LIMIT ?");
 
-		List<QuestionProfile> results = new ArrayList<QuestionProfile>(exam.getSize());
 		try {
-			// Loop through each pool
-			for (Iterator<ExamSubPool> i = exam.getPools().iterator(); i.hasNext(); ) {
-				ExamSubPool esp = i.next();
-				prepareStatement(sqlBuf.toString());
-				_ps.setBoolean(1, true);
-				_ps.setString(2, exam.getName());
-				_ps.setInt(3, esp.getID());
-				_ps.setInt(4, esp.getSize());
-				results.addAll(execute());
-			}
+			prepareStatement(sqlBuf.toString());
+			_ps.setBoolean(1, true);
+			_ps.setString(2, exam.getName());
+			_ps.setInt(3, exam.getSize());
+			List<QuestionProfile> results = execute();
 			
 			// Load the correct answer counts and multiple choice options
 			loadResults(results, false);

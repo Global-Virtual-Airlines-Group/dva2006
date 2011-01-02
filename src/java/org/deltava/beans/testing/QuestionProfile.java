@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A class to store Exam Question profiles.
  * @author Luke
- * @version 3.0
+ * @version 3.5
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class QuestionProfile extends Question implements ViewEntry {
 	private int _totalAnswers;
 	private int _correctAnswers;
 	private boolean _active;
-	private final Collection<ExamSubPool> _exams = new TreeSet<ExamSubPool>();
+	private final Collection<String> _exams = new TreeSet<String>();
 
 	private AirlineInformation _owner;
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -33,12 +33,12 @@ public class QuestionProfile extends Question implements ViewEntry {
 	}
 
 	/**
-	 * Returns the Examination Pools associated with this Question.
-	 * @return a Collection of ExamSubPool beans
-	 * @see QuestionProfile#addPool(ExamSubPool)
-	 * @see QuestionProfile#setPools(Collection)
+	 * Returns the Examinatios associated with this Question.
+	 * @return a Collection of Examination names
+	 * @see QuestionProfile#addExam(String)
+	 * @see QuestionProfile#setExams(Collection)
 	 */
-	public Collection<ExamSubPool> getPools() {
+	public Collection<String> getExams() {
 		return _exams;
 	}
 
@@ -108,23 +108,23 @@ public class QuestionProfile extends Question implements ViewEntry {
 
 	/**
 	 * Links this Question to an Examination.
-	 * @param esp the Examination pool
-	 * @see QuestionProfile#setPools(Collection)
-	 * @see QuestionProfile#getPools()
+	 * @param examName the Examination name
+	 * @see QuestionProfile#setExams(Collection)
+	 * @see QuestionProfile#getExams()
 	 */
-	public void addPool(ExamSubPool esp) {
-		_exams.add(esp);
+	public void addExam(String examName) {
+		_exams.add(examName);
 	}
 
 	/**
 	 * Links this Question to a number of Examinations.
-	 * @param pools a Collection of ExamSubPool beans
-	 * @see QuestionProfile#addPool(ExamSubPool)
-	 * @see QuestionProfile#getPools()
+	 * @param exams a Collection of examination names
+	 * @see QuestionProfile#addExam(String)
+	 * @see QuestionProfile#getExams()
 	 */
-	public void setPools(Collection<ExamSubPool> pools) {
+	public void setExams(Collection<String> exams) {
 		_exams.clear();
-		_exams.addAll(pools);
+		_exams.addAll(exams);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 3.2
+ * @version 3.5
  * @since 1.0
  */
 
@@ -99,24 +99,11 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 			// Load the fields from the request
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			Collection<String> examPools = ctx.getParameters("examNames");
-			if (examPools != null) {
-				Collection<ExamSubPool> pools = new LinkedHashSet<ExamSubPool>();
-				for (Iterator<String> i = examPools.iterator(); i.hasNext();) {
-					String poolName = i.next();
-					int pos = poolName.lastIndexOf('-');
-					if (pos == -1)
-						pools.add(new ExamSubPool(poolName, ""));
-					else {
-						ExamSubPool esp = new ExamSubPool(poolName.substring(0, pos), "");
-						esp.setID(StringUtils.parse(poolName.substring(pos + 1), 0));
-						pools.add(esp);
-					}
-				}
-
-				qp.setPools(pools);
-			} else
-				qp.setPools(new HashSet<ExamSubPool>());
+			Collection<String> examNames = ctx.getParameters("examNames");
+			if (examNames != null)
+				qp.setExams(examNames);
+			else
+				qp.setExams(new HashSet<String>());
 
 			// Start a transaction
 			ctx.startTX();
@@ -191,9 +178,9 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Get exam names
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			if (doEdit)
-				ctx.setAttribute("examNames", epdao.getAllSubPools(), REQUEST);
+				ctx.setAttribute("examNames", epdao.getAllExamProfiles(), REQUEST);
 			else
-				ctx.setAttribute("examNames", epdao.getSubPools(), REQUEST);
+				ctx.setAttribute("examNames", epdao.getExamProfiles(), REQUEST);
 
 			// Set the center of the map
 			if (qp == null) {

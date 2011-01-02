@@ -27,14 +27,14 @@ This Pilot Examination Question has been succesfully updated in the database.<br
 <br />
 To view this Question, <el:cmd url="qprofile" link="${question}">Click Here</el:cmd>.<br />
 <br />
-This Question has been included in <fmt:int value="${fn:sizeof(question.pools)}" /> Pilot
+This Question has been included in <fmt:int value="${fn:sizeof(question.exams)}" /> Pilot
 Examinations. To view all Questions in these Examinations, select one from the list below:<br />
 <br />
-<c:forEach var="pool" items="${question.pools}">
-<el:cmd url="qprofiles" linkID="${pool.examName}">${pool.examName}</el:cmd><br />
+<c:forEach var="exam" items="${question.exams}">
+<el:cmd url="qprofiles" linkID="${exam}">${exam}</el:cmd><br />
 </c:forEach>
 </c:if>
-<c:if test="${(!empty exam) && !isPoolUpdate}">
+<c:if test="${!empty exam}">
 <div class="updateHdr">Examination Updated</div>
 <br />
 This Pilot Examination has been succsfully updated in the database.<br />
@@ -42,15 +42,6 @@ This Pilot Examination has been succsfully updated in the database.<br />
 To view this Examination Profile, <el:cmd url="eprofile" linkID="${exam.name}" className="sec bld">Click Here</el:cmd>.<br />
 To view all Examination Profiles, <el:cmd url="eprofiles" className="sec bld">Click Here</el:cmd>.<br />
 To view Questions in this Examination, <el:cmd url="qprofiles" linkID="${exam.name}" className="sec bld">Click Here</el:cmd>.<br />
-</c:if>
-<c:if test="${isPoolUpdate}">
-<div class="updateHdr">Examination Question Pools Updated</div>
-<br />
-This Pilot Examination's Question Sub-pools have been succsfully updated in the database.<br />
-<br />
-To view this Examination Profile, <el:cmd url="eprofile" linkID="${exam.name}" className="sec bld">Click Here</el:cmd>.<br />
-To view this Examination's sub-pools, <el:cmd url="epools" linkID="${exam.name}" className="sec bld">Click Here</el:cmd>.<br />
-To view all Examination Profiles, <el:cmd url="eprofiles" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${(!empty script) && isUpdate}">
 <div class="updateHdr">Check Ride Script Updated</div>
