@@ -37,7 +37,8 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
 			
 			// Get the Certification
-			Certification cert = academyHistory.getCertification(name);
+			GetAcademyCertifications cdao = new GetAcademyCertifications(con); 
+			Certification cert = cdao.get(name);
 			if (cert == null)
 				throw notFoundException("Unknown Certification - " + name);
 			
