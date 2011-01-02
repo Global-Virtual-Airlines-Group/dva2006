@@ -44,6 +44,8 @@ To view the Pilot Profile, <el:profile location="${usrLoc}" className="sec bld">
 <c:if test="${exam.academy}">
 To return to the Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 To return to the Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
+<c:if test="${autoScore}">
+To return to the Testing Center, <el:cmd url="testcenter" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <content:filter roles="Examination">
 To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">Click Here</el:cmd>.<br /></content:filter>
 </c:when>
