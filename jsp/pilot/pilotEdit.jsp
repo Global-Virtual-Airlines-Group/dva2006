@@ -207,7 +207,7 @@ return true;
 <c:if test="${!empty pilot.pilotCode}">
 <tr>
  <td class="label">Personal Motto</td>
- <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="36" max="62" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="40" max="60" /></td>
 </tr>
 </c:if>
 
