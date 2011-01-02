@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 2.7
+ * @version 3.5
  * @since 1.0
  */
 
@@ -64,7 +64,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 						+ "SUM(IF((P.ATTR & ?) > 0, P.DISTANCE, 0)), COUNT(AP.ACARS_ID), "
 						+ "ROUND(SUM(IF(AP.ACARS_ID, P.FLIGHT_TIME, 0)), 1), SUM(IF(AP.ACARS_ID, P.DISTANCE, 0)) "
 						+ "FROM PIREPS P LEFT JOIN ACARS_PIREPS AP ON (P.ID=AP.ID) WHERE (P.STATUS=?)");
-				_ps.setQueryTimeout(10);
+				_ps.setQueryTimeout(25);
 				_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
 				_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 				_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
@@ -123,7 +123,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 
 				// Get Pilot Totals
 				prepareStatement("SELECT COUNT(ID), SUM(CASE STATUS WHEN ? THEN 1 WHEN ? THEN 1 END) FROM PILOTS");
-				_ps.setQueryTimeout(8);
+				_ps.setQueryTimeout(10);
 				_ps.setInt(1, Pilot.ACTIVE);
 				_ps.setInt(2, Pilot.ON_LEAVE);
 				rs = _ps.executeQuery();
