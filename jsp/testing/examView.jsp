@@ -60,18 +60,27 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
+<c:set var="qProfile" value="${qStats[q.number]}" scope="page" />
 <c:set var="hasImage" value="${q.size > 0}" scope="page" />
+<c:set var="rspan" value="${hasImage ? 3 : 2}" scope="page" />
+<c:if test="${showAnswers}"><c:set var="rspan" value="${rpsan + 1}" scope="page" /></c:if>
 <!-- Question #${q.number} -->
 <tr>
- <td class="label top" rowspan="${hasImage ? '2' : '1'}">Question #<fmt:int value="${q.number}" /></td>
- <td class="data">${q.question}
-<c:if test="${showAnswers}"><div class="sec small">${q.correctAnswer}</div></c:if></td>
+ <td class="label top" rowspan="${hasImage ? 3 : 2}">Question #<fmt:int value="${q.number}" /></td>
+ <td class="data">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">
 <tr>
  <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
  bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void viewImage('${q.hexID}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+</tr>
+</c:if>
+<c:if test="${showAnswers}">
+<tr>
+ <td class="data"><span class="sec small">${q.correctAnswer}</span>
+ <c:if test="${!empty qProfile}"> - Correct [ <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
+ (<fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %) ]</c:if></td>
 </tr>
 </c:if>
 <c:if test="${fn:isRoutePlot(q)}">

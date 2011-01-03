@@ -74,11 +74,12 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
+<c:set var="qProfile" value="${qStats[q.number]}" scope="page" />
 <c:set var="mcCSS" value="${fn:isMultiChoice(q) ? 'opt1' : ''}" scope="page" />
 <c:set var="hasImage" value="${q.size > 0}" scope="page" />
 <!-- Question #${q.number} -->
 <tr>
- <td class="label top" rowspan="${hasImage ? '3' : '2'}">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${hasImage ? 3 : 2}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data ${mcCSS}">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">
@@ -89,7 +90,9 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data small ${mcCSS}"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span></td>
+ <td class="data small ${mcCSS}"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span>
+<c:if test="${!empty qProfile}"> - Correct [ <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
+ (<fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %) ]</c:if></td>
 </tr>
 <c:if test="${fn:isRoutePlot(q)}">
 <tr>
