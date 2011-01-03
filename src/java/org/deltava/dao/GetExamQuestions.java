@@ -193,9 +193,9 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
-	 * Loads all active Questions linked to a particular Pilot Examination.
+	 * Loads all active Questions linked to a particular Pilot Examination. 
 	 * @param exam the ExamProfile bean
 	 * @param isRandom randomly order Questions
 	 * @return a List of QuestionProfiles
@@ -203,21 +203,40 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 	 * @throws NullPointerException if exam is null
 	 */
 	public List<QuestionProfile> getQuestionPool(ExamProfile exam, boolean isRandom) throws DAOException {
+		return getQuestionPool(exam, isRandom, 0);
+	}
+	
+	/**
+	 * Loads all active Questions linked to a particular Pilot Examination. If a Pilot ID is specified, questions will be selected
+	 * in increasing order of frequency of visibility in prior examination written by this Pilot. 
+	 * @param exam the ExamProfile bean
+	 * @param isRandom randomly order Questions
+	 * @param pilotID the user's database ID, or zero if none
+	 * @return a List of QuestionProfiles
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if exam is null
+	 */
+	public List<QuestionProfile> getQuestionPool(ExamProfile exam, boolean isRandom, int pilotID) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
-				+ "RQ.AIRPORT_A FROM exams.QE_INFO QE, exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON "
-				+ "(Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ "
-				+ "ON (Q.ID=RQ.ID) WHERE (Q.ID=QE.QUESTION_ID) AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) GROUP BY "
-				+ "Q.ID ORDER BY ");
-		sqlBuf.append(isRandom ? "RAND()" : "Q.ID");
+			+ "RQ.AIRPORT_A, COUNT(EQ.EXAM_ID)+RAND() AS CNT FROM exams.QE_INFO QE, exams.QUESTIONINFO Q "
+			+ "LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) "
+			+ "LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN exams.EXAMS E ON (E.PILOT_ID=?) LEFT JOIN "
+			+ "exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) AND (EQ.EXAM_ID=E.ID) WHERE (Q.ID=QE.QUESTION_ID) "
+			+ "AND (Q.ACTIVE=?) AND (QE.EXAM_NAME=?) GROUP BY Q.ID ");
+		if (pilotID > 0)
+			sqlBuf.append("ORDER BY CNT");
+		else if (isRandom)
+			sqlBuf.append("ORDER BY RAND()");
 		sqlBuf.append(" LIMIT ?");
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, true);
-			_ps.setString(2, exam.getName());
-			_ps.setInt(3, exam.getSize());
+			_ps.setInt(1, pilotID);
+			_ps.setBoolean(2, true);
+			_ps.setString(3, exam.getName());
+			_ps.setInt(4, exam.getSize());
 			List<QuestionProfile> results = execute();
 			
 			// Load the correct answer counts and multiple choice options
