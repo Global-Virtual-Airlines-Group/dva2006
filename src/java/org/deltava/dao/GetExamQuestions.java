@@ -193,6 +193,57 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Retrieves the most commonly asked active examination Questions.
+	 * @return a List of QuestionProfile beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<QuestionProfile> getMostPopular() throws DAOException {
+		try {
+			prepareStatement("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, "
+				+ "COUNT(EQ.CORRECT) AS CNT FROM exams.QUESTIONINFO Q LEFT JOIN exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) "
+				+ "LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT "
+				+ "JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) "
+				+ "WHERE (Q.ACTIVE=?) GROUP BY Q.ID ORDER BY CNT DESC");
+			_ps.setBoolean(1, true);
+			List<QuestionProfile> results = execute();
+			loadResults(results, true);
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns active examination Questions based on the frequency of being answered correctly.
+	 * @param isDesc TRUE if in descening order of correct answers, otherwise FALSE
+	 * @param minExams the minimum number of exams the Question must have been in
+	 * @return a List of QuestionProfile beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<QuestionProfile> getResults(boolean isDesc, int minExams) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
+			+ "RQ.AIRPORT_A, COUNT(EQ.CORRECT) AS CNT, SUM(EQ.CORRECT) AS SCR FROM exams.QUESTIONINFO Q LEFT JOIN "
+			+ "exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN "
+			+ "exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN "
+			+ "exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID HAVING (CNT>=?) "
+			+ "ORDER BY (SCR/CNT)");
+		if (isDesc)
+			sqlBuf.append(" DESC");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setBoolean(1, true);
+			List<QuestionProfile> results = execute();
+			loadResults(results, true);
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Loads all active Questions linked to a particular Pilot Examination. 
