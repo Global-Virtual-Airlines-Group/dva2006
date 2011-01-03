@@ -55,19 +55,12 @@ public class ExamCommand extends AbstractCommand {
          access.validate();
          if (!access.getCanRead())
             throw securityException("Cannot view Examination " + ctx.getID());
-         
-         // Get the Pilot and the scorer
-         Collection<Integer> IDs = new HashSet<Integer>();
-         IDs.add(new Integer(ex.getPilotID()));
-         if (ex.getScorerID() != 0)
-        	 IDs.add(new Integer(ex.getScorerID()));
-         
+             
          // Load the Pilots
          GetPilot pdao = new GetPilot(con);
-         UserDataMap udm = uddao.get(IDs);
-         Map<Integer, Pilot> pilots = pdao.get(udm);
-         ctx.setAttribute("pilot", pilots.get(new Integer(ex.getPilotID())), REQUEST);
-       	 ctx.setAttribute("scorer", pilots.get(new Integer(ex.getScorerID())), REQUEST);
+         ctx.setAttribute("pilot", pdao.get(uddao.get(ex.getPilotID())), REQUEST);
+         if (ex.getScorerID() != 0)
+        	 ctx.setAttribute("scorer", pdao.get(uddao.get(ex.getScorerID())), REQUEST);
        	 
        	 // Load the route plotting question numbers and Terminal Route choices
        	 GetNavRoute navdao = new GetNavRoute(con);
@@ -84,6 +77,20 @@ public class ExamCommand extends AbstractCommand {
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers() && (activeExamID == 0)), REQUEST);
          else
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers()), REQUEST);
+         
+         // If we can view answers and in HR/TestAdmin, calculate question percentages
+         if (access.getCanViewAnswers() && !access.getCanSubmit()) {
+        	 Map<Integer, QuestionProfile> qstats = new HashMap<Integer, QuestionProfile>();
+        	 GetExamQuestions eqdao = new GetExamQuestions(con);
+        	 for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
+        		 Question q = i.next();
+        		 QuestionProfile qp = eqdao.getQuestionProfile(q.getID());
+        		 if (qp != null)
+        			 qstats.put(Integer.valueOf(q.getNumber()), qp);
+        	 }
+        	 
+        	 ctx.setAttribute("qStats", qstats, REQUEST);
+         }
          
          // Determine what we will do with the examination
          String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
@@ -115,13 +122,12 @@ public class ExamCommand extends AbstractCommand {
         	 ctx.setAttribute("aRoutes", aRoutes, REQUEST);
         	 ctx.setAttribute("cRoutes", cRoutes, REQUEST);
         	 
+             // Determine if we are scoring or viewing
+             boolean isScore = ((ex.getStatus() != Test.SCORED) && access.getCanScore());
+             isScore |= (("edit".equals(opName)) && (access.getCanEdit()));
+        	 
         	 // Forward to the JSP
-        	 if ((ex.getStatus() != Test.SCORED) && access.getCanScore())
-                 result.setURL("/jsp/testing/examScore.jsp");
-             else if (("edit".equals(opName)) && (access.getCanEdit()))
-                result.setURL("/jsp/testing/examScore.jsp");
-             else
-                result.setURL("/jsp/testing/examView.jsp");
+        	 result.setURL(isScore ? "/jsp/testing/examScore.jsp" : "/jsp/testing/examView.jsp");
          }
          
          // Save route plot questions
