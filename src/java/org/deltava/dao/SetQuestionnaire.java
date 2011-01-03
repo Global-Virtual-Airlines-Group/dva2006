@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicant Questionnaires.
  * @author Luke
- * @version 1.0
+ * @version 3.5
  * @since 1.0
  */
 
@@ -181,9 +181,9 @@ public class SetQuestionnaire extends DAO {
 			executeUpdate(1);
 			int examID = getNewID();
 
-			// Prepare the statement for questions
-			prepareStatement("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, QUESTION, "
-					+ "CORRECT_ANSWER, ANSWER, CORRECT) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			// Prepare the statement for question info
+			prepareStatement("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, CORRECT) "
+				+ "VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, examID);
 
 			// Batch the questions
@@ -191,17 +191,33 @@ public class SetQuestionnaire extends DAO {
 				Question q = i.next();
 				_ps.setInt(2, q.getID());
 				_ps.setInt(3, q.getNumber());
-				_ps.setString(4, q.getQuestion());
-				_ps.setString(5, q.getCorrectAnswer());
-				_ps.setString(6, q.getAnswer());
-				_ps.setBoolean(7, q.isCorrect());
+				_ps.setBoolean(4, q.isCorrect());
 				_ps.addBatch();
 			}
 
 			// Write the questions and clean up
 			_ps.executeBatch();
 			_ps.close();
+			
+			// Prepare the statement for question text
+			prepareStatement("INSERT INTO exams.EXAMQANSWERS (EXAM_ID, QUESTION_NO, QUESTION, "
+					+ "CORRECT_ANSWER, ANSWER) VALUES (?, ?, ?, ?, ?)");
+			_ps.setInt(1, examID);
+			
+			// Batch the questions
+			for (Iterator<Question> i = e.getQuestions().iterator(); i.hasNext();) {
+				Question q = i.next();
+				_ps.setInt(2, q.getNumber());
+				_ps.setString(3, q.getQuestion());
+				_ps.setString(4, q.getCorrectAnswer());
+				_ps.setString(5, q.getAnswer());
+				_ps.addBatch();
+			}
 
+			// Write the questions and clean up
+			_ps.executeBatch();
+			_ps.close();
+			
 			// Copy multiple choice data
 			if (e.hasMultipleChoice()) {
 				prepareStatement("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");

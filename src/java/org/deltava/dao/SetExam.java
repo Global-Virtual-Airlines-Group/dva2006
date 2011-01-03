@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 3.4
+ * @version 3.5
  * @since 1.0
  */
 
@@ -68,13 +68,20 @@ public class SetExam extends DAO {
 	 * Helper method to write a Question to the database.
 	 */
 	private void write(int id, Question q) throws SQLException {
-		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, "
-				+ "QUESTION, CORRECT_ANSWER) VALUES (?, ?, ?, ?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO) "
+			+ "VALUES (?, ?, ?)");
 		_ps.setInt(1, id);
 		_ps.setInt(2, q.getID());
 		_ps.setInt(3, q.getNumber());
-		_ps.setString(4, q.getQuestion());
-		_ps.setString(5, q.getCorrectAnswer());
+		executeUpdate(1);
+		
+		// Write question text
+		prepareStatementWithoutLimits("INSERT INTO exams.EXAMQANSWERS (EXAM_ID, QUESTION_NO, QUESTION, "
+				+ "CORRECT_ANSWER) VALUES (?, ?, ?, ?)");
+		_ps.setInt(1, id);
+		_ps.setInt(2, q.getNumber());
+		_ps.setString(3, q.getQuestion());
+		_ps.setString(4, q.getCorrectAnswer());
 		executeUpdate(1);
 		
 		// Write child tables
@@ -130,12 +137,12 @@ public class SetExam extends DAO {
 			_ps.setBoolean(7, ex.getEmpty());
 			_ps.setBoolean(8, ex.getAutoScored());
 			_ps.setInt(9, ex.getID());
-
-			// Update the exam
 			executeUpdate(1);
 
 			// Prepare the statement for questions
-			prepareStatement("UPDATE exams.EXAMQUESTIONS SET ANSWER=?, CORRECT=? WHERE (EXAM_ID=?) AND (QUESTION_ID=?)");
+			prepareStatement("UPDATE exams.EXAMQUESTIONS EQ, exams.EXAMQANSWERS EQA SET EQA.ANSWER=?, "
+				+ "EQ.CORRECT=? WHERE (EQ.EXAM_ID=EQA.EXAM_ID) AND (EQ.QUESTION_NO=EQA.QUESTION_NO) AND "
+				+ "(EQ.EXAM_ID=?) AND (EQ.QUESTION_NO=?)");
 			_ps.setInt(3, ex.getID());
 
 			// Batch the questions
@@ -143,7 +150,7 @@ public class SetExam extends DAO {
 				Question q = i.next();
 				_ps.setString(1, q.getAnswer());
 				_ps.setBoolean(2, q.isCorrect());
-				_ps.setInt(4, q.getID());
+				_ps.setInt(4, q.getNumber());
 				_ps.addBatch();
 			}
 
@@ -254,7 +261,7 @@ public class SetExam extends DAO {
 	 */
 	public void answer(int examID, Question q) throws DAOException {
 		try {
-			prepareStatement("UPDATE exams.EXAMQUESTIONS SET ANSWER=? WHERE (EXAM_ID=?) AND (QUESTION_NO=?)");
+			prepareStatement("UPDATE exams.EXAMQANSWERS SET ANSWER=? WHERE (EXAM_ID=?) AND (QUESTION_NO=?)");
 			_ps.setString(1, q.getAnswer());
 			_ps.setInt(2, examID);
 			_ps.setInt(3, q.getNumber());

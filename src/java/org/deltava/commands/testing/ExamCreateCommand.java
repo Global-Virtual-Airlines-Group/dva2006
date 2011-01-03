@@ -109,7 +109,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 
 			// Load the question pool for this examination
 			GetExamQuestions eqdao = new GetExamQuestions(con);
-			List<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true);
+			List<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true, ex.getPilotID());
 			if (qPool.isEmpty())
 				throw new CommandException("Empty Question Pool for " + examName, false);
 			
