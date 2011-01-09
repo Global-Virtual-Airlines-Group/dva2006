@@ -30,10 +30,12 @@
  <td class="label">${fn:pending(checkRide) ? 'Assigned' : 'Scored'} by</td>
  <td class="data sec bld">${scorer.name}</td>
 </tr>
+<c:if test="${!checkRide.academy}">
 <tr>
  <td class="label">Equipment Program</td>
  <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
+</c:if>
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
