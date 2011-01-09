@@ -150,18 +150,25 @@ return true;
  <td colspan="7">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
+<c:set var="isMine" value="${course.pilotID == user.ID}" scope="page" />
 <c:set var="lastUpd" value="${pilots[progress.authorID]}" scope="page" />
 <view:row entry="${progress}">
  <td class="label top">Entry #<fmt:int value="${progress.ID}" /></td>
  <td colspan="6" class="data top"><fmt:msg value="${progress.text}" />
-<c:if test="${progress.complete || access.canUpdateProgress}">
+<c:if test="${(!empty progress.examName) || progress.complete || access.canUpdateProgress}">
 <br /><hr />
-<c:if test="${progress.complete}">
+<c:choose>
+<c:when test="${progress.complete}">
 <span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /> (${lastUpd.name})</span>
-</c:if>
-<c:if test="${access.canUpdateProgress}">
+</c:when>
+<c:when test="${!empty progress.examName}">
+Requires the <span class="pri bld">${progress.examName}</span> examination<c:if test="${isMine}">, which can be started at the 
+ <el:cmd url="academy" className="sec bld">Flight Academy</el:cmd> page</c:if>. 
+</c:when>
+<c:when test="${access.canUpdateProgress}">
 <el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Mark as Completed" />
-</c:if>
+</c:when>
+</c:choose>
 </c:if>
 </td>
 </view:row>
