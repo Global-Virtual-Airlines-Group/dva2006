@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to post comments in a Flight Academy Course.
  * @author Luke
- * @version 3.4
+ * @version 3.5
  * @since 1.0
  */
 
@@ -69,12 +69,17 @@ public class CourseCommentCommand extends AbstractCommand {
 			Map<Integer, Pilot> ins = new HashMap<Integer, Pilot>();
 			for (AirlineInformation ai : uddao.getAirlines(true).values()) {
 				Map<Integer, Pilot> usrs = CollectionUtils.createMap(pddao.getByRole("Instructor", ai.getDB()), "ID");
+				Map<Integer, Pilot> admins = CollectionUtils.createMap(pddao.getByRole("AcademyAdmin", ai.getDB()), "ID");
 				ins.putAll(usrs);
+				ins.putAll(admins);
 			}
 			
 			// Get Pilot IDs from comments - only add instructors
+			boolean hasINS = (c.getInstructorID() != 0);
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(c.getPilotID()));
+			if (hasINS)
+				IDs.add(new Integer(c.getInstructorID()));
 			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
 				CourseComment comment = i.next();
 				Integer id = new Integer(comment.getAuthorID());
@@ -87,10 +92,10 @@ public class CourseCommentCommand extends AbstractCommand {
 			UserDataMap udm = uddao.get(IDs);
 			addrs = new ArrayList<Pilot>(pdao.get(udm).values());
 			
-			// Add additional instructors 
+			// Add additional instructors
 			for (Iterator<Map.Entry<Integer, Pilot>> i = ins.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry<Integer, Pilot> me = i.next();
-				if (!IDs.contains(me.getKey()))
+				if (!IDs.contains(me.getKey()) || !hasINS || me.getValue().isInRole("AcademyAdmin"))
 					addrs.add(me.getValue());
 			}
 

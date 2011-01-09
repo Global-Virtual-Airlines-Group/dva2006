@@ -68,7 +68,8 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			// Get Pilot IDs from comments/progress
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(c.getPilotID()));
-			IDs.add(new Integer(c.getInstructorID()));
+			if (c.getInstructorID() != 0)
+				IDs.add(new Integer(c.getInstructorID()));
 			for (CourseComment cc : c.getComments())
 				IDs.add(new Integer(cc.getAuthorID()));
 			for (CourseProgress cp : c.getProgress())
