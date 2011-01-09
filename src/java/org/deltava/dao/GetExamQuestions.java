@@ -124,7 +124,7 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 			_ps.close();
 
 			// Load correct answer copunts
-			loadResults(Collections.singleton(qp), true);
+			loadResults(Collections.singleton(qp), false);
 
 			// Get multiple choice choices
 			if (isMultiChoice) {
@@ -201,14 +201,14 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 	 */
 	public List<QuestionProfile> getMostPopular() throws DAOException {
 		try {
-			prepareStatement("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, "
-				+ "COUNT(EQ.CORRECT) AS CNT FROM exams.QUESTIONINFO Q LEFT JOIN exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) "
-				+ "LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT "
-				+ "JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) "
-				+ "WHERE (Q.ACTIVE=?) GROUP BY Q.ID ORDER BY CNT DESC");
+			prepareStatement("SELECT Q.*, COUNT(DISTINCT MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, RQ.AIRPORT_A, "
+				+ "(SELECT COUNT(EQ.EXAM_ID) FROM exams.EXAMQUESTIONS EQ WHERE (EQ.QUESTION_ID=Q.ID) GROUP BY Q.ID) AS CNT, "
+				+ "(SELECT SUM(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ WHERE (EQ.QUESTION_ID=Q.ID) GROUP BY Q.ID) AS SCOR "
+				+ "FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN exams.QUESTIONMINFO MQ "
+				+ "ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID "
+				+ "ORDER BY CNT DESC");
 			_ps.setBoolean(1, true);
 			List<QuestionProfile> results = execute();
-			loadResults(results, true);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -225,20 +225,21 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 	public List<QuestionProfile> getResults(boolean isDesc, int minExams) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
-			+ "RQ.AIRPORT_A, COUNT(EQ.CORRECT) AS CNT, SUM(EQ.CORRECT) AS SCR FROM exams.QUESTIONINFO Q LEFT JOIN "
-			+ "exams.QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN "
-			+ "exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) LEFT JOIN "
-			+ "exams.EXAMQUESTIONS EQ ON (EQ.QUESTION_ID=Q.ID) WHERE (Q.ACTIVE=?) GROUP BY Q.ID HAVING (CNT>=?) "
-			+ "ORDER BY (SCR/CNT)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(DISTINCT MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y, RQ.AIRPORT_D, "
+			+ "RQ.AIRPORT_A, (SELECT COUNT(EQ.EXAM_ID) FROM exams.EXAMQUESTIONS EQ WHERE (EQ.QUESTION_ID=Q.ID) "
+			+ "GROUP BY Q.ID) AS CNT, (SELECT SUM(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ WHERE (EQ.QUESTION_ID=Q.ID) "
+			+ "GROUP BY Q.ID) AS CR, (SELECT AVG(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ WHERE (EQ.QUESTION_ID=Q.ID) "
+			+ "GROUP BY Q.ID) AS SCOR FROM exams.QUESTIONINFO Q LEFT JOIN exams.QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN "
+			+ "exams.QUESTIONMINFO MQ ON (Q.ID=MQ.ID) LEFT JOIN exams.QUESTIONRPINFO RQ ON (Q.ID=RQ.ID) WHERE (Q.ACTIVE=?) "
+			+ "GROUP BY Q.ID HAVING (CNT>=?) ORDER BY SCOR");
 		if (isDesc)
 			sqlBuf.append(" DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, true);
+			_ps.setInt(2, minExams);
 			List<QuestionProfile> results = execute();
-			loadResults(results, true);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -307,6 +308,7 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasStats = (rs.getMetaData().getColumnCount() > 13);
 		while (rs.next()) {
 			// Check if we are multiple choice
 			boolean isMultiChoice = (rs.getInt(6) > 0);
@@ -335,6 +337,14 @@ public class GetExamQuestions extends DAO implements CachingDAO {
 				qp.setSize(rs.getInt(8));
 				qp.setWidth(rs.getInt(9));
 				qp.setHeight(rs.getInt(10));
+			}
+			
+			// Load stats
+			if (hasStats) {
+				qp.setTotalAnswers(rs.getInt(13));
+				qp.setCorrectAnswers(rs.getInt(14));
+				ExamResults er = new ExamResults(qp.getID(), qp.getTotalAnswers(), qp.getCorrectAnswers());
+				_rCache.add(er);
 			}
 
 			// Add to results
