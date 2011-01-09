@@ -16,10 +16,10 @@
 <content:pics />
 <content:js name="common" />
 <script type="text/javascript">
-function setExamName(combo)
+function update()
 {
-var opt = combo.options[combo.selectedIndex];
-self.location = 'qprofiles.do?id=' + ((combo.selectedIndex == 0) ? opt.value : opt.text);
+var f = document.forms[0];
+f.submit();
 return true;
 }
 </script>
@@ -32,18 +32,19 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="qprofiles.do" method="get" validate="return false">
+<el:form action="qprofiles.do" method="post" validate="return true">
 <view:table className="view" cmd="qprofiles">
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="8%">&nbsp;</td>
+ <td width="7%">&nbsp;</td>
  <td width="6%">CORRECT</td>
  <td width="6%">ASKED</td>
  <td width="6%">&nbsp;</td>
  <td width="15%" colspan="2" class="left">QUESTION TEXT</td>
- <td width="30%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />
- <el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></td></c:if>
- <td class="right">SELECT EXAM <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
+ <td width="20%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />
+ <el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></c:if></td>
+ <td class="right">SELECT <el:combo name="id" idx="*" size="1" options="${examNames}" value="${param.id}" onChange="void update()" />
+ MIN EXAMS <el:text name="minExams" idx="*" size="3" max="5" value="${param.minExams}" /> <el:button type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Question Data -->

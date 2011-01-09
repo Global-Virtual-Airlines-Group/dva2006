@@ -98,7 +98,7 @@ public class ExamAccessControl extends AccessControl {
         _canEdit = isScored && isHR && isOurAirline && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin") && (isOurAirline || isOurUser);
         _canScore = _canEdit || (isSubmitted && (inScoreList || (isHR && isOurAirline)));
-        _canViewAnswers = isScored && !(isExam || (_t.getAcademy() && isAcademy));
+        _canViewAnswers = isScored && (isExam || isHR);
         
         // Throw an exception if we cannot view
         if (!_canRead)

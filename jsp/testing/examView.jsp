@@ -62,11 +62,11 @@ return true;
 <c:forEach var="q" items="${exam.questions}">
 <c:set var="qProfile" value="${qStats[q.number]}" scope="page" />
 <c:set var="hasImage" value="${q.size > 0}" scope="page" />
-<c:set var="rspan" value="${hasImage ? 3 : 2}" scope="page" />
-<c:if test="${showAnswers}"><c:set var="rspan" value="${rpsan + 1}" scope="page" /></c:if>
+<c:set var="rspan" value="${hasImage ? 2 : 1}" scope="page" />
+<c:if test="${showAnswers}"><c:set var="rspan" value="${rspan + 1}" scope="page" /></c:if>
 <!-- Question #${q.number} -->
 <tr>
- <td class="label top" rowspan="${hasImage ? 3 : 2}">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label top" rowspan="${rspan}">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">

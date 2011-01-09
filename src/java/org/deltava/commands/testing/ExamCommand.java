@@ -78,20 +78,6 @@ public class ExamCommand extends AbstractCommand {
          else
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers()), REQUEST);
          
-         // If we can view answers and in HR/TestAdmin, calculate question percentages
-         if (access.getCanViewAnswers() && !access.getCanSubmit()) {
-        	 Map<Integer, QuestionProfile> qstats = new HashMap<Integer, QuestionProfile>();
-        	 GetExamQuestions eqdao = new GetExamQuestions(con);
-        	 for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
-        		 Question q = i.next();
-        		 QuestionProfile qp = eqdao.getQuestionProfile(q.getID());
-        		 if (qp != null)
-        			 qstats.put(Integer.valueOf(q.getNumber()), qp);
-        	 }
-        	 
-        	 ctx.setAttribute("qStats", qstats, REQUEST);
-         }
-         
          // Determine what we will do with the examination
          String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
          if (access.getCanSubmit()) {
