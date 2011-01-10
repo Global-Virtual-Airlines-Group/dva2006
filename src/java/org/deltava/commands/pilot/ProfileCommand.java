@@ -1,17 +1,13 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
-import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import java.sql.Connection;
-
-import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 import org.apache.commons.httpclient.*;
@@ -19,6 +15,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
+import org.deltava.beans.cooler.SignatureImage;
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.testing.Test;
@@ -43,7 +40,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 3.4
+ * @version 3.5
  * @since 1.0
  */
 
@@ -420,27 +417,18 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (imgOK) {
 					boolean isAuth = ctx.isUserInRole("HR") && Boolean.valueOf(ctx.getParameter("isAuthSig")).booleanValue();
 					if (isAuth) {
+						SignatureImage si = new SignatureImage(p.getID());
+						si.load(imgData.getBuffer());
+						si.watermark("Approved Signature", new Point(si.getWidth() - 120, si.getHeight() - 4));
 						try {
-							BufferedImage img = ImageIO.read(imgData.getInputStream());
-							Graphics2D g = img.createGraphics();
-							g.setColor(Color.WHITE);
-							g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
-							g.drawString("Approved Signature", img.getWidth() - 120, img.getHeight() - 4);
-							g.dispose();
-						
-							// Save the new Image
-							ByteArrayOutputStream os = new ByteArrayOutputStream(16384);
-							ImageIO.write(img, "png", os);
-							imgData.load(new ByteArrayInputStream(os.toByteArray()));
-							img.flush();
-						} catch (IOException ie) {
-							log.error("Cannot authorize Signature Image - " + ie.getMessage(), ie);
-							isAuth = false;
+							p.load(si.getImage("png"));
+						} catch (Exception e) {
+							throw new DAOException(e);
 						}
-					}
+					} else
+						p.load(imgData.getBuffer());
 
 					// Save the image
-					p.load(imgData.getBuffer());
 					sigdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);
 					ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
 					log.info("Signature Updated");
