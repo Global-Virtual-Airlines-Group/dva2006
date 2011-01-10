@@ -17,7 +17,7 @@ import org.deltava.util.CollectionUtils;
  * A Web Site Command to update the Examinations a Question appears in, if the current web
  * application is not the owner of the Question.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 2.0
  */
 
@@ -28,6 +28,7 @@ public class QuestionIncludeCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -63,7 +64,7 @@ public class QuestionIncludeCommand extends AbstractCommand {
 			qp.setExams(exams);
 			
 			// Save the question profile
-			SetExamProfile wdao = new SetExamProfile(con);
+			SetExamQuestion wdao = new SetExamQuestion(con);
 			wdao.writeExams(qp);
 		} catch (DAOException de) {
 			throw new CommandException(de);

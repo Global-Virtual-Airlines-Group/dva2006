@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -266,6 +266,33 @@ public class SetExam extends DAO {
 			_ps.setInt(2, examID);
 			_ps.setInt(3, q.getNumber());
 			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates Examination correct answer statistics.
+	 * @param e the Examination bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void updateStats(Examination e) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO exams.QUESTIONSTATS (SELECT EQ.QUESTION_ID, ?, COUNT(EQ.CORRECT), "
+				+ "SUM(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ, exams.EXAMS E, exams.EXAMINFO EP WHERE "
+				+ "(EQ.EXAM_ID=E.ID) AND (EP.NAME=E.NAME) AND (E.ISEMPTY=?) AND (E.ACADEMY=?) AND (EQ.QUESTION_ID=?) "
+				+ "GROUP BY EQ.QUESTION_ID)");
+			_ps.setBoolean(1, e.getAcademy());
+			_ps.setBoolean(2, false);
+			_ps.setBoolean(3, e.getAcademy());
+			for (Question q : e.getQuestions()) {
+				_ps.setInt(4, q.getID());	
+				_ps.addBatch();
+			}
+			
+			// Execute
+			_ps.executeBatch();
+			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

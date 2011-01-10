@@ -60,7 +60,7 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="qProfile" value="${qStats[q.number]}" scope="page" />
+<c:set var="qProfile" value="${qStats[q.ID]}" scope="page" />
 <c:set var="hasImage" value="${q.size > 0}" scope="page" />
 <c:set var="rspan" value="${hasImage ? 2 : 1}" scope="page" />
 <c:if test="${showAnswers}"><c:set var="rspan" value="${rspan + 1}" scope="page" /></c:if>
@@ -79,8 +79,8 @@ return true;
 <c:if test="${showAnswers}">
 <tr>
  <td class="data"><span class="sec small">${q.correctAnswer}</span>
- <c:if test="${!empty qProfile}"> - Correct [ <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
- (<fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %) ]</c:if></td>
+ <c:if test="${!empty qProfile}"> - <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
+ (<span class="bld"><fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %</span>)</c:if></td>
 </tr>
 </c:if>
 <c:if test="${fn:isRoutePlot(q)}">
