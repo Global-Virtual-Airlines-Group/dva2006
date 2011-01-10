@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class InactivityUpdateTask extends Task {
 	/**
 	 * Executes the task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 
 		// Get the inactivity cutoff time
@@ -101,7 +102,12 @@ public class InactivityUpdateTask extends Task {
 				InactivityPurge ip = me.getValue();
 				Integer id = me.getKey();
 				Pilot p = pilots.get(id);
-				if (p != null) {
+				if (p == null) {
+					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
+					iwdao.delete(ip.getID());
+				} else if (p.isInRole("AcademyAudit"))
+					log.warn("Ignoring " + p.getName() + " - Flight Academy Auditor");
+				else {
 					boolean noWarn = !ip.isNotified();
 					if (noWarn)
 						log.warn("Marking " + p.getName() + " Inactive after no participation in " + inactiveDays + " days");
@@ -182,9 +188,6 @@ public class InactivityUpdateTask extends Task {
 					Mailer mailer = new Mailer(isTest ? null : taskBy);
 					mailer.setContext(mctxt);
 					mailer.send(p);
-				} else {
-					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
-					iwdao.delete(ip.getID());
 				}
 			}
 			
