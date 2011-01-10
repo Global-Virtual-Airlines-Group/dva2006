@@ -27,10 +27,10 @@
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="15%">EXAM NAME</td>
-<c:if test="${access.canEdit}">
+<c:if test="${access.canCreate}">
  <td width="20%"><el:cmdbutton url="eprofile" op="edit" label="NEW EXAMINATION PROFILE" /></td>
 </c:if>
-<c:if test="${!access.canEdit}">
+<c:if test="${!access.canCreate}">
  <td width="20%">&nbsp;</td>
 </c:if>
  <td width="15%">EQUIPMENT TYPE</td>

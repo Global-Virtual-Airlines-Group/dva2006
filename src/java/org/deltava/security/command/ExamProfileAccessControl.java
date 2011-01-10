@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.ExamProfile;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Examination Profiles.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class ExamProfileAccessControl extends AccessControl {
 	private ExamProfile _ep;
 
 	private boolean _canRead;
+	private boolean _canCreate;
 	private boolean _canEdit;
 
 	/**
@@ -34,15 +35,24 @@ public class ExamProfileAccessControl extends AccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		validateContext();
 
+		// Check create access
+		boolean isHR = _ctx.isUserInRole("HR");
+		_canCreate = isHR || _ctx.isUserInRole("AcademyAdmin") || _ctx.isUserInRole("TestAdmin");
+		if (_ep == null)
+			return;
+
 		// Check if the exam belongs to our airline
-		boolean isOurAirline = (_ep == null) || SystemData.get("airline.code").equals(_ep.getOwner().getCode());
+		boolean isOurAirline = SystemData.get("airline.code").equals(_ep.getOwner().getCode());
+		boolean isAdmin = _ep.getAcademy() ? _ctx.isUserInRole("AcademyAdmin") : _ctx.isUserInRole("TestAdmin");
+		boolean isExaminer = _ep.getAcademy() ? _ctx.isUserInRole("Instructor") : _ctx.isUserInRole("Examination");
 
 		// Check if we are a member of the HR role
-		_canEdit = isOurAirline && (_ctx.isUserInRole("HR") || _ctx.isUserInRole("TestAdmin"));
-		_canRead = (_ep == null) || _canEdit || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examination");
+		_canEdit = isOurAirline && (isHR || isAdmin);
+		_canRead = _canEdit || isExaminer || (_ep.getAcademy() && _ctx.isUserInRole("AcademyAudit"));
 	}
 
 	/**
@@ -59,5 +69,13 @@ public class ExamProfileAccessControl extends AccessControl {
 	 */
 	public boolean getCanEdit() {
 		return _canEdit;
+	}
+
+	/**
+	 * Returns if a new Examination Profile can be created.
+	 * @return TRUE if it can be created, otherwise FALSE
+	 */
+	public boolean getCanCreate() {
+		return _canCreate;
 	}
 }

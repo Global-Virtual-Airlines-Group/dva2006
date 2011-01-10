@@ -27,6 +27,7 @@ public class ExamCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the results
@@ -77,6 +78,19 @@ public class ExamCommand extends AbstractCommand {
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers() && (activeExamID == 0)), REQUEST);
          else
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers()), REQUEST);
+         
+         // Load question profiles
+         if (access.getCanViewAnswers()) {
+        	 GetExamQuestions eqdao = new GetExamQuestions(con);
+        	 Map<Integer, QuestionProfile> qInfo = new HashMap<Integer, QuestionProfile>();
+        	 for (Question q : ex.getQuestions()) {
+        		 QuestionProfile qp = eqdao.getQuestionProfile(q.getID());
+        		 if (qp != null)
+        			 qInfo.put(Integer.valueOf(q.getID()), qp);
+        	 }
+        	 
+        	 ctx.setAttribute("qStats", qInfo, REQUEST);
+         }
          
          // Determine what we will do with the examination
          String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);

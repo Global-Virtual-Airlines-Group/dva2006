@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Profiles.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -31,8 +31,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    protected void execSave(CommandContext ctx) throws CommandException {
-
       String examName = (String) ctx.getCmdParameter(ID, null);
       try {
          Connection con = ctx.getConnection();
@@ -56,8 +56,9 @@ public class ExamProfileCommand extends AbstractFormCommand {
          // Check our access level
          ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
          access.validate();
-         if (!access.getCanEdit())
-        	 throw securityException("Cannot edit Examination Profile");
+         boolean canExec = (examName != null) ? access.getCanEdit() : access.getCanCreate();
+         if (!canExec)
+        	 throw securityException("Cannot create/edit Examination Profile");
 
          // Load the fields from the request
          ep.setEquipmentType("N/A".equals(ctx.getParameter("eqType")) ? null : ctx.getParameter("eqType"));
@@ -117,8 +118,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    protected void execEdit(CommandContext ctx) throws CommandException {
-
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
          Connection con = ctx.getConnection();
@@ -169,8 +170,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    protected void execRead(CommandContext ctx) throws CommandException {
-
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
          Connection con = ctx.getConnection();

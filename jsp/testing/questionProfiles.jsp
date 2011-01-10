@@ -36,34 +36,33 @@ return true;
 <view:table className="view" cmd="qprofiles">
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="7%">&nbsp;</td>
- <td width="6%">CORRECT</td>
- <td width="6%">ASKED</td>
  <td width="6%">&nbsp;</td>
- <td width="15%" colspan="2" class="left">QUESTION TEXT</td>
+ <td width="12%">CORRECT / ASKED</td>
+ <td width="6%">&nbsp;</td>
+ <td width="7%">&nbsp;</td>
  <td width="20%"><c:if test="${access.canCreate}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" />
  <el:cmdbutton url="qprofile" op="edit&isRP=true" label="NEW ROUTE PLOT" /></c:if></td>
  <td class="right">SELECT <el:combo name="id" idx="*" size="1" options="${examNames}" value="${param.id}" onChange="void update()" />
- MIN EXAMS <el:text name="minExams" idx="*" size="3" max="5" value="${param.minExams}" /> <el:button type="submit" label="GO" /></td>
+ MIN EXAMS <el:text name="minExams" idx="*" size="3" max="5" value="${minExams}" />
+ <el:box name="isAcademy" value="true" checked="${academyOnly}" className="small" label="Academy Only" /> <el:button type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Question Data -->
 <c:forEach var="q" items="${viewContext.results}">
 <view:row entry="${q}">
  <td><el:cmd className="pri bld" url="qprofile" link="${q}">VIEW</el:cmd></td>
- <td><fmt:int value="${q.correctAnswers}" /></td>
- <td><fmt:int value="${q.totalAnswers}" /></td>
+ <td><fmt:int value="${q.correctAnswers}" /> / <fmt:int value="${q.totalAnswers}" /></td>
  <td><c:if test="${q.totalAnswers > 0}"><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</c:if>
 <c:if test="${q.totalAnswers == 0}">-</c:if></td>
- <td width="7%">&nbsp;<c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
+ <td>&nbsp;<c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
 <c:if test="${q.size > 0}"><el:img src="testing/image.png" caption="Image Resource" /></c:if></td>
- <td class="left small" colspan="3">${q.question}</td>
+ <td class="left small" colspan="2"><fmt:text value="${q.question}" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title caps">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

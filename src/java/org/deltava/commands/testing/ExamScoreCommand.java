@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to score Pilot Examinations.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class ExamScoreCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
    	
    	// Create the messaging context
@@ -88,8 +89,7 @@ public class ExamScoreCommand extends AbstractCommand {
          ctx.setAttribute("reScore", Boolean.valueOf(ex.getStatus() == Test.SCORED), REQUEST);
          
          // Update examination
-         Calendar cld = Calendar.getInstance();
-         ex.setScoredOn(cld.getTime());
+         ex.setScoredOn(new Date());
          ex.setStatus(Test.SCORED);
          ex.setScore(score);
          ex.setScorerID(ctx.getUser().getID());
@@ -110,6 +110,7 @@ public class ExamScoreCommand extends AbstractCommand {
          // Update the examination in the database
          SetExam wdao = new SetExam(con);
          wdao.update(ex);
+         wdao.updateStats(ex);
          
          // Commit
          ctx.commitTX();
