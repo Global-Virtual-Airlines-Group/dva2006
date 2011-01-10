@@ -24,7 +24,7 @@
 <content:submenu title="Flight Academy" width="170">
  <content:subitem><el:cmd url="academy">Academy Home</el:cmd></content:subitem>
  <content:subitem><el:cmd url="academycalendar">Instruction Calendar</el:cmd></content:subitem>
-<content:filter roles="HR,Instructor,AcademyAdmin">
+<content:filter roles="HR,Instructor,AcademyAdmin,AcademyAudit">
  <content:subitem><el:cmd url="busycalendar">Busy Times</el:cmd></content:subitem>
  <content:subitem><el:cmd url="courses">Active Courses</el:cmd></content:subitem>
  <content:subitem><el:cmd url="coursequeue">Pending Approval</el:cmd></content:subitem>
@@ -32,6 +32,8 @@
  <content:subitem><el:cmd url="arscripts">Check Ride Scripts</el:cmd></content:subitem>
  <content:subitem><el:cmd url="academyridequeue">Check Rides</el:cmd></content:subitem>
  <content:subitem><el:cmd url="inslogbook">Instruction Logbook</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="eprofiles">Exam Profiles</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="qprofiles">Question Profiles</el:cmd></content:subitem>
 <c:if test="${videoEnabled}">
  <content:subitem><el:cmd url="tvideolibrary">Video Library</el:cmd></content:subitem>
 </c:if>

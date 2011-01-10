@@ -1453,31 +1453,31 @@
 	<command id="eprofiles">
 		<name>Examination Profiles</name>
 		<class>org.deltava.commands.testing.ExamProfilesCommand</class>
-		<roles>HR,Examination,Instructor,TestAdmin</roles>
+		<roles>HR,Examination,Instructor,TestAdmin,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="eprofile">
 		<name>Examination Profile</name>
 		<class>org.deltava.commands.testing.ExamProfileCommand</class>
-		<roles>HR,Examination,Instructor,TestAdmin</roles>
+		<roles>HR,Examination,Instructor,TestAdmin,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="qprofiles">
 		<name>Question Profiles</name>
 		<class>org.deltava.commands.testing.QuestionProfilesCommand</class>
-		<roles>HR,Examination,TestAdmin</roles>
+		<roles>HR,Examination,TestAdmin,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="qprofile">
 		<name>Question Profile</name>
 		<class>org.deltava.commands.testing.QuestionProfileCommand</class>
-		<roles>HR,Examination,TestAdmin</roles>
+		<roles>HR,Examination,TestAdmin,AcademyAdmin,AcademyAudit</roles>
 	</command>
 
 	<command id="qinclude">
 		<name>Question Examination Include</name>
 		<class>org.deltava.commands.testing.QuestionIncludeCommand</class>
-		<roles>HR,Examination,TestAdmin</roles>
+		<roles>HR,Examination,TestAdmin,AcademyAdmin</roles>
 	</command>
 
 	<command id="qpdelete">
