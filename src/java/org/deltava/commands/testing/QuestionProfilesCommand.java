@@ -9,16 +9,13 @@ import org.deltava.beans.testing.ExamProfile;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.security.command.QuestionProfileAccessControl;
-
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.security.command.*;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display Examination Question Profiles.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -34,6 +31,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the view start/end/count
@@ -44,14 +42,30 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
       try {
          Connection con = ctx.getConnection();
          
-         // Get the examination profile
+         // Get the examination profiles and see which ones we can view
+         boolean hasAcademy = false; boolean hasProgram = false;
          GetExamProfiles epdao = new GetExamProfiles(con);
+         Collection<ExamProfile> eProfiles = epdao.getExamProfiles();
+         for (Iterator<ExamProfile> i = eProfiles.iterator(); i.hasNext(); ) {
+        	 ExamProfile ep = i.next();
+        	 ExamProfileAccessControl eac = new ExamProfileAccessControl(ctx, ep);
+        	 eac.validate();
+        	 if (eac.getCanRead()) {
+        		 hasAcademy |= ep.getAcademy();
+        		 hasProgram |= !ep.getAcademy();
+        	 } else
+        		 i.remove();
+         }
          
+         // Determine what stats to display
+         boolean isAcademyOnly = hasAcademy && !hasProgram;
+         isAcademyOnly |= Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue();
          
          // Get all exam names and save
          List<Object> examNames = new ArrayList<Object>(ADD_OPTS);
-         examNames.addAll(epdao.getExamProfiles());
+         examNames.addAll(eProfiles);
          ctx.setAttribute("examNames", examNames, REQUEST);
+         ctx.setAttribute("academyOnly", Boolean.valueOf(isAcademyOnly), REQUEST);
          
          // Get the question list and save
          GetExamQuestions eqdao = new GetExamQuestions(con);
@@ -60,19 +74,25 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
          int ofs = StringUtils.arrayIndexOf(ADD_CODES, examName);
          switch (ofs) {
          case 1:
-        	 vc.setResults(eqdao.getMostPopular());
+        	 vc.setResults(eqdao.getMostPopular(isAcademyOnly));
         	 break;
         	 
          case 2:
-        	 vc.setResults(eqdao.getResults(true, StringUtils.parse(ctx.getParameter("minExams"), 10)));
-        	 break;
-        	 
          case 3:
-        	 vc.setResults(eqdao.getResults(false, StringUtils.parse(ctx.getParameter("minExams"), 10)));
+        	 int minExams = StringUtils.parse(ctx.getParameter("minExams"), 20);
+        	 vc.setResults(eqdao.getResults((ofs == 2), isAcademyOnly, minExams));
+        	 ctx.setAttribute("minExams", Integer.valueOf(minExams), REQUEST);
         	 break;
         	 
          default:
         	ExamProfile ep = epdao.getExamProfile(examName);
+        	if (ep != null) {
+        		ExamProfileAccessControl eac = new ExamProfileAccessControl(ctx, ep);
+        		eac.validate();
+        		if (!eac.getCanRead())
+        			throw securityException("Cannot view " + examName + " examination info");
+        	}
+
         	vc.setResults(eqdao.getQuestions(ep));
          }
       } catch (DAOException de) {

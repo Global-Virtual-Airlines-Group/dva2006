@@ -91,8 +91,8 @@ return true;
 </c:if>
 <tr>
  <td class="data small ${mcCSS}"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span>
-<c:if test="${!empty qProfile}"> - Correct [ <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
- (<fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %) ]</c:if></td>
+<c:if test="${!empty qProfile}"> - <fmt:int value="${qProfile.correctAnswers}" /> / <fmt:int value="${qProfile.totalAnswers}" />
+ (<span class="bld"><fmt:dec value="${qProfile.correctAnswers * 100.0 / qProfile.totalAnswers}" fmt="##0.00" /> %</span>)</c:if></td>
 </tr>
 <c:if test="${fn:isRoutePlot(q)}">
 <tr>

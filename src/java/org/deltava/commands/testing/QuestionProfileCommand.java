@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -32,6 +32,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -109,7 +110,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			ctx.startTX();
 
 			// Save the profile
-			SetExamProfile wdao = new SetExamProfile(con);
+			SetExamQuestion wdao = new SetExamQuestion(con);
 			wdao.write(qp);
 
 			// Save/delete the image
@@ -149,6 +150,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		boolean doEdit = false;
 		boolean isRP = false;
@@ -233,6 +235,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
