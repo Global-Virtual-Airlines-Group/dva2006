@@ -128,23 +128,6 @@ ul.menu li ul {
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main IE formatting table */
-table#ieLayout {
-	width: 100%;
-	left: 0px;
-	background-color: #ffffff;
-}
-
-table#ieLayout td#navmenu {
-	vertical-align: top;
-	width: 160px;
-}
-
-table#ieLayout td#main {
-	vertical-align: top;
-	color: #0000a1;
-	margin: 8px;
-}
-
 .navbar div#main {
 	margin: 4px;
 	padding: 8px;

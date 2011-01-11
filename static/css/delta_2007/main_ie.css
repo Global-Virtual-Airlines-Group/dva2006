@@ -128,22 +128,6 @@ ul.menu li ul {
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main IE formatting table */
-table#ieLayout {
-	width: 100%;
-	left: 0px;
-	background-color: #ffffff;
-}
-
-table#ieLayout td#navmenu {
-	vertical-align: top;
-	width: 160px;
-}
-
-table#ieLayout td#main {
-	vertical-align: top;
-	color: #0000a1;
-}
-
 .navbar div#main {
 	margin: 4px;
 	padding: 8px;
@@ -228,10 +212,9 @@ table {
 
 body {
 	color: #1a4876;
-	margin-left: 2px;
-	margin-right: 0px;
+	margin: 1px;
 	font-family: verdana, tahoma, sans-serif;
-	font-size: 9pt;
+	font-size: 11px;
 }
 
 .cmdButton, .button {
@@ -247,13 +230,13 @@ body {
 a, a:visited {
 	color: #1a4876;
 	text-decoration: underline;
-	font-size: 9pt;
+	font-size: 11px;
 }
 
 a:hover {
 	color: #c01933;
 	text-decoration: underline;
-	font-size: 9pt;
+	font-size: 11px;
 }
 
 .bld, a.bld {
@@ -293,7 +276,7 @@ a:hover {
 }
 
 .small, *.small a, a.small {
-	font-size: 8pt;
+	font-size: 10px;
 }
 
 .caps {
