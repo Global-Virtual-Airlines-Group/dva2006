@@ -280,7 +280,7 @@ public class SetExam extends DAO {
 		try {
 			prepareStatement("REPLACE INTO exams.QUESTIONSTATS (SELECT EQ.QUESTION_ID, ?, COUNT(EQ.CORRECT), "
 				+ "SUM(EQ.CORRECT) FROM exams.EXAMQUESTIONS EQ, exams.EXAMS E, exams.EXAMINFO EP WHERE "
-				+ "(EQ.EXAM_ID=E.ID) AND (EP.NAME=E.NAME) AND (E.ISEMPTY=?) AND (E.ACADEMY=?) AND (EQ.QUESTION_ID=?) "
+				+ "(EQ.EXAM_ID=E.ID) AND (EP.NAME=E.NAME) AND (E.ISEMPTY=?) AND (EP.ACADEMY=?) AND (EQ.QUESTION_ID=?) "
 				+ "GROUP BY EQ.QUESTION_ID)");
 			_ps.setBoolean(1, e.getAcademy());
 			_ps.setBoolean(2, false);
