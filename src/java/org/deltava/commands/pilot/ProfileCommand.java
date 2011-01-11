@@ -40,7 +40,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -171,7 +171,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (im.getIsVisible())
 					p.setIMHandle(im, ctx.getParameter(im.toString() + "Handle"));
 			}
-
 			
 			// Set location
 			if (!StringUtils.isEmpty(ctx.getParameter("location")))
@@ -743,6 +742,12 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get Pilot Examinations
 			GetExam exdao = new GetExam(con);
 			ctx.setAttribute("exams", exdao.getExams(p.getID()), REQUEST);
+			
+			// Load if signature validated
+			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Signature")) {
+				GetImage imgdao = new GetImage(con);
+				ctx.setAttribute("sigAuthorized", Boolean.valueOf(imgdao.isSignatureAuthorized(p.getID())), REQUEST);
+			}
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);

@@ -256,8 +256,8 @@ return true;
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
 <img alt="${forumName} Signature" src="/sig/${db}/${pilot.hexID}" /><br />
 <el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
-<content:filter roles="HR,Signature">
-<el:box name="isAuthSig" value="true" label="Authorized ${forumName} Signature Image" /><br /></content:filter>
+<content:filter roles="HR,Signature"><c:if test="${!sigAuthorized}">
+<el:box name="isAuthSig" value="true" label="Authorized ${forumName} Signature Image" /><br /></c:if></content:filter>
 <el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void disableSigBoxes()" /></td>
 </tr>
 <tr>
