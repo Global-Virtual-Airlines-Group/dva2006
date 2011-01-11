@@ -9,7 +9,6 @@
 <map:xhtml>
 <head>
 <title><content:airline /> ACARS Live Map</title>
-<content:browserFilter ie8="true"><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /></content:browserFilter>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />

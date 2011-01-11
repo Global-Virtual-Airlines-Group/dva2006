@@ -8,7 +8,6 @@
 <map:xhtml>
 <head>
 <title><content:airline /> ACARS Dispatch Map</title>
-<content:browserFilter ie8="true"><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /></content:browserFilter>
 <content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
 <content:js name="common" />
