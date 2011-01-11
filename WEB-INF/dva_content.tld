@@ -492,24 +492,6 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
-		<attribute>
-			<name>rows</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Integer</type>
-		</attribute>
-		<attribute>
-			<name>cols</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Integer</type>
-		</attribute>
-		<attribute>
-			<name>closeRow</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
 	</tag>
 
 	<tag>
