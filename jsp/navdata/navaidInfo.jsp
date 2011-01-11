@@ -71,6 +71,7 @@ xmlreq.onreadystatechange = function() {
 		var code = wp.getAttribute('code');
 		if (code != '${param.navaidCode}') {
 			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
+			var mrk;
 			if (wp.getAttribute('pal'))
 				mrk = googleIconMarker(wp.getAttribute('pal'), wp.getAttribute('icon'), p, wp.firstChild.data);
 			else
@@ -104,6 +105,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -157,23 +159,26 @@ return true;
 </content:page>
 <c:if test="${!empty results}">
 <script type="text/javascript">
-// Build the navaid list
-<map:markers var="navaids" items="${results}" />
+<map:point var="mapC" point="${mapCenter}" />
 
-//Create map options
+// Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: navaids[0].getPosition(), zoom: getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center: mapC, zoom: getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Build the map
 var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+
+//Build the navaid list
+<map:markers var="navaids" items="${results}" />
 addMarkers(map, 'navaids');
 
 // Surrounding navads
 var sMarkers = new MarkerManager(map, {borderPadding:24});
 document.forms[0].navaid.selectedIndex = 0;
-zoomTo(document.forms[0].navaid);
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() { zoomTo(document.forms[0].navaid); });
 </script></c:if>
 </body>
 </map:xhtml>
