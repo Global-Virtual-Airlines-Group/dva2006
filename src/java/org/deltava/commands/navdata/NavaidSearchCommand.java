@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to search Naivgation Data.
  * @author Luke
- * @version 2.8
+ * @version 3.6
  * @since 1.0
  */
 
@@ -36,7 +36,7 @@ public class NavaidSearchCommand extends AbstractCommand {
 			return;
 		}
 
-		Collection<NavigationDataBean> results = null;
+		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
 		try {
 			GetNavData dao = new GetNavData(ctx.getConnection());
 			NavigationDataMap ndMap = dao.get(code);
@@ -44,8 +44,10 @@ public class NavaidSearchCommand extends AbstractCommand {
 				ndMap = new NavigationDataMap();
 
 			// Save results
-			results = ndMap.getAll();
+			results.addAll(ndMap.getAll());
 			ctx.setAttribute("results", results, REQUEST);
+			if (!results.isEmpty())
+				ctx.setAttribute("mapCenter", results.get(0), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
