@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -90,10 +90,10 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null)) {
 			if (_doStable) {
-				_minorVersion = "1";
+				_minorVersion = "2";
 				_doStable = false;
 			} else if (!_doCurrent)
-				_minorVersion = "2";
+				_minorVersion = "3";
 			else
 				_doCurrent = false;
 		}
