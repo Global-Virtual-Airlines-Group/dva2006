@@ -36,6 +36,10 @@
  <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
 </c:if>
+<tr>
+ <td class="label">Aircraft Type</td>
+ <td class="data">${checkRide.aircraftType}</td>
+</tr>
 <c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
