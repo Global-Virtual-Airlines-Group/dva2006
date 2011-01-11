@@ -37,6 +37,7 @@ div.navbar div#navmenu {
 	height: 20px;
 	margin: 0px;
 	background-color: #0000a1;
+	z-index: 20;
 }
 
 ul.menu, ul.menuitem {
@@ -44,6 +45,7 @@ ul.menu, ul.menuitem {
 	margin: 0px;
 	padding: 0px;
 	float: left;
+	z-index: 20;
 }
 
 ul.menuitem li {
