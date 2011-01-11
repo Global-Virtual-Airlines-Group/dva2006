@@ -95,7 +95,7 @@ public class TestCommandContext extends TestCase {
     	_ctxt.release();
     	
     	// Intialize a connection pool
-    	ConnectionPool pool = new ConnectionPool(1);
+    	ConnectionPool pool = new ConnectionPool(1, "test");
     	SystemData.init();
     	SystemData.add(SystemData.JDBC_POOL, pool);
     	

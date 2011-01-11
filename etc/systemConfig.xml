@@ -207,6 +207,7 @@
 			<useCursorFetch>true</useCursorFetch>
 			<maintainTimeStats>false</maintainTimeStats>
 			<validationQuery>/* ping */</validationQuery>
+			<enableQueryTimeouts>true</enableQueryTimeouts>
 		</map>
 		
 		<pool_size type="Integer">1</pool_size>

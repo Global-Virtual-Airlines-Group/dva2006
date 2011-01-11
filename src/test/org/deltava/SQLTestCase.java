@@ -29,7 +29,7 @@ public abstract class SQLTestCase extends TestCase {
         props.load(new FileInputStream("data/jdbc.properties"));
 
 		// Init the connection Pool
-		_jdbcPool = new ConnectionPool(1);
+		_jdbcPool = new ConnectionPool(1, "test");
         _jdbcPool.setProperties(props);
         _jdbcPool.setCredentials(props.getProperty("user"), props.getProperty("password"));
         _jdbcPool.setDriver(props.getProperty("driver"));
