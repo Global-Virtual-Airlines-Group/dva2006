@@ -193,8 +193,8 @@ You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchF
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="helpdesk">Help Desk</el:cmd></td>
- <td class="data">The <content:airline /> Help Desk lets pilots and communicate with our Instructors 
- and Staff to quickly and easily resolve any issues, or answer questions about <content:airline />.</td>
+ <td class="data">The <content:airline /> Help Desk lets our members communicate with our Instructors 
+ and Staff to quickly and easily resolve any issues or answer questions about <content:airline />.</td>
 </tr>
 </c:if>
 
