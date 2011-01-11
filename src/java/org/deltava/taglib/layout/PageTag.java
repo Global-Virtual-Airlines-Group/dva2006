@@ -8,6 +8,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.deltava.beans.Pilot;
 
 import org.deltava.commands.CommandContext;
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to render page layouts in a user-specific way.
@@ -40,7 +41,7 @@ public class PageTag extends TagSupport {
 		HttpSession s = hreq.getSession(false);
 		if (s != null) {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
-			_sideMenu = ((usr == null) || !usr.getShowNavBar());
+			_sideMenu = (usr == null) || !usr.getShowNavBar() || ContentHelper.isIE6(pageContext);
 			if (!_sideMenu) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
 				_sideMenu = (sX == null) || (sX.intValue() < 1280);
@@ -48,7 +49,7 @@ public class PageTag extends TagSupport {
 		} else
 			_sideMenu = true;
 		
-		// Render a table for IE6
+		// Render the div
 		try {
 			JspWriter out = pageContext.getOut();
 			if (_sideMenu)
