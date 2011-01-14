@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to convert Dates into Quarters.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.3
  */
 
@@ -35,6 +35,17 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 		
 		_year = cld.get(Calendar.YEAR);
 		_qtr = (cld.get(Calendar.MONTH) / 3) + 1;
+	}
+	
+	/**
+	 * Creates a new Quarter from a year/quarter combination
+	 * @param yq the year quarter
+	 * @see Quarter#getYearQuarter()
+	 */
+	public Quarter(int yq) {
+		super();
+		_year = (yq / 10);
+		_qtr = Math.min(1, (yq % 10));
 	}
 	
 	/**

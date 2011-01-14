@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to load Senior Captain nominations.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 3.3
  */
 
@@ -31,9 +31,9 @@ public class GetNominations extends DAO {
 	 */
 	public List<Nomination> getByAuthor(int authorID) throws DAOException {
 		try {
-			prepareStatement("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR), SUM(IF(NC.AUTHOR=?,1,0)) "
-				+ "AS MINE FROM NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
-				+ "WHERE (N.QUARTER=?) GROUP BY N.ID HAVING (MINE>0) ORDER BY N.SCORE DESC, N.ID");
+			prepareStatement("SELECT N.ID, N.QUARTER, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR), SUM(IF(NC.AUTHOR=?,1,0)) "
+				+ "AS MINE FROM NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) WHERE "
+				+ "(N.QUARTER=?) GROUP BY N.ID HAVING (MINE>0) ORDER BY N.SCORE DESC, N.ID");
 			_ps.setInt(1, authorID);
 			_ps.setInt(2, new Quarter().getYearQuarter());
 			
@@ -58,7 +58,7 @@ public class GetNominations extends DAO {
 	public List<Nomination> getByStatus(Nomination.Status status, Quarter q) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) "
+		StringBuilder sqlBuf = new StringBuilder("SELECT N.ID, N.QUARTER, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) "
 			+ "FROM NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
 			+ "WHERE (N.STATUS=?) ");
 		if (q != null)
@@ -90,8 +90,8 @@ public class GetNominations extends DAO {
 	 */
 	public List<Nomination> getByEQType(String eqType) throws DAOException {
 		try {
-			prepareStatement("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) FROM PILOTS P, "
-				+ "NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
+			prepareStatement("SELECT N.ID, N.QUARTER, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) FROM "
+				+ "PILOTS P, NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
 				+ "WHERE (N.ID=P.ID) AND (P.EQTYPE=?) AND (N.QUARTER=?) GROUP BY N.ID ORDER BY N.SCORE DESC, N.ID");
 			_ps.setString(1, eqType);
 			_ps.setInt(2, new Quarter().getYearQuarter());
@@ -144,6 +144,7 @@ public class GetNominations extends DAO {
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
 				n = new Nomination(rs.getInt(1));
+				n.setQuarter(new Quarter(rs.getInt(2)));
 				n.setScore(rs.getInt(3));
 				n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
 				n.setCreatedOn(rs.getTimestamp(5));
@@ -172,9 +173,9 @@ public class GetNominations extends DAO {
 	 */
 	public List<Nomination> getAll(Quarter q) throws DAOException {
 		try {
-			prepareStatement("SELECT N.ID, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) FROM NOMINATIONS N "
-				+ "LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) WHERE (N.QUARTER=?) "
-				+ "GROUP BY N.ID ORDER BY N.SCORE DESC, N.ID");
+			prepareStatement("SELECT N.ID, N.QUARTER, N.SCORE, N.STATUS, MIN(NC.CREATED), COUNT(NC.AUTHOR) FROM "
+				+ "NOMINATIONS N LEFT JOIN NOMINATION_COMMENTS NC ON (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER) "
+				+ "WHERE (N.QUARTER=?) GROUP BY N.ID ORDER BY N.SCORE DESC, N.ID");
 			_ps.setInt(1, q.getYearQuarter());
 			return execute();
 		} catch (SQLException se) {
@@ -190,10 +191,11 @@ public class GetNominations extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			Nomination n = new Nomination(rs.getInt(1));
-			n.setScore(rs.getInt(2));
-			n.setStatus(Nomination.Status.values()[rs.getInt(3)]);
-			n.setCreatedOn(rs.getTimestamp(4));
-			n.setCommentCount(rs.getInt(5));
+			n.setQuarter(new Quarter(rs.getInt(2)));
+			n.setScore(rs.getInt(3));
+			n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
+			n.setCreatedOn(rs.getTimestamp(5));
+			n.setCommentCount(rs.getInt(6));
 			results.add(n);
 		}
 		
@@ -209,7 +211,7 @@ public class GetNominations extends DAO {
 		prepareStatementWithoutLimits("SELECT AUTHOR, SUPPORT, CREATED, BODY FROM NOMINATION_COMMENTS "
 				+ "WHERE (ID=?) AND (QUARTER=?)");
 		_ps.setInt(1, n.getID());
-		_ps.setInt(2, new Quarter(n.getCreatedOn()).getYearQuarter());
+		_ps.setInt(2, n.getQuarter().getYearQuarter());
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));

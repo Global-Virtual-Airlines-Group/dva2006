@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Senior Captain nominations.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.3
  */
 
@@ -43,8 +43,10 @@ public class NominationCommand extends AbstractFormCommand {
 			GetNominations ndao = new GetNominations(con);
 			Nomination n = ndao.get(ctx.getID());
 			boolean isNew = (n == null);
-			if (isNew)
+			if (isNew) {
 				n = new Nomination(ctx.getID());
+				n.setQuarter(new Quarter());
+			}
 			
 			// Load the pilot
 			GetPilot pdao = new GetPilot(con);
@@ -96,15 +98,15 @@ public class NominationCommand extends AbstractFormCommand {
 			// Start a transaction
 			ctx.startTX();
 			
-			// Save the nomination and the comment
+			// Save the nomination
 			SetNomination nwdao = new SetNomination(con);
 			if (isNew)
 				nwdao.create(n);
 			else
 				nwdao.update(n);
-			nwdao.write(n.getID(), nc);
 			
-			// Commit
+			// Save the comment and commit
+			nwdao.writeComment(n, nc);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
