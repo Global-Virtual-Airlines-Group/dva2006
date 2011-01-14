@@ -224,8 +224,7 @@ return true;
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER</td>
 </tr>
 <tr>
- <td class="label top">Weather Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div></td>
 </tr>
 <tr>
  <td class="label">Airport Code</td>
