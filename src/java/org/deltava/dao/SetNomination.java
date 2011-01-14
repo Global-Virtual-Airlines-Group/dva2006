@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to write Senior Captain Nominations to the database.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.3
  */
 
@@ -50,7 +50,7 @@ public class SetNomination extends DAO {
 			prepareStatementWithoutLimits("UPDATE NOMINATIONS SET SCORE=?, STATUS=? WHERE (QUARTER=?) AND (ID=?)");
 			_ps.setInt(1, n.getScore());
 			_ps.setInt(2, n.getStatus().ordinal());
-			_ps.setInt(3, new Quarter(n.getCreatedOn()).getYearQuarter());
+			_ps.setInt(3, n.getQuarter().getYearQuarter());
 			_ps.setInt(4, n.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -59,17 +59,17 @@ public class SetNomination extends DAO {
 	}
 	
 	/**
-	 * Writes a NominationComment to the database.
-	 * @param id the Nomination database ID
+	 * Writes a Nomination Comment to the database.
+	 * @param n the Nomination bean
 	 * @param nc the NominationComment bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(int id, NominationComment nc) throws DAOException {
+	public void writeComment(Nomination n, NominationComment nc) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO NOMINATION_COMMENTS (ID, QUARTER, AUTHOR, SUPPORT, CREATED, BODY) "
 				+ "VALUES (?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, id);
-			_ps.setInt(2, new Quarter(nc.getCreatedOn()).getYearQuarter());
+			_ps.setInt(1, n.getID());
+			_ps.setInt(2, n.getQuarter().getYearQuarter());
 			_ps.setInt(3, nc.getID());
 			_ps.setBoolean(4, nc.getSupport());
 			_ps.setTimestamp(5, createTimestamp(nc.getCreatedOn()));
@@ -91,6 +91,7 @@ public class SetNomination extends DAO {
 			_ps.setInt(1, new Quarter().getYearQuarter());
 			_ps.setInt(2, n.getID());
 			_ps.setInt(3, new Quarter(n.getCreatedOn()).getYearQuarter());
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

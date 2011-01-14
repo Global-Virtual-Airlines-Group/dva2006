@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
  * A bean to track Senior Captain nominations. The first nomination is tracked in the Nomination and
  * {@link NominationComment} beans, with further nominations resulting in another NominationComment.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 3.3
  */
 
@@ -20,6 +20,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	}
 
 	private Date _created;
+	private Quarter _q;
 	private Status _status = Status.PENDING;
 	
 	private int _score;
@@ -61,6 +62,16 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 */
 	public int getScore() {
 		return _score;
+	}
+	
+	/**
+	 * Returns the calendar quarter for this Nomination, which may be different than
+	 * the date it was created.
+	 * @return the Qurater
+	 * @see Nomination#setQuarter(Quarter)
+	 */
+	public Quarter getQuarter() {
+		return _q;
 	}
 	
 	/**
@@ -114,6 +125,15 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
+	 * Updates the calendar quarter of this Nomination.
+	 * @param q the Quarter
+	 * @see Nomination#getQuarter()
+	 */
+	public void setQuarter(Quarter q) {
+		_q = q;
+	}
+	
+	/**
 	 * Updates the date this nomination was created.
 	 * @param dt the date/time the nomination was created
 	 * @throws IllegalStateException if comments have been added
@@ -158,7 +178,7 @@ public class Nomination extends DatabaseBean implements ViewEntry {
 	 */
 	public String getRowClassName() {
 		if (_status == Status.PENDING)
-			return null;
+			return _q.equals(new Quarter(_created)) ? null : "opt1";
 		
 		return (_status == Status.REJECTED) ? "error" : "opt2";
 	}
