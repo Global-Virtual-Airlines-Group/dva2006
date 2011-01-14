@@ -113,7 +113,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
 </tr>
 <c:forEach var="nom" items="${noms}">
 <c:set var="pilot" value="${pilots[nom.ID]}" scope="page" />
-<tr>
+<view:row entry="${nom}">
  <td><a id="tc${nom.ID}" class="ncToggle plain" onclick="javascript:void toggleComments(${nom.ID})"> + </a><el:cmd url="scnominate" link="${nom}" className="pri bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
@@ -122,7 +122,7 @@ We look forward to your help in recognizing those who make <content:airline /> a
  <td><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
  <td class="small bld"><fmt:date fmt="d" date="${nom.createdOn}" /></td>
  <td class="pri bld"><fmt:int value="${nom.score}" /></td>
-</tr>
+</view:row>
 <c:forEach var="nc" items="${nom.comments}">
 <c:set var="author" value="${pilots[nc.authorID]}" scope="page" />
 <view:row entry="${nc}" className="nc-${nom.ID}" style="display:none;">
