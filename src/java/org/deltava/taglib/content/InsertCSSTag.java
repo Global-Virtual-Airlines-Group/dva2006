@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 3.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -30,7 +30,6 @@ public class InsertCSSTag extends InsertContentTag {
 	private String _host;
 	private String _scheme;
 	private boolean _browserSpecific;
-	private String _ie7suffix;
 	private String _defaultSuffix = DEFAULT_SUFFIX;
 
 	/**
@@ -56,14 +55,6 @@ public class InsertCSSTag extends InsertContentTag {
 	 */
 	public void setScheme(String name) {
 		_scheme = (name == null) ? null : name.toLowerCase().replace(' ', '_');
-	}
-	
-	/**
-	 * Overrides the file suffix to use for Internet Explorer 7.
-	 * @param suffix the suffix
-	 */
-	public void setIe7suffix(String suffix) {
-		_ie7suffix = suffix;
 	}
 	
 	/**
@@ -117,9 +108,7 @@ public class InsertCSSTag extends InsertContentTag {
 			buf.append('_');
 			if (ContentHelper.isFirefox(pageContext) || ContentHelper.isWebKit(pageContext))
 				buf.append("ff");
-			else if ((ContentHelper.isIE7(pageContext) || ContentHelper.isIE8(pageContext)) && (_ie7suffix != null))
-				buf.append(_ie7suffix);
-			else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext) || ContentHelper.isIE8(pageContext))
+			else if (ContentHelper.isIE8(pageContext) || ContentHelper.isIE7(pageContext) || ContentHelper.isIE9(pageContext) || ContentHelper.isIE6(pageContext))
 				buf.append("ie");
 			else
 				buf.append(_defaultSuffix);
@@ -164,7 +153,6 @@ public class InsertCSSTag extends InsertContentTag {
 		super.release();
 		_scheme = null;
 		_host = null;
-		_ie7suffix = null;
 		_defaultSuffix = DEFAULT_SUFFIX;
 	}
 }
