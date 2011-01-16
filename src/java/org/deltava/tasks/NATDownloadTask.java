@@ -1,4 +1,4 @@
-// Copyright 2002, 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2002, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to download Oceanic Track data.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -59,8 +59,19 @@ public class NATDownloadTask extends Task {
 				dao.setSSLContext(SSLUtils.getContext(cert));
 			}
 			
+			// Load waypoint data, retry up to 3 times
+			int retryCount = 0; boolean isDownloaded = false;
+			while (!isDownloaded && (retryCount < 3)) {
+				try {
+					or.setRoute(dao.getTrackInfo());		
+					isDownloaded = true;
+				} catch (DAOException de) {
+					retryCount++;
+					log.warn("Error downloading NAT Data - " + de.getMessage());
+				}
+			}
+			
 			// Get the waypoint data
-			or.setRoute(dao.getTrackInfo());
 			Map<String, Collection<String>> trackData = dao.getWaypoints();
 			Collection<String> waypointIDs = new HashSet<String>();
 			for (Iterator<Collection<String>> i = trackData.values().iterator(); i.hasNext(); ) {
