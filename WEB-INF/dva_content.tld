@@ -23,11 +23,6 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
-			<name>ie7suffix</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
 			<name>defaultSuffix</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>

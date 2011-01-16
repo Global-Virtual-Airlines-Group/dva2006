@@ -16,10 +16,10 @@
 <content:sysdata var="ourDomain" name="airline.domain" />
 <c:forEach var="domain" items="${userDomains}">
 <c:if test="${domain == ourDomain}">
-<content:css name="signature" browserSpecific="true" ie7suffix="ie7" />
+<content:css name="signature" browserSpecific="true" />
 </c:if>
 <c:if test="${domain != ourDomain}">
-<content:css host="www.${domain}" name="signature" browserSpecific="true" ie7suffix="ie7" scheme="legacy" />
+<content:css host="www.${domain}" name="signature" browserSpecific="true" scheme="legacy" />
 </c:if>
 </c:forEach>
 <content:pics />
@@ -128,7 +128,6 @@ return true;
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="page" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:sysdata var="ccLevels" name="centuryClubLevels" />
 <c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="page" />
 
 <!-- Main Body Frame -->
