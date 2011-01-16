@@ -552,8 +552,8 @@
 		<list name="versions" attr="version" sorted="true">
 			<version>2.2</version>
 			<version>3.0</version>
-			<version>3.4</version>
 			<version>3.5</version>
+			<version>3.6</version>
 		</list>
 		
 		<assignto type="Integer">043</assignto>
@@ -561,15 +561,15 @@
 	
 	<cooler>
 		<img_max>
-			<x type="Integer">1030</x>
-			<y type="Integer">780</y>
+			<x type="Integer">1230</x>
+			<y type="Integer">840</y>
 			<size type="Integer">327680</size>
 		</img_max>
 
 		<sig_max>
-			<x type="Integer">520</x>
-			<y type="Integer">160</y>
-			<size type="Integer">65520</size>
+			<x type="Integer">540</x>
+			<y type="Integer">180</y>
+			<size type="Integer">81920</size>
 		</sig_max>
 
 		<imgurls>
