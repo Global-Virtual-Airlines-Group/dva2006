@@ -12,6 +12,7 @@
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 <content:rss title="${airlineName} NOTAMs" path="/notams_rss.ws" />
 <content:pics />
 </head>
@@ -49,7 +50,7 @@
  <td colspan="3" class="left">${notam.body}</td>
 </c:if>
 <c:if test="${!notam.isHTML}">
- <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
+ <td colspan="3" class="left"><fmt:msg value="${notam.body}" bbCode="true" /></td>
 </c:if>
 </view:row>
 </c:forEach>

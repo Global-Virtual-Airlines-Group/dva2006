@@ -15,7 +15,7 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/header.jspf" %>
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
@@ -34,7 +34,7 @@
 </tr>
 <tr>
  <td class="label top">Entry Text</td>
- <td class="data"><fmt:text value="${entry.body}" /></td>
+ <td class="data"><fmt:msg value="${entry.body}" bbCode="true" /></td>
 </tr>
 </el:table>
 
