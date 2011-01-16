@@ -76,7 +76,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="3" class="left">${notam.body}</td>
 </c:if>
 <c:if test="${!notam.isHTML}">
- <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
+ <td colspan="3" class="left"><fmt:msg value="${notam.body}" bbCode="true" /></td>
 </c:if>
 </c:forEach>
 </el:table>
@@ -91,7 +91,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td class="secB" width="20%">${entry.authorName}</td>
 </tr>
 <tr>
- <td class="left" colspan="3"><fmt:text value="${entry.body}" /></td>
+ <td class="left" colspan="3"><fmt:msg value="${entry.body}" bbCode="true" /></td>
 </tr>
 </c:forEach>
 </el:table>
