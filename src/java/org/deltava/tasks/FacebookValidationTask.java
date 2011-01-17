@@ -89,6 +89,7 @@ public class FacebookValidationTask extends Task {
 			// Load Pilots with a Facebook token
 			Queue<Pilot> work = new LinkedBlockingQueue<Pilot>();
 			work.addAll(pdao.getByIMType(IMAddress.FBTOKEN).values());
+			int totalPilots = work.size();
 			ctx.release();
 			
 			// Fire up the workers
@@ -102,6 +103,12 @@ public class FacebookValidationTask extends Task {
 			
 			// Wait for the workers to finish
 			ThreadUtils.waitOnPool(workers);
+			
+			// Do a sanity check to ensure that FB isn't down
+			if (pilots.size() >= (totalPilots * 0.8)) {
+				log.warn(totalPilots + " total, " + pilots.size() + " invalid, aborting");
+				pilots.clear();
+			}
 			
 			// Write the data
 			con = ctx.getConnection();
