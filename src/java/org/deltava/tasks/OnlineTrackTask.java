@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * A Scheduled Task to download Online Tracks via the ServInfo feed from all
  * online network
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 3.1
  */
 
@@ -65,7 +65,8 @@ public class OnlineTrackTask extends Task {
 				GetPilotOnline podao = new GetPilotOnline(con);
 				networkIDs.putAll(podao.getIDs(network));
 				info.setPilotIDs(networkIDs);
-				log.debug("Loaded " + networkIDs.size() + " " + network + " IDs");
+				if (log.isDebugEnabled())
+					log.debug("Loaded " + networkIDs.size() + " " + network + " IDs");
 				
 				// Loop through the pilots
 				int flightCount = 0;
@@ -76,6 +77,8 @@ public class OnlineTrackTask extends Task {
 					if (!networkIDs.containsKey(String.valueOf(p.getID())))
 						continue;
 					else if ((p.getAirportD().getICAO().length() != 4) || (p.getAirportA().getICAO().length() != 4))
+						continue;
+					else if (p.getPilotID() == 0)
 						continue;
 					
 					// Check if we've already opened a flight track for this Pilot
@@ -107,7 +110,7 @@ public class OnlineTrackTask extends Task {
 				
 				// Purge old flight entries
 				int purgeCount = otwdao.purgeAll(48);
-				log.debug("Purged " + purgeCount + " old flight tracks");
+				log.info("Purged " + purgeCount + " old flight tracks");
 			} catch (DAOException de) {
 				ctx.rollbackTX();
 				log.error("Error loading " + network + " data", de);
