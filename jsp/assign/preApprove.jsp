@@ -44,6 +44,13 @@ return true;
 <tr class="title caps">
  <td colspan="2">UNSCHEDULED FLIGHT APPROVAL - ${assignPilot.name}</td>
 </tr>
+<c:if test="${charterFlights > 0}">
+<tr>
+ <td class="label">Charter Flights</td>
+ <td class="data"><fmt:int value="${charterFlights}" /> total Charters flown, <fmt:int value="${recentCharterFlights}" /> Charters
+ within the past 90 days</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Aircraft Type</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" className="req" options="${eqTypes}" firstEntry="-" /></td>

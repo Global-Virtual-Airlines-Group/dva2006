@@ -485,6 +485,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="charterstats">
+		<name>Charter Flight Statistics</name>
+		<class>org.deltava.commands.stats.CharterStatsCommand</class>
+		<roles>HR,Operations</roles>
+	</command>
+
 	<command id="simversionstats">
 		<name>Simulator Version Statistics</name>
 		<class>org.deltava.commands.stats.SimulatorStatsCommand</class>
@@ -512,7 +518,7 @@
 	<command id="fleetstats">
 		<name>Fleet Installer Statistics</name>
 		<class>org.deltava.commands.stats.InstallerStatsCommand</class>
-		<roles>Fleet,HR</roles>
+		<roles>Fleet,HR,Operations</roles>
 	</command>
 
 
@@ -1139,6 +1145,12 @@
 		<name>Accomplishment Profile</name>
 		<class>org.deltava.commands.stats.AccomplishmentCommand</class>
 		<roles>HR,Operations,PIREP</roles>
+	</command>
+
+	<command id="accomplishrecalc">
+		<name>Accomplishment Recalculate</name>
+		<class>org.deltava.commands.stats.AccomplishmentUpdateCommand</class>
+		<roles>HR,Operations</roles>
 	</command>
 
 	<command id="accalc">

@@ -460,6 +460,86 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	}
 	
 	/**
+	 * Retrieves aggregated Charter Flight Report statistics.
+	 * @param groupBy the &quot;GROUP BY&quot; column name
+	 * @param orderBy the &quot;ORDER BY&quot; column name
+	 * @param descSort TRUE if a descending sort, otherwise FALSE
+	 * @return a Collection of FlightStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<FlightStatsEntry> getCharterStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
+		boolean hasPilot = groupBy.contains("P.");
+		
+		// Get the SQL statement to use
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		sqlBuf.append(groupBy);
+		sqlBuf.append(hasPilot ? getPilotJoinSQL() : getSQL());
+		sqlBuf.append("AND ((F.ATTR & ?) > 0) GROUP BY LABEL ORDER BY ");
+		sqlBuf.append(orderBy);
+		if (descSort)
+			sqlBuf.append(" DESC");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, FlightReport.ATTR_ACARS);
+			_ps.setInt(2, FlightReport.ATTR_VATSIM);
+			_ps.setInt(3, FlightReport.ATTR_IVAO);
+			_ps.setInt(4, FlightReport.ATTR_HISTORIC);
+			_ps.setInt(5, FlightReport.ATTR_DISPATCH);
+			_ps.setInt(6, FlightReport.OK);
+			_ps.setInt(7, FlightReport.ATTR_CHARTER);
+			
+			// Check the cache
+			String cacheKey = getCacheKey(_ps.toString());
+			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
+			if (results != null) {
+				_ps.close();
+				return results.clone();
+			}
+			
+			// Get the results
+			results = new CacheableList<FlightStatsEntry>(cacheKey);
+			results.addAll(execute());
+			_statCache.add(results);
+			return results.clone();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of Charter flights flown by a Pilot in a particular time interval.
+	 * @param pilotID the Pilot's datbase ID
+	 * @param days the number of days, zero for all
+	 * @return the number of approved Charter flights
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getCharterCount(int pilotID, int days) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
+		if (days > 0)
+			sqlBuf.append(" AND (DATE >= DATE_SUB(CURDATE(), INTERVAL ? DAY))");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, pilotID);
+			_ps.setInt(2, FlightReport.OK);
+			if (days > 0)
+				_ps.setInt(3, days);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int count = rs.next() ? rs.getInt(1) : 0;
+			rs.close();
+			_ps.close();
+			return count;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Retrieves aggregated approved Flight Report statistics.
 	 * @param pilotID the Pilot's database ID, or zero if airline-wide
 	 * @param groupBy the &quot;GROUP BY&quot; column name
@@ -567,7 +647,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS DSPLEGS, "
 				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM PIREPS F WHERE (F.STATUS=?) ";
 	}
-
+	
 	/**
 	 * Private helper method to return SQL statement that involves a join on the <i>PILOTS</i> table.
 	 */

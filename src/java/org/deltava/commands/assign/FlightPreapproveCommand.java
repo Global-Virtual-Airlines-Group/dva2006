@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.1
  */
 
@@ -68,6 +68,11 @@ public class FlightPreapproveCommand extends AbstractCommand {
 				// Get the equipment types
 				GetAircraft adao = new GetAircraft(con);
 				ctx.setAttribute("eqTypes", adao.getAircraftTypes(), REQUEST);
+				
+				// Get the number of charter flights
+				GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
+				ctx.setAttribute("charterFlights", Integer.valueOf(stdao.getCharterCount(usr.getID(), 0)), REQUEST);
+				ctx.setAttribute("recentCharterFlights", Integer.valueOf(stdao.getCharterCount(usr.getID(), 90)), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
