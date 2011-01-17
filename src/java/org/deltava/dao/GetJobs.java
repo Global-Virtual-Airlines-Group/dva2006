@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to read Job applications and profiles from the database.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -87,6 +87,21 @@ public class GetJobs extends DAO {
 	public List<JobPosting> getAll() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM JOBPOSTINGS ORDER BY CLOSES DESC, CREATED DESC");
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves all open Job postings.
+	 * @return a List of JobPosting beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<JobPosting> getOpen() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM JOBPOSTINGS WHERE (STATUS=?) ORDER BY CLOSES DESC");
+			_ps.setInt(1, JobPosting.OPEN);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
