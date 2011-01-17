@@ -637,6 +637,10 @@ training session with a Flight Academy student.</td>
 </content:filter>
 <content:filter roles="HR,Operations">
 <tr>
+ <td class="mid"><el:cmd className="bld" url="accomplishrecalc">Recalculate Pilot Accomplishments</el:cmd></td>
+ <td class="data">You can recalculate which pilots are eligible for a specific Pilot Accomplishment.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="eqtypes">Equipment Type Programs</el:cmd></td>
  <td class="data">You can add new equipment programs, or modify existing programs to
  change Chief Pilots, automatic additional ratings or equipment types for flight legs

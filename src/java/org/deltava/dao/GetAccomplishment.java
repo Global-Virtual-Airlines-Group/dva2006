@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 3.2
  */
 
@@ -193,6 +193,30 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 		}
 		
 		return results;
+	}
+	
+	/**
+	 * Retruns whether a Pilot was awarded a particular Accomplishment.
+	 * @param pilotID the Pilot database ID
+	 * @param a the Accomplishment bean
+	 * @return TRUE if the Accomplishment was awarded, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean has(int pilotID, Accomplishment a) throws DAOException {
+		try {
+			prepareStatement("SELECT DATE FROM PILOT_ACCOMPLISHMENTS WHERE (PILOT_ID=?) AND (AC_ID=?)");
+			_ps.setInt(1, pilotID);
+			_ps.setInt(2, a.getID());
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			boolean isOK = rs.next() ? (rs.getTimestamp(1) != null) : false;
+			rs.close();
+			_ps.close();
+			return isOK;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/**
