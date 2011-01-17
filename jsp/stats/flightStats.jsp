@@ -29,13 +29,13 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="flightstats.do" method="post" validate="return true">
+<el:form action="${isCharter ? 'charter' : 'flight'}stats.do" method="post" validate="return true">
 <view:table className="view" cmd="flightstats">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS</td>
+ <td colspan="4" class="left caps"><content:airline /> <c:if test="${isCharter}">CHARTER </c:if>FLIGHT STATISTICS</td>
  <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" />
- <el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Pilots Only" /></td>
+<c:if test="${!isCharter}"> <el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Pilots Only" /></c:if></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
 </view:table>
