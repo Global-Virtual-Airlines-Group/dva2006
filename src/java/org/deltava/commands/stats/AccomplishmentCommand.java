@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 3.2
  */
 
@@ -89,6 +89,10 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			// Write the accomplishment
 			SetAccomplishment wdao = new SetAccomplishment(con);
 			wdao.write(a);
+			
+			// Save status attributes
+			ctx.setAttribute("ap", a, REQUEST);
+			ctx.setAttribute("isNew", Boolean.valueOf(isNew), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -97,8 +101,8 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setType(ResultType.REDIRECT);
-		result.setURL("accomplishments.do");
+		result.setType(ResultType.REQREDIRECT);
+		result.setURL("/jsp/stats/accomplishmentUpdate.jsp");
 		result.setSuccess(true);
 	}
 
