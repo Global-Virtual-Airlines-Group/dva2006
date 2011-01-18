@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to define Pilot accomplishments.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 3.2
  */
 
-public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry {
+public class Accomplishment extends DatabaseBean implements Cacheable, ComboAlias, ViewEntry {
 
 	/**
 	 * Enumeration to track Accomplishment Units.
@@ -158,6 +158,14 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ViewEntry
 	 */
 	public AirlineInformation getOwner() {
 		return _owner;
+	}
+	
+	public String getComboName() {
+		return _name;
+	}
+	
+	public String getComboAlias() {
+		return getHexID();
 	}
 	
 	/**
