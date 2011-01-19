@@ -8,11 +8,12 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.testing.*;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -293,6 +294,12 @@ public class AcademyHistoryHelper {
 	 * @return TRUE if the user can take the Course, otherwise FALSE
 	 */
 	public boolean canTake(Certification c) {
+		
+		// Check that the academy is enabled
+		if (!SystemData.getBoolean("academy.enabled")) {
+			log("Flight Academy disabled");
+			return false;
+		}
 		
 		// If it's inactive, and we're not an instructor no
 		if (!c.getActive() && !_allowInactive) {
