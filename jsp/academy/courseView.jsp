@@ -165,10 +165,9 @@ return true;
 Requires the <span class="pri bld">${progress.examName}</span> examination<c:if test="${isMine}">, which can be started at the 
  <el:cmd url="academy" className="sec bld">Flight Academy</el:cmd> page</c:if>. 
 </c:when>
-<c:when test="${access.canUpdateProgress}">
-<el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Mark as Completed" />
-</c:when>
 </c:choose>
+<c:if test="${access.canUpdateProgress}">
+ <el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Mark as Completed" /></c:if>
 </c:if>
 </td>
 </view:row>
