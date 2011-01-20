@@ -27,6 +27,6 @@
 	<classpathentry kind="lib" path="lib/deploy/json-1.00.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.14-bin.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.43.jar" sourcepath="/IPC"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.44.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
