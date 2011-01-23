@@ -60,7 +60,7 @@ return true;
  <td class="data">The following <content:airline /> Pilots have been awarded the Accomplishment:<br />
 <br />
 <c:forEach var="pilot" items="${pilots}" varStatus="pStatus">
-${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br /></c:if></c:forEach></td>
+${pilot.rank.name} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> (${pilot.pilotCode})<c:if test="${!pStatus.last}"><br /></c:if></c:forEach></td>
 </tr>
 </c:otherwise>
 </c:choose>
