@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 /**
  * A cache for File handles.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.2
  */
 
@@ -18,14 +18,20 @@ public class FileCache extends Cache<CacheableFile> {
 	
 	private long _maxAge;
 	
-	protected static class FileCacheEntry extends CacheEntry<CacheableFile> {
+	protected class FileCacheEntry extends CacheEntry<CacheableFile> {
+		private long _lastModified;
 		
 		public FileCacheEntry(CacheableFile f) {
-			super(f);
+			super(f, _refQueue);
+			_lastModified = f.lastModified();
+		}
+		
+		public boolean exists() {
+			return (get() != null) && (get().exists());
 		}
 		
 		public long getLastUpdateTime() {
-			return getData().lastModified();
+			return _lastModified;
 		}
 		
 		public int compareTo(CacheEntry<CacheableFile> e2) {
@@ -70,8 +76,8 @@ public class FileCache extends Cache<CacheableFile> {
 		FileCacheEntry entry = (FileCacheEntry) _cache.get(key);
 		_cache.remove(key);
 		if (entry != null) {
-			if (!entry.getData().delete())
-				log.warn("Cannot delete " + entry.getData().getAbsolutePath());
+			if (!entry.exists() || !entry.get().delete())
+				log.warn("Cannot delete file");
 		}
 	}
 	
@@ -80,10 +86,10 @@ public class FileCache extends Cache<CacheableFile> {
 	 */
 	public final void clear() {
 		for (Iterator<CacheEntry<CacheableFile>> i = _cache.values().iterator(); i.hasNext(); ) {
-			CacheEntry<CacheableFile> entry = i.next();
-			if (entry.getData().exists()) {
-				if (!entry.getData().delete())
-					log.warn("Cannot delete " + entry.getData().getAbsolutePath());
+			FileCacheEntry entry = (FileCacheEntry) i.next();
+			if (entry.exists()) {
+				if (!entry.get().delete())
+					log.warn("Cannot delete " + entry.get().getAbsolutePath());
 			}
 			
 			i.remove();
@@ -110,18 +116,18 @@ public class FileCache extends Cache<CacheableFile> {
 		
 		// Check if the file exists or is new
 		FileCacheEntry entry = (FileCacheEntry) _cache.get(key);
-		if ((entry == null) || (!entry.getData().exists()))
+		if (entry == null)
 			return null;
 
 		// Check if expired
 		if (_maxAge > 0) {
 			long age = System.currentTimeMillis() - entry.getLastUpdateTime();
-			if (age >= _maxAge) {
+			if ((age >= _maxAge) || !entry.exists()) {
 				remove(key);
 				return null;
 			}
 		}
 			
-		return entry.getData();
+		return entry.get();
 	}
 }

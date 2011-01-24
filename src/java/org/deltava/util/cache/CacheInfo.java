@@ -1,44 +1,47 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 2.6
  */
 
 public class CacheInfo implements java.io.Serializable {
-	
+
 	private int _instances;
 	private long _hits;
 	private long _reqs;
+	private long _clears;
 	private long _size;
 	private long _capacity;
 
 	/**
 	 * Initializes the information bean from a Cache.
-	 * @param c the Cache 
+	 * @param c the Cache
 	 */
 	public CacheInfo(Cache<?> c) {
 		super();
 		add(c);
 	}
-	
+
 	/**
 	 * Adds another Cache's statistics to this bean.
 	 * @param c the Cache
 	 */
 	public void add(Cache<?> c) {
 		if (c != null) {
+			c.checkQueue();
 			_instances++;
 			_hits += c.getHits();
 			_reqs += c.getRequests();
+			_clears += c.getClears();
 			_size += c.size();
 			_capacity += c.getMaxSize();
 		}
 	}
-	
+
 	/**
 	 * Returns the number of cache instances used to generate these statistics.
 	 * @return the number of caches;
@@ -54,7 +57,7 @@ public class CacheInfo implements java.io.Serializable {
 	public long getHits() {
 		return _hits;
 	}
-	
+
 	/**
 	 * Returns the number of cache requests.
 	 * @return the number of requests
@@ -64,13 +67,21 @@ public class CacheInfo implements java.io.Serializable {
 	}
 	
 	/**
+	 * Returns the number of cache entry garbage collections.
+	 * @return the number of collections
+	 */
+	public long getClears() {
+		return _clears;
+	}
+
+	/**
 	 * Returns the number of objects in the caches.
 	 * @return the number of objects
 	 */
 	public long getSize() {
 		return _size;
 	}
-	
+
 	/**
 	 * Returns the maximum size of the caches.
 	 * @return the maximum number of objects
@@ -78,7 +89,7 @@ public class CacheInfo implements java.io.Serializable {
 	public long getMaxSize() {
 		return _capacity;
 	}
-	
+
 	/**
 	 * Dumps information about the CacheInfo bean.
 	 */
