@@ -38,9 +38,8 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 			
 			// Get all accomplishments
 			GetAccomplishment adao = new GetAccomplishment(con);
-			int id = ctx.getID();
-			if (id == 0) {
-				ctx.setAttribute("accomplishments", adao.getAll(), REQUEST);
+			ctx.setAttribute("accomplishments", adao.getAll(), REQUEST);
+			if (ctx.getID() == 0) {
 				ctx.release();
 				
 				// Forward to the JSP
@@ -50,9 +49,9 @@ public class AccomplishmentUpdateCommand extends AbstractCommand {
 			}
 			
 			// Get the Accomplishment
-			Accomplishment a = adao.get(id);
+			Accomplishment a = adao.get(ctx.getID());
 			if (a == null)
-				throw notFoundException("Invalid Accomplishment ID - " + id);
+				throw notFoundException("Invalid Accomplishment ID - " + ctx.getID());
 			
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
