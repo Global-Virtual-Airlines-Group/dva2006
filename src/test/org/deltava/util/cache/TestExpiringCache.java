@@ -34,7 +34,7 @@ public class TestExpiringCache extends TestCase {
 		Cacheable e2 = new CacheableLong(Integer.valueOf(2), 2);
 		_cache.setExpiration(2);
 		_entry = _cache.new ExpiringCacheEntry<Cacheable>(e1);
-		assertSame(e1, _entry.getData());
+		assertSame(e1, _entry.get());
 		_cache.setExpiration(1);
 		ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> entry2 = _cache.new ExpiringCacheEntry<Cacheable>(e2);
 		assertTrue(_entry.compareTo(entry2) > 0);
@@ -44,7 +44,7 @@ public class TestExpiringCache extends TestCase {
 		Object key = "$key";
 		_nullEntry = _cache.new ExpiringNullCacheEntry<Cacheable>(key);
 		assertEquals(key, _nullEntry.toString());
-		assertNull(_nullEntry.getData());
+		assertNull(_nullEntry.get());
 	}
 
 	public void testClone() throws Exception {

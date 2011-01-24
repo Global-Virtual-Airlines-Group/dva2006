@@ -1,5 +1,7 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
+
+import java.lang.ref.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -9,7 +11,7 @@ import java.util.concurrent.atomic.*;
  * An an abstract class to store common cache operations. These caches can store null
  * entries to prevent repeated uncached calls for invalid keys.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -19,8 +21,11 @@ public abstract class Cache<T extends Cacheable> {
 	private final Semaphore _ovLock = new Semaphore(1, true);
 	private int _maxSize;
 
+	protected final ReferenceQueue<T> _refQueue = new ReferenceQueue<T>();
+	
 	private final AtomicLong _hits = new AtomicLong();
 	private final AtomicLong _gets = new AtomicLong();
+	private final AtomicLong _clears = new AtomicLong();
 
 	/**
 	 * Initializes the cache.
@@ -137,16 +142,24 @@ public abstract class Cache<T extends Cacheable> {
 	 * @see Cache#getRequests()
 	 */
 	public final long getHits() {
-		return _hits.intValue();
+		return _hits.longValue();
 	}
 
 	/**
-	 * Returns the total number of cache requests
+	 * Returns the total number of cache requests.
 	 * @return the number of requests
 	 * @see Cache#getHits()
 	 */
 	public final long getRequests() {
-		return _gets.intValue();
+		return _gets.longValue();
+	}
+	
+	/**
+	 * Returns the total number of cache entry garbage collections.
+	 * @return the number of collections
+	 */
+	public final long getClears() {
+		return _clears.longValue();
 	}
 	
 	/**
@@ -179,6 +192,25 @@ public abstract class Cache<T extends Cacheable> {
 	public final void addNull(String key) {
 		addNullEntry(key);
 		checkOverflow();
+	}
+	
+	/**
+	 * Flushes the reference queue of any garbage collected entries.
+	 */
+	protected void checkQueue() {
+		if (_ovLock.tryAcquire()) {
+			try {
+				Reference<? extends T> ref = _refQueue.poll();
+				while (ref != null) {
+					CacheEntry<?> entry = (CacheEntry<?>) ref;
+					_cache.remove(entry.getKey());
+					_clears.incrementAndGet();
+					ref = _refQueue.poll();
+				}
+			} finally {
+				_ovLock.release();
+			}
+		}
 	}
 
 	/**

@@ -34,7 +34,7 @@ public class TestAgingCache extends TestCase {
 	  Cacheable e1 = new CacheableLong(Integer.valueOf(1), 1);
 	  Cacheable e2 = new CacheableLong(Integer.valueOf(2), 2);
       _entry = _cache.new AgingCacheEntry<Cacheable>(e1);
-      assertSame(e1, _entry.getData());
+      assertSame(e1, _entry.get());
       Thread.sleep(20);
       AgingCache<Cacheable>.AgingCacheEntry<Cacheable> entry2 = _cache.new AgingCacheEntry<Cacheable>(e2);
       assertTrue(_entry.compareTo(entry2) < 0);
@@ -42,7 +42,7 @@ public class TestAgingCache extends TestCase {
    
    public void testNullCacheEntry() {
 	   _nullEntry = _cache.new AgingNullCacheEntry<Cacheable>();
-	   assertNull(_nullEntry.getData());
+	   assertNull(_nullEntry.get());
    }
    
    public void testClone() {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -6,7 +6,7 @@ package org.deltava.util.cache;
  * that this cache does not purge an entry until the cache overflows, whereas an {@link ExpiringCache} invalidates data
  * based on age.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -19,12 +19,12 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	/**
 	 * A cache entry for Aging caches.
 	 */
-	protected class AgingCacheEntry<U extends Cacheable> extends CacheEntry<U> {
+	protected class AgingCacheEntry<U extends T> extends CacheEntry<U> {
 
 		private long _createdOn;
 
 		public AgingCacheEntry(U entry) {
-			super(entry);
+			super(entry, _refQueue);
 			long now = System.currentTimeMillis();
 			_createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = _createdOn;
@@ -43,7 +43,7 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	/**
 	 * A null cache entry for Aging caches.
 	 */
-	protected class AgingNullCacheEntry<U extends Cacheable> extends AgingCacheEntry<U> {
+	protected class AgingNullCacheEntry<U extends T> extends AgingCacheEntry<U> {
 		
 		AgingNullCacheEntry() {
 			super(null);
@@ -102,6 +102,7 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	 */
 	public T get(Object key) {
 		request();
+		checkQueue();
 		if (key == null)
 			return null;
 		
@@ -110,6 +111,6 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 			return null;
 
 		hit();
-		return entry.getData();
+		return entry.get();
 	}
 }
