@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -17,12 +17,12 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	protected long _lastCreationTime;
 	protected int _expiry;
 
-	protected class ExpiringCacheEntry<U extends Cacheable> extends CacheEntry<U> {
+	protected class ExpiringCacheEntry<U extends T> extends CacheEntry<U> {
 
 		private long _expiryTime;
 
 		public ExpiringCacheEntry(U entryData) {
-			super(entryData);
+			super(entryData, _refQueue);
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
@@ -49,7 +49,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	/**
 	 * A null cache entry for expiring caches.
 	 */
-	protected class ExpiringNullCacheEntry<U extends Cacheable> extends ExpiringCacheEntry<U> {
+	protected class ExpiringNullCacheEntry<U extends T> extends ExpiringCacheEntry<U> {
 		
 		private Object _cacheKey;
 		
@@ -118,6 +118,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 */
 	public T get(Object key, boolean ifExpired) {
 		request();
+		checkQueue();
 		if (key == null)
 			return null;
 		
@@ -127,12 +128,12 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 
 		// If we're expired, remove the entry and return null
 		if (entry.isExpired() && !ifExpired) {
-			_cache.remove(entry.getData().cacheKey());
+			_cache.remove(entry.getKey());
 			return null;
 		}
 
 		hit();
-		return entry.getData();
+		return entry.get();
 	}
 
 	/**
