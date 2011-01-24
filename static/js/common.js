@@ -3,23 +3,22 @@ function getElement(eName)
 return document.getElementById(eName);
 }
 
-function getElementsById(eName)
+function getElementsById(id, eName)
 {
 var elements = [];
-var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
+var all = document.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
-	if (all[x].id == eName) {
+	if (all[x].id == id)
 		elements.push(all[x]);
-	}
 }
 
 return elements;
 }
 
-function getElementsByClass(cName)
+function getElementsByClass(cName, eName)
 {
 var elements = [];
-var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
+var all = document.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
 	var c = all[x].className;
 	if (c.indexOf) {

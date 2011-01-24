@@ -34,9 +34,48 @@ for (var x = 0; x < dates.length; x++) {
 return results;
 }
 
+function wxGetTile(pnt, zoom, doc)
+{
+var div = doc.createElement('div');
+div.style.width = '256px';
+div.style.height = '256px';
+var img = doc.createElement('img');
+img.src = this.getTileUrl(pnt, zoom);
+img.setAttribute('class', 'ffTile ' + this.imgClass);
+img.defaultClass = img.className;
+img.style.opacity = 0;
+img.opacity = this.opacity;
+div.appendChild(img);
+return div;	
+}
+
+function ovShow()
+{
+var imgs = getElementsByClass(this.imgClass, 'img');
+for (var x = 0; x < imgs.length; x++) {
+	var img = imgs[x];
+	img.style.opacity = this.opacity;
+	img.className = 'ffVisible ' + img.defaultClass;
+}
+
+return true;
+}
+
+function ovHide()
+{
+var imgs = getElementsByClass(this.imgClass, 'img');
+for (var x = 0; x < imgs.length; x++) {
+	var img = imgs[x];
+	img.style.opacity = 0;
+	img.className = img.defaultClass;
+}
+
+return true;
+}
+
 function getFFOverlay(name, tx, date)
 {
-var layerOpts = {minZoon:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
+var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
 layerOpts.myBaseURL = 'http://' + document.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 if (zoom > this.maxZoom) return '';
@@ -64,9 +103,14 @@ return url + '.png';
 var ovLayer = new google.maps.ImageMapType(layerOpts);
 ovLayer.getTileUrl = layerOpts.getTileUrl;
 ovLayer.myBaseURL = layerOpts.myBaseURL;
+ovLayer.opacity = layerOpts.opacity;
 ovLayer.layerName = name;
 ovLayer.layerDate = date;
+ovLayer.imgClass = 'wxTile-' + name + '-' + date.getTime();
 ovLayer.isFF = true;
+ovLayer.getTile = wxGetTile;
+ovLayer.hide = ovHide;
+ovLayer.show = ovShow;
 document.wxLayers[name + '!' + date.getTime()] = ovLayer;
 return ovLayer;
 }
@@ -110,8 +154,10 @@ if (map.wxData)
 	
 var utc = combo.options[combo.selectedIndex].value;
 map.wxData = document.wxLayers[map.ffLayer + '!' + utc];
-if (map.wxData)
+if (map.wxData) {
 	map.addWeather(map.wxData);
+	map.wxData.show();
+}
 
 return true;
 }
@@ -191,24 +237,15 @@ function animateFF()
 {
 var f = document.forms[0];
 var btn = getElement('AnimateButton');
-var opts = map.getOptions();
 if (map.isAnimating) {
 	removeSlices();
 	btn.value = 'ANIMATE';
 	enableObject(btn, true);
 	enableObject(f.ffSlice, true);
 	pBar.hide();
-	opts.disableDoubleClickZoom = false;
-	opts.scrollwheel = true;
-	opts.dragging = true;
-	opts.navigationControl = true;
 	map.isAnimating = false;
 } else {
 	enableObject(f.ffSlice, false);
-	opts.dragging = false;
-	opts.scrollwheel = false;
-	opts.disableDoubleClickZoom = true;
-	opts.navigationControl = false;
 
 	// Preload the tiles for each tile layer
 	enableObject(btn, false);
@@ -216,7 +253,6 @@ if (map.isAnimating) {
 	preloadImages(map.ffLayer, document.ffSlices[map.ffLayer]);
 }
 
-map.setOptions(opts);
 return true;
 }
 
@@ -231,16 +267,14 @@ var timerInterval = (newOfs == 0) ? 900 : 450;
 // Load the layer
 var ov = animateSlices[ofs];
 setWXStatus('Showing ' + ov.layerName + ' (' + fmtDate(new Date(ov.layerDate.getTime() - GMTOffset)) + ')');
-if (ov.isPreloaded) {
-	hideAllSlices();
+if (!ov.isPreloaded) {
 	map.addWeather(ov);
-} else {
-	map.addWeather(ov);
-	hideAllSlices();
 	ov.isPreloaded = true;
-	//timerInterval += 15;
+	timerInterval = 1;
 }
 
+hideAllSlices();
+ov.show();
 window.setTimeout('showSliceLayer(' + newOfs + ')', timerInterval);
 return true;
 }
@@ -257,10 +291,11 @@ return true;
 
 function hideAllSlices()
 {
-for (var x in animateSlices) {
-	var ov = animateSlices[x];
-	if (ov.isPreloaded)
-		map.removeWeather(ov);
+var imgs = getElementsByClass('ffVisible', 'img');
+for (var x = 0; x < imgs.length; x++) {
+	var img = imgs[x];
+	img.style.opacity = 0;
+	img.className = img.defaultClass;
 }
 	
 return true;
