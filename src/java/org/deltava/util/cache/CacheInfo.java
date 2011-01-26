@@ -10,6 +10,8 @@ package org.deltava.util.cache;
 
 public class CacheInfo implements java.io.Serializable {
 
+	private String _id;
+	
 	private int _instances;
 	private long _hits;
 	private long _reqs;
@@ -22,7 +24,17 @@ public class CacheInfo implements java.io.Serializable {
 	 * @param c the Cache
 	 */
 	public CacheInfo(Cache<?> c) {
+		this(null, c);
+	}
+	
+	/**
+	 * Initializes the information bean from a Cache.
+	 * @param id the Cache ID
+	 * @param c the Cache
+	 */
+	public CacheInfo(String id, Cache<?> c) {
 		super();
+		_id = id;
 		add(c);
 	}
 
@@ -88,6 +100,10 @@ public class CacheInfo implements java.io.Serializable {
 	 */
 	public long getMaxSize() {
 		return _capacity;
+	}
+	
+	public int hashCode() {
+		return (_id != null) ? _id.hashCode() : super.hashCode();
 	}
 
 	/**
