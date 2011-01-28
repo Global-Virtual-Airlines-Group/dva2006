@@ -67,8 +67,8 @@ return true;
 Airports inside the United States or Canada, use &lt;City Name&gt; &lt;State Abbreviation&gt;. <span class="ita">(Chattanooga TN)</span><br /> 
 Airports inside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;State Abbreviation&gt;. 
  <span class="ita">(New York-Kennedy NY)</span><br />
-Airports outside the United States or Canada, use &lt;City Name&gt;-&lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br />
-Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt;-&lt;Country&gt;.
+Airports outside the United States or Canada, use &lt;City Name&gt; &lt;Country&gt;. <span class="ita">(Trondheim Norway)</span><br />
+Airports outside the United States or Canada with multiple airports, use &lt;City Name&gt;-&lt;Airport Name&gt; &lt;Country&gt;.
  <span class="ita">(Paris-Charles De Gaulle France)</span></td>
 </tr>
 <tr>
