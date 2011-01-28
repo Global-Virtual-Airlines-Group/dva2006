@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans. 
  * @author Luke
- * @version 2.8
+ * @version 3.6
  * @since 2.2
  */
 
@@ -50,7 +50,7 @@ public class RoutePlanService extends WebService {
 		// Get the Flight Plan generator
 		FlightPlanGenerator fpgen = null;
 		if ("FSX".equals(ctx.getParameter("simVersion")))
-			fpgen = new FSXGenerator();
+			fpgen = new FS9Generator();
 		else if ("XP9".equals(ctx.getParameter("simVersion")))
 			fpgen = new XP9Generator();
 		else
