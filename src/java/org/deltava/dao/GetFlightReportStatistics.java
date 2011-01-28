@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.1
  */
 
@@ -517,7 +517,8 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	public int getCharterCount(int pilotID, int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) "
+			+ "AND ((ATTR & ?) > 0)");
 		if (days > 0)
 			sqlBuf.append(" AND (DATE >= DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 		
@@ -525,8 +526,9 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(3, FlightReport.ATTR_CHARTER);
 			if (days > 0)
-				_ps.setInt(3, days);
+				_ps.setInt(4, days);
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
