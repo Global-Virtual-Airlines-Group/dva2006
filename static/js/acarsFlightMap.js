@@ -70,7 +70,7 @@ return true;
 function showAPP(ctr, range)
 {
 hideATC();
-var c = new google.maps.Circle({center:ctr, range:range, strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25});
+var c = new google.maps.Circle({center:ctr, radius:(range*1609.344), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25});
 selectedFIRs.push(c);
 c.setMap(map);
 return true;
