@@ -62,7 +62,7 @@ return true;
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
 <view:row entry="${isPending ? pilot : course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
- <td class="bld"><fmt:int value="${course.stage}" /></td>
+ <td class="sec bld"><fmt:int value="${course.stage}" /></td>
  <td><el:cmd url="profile" link="${pilot}" className="sec bld">${pilot.name}</el:cmd>
  <span class="small">(${pilot.pilotCode})</span></td>
  <td class="pri bld">${course.statusName}</td>
