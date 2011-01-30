@@ -4,16 +4,18 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to enroll a Pilot in a Flight Academy course.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -45,6 +47,13 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			// Make sure we can take the test
 			if (!academyHistory.canTake(cert))
 				throw securityException("Cannot enroll in " + cert.getName());
+			
+			// Check if we have enough flights
+			int minFlights = SystemData.getInt("academy.minFlights", 10); 
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(ctx.getUser().getID());
+			if (p.getLegs() < minFlights)
+				throw securityException("Must have " + minFlights + " flights to enroll");
 			
 			// Create the status entry
 			StatusUpdate upd = new StatusUpdate(ctx.getUser().getID(), StatusUpdate.ACADEMY);
