@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.0
  */
 
@@ -79,13 +79,22 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("pirep", fr, REQUEST);			
+			ctx.setAttribute("pirep", fr, REQUEST);
 			
 			// Create the access controller and stuff it in the request
 			PIREPAccessControl ac = new CrossAppPIREPAccessControl(ctx, fr, cr);
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
 			ctx.setAttribute("scoreCR", Boolean.valueOf(crAccess.getCanScore()), REQUEST);
+			
+			// Calculate the average time between the airports
+			if (ac.getCanDispose()) {
+				GetSchedule scdao = new GetSchedule(con);
+				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA(), ud.getDB())), REQUEST);
+				
+				// Display user's networks
+				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
+			}
 			
 			// Get the route data from the DAFIF database
 			GetACARSData ardao = new GetACARSData(con);
