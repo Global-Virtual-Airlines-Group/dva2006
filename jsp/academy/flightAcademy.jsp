@@ -61,6 +61,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/academy/header.jspf" %> 
 <%@ include file="/jsp/academy/sideMenu.jspf" %>
+<content:sysdata var="academyFlights" name="academy.minFlights" default="10" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -128,14 +129,22 @@ return true;
 <tr class="title caps">
  <td class="left" colspan="6">TRAINING COURSES</td>
 </tr>
-<c:if test="${!empty course}">
+<c:choose>
+<c:when test="${!empty course}">
 <tr>
- <td class="left" colspan="6">You are currently enrolled in a Flight Academy training course, 
-<span class="pri bld">${course.name}</span>. Until you have completed or withdrawn from this course, 
+ <td class="left" colspan="6">You are currently enrolled in a <content:airline /> Flight Academy training
+course, <span class="pri bld">${course.name}</span>. Until you have completed or withdrawn from this course, 
 you may not enroll in any other <content:airline /> Flight Academy courses.</td>
 </tr>
-</c:if>
-<c:if test="${empty course}">
+</c:when>
+<c:when test="${pilot.legs < minFlights}">
+<tr>
+ <td class="left" colspan="6">You have completed <fmt:int value="${pilot.legs}" /> flight legs as a <content:airline />
+pilot. You need to have completed <fmt:int value="${minFlights}" /> flight legs in order to enroll in a <content:airline />
+Flight Academy training course.</td>
+</tr>
+</c:when>
+<c:otherwise>
 <tr>
  <td class="left" colspan="6">Please select a Flight Academy course from the list below. Make sure
  that you are prepared to enroll before clicking on &quot;Enroll.&quot;</td>
@@ -144,7 +153,8 @@ you may not enroll in any other <content:airline /> Flight Academy courses.</td>
  <td colspan="6">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="[ SELECT COURSE ]" />
  <el:button ID="EnrollButton" type="submit" label="ENROLL IN COURSE" /></td>
 </tr>
-</c:if>
+</c:otherwise>
+</c:choose>
 <c:if test="${!empty exams}">
 <!-- Examination Section -->
 <tr class="title caps">
