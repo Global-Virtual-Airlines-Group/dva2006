@@ -38,14 +38,17 @@
  <td class="data">Build <fmt:int value="${err.clientBuild}" /></td>
 </tr>
 <c:if test="${err.FSVersion > 0}">
+<c:set var="fsVersion" value="${(err.FSVersion == 2006) ? 'X' : err.FSVersion}" scope="page" />
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data bld">Flight Simulator ${err.FSVersion}</td>
+ <td class="data bld">Flight Simulator ${fsVersion}</td>
 </tr>
+<c:if test="${!empty err.FSUIPCVersion}">
 <tr>
  <td class="label">FSUIPC Version</td>
  <td class="data">${err.FSUIPCVersion}</td>
 </tr>
+</c:if>
 </c:if>
 <c:if test="${err.FSVersion == 0}">
 <tr>
