@@ -1,9 +1,11 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.commands.*;
@@ -14,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display submitted Flight Academy Check Rides.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -29,7 +31,6 @@ public class RideQueueCommand extends AbstractViewCommand {
 
 		// Get the view start/end
 		ViewContext vc = initView(ctx);
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -40,23 +41,36 @@ public class RideQueueCommand extends AbstractViewCommand {
 			Collection<CheckRide> rides = exdao.getCheckRideQueue(true);
 			vc.setResults(rides);
 			
-			// Build the CheckRide/Pilot IDs
+			// Get the user data / flight report DAOs
+			GetUserData uddao = new GetUserData(con);
+			GetFlightReports frdao = new GetFlightReports(con);
+			
+			// Build the CheckRide/Pilot IDs and load Flight Reports
 			Collection<Integer> ids = new HashSet<Integer>();
 			Collection<Integer> pids = new HashSet<Integer>();
+			Map<Integer, FlightReport> pireps = new HashMap<Integer, FlightReport>();
 			for (Iterator<CheckRide> i = rides.iterator(); i.hasNext(); ) {
 				CheckRide cr = i.next();
 				ids.add(new Integer(cr.getID()));
 				pids.add(new Integer(cr.getPilotID()));
+				
+				// Load the PIREP
+				UserData ud = uddao.get(cr.getPilotID());
+				FlightReport fr = frdao.getACARS(ud.getDB(), cr.getFlightID());
+				if (fr != null)
+					pireps.put(new Integer(ud.getID()), fr);
 			}
 			
 			// Load the Courses
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			ctx.setAttribute("courses", CollectionUtils.createMap(cdao.getByCheckRide(ids), "ID"), REQUEST);
 			
-			// Load the Pilots
-			GetUserData uddao = new GetUserData(con);
+			// Load the Pilots and pireps
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.get(uddao.get(pids)), REQUEST);
+			UserDataMap udm = uddao.get(pids);
+			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
+			ctx.setAttribute("pireps", pireps, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

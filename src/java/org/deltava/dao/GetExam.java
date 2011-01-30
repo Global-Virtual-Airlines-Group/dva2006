@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -275,17 +275,18 @@ public class GetExam extends DAO {
 			_ps.setInt(1, id);
 			List<Test> results = new ArrayList<Test>(execute());
 
-			// Load Check Rides
+			// Load Check Rides - this will break if the Academy eq program is common to both airlines
 			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
 				+ "common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN "
 				+ "exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.PILOT_ID=?) AND (CR.EQTYPE=EQ.EQTYPE) "
-				+ "AND (LOCATE(?, EQ.AIRLINES) > 0)");
+				+ "AND ((LOCATE(?, EQ.AIRLINES) > 0) OR (CR.ACADEMY=?))");
 			
 			// Execute the query
 			_ps.setInt(1, id);
 			_ps.setString(2, SystemData.get("airline.code"));
+			_ps.setBoolean(3, true);
 			results.addAll(executeCheckride());
-
+			
 			// Sort the results to merge them in by date
 			Collections.sort(results, new TestComparator(TestComparator.DATE));
 			return results;
