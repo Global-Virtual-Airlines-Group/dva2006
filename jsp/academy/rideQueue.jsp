@@ -34,20 +34,21 @@
  <td width="20%">PILOT NAME</td>
  <td width="15%">COURSE NAME</td>
  <td width="10%">AIRCRAFT</td>
- <td class="left">COMMENTS</td>
+ <td>FLIGHT ROUTE</td>
 </tr>
  
 <!-- Table View data -->
 <c:forEach var="ride" items="${viewContext.results}">
 <c:set var="course" value="${courses[ride.courseID]}" scope="page" />
 <c:set var="pilot" value="${pilots[ride.pilotID]}" scope="page" />
+<c:set var="pirep" value="${pireps[ride.pilotID]}" scope="page" />
 <tr>
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
  <td><el:cmdbutton url="crview" linkID="${ride.hexID}" label="SCORE" /></td>
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
  <td><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
- <td class="sec">${ride.equipmentType}</td>
- <td class="small left">${ride.comments}</td>
+ <td class="sec">${ride.aircraftType}</td>
+ <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>
 </tr>
 </c:forEach>
 
