@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -6,17 +6,18 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
- * @version 2.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -54,10 +55,13 @@ public class CourseListCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 
 			// Load the instructors
+			GetUserData uddao = new GetUserData(con);
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			List<String> codes = new ArrayList<String>(Arrays.asList(VIEW_CODE));
-			Collection<Pilot> insList = pdao.getByRole("Instructor", SystemData.get("airline.db"));
-			for (Iterator<? extends ComboAlias> i = insList.iterator(); i.hasNext();) {
+			Collection<Pilot> instructors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
+			for (AirlineInformation ai : uddao.getAirlines(true).values())
+				instructors.addAll(pdao.getByRole("Instructor", ai.getDB()));
+			for (Iterator<? extends ComboAlias> i = instructors.iterator(); i.hasNext();) {
 				ComboAlias a = i.next();
 				codes.add(a.getComboAlias());
 			}
@@ -110,11 +114,13 @@ public class CourseListCommand extends AbstractViewCommand {
 			}
 
 			// Load the Pilot profiles
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 
 			// Save view options
 			Collection<ComboAlias> viewOpts = new ArrayList<ComboAlias>(VIEW_OPTS);
-			viewOpts.addAll(insList);
+			viewOpts.addAll(instructors);
 			ctx.setAttribute("viewOpts", viewOpts, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

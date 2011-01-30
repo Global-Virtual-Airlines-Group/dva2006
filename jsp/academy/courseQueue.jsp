@@ -39,12 +39,12 @@
 
 <!-- Table View data -->
 <c:forEach var="course" items="${viewContext.results}">
+<c:set var="pilotLoc" value="${userData[course.pilotID]}" scope="page" />
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
 <c:set var="ins" value="${pilots[course.instructorID]}" scope="page" />
 <view:row entry="${course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
- <td><el:cmd url="profile" link="${pilot}" className="sec bld">${pilot.name}</el:cmd>
- <span class="small">(${pilot.pilotCode})</span></td>
+ <td><el:profile location="${pilotLoc}" className="sec bld">${pilot.name}</el:profile> <span class="small">(${pilot.pilotCode})</span></td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>
 <c:choose>
 <c:when test="${empty ins}">

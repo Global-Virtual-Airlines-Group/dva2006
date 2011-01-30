@@ -1,9 +1,10 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.academy.Course;
 
 import org.deltava.commands.*;
@@ -12,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display Flight Academy courses ready for approval.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -48,7 +49,9 @@ public class CourseQueueCommand extends AbstractViewCommand {
 			// Load the data
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
