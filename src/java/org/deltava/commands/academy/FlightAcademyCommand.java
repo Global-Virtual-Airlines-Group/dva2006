@@ -1,19 +1,21 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.testing.ExamProfile;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Flight Academy.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -25,12 +27,21 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Check if we're enabled
+		if (!SystemData.getBoolean("academy.enabled"))
+			throw securityException("Flight Academy not enabled");
+		
 		try {
 			Connection con = ctx.getConnection();
 
 			// Initialize the Academy History Helper and save if we are in a course
 			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
 			ctx.setAttribute("course", academyHistory.getCurrentCourse(), REQUEST);
+			
+			// Check if we have enough flights
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(ctx.getUser().getID());
 
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
@@ -68,7 +79,7 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			
 			// Load Instructors
 			GetUserData uddao = new GetUserData(con);
-			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(uddao.get(IDs)), REQUEST);
 
 			// Save the exams and certifications available
@@ -80,9 +91,6 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 		} finally {
 			ctx.release();
 		}
-
-		// Save pilot name
-		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
