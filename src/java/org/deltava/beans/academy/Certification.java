@@ -4,11 +4,12 @@ package org.deltava.beans.academy;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * A bean to store Flight Academy certification data.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -33,6 +34,7 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	private boolean _hasCR;
 	
 	private String _desc;
+	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
 	
 	private String _certReq;
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
@@ -143,12 +145,22 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	
 	/**
 	 * Returns the requirements for this Certification.
-	 * @return a Collection of requirement beans
+	 * @return a Collection of CertificationRequirement beans
 	 * @see Certification#addRequirement(CertificationRequirement)
 	 * @see Certification#setRequirements(Collection)
 	 */
 	public Collection<CertificationRequirement> getRequirements() {
 		return _reqs;
+	}
+	
+	/**
+	 * Returns the eligible virtual airlines for this Certification.
+	 * @return a Collection of AirlineInformation beans
+	 * @see Certification#addAirline(AirlineInformation)
+	 * @see Certification#setAirlines(Collection)
+	 */
+	public Collection<AirlineInformation> getAirlines() {
+		return _airlines;
 	}
 	
 	/**
@@ -177,6 +189,27 @@ public class Certification implements java.io.Serializable, ComboAlias, ViewEntr
 	 */
 	public String getDescription() {
 		return _desc;
+	}
+	
+	/**
+	 * Adds an eligible virtual airline to this Certification.
+	 * @param ai an AirlineInformation bean
+	 * @see Certification#getAirlines()
+	 * @see Certification#setAirlines(Collection)
+	 */
+	public void addAirline(AirlineInformation ai) {
+		_airlines.add(ai);
+	}
+	
+	/**
+	 * Assigns eligible virtual airlines to this Certification.
+	 * @param airlines a Collection of AirlineInformation beans
+	 * @see Certification#getAirlines()
+	 * @see Certification#addAirline(AirlineInformation)
+	 */
+	public void setAirlines(Collection<AirlineInformation> airlines) {
+		_airlines.clear();
+		_airlines.addAll(airlines);
 	}
 	
 	/**

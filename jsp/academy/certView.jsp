@@ -34,6 +34,10 @@
  <td class="data"><span class="sec bld">${cert.reqName}</span><c:if test="${!empty preReqCert}"> - 
  <el:cmd url="cert" linkID="${preReqCert.name}" className="pri bld">${preReqCert.name}</el:cmd></c:if></td>
 </tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><fmt:list value="${cert.airlines}" delim=", " /></td>
+</tr>
 <c:if test="${!empty cert.examNames}">
 <tr>
  <td class="label">Examinations</td>
