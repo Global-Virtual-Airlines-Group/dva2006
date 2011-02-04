@@ -5,7 +5,9 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -20,8 +22,8 @@ import org.deltava.util.system.SystemData;
 public class AcademyHistoryHelper {
 	
 	private static final Logger log = Logger.getLogger(AcademyHistoryHelper.class);
-	
-	private final Collection<String> _roles = new HashSet<String>(); 
+
+	private Pilot _p; 
 	private boolean _debugLog;
 	private boolean _allowInactive;
 	
@@ -31,11 +33,13 @@ public class AcademyHistoryHelper {
 
 	/**
 	 * Initializes the helper.
+	 * @param p the Pilot
 	 * @param courses a Collection of course objects, representing this Pilot's Flight Academy history
 	 * @param allCerts all available Certifications
 	 */
-	public AcademyHistoryHelper(Collection<Course> courses, Collection<Certification> allCerts) {
+	public AcademyHistoryHelper(Pilot p, Collection<Course> courses, Collection<Certification> allCerts) {
 		super();
+		_p = p;
 		_courses.putAll(CollectionUtils.createMap(courses, "name"));
 		_certs.putAll(CollectionUtils.createMap(allCerts, "name"));
 		_certs.putAll(CollectionUtils.createMap(allCerts, "code"));
@@ -60,14 +64,6 @@ public class AcademyHistoryHelper {
 	 */
 	public void setAllowInactive(boolean doInactive) {
 		_allowInactive = doInactive;
-	}
-	
-	/**
-	 * Sets the User's roles.
-	 * @param roles a Collection of role names
-	 */
-	public void setRoles(Collection<String> roles) {
-		_roles.addAll(roles);
 	}
 	
 	/**
@@ -307,6 +303,13 @@ public class AcademyHistoryHelper {
 			return false;
 		}
 		
+		// Check that it matches our airline
+		AirlineInformation appInfo = SystemData.getApp(_p.getAirlineCode());
+		if (!c.getAirlines().contains(appInfo)) {
+			log(c.getName() + " not available to " + appInfo.getName() + " pilots");
+			return false;
+		}
+		
 		// If we've already passed it or are taking it, then no
 		if (hasPassed(c.getName()) || isPending(c.getName())) {
 			log("Already passed/enrolled in " + c.getName());
@@ -321,8 +324,8 @@ public class AcademyHistoryHelper {
 		}
 		
 		// Check security roles
-		if (!_roles.contains("AcademyAdmin") && !_roles.contains("AcademyAudit")) {
-			if (!RoleUtils.hasAccess(_roles, c.getRoles())) {
+		if (!_p.isInRole("AcademyAdmin") && !_p.isInRole("AcademyAudit")) {
+			if (!RoleUtils.hasAccess(_p.getRoles(), c.getRoles())) {
 				log("Cannot take " + c.getName() + ", needs role in " + c.getRoles());
 				return false;
 			}

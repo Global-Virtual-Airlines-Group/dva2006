@@ -6,10 +6,12 @@ import java.util.*;
 
 import org.deltava.beans.academy.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -46,6 +48,7 @@ public class GetAcademyCertifications extends DAO {
 			loadRequirements(cert);
 			loadExams(cert);
 			loadRoles(cert);
+			loadAirlines(cert);
 			return cert;
 		} catch (SQLException se) { 
 			throw new DAOException(se);
@@ -67,6 +70,7 @@ public class GetAcademyCertifications extends DAO {
 			for (Certification c: results) {
 				loadExams(c);
 				loadRoles(c);
+				loadAirlines(c);
 			}
 			
 			return results;
@@ -89,6 +93,7 @@ public class GetAcademyCertifications extends DAO {
 			for (Certification c: results) {
 				loadExams(c);
 				loadRoles(c);
+				loadAirlines(c);
 			}
 			
 			return results;
@@ -229,6 +234,23 @@ public class GetAcademyCertifications extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next())
 			cert.addExamName(rs.getString(1));
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+
+	/**
+	 * Helper method to load virtual airlines.
+	 */
+	private void loadAirlines(Certification cert) throws SQLException {
+		prepareStatementWithoutLimits("SELECT AIRLINE FROM exams.CERTAPPS WHERE (CERTNAME=?)");
+		_ps.setString(1, cert.getName());
+		
+		// Load the result set
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			cert.addAirline(SystemData.getApp(rs.getString(1)));
 		
 		// Clean up
 		rs.close();
