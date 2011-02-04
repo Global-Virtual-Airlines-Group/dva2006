@@ -1,17 +1,12 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-
-import java.net.URL;
 import java.util.*;
 import java.awt.*;
 
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
@@ -27,7 +22,7 @@ import org.deltava.comparators.RankComparator;
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetVATSIMData;
+import org.deltava.dao.http.GetVATSIMData;
 
 import org.deltava.security.*;
 import org.deltava.security.command.*;
@@ -88,27 +83,8 @@ public class ProfileCommand extends AbstractFormCommand {
 				String uri = SystemData.get("online.vatsim.validation_url");
 				if (!StringUtils.isEmpty(uri)) {
 					try {
-						URL url = new URL(uri + "?cid=" + vid);
-						
-						// Init the HTTP client
-						HttpClient hc = new HttpClient();
-						hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-						hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
-						hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
-						hc.getParams().setParameter("http.socket.timeout", new Integer(5000));
-						hc.getParams().setParameter("http.connection.timeout", new Integer(2000));
-						
-						// Open the connection
-						GetMethod gm = new GetMethod(url.toExternalForm());
-						gm.setFollowRedirects(false);
-						int responseCode = hc.executeMethod(gm);
-						if (responseCode == SC_NOT_FOUND)
-							throw new IllegalStateException("Cannot fetch VATSIM data at " + url.toExternalForm());
-						
-						// Get the DAO
-						GetVATSIMData dao = new GetVATSIMData(gm.getResponseBodyAsStream());
-						Certificate c = dao.getInfo();
-						
+						GetVATSIMData dao = new GetVATSIMData();
+						Certificate c = dao.getInfo(ctx.getParameter("VATSIM_ID"));
 						if (c != null) {
 							Collection<String> msgs = new ArrayList<String>();
 							if (!c.isActive())
