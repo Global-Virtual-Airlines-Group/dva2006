@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 1.0
  */
 
@@ -250,8 +250,6 @@ public class ThreadCommand extends AbstractCommand {
 		
 		// Mark this thread as read
 		if (ctx.isAuthenticated() && ctx.isUserInRole("Pilot")) {
-			Pilot p = (Pilot) ctx.getUser();
-			
 			@SuppressWarnings("unchecked")
 			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
 			if (threadIDs == null) {
@@ -264,9 +262,9 @@ public class ThreadCommand extends AbstractCommand {
 			if (cutoff == null)
 				cutoff = (Date) ctx.getSession().getAttribute(CommandContext.THREADREADOV_ATTR_NAME);
 			if (cutoff == null)
-				cutoff = p.getLastLogoff();
+				cutoff = ctx.getUser().getLastLogoff();
 			if (cutoff == null)
-				cutoff = p.getLastLogin();
+				cutoff = ctx.getUser().getLastLogin();
 			
 			// Save unread list
 			List<Boolean> unRead = new ArrayList<Boolean>(mt.getPostCount());
@@ -275,7 +273,7 @@ public class ThreadCommand extends AbstractCommand {
 			// Find the first unread post if we've read some
 			boolean hasFirstUnread = false;
 			Message msg = mt.getPosts().get(0);
-			if (p.getShowNewPosts() && msg.getCreatedOn().before(cutoff)) {
+			if (ctx.getUser().getShowNewPosts() && msg.getCreatedOn().before(cutoff)) {
 				for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
 					msg = i.next();
 					boolean isUnread = msg.getCreatedOn().after(cutoff);

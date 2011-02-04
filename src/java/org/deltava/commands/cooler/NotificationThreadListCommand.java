@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Water Cooler threads set up for notifications.
  * @author Luke
- * @version 2.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -33,7 +33,6 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the user for the channel list and default airline
-		Pilot p = (Pilot) ctx.getUser();
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Get/set start/count parameters
@@ -43,11 +42,9 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 
 			// Get the DAO and the Pilot's airline
 			GetUserData uddao = new GetUserData(con);
-			if (p != null) {
-				UserData usrData = uddao.get(p.getID());
-				if (usrData != null)
-					airline = SystemData.getApp(usrData.getAirlineCode());
-			}
+			UserData usrData = uddao.get(ctx.getUser().getID());
+			if (usrData != null)
+				airline = SystemData.getApp(usrData.getAirlineCode());
 
 			// Get the channel DAO and the list of channels
 			GetCoolerChannels dao = new GetCoolerChannels(con);

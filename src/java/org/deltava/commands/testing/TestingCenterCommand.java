@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Testing Center.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the user Profile
-		Pilot usr = (Pilot) ctx.getUser();
+		Pilot usr = ctx.getUser();
 		ctx.setAttribute("pilot", usr, REQUEST);
 
 		try {

@@ -2,15 +2,11 @@
 package org.deltava.commands.register;
 
 import java.util.*;
-import java.net.URL;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
-import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
@@ -22,17 +18,18 @@ import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetVATSIMData;
+import org.deltava.dao.http.GetVATSIMData;
 import org.deltava.mail.*;
 
 import org.deltava.security.AddressValidationHelper;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -200,26 +197,8 @@ public class RegisterCommand extends AbstractCommand {
 			String uri = SystemData.get("online.vatsim.validation_url");
 			if (!StringUtils.isEmpty(uri)) {
 				try {
-					URL url = new URL(uri + "?cid=" + a.getNetworkID(OnlineNetwork.VATSIM));
-					
-					// Init the HTTP client
-					HttpClient hc = new HttpClient();
-					hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-					hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
-					hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
-					hc.getParams().setParameter("http.socket.timeout", new Integer(5000));
-					hc.getParams().setParameter("http.connection.timeout", new Integer(2000));
-					
-					// Open the connection
-					GetMethod gm = new GetMethod(url.toExternalForm());
-					gm.setFollowRedirects(false);
-					int responseCode = hc.executeMethod(gm);
-					if (responseCode == SC_NOT_FOUND)
-						throw new IllegalStateException("Cannot fetch VATSIM data at " + url.toExternalForm());
-
-					// Get the DAO
-					GetVATSIMData dao = new GetVATSIMData(gm.getResponseBodyAsStream());
-					Certificate c = dao.getInfo();
+					GetVATSIMData dao = new GetVATSIMData();
+					Certificate c = dao.getInfo(a.getNetworkID(OnlineNetwork.VATSIM));
 					if (c != null) {
 						StringBuilder buf = new StringBuilder("VATSIM ID belongs to ");
 						buf.append(c.getName());

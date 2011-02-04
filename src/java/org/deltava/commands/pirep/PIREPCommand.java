@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -226,7 +226,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			throw securityException("Cannot create/edit Flight Report");
 
 		// Check if we're creating a new PIREP
-		Pilot usr = (Pilot) ctx.getUser();
+		Pilot usr = ctx.getUser();
 		boolean isNew = (ctx.getID() == 0);
 		boolean forcePage = (ctx.getSession() != null) && Boolean.valueOf(String.valueOf(ctx.getSession().getAttribute("forcePIREP"))).booleanValue();
 
@@ -364,7 +364,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Calculate what map type to use
-		int mapType = ctx.isAuthenticated() ? ((Pilot) ctx.getUser()).getMapType() : Pilot.MAP_GOOGLE;
+		int mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : Pilot.MAP_GOOGLE;
 		try {
 			Connection con = ctx.getConnection();
 

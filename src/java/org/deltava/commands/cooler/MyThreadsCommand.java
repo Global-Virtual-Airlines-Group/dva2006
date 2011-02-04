@@ -1,12 +1,10 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserData;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.*;
 
@@ -20,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a user's Water Cooler Threads.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
@@ -33,9 +31,6 @@ public class MyThreadsCommand extends AbstractViewCommand {
 	 */
    public void execute(CommandContext ctx) throws CommandException {
 
-      // Get the user for the channel list
-      Pilot p = (Pilot) ctx.getUser();
-      
 		// Get the default airline
       AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
       
@@ -46,11 +41,9 @@ public class MyThreadsCommand extends AbstractViewCommand {
          
          // Get the DAO and the Pilot's airline
          GetUserData uddao = new GetUserData(con);
-         if (p != null) {
-            UserData usrData = uddao.get(p.getID());
-            if (usrData != null)
-               airline = SystemData.getApp(usrData.getAirlineCode());
-         }
+         UserData usrData = uddao.get(ctx.getUser().getID());
+         if (usrData != null)
+        	 airline = SystemData.getApp(usrData.getAirlineCode());
 
          // Get the channel DAO and the list of channels
          GetCoolerChannels dao = new GetCoolerChannels(con);
@@ -66,7 +59,7 @@ public class MyThreadsCommand extends AbstractViewCommand {
 
          // Get either by channel or all; now filter by role
          Collection<Integer> pilotIDs = new HashSet<Integer>();
-         List<MessageThread> threads = dao2.getByAuthor(p.getID(), p.getShowSSThreads());
+         List<MessageThread> threads = dao2.getByAuthor(ctx.getUser().getID(), ctx.getUser().getShowSSThreads());
          for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
             MessageThread thread = i.next();
             

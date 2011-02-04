@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -58,6 +58,12 @@ public class CourseDisposalCommand extends AbstractCommand {
 			Course c = dao.get(ctx.getID());
 			if (c == null)
 				throw notFoundException("Invalid Course - " + ctx.getID());
+			
+			// Get the Pilot
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			UserData ud = uddao.get(c.getPilotID());
+			Pilot usr = pdao.get(ud);
 			
 			// Load our exams
 			GetExam exdao = new GetExam(con);
@@ -101,7 +107,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 					
 					// Get our exams and init the academy helper
 					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
-					AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
+					AcademyHistoryHelper helper = new AcademyHistoryHelper(usr, dao.getByPilot(c.getPilotID()), cdao.getAll());
 					helper.addExams(exdao.getExams(c.getPilotID()));
 					
 					// Check our access
@@ -115,9 +121,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			if (!canExec)
 				throw securityException("Cannot " + opName + " Course - Not Authorized");
 
-			// Get the Pilot
-			GetPilot pdao = new GetPilot(con);
-			Pilot usr = pdao.get(c.getPilotID());
+			// Save the pilot
 			ctx.setAttribute("pilot", usr, REQUEST);
 			mctx.addData("pilot", usr);
 			if (ctx.getUser().getID() != c.getPilotID())
@@ -153,12 +157,13 @@ public class CourseDisposalCommand extends AbstractCommand {
 				}
 				
 				// Load the pilots
-				usrs.addAll(pdao.getByID(IDs, "PILOTS").values());
+				UserDataMap udm = uddao.get(IDs);
+				usrs.addAll(pdao.get(udm).values());
 			}
 			
 			// Write the Status Update
 			SetStatusUpdate uwdao = new SetStatusUpdate(con);
-			uwdao.write(upd);
+			uwdao.write(ud.getDB(), upd);
 			
 			// Write Facebook update
 			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (opCode == Course.COMPLETE)) {
