@@ -1,7 +1,8 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.file;
+// Copyright 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao.http;
 
 import java.io.*;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 import org.jdom.*;
 import org.jdom.input.*;
@@ -10,36 +11,40 @@ import org.deltava.beans.servinfo.Certificate;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read VATSIM CERT data.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
 public class GetVATSIMData extends DAO {
 
 	/**
-	 * Initializes the Data Access Object.
-	 * @param is the stream to use
-	 */
-	public GetVATSIMData(InputStream is) {
-		super(is);
-	}
-
-	/**
 	 * Returns information about the selected VATSIM certificate.
+	 * @param id the VATSIM certificate ID
 	 * @return a Certificate bean
 	 * @throws DAOException if an error occurs
 	 */
-	public Certificate getInfo() throws DAOException {
+	public Certificate getInfo(String id) throws DAOException {
+		
+		// Get the URL
+		String url = SystemData.get("online.vatsim.validation_url") + "?cid=" + id;
+		if (StringUtils.isEmpty(id))
+			return null;
+		
 		try {
+			init(url);
+			if (getResponseCode() != HTTP_OK)
+				return null;
+			
 			// Process the XML document
 			Document doc = null;	
 			try {
 				SAXBuilder builder = new SAXBuilder();
-				doc = builder.build(getReader());
+				doc = builder.build(getIn());
 			} catch (JDOMException je) {
 				throw new DAOException(je);
 			}
@@ -55,8 +60,8 @@ public class GetVATSIMData extends DAO {
 				throw new DAOException("user element expected");
 			
 			// Check the ID
-			String id = ue.getAttributeValue("cid");
-			if (StringUtils.isEmpty(id))
+			String cid = ue.getAttributeValue("cid");
+			if (StringUtils.isEmpty(cid))
 				return null;
 			
 			// Check if inactive
