@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to download Weather data from the NOAA.
  * @author Luke
- * @version 2.7
+ * @version 3.6
  * @since 2.2
  */
 
@@ -101,58 +101,6 @@ public class GetNOAAWeather extends DAO {
 	}
 
 	/**
-	 * Loads METAR data from the stream.
-	 * @param loc the AirportLocation
-	 * @return a METAR bean
-	 * @throws DAOException if an I/O error occurs
-	 */
-	@Deprecated
-	public METAR getMETAR(AirportLocation loc) throws DAOException {
-		if (loc == null)
-			return null;
-		
-		try {
-			URL url = new URL(SystemData.get("weather.url.metar"));
-			if (!"ftp".equalsIgnoreCase(url.getProtocol()))
-				throw new DAOException("FTP expected - " + url.toExternalForm());
-			
-			// Get the file name
-			String fName = loc.getCode() + ".TXT";
-
-			// Connect to the FTP site and change directories
-			FTPConnection ftpc = new FTPConnection(url.getHost());
-			ftpc.connect("anonymous", "golgotha@" + InetAddress.getLocalHost().getHostName());
-			ftpc.getClient().chdir(url.getPath());
-			if (!ftpc.hasFile(url.getPath(), fName)) {
-				ftpc.close();
-				return null;
-			}
-			
-			// Get the file
-			InputStream is = ftpc.get(fName, false);
-			LineNumberReader lr = new LineNumberReader(new InputStreamReader(is), 16384);
-			Date dt = df.parse(lr.readLine());
-			StringBuilder buf = new StringBuilder(lr.readLine());
-			while (lr.ready()) {
-				buf.append(lr.readLine());
-				buf.append(' ');
-			}
-			
-			// Close the file
-			ftpc.close();
-			
-			// Parse the METAR
-			METAR result = MetarParser.parse(buf.toString());
-			result.setDate(dt);
-			result.setData(XMLUtils.stripInvalidUnicode(buf.toString()));
-			result.setAirport(loc);
-			return result;
-		} catch (Exception e) {
-			throw new DAOException(e);
-		}
-	}
-	
-	/**
 	 * Retrieves a complete TAF cycle.
 	 * @param hour the hour in military time
 	 * @return a Map of TAF objects, keyed by airport code
@@ -231,58 +179,6 @@ public class GetNOAAWeather extends DAO {
 			// Disconnect
 			is.close();
 			return results;
-		} catch (Exception e) {
-			throw new DAOException(e);
-		}
-	}
-	
-	/**
-	 * Loads TAF data from the stream.
-	 * @param loc the AirportLocation bean
-	 * @return a TAF bean
-	 * @throws DAOException if an I/O error occurs
-	 */
-	@Deprecated
-	public TAF getTAF(AirportLocation loc) throws DAOException {
-		if (loc == null)
-			return null;
-		
-		try {
-			URL url = new URL(SystemData.get("weather.url.taf"));
-			if (!"ftp".equalsIgnoreCase(url.getProtocol()))
-				throw new DAOException("FTP expected - " + url.toExternalForm());
-			
-			// Get the file name
-			String fName = loc.getCode() + ".TXT";
-			
-			// Connect to the FTP site and change directories
-			FTPConnection ftpc = new FTPConnection(url.getHost());
-			ftpc.connect("anonymous", "golgotha@" + InetAddress.getLocalHost().getHostName());
-			ftpc.getClient().chdir(url.getPath());
-			if (!ftpc.hasFile(url.getPath(), fName)) {
-				ftpc.close();
-				return null;
-			}
-
-			// Get the file
-			InputStream is = ftpc.get(fName, false);
-			LineNumberReader lr = new LineNumberReader(new InputStreamReader(is), 10240);
-			Date dt = df.parse(lr.readLine());
-			StringBuilder buf = new StringBuilder();
-			while (lr.ready()) {
-				buf.append(lr.readLine());
-				buf.append("\r\n");
-			}
-			
-			// Close the file
-			is.close();
-			
-			// Build the TAF
-			TAF result = new TAF();
-			result.setDate(dt);
-			result.setData(XMLUtils.stripInvalidUnicode(buf.toString()));
-			result.setAirport(loc);
-			return result;
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
