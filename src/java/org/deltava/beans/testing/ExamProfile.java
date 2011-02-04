@@ -11,11 +11,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
-public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntry {
+public class ExamProfile implements Comparable<ExamProfile>, java.io.Serializable, Cacheable, ViewEntry {
 
     private String _name;
     private int _stage;
