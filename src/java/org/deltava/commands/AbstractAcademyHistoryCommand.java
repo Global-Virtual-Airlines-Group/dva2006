@@ -4,7 +4,7 @@ package org.deltava.commands;
 import java.util.Collection;
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.*;
 
 import org.deltava.dao.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
  * A class to support Web Site Commands use a {@link AcademyHistoryHelper} object to determine what
  * Flight Academy examinations/courses a Pilot is eligible for.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -25,14 +25,13 @@ public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 	 * @param c the JDBC connection to use
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	protected final AcademyHistoryHelper initHistory(Person p, Connection c) throws DAOException {
+	protected final AcademyHistoryHelper initHistory(Pilot p, Connection c) throws DAOException {
 		
 		// Load all certifications and the Pilot's courses
 		GetAcademyCourses cdao = new GetAcademyCourses(c);
 		GetAcademyCertifications crdao = new GetAcademyCertifications(c);
 		Collection<Certification> allCerts = crdao.getAll();
-		AcademyHistoryHelper helper = new AcademyHistoryHelper(cdao.getByPilot(p.getID()), allCerts);
-		helper.setRoles(p.getRoles());
+		AcademyHistoryHelper helper = new AcademyHistoryHelper(p, cdao.getByPilot(p.getID()), allCerts);
 		helper.setAllowInactive(p.isInRole("Instructor") || p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit"));
 		
 		// Get the Pilot's examinations and check rides

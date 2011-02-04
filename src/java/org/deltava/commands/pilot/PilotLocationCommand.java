@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 3.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class PilotLocationCommand extends AbstractCommand {
 
 		// Get the command result and the user
 		CommandResult result = ctx.getResult();
-		Pilot p = (Pilot) ctx.getUser();
+		Pilot p = ctx.getUser();
 		
 		// Get the IP address Info
 		GeoLocation addrInfo = (GeoLocation) ctx.getSession().getAttribute(HTTPContext.ADDRINFO_ATTR_NAME);
