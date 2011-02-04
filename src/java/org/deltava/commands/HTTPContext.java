@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class to share command data between different HTTP command contexts.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 2.4
  */
 
@@ -29,7 +29,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	private HttpServletRequest _req;
 	private HttpServletResponse _rsp;
 
-	private Person _usr;
+	private Pilot _usr;
 
 	/**
 	 * Creates a new Command context from an HTTP Servlet Request/Resposne pair.
@@ -72,8 +72,8 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * @see HTTPContext#isAuthenticated()
 	 * @see HTTPContext#isUserInRole(String)
 	 */
-	public Person getUser() {
-		return (_usr == null) ? (Person) _req.getUserPrincipal() : _usr;
+	public Pilot getUser() {
+		return (_usr == null) ? (Pilot) _req.getUserPrincipal() : _usr;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public abstract class HTTPContext extends ConnectionContext implements SecurityC
 	 * effect if a user object is already present in the request.
 	 * @param p the User object, or null if anonymous
 	 */
-	public void setUser(Person p) {
+	public void setUser(Pilot p) {
 		if (_req.getUserPrincipal() == null)
 			_usr = p;
 	}
