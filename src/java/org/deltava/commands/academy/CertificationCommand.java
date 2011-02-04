@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -71,10 +71,12 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setReqCert((cert.getReqs() != Certification.REQ_SPECIFIC) ? null : ctx.getParameter("reqCert"));
 			cert.setDescription(ctx.getParameter("desc"));
 			cert.setRoles(ctx.getParameters("enrollRoles"));
+			cert.setExams(ctx.getParameters("reqExams"));
 			
-			// Load the examination names
-			Collection<String> eNames = ctx.getParameters("reqExams");
-			cert.setExams(eNames);
+			// Load apps
+			cert.getAirlines().clear();
+			for (String appName : ctx.getParameters("airlines"))
+				cert.addAirline(SystemData.getApp(appName));
 			
 			// Make sure that each requirement with an exam remains valid
 			for (Iterator<CertificationRequirement> i = cert.getRequirements().iterator(); i.hasNext(); ) {

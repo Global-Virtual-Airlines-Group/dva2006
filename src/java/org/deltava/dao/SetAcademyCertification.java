@@ -5,12 +5,14 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.academy.*;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object for Flight Academy Certifications and Check Ride Scripts.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -53,6 +55,7 @@ public class SetAcademyCertification extends DAO {
 			// Write the exams/roles
 			writeExams(c.getName(), c.getExamNames());
 			writeRoles(c.getName(), c.getRoles());
+			writeApps(c.getName(), c.getAirlines());
 			
 			// Commit the transaction
 			commitTransaction();
@@ -104,9 +107,15 @@ public class SetAcademyCertification extends DAO {
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
+			// Clear the Apps
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTAPPS WHERE (CERTNAME=?)");
+			_ps.setString(1, c.getName());
+			executeUpdate(0);
+			
 			// Write the exams/roles
 			writeExams(c.getName(), c.getExamNames());
 			writeRoles(c.getName(), c.getRoles());
+			writeApps(c.getName(), c.getAirlines());
 			
 			// Write the requirements
 			prepareStatementWithoutLimits("INSERT INTO exams.CERTREQS (CERTNAME, SEQ, EXAMNAME, REQENTRY) VALUES (?, ?, ?, ?)");
@@ -199,8 +208,8 @@ public class SetAcademyCertification extends DAO {
 	private void writeRoles(String certName, Collection<String> roles) throws SQLException {
 		prepareStatementWithoutLimits("INSERT INTO exams.CERTROLES (CERTNAME, ROLE) VALUES (?, ?)");
 		_ps.setString(1, certName);
-		for (Iterator<String> i = roles.iterator(); i.hasNext(); ) {
-			_ps.setString(2, i.next());
+		for (String role : roles) {
+			_ps.setString(2, role);
 			_ps.addBatch();			
 		}
 		
@@ -216,8 +225,25 @@ public class SetAcademyCertification extends DAO {
 	private void writeExams(String certName, Collection<String> exams) throws SQLException {
 		prepareStatementWithoutLimits("INSERT INTO exams.CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)");
 		_ps.setString(1, certName);
-		for (Iterator<String> i = exams.iterator(); i.hasNext(); ) {
-			_ps.setString(2, i.next());
+		for (String exam : exams) {
+			_ps.setString(2, exam);
+			_ps.addBatch();
+		}
+		
+		// Execute the batch transaction
+		_ps.executeBatch();
+		_ps.close();
+		_ps = null;
+	}
+	
+	/**
+	 * Helper method to write virtual ailrine names.
+	 */
+	private void writeApps(String certName, Collection<AirlineInformation> airlines) throws SQLException {
+		prepareStatementWithoutLimits("INSERT INTO exams.CERTAPPS (CERTNAME, AIRLINE) VALUES (?, ?)");
+		_ps.setString(1, certName);
+		for (AirlineInformation ai : airlines) {
+			_ps.setString(2, ai.getCode());
 			_ps.addBatch();
 		}
 		
