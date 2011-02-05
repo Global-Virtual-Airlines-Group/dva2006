@@ -66,6 +66,7 @@ public class NATDownloadTask extends Task {
 					or.setRoute(dao.getTrackInfo());		
 					isDownloaded = true;
 				} catch (DAOException de) {
+					dao.reset();
 					retryCount++;
 					log.warn("Error downloading NAT Data - " + de.getMessage());
 				}
