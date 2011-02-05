@@ -66,6 +66,7 @@ public class PACOTDownloadTask extends Task {
 					or.setRoute(dao.getTrackInfo());		
 					isDownloaded = true;
 				} catch (DAOException de) {
+					dao.reset();
 					retryCount++;
 					log.warn("Error downloading PACOT Data - " + de.getMessage());
 				}
