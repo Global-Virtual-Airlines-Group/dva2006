@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 2.8
+ * @version 3.6
  * @since 1.0
  */
 
@@ -36,6 +36,8 @@ public class MapService extends WebService {
 		// Get the pool data
 		GetACARSPool acdao = new GetACARSPool();
 		Collection<ACARSMapEntry> entries = acdao.getEntries();
+		if (entries == null)
+			entries = Collections.emptyList();
 
 		// Generate the XML document
 		Document doc = new Document();
