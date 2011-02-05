@@ -1,12 +1,12 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * A bean to store VATSIM registration data.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 2.6
  */
 
@@ -15,6 +15,8 @@ public class Certificate extends NetworkUser {
 	private boolean _active;
 	private String _eMail;
 	private Date _regDate;
+	
+	private final Collection<String> _pilotRatings = new TreeSet<String>();
 	
 	/**
 	 * Initializes the bean.
@@ -41,11 +43,30 @@ public class Certificate extends NetworkUser {
 	}
 	
 	/**
+	 * Returns the user's pilot ratings.
+	 * @return a Collection of rating codes
+	 */
+	public Collection<String> getPilotRatings() {
+		return new ArrayList<String>(_pilotRatings);
+	}
+	
+	/**
 	 * Returns whether the user account is active.
 	 * @return TRUE if active, otherwise FALSE
 	 */
 	public boolean isActive() {
 		return _active;
+	}
+	
+	/**
+	 * Adds a Pilot rating.
+	 * @param rating the rating code
+	 */
+	public void addPilotRating(String rating) {
+		if (!rating.startsWith("P"))
+			rating = "P" + rating;
+		
+		_pilotRatings.add(rating);
 	}
 	
 	/**
