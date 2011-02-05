@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import javax.net.ssl.*;
  * DAOs create their own stream to a URL. This is used in situations where
  * request-specific data is encoded into the URL. 
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 2.4
  */
 
@@ -20,6 +20,9 @@ public abstract class DAO {
 	
 	private SSLContext _sslCtxt;
 	private String _method = "GET";
+	
+	private int _readTimeout = 4500;
+	private int _connectTimeout = 2500;
 	
 	private HttpURLConnection _urlcon;
 	
@@ -41,6 +44,22 @@ public abstract class DAO {
     }
     
     /**
+     * Sets the HTTP connect timeout.
+     * @param timeout the timeout in milliseconds
+     */
+    public void setConnectTimeout(int timeout) {
+    	_connectTimeout = Math.max(0, timeout);
+    }
+    
+    /**
+     * Sets the HTTP connect timeout.
+     * @param timeout the timeout in milliseconds
+     */
+    public void setReadTimeout(int timeout) {
+    	_readTimeout = Math.max(0, timeout);
+    }
+    
+    /**
      * Helper method to open the connection.
      * @param url the URI to connect to
      * @throws IOException if an error occurs
@@ -57,8 +76,8 @@ public abstract class DAO {
     	}
     	
     	// Set timeouts and other stuff
-		_urlcon.setConnectTimeout(2500);
-		_urlcon.setReadTimeout(4500);
+		_urlcon.setConnectTimeout(_connectTimeout);
+		_urlcon.setReadTimeout(_readTimeout);
 		_urlcon.setRequestMethod(_method);
 		_urlcon.setDefaultUseCaches(false);
     }

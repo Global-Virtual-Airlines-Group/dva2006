@@ -66,6 +66,7 @@ public class AUSOTDownloadTask extends Task {
 					or.setRoute(dao.getTrackInfo());		
 					isDownloaded = true;
 				} catch (DAOException de) {
+					dao.setConnectTimeout(5000);
 					dao.reset();
 					retryCount++;
 					log.warn("Error downloading AUSOT Data - " + de.getMessage());
