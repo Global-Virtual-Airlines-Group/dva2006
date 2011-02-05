@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 3.5
+ * @version 3.6
  * @since 1.0
  */
 
@@ -275,8 +275,8 @@ public class GetStatistics extends DAO implements CachingDAO {
 		Map<Integer, Long> results = new HashMap<Integer, Long>();
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 			Integer id = i.next();
-			if (_coolerStatsCache.contains(id)) {
-				CacheableLong result = _coolerStatsCache.get(id);
+			CacheableLong result = _coolerStatsCache.get(id);
+			if (result != null) {
 				results.put(id, Long.valueOf(result.getValue()));
 				i.remove();
 			}
