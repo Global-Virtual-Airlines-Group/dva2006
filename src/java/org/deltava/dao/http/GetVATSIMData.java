@@ -2,6 +2,7 @@
 package org.deltava.dao.http;
 
 import java.io.*;
+import java.util.*;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 import org.jdom.*;
@@ -75,6 +76,12 @@ public class GetVATSIMData extends DAO {
 			c.setEmailDomain(ue.getChildTextTrim("email"));
 			c.setRegistrationDate(StringUtils.parseDate(ue.getChildTextTrim("regdate"), "yyyy-MM-dd HH:mm:ss"));
 			c.setActive(!isInactive);
+			
+			// Load Pilot ratings
+			Collection<String> ratings = new LinkedHashSet<String>(StringUtils.split(ue.getChildTextTrim("pilotrating"), ","));
+			for (String pRating : ratings)
+				c.addPilotRating(pRating);
+			
 			return c;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
