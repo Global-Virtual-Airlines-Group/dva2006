@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -131,7 +131,9 @@ public class ImageServlet extends BasicAuthServlet {
 					// Validate that we can view the image
 					GetGallery gdao = new GetGallery(c);
 					Image img = gdao.getImageData(imgID, url.getLastPath());
-					if (img.getThreadID() != 0) {
+					if (img == null)
+						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+					else if (img.getThreadID() != 0) {
 						GetCoolerChannels chdao = new GetCoolerChannels(c);
 						GetCoolerThreads tdao = new GetCoolerThreads(c);
 						MessageThread mt = tdao.getThread(img.getThreadID(), false);
@@ -205,7 +207,7 @@ public class ImageServlet extends BasicAuthServlet {
 		// Set the content-type and content length
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength(imgBuffer.length);
-		rsp.setBufferSize(Math.min(65536, imgBuffer.length));
+		rsp.setBufferSize(Math.min(65536, imgBuffer.length + 16));
 
 		// Dump the data to the output stream
 		try {
