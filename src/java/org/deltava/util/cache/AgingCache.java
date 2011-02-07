@@ -30,10 +30,6 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 			_lastCreationTime = _createdOn;
 		}
 
-		public long getCreationTime() {
-			return _createdOn;
-		}
-
 		public int compareTo(CacheEntry<U> e2) {
 			AgingCacheEntry<U> ae2 = (AgingCacheEntry<U>) e2;
 			return Long.valueOf(_createdOn).compareTo(Long.valueOf(ae2._createdOn));

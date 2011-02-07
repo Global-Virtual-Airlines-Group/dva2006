@@ -36,10 +36,6 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			return (_expiryTime < System.currentTimeMillis());
 		}
 
-		public long getExpiryTime() {
-			return _expiryTime;
-		}
-
 		public int compareTo(CacheEntry<U> e2) {
 			ExpiringCacheEntry<U> ee2 = (ExpiringCacheEntry<U>) e2;
 			return Long.valueOf(_expiryTime).compareTo(Long.valueOf(ee2._expiryTime));
