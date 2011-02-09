@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 2.8
+ * @version 3.6
  * @since 2.4
  */
 
@@ -36,6 +36,28 @@ public class OfflineFlightParser {
 			xml = xml.replace(',', '.');
 		
 		return Double.parseDouble(xml);
+	}
+	
+	/**
+	 * Helper class to let us override Flight IDs if required without throwing an error.
+	 */
+	public static class OfflineFlightInfo extends FlightInfo {
+		private int _id;
+		
+		OfflineFlightInfo(long conID) {
+			super(conID);
+		}
+		
+		public int getID() {
+			return _id;
+		}
+		
+		public void setID(int newID) {
+			if (newID != 0)
+				validateID(_id, newID);
+			
+			_id = newID;
+		}
 	}
 	
 	/**
@@ -86,7 +108,7 @@ public class OfflineFlightParser {
 		result.setConnection(ce);
 		
 		// Build a flight data entry
-		FlightInfo inf = new FlightInfo(ce.getID());
+		FlightInfo inf = new OfflineFlightInfo(ce.getID());
 		int flightID = StringUtils.parse(ie.getChildTextTrim("id"), 0);
 		if (flightID > 0)
 			inf.setID(flightID);
