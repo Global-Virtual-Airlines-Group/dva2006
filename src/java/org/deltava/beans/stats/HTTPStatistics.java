@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.Date;
@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * A class for storing daily HTTP server statistics.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
@@ -15,8 +15,8 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	private Date _date;
 	private int _reqs;
 	private int _homeHits;
-	private int _execTime;
-	private int _backEndTime;
+	private long _execTime;
+	private long _backEndTime;
 	private long _bandwidth;
 
 	/**
@@ -59,18 +59,18 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	/**
 	 * Returns the total time serving requests.
 	 * @return the time in milliseconds
-	 * @see HTTPStatistics#setExecutionTime(int)
+	 * @see HTTPStatistics#setExecutionTime(long)
 	 */
-	public int getExecutionTime() {
+	public long getExecutionTime() {
 		return _execTime;
 	}
 
 	/**
 	 * Returns the total time executing database operations.
 	 * @return the time in milliseconds
-	 * @see HTTPStatistics#setBackEndTime(int)
+	 * @see HTTPStatistics#setBackEndTime(long)
 	 */
-	public int getBackEndTime() {
+	public long getBackEndTime() {
 		return _backEndTime;
 	}
 
@@ -106,7 +106,7 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	 * @param time the total time serving requests in milliseconds
 	 * @see HTTPStatistics#getExecutionTime()
 	 */
-	public void setExecutionTime(int time) {
+	public void setExecutionTime(long time) {
 		_execTime = time;
 	}
 	
@@ -115,7 +115,7 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	 * @param time the total database execution time in milliseconds
 	 * @see HTTPStatistics#getBackEndTime()
 	 */
-	public void setBackEndTime(int time) {
+	public void setBackEndTime(long time) {
 		_backEndTime = time;
 	}
 
@@ -126,6 +126,10 @@ public class HTTPStatistics implements java.io.Serializable, Comparable<HTTPStat
 	 */
 	public void setBandwidth(long bytes) {
 		_bandwidth = bytes;
+	}
+	
+	public int hashCode() {
+		return _date.hashCode();
 	}
 
 	/**

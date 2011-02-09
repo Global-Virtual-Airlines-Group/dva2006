@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
@@ -47,17 +47,13 @@ public class GetSystemData extends DAO implements CachingDAO {
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			List<HTTPStatistics> results = new ArrayList<HTTPStatistics>();
 			while (rs.next()) {
 				HTTPStatistics stats = new HTTPStatistics(expandDate(rs.getDate(1)));
 				stats.setRequests(rs.getInt(2));
 				stats.setHomePageHits(rs.getInt(3));
-				stats.setExecutionTime(rs.getInt(4));
+				stats.setExecutionTime(rs.getLong(4));
 				stats.setBandwidth(rs.getLong(5));
-
-				// Add to results
 				results.add(stats);
 			}
 
