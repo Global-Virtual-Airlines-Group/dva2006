@@ -50,7 +50,7 @@ return true;
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title">
- <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
+ <td class="caps" colspan="2">DEVELOPMENT ISSUE #${issue.ID} - ${issue.subject}</td>
 </tr>
 
 <!-- Issue Data -->
