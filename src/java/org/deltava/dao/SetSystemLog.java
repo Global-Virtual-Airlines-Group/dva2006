@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.stats.HTTPStatistics;
 /**
  * A Data Access Object to write HTTP statistics and purge System Log entries.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -69,7 +69,7 @@ public class SetSystemLog extends DAO {
          _ps.setTimestamp(1, createTimestamp(stats.getDate()));
          _ps.setInt(2, stats.getRequests());
          _ps.setInt(3, stats.getHomePageHits());
-         _ps.setInt(4, stats.getExecutionTime());
+         _ps.setLong(4, stats.getExecutionTime());
          _ps.setLong(5, stats.getBandwidth());
          executeUpdate(1);
       } catch (SQLException se) {
