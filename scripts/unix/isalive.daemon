@@ -235,7 +235,7 @@ do
 				cat /tmp/healthcheck.log >> /var/cache/isalive.txt
 				cat /tmp/healthcheck.out >> /var/cache/isalive.txt
 				kill -3 `cat /var/run/tomcat60.pid`
-				sleep 5.5
+				sleep 10
 				kill -9 `cat /var/run/tomcat60.pid`
 				sleep 1.25
 				logger -p local3.err "Archiving Tomcat log"
