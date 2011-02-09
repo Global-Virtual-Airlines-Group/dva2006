@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.log;
 
 import java.io.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.stats.HTTPStatistics;
  * A Log Parser for Apache 2.0 common access logs. <i>This requires that the log be in the Apache 2.x 
  * format &quot;%h %u %t \"%r\" %>s %B %D&quot;.</i>
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
@@ -84,8 +84,8 @@ public class ApacheLogParser implements LogParser {
       // Init counters
       int totalHits = 0;
       int homeHits = 0;
-      int execTime = 0;
-      int beTime = 0;
+      long execTime = 0;
+      long beTime = 0;
       long bandwidth = 0;
       
       try {
