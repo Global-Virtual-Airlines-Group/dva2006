@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -31,7 +31,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.4
  */
 
@@ -351,6 +351,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
+				}
+			}
+			
+			// Validate the flight ID, otherwise set it to zero
+			if (inf.getID() != 0) {
+				GetACARSData addao = new GetACARSData(con);
+				FlightInfo savedInf = addao.getInfo(inf.getID());
+				if (savedInf == null) {
+					log.warn("Invalid Flight ID - " + inf.getID());
+					inf.setID(0);
 				}
 			}
 			
