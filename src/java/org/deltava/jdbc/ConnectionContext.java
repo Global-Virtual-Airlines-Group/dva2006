@@ -120,7 +120,7 @@ public abstract class ConnectionContext {
     		   _con.setAutoCommit(_autoCommit);
     	   }
        } catch (Exception e) {
-    	   log.error("Error rolling back transaction - " + e.getMessage(), e);
+   		   log.error("Error rolling back transaction - " + e.getMessage());
        }
     }
     
