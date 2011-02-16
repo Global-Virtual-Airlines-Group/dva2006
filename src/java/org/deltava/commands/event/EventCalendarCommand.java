@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to display the Online Event calendar.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class EventCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the DAO and the events
 			GetEvent dao = new GetEvent(con);
-			Collection<Event> events = dao.getEventCalendar(cctx.getStartDate(), cctx.getDays());
+			Collection<Event> events = dao.getEventCalendar(cctx.getRange());
 			ctx.setAttribute("events", events, REQUEST);
 			
 			// Get future events

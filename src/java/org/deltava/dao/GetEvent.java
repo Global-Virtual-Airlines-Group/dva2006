@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
 
-import org.deltava.beans.OnlineNetwork;
+import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 2.3
+ * @version 3.6
  * @since 1.0
  */
 
@@ -45,6 +45,7 @@ public class GetEvent extends DAO {
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
+			loadSignups(eMap);
 			
 			// Return the results
 			return results;
@@ -117,21 +118,19 @@ public class GetEvent extends DAO {
 	
 	/**
 	 * Returns all Online Events within a certain date range.
-	 * @param startDate the start Date
-	 * @param days the number of days forward to query
+	 * @param dr the DateRange
 	 * @return a List of Event beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Event> getEventCalendar(java.util.Date startDate, int days) throws DAOException {
+	public List<Event> getEventCalendar(DateRange dr) throws DAOException {
 		try {
 			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) AND "
-					+ "(E.STARTTIME >= ?) AND (E.STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) AND (E.STATUS !=?) "
-					+ "AND (EA.AIRLINE=?) ORDER BY E.STARTTIME");
-			_ps.setTimestamp(1, createTimestamp(startDate));
-			_ps.setTimestamp(2, createTimestamp(startDate));
-			_ps.setInt(3, days);
-			_ps.setInt(4, Event.CANCELED);
-			_ps.setString(5, SystemData.get("airline.code"));
+				+ "(E.STARTTIME >= ?) AND (E.STARTTIME <= ?) AND (E.STATUS !=?) AND (EA.AIRLINE=?) "
+				+ "ORDER BY E.STARTTIME");
+			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
+			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
+			_ps.setInt(3, Event.CANCELED);
+			_ps.setString(4, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
 			// Load the airports

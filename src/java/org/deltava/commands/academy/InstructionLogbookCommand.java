@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to display Instruction logbooks.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<InstructionFlight> flights = dao.getFlightCalendar(null, 0, id); 
+			Collection<InstructionFlight> flights = dao.getFlightCalendar(id, null); 
 			vc.setResults(flights);
 			
 			// Get the Pilot IDs

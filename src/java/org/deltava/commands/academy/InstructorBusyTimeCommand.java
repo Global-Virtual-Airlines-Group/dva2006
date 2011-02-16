@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.BusyTimeAccessControl;
 /**
  * A Web Site Command to list busy time for a Flight Academy Instructor.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 			
 			// Get the DAO and the Calendar
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
-			Collection<InstructionBusy> busyTime = dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
+			Collection<InstructionBusy> busyTime = dao.getBusyCalendar(ctx.getID(), cctx.getRange());
 			
 			// Calculcate access rights
 			Map<InstructionBusy, BusyTimeAccessControl> accessMap = new LinkedHashMap<InstructionBusy, BusyTimeAccessControl>();

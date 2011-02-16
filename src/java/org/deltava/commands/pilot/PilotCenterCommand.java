@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -264,7 +264,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Check if we have instruction flights
 				GetAcademyCalendar facdao = new GetAcademyCalendar(con);
 				facdao.setQueryMax(1);
-				boolean hasFlights = !facdao.getFlightCalendar(null, 0, ctx.getUser().getID()).isEmpty();
+				boolean hasFlights = !facdao.getFlightCalendar(p.getID(), null).isEmpty();
 				ctx.setAttribute("academyInsFlights", Boolean.valueOf(hasFlights || ctx.isUserInRole("HR")), REQUEST);
 			}
 
