@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract Command class to support Calendar views.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -22,21 +22,21 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	
 	protected final class CalendarContext {
 		
-		private DateTime _startDate;
+		private DateRange _dr;
 		private int _days;
 		
-		CalendarContext(DateTime sd, int days) {
+		CalendarContext(DateRange dr, int days) {
 			super();
-			_startDate = sd;
+			_dr = dr;
 			_days = days;
 		}
 		
-		public DateTime getStartDateTime() {
-			return _startDate; 
+		public Date getStartDate() {
+			return _dr.getStartDate();
 		}
 		
-		public Date getStartDate() {
-			return _startDate.getDate();
+		public DateRange getRange() {
+			return _dr;
 		}
 		
 		public int getDays() {
@@ -93,6 +93,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 		ctx.setAttribute("typeOptions", TYPE_OPTIONS, REQUEST);
 		
 		// Build and return the Calendar context
-		return new CalendarContext(ldt, days);
+		DateRange dr = (days == 7) ? DateRange.createWeek(startDate) : DateRange.createMonth(startDate);
+		return new CalendarContext(dr, days);
 	}
 }

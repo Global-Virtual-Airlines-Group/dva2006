@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.DispatchScheduleAccessControl;
 /**
  * A Web Site Command to display the ACARS Dispatch service calendar.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.2
  */
 
@@ -57,7 +57,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the entries
 			GetDispatchCalendar dcdao = new GetDispatchCalendar(con);
-			Collection<DispatchScheduleEntry> schedEntries = dcdao.getCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
+			Collection<DispatchScheduleEntry> schedEntries = dcdao.getCalendar(ctx.getID(), cctx.getRange());
 			for (Iterator<DispatchScheduleEntry> i = schedEntries.iterator(); i.hasNext(); ) {
 				DispatchScheduleEntry se = i.next();
 				if (se.getEndTime().getTime() >= now)
@@ -87,7 +87,7 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 			
 			// Load the history if requested
 			if (!noHistory) {
-				Collection<ConnectionEntry> cons = dcdao.getDispatchConnections(cctx.getStartDate(), cctx.getDays());
+				Collection<ConnectionEntry> cons = dcdao.getDispatchConnections(cctx.getRange());
 				Collection<Integer> conIDs = new HashSet<Integer>();
 				for (Iterator<ConnectionEntry> i = cons.iterator(); i.hasNext(); ) {
 					DispatchConnectionEntry ce = (DispatchConnectionEntry) i.next();
@@ -107,7 +107,6 @@ public class ServiceCalendarCommand extends AbstractCalendarCommand {
 						conEntries.add(ce);
 				}
 				
-				// Save in the request
 				IDs.addAll(conIDs);
 			}
 			

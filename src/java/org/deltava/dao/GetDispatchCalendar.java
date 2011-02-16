@@ -1,15 +1,16 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.DateRange;
 import org.deltava.beans.acars.*;
 
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.2
  */
 
@@ -25,20 +26,18 @@ public class GetDispatchCalendar extends GetACARSData {
 	
 	/**
 	 * Returns all ACARS Dispatch connection entries within a time span.
-	 * @param sd the start date/time
-	 * @param days the number of days forward to retrieve
+	 * @param dr the DateRange
 	 * @return a List of dispatch ConnectionEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<ConnectionEntry> getDispatchConnections(java.util.Date sd, int days) throws DAOException {
+	public List<ConnectionEntry> getDispatchConnections(DateRange dr) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
-					+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH FROM acars.CONS C WHERE "
-					+ "(C.DISPATCH=?) AND (C.DATE > ?) AND (C.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY C.ID");
+				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH FROM acars.CONS C WHERE "
+				+ "(C.DISPATCH=?) AND (C.DATE > ?) AND (C.DATE < ?) ORDER BY C.ID");
 			_ps.setBoolean(1, true);
-			_ps.setTimestamp(2, createTimestamp(sd));
-			_ps.setTimestamp(3, createTimestamp(sd));
-			_ps.setInt(4, days);
+			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
+			_ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
 			return executeConnectionInfo();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -56,7 +55,7 @@ public class GetDispatchCalendar extends GetACARSData {
 			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM "
 					+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN "
 					+ "acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
-					+ "WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED > ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
+					+ "WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
 			_ps.setInt(1, ce.getPilotID());
 			_ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
@@ -70,21 +69,19 @@ public class GetDispatchCalendar extends GetACARSData {
 	/**
 	 * Retrieves all Flights dispatched by a Dispatcher within a time span.
 	 * @param id the Dispatcher's database ID
-	 * @param sd the start date/time
-	 * @param days the number of days forward to retrieve
+	 * @param dr the DateRange
 	 * @return a List of FlightInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightInfo> getDispatchedFlights(int id, java.util.Date sd, int days) throws DAOException {
+	public List<FlightInfo> getDispatchedFlights(int id, DateRange dr) throws DAOException {
 		try {
 			prepareStatement("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
 				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FDR LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "WHERE (C.ID=F.CON_ID) AND (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED > ?) AND "
-				+ "(F.CREATED < DATE_ADD(?, INTERVAL ? DAY))");
+				+ "WHERE (C.ID=F.CON_ID) AND (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND "
+				+ "(F.CREATED < ?)");
 			_ps.setInt(1, id);
-			_ps.setTimestamp(2, createTimestamp(sd));
-			_ps.setTimestamp(3, createTimestamp(sd));
-			_ps.setInt(4, days);
+			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
+			_ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
 			return executeFlightInfo();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -110,20 +107,19 @@ public class GetDispatchCalendar extends GetACARSData {
 	
 	/**
 	 * Return Dispatcher service times for the Calendar.
-	 * @param sd the start date/time
-	 * @param days the number of days to retrieve
 	 * @param dispatcherID the dispatcher database ID, or zero if all
+	 * @param dr the DateRange
 	 * @return a Collection of DispatchScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<DispatchScheduleEntry> getCalendar(java.util.Date sd, int days, int dispatcherID) throws DAOException {
+	public Collection<DispatchScheduleEntry> getCalendar(int dispatcherID, DateRange dr) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM acars.DSP_SCHEDULE ");
-		if ((sd != null) || (dispatcherID != 0))
+		if ((dr != null) || (dispatcherID != 0))
 			sqlBuf.append("WHERE ");
-		if (sd != null) {
-			sqlBuf.append("(STARTTIME >=?) AND (STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
+		if (dr != null) {
+			sqlBuf.append("(STARTTIME >=?) AND (STARTTIME < ?) ");
 			if (dispatcherID > 0)
 				sqlBuf.append("AND ");
 		}
@@ -135,10 +131,9 @@ public class GetDispatchCalendar extends GetACARSData {
 		int param = 0;
 		try {
 			prepareStatement(sqlBuf.toString());
-			if (sd != null) {
-				_ps.setTimestamp(++param, createTimestamp(sd));
-				_ps.setTimestamp(++param, createTimestamp(sd));
-				_ps.setInt(++param, days);
+			if (dr != null) {
+				_ps.setTimestamp(++param, createTimestamp(dr.getStartDate()));
+				_ps.setTimestamp(++param, createTimestamp(dr.getEndDate()));
 			}
 			
 			if (dispatcherID > 0)
@@ -166,7 +161,6 @@ public class GetDispatchCalendar extends GetACARSData {
 			results.add(e);
 		}
 		
-		// Clean up and return
 		rs.close();
 		_ps.close();
 		return results;
