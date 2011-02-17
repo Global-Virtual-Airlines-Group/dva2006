@@ -75,6 +75,27 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	}
 	
 	/**
+	 * Parses a Date range combo alias.
+	 * @param alias the alias
+	 * @return a DateRange, or null if unparseable
+	 * @see DateRange#getComboAlias()
+	 */
+	public static DateRange parse(String alias) {
+		if (alias == null) return null;
+		int pos = alias.indexOf('-');
+		if (pos == -1)
+			return null;
+		
+		try {
+			long st = Long.parseLong(alias.substring(0, pos));
+			long len = Long.parseLong(alias.substring(pos + 1));
+			return new DateRange(new Date(st), new Date(st + len));
+		} catch (NumberFormatException nfe) {
+			return null;
+		}
+	}
+	
+	/**
 	 * Creates a date range.
 	 * @param startDate the start date/time
 	 * @param endDate the end date/time
@@ -162,5 +183,9 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 			tmpResult = _endDate.compareTo(dr2._endDate);
 		
 		return tmpResult;
+	}
+	
+	public boolean equals(Object o) {
+		return (o instanceof DateRange) ? (compareTo((DateRange) o) == 0) : false;
 	}
 }
