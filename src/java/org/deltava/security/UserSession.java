@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Pilot;
@@ -7,11 +7,11 @@ import org.deltava.beans.system.*;
 /**
  * A bean to store data about a User session.
  * @author Luke
- * @version 2.5
+ * @version 3.6
  * @since 1.0
  */
 
-public class UserSession implements Comparable<UserSession> {
+public class UserSession implements java.io.Serializable, Comparable<UserSession> {
 
 	private String _sessionID;
 	private String _userAgent;
