@@ -240,12 +240,14 @@ public class LoginCommand extends AbstractCommand {
 			idao.delete(p.getID());
 
 			// Create the session and stuff in the pilot data
+			String userAgent = ctx.getRequest().getHeader("user-agent");
 			HttpSession s = ctx.getRequest().getSession(true);
 			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
+			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
 			s.setAttribute(CommandContext.ADDR_ATTR_NAME, cData.getRemoteAddr());
-			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
-			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
+			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
+			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
 			
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
@@ -258,7 +260,7 @@ public class LoginCommand extends AbstractCommand {
 				s.setAttribute("next_url", "home.do");
 
 			// Add the user to the User pool
-			UserPool.add(p, s.getId(), addrInfo, ctx.getRequest().getHeader("user-agent"));
+			UserPool.add(p, s.getId(), addrInfo, userAgent);
 
 			// Commit the transaction
 			ctx.commitTX();
