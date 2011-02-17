@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.*;
 /**
  * An access controller for Job Postings.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -58,10 +58,11 @@ public class JobPostingAccessControl extends AccessControl {
 		
 		// Check we're staff
 		Pilot p = (Pilot) _ctx.getUser();
+		boolean isHireMgr = _ctx.isAuthenticated() && (p.getID() == _jp.getHireManagerID());
 		boolean isStaff = _ctx.isAuthenticated() && (p.getRank().isCP() || RoleUtils.hasAccess(p.getRoles(), STAFF_ROLES));
-		boolean canRead = (_jp.getStatus() == JobPosting.OPEN) || isHR;
+		boolean canRead = (_jp.getStatus() == JobPosting.OPEN) || isHireMgr || isHR;
 		if (_jp.getStaffOnly())
-			canRead &= isStaff;
+			canRead &= (isStaff || isHireMgr);
 		
 		// Check our access
 		if (!canRead)
@@ -70,7 +71,6 @@ public class JobPostingAccessControl extends AccessControl {
 			return;
 		
 		// Check if we have applications
-		boolean isHireMgr = (p.getID() == _jp.getHireManagerID());
 		_canEdit = isHR && (_jp.getStatus() != JobPosting.COMPLETE);
 		_canDelete = (_jp.getAppCount() > 0) ? _ctx.isUserInRole("Admin") : isHR;
 		_canViewApplications = isHR || (isHireMgr && (_jp.getStatus() >= JobPosting.SHORTLIST));

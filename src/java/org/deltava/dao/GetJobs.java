@@ -115,9 +115,8 @@ public class GetJobs extends DAO {
 	 */
 	public List<JobPosting> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM JOBPOSTINGS WHERE (STATUS=?) AND (CLOSES>NOW()) ORDER BY "
-				+ "CLOSES DESC, CREATED DESC");
-			_ps.setInt(1, JobPosting.OPEN);
+			prepareStatement("SELECT * FROM JOBPOSTINGS WHERE (STATUS<>?) ORDER BY CLOSES DESC, CREATED DESC");
+			_ps.setInt(1, JobPosting.COMPLETE);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
