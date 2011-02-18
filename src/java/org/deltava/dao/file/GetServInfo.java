@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.TZInfo;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.schedule.Airport;
 
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
@@ -34,7 +34,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetServInfo extends DAO {
+public class GetServInfo extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
@@ -47,6 +47,10 @@ public class GetServInfo extends DAO {
 	 */
 	public GetServInfo(InputStream is) {
 		super(is);
+	}
+	
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_infoCache);
 	}
 	
 	/**
