@@ -131,6 +131,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetACARSRunways(null));
 		daoCaches.add(new GetACARSLog(null));
 		daoCaches.add(new GetIPLocation(null));
+		daoCaches.add(new GetServInfo(null));
 		daoCaches.add(new GetWeather(null));
 		daoCaches.add(new GetFAWeather());
 		daoCaches.add(new org.deltava.dao.ipc.GetACARSPool());
