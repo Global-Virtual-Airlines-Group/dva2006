@@ -1,22 +1,22 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.util.cache.Cacheable;
+import org.deltava.comparators.GeoComparator;
 
-import org.deltava.util.GeoUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store aggregated network information.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
-public class NetworkInfo implements Cacheable {
+public class NetworkInfo implements java.io.Serializable, Cacheable {
 
     private OnlineNetwork _net;
     private int _version;
@@ -275,6 +275,30 @@ public class NetworkInfo implements Cacheable {
      */
     public Controller getController(String callsign) {
        return _controllers.get(callsign);
+    }
+    
+    /**
+     * Returns a controller by Frequency.
+     * @param freq the frequency
+     * @param loc the location to sort, if multiple results found
+     * @return a Controller bean, or null if the frequency was not found
+     */
+    public Controller getControllerByFrequency(String freq, GeoLocation loc) {
+    	if ("122.8".equals(freq))
+    		return null;
+    	
+    	List<Controller> results = new ArrayList<Controller>();
+    	for (Iterator<Controller> i = _controllers.values().iterator(); i.hasNext(); ) {
+    		Controller ctr = i.next();
+    		if (freq.equals(ctr.getFrequency()))
+    			results.add(ctr);
+    	}
+
+    	// Sort by distance if a location specified
+    	if (loc != null)
+    		Collections.sort(results, new GeoComparator(loc));
+    	
+    	return results.isEmpty() ? null : results.get(0);
     }
     
     /**
