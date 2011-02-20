@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store online Controller information.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -92,6 +92,23 @@ public class Controller extends ConnectedUser {
      */
     public void setFrequency(String freq) {
     	_freq = freq;
+    }
+    
+    /**
+     * Returns whether the controller is an Observer.
+     * @return TRUE if the Controller has an Observer rating or _OBS callsign
+     */
+    public boolean isObserver() {
+    	return (getRating() == Rating.OBS) || getCallsign().endsWith("_OBS");
+    }
+    
+    /**
+     * Returns whether the Conrtoller has set a primary frequency.
+     * @return TRUE if a frequency has been set, otherwise FALSE
+     * @see Controller#getFrequency()
+     */
+    public boolean hasFrequency() {
+    	return !StringUtils.isEmpty(_freq) && !"199.998".equals(_freq);
     }
     
     /**
