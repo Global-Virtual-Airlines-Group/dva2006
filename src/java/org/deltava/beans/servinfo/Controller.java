@@ -121,6 +121,31 @@ public class Controller extends ConnectedUser {
     }
     
     /**
+     * Compares this user to another Controller by comparing the Network IDs and callsigns.
+     */
+    public int compareTo(Controller c2) {
+    	int tmpResult = super.compareTo(c2);
+    	return (tmpResult == 0) ? getCallsign().compareTo(c2.getCallsign()) : tmpResult;
+    }
+    
+    /**
+     * Checks equality by comparing network IDs and callsigns.
+     */
+    public final boolean equals(Object o2) {
+    	if (o2 instanceof Controller)
+    		return (compareTo((Controller) o2) == 0);
+    	
+   		return super.equals(o2);
+    }
+    
+    /**
+     * Returns the Network ID's hash code.
+     */
+    public int hashCode() {
+    	return getCallsign().hashCode();
+    }
+    
+    /**
 	 * Returns the Google Map Infobox text.
 	 * @return HTML text
 	 */
