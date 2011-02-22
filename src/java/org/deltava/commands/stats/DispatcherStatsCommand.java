@@ -57,6 +57,11 @@ public class DispatcherStatsCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Calculate the length - if it's the current time period adjust accordingly
+		Date now = new Date();
+		if (dr.getEndDate().after(now))
+			dr = new DateRange(dr.getStartDate(), now);
+		
 		// Display dates
 		ctx.setAttribute("range", dr, REQUEST);
 		ctx.setAttribute("totalHours", new Double(dr.getLength() / 3600000.0), REQUEST);
