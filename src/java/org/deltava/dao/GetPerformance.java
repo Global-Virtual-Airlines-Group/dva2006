@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 2.7
+ * @version 3.6
  * @since 1.0
  */
 
@@ -123,7 +123,7 @@ public class GetPerformance extends DAO {
 				+ "MIN(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS MN, "
 				+ "MAX(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS MX, COUNT(CR.ID) AS CNT FROM "
 				+ "exams.CHECKRIDES CR, common.EQPROGRAMS EP WHERE (CR.STATUS=?) AND (CR.EQTYPE=EP.EQTYPE) AND "
-				+ "(EP.AIRLINE=?) AND (CR.CREATED >= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND "
+				+ "(EP.OWNER=?) AND (CR.CREATED >= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND "
 				+ "(CR.CREATED <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND (LOCATE(?, CR.NAME) = 0) GROUP BY CATNAME");
 
 		try {

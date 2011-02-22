@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 		try {
 			if (dbName == null) {
 				prepareStatementWithoutLimits("SELECT AI.DBNAME, CASE AI.DBNAME WHEN ? THEN 1 ELSE 0 END AS SRT FROM "
-						+ "common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE (EP.AIRLINE=AI.CODE) AND (EP.EQTYPE=?) "
+						+ "common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE (EP.OWNER=AI.CODE) AND (EP.EQTYPE=?) "
 						+ "ORDER BY SRT DESC LIMIT 1");
 				_ps.setString(1, SystemData.get("airline.db"));
 				_ps.setString(2, eqType);
@@ -68,13 +68,13 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				return eq;
 			
 			// Build the SQL statement
-			StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-					+ "P.EMAIL FROM ");
+			StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+				+ "P.EMAIL FROM ");
 			sqlBuf.append(dbName);
 			sqlBuf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
 			sqlBuf.append(dbName);
-			sqlBuf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.AIRLINE=AI.CODE) AND "
-					+ "(AI.DBNAME=?) AND (EQ.EQTYPE=?) LIMIT 1");
+			sqlBuf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.OWNER=AI.CODE) AND "
+				+ "(AI.DBNAME=?) AND (EQ.EQTYPE=?) LIMIT 1");
 
 			// Prepare the statement
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -89,7 +89,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			// Get the ratings/exams
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
-			loadAirlines(results, dbName);
+			loadAirlines(results);
 			_cache.addAll(results);
 			return results.get(0);
 		} catch (SQLException se) {
@@ -107,13 +107,13 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	public Collection<EquipmentType> getByStage(int stage, String dbName) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-				+ "P.EMAIL FROM common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+			+ "P.EMAIL FROM common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".EQTYPES EQ, ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS P WHERE (EP.AIRLINE=AI.CODE) AND (AI.DBNAME=LOWER(?)) AND (EP.EQTYPE=EQ.EQTYPE) "
-				+ "AND (EQ.CP_ID=P.ID) AND (EQ.STAGE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
+		sqlBuf.append(".PILOTS P WHERE (EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EP.EQTYPE=EQ.EQTYPE) AND "
+			+ "(EQ.CP_ID=P.ID) AND (EP.STAGE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -124,7 +124,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			List<EquipmentType> results = execute();
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
-			loadAirlines(results, dbName);
+			loadAirlines(results);
 			_cache.addAll(results);
 			return results;
 		} catch (SQLException se) {
@@ -142,7 +142,8 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 		try {
 			// Get the programs to load
 			prepareStatementWithoutLimits("SELECT DISTINCT AI.DBNAME FROM common.AIRLINEINFO AI, "
-					+ "common.EQPROGRAMS EP WHERE (AI.CODE=EP.AIRLINE) AND (LOCATE(?, EP.AIRLINES) > 0)");
+				+ "common.EQPROGRAMS EP, common.EQAIRLINES EA WHERE (AI.CODE=EP.OWNER) AND "
+				+ "(EP.EQTYPE=EA.EQTYPE) AND (EP.OWNER=EA.OWNER) AND (EA.AIRLINE=?)");
 			_ps.setString(1, aCode);
 			
 			// Execute the query
@@ -161,13 +162,13 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				String db = formatDBName(i.next());
 				
 				// Build the SQL statement
-				StringBuilder buf = new StringBuilder("SELECT DISTINCT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-						+ "P.EMAIL FROM ");
+				StringBuilder buf = new StringBuilder("SELECT DISTINCT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
 				buf.append(db);
-				buf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
+				buf.append(".EQTYPES EQ, common.EQAIRLINES EA, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
 				buf.append(db);
 				buf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) AND "
-						+ "(EP.AIRLINE=AI.CODE) AND (AI.DBNAME=LOWER(?)) AND (EP.EQTYPE=EQ.EQTYPE) AND (LOCATE(?, EP.AIRLINES) > 0)");
+					+ "(EP.OWNER=AI.CODE) AND (AI.DBNAME=?) AND (EP.EQTYPE=EQ.EQTYPE) AND (EP.OWNER=EA.OWNER) AND "
+					+ "(EP.EQTYPE=EA.EQTYPE) AND (EA.AIRLINE=?)");
 				
 				// Prepare the statement and execute
 				prepareStatementWithoutLimits(buf.toString());
@@ -179,7 +180,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				// Load child rows and add
 				loadRatings(exams, db);
 				loadExams(exams, db);
-				loadAirlines(exams, db);
+				loadAirlines(exams);
 				results.addAll(new TreeSet<EquipmentType>(exams));
 			}
 			
@@ -200,12 +201,12 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.OWNER, EP.STAGE CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".EQTYPES EQ WHERE (AI.DBNAME=?) AND (EP.AIRLINE=AI.CODE) AND (EP.EQTYPE=EQ.EQTYPE) AND "
-				+ "(EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
+		sqlBuf.append(".EQTYPES EQ WHERE (AI.DBNAME=?) AND (EP.OWNER=AI.CODE) AND (EP.EQTYPE=EQ.EQTYPE) AND "
+			+ "(EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) ORDER BY EP.STAGE, EQ.EQTYPE");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -214,7 +215,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			List<EquipmentType> results = execute();
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
-			loadAirlines(results, dbName);
+			loadAirlines(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -238,9 +239,9 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	public List<EquipmentType> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM EQTYPES EQ, "
-					+ "common.EQPROGRAMS EP, PILOTS P WHERE (EQ.EQTYPE=EP.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.AIRLINE=?) "
-					+ "ORDER BY EQ.STAGE, EQ.EQTYPE");
+			prepareStatement("SELECT EQ.*, EP.OWNER, EP.STAGE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM EQTYPES EQ, "
+					+ "common.EQPROGRAMS EP, PILOTS P WHERE (EQ.EQTYPE=EP.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.OWNER=?) "
+					+ "ORDER BY EP.STAGE, EQ.EQTYPE");
 			_ps.setString(1, SystemData.get("airline.code"));
 			List<EquipmentType> results = execute();
 			loadRatings(results, SystemData.get("airline.db"));
@@ -294,9 +295,11 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	public Map<String, Integer> getPilotCounts() throws DAOException {
 		try {
-			prepareStatement("SELECT P.EQTYPE, COUNT(P.ID) FROM PILOTS P, EQTYPES EQ WHERE (P.STATUS=?) "
-					+ "AND (P.EQTYPE=EQ.EQTYPE) GROUP BY P.EQTYPE ORDER BY EQ.STAGE DESC, P.EQTYPE");
+			prepareStatement("SELECT P.EQTYPE, COUNT(P.ID) FROM PILOTS P, common.EQPROGRAMS EP WHERE "
+				+ "(P.STATUS=?) AND (P.EQTYPE=EP.EQTYPE) AND (EP.OWNER=?) GROUP BY P.EQTYPE ORDER BY "
+				+ "EP.STAGE DESC, P.EQTYPE");
 			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setString(2, SystemData.get("airline.code"));
 
 			// Execute the query
 			Map<String, Integer> results = new LinkedHashMap<String, Integer>();
@@ -351,7 +354,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			Collection<Integer> results = new LinkedHashSet<Integer>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+				results.add(Integer.valueOf(rs.getInt(1)));
 
 			// Clean up and return
 			rs.close();
@@ -425,16 +428,17 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	/**
 	 * Helper method to load airlines for equipment type program.
 	 */
-	private void loadAirlines(Collection<EquipmentType> eTypes, String db) throws SQLException {
+	private void loadAirlines(Collection<EquipmentType> eTypes) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
 		
 		// Execute the query
-		prepareStatementWithoutLimits("SELECT EQTYPE, AIRLINE FROM " + db + ".EQAIRLINES");
+		prepareStatementWithoutLimits("SELECT EQTYPE, OWNER, AIRLINE FROM common.EQAIRLINES");
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			EquipmentType eq = types.get(rs.getString(1));
-			if (eq != null)
-				eq.addAirline(SystemData.getApp(rs.getString(2)));
+			String ownerCode = rs.getString(2);
+			if ((eq != null) && (eq.getOwner().getCode().equals(ownerCode)))
+				eq.addAirline(SystemData.getApp(rs.getString(3)));
 		}
 		
 		// Clean up
@@ -453,17 +457,17 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 		while (rs.next()) {
 			EquipmentType eq = new EquipmentType(rs.getString(1));
 			eq.setCPID(rs.getInt(2));
-			eq.setStage(rs.getInt(3));
-			eq.addRanks(rs.getString(4), ",");
-			eq.setActive(rs.getBoolean(5));
-			eq.setPromotionLegs(rs.getInt(6));
-			eq.setPromotionHours(rs.getInt(7));
-			eq.setACARSPromotionLegs(rs.getBoolean(8));
-			eq.setPromotionMinLength(rs.getInt(9));
-			eq.setPromotionSwitchLength(rs.getInt(10));
-			eq.setMinimum1XTime(rs.getInt(11));
-			eq.setMaximumAccelTime(rs.getInt(12));
-			eq.setOwner(SystemData.getApp(rs.getString(13)));
+			eq.addRanks(rs.getString(3), ",");
+			eq.setActive(rs.getBoolean(4));
+			eq.setPromotionLegs(rs.getInt(5));
+			eq.setPromotionHours(rs.getInt(6));
+			eq.setACARSPromotionLegs(rs.getBoolean(7));
+			eq.setPromotionMinLength(rs.getInt(8));
+			eq.setPromotionSwitchLength(rs.getInt(9));
+			eq.setMinimum1XTime(rs.getInt(10));
+			eq.setMaximumAccelTime(rs.getInt(11));
+			eq.setOwner(SystemData.getApp(rs.getString(12)));
+			eq.setStage(rs.getInt(13));
 			eq.setCPName(rs.getString(14));
 			eq.setCPEmail(rs.getString(15));
 			results.add(eq);

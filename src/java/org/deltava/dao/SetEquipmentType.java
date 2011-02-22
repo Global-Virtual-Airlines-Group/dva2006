@@ -8,6 +8,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to write Equipment Profiles.
@@ -34,22 +35,29 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 	public void create(EquipmentType eq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, ACTIVE, C_LEGS, C_HOURS, "
-				+ "C_LEGS_ACARS, C_LEGS_DISTANCE, C_SWITCH_DISTANCE, C_MIN_1X, C_MAX_ACCEL) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
+			// Write shared entry
+			prepareStatement("INSERT INTO common.EQPROGRAMS (EQTYPE, OWNER, STAGE) VALUES (?, ?, ?)");
+			_ps.setString(1, eq.getName());
+			_ps.setString(2, SystemData.get("airline.code"));
+			_ps.setInt(3, eq.getStage());
+			executeUpdate(1);
+			
+			// Write to the local database
+			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, RANKS, ACTIVE, C_LEGS, C_HOURS, "
+				+ "C_LEGS_ACARS, C_LEGS_DISTANCE, C_SWITCH_DISTANCE, C_MIN_1X, C_MAX_ACCEL) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
-			_ps.setInt(3, eq.getStage());
-			_ps.setString(4, StringUtils.listConcat(eq.getRanks(), ","));
-			_ps.setBoolean(5, eq.getActive());
-			_ps.setInt(6, eq.getPromotionLegs());
-			_ps.setDouble(7, eq.getPromotionHours());
-			_ps.setBoolean(8, eq.getACARSPromotionLegs());
-			_ps.setInt(9, eq.getPromotionMinLength());
-			_ps.setInt(10, eq.getPromotionSwitchLength());
-			_ps.setInt(11, eq.getMinimum1XTime());
-			_ps.setInt(12, eq.getMaximumAccelTime());
+			_ps.setString(3, StringUtils.listConcat(eq.getRanks(), ","));
+			_ps.setBoolean(4, eq.getActive());
+			_ps.setInt(5, eq.getPromotionLegs());
+			_ps.setDouble(6, eq.getPromotionHours());
+			_ps.setBoolean(7, eq.getACARSPromotionLegs());
+			_ps.setInt(8, eq.getPromotionMinLength());
+			_ps.setInt(9, eq.getPromotionSwitchLength());
+			_ps.setInt(10, eq.getMinimum1XTime());
+			_ps.setInt(11, eq.getMaximumAccelTime());
 			executeUpdate(1);
 			
 			// Write the exams/ratings and commit
@@ -72,28 +80,37 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 	 */
 	public void update(EquipmentType eq, String newName) throws DAOException {
 		try {
+			String oldName = eq.getName();
 			startTransaction();
-			prepareStatementWithoutLimits("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, ACTIVE=?, C_LEGS=?, C_HOURS=?, "
-					+ "C_LEGS_ACARS=?, C_LEGS_DISTANCE=?, C_SWITCH_DISTANCE=?, C_MIN_1X=?, C_MAX_ACCEL=?, EQTYPE=? "
-					+ "WHERE (EQTYPE=?) LIMIT 1");
 			
+			// Update the name if necessary in common table
+			if (newName != null) {
+				prepareStatementWithoutLimits("UPDATE common.EQPROGRAMS SET EQTYPE=?, STAGE=? WHERE (EQTYPE=?) AND (OWNER=?)");
+				_ps.setString(1, newName);
+				_ps.setInt(2, eq.getStage());
+				_ps.setString(3, eq.getName());
+				_ps.setString(4, SystemData.get("airline.code"));
+				executeUpdate(1);
+			}
+			
+			prepareStatementWithoutLimits("UPDATE EQTYPES SET CP_ID=?, RANKS=?, ACTIVE=?, C_LEGS=?, C_HOURS=?, "
+					+ "C_LEGS_ACARS=?, C_LEGS_DISTANCE=?, C_SWITCH_DISTANCE=?, C_MIN_1X=?, C_MAX_ACCEL=?, EQTYPE=? "
+					+ "WHERE (EQTYPE=?)");
 			_ps.setInt(1, eq.getCPID());
-			_ps.setInt(2, eq.getStage());
-			_ps.setString(3, StringUtils.listConcat(eq.getRanks(), ","));
-			_ps.setBoolean(4, eq.getActive());
-			_ps.setInt(5, eq.getPromotionLegs());
-			_ps.setDouble(6, eq.getPromotionHours());
-			_ps.setBoolean(7, eq.getACARSPromotionLegs());
-			_ps.setInt(8, eq.getPromotionMinLength());
-			_ps.setInt(9, eq.getPromotionSwitchLength());
-			_ps.setInt(10, eq.getMinimum1XTime());
-			_ps.setInt(11, eq.getMaximumAccelTime());
-			_ps.setString(12, (newName == null) ? eq.getName() : newName);
-			_ps.setString(13, eq.getName());
+			_ps.setString(2, StringUtils.listConcat(eq.getRanks(), ","));
+			_ps.setBoolean(3, eq.getActive());
+			_ps.setInt(4, eq.getPromotionLegs());
+			_ps.setDouble(5, eq.getPromotionHours());
+			_ps.setBoolean(6, eq.getACARSPromotionLegs());
+			_ps.setInt(7, eq.getPromotionMinLength());
+			_ps.setInt(8, eq.getPromotionSwitchLength());
+			_ps.setInt(9, eq.getMinimum1XTime());
+			_ps.setInt(10, eq.getMaximumAccelTime());
+			_ps.setString(11, (newName == null) ? eq.getName() : newName);
+			_ps.setString(12, eq.getName());
 			executeUpdate(1);
 			
 			// Update the name if neccessary
-			String oldName = eq.getName();
 			if (newName != null)
 				eq.setName(newName);
 			
@@ -178,16 +195,18 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 	private void writeAirlines(EquipmentType eq) throws SQLException {
 		
 		// Clean out airlines
-		prepareStatementWithoutLimits("DELETE FROM EQAIRLINES WHERE (EQTYPE=?)");
+		prepareStatementWithoutLimits("DELETE FROM common.EQAIRLINES WHERE (EQTYPE=?) AND (OWNER=?)");
 		_ps.setString(1, eq.getName());
+		_ps.setString(2, SystemData.get("airline.code"));
 		executeUpdate(0);
 		
 		// Prepare the statement and add the airlines
-		prepareStatementWithoutLimits("INSERT INTO EQAIRLINES (EQTYPE, AIRLINE) VALUES (?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO common.EQAIRLINES (EQTYPE, OWNER, AIRLINE) VALUES (?, ?, ?)");
 		_ps.setString(1, eq.getName());
+		_ps.setString(2, SystemData.get("airline.code"));
 		for (Iterator<AirlineInformation> i = eq.getAirlines().iterator(); i.hasNext(); ) {
 			AirlineInformation ai = i.next();
-			_ps.setString(2, ai.getCode());
+			_ps.setString(3, ai.getCode());
 			_ps.addBatch();
 		}
 		
