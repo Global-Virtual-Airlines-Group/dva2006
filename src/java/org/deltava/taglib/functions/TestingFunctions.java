@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.testing.*;
@@ -6,7 +6,7 @@ import org.deltava.beans.testing.*;
 /**
  * A JSP Function Library to define Testing Center-related functions.
  * @author Luke
- * @version 2.3
+ * @version 3.6
  * @since 1.0
  */
 
@@ -28,12 +28,7 @@ public class TestingFunctions {
 	 * @see MultipleChoice
 	 */
 	public static boolean isMultiChoice(Question q) {
-		if (!(q instanceof MultipleChoice))
-			return false;
-		
-		// Check that we have more than one choice
-		MultipleChoice mc = (MultipleChoice) q;
-		return (mc.getChoices().size() > 1);
+		return (q instanceof MultipleChoice);
 	}
 	
 	/**
