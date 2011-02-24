@@ -19,6 +19,8 @@ import org.deltava.crypt.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
+import org.deltava.util.system.SystemData;
+
 public class ChartLoader extends TestCase {
 	
 	private static Logger log;
@@ -75,6 +77,10 @@ public class ChartLoader extends TestCase {
 		PropertyConfigurator.configure("etc/log4j.properties");
 		log = Logger.getLogger(ChartLoader.class);
 		
+		// Init SystemData
+		SystemData.init();
+		SystemData.add("airline.code", "DVA");
+		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
 		_c = DriverManager.getConnection(JDBC_URL, "import", "import");
@@ -94,12 +100,8 @@ public class ChartLoader extends TestCase {
 				i.remove();
 			else if (me.getKey().length() != 4)
 				i.remove();
-		}
-		
-		// Populate charts map
-		for (Iterator<Airport> i = airports.values().iterator(); i.hasNext(); ) {
-			Airport a = i.next();
-			charts.put(a, new ArrayList<MD5Chart>());
+			else
+				charts.put(me.getValue(), new ArrayList<MD5Chart>());
 		}
 		
 		// Load existing charts
@@ -109,7 +111,8 @@ public class ChartLoader extends TestCase {
 		for (Iterator<MD5Chart> i = dbCharts.iterator(); i.hasNext(); ) {
 			MD5Chart c = i.next();
 			Collection<MD5Chart> apCharts = charts.get(c.getAirport());
-			apCharts.add(c);
+			if (apCharts != null)
+				apCharts.add(c);
 		}
 		
 		// Load PDFs and make them case insensitive
@@ -220,9 +223,12 @@ public class ChartLoader extends TestCase {
 					c.setID(oc.getID());
 					c.load(new FileInputStream(f));
 					c.setImgType(Chart.PDF);
-					c.setType(StringUtils.arrayIndexOf(TYPES, ce.getChildTextTrim("chart_code"), 0));
+					String typeCode = ce.getChildTextTrim("chart_code");
+					c.setType(StringUtils.arrayIndexOf(TYPES, typeCode, 0));
 					if ((c.getType() == Chart.ILS) && (!c.getName().contains("ILS")))
-							c.setType(Chart.APR);
+						c.setType(Chart.APR);
+					else if ((c.getType() == Chart.UNKNOWN) && ("DPO".equals(typeCode)))
+						c.setType(Chart.SID);
 					
 					// Check if the hash changed
 					if ((c.getType() > 0) && (!c.getHash().equals(oc.getHash()))) {
@@ -236,9 +242,12 @@ public class ChartLoader extends TestCase {
 					MD5Chart c = new MD5Chart(chartName, a);
 					c.load(new FileInputStream(f));
 					c.setImgType(Chart.PDF);
-					c.setType(StringUtils.arrayIndexOf(TYPES, ce.getChildTextTrim("chart_code"), 0));
+					String typeCode = ce.getChildTextTrim("chart_code");
+					c.setType(StringUtils.arrayIndexOf(TYPES, typeCode, 0));
 					if ((c.getType() == Chart.ILS) && (!c.getName().contains("ILS")))
 						c.setType(Chart.APR);
+					else if ((c.getType() == Chart.UNKNOWN) && ("DPO".equals(typeCode)))
+						c.setType(Chart.SID);
 			
 					if (c.getType() > 0) {
 						apCharts.put(chartName, c);
