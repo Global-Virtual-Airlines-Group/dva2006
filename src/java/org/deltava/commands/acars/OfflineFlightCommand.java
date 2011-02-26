@@ -364,6 +364,26 @@ public class OfflineFlightCommand extends AbstractCommand {
 				}
 			}
 			
+			// Validate the dispatch route ID
+			if (inf.getRouteID() != 0) {
+				GetACARSRoute ardao = new GetACARSRoute(con);
+				DispatchRoute dr = ardao.getRoute(inf.getRouteID());
+				if (dr == null) {
+					log.warn("Invalid Dispatch Route - " + inf.getRouteID());
+					inf.setRouteID(0);
+				}
+			}
+			
+			// Validate the dispatcher
+			if (inf.getDispatcherID() != 0) {
+				GetUserData uddao = new GetUserData(con);
+				UserData ud = uddao.get(inf.getDispatcherID());
+				if (ud == null) {
+					log.warn("Invalid Disaptcher - " + inf.getDispatcherID());
+					inf.setDispatcherID(0);
+				}
+			}
+			
 			// Turn off auto-commit
 			ctx.startTX();
 
