@@ -48,8 +48,10 @@ return true;
 <el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.networkName}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
 - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
-<c:forEach var="route" items="${event.routes}"><div class="small">${route.airportD.name} - ${route.airportA.name}<br />
-<span class="sec"><fmt:distance longUnits="true" value="${route.distance}" /></span></div></c:forEach>
+<c:forEach var="route" items="${event.routes}">
+<c:if test="${((route.maxSignups == 0) || (route.signups < route.maxSignups))}">
+<div class="small">${route.airportD.name} - ${route.airportA.name}<br />
+<span class="sec"><fmt:distance longUnits="true" value="${route.distance}" /></span></div></c:if></c:forEach>
 <c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="page" />
 <c:if test="${!event.canSignup}">
 <c:if test="${!empty event.signupURL}">
