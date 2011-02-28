@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.apache.log4j.Logger;
@@ -8,7 +8,7 @@ import org.deltava.beans.EquipmentType;
 /**
  * A utility class to determine whether a Flight counts for promotion to Captain in a particular Equipment Type program.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.7
  */
 
@@ -54,7 +54,7 @@ public class FlightPromotionHelper {
 			return false;
 		} else if (_fr.getDistance() < eq.getPromotionMinLength()) {
 			log.info("Minimum " + eq.getName() + " flight length is "  +  eq.getPromotionMinLength() + ", distance=" + _fr.getDistance());
-			_comment = "Minimum flight length for promotion to Captain in " + eq.getName() + " is "  +  eq.getPromotionMinLength() + " miles";
+			_comment = "Minimum flight length for promotion to Captain in " + eq.getName() + " is "  +  eq.getPromotionMinLength() + " statute miles";
 			return false;
 		} else if (_fr.hasAttribute(FlightReport.ATTR_CHARTER)) {
 			log.info("Charter flights not eligible for promotion");
