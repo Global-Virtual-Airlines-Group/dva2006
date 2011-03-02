@@ -36,14 +36,17 @@ public class JobCloseTask extends Task {
 			// Get all jobs
 			GetJobs jdao = new GetJobs(con);
 			List<JobPosting> openJobs = jdao.getOpen();
+			Date now = new Date();
 			
 			// Close them if required
 			SetJobs jwdao = new SetJobs(con);
 			for (Iterator<JobPosting> i = openJobs.iterator(); i.hasNext(); ) {
 				JobPosting jp = i.next();
-				log.info("Closing Job " + jp.getTitle());
-				jp.setStatus(JobPosting.CLOSED);
-				jwdao.write(jp);
+				if (jp.getClosesOn().before(now)) {
+					log.info("Closing Job " + jp.getTitle());
+					jp.setStatus(JobPosting.CLOSED);
+					jwdao.write(jp);
+				}
 			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
