@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save NOTAM entries.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -78,7 +78,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				
 				// Get the Pilots to send to
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				pilots = pdao.getNotifications(Person.NEWS);
+				pilots = pdao.getNotifications(Notification.NEWS);
 			}
 			
 			// Get the write DAO and save the entry

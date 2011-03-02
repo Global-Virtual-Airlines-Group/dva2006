@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import org.deltava.security.command.NewsAccessControl;
 /**
  * A Web Site Command to save System News entries.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -72,7 +72,7 @@ public class NewsSaveCommand extends AbstractCommand {
 				
 				// Get the pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				pilots = pdao.getNotifications(Person.NEWS);
+				pilots = pdao.getNotifications(Notification.NEWS);
 			}
 
 			// Get the write DAO and save the entry
@@ -89,7 +89,7 @@ public class NewsSaveCommand extends AbstractCommand {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
-			ctx.setAttribute("notifyUsers", new Integer(pilots.size()), REQUEST);
+			ctx.setAttribute("notifyUsers", Integer.valueOf(pilots.size()), REQUEST);
 		}
 
 		// Set status attributes

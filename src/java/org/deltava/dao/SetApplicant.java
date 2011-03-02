@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -63,12 +63,12 @@ public class SetApplicant extends PilotWriteDAO {
 				// Get the new applicant ID
 				a.setID(getNewID());
 				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
-						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
-						+ "EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, "
-						+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, COMMENTS, "
-						+ "HR_COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-				_ps.setString(31, a.getHRComments());
-				_ps.setInt(32, a.getID());
+						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, NOTIFY, "
+						+ "SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, "
+						+ "DISTANCEUNITS, SIM_VERSION, TZ, UISCHEME, COMMENTS, HR_COMMENTS, ID) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				_ps.setString(28, a.getHRComments());
+				_ps.setInt(29, a.getID());
 			} else {
 				// Delete stage choices
 				prepareStatementWithoutLimits("DELETE FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
@@ -78,14 +78,13 @@ public class SetApplicant extends PilotWriteDAO {
 				// Create the UPDATE statement
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
 						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
-						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
-						+ "CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, "
-						+ "AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, "
-						+ "HR_COMMENTS=? WHERE (ID=?)");
-				_ps.setString(31, a.getEquipmentType());
-				_ps.setString(32, a.getRank().getName());
-				_ps.setString(33, a.getHRComments());
-				_ps.setInt(34, a.getID());
+						+ "HOME_AIRPORT=?, NOTIFY=?, SHOW_EMAIL=?, CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), "
+						+ "DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, SIM_VERSION=?, TZ=?, "
+						+ "UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, HR_COMMENTS=? WHERE (ID=?)");
+				_ps.setString(28, a.getEquipmentType());
+				_ps.setString(29, a.getRank().getName());
+				_ps.setString(30, a.getHRComments());
+				_ps.setInt(31, a.getID());
 			}
 
 			// Set the fields
@@ -102,23 +101,20 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(11, a.getLegacyURL());
 			_ps.setBoolean(12, a.getLegacyVerified());
 			_ps.setString(13, a.getHomeAirport());
-			_ps.setBoolean(14, a.getNotifyOption(Person.FLEET));
-			_ps.setBoolean(15, a.getNotifyOption(Person.EVENT));
-			_ps.setBoolean(16, a.getNotifyOption(Person.NEWS));
-			_ps.setBoolean(17, a.getNotifyOption(Person.PIREP));
-			_ps.setInt(18, a.getEmailAccess());
-			_ps.setTimestamp(19, createTimestamp(a.getCreatedOn()));
-			_ps.setString(20, a.getRegisterHostName());
-			_ps.setString(21, a.getRegisterAddress());
-			_ps.setString(22, a.getDateFormat());
-			_ps.setString(23, a.getTimeFormat());
-			_ps.setString(24, a.getNumberFormat());
-			_ps.setInt(25, a.getAirportCodeType().ordinal());
-			_ps.setInt(26, a.getDistanceType());
-			_ps.setInt(27, a.getSimVersion());
-			_ps.setString(28, a.getTZ().getID());
-			_ps.setString(29, a.getUIScheme());
-			_ps.setString(30, a.getComments());
+			_ps.setInt(14, a.getNotifyCode());
+			_ps.setInt(15, a.getEmailAccess());
+			_ps.setTimestamp(16, createTimestamp(a.getCreatedOn()));
+			_ps.setString(17, a.getRegisterHostName());
+			_ps.setString(18, a.getRegisterAddress());
+			_ps.setString(19, a.getDateFormat());
+			_ps.setString(20, a.getTimeFormat());
+			_ps.setString(21, a.getNumberFormat());
+			_ps.setInt(22, a.getAirportCodeType().ordinal());
+			_ps.setInt(23, a.getDistanceType());
+			_ps.setInt(24, a.getSimVersion());
+			_ps.setString(25, a.getTZ().getID());
+			_ps.setString(26, a.getUIScheme());
+			_ps.setString(27, a.getComments());
 			executeUpdate(1);
 			
 			// Write the stage choices

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -113,7 +113,7 @@ public class InstallerCommand extends LibraryEditCommand {
 			// Get the pilots to notify
 			if (!noNotify) {
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				pilots = pdao.getNotifications(Person.FLEET);
+				pilots = pdao.getNotifications(Notification.FLEET);
 			}
 
 			// Get the write DAO and update the database

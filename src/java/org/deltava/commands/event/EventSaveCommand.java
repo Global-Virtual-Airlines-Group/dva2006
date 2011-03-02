@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save Online Events.
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 1.0
  */
 
@@ -231,7 +231,7 @@ public class EventSaveCommand extends AbstractCommand {
 
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				Collection<EMailAddress> pilots = pdao.getNotifications(Person.EVENT);
+				Collection<EMailAddress> pilots = pdao.getNotifications(Notification.EVENT);
 				if (pilots != null) {
 					for (Iterator<String> i = e.getContactAddrs().iterator(); i.hasNext(); )
 						pilots.add(Mailer.makeAddress(i.next()));

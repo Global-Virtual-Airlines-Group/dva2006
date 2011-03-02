@@ -104,6 +104,7 @@ return true;
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
+<content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />

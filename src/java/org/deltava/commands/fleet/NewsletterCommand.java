@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Newsletters.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
@@ -50,11 +50,10 @@ public class NewsletterCommand extends LibraryEditCommand {
 
 		// Get the uploaded file
 		FileUpload mFile = ctx.getFile("file");
-		if (isNew && (mFile == null)) {
+		if (isNew && (mFile == null))
 			throw notFoundException("No Manual Uploaded");
-		} else if (isNew && (mFile != null)) {
+		else if (isNew && (mFile != null))
 			fName = mFile.getName();
-		}
 
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
@@ -80,9 +79,9 @@ public class NewsletterCommand extends LibraryEditCommand {
 				throw securityException("Cannot create/edit Newsletter");
 
 			// Check if we're uploading to ensure that the file does not already exist
-			if (isNew && (nws != null)) {
+			if (isNew && (nws != null))
 				throw new CommandException("Document " + fName + " already exists");
-			} else if (isNew) {
+			else if (isNew) {
 				File f = new File(SystemData.get("path.newsletter"), fName);
 				nws = new Newsletter(f.getPath());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
@@ -106,7 +105,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			
 			// Get the pilots to notify
 			GetPilotNotify pdao = new GetPilotNotify(con);
-			pilots = pdao.getNotifications(Person.FLEET);
+			pilots = pdao.getNotifications(Notification.FLEET);
 
 			// Start the transaction
 			ctx.startTX();

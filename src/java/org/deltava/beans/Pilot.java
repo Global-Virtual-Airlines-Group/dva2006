@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -1077,7 +1077,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias, Cloneable {
 		if (!StringUtils.isEmpty(getPilotCode()))
 			p2.setPilotCode(getPilotCode());
 
-		p2._notifyOptions.putAll(_notifyOptions);
+		p2._notifyOptions.addAll(_notifyOptions);
 		for (Iterator<Map.Entry<IMAddress, String>> i = getIMHandle().entrySet().iterator(); i.hasNext();) {
 			Map.Entry<IMAddress, String> me = i.next();
 			p2.setIMHandle(me.getKey(), me.getValue());

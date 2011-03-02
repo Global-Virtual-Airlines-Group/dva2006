@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to transfer pilots between Airlines.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -38,10 +38,9 @@ public class SetPilotTransfer extends SetPilot {
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS (FIRSTNAME, LASTNAME, STATUS, LDAP_DN, EMAIL, LOCATION, LEGACY_HOURS, HOME_AIRPORT, "
-				+ "EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, LAST_LOGOFF, TZ, FILE_NOTIFY, "
-				+ "EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, UISCHEME, VIEWSIZE, LOGINHOSTNAME, "
-				+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, ID) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, LAST_LOGOFF, TZ, NOTIFY, SHOW_EMAIL, "
+			+ "UISCHEME, VIEWSIZE, LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, DISTANCEUNITS, ID) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -65,20 +64,17 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setTimestamp(15, createTimestamp(p.getLastLogin()));
 			_ps.setTimestamp(16, createTimestamp(p.getLastLogoff()));
 			_ps.setString(17, p.getTZ().getID());
-			_ps.setBoolean(18, p.getNotifyOption(Person.FLEET));
-			_ps.setBoolean(19, p.getNotifyOption(Person.EVENT));
-			_ps.setBoolean(20, p.getNotifyOption(Person.NEWS));
-			_ps.setBoolean(21, p.getNotifyOption(Person.PIREP));
-			_ps.setInt(22, p.getEmailAccess());
-			_ps.setString(23, p.getUIScheme());
-			_ps.setInt(24, p.getViewCount());
-			_ps.setString(25, p.getLoginHost());
-			_ps.setString(26, p.getDateFormat());
-			_ps.setString(27, p.getTimeFormat());
-			_ps.setString(28, p.getNumberFormat());
-			_ps.setInt(29, p.getAirportCodeType().ordinal());
-			_ps.setInt(30, p.getDistanceType());
-			_ps.setInt(31, id);
+			_ps.setInt(18, p.getNotifyCode());
+			_ps.setInt(19, p.getEmailAccess());
+			_ps.setString(20, p.getUIScheme());
+			_ps.setInt(21, p.getViewCount());
+			_ps.setString(22, p.getLoginHost());
+			_ps.setString(23, p.getDateFormat());
+			_ps.setString(24, p.getTimeFormat());
+			_ps.setString(25, p.getNumberFormat());
+			_ps.setInt(26, p.getAirportCodeType().ordinal());
+			_ps.setInt(27, p.getDistanceType());
+			_ps.setInt(28, id);
 			executeUpdate(1);
 
 			// Write the ratings - don't bother writing roles

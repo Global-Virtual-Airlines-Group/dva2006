@@ -1,14 +1,19 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.http.SetFacebookData;
+import org.deltava.mail.*;
+
+import org.deltava.security.MultiUserSecurityContext;
 import org.deltava.security.command.*;
 
 import org.deltava.util.StringUtils;
@@ -17,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Job Postings.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -30,10 +35,16 @@ public class JobPostingCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
+		boolean isNew = (ctx.getID() == 0);
+
+		// Get mailer context
+		List<EMailAddress> addrs = new ArrayList<EMailAddress>();
+		MessageContext mctxt = new MessageContext();
+		mctxt.addData("user", ctx.getUser());
 		try {
 			Connection con = ctx.getConnection();
 			JobPosting jp = null;
-			if (ctx.getID() != 0) {
+			if (!isNew) {
 				GetJobs dao = new GetJobs(con);
 				jp = dao.get(ctx.getID());
 				if (jp == null)
@@ -61,17 +72,65 @@ public class JobPostingCommand extends AbstractFormCommand {
 			jp.setHireManagerID(StringUtils.parse(ctx.getParameter("hireMgr"), 0));
 			jp.setStaffOnly(Boolean.valueOf(ctx.getParameter("staffOnly")).booleanValue());
 			
+			// Get users
+			if (isNew) {
+				GetPilotNotify pdao = new GetPilotNotify(con);
+				Collection<Pilot> pilots = pdao.gePilots(Notification.JOB);
+				MultiUserSecurityContext mctx = new MultiUserSecurityContext(ctx);
+				for (Pilot p : pilots) {
+					mctx.setUser(p);
+					JobPostingAccessControl ac = new JobPostingAccessControl(mctx, jp);
+					try {
+						ac.validate();
+						if (ac.getCanApply())
+							addrs.add(p);
+					} catch (AccessControlException ace) {
+						// empty
+					}
+				}
+				
+				// Load the template
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				mctxt.setTemplate(mtdao.get("NEWJOB"));
+			}
+			
 			// Save the posting
 			SetJobs jwdao = new SetJobs(con);
 			jwdao.write(jp);
 			
+			// Write Facebook update
+			if (isNew && !StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+				MessageContext fbctxt = new MessageContext();
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				fbctxt.setTemplate(mtdao.get("FBNEWJOB"));
+				
+				// Init the FB DAO
+				SetFacebookData fbwdao = new SetFacebookData();
+				fbwdao.setWarnMode(true);
+				fbwdao.setAppID(SystemData.get("users.facebook.pageID"));		
+				fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+				
+				// Create the news entry
+				NewsEntry nws = new NewsEntry(fbctxt.getBody());
+				fbwdao.writeApp(nws);
+			}
+			
 			// Save in status
+			mctxt.addData("job", jp);
 			ctx.setAttribute("job", jp, REQUEST);
 			ctx.setAttribute("isSave", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+		
+		// If new, mail it
+		if (isNew) {
+			// Send email
+			Mailer m = new Mailer(ctx.getUser());
+			m.setContext(mctxt);
+			m.send(addrs);
 		}
 		
 		// Forward to the JSP

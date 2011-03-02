@@ -64,7 +64,6 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Save the notification options
-		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
 		ctx.setAttribute("distanceUnits", ComboUtils.fromArray(Person.DISTANCE_NAMES), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
@@ -180,8 +179,8 @@ public class RegisterCommand extends AbstractCommand {
 		// Set Notification Options
 		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
 		if (notifyOptions != null) {
-			for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
-				a.setNotifyOption(Person.NOTIFY_CODES[x], notifyOptions.contains(Person.NOTIFY_CODES[x]));
+			for (Notification n : Notification.values())
+				a.setNotifyOption(n, notifyOptions.contains(n.name()));
 		}
 		
 		// Get eq type preferences

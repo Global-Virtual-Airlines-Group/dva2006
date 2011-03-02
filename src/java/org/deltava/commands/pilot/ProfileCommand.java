@@ -160,12 +160,13 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Set Notification Options
 			Collection<String> notifyOpts = ctx.getParameters("notifyOption");
-			if (notifyOpts != null)
-				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
-					p.setNotifyOption(Person.NOTIFY_CODES[x], notifyOpts.contains(Person.NOTIFY_CODES[x]));
-			else
-				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
-					p.setNotifyOption(Person.NOTIFY_CODES[x], false);
+			if (notifyOpts != null) {
+				for (Notification n : Notification.values())
+					p.setNotifyOption(n, notifyOpts.contains(n.name()));
+			} else {
+				for (Notification n : Notification.values())
+					p.setNotifyOption(n, false);
+			}
 
 			// Determine if we are changing the pilot's status
 			if (p_access.getCanChangeStatus() || p_access.getCanChangeRoles()) {
@@ -655,7 +656,6 @@ public class ProfileCommand extends AbstractFormCommand {
 
 		// Save time zones and notification/privacy options
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
-		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("privacyOptions", ComboUtils.fromArray(PRIVACY_NAMES, PRIVACY_ALIASES), REQUEST);
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
 		ctx.setAttribute("mapTypes", ComboUtils.fromArray(Pilot.MAP_TYPES), REQUEST);

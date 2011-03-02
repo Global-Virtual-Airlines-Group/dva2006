@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -456,25 +456,22 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setHomeAirport(rs.getString(15));
 			a.setEquipmentType(rs.getString(16));
 			a.setRank(Rank.fromName(rs.getString(17)));
-			a.setNotifyOption(Person.FLEET, rs.getBoolean(18));
-			a.setNotifyOption(Person.EVENT, rs.getBoolean(19));
-			a.setNotifyOption(Person.NEWS, rs.getBoolean(20));
-			a.setNotifyOption(Person.PIREP, rs.getBoolean(21));
-			a.setEmailAccess(rs.getInt(22));
-			a.setCreatedOn(rs.getTimestamp(23));
-			// skip 24
-			a.setRegisterHostName(rs.getString(25));
-			a.setDateFormat(rs.getString(26));
-			a.setTimeFormat(rs.getString(27));
-			a.setNumberFormat(rs.getString(28));
-			a.setAirportCodeType(Airport.Code.values()[rs.getInt(29)]);
-			a.setDistanceType(rs.getInt(30));
-			a.setSimVersion(rs.getInt(31));
-			a.setTZ(TZInfo.get(rs.getString(32)));
-			a.setUIScheme(rs.getString(33));
-			a.setComments(rs.getString(34));
-			a.setHRComments(rs.getString(35));
-			a.setRegisterAddress(rs.getString(36));
+			a.setNotificationCode(rs.getInt(18));
+			a.setEmailAccess(rs.getInt(19));
+			a.setCreatedOn(rs.getTimestamp(20));
+			// skip 21
+			a.setRegisterHostName(rs.getString(22));
+			a.setDateFormat(rs.getString(23));
+			a.setTimeFormat(rs.getString(24));
+			a.setNumberFormat(rs.getString(25));
+			a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
+			a.setDistanceType(rs.getInt(27));
+			a.setSimVersion(rs.getInt(28));
+			a.setTZ(TZInfo.get(rs.getString(29)));
+			a.setUIScheme(rs.getString(30));
+			a.setComments(rs.getString(31));
+			a.setHRComments(rs.getString(32));
+			a.setRegisterAddress(rs.getString(33));
 			results.add(a);
 		}
 
