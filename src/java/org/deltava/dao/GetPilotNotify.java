@@ -1,4 +1,4 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to get Pilot notification lists.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -45,37 +45,25 @@ public class GetPilotNotify extends GetPilot {
       public int hashCode() {
     	  return _addr.hashCode();
       }
+      
+      public boolean equals(Object o) {
+    	  return (o instanceof EMailAddress) ? _addr.equals(((EMailAddress) o).getEmail()) : false; 
+      }
    }
    
    /**
     * Returns Pilots signed up to receive a particular notification type.
-    * @param notificationType the Notification Type to filter on.
+    * @param notificationType the Notification Type to filter on
     * @return a List of objects implementing {@link EMailAddress}
     * @throws DAOException if a JDBC error occurs
     * @throws IllegalArgumentException if notificationType is invalid
     */
-   public List<EMailAddress> getNotifications(String notificationType) throws DAOException {
-      
-      // Figure out the database field
-      String fieldName = "";
-      if (Person.EVENT.equals(notificationType))
-         fieldName = "EVENT_NOTIFY";
-      else if (Person.FLEET.equals(notificationType))
-         fieldName = "FILE_NOTIFY";
-      else if (Person.NEWS.equals(notificationType))
-         fieldName = "NEWS_NOTIFY";
-      else
-         throw new IllegalArgumentException("Invalid notification type - " + notificationType);
-      
-      // Build the SQL statement
-      StringBuilder sqlBuf = new StringBuilder("SELECT FIRSTNAME, LASTNAME, EMAIL FROM PILOTS WHERE (STATUS=?) AND (");
-      sqlBuf.append(fieldName);
-      sqlBuf.append("=?) ORDER BY LASTNAME, FIRSTNAME");
-      
+   public List<EMailAddress> getNotifications(Notification notificationType) throws DAOException {
       try {
-         prepareStatement(sqlBuf.toString());
+         prepareStatement("SELECT FIRSTNAME, LASTNAME, EMAIL FROM PILOTS WHERE (STATUS=?) AND "
+        		 + "((NOTIFY & ?) > 0) ORDER BY LASTNAME, FIRSTNAME");
          _ps.setInt(1, Pilot.ACTIVE);
-         _ps.setBoolean(2, true);
+         _ps.setInt(2, notificationType.getCode());
          
          // Execute the query
          List<EMailAddress> results = new ArrayList<EMailAddress>();
@@ -90,5 +78,22 @@ public class GetPilotNotify extends GetPilot {
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+   }
+   
+   /**
+    * Returns the populated Pilots signed up to receive a particulr notification type.
+    * @param notificationType the Notification Type to filter on.
+    * @return a Collection of Pilot beans
+    * @throws DAOException if a JDBC error occurs
+    */
+   public Collection<Pilot> gePilots(Notification notificationType) throws DAOException {
+	   try {
+		   prepareStatement("SELECT ID FROM PILOTS WHERE (STATUS=?) AND ((NOTIFY & ?) > 0)");
+		   _ps.setInt(1, Pilot.ACTIVE);
+		   _ps.setInt(2, notificationType.getCode());
+		   return getByID(executeIDs(), "PILOTS").values();
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
    }
 }

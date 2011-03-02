@@ -120,11 +120,11 @@ public class TestPerson extends AbstractBeanTestCase {
     public void testNotifyOptions() {
     	assertNotNull(_p.getNotifyOptions());
     	assertEquals(0, _p.getNotifyOptions().size());
-        assertFalse(_p.getNotifyOption("EVENT"));
-        _p.setNotifyOption("EVENT", true);
-        assertTrue(_p.getNotifyOption("EVENT"));
-        _p.setNotifyOption("EVENT", false);
-        assertFalse(_p.getNotifyOption("EVENT"));
+        assertFalse(_p.hasNotifyOption(Notification.EVENT));
+        _p.setNotifyOption(Notification.EVENT, true);
+        assertTrue(_p.hasNotifyOption(Notification.EVENT));
+        _p.setNotifyOption(Notification.EVENT, false);
+        assertFalse(_p.hasNotifyOption(Notification.EVENT));
         try {
             _p.setNotifyOption(null, true);
             fail("NullPointerException expected");

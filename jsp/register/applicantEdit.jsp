@@ -54,6 +54,7 @@ return cmdPost(f.action);
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
+<content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

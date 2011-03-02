@@ -273,63 +273,58 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setDN(rs.getString(6));
 			p.setEmail(rs.getString(7));
 			p.setLocation(rs.getString(8));
-			//p.setIMHandle(IMAddress.AIM, rs.getString(9));
-			//p.setIMHandle(IMAddress.MSN, rs.getString(10));
-			p.setLegacyHours(rs.getDouble(11));
-			p.setHomeAirport(rs.getString(12));
-			p.setEquipmentType(rs.getString(13));
-			p.setRank(Rank.fromName(rs.getString(14)));
-			p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(15));
-			p.setNetworkID(OnlineNetwork.IVAO, rs.getString(16));
-			p.setCreatedOn(rs.getTimestamp(17));
-			p.setLoginCount(rs.getInt(18));
-			p.setLastLogin(rs.getTimestamp(19));
-			p.setLastLogoff(rs.getTimestamp(20));
-			p.setTZ(TZInfo.get(rs.getString(21)));
-			p.setNotifyOption(Person.FLEET, rs.getBoolean(22));
-			p.setNotifyOption(Person.EVENT, rs.getBoolean(23));
-			p.setNotifyOption(Person.NEWS, rs.getBoolean(24));
-			p.setNotifyOption(Person.PIREP, rs.getBoolean(25));
-			p.setEmailAccess(rs.getInt(26));
-			p.setShowSignatures(rs.getBoolean(27));
-			p.setShowSSThreads(rs.getBoolean(28));
-			p.setHasDefaultSignature(rs.getBoolean(29));
-			p.setShowNewPosts(rs.getBoolean(30));
-			p.setUIScheme(rs.getString(31));
-			p.setShowNavBar(rs.getBoolean(32));
-			p.setViewCount(rs.getInt(33));
-			p.setLoginHost(rs.getString(34));
-			p.setDateFormat(rs.getString(35));
-			p.setTimeFormat(rs.getString(36));
-			p.setNumberFormat(rs.getString(37));
-			p.setAirportCodeType(Airport.Code.values()[rs.getInt(38)]);
-			p.setDistanceType(rs.getInt(39));
-			p.setMapType(rs.getInt(40));
-			p.setNoExams(rs.getBoolean(41));
-			p.setNoVoice(rs.getBoolean(42));
-			p.setNoCooler(rs.getBoolean(43));
-			p.setACARSRestriction(rs.getInt(44));
-			p.setLDAPName(rs.getString(45));
-			p.setMotto(rs.getString(46));
+			p.setLegacyHours(rs.getDouble(9));
+			p.setHomeAirport(rs.getString(10));
+			p.setEquipmentType(rs.getString(11));
+			p.setRank(Rank.fromName(rs.getString(12)));
+			p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(13));
+			p.setNetworkID(OnlineNetwork.IVAO, rs.getString(14));
+			p.setCreatedOn(rs.getTimestamp(15));
+			p.setLoginCount(rs.getInt(16));
+			p.setLastLogin(rs.getTimestamp(17));
+			p.setLastLogoff(rs.getTimestamp(18));
+			p.setTZ(TZInfo.get(rs.getString(19)));
+			p.setNotificationCode(rs.getInt(20));
+			p.setEmailAccess(rs.getInt(21));
+			p.setShowSignatures(rs.getBoolean(22));
+			p.setShowSSThreads(rs.getBoolean(23));
+			p.setHasDefaultSignature(rs.getBoolean(24));
+			p.setShowNewPosts(rs.getBoolean(25));
+			p.setUIScheme(rs.getString(26));
+			p.setShowNavBar(rs.getBoolean(27));
+			p.setViewCount(rs.getInt(28));
+			p.setLoginHost(rs.getString(29));
+			p.setDateFormat(rs.getString(30));
+			p.setTimeFormat(rs.getString(31));
+			p.setNumberFormat(rs.getString(32));
+			p.setAirportCodeType(Airport.Code.values()[rs.getInt(33)]);
+			p.setDistanceType(rs.getInt(34));
+			p.setMapType(rs.getInt(35));
+			p.setNoExams(rs.getBoolean(36));
+			p.setNoVoice(rs.getBoolean(37));
+			p.setNoCooler(rs.getBoolean(38));
+			p.setACARSRestriction(rs.getInt(39));
+			p.setLDAPName(rs.getString(40));
+			p.setMotto(rs.getString(41));
 
-			// Check if this result set has a column 47-50, which is the PIREP totals
-			if (columnCount > 49) {
-				p.setLegs(rs.getInt(47));
-				p.setMiles(rs.getLong(48));
-				p.setHours(rs.getDouble(49));
-				p.setLastFlight(expandDate(rs.getDate(50)));
+			// Check if this result set has columns 42-45, which is the PIREP totals
+			if (columnCount > 44) {
+				p.setLegs(rs.getInt(42));
+				p.setMiles(rs.getLong(43));
+				p.setHours(rs.getDouble(44));
+				p.setLastFlight(expandDate(rs.getDate(45)));
 			}
 
-			// Check if this result set has a column 51, which is the signature extension
-			if (columnCount > 50) {
-				p.setSignatureExtension(rs.getString(51));
-				p.setSignatureModified(rs.getTimestamp(52));
+			// Check if this result set has columns 46/47, which is the signature extension
+			if (columnCount > 46) {
+				p.setSignatureExtension(rs.getString(46));
+				p.setSignatureModified(rs.getTimestamp(47));
 			}
 
-			// CHeck if this result set has columns 53/54, which are online legs/hours
-			if (columnCount > 53) {
-				p.setOnlineLegs(rs.getInt(53));
-				p.setOnlineHours(rs.getDouble(54));
+			// CHeck if this result set has columns 48/49, which are online legs/hours
+			if (columnCount > 48) {
+				p.setOnlineLegs(rs.getInt(48));
+				p.setOnlineHours(rs.getDouble(49));
 			}
 
 			results.add(p);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -321,7 +321,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		}
 
 		// Send a notification message
-		if ((opCode != FlightReport.OK) || (p.getNotifyOption(Person.PIREP))) {
+		if ((opCode != FlightReport.OK) || (p.hasNotifyOption(Notification.PIREP))) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctx);
 			mailer.send(p);
