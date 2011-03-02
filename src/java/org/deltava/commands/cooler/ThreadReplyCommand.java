@@ -1,10 +1,8 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.SecurityContext;
+import org.deltava.security.*;
 import org.deltava.security.command.CoolerThreadAccessControl;
 
 import org.deltava.util.StringUtils;
@@ -23,49 +21,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
 public class ThreadReplyCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(ThreadReplyCommand.class);
-
-	private class MultiUserSecurityContext implements SecurityContext {
-
-		private Person _usr;
-		private HttpServletRequest _req;
-
-		MultiUserSecurityContext(SecurityContext ctx) {
-			super();
-			setUser(ctx.getUser());
-			_req = ctx.getRequest();
-		}
-
-		public Person getUser() {
-			return _usr;
-		}
-
-		public HttpServletRequest getRequest() {
-			return _req;
-		}
-
-		public boolean isAuthenticated() {
-			return (_usr != null);
-		}
-
-		public Collection<String> getRoles() {
-			return isAuthenticated() ? getUser().getRoles() : new HashSet<String>();
-		}
-
-		public boolean isUserInRole(String roleName) {
-			return _req.isUserInRole(roleName);
-		}
-
-		public void setUser(Person usr) {
-			_usr = usr;
-		}
-	}
 
 	/**
 	 * Executes the command.
