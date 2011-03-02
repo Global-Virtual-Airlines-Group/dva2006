@@ -141,6 +141,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="jobreset">
+		<name>Job Shortlist Reset</name>
+		<class>org.deltava.commands.hr.JobResetCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="jobapprove">
 		<name>Job Shortlist Approve</name>
 		<class>org.deltava.commands.hr.JobCompleteCommand</class>
