@@ -28,6 +28,7 @@ public class JobPostingAccessControl extends AccessControl {
 	private boolean _canViewApplications;
 	private boolean _canApply;
 	private boolean _canShortList;
+	private boolean _canReset;
 	private boolean _canSelect;
 	private boolean _canEdit;
 	private boolean _canDelete;
@@ -75,6 +76,7 @@ public class JobPostingAccessControl extends AccessControl {
 		_canDelete = (_jp.getAppCount() > 0) ? _ctx.isUserInRole("Admin") : isHR;
 		_canViewApplications = isHR || (isHireMgr && (_jp.getStatus() >= JobPosting.SHORTLIST));
 		_canShortList = isHR && (_jp.getStatus() == JobPosting.CLOSED);
+		_canReset = isHR && (_jp.getStatus() == JobPosting.SHORTLIST);
 		_canSelect = (_jp.getStatus() == JobPosting.SHORTLIST) && (isHR || isHireMgr);
 		_canComment = isHR || _canShortList || _canSelect;
 			
@@ -121,6 +123,14 @@ public class JobPostingAccessControl extends AccessControl {
 	 */
 	public boolean getCanShortlist() {
 		return _canShortList;
+	}
+	
+	/**
+	 * Returns whether the current user can reset the shortlist process.
+	 * @return TRUE if the shortlist can be reset, otherwise FALSE
+	 */
+	public boolean getCanReset() {
+		return _canReset;
 	}
 	
 	/**
