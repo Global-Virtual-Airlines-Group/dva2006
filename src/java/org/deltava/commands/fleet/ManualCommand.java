@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Document Library entries.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -117,7 +117,7 @@ public class ManualCommand extends LibraryEditCommand {
 
 			// Get the pilots to notify
 			GetPilotNotify pdao = new GetPilotNotify(con);
-			pilots = pdao.getNotifications(Person.FLEET);
+			pilots = pdao.getNotifications(Notification.FLEET);
 			
 			// Start the transaction
 			ctx.startTX();

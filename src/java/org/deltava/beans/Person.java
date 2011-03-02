@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,42 +11,11 @@ import org.deltava.util.StringUtils;
 /**
  * An abstract class storing information about a Person.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
 public abstract class Person extends DatabaseBlobBean implements Principal, EMailAddress, ViewEntry {
-
-	/**
-	 * Notify when new System News entries are created.
-	 */
-	public static final String NEWS = "NEWS";
-
-	/**
-	 * Notify when new Online Event entries are created.
-	 */
-	public static final String EVENT = "EVENT";
-
-	/**
-	 * Notify when new Fleet Library entries are created.
-	 */
-	public static final String FLEET = "FLEET";
-
-	/**
-	 * Notify when Flight Reports Approved.
-	 */
-	public static final String PIREP = "PIREP";
-	
-	/**
-	 * Notification type codes.
-	 */
-	public static final String[] NOTIFY_CODES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
-	
-	/**
-	 * Notification type descriptions.
-	 */
-	public static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
-			"Send Library Notifications", "Send Flight Approval Notifications" };
 
 	/**
 	 * Hide e-mail address from all non-staff users.
@@ -108,7 +77,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _loginHost;
 
 	protected final Map<OnlineNetwork, String> _networkIDs = new HashMap<OnlineNetwork, String>();
-	protected final Map<String, Boolean> _notifyOptions = new HashMap<String, Boolean>();
+	protected final Collection<Notification> _notifyOptions = new HashSet<Notification>();
 
 	private double _legacyHours;
 
@@ -363,30 +332,33 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Return a particular e-mail notification option for this Person.
 	 * @param notifyType the NotificationType, use constants if possible
 	 * @return TRUE if this Person should be notified
-	 * @see Person#setNotifyOption(String, boolean)
+	 * @see Person#setNotifyOption(Notification, boolean)
 	 * @see Person#getNotifyOptions()
 	 */
-	public boolean getNotifyOption(String notifyType) {
-		Boolean notify = _notifyOptions.get(notifyType);
-		return (notify == null) ? false : notify.booleanValue();
+	public boolean hasNotifyOption(Notification notifyType) {
+		return _notifyOptions.contains(notifyType);
 	}
 
 	/**
 	 * Returns all selected notification options.
 	 * @return a List of notification types
-	 * @see Person#setNotifyOption(String, boolean)
-	 * @see Person#getNotifyOption(String)
+	 * @see Person#setNotifyOption(Notification, boolean)
+	 * @see Person#hasNotifyOption(Notification)
 	 */
-	public Collection<String> getNotifyOptions() {
-		Collection<String> results = new HashSet<String>();
-		for (Iterator<String> i = _notifyOptions.keySet().iterator(); i.hasNext();) {
-			String optName = i.next();
-			Boolean isSet = _notifyOptions.get(optName);
-			if (isSet.booleanValue())
-				results.add(optName);
-		}
-
-		return results;
+	public Collection<Notification> getNotifyOptions() {
+		return new TreeSet<Notification>(_notifyOptions);
+	}
+	
+	/**
+	 * Returns the aggregated notification code.
+	 * @return the notification code.
+	 */
+	public int getNotifyCode() {
+		int code = 0;
+		for (Notification n : _notifyOptions)
+			code |= n.getCode();
+		
+		return code;
 	}
 
 	/**
@@ -568,14 +540,29 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @param option the notification type. Use constants if possible.
 	 * @param notify TRUE if this person should be notified
 	 * @throws NullPointerException if option is null
-	 * @see Person#getNotifyOption(String)
+	 * @see Person#hasNotifyOption(Notification)
 	 * @see Person#getNotifyOptions()
 	 */
-	public void setNotifyOption(String option, boolean notify) {
+	public void setNotifyOption(Notification option, boolean notify) {
 		if (option == null)
 			throw new NullPointerException("Notify Option cannot be null");
-
-		_notifyOptions.put(option, Boolean.valueOf(notify));
+		else if (!notify)
+			_notifyOptions.remove(option);
+		else
+			_notifyOptions.add(option);
+	}
+	
+	/**
+	 * Sets the notification options for a user from a single bitmap value.
+	 * @param code the bitmap value
+	 * @see Person#getNotifyCode()
+	 */
+	public void setNotificationCode(int code) {
+		_notifyOptions.clear();
+		for (Notification n : Notification.values()) {
+			if ((code & n.getCode()) > 0)
+				_notifyOptions.add(n);
+		}
 	}
 
 	/**
