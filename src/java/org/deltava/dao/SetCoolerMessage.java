@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
@@ -106,17 +106,17 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 			
 			// If we have poll options, write them to the database
 			if (!t.getOptions().isEmpty()) {
-				prepareStatementWithoutLimits("INSERT INTO common.COOLER_POLLS (ID, NAME) VALUES (?, ?)");
-				_ps.setInt(1, t.getID());
+				prepareStatementWithoutLimits("INSERT INTO common.COOLER_POLLS (ID, OPT_ID, NAME) VALUES (?, ?, ?)");
+				_ps.setInt(1, t.getID()); int optID = 0;
 				for (Iterator<PollOption> i = t.getOptions().iterator(); i.hasNext(); ) {
 					PollOption opt = i.next();
-					_ps.setString(2, opt.getName());
+					_ps.setInt(2, ++optID);
+					_ps.setString(3, opt.getName());
 					_ps.addBatch();
 				}
 				
 				_ps.executeBatch();
 				_ps.close();
-				_ps = null;
 			}
 		} catch (SQLException se) {
 			rollbackTransaction();
