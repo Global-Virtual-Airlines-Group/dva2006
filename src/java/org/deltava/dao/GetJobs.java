@@ -86,7 +86,8 @@ public class GetJobs extends DAO {
 	 */
 	public List<JobPosting> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM JOBPOSTINGS ORDER BY CLOSES DESC, CREATED DESC");
+			prepareStatement("SELECT J.*, COUNT(JA.AUTHOR_ID) FROM JOBPOSTINGS J LEFT JOIN JOBAPPS JA ON"
+				+ "(J.ID=JA.ID) GROUP BY J.ID ORDER BY J.CLOSES DESC, J.CREATED DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -100,7 +101,8 @@ public class GetJobs extends DAO {
 	 */
 	public List<JobPosting> getOpen() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM JOBPOSTINGS WHERE (STATUS=?) ORDER BY CLOSES DESC");
+			prepareStatement("SELECT J.*, COUNT(JA.AUTHOR_ID) FROM JOBPOSTINGS J LEFT JOIN JOBAPPS JA ON "
+				+ "(J.ID=JA.ID) GROUP BY J.ID WHERE (J.STATUS=?) ORDER BY J.CLOSES DESC");
 			_ps.setInt(1, JobPosting.OPEN);
 			return execute();
 		} catch (SQLException se) {
@@ -115,9 +117,42 @@ public class GetJobs extends DAO {
 	 */
 	public List<JobPosting> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM JOBPOSTINGS WHERE (STATUS<>?) ORDER BY CLOSES DESC, CREATED DESC");
+			prepareStatement("SELECT J.*, COUNT(JA.AUTHOR_ID) FROM JOBPOSTINGS J LEFT JOIN JOBAPPS JA ON "
+				+"(J.ID=JA.ID) WHERE (J.STATUS<>?) GROUP BY J.ID ORDER BY J.CLOSES DESC, J.CREATED DESC");
 			_ps.setInt(1, JobPosting.COMPLETE);
 			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Retrieves all Job Applications.
+	 * @return a Collection of Application beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Application> getApplications() throws DAOException {
+		try {
+			prepareStatement("SELECT JA.*, P.FIRSTNAME, P.LASTNAME FROM JOBAPPS JA, PILOTS P WHERE "
+				+ "(JA.AUTHOR_ID=P.ID) ORDER BY JA.CREATED");
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			List<Application> results = new ArrayList<Application>();
+			while (rs.next()) {
+				Application a = new Application(rs.getInt(1), rs.getInt(2));
+				a.setCreatedOn(rs.getTimestamp(3));
+				a.setStatus(rs.getInt(4));
+				a.setBody(rs.getString(5));
+				a.setFirstName(rs.getString(6));
+				a.setLastName(rs.getString(7));
+				results.add(a);
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

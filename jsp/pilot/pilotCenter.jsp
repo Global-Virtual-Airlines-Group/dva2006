@@ -659,8 +659,13 @@ training session with a Flight Academy student.</td>
 <content:filter roles="HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="careers">Career Opportunities</el:cmd></td>
- <td class="data">You can view any open <content:airline /> volunteer staff Job Posting here, and create
- new Job Postings for staff members and Pilots to view.</td>
+ <td class="data">You can view any <content:airline /> volunteer staff Job Posting here, and create new
+ Job Postings for <content:airline /> staff members and Pilots to view.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="jobapplist">Job Applications</el:cmd></td>
+ <td class="data">You can view any applications for current or historic <content:airline /> volunteer
+ staff Job Postings.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
@@ -850,11 +855,6 @@ performed each time the Terminal Routes have been imported from AIRAC data.</td>
  <td class="data">You can control which versions of the <content:airline /> ACARS client are allowed to 
 connect to the ACARS Server, as well as inform users of a new ACARS Client version. <span class="ita">The latest
 ACARS build is Build <fmt:int value="${latestBuild}" />.</span></td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="acarscmdstats">ACARS Command Log Statistics</el:cmd></td>
- <td class="data">You can view statistics about the commands executed by the <content:airline /> ACARS 
-server.</td>
 </tr>
 </content:filter>
 </content:filter>
