@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -9,11 +9,10 @@ import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store Airway names and waypoint data. Since there can be multiple Airways across the world with
- * the same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway
- * sequence.
+ * A bean to store Airway names and waypoint data. Since there can be multiple Airways across the world with the
+ * same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway sequence.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 1.0
  */
 
