@@ -40,7 +40,7 @@ return true;
 <script type="text/javascript">
 function zoomTo(lat, lng)
 {
-map.setZoom(11);
+map.setZoom(12);
 map.panTo(new google.maps.LatLng(lat, lng));
 return true;
 }
