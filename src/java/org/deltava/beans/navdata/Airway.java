@@ -158,7 +158,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 		if ((st == -1) && (end != null))
 			return new ArrayList<NavigationDataBean>();
 		else if (ed == -1)
-			ed = _waypoints.size();
+			ed = _waypoints.size() - 1;
 		else if (ed < st) {
 			// If ed is before sd then reverse the waypoints
 			List<NavigationDataBean> wp2 = new ArrayList<NavigationDataBean>(_waypoints.subList(ed, st+1));
