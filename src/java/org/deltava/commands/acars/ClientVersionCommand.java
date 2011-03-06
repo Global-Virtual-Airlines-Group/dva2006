@@ -84,9 +84,9 @@ public class ClientVersionCommand extends AbstractCommand {
 		}
 		
 		// Add new beta build
-		int newBuild = StringUtils.parse("newBuild", 0);
+		int newBuild = StringUtils.parse(ctx.getParameter("newBuild"), 0);
 		if (newBuild > 0) {
-			int newBeta = StringUtils.parse("newBeta", 0);
+			int newBeta = StringUtils.parse(ctx.getParameter("newBeta"), 0);
 			if (newBeta > 0)
 				cInfo.setMinimumBetaBuild(newBuild, newBeta);
 		}
