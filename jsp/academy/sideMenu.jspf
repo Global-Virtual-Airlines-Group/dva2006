@@ -68,6 +68,9 @@
 <c:if test="${helpDeskEnabled}">
  <content:subitem><el:cmd url="helpdesk">Help Desk</el:cmd></content:subitem>
 </c:if>
+ <content:subitem><el:cmd url="routeplot">Route Plotter</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="wxcenter">Weather Center</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="findflight">Find a Flight</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
  <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
