@@ -73,8 +73,10 @@ public class RoutePlanService extends WebService {
 			}
 			
 			// Add the route waypoints
-			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
-				List<NavigationDataBean> points = dao.getRouteWaypoints(ctx.getParameter("route"), aD);
+			String rte = ctx.getParameter("route");
+			if (!StringUtils.isEmpty(rte)) {
+				fpgen.setRoute(rte);
+				List<NavigationDataBean> points = dao.getRouteWaypoints(rte, aD);
 				routePoints.addAll(points);
 			}
 			
