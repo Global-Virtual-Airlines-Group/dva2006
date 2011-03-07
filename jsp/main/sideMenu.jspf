@@ -65,6 +65,9 @@
  <content:subitem><el:cmd url="wxcenter">Weather Center</el:cmd></content:subitem>
  <content:subitem><el:cmd url="findflight">Find a Flight</el:cmd></content:subitem>
 </content:filter>
+<c:if test="${academyEnabled}">
+ <content:subitem><el:cmd url="graduates">Academy Graduates</el:cmd></content:subitem>
+</c:if>
  <content:subitem><el:cmd url="eventcalendar">Online Events</el:cmd></content:subitem>
  <content:subitem><el:cmd url="channels">${forumName}</el:cmd></content:subitem>
 </content:submenu>

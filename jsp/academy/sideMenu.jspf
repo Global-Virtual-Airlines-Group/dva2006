@@ -24,6 +24,7 @@
 <content:submenu title="Flight Academy" width="170">
  <content:subitem><el:cmd url="academy">Academy Home</el:cmd></content:subitem>
  <content:subitem><el:cmd url="academycalendar">Instruction Calendar</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="graduates">Academy Graduates</el:cmd></content:subitem>
 <content:filter roles="HR,Instructor,AcademyAdmin,AcademyAudit">
  <content:subitem><el:cmd url="busycalendar">Busy Times</el:cmd></content:subitem>
  <content:subitem><el:cmd url="courses">Active Courses</el:cmd></content:subitem>
