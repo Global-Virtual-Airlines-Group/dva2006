@@ -79,12 +79,12 @@ public class CourseListCommand extends AbstractViewCommand {
 					break;
 
 				case 1:
-					courses = dao.getByStatus(vc.getSortType(), Course.STARTED);
+					courses = dao.getByStatus(Course.STARTED, vc.getSortType(), null);
 					break;
 
 				case 2:
 					ctx.setAttribute("isPending", Boolean.TRUE, REQUEST);
-					courses = dao.getByStatus(vc.getSortType(), Course.PENDING);
+					courses = dao.getByStatus(Course.PENDING, vc.getSortType(), null);
 					break;
 
 				case 4: // Unassigned
