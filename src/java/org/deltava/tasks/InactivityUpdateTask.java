@@ -66,8 +66,8 @@ public class InactivityUpdateTask extends Task {
 			SetInactivity iwdao = new SetInactivity(con);
 			
 			// Load pending flight academy users
-			Collection<Course> pC = cdao.getByStatus("C.PILOT_ID", Course.PENDING);
-			pC.addAll(cdao.getByStatus("C.PILOT_ID", Course.STARTED));
+			Collection<Course> pC = cdao.getByStatus(Course.PENDING, null, null);
+			pC.addAll(cdao.getByStatus(Course.STARTED, null, null));
 			Map<Integer, Course> courses = CollectionUtils.createMap(pC, "pilotID");
 
 			// Get the Message templates

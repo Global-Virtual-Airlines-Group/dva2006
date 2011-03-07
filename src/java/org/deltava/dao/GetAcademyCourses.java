@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.academy.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load Flight Academy course data. 
@@ -169,22 +170,32 @@ public class GetAcademyCourses extends DAO {
 
 	/**
 	 * Returns all Flight Academy Course profiles with a particular status.
-	 * @param sortBy the sort column SQL
 	 * @param status the Course status code
+	 * @param sortBy the sort column SQL
+	 * @param c the Certification, or null for all
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getByStatus(String sortBy, int status) throws DAOException {
+	public Collection<Course> getByStatus(int status, String sortBy, Certification c) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
 				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
-				+ "AND (C.STATUS=?) GROUP BY C.ID ORDER BY ");
-		sqlBuf.append(sortBy);
+				+ "AND (C.STATUS=?) ");
+		if (c != null)
+			sqlBuf.append("AND (C.CERTNAME=?) ");
+		sqlBuf.append("GROUP BY C.ID ");
+		if (!StringUtils.isEmpty(sortBy)) {
+			sqlBuf.append("ORDER BY ");
+			sqlBuf.append(sortBy);
+		}
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, status);
+			if (c != null)
+				_ps.setString(2, c.getName());
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
