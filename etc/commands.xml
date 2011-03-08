@@ -135,6 +135,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="jobapplist">
+		<name>Job Application List</name>	
+		<class>org.deltava.commands.hr.ApplicationListCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="jobsl">
 		<name>Job Shortlist</name>
 		<class>org.deltava.commands.hr.ShortListCommand</class>
@@ -1976,12 +1982,6 @@
 		<roles>HR,Developer</roles>
 	</command>
 
-	<command id="acarscmdstats">
-		<name>ACARS Command Log Statistics</name>
-		<class>org.deltava.commands.acars.LogStatisticsCommand</class>
-		<roles>Admin</roles>
-	</command>
-
 	<command id="liveries">
 		<name>ACARS Multi-Player Liveries</name>
 		<class>org.deltava.commands.acars.LiveryListCommand</class>
@@ -2194,6 +2194,12 @@
 		<name>Flight Academy Course Disposal</name>
 		<class>org.deltava.commands.academy.CourseDisposalCommand</class>
 		<roles>Pilot,Instructor,HR,AcademyAdmin</roles>
+	</command>
+
+	<command id="graduates">
+		<name>Flight Academy Graduates</name>
+		<class>org.deltava.commands.academy.GraduatesCommand</class>
+		<roles>*</roles>
 	</command>
 
 	<command id="courseride">

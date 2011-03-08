@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,67 +6,21 @@ import java.util.*;
 
 import org.deltava.beans.acars.*;
 
-import org.deltava.util.cache.*;
-
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 1.0
  */
 
-public class GetACARSLog extends GetACARSData  implements CachingDAO {
+public class GetACARSLog extends GetACARSData {
 	
-	private static final Cache<CacheableList<CommandEntry>> _statCache = new ExpiringCache<CacheableList<CommandEntry>>(1, 900);
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
 	public GetACARSLog(Connection c) {
 		super(c);
-	}
-	
-	/**
-	 * Retrieves ACARS server Command statistics from the database.
-	 * @return a Collection of CommandEntry beans
-	 * @throws DAOException if a JDBC error occurss
-	 */
-	public Collection<CommandEntry> getCommandStats() throws DAOException {
-		
-		// Check the cache
-		CacheableList<CommandEntry> results = _statCache.get(GetACARSLog.class);
-		if (results != null)
-			return results;
-		
-		try {
-			prepareStatementWithoutLimits("SELECT CLASS, COUNT(CMDDATE), SUM(EXECTIME), MAX(EXECTIME), MIN(EXECTIME) "
-					+ "FROM acars.COMMAND_STATS GROUP BY CLASS");
-			
-			// Execute the query
-			results = new CacheableList<CommandEntry>(GetACARSLog.class);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				CommandEntry entry = new CommandEntry(rs.getString(1));
-				entry.setCount(rs.getLong(2));
-				entry.setTotalTime(rs.getLong(3));
-				entry.setMaxTime(rs.getInt(4));
-				entry.setMinTime(rs.getInt(5));
-				results.add(entry);
-			}
-			
-			// Clean up
-			rs.close();
-			_ps.close();
-			_statCache.add(results);
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_statCache);
 	}
 	
 	/**
