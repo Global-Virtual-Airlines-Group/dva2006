@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A Data Access Object to purge ACARS data.
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 3.2
  */
 
@@ -95,6 +95,7 @@ public class SetACARSPurge extends SetACARSLog {
 	 * @return the number of entries purged
 	 * @throws DAOException if a JDBC error occurs
 	 */
+	@Deprecated
 	public int purgeLogs(int hours) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM acars.COMMAND_STATS WHERE (CMDDATE < DATE_SUB(NOW(), "
