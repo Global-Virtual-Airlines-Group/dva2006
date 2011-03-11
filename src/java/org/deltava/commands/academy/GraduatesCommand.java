@@ -41,9 +41,9 @@ public class GraduatesCommand extends AbstractViewCommand {
 			ViewContext vc = initView(ctx);
 			if (cert != null) {
 				GetAcademyCourses cdao = new GetAcademyCourses(con);
-				Collection<Course> courses = cdao.getByStatus(Course.COMPLETE, "C.ENDDATE", cert);
 				cdao.setQueryStart(vc.getStart());
 				cdao.setQueryMax(vc.getCount());
+				Collection<Course> courses = cdao.getByStatus(Course.COMPLETE, "C.ENDDATE", cert);
 				vc.setResults(courses);
 					
 				// Load the Pilot IDs
