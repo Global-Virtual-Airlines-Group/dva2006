@@ -19,7 +19,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<filter-class>org.deltava.servlet.filter.BrowserTypeFilter</filter-class>
 		<init-param>
 			<param-name>default</param-name>
-			<param-value>MSIE 7.0</param-value>
+			<param-value>MSIE 8.0</param-value>
 		</init-param>
 	</filter>
 
@@ -242,7 +242,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 
 	<!-- Sessions time out after 20 minutes -->
 	<session-config>
-		<session-timeout>30</session-timeout> 
+		<session-timeout>20</session-timeout> 
 	</session-config>
 
 	<!-- welcome files for the application -->
