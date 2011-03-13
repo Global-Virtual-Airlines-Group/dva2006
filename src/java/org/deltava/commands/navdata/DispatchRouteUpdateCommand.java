@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to ensure Dispatch Routes have the latest Terminal Route waypoints.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 2.6
  */
 
@@ -26,6 +26,7 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		boolean saveChanges = "save".equals(ctx.getCmdParameter(OPERATION, null));
@@ -52,6 +53,10 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 					int pos = rt.getSID().indexOf('.');
 					String name = rt.getSID().substring(0, pos);
 					sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, rt.getSID(), true);
+					
+					// If we still can't find a SID, find one that uses this transition and runway
+					if (sid == null)
+						sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, "%" + rt.getSID().substring(pos), true);
 					
 					// If we found a better SID, update what is in the route with this one
 					if (sid != null) {
@@ -84,6 +89,10 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 					int pos = rt.getSTAR().indexOf('.');
 					String name = rt.getSTAR().substring(0, pos);
 					star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, rt.getSTAR(), true);
+					
+					// If we still can't find a STAR, find one that uses this transition and runway
+					if (star == null)
+						star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, "%" + rt.getSTAR().substring(pos), true);
 					
 					// If we found a better STAR, update what is in the route with this one
 					if (star != null) {
