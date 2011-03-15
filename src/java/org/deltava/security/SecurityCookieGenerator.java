@@ -1,4 +1,4 @@
-// Copyright 2004, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.Base64;
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
@@ -44,13 +44,11 @@ public final class SecurityCookieGenerator {
 	public static SecurityCookieData readCookie(String cookieText) throws SecurityException {
 		
 		String rawToken = null;
+		byte[] encData = Base64.decode(cookieText);
 		try {
-			byte[] encData = Base64.decode(cookieText);
-			try {
-				rawToken = new String(_encryptor.decrypt(encData), "UTF-8");
-			} catch (CryptoException ce) {
-				throw new SecurityException("Cannot decode Security Cookie (size=" + encData.length + ")", ce.getCause());
-			}
+			rawToken = new String(_encryptor.decrypt(encData), "UTF-8");
+		} catch (CryptoException ce) {
+			throw new SecurityException("Cannot decode Security Cookie (size=" + encData.length + ")", ce.getCause());
 		} catch (UnsupportedEncodingException uee) {
 			throw new SecurityException("UTF-8 not available", uee);
 		}
@@ -71,10 +69,10 @@ public final class SecurityCookieGenerator {
 		// Rebuild the message token
 		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(cookieData.get("uid"));
-		buf.append("@pwd:");
-		buf.append(cookieData.get("pwd"));
 		buf.append("@addr:");
 		buf.append(cookieData.get("addr"));
+		buf.append("@login:");
+		buf.append(cookieData.get("login"));
 		buf.append("@expiry:");
 		buf.append(cookieData.get("expiry"));
 		buf.append("@x:");
@@ -95,21 +93,12 @@ public final class SecurityCookieGenerator {
 		}
 		
 		// Initalize the cookie data
-		SecurityCookieData scData = new SecurityCookieData(cookieData);
+		SecurityCookieData scData = new SecurityCookieData(cookieData.get("uid"));
+		scData.setRemoteAddr(cookieData.get("addr"));
 		try {
+			scData.setLoginDate(Long.parseLong(cookieData.get("login"), 16));
 		    scData.setExpiryDate(Long.parseLong(cookieData.get("expiry"), 16));
-		    scData.setScreenSize(Integer.parseInt(cookieData.get("x"), 16), 
-		    		Integer.parseInt(cookieData.get("y"), 16));
-			
-			// Convert the hex password into a String
-			String rawPwd = cookieData.get("pwd");
-			StringBuilder pwdBuf = new StringBuilder();
-			for (int x = 0; x < rawPwd.length(); x += 2) {
-				int hexByte = Integer.parseInt(rawPwd.substring(x, x+ 2), 16);
-				pwdBuf.append((char) hexByte);
-			}
-			
-			scData.setPassword(pwdBuf.toString());
+		    scData.setScreenSize(Integer.parseInt(cookieData.get("x"), 16), Integer.parseInt(cookieData.get("y"), 16));
 		} catch (NumberFormatException nfe) {
 			throw new SecurityException("Invalid Security Cookie Data");
 		}
@@ -127,10 +116,10 @@ public final class SecurityCookieGenerator {
 		// Build the cookie token
 		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(scData.getUserID());
-		buf.append("@pwd:"); // Convert password bytes to HEX to allow commas and colons
-		buf.append(scData.getPasswordBytes());
 		buf.append("@addr:");
 		buf.append(scData.getRemoteAddr());
+		buf.append("@login:");
+		buf.append(Long.toHexString(scData.getLoginDate()));
 		buf.append("@expiry:");
 		buf.append(Long.toHexString(scData.getExpiryDate()));
 		buf.append("@x:");

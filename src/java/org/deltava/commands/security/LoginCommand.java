@@ -180,18 +180,19 @@ public class LoginCommand extends AbstractCommand {
 			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
 			
 			// Get IP address info
+			String remoteAddr = ctx.getRequest().getRemoteAddr();
 			GetIPLocation ipdao = new GetIPLocation(con);
-			IPAddressInfo addrInfo = ipdao.get(ctx.getRequest().getRemoteAddr());
+			IPAddressInfo addrInfo = ipdao.get(remoteAddr);
 
 			// Create the user authentication cookie
-			SecurityCookieData cData = new SecurityCookieData(p.getDN());
-			cData.setPassword(ctx.getParameter("pwd"));
-			cData.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+			SecurityCookieData cData = new SecurityCookieData(p.getHexID());
+			cData.setLoginDate(System.currentTimeMillis());
+			cData.setRemoteAddr(remoteAddr);
 			cData.setScreenSize(screenX, screenY);
 			
 			// Encode the encrypted data via Base64
 			Cookie c = new Cookie(CommandContext.AUTH_COOKIE_NAME, SecurityCookieGenerator.getCookieData(cData));
-			c.setMaxAge(SystemData.getInt("security.cookie.maxAge", -1));
+			c.setMaxAge(-1);
 			c.setPath("/");
 			ctx.getResponse().addCookie(c);
 
@@ -207,13 +208,13 @@ public class LoginCommand extends AbstractCommand {
 
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
-			wdao.login(p.getID(), ctx.getRequest().getRemoteHost());
 			p.setLastLogin(new Date());
 			p.setLoginHost(ctx.getRequest().getRemoteHost());
-
+			wdao.login(p.getID(), p.getLoginHost());
+			
 			// Save login hostname/IP address forever
 			SetSystemData sysdao = new SetSystemData(con);
-			sysdao.login(SystemData.get("airline.db"), p.getID(), ctx.getRequest().getRemoteAddr(), p.getLoginHost());
+			sysdao.login(SystemData.get("airline.db"), p.getID(), remoteAddr, p.getLoginHost());
 			
 			// Clear LOA if done today
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
@@ -245,7 +246,7 @@ public class LoginCommand extends AbstractCommand {
 			s.setAttribute(HTTPContext.USER_ATTR_NAME, p);
 			s.setAttribute(HTTPContext.ADDRINFO_ATTR_NAME, addrInfo);
 			s.setAttribute(HTTPContext.USERAGENT_ATTR_NAME, userAgent);
-			s.setAttribute(CommandContext.ADDR_ATTR_NAME, cData.getRemoteAddr());
+			s.setAttribute(CommandContext.AUTH_COOKIE_NAME, cData);
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
 			

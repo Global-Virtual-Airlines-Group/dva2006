@@ -76,33 +76,6 @@ public class SecurityCookieFilter implements Filter {
 	}
 
 	/**
-	 * Helper method to revalidate a user's credentials.
-	 */
-	private boolean authenticate(Pilot p, String pwd) {
-		
-		// Get the authenticator and validate the password
-		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-		Connection con = null; boolean isOK = false;
-		try {
-			if (auth instanceof SQLAuthenticator) {
-				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
-				sqlAuth.setConnection(con);
-				sqlAuth.authenticate(p, pwd);
-				sqlAuth.clearConnection();
-			} else
-				auth.authenticate(p, pwd);
-			
-			isOK = true;
-		} catch (SecurityException se) {
-			log.error("Cannot reauthenticate " + p.getName());
-		} finally {
-			_jdbcPool.release(con);
-		}
-		
-		return isOK;
-	}
-	
-	/**
 	 * Called by the servlet container on each request. Repopulates the session if a cookie is found.
 	 * @param req the Servlet Request
 	 * @param rsp the Servlet Response
@@ -125,44 +98,54 @@ public class SecurityCookieFilter implements Filter {
 		}
 
 		// Decrypt the cookie
-		SecurityCookieData cData = null;
-		try {
-			cData = SecurityCookieGenerator.readCookie(authCookie);
-			if (SystemData.getBoolean("security.cookie.checkIP")) {
-				if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
-					throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
+		HttpSession s = hreq.getSession(true);
+		SecurityCookieData cData = (SecurityCookieData) s.getAttribute(AUTH_COOKIE_NAME);
+		if (cData == null) {
+			try {
+				cData = SecurityCookieGenerator.readCookie(authCookie);
+				if (SystemData.getBoolean("security.cookie.checkIP")) {
+					if ((cData != null) && (!remoteAddr.equals(cData.getRemoteAddr())))
+						throw new SecurityException(remoteAddr + " != " + cData.getRemoteAddr());
+				}
+				
+				s.setAttribute(AUTH_COOKIE_NAME, cData);
+			} catch (Exception e) {
+				log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + hreq.getHeader("user-agent") + " - " + e.getMessage());
+				hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+				cData = null;
 			}
-		} catch (Exception e) {
-			log.error("Error decrypting security cookie from " + req.getRemoteHost() + " using " + hreq.getHeader("user-agent") + " - " + e.getMessage());
+		}
+		
+		// If the context has expired, invalidate the session
+		Pilot p = (Pilot) s.getAttribute(USER_ATTR_NAME);
+		if ((cData != null) && cData.isExpired()) {
+			log.warn("Cookie for " + cData.getUserID() + " has expired");
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			s.invalidate();
 			cData = null;
+			p = null;
 		}
 
 		// Validate the session/cookie data
-		HttpSession s = hreq.getSession(true);
-		Pilot p = (Pilot) s.getAttribute(USER_ATTR_NAME);
 		try {
-			String savedAddr = (String) s.getAttribute(ADDR_ATTR_NAME);
+			String savedAddr = (cData == null) ? null : cData.getRemoteAddr();
 			if (UserPool.isBlocked(p))
 				throw new SecurityException(p.getName() + " is blocked");
 			else if (hreq.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
 			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr))
 				throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
-			else if (savedAddr == null)
-				s.setAttribute(ADDR_ATTR_NAME, remoteAddr);
 		} catch (SecurityException se) {
 			log.warn(se.getMessage());
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
 			s.invalidate();
-			p = null;
 			cData = null;
 		}
 			
 		// Load the user
 		if ((p == null) && (cData != null)) {
-			s.setAttribute(SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
-			s.setAttribute(SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
+			s.setAttribute(SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
+			s.setAttribute(SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
 			IPAddressInfo addrInfo = null;
 			
 			// Load the person and the IP Address data
@@ -171,19 +154,19 @@ public class SecurityCookieFilter implements Filter {
 				con = _jdbcPool.getConnection();
 				
 				// Get the person
-				GetPilotDirectory dao = new GetPilotDirectory(con);
-				p = dao.getFromDirectory(cData.getUserID());
+				GetPilot dao = new GetPilot(con);
+				p = dao.get(StringUtils.parseHex(cData.getUserID()));
 				
 				// Populate online/ACARS legs
 				if (p != null) {
 					GetFlightReports frdao = new GetFlightReports(con);
 					frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+					
+					// Load the IP address data
+					GetIPLocation ipdao = new GetIPLocation(con);
+					addrInfo = ipdao.get(remoteAddr);
 				} else
 					log.error("Unknown Pilot - " + cData.getUserID());
-
-				// Load the IP address data
-				GetIPLocation ipdao = new GetIPLocation(con);
-				addrInfo = ipdao.get(remoteAddr);
 			} catch (DAOException de) {
 				log.error("Error loading " + cData.getUserID() + " - " + de.getMessage(), de);
 			} catch (org.gvagroup.jdbc.ConnectionPoolException cpe) {
@@ -196,17 +179,14 @@ public class SecurityCookieFilter implements Filter {
 			if (p != null) {
 				try {
 					if (p.getStatus() == Pilot.ACTIVE) {
-						if (authenticate(p, cData.getPassword())) {
-							String userAgent = hreq.getHeader("user-agent");
-							s.setAttribute(USERAGENT_ATTR_NAME, userAgent);
-							s.setAttribute(USER_ATTR_NAME, p);
-							log.info("Restored " + p.getName() + " from Security Cookie");
+						String userAgent = hreq.getHeader("user-agent");
+						s.setAttribute(USERAGENT_ATTR_NAME, userAgent);
+						s.setAttribute(USER_ATTR_NAME, p);
+						log.info("Restored " + p.getName() + " from Security Cookie");
 							
-							// Check if we are a superUser impersonating someone
-							Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);
-							UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent);
-						} else 
-							throw new SecurityException("Cannot re-authenticate " + p.getName());
+						// Check if we are a superUser impersonating someone
+						Pilot su = (Pilot) s.getAttribute(SU_ATTR_NAME);
+						UserPool.add((su != null) ? su : p, s.getId(), addrInfo, userAgent);
 					} else
 						throw new SecurityException(p.getName() + " status = " + p.getStatusName());
 				} catch (SecurityException se) {

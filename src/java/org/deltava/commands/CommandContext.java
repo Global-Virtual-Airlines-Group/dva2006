@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import javax.servlet.http.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 1.0
  * @see Command
  */
@@ -16,7 +16,6 @@ import javax.servlet.http.*;
 public class CommandContext extends HTTPContext {
 
 	public static final String AUTH_COOKIE_NAME = "authToken";
-	public static final String ADDR_ATTR_NAME = "authRemoteAddr";
 	public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
 	public static final String SCREENX_ATTR_NAME = "screenXSize";
 	public static final String SCREENY_ATTR_NAME = "screenYSize";
