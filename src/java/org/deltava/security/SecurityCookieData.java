@@ -1,22 +1,20 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
-
-import java.util.Map;
 
 /**
  * A bean containing data stored in the security cookie.
  * @author Luke
- * @version 1.0
+ * @version 3.6
  * @since 1.0
  */
 
-public class SecurityCookieData {
+public class SecurityCookieData implements java.io.Serializable {
     
     private static final long DEFAULT_EXPIRY = 360 * 60000; // 6 hours
     
  	private String _userID;
-	private String _pwd;
 	private String _remoteAddr;
+	private long _loginDate;
 	private long _expiryDate;
 	
 	private int _screenX = 1024;
@@ -33,20 +31,19 @@ public class SecurityCookieData {
     }
     
     /**
-     * Creates a new security cookie data bean.
-     * @param cookieData a map of parameters
-     */
-    public SecurityCookieData(Map<String, String> cookieData) {
-        this(cookieData.get("uid"));
-        _remoteAddr = cookieData.get("addr");
-    }
-    
-    /**
      * Returns the expiration date of the cookie.
      * @return the expiration date as a 64-bit Unix timestamp
      */
     public long getExpiryDate() {
         return _expiryDate;
+    }
+    
+    /**
+     * Returns the login date.
+     * @return the login date as a 64-bit Unix timestamp
+     */
+    public long getLoginDate() {
+    	return _loginDate;
     }
     
     /**
@@ -73,15 +70,6 @@ public class SecurityCookieData {
  		return _userID;
  	}
  	
- 	/**
- 	 * Retrieves the password from this security cooke. This value is not guaranteed to be set, and this method
- 	 * exists for use in SSO where we need to get the password
- 	 * @return the user's password
- 	 */
- 	public String getPassword() {
- 		return _pwd;
- 	}
-
 	 /**
 	  * Returns the remote address of the user.
 	 * @return the IP address
@@ -100,23 +88,20 @@ public class SecurityCookieData {
 	
 	/**
 	 * Sets the expiry date of the security cookie.
-	 * @param expiryDate the expiration date as a 32-bit UNIX timestamp
+	 * @param dt the expiration date as a 64-bit UNIX timestamp
 	 */
-	public void setExpiryDate(long expiryDate) {
-	    if (expiryDate < 1)
-	        throw new IllegalArgumentException("Expiration Date cannot be zero or negative");
-	    
-	    _expiryDate = expiryDate;
+	public void setExpiryDate(long dt) {
+	    _expiryDate = Math.max(_loginDate, dt);
+	}
+	
+	/**
+	 * Sets the login date.
+	 * @param dt the login date as a 64-bit UNIX timestamp
+	 */
+	public void setLoginDate(long dt) {
+		_loginDate = Math.max(1, dt);
 	}
     
-    /**
- 	 * Updates the user's password.
- 	 * @param pwd the new password
- 	 */
- 	public void setPassword(String pwd) {
- 		_pwd = pwd;
- 	}
- 	
  	/**
  	 * Updates the user's IP address.
  	 * @param remoteAddr the IP address
@@ -134,16 +119,4 @@ public class SecurityCookieData {
  	   _screenX = width;
  	   _screenY = height;
  	}
- 	
-	/**
-	 * Helper method to turn the bytes in the password into hexadecimal values.
-	 * @return password converted to hex bytes
-	 */
-	String getPasswordBytes() {
-		StringBuilder buf = new StringBuilder();
-		for (int x = 0; x < _pwd.length(); x++)
-			buf.append(Integer.toHexString(_pwd.charAt(x)));
-		
-		return buf.toString();
-	}
 }
