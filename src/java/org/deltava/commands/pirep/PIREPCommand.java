@@ -12,6 +12,7 @@ import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.servinfo.OnlineTime;
 import org.deltava.beans.servinfo.PositionData;
 
 import org.deltava.beans.schedule.*;
@@ -577,8 +578,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (pd.isEmpty() && (age < 86000)) {
 					int trackID = tdao.getTrackID(fr.getDatabaseID(DatabaseID.PILOT), fr.getNetwork(), fr.getSubmittedOn(), fr.getAirportD(), fr.getAirportA());
 					if ((trackID == 0) && fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
-						GetVRouteData vddao = new GetVRouteData();
 						try {
+							GetVRouteData vddao = new GetVRouteData();
 							pd = vddao.getPositions(p, fr.getAirportD(), fr.getAirportA());
 						} catch (DAOException de) {
 							log.warn("Cannot download VRoute position data - " + de.getMessage());
@@ -591,7 +592,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Save the position and the route
 					synchronized (this) {
-						boolean hasDataLoaded = !tdao.get(fr.getID()).isEmpty();
+						boolean hasDataLoaded = tdao.hasTrack(fr.getID());
 					
 						// Save the positions if we get them
 						if (!pd.isEmpty() && (age > 300) & !hasDataLoaded) {
@@ -611,6 +612,9 @@ public class PIREPCommand extends AbstractFormCommand {
 						}
 					}
 				}
+				
+				// Calculate the online time
+				ctx.setAttribute("onlineTime", Integer.valueOf(OnlineTime.calculate(pd, SystemData.getInt("online.track_gap", 20))), REQUEST);
 				
 				// Write the positions
 				if (mapType == Pilot.MAP_GOOGLE)
