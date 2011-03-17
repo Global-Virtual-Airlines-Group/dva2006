@@ -4,6 +4,8 @@ package org.deltava.commands.pilot;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.Course;
@@ -31,6 +33,8 @@ import org.gvagroup.common.SharedData;
  */
 
 public class PilotCenterCommand extends AbstractTestHistoryCommand {
+	
+	private static final Logger log = Logger.getLogger(PilotCenterCommand.class);
 
 	/**
 	 * Executes the command
@@ -232,8 +236,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (SystemData.getBoolean("smtp.imap.enabled")) {
 				GetPilotEMail pedao = new GetPilotEMail(con);
 				IMAPConfiguration mcfg = pedao.getEMailInfo(p.getID());
-				if ((mcfg != null) && (!StringUtils.isEmpty(SystemData.get("smtp.imap.newmail"))))
-					ctx.setAttribute("newMsgs", Integer.valueOf(pedao.hasNewMail(mcfg.getMailDirectory())), REQUEST);
+				try {
+					if ((mcfg != null) && (!StringUtils.isEmpty(SystemData.get("smtp.imap.newmail"))))
+						ctx.setAttribute("newMsgs", Integer.valueOf(pedao.hasNewMail(mcfg.getMailDirectory())), REQUEST);
+				} catch (DAOException de) {
+					log.error(de.getMessage());
+				}
 			}
 			
 			// If we are in the HR/Examination roles, get transfer request and exam counts
