@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.beans.servinfo.PositionData;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 2.4
  */
 
@@ -112,6 +112,28 @@ public class GetOnlineTrack extends DAO {
 			rs.close();
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * An optimized method to determine if a Flight Report has online track data.
+	 * @param pirepID the Flight Report database ID
+	 * @return TRUE if track data exists, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean hasTrack(int pirepID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT PILOT_ID FROM ONLINE_TRACK WHERE (PIREP_ID=?) LIMIT 1");
+			_ps.setInt(1, pirepID);
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			boolean hasTrack = rs.next() ? (rs.getInt(1) != 0) : false;
+			rs.close();
+			_ps.close();
+			return hasTrack;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

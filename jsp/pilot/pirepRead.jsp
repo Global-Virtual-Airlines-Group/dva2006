@@ -93,9 +93,9 @@ return true;
 <c:if test="${!empty vatsimID}">
 <tr>
  <td class="label">VATSIM ID</td>
- <td class="data"><span class="bld">${vatsimID}</span> - View flight log at 
+ <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at 
  <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" external="true">
-<el:img src="vataware.png" border="0" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></td>
+<el:img src="vataware.png" border="0" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
 </tr>
 </c:if>
 </c:if>
@@ -225,6 +225,15 @@ return true;
  <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}">
  <span class="ita">(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</span></c:if></td>
 </tr>
+<c:if test="${!empty onlineTrack}">
+<c:set var="onlinePct" value="${onlineTime * 100 / (pirep.length * 360)}" scope="page" />
+<c:set var="onlinePctClass" value="${(onlinePct < 50) ? 'warn bld' : 'visible'}" scope="page" />
+<tr>
+ <td class="label">Estimated Online Time</td>
+ <td class="data"><fmt:int value="${onlineTime / 3600}" />:<fmt:int value="${(onlineTime % 3600) / 60}" fmt="00" />,
+ <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
+</tr>
+</c:if>
 <c:if test="${!isACARS && (!empty pirep.route)}">
 <tr>
  <td class="label">Flight Route</td>
