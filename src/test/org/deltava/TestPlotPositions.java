@@ -20,7 +20,7 @@ import com.ice.tar.*;
 
 public class TestPlotPositions extends TestCase {
 
-	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=luke&password=14072";
+	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=test&password=test";
 
 	protected final Queue<Integer> _IDwork = new ConcurrentLinkedQueue<Integer>();
 	protected final Queue<Map.Entry<TileAddress, Collection<Point>>> _imgWork = new ConcurrentLinkedQueue<Map.Entry<TileAddress, Collection<Point>>>();
@@ -38,13 +38,14 @@ public class TestPlotPositions extends TestCase {
 		assertNotNull(c);
 		
 		// Build Zoom levels
-		_zooms.add(new ProjectInfo(3, 96, 6));
-		_zooms.add(new ProjectInfo(4, 80, 5));
-		_zooms.add(new ProjectInfo(5, 64, 4));
-		_zooms.add(new ProjectInfo(6, 52, 3));
-		_zooms.add(new ProjectInfo(7, 48, 3));
-		_zooms.add(new ProjectInfo(8, 42, 3));
-		_zooms.add(new ProjectInfo(9, 40, 3));
+		_zooms.add(new ProjectInfo(3, 144, 8));
+		_zooms.add(new ProjectInfo(4, 128, 6));
+		_zooms.add(new ProjectInfo(5, 96, 6));
+		_zooms.add(new ProjectInfo(6, 64, 5));
+		_zooms.add(new ProjectInfo(7, 56, 5));
+		_zooms.add(new ProjectInfo(8, 48, 4));
+		_zooms.add(new ProjectInfo(9, 40, 4));
+		//_zooms.add(new ProjectInfo(10, 32, 3));
 	}
 	
 	private class ProjectInfo implements Comparable<ProjectInfo> {
@@ -179,7 +180,7 @@ public class TestPlotPositions extends TestCase {
 						ImageIO.write(img, "png", buf);
 						entry.setSize(buf.size());
 						entry.setUnixTarFormat();
-						entry.setIds(500, 500);
+						entry.setIds(0, 0);
 						synchronized (_out) {
 							_out.putNextEntry(entry);
 							_out.write(buf.toByteArray());
@@ -206,7 +207,8 @@ public class TestPlotPositions extends TestCase {
 
 		public void run() {
 			try {
-				PreparedStatement ps = _c.prepareStatement("SELECT LAT, LNG FROM TRACKPOS WHERE (ID=?)");	
+				PreparedStatement ps = _c.prepareStatement("SELECT LAT, LNG FROM POSITION_ARCHIVE WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) = 0)");	
+				ps.setInt(2, 12);
 				//PreparedStatement ps = _c.prepareStatement("SELECT LAT, LNG FROM TRACKPOS WHERE (ID=?) AND "
 					//	+ "((LAT < 36) AND (LAT >= 32)) AND ((LNG > -87) AND (LNG <= -82))");
 				ps.setFetchSize(1600);
@@ -247,6 +249,7 @@ public class TestPlotPositions extends TestCase {
 
 		Connection c = DriverManager.getConnection(URL);
 		Statement s = c.createStatement();
+		s.setFetchSize(500);
 		ResultSet rs = s.executeQuery("SELECT ID FROM IDS");
 		while (rs.next())
 			_IDwork.add(Integer.valueOf(rs.getInt(1)));
