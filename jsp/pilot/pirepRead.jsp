@@ -227,6 +227,7 @@ return true;
 </tr>
 <c:if test="${!empty onlineTrack}">
 <c:set var="onlinePct" value="${onlineTime * 100 / (pirep.length * 360)}" scope="page" />
+<c:set var="onlinePct" value="${(onlinePct > 100) ? 100 : onlinePct}" scope="page" />
 <c:set var="onlinePctClass" value="${(onlinePct < 50) ? 'warn bld' : 'visible'}" scope="page" />
 <tr>
  <td class="label">Estimated Online Time</td>
