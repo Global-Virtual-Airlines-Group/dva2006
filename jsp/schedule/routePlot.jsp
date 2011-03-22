@@ -84,7 +84,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="80" max="224" idx="*" value="" onChange="void plotMap()" /></td>
+ <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" onChange="void plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -110,7 +110,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data"><el:text name="routeCodes" size="144" max="320" readOnly="true" value="" /></td>
+ <td class="data"><el:text name="routeCodes" size="144" max="480" readOnly="true" value="" /></td>
 </tr>
 <tr>
  <td class="label">Simulator Version</td>
