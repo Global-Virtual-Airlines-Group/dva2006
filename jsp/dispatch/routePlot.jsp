@@ -121,7 +121,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="80" max="224" idx="*" value="" onChange="updateRoute(); plotMap()" /></td>
+ <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" onChange="updateRoute(); plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
