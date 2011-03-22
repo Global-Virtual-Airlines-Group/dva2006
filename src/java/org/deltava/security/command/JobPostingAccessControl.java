@@ -83,7 +83,7 @@ public class JobPostingAccessControl extends AccessControl {
 		// Check whether we can apply
 		Date now = new Date();
 		Date minDate = CalendarUtils.adjust(CalendarUtils.getInstance(now, true).getTime(), _jp.getMinAge());
-		_canApply = (_jp.getClosesOn() != null) && (_jp.getClosesOn().after(now)) && !isHireMgr;
+		_canApply = (_jp.getStatus() == JobPosting.OPEN) && (_jp.getClosesOn() != null) && (_jp.getClosesOn().after(now)) && !isHireMgr;
 		_canApply &= (_jp.getMinLegs() <= p.getLegs()) && (p.getCreatedOn().before(minDate));
 		if (_jp.getStaffOnly())
 			_canApply &= isStaff;
