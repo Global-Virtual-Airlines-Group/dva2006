@@ -21,7 +21,7 @@ import static org.deltava.commands.CommandContext.*;
 import org.deltava.dao.*;
 import org.gvagroup.jdbc.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -133,8 +133,12 @@ public class SecurityCookieFilter implements Filter {
 				throw new SecurityException(p.getName() + " is blocked");
 			else if (hreq.isRequestedSessionIdFromURL())
 				throw new SecurityException(req.getRemoteHost() + " attempting to create HTTP session via URL");
-			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr))
-				throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
+			else if ((savedAddr != null) && !remoteAddr.equals(savedAddr)) {
+				long pSaved = NetworkUtils.pack(savedAddr) & NetworkUtils.NetworkType.C.getMask();
+				long pRemote = NetworkUtils.pack(remoteAddr) & NetworkUtils.NetworkType.C.getMask();
+				if (pSaved != pRemote)
+					throw new SecurityException("HTTP Session is from " + savedAddr + ", request from " + remoteAddr);
+			}
 		} catch (SecurityException se) {
 			log.warn(se.getMessage());
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
