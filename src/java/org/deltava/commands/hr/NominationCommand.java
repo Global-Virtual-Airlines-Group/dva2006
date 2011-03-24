@@ -42,7 +42,7 @@ public class NominationCommand extends AbstractFormCommand {
 			// Load the nomination - If no nomination, create one
 			GetNominations ndao = new GetNominations(con);
 			Nomination n = ndao.get(ctx.getID());
-			if (n.getStatus() != Nomination.Status.PENDING)
+			if ((n != null) && (n.getStatus() != Nomination.Status.PENDING))
 				n = null;
 			
 			boolean isNew = (n == null);
