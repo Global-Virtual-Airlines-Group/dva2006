@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 3.2
+ * @version 3.6
  * @since 1.0
  */
 
@@ -650,6 +650,12 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 			warnings.add("STALL");
 		if (isFlagSet(FLAG_OVERSPEED))
 			warnings.add("OVERSPEED");
+		if (isFlagSet(FLAG_GEARDOWN) && (_aSpeed > 250))
+			warnings.add("GEAR SPEED");
+		if (!isFlagSet(FLAG_GEARDOWN) && isFlagSet(FLAG_ONGROUND))
+			warnings.add("GEAR UP");
+		if (isFlagSet(FLAG_CRASH))
+			warnings.add("CRASH");
 		
 		return warnings.isEmpty() ? null : StringUtils.listConcat(warnings, " ");
 	}
@@ -669,7 +675,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	public String getIconColor() {
 		if (isFlagSet(FLAG_TOUCHDOWN))
 			return PURPLE;
-		else if (isWarning() || isFlagSet(FLAG_CRASH))
+		else if (isWarning())
 			return RED;
 		else if (isFlagSet(FLAG_AP_ANY))
 			return WHITE;
@@ -757,9 +763,11 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 			buf.append("<sup>o</sup><br />");
 		}
 
-		// Add afterburner if deployed
+		// Add afterburner/gear if deployed
 		if (isFlagSet(FLAG_AFTERBURNER))
 			buf.append("<span class=\"bld ita\">AFTERBURNER</span><br />");
+		if (isFlagSet(FLAG_GEARDOWN) && !isFlagSet(FLAG_ONGROUND))
+			buf.append("<span class=\"ita\">GEAR DOWN</span><br />");
 
 		// Add Autopilot flags if set
 		if (isFlagSet(FLAG_AP_ANY)) {
@@ -785,8 +793,6 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		// Add Pause/Stall/Warning flags
 		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
-		if (isFlagSet(FLAG_CRASH))
-			buf.append("<span class=\"error bld\">AIRCRAFT CRASHED</span><br />");
 		String warn = getWarning();
 		if (warn != null) {
 			buf.append("<span class=\"error bld\">");
