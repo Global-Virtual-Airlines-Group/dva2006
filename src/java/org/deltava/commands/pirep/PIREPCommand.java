@@ -571,8 +571,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 			
 			// Load the online track
-			if (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT)) {
-				GetOnlineTrack tdao = new GetOnlineTrack(con);
+			GetOnlineTrack tdao = new GetOnlineTrack(con);
+			boolean hasTrack = tdao.hasTrack(fr.getID());
+			if (hasTrack || (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK) && (fr.getStatus() != FlightReport.DRAFT))) {
 				Collection<PositionData> pd = tdao.get(fr.getID());
 				long age = (fr.getSubmittedOn() == null) ? Long.MAX_VALUE : (System.currentTimeMillis() - fr.getSubmittedOn().getTime()) / 1000;
 				if (pd.isEmpty() && (age < 86000)) {
