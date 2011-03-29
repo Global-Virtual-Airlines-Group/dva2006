@@ -102,7 +102,7 @@ public class GetJobs extends DAO {
 	public List<JobPosting> getOpen() throws DAOException {
 		try {
 			prepareStatement("SELECT J.*, COUNT(JA.AUTHOR_ID) FROM JOBPOSTINGS J LEFT JOIN JOBAPPS JA ON "
-				+ "(J.ID=JA.ID) GROUP BY J.ID WHERE (J.STATUS=?) ORDER BY J.CLOSES DESC");
+				+ "(J.ID=JA.ID) WHERE (J.STATUS=?) GROUP BY J.ID ORDER BY J.CLOSES DESC");
 			_ps.setInt(1, JobPosting.OPEN);
 			return execute();
 		} catch (SQLException se) {
