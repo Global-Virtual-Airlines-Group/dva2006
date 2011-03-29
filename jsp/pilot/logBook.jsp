@@ -20,6 +20,10 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:authUser var="user">
+<content:attr attr="showCSV" value="true" roles="HR,PIREP" />
+<c:set var="showCSV" value="${showCSV || (user.ID == pilot.ID)}" scope="page" />
+</content:authUser> 
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -27,12 +31,11 @@
 <view:table className="view" cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
+<c:set var="cspan" value="${access.canPreApprove ? 4 : 6}" scope="page" />
+ <td colspan="${cspan}" class="caps left">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if>
+<c:if test="${showCSV}"> - <a href="mylogbook.ws?id=${pilot.hexID}">CSV Download</a></c:if></td>
 <c:if test="${access.canPreApprove}">
- <td colspan="4" class="caps left">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
  <td colspan="2"><el:cmd url="preapprove" link="${pilot}" className="title">PRE-APPROVE FLIGHT</el:cmd></td>
-</c:if>
-<c:if test="${!access.canPreApprove}">
- <td colspan="6" class="caps left">PILOT LOGBOOK FOR ${pilot.rank.name} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </c:if>
 </tr>
 
