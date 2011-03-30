@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.event.Event;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.navdata.TerminalRoute;
@@ -237,18 +238,30 @@ public class OfflineFlightCommand extends AbstractCommand {
 				afr.setCaptEQType(promoEQ);
 			}
 			
-			// Check if it's an Online Event flight
-			OnlineNetwork network = afr.getNetwork();
-			if ((afr.getDatabaseID(DatabaseID.EVENT) == 0) && (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
-				GetEvent evdao = new GetEvent(con);
-				afr.setDatabaseID(DatabaseID.EVENT, evdao.getEvent(afr.getAirportD(), afr.getAirportA(), network));
-			}
-			
 			// Check that the user has an online network ID
+			OnlineNetwork network = afr.getNetwork();
 			if ((network != null) && (!p.hasNetworkID(network))) {
 				log.warn(p.getName() + " does not have a " + network.toString() + " ID");
 				comments.add("No " + network.toString() + " ID, resetting Online Network flag");
 				afr.setNetwork(null);
+			}
+			
+			// Check if it's an Online Event flight
+			GetEvent evdao = new GetEvent(con);
+			if ((afr.getDatabaseID(DatabaseID.EVENT) == 0) && (afr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)))
+				afr.setDatabaseID(DatabaseID.EVENT, evdao.getEvent(afr.getAirportD(), afr.getAirportA(), network));
+			
+			// Check that the event hasn't expired
+			if (afr.getDatabaseID(DatabaseID.EVENT) != 0) {
+				Event e = evdao.get(afr.getDatabaseID(DatabaseID.EVENT));
+				if (e != null) {
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 1000;
+					if (timeSinceEnd > 86400) {
+						log.warn("Flight logged over 24 hours after Event completion");
+						afr.setDatabaseID(DatabaseID.EVENT, 0);
+					}
+				} else
+					afr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 			
 			// Check if the user is rated to fly the aircraft

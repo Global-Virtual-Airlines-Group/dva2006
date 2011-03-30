@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.event.Event;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -111,14 +112,27 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			pirep.setAttribute(FlightReport.ATTR_ACADEMY, isAcademy);
 			
 			// Check if it's an Online Event flight
+			GetEvent evdao = new GetEvent(con);
 			if ((pirep.getDatabaseID(DatabaseID.EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
 				OnlineNetwork net = OnlineNetwork.VATSIM;
 				if (pirep.hasAttribute(FlightReport.ATTR_IVAO))
 					net = OnlineNetwork.IVAO;
 				
 				// Load the event ID
-				GetEvent evdao = new GetEvent(con);
 				pirep.setDatabaseID(DatabaseID.EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), net));
+			}
+			
+			// Check that the event hasn't expired
+			if (pirep.getDatabaseID(DatabaseID.EVENT) != 0) {
+				Event e = evdao.get(pirep.getDatabaseID(DatabaseID.EVENT));
+				if (e != null) {
+					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 1000;
+					if (timeSinceEnd > 86400) {
+						log.warn("Flight logged over 24 hours after Event completion");
+						pirep.setDatabaseID(DatabaseID.EVENT, 0);
+					}
+				} else
+					pirep.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 
 			// Update the status of the PIREP
