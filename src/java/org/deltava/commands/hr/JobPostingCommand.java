@@ -105,14 +105,16 @@ public class JobPostingCommand extends AbstractFormCommand {
 				fbctxt.setTemplate(mtdao.get("FBNEWJOB"));
 				
 				// Init the FB DAO
-				SetFacebookData fbwdao = new SetFacebookData();
-				fbwdao.setWarnMode(true);
-				fbwdao.setAppID(SystemData.get("users.facebook.pageID"));		
-				fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
+				if (fbctxt.getTemplate() != null) {
+					SetFacebookData fbwdao = new SetFacebookData();
+					fbwdao.setWarnMode(true);
+					fbwdao.setAppID(SystemData.get("users.facebook.pageID"));		
+					fbwdao.setToken(SystemData.get("users.facebook.pageToken"));
 				
-				// Create the news entry
-				NewsEntry nws = new NewsEntry(fbctxt.getBody());
-				fbwdao.writeApp(nws);
+					// Create the news entry
+					NewsEntry nws = new NewsEntry(fbctxt.getBody());
+					fbwdao.writeApp(nws);
+				}
 			}
 			
 			// Save in status
