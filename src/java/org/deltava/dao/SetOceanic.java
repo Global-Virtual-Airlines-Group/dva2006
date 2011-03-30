@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to write Oceanic Routes.
  * @author Luke
- * @version 2.7
+ * @version 3.6
  * @since 1.0
  */
 
@@ -107,6 +107,9 @@ public class SetOceanic extends DAO {
 			int seq = 0;
 			for (Iterator<NavigationDataBean> i = ow.getWaypoints().iterator(); i.hasNext(); ) {
 				NavigationDataBean wp = i.next();
+				if (wp.getCode().length() > 15)
+					wp.setCode(wp.getCode().substring(0, 16));
+				
 				_ps.setInt(4, ++seq);
 				_ps.setString(5, wp.getCode());
 				_ps.setDouble(6, wp.getLatitude());
