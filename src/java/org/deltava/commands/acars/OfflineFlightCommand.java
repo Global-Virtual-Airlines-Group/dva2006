@@ -12,8 +12,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.event.Event;
 import org.deltava.beans.flight.*;
-import org.deltava.beans.navdata.Runway;
-import org.deltava.beans.navdata.TerminalRoute;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.testing.*;
 
@@ -25,8 +24,7 @@ import org.deltava.crypt.MessageDigester;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.acars.ACARSClientInfo;
-import org.gvagroup.acars.ACARSFlags;
+import org.gvagroup.acars.*;
 import org.gvagroup.common.SharedData;
 
 /**
