@@ -14,6 +14,8 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.ExamAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
@@ -60,7 +62,10 @@ public class ExamSubmitCommand extends AbstractCommand {
 			boolean allMC = true;
 			for (int x = 1; x <= ex.getSize(); x++) {
 				Question q = ex.getQuestion(x);
-				q.setAnswer(ctx.getParameter("answer" + String.valueOf(x)));
+				String answer = ctx.getParameter("answer" + String.valueOf(x));
+				if (!StringUtils.isEmpty(answer))
+					q.setAnswer(answer);
+				
 				allMC &= (q instanceof MultiChoiceQuestion);
 				if ((q instanceof MultiChoiceQuestion) && (q.getAnswer() != null)) {
 					String ca = q.getAnswer().replace("\r", "");
