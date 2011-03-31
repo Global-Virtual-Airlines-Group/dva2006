@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 2.5
  */
 
@@ -59,9 +59,12 @@ public class GetIPLocation extends DAO implements CachingDAO {
 			long ip_start = -1;
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
-				result = new IPAddressInfo(addr);
-				result.setBlock(new IPBlock(rs.getString(1)));
-				ip_start = rs.getLong(2);
+				String cidr = rs.getString(1);
+				if (cidr != null) {
+					result = new IPAddressInfo(addr);
+					result.setBlock(new IPBlock(cidr));
+					ip_start = rs.getLong(2);
+				}
 			}
 			
 			// Clean up
