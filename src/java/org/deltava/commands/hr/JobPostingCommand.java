@@ -179,8 +179,9 @@ public class JobPostingCommand extends AbstractFormCommand {
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
 			// Load hiring manager choices
-			List<Pilot> hMgrs = new ArrayList<Pilot>();
+			Collection<Pilot> hMgrs = new LinkedHashSet<Pilot>();
 			hMgrs.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
+			hMgrs.addAll(pdao.getByRole("HireMgr", SystemData.get("airline.db")));
 			hMgrs.addAll(pdao.getPilotsByRank(Rank.CP));
 			ctx.setAttribute("hireMgrs", hMgrs, REQUEST);
 			
@@ -246,10 +247,8 @@ public class JobPostingCommand extends AbstractFormCommand {
 			
 			// Load commenter IDs
 			if (access.getCanComment()) {
-				for (Iterator<Comment> i = jp.getComments().iterator(); i.hasNext(); ) {
-					Comment c = i.next();
+				for (Comment c : jp.getComments())
 					IDs.add(new Integer(c.getAuthorID()));
-				}
 			}
 			
 			// Load pilots

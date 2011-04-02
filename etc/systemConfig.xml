@@ -381,7 +381,8 @@
 			<role>ExamUpdate</role>
 			<role>Event</role>
 			<role>Fleet</role>
-			<role>Gallery</role>			
+			<role>Gallery</role>
+			<role>HireMgr</role>			
 			<role>HR</role>
 			<role>HelpDesk</role>
 			<role>Instructor</role>
