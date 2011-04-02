@@ -414,6 +414,7 @@
 			<role>Fleet</role>
 			<role>Gallery</role>			
 			<role>HelpDesk</role>
+			<role>HireMgr</role>
 			<role>HR</role>
 			<role>Instructor</role>
 			<role>News</role>
