@@ -99,8 +99,9 @@ public class LogbookService extends WebService {
 				ctx.print(",");
 				ctx.print(String.valueOf(maxPromoCount));
 				ctx.print(",");
-				ctx.print(StringUtils.listConcat(fr.getCaptEQType(), " "));
-			}
+				ctx.println(StringUtils.listConcat(fr.getCaptEQType(), " "));
+			} else
+				ctx.println("");
 		}
 		
 		// Write the response
