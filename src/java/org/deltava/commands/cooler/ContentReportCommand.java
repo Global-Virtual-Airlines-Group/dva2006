@@ -1,4 +1,4 @@
- // Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to report Water Cooler threads with questionable content.
  * @author Luke
- * @version 2.2
+ * @version 3.6
  * @since 1.0
  */
 
@@ -41,7 +42,7 @@ public class ContentReportCommand extends AbstractCommand {
 
 		boolean isLocked = false;
 		MessageThread mt = null;
-		Collection<Pilot> moderators = null;
+		Collection<Pilot> moderators = new ArrayList<Pilot>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -101,11 +102,14 @@ public class ContentReportCommand extends AbstractCommand {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctx.setTemplate(mtdao.get("CONTENTWARN"));
 				mctx.addData("thread", mt);
-				mctx.addData("maxWarns", new Integer(maxWarns));
+				mctx.addData("maxWarns", Integer.valueOf(maxWarns));
 
 				// Get the moderators
 				GetPilotDirectory pdao = new GetPilotDirectory(con);
-				moderators = pdao.getByRole("Moderator", SystemData.get("airline.db"));
+				for (String aCode : c.getAirlines()) {
+					AirlineInformation aInfo = SystemData.getApp(aCode);
+					moderators.addAll(pdao.getByRole("Moderator", aInfo.getDB()));
+				}
 			}
 			
 			// Commit the transaction
@@ -118,7 +122,7 @@ public class ContentReportCommand extends AbstractCommand {
 		}
 		
 		// Notify Moderators on first warning
-		if (moderators != null) {
+		if (!moderators.isEmpty()) {
 			log.warn("Sending Content Warning notification to moderators");
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctx);
