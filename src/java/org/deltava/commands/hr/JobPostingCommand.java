@@ -9,6 +9,7 @@ import org.deltava.beans.fb.NewsEntry;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.SetFacebookData;
 import org.deltava.mail.*;
@@ -179,7 +180,7 @@ public class JobPostingCommand extends AbstractFormCommand {
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 			
 			// Load hiring manager choices
-			Collection<Pilot> hMgrs = new LinkedHashSet<Pilot>();
+			Collection<Pilot> hMgrs = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
 			hMgrs.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
 			hMgrs.addAll(pdao.getByRole("HireMgr", SystemData.get("airline.db")));
 			hMgrs.addAll(pdao.getPilotsByRank(Rank.CP));
