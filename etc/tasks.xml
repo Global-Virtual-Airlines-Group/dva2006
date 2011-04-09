@@ -227,4 +227,16 @@
 			<wday>*</wday>
 		</time>
 	</task>
+	
+	<!-- Pilot Promotion Forum post -->
+	<task id="forumrecog" enabled="false">
+		<class>org.deltava.tasks.PromotionListTask</class>
+		<time>
+			<min>55</min>
+			<hour>3</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>
