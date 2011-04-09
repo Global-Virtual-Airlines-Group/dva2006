@@ -69,9 +69,9 @@ public class CachedRouteUpdateTask extends Task {
 					continue;
 				}
 				
-				// Get the average age - if over 45 days load new routes
+				// Get the average age - if over three-quarters of the max age load new routes
 				int avgAge = rcdao.getAverageAge(rp.getAirportD(), rp.getAirportA());
-				if (SystemData.getBoolean("schedule.flightaware.enabled") && ((avgAge == -1) || (avgAge > 45))) {
+				if (SystemData.getBoolean("schedule.flightaware.enabled") && ((avgAge == -1) || (avgAge > (maxAge * .75)))) {
 					ctx.startTX();
 					
 					// Purge the routes and load new ones
