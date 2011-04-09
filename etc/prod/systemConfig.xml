@@ -483,7 +483,7 @@
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
-			<max_load type="Integer">75</max_load>
+			<max_load type="Integer">50</max_load>
 			<download>
 				<user>gvagroup</user>			
 				<pwd>18f14fe837c03e585d20b955d797fd711cd907b0</pwd>			
@@ -584,6 +584,12 @@
 				<type>image/png</type>
 			</list>
 		</imgurls>
+
+		<!-- Announcement channel for promotion -->
+		<promotion>
+			<channel>Pilot Achievements and Promotions</channel>
+			<maxAge type="Integer">24</maxAge>
+		</promotion>
 
 		<maxreports type="Integer">3</maxreports>
 		<search>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.StatusUpdate;
 /**
  * A Data Access Object to read Status Update log entries.
  * @author Luke
- * @version 2.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -72,7 +72,7 @@ public class GetStatusUpdate extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all Status Updates with a given type.
 	 * @param updateType the Status Update type
@@ -80,9 +80,30 @@ public class GetStatusUpdate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<StatusUpdate> getByType(int updateType) throws DAOException {
+		return getByType(updateType);
+	}
+	
+	/**
+	 * Returns all Status Updates with a given type and time period.
+	 * @param updateType the Status Update type
+	 * @param maxHours the maximum elapsed time in hours, or zero for all 
+	 * @return a List of StatusUpdate beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<StatusUpdate> getByType(int updateType, int maxHours) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM STATUS_UPDATES WHERE (TYPE=?)");
+		if (maxHours > 0)
+			sqlBuf.append(" AND (CREATED > DATE_SUB(NOW(), INTERVAL ? HOUR))");
+		sqlBuf.append(" ORDER BY CREATED DESC");
+		
 		try {
-			prepareStatement("SELECT * FROM STATUS_UPDATES WHERE (TYPE=?) ORDER BY CREATED DESC");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, updateType);
+			if (maxHours > 0)
+				_ps.setInt(2, maxHours);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

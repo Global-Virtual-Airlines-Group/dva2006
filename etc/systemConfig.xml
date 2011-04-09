@@ -550,6 +550,12 @@
 				<type>image/png</type>
 			</list>
 		</imgurls>
+
+		<!-- Announcement channel for promotion -->
+		<promotion>
+			<channel>Pilot Achievements and Promotions</channel>
+			<maxAge type="Integer">24</maxAge>
+		</promotion>
 		
 		<maxreports type="Integer">2</maxreports>
 		<search>
