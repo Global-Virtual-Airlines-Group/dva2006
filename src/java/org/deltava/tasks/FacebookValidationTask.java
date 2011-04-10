@@ -16,7 +16,6 @@ import org.deltava.dao.http.GetFacebookData;
 import org.deltava.taskman.*;
 
 import org.deltava.util.ThreadUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to validate Facbook tokens.
@@ -82,11 +81,8 @@ public class FacebookValidationTask extends Task {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Figure out who we're operating as
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Pilot taskBy = pdao.getByCode(SystemData.get("users.tasks_by"));
-			
 			// Load Pilots with a Facebook token
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Queue<Pilot> work = new LinkedBlockingQueue<Pilot>();
 			work.addAll(pdao.getByIMType(IMAddress.FBTOKEN).values());
 			int totalPilots = work.size();
@@ -122,7 +118,7 @@ public class FacebookValidationTask extends Task {
 				
 				// Create status update
 				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
-				upd.setAuthorID(taskBy.getID());
+				upd.setAuthorID(ctx.getUser().getID());
 				upd.setCreatedOn(new Date());
 				upd.setDescription("Clearing Facebook Token after errors");
 

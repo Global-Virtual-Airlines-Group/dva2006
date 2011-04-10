@@ -20,8 +20,8 @@ import org.deltava.util.CollectionUtils;
  */
 
 public class GetSystemData extends DAO implements CachingDAO {
-   
-   private static final Cache<HTTPTotals> _cache = new ExpiringCache<HTTPTotals>(1, 7200);
+
+	private static final Cache<HTTPTotals> _cache = new ExpiringCache<HTTPTotals>(1, 7200);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -30,7 +30,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 	public GetSystemData(Connection c) {
 		super(c);
 	}
-	
+
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_cache);
 	}
@@ -73,47 +73,29 @@ public class GetSystemData extends DAO implements CachingDAO {
 	 * @see HTTPTotals
 	 */
 	public HTTPTotals getHTTPTotals() throws DAOException {
-	   
-	   // Check the cache first
-	   HTTPTotals totals = _cache.get(HTTPTotals.class);
-	   if (totals != null)
-	      return totals;
-	   
+
+		// Check the cache first
+		HTTPTotals totals = _cache.get(HTTPTotals.class);
+		if (totals != null)
+			return totals;
+
 		try {
 			prepareStatement("SELECT SUM(REQUESTS), SUM(HOMEHITS), SUM(BANDWIDTH) FROM SYS_HTTPLOG");
-			
+
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			rs.next();
-			
+
 			// Create the result bean
 			totals = new HTTPTotals(rs.getInt(1), rs.getInt(2), rs.getLong(3));
-			
+
 			// Clean up
 			rs.close();
 			_ps.close();
-			
+
 			// Add to the cache and return
 			_cache.add(totals);
 			return totals;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns Command invocation statistics for a particular date.
-	 * @param d the Date to query
-	 * @return a List of CommandLog objects
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<CommandLog> getCommands(java.util.Date d) throws DAOException {
-		try {
-			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
-					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) "
-					+ "ORDER BY CMDDATE");
-			_ps.setTimestamp(1, createTimestamp(d));
-			return executeCommandLog();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -137,7 +119,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns invocation statistics for particular user(s).
 	 * @param pilotIDs a Collection of Database IDs
@@ -147,11 +129,11 @@ public class GetSystemData extends DAO implements CachingDAO {
 	public List<CommandLog> getCommands(Collection<Integer> pilotIDs) throws DAOException {
 		if (pilotIDs.isEmpty())
 			return Collections.emptyList();
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, "
 				+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (");
-		for (Iterator<Integer> i = pilotIDs.iterator(); i.hasNext(); ) {
+		for (Iterator<Integer> i = pilotIDs.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append("(PILOT_ID=");
 			sqlBuf.append(id.toString());
@@ -159,9 +141,9 @@ public class GetSystemData extends DAO implements CachingDAO {
 			if (i.hasNext())
 				sqlBuf.append(" OR ");
 		}
-		
+
 		sqlBuf.append(") ORDER BY CMDDATE DESC");
-		
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			return executeCommandLog();
@@ -200,7 +182,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 		_ps.close();
 		return results;
 	}
-	
+
 	/**
 	 * Returns Command invocation statistics.
 	 * @param orderBy the column to order results by
@@ -208,68 +190,92 @@ public class GetSystemData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<CommandStatsEntry> getCommandStats(String orderBy) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, "
-	         + "MAX(TOTAL_TIME) AS MAXTOTAL, MAX(BE_TIME) AS MAXBE, SUM(SUCCESS) AS SC, "
-	         + "COUNT(SUCCESS) AS TC FROM SYS_COMMANDS GROUP BY NAME ORDER BY ");
-	   sqlBuf.append(orderBy);
-	   
-	   List<CommandStatsEntry> results = new ArrayList<CommandStatsEntry>();
-	   try {
-	      prepareStatement(sqlBuf.toString());
-	      
-	      // Execute the query
-	      ResultSet rs = _ps.executeQuery();
-	      while (rs.next()) {
-	         CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
-	         stat.setAvgTime(rs.getInt(2));
-	         stat.setAvgBackEndTime(rs.getInt(3));
-	         stat.setMaxTime(rs.getInt(4));
-	         stat.setMaxBackEndTime(rs.getInt(5));
-	         stat.setSuccessCount(rs.getInt(6));
-	         stat.setCount(rs.getInt(7));
-	         
-	         // Add to results
-	         results.add(stat);
-	      }
-	      
-	      // Clean up after ourselves
-	      rs.close();
-	      _ps.close();
-	      return results;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, "
+				+ "MAX(TOTAL_TIME) AS MAXTOTAL, MAX(BE_TIME) AS MAXBE, SUM(SUCCESS) AS SC, "
+				+ "COUNT(SUCCESS) AS TC FROM SYS_COMMANDS GROUP BY NAME ORDER BY ");
+		sqlBuf.append(orderBy);
+
+		List<CommandStatsEntry> results = new ArrayList<CommandStatsEntry>();
+		try {
+			prepareStatement(sqlBuf.toString());
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
+				stat.setAvgTime(rs.getInt(2));
+				stat.setAvgBackEndTime(rs.getInt(3));
+				stat.setMaxTime(rs.getInt(4));
+				stat.setMaxBackEndTime(rs.getInt(5));
+				stat.setSuccessCount(rs.getInt(6));
+				stat.setCount(rs.getInt(7));
+
+				// Add to results
+				results.add(stat);
+			}
+
+			// Clean up after ourselves
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
-	
+
 	/**
 	 * Returns the last execution date/times for Scheduled Tasks.
 	 * @return a Map of TaskLastRun beans, ordered by task ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, TaskLastRun> getTaskExecution() throws DAOException {
-	   
-	   List<TaskLastRun> results = new ArrayList<TaskLastRun>();
-	   try {
-	      prepareStatement("SELECT * FROM SYS_TASKS");
-	      
-	      // Execute the query
-	      ResultSet rs = _ps.executeQuery();
-	      while (rs.next())
-	         results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2), rs.getLong(3)));
 
-	      // Clean up after ourselves
-	      rs.close();
-	      _ps.close();
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
-	   
-	   // Return as a map
-	   return CollectionUtils.createMap(results, "name");
+		Collection<TaskLastRun> results = new ArrayList<TaskLastRun>();
+		try {
+			prepareStatementWithoutLimits("SELECT * FROM SYS_TASKS");
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2), rs.getLong(3)));
+
+			// Clean up after ourselves
+			rs.close();
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+
+		// Return as a map
+		return CollectionUtils.createMap(results, "name");
 	}
-	
+
+	/**
+	 * Returns the last execution time of a Scheduled Task.
+	 * @param taskID the Task ID
+	 * @return the last execution date/time, or null if never
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public java.util.Date getLastRun(String taskID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT LASTRUN FROM SYS_TASKS WHERE (ID=?) LIMIT 1");
+			_ps.setString(1, taskID);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			Timestamp lastRun = rs.next() ? rs.getTimestamp(1) : null;
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return lastRun;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
 	/**
 	 * Loads a Registration Block entry from the database.
 	 * @param id the block database ID
@@ -280,7 +286,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM REG_BLOCKS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
-			
+
 			// Execute the query and return if not found
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next()) {
@@ -288,7 +294,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 				_ps.close();
 				return null;
 			}
-			
+
 			// Create the bean
 			RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
 			rb.setID(rs.getInt(1));
@@ -298,7 +304,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 			rb.setComments(rs.getString(7));
 			rb.setHasUserFeedback(rs.getBoolean(8));
 			rb.setActive(rs.getBoolean(9));
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -307,7 +313,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Loads all Registration Block entries from the database.
 	 * @return a Collection of RegistrationBlock beans
@@ -316,7 +322,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 	public Collection<RegistrationBlock> getBlocks() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM REG_BLOCKS");
-			
+
 			// Execute the query
 			Collection<RegistrationBlock> results = new ArrayList<RegistrationBlock>();
 			ResultSet rs = _ps.executeQuery();
@@ -331,7 +337,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 				rb.setActive(rs.getBoolean(9));
 				results.add(rb);
 			}
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();

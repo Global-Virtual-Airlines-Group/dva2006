@@ -1,18 +1,21 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 3.1
+ * @version 3.6
  * @since 1.0
  */
 
@@ -238,10 +241,18 @@ public abstract class Task implements Runnable, Comparable<Task> {
     	_runCount++;
     	log.info(_name + " starting ");
     	
-    	// Log task starting
     	TaskContext ctxt = new TaskContext();
     	try {
-    		SetSystemData dao = new SetSystemData(ctxt.getConnection());
+    		Connection con = ctxt.getConnection();
+    		
+			// Load the author and last run
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			GetSystemData sddao = new GetSystemData(con);
+			ctxt.setUser(pdao.getByCode(SystemData.get("users.tasks_by")));
+			ctxt.setLastRun(sddao.getLastRun(_id));
+			
+	    	// Log task starting
+    		SetSystemData dao = new SetSystemData(con);
     		dao.logTaskExecution(getID(), 0);
     	} catch (Exception e) {
     		log.error("Cannot log Task start - " + e.getMessage(), e);
@@ -270,6 +281,10 @@ public abstract class Task implements Runnable, Comparable<Task> {
      */
     public int compareTo(Task t2) {
     	return _name.compareTo(t2._name);
+    }
+    
+    public int hashCode() {
+    	return _name.hashCode();
     }
     
     /**
