@@ -11,9 +11,21 @@
 			<wday>*</wday>
 		</time>
 	</task>
-	
+
 	<!-- Purge old FlightAware routes -->
 	<task id="purgeroutecache" enabled="false">
+		<class>org.deltava.tasks.CachedRoutePurgeTask</class>	
+		<time>
+			<min>25</min>		
+			<hour>9</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+
+	<!-- Update FlightAware routes -->
+	<task id="updroutecache" enabled="false">
 		<class>org.deltava.tasks.CachedRouteUpdateTask</class>	
 		<time>
 			<min>30</min>		

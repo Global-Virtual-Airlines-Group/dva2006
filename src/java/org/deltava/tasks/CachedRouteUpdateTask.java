@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -14,9 +14,9 @@ import org.deltava.taskman.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Scheduled task to purge cached FlightAware routes from the database.
+ * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 2.6
  */
 
@@ -41,15 +41,11 @@ public class CachedRouteUpdateTask extends Task {
 		fwdao.setUser(SystemData.get("schedule.flightaware.download.user"));
 		fwdao.setPassword(SystemData.get("schedule.flightaware.download.pwd"));
 
-		// Get the age to purge, and max routes to load
+		// Get max routes to load
 		int maxAge = SystemData.getInt("schedule.flightaware.max_age", 365);
 		int maxRoutes = SystemData.getInt("schedule.flightaware.max_load", 100);
 		try {
 			Connection con = ctx.getConnection();
-			
-			// Purge the routes
-			SetCachedRoutes rcwdao = new SetCachedRoutes(con);
-			log.warn("Purged " + rcwdao.purge(maxAge) + " cached routes " + maxAge + " days of age or older");
 			
 			// Load popular route pairs
 			int routesLoaded = 0;
@@ -71,7 +67,9 @@ public class CachedRouteUpdateTask extends Task {
 				
 				// Get the average age - if over three-quarters of the max age load new routes
 				int avgAge = rcdao.getAverageAge(rp.getAirportD(), rp.getAirportA());
-				if (SystemData.getBoolean("schedule.flightaware.enabled") && ((avgAge == -1) || (avgAge > (maxAge * .75)))) {
+				boolean isExpired = (avgAge == -1) || (avgAge >= maxAge);
+				SetCachedRoutes rcwdao = new SetCachedRoutes(con);
+				if (SystemData.getBoolean("schedule.flightaware.enabled") && isExpired) {
 					ctx.startTX();
 					
 					// Purge the routes and load new ones
@@ -93,7 +91,6 @@ public class CachedRouteUpdateTask extends Task {
 						rcwdao.write(Collections.singleton(rt));
 					}
 					
-					// Commit
 					ctx.commitTX();
 				}
 			}
