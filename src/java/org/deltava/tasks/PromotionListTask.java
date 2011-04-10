@@ -89,9 +89,9 @@ public class PromotionListTask extends Task {
 				// Add pilot name and link
 				msgBuf.append(p.getRank());
 				msgBuf.append(' ');
-				msgBuf.append("[url=\"/profile.do?id=");
+				msgBuf.append("[url=/profile.do?id=");
 				msgBuf.append(p.getHexID());
-				msgBuf.append("\"]");
+				msgBuf.append(']');
 				msgBuf.append(p.getName());
 				msgBuf.append("[/url] (");
 				msgBuf.append(p.getPilotCode());
