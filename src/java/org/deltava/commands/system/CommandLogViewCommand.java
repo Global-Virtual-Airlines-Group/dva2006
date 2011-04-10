@@ -62,7 +62,7 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          dao.setQueryMax(vc.getCount());
          
          // Do the query
-         Collection<CommandLog> results = (id != 0) ? dao.getCommands(IDs) : dao.getCommands(addr);
+         Collection<CommandLog> results = (IDs.size() > 0 ) ? dao.getCommands(IDs) : dao.getCommands(addr);
          vc.setResults(results);
          
          // Load the pilot IDs
