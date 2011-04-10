@@ -242,7 +242,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				log.warn(p.getName() + " does not have a " + network.toString() + " ID");
 				comments.add("No " + network.toString() + " ID, resetting Online Network flag");
 				afr.setNetwork(null);
-			}
+			} else if ((network == null) && (afr.getDatabaseID(DatabaseID.EVENT) != 0))
+				afr.setDatabaseID(DatabaseID.EVENT, 0);
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
