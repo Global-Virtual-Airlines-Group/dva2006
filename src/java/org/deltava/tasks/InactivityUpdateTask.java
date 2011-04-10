@@ -76,8 +76,7 @@ public class InactivityUpdateTask extends Task {
 			MessageTemplate nmt = mtdao.get("USERNOTIFY");
 
 			// Figure out who we're operating as
-			GetPilotDirectory pddao = new GetPilotDirectory(con);
-			Pilot taskBy = pddao.getByCode(SystemData.get("users.tasks_by"));
+			//GetPilotDirectory pddao = new GetPilotDirectory(con);
 			
 			// Get the pilots to mark without warning
 			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(),  "ID");
@@ -118,7 +117,7 @@ public class InactivityUpdateTask extends Task {
 
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
-					upd.setAuthorID(taskBy.getID());
+					upd.setAuthorID(ctx.getUser().getID());
 					upd.setCreatedOn(new Date());
 					if (noWarn)
 						upd.setDescription("Marked Inactive due to no participation within " + inactiveDays + " days");
@@ -130,7 +129,7 @@ public class InactivityUpdateTask extends Task {
 					// Create the Message Context
 					MessageContext mctxt = new MessageContext();
 					mctxt.setTemplate(imt);
-					mctxt.addData("user", taskBy);
+					mctxt.addData("user", ctx.getUser());
 					mctxt.addData("pilot", p);
 					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
 					
@@ -185,7 +184,7 @@ public class InactivityUpdateTask extends Task {
 					ctx.commitTX();
 
 					// Send notification message
-					Mailer mailer = new Mailer(isTest ? null : taskBy);
+					Mailer mailer = new Mailer(isTest ? null : ctx.getUser());
 					mailer.setContext(mctxt);
 					mailer.send(p);
 				}
@@ -206,7 +205,7 @@ public class InactivityUpdateTask extends Task {
 					// Create the Message Context
 					MessageContext mctxt = new MessageContext();
 					mctxt.setTemplate(nmt);
-					mctxt.addData("user", taskBy);
+					mctxt.addData("user", ctx.getUser());
 					mctxt.addData("pilot", p);
 					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
 
@@ -215,7 +214,7 @@ public class InactivityUpdateTask extends Task {
 					
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
-					upd.setAuthorID(taskBy.getID());
+					upd.setAuthorID(ctx.getUser().getID());
 					upd.setCreatedOn(new Date());
 					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
 					sudao.write(upd);
@@ -227,7 +226,7 @@ public class InactivityUpdateTask extends Task {
 					ctx.commitTX();
 					
 					// Send the message
-					Mailer mailer = new Mailer(isTest ? null : taskBy);
+					Mailer mailer = new Mailer(isTest ? null : ctx.getUser());
 					mailer.setContext(mctxt);
 					mailer.send(p);
 				}

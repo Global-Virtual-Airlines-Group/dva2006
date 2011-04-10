@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 1.0
  */
 
@@ -47,11 +47,8 @@ public class TransferPurgeTask extends Task {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			MessageTemplate mt = mtdao.get("XFERREJECT");
 			
-			// Get the Pilot read DAO
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Pilot taskBy = pdao.getByCode(SystemData.get("users.tasks_by"));
-			
 			// Loop through the old transfers
+			GetPilot pdao = new GetPilot(con);
 			GetExam exdao = new GetExam(con);
 			SetExam exwdao = new SetExam(con);
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
@@ -62,7 +59,7 @@ public class TransferPurgeTask extends Task {
 
 				// Make a status update
 				StatusUpdate upd = new StatusUpdate(tx.getID(), StatusUpdate.COMMENT);
-				upd.setAuthorID(taskBy.getID());
+				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Transfer to " + tx.getEquipmentType() + " program purged after " + purgeInterval + " days");
 				
 				// Get the check ride (if any) and then delete
@@ -86,13 +83,13 @@ public class TransferPurgeTask extends Task {
 					// Create the e-mail message
 					MessageContext mctxt = new MessageContext();
 					mctxt.setTemplate(mt);
-					mctxt.addData("user", taskBy);
+					mctxt.addData("user", ctx.getUser());
 					mctxt.addData("pilot", p);
 					mctxt.addData("txReq", tx);
 					mctxt.addData("rejectComments", "Transfer automatically deleted after " + purgeInterval + " days");
 
 					// Send a notification message
-					Mailer mailer = new Mailer(taskBy);
+					Mailer mailer = new Mailer(ctx.getUser());
 					mailer.setContext(mctxt);
 					mailer.send(p);
 				}

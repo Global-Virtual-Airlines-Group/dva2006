@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.HeadMethod;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.VersionInfo;
 import org.deltava.dao.*;
@@ -25,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 2.6
+ * @version 3.6
  * @since 1.0
  */
 
@@ -117,10 +116,6 @@ public class ImageLinkTestTask extends Task {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Figure out who we're operating as
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Pilot taskBy = pdao.getByCode(SystemData.get("users.tasks_by"));
-			
 			// Get the images to check
 			GetCoolerLinks dao = new GetCoolerLinks(con);
 			Collection<Integer> ids = dao.getThreads();
@@ -161,7 +156,7 @@ public class ImageLinkTestTask extends Task {
 			for (LinkedImage img : badImgs) {
 				ThreadUpdate upd = new ThreadUpdate(img.getThreadID());
 				upd.setMessage("Removed linked image " + img.getURL());
-				upd.setAuthorID(taskBy.getID());
+				upd.setAuthorID(ctx.getUser().getID());
 
 				// Get the update time
 				Integer id = new Integer(img.getThreadID());
