@@ -56,10 +56,6 @@ public class PromotionListTask extends Task {
 			if (c == null)
 				throw new DAOException("Unknown promotions Channel - " + channelName);
 			
-			// Load the author
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Pilot author = pdao.getByCode(SystemData.get("users.tasks_by"));
-			
 			// Load the updates
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
 			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
@@ -77,7 +73,7 @@ public class PromotionListTask extends Task {
 			mt.setChannel(c.getName());
 			mt.setStickyUntil(CalendarUtils.adjust(now.getDate(), 1));
 
-			Message msg = new Message(author.getID());
+			Message msg = new Message(ctx.getUser().getID());
 			msg.setRemoteAddr("127.0.0.1");
 			msg.setRemoteHost("localhost");
 			StringBuilder msgBuf = new StringBuilder("The following " + SystemData.get("airline.name")
@@ -85,16 +81,21 @@ public class PromotionListTask extends Task {
 			msgBuf.append("\n\n");
 			
 			// Add the pilots
+			GetPilot pdao = new GetPilot(con);
 			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
 				StatusUpdate upd = i.next();
 				Pilot p = pdao.get(upd.getID());
 				
 				// Add pilot name and link
+				msgBuf.append(p.getRank());
+				msgBuf.append(' ');
 				msgBuf.append("[url=\"/profile.do?id=");
 				msgBuf.append(p.getHexID());
 				msgBuf.append("\"]");
 				msgBuf.append(p.getName());
-				msgBuf.append("[/url] - ");
+				msgBuf.append("[/url] (");
+				msgBuf.append(p.getPilotCode());
+				msgBuf.append(") - ");
 				
 				// Add status update description
 				msgBuf.append(upd.getDescription());
@@ -102,7 +103,7 @@ public class PromotionListTask extends Task {
 			}
 			
 			// Set the body
-			msgBuf.append("Please join me in congratulating these " + SystemData.get("airline.name") + " Pilots.\n\n");
+			msgBuf.append("\nPlease join me in congratulating these " + SystemData.get("airline.name") + " Pilots.\n");
 			msg.setBody(msgBuf.toString());
 			mt.addPost(msg);
 			
