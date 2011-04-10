@@ -80,7 +80,7 @@ public class GetStatusUpdate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<StatusUpdate> getByType(int updateType) throws DAOException {
-		return getByType(updateType);
+		return getByType(updateType, 0);
 	}
 	
 	/**
