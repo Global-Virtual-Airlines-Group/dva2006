@@ -171,11 +171,10 @@ public class ImageServlet extends BasicAuthServlet {
 		} catch (ConnectionPoolException cpe) {
 			log.error(cpe.getMessage());
 		} catch (ControllerException ce) {
-			if (ce.isWarning()) {
+			if (ce.isWarning())
 				log.warn("Error retrieving image - " + ce.getMessage());
-			} else {
+			else
 				log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
-			}
 		} finally {
 			jdbcPool.release(c);
 		}
@@ -183,7 +182,12 @@ public class ImageServlet extends BasicAuthServlet {
 		// If we got nothing, then throw an error
 		if (imgBuffer == null) {
 			log.error("Cannot find image " + url.getLastPath() + "/" + imgID);
-			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			try {
+				rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			} catch (IllegalStateException ise) {
+				// empty
+			}
+			
 			return;
 		}
 
@@ -211,10 +215,8 @@ public class ImageServlet extends BasicAuthServlet {
 
 		// Dump the data to the output stream
 		try {
-			OutputStream out = rsp.getOutputStream();
-			out.write(imgBuffer);
+			rsp.getOutputStream().write(imgBuffer);
 			rsp.flushBuffer();
-			out.close();
 		} catch (IOException ie) {
 			// NOOP
 		}
