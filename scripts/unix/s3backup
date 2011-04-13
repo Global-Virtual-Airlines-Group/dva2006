@@ -1,0 +1,35 @@
+#!/bin/bash
+# S3 database backup script
+# Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+#
+# This requires s3fs and the necessary access keys for S3 stored in the
+# executing user's ~/.passwd-s3fs file. 
+#
+
+BUCKET="gva-backup"
+MOUNTPT="/home/backup/s3"
+OPTS="-avr --delete --progress --bwlimit=512"
+
+if [ ! -d "$MOUNTPT" ]; then
+	echo "Mount point $MOUNTPT does not exist!"
+	exit 1
+fi
+
+if [ ! -f "$MOUNTPT/is_s3"]; then
+	echo "Mounting S3 filesystem"
+	s3fs $BUCKET $MOUNTPT -ourl="https://s3.amazonaws.com/"
+fi
+
+# Backup files
+cd /home/backup
+rsync $OPTS cfg/* $MOUNTPT/cfg
+rsync $OPTS --exclude=svn.revision_base svn/* $MOUNTPT/svn
+rsync $OPTS db/* $MOUNTPT/db
+
+# Backup logs
+rsync $OPTS logs/* $MOUNTPT/logs
+
+
+# Unmount S3
+umount $MOUNTPT
+exit 0
