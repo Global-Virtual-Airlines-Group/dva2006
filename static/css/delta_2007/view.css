@@ -81,3 +81,7 @@ table.view tr :link, table.view tr :visited {
 	color: inherit;
 	text-decoration: none;
 }
+
+table.view :link:hover {
+	color: #c01933;
+}
