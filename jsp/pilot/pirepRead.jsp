@@ -25,7 +25,8 @@ if (!checkSubmit()) return false;
 
 // Validate form
 var act = form.action;
-if (act.indexOf('release.do') == -1) {
+var isCR = (act.indexOf('release.do') == -1) && (act.indexOf('updrwy.do') == -1);
+if (isCR) {
 	if (!validateCheckBox(form.crApprove, 1, 'Check Ride status')) return false;
 	if (!validateCheckBox(form.frApprove, 1, 'Flight Report status')) return false;
 }
