@@ -74,7 +74,7 @@
 <c:otherwise> takeoff run <fmt:int value="${rwy.distance}" /> feet)</c:otherwise>
 </c:choose></c:if>
 <c:if test="${empty rwy}">
-<span class="pri bld">UNKNOWN</span></c:if>
+<span class="error bld">UNKNOWN</span></c:if>
  <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
 <c:if test="${access.canDispose && (!empty dRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
@@ -124,7 +124,7 @@
 <c:otherwise> <fmt:int value="${rwy.distance}" /> feet from threshold)</c:otherwise>
 </c:choose></c:if>
 <c:if test="${empty rwy}">
-<span class="pri bld">UNKNOWN</span></c:if>
+<span class="error bld">UNKNOWN</span></c:if>
  <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
 <c:if test="${access.canDispose && (!empty aRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
@@ -151,7 +151,7 @@
 </tr>
 <tr>
  <td class="label">Arrival Time</td>
- <td class="data" colspan="${cspan}"><fmt:date className="sec bld" date="${pirep.endTime}" />, 
+ <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.endTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
 </tr>
 <c:if test="${pirep.gateFuel > 0}">
