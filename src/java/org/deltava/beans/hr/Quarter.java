@@ -45,7 +45,7 @@ public class Quarter implements java.io.Serializable, Comparable<Quarter> {
 	public Quarter(int yq) {
 		super();
 		_year = (yq / 10);
-		_qtr = Math.min(1, (yq % 10));
+		_qtr = Math.max(1, (yq % 10));
 	}
 	
 	/**
