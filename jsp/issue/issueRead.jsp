@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Issue Report #${issue.ID}</title>
+<title><content:airline /> Issue Report #<fmt:int value="${issue.ID}" /></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="common" />
@@ -21,7 +21,8 @@ if (!validateText(form.comment, 10, 'Issue Comments')) return false;
 
 setSubmit();
 disableButton('EditButton');
-disableButton('CommentButton');</c:if>
+disableButton('CommentButton');
+disableButton('ConvertButton');</c:if>
 return ${access.canComment};
 }
 
@@ -50,7 +51,7 @@ return true;
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title">
- <td class="caps" colspan="2">DEVELOPMENT ISSUE #${issue.ID} - ${issue.subject}</td>
+ <td class="caps" colspan="2">DEVELOPMENT ISSUE #<fmt:int value="${issue.ID}" /> - ${issue.subject}</td>
 </tr>
 
 <!-- Issue Data -->
@@ -136,6 +137,9 @@ return true;
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
+</c:if>
+<c:if test="${access.canResolve}">
+ <el:cmdbutton ID="ConvertButton" label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" />
 </c:if>
  </td>
 </tr>
