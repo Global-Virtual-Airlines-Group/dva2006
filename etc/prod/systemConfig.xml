@@ -225,7 +225,7 @@
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 			<useLocalSessionState>false</useLocalSessionState>
 			<elideSetAutoCommits>true</elideSetAutoCommits>
-			<cacheServerConfiguration>true</cacheServerConfiguration>
+			<cacheServerConfiguration>false</cacheServerConfiguration>
 			<useCursorFetch>true</useCursorFetch>
 			<maintainTimeStats>false</maintainTimeStats>
 			<validationQuery>/* ping */</validationQuery>
@@ -233,7 +233,7 @@
 		
 		<pool_size type="Integer">2</pool_size>
 		<pool_max_size type="Integer">12</pool_max_size>
-		<max_reqs type="Integer">0</max_reqs>
+		<max_reqs type="Integer">500</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 		<log_stack type="Boolean">true</log_stack>
 	</jdbc>
@@ -483,7 +483,7 @@
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
 			<max_age type="Integer">180</max_age>
-			<max_load type="Integer">50</max_load>
+			<max_load type="Integer">15</max_load>
 			<download>
 				<user>gvagroup</user>			
 				<pwd>18f14fe837c03e585d20b955d797fd711cd907b0</pwd>			
