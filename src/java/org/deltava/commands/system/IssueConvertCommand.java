@@ -5,12 +5,16 @@ import java.util.*;
 import java.net.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.IssueAccessControl;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to convert a devlopemnt Issue into a Help Desk Issue.
@@ -28,6 +32,8 @@ public class IssueConvertCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		MessageContext mctx = new MessageContext();
+		mctx.addData("user", ctx.getUser());
 		try {
 			Connection con = ctx.getConnection();
 
@@ -50,6 +56,13 @@ public class IssueConvertCommand extends AbstractCommand {
 			hi.setSubject(i.getSubject());
 			hi.setStatus(org.deltava.beans.help.Issue.OPEN);
 			hi.setBody(i.getDescription());
+			mctx.addData("issue", hi);
+			
+			// Set default assignee
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.getPilotByCode(SystemData.getInt("helpdesk.assignto"), SystemData.get("airline.db"));
+			hi.setAssignedTo(p.getID());
+			mctx.addData("assignee", p);
 
 			// Mark resolved
 			i.setResolvedOn(new Date());
@@ -90,8 +103,9 @@ public class IssueConvertCommand extends AbstractCommand {
 			// Add a dummy issue comment
 			try {
 				URL url = new URL("http", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
-				IssueComment ic = new IssueComment(ctx.getUser().getID(), "Converted to Help Desk Issue at " + url.toString());
+				IssueComment ic = new IssueComment("Converted to Help Desk Issue at " + url.toString());
 				ic.setIssueID(i.getID());
+				ic.setAuthorID(ctx.getUser().getID());
 				iwdao.writeComment(ic);
 			} catch (MalformedURLException mue) {
 				// empty
@@ -99,6 +113,15 @@ public class IssueConvertCommand extends AbstractCommand {
 
 			// Commit
 			ctx.commitTX();
+			
+			// Get the message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctx.setTemplate(mtdao.get("HDISSUEASSIGN"));
+			
+			// Create the message
+			Mailer mailer = new Mailer(ctx.getUser());
+			mailer.setContext(mctx);
+			mailer.send(p);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
