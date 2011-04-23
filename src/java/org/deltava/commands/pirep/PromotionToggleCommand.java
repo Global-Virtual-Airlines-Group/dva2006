@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -11,12 +11,13 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to toggle whether a Flight Report counts for promotion to Captain.
  * @author Luke
- * @version 2.7
+ * @version 3.6
  * @since 1.0
  */
 
@@ -28,7 +29,6 @@ public class PromotionToggleCommand extends AbstractCommand {
 	 * @throws CommandException if an error (typically database) occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -44,11 +44,22 @@ public class PromotionToggleCommand extends AbstractCommand {
 			if (!access.getCanDispose())
 				throw securityException("Cannot Toggle Promotion flag on " + ctx.getID());
 			
+			// Get comments
+			StringBuilder buf = new StringBuilder();
+			if (!StringUtils.isEmpty(fr.getComments())) {
+				buf.append(fr.getComments());
+				buf.append("\r\n");
+			}
+
+			// Start transaction
+			ctx.startTX();
+			
 			// Check if we set or clear
 			SetFlightReport fwdao = new SetFlightReport(con);
-			if (!fr.getCaptEQType().isEmpty())
+			if (!fr.getCaptEQType().isEmpty()) {
+				buf.append("Promotion flag cleared by " + ctx.getUser().getName());
 				fwdao.clearPromoEQ(fr.getID());
-			else {
+			} else {
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
 				
@@ -61,9 +72,15 @@ public class PromotionToggleCommand extends AbstractCommand {
 						i.remove();
 				}
 				
+				buf.append("Promotion flag in " + StringUtils.listConcat(pTypeNames, ", ") + " set by " + ctx.getUser().getName());
 				fwdao.setPromoEQ(fr.getID(), pTypeNames);
 			}
+			
+			// Save comments and commit
+			fwdao.writeComments(fr.getID(), buf.toString());
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

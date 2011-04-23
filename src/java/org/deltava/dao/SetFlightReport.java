@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 3.3
+ * @version 3.6
  * @since 1.0
  */
 
@@ -80,20 +80,10 @@ public class SetFlightReport extends DAO {
 			executeUpdate(1);
 			
 			// Save the promotion equipment types
-			writePromoEQ(pirep.getID(), db, pirep.getCaptEQType());
+			writePromoEQ(pirep.getID(), dbName, pirep.getCaptEQType());
 
 			// Write the comments into the database
-			if (!StringUtils.isEmpty(pirep.getComments())) {
-				prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
-				_ps.setInt(1, pirep.getID());
-				_ps.setString(2, pirep.getComments());
-				executeUpdate(1);
-			} else {
-				prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
-				_ps.setInt(1, pirep.getID());
-				executeUpdate(0);
-			}
-
+			writeComments(pirep.getID(), dbName, pirep.getComments());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -197,23 +187,7 @@ public class SetFlightReport extends DAO {
 	public void setPromoEQ(int id, Collection<String> eqTypes) throws DAOException {
 		try {
 			startTransaction();
-			
-			// Clear the flags
-			prepareStatementWithoutLimits("DELETE FROM PROMO_EQ WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
-			
-			// Write the flags
-			prepareStatementWithoutLimits("INSERT INTO PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
-			_ps.setInt(1, id);
-			for (Iterator<String> i = eqTypes.iterator(); i.hasNext();) {
-				_ps.setString(2, i.next());
-				_ps.addBatch();
-			}
-			
-			// Write the entries
-			_ps.executeBatch();
-			_ps.close();
+			writePromoEQ(id, SystemData.get("airline.db"), eqTypes);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -222,10 +196,23 @@ public class SetFlightReport extends DAO {
 	}
 	
 	/**
+	 * Updates Flight Report comments.
+	 * @param id the Flight Report database ID
+	 * @param comments the comments
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeComments(int id, String comments) throws DAOException {
+		try {
+			writeComments(id, SystemData.get("airline.db"), comments);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Helper method to write promotion equipment types.
 	 */
 	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes) throws SQLException {
-		dbName = formatDBName(dbName);
 		
 		// Delete the existing records
 		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PROMO_EQ WHERE (ID=?)");
@@ -249,8 +236,7 @@ public class SetFlightReport extends DAO {
 	 * Helper method to write a Flight Report's core data to the database.
 	 */
 	private void writeCore(FlightReport fr, String dbName) throws SQLException {
-		dbName = formatDBName(dbName);
-		
+
 		// Initialize the prepared statement
 		if (fr.getID() == 0)
 			insert(fr, dbName);
@@ -263,16 +249,7 @@ public class SetFlightReport extends DAO {
 			fr.setID(getNewID());
 
 		// Write the comments into the database
-		if (!StringUtils.isEmpty(fr.getComments())) {
-			prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
-			_ps.setInt(1, fr.getID());
-			_ps.setString(2, fr.getComments());
-			executeUpdate(1);
-		} else {
-			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?) LIMIT 1");
-			_ps.setInt(1, fr.getID());
-			executeUpdate(0);
-		}
+		writeComments(fr.getID(), dbName, fr.getComments());
 		
 		// Write the route into the database
 		if (!StringUtils.isEmpty(fr.getRoute())) {
@@ -296,8 +273,28 @@ public class SetFlightReport extends DAO {
 			_ps.setString(2, buf.toString());
 			executeUpdate(1);
 		} else {
-			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_ROUTE WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PIREP_ROUTE WHERE (ID=?)");
 			_ps.setInt(1, fr.getID());
+			executeUpdate(0);
+		}
+	}
+	
+	/**
+	 * Writes flight report comments to the database.
+	 * @param id the Flight Report database ID
+	 * @param dbName the database name
+	 * @param comments the comments
+	 * @throws SQLException if a JDBC error occurs
+	 */
+	private void writeComments(int id, String dbName, String comments) throws SQLException {
+		if (!StringUtils.isEmpty(comments)) {
+			prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+			_ps.setInt(1, id);
+			_ps.setString(2, comments);
+			executeUpdate(1);
+		} else {
+			prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
+			_ps.setInt(1, id);
 			executeUpdate(0);
 		}
 	}
@@ -312,20 +309,18 @@ public class SetFlightReport extends DAO {
 	}
 
 	/**
-	 * Write a Flight Report to the database.
+	 * Writes a Flight Report to the database.
 	 * @param fr the Flight Report
 	 * @param db the Database to write to
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(FlightReport fr, String db) throws DAOException {
+		String dbName = formatDBName(db);
 		try {
 			startTransaction();
-
-			// Write the fields and the captain equipment types
-			writeCore(fr, db);
-			writePromoEQ(fr.getID(), db, fr.getCaptEQType());
-
-			// Commit the transaction
+			writeCore(fr, dbName);
+			writePromoEQ(fr.getID(), dbName, fr.getCaptEQType());
+			writeComments(fr.getID(), dbName, fr.getComments());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -340,10 +335,11 @@ public class SetFlightReport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeACARS(ACARSFlightReport afr, String dbName) throws DAOException {
+		String db = formatDBName(dbName);
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
-		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(db);
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
 			+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, "
 			+ "TAKEOFF_LNG, TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, "
@@ -353,12 +349,12 @@ public class SetFlightReport extends DAO {
 			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
-			// Since we are writing to multiple tables, this is designd as a transaction
 			startTransaction();
 
 			// Write the regular fields
-			writeCore(afr, dbName);
-			writePromoEQ(afr.getID(), dbName, afr.getCaptEQType());
+			writeCore(afr, db);
+			writePromoEQ(afr.getID(), db, afr.getCaptEQType());
+			writeComments(afr.getID(), afr.getComments());
 
 			// Write the ACARS fields
 			prepareStatementWithoutLimits(sqlBuf.toString());

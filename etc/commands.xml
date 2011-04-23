@@ -1096,7 +1096,7 @@
 	<command id="promotoggle">
 		<name>PIREP Promotion Flag Toggle</name>
 		<class>org.deltava.commands.pirep.PromotionToggleCommand</class>
-		<roles>HR</roles>
+		<roles>PIREP,HR</roles>
 	</command>
 
 	<command id="dispose">
