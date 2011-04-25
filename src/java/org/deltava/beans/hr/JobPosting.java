@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store information about a job posting.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -34,9 +34,11 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	public static final int OPEN = 0;
 	public static final int CLOSED = 1;
 	public static final int SHORTLIST = 2;
-	public static final int COMPLETE = 3;
+	public static final int SELECTED = 3;
+	public static final int COMPLETE = 4;
 	
-	public static final String[] STATUS_NAMES = {"Open", "Closed", "Shortlisted", "Complete"};
+	public static final String[] STATUS_NAMES = {"Open", "Closed", "Shortlisted", "Selected", "Complete"};
+	private static final String[] ROW_CLASSES = {null, "opt2", "opt3", "opt4", "opt1"};
 	
 	private final Collection<Comment> _comments = new ArrayList<Comment>();
 	private final Collection<Application> _apps = new ArrayList<Application>();
@@ -153,6 +155,19 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 */
 	public Collection<Comment> getComments() {
 		return new ArrayList<Comment>(_comments);
+	}
+	
+	/**
+	 * Returns the selected Application, if any.
+	 * @return an Application, or null if none selected for hire
+	 */
+	public Application getSelectedApplication() {
+		for (Application a : _apps) {
+			if (a.getApproved())
+				return a;
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -291,9 +306,9 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 
 	@Override
 	public String getRowClassName() {
-		if (_status != OPEN) 
-			return "opt1";
+		if ((_status == OPEN) && _staffOnly) 
+			return "warn";
 		
-		return _staffOnly ? "opt2" : null;
+		return ROW_CLASSES[_status];
 	}
 }

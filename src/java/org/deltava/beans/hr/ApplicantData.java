@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store job applicant information.
  * @author Luke
- * @version 3.4
+ * @version 3.6
  * @since 3.4
  */
 
@@ -61,6 +61,17 @@ public abstract class ApplicantData extends DatabaseBean implements AuthoredBean
 		return _lastName;
 	}
 	
+	/**
+	 * Returns the user's full name.
+	 * @return the first and last names
+	 */
+	public String getName() {
+		StringBuilder buf = new StringBuilder(_firstName);
+		buf.append(' ');
+		buf.append(_lastName);
+		return buf.toString();
+	}
+	
 	@Override
 	public int getAuthorID() {
 		return getID();
@@ -68,10 +79,7 @@ public abstract class ApplicantData extends DatabaseBean implements AuthoredBean
 	
 	@Override
 	public String getComboName() {
-		StringBuilder buf = new StringBuilder(_firstName);
-		buf.append(' ');
-		buf.append(_lastName);
-		return buf.toString();
+		return getName();
 	}
 	
 	@Override
