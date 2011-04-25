@@ -230,8 +230,8 @@ public class JobPostingCommand extends AbstractFormCommand {
 			// Load applicant IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			if (access.getCanViewApplicants()) {
-				Collection<Application> apps = new ArrayList<Application>(jp.getApplications());
-				for (Iterator<Application> i = jp.getApplications().iterator(); i.hasNext(); ) {
+				Collection<Application> apps = jp.getApplications();
+				for (Iterator<Application> i = apps.iterator(); i.hasNext(); ) {
 					Application a = i.next();
 					
 					// Check our access

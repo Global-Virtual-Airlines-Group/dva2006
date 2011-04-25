@@ -229,6 +229,7 @@ Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 <c:if test="${access.canShortlist}"> <el:button ID="SLButton" type="submit" label="SELECT POSITION SHORTLIST" /></c:if>
 <c:if test="${access.canReset}"> <el:cmdbutton ID="ResetButton" url="jobreset" link="${job}" label="RESET POSITION SHORTLIST" /></c:if>
 <c:if test="${access.canSelect}"> <el:button ID="SelectButton" type="submit" label="SELECT SHORTLISTED APPLICANT" /></c:if>
+<c:if test="${access.canComplete}"> <el:cmdbutton ID="CompleteButton" url="jobcomplete" link="${job}" label="HIRE PROCESS COMPLETED" /></c:if>
 <c:if test="${access.canDelete}"> <el:cmdbutton ID="DeleteButton" url="jobdelete" link="${job}" label="DELETE JOB POSTING" /></c:if></td>
 </tr>
 </el:table>

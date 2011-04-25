@@ -57,8 +57,8 @@ following applicants are on the shortlist:<br />
 <br />
 To return to this <content:airline /> Job Posting, <el:cmd url="job" className="sec bld" link="${job}">Click Here</el:cmd>.<br />
 </c:when>
-<c:when test="${isCompleted}">
-<div class="updateHdr"><content:airline /> Job Posting Completed</div>
+<c:when test="${isSelected}">
+<div class="updateHdr"><content:airline /> Job Posting Hire Selected</div>
 <br />
 One or more shortlisted applicants for the <span class="pri bld">${job.title}</span> Job Posting has been selected. The
 following shortlisted applicants have been selected:<br />
@@ -67,6 +67,14 @@ following shortlisted applicants have been selected:<br />
 <li><el:cmd url="profile" link="${app}">${app.firstName} ${app.lastName}</el:cmd></li>
 </c:forEach>
 </ul>
+<br />
+To return to this <content:airline /> Job Posting, <el:cmd url="job" className="sec bld" link="${job}">Click Here</el:cmd>.<br />
+</c:when>
+<c:when test="${isCompleted}">
+<div class="updateHdr"><content:airline /> Job Posting Completed</div>
+<br />
+The <content:airline /> Job Posting for <span class="pri bld">${job.title}</span> has been completed, and <span class="bld">${job.selectedApplication.name}</span>
+has been recorded as hired.<br />
 <br />
 To return to this <content:airline /> Job Posting, <el:cmd url="job" className="sec bld" link="${job}">Click Here</el:cmd>.<br />
 </c:when>
