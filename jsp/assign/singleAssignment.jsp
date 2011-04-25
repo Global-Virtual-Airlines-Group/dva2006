@@ -43,8 +43,12 @@ return true;
 <tr>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${pilot.ratings}" value="${criteria.equipmentType}" /></td>
+ <td class="label">Flight Legs</td>
+ <td class="data"><el:text name="legs" idx="*" size="1" max="1" value="${totalLegs}" /></td>
+</tr>
+<tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" /></td>
+ <td colspan="3" class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" /></td>
 </tr>
 </el:table>
 

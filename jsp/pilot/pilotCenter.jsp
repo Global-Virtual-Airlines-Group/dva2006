@@ -378,7 +378,7 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
 <c:if test="${!empty lastFlight}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="singleassign">Random Flight</el:cmd></td>
- <td class="data">You can select a Flight departing from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) 
+ <td class="data">You can select one or more Flights starting from ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) 
 from the <content:airline /> Flight Schedule. This flight is selected at random, and depending on the airport, there may not be flights 
 departing today.</td>
 </tr>
