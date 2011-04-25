@@ -30,6 +30,7 @@ public class JobPostingAccessControl extends AccessControl {
 	private boolean _canShortList;
 	private boolean _canReset;
 	private boolean _canSelect;
+	private boolean _canComplete;
 	private boolean _canEdit;
 	private boolean _canDelete;
 
@@ -63,7 +64,7 @@ public class JobPostingAccessControl extends AccessControl {
 		boolean isStaff = _ctx.isAuthenticated() && (p.getRank().isCP() || RoleUtils.hasAccess(p.getRoles(), STAFF_ROLES));
 		boolean canRead = (_jp.getStatus() == JobPosting.OPEN) || isHireMgr || isHR;
 		if (_jp.getStaffOnly())
-			canRead &= (isStaff || isHireMgr);
+			canRead &= isStaff;
 		
 		// Check our access
 		if (!canRead)
@@ -72,13 +73,14 @@ public class JobPostingAccessControl extends AccessControl {
 			return;
 		
 		// Check if we have applications
-		_canEdit = isHR && (_jp.getStatus() != JobPosting.COMPLETE);
+		_canEdit = isHR && (_jp.getStatus() < JobPosting.SELECTED);
 		_canDelete = (_jp.getAppCount() > 0) ? _ctx.isUserInRole("Admin") : isHR;
 		_canViewApplications = isHR || (isHireMgr && (_jp.getStatus() >= JobPosting.SHORTLIST));
 		_canShortList = isHR && (_jp.getStatus() == JobPosting.CLOSED);
 		_canReset = isHR && (_jp.getStatus() == JobPosting.SHORTLIST);
 		_canSelect = (_jp.getStatus() == JobPosting.SHORTLIST) && (isHR || isHireMgr);
 		_canComment = isHR || _canShortList || _canSelect;
+		_canComplete = isHR && (_jp.getStatus() == JobPosting.SELECTED);
 			
 		// Check whether we can apply
 		Date now = new Date();
@@ -147,6 +149,14 @@ public class JobPostingAccessControl extends AccessControl {
 	 */
 	public boolean getCanEdit() {
 		return _canEdit;
+	}
+	
+	/**
+	 * Returns whether the current user can complete this Job Posting.
+	 * @return TRUE if the user can complete the posting, otherwise FALSE
+	 */
+	public boolean getCanComplete() {
+		return _canComplete;
 	}
 	
 	/**

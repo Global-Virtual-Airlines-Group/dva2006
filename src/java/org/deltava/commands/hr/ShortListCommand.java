@@ -51,6 +51,9 @@ public class ShortListCommand extends AbstractCommand {
 			jp.setStatus(JobPosting.SHORTLIST);
 			jwdao.write(jp);
 			
+			// Create comment buffer
+			StringBuilder buf = new StringBuilder();
+			
 			// Go through the applications and shortlist as necessary
 			Collection<String> slIDs = ctx.getParameters("sl");
 			Collection<Application> SL = new ArrayList<Application>();
@@ -60,13 +63,21 @@ public class ShortListCommand extends AbstractCommand {
 				if (isSL && (a.getStatus() == Application.NEW)) {
 					a.setStatus(Application.SHORTLIST);
 					SL.add(a);
-				} else if (a.getShortlisted() && !isSL)
+					buf.append("Added " + a.getName() + " to shortlist\r\n");
+				} else if (a.getShortlisted() && !isSL) {
 					a.setStatus(Application.NEW);
-				else if (a.getShortlisted())
+					buf.append("Removed " + a.getName() + " from shortlist\r\n");
+				} else if (a.getShortlisted())
 					SL.add(a);
 					
 				jwdao.write(a);
 			}
+			
+			// Create comment
+			Comment c = new Comment(jp.getID(), ctx.getUser().getID());
+			c.setCreatedOn(new Date());
+			c.setBody(buf.toString());
+			jwdao.write(c);
 			
 			// Commit
 			ctx.commitTX();
