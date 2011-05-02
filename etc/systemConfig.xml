@@ -201,7 +201,7 @@
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>true</useServerPrepStmts>
+			<useServerPrepStmts>false</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 			<useLocalSessionState>false</useLocalSessionState>
 			<useCursorFetch>true</useCursorFetch>
