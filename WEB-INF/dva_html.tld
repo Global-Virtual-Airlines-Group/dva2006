@@ -256,6 +256,11 @@
 			<type>org.deltava.beans.DatabaseBean</type>
 		</attribute>
 		<attribute>
+			<name>domain</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>startDate</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
