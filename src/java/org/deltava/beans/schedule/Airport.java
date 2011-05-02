@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,12 +10,12 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 1.0
  */
 
 public class Airport implements java.io.Serializable, Comparable<Airport>, ComboAlias, ViewEntry, 
-	ICAOAirport, MarkerMapEntry, IconMapEntry {
+	ICAOAirport, MarkerMapEntry, IconMapEntry, Cloneable {
 
 	/**
 	 * Enumeration for Airport code types.
@@ -433,5 +433,21 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		buf.append(_iata);
 		buf.append(')');
 		return buf.toString();
+	}
+	
+	/**
+	 * Clones the Airport object.
+	 */
+	public Object clone() {
+		Airport a2 = new Airport(_iata, _icao, _name);
+		a2._alt = _alt;
+		a2._magVar = _magVar;
+		a2._region = _region;
+		a2._adseX = _adseX;
+		a2._tz = _tz;
+		a2._country = _country;
+		a2.setLocation(_position.getLatitude(), _position.getLongitude());
+		a2._aCodes.addAll(_aCodes);
+		return a2;
 	}
 }
