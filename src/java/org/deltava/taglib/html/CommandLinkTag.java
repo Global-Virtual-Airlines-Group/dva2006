@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.text.*;
@@ -15,12 +15,13 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to create a link to a Web Site Command.
  * @author Luke
- * @version 1.0
+ * @version 3.7
  * @since 1.0
  */
 
 public class CommandLinkTag extends LinkTag {
 
+	private String _domain;
 	private String _cmdName;
 	private final Map<String, String> _cmdParams = new TreeMap<String, String>();
 	private boolean _disableLink;
@@ -60,6 +61,14 @@ public class CommandLinkTag extends LinkTag {
 	public void setSort(String sortType) {
 		_cmdParams.put("sortType", sortType);
 	}
+	
+	/**
+	 * Overrides the domain to use for the link.
+	 * @param domain the domain name
+	 */
+	public void setDomain(String domain) {
+		_domain = domain.toLowerCase();
+	}
 
 	/**
 	 * Sets the command name.
@@ -84,6 +93,7 @@ public class CommandLinkTag extends LinkTag {
 	public void release() {
 		super.release();
 		_disableLink = false;
+		_domain = null;
 		_cmdParams.clear();
 	}
 
@@ -98,17 +108,24 @@ public class CommandLinkTag extends LinkTag {
 		if (_disableLink)
 			return EVAL_BODY_INCLUDE;
 		
-		StringBuilder url = new StringBuilder(_cmdName);
+		StringBuilder url = new StringBuilder(64);
+		if (!StringUtils.isEmpty(_domain)) {
+			url.append(pageContext.getRequest().isSecure() ? "https://www." : "http://www.");
+			url.append(_domain);
+			url.append('/');
+		}
+		
+		url.append(_cmdName);
+		if (!_cmdParams.isEmpty())
+			url.append('?');
+		
+		// Append the parameters
 		try {
-			if (!_cmdParams.isEmpty())
-				url.append('?');
-			
-			// Append the parameters
-			for (Iterator<String> i = _cmdParams.keySet().iterator(); i.hasNext(); ) {
-				String pName = i.next();
-				url.append(pName);
+			for (Iterator<Map.Entry<String, String>> i = _cmdParams.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<String, String> me = i.next();
+				url.append(me.getKey());
 				url.append('=');
-				url.append(URLEncoder.encode(_cmdParams.get(pName), "UTF-8"));
+				url.append(URLEncoder.encode(me.getValue(), "UTF-8"));
 				if (i.hasNext())
 					url.append("&amp;");
 			}
@@ -128,10 +145,13 @@ public class CommandLinkTag extends LinkTag {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
-		if (!_disableLink)
-			super.doEndTag();
+		try {
+			if (!_disableLink)
+				super.doEndTag();
+		} finally {
+			release();	
+		}
 		
-		release();
 		return EVAL_PAGE;
 	}
 }
