@@ -354,7 +354,7 @@ public class SetFlightReport extends DAO {
 			// Write the regular fields
 			writeCore(afr, db);
 			writePromoEQ(afr.getID(), db, afr.getCaptEQType());
-			writeComments(afr.getID(), afr.getComments());
+			writeComments(afr.getID(), db, afr.getComments());
 
 			// Write the ACARS fields
 			prepareStatementWithoutLimits(sqlBuf.toString());
