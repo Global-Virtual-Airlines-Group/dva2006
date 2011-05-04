@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 2.2
  */
 
@@ -37,7 +37,8 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 		// Build the search criteria
 		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria("RAND()");
 		criteria.setDBName(SystemData.get("airline.db"));
-		criteria.setMaxResults(1);
+		criteria.setDistance(StringUtils.parse(ctx.getParameter("maxLength"), 0));
+		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("maxLengthRange"), 0));
 
 		// Get total legs to load
 		int totalLegs = Math.min(8, Math.max(1, StringUtils.parse(ctx.getParameter("legs"), 1)));
@@ -86,6 +87,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			}
 			
 			// Define Variables
+			int oldDistance = criteria.getDistance();
 			AssignmentInfo ai = null; Airport startAirport = criteria.getAirportD();
 			Collection<ScheduleEntry> flightEntries = new ArrayList<ScheduleEntry>();
 			
@@ -97,6 +99,13 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 				if (ai == null) {
 					String eqType = legs.isEmpty() ? "RANDOM" : legs.get(0).getEquipmentType();
 					ai = new AssignmentInfo(eqType);
+				}
+				
+				// Re-search if a distance query was used
+				if (legs.isEmpty() && (criteria.getDistance()  > 0)) {
+					criteria.setDistance(0);
+					legs = sdao.search(criteria);
+					criteria.setDistance(oldDistance);
 				}
 				
 				// Add the leg
