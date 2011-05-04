@@ -48,7 +48,10 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td colspan="3" class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${criteria.airline}" /></td>
+ <td class="label">Maximum Distnce</td>
+ <td class="data"><el:text name="maxLength" idx="*" size="4" max="4" value="${(criteria.distance < 1) ? '' : criteria.distance}" />
+ +/- <el:text name="maxLengthRange" idx="*" size="3" max="4" value="${(criteria.distance < 1) ? '' : criteria.distanceRange}" /> miles</td>
 </tr>
 </el:table>
 
