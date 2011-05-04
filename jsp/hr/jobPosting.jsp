@@ -35,7 +35,7 @@ return true;
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateCheckBox(form.sl, 2, 'Short-listed Applicant')) return false;
+if (!validateCheckBox(form.sl, 1, 'Short-listed Applicant')) return false;
 
 setSubmit();
 disableButton('SLButton');
