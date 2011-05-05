@@ -24,6 +24,10 @@
 Oops. You attempted to access something that you're not allowed to.<br />
 <content:filter roles="Anonymous">
 <br />
+<c:if test="${isExpired}">
+<span class="ita bld">Your user session has expired.</span><br />
+<br />
+</c:if>
 To log in to the <content:airline /> web site, <el:cmd url="login" className="sec bld">Click Here</el:cmd>.<br />
 </content:filter>
 <content:filter roles="!Anonymous">
