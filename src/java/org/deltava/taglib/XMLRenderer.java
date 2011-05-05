@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2010 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2010, 2011 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class XMLRenderer {
 	 * @param value the attribute value
 	 */
 	public void setAttribute(String name, String value) {
-		if (!StringUtils.isEmpty(name) && !StringUtils.isEmpty(value))
+		if (!StringUtils.isEmpty(name))
 			_attrs.put(name.toLowerCase(), value);
 	}
 	
@@ -90,9 +90,11 @@ public class XMLRenderer {
 
 			// Append the attribute name and value
 			buf.append(e.getKey());
-			buf.append("=\"");
-			buf.append(e.getValue());
-			buf.append('\"');
+			if (e.getValue() != null) {
+				buf.append("=\"");
+				buf.append(e.getValue());
+				buf.append('\"');
+			}
 
 			// If there's another attribute, add a space
 			if (i.hasNext())
@@ -129,8 +131,7 @@ public class XMLRenderer {
 	 * @return the close tag
 	 */
 	public String close() {
-		StringBuilder buf = new StringBuilder();
-		buf.append("</");
+		StringBuilder buf = new StringBuilder("</");
 		buf.append(_name);
 		buf.append('>');
 		return buf.toString();
