@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -90,10 +90,10 @@ public class InsertGoogleAPITag extends TagSupport {
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null)) {
 			if (_doStable) {
-				_minorVersion = "2";
+				_minorVersion = "3";
 				_doStable = false;
 			} else if (!_doCurrent)
-				_minorVersion = "3";
+				_minorVersion = "4";
 			else
 				_doCurrent = false;
 		}
