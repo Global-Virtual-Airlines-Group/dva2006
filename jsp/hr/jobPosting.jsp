@@ -244,6 +244,7 @@ if (!validateText(form.body, 12, 'Comment Text')) return false;
 
 setSubmit();
 disableButton('CommentButton');
+disableButton('CloneButton');
 return true;
 }
 </script>
@@ -260,7 +261,9 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td class="mid"><el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" /></td>
+ <td class="mid"><el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
+<content:filter roles="HR">
+ <el:cmdbutton ID="CloneButton" url="jobclone" link="${job}" label="CLONE JOB POSTING" /></content:filter></td>
 </tr>
 </el:table>
 </el:form>

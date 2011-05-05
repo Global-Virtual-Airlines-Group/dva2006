@@ -123,6 +123,18 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="jobclone">
+		<name>Job Posting Clone</name>
+		<class>org.deltava.commands.hr.JobCloneCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="jobdelete">
+		<name>Job Posting Delete</name>
+		<class>org.deltava.commands.hr.JobDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="jobcomment">
 		<name>Job Posting Comment</name>	
 		<class>org.deltava.commands.hr.JobCommentCommand</class>

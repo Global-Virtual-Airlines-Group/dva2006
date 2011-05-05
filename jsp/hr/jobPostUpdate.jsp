@@ -71,16 +71,24 @@ following shortlisted applicants have been selected:<br />
 To return to this <content:airline /> Job Posting, <el:cmd url="job" className="sec bld" link="${job}">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isCompleted}">
+<c:set var="selectedApps" value="${job.selectedApplications}" scope="page" />
 <div class="updateHdr"><content:airline /> Job Posting Completed</div>
 <br />
-The <content:airline /> Job Posting for <span class="pri bld">${job.title}</span> has been completed, and <span class="bld">${job.selectedApplication.name}</span>
-has been recorded as hired.<br />
+The <content:airline /> Job Posting for <span class="pri bld">${job.title}</span> has been completed, and 
+<c:forEach var="app" items="${selectedApps}" varStatus="appStatus">
+<span class="bld">${app.name}</span><c:if test="${!acpStatus.last}">, </c:if></c:forEach>
+ ${(fn:sizeof(selectedApps) > 1) ? 'were' : 'was' } recorded as hired.<br />
 <br />
 To return to this <content:airline /> Job Posting, <el:cmd url="job" className="sec bld" link="${job}">Click Here</el:cmd>.<br />
 </c:when>
+<c:when test="${isDelete}">
+<div class="updateHdr"><content:airline /> Job Posting Deleted</div>
+<br />
+The <content:airline /> Job Posting for <span class="pri bld">${job.title}</span> has been deleted.<br />
+</c:when>
 </c:choose>
 <br />
-To return to the list of available volunteer opportunities, <el:cmd url="careers" className="sec bld">Click Here</el:cmd>.<br />
+To return to the list of <content:airline /> volunteer opportunities, <el:cmd url="careers" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
