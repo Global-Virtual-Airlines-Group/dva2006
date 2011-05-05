@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -75,9 +75,6 @@ public class InactivityUpdateTask extends Task {
 			MessageTemplate imt = mtdao.get("USERINACTIVE");
 			MessageTemplate nmt = mtdao.get("USERNOTIFY");
 
-			// Figure out who we're operating as
-			//GetPilotDirectory pddao = new GetPilotDirectory(con);
-			
 			// Get the pilots to mark without warning
 			Map<Integer, InactivityPurge> purgeBeans = CollectionUtils.createMap(dao.getPurgeable(),  "ID");
 			Collection<Integer> noWarnIDs = dao.getRepeatInactive(notifyDays, inactiveDays, 2);
