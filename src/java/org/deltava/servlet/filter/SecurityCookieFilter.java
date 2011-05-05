@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -121,9 +121,19 @@ public class SecurityCookieFilter implements Filter {
 		if ((cData != null) && cData.isExpired()) {
 			log.warn("Cookie for " + cData.getUserID() + " has expired");
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			req.setAttribute("isExpired", Boolean.TRUE);
 			s.invalidate();
 			cData = null;
 			p = null;
+		} else if (cData != null) {
+			long timeUntilExpiry = (cData.getExpiryDate() - System.currentTimeMillis()) / 1000;
+			
+			// Renew the cookie if it's about to expire
+			if (timeUntilExpiry < 600) {
+				cData.setExpiryDate(cData.getExpiryDate() + 600000);
+				String newCookie = SecurityCookieGenerator.getCookieData(cData);
+				hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, newCookie));	
+			}
 		}
 
 		// Validate the session/cookie data
@@ -142,6 +152,7 @@ public class SecurityCookieFilter implements Filter {
 		} catch (SecurityException se) {
 			log.warn(se.getMessage());
 			hrsp.addCookie(new Cookie(AUTH_COOKIE_NAME, ""));
+			req.setAttribute("servlet_error", se.getMessage());
 			s.invalidate();
 			cData = null;
 		}
