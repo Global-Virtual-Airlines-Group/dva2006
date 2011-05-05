@@ -1,20 +1,24 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.Date;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.JobPostingAccessControl;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to create a Job Posting comment.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 3.4
  */
 
@@ -27,6 +31,7 @@ public class JobCommentCommand extends AbstractCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		MessageContext mctxt = new MessageContext();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -42,14 +47,38 @@ public class JobCommentCommand extends AbstractCommand {
 			if (!access.getCanComment())
 				throw securityException("Cannot comment on Job Posting " + jp.getID());
 			
+			// Load users
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Comment c : jp.getComments())
+				IDs.add(new Integer(c.getAuthorID()));
+			
 			// Create the comment
 			Comment c = new Comment(jp.getID(), ctx.getUser().getID());
 			c.setCreatedOn(new Date());
 			c.setBody(ctx.getParameter("body"));
 			
+			// Create the context
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("JOBCOMMENT"));
+			mctxt.addData("user", ctx.getUser());
+			mctxt.addData("job", jp);
+			mctxt.addData("comment", c);
+			
+			// Load the users
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			Collection<Pilot> pilots = new HashSet<Pilot>();
+			pilots.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
+			pilots.addAll(pdao.getByID(IDs, "PILOTS").values());
+			pilots.remove(ctx.getUser());
+			
 			// Write the comment
 			SetJobs jwdao = new SetJobs(con);
 			jwdao.write(c);
+			
+            // Create the e-mail message
+            Mailer mailer = new Mailer(ctx.getUser());
+            mailer.setContext(mctxt);
+            mailer.send(pilots);
 		} catch(DAOException de) {
 			throw new CommandException(de);
 		} finally {
