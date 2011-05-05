@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store information about a job posting.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 3.4
  */
 
@@ -154,20 +154,21 @@ public class JobPosting extends DatabaseBean implements ViewEntry {
 	 * @return a Collection of Comment beans
 	 */
 	public Collection<Comment> getComments() {
-		return new ArrayList<Comment>(_comments);
+		return _comments;
 	}
 	
 	/**
-	 * Returns the selected Application, if any.
-	 * @return an Application, or null if none selected for hire
+	 * Returns the selected Applications, if any.
+	 * @return a Collection of Application beans
 	 */
-	public Application getSelectedApplication() {
+	public Collection<Application> getSelectedApplications() {
+		Collection<Application> apps = new ArrayList<Application>();
 		for (Application a : _apps) {
 			if (a.getApproved())
-				return a;
+				apps.add(a);
 		}
 		
-		return null;
+		return apps;
 	}
 	
 	/**
