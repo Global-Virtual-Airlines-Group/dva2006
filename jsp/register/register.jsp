@@ -128,7 +128,9 @@ return true;
  <td colspan="4" class="pri bld">You'll find that <content:airline /> is one of the largest yet friendliest and most sophisticated virtual airlines
  on the Internet. Many aspects of our operations are significantly different from other virtual airlines, specifically in promotions, ratings and 
  what flights are credited for hours. Please take a few moments to download and review some of our manuals to help determine if <content:airline />
- is the right virtual airline for you.</td>
+ is the right virtual airline for you.<br />
+<br />
+This is also a good time to review <content:airline />'s <el:cmd url="privacy" className="pri bld">Privacy Policy</el:cmd>.</td>
 </tr>
 
 <!-- Table Header Bar -->
