@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 3.2
+ * @version 3.7
  * @since 1.0
  */
 
@@ -95,7 +95,7 @@ public class GetAirport extends DAO {
 	}
 
 	/**
-	 * Returns all airports served by a particular airline.
+	 * Returns all Airports served by a particular Airline.
 	 * @param al the Airline to query with
 	 * @param sortBy the SORT BY column
 	 * @return a List of Airport objects
@@ -147,7 +147,7 @@ public class GetAirport extends DAO {
 	}
 	
 	/**
-	 * Returns all airports visited by a particular Pilot.
+	 * Returns all Airports visited by a particular Pilot.
 	 * @param id the Pilot's database ID
 	 * @return a Collection of Airport beans
 	 * @throws DAOException if a JDBC error occurs
@@ -163,6 +163,37 @@ public class GetAirport extends DAO {
 			while (rs.next()) {
 				results.add(SystemData.getAirport(rs.getString(1)));
 				results.add(SystemData.getAirport(rs.getString(2)));
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Airports with upcoming Online Events.
+	 * @return a Collection of Airports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getEventAirports() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_AIRPORTS EA, events.EVENTS E "
+				+ "WHERE (E.ID=EA.ID) AND (E.ENDTIME > NOW())");
+			
+			// Execute the query
+			Collection<Airport> results = new LinkedHashSet<Airport>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				Airport aD = (Airport) SystemData.getAirport(rs.getString(1)).clone();
+				aD.addAirlineCode(_appCode);
+				results.add(aD);
+				Airport aA = (Airport) SystemData.getAirport(rs.getString(2)).clone();
+				aA.addAirlineCode(_appCode);
+				results.add(aA);
 			}
 			
 			// Clean up and return
