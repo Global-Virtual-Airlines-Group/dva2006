@@ -1,14 +1,17 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
 
 import javax.servlet.jsp.PageContext;
 
+import org.deltava.beans.system.HTTPContextData;
+import org.deltava.commands.HTTPContext;
+
 /**
  * A Helper class to check whether content has been aded into this request.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  * @see org.deltava.taglib.content.BrowserFilterTag
@@ -56,98 +59,12 @@ public class ContentHelper {
 	}
 	
 	/**
-     * Detects if the browser is Microsoft Internet Explorer 9 or below.
-     * @return TRUE if the browser is Internet Explorer 9, otherwise FALSE
-     */
-	public static boolean isIE9(PageContext ctx) {
-		return (ctx.getRequest().getAttribute("browser$ie9") != null);
+	 * Fetches the browser data.
+	 * @param ctx the PageContext object
+	 * @return an HTTPContextData bean, or none if null
+	 * @see BrowserInfoTag
+	 */
+	public static HTTPContextData getBrowserContext(PageContext ctx) {
+		return (HTTPContextData) ctx.getRequest().getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
 	}
-	
-	/**
-     * Detects if the browser is Microsoft Internet Explorer 8 or below.
-     * @return TRUE if the browser is Internet Explorer 8, otherwise FALSE
-     */
-	public static boolean isIE8(PageContext ctx) {
-		return (ctx.getRequest().getAttribute("browser$ie8") != null);
-	}
-	
-    /**
-     * Detects if the browser is Microsoft Internet Explorer 7 or below.
-     * @return TRUE if the browser is Internet Explorer 7, otherwise FALSE
-     */
-    public static boolean isIE7(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("browser$ie7") != null);
-    }
-    
-    /**
-     * Detects if the browser is Microsoft Internet Explorer 6 or below.
-     * @return TRUE if the browser is Internet Explorer 5 or 6, otherwise FALSE
-     */
-    public static boolean isIE6(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("browser$ie") != null);
-    }
-    
-    /**
-     * Detects if the browser is Mozilla Firefox.
-     * @return TRUE if the browser is Firefox, otherwise FALSE
-     */
-    public static boolean isFirefox(PageContext ctx) {
-        return (ctx.getRequest().getAttribute("browser$mozilla") != null);
-    }
-    
-    /**
-     * Detects if the browser is Mozilla Firefox.
-     * @return TRUE if the browser is Firefox 3.6, otherwise FALSE
-     */
-    public static boolean isFirefox36(PageContext ctx) {
-        return (ctx.getRequest().getAttribute("browser$ff36") != null);
-    }
-    
-    /**
-     * Detects if the browser is Opera.
-     * @return TRUE if the browser is Opera, otherwise FALSE
-     */
-    public static boolean isOpera(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("browser$opera") != null);
-    }
-    
-    /**
-     * Detects if the browser is Webkit/Safari/Chrome.
-     * @return TRUE if the browser is WebKit-based, otherwise FALSE
-     */
-    public static boolean isWebKit(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("browser$webkit") != null);
-    }
-    
-    /**
-     * Detects if the browser is running on Microsoft Windows.
-     * @return TRUE if running on Windows, otherwise FALSE
-     */
-    public static boolean isWindows(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("os$windows") != null);
-    }
-    
-    /**
-     * Detects if the browser is running on iOS on an iPad.
-     * @return TRUE if running on iOS, otherwise FALSE
-     */
-    public static boolean isIPad(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("os$iOS") != null);
-    }
-    
-    /**
-     * Detects if the browser is running on Mac OS.
-     * @return TRUE if running on Mac OS, otherwise FALSE
-     */
-    public static boolean isMac(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("os$mac") != null);
-    }
-    
-    /**
-     * Detects if the browser is running on Linux.
-     * @return TRUE if running on Linux, otherwise FALSE
-     */
-    public static boolean isLinux(PageContext ctx) {
-    	return (ctx.getRequest().getAttribute("os$linux") != null);
-    }
 }
