@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for supporting JSP tags that generate HTML input elements.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -72,6 +72,14 @@ public abstract class FormElementTag extends ElementTag {
      */
     public void setValue(Object value) {
         _value = value;
+    }
+    
+    /**
+     * Sets this field as required for HTML5 browsers.
+     * @param isRequired TRUE if required, otherwise FALSE
+     */
+    public void setRequired(boolean isRequired) {
+    	_data.setAttribute("required", null);
     }
     
     /**

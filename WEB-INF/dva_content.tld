@@ -199,13 +199,13 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
-			<name>mozilla</name>
+			<name>html5</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
-			<name>ff36</name>
+			<name>mozilla</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Boolean</type>
