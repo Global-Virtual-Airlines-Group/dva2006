@@ -1,20 +1,22 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.ContentHelper;
+import org.deltava.beans.system.BrowserType;
+import org.deltava.beans.system.HTTPContextData;
+
+import org.deltava.taglib.*;
 
 /**
  * A JSP tag to filter content based on the browser type.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 1.0
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
 
-public class BrowserFilterTag extends TagSupport {
+public class BrowserFilterTag extends BrowserInfoTag {
 
 	private boolean _showIE6;
 	private boolean _showIE7;
@@ -23,7 +25,7 @@ public class BrowserFilterTag extends TagSupport {
 	private boolean _showMoz;
 	private boolean _showWebKit;
 	private boolean _showOpera;
-	private boolean _showFF36;
+	private boolean _showHTML5;
 	
 	/**
 	 * Marks this content as visible to all Internet Explorer users.
@@ -91,16 +93,15 @@ public class BrowserFilterTag extends TagSupport {
 	 * @param showMoz TRUE if the content should be shown to Mozilla users, otherwise FALSE
 	 */
 	public void setMozilla(boolean showMoz) {
-		_showFF36 = showMoz;
 		_showMoz = showMoz;
 	}
 	
 	/**
-	 * Marks this content as visible to Firefox 3.6 users.
-	 * @param showFF36 TRUE if the content should be shown to Firefox 3.6 users, otherwise FALSE
+	 * Marks this content as visible to HTML5 users.
+	 * @param showHTML5 TRUE if the content should be shown to HTML5 users, otherwise FALSE
 	 */
-	public void setFf36(boolean showFF36) {
-		_showFF36 = showFF36;
+	public void setHtml5(boolean showHTML5) {
+		_showHTML5 = showHTML5;
 	}
 	
 	/**
@@ -108,24 +109,30 @@ public class BrowserFilterTag extends TagSupport {
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
 	public int doStartTag() {
-		if (ContentHelper.isIE6(pageContext) && _showIE6)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isIE7(pageContext) && _showIE7)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isIE8(pageContext) && _showIE8)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isIE9(pageContext) && _showIE9)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isFirefox36(pageContext) && _showFF36)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isWebKit(pageContext) && _showWebKit)
-			return EVAL_BODY_INCLUDE;
-		else if (ContentHelper.isOpera(pageContext) && _showOpera)
-			return EVAL_BODY_INCLUDE;
-		else
+		HTTPContextData bctxt = getBrowserContext();
+		if (bctxt == null)
 			return SKIP_BODY;
+		else if (bctxt.getHTML5() && _showHTML5)
+			return EVAL_BODY_INCLUDE;
+		
+		BrowserType bt = bctxt.getBrowserType();
+		if (bt == BrowserType.IE) {
+			if (_showIE6 && (bctxt.getMajor() == 6))
+				return EVAL_BODY_INCLUDE;
+			if (_showIE7 && (bctxt.getMajor() == 7))
+				return EVAL_BODY_INCLUDE;
+			if (_showIE8 && (bctxt.getMajor() == 8))
+				return EVAL_BODY_INCLUDE;
+			if (_showIE9 && (bctxt.getMajor() == 9))
+				return EVAL_BODY_INCLUDE;
+		} else if ((bt == BrowserType.FIREFOX) && _showMoz)
+			return EVAL_BODY_INCLUDE;
+		else if (((bt == BrowserType.CHROME) || (bt == BrowserType.WEBKIT)) && _showWebKit)
+			return EVAL_BODY_INCLUDE;
+		else if ((bt == BrowserType.OPERA) && _showOpera)
+			return EVAL_BODY_INCLUDE;
+		
+		return SKIP_BODY;
 	}
 	
 	/**
@@ -148,8 +155,8 @@ public class BrowserFilterTag extends TagSupport {
 		_showIE8 = false;
 		_showIE9 = false;
 		_showMoz = false;
-		_showFF36 = false;
 		_showWebKit = false;
 		_showOpera = false;
+		_showHTML5 = false;
 	}
 }

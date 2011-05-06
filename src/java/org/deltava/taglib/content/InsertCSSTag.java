@@ -8,13 +8,16 @@ import javax.servlet.jsp.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.Person;
+import org.deltava.beans.system.*;
+
 import org.deltava.taglib.ContentHelper;
+
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -105,10 +108,11 @@ public class InsertCSSTag extends InsertContentTag {
 
 		// Append browser-specific extension
 		if (_browserSpecific) {
+			HTTPContextData bctxt = ContentHelper.getBrowserContext(pageContext);
 			buf.append('_');
-			if (ContentHelper.isFirefox(pageContext) || ContentHelper.isWebKit(pageContext))
+			if ((bctxt.getBrowserType() == BrowserType.FIREFOX) || (bctxt.getBrowserType() == BrowserType.CHROME) || (bctxt.getBrowserType() == BrowserType.WEBKIT))
 				buf.append("ff");
-			else if (ContentHelper.isIE8(pageContext) || ContentHelper.isIE7(pageContext) || ContentHelper.isIE9(pageContext) || ContentHelper.isIE6(pageContext))
+			else if ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 8))
 				buf.append("ie");
 			else
 				buf.append(_defaultSuffix);

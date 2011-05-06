@@ -1,19 +1,19 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import org.deltava.beans.system.*;
 
-import org.deltava.taglib.ContentHelper;
+import org.deltava.taglib.BrowserInfoTag;
 
 /**
  * A JSP tag to filter content based on the client operating system.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 2.2
  * @see org.deltava.servlet.filter.BrowserTypeFilter
  */
 
-public class OSFilterTag extends TagSupport {
+public class OSFilterTag extends BrowserInfoTag {
 
 	private boolean _doWindows;
 	private boolean _doMacOS;
@@ -68,13 +68,17 @@ public class OSFilterTag extends TagSupport {
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
 	public int doStartTag() {
-		if (_doWindows && ContentHelper.isWindows(pageContext))
+		HTTPContextData ctxt = getBrowserContext();
+		if (ctxt == null)
 			return EVAL_BODY_INCLUDE;
-		else if (_doMacOS && ContentHelper.isMac(pageContext))
+		
+		if (_doWindows && (ctxt.getOperatingSystem() == OperatingSystem.WINDOWS))
 			return EVAL_BODY_INCLUDE;
-		else if (_doiOS && ContentHelper.isIPad(pageContext))
+		else if (_doMacOS && (ctxt.getOperatingSystem() == OperatingSystem.OSX))
 			return EVAL_BODY_INCLUDE;
-		else if (_doLinux && ContentHelper.isLinux(pageContext))
+		else if (_doiOS && (ctxt.getOperatingSystem() == OperatingSystem.IOS))
+			return EVAL_BODY_INCLUDE;
+		else if (_doLinux && (ctxt.getOperatingSystem() == OperatingSystem.LINUX))
 			return EVAL_BODY_INCLUDE;
 		
 		return SKIP_BODY;

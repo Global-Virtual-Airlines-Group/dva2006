@@ -3,22 +3,23 @@ package org.deltava.taglib.layout;
 
 import javax.servlet.http.*;
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.CommandContext;
-import org.deltava.taglib.ContentHelper;
+
+import org.deltava.taglib.BrowserInfoTag;
 
 /**
  * A JSP tag to render page layouts in a user-specific way.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
-public class PageTag extends TagSupport {
-	
+public class PageTag extends BrowserInfoTag {
+
 	private boolean _sideMenu;
 
 	/**
@@ -28,27 +29,31 @@ public class PageTag extends TagSupport {
 	boolean sideMenu() {
 		return _sideMenu;
 	}
-	
+
 	/**
 	 * Writes the layout element's opening tag to the JSP output stream.
 	 * @return TagSuppport.EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
 	public int doStartTag() throws JspException {
-		
+
+		// Check for IE6
+		HTTPContextData bctxt = getBrowserContext();
+		boolean isIE6 = (bctxt != null) && (bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 7);
+
 		// Check if our screen size is big enough
-		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest(); 
+		HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
 		HttpSession s = hreq.getSession(false);
 		if (s != null) {
 			Pilot usr = (Pilot) hreq.getUserPrincipal();
-			_sideMenu = (usr == null) || !usr.getShowNavBar() || ContentHelper.isIE6(pageContext);
+			_sideMenu = (usr == null) || !usr.getShowNavBar() || isIE6;
 			if (!_sideMenu) {
 				Number sX = (Number) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
 				_sideMenu = (sX == null) || (sX.intValue() < 1280);
 			}
 		} else
 			_sideMenu = true;
-		
+
 		// Render the div
 		try {
 			JspWriter out = pageContext.getOut();

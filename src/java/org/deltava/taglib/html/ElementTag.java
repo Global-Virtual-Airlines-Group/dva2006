@@ -1,19 +1,18 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.XMLRenderer;
+import org.deltava.taglib.*;
 
 /**
  * A class for supporting JSP Tags that render HTML elements.
  * @author Luke
- * @version 3.0
+ * @version 3.7
  * @since 1.0
  */
 
-public abstract class ElementTag extends TagSupport {
+public abstract class ElementTag extends BrowserInfoTag {
 
 	protected XMLRenderer _data;
 	protected JspWriter _out;
