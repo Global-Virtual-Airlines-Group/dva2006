@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 2.4
  */
 
@@ -120,7 +120,10 @@ public class OfflineFlightParser {
 		inf.setAltitude(ie.getChildTextTrim("altitude"));
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
-		inf.setFSVersion(StringUtils.parse(ie.getChildTextTrim("fs_ver"), 2004));
+		String fsVersion = ie.getChildTextTrim("fs_ver");
+		if ("FSX".equals(fsVersion))
+			fsVersion = "2006";
+		inf.setFSVersion(StringUtils.parse(fsVersion, 2004));
 		inf.setOffline(Boolean.valueOf(ie.getChildTextTrim("offline")).booleanValue());
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
 		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
