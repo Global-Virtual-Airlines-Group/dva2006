@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 3.2
+ * @version 3.7
  * @since 1.0
  */
 
@@ -91,6 +91,10 @@ public class IssueCommand extends AbstractFormCommand {
 			if (ac.getCanUpdateStatus())
 				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			
+			// Save the issue
+			SetHelp iwdao = new SetHelp(con);
+			iwdao.write(i);
+			 
 			// Send an issue
 			if (isNew || sendIssue) {
 				MessageContext mctx = new MessageContext();
@@ -102,15 +106,26 @@ public class IssueCommand extends AbstractFormCommand {
 				mctx.setTemplate(mtdao.get(isNew ? "HDISSUECREATE" : "HDISSUEASSIGN"));
 				
 				// Get the Assignee and copyto
-				GetPilot pdao = new GetPilot(con);
+				GetPilotDirectory pdao = new GetPilotDirectory(con);
 				Pilot usr = pdao.get(i.getAssignedTo());
 				mctx.addData("assignee", usr);
+				
+				// Get users to notify
+				Collection<Pilot> notifyPilots = new HashSet<Pilot>(pdao.getByID(getPilotIDs(i), "PILOTS").values());
+				
+				// If new, notify additional users
+				Collection<?> roles = (Collection<?>) SystemData.getObject("helpdesk.notify_roles");
+				if (isNew && !CollectionUtils.isEmpty(roles)) {
+					for (Iterator<?> nri = roles.iterator(); nri.hasNext(); ) {
+						String roleName = String.valueOf(nri.next());
+						notifyPilots.addAll(pdao.getByRole(roleName, SystemData.get("airline.db")));
+					}
+				}
 
 				// Create the message
 				Mailer mailer = new Mailer(ctx.getUser());
 				mailer.setContext(mctx);
-				Collection<Pilot> ids = pdao.getByID(getPilotIDs(i), "PILOTS").values();
-				for (Iterator<Pilot> cci = ids.iterator(); cci.hasNext(); )
+				for (Iterator<Pilot> cci = notifyPilots.iterator(); cci.hasNext(); )
 					mailer.setCC(cci.next());
 				
 				// Send the message
@@ -121,10 +136,6 @@ public class IssueCommand extends AbstractFormCommand {
 				ctx.setAttribute("emailSent", Boolean.TRUE, REQUEST);
 			}
 			
-			// Save the issue
-			SetHelp iwdao = new SetHelp(con);
-			iwdao.write(i);
-			 
 			// Save issue in the request
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("isNew", Boolean.valueOf(isNew), REQUEST);
@@ -267,17 +278,13 @@ public class IssueCommand extends AbstractFormCommand {
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
 	private Collection<Integer> getPilotIDs(Issue i) {
-		Collection<Integer> results = new HashSet<Integer>();
+		Collection<Integer> results = new HashSet<Integer>(16);
 
-		// Add Creator
+		// Add creator/assignee and comment authors
 		results.add(new Integer(i.getAuthorID()));
 		results.add(new Integer(i.getAssignedTo()));
-
-		// Add comment authors
-		for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext();) {
-			IssueComment ic = ici.next();
+		for (IssueComment ic : i.getComments())
 			results.add(new Integer(ic.getAuthorID()));
-		}
 
 		return results;
 	}

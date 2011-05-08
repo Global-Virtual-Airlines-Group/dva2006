@@ -682,5 +682,7 @@
 	<helpdesk>
 		<enabled type="Boolean">true</enabled>
 		<assignto type="Integer">3698</assignto>
+		<list name="notify_roles" attr="role" unique="true">
+		</list>
 	</helpdesk>
 </config>
