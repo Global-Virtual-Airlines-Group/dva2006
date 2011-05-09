@@ -1,14 +1,16 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.hr.TransferRequest;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to write equipment program Transfer Requests.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -29,16 +31,24 @@ public class SetTransferRequest extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void create(TransferRequest txreq, String dbName) throws DAOException {
+		String db = formatDBName(dbName);
 		try {
-            prepareStatement("INSERT INTO " + formatDBName(dbName) + ".TXREQUESTS (STATUS, CHECKRIDE_ID, EQTYPE, "
-            		+ "CREATED, RATING_ONLY, ID) VALUES (?, ?, ?, NOW(), ?, ?)");
+			startTransaction();
+			
+			// Write the transfer request
+            prepareStatement("INSERT INTO " + db + ".TXREQUESTS (STATUS, EQTYPE, CREATED, "
+            		+ "RATING_ONLY, ID) VALUES (?, ?, NOW(), ?, ?)");
             _ps.setInt(1, txreq.getStatus());
-            _ps.setInt(2, txreq.getCheckRideID());
-            _ps.setString(3, txreq.getEquipmentType());
-            _ps.setBoolean(4, txreq.getRatingOnly());
-            _ps.setInt(5, txreq.getID());
+            _ps.setString(2, txreq.getEquipmentType());
+            _ps.setBoolean(3, txreq.getRatingOnly());
+            _ps.setInt(4, txreq.getID());
             executeUpdate(1);
+            
+			// Write check ride IDs
+			writeRides(txreq, db);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -50,19 +60,46 @@ public class SetTransferRequest extends DAO {
 	 */
 	public void update(TransferRequest txreq) throws DAOException {
 		try {
-			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, CHECKRIDE_ID=?, EQTYPE=?, CREATED=?, RATING_ONLY=? WHERE (ID=?)");
+			startTransaction();
+			
+			// Write the transfer request
+			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, EQTYPE=?, CREATED=?, RATING_ONLY=? WHERE (ID=?)");
 			_ps.setInt(1, txreq.getStatus());
-			_ps.setInt(2, txreq.getCheckRideID());
-			_ps.setString(3, txreq.getEquipmentType());
-			_ps.setTimestamp(4, createTimestamp(txreq.getDate()));
-			_ps.setBoolean(5, txreq.getRatingOnly());
-			_ps.setInt(6, txreq.getID());
-
-			// Execute the update
+			_ps.setString(2, txreq.getEquipmentType());
+			_ps.setTimestamp(3, createTimestamp(txreq.getDate()));
+			_ps.setBoolean(4, txreq.getRatingOnly());
+			_ps.setInt(5, txreq.getID());
 			executeUpdate(1);
+			
+			// Write check ride IDs
+			writeRides(txreq, formatDBName(SystemData.get("airline.db")));
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Helper method to write check ride IDs to the database.
+	 */
+	private void writeRides(TransferRequest txreq, String db) throws SQLException {
+		
+		// Clear the check rides
+		prepareStatementWithoutLimits("DELETE FROM " + db + ".TXRIDES WHERE (ID=?)");
+		_ps.setInt(1, txreq.getID());
+		executeUpdate(0);
+		
+		// Write the check rides
+		prepareStatementWithoutLimits("INSERT INTO " + db + ".TXRIDES (ID, CHECKRIDE_ID) VALUES (?, ?)");
+		_ps.setInt(1, txreq.getID());
+		for (Integer ID : txreq.getCheckRideIDs()) {
+			_ps.setInt(2, ID.intValue());
+			_ps.addBatch();
+		}
+		
+		_ps.executeBatch();
+		_ps.close();
 	}
 
 	/**

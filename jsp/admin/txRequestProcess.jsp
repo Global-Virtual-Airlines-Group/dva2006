@@ -31,11 +31,20 @@ else {
 setSubmit();
 disableButton('ProfileButton');
 disableButton('CheckRideButton');
-disableButton('PIREPButton');
 disableButton('AssignButton');
 disableButton('ApproveButton');
 disableButton('RejectButton');
 disableButton('DeleteButton');
+return true;
+}
+
+function toggleBody(id)
+{
+var row = getElement('desc' + id);
+var linkDesc = getElement('toggle' + id);
+var visible = (row.style.display != 'none');
+displayObject(row, !visible);
+linkDesc.innerHTML = visible ? 'View' : 'Hide';
 return true;
 }
 </script>
@@ -72,40 +81,44 @@ return true;
  <td class="data ter bld">PILOT IS REQUESTING ADDITIONAL RATINGS ONLY</td>
 </tr>
 </c:if>
-<c:if test="${!empty checkRide}">
+<c:if test="${!empty checkRides}">
+<tr class="title caps">
+ <td colspan="2">CHECK RIDE STATUS</td>
+</tr>
+<c:set var="rideCount" value="0" scope="page" />
+<c:forEach var="rideID" items="${txReq.checkRideIDs}">
+<c:set var="checkRide" value="${checkRides[rideID]}" scope="page" />
+<c:set var="pirep" value="${pireps[checkRide.flightID]}" scope="page" />
+<c:set var="rideCount" value="${rideCount + 1}" scope="page" />
 <tr>
- <td class="label">Check Ride Status</td>
+ <td class="label top">Check Ride #<fmt:int value="${rideCount}" /></td>
+ <td class="data">Assigned on <fmt:date fmt="d" date="${checkRide.date}" /> in ${checkRide.equipmentType}
+ <a href="javascript:void toggleBody(${rideCount})">Click to <span id="toggle${rideCount}">View</span> Comments</a><br />
 <c:choose>
 <c:when test="${fn:passed(checkRide)}">
- <td class="data ter bld caps">CHECK RIDE PASSED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></td>
+ <span class="ter bld caps">CHECK RIDE PASSED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></span>
 </c:when>
 <c:when test="${fn:failed(checkRide)}">
- <td class="data error bld caps">CHECK RIDE FAILED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></td>
+ <span class="error bld caps">CHECK RIDE FAILED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></span>
 </c:when>
 <c:when test="${fn:submitted(checkRide)}">
- <td class="data bld pri caps">CHECK RIDE SUBMITTED ON <fmt:date fmt="d" date="${checkRide.submittedOn}" /></td>
+ <span class="bld pri caps">CHECK RIDE SUBMITTED ON <fmt:date fmt="d" date="${checkRide.submittedOn}" /></span>
 </c:when>
-<c:otherwise>
- <td class="data bld caps">CHECK RIDE ASSIGNED ON <fmt:date fmt="d" date="${checkRide.date}" /></td>
-</c:otherwise>
-</c:choose>
+</c:choose></td>
 </tr>
+<c:if test="${!empty pirep}">
 <tr>
- <td class="label">Equipment Type</td>
- <td class="data">${checkRide.equipmentType}</td>
+ <td class="label">Check Ride #<fmt:int value="${rideCount}" /> Data</td>
+ <td class="data">ACARS Flight <fmt:int value="${checkRide.flightID}" /> - <el:cmd url="crview" link="${checkRide}" className="pri bld">VIEW FLIGHT REPORT"</el:cmd></td>
 </tr>
-<tr>
- <td class="label top">Comments</td>
+</c:if>
+<tr id="desc${rideCount}" style="display:none;">
+ <td class="label top">Check Ride #<fmt:int value="${rideCount}" /> Comment</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
-<c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
-<tr>
- <td class="label">ACARS Flight ID</td>
- <td class="data"><fmt:int value="${checkRide.flightID}" />
- <el:cmdbutton ID="PIREPButton" url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
-</tr>
+</c:forEach>
 </c:if>
-</c:if>
+
 <c:if test="${access.canApprove}">
 <tr class="title caps">
  <td colspan="2">APPROVE TRANSFER REQUEST</td>

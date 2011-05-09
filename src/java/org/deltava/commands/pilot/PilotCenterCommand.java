@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -215,9 +215,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("txAccess", txAccess, REQUEST);
 				
 				// Load the checkride if any
-				if (txreq.getCheckRideID() != 0) {
+				if (txreq.getLatestCheckRideID() != 0) {
 					GetExam exdao = new GetExam(con);
-					ctx.setAttribute("checkRide", exdao.getCheckRide(txreq.getCheckRideID()), REQUEST);
+					ctx.setAttribute("checkRide", exdao.getCheckRide(txreq.getLatestCheckRideID()), REQUEST);
 				}
 			} else if (hasTX)
 				ctx.setAttribute("txPending", Boolean.TRUE, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -48,9 +48,9 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			
 			// Check for an existing check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
+			CheckRide cr = exdao.getCheckRide(txreq.getLatestCheckRideID());
 			if ((cr != null) && (cr.getStatus() == Test.NEW))
-				throw securityException("Check Ride " + txreq.getCheckRideID() + " already exists");
+				throw securityException("Check Ride " + txreq.getLatestCheckRideID() + " already exists");
 
 			// Check our access level
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
@@ -107,7 +107,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			exwdao.write(cr);
 
 			// Update the transfer request
-			txreq.setCheckRideID(cr.getID());
+			txreq.addCheckRideID(cr.getID());
 			txreq.setStatus(TransferRequest.ASSIGNED);
 
 			// Save the transfer request
