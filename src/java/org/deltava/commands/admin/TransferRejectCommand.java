@@ -72,7 +72,7 @@ public class TransferRejectCommand extends AbstractCommand {
 			
 			// Get the check ride (if any)
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
+			CheckRide cr = exdao.getCheckRide(txreq.getLatestCheckRideID());
 
 			// Use a SQL Transaction
 			ctx.startTX();

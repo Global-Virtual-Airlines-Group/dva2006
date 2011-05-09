@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically purge old Transfer Requests.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class TransferPurgeTask extends Task {
 				upd.setDescription("Transfer to " + tx.getEquipmentType() + " program purged after " + purgeInterval + " days");
 				
 				// Get the check ride (if any) and then delete
-				CheckRide cr = exdao.getCheckRide(tx.getCheckRideID());
+				CheckRide cr = exdao.getCheckRide(tx.getLatestCheckRideID());
 				int crAge = (cr == null) ? 0 : (int) ((System.currentTimeMillis() - cr.getDate().getTime()) / 86400);
 				if ((cr == null) || ((cr.getStatus() == Test.NEW) && (crAge > 7))) {
 					ctx.startTX();
