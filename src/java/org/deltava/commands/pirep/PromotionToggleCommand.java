@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to toggle whether a Flight Report counts for promotion to Captain.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -77,7 +77,8 @@ public class PromotionToggleCommand extends AbstractCommand {
 			}
 			
 			// Save comments and commit
-			fwdao.writeComments(fr.getID(), buf.toString());
+			fr.setComments(buf.toString());
+			fwdao.writeComments(fr);
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

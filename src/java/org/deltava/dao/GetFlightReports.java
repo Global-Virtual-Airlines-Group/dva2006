@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -91,7 +91,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM (");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(dbName);
@@ -143,7 +143,7 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByStatus(Collection<Integer> status, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.*, GROUP_CONCAT(ER.EQTYPE) "
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.*, GROUP_CONCAT(ER.EQTYPE) "
 			+ "FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS "
 			+ "APR ON (PR.ID=APR.ID) LEFT JOIN EQRATINGS ER ON (ER.RATED_EQ=PR.EQTYPE) AND "
 			+ "(ER.RATING_TYPE=?) WHERE (P.ID=PR.PILOT_ID) AND (");
@@ -269,7 +269,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -297,7 +297,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -324,7 +324,7 @@ public class GetFlightReports extends DAO {
 	 */
 	public List<FlightReport> getLogbookCalendar(int id, java.util.Date startDate, int days) throws DAOException {
 		try {
-			prepareStatement("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN PIREP_COMMENT PC "
+			prepareStatement("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR LEFT JOIN PIREP_COMMENT PC "
 				+ "ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?) AND "
 				+ "(PR.DATE >= ?) AND (PR.DATE < DATE_ADD(?, INTERVAL ? DAY)) ORDER BY PR.DATE, PR.ID");
 			_ps.setInt(1, id);
@@ -347,7 +347,7 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria) throws DAOException {
 
 		// Build the statement
-		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, APR.* FROM PIREPS PR LEFT JOIN "
+		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR LEFT JOIN "
 				+ "PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
 				+ "WHERE (PR.PILOT_ID=?)");
 		if (criteria != null) {
@@ -488,7 +488,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, S.TIME_D, S.TIME_A FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, S.TIME_D, S.TIME_A FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -557,9 +557,9 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 62);
-		boolean hasComments = (md.getColumnCount() >= 22);
-		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() >= 24));
+		boolean hasACARS = (md.getColumnCount() > 61);
+		boolean hasComments = (md.getColumnCount() > 21);
+		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 23));
 
 		// Iterate throught the results
 		while (rs.next()) {
@@ -591,14 +591,15 @@ public class GetFlightReports extends DAO {
 			p.setAttributes(rs.getInt(13));
 			// Skip column #14 - we calculate this in the flight report
 			p.setLength(Math.round(rs.getFloat(15) * 10));
-			p.setRemarks(rs.getString(16));
-			p.setDatabaseID(DatabaseID.DISPOSAL, rs.getInt(17));
-			p.setSubmittedOn(rs.getTimestamp(18));
-			p.setDisposedOn(rs.getTimestamp(19));
-			p.setDatabaseID(DatabaseID.EVENT, rs.getInt(20));
-			p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(21));
-			if (hasComments)
-				p.setComments(rs.getString(22));
+			p.setDatabaseID(DatabaseID.DISPOSAL, rs.getInt(16));
+			p.setSubmittedOn(rs.getTimestamp(17));
+			p.setDisposedOn(rs.getTimestamp(18));
+			p.setDatabaseID(DatabaseID.EVENT, rs.getInt(19));
+			p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(20));
+			if (hasComments) {
+				p.setComments(rs.getString(21));
+				p.setRemarks(rs.getString(22));
+			}
 			
 			// Load scheduled times
 			if (isDraft) {

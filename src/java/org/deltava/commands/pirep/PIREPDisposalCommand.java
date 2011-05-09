@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -114,7 +114,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
 
 			// Check if this flight was flown with an equipment type in our primary ratings
-			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
+			/* Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
 			if (pTypeNames.contains(p.getEquipmentType())) {
 				FlightPromotionHelper helper = new FlightPromotionHelper(fr);
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
@@ -133,7 +133,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				if (CollectionUtils.hasDelta(pTypeNames, fr.getCaptEQType()))
 					log.warn("Updating Promotion to Captain types - was " + fr.getCaptEQType() + ", now " + pTypeNames);
 			} else
-				fr.setCaptEQType(new HashSet<String>());
+				fr.setCaptEQType(new HashSet<String>()); */
 			
 			// Check if the pilot is rated in the equipment type
 			Collection<String> allRatings = new HashSet<String>(p.getRatings());
