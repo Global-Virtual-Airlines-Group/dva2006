@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.hr.TransferRequest;
 
 import org.deltava.commands.*;
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -41,11 +42,6 @@ public class TransferProcessCommand extends AbstractCommand {
 			if (txreq == null)
 				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
 
-			// See if there's a checkride
-			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
-			ctx.setAttribute("checkRide", cr, REQUEST);
-
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
 			access.validate();
@@ -57,10 +53,18 @@ public class TransferProcessCommand extends AbstractCommand {
 			Pilot usr = pdao.get(ud);
 			ctx.setAttribute("pilot", usr, REQUEST);
 			
-			// If the checkride has been submitted, get the flight report
-			if ((cr != null) && (cr.getFlightID() != 0)) {
-				GetFlightReports frdao = new GetFlightReports(con);
-				ctx.setAttribute("pirep", frdao.getACARS(ud.getDB(), cr.getFlightID()), REQUEST);
+			// See if there's any checkrides
+			GetExam exdao = new GetExam(con);
+			GetFlightReports frdao = new GetFlightReports(con);
+			Map<Integer, CheckRide> rides = new HashMap<Integer, CheckRide>();
+			Map<Integer, FlightReport> pireps = new HashMap<Integer, FlightReport>();
+			for (Integer crID : txreq.getCheckRideIDs()) {
+				CheckRide cr = exdao.getCheckRide(crID.intValue());
+				if (cr != null) {
+					rides.put(crID, cr);
+					if (cr.getFlightID() != 0)
+						pireps.put(Integer.valueOf(cr.getFlightID()), frdao.getACARS(ud.getDB(), cr.getFlightID()));
+				}
 			}
 			
 			// Get the requested equipment type
@@ -113,6 +117,8 @@ public class TransferProcessCommand extends AbstractCommand {
 
 			// Save the transfer request and access controller
 			ctx.setAttribute("txReq", txreq, REQUEST);
+			ctx.setAttribute("checkRides", rides, REQUEST);
+			ctx.setAttribute("pireps", rides, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to delete Equipment Transfer Requests.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -51,7 +51,7 @@ public class TransferDeleteCommand extends AbstractCommand {
 
 			// Get the check ride (if any)
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
+			CheckRide cr = exdao.getCheckRide(txreq.getLatestCheckRideID());
 			
 			// Use a SQL Transaction
 			ctx.startTX();

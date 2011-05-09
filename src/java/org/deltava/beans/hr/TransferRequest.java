@@ -1,16 +1,15 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
-import java.util.Date;
+import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
  * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -22,7 +21,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 
 	private static final String[] STATUS = { "New", "Pending Check Ride", "Check Ride Assigned", "Complete" };
 
-	private int _checkRideID;
+	private final SortedSet<Integer> _checkRideIDs = new TreeSet<Integer>();
 	private boolean _crSubmitted;
 	
 	private int _status;
@@ -61,12 +60,23 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	}
 
 	/**
-	 * Returns the database ID of an assigned Check Ride.
+	 * Returns the database ID of the latest assigned Check Ride.
 	 * @return the database ID of the assigned Check Ride, or zero if none assigned
-	 * @see TransferRequest#setCheckRideID(int)
+	 * @see TransferRequest#getCheckRideIDs()
+	 * @see TransferRequest#addCheckRideID(int)
 	 */
-	public int getCheckRideID() {
-		return _checkRideID;
+	public int getLatestCheckRideID() {
+		return _checkRideIDs.last().intValue();
+	}
+	
+	/**
+	 * Returns the database IDs of all check rides associated with this Transfer Request.
+	 * @return a Collection of database IDs
+	 * @see TransferRequest#getLatestCheckRideID()
+	 * @see TransferRequest#addCheckRideID(int)
+	 */
+	public Collection<Integer> getCheckRideIDs() {
+		return _checkRideIDs;
 	}
 
 	/**
@@ -122,11 +132,9 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 * @throws IllegalArgumentException if id is negative
 	 * @see DatabaseBean#validateID(int, int)
 	 */
-	public void setCheckRideID(int id) {
-		if (id != 0) {
-			validateID((_status == PENDING) ? 0 : _checkRideID, id);
-			_checkRideID = id;
-		}
+	public void addCheckRideID(int id) {
+		validateID(0, id);
+		_checkRideIDs.add(new Integer(id));
 	}
 	
 	/**
@@ -136,7 +144,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 * @see TransferRequest#getCheckRideSubmitted()
 	 */
 	public void setCheckRideSubmitted(boolean isSubmitted) {
-		if (isSubmitted && (_checkRideID == 0))
+		if (isSubmitted && _checkRideIDs.isEmpty())
 			throw new IllegalStateException("No Check Ride ID");
 		
 		_crSubmitted = isSubmitted;
