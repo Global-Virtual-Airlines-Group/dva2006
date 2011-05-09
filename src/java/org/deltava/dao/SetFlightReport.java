@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -79,11 +79,9 @@ public class SetFlightReport extends DAO {
 			_ps.setInt(4, pirep.getID());
 			executeUpdate(1);
 			
-			// Save the promotion equipment types
+			// Save the promotion equipment types and comments
 			writePromoEQ(pirep.getID(), dbName, pirep.getCaptEQType());
-
-			// Write the comments into the database
-			writeComments(pirep.getID(), dbName, pirep.getComments());
+			writeComments(pirep, dbName);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -103,8 +101,8 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS (PILOT_ID, RANK, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, "
-				+ "FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, REMARKS, SUBMITTED, EVENT_ID, ASSIGN_ID) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, SUBMITTED, EVENT_ID, ASSIGN_ID) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
@@ -122,10 +120,9 @@ public class SetFlightReport extends DAO {
 		_ps.setInt(12, fr.getAttributes());
 		_ps.setInt(13, fr.getDistance());
 		_ps.setDouble(14, (fr.getLength() / 10.0));
-		_ps.setString(15, fr.getRemarks());
-		_ps.setTimestamp(16, createTimestamp(fr.getSubmittedOn()));
-		_ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
-		_ps.setInt(18, fr.getDatabaseID(DatabaseID.ASSIGN));
+		_ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
+		_ps.setInt(16, fr.getDatabaseID(DatabaseID.EVENT));
+		_ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
 	}
 
 	/**
@@ -137,8 +134,8 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, "
-				+ "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, REMARKS=?, DISPOSAL_ID=?, "
-				+ "SUBMITTED=?, DISPOSED=?, ASSIGN_ID=?, EVENT_ID=? WHERE (ID=?)");
+				+ "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, DISPOSAL_ID=?, SUBMITTED=?, "
+				+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=? WHERE (ID=?)");
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
@@ -154,13 +151,12 @@ public class SetFlightReport extends DAO {
 		_ps.setInt(10, fr.getAttributes());
 		_ps.setInt(11, fr.getDistance());
 		_ps.setDouble(12, (fr.getLength() / 10.0));
-		_ps.setString(13, fr.getRemarks());
-		_ps.setInt(14, fr.getDatabaseID(DatabaseID.DISPOSAL));
-		_ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
-		_ps.setTimestamp(16, createTimestamp(fr.getDisposedOn()));
-		_ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
-		_ps.setInt(18, fr.getDatabaseID(DatabaseID.EVENT));
-		_ps.setInt(19, fr.getID());
+		_ps.setInt(13, fr.getDatabaseID(DatabaseID.DISPOSAL));
+		_ps.setTimestamp(14, createTimestamp(fr.getSubmittedOn()));
+		_ps.setTimestamp(15, createTimestamp(fr.getDisposedOn()));
+		_ps.setInt(16, fr.getDatabaseID(DatabaseID.ASSIGN));
+		_ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
+		_ps.setInt(18, fr.getID());
 	}
 
 	/**
@@ -197,13 +193,12 @@ public class SetFlightReport extends DAO {
 	
 	/**
 	 * Updates Flight Report comments.
-	 * @param id the Flight Report database ID
-	 * @param comments the comments
+	 * @param fr the FlightReport bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeComments(int id, String comments) throws DAOException {
+	public void writeComments(FlightReport fr) throws DAOException {
 		try {
-			writeComments(id, SystemData.get("airline.db"), comments);
+			writeComments(fr, SystemData.get("airline.db"));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -249,7 +244,7 @@ public class SetFlightReport extends DAO {
 			fr.setID(getNewID());
 
 		// Write the comments into the database
-		writeComments(fr.getID(), dbName, fr.getComments());
+		writeComments(fr, dbName);
 		
 		// Write the route into the database
 		if (!StringUtils.isEmpty(fr.getRoute())) {
@@ -281,20 +276,21 @@ public class SetFlightReport extends DAO {
 	
 	/**
 	 * Writes flight report comments to the database.
-	 * @param id the Flight Report database ID
+	 * @param fr the FlightReport bean
 	 * @param dbName the database name
-	 * @param comments the comments
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	private void writeComments(int id, String dbName, String comments) throws SQLException {
-		if (!StringUtils.isEmpty(comments)) {
-			prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
-			_ps.setInt(1, id);
-			_ps.setString(2, comments);
+	private void writeComments(FlightReport fr, String dbName) throws SQLException {
+		boolean isEmpty = StringUtils.isEmpty(fr.getRemarks()) && StringUtils.isEmpty(fr.getComments());
+		if (!isEmpty) {
+			prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS, REMARKS) VALUES (?, ?, ?)");
+			_ps.setInt(1, fr.getID());
+			_ps.setString(2, fr.getComments());
+			_ps.setString(3, fr.getRemarks());
 			executeUpdate(1);
 		} else {
 			prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
-			_ps.setInt(1, id);
+			_ps.setInt(1, fr.getID());
 			executeUpdate(0);
 		}
 	}
@@ -319,8 +315,8 @@ public class SetFlightReport extends DAO {
 		try {
 			startTransaction();
 			writeCore(fr, dbName);
+			writeComments(fr, dbName);
 			writePromoEQ(fr.getID(), dbName, fr.getCaptEQType());
-			writeComments(fr.getID(), dbName, fr.getComments());
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -353,8 +349,8 @@ public class SetFlightReport extends DAO {
 
 			// Write the regular fields
 			writeCore(afr, db);
+			writeComments(afr, db);
 			writePromoEQ(afr.getID(), db, afr.getCaptEQType());
-			writeComments(afr.getID(), db, afr.getComments());
 
 			// Write the ACARS fields
 			prepareStatementWithoutLimits(sqlBuf.toString());
