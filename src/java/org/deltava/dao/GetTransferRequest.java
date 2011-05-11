@@ -120,7 +120,7 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TR ON "
+			prepareStatementWithoutLimits("SELECT TX.* FROM TXREQUESTS TX LEFT JOIN TXRIDES TC ON "
 				+ "(TX.ID=TC.ID) WHERE (TC.CHECKRIDE_ID=?) LIMIT 1");
 			_ps.setInt(1, checkRideID);
 
