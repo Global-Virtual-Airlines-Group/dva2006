@@ -46,10 +46,8 @@ public class PromotionToggleCommand extends AbstractCommand {
 			
 			// Get comments
 			StringBuilder buf = new StringBuilder();
-			if (!StringUtils.isEmpty(fr.getComments())) {
+			if (!StringUtils.isEmpty(fr.getComments()))
 				buf.append(fr.getComments());
-				buf.append("\r\n");
-			}
 
 			// Start transaction
 			ctx.startTX();
@@ -57,7 +55,7 @@ public class PromotionToggleCommand extends AbstractCommand {
 			// Check if we set or clear
 			SetFlightReport fwdao = new SetFlightReport(con);
 			if (!fr.getCaptEQType().isEmpty()) {
-				buf.append("Promotion flag cleared by " + ctx.getUser().getName());
+				buf.append("\r\nPromotion flag cleared by " + ctx.getUser().getName());
 				fwdao.clearPromoEQ(fr.getID());
 			} else {
 				GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -72,8 +70,10 @@ public class PromotionToggleCommand extends AbstractCommand {
 						i.remove();
 				}
 				
-				buf.append("Promotion flag in " + StringUtils.listConcat(pTypeNames, ", ") + " set by " + ctx.getUser().getName());
-				fwdao.setPromoEQ(fr.getID(), pTypeNames);
+				if (!pTypeNames.isEmpty()) {
+					buf.append("\r\nPromotion flag in " + StringUtils.listConcat(pTypeNames, ", ") + " set by " + ctx.getUser().getName());
+					fwdao.setPromoEQ(fr.getID(), pTypeNames);
+				}
 			}
 			
 			// Save comments and commit
