@@ -233,11 +233,11 @@ public class GetTransferRequest extends DAO {
 		if (txreqs.isEmpty())
 			return;
 		
-		StringBuilder sqlBuf = new StringBuilder("SELECT TC.ID, CR.ID, CR.STATUS FROM TXRIDES RC LEFT JOIN "
+		StringBuilder sqlBuf = new StringBuilder("SELECT TC.ID, CR.ID, CR.STATUS FROM TXRIDES TC LEFT JOIN "
 			+ "exams.CHECKRIDES CR ON (TC.CHECKRIDE_ID=CR.ID) WHERE TC.ID IN (");
 		for (Iterator<TransferRequest> i = txreqs.iterator(); i.hasNext(); ) {
 			TransferRequest tx = i.next();
-			sqlBuf.append(String.valueOf(tx.getID()));
+			sqlBuf.append(tx.getID());
 			if (i.hasNext())
 				sqlBuf.append(',');
 		}
@@ -252,7 +252,7 @@ public class GetTransferRequest extends DAO {
 			if (tx != null) {
 				tx.addCheckRideID(rs.getInt(2));
 				if (!tx.getCheckRideSubmitted())
-					tx.setCheckRideSubmitted(rs.getInt(6) == Test.SUBMITTED);
+					tx.setCheckRideSubmitted(rs.getInt(3) == Test.SUBMITTED);
 			}
 		}
 		
