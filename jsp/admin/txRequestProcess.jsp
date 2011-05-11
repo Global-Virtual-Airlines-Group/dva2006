@@ -109,7 +109,7 @@ return true;
 <c:if test="${!empty pirep}">
 <tr>
  <td class="label">Check Ride #<fmt:int value="${rideCount}" /> Data</td>
- <td class="data">ACARS Flight <fmt:int value="${checkRide.flightID}" /> - <el:cmd url="crview" link="${checkRide}" className="pri bld">VIEW FLIGHT REPORT"</el:cmd></td>
+ <td class="data">ACARS Flight <fmt:int value="${checkRide.flightID}" /> - <el:cmd url="crview" link="${checkRide}" className="pri bld">VIEW FLIGHT REPORT</el:cmd></td>
 </tr>
 </c:if>
 <tr id="desc${rideCount}" style="display:none;">

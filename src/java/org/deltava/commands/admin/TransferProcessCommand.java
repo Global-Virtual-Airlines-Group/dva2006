@@ -118,7 +118,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			// Save the transfer request and access controller
 			ctx.setAttribute("txReq", txreq, REQUEST);
 			ctx.setAttribute("checkRides", rides, REQUEST);
-			ctx.setAttribute("pireps", rides, REQUEST);
+			ctx.setAttribute("pireps", pireps, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
