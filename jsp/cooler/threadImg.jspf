@@ -9,7 +9,7 @@
 <td colspan="3"><c:forEach var="imgLink" items="${thread.imageURLs}">
 <img src="${imgLink.URL}" alt="${imgLink.description}" border="0" /><br />
 <span class="small">${imgLink.description}</span>
-<c:if test="${access.canDelete || access.canLock || access.canUnlock}">
+<c:if test="${access.canDelete || access.canLock || access.canUnlock || access.canUnlinkImage}">
 &nbsp;<el:cmd url="linkedimgkill" link="${thread}" op="${imgLink.ID}" className="pri bld small">UNLINK IMAGE</el:cmd></c:if><br />
 <hr />
 </c:forEach></td>
