@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Water Cooler Threads.
  * @author Luke
- * @version 2.2
+ * @version 3.7
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     private boolean _canEdit;
     private boolean _canEditTitle;
     private boolean _canAddImage;
+    private boolean _canUnlinkImage;
     private boolean _canVote;
     private boolean _canReport;
     private boolean _canLock;
@@ -103,6 +104,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canDelete = _ctx.isUserInRole("Admin");
         _canReport = _canReply && (!isClosed) && (!_mt.getReportIDs().contains(new Integer(_ctx.getUser().getID())));
         _canAddImage = (isOurs && _canReply) || (isModerator && _canRead);
+        _canUnlinkImage = _canAddImage && !_mt.getImageURLs().isEmpty();
         
         // Check if we can edit the title
         _canEditTitle = _canRead && (_ctx.isUserInRole("Moderator") || (isOurs && _mt.getPostCount() == 1));
@@ -162,6 +164,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanAddImage() {
     	return _canAddImage;
+    }
+    
+    /**
+     * Returns if a user can remove a Linked Image from the thread.
+     * @return TRUE if an Image can be unlinked, otherwise FALSE
+     */
+    public boolean getCanUnlinkImage() {
+    	return _canUnlinkImage;
     }
     
     /**
