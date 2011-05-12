@@ -137,7 +137,7 @@ return true;
 <!-- Thread Header -->
 <tr class="title">
  <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
- WATER COOLER</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
+ ${forumName}</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
  <fmt:text value="${thread.subject}" /><c:if test="${access.canReport && (postCount > 1)}">
  ( <el:cmd url="threadreport" link="${thread}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
@@ -152,7 +152,7 @@ return true;
 <content:sysdata var="dateFmt" name="time.date_format" />
 
 <!-- Thread Posts -->
-<c:set var="postIdx" value="${0}" scope="page" />
+<c:set var="postIdx" value="0" scope="page" />
 <c:set var="contentWarn" value="false" scope="page" />
 <content:attr attr="isModerator" value="true" roles="Moderator" />
 <c:forEach var="msg" items="${thread.posts}">
@@ -169,9 +169,11 @@ return true;
 <tr id="post${msg.createdOn.time}">
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
- <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
-<c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span><br /></c:if>
- <span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
+<el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
+<c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span></c:if>
+<c:if test="${empty pilot.pilotCode}"><span class="bld caps">NEW ${pilot.airlineCode} PILOT</span></c:if>
+<br />
+<span class="bld caps">${pilot.rank.name}</span>, ${pilot.equipmentType}<br />
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
 <fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <c:if test="${isDispatcher}"><span class="sec bld">DISPATCHER</span><br /></c:if>
