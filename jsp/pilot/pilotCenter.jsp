@@ -251,8 +251,8 @@ To view statistics about your flights, <el:cmd className="sec bld" url="mystats"
 <!-- Flight Report Admin Section -->
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
- <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.  <span class="${queueClass}">There 
- are currently <fmt:quantity value="${pirepQueueSize}" single="Flight Report" /> awaiting review.</span>
+ <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here. <c:if test="${pirepQueueSize > 0}"><span class="${queueClass}">There 
+ are currently <fmt:quantity value="${pirepQueueSize}" single="Flight Report" /> awaiting review.</span></c:if>
 <c:if test="${checkRideQueueSize > 0}"><br />
 <span class="pri bld">There are <fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
