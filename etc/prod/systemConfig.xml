@@ -612,6 +612,7 @@
 		
 		<user_cookie_age type="Integer">30</user_cookie_age>
 		<transfer_max type="Integer">21</transfer_max>
+		<checkrde_max type="Integer">3</checkrde_max>
 
 		<facebook>
 			<id>93603160577</id>
