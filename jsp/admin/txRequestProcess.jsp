@@ -54,6 +54,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="maxRides" name="users.checkride_max" default="10" /> 
 <c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="page" />
 
 <!-- Main Body Frame -->
@@ -145,6 +146,12 @@ return true;
 <tr class="title caps">
  <td colspan="2">ASSIGN CHECK RIDE</td>
 </tr>
+<c:if test="${fn:sizeof(txReq.checkRideIDs) >= maxRides}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data warn bld caps">${pilot.name} has already been assigned <fmt:int value="${fn:sizeof(txReq.checkRideIDs)}" /> Check Rides</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Equipment Type</td>
  <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
@@ -159,6 +166,9 @@ return true;
 </tr>
 </c:if>
 <c:if test="${access.canReject}">
+<tr class="title caps">
+ <td colspan="2">REJECT EQUIPMENT TRANSFER REQUEST</td>
+</tr>
 <tr>
  <td class="label top">Rejection Commnents</td>
  <td class="data"><el:textbox name="rejectComments" idx="*" width="80%" height="3" resize="true"></el:textbox></td>
