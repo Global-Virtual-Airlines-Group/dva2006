@@ -66,7 +66,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 * @see TransferRequest#addCheckRideID(int)
 	 */
 	public int getLatestCheckRideID() {
-		return _checkRideIDs.last().intValue();
+		return _checkRideIDs.isEmpty() ? 0 : _checkRideIDs.last().intValue();
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class TransferRequest extends DatabaseBean implements ViewEntry {
 	 */
 	public void addCheckRideID(int id) {
 		validateID(0, id);
-		_checkRideIDs.add(new Integer(id));
+		_checkRideIDs.add(Integer.valueOf(id));
 	}
 	
 	/**
