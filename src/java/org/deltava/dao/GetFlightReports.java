@@ -564,7 +564,7 @@ public class GetFlightReports extends DAO {
 		// Iterate throught the results
 		while (rs.next()) {
 			int status = rs.getInt(4);
-			boolean isACARS = (hasACARS && (rs.getInt(23) != 0));
+			boolean isACARS = (hasACARS && (rs.getInt(24) != 0));
 			boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
 			// Build the PIREP as a standard one, or an ACARS pirep
