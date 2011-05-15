@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -14,14 +14,17 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert weather.com Series List data into a JSP page. 
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 3.0
  */
 
 public class InsertWeatherTag extends TagSupport {
 	
-	public static final String USAGE_ATTR_NAME = "$wxLayerUsage$";
-	private static final Collection<String> _layers = new LinkedHashSet<String>();
+	private static final String DEFAULT_FUNC = "loadSeries";
+	private static final String USAGE_ATTR_NAME = "$wxLayerUsage$";
+	
+	private String _jsFunc = DEFAULT_FUNC;
+	private final Collection<String> _layers = new LinkedHashSet<String>();
 	
 	/**
 	 * Sets the layers to download image series data for.
@@ -29,6 +32,23 @@ public class InsertWeatherTag extends TagSupport {
 	 */
 	public void setLayers(String layers) {
 		_layers.addAll(StringUtils.split(layers, ","));
+	}
+	
+	/**
+	 * Overrides the series list parsing function name.
+	 * @param jsFunc a JavaScript function name
+	 */
+	public void setFunction(String jsFunc) {
+		_jsFunc = jsFunc;
+	}
+	
+	/**
+	 * Releases the tag's state data.
+	 */
+	public void release() {
+		super.release();
+		_layers.clear();
+		_jsFunc = DEFAULT_FUNC;
 	}
 	
 	/**
@@ -62,16 +82,18 @@ public class InsertWeatherTag extends TagSupport {
 			return EVAL_PAGE;
 		
 		String host = SystemData.get("weather.tileHost");
-		if (StringUtils.isEmpty(host))
+		if (StringUtils.isEmpty(host) || _layers.isEmpty())
 			return EVAL_PAGE;
 		else if (host.indexOf('%') != -1)
 			host = host.replace("%", "");
 
-		JspWriter out = pageContext.getOut();
 		try {
+			JspWriter out = pageContext.getOut();
 			out.print("<script type=\"text/javascript\" src=\"http://");
 			out.print(host);
-			out.print("/TileServer/jserieslist.do?function=loadSeries&amp;id=wx&amp;type=");
+			out.print("/TileServer/jserieslist.do?function=");
+			out.print(_jsFunc);
+			out.print("&amp;id=wx&amp;type=");
 			out.print(StringUtils.listConcat(_layers, ","));
 			out.println("\"></script>");
 		} catch (Exception e) {
