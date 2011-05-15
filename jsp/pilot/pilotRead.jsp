@@ -18,7 +18,7 @@
 <script type="text/javascript">
 function toggleLoginAddrs(lnk)
 {
-var addrDiv = getElement('loginAddrs');
+var addrDiv = document.getElementById('loginAddrs');
 if (!addrDiv) return false;
 
 // Toggle the visibility

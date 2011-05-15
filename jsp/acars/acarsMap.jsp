@@ -25,9 +25,6 @@
 <content:js name="progressBar" />
 </c:if>
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
-document.multiHost = ${multiHost};
-</c:if>
 function reloadData(isAuto)
 {
 // Get auto refresh
@@ -36,7 +33,7 @@ var doRefresh = f.autoRefresh.checked;
 
 // Generate XMLHTTPRequest if we're not already viewing a flight
 if (!document.pauseRefresh) {
-	var isLoading = getElement('isLoading');
+	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = ' - LOADING...';
 	var xmlreq = generateXMLRequest();
 	xmlreq.send(null);
@@ -160,7 +157,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.getOptions = function() { return mapOpts; };
 <c:if test="${!empty tileHost}">
 // Load the tile overlays

@@ -112,7 +112,7 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Set the distance
-	var dstE = getElement('rtDistance');
+	var dstE = document.getElementById('rtDistance');
 	if (dstE != null) {
 		var dst = xdoc.getAttribute('distance');
 		if (dst) {
@@ -126,13 +126,13 @@ xmlreq.onreadystatechange = function() {
 	// Load the runways
 	var rws = xdoc.getElementsByTagName('runway');
 	updateRoutes(f.runway, rws);
-	showObject(getElement('runways'), (f.runway.options.length > 1));
+	showObject(document.getElementById('runways'), (f.runway.options.length > 1));
 
 	// Load the SID/STAR list
 	updateRoutes(f.sid, xdoc.getElementsByTagName('sid'));
-	displayObject(getElement('sids'), (f.sid.options.length > 1));
+	displayObject(document.getElementById('sids'), (f.sid.options.length > 1));
 	updateRoutes(f.star, xdoc.getElementsByTagName('star'));
-	displayObject(getElement('stars'), (f.star.options.length > 1));
+	displayObject(document.getElementById('stars'), (f.star.options.length > 1));
 	return true;
 }
 
@@ -252,7 +252,7 @@ if (airportsChanged) {
 	f.routes.options[0] = new Option('No Routes Loaded', '');
 	f.routes.selectedIndex = 0;
 	f.route.value = '';
-	showObject(getElement('routeList'), false);
+	showObject(document.getElementById('routeList'), false);
 	setRoute(f.routes);
 }
 

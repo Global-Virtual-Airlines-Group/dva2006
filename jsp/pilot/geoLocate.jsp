@@ -36,7 +36,7 @@ function geoLocate(addr)
 if (addr.value.length < 3) return false;
 
 // Do the lookup
-var isLoading = getElement('isLoading');
+var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - SEARCHING...';
 disableButton('SearchButton');
 geoCoder.geocode({address:addr.value}, showResponse);
@@ -46,7 +46,7 @@ return true;
 function showResponse(result, status)
 {
 var f = document.forms[0];
-var isLoading = getElement('isLoading');
+var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = '';
 enableElement('SearchButton', true);
 
@@ -178,7 +178,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center: mapC, zoom:getDefaultZoom(${!empty location ? 30 : 2000}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Build the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });

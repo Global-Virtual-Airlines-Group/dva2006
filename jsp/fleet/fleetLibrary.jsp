@@ -19,14 +19,14 @@ function selectAC(combo)
 {
 if (combo.selectedIndex < 1) {
 	document.fName = null;
-	showObject(getElement('installerInfo'), false);
+	showObject(document.getElementById('installerInfo'), false);
 	return false;
 }
 
 // Get the code
 var code = combo.options[combo.selectedIndex].value;
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('GET', 'fleetlib.ws?code=' + code, true);
+xmlreq.open('get', 'fleetlib.ws?code=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -45,19 +45,19 @@ xmlreq.onreadystatechange = function() {
 
 	// Update the page
 	document.fName = info.getAttribute('filename');
-	getElement('FleetPic').src = info.getAttribute('img');
-	getElement('divName').innerHTML = info.getAttribute('title');
+	document.getElementById('FleetPic').src = info.getAttribute('img');
+	document.getElementById('divName').innerHTML = info.getAttribute('title');
 	var dt = info.getAttribute('date');
 	if (dt)
-		getElement('divDT').innerHTML = dt;
-	getElement('divSize').innerHTML = info.getAttribute('size');
-	getElement('FSVersions').innerHTML = (versions.length == 0) ? '' : (verDesc + '.');
+		document.getElementById('divDT').innerHTML = dt;
+	document.getElementById('divSize').innerHTML = info.getAttribute('size');
+	document.getElementById('FSVersions').innerHTML = (versions.length == 0) ? '' : (verDesc + '.');
 
 	// Load the description
 	var descE = info.getElementsByTagName('desc')[0].firstChild;
-	getElement('divDesc').innerHTML = descE.data;
+	document.getElementById('divDesc').innerHTML = descE.data;
 	combo.disabled = false;
-	showObject(getElement('installerInfo'), true);
+	showObject(document.getElementById('installerInfo'), true);
 	return true;
 }
 

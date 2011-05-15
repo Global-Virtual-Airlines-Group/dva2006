@@ -50,11 +50,11 @@ disableButton('ResendButton');
 f.action = '/appresendvalidate.do';
 
 // Relabel the submit button
-var sb = getElement('SubmitButton');
+var sb = document.getElementById('SubmitButton');
 sb.value = 'UPDATE ADDRESS';
 
 // Hide this link
-var link = getElement('updateAddrLink');
+var link = document.getElementById('updateAddrLink');
 link.innerHTML = '';
 return true;
 }

@@ -33,7 +33,7 @@ for (var x = 0; x < rpQuestions.length; x++) {
 	var idx = rpQuestions[x];
 	var info = rpInfo[idx];
 	var mapOpts = {center:info.mapCenter, zoom:getDefaultZoom(info.distance), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
-	info.map = new google.maps.Map(getElement('qMap' + info.idx), mapOpts);
+	info.map = new google.maps.Map(document.getElementById('qMap' + info.idx), mapOpts);
 	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 	info.aD.setMap(info.map);
 	info.aA.setMap(info.map);

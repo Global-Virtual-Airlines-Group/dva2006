@@ -38,24 +38,24 @@ for (var x = 0; x < rows.length; x++)
 var c = f.units.options[f.units.selectedIndex].value;
 switch (c) {
 case 'COUNTRIES':
-	displayObject(getElement('valueCountry'), true);
+	displayObject(document.getElementById('valueCountry'), true);
 	break;
 
 case 'STATES':
-	displayObject(getElement('valueState'), true);
+	displayObject(document.getElementById('valueState'), true);
 	break;
 
 case 'AIRLINES':
-	displayObject(getElement('valueAirline'), true);
+	displayObject(document.getElementById('valueAirline'), true);
 	break;
 
 case 'AIRCRAFT':
 case 'EQLEGS':
-	displayObject(getElement('valueEQType'), true);
+	displayObject(document.getElementById('valueEQType'), true);
 	break;
 
 default:
-	displayObject(getElement('valueBox'), true);
+	displayObject(document.getElementById('valueBox'), true);
 	break;
 }
 
