@@ -398,7 +398,7 @@ notification each time a reply is posted in this Thread.
 </content:page>
 <c:if test="${!empty firstUnreadTime}">
 <script type="text/javascript">
-var postRow = getElement('post${firstUnreadTime.time}');
+var postRow = document.getElementById('post${firstUnreadTime.time}');
 postRow.scrollIntoView();
 </script></c:if>
 <content:googleAnalytics />

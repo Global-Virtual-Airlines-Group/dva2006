@@ -22,9 +22,6 @@
 <map:wxList layers="radar,eurorad,sat,temp,future_radar_ff" />
 </c:if>
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">
-document.tileHost = '${tileHost}';
-document.multiHost = ${multiHost};</c:if>
 function updateZoomLevel(oldZoom, newZoom)
 {
 var level = document.getElementById('zoomLevel');
@@ -97,7 +94,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:new google.maps.LatLng(36.44, -100.14), zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Load the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.getOptions = function() { return mapOpts; };
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});

@@ -76,7 +76,7 @@ return true;
 function getFFOverlay(name, tx, date)
 {
 var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
-layerOpts.myBaseURL = 'http://' + document.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
+layerOpts.myBaseURL = 'http://' + golgotha.maps.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 if (zoom > this.maxZoom) return '';
 var url = this.myBaseURL;
@@ -90,7 +90,7 @@ for (var x = zoom; x > 0; x--) {
 }
 
 // Check for multi-host
-if (document.multiHost) {
+if (golgotha.maps.multiHost) {
 	var lastDigit = url.charAt(url.length - 1);
 	var pos = url.indexOf('%');
 	if (pos > -1)
@@ -142,8 +142,8 @@ FFOverlayControl.prototype.updateMap = function() {
 	for (var x = 0; x < options.length; x++)
 		f.ffSlice.options[x] = options[x];
 
-	showObject(getElement('copyright'), true);
-	showObject(getElement('ffSlices'), true);
+	showObject(document.getElementById('copyright'), true);
+	showObject(document.getElementById('ffSlices'), true);
 	return true;
 }
 
@@ -195,7 +195,7 @@ if (imgs.length == 0)
 	loadSlices.remove(ov);
 
 if (loadSlices.length == 0) {
-	var btn = getElement('AnimateButton');
+	var btn = document.getElementById('AnimateButton');
 	btn.value = 'STOP';
 	enableObject(btn, true);
 	pBar.hide();
@@ -236,7 +236,7 @@ return true;
 function animateFF()
 {
 var f = document.forms[0];
-var btn = getElement('AnimateButton');
+var btn = document.getElementById('AnimateButton');
 if (map.isAnimating) {
 	removeSlices();
 	btn.value = 'ANIMATE';

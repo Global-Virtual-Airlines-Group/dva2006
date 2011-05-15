@@ -22,7 +22,7 @@ xmlreq.onreadystatechange = function() {
 	return true;
 } // function
 
-var isLoading = getElement('isLoading');
+var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 enableElement(f.noFilter, false);
 enableElement(f.eqType, false);
@@ -57,7 +57,7 @@ if (a != null)
 	setTimeout('mrkLoad(' + batchSize + ')', 2);
 else {
 	var f = document.forms[0];
-	var isLoading = getElement('isLoading');
+	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = '';
 	enableElement(f.noFilter, true);
 	enableElement(f.eqType, true);

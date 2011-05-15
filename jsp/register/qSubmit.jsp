@@ -37,7 +37,7 @@ while (isOK && (a.length > 0)) {
 	}
 
 	qNum++;
-	a = getElement('A' + qNum);
+	a = document.getElementById('A' + qNum);
 }
 
 if (!isOK) {

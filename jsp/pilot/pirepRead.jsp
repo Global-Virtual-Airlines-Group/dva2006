@@ -344,7 +344,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Build the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);

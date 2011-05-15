@@ -164,7 +164,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Build the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 addMarkers(map, 'apMarker');
 </script>

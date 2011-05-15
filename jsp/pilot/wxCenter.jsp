@@ -16,15 +16,12 @@
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}">
 <content:js name="acarsMapWX" />
 <content:js name="acarsMapFF" />
 <content:js name="progressBar" />
 </c:if>
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
-document.multiHost = ${multiHost};</c:if>
 <c:if test="${!empty jetStreamImgs}">
 function setJSMapType(combo)
 {
@@ -44,7 +41,7 @@ if (opts != null) {
 
 cbo.selectedIndex = 0;
 setJSMap(cbo);
-var div = getElement('jsURLSelect');
+var div = document.getElementById('jsURLSelect');
 div.style.visibility = (combo.selectedIndex == 0) ? 'hidden' : 'visible';
 return true;	
 }
@@ -52,7 +49,7 @@ return true;
 function setJSMap(combo)
 {
 var idx = combo.selectedIndex;
-var row = getElement('jsMapRow');
+var row = document.getElementById('jsMapRow');
 if (idx == 0) {
 	row.style.display = 'none';
 	return true;
@@ -61,7 +58,7 @@ if (idx == 0) {
 
 // Show the map
 var opt = combo.options[idx];
-var img = getElement('jsImg');
+var img = document.getElementById('jsImg');
 img.src = opt.value;
 return true;
 }
@@ -272,7 +269,7 @@ var mapOpts = {center:mapC, zoom:5, scrollwheel:false, streetViewControl:false, 
 var wxMarkers = [];
 
 // Create the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.getOptions = function() { return mapOpts; }; 
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});

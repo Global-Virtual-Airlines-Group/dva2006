@@ -7,7 +7,7 @@ var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'acars_map.ws?time=' + dtime, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var isLoading = getElement('isLoading');
+	var isLoading = document.getElementById('isLoading');
 	if (isLoading && (xmlreq.status != 200)) {
 		isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
 		return false;
@@ -21,7 +21,7 @@ xmlreq.onreadystatechange = function() {
 	removeMarkers('dcPositions');
 	acPositions.length = 0;
 	dcPositions.length = 0;
-	displayObject(getElement('userSelect'), false);
+	displayObject(document.getElementById('userSelect'), false);
 	var cbo = document.forms[0].usrID;
 	if (cbo != null) {
 		selectedPilot = cbo.options[cbo.selectedIndex].value;
@@ -136,7 +136,7 @@ xmlreq.onreadystatechange = function() {
 	enableElement('EarthButton', (ac.length > 0));
 
 	// Display dispatch status
-	var de = getElement('dispatchStatus');
+	var de = document.getElementById('dispatchStatus');
 	if ((de) && (dc.length > 0)) {
 		de.className = 'ter bld caps';
 		de.innerHTML = 'Dispatcher Currently Online';
@@ -147,7 +147,7 @@ xmlreq.onreadystatechange = function() {
 
 	// Focus on the map
 	if (cbo)
-		displayObject(getElement('userSelect'), (cbo.options.length > 1));
+		displayObject(document.getElementById('userSelect'), (cbo.options.length > 1));
 	if (isLoading)
 		isLoading.innerHTML = ' - ' + (ac.length + dc.length) + ' CONNECTIONS';
 

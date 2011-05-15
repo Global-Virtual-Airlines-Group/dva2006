@@ -15,17 +15,13 @@
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
-document.multiHost = ${multiHost};
-</c:if>
 function showTrackInfo(marker)
 {
-var label = getElement("trackLabel");
-var data = getElement("trackData");
+var label = document.getElementById("trackLabel");
+var data = document.getElementById("trackData");
 if ((!label) || (!data))
 	return false;
 	
@@ -50,8 +46,8 @@ for (var x = 0; x < f.showTracks.length; x++)
 	f.showTracks[x].checked = true;
 
 // Reset track data label
-var label = getElement("trackLabel");
-var data = getElement("trackData");
+var label = document.getElementById("trackLabel");
+var data = document.getElementById("trackData");
 if ((!label) || (!data))
 	return false;
 
@@ -86,7 +82,7 @@ if (f.date.selectedIndex == 0)
 	return;
 
 // Set map as loading
-var isLoading = getElement("isLoading");
+var isLoading = document.getElementById("isLoading");
 if (isLoading)
 	isLoading.innerHTML = " - LOADING...";
 
@@ -191,7 +187,7 @@ var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTyp
 var mapOpts = {center:new google.maps.LatLng(42.0, -165.0), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 <c:if test="${!empty tileHost}">
 // Build the sat layer control
