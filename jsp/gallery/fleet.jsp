@@ -18,8 +18,8 @@ function selectAircraft(combo)
 if (combo.selectedIndex == 0) return false;
 
 // Get the image object and its description object
-var img = getElement('FleetPic');
-var desc = getElement('FleetDesc');
+var img = document.getElementById('FleetPic');
+var desc = document.getElementById('FleetDesc');
 
 // Load the picture in its place, save the description
 img.src = '/gallery/${imgDB}/0x' + combo.options[combo.selectedIndex].value + '.jpg';
@@ -65,7 +65,7 @@ return true;
 </content:region>
 </content:page>
 <script type="text/javascript">
-var dList = getElement('fleetDescs').value.split(',');
+var dList = document.getElementById('fleetDescs').value.split(',');
 </script>
 <content:googleAnalytics />
 </body>

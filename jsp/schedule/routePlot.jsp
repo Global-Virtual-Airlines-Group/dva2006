@@ -18,13 +18,10 @@
 <content:js name="routePlot" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
-document.multiHost = ${multiHost};</c:if>
 var routeUpdated = false;
 var getInactive = false;
 
@@ -151,7 +148,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 <c:if test="${!empty tileHost}">

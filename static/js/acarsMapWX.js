@@ -39,7 +39,7 @@ return true;
 function getTileOverlay(name, tx)
 {
 var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
-layerOpts.myBaseURL = 'http://' + document.tileHost + '/TileServer/imgs/' + name + '/u' + document.seriesDate[name] + '/';
+layerOpts.myBaseURL = 'http://' + golgotha.maps.tileHost + '/TileServer/imgs/' + name + '/u' + document.seriesDate[name] + '/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 if (zoom > this.maxZoom) return '';
 var url = this.myBaseURL;
@@ -53,7 +53,7 @@ for (var x = zoom; x > 0; x--) {
 }
 
 // Check for multi-host
-if (document.multiHost) {
+if (golgotha.maps.multiHost) {
 	var lastDigit = url.charAt(url.length - 1);
 	var pos = url.indexOf('%');
 	if (pos > -1)
@@ -108,7 +108,7 @@ WXOverlayControl.prototype.updateMap = function() {
 		setWXStatus('Showing ' + layer.layerName + ' (' + fmtDate(new Date(layer.layerDate.getTime() - GMTOffset)) + ')');
 	}
 
-	showObject(getElement('copyright'), true);
+	showObject(document.getElementById('copyright'), true);
 	delete map.ffLayer;
 	return true;
 }
@@ -168,14 +168,14 @@ try {
 
 delete map.wxData;
 delete map.ffLayer;
-showObject(getElement('copyright'), false);
+showObject(document.getElementById('copyright'), false);
 setWXStatus('None');
 return true;
 }
 
 function setWXStatus(msg)
 {
-var sp = getElement('wxLoading');	
+var sp = document.getElementById('wxLoading');	
 if (sp)	sp.innerHTML = msg;
 return true;
 }

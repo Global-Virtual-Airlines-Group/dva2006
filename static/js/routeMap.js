@@ -1,6 +1,6 @@
 function updateAirports(combo)
 {
-var isLoading = getElement('isLoading');
+var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - CLEARING...';
 
 // Remove airports/routes from the map
@@ -29,7 +29,7 @@ var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'rmap_airports.ws?airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var isLoading = getElement('isLoading');
+	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = ' - REDRAWING...';
 	aps = [];
 	var f = document.forms[0];
@@ -76,11 +76,11 @@ return true;
 function showRoutes()
 {
 // Update status
-var isLoading = getElement('isLoading');
+var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 
 // Get the airline code
-var aCombo = getElement('airlineCode');
+var aCombo = document.getElementById('airlineCode');
 var aCode = aCombo.options[aCombo.selectedIndex].value;
 removeMarkers('routes');
 map.infoWindow.close();
@@ -90,7 +90,7 @@ var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'rmap_routes.ws?icao=' + this.icao + '&airline=' + aCode, true);
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
-	var isLoading = getElement('isLoading');
+	var isLoading = document.getElementById('isLoading');
 	isLoading.innerHTML = ' - REDRAWING...';
 		routes.length = 0;
 
@@ -127,7 +127,7 @@ xmlreq.onreadystatechange = function() {
 
 // Send the XMLHTTP request
 xmlreq.send(null);
-var showInfo = getElement('showInfo');
+var showInfo = document.getElementById('showInfo');
 if ((showInfo) && (showInfo.checked)) {
 	map.infoWindow.setContent(this.infoLabel);
 	map.infoWindow.open(map, this);

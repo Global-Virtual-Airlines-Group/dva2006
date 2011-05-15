@@ -16,7 +16,7 @@
 function showReqCert(combo)
 {
 var opt = combo.options[combo.selectedIndex];
-displayObject(getElement('reqCertRow'), (opt.text == 'Specific Certification'));
+displayObject(document.getElementById('reqCertRow'), (opt.text == 'Specific Certification'));
 return true;	
 }
 
@@ -28,7 +28,7 @@ if (!validateNumber(form.stage, 1, 'Certification Stage')) return false;
 if (!validateCombo(form.preReqs, 'Examination Prerequisites')) return false;
 
 // Check specific cert
-var reqCertRow = getElement('reqCertRow');
+var reqCertRow = document.getElementById('reqCertRow');
 if (reqCertRow.style.display != 'none') {
 	if (!validateCombo(form.preReqCert, 'Specific Certification Prerequisite')) return false;
 }

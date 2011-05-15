@@ -143,7 +143,7 @@ var maps = [];
 // Create map
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, zoom:getDefaultZoom(${q.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
-var map = new google.maps.Map(getElement('qMap${q.number}'), mapOpts);
+var map = new google.maps.Map(document.getElementById('qMap${q.number}'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });

@@ -21,8 +21,6 @@
 <c:if test="${!empty tileHost}">
 <content:js name="acarsMapWX" /></c:if>
 <script type="text/javascript">
-<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
-document.multiHost = ${multiHost};</c:if>
 function reloadData(isAuto)
 {
 // Get auto refresh
@@ -80,7 +78,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.getOptions = function() { return mapOpts; };
 <c:if test="${!empty tileHost}">
 // Load the tile overlays

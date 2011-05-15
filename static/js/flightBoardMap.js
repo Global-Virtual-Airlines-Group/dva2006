@@ -13,7 +13,7 @@ var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'si_data.ws?network=' + document.network + '&time=' + dtime + '&atc=true', true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var isLoading = getElement('isLoading');
+	var isLoading = document.getElementById('isLoading');
 	if (xmlreq.status != 200) {
 		isLoading.innerHTML = ' - ERROR ' + xmlreq.status;
 		return false;
@@ -22,8 +22,8 @@ xmlreq.onreadystatechange = function() {
 	var xdoc = xmlreq.responseXML;
 	var re = xdoc.documentElement;
 	map.clearOverlays();
-	displayObject(getElement('userSelect'), false);
-	var cbo = getElement('usrID');
+	displayObject(document.getElementById('userSelect'), false);
+	var cbo = document.getElementById('usrID');
 	var selectedATC = cbo.options[cbo.selectedIndex].value;
 	cbo.options.length = 1;
 
@@ -75,7 +75,7 @@ xmlreq.onreadystatechange = function() {
 			cbo.selectedIndex = (cbo.options.length - 1);
 	}
 
-	displayObject(getElement('userSelect'), (cbo.options.length > 1));
+	displayObject(document.getElementById('userSelect'), (cbo.options.length > 1));
 	if (isAuto)
 		window.setTimeout('void updateMap()', 90000);
 

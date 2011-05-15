@@ -40,8 +40,8 @@ return true;
 
 function toggleBody(id)
 {
-var row = getElement('desc' + id);
-var linkDesc = getElement('toggle' + id);
+var row = document.getElementById('desc' + id);
+var linkDesc = document.getElementById('toggle' + id);
 var visible = (row.style.display != 'none');
 displayObject(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';

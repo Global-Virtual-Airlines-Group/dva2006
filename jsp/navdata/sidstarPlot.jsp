@@ -81,7 +81,7 @@ return false;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void showObject(getElement('ToggleButton'), true)">
+<body onload="void showObject(document.getElementById('ToggleButton'), true)">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -156,7 +156,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:mapC, zoom:7, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 //Create the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 

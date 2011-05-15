@@ -2,7 +2,7 @@ function updateAirports(combo, cmdURL, doICAO, oldCode)
 {
 if (combo == null) return false;
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "airports.ws?" + cmdURL, true);
+xmlreq.open('get', 'airports.ws?' + cmdURL, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -52,7 +52,7 @@ return true;
 
 function changeAirport(combo)
 {
-var text = getElement(combo.name + 'Code');
+var text = document.getElementById(combo.name + 'Code');
 if (text) text.value = combo.options[combo.selectedIndex].value.toUpperCase();
 return true;
 }

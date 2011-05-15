@@ -53,7 +53,7 @@ if (!f.showAll.checked || (map.getZoom() < 5))
 	return true;
 
 // Status message
-var isLoading = getElement('isLoading');
+var isLoading = document.getElementById('isLoading');
 isLoading.innerHTML = ' - LOADING...';
 
 //Build the XML Requester
@@ -166,7 +166,7 @@ var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center: mapC, zoom: getDefaultZoom(110), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Build the map
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });

@@ -50,7 +50,7 @@ return null;
 function showRemaining(interval)
 {
 var now = new Date();
-var tr = getElement('timeRemaining');
+var tr = document.getElementById('timeRemaining');
 var secondsLeft = (expiry - now.getTime() + timeOffset) / 1000;
 
 // Update the text color

@@ -1,8 +1,3 @@
-function getElement(eName)
-{
-return document.getElementById(eName);
-}
-
 function getElementsById(id, eName)
 {
 var elements = [];
@@ -15,10 +10,13 @@ for (var x = 0; x < all.length; x++) {
 return elements;
 }
 
-function getElementsByClass(cName, eName)
+function getElementsByClass(cName, eName, parent)
 {
+if (parent == null)
+	parent = document;
+
 var elements = [];
-var all = document.getElementsByTagName((eName == null) ? '*' : eName);
+var all = parent.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
 	var c = all[x].className;
 	if (c.indexOf) {

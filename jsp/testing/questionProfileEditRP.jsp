@@ -84,7 +84,7 @@ for (var x = 1; x <= 5; x++) {
 // Hide unused answers
 for (var x = 1; x <= 5; x++) {
 	var rt = eval('f.route' + x + '.value');
-	var row = getElement('choice' + x);
+	var row = document.getElementById('choice' + x);
 	if (x > (maxAnswer + 1))
 		row.style.display = 'none';
 	else
@@ -92,7 +92,7 @@ for (var x = 1; x <= 5; x++) {
 }
 
 // Show the correct answer
-var row = getElement('correctAnswerRow');
+var row = document.getElementById('correctAnswerRow');
 row.style.display = (maxAnswer > 1) ? '' : 'none';
 combo.selectedIndex = (oldAnswer >= combo.options.length) ? 0 : oldAnswer;
 plotRouteMap(combo);
@@ -264,7 +264,7 @@ var doRunways = false;
 // Create map
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, zoom:getDefaultZoom(${mapDistance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
-var map = new google.maps.Map(getElement('googleMap'), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });

@@ -5,15 +5,15 @@ xmlreq.open('get', 'sceligible.ws');
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status == 0)) return false;
 	if (xmlreq.status != 200) {
-		displayObject(getElement('rowError'), true);
-		displayObject(getElement('rowLoading'), false);
-		var codeSpan = getElement('errorCode');
+		displayObject(document.getElementById('rowError'), true);
+		displayObject(document.getElementById('rowLoading'), false);
+		var codeSpan = document.getElementById('errorCode');
 		codeSpan.innerHTML = '(' + xmlreq.status + ')';
 		return false;
 	}
 
 	// Parse the XML
-	var cbo = getElement('selectPilot');
+	var cbo = document.getElementById('selectPilot');
 	if (cbo == null) return false;
 	cbo.options.length = 1;
 	var xmlDoc = xmlreq.responseXML;
@@ -32,8 +32,8 @@ xmlreq.onreadystatechange = function() {
 		}
 	}
 
-	displayObject(getElement('rowSelectPilot'), true);
-	displayObject(getElement('rowLoading'), false);
+	displayObject(document.getElementById('rowSelectPilot'), true);
+	displayObject(document.getElementById('rowLoading'), false);
 
 	// Initialize onkeyup
 	var txt = document.forms[0].pilotSearch;
@@ -41,8 +41,8 @@ xmlreq.onreadystatechange = function() {
 	return true;
 } // function
 	
-displayObject(getElement('rowLoading'), true);
-displayObject(getElement('rowError'), false);
+displayObject(document.getElementById('rowLoading'), true);
+displayObject(document.getElementById('rowError'), false);
 xmlreq.send(null);
 return true;
 }
@@ -50,17 +50,17 @@ return true;
 function search(searchStr)
 {
 searchStr = searchStr.toLowerCase();
-var combo = getElement('selectPilot');
+var combo = document.getElementById('selectPilot');
 for (var x = 1; x < combo.options.length; x++) {
 	var opt = combo.options[x];
 	var txt = opt.text.substring(0, searchStr.length).toLowerCase();
 	if (txt == searchStr) {
 		combo.selectedIndex = x;
-		displayObject(getElement('rowComments'), true);
+		displayObject(document.getElementById('rowComments'), true);
 		return true;
 	} else if (txt > searchStr) {
 		combo.selectedIndex = x;
-		displayObject(getElement('rowComments'), true);
+		displayObject(document.getElementById('rowComments'), true);
 		return false;
 	}
 }
@@ -72,13 +72,13 @@ function setPilot(combo)
 {
 var f = document.forms[0];
 f.pilotSearch.value = '';
-displayObject(getElement('rowComments'), (combo.selectedIndex > 0));
+displayObject(document.getElementById('rowComments'), (combo.selectedIndex > 0));
 return true;
 }
 
 function toggleComments(id)
 {
-var lnk = getElement('tc' + id);
+var lnk = document.getElementById('tc' + id);
 if (lnk == null) return false;
 
 var visible = false;
