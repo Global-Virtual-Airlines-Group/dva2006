@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to reject Equipment Profile transfer requests.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -55,11 +55,12 @@ public class TransferRejectCommand extends AbstractCommand {
 			usr = pdao.get(txreq.getID());
 			if (usr == null)
 				throw notFoundException("Invalid Pilot - " + txreq.getID());
-
+			
 			// Make a status update
 			StatusUpdate upd = new StatusUpdate(txreq.getID(), StatusUpdate.COMMENT);
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setDescription("Transfer Request to " + txreq.getEquipmentType() + " program Rejected");
+			upd.setDescription("Transfer Request to " + txreq.getEquipmentType() + " program Rejected after "
+					+ txreq.getCheckRideIDs().size() + " check rides");
 			
 			// Save the pilot for the message context
 			mctxt.addData("pilot", usr);
