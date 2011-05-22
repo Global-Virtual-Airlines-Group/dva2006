@@ -4,18 +4,22 @@ package org.deltava.commands.hr;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.hr.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.*;
+
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to short-list applicants for a Job Posting.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 3.4
  */
 
@@ -81,6 +85,24 @@ public class ShortListCommand extends AbstractCommand {
 			
 			// Commit
 			ctx.commitTX();
+			
+			// Create the context
+			MessageContext mctxt = new MessageContext();
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("JOBCOMMENT"));
+			mctxt.addData("user", ctx.getUser());
+			mctxt.addData("job", jp);
+			mctxt.addData("comment", c);
+			
+			// Load the users
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			Collection<Pilot> pilots = new HashSet<Pilot>(pdao.getByRole("HR", SystemData.get("airline.db")));
+			pilots.remove(ctx.getUser());
+			
+            // Create the e-mail message
+            Mailer mailer = new Mailer(ctx.getUser());
+            mailer.setContext(mctxt);
+            mailer.send(pilots);
 			
 			// Save status attributes
 			ctx.setAttribute("job", jp, REQUEST);
