@@ -31,7 +31,6 @@ public class JobCommentCommand extends AbstractCommand {
      */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		MessageContext mctxt = new MessageContext();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -47,17 +46,13 @@ public class JobCommentCommand extends AbstractCommand {
 			if (!access.getCanComment())
 				throw securityException("Cannot comment on Job Posting " + jp.getID());
 			
-			// Load users
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Comment c : jp.getComments())
-				IDs.add(new Integer(c.getAuthorID()));
-			
 			// Create the comment
 			Comment c = new Comment(jp.getID(), ctx.getUser().getID());
 			c.setCreatedOn(new Date());
 			c.setBody(ctx.getParameter("body"));
 			
 			// Create the context
+			MessageContext mctxt = new MessageContext();
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("JOBCOMMENT"));
 			mctxt.addData("user", ctx.getUser());
@@ -66,9 +61,7 @@ public class JobCommentCommand extends AbstractCommand {
 			
 			// Load the users
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			Collection<Pilot> pilots = new HashSet<Pilot>();
-			pilots.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
-			pilots.addAll(pdao.getByID(IDs, "PILOTS").values());
+			Collection<Pilot> pilots = new HashSet<Pilot>(pdao.getByRole("HR", SystemData.get("airline.db")));
 			pilots.remove(ctx.getUser());
 			
 			// Write the comment
