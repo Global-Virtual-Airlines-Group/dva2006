@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+\<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -305,7 +305,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canRelease}">
  <el:cmdbutton url="release" link="${pirep}" post="true" label="RELEASE HOLD" />
 </c:if>
-<c:if test="${access.canReject && (!fn:isCheckFlight(pirep))}">
+<c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || (empty checkRide))}">
  <el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
 <c:if test="${isACARS}"><content:filter roles="HR,PIREP,Operations">
  <el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" />
