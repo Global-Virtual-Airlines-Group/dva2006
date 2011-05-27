@@ -163,17 +163,18 @@ return true;
 <el:table className="view">
 <!-- Search Results Data -->
 <tr class="title caps">
- <td colspan="8" class="left">FLIGHT SCHEDULE SEARCH RESULTS</td>
+ <td colspan="9" class="left">FLIGHT SCHEDULE SEARCH RESULTS</td>
 </tr>
 
 <!-- Search Results Header Bar -->
 <tr class="caps title">
  <td width="5%">ADD</td>
- <td width="15%">FLIGHT NUMBER</td>
+ <td width="12%">FLIGHT NUMBER</td>
  <td width="10%">EQUIPMENT</td>
  <td width="35%">AIRPORTS</td>
- <td width="10%">DEPARTS</td>
- <td width="10%">ARRIVES</td>
+ <td width="8%">DEPARTS</td>
+ <td width="8%">ARRIVES</td>
+ <td width="8%">LENGTH</td>
  <td width="5%">ROUTES</td>
  <td>DISTANCE</td>
 </tr>
@@ -194,6 +195,7 @@ return true;
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
 </c:if>
+ <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
 <c:if test="${fn:isSearchEntry(flight)}">
  <td class="small bld"><fmt:int value="${flight.dispatchRoutes}" /></td>
  <td class="sec"><fmt:distance value="${flight.distance}" /></td>
@@ -204,33 +206,33 @@ return true;
 </view:row>
 </c:forEach>
 
+<!-- Button Bar -->
 <tr class="title">
- <td colspan="8"><el:button ID="BuildButton" type="submit" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
+ <td colspan="9"><el:button ID="BuildButton" type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="BuildResetButton" url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
 </c:if>
 <content:hasmsg>
-<tr class="error caps bld">
- <td colspan="5"><content:sysmsg /></td>
-</tr>
+<div class="error caps bld"><content:sysmsg /></div>
 </content:hasmsg>
 <c:if test="${!empty buildAssign}">
 <br />
 <el:table className="view">
 <!-- Flight Assignment Data -->
 <tr class="caps title">
- <td colspan="6" class="left">FLIGHT ASSIGNMENT</td>
+ <td colspan="7" class="left">FLIGHT ASSIGNMENT</td>
 </tr>
 
 <!-- Flight Assignment Header Bar -->
 <tr class="caps title">
- <td width="20%">FLIGHT NUMBER</td>
+ <td width="15%">FLIGHT NUMBER</td>
  <td width="10%">EQUIPMENT</td>
  <td>AIRPORTS</td>
  <td width="10%">DEPARTS</td>
  <td width="10%">ARRIVES</td>
+ <td width="10%">LENGTH</td>
  <td width="10%">DISTANCE</td>
 </tr>
 
@@ -249,11 +251,14 @@ return true;
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
 </c:if>
+ <td class="small"><fmt:int value="${flight.length / 10}" />:<fmt:int value="${(flight.length * 6) % 60}" fmt="00" /></td>
  <td class="sec"><fmt:distance value="${flight.distance}" /></td>
 </tr>
 </c:forEach>
+
+<!-- Button Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
+ <td colspan="7"><view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
 <el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="ClearButton" url="resetassign" label="CLEAR FLIGHT ASSIGNMENT" /></td>
 </tr>
