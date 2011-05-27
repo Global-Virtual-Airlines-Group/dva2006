@@ -341,8 +341,8 @@ public class SetFlightReport extends DAO {
 			+ "TAKEOFF_LNG, TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, "
 			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_G, LANDING_N1, LANDING_HDG, LANDING_LAT, "
 			+ "LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
-			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD) VALUES "
-			+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -385,15 +385,16 @@ public class SetFlightReport extends DAO {
 			_ps.setTimestamp(29, createTimestamp(afr.getEndTime()));
 			_ps.setInt(30, afr.getGateWeight());
 			_ps.setInt(31, afr.getGateFuel());
-			_ps.setInt(32, afr.getTime(0));
-			_ps.setInt(33, afr.getTime(1));
-			_ps.setInt(34, afr.getTime(2));
-			_ps.setInt(35, afr.getTime(4));
-			_ps.setString(36, afr.getFDE());
-			_ps.setString(37, afr.getAircraftCode());
-			_ps.setBoolean(38, afr.getHasReload());
-			_ps.setInt(39, afr.getClientBuild());
-			_ps.setInt(40, afr.getBeta());
+			_ps.setInt(32, afr.getTotalFuel());
+			_ps.setInt(33, afr.getTime(0));
+			_ps.setInt(34, afr.getTime(1));
+			_ps.setInt(35, afr.getTime(2));
+			_ps.setInt(36, afr.getTime(4));
+			_ps.setString(37, afr.getFDE());
+			_ps.setString(38, afr.getAircraftCode());
+			_ps.setBoolean(39, afr.getHasReload());
+			_ps.setInt(40, afr.getClientBuild());
+			_ps.setInt(41, afr.getBeta());
 			executeUpdate(1);
 
 			// Commit the transaction

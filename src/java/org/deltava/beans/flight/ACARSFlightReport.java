@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 2.8
+ * @version 3.7
  * @since 1.0
  */
 
@@ -45,6 +45,8 @@ public class ACARSFlightReport extends FlightReport {
     
     private int _gateWeight;
     private int _gateFuel;
+    
+    private int _totalFuel;
     
     private String _fde;
     private String _code;
@@ -409,6 +411,15 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Returns the total amount of fuel burned.
+     * @return the total amount of fuel in pounds
+     * @see ACARSFlightReport#setTotalFuel(int)
+     */
+    public int getTotalFuel() {
+    	return _totalFuel;
+    }
+    
+    /**
      * Updates the start time of the flight.
      * @param dt the date/time the flight started
      * @see ACARSFlightReport#getEndTime()
@@ -636,6 +647,15 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setGateFuel(int f) {
         _gateFuel = Math.max(0, f);
+    }
+    
+    /**
+     * Updates the total amount of fuel burned during the flight.
+     * @param f the amount of fuel in punds
+     * @see ACARSFlightReport#getTotalFuel()
+     */
+    public void setTotalFuel(int f) {
+    	_totalFuel = Math.max(0, f);
     }
     
     /**

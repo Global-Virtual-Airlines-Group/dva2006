@@ -30,7 +30,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 2.4
  */
 
@@ -293,6 +293,11 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(afr);
 			afr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
+			
+			// Check for inflight refueling
+			FuelUse fuelUse = FuelUse.validate(flight.getPositions());
+			afr.setAttribute(FlightReport.ATTR_REFUELWARN, fuelUse.getRefuel());
+			afr.setTotalFuel(fuelUse.getTotalFuel());
 
 			// Check the schedule database and check the route pair
 			int avgHours = sdao.getFlightTime(afr.getAirportD(), afr.getAirportA());

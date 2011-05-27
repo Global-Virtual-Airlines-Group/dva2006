@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,13 +12,14 @@ import org.deltava.beans.servinfo.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
+import org.gvagroup.acars.ACARSFlags;
 
 import static org.gvagroup.acars.ACARSFlags.*;
 
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 3.4
+ * @version 3.7
  * @since 1.0
  */
 
@@ -213,38 +214,42 @@ public class GetACARSData extends DAO {
 	 * Checks if in-flight refueling was used on a Flight.
 	 * @param flightID the ACARS Flight ID
 	 * @param isArchived TRUE if the flight data is archived, otherwise FALSE
-	 * @return TRUE if refuelling is detected, otherwise FALSE
+	 * @return a {@link FuelUse} bean with fuel data
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public boolean checkRefuel(int flightID, boolean isArchived) throws DAOException {
+	public FuelUse checkRefuel(int flightID, boolean isArchived) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT FUEL FROM acars.");
+		StringBuilder sqlBuf = new StringBuilder("SELECT FUEL, FLAGS FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
-		sqlBuf.append(" WHERE (FLIGHT_ID=?) AND (PHASE>?) AND (PHASE<?) ORDER BY REPORT_TIME");
+		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 		
 		try {
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, flightID);
-			_ps.setInt(2, FlightPhase.PUSHBACK.getPhase());
-			_ps.setInt(3, FlightPhase.ATGATE.getPhase());
 			
 			// Execute the query
-			boolean isRefuel = false;
-			int fuelWeight = Integer.MAX_VALUE - 2000;
+			FuelUse use = new FuelUse(); int lastFuel = 0;
 			ResultSet rs = _ps.executeQuery();
-			while (!isRefuel && rs.next()) {
-				int fuelRemaining = rs.getInt(1);
-				if (fuelRemaining > (fuelWeight + 1250))
-					isRefuel = true;
-				else if (fuelWeight > fuelRemaining)
-					fuelWeight = fuelRemaining;
+			while (rs.next()) {
+				int fuel = rs.getInt(1);
+				if (lastFuel != 0) {
+					int fuelDelta = (lastFuel - fuel); 
+					if (fuelDelta < -FuelUse.MAX_DELTA) {
+						boolean isAirborne = ((rs.getInt(2) & ACARSFlags.FLAG_ONGROUND) != 0);
+						if (!isAirborne)
+							use.setRefuel(true);
+					} else if (fuelDelta > 0)
+						use.addFuelUse(fuel - lastFuel);
+				}
+				
+				lastFuel = fuel;
 			}
 			
 			// Clean up and return
 			rs.close();
 			_ps.close();
-			return isRefuel;
+			return use;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
