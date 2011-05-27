@@ -157,12 +157,13 @@
 <c:if test="${pirep.gateFuel > 0}">
 <tr>
  <td class="label">Arrival Information</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" />
- lbs fuel</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" /> lbs fuel</td>
 </tr>
 </c:if>
-<c:set var="airborneTime" value="${fn:delta(pirep.takeoffTime, pirep.landingTime) / 60}" scope="page" />
-<c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="page" />
+<tr>
+ <td class="label">Total Fuel Used</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.totalFuel}" /> lbs</td>
+</tr>
 <tr>
  <td class="label">Flight Time</td>
  <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, total time
