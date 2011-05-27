@@ -5,8 +5,9 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty courses}">
 <c:if test="${showCourseToggle}">
-<c:set var="toggleLabel" value="${courseCollapse ? 'EXPAND' : 'COLLAPSE'}" scope="page" />
-</c:if>
+<c:set var="toggleLabel" value="${courseCollapse ? 'EXPAND' : 'COLLAPSE'}" scope="page" /></c:if>
+<content:attr attr="linkCourse" value="true" roles="HR,Instructor,AcademyAdmin,AcademyAudit" />
+<content:authUser var="user" />
 
 <!-- Pilot Flight Academy History -->
 <tr class="title caps">
@@ -26,8 +27,15 @@
 <!-- Pilot Flight Academy Data -->
 <c:forEach var="course" items="${courses}">
 <c:set var="ins" value="${authors[course.instructorID]}" scope="page" />
+<c:if test="${!linkCourse}">
+<c:set var="myCourse" value="${user.ID ==  course.pilotID}" scope="page" /></c:if>
 <tr class="mid faCourse"<c:if test="${courseCollapse}"> style="display:none;"</c:if>>
+<c:if test="${linkCourse || myCourse}">
  <td colspan="2" class="pri bld"><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
+</c:if>
+<c:if test="${!linkCourse && !myCourse}">
+ <td colspan="2" class="pri bld">${course.name}</td>
+</c:if>
 <c:choose>
 <c:when test="${fn:isCourseActive(course) && (empty ins)}">
  <td class="sec bld">Self-Directed</td>
