@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 2.5
  */
 
@@ -43,8 +43,7 @@ public class GetIPLocation extends DAO implements CachingDAO {
 			return null;
 		
 		// Check the cache
-		long rawAddr = NetworkUtils.pack(addr) & 0xFFFFFF00;
-		IPAddressInfo result = _cache.get(NetworkUtils.format(NetworkUtils.convertIP(rawAddr)));
+		IPAddressInfo result = _cache.get(addr);
 		if (result != null)
 			return result;
 		
