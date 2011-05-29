@@ -13,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -353,7 +353,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @see RouteEntry#setAltitude(int)
 	 */
 	public void setRadarAltitude(int alt) {
-		_radarAlt = (alt < 0) ? 0 : alt;
+		_radarAlt = Math.max(0, alt);
 	}
 
 	/**
@@ -509,7 +509,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @see RouteEntry#getSimRate()
 	 */
 	public void setSimRate(int rate) {
-		_simRate = (rate < 0) ? 1 : rate;
+		_simRate = Math.max(1, rate);
 	}
 	
 	/**
@@ -544,10 +544,7 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 * @see RouteEntry#getFlaps()
 	 */
 	public void setFlaps(int flapDetent) {
-		if ((flapDetent < 0) || (flapDetent > 100))
-			throw new IllegalArgumentException("Invalid flap detent - " + flapDetent);
-
-		_flaps = flapDetent;
+		_flaps = Math.max(0, Math.min(100, flapDetent));
 	}
 
 	/**
