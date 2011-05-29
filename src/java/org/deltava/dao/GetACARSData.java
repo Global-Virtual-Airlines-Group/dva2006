@@ -222,7 +222,7 @@ public class GetACARSData extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT FUEL, FLAGS FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
-		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -240,7 +240,7 @@ public class GetACARSData extends DAO {
 						if (!isAirborne)
 							use.setRefuel(true);
 					} else if (fuelDelta > 0)
-						use.addFuelUse(fuel - lastFuel);
+						use.addFuelUse(fuelDelta);
 				}
 				
 				lastFuel = fuel;
