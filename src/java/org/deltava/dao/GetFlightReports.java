@@ -552,19 +552,19 @@ public class GetFlightReports extends DAO {
 	 * Helper method to load PIREP data.
 	 */
 	protected List<FlightReport> execute() throws SQLException {
-		List<FlightReport> results = new ArrayList<FlightReport>();
-
+		
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() > 62);
-		boolean hasComments = (md.getColumnCount() > 21);
-		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 23));
+		boolean hasACARS = (md.getColumnCount() > 64);
+		boolean hasComments = (md.getColumnCount() > 23);
+		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
 
 		// Iterate throught the results
+		List<FlightReport> results = new ArrayList<FlightReport>();
 		while (rs.next()) {
 			int status = rs.getInt(4);
-			boolean isACARS = (hasACARS && (rs.getInt(24) != 0));
+			boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
 			boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
 			// Build the PIREP as a standard one, or an ACARS pirep
@@ -596,18 +596,20 @@ public class GetFlightReports extends DAO {
 			p.setDisposedOn(rs.getTimestamp(18));
 			p.setDatabaseID(DatabaseID.EVENT, rs.getInt(19));
 			p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(20));
+			p.setPassengers(rs.getInt(21));
+			p.setLoadFactor(rs.getDouble(22));
 			if (hasComments) {
-				p.setComments(rs.getString(21));
-				p.setRemarks(rs.getString(22));
+				p.setComments(rs.getString(23));
+				p.setRemarks(rs.getString(24));
 			}
 			
 			// Load scheduled times
 			if (isDraft) {
 				DraftFlightReport dp = (DraftFlightReport) p;
-				Timestamp dts = rs.getTimestamp(23);
+				Timestamp dts = rs.getTimestamp(25);
 				if (dts != null) {
-					dp.setTimeD(rs.getTimestamp(23));
-					dp.setTimeA(rs.getTimestamp(24));
+					dp.setTimeD(dts);
+					dp.setTimeA(rs.getTimestamp(26));
 				}
 			}
 
@@ -615,42 +617,42 @@ public class GetFlightReports extends DAO {
 			if (isACARS) {
 				ACARSFlightReport ap = (ACARSFlightReport) p;
 				ap.setAttribute(FlightReport.ATTR_ACARS, true);
-				ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(24));
-				ap.setStartTime(rs.getTimestamp(25));
-				ap.setTaxiTime(rs.getTimestamp(26));
-				ap.setTaxiWeight(rs.getInt(27));
-				ap.setTaxiFuel(rs.getInt(28));
-				ap.setTakeoffTime(rs.getTimestamp(29));
-				ap.setTakeoffDistance(rs.getInt(30));
-				ap.setTakeoffSpeed(rs.getInt(31));
-				ap.setTakeoffN1(rs.getDouble(32));
-				ap.setTakeoffHeading(rs.getInt(33));
-				ap.setTakeoffLocation(new GeoPosition(rs.getDouble(34), rs.getDouble(35), rs.getInt(36)));
-				ap.setTakeoffWeight(rs.getInt(37));
-				ap.setTakeoffFuel(rs.getInt(38));
-				ap.setLandingTime(rs.getTimestamp(39));
-				ap.setLandingDistance(rs.getInt(40));
-				ap.setLandingSpeed(rs.getInt(41));
-				ap.setLandingVSpeed(rs.getInt(42));
-				ap.setLandingG(rs.getDouble(43));
-				ap.setLandingN1(rs.getDouble(44));
-				ap.setLandingHeading(rs.getInt(45));
-				ap.setLandingLocation(new GeoPosition(rs.getDouble(46), rs.getDouble(47), rs.getInt(48)));
-				ap.setLandingWeight(rs.getInt(49));
-				ap.setLandingFuel(rs.getInt(50));
-				ap.setEndTime(rs.getTimestamp(51));
-				ap.setGateWeight(rs.getInt(52));
-				ap.setGateFuel(rs.getInt(53));
-				ap.setTotalFuel(rs.getInt(54));
-				ap.setTime(0, rs.getInt(55));
-				ap.setTime(1, rs.getInt(56));
-				ap.setTime(2, rs.getInt(57));
-				ap.setTime(4, rs.getInt(58));
-				ap.setFDE(rs.getString(59));
-				ap.setAircraftCode(rs.getString(60));
-				ap.setHasReload(rs.getBoolean(61));
-				ap.setClientBuild(rs.getInt(62));
-				ap.setBeta(rs.getInt(63));
+				ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(26));
+				ap.setStartTime(rs.getTimestamp(27));
+				ap.setTaxiTime(rs.getTimestamp(28));
+				ap.setTaxiWeight(rs.getInt(29));
+				ap.setTaxiFuel(rs.getInt(30));
+				ap.setTakeoffTime(rs.getTimestamp(31));
+				ap.setTakeoffDistance(rs.getInt(32));
+				ap.setTakeoffSpeed(rs.getInt(33));
+				ap.setTakeoffN1(rs.getDouble(34));
+				ap.setTakeoffHeading(rs.getInt(35));
+				ap.setTakeoffLocation(new GeoPosition(rs.getDouble(36), rs.getDouble(37), rs.getInt(38)));
+				ap.setTakeoffWeight(rs.getInt(39));
+				ap.setTakeoffFuel(rs.getInt(40));
+				ap.setLandingTime(rs.getTimestamp(41));
+				ap.setLandingDistance(rs.getInt(42));
+				ap.setLandingSpeed(rs.getInt(43));
+				ap.setLandingVSpeed(rs.getInt(44));
+				ap.setLandingG(rs.getDouble(45));
+				ap.setLandingN1(rs.getDouble(46));
+				ap.setLandingHeading(rs.getInt(47));
+				ap.setLandingLocation(new GeoPosition(rs.getDouble(48), rs.getDouble(49), rs.getInt(50)));
+				ap.setLandingWeight(rs.getInt(51));
+				ap.setLandingFuel(rs.getInt(52));
+				ap.setEndTime(rs.getTimestamp(53));
+				ap.setGateWeight(rs.getInt(54));
+				ap.setGateFuel(rs.getInt(55));
+				ap.setTotalFuel(rs.getInt(56));
+				ap.setTime(0, rs.getInt(57));
+				ap.setTime(1, rs.getInt(58));
+				ap.setTime(2, rs.getInt(59));
+				ap.setTime(4, rs.getInt(60));
+				ap.setFDE(rs.getString(61));
+				ap.setAircraftCode(rs.getString(62));
+				ap.setHasReload(rs.getBoolean(63));
+				ap.setClientBuild(rs.getInt(64));
+				ap.setBeta(rs.getInt(65));
 			}
 
 			// Add the flight report to the results

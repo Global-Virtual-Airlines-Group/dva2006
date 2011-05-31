@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.event.Event;
@@ -22,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -145,6 +146,15 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (pirep.getDistance() > a.getRange()) {
 				pirep.setAttribute(FlightReport.ATTR_RANGEWARN, true);
 				ctx.setAttribute("rangeWarning", Boolean.TRUE, REQUEST);
+			}
+			
+			// Calculate the load factor
+			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
+			if (eInfo != null) {
+				LoadFactor lf = new LoadFactor(eInfo);
+				double loadFactor = lf.generate(pirep.getSubmittedOn());
+				pirep.setPassengers((int) Math.round(a.getSeats() * loadFactor));
+				pirep.setLoadFactor(loadFactor);
 			}
 
 			// Check the schedule database and check the route pair

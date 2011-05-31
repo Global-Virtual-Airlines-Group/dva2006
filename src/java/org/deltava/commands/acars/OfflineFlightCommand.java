@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.econ.*;
 import org.deltava.beans.event.Event;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
@@ -287,6 +288,15 @@ public class OfflineFlightCommand extends AbstractCommand {
 					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 				else if ((a.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
 					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+			}
+			
+			// Calculate the load factor
+			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
+			if (eInfo != null) {
+				LoadFactor lf = new LoadFactor(eInfo);
+				double loadFactor = lf.generate(afr.getSubmittedOn());
+				afr.setPassengers((int) Math.round(a.getSeats() * loadFactor));
+				afr.setLoadFactor(loadFactor);
 			}
 			
 			// Check if it's a Flight Academy flight

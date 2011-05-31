@@ -26,10 +26,11 @@
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="20%">AIRCRAFT NAME</td>
+ <td width="15%">AIRCRAFT NAME</td>
  <td width="20%">IATA CODE</td>
  <td width="5%">&nbsp;</td>
  <td width="5%">WEIGHT</td>
+ <td width="10%">SEATS</td>
  <td width="25%">WEB APPLICATIONS</td>
  <td><el:cmdbutton url="aircraft" op="edit" label="NEW AIRCRAFT" /></td>
 </tr>
@@ -46,13 +47,14 @@
 <c:if test="${aircraft.maxWeight == 0}">
  <td class="small">N / A</td>
 </c:if>
+ <td><fmt:int value="${aircraft.seats}" /></td>
  <td colspan="2" class="sec"><fmt:list value="${aircraft.apps}" delim=", " /></td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="100" labels="Historic,Current" classes="opt1, " /></td>
+ <td colspan="7"><view:legend width="100" labels="Historic,Current" classes="opt1, " /></td>
 </tr>
 </view:table>
 <content:copyright />

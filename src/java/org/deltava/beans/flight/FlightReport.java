@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -139,6 +139,8 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	private int _status = FlightReport.DRAFT;
 	private int _fsVersion;
 	private int _attr;
+	private int _pax;
+	private double _load;
 	private String _remarks;
 	private String _comments; // made on disposition
 	private Rank _rank; // at time of flight
@@ -344,6 +346,24 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 			return OnlineNetwork.FPI;
 		
 		return null;
+	}
+	
+	/**
+	 * Returns the number of passengers carried on this flight.
+	 * @return the number of passengers
+	 * @see FlightReport#setPassengers(int)
+	 */
+	public int getPassengers() {
+		return _pax;
+	}
+	
+	/**
+	 * Returns the load factor for this flight.
+	 * @return the load factor from 0 to 1
+	 * @see FlightReport#setLoadFactor(double)
+	 */
+	public double getLoadFactor() {
+		return _load;
 	}
 
 	/**
@@ -566,6 +586,24 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 */
 	public void setDisposedOn(Date dd) {
 		_disposedOn = dd;
+	}
+	
+	/**
+	 * Updates the number of passengers carried on this flight.
+	 * @param ps the number of passengers
+	 * @see FlightReport#getPassengers()
+	 */
+	public void setPassengers(int ps) {
+		_pax = Math.max(0, ps);
+	}
+	
+	/**
+	 * Updates the load factor for this flight.
+	 * @param lf the load factor
+	 * @see FlightReport#getLoadFactor()
+	 */
+	public void setLoadFactor(double lf) {
+		_load = Math.max(0, Math.min(100, lf));
 	}
 
 	/**
