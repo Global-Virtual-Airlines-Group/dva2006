@@ -14,7 +14,7 @@ import org.deltava.util.cache.Cacheable;
  * secondary and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank
  * types.
  * @author Luke
- * @version 3.7
+ * @version 4.0
  * @since 1.0
  */
 
@@ -29,29 +29,6 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 		private final String _desc;
 		
 		TankType(String desc) {
-			_desc = desc;
-		}
-		
-		public String getDescription() {
-			return _desc;
-		}
-		
-		public String toString() {
-			return _desc;
-		}
-	}
-	
-	/**
-	 * Enumeration for MSFS fuel tanks.
-	 */
-	public enum Tank {
-		CTR1("Center"), LMAIN("Left Main"), LAUX("Left Aux"), LTIP("Left Tip"), RMAIN("Right Main"),
-		RAUX("Right Aux"), RTIP("Right Tip"), CTR2("Center 2"), CTR3("Center 3"), EXT1("External 1"),
-		EXT2("External 2");
-		
-		private final String _desc;
-		
-		Tank(String desc) {
 			_desc = desc;
 		}
 		
@@ -278,9 +255,9 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 		Map<String, Collection<String>> results = new LinkedHashMap<String, Collection<String>>();
 		for (TankType tt : TankType.values()) {
 			Collection<String> names = new LinkedHashSet<String>();
-			for (Tank t : Tank.values()) {
+			for (FuelTank t : FuelTank.values()) {
 				if ((_tankCodes[tt.ordinal()] & (1 << t.ordinal())) > 0)
-					names.add(t.getDescription());
+					names.add(t.getName());
 			}
 			
 			results.put(tt.getDescription(), names);
@@ -552,8 +529,8 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 			return;
 		
 		// Update the tanks
-		for (Tank t : Tank.values()) {
-			if (tankNames.contains(t.getDescription()))
+		for (FuelTank t : FuelTank.values()) {
+			if (tankNames.contains(t.getName()))
 				_tankCodes[tt.ordinal()] |= (1 << t.ordinal());
 		}
 	}
