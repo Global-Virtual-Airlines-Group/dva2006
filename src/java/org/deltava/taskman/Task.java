@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -237,6 +238,15 @@ public abstract class Task implements Runnable, Comparable<Task> {
      * {@link Task#execute(TaskContext)} method.
      */
     public void run() {
+    	run(null);
+    }
+    
+    /**
+     * Executes the Task. This logs execution start/stop times and calls each Task implementation's
+     * {@link Task#execute(TaskContext)} method.
+     * @param usr overrides the user executing the Task if not null
+     */
+    public void run(Pilot usr) {
     	setStartTime(new Date());
     	_runCount++;
     	log.info(_name + " starting ");
@@ -248,7 +258,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
 			// Load the author and last run
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			GetSystemData sddao = new GetSystemData(con);
-			ctxt.setUser(pdao.getByCode(SystemData.get("users.tasks_by")));
+			ctxt.setUser((usr == null) ? pdao.getByCode(SystemData.get("users.tasks_by")) : usr);
 			ctxt.setLastRun(sddao.getLastRun(_id));
 			
 	    	// Log task starting
