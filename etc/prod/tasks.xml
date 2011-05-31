@@ -97,7 +97,7 @@
 	</task>
 
 	<!-- Update FlightAware routes -->
-	<task id="updroutecache" enabled="false">
+	<task id="updroutecache" enabled="true">
 		<class>org.deltava.tasks.CachedRouteUpdateTask</class>	
 		<time>
 			<min>30</min>		
