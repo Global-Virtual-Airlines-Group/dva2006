@@ -16,7 +16,7 @@ import org.deltava.beans.Pilot;
 public class PopulatedChannel implements java.io.Serializable {
 	
 	private Channel _c;
-	private final Collection<Pilot> _users = new LinkedHashSet<Pilot>();
+	private final Map<Long, Pilot> _users = new LinkedHashMap<Long, Pilot>();
 
 	/**
 	 * Initializes the bean.
@@ -36,19 +36,37 @@ public class PopulatedChannel implements java.io.Serializable {
 	}
 
 	/**
+	 * Returns all of the connections in this voice channel.
+	 * @return a Collection of Connection IDs
+	 */
+	public Collection<Long> getConnectionIDs() {
+		return new ArrayList<Long>(_users.keySet());
+	}
+	
+	/**
 	 * Returns the users in this voice channel.
 	 * @return a Collection of Pilot beans
 	 */
 	public Collection<Pilot> getUsers() {
-		return _users;
+		return _users.values();
 	}
 
 	/**
 	 * Adds a user to the channel.
+	 * @param conID the user's connection ID
 	 * @param usr the Pilot to add
 	 */
-	public void add(Pilot usr) {
-		_users.add(usr);
+	public void add(long conID, Pilot usr) {
+		_users.put(new Long(conID), usr);
+	}
+	
+	/**
+	 * Returns whether a User is in a particular channel.
+	 * @param conID the connection ID to check
+	 * @return TRUE if the connection is in the channel, otherwise FALSE
+	 */
+	public boolean contains(long conID) {
+		return _users.containsKey(new Long(conID));
 	}
 	
 	/**
@@ -57,16 +75,16 @@ public class PopulatedChannel implements java.io.Serializable {
 	 * @return TRUE if the Pilot is in the channel, otherwise FALSE
 	 */
 	public boolean contains(Pilot usr) {
-		return _users.contains(usr);
+		return _users.containsValue(usr);
 	}
 
 	/**
 	 * Removes a user from the channel.
-	 * @param usr the Pilot to remove
+	 * @param conID the connection ID of the user
 	 * @returnn TRUE if the user was removed, otherwise FALSE
 	 */
-	public boolean remove(Pilot usr) {
-		return _users.remove(usr);
+	public boolean remove(long conID) {
+		return (_users.remove(new Long(conID)) != null);
 	}
 	
 	/**
