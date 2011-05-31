@@ -57,11 +57,15 @@ public class TransferProcessCommand extends AbstractCommand {
 			GetExam exdao = new GetExam(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			Map<Integer, CheckRide> rides = new HashMap<Integer, CheckRide>();
+			Map<Integer, Pilot> graders = new HashMap<Integer, Pilot>();
 			Map<Integer, FlightReport> pireps = new HashMap<Integer, FlightReport>();
 			for (Integer crID : txreq.getCheckRideIDs()) {
 				CheckRide cr = exdao.getCheckRide(crID.intValue());
 				if (cr != null) {
 					rides.put(crID, cr);
+					Pilot scorer = pdao.get(uddao.get(cr.getScorerID()));
+					if (scorer != null)
+						graders.put(Integer.valueOf(cr.getScorerID()), scorer);
 					if (cr.getFlightID() != 0)
 						pireps.put(Integer.valueOf(cr.getFlightID()), frdao.getACARS(ud.getDB(), cr.getFlightID()));
 				}
@@ -119,6 +123,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			ctx.setAttribute("txReq", txreq, REQUEST);
 			ctx.setAttribute("checkRides", rides, REQUEST);
 			ctx.setAttribute("pireps", pireps, REQUEST);
+			ctx.setAttribute("scorers", graders, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

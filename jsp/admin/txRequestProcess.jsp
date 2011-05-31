@@ -38,10 +38,10 @@ disableButton('DeleteButton');
 return true;
 }
 
-function toggleBody(id)
+function toggleBody(id, type)
 {
-var row = document.getElementById('desc' + id);
-var linkDesc = document.getElementById('toggle' + id);
+var row = document.getElementById('body' + type + id);
+var linkDesc = document.getElementById('toggle' + type + id);
 var visible = (row.style.display != 'none');
 displayObject(row, !visible);
 linkDesc.innerHTML = visible ? 'View' : 'Hide';
@@ -91,16 +91,20 @@ return true;
 <c:set var="checkRide" value="${checkRides[rideID]}" scope="page" />
 <c:set var="pirep" value="${pireps[checkRide.flightID]}" scope="page" />
 <c:set var="rideCount" value="${rideCount + 1}" scope="page" />
+<c:set var="hasComments" value="${(!empty pirep) && (!empty pirep.comments)}" scope="page" />
+<c:set var="scorer" value="${scorers[checkRide.scorerID]}" scope="page" />
 <tr>
  <td class="label top">Check Ride #<fmt:int value="${rideCount}" /></td>
  <td class="data">Assigned on <fmt:date fmt="d" date="${checkRide.date}" /> in ${checkRide.equipmentType}
- <a href="javascript:void toggleBody(${rideCount})">Click to <span id="toggle${rideCount}">View</span> Comments</a><br />
+ <a href="javascript:void toggleBody(${rideCount}, 'D')"><span id="toggleD${rideCount}">View</span> Description</a>
+<c:if test="${hasComments}">
+ <a href="javascript:void toggleBody(${rideCount}, 'C')"><span id="toggleC${rideCount}">View</span> Comments</a></c:if><br />
 <c:choose>
 <c:when test="${fn:passed(checkRide)}">
- <span class="ter bld caps">CHECK RIDE PASSED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></span>
+ <span class="ter bld caps">CHECK RIDE PASSED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</span>
 </c:when>
 <c:when test="${fn:failed(checkRide)}">
- <span class="error bld caps">CHECK RIDE FAILED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></span>
+ <span class="error bld caps">CHECK RIDE FAILED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</span>
 </c:when>
 <c:when test="${fn:submitted(checkRide)}">
  <span class="bld pri caps">CHECK RIDE SUBMITTED ON <fmt:date fmt="d" date="${checkRide.submittedOn}" /></span>
@@ -113,10 +117,16 @@ return true;
  <td class="data">ACARS Flight <fmt:int value="${checkRide.flightID}" /> - <el:cmd url="crview" link="${checkRide}" className="pri bld">VIEW FLIGHT REPORT</el:cmd></td>
 </tr>
 </c:if>
-<tr id="desc${rideCount}" style="display:none;">
- <td class="label top">Check Ride #<fmt:int value="${rideCount}" /> Comment</td>
+<tr id="bodyD${rideCount}" style="display:none;">
+ <td class="label top">Check Ride #<fmt:int value="${rideCount}" /> Description</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
+<c:if test="${hasComments}">
+<tr id="bodyC${rideCount}" style="display:none;">
+ <td class="label top">Check Ride #<fmt:int value="${rideCount}" /> Comments</td>
+ <td class="data"><fmt:text value="${pirep.comments}" /></td>
+</tr>
+</c:if>
 </c:forEach>
 </c:if>
 
