@@ -9,13 +9,15 @@ import org.apache.log4j.*;
 import org.deltava.beans.acars.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.system.SystemData;
+
 import junit.framework.TestCase;
 
 public class FuelBurnLoader extends TestCase {
 	
 	private static Logger log;
 
-	private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/dva";
+	private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/dva";
 	
 	private Connection _c;
 
@@ -24,7 +26,11 @@ public class FuelBurnLoader extends TestCase {
 		
 		// Init Log4j
 		PropertyConfigurator.configure("etc/log4j.properties");
-		log = Logger.getLogger(RunwayLoader.class);
+		log = Logger.getLogger(FuelBurnLoader.class);
+		
+		// Init SystemData
+		SystemData.init();
+		SystemData.add("airline.code", "DVA");
 		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
@@ -32,6 +38,14 @@ public class FuelBurnLoader extends TestCase {
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());
+		
+		// Load the airports/time zones
+		GetTimeZone tzdao = new GetTimeZone(_c);
+		tzdao.initAll();
+		GetCountry cdao = new GetCountry(_c);
+		cdao.initAll();
+		GetAirport apdao = new GetAirport(_c);
+		SystemData.add("airports", apdao.getAll());
 	}
 
 	protected void tearDown() throws Exception {
@@ -44,7 +58,7 @@ public class FuelBurnLoader extends TestCase {
 		
 		// Load ACARS flight IDs
 		Collection<Integer> IDs = new LinkedHashSet<Integer>();
-		PreparedStatement ps = _c.prepareStatement("SELECT ACARS_ID FROM ACARS_PIREPS");
+		PreparedStatement ps = _c.prepareStatement("SELECT ACARS_ID FROM ACARS_PIREPS WHERE (ACARS_ID<>0) AND (TOTAL_FUEL=0)");
 		ps.setFetchSize(1000);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
@@ -75,18 +89,19 @@ public class FuelBurnLoader extends TestCase {
 			FuelUse use = FuelUse.validate(entries);
 			
 			// Update the data
-			if (use.getTotalFuel() > 0) {
-				ps.setInt(1, use.getTotalFuel());
-				ps.setInt(2, id);
-				ps.executeUpdate();
-			}
+			ps.setInt(1, Math.max(1, use.getTotalFuel()));
+			ps.setInt(2, id);
+			ps.executeUpdate();
 			
-			if ((totalFlights % 250) == 0)
+			if ((totalFlights % 250) == 0) {
 				log.info(totalFlights + " flights updated");
+				_c.commit();
+			}
 		}
 		
 		// Commit
 		ps.close();
-		//_c.commit();
+		_c.commit();
+		log.info(totalFlights + " flights updated");
 	}
 }
