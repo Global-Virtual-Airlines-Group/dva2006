@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 3.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -94,7 +94,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		Map<String, ConnectionPool> pools = new HashMap<String, ConnectionPool>();
 		for (Iterator<String> i = appNames.iterator(); i.hasNext(); ) {
 			String appName = i.next();
-			Serializable rawPool = (Serializable) SharedData.get(SharedData.JDBC_POOL + appName);
+			Serializable rawPool = SharedData.get(SharedData.JDBC_POOL + appName);
 			ConnectionPool jdbcPool = (ConnectionPool) IPCUtils.reserialize(rawPool);
 			pools.put(appName, jdbcPool);
 		}
