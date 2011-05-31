@@ -50,7 +50,7 @@ public class Channel extends DatabaseBean {
 	 * @return the range in miles
 	 */
 	public int getRange() {
-		return _range;
+		return (_center != null) ? _range : 0;
 	}
 	
 	/**
@@ -109,8 +109,16 @@ public class Channel extends DatabaseBean {
 		_viewRoles.add(role);
 	}
 	
+	public void addViewRoles(Collection<String> roles) {
+		_viewRoles.addAll(roles);
+	}
+	
 	public void addTalkRole(String role) {
 		_talkRoles.add(role);
+	}
+	
+	public void addTalkRoles(Collection<String> roles) {
+		_talkRoles.addAll(roles);
 	}
 	
 	public void addAdminRole(String role) {
