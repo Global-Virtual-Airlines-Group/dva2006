@@ -36,7 +36,7 @@ public class GetMVSChannel extends DAO {
 	 */
 	public Channel get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM CHANNELS WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM mvs.CHANNELS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			List<Channel> results = execute();
 			if (results.isEmpty())
@@ -58,7 +58,7 @@ public class GetMVSChannel extends DAO {
 	 */
 	public Channel get(String name) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM CHANNELS WHERE (NAME=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM mvs.CHANNELS WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
 			List<Channel> results = execute();
 			if (results.isEmpty())
@@ -79,7 +79,7 @@ public class GetMVSChannel extends DAO {
 	 */
 	public Collection<Channel> getAll() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM CHANNELS ORDER BY NAME");
+			prepareStatementWithoutLimits("SELECT * FROM mvs.CHANNELS ORDER BY NAME");
 			List<Channel> results = execute();
 			for (Channel c : results)
 				loadRoles(c);
@@ -119,7 +119,7 @@ public class GetMVSChannel extends DAO {
 	 * Helper method to load channel access roles.
 	 */
 	private void loadRoles(Channel c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ROLE, TYPE FROM CHANNEL_ROLES WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT ROLE, TYPE FROM mvs.CHANNEL_ROLES WHERE (ID=?)");
 		_ps.setInt(1, c.getID());
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
