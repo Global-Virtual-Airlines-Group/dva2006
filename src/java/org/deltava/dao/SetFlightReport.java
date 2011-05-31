@@ -101,8 +101,8 @@ public class SetFlightReport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS (PILOT_ID, RANK, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, "
-				+ "FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, SUBMITTED, EVENT_ID, ASSIGN_ID) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, SUBMITTED, EVENT_ID, ASSIGN_ID, PAX, LOADFACTOR) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
@@ -123,6 +123,8 @@ public class SetFlightReport extends DAO {
 		_ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
 		_ps.setInt(16, fr.getDatabaseID(DatabaseID.EVENT));
 		_ps.setInt(17, fr.getDatabaseID(DatabaseID.ASSIGN));
+		_ps.setInt(18, fr.getPassengers());
+		_ps.setDouble(19, fr.getLoadFactor());
 	}
 
 	/**
@@ -135,7 +137,7 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, "
 				+ "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, DISPOSAL_ID=?, SUBMITTED=?, "
-				+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=? WHERE (ID=?)");
+				+ "DISPOSED=?, ASSIGN_ID=?, EVENT_ID=?, PAX=?, LOADFACTOR=? WHERE (ID=?)");
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
@@ -156,7 +158,9 @@ public class SetFlightReport extends DAO {
 		_ps.setTimestamp(15, createTimestamp(fr.getDisposedOn()));
 		_ps.setInt(16, fr.getDatabaseID(DatabaseID.ASSIGN));
 		_ps.setInt(17, fr.getDatabaseID(DatabaseID.EVENT));
-		_ps.setInt(18, fr.getID());
+		_ps.setInt(18, fr.getPassengers());
+		_ps.setDouble(19, fr.getLoadFactor());
+		_ps.setInt(20, fr.getID());
 	}
 
 	/**

@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 3.3
+ * @version 3.7
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public final class SystemData implements Serializable {
 	public static final String AUTHENTICATOR = "security.auth.obj";
 	public static final String JDBC_POOL = "jdbc.pool";
 	public static final String TASK_POOL = "tasks.pool";
+	public static final String ECON_DATA = "econ.info";
 
 	public static final String CFG_NAME = "$CONFIGNAME$";
 	public static final String LOADER_NAME = "$LOADERCLASS$";

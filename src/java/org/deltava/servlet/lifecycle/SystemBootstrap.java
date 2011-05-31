@@ -8,6 +8,10 @@ import javax.servlet.*;
 
 import org.apache.log4j.*;
 
+import org.deltava.beans.econ.EconomyInfo;
+import org.deltava.beans.fb.FacebookCredentials;
+import org.deltava.beans.stats.AirlineTotals;
+
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 
@@ -21,8 +25,7 @@ import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.common.*;
-import org.gvagroup.jdbc.ConnectionPool;
-import org.gvagroup.jdbc.ConnectionPoolException;
+import org.gvagroup.jdbc.*;
 
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
@@ -64,6 +67,9 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Initialize system data
 		SystemData.init();
 		SharedData.addApp(SystemData.get("airline.code"));
+		
+		// Set start date
+		AirlineTotals.BIRTHDATE.setTime(StringUtils.parseDate(SystemData.get("airline.birthdate"), "MM/dd/yyyy"));
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
@@ -178,6 +184,19 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			log.error("Error retrieving data - " + ex.getMessage(), ex);
 		} finally {
 			_jdbcPool.release(c);
+		}
+		
+		// Load economy data
+		if (!StringUtils.isEmpty(SystemData.get("econ.targetLoad"))) {
+			EconomyInfo econInfo = new EconomyInfo(SystemData.getDouble("econ.targetLoad", 0.8d), SystemData.getDouble("econ.targetAmplitude", 0.125));
+			econInfo.setMinimumLoad(SystemData.getDouble("econ.minimumLoad", 0.25));
+			econInfo.setStartDate(AirlineTotals.BIRTHDATE.getTime());
+			econInfo.setHourlyFactor(SystemData.getDouble("econ.hourlyFactor", 0.0));
+			econInfo.setYearlyCycleLength(SystemData.getInt("econ.yearlyCycleLength", 365));
+			econInfo.setHourlyCycleLength(SystemData.getInt("econ.hourlyCycleLength", 24));
+			SystemData.add(SystemData.ECON_DATA, econInfo);
+			SharedData.addData(SharedData.ECON_DATA + SystemData.get("airline.code"), econInfo);
+			log.info("Loaded Economic parameters");
 		}
 		
 		// Load facebook credentials

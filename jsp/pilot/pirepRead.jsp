@@ -236,6 +236,12 @@ return true;
  <span class="${onlinePctClass}">(<fmt:dec value="${onlinePct}" fmt="#00.0" />% of flight)</span></td>
 </tr>
 </c:if>
+<c:if test="${pirep.passengers > 0}">
+<tr>
+ <td class="label">Passengers Carried</td>
+ <td class="data"><fmt:int value="${pirep.passengers}" /> passengers (<fmt:dec value="${pirep.loadFactor * 100.0}" fmt="##0.00" />% full)</td>
+</tr>
+</c:if>
 <c:if test="${!isACARS && (!empty pirep.route)}">
 <tr>
  <td class="label">Flight Route</td>

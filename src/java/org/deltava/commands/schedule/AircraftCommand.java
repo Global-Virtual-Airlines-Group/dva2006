@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 2.6
+ * @version 3.7
  * @since 1.0
  */
 
@@ -57,17 +57,18 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
+			a.setSeats(StringUtils.parse(ctx.getParameter("seats"), 0));
 			a.setEngines((byte) StringUtils.parse(ctx.getParameter("engineCount"), 2));
 			a.setEngineType(ctx.getParameter("engineType"));
 			a.setCruiseSpeed(StringUtils.parse(ctx.getParameter("cruiseSpeed"), 0));
 			a.setFuelFlow(StringUtils.parse(ctx.getParameter("fuelFlow"), 0));
 			a.setBaseFuel(StringUtils.parse(ctx.getParameter("baseFuel"), 0));
 			a.setTaxiFuel(StringUtils.parse(ctx.getParameter("taxiFuel"), 0));
-			a.setTanks(Aircraft.PRIMARY, ctx.getParameters("pTanks"));
-			a.setPct(Aircraft.PRIMARY, StringUtils.parse(ctx.getParameter("pPct"), 100));
-			a.setTanks(Aircraft.SECONDARY, ctx.getParameters("sTanks"));
-			a.setPct(Aircraft.SECONDARY, StringUtils.parse(ctx.getParameter("sPct"), 0));
-			a.setTanks(Aircraft.OTHER, ctx.getParameters("oTanks"));
+			a.setTanks(Aircraft.TankType.PRIMARY, ctx.getParameters("pTanks"));
+			a.setPct(Aircraft.TankType.PRIMARY, StringUtils.parse(ctx.getParameter("pPct"), 100));
+			a.setTanks(Aircraft.TankType.SECONDARY, ctx.getParameters("sTanks"));
+			a.setPct(Aircraft.TankType.SECONDARY, StringUtils.parse(ctx.getParameter("sPct"), 0));
+			a.setTanks(Aircraft.TankType.OTHER, ctx.getParameters("oTanks"));
 			
 			// Update the web applications
 			a.clearApps();
@@ -133,9 +134,6 @@ public class AircraftCommand extends AbstractFormCommand {
 				ctx.release();
 			}
 		}
-		
-		// Save tank names
-		ctx.setAttribute("tankNames", ComboUtils.fromArray(Aircraft.TANK_NAMES), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -20,25 +20,49 @@ import org.deltava.util.cache.Cacheable;
 
 public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 
-	public static final int CENTER = 0;
-	public static final int LEFT_MAIN = 1;
-	public static final int LEFT_AUX = 2;
-	public static final int LEFT_TIP = 3;
-	public static final int RIGHT_MAIN = 4;
-	public static final int RIGHT_AUX = 5;
-	public static final int RIGHT_TIP = 6;
-	public static final int CENTER2 = 7;
-	public static final int CENTER3 = 8;
-	public static final int EXT1 = 9;
-	public static final int EXT2 = 10;
-
-	public static final String[] TANK_TYPES = { "Primary", "Secondary", "Other" };
-	public static final String[] TANK_NAMES = { "Center", "Left Main", "Left Aux", "Left Tip", "Right Main",
-			"Right Aux", "Right Tip", "Center 2", "Center 3", "External", "External 2" };
-
-	public static final int PRIMARY = 0;
-	public static final int SECONDARY = 1;
-	public static final int OTHER = 2;
+	/**
+	 * Enumeration for fuel tank types.
+	 */
+	public enum TankType {
+		PRIMARY("Primary"), SECONDARY("Secondary"), OTHER("Other");
+		
+		private final String _desc;
+		
+		TankType(String desc) {
+			_desc = desc;
+		}
+		
+		public String getDescription() {
+			return _desc;
+		}
+		
+		public String toString() {
+			return _desc;
+		}
+	}
+	
+	/**
+	 * Enumeration for MSFS fuel tanks.
+	 */
+	public enum Tank {
+		CTR1("Center"), LMAIN("Left Main"), LAUX("Left Aux"), LTIP("Left Tip"), RMAIN("Right Main"),
+		RAUX("Right Aux"), RTIP("Right Tip"), CTR2("Center 2"), CTR3("Center 3"), EXT1("External 1"),
+		EXT2("External 2");
+		
+		private final String _desc;
+		
+		Tank(String desc) {
+			_desc = desc;
+		}
+		
+		public String getDescription() {
+			return _desc;
+		}
+		
+		public String toString() {
+			return _desc;
+		}
+	}
 
 	private String _name;
 	private String _fullName;
@@ -56,6 +80,8 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	private int _maxWeight;
 	private int _maxTakeoffWeight;
 	private int _maxLandingWeight;
+	
+	private int _seats;
 
 	// Fuel Tank loading codes and percentages
 	private int[] _tankCodes = { 0, 0, 0 };
@@ -182,6 +208,15 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	public int getFuelFlow() {
 		return _fuelFlow;
 	}
+	
+	/**
+	 * Returns the number of seats on the aircraft.
+	 * @return the number of seats
+	 * @see Aircraft#setSeats(int)
+	 */
+	public int getSeats() {
+		return _seats;
+	}
 
 	/**
 	 * Returns all web applications using this aircraft type.
@@ -213,50 +248,42 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 
 	/**
 	 * Returns the fuel tank codes for a particular tank type.
-	 * @param tankType the fuel tank type
+	 * @param tt the TankType
 	 * @return the tank codes as a bitmap
 	 * @throws IllegalArgumentException if tankType is invalid
 	 * @see Aircraft#getTankNames()
-	 * @see Aircraft#setTanks(int, int)
+	 * @see Aircraft#setTanks(TankType, int)
 	 */
-	public int getTanks(int tankType) {
-		if ((tankType < 0) || (tankType > OTHER))
-			throw new IllegalArgumentException("Invalid tank type code - " + tankType);
-
-		return _tankCodes[tankType];
+	public int getTanks(TankType tt) {
+		return _tankCodes[tt.ordinal()];
 	}
 
 	/**
 	 * Returns the filling percentage for a particular tank type.
-	 * @param tankType the fuel tank type
+	 * @param tt the TankType
 	 * @return the percentage each tank should be filled
 	 * @throws IllegalArgumentException if tankType is invalid
-	 * @see Aircraft#setPct(int, int)
+	 * @see Aircraft#setPct(TankType, int)
 	 */
-	public int getPct(int tankType) {
-		if ((tankType < 0) || (tankType > OTHER))
-			throw new IllegalArgumentException("Invalid tank type code - " + tankType);
-
-		return _tankPct[tankType];
+	public int getPct(TankType tt) {
+		return _tankPct[tt.ordinal()];
 	}
 
 	/**
 	 * Returns the fuel tank names, for display in a JSP.
 	 * @return a Map of Collections of tank names, keyed by tank type
 	 * @see Aircraft#getTankPercent()
-	 * @see Aircraft#TANK_TYPES
-	 * @see Aircraft#TANK_NAMES
 	 */
 	public Map<String, Collection<String>> getTankNames() {
 		Map<String, Collection<String>> results = new LinkedHashMap<String, Collection<String>>();
-		for (int tankType = PRIMARY; tankType <= OTHER; tankType++) {
+		for (TankType tt : TankType.values()) {
 			Collection<String> names = new LinkedHashSet<String>();
-			for (int x = 0; x < TANK_NAMES.length; x++) {
-				if ((_tankCodes[tankType] & (1 << x)) > 0)
-					names.add(TANK_NAMES[x]);
+			for (Tank t : Tank.values()) {
+				if ((_tankCodes[tt.ordinal()] & (1 << t.ordinal())) > 0)
+					names.add(t.getDescription());
 			}
 			
-			results.put(TANK_TYPES[tankType], names);
+			results.put(tt.getDescription(), names);
 		}
 
 		return results;
@@ -266,13 +293,11 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 * Returns the fuel tank fill percentages, for display in a JSP.
 	 * @return a Map of tank percentages, keyed by tank type
 	 * @see Aircraft#getTankNames() 
-	 * @see Aircraft#TANK_TYPES
-	 * @see Aircraft#TANK_NAMES
 	 */
 	public Map<String, Integer> getTankPercent() {
 		Map<String, Integer> results = new LinkedHashMap<String, Integer>();
-		for (int tankType = PRIMARY; tankType < OTHER; tankType++)
-			results.put(TANK_TYPES[tankType], new Integer(_tankPct[tankType]));
+		for (TankType tt : TankType.values())
+			results.put(tt.getDescription(), Integer.valueOf(_tankPct[tt.ordinal()]));
 		
 		return results;
 	}
@@ -478,58 +503,58 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	public void setFuelFlow(int flow) {
 		_fuelFlow = Math.max(0, flow);
 	}
+	
+	/**
+	 * Updates the number of seats on the aircraft.
+	 * @param seats the number of seats
+	 * @see Aircraft#getSeats()
+	 */
+	public void setSeats(int seats) {
+		_seats = Math.max(0, seats);
+	}
 
 	/**
 	 * Updates the tank usage percentage for a particular fuel tank type.
-	 * @param tankType the tank type
+	 * @param tt the TankType
 	 * @param pct the percentage required to be filled before filling the next tank type
 	 * @throws IllegalArgumentException if tankType is invalid
-	 * @see Aircraft#getPct(int)
+	 * @see Aircraft#getPct(TankType)
 	 */
-	public void setPct(int tankType, int pct) {
-		if ((tankType < 0) || (tankType > OTHER))
-			throw new IllegalArgumentException("Invalid tank type code - " + tankType);
-
-		_tankPct[tankType] = Math.min(100, Math.max(0, pct));
+	public void setPct(TankType tt, int pct) {
+		_tankPct[tt.ordinal()] = Math.min(100, Math.max(0, pct));
 	}
 
 	/**
 	 * Updates the fuel tanks used in filling the aircraft.
-	 * @param tankType the tank type
+	 * @param tt the TankType
 	 * @param tankCodes the codes for the fuel tanks used in this order
 	 * @throws IllegalArgumentException if tankType is invalid
-	 * @see Aircraft#setTanks(int, Collection)
-	 * @see Aircraft#getTanks(int)
+	 * @see Aircraft#setTanks(TankType, Collection)
+	 * @see Aircraft#getTanks(TankType)
 	 * @see Aircraft#getTankNames()
 	 */
-	public void setTanks(int tankType, int tankCodes) {
-		if ((tankType < 0) || (tankType > OTHER))
-			throw new IllegalArgumentException("Invalid tank type code - " + tankType);
-
-		_tankCodes[tankType] = tankCodes;
+	public void setTanks(TankType tt, int tankCodes) {
+		_tankCodes[tt.ordinal()] = tankCodes;
 	}
 
 	/**
 	 * Updates the fuel tanks used in filling the aircraft.
-	 * @param tankType the tank type
+	 * @param tt the TankType
 	 * @param tankNames a Collection of tank names
 	 * @throws IllegalArgumentException if tankType is invalid
-	 * @see Aircraft#setTanks(int, int)
-	 * @see Aircraft#getTanks(int)
+	 * @see Aircraft#setTanks(TankType, int)
+	 * @see Aircraft#getTanks(TankType)
 	 * @see Aircraft#getTankNames()
 	 */
-	public void setTanks(int tankType, Collection<String> tankNames) {
-		if ((tankType < 0) || (tankType > OTHER))
-			throw new IllegalArgumentException("Invalid tank type code - " + tankType);
-		else if (CollectionUtils.isEmpty(tankNames))
+	public void setTanks(TankType tt, Collection<String> tankNames) {
+		_tankCodes[tt.ordinal()] = 0;
+		if (CollectionUtils.isEmpty(tankNames))
 			return;
 		
 		// Update the tanks
-		_tankCodes[tankType] = 0;
-		for (Iterator<String> i = tankNames.iterator(); i.hasNext(); ) {
-			int ofs = StringUtils.arrayIndexOf(TANK_NAMES, i.next());
-			if (ofs != -1)
-				_tankCodes[tankType] |= (1 << ofs);
+		for (Tank t : Tank.values()) {
+			if (tankNames.contains(t.getDescription()))
+				_tankCodes[tt.ordinal()] |= (1 << t.ordinal());
 		}
 	}
 

@@ -19,12 +19,13 @@ if (!checkSubmit()) return false;
 if (!validateText(form.name, 3, 'Aircraft Name')) return false;
 if (!validateText(form.fullName, 5, 'Aircraft Full Name')) return false;
 if (!validateNumber(form.range, 1, 'Aircraft Range')) return false;
+if (!validateNumber(form.seats, 0, 'Passenger Capacity')) return false;
 if (!validateNumber(form.maxWeight, 1, 'Maximum Weight')) return false;
 if (!validateNumber(form.maxTWeight, 1, 'Maximum Takeoff Weight')) return false;
 if (!validateNumber(form.maxLWeight, 1, 'Maximum Landing Weight')) return false;
 if (!validateNumber(form.engineCount, 1, 'Engine Count')) return false;
 if (!validateText(form.engineType, 4, 'Engine Count')) return false;
-if (!validateNumber(form.cruiseSpeed, 40, 'Cruise Speed')) return false;
+if (!validateNumber(form.cruiseSpeed, 50, 'Cruise Speed')) return false;
 if (!validateNumber(form.fuelFlow, 100, 'Fuel Flow')) return false;
 if (!validateNumber(form.baseFuel, 0, 'Base Fuel Amount')) return false;
 if (!validateNumber(form.taxiFuel, 0, 'Taxi Fuel Amount')) return false;
@@ -42,6 +43,7 @@ return true;
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:sysdata var="airlines" name="apps" mapValues="true" />
+<content:enum var="tankNames" className="org.deltava.beans.schedule.Aircraft$Tank" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -61,6 +63,10 @@ return true;
 <tr>
  <td class="label">Maximum Range</td>
  <td class="data"><el:text name="range" idx="*" className="req" size="4" max="5" value="${aircraft.range}" /> miles</td>
+</tr>
+<tr>
+ <td class="label">Passenger Capacity</td>
+ <td class="data"><el:text name="seats" idx="*" className="req" size="3" max="3" value="${aircraft.seats}" /> seats</td>
 </tr>
 <tr>
  <td class="label top">IATA Equipment Code(s)</td>

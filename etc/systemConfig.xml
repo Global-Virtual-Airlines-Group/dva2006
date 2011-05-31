@@ -10,6 +10,7 @@
 		<code>DVA</code>
 		<forum>Water Cooler</forum>
 		<db>dva</db>
+		<birthdate>06/10/2001</birthdate>
 		<voice>
 			<url>rw.deltava.org/DAL</url>
 			<ts2>
@@ -649,4 +650,16 @@
 		<list name="notify_roles" attr="role" unique="true">
 		</list>
 	</helpdesk>
+	
+	<!-- Simulated economy data -->
+	<econ>
+		<targetLoad type="Double">0.875</targetLoad>
+		<targetAmplitude type="Double">0.105</targetAmplitude>
+		<minimumLoad type="Double">0.175</minimumLoad>
+		
+		<!-- Weighting of hourly cycle versus yearly cycle -->
+		<hourlyFactor type="Double">0.125</hourlyFactor>
+		<yearlyCycleLength type="Integer">1420</yearlyCycleLength>
+		<hourlyCycleLength type="Integer">24</hourlyCycleLength>
+	</econ>
 </config>
