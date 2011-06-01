@@ -5,6 +5,8 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.beans.system.AirlineInformation;
+
 /**
  * A bean to store data about an MVS voice channel. 
  * @author Luke
@@ -12,14 +14,24 @@ import org.deltava.beans.*;
  * @since 4.0
  */
 
-public class Channel extends DatabaseBean {
+public class Channel extends DatabaseBean implements ViewEntry {
+	
+	/**
+	 * Access rights enumeration.
+	 */
+	public enum Access {
+		VIEW, TALK, ADMIN
+	}
 	
 	public static final int JOIN_ROLE = 0;
 	public static final int TALK_ROLE = 1;
 	public static final int ADMIN_ROLE = 2;
 
 	private String _name;
+	private String _desc;
 	private SampleRate _rate;
+	private int _maxUsers;
+	private String _freq;
 	
 	private GeoLocation _center;
 	private int _range;
@@ -31,6 +43,8 @@ public class Channel extends DatabaseBean {
 	private final Collection<String> _talkRoles = new TreeSet<String>();
 	private final Collection<String> _adminRoles = new TreeSet<String>();
 	
+	private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
+	
 	/**
 	 * Creates a new Channel.
 	 * @param name the Channel name
@@ -38,7 +52,7 @@ public class Channel extends DatabaseBean {
 	 */
 	public Channel(String name) {
 		super();
-		_name = name.trim();
+		setName(name);
 	}
 	
 	/**
@@ -66,11 +80,43 @@ public class Channel extends DatabaseBean {
 	}
 	
 	/**
+	 * Returns the maximum number of users in this channel.
+	 * @return the maximum number of users
+	 */
+	public int getMaxUsers() {
+		return _maxUsers;
+	}
+	
+	/**
+	 * Returns the Airlines associated with this channel.
+	 * @return a Collection of AirlineInformation beans
+	 */
+	public Collection<AirlineInformation> getAirlines() {
+		return _airlines;
+	}
+	
+	/**
 	 * Returns the Channel name.
 	 * @return the name
 	 */
 	public String getName() {
 		return _name;
+	}
+	
+	/**
+	 * Returns the channel description.
+	 * @return the description
+	 */
+	public String getDescription() {
+		return _desc;
+	}
+	
+	/**
+	 * Returns the channel frequency.
+	 * @return the frequency
+	 */
+	public String getFrequency() {
+		return _freq;
 	}
 	
 	/**
@@ -138,6 +184,14 @@ public class Channel extends DatabaseBean {
 	}
 	
 	/**
+	 * Updates the maximum number of users in the channel.
+	 * @param users the maximum number of users
+	 */
+	public void setMaxUsers(int users) {
+		_maxUsers = Math.max(0, users);
+	}
+	
+	/**
 	 * Sets the Center of a range-limited channel.
 	 * @param loc the Center
 	 */
@@ -169,6 +223,41 @@ public class Channel extends DatabaseBean {
 		_isDefault = isDefault;
 	}
 	
+	/**
+	 * Updates the Channel name.
+	 * @param name the name
+	 * @throws NullPointerException if name is null
+	 */
+	public void setName(String name) {
+		_name = name.trim();
+	}
+	
+	/**
+	 * Updates the channel description.
+	 * @param desc the description
+	 */
+	public void setDescription(String desc) {
+		_desc = desc;
+	}
+	
+	/**
+	 * Updates the channel frequency.
+	 * @param freq the frequency
+	 */
+	public void setFrequency(String freq) {
+		_freq = freq;
+	}
+	
+	/**
+	 * Sets the Airlines associated with this channel.
+	 * @param airlines a Collection of AirlineInformation beans
+	 */
+	public void setAirlines(Collection<AirlineInformation> airlines) {
+		_airlines.clear();
+		if (airlines != null)
+			_airlines.addAll(airlines);
+	}
+	
 	public int hashCode() {
 		return _name.hashCode();
 	}
@@ -186,5 +275,12 @@ public class Channel extends DatabaseBean {
 	
 	public String toString() {
 		return _name;
+	}
+	
+	public String getRowClassName() {
+		if (_isDefault)
+			return "opt2";
+		
+		return getIsTemporary() ? "opt3" : null;
 	}
 }
