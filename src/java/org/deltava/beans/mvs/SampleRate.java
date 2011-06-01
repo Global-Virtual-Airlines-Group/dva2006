@@ -1,6 +1,8 @@
 // Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
+import org.deltava.beans.ComboAlias;
+
 /**
  * Valid MVS sample rates.
  * @author Luke
@@ -8,7 +10,7 @@ package org.deltava.beans.mvs;
  * @since 4.0
  */
 
-public enum SampleRate implements Comparable<SampleRate> {
+public enum SampleRate implements Comparable<SampleRate>, ComboAlias {
 
 	SR11K(11025), SR22K(22050), SR44K(44100);
 	
@@ -39,18 +41,12 @@ public enum SampleRate implements Comparable<SampleRate> {
 	public int getRate() {
 		return _rate;
 	}
-
-	/**
-	 * Converts an integer to a sample rate.
-	 * @param rate the rate
-	 * @return a SampleRate, or null if unknown
-	 */
-	public static SampleRate get(int rate) {
-		for (SampleRate sr : values()) {
-			if (sr.getRate() == rate)
-				return sr;
-		}
-		
-		return null;
+	
+	public String getComboName() {
+		return name();
+	}
+	
+	public String getComboAlias() {
+		return String.valueOf(_rate);
 	}
 }
