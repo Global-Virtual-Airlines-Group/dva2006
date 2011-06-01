@@ -13,6 +13,10 @@ import org.deltava.beans.*;
  */
 
 public class Channel extends DatabaseBean {
+	
+	public static final int JOIN_ROLE = 0;
+	public static final int TALK_ROLE = 1;
+	public static final int ADMIN_ROLE = 2;
 
 	private String _name;
 	private SampleRate _rate;

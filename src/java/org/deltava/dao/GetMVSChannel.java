@@ -16,10 +16,6 @@ import org.deltava.beans.schedule.GeoPosition;
 
 public class GetMVSChannel extends DAO {
 	
-	private static final int JOIN_ROLE = 0;
-	private static final int TALK_ROLE = 1;
-	private static final int ADMIN_ROLE = 2;
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -36,7 +32,7 @@ public class GetMVSChannel extends DAO {
 	 */
 	public Channel get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM mvs.CHANNELS WHERE (ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			List<Channel> results = execute();
 			if (results.isEmpty())
@@ -58,7 +54,7 @@ public class GetMVSChannel extends DAO {
 	 */
 	public Channel get(String name) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM mvs.CHANNELS WHERE (NAME=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
 			List<Channel> results = execute();
 			if (results.isEmpty())
@@ -79,7 +75,7 @@ public class GetMVSChannel extends DAO {
 	 */
 	public Collection<Channel> getAll() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM mvs.CHANNELS ORDER BY NAME");
+			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS ORDER BY NAME");
 			List<Channel> results = execute();
 			for (Channel c : results)
 				loadRoles(c);
@@ -119,20 +115,20 @@ public class GetMVSChannel extends DAO {
 	 * Helper method to load channel access roles.
 	 */
 	private void loadRoles(Channel c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ROLE, TYPE FROM mvs.CHANNEL_ROLES WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT ROLE, TYPE FROM acars.CHANNEL_ROLES WHERE (ID=?)");
 		_ps.setInt(1, c.getID());
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			int roleType = rs.getInt(1);
 			String roleName = rs.getString(2);
 			switch (roleType) {
-				case ADMIN_ROLE:
+				case Channel.ADMIN_ROLE:
 					c.addAdminRole(roleName);
 					break;
-				case TALK_ROLE:
+				case Channel.TALK_ROLE:
 					c.addTalkRole(roleName);
 					break;
-				case JOIN_ROLE:
+				case Channel.JOIN_ROLE:
 					c.addViewRole(roleName);
 					break;
 			}
