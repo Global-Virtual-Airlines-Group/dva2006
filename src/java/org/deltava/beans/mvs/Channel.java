@@ -250,12 +250,10 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	
 	/**
 	 * Sets the Airlines associated with this channel.
-	 * @param airlines a Collection of AirlineInformation beans
+	 * @param a an AirlineInformation bean
 	 */
-	public void setAirlines(Collection<AirlineInformation> airlines) {
-		_airlines.clear();
-		if (airlines != null)
-			_airlines.addAll(airlines);
+	public void addAirline(AirlineInformation a) {
+		_airlines.add(a);
 	}
 	
 	public int hashCode() {

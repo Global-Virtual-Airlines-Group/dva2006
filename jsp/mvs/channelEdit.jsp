@@ -33,6 +33,8 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="roles" name="security.roles" />
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 <content:enum var="sampleRates" className="org.deltava.beans.mvs.SampleRate" />
 
 <!-- Main Body Frame -->
@@ -70,6 +72,22 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isDefault" idx="*" value="true" checked="${channel.isDefault}" label="Default Channel" /></td>
+</tr>
+<tr>
+ <td class="label">Web Applications</td>
+ <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${channel.airlines}" /></td>
+</tr>
+<tr>
+ <td class="label top">Join-Access Roles</td>
+ <td class="data"><el:check name="joinRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.viewRoles}" options="${roles}" /></td>
+</tr>
+<tr>
+ <td class="label top">Talk-Access Roles</td>
+ <td class="data"><el:check name="talkRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.talkRoles}" options="${roles}" /></td>
+</tr>
+<tr>
+ <td class="label top">Admin-Access Roles</td>
+ <td class="data"><el:check name="adminRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.adminRoles}" options="${roles}" /></td>
 </tr>
 </el:table>
 
