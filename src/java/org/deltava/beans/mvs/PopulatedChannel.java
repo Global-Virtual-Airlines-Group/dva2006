@@ -2,6 +2,7 @@
 package org.deltava.beans.mvs;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.deltava.beans.Pilot;
 
@@ -16,7 +17,7 @@ import org.deltava.beans.Pilot;
 public class PopulatedChannel implements java.io.Serializable {
 	
 	private Channel _c;
-	private final Map<Long, Pilot> _users = new LinkedHashMap<Long, Pilot>();
+	private final ConcurrentMap<Long, Pilot> _users = new ConcurrentHashMap<Long, Pilot>();
 
 	/**
 	 * Initializes the bean.
