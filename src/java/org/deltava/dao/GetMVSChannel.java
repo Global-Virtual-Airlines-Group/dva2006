@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.mvs.*;
 import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load permanent voice channel data.
@@ -40,6 +41,7 @@ public class GetMVSChannel extends DAO {
 			
 			Channel c = results.get(0);
 			loadRoles(c);
+			loadAirlines(c);
 			return c;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -62,6 +64,7 @@ public class GetMVSChannel extends DAO {
 			
 			Channel c = results.get(0);
 			loadRoles(c);
+			loadAirlines(c);
 			return c;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -77,8 +80,10 @@ public class GetMVSChannel extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM acars.CHANNELS ORDER BY NAME");
 			List<Channel> results = execute();
-			for (Channel c : results)
+			for (Channel c : results) {
 				loadRoles(c);
+				loadAirlines(c);
+			}
 			
 			return results;
 		} catch (SQLException se) {
@@ -109,6 +114,20 @@ public class GetMVSChannel extends DAO {
 		rs.close();
 		_ps.close();
 		return results;
+	}
+	
+	/**
+	 * Helper method to load channel airlines
+	 */
+	private void loadAirlines(Channel c) throws SQLException {
+		prepareStatementWithoutLimits("SELECT CODE FROM acars.CHANNEL_AIRLINES WHERE (ID=?)");
+		_ps.setInt(1, c.getID());
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			c.addAirline(SystemData.getApp(rs.getString(1)));
+		
+		rs.close();
+		_ps.close();
 	}
 	
 	/**
