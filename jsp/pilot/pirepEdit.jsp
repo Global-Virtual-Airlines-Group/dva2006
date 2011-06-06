@@ -217,8 +217,8 @@ var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
 initDateCombos(f.dateM, f.dateD, ((d == null) ? new Date() : d));
 if (f.airline.selectedIndex != 0) {
 	var aCode = getValue(f.airline);
-	updateAirports(f.airportD, 'airline=' + aCode, false, '${pirep.airportD.IATA}');
-	updateAirports(f.airportA, 'airline=' + aCode, false, '${pirep.airportA.IATA}');
+	updateAirports(f.airportD, 'airline=' + aCode + '&add=${pirep.airportD.ICAO}', false, '${pirep.airportD.IATA}');
+	updateAirports(f.airportA, 'airline=' + aCode + '&add=${pirep.airportA.ICAO}', false, '${pirep.airportA.IATA}');
 }
 
 f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);

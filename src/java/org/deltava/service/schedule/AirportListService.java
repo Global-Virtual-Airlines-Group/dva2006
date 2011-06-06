@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 3.0
+ * @version 4.0
  * @since 1.0
  */
 
@@ -111,8 +111,12 @@ public class AirportListService extends WebService {
 				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
 			}
 			
-			// Generate the destination list
+			// Add forced airport
 			GetAirport adao = new GetAirport(con);
+			if (!StringUtils.isEmpty(ctx.getParameter("add")))
+				airports.add(adao.get(ctx.getParameter("add")));
+			
+			// Generate the destination list
 			Map<String, Airport> allAirports = adao.getAll();
 			for (Iterator<Airport> i = allAirports.values().iterator(); i.hasNext();) {
 				Airport a = i.next();
