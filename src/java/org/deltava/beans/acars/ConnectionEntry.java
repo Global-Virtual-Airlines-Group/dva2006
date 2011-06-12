@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.IPAddressInfo;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -43,6 +43,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    private FlightInfo _fInfo;
    private String _flightPhase;
    private boolean _isHidden;
+   private boolean _isVoice; 
    private long _bytesOut;
    
    /**
@@ -187,6 +188,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
     */
    public boolean getUserHidden() {
 	   return _isHidden;
+   }
+   
+   /**
+    * Returns if voice is enabled.
+    * @return TRUE if voice enabled, otherwise FALSE
+    * @see ConnectionEntry#setVoice(boolean)
+    */
+   public boolean getVoice() {
+	   return _isVoice;
    }
    
    /**
@@ -461,6 +471,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
     */
    public void setUserHidden(boolean isHidden) {
 	   _isHidden = isHidden;
+   }
+   
+   /**
+    * Marks this connection as voice-enabled.
+    * @param isVoice TRUE if voice enabled, otherwise FALSE
+    * @see ConnectionEntry#getVoice()
+    */
+   public void setVoice(boolean isVoice) {
+	   _isVoice = isVoice;
    }
    
    /**
