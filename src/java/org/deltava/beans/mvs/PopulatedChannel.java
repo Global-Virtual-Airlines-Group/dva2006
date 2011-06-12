@@ -2,12 +2,11 @@
 package org.deltava.beans.mvs;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.deltava.beans.Pilot;
 
 /**
- * A bean to store user/channel mappings. This class is unsynchronized and callers
+ * A bean to store user/warning/channel mappings. This class is unsynchronized and callers
  * should perform their own synchronization to ensure thread safety.
  * @author Luke
  * @version 4.0
@@ -17,7 +16,7 @@ import org.deltava.beans.Pilot;
 public class PopulatedChannel implements java.io.Serializable {
 	
 	private Channel _c;
-	private final ConcurrentMap<Long, Pilot> _users = new ConcurrentHashMap<Long, Pilot>();
+	private final Map<Long, Pilot> _users = new HashMap<Long, Pilot>();
 
 	/**
 	 * Initializes the bean.
@@ -58,7 +57,8 @@ public class PopulatedChannel implements java.io.Serializable {
 	 * @param usr the Pilot to add
 	 */
 	public void add(long conID, Pilot usr) {
-		_users.put(new Long(conID), usr);
+		Long key = new Long(conID);
+		_users.put(key, usr);
 	}
 	
 	/**
