@@ -45,10 +45,10 @@ public class PopulatedChannel implements java.io.Serializable {
 	
 	/**
 	 * Returns the users in this voice channel.
-	 * @return a Collection of Pilot beans
+	 * @return a Collection of Map.Entry objects
 	 */
-	public Collection<Pilot> getUsers() {
-		return _users.values();
+	public Collection<Map.Entry<Long, Pilot>> getEntries() {
+		return _users.entrySet();
 	}
 
 	/**
