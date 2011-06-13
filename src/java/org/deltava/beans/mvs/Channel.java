@@ -32,8 +32,6 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	private SampleRate _rate;
 	private int _maxUsers;
 	private String _freq;
-	
-	private GeoLocation _center;
 	private int _range;
 	
 	private Pilot _owner;
@@ -56,19 +54,11 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Returns the center of a range-limited Channel.
-	 * @return the Center GeoLocation, or null if not range-limited
-	 */
-	public GeoLocation getCenter() {
-		return _center;
-	}
-	
-	/**
 	 * Returns the range of a range-limited Channel.
-	 * @return the range in miles
+	 * @return the range in miles from the sender
 	 */
 	public int getRange() {
-		return (_center != null) ? _range : 0;
+		return _range;
 	}
 	
 	/**
@@ -189,14 +179,6 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	 */
 	public void setMaxUsers(int users) {
 		_maxUsers = Math.max(0, users);
-	}
-	
-	/**
-	 * Sets the Center of a range-limited channel.
-	 * @param loc the Center
-	 */
-	public void setCenter(GeoLocation loc) {
-		_center = loc;
 	}
 	
 	/**

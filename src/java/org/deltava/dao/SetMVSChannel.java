@@ -33,16 +33,14 @@ public class SetMVSChannel extends DAO {
 			startTransaction();
 			
 			// Write channel entry
-			prepareStatement("REPLACE INTO acars.CHANNELS (ID, NAME, DESCRIPTION, RATE, LAT, LNG, "
-				+ "RNG, ISDEFAULT) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO acars.CHANNELS (ID, NAME, DESCRIPTION, RATE, RNG, "
+				+ "ISDEFAULT) VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, ch.getID());
 			_ps.setString(2, ch.getName());
 			_ps.setString(3, ch.getDescription());
 			_ps.setInt(4, ch.getSampleRate().getRate());
-			_ps.setDouble(5, ch.getCenter().getLatitude());
-			_ps.setDouble(6, ch.getCenter().getLongitude());
-			_ps.setInt(7, ch.getRange());
-			_ps.setBoolean(8, ch.getIsDefault());
+			_ps.setInt(5, ch.getRange());
+			_ps.setBoolean(6, ch.getIsDefault());
 			executeUpdate(1);
 			
 			// Get ID
