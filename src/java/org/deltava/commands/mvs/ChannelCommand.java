@@ -1,10 +1,9 @@
-// Copyright 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mvs;
 
 import java.sql.Connection;
 
 import org.deltava.beans.mvs.*;
-import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +14,7 @@ import org.deltava.util.StringUtils;
  * A Web Site Command to update MVS Channel data.
  * @author Luke
  * @version 4.0
- * @since 1.0
+ * @since 4.0
  */
 
 public class ChannelCommand extends AbstractFormCommand {
@@ -49,7 +48,6 @@ public class ChannelCommand extends AbstractFormCommand {
 			c.setSampleRate(SampleRate.getRate(StringUtils.parse(ctx.getParameter("rate"), SampleRate.SR11K.getRate())));
 			c.setMaxUsers(StringUtils.parse(ctx.getParameter("maxUsers"), 0));
 			c.setIsDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
-			c.setCenter(new GeoPosition(StringUtils.parse(ctx.getParameter("lat"), 0.0), StringUtils.parse(ctx.getParameter("lng"), 0.0)));
 			c.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			
 			// Get the write DAO and save the channel

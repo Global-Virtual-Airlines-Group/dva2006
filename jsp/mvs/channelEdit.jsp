@@ -65,11 +65,6 @@ return true;
  <td class="data"><el:text name="range" idx="*" size="3" max="4" className="bld req" value="${channel.range}" /> miles</td>
 </tr>
 <tr>
- <td class="label">Center Point</td>
- <td class="data"><el:text name="lat" idx="*" size="7" max="8" value="${channel.center.latitude}" /> degrees latitude,
- <el:text name="lng" idx="*" size="8" max="10" value="${channel.center.longitude}" /> degrees longitude</td>
-</tr>
-<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isDefault" idx="*" value="true" checked="${channel.isDefault}" label="Default Channel" /></td>
 </tr>

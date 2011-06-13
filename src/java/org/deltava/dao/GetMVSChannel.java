@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.mvs.*;
-import org.deltava.beans.schedule.GeoPosition;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -101,13 +101,7 @@ public class GetMVSChannel extends DAO {
 			Channel c = new Channel(rs.getString(2));
 			c.setID(rs.getInt(1));
 			c.setSampleRate(SampleRate.getRate(rs.getInt(3)));
-			double lat = rs.getDouble(4);
-			double lng = rs.getDouble(5);
-			if ((lat != 0.0d) || (lng != 0.0d)) {
-				c.setCenter(new GeoPosition(lat, lng));
-				c.setRange(rs.getInt(6));
-			}
-			
+			c.setRange(rs.getInt(5));
 			results.add(c);
 		}
 
