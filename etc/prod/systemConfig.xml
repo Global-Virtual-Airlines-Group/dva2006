@@ -312,12 +312,12 @@
 		<services>/etc/services.xml</services>
 		<tasks>/etc/tasks.xml</tasks>
 		<nat>
-			<url>https://www.notams.jcs.mil/common/nat.html</url>
-			<keystore>/etc/jcs.notams.cer</keystore>
+			<url>https://www.notams.faa.gov/common/nat.html</url>
+			<!-- <keystore>/etc/jcs.notams.cer</keystore> -->
 		</nat>
 		<pacot>
-			<url>https://www.notams.jcs.mil/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks</url>
-			<keystore>/etc/jcs.notams.cer</keystore>
+			<url>https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks</url>
+			<!-- <keystore>/etc/jcs.notams.cer</keystore> -->
 		</pacot>
 		<ausot>
 			<url>http://www.airservicesaustralia.com/customer/ausots/html.asp?/flextracks/text.asp?ver=1</url>

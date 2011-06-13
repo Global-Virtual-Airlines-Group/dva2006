@@ -19,17 +19,6 @@ public class TestTrackDAO extends TestCase {
 		PropertyConfigurator.configure("etc/log4j.properties");
 	}
 	
-	public void testInvalidKeyNAT() {
-		try {
-			GetNATs dao = new GetNATs("https://www.notams.jcs.mil/common/nat.html");
-			String natInfo = dao.getTrackInfo();
-			assertNull(natInfo);
-			fail("DAOException expected");
-		} catch (Exception e) {
-			// valid
-		}
-	}
-	
 	public void testValidKeyNAT() throws Exception {
 		
 		// Load the certificate Init the SSL context
@@ -39,8 +28,8 @@ public class TestTrackDAO extends TestCase {
 		assertNotNull(ctx);
 		
 		// Pull down the data
-		GetNATs dao = new GetNATs("https://www.notams.jcs.mil/common/nat.html");
-		dao.setSSLContext(ctx);
+		GetNATs dao = new GetNATs("https://www.notams.faa.gov/common/nat.html");
+		//dao.setSSLContext(ctx);
 
 		String natInfo = dao.getTrackInfo();
 		assertNotNull(natInfo);
@@ -48,18 +37,6 @@ public class TestTrackDAO extends TestCase {
 		// Test that we can parse
 		Map<String, Collection<String>> results = dao.getWaypoints();
 		assertNotNull(results);
-	}
-	
-	public void testInvalidKeyPACOT() {
-		
-		try {
-			GetPACOTs dao = new GetPACOTs("https://www.notams.jcs.mil/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks");
-			String pacotInfo = dao.getTrackInfo();
-			assertNull(pacotInfo);
-			fail("DAOException expected");
-		} catch (Exception e) {
-			// valid
-		}
 	}
 	
 	public void testValidKeyPACOT() throws Exception {
@@ -71,8 +48,8 @@ public class TestTrackDAO extends TestCase {
 		assertNotNull(ctx);
 		
 		// Pull down the data
-		GetPACOTs dao = new GetPACOTs("https://www.notams.jcs.mil/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks");
-		dao.setSSLContext(ctx);
+		GetPACOTs dao = new GetPACOTs("https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do?queryType=pacificTracks");
+		//dao.setSSLContext(ctx);
 		String pacotInfo = dao.getTrackInfo();
 		assertNotNull(pacotInfo);
 		
