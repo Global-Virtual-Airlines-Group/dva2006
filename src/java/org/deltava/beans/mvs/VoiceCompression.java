@@ -10,7 +10,7 @@ package org.deltava.beans.mvs;
 
 public enum VoiceCompression implements Comparable<VoiceCompression> {
 
-	NONE(0), GZIP(1);
+	NONE(0), GZIP(1), DEFLATE(2);
 	
 	private int _type;
 	
