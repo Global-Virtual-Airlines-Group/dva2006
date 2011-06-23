@@ -17,6 +17,9 @@
 				<enabled type="Boolean">true</enabled>
 				<url>teamspeak://ts2.deltava.org</url>
 			</ts2>
+			<mvs>
+				<enabled type="Boolean">true</enabled>
+			</mvs>
 		</voice>
 		
 		<!-- Do we have a file library? -->
