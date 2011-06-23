@@ -130,7 +130,7 @@ public class GetMVSChannel extends DAO {
 	 * Helper method to load channel access roles.
 	 */
 	private void loadRoles(Channel c) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ROLE, TYPE FROM acars.CHANNEL_ROLES WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT TYPE, ROLE FROM acars.CHANNEL_ROLES WHERE (ID=?)");
 		_ps.setInt(1, c.getID());
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {

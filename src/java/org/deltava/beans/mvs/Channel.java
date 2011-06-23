@@ -150,7 +150,8 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	public void addViewRoles(Collection<String> roles) {
-		_viewRoles.addAll(roles);
+		if (roles != null)
+			_viewRoles.addAll(roles);
 	}
 	
 	public void addTalkRole(String role) {
@@ -158,11 +159,17 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	public void addTalkRoles(Collection<String> roles) {
-		_talkRoles.addAll(roles);
+		if (roles != null)
+			_talkRoles.addAll(roles);
 	}
 	
 	public void addAdminRole(String role) {
 		_adminRoles.add(role);
+	}
+	
+	public void addAdminRoles(Collection<String> roles) {
+		if (roles != null)
+			_adminRoles.addAll(roles);
 	}
 	
 	/**
