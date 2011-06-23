@@ -166,6 +166,15 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
+	 * Clears all access role lists.
+	 */
+	public void clearRoles() {
+		_adminRoles.clear();
+		_talkRoles.clear();
+		_viewRoles.clear();
+	}
+	
+	/**
 	 * Updates the Channel's sampling rate.
 	 * @param rt the rate
 	 */

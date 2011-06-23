@@ -19,6 +19,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateCombo(form.rate, 'Channel Bandwidth')) return false;
 if (!validateText(form.name, 6, 'Channel Name')) return false;
+if (!validateText(form.desc, 3, 'Channel Description')) return false;
 if (!validateNumber(form.maxUsers, 0, 'Channel User Limit')) return false;
 
 setSubmit();
@@ -49,8 +50,8 @@ return true;
  <td class="data"><el:text name="name" idx="*" className="pri bld req" size="26" max="40" value="${channel.name}" /></td>
 </tr>
 <tr>
- <td class="label top">Channel Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" height="4">${channel.description}</el:textbox></td>
+ <td class="label">Channel Description</td>
+ <td class="data"><el:text name="desc" idx="*" className="req" size="96" max="128" value="${channel.description}" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Users</td>

@@ -50,6 +50,12 @@ public class ChannelCommand extends AbstractFormCommand {
 			c.setIsDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
 			c.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			
+			// Update the roles
+			c.clearRoles();
+			c.addViewRoles(ctx.getParameters("joinRoles"));
+			c.addTalkRoles(ctx.getParameters("talkRoles"));
+			c.addAdminRole(ctx.getParameter("adminRoles"));
+			
 			// Get the write DAO and save the channel
 			SetMVSChannel wdao = new SetMVSChannel(con);
 			wdao.write(c);
