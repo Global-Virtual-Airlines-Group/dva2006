@@ -239,7 +239,10 @@ Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
  <td class="mid bld">Flight Information</td>
  <td class="data">To view a map of the routes you have flown, <el:cmd className="sec bld" url="myroutemap">Click Here</el:cmd>.<br />
 <c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}"><br />
-To view statistics about your flights, <el:cmd className="sec bld" url="mystats">Click Here</el:cmd>.</c:if></td>
+To view statistics about your flights, <el:cmd className="sec bld" url="mystats">Click Here</el:cmd>.</c:if>
+<c:if test="${pilot.legs > 10}"><br />
+To view airports you have yet to vist, <el:cmd className="sec bld" url="mynewairports">Click Here</el:cmd>.</c:if>
+</td>
 </tr>
 </c:if>
 <content:filter roles="PIREP">
