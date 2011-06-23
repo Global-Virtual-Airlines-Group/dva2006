@@ -1,6 +1,7 @@
 // Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mvs;
 
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.mvs.*;
@@ -9,6 +10,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update MVS Channel data.
@@ -54,7 +56,15 @@ public class ChannelCommand extends AbstractFormCommand {
 			c.clearRoles();
 			c.addViewRoles(ctx.getParameters("joinRoles"));
 			c.addTalkRoles(ctx.getParameters("talkRoles"));
-			c.addAdminRole(ctx.getParameter("adminRoles"));
+			c.addAdminRoles(ctx.getParameters("adminRoles"));
+			
+			// Set airlines
+			Collection<String> alCodes = ctx.getParameters("airline");
+			if (alCodes != null) {
+				c.getAirlines().clear();
+				for (String alCode : alCodes)
+					c.addAirline(SystemData.getApp(alCode));
+			}
 			
 			// Get the write DAO and save the channel
 			SetMVSChannel wdao = new SetMVSChannel(con);
