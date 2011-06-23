@@ -27,31 +27,31 @@
 <content:region id="main">
 <view:table className="view" cmd="newairports">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> UNVISITED AIRPORTS FOR ${pilot.name}</td>
+ <td colspan="5" class="left caps"><content:airline /> UNVISITED AIRPORTS FOR ${pilot.name}</td>
 </tr>
 <c:forEach var="entry" items="${airports}">
-<c:set var="airline" value="${entry.key}" scope="page" />
+<c:set var="airline" value="${allAirlines[entry.key]}" scope="page" />
 <c:set var="aps" value="${entry.value}" scope="page" />
 <tr class="title">
- <td colspan="4" class="left caps">${airline.name} - <fmt:int value="${fn:sizeof(aps)}" /> AIRPORTS</td>
+ <td colspan="5" class="left caps">${airline.name} - <fmt:int value="${fn:sizeof(aps)}" /> AIRPORTS</td>
 </tr>
 <c:forEach var="ap" items="${aps}">
 <tr>
  <td width="25%" class="pri bld">${ap.name}</td>
- <td width="10%" class="bld">${ap.icao}</td>
- <td width="10%" class="sec">${ap.iata}</td>
- <td width="25%">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
+ <td width="8%" class="bld">${ap.ICAO}</td>
+ <td width="8%" class="sec">${ap.IATA}</td>
+ <td width="15%">${ap.country.name} <el:flag countryCode="${ap.country.code}" caption="${ap.country.name}" /></td>
  <td class="left small">
 <c:forEach var="alCode" items="${ap.airlineCodes}" varStatus="acStatus">
 <c:set var="apAirline" value="${allAirlines[alCode]}" scope="page" />
-${apAirline.name}><c:if test="${!acStatus.last}">, </c:if></c:forEach></td>
+${apAirline.name}<c:if test="${!acStatus.last}">, </c:if></c:forEach></td>
 </tr>
 </c:forEach>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;</td>
+ <td colspan="5">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
