@@ -100,8 +100,10 @@ public class GetMVSChannel extends DAO {
 		while (rs.next()) {
 			Channel c = new Channel(rs.getString(2));
 			c.setID(rs.getInt(1));
-			c.setSampleRate(SampleRate.getRate(rs.getInt(3)));
+			c.setDescription(rs.getString(3));
+			c.setSampleRate(SampleRate.getRate(rs.getInt(4)));
 			c.setRange(rs.getInt(5));
+			c.setIsDefault(rs.getBoolean(6));
 			results.add(c);
 		}
 

@@ -24,7 +24,8 @@
 <content:sysdata var="maxHeld" name="users.pirep.maxHeld" default="5" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="fileLibEnabled" name="airline.files.enabled" />
-<content:sysdata var="ts2enabled" name="airline.voice.ts2.enabled" />
+<content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
+<content:sysdata var="mvsEnabled" name="airline.voice.mvs.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
 <content:sysdata var="resourceEnabled" name="airline.resources.enabled" />
@@ -929,12 +930,18 @@ and database usage times here.</td>
  <td class="mid"><el:cmd className="bld" url="cmdlog">Command Log</el:cmd></td>
  <td class="data">You can view and search for entries in the Command Log database.</td>
 </tr>
-<c:if test="${ts2enabled}">
+<c:if test="${ts2Enabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="ts2servers">TeamSpeak 2 Virtual Servers</el:cmd><br />
 <el:cmd className="bld" url="ts2channels">TeamSpeak 2 Voice Channels</el:cmd></td>
  <td class="data">You can update TeamSpeak 2 virtual server permissions and configurations, and 
 create, edit or delete TeamSpeak 2 voice channels.</td>
+</tr>
+</c:if>
+<c:if test="${mvsEnabled}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="mvschannels">MVS Voice Channels</el:cmd></td>
+ <td class="data">You can update Modern Voice Server permanent channels.</td>
 </tr>
 </c:if>
 </content:filter>

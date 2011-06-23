@@ -67,7 +67,7 @@ public class ChannelCommand extends AbstractFormCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/mvs/mvsUpdate.jsp");
+		result.setURL("/jsp/mvs/channelUpdate.jsp");
 		result.setType(ResultType.REQREDIRECT);
 		result.setSuccess(true);
 	}
