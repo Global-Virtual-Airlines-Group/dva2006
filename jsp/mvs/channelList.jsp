@@ -26,7 +26,7 @@
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="20%">CHANNEL NAME</td>
- <td width="10%">SAMPLE RATE</td>
+ <td width="15%">SAMPLE RATE</td>
  <td width="10%">RANGE</td>
  <td width="10%">USERS</td>
  <td width="15%"><el:cmdbutton url="mvschannel" op="edit" label="NEW CHANNEL" /></td>
@@ -40,8 +40,13 @@
 </tr>
 <view:row entry="${channel}">
  <td><el:cmd url="mvschannel" op="edit" link="${channel}" className="pri bld">${channel.name}</el:cmd></td>
- <td>${channel.sampleRate}</td>
+ <td>${channel.sampleRate} (<fmt:int value="${channel.sampleRate.rate}" />)</td>
+<c:if test="${channel.range == 0}">
+ <td class="bld small caps">Unlimited</td>
+</c:if>
+<c:if test="${channel.range > 0}">
  <td><fmt:int value="${channel.range}" /> miles</td>
+</c:if>
  <td class="sec bld"><fmt:int value="${channel.maxUsers}" /></td>
  <td colspan="2" class="left small">${channel.description}</td>
 </view:row>
