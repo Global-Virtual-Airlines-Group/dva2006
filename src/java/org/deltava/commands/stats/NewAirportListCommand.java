@@ -63,7 +63,8 @@ public class NewAirportListCommand extends AbstractCommand {
 		}
 		
 		// Get all airports and remove those we've visited or which aren't active
-		Map<Airline, Collection<Airport>> airports = new TreeMap<Airline, Collection<Airport>>();
+		Map<String, Collection<Airport>> airports = new LinkedHashMap<String, Collection<Airport>>();
+		airports.put(defaultCode, new LinkedHashSet<Airport>());
 		Collection<Airport> allAirports = new TreeSet<Airport>(SystemData.getAirports().values());
 		for (Airport a : allAirports) {
 			if (myAirports.contains(a) || a.getAirlineCodes().isEmpty())
@@ -76,18 +77,18 @@ public class NewAirportListCommand extends AbstractCommand {
 			apAirlines.addAll(a.getAirlineCodes());
 			
 			// Get the first airline and its group
-			Airline al = SystemData.getAirline(apAirlines.iterator().next());
-			Collection<Airport> aps = airports.get(al);
+			String alCode = apAirlines.iterator().next();
+			Collection<Airport> aps = airports.get(alCode);
 			if (aps == null) {
 				aps = new LinkedHashSet<Airport>();
-				airports.put(al, aps);
+				airports.put(alCode, aps);
 			}
 			
 			aps.add(a);
 		}
 		
 		// Save in request
-		ctx.setAttribute("allAirports", airports, REQUEST);
+		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
