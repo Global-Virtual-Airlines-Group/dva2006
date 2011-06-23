@@ -50,6 +50,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="mynewairports">
+		<name>Pilot Missed Airports</name>	
+		<class>org.deltava.commands.stats.NewAirportListCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="acarsprsearch">
 		<name>ACARS Flight Search</name>
 		<class>org.deltava.commands.pirep.ACARSFlightSearchCommand</class>
