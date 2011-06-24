@@ -29,6 +29,7 @@ The MVS Voice Channel <span class="sec bld">${channel.name}</span> has been succ
 <br />
 The MVS Voice Channel <span class="sec bld">${channel.name}</span> has been deleted.<br />
 </c:if>
+<br />
 To return to the list of MVS voice channels, <el:cmd url="mvschannels" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />

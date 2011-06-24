@@ -137,15 +137,19 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	public Collection<String> getViewRoles() {
-		return _roles.get(Access.VIEW);
+		return getRoles(Access.VIEW);
 	}
 	
 	public Collection<String> getTalkRoles() {
-		return _roles.get(Access.TALK);
+		return getRoles(Access.TALK);
+	}
+	
+	public Collection<String> getDynTalkRoles() {
+		return getRoles(Access.TALK_IF_PRESENT);
 	}
 	
 	public Collection<String> getAdminRoles() {
-		return _roles.get(Access.ADMIN);
+		return getRoles(Access.ADMIN);
 	}
 	
 	public void addRole(Access a, String role) {
