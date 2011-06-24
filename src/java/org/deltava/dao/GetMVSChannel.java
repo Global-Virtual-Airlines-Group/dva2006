@@ -134,19 +134,8 @@ public class GetMVSChannel extends DAO {
 		_ps.setInt(1, c.getID());
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			int roleType = rs.getInt(1);
-			String roleName = rs.getString(2);
-			switch (roleType) {
-				case Channel.ADMIN_ROLE:
-					c.addAdminRole(roleName);
-					break;
-				case Channel.TALK_ROLE:
-					c.addTalkRole(roleName);
-					break;
-				case Channel.JOIN_ROLE:
-					c.addViewRole(roleName);
-					break;
-			}
+			Channel.Access a = Channel.Access.values()[rs.getInt(1)];
+			c.addRole(a, rs.getString(2));
 		}
 		
 		rs.close();

@@ -61,26 +61,12 @@ public class SetMVSChannel extends DAO {
 			// Write roles
 			prepareStatementWithoutLimits("INSERT INTO acars.CHANNEL_ROLES (ID, ROLE, TYPE) VALUES (?, ?, ?)");
 			_ps.setInt(1, ch.getID());
-			
-			// Write admin roles
-			_ps.setInt(3, Channel.ADMIN_ROLE);
-			for (String role : ch.getAdminRoles()) {
-				_ps.setString(2, role);
-				_ps.addBatch();
-			}
-			
-			// Write talk roles
-			_ps.setInt(3, Channel.TALK_ROLE);
-			for (String role : ch.getTalkRoles()) {
-				_ps.setString(2, role);
-				_ps.addBatch();
-			}
-			
-			// Write view roles
-			_ps.setInt(3, Channel.JOIN_ROLE);
-			for (String role : ch.getViewRoles()) {
-				_ps.setString(2, role);
-				_ps.addBatch();
+			for (Channel.Access a : Channel.Access.values()) {
+				_ps.setInt(3, a.ordinal());
+				for (String role : ch.getRoles(a)) {
+					_ps.setString(2, role);
+					_ps.addBatch();
+				}
 			}
 			
 			_ps.executeBatch();

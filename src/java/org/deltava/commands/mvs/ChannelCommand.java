@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.mvs.*;
+import org.deltava.beans.mvs.Channel.Access;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -54,9 +55,9 @@ public class ChannelCommand extends AbstractFormCommand {
 			
 			// Update the roles
 			c.clearRoles();
-			c.addViewRoles(ctx.getParameters("joinRoles"));
-			c.addTalkRoles(ctx.getParameters("talkRoles"));
-			c.addAdminRoles(ctx.getParameters("adminRoles"));
+			c.addRoles(Access.VIEW, ctx.getParameters("joinRoles"));
+			c.addRoles(Access.TALK, ctx.getParameters("talkRoles"));
+			c.addRoles(Access.ADMIN, ctx.getParameters("adminRoles"));
 			
 			// Set airlines
 			Collection<String> alCodes = ctx.getParameters("airline");
