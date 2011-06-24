@@ -23,6 +23,10 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <view:table className="view" cmd="mvschannels">
+<tr class="title">
+ <td colspan="6" class="left caps">MODERN VOICE SERVER PERSISTENT CHANNELS</td>
+</tr>
+
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="20%">CHANNEL NAME</td>
@@ -35,9 +39,6 @@
 
 <!-- Table Channel Data -->
 <c:forEach var="channel" items="${viewContext.results}">
-<tr class="title">
- <td colspan="6" class="left caps">MODERN VOICE SERVER PERSISTENT CHANNELS</td>
-</tr>
 <view:row entry="${channel}">
  <td><el:cmd url="mvschannel" op="edit" link="${channel}" className="pri bld">${channel.name}</el:cmd></td>
  <td>${channel.sampleRate} (<fmt:int value="${channel.sampleRate.rate}" />)</td>
