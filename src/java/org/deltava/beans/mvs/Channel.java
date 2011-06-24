@@ -20,13 +20,9 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	 * Access rights enumeration.
 	 */
 	public enum Access {
-		VIEW, TALK, ADMIN
+		VIEW, TALK, TALK_IF_PRESENT, ADMIN
 	}
 	
-	public static final int JOIN_ROLE = 0;
-	public static final int TALK_ROLE = 1;
-	public static final int ADMIN_ROLE = 2;
-
 	private String _name;
 	private String _desc;
 	private SampleRate _rate;
@@ -37,9 +33,12 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	private Pilot _owner;
 	private boolean _isDefault;
 	
-	private final Collection<String> _viewRoles = new TreeSet<String>();
-	private final Collection<String> _talkRoles = new TreeSet<String>();
-	private final Collection<String> _adminRoles = new TreeSet<String>();
+	private final Map<Access, Collection<String>> _roles = new HashMap<Access, Collection<String>>() {{
+		put(Access.VIEW, new TreeSet<String>());
+		put(Access.TALK, new TreeSet<String>());
+		put(Access.TALK_IF_PRESENT, new TreeSet<String>());
+		put(Access.ADMIN, new TreeSet<String>());
+	}};
 	
 	private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
 	
@@ -133,52 +132,38 @@ public class Channel extends DatabaseBean implements ViewEntry {
 		return _isDefault;
 	}
 	
+	public Collection<String> getRoles(Access a) {
+		return _roles.get(a);
+	}
+	
 	public Collection<String> getViewRoles() {
-		return _viewRoles;
+		return _roles.get(Access.VIEW);
 	}
 	
 	public Collection<String> getTalkRoles() {
-		return _talkRoles;
+		return _roles.get(Access.TALK);
 	}
 	
 	public Collection<String> getAdminRoles() {
-		return _adminRoles;
+		return _roles.get(Access.ADMIN);
 	}
 	
-	public void addViewRole(String role) {
-		_viewRoles.add(role);
+	public void addRole(Access a, String role) {
+		if (_roles.containsKey(a))
+			_roles.get(a).add(role);
 	}
 	
-	public void addViewRoles(Collection<String> roles) {
-		if (roles != null)
-			_viewRoles.addAll(roles);
-	}
-	
-	public void addTalkRole(String role) {
-		_talkRoles.add(role);
-	}
-	
-	public void addTalkRoles(Collection<String> roles) {
-		if (roles != null)
-			_talkRoles.addAll(roles);
-	}
-	
-	public void addAdminRole(String role) {
-		_adminRoles.add(role);
-	}
-	
-	public void addAdminRoles(Collection<String> roles) {
-		if (roles != null)
-			_adminRoles.addAll(roles);
+	public void addRoles(Access a, Collection<String> roles) {
+		if ((roles != null) && _roles.containsKey(a))
+			_roles.get(a).addAll(roles);
 	}
 	
 	/**
 	 * Clears all access role lists.
 	 */
 	public void clearRoles() {
-		_adminRoles.clear();
-		_talkRoles.clear();
-		_viewRoles.clear();
+		for (Collection<String> roles : _roles.values())
+			roles.clear();
 	}
 	
 	/**

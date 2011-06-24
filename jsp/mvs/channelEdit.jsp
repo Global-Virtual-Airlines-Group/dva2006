@@ -82,6 +82,10 @@ return true;
  <td class="data"><el:check name="talkRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.talkRoles}" options="${roles}" /></td>
 </tr>
 <tr>
+ <td class="label top">Talk-Access if Present Roles</td>
+ <td class="data"><el:check name="dynTalkRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.dynTalkRoles}" options="${roles}" /></td>
+</tr>
+<tr>
  <td class="label top">Admin-Access Roles</td>
  <td class="data"><el:check name="adminRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.adminRoles}" options="${roles}" /></td>
 </tr>
