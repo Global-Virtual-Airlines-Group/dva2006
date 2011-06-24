@@ -95,4 +95,16 @@ public class PopulatedChannel implements java.io.Serializable {
 	public int size() {
 		return _users.size();
 	}
+	
+	/**
+	 * Returns the roles of all Users in the Channel.
+	 * @return a Collection of roles
+	 */
+	public Collection<String> getRolesPresent() {
+		Collection<String> results = new HashSet<String>();
+		for (Pilot p : _users.values())
+			results.addAll(p.getRoles());
+		
+		return results;
+	}
 }
