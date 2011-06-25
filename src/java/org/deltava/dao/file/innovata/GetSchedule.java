@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format direct flight schedules from Innovata LLC.
  * @author Luke
- * @version 2.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -221,17 +221,14 @@ public class GetSchedule extends ScheduleLoadDAO {
 		}
 
 		// Go through the MultiLegInfo beans
-		int invalidFlights = 0;
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		for (Iterator<MultiLegInfo> i = new TreeSet<MultiLegInfo>(legs.values()).iterator(); i.hasNext();) {
 			MultiLegInfo inf = i.next();
 			if (inf.getEntries().isEmpty()) {
 				log.warn(inf.getFlightCode() + " empty");
-				invalidFlights++;
 			} else if (inf.getEntries().size() > (inf.getDepartsFrom().size())) {
 				log.warn(inf.getFlightCode() + " stops=" + inf.getDepartsFrom() + ", entries="
 						+ inf.getEntries().size());
-				invalidFlights++;
 			} else {
 				// Trim out nulls
 				Collection<ScheduleEntry> entries = inf.getEntries();
