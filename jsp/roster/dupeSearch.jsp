@@ -146,7 +146,8 @@ return true;
  <td class="label top">Merge Options</td>
  <td class="data"><el:box name="mergeFlights" value="true" checked="true" label="Merge Flight Reports" /><br />
 <el:box name="mergeExams" value="true" checked="true" label="Merge Examinations" /><br />
-<el:box name="mergeCRs" value="true" checked="true" label="Merge Check Rides" /></td>
+<el:box name="mergeCRs" value="true" checked="true" label="Merge Check Rides" /><br />
+<el:box name="mergeFA" value="true" checked="true" label="Merge Flight Academy Certifications" /></td>
 </tr>
 </el:table>
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to merge two pilot profiles.
  * @author Luke
- * @version 3.1
+ * @version 4.0
  * @since 1.0
  */
 
@@ -45,6 +45,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 		boolean mergeFlights = Boolean.valueOf(ctx.getParameter("mergeFlights")).booleanValue();
 		boolean mergeExams = Boolean.valueOf(ctx.getParameter("mergeExams")).booleanValue();
 		boolean mergeCRs = Boolean.valueOf(ctx.getParameter("mergeCRs")).booleanValue();
+		boolean mergeFA = Boolean.valueOf(ctx.getParameter("mergeFA")).booleanValue();
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -134,6 +135,17 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
 							su.setAuthorID(ctx.getUser().getID());
 							su.setDescription("Merged " + ridesMerged + " Check Rides from " + p.getName() + " (" + p.getPilotCode() + ")");
+							sUpdates.add(su);
+						}
+					}
+					
+					// Merge Flight Academy courses
+					if (mergeFA) {
+						int coursesMerged = mgdao.mergeCourses(p, usr);
+						if (coursesMerged > 0) {
+							su = new StatusUpdate(usr.getID(), StatusUpdate.COMMENT);
+							su.setAuthorID(ctx.getUser().getID());
+							su.setDescription("Merged " + coursesMerged + " Flight Academy Courses from " + p.getName() + " (" + p.getPilotCode() + ")");
 							sUpdates.add(su);
 						}
 					}
