@@ -1,11 +1,14 @@
 // Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
-import java.util.Collection;
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.testing.Test;
+
+import org.deltava.comparators.TestComparator;
 
 import org.deltava.dao.*;
 
@@ -13,7 +16,7 @@ import org.deltava.dao.*;
  * A class to support Web Site Commands use a {@link AcademyHistoryHelper} object to determine what
  * Flight Academy examinations/courses a Pilot is eligible for.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -27,16 +30,32 @@ public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 	 */
 	protected final AcademyHistoryHelper initHistory(Pilot p, Connection c) throws DAOException {
 		
-		// Load all certifications and the Pilot's courses
+		// Load the piliot's cross-airline IDs
+		GetUserData uddao = new GetUserData(c);
+		UserData ud = uddao.get(p.getID());
+		
+		// Get the DAOs
+		GetExam exdao = new GetExam(c);
 		GetAcademyCourses cdao = new GetAcademyCourses(c);
 		GetAcademyCertifications crdao = new GetAcademyCertifications(c);
-		Collection<Certification> allCerts = crdao.getAll();
-		AcademyHistoryHelper helper = new AcademyHistoryHelper(p, cdao.getByPilot(p.getID()), allCerts);
-		helper.setAllowInactive(p.isInRole("Instructor") || p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit"));
 		
-		// Get the Pilot's examinations and check rides
-		GetExam exdao = new GetExam(c);
-		helper.addExams(exdao.getExams(p.getID()));
+		// Load exams and courses across all airlines
+		List<Course> courses = new ArrayList<Course>();
+		List<Test> exams = new ArrayList<Test>();
+		for (Integer xID : ud.getIDs()) {
+			int id = xID.intValue();
+			exams.addAll(exdao.getExams(id));
+			courses.addAll(cdao.getByPilot(id));
+		}
+		
+		// Sort the lists
+		Collections.sort(courses);
+		Collections.sort(exams, new TestComparator(TestComparator.DATE));
+		
+		// Load all certifications and return the helper
+		AcademyHistoryHelper helper = new AcademyHistoryHelper(p, courses, crdao.getAll());
+		helper.addExams(exams);
+		helper.setAllowInactive(p.isInRole("Instructor") || p.isInRole("AcademyAdmin") || p.isInRole("AcademyAudit"));
 		return helper;
 	}
 }
