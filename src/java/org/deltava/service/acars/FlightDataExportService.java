@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class FlightDataExportService extends WebService {
 		}
 
 		// Write the CSV header
-		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
+		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
 		ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,COM1,ATC,WARN");
 
 		// Format the ACARS data
@@ -72,6 +72,8 @@ public class FlightDataExportService extends WebService {
 			ctx.print(StringUtils.format(entry.getAirSpeed(), "##0"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getGroundSpeed(), "##0"));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getMach(), "#.000"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getVerticalSpeed(), "##0"));
 			ctx.print(",");
@@ -129,7 +131,7 @@ public class FlightDataExportService extends WebService {
 
 		// Write the response
 		try {
-			ctx.getResponse().setContentType("text/csv");
+			ctx.setContentType("text/csv", "UTF-8");
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
 			ctx.commit();
 		} catch (IOException ie) {
