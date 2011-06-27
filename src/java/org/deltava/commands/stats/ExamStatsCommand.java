@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Examination and Check Ride statistics. 
  * @author Luke
- * @version 3.0
+ * @version 4.0
  * @since 3.0
  */
 
@@ -71,7 +71,7 @@ public class ExamStatsCommand extends AbstractViewCommand {
 				} else {
 					int scorerID = StringUtils.parse(ctx.getParameter("crScorer"), 0);
 					boolean academyOnly = Boolean.valueOf(ctx.getParameter("academyOnly")).booleanValue();
-					vc.setResults(dao.getCheckrideStatistics(label, subLabel, academyOnly, scorerID));
+					vc.setResults(dao.getCheckrideStatistics(label, subLabel, academyOnly, scorerID, null));
 				}
 				
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);

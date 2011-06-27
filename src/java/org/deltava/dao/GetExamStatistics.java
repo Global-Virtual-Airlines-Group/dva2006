@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Examination and Check Ride statistics.
  * @author Luke
- * @version 3.0
+ * @version 4.0
  * @since 3.0
  */
 
@@ -179,7 +179,7 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<ExamStatsEntry> getCheckrideStatistics(String label, String subLabel, boolean academyOnly) throws DAOException {
-		return getCheckrideStatistics(label, subLabel, academyOnly, 0);
+		return getCheckrideStatistics(label, subLabel, academyOnly, 0, null);
 	}
 	
 	/**
@@ -188,10 +188,11 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 	 * @param subLabel the sub-label SQL
 	 * @param academyOnly TRUE if only Flight Academy check rides are included, otherwise FALSE 
 	 * @param scorerID the check ride scorer's database ID, or zero
+	 * @param eqProgram an Equipment Type program, or null for all
 	 * @return a Collection of ExamStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<ExamStatsEntry> getCheckrideStatistics(String label, String subLabel, boolean academyOnly, int scorerID) throws DAOException {
+	public Collection<ExamStatsEntry> getCheckrideStatistics(String label, String subLabel, boolean academyOnly, int scorerID, String eqProgram) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -205,6 +206,8 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 			sqlBuf.append("AND (C.ACADEMY=?) ");
 		if (scorerID > 0)
 			sqlBuf.append("AND (C.GRADED_BY=?) ");
+		if (eqProgram != null)
+			sqlBuf.append("AND (C.EQTYPE=?) ");
 		sqlBuf.append("GROUP BY LBL, SUBLBL ORDER BY ");
 		sqlBuf.append(label.startsWith("DATE") ? "DT DESC" : "LBL");
 		sqlBuf.append(", ");
@@ -218,6 +221,8 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 				_ps.setBoolean(++pos, true);
 			if (scorerID > 0)
 				_ps.setInt(++pos, scorerID);
+			if (eqProgram != null)
+				_ps.setString(++pos, eqProgram);
 			
 			// Execute the query
 			Collection<ExamStatsEntry> results = new ArrayList<ExamStatsEntry>();
