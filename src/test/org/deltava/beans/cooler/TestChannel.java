@@ -58,19 +58,19 @@ public class TestChannel extends AbstractBeanTestCase {
         assertEquals(1, _c.getWriteRoles().size());
         assertTrue(_c.getWriteRoles().contains("*"));
         
-        _c.addRole(false, "Role1");
+        _c.addRole(Channel.INFOTYPE_RROLE, "Role1");
         assertEquals(1, _c.getReadRoles().size());
         assertTrue(_c.getReadRoles().contains("Role1"));
-        _c.addRole(false, "Role2");
+        _c.addRole(Channel.INFOTYPE_RROLE, "Role2");
         assertEquals(2, _c.getReadRoles().size());
         assertTrue(_c.getReadRoles().contains("Role2"));
-        _c.addRole(false, "Role1");
+        _c.addRole(Channel.INFOTYPE_RROLE, "Role1");
         assertEquals(1, _c.getReadRoles().size());
         
         Set<String> rNames = new HashSet<String>();
         rNames.add("Role3");
         rNames.add("Role4");
-        _c.setRoles(true, rNames);
+        _c.setRoles(Channel.INFOTYPE_WROLE, rNames);
         
         assertEquals(2, _c.getWriteRoles().size());
         assertTrue(_c.getWriteRoles().contains("Role3"));

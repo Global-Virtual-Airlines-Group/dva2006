@@ -32,7 +32,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 	}
 
 	public void testAccess() throws Exception {
-		_c.addRole(false, "X");
+		_c.addRole(Channel.INFOTYPE_RROLE, "X");
 		assertFalse(_user.isInRole("X"));
 		_ac.validate();
 
@@ -51,8 +51,8 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 	}
 
 	public void testWildcardAccess() throws Exception {
-		_c.addRole(false, "*");
-		_c.addRole(true, "*");
+		_c.addRole(Channel.INFOTYPE_RROLE, "*");
+		_c.addRole(Channel.INFOTYPE_WROLE, "*");
 		_ac.validate();
 
 		assertTrue(_ac.getCanAccess());
@@ -80,7 +80,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 		assertFalse(_ac.getCanRead());
 		assertFalse(_ac.getCanEdit());
 
-		_c.addRole(false, "Anonymous");
+		_c.addRole(Channel.INFOTYPE_RROLE, "Anonymous");
 		_ac.validate();
 
 		assertTrue(_ac.getCanAccess());
@@ -115,8 +115,8 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 	}
 
 	public void testOtherAirlineAccess() throws Exception {
-		_c.addRole(false, "Pilot");
-		_c.addRole(true, "Pilot");
+		_c.addRole(Channel.INFOTYPE_RROLE, "Pilot");
+		_c.addRole(Channel.INFOTYPE_WROLE, "Pilot");
 		_user.setPilotCode("AFV123");
 		assertFalse(_c.getAirlines().contains("AFV"));
 		_ac.validate();

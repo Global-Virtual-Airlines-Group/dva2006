@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.Channel;
 /**
  * A Data Access Object to write Water Cooler Channel Profiles.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -55,6 +55,13 @@ public class SetCoolerChannel extends DAO {
 			// Dump write roles
 			_ps.setInt(2, Channel.INFOTYPE_WROLE);
 			for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
+				_ps.setString(3, i.next());
+				_ps.addBatch();
+			}
+			
+			// Dump notify roles
+			_ps.setInt(2, Channel.INFOTYPE_NROLE);
+			for (Iterator<String> i = c.getNotifyRoles().iterator(); i.hasNext(); ) {
 				_ps.setString(3, i.next());
 				_ps.addBatch();
 			}

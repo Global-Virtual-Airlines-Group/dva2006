@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -21,6 +21,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     public static final int INFOTYPE_AIRLINE = 0;
     public static final int INFOTYPE_RROLE = 1;
     public static final int INFOTYPE_WROLE = 2;
+    public static final int INFOTYPE_NROLE = 3;
     
     private String _name;
     private String _desc;
@@ -29,6 +30,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     private final Collection<String> _airlines = new TreeSet<String>();
     private final Collection<String> _rRoles = new TreeSet<String>();
     private final Collection<String> _wRoles = new TreeSet<String>();
+    private final Collection<String> _nRoles = new TreeSet<String>();
     
     private int _threadCount;
     private int _postCount;
@@ -40,7 +42,6 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     static class AllChannel extends Channel {
     	
     	private static final Collection<String> RROLES = Arrays.asList("*");
-    	private static final Collection<String> WROLES = Collections.emptySet();
     	
     	private String _myName;
     	private boolean _topOfList;
@@ -66,7 +67,12 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     	
     	@Override
     	public final Collection<String> getWriteRoles() {
-    		return WROLES;
+    		return Collections.emptySet();
+    	}
+    	
+    	@Override
+    	public final Collection<String> getNotifyRoles() {
+    		return Collections.emptySet();
     	}
     	
     	public final int compareTo(Channel c2) {
@@ -112,8 +118,8 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     
     /**
      * Returns the roles authorized to access this Channel.
-     * @return a sorted Set of roles authorized to view this Channel
-     * @see Channel#addRole(boolean, String)
+     * @return a Collection of roles authorized to view this Channel
+     * @see Channel#addRole(int, String)
      */
     public Collection<String> getReadRoles() {
         return _rRoles;
@@ -121,13 +127,21 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     
     /**
      * Returns the roles authorized to post in this Channel.
-     * @return a sorted Set of roles authorized to view this Channel
-     * @see Channel#addRole(boolean, String)
+     * @return a Collection of roles authorized to view this Channel
+     * @see Channel#addRole(int, String)
      */
     public Collection<String> getWriteRoles() {
         return _wRoles;
     }
 
+    /**
+     * Returns the roles notified when a new post is created in this Channel.
+     * @return a Collection of roles
+     * @see Channel#addRole(int, String)
+     */
+    public Collection<String> getNotifyRoles() {
+    	return _nRoles;
+    }
     
     /**
      * Returns the total number of thread views for Threads in this Channel. 
@@ -239,34 +253,56 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     
     /**
      * Add a security role to this Channel.
-     * @param isWrite TRUE if post access, otherwise FALSE
+     * @param type the role type
      * @param roleName the name of the role to add to this Channel's access list
-     * @see Channel#setRoles(boolean, Collection)
+     * @see Channel#setRoles(int, Collection)
      * @see Channel#getReadRoles()
      * @see Channel#getWriteRoles()
      */
-    public void addRole(boolean isWrite, String roleName) {
-    	Collection<String> roles = isWrite ? _wRoles : _rRoles; 
-    	roles.add(roleName);
+    public void addRole(int type, String roleName) {
+    	switch (type) {
+    		case Channel.INFOTYPE_RROLE:
+    			_rRoles.add(roleName);
+    			break;
+    			
+    		case Channel.INFOTYPE_WROLE:
+    			_wRoles.add(roleName);
+    			break;
+    			
+    		case Channel.INFOTYPE_NROLE:
+    			_nRoles.add(roleName);
+    			break;
+    	}
     }
     
     /**
      * Updates the security roles for this Channel.
-     * @param isWrite TRUE if post access, otherwise FALSE
+     * @param type the role type
      * @param roles the roles to add to this Channel's access list
      * @see Channel#getReadRoles()
      * @see Channel#getWriteRoles()
-     * @see Channel#addRole(boolean, String)
+     * @see Channel#addRole(int, String)
      */
-    public void setRoles(boolean isWrite, Collection<String> roles) {
-    	if (roles == null)
-    		roles = Collections.emptyList();
+    public void setRoles(int type, Collection<String> roles) {
+    	if ((type == Channel.INFOTYPE_NROLE) && ((roles == null) || roles.isEmpty()))
+    		roles = Arrays.asList("*");
     	
-    	Collection<String> r = isWrite ? _wRoles : _rRoles; 
-    	r.clear();
-    	r.addAll(roles);
-    	if (r.isEmpty())
-    		r.add("*");
+    	switch (type) {
+			case Channel.INFOTYPE_RROLE:
+				_rRoles.clear();
+				_rRoles.addAll(roles);
+				break;
+			
+			case Channel.INFOTYPE_WROLE:
+				_wRoles.clear();
+				_wRoles.addAll(roles);
+				break;
+			
+			case Channel.INFOTYPE_NROLE:
+				_nRoles.clear();
+				_nRoles.addAll(roles);
+				break;
+    	}
     }
     
     /**

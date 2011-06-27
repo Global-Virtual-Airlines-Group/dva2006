@@ -13,7 +13,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       super.setUp();
       _c = new Channel("Channel");
       _c.addAirline("DVA");
-      _c.addRole(false, "Dummy");
+      _c.addRole(Channel.INFOTYPE_RROLE, "Dummy");
       _mt = new MessageThread("Thread Subject");
       _ac = new CoolerThreadAccessControl(_ctxt);
    }
@@ -34,7 +34,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanLock());
       assertFalse(_ac.getCanUnlock());
       
-      _c.addRole(false, "*");
+      _c.addRole(Channel.INFOTYPE_RROLE, "*");
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -45,7 +45,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    
    public void testAnonymousAccess() throws Exception {
       _ctxt.logoff();
-      _c.addRole(false, "*");
+      _c.addRole(Channel.INFOTYPE_RROLE, "*");
       _ac.updateContext(_mt, _c);
       _ac.validate();
       
@@ -56,7 +56,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    }
    
    public void testLockingAccess() throws Exception {
-      _c.addRole(false, "*");
+      _c.addRole(Channel.INFOTYPE_RROLE, "*");
       _user.addRole("Moderator");
       _ac.updateContext(_mt, _c);
       _ac.validate();
@@ -76,8 +76,8 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    }
    
    public void testLockedAccess() throws Exception {
-      _c.addRole(false, "*");
-      _c.addRole(true, "*");
+      _c.addRole(Channel.INFOTYPE_RROLE, "*");
+      _c.addRole(Channel.INFOTYPE_WROLE, "*");
       _mt.setHidden(true);
       _ac.updateContext(_mt, _c);
       _ac.validate();
