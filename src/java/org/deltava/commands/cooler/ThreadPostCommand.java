@@ -279,6 +279,8 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 			
+			// TODO: Load users to notify
+			
 			// Mark this thread as read
 			@SuppressWarnings("unchecked")
 			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);

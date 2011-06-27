@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Iterator;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to maintain Discussion Forum channel profiles.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -49,11 +49,12 @@ public class ChannelCommand extends AbstractFormCommand {
 			
 			// Load roles and airlines - make sure write access can read
 			c.setAirlines(ctx.getParameters("airline"));
-			c.setRoles(false, ctx.getParameters("readRoles"));
-			c.setRoles(true, ctx.getParameters("writeRoles"));
-			if (!c.getReadRoles().contains("*")) {
+			c.setRoles(Channel.INFOTYPE_RROLE, ctx.getParameters("readRoles"));
+			c.setRoles(Channel.INFOTYPE_WROLE, ctx.getParameters("writeRoles"));
+			c.setRoles(Channel.INFOTYPE_NROLE, ctx.getParameters("notifyRoles"));
+			if (!c.getWriteRoles().contains("*")) {
 				for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); )
-					c.addRole(false, i.next());
+					c.addRole(Channel.INFOTYPE_RROLE, i.next());
 			}
 			
 			// Check our access
