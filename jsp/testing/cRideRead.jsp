@@ -13,6 +13,17 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<script type="text/javascript">
+function toggleBody(id)
+{
+var row = document.getElementById(id);
+var linkDesc = document.getElementById('toggleC');
+var visible = (row.style.display != 'none');
+displayObject(row, !visible);
+linkDesc.innerHTML = visible ? 'View' : 'Hide';
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -55,7 +66,7 @@
 </c:if>
 <tr>
  <td class="label">Assigned on</td>
- <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /></td>
+ <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /> - <a href="javascript:void toggleBody('crComments')"><span id="toggleC">View</span> Description</a></td>
 </tr>
 <c:if test="${!fn:passed(checkRide) && !fn:failed(checkRide)}">
 <tr>
@@ -89,10 +100,16 @@
  <td class="data"><fmt:date fmt="d" date="${checkRide.scoredOn}" /> by ${scorer.name}</td>
 </tr>
 </c:if>
-<tr>
- <td class="label top">Comments</td>
+<tr id="crComments" style="display:none;">
+ <td class="label top">Description</td>
  <td class="data top"><fmt:msg value="${checkRide.comments}" /></td>
 </tr>
+<c:if test="${!empty pirep}">
+<tr id="frComments">
+ <td class="label top">Comments</td>
+ <td class="data top"><fmt:msg value="${pirep.comments}" /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
