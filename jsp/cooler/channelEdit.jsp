@@ -64,6 +64,10 @@ return true;
  <td class="data"><el:check name="writeRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.writeRoles}" options="${roles}" /></td>
 </tr>
 <tr>
+ <td class="label top">Notify Roles</td>
+ <td class="data"><el:check name="notifyRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.notifyRoles}" options="${roles}" /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" className="sec" value="true" label="Channel is Active" checked="${channel.active}" /><br />
 <el:box name="allowNew" idx="*" value="true" label="Allow New Threads and Replies" checked="${channel.allowNewPosts}" /></td>
