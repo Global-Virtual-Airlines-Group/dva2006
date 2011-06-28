@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Water Cooler channels.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -34,6 +34,16 @@ public class CoolerChannelAccessControl extends AccessControl {
     public CoolerChannelAccessControl(SecurityContext ctx, Channel c) {
         super(ctx);
         _c = c;
+    }
+    
+    /**
+     * Updates the Security Context verify access with. Since this Access controller may be called many times in
+     * succession, it is more efficient to update the security context rather than constantly creating a new
+     * CoolerChannelAccessControl object. 
+     * @param ctx the SecurityContext
+     */
+    public void updateContext(SecurityContext ctx) {
+       _ctx = ctx;
     }
 
     /**

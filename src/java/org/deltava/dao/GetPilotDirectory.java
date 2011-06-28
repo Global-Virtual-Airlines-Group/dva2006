@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -213,20 +213,16 @@ public class GetPilotDirectory extends GetPilot implements PersonUniquenessDAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
+		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) GROUP BY P.ID");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, roleName);
-			_ps.setInt(2, FlightReport.OK);
-			return execute();
+			return new ArrayList<Pilot>(getByID(executeIDs(), "PILOTS").values());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
