@@ -67,6 +67,10 @@ Your attached image has been saved in the Image Gallery as a <span class="ita">$
 ${forumName} image size is <fmt:int value="${maxX}" />x<fmt:int value="${maxY}" /> pixels, or <fmt:int value="${maxSize / 1024}" />K.</span> 
 Your image has been scaled to match the ${forumName} limits, and some loss of image quality may occur.<br /></c:if>
 </c:if>
+<c:if test="${!empty notifyMsgs}">
+<br />
+<fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new ${forumName} discussion thread thread.<br />
+</c:if>
 </c:if>
 <c:if test="${isReply || isVote}">
 <!-- New Response Message -->
@@ -107,8 +111,7 @@ The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>
 <br />
 <c:if test="${!isDelete}">
 The discussion thread will automatically be displayed within 3 seconds. If your browser does not return to the thread or you are 
-impatient, you can <el:cmd className="sec bld" url="thread" link="${thread}" op="read">click here</el:cmd> to display the 
-discussion thread.<br />
+impatient, you can <el:cmd className="sec bld" url="thread" link="${thread}">Click Here</el:cmd> to display the discussion thread.<br />
 <br />
 </c:if>
 To return to the ${forumName} Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">Click Here</el:cmd>.<br />

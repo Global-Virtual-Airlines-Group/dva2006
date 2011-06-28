@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -16,7 +16,9 @@ import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
+import org.deltava.security.MultiUserSecurityContext;
 import org.deltava.security.command.CoolerChannelAccessControl;
 
 import org.deltava.util.*;
@@ -25,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 3.1
+ * @version 4.0
  * @since 1.0
  */
 
@@ -60,6 +62,11 @@ public class ThreadPostCommand extends AbstractCommand {
 		// Get the default airline and channel name
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 		String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
+		
+		// Initialze the Mailer context
+		Collection<Pilot> nPilots = new HashSet<Pilot>();
+		MessageContext mctxt = new MessageContext();
+		mctxt.addData("user", ctx.getUser());
 
 		try {
 			Connection con = ctx.getConnection();
@@ -279,7 +286,33 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 			
-			// TODO: Load users to notify
+			// Load the message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("THREADNOTIFY"));
+			
+			// Save thread data
+			mctxt.addData("thread", mt);
+			
+			// Load users to notify
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			for (String appCode : ch.getAirlines()) {
+				AirlineInformation ai = SystemData.getApp(appCode);
+				for (String role : ch.getNotifyRoles())
+					nPilots.addAll(pdao.getByRole(role, ai.getDB()));
+			}
+			
+			// Filter notify users
+			MultiUserSecurityContext sctx = new MultiUserSecurityContext(ctx);
+			for (Iterator<Pilot> i = nPilots.iterator(); i.hasNext();) {
+				Pilot usr = i.next();
+				sctx.setUser(usr);
+
+				// Validate this user's access to the channel
+				access.updateContext(sctx);
+				access.validate();
+				if (!access.getCanAccess())
+					i.remove();
+			}
 			
 			// Mark this thread as read
 			@SuppressWarnings("unchecked")
@@ -300,6 +333,16 @@ public class ThreadPostCommand extends AbstractCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+		
+		// Send the notification messages
+		if (!nPilots.isEmpty()) {
+			Mailer mailer = new Mailer(null);
+			mailer.setContext(mctxt);
+			mailer.send(nPilots);
+
+			// Save notification message count
+			ctx.setAttribute("notifyMsgs", Integer.valueOf(nPilots.size()), REQUEST);
 		}
 
 		// Remove image URLs
