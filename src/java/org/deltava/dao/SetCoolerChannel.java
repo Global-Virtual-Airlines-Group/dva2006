@@ -41,40 +41,9 @@ public class SetCoolerChannel extends DAO {
 			_ps.setBoolean(4, c.getAllowNewPosts());
 			executeUpdate(1);
 			
-			// Write the channel data
-			prepareStatement("INSERT INTO common.COOLER_CHANNELINFO (CHANNEL, INFOTYPE, INFODATA) VALUES (?, ?, ?)");
-			_ps.setString(1, c.getName());
-			
-			// Dump read roles
-			_ps.setInt(2, Channel.INFOTYPE_RROLE);
-			for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-			
-			// Dump write roles
-			_ps.setInt(2, Channel.INFOTYPE_WROLE);
-			for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-			
-			// Dump notify roles
-			_ps.setInt(2, Channel.INFOTYPE_NROLE);
-			for (Iterator<String> i = c.getNotifyRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-			
-			// Dump airlines
-			_ps.setInt(2, Channel.INFOTYPE_AIRLINE);
-			for (Iterator<String> i = c.getAirlines().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-			
-			// Execute the update and commit
-			_ps.executeBatch();
+			// Write data
+			writeInfo(c);
+
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -98,33 +67,8 @@ public class SetCoolerChannel extends DAO {
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
-			// Write the channel data
-			prepareStatement("INSERT INTO common.COOLER_CHANNELINFO (CHANNEL, INFOTYPE, INFODATA) VALUES (?, ?, ?)");
-			_ps.setString(1, c.getName());
-			
-			// Dump roles
-			_ps.setInt(2, Channel.INFOTYPE_RROLE);
-			for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-			
-			// Dump write roles
-			_ps.setInt(2, Channel.INFOTYPE_WROLE);
-			for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-			
-			// Dump airlines
-			_ps.setInt(2, Channel.INFOTYPE_AIRLINE);
-			for (Iterator<String> i = c.getAirlines().iterator(); i.hasNext(); ) {
-				_ps.setString(3, i.next());
-				_ps.addBatch();
-			}
-
-			// write the channel data
-			_ps.executeBatch();
+			// Write data
+			writeInfo(c);
 			
 			// Update the channel profile
 			prepareStatement("UPDATE common.COOLER_CHANNELS SET CHANNEL=?, DESCRIPTION=?, ACTIVE=?, "
@@ -142,6 +86,46 @@ public class SetCoolerChannel extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Helper method to write metadata.
+	 */
+	private void writeInfo(Channel c) throws SQLException {
+
+		prepareStatement("INSERT INTO common.COOLER_CHANNELINFO (CHANNEL, INFOTYPE, INFODATA) VALUES (?, ?, ?)");
+		_ps.setString(1, c.getName());
+		
+		// Dump read roles
+		_ps.setInt(2, Channel.INFOTYPE_RROLE);
+		for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); ) {
+			_ps.setString(3, i.next());
+			_ps.addBatch();
+		}
+		
+		// Dump write roles
+		_ps.setInt(2, Channel.INFOTYPE_WROLE);
+		for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
+			_ps.setString(3, i.next());
+			_ps.addBatch();
+		}
+		
+		// Dump notify roles
+		_ps.setInt(2, Channel.INFOTYPE_NROLE);
+		for (Iterator<String> i = c.getNotifyRoles().iterator(); i.hasNext(); ) {
+			_ps.setString(3, i.next());
+			_ps.addBatch();
+		}
+		
+		// Dump airlines
+		_ps.setInt(2, Channel.INFOTYPE_AIRLINE);
+		for (Iterator<String> i = c.getAirlines().iterator(); i.hasNext(); ) {
+			_ps.setString(3, i.next());
+			_ps.addBatch();
+		}
+		
+		_ps.executeBatch();
+		_ps.close();
 	}
 	
 	/**
