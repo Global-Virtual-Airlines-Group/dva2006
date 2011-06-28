@@ -100,7 +100,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 					sctx.setUser(usr);
 
 					// Validate this user's access
-					ac.updateContxt(sctx);
+					ac.updateContext(sctx);
 					ac.validate();
 					if (!ac.getCanRead()) {
 						log.warn(usr.getName() + " can no longer read " + mt.getSubject());

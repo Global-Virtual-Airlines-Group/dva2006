@@ -48,7 +48,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
      * CoolerThreadAccessControl object. 
 	 * @param t the Water Cooler message thread
 	 * @param c the Water Cooler Channel
-	 * @see CoolerThreadAccessControl#updateContxt(SecurityContext)
+	 * @see CoolerThreadAccessControl#updateContext(SecurityContext)
      */
     public void updateContext(MessageThread t, Channel c) {
         _mt = t;
@@ -63,7 +63,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
      * @param ctx the Command context
      * @see CoolerThreadAccessControl#updateContext(MessageThread, Channel)
      */
-    public void updateContxt(SecurityContext ctx) {
+    public void updateContext(SecurityContext ctx) {
        _ctx = ctx;
        _cac = new CoolerChannelAccessControl(ctx, _c);
     }
