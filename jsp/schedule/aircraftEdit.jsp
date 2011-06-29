@@ -43,7 +43,7 @@ return true;
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:sysdata var="airlines" name="apps" mapValues="true" />
-<content:enum var="tankNames" className="org.deltava.beans.schedule.Aircraft$Tank" />
+<content:enum var="tankNames" className="org.deltava.beans.schedule.FuelTank" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
