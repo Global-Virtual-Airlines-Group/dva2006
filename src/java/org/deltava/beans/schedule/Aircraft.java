@@ -256,7 +256,7 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 		for (TankType tt : TankType.values()) {
 			Collection<String> names = new LinkedHashSet<String>();
 			for (FuelTank t : FuelTank.values()) {
-				if ((_tankCodes[tt.ordinal()] & (1 << t.ordinal())) > 0)
+				if ((_tankCodes[tt.ordinal()] & (1 << t.code())) > 0)
 					names.add(t.getName());
 			}
 			
@@ -530,8 +530,8 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 		
 		// Update the tanks
 		for (FuelTank t : FuelTank.values()) {
-			if (tankNames.contains(t.getName()))
-				_tankCodes[tt.ordinal()] |= (1 << t.ordinal());
+			if (tankNames.contains(t.name()))
+				_tankCodes[tt.ordinal()] |= (1 << t.code());
 		}
 	}
 
