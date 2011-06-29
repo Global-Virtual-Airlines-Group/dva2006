@@ -1,6 +1,8 @@
 // Copyright 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import org.deltava.beans.ComboAlias;
+
 /**
  * An enumeration to store MS Flight Simulator Fuel Tank codes.
  * @author Luke
@@ -8,7 +10,7 @@ package org.deltava.beans.schedule;
  * @since 2.0
  */
 
-public enum FuelTank {
+public enum FuelTank implements ComboAlias {
 
 	CENTER(0, "Center"), CENTER_2(7, "Center 2"), CENTER_3(8, "Center 3"),
 	LEFT_MAIN(1, "Left Main"), LEFT_AUX(2, "Left Aux"), LEFT_TIP(3, "Left Tip"),
@@ -42,6 +44,14 @@ public enum FuelTank {
 	 */
 	public String getName() {
 		return _name;
+	}
+	
+	public String getComboName() {
+		return getName();
+	}
+	
+	public String getComboAlias() {
+		return name();
 	}
 	
 	/**
