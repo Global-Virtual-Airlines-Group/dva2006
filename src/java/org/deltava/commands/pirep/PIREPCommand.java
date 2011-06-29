@@ -144,6 +144,15 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (aInfo != null) {
 				fr.setAttribute(FlightReport.ATTR_HISTORIC, aInfo.getHistoric());
 				fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > aInfo.getRange()));
+				
+				// Check for excessive weight
+				if (fr instanceof ACARSFlightReport) {
+					ACARSFlightReport afr = (ACARSFlightReport) fr;
+					if ((aInfo.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > aInfo.getMaxTakeoffWeight()))
+						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+					else if ((aInfo.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > aInfo.getMaxLandingWeight()))
+						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+				}
 			}
 
 			// Figure out what network the flight was flown on and ensure we have an ID
