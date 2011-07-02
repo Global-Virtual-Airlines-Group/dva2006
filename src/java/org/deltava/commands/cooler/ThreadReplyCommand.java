@@ -157,11 +157,8 @@ public class ThreadReplyCommand extends AbstractCommand {
 			// Add thread and save
 			threadIDs.put(Integer.valueOf(mt.getID()), new Date());
 
-			// Save thread data
-			mctxt.addData("thread", mt);
-			mctxt.addData("threadID", StringUtils.formatHex(mt.getID()));
-
 			// Save the thread in the request
+			mctxt.addData("thread", mt);
 			ctx.setAttribute("thread", mt, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
