@@ -66,10 +66,6 @@ return true;
  <td class="data"><el:text name="range" idx="*" size="3" max="4" className="bld req" value="${channel.range}" /> miles</td>
 </tr>
 <tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isDefault" idx="*" value="true" checked="${channel.isDefault}" label="Default Channel" /></td>
-</tr>
-<tr>
  <td class="label">Web Applications</td>
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${channel.airlines}" /></td>
 </tr>
@@ -83,7 +79,7 @@ return true;
 </tr>
 <tr>
  <td class="label top">Talk-Access if Present Roles</td>
- <td class="data"><el:check name="dynTalkRoles" width="115" cols="6" className="small" newLine="true" firstEntry="Pilot" checked="${channel.dynTalkRoles}" options="${roles}" /></td>
+ <td class="data"><el:check name="dynTalkRoles" width="115" cols="6" className="small" newLine="true" checked="${channel.dynTalkRoles}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label top">Admin-Access Roles</td>
