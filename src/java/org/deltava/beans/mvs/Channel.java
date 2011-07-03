@@ -17,6 +17,11 @@ import org.deltava.beans.system.AirlineInformation;
 public class Channel extends DatabaseBean implements ViewEntry {
 	
 	/**
+	 * Lobby name.
+	 */
+	public static final String DEFAULT_NAME = "Lobby";
+	
+	/**
 	 * Access rights enumeration.
 	 */
 	public enum Access {
@@ -263,9 +268,6 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	public String getRowClassName() {
-		if (_isDefault)
-			return "opt2";
-		
 		return getIsTemporary() ? "opt3" : null;
 	}
 }

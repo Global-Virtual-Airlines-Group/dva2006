@@ -107,4 +107,12 @@ public class PopulatedChannel implements java.io.Serializable {
 		
 		return results;
 	}
+	
+	public int hashCode() {
+		return _c.getName().hashCode();
+	}
+	
+	public String toString() {
+		return _c.getName();
+	}
 }
