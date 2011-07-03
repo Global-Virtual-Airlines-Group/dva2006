@@ -8,6 +8,8 @@ import org.deltava.beans.mvs.Channel;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to delete an MVS persistent channel.
  * @author Luke
@@ -22,6 +24,7 @@ public class ChannelDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command Context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -44,8 +47,9 @@ public class ChannelDeleteCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Set status attribute
+		// Set status attributes
 		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
+		EventDispatcher.send(new SystemEvent(SystemEvent.Type.MVS_RELOAD));
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

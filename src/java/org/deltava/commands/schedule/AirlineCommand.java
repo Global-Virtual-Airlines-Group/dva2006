@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class AirlineCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the airline code
@@ -76,7 +77,7 @@ public class AirlineCommand extends AbstractFormCommand {
 		}
 		
 		// Force an airline reload
-		EventDispatcher.send(SystemEvent.AirlineReload());
+		EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRLINE_RELOAD));
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -89,6 +90,7 @@ public class AirlineCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the airline code
@@ -127,6 +129,7 @@ public class AirlineCommand extends AbstractFormCommand {
 	 * Callback method called when reading the Airline. Redirects to Edit.
 	 * @param ctx the Command context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}
