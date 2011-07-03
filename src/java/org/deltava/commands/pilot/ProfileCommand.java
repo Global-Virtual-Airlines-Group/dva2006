@@ -35,7 +35,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -52,6 +52,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -629,7 +630,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.commitTX();
 			
 			// Invalidate the Pilot cache across applications
-			EventDispatcher.send(UserEvent.UserInvalidate(p.getID()));
+			EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_INVALIDATE, p.getID()));
 			
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -652,6 +653,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Save time zones and notification/privacy options
@@ -766,6 +768,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
