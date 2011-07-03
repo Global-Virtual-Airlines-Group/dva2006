@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 3.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -126,7 +126,7 @@ public class AirportCommand extends AbstractFormCommand {
 		}
 
 		// Update the Airports
-		EventDispatcher.send(SystemEvent.AirportReload());
+		EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
 
 		// Set status update flag
 		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);

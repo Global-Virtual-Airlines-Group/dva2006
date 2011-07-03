@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to reactivate a Pilot.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class PilotActivationCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get command results
@@ -53,7 +54,7 @@ public class PilotActivationCommand extends AbstractCommand {
 				int size = stdao.getActivePilots(SystemData.get("airline.db"));
 				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				if (isFull)
-					ctx.setAttribute("airlineSize", new Integer(size), REQUEST);
+					ctx.setAttribute("airlineSize", Integer.valueOf(size), REQUEST);
 			}
 
 			// Get the DAO and the Pilot profile
@@ -154,7 +155,7 @@ public class PilotActivationCommand extends AbstractCommand {
 				auth.authenticate(p, p.getPassword());
 			
 			// Invalidate the Pilot cache across applications
-			EventDispatcher.send(UserEvent.UserInvalidate(p.getID()));
+			EventDispatcher.send(new UserEvent(SystemEvent.Type.USER_INVALIDATE, p.getID()));
 
 			// Set JSP result
 			result.setType(ResultType.REQREDIRECT);

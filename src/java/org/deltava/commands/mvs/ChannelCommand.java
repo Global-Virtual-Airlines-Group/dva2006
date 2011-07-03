@@ -13,6 +13,8 @@ import org.deltava.dao.*;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to update MVS Channel data.
  * @author Luke
@@ -27,6 +29,7 @@ public class ChannelCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new channel
@@ -50,13 +53,13 @@ public class ChannelCommand extends AbstractFormCommand {
 			c.setDescription(ctx.getParameter("desc"));
 			c.setSampleRate(SampleRate.getRate(StringUtils.parse(ctx.getParameter("rate"), SampleRate.SR11K.getRate())));
 			c.setMaxUsers(StringUtils.parse(ctx.getParameter("maxUsers"), 0));
-			c.setIsDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
 			c.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			
 			// Update the roles
 			c.clearRoles();
 			c.addRoles(Access.VIEW, ctx.getParameters("joinRoles"));
 			c.addRoles(Access.TALK, ctx.getParameters("talkRoles"));
+			c.addRoles(Access.TALK_IF_PRESENT, ctx.getParameters("dynTalkRoles"));
 			c.addRoles(Access.ADMIN, ctx.getParameters("adminRoles"));
 			
 			// Set airlines
@@ -81,6 +84,7 @@ public class ChannelCommand extends AbstractFormCommand {
 
 		// Set status attribute
 		ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
+		EventDispatcher.send(new SystemEvent(SystemEvent.Type.MVS_RELOAD));
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -94,6 +98,7 @@ public class ChannelCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
 			GetMVSChannel dao = new GetMVSChannel(ctx.getConnection());
@@ -115,9 +120,10 @@ public class ChannelCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when reading the channel profile.
+	 * Callback method called when reading the channel profile - redirects to edit.
 	 * @param ctx the Command context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}
