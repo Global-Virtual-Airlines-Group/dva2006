@@ -87,6 +87,11 @@ public class NewAirportListCommand extends AbstractCommand {
 			aps.add(a);
 		}
 		
+		// Check in case we've visited all airports for the default airline
+		Collection<Airport> defaultAirlineList = airports.get(defaultCode);
+		if (defaultAirlineList.isEmpty())
+			airports.remove(defaultCode);
+		
 		// Save in request
 		ctx.setAttribute("airports", airports, REQUEST);
 		
