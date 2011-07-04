@@ -191,6 +191,38 @@
 </c:forEach>
 </view:table>
 </c:if>
+<c:if test="${!empty crStats}">
+<!-- Check Ride Statistics -->
+<view:table className="view" cmd="prgroster">
+<tr class="title caps">
+ <td class="left" colspan="7">CHECK RIDE STATISTICS</td>
+</tr>
+
+<!-- Table Header Bar -->
+<tr class="title caps">
+ <td width="20%">MONTH</td>
+ <td width="20%">SCORER</td>
+ <td width="10%">PASSED</td>
+ <td width="10%">TOTAL</td>
+ <td width="15%">PASS RATE</td>
+ <td width="10%">PILOTS</td>
+ <td>AVG. TRIES</td>
+</tr>
+
+<!-- Table Data -->
+<c:forEach var="crStat" items="${crStats}">
+<tr>
+ <td class="pri bld">${crStat.label}</td>
+ <td class="bld">${crStat.subLabel}</td>
+ <td class="sec bld"><fmt:int value="${crStat.passed}" /></td>
+ <td><fmt:int value="${crStat.total}" /></td>
+ <td class="pri bld"><fmt:dec value="${crStat.passed * 100.0 / crStat.total}" />%</td>
+ <td class="sec"><fmt:int value="${crStat.users}" /></td>
+ <td class="bld"><fmt:dec value="${crStat.total / crStat.users}" /></td>
+</tr>
+</c:forEach>
+</view:table>
+</c:if>
 <!-- Flight Report Statistics -->
 <el:table className="view">
 <tr class="title caps">
