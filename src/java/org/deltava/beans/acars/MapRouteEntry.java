@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -163,6 +163,11 @@ public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(")<br /><br />ACARS Flight <span class=\"bld\">");
 		buf.append(StringUtils.format(getID(), "#,##0"));
 		buf.append("</span>");
+		if (_network != null) {
+			buf.append("<br />Flight operated online using <span class=\"sec bld caps\">");
+			buf.append(_network.toString());
+			buf.append("</span>");
+		}
 		if (isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
 			buf.append("<br />Flight Phase: <span class=\"bld\">");
 			buf.append(_phaseName);
