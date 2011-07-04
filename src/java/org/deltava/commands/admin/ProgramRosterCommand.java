@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 2.1
  */
 
@@ -131,6 +131,12 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 				else
 					IDs.add(new Integer(ex.getPilotID()));
 			}
+			
+			// Load checkride statistics
+			GetExamStatistics exsdao = new GetExamStatistics(con);
+			exsdao.setQueryMax(15);
+			ctx.setAttribute("crStats", exsdao.getCheckrideStatistics("DATE_FORMAT(C.CREATED, '%M %Y')", "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", 
+					false, 0, eq.getName()), REQUEST);
 			
 			// Load flight report statistics for the past 14 days 
 			GetFlightReportStatistics psdao = new GetFlightReportStatistics(con);
