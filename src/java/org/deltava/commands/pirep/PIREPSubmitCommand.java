@@ -61,7 +61,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep.getAirportD(), pirep.getAirportA(), SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
-				if (pirep.getID() != 0)
+				if (pirep.getID() == 0)
 					pirep.setID(fr.getID());
 				pirep.setDatabaseID(DatabaseID.ASSIGN, fr.getDatabaseID(DatabaseID.ASSIGN));
 				pirep.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
