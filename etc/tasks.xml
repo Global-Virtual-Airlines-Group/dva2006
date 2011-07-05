@@ -251,16 +251,4 @@
 			<wday>*</wday>
 		</time>
 	</task>
-
-	<!-- Equipment Program Summary -->
-	<task id="eqprogsummary" enabled="false">
-		<class>org.deltava.tasks.ProgramSummaryTask</class>
-		<time>
-			<min>10</min>
-			<hour>1</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-		</time>
-	</task>
 </tasks>
