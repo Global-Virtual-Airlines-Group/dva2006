@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 3.7
+ * @version 4.0
  * @since 1.0
  */
 
@@ -93,8 +93,8 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM STAFF S LEFT JOIN PIREPS PR ON "
-				+ "(PR.PILOT_ID=S.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (APR.CLIENT_BUILD >= ?) "
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM STAFF S LEFT JOIN (PIREPS PR, "
+				+ "ACARS_PIREPS APR) ON (PR.PILOT_ID=S.ID) WHERE (PR.ID=APR.ID) AND (APR.CLIENT_BUILD >= ?) "
 				+ "AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
