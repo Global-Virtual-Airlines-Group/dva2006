@@ -12,7 +12,7 @@ import org.deltava.beans.ComboAlias;
 
 public enum SampleRate implements Comparable<SampleRate>, ComboAlias {
 
-	SR5K(5000), SR6K(6000), SR8K(8000), SR11K(11025), SR22K(22050), SR44K(44100);
+	SR5K(5000), SR6K(6000), SR8K(8000);
 	
 	private int _rate;
 	
@@ -21,18 +21,12 @@ public enum SampleRate implements Comparable<SampleRate>, ComboAlias {
 	 */
 	public static SampleRate getRate(int rate) {
 		switch (rate) {
-			case 44100:
-				return SR44K;
-			case 22050:
-				return SR22K;
-			case 8000:
-				return SR8K;
 			case 6000:
 				return SR6K;
 			case 5000:
 				return SR5K;
 			default:
-				return SR11K;
+				return SR8K;
 		}
 	}
 	

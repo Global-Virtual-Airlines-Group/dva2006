@@ -51,7 +51,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			
 			// Update the bean from the request
 			c.setDescription(ctx.getParameter("desc"));
-			c.setSampleRate(SampleRate.getRate(StringUtils.parse(ctx.getParameter("rate"), SampleRate.SR11K.getRate())));
+			c.setSampleRate(SampleRate.getRate(StringUtils.parse(ctx.getParameter("rate"), SampleRate.SR8K.getRate())));
 			c.setMaxUsers(StringUtils.parse(ctx.getParameter("maxUsers"), 0));
 			c.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			
