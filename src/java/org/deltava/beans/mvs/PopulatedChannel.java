@@ -115,4 +115,8 @@ public class PopulatedChannel implements java.io.Serializable {
 	public String toString() {
 		return _c.getName();
 	}
+	
+	public boolean equals(Object o) {
+		return (o instanceof PopulatedChannel) ? (hashCode() == o.hashCode()) : false;
+	}
 }
