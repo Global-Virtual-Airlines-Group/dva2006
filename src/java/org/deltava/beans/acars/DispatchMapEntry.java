@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
@@ -7,24 +7,21 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.util.StringUtils;
 
 /**
- * A bean to store a Dispatcher location and range.
+ * An ACARS Map entry bean to store a Dispatcher location and range.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 2.2
  */
 
-public class DispatchMapEntry extends ACARSMapEntry {
+public class DispatchMapEntry extends GroundMapEntry {
 	
-	private int _range;
-
 	/**
 	 * Initializes the map entry.
 	 * @param usr the Dispatcher user
 	 * @param loc the service location
 	 */
 	public DispatchMapEntry(Pilot usr, GeoLocation loc) {
-		super(loc);
-		_usr = usr;
+		super(usr, loc);
 	}
 
 	public final boolean isDispatch() {
@@ -54,10 +51,11 @@ public class DispatchMapEntry extends ACARSMapEntry {
 			buf.append("<br /><span class=\"error bld\">BUSY - Not providing Dispatch Service</span>");
 		
 		// Display limited range
-		if ((_range > 0) && (_range != Integer.MAX_VALUE)) {
+		int range = getRange();
+		if ((range > 0) && (range != Integer.MAX_VALUE)) {
 			buf.append("<br /><br />");
 			buf.append("<span class=\"sec bld\">Dispatch services restricted to Pilots within<br />");
-			buf.append(_range);
+			buf.append(range);
 			buf.append(" miles of ");
 			GeoLocation loc = getLocation();
 			if (loc instanceof Airport)
@@ -70,21 +68,5 @@ public class DispatchMapEntry extends ACARSMapEntry {
 			
 		buf.append("</div>");
 		return buf.toString();
-	}
-	
-	/**
-	 * Returns the dispatch service range.
-	 * @return the range in miles
-	 */
-	public int getRange() {
-		return _range;
-	}
-
-	/**
-	 * Updates the dispatch service range.
-	 * @param range the range radius in miles
-	 */
-	public void setRange(int range) {
-		_range = range;
 	}
 }
