@@ -27,9 +27,9 @@
 This <content:airline /> Flight Report has been successfully and saved in the database.<br />
 <c:if test="${isCreated}">
 <br />
-<span class="err">Please note that you must <u>SUBMIT</u> a Flight Report if you want the flight 
-hours and flight leg to be counted here at <content:airline />. To Submit this Flight Report for 
-approval,</span> <el:cmd className="sec bld" url="submit" link="${pirep}">Click Here</el:cmd>.<br />
+<span class="err">Please note that you must <span class="bld und">SUBMIT</span> a Flight Report if you
+want the flight hours and flight leg to be credited towards your flight totals here at <content:airline />. 
+To Submit this Flight Report for approval,</span> <el:cmd className="sec bld" url="submit" link="${pirep}">Click Here</el:cmd>.<br />
 </c:if>
 </c:if>
 <c:if test="${isSubmitted}">
@@ -127,6 +127,8 @@ This Flight Report has been succesfully deleted from the database.<br />
 
 <content:filter roles="PIREP"><c:if test="${isApprove || isReject || isHold || isDeleted}">
 To return to the <content:airline /> submitted Flight Report queue, <el:cmd url="pirepqueue" className="sec bld">Click Here</el:cmd>.<br />
+<c:if test="${fn:EventID(pirep) > 0}">
+To view this flight's Online Event, <el:cmd url="event" linkID="${fn:EventID(pirep)}" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <br />
 </c:if></content:filter>
 <content:filter roles="AcademyAdmin,HR"><c:if test="${academyEnabled && (!empty checkRide)}">
