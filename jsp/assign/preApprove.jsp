@@ -59,9 +59,11 @@ return true;
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" className="req" options="${airlines}" onChange="void changeAirline(this, false)" firstEntry="-" /></td>
 </tr>
+<c:set var="flightNumber" value="${assignPilot.pilotNumber}" scope="request" />
+<c:if test="${flightNumber > 9999}"><c:set var="flightNumber" value="${flightNumber % 10000}" scope="request" /></c:if>
 <tr>
  <td class="label">Flight / Leg</td>
- <td class="data"><el:text name="flight" idx="*" size="4" max="5" className="pri bld req" value="${assignPilot.pilotNumber}" />
+ <td class="data"><el:text name="flight" idx="*" size="4" max="4" className="pri bld req" value="${flightNumber}" />
  <el:text name="leg" idx="*" size="1" max="1" className="req" value="1" /></td>
 </tr>
 <tr>
