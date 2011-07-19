@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Flights for an Online Event.
  * @author Luke
- * @version 3.1
+ * @version 4.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class EventAssignCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Create the message context
@@ -85,8 +86,16 @@ public class EventAssignCommand extends AbstractCommand {
 				ai.setEventID(e.getID());
 				ai.setStatus(AssignmentInfo.RESERVED);
 				
+				// Calculate the flight number
+				int flightID = usr.getPilotNumber();
+				if (flightID == 0) {
+					Calendar cld = Calendar.getInstance();
+					flightID = cld.get(Calendar.YEAR) + cld.get(Calendar.DAY_OF_YEAR);
+				} else if (flightID > 10000)
+					flightID %= 10000;
+				
 				// Create an Assignment Leg
-				AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(usrData.getAirlineCode()), usr.getPilotNumber(),1);
+				AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(usrData.getAirlineCode()), flightID, 1);
 				leg.setEquipmentType(s.getEquipmentType());
 				leg.setAirportD(s.getAirportD());
 				leg.setAirportA(s.getAirportA());
