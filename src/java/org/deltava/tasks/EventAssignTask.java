@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 3.1
+ * @version 4.0
  * @since 1.0
  */
 
@@ -49,9 +49,9 @@ public class EventAssignTask extends Task {
 	/**
 	 * Executes the Task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 		
-		// Create the message context
 		MessageContext mctxt = new MessageContext();
 		try {
 			Connection con = ctx.getConnection();
@@ -110,8 +110,16 @@ public class EventAssignTask extends Task {
 						if (a == null)
 							a = SystemData.getAirline(SystemData.get("airline.code"));
 						
+						// Calculate the flight number
+						int flightID = usr.getPilotNumber();
+						if (flightID == 0) {
+							Calendar cld = Calendar.getInstance();
+							flightID = cld.get(Calendar.YEAR) + cld.get(Calendar.DAY_OF_YEAR);
+						} else if (flightID > 10000)
+							flightID %= 10000;
+						
 						// Create an Assignment Leg
-						AssignmentLeg leg = new AssignmentLeg(a, usr.getPilotNumber(), 1);
+						AssignmentLeg leg = new AssignmentLeg(a, flightID, 1);
 						leg.setEquipmentType(s.getEquipmentType());
 						leg.setAirportD(s.getAirportD());
 						leg.setAirportA(s.getAirportA());
@@ -163,8 +171,8 @@ public class EventAssignTask extends Task {
 
 						// Get the addresses to send to
 						Collection<EMailAddress> addrs = new LinkedHashSet<EMailAddress>();
-						for (Iterator<String> ai = e.getContactAddrs().iterator(); ai.hasNext(); )
-							addrs.add(Mailer.makeAddress(ai.next()));
+						for (String addr : e.getContactAddrs())
+							addrs.add(Mailer.makeAddress(addr));
 						
 						// Send the message
 						Mailer mailer = new Mailer(from);
