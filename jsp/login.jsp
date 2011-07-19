@@ -86,7 +86,7 @@ in order to log into the site.<br />
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember my User ID next time I Log in" checked="${!empty fname}" /></td>
+ <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember my Name next time I Log in" checked="${!empty fname}" /></td>
 </tr>
 <c:if test="${!empty dupeUsers}">
 <tr class="title caps">
