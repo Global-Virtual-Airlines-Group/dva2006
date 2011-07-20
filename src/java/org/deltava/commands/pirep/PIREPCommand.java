@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -152,6 +152,8 @@ public class PIREPCommand extends AbstractFormCommand {
 						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 					else if ((aInfo.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > aInfo.getMaxLandingWeight()))
 						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+					else if (afr.hasAttribute(FlightReport.ATTR_WEIGHTWARN))
+						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, false);
 				}
 			}
 
