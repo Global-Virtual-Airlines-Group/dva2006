@@ -21,10 +21,11 @@ public class ATCMapEntry extends GroundMapEntry {
 		super(usr, loc);
 	}
 	
-	public final boolean isDispatch() {
-		return false;
+	@Override
+	public EntryType getType() {
+		return EntryType.ATC;
 	}
-
+	
 	@Override
 	public String getIconColor() {
 		return BROWN;
