@@ -23,11 +23,13 @@ public class DispatchMapEntry extends GroundMapEntry {
 	public DispatchMapEntry(Pilot usr, GeoLocation loc) {
 		super(usr, loc);
 	}
-
-	public final boolean isDispatch() {
-		return true;
+	
+	@Override
+	public EntryType getType() {
+		return EntryType.DISPATCH;
 	}
 
+	@Override
 	public String getIconColor() {
 		return _busy ? PURPLE : GREEN;
 	}
