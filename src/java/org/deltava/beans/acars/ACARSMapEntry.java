@@ -1,17 +1,24 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 /**
- * An abstract class to describe ACARS Pilot/Dispatcher map entries.
+ * An abstract class to describe ACARS map entries.
  * @author Luke
- * @version 2.8
+ * @version 4.0
  * @since 2.2
  */
 
 public abstract class ACARSMapEntry extends DatabaseBean implements MarkerMapEntry {
+	
+	/**
+	 * Map entry types.
+	 */
+	public enum EntryType {
+		AIRCRAFT, DISPATCH, ATC
+	}
 	
 	protected GeoLocation _pos;
 	protected Pilot _usr;
@@ -61,10 +68,9 @@ public abstract class ACARSMapEntry extends DatabaseBean implements MarkerMapEnt
 	}
 	
 	/**
-	 * Returns whether this entry is a Dispatcher.
-	 * @return TRUE if a Dispatcher, otherwise FALSE
+	 * Returns the map entry type.
 	 */
-	public abstract boolean isDispatch();
+	public abstract EntryType getType();
 	
 	/**
 	 * Sets the ACARS client version used.

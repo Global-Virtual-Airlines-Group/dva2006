@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -47,15 +47,15 @@ public class MapService extends WebService {
 		// Add the items
 		for (Iterator<ACARSMapEntry> i = entries.iterator(); i.hasNext();) {
 			ACARSMapEntry entry = i.next();
-			Element e = new Element(entry.isDispatch() ? "dispatch" : "aircraft");
+			Element e = new Element(entry.getType().toString().toLowerCase());
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
 			e.setAttribute("busy", String.valueOf(entry.isBusy()));
 			
-			if (entry.isDispatch()) {
-				DispatchMapEntry dme = (DispatchMapEntry) entry;
-				e.setAttribute("range", String.valueOf((dme.getRange() > 5000) ? 0 : dme.getRange()));
+			if (entry instanceof GroundMapEntry) {
+				GroundMapEntry gme = (GroundMapEntry) entry;
+				e.setAttribute("range", String.valueOf((gme.getRange() > 5000) ? 0 : gme.getRange()));
 			} else
 				e.setAttribute("flight_id", String.valueOf(entry.getID()));
 			

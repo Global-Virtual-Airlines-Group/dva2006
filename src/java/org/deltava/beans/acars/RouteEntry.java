@@ -13,7 +13,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 3.7
+ * @version 4.0
  * @since 1.0
  */
 
@@ -66,13 +66,6 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 		_date = dt;
 	}
 	
-	/**
-	 * Returns if this entry is a Dispatcher.
-	 */
-	public final boolean isDispatch() {
-		return false;
-	}
-
 	/**
 	 * Returns the aircraft's atltiude above <i>sea level</i>.
 	 * @return the altitude in feet MSL
@@ -318,6 +311,11 @@ public class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 	 */
 	public Controller getController() {
 		return _atc;
+	}
+	
+	@Override
+	public final EntryType getType() {
+		return EntryType.AIRCRAFT;
 	}
 
 	/**
