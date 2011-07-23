@@ -52,13 +52,15 @@ so.write('flashcontent');
 
 <!-- Table Connection Data -->
 <c:forEach var="con" items="${acarsPool}">
+<c:set var="tcp" value="${con.TCPStatistics}" scope="request" />
+<c:set var="udp" value="${con.UDPStatistics}" scope="request" />
 <view:row entry="${con}">
  <td class="priB"><fmt:hex value="${con.ID}" /></td>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})
 <c:if test="${!empty con.addressInfo}"> <el:flag countryCode="${con.addressInfo.country.code}" caption="${con.addressInfo.location}" /></c:if></td>
- <td class="small"><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
- <td class="small"><fmt:int value="${con.bytesIn / 1024}" />K in, <fmt:int value="${con.bytesOut / 1024}" />K out</td>
+ <td class="small"><fmt:int value="${tcp.msgsIn}" /> in, <fmt:int value="${tcp.msgsOut}" /> out</td>
+ <td class="small"><fmt:int value="${tcp.bytesIn / 1024}" />K in, <fmt:int value="${tcp.bytesOut / 1024}" />K out</td>
 </view:row>
 <view:row entry="${con}">
  <td class="small">Build <fmt:int value="${con.clientBuild}" /><c:if test="${con.beta > 0}"> (b${con.beta})</c:if></td>
@@ -70,11 +72,11 @@ so.write('flashcontent');
  <td class="sec bld">${con.flightInfo.flightCode}</td>
 </c:otherwise>
 </c:choose>
- <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferReads}" /> reads, 
-<fmt:dec value="${con.bytesIn / con.bufferReads}" fmt="###0.0" /> bytes / read, 
-<fmt:int value="${con.bufferWrites}" /> writes, <fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> 
-writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> bytes / write
-<c:if test="${con.writeErrors > 0}">, <span class="error bld"><fmt:int value="${con.writeErrors}" /> errors</span></c:if>
+ <td colspan="4" class="small">Buffer: <fmt:int value="${tcp.bufferReads}" /> reads, 
+<fmt:dec value="${tcp.bytesIn / tcp.bufferReads}" fmt="###0.0" /> bytes / read, 
+<fmt:int value="${tcp.bufferWrites}" /> writes, <fmt:dec value="${tcp.bufferWrites / tcp.msgsOut}" fmt="#0.00" /> 
+writes / message, <fmt:dec value="${tcp.bytesOut / tcp.bufferWrites}" fmt="###0.0" /> bytes / write
+<c:if test="${tcp.writeErrors > 0}">, <span class="error bld"><fmt:int value="${tcp.writeErrors}" /> errors</span></c:if>
 </td>
 </view:row>
 </c:forEach>
