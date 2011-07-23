@@ -33,18 +33,20 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    private int _infoCount;
    private int _posCount;
    
-   private int _msgsIn;
-   private int _msgsOut;
-   private long _bytesIn;
-   private int _bufferReads;
-   private int _bufferWrites;
-   private int _errors;
+   private ConnectionStats _tcpStats;
+   private ConnectionStats _udpStats;
    
    private FlightInfo _fInfo;
    private String _flightPhase;
    private boolean _isHidden;
    private boolean _isVoice; 
-   private long _bytesOut;
+   
+   private class LocalConnectionStats extends ConnectionStats {
+	   
+	   LocalConnectionStats(ConnectionStats cs) {
+		   super(cs);
+	   }
+   }
    
    /**
     * Creates a new ACARS Connection entry.
@@ -217,51 +219,19 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    }
    
    /**
-    * Returns the number of ACARS messages sent by the client.
-    * @return the number of messages
+    * Returns control statistics.
+    * @return a ConnectionStats bean
     */
-   public int getMsgsIn() {
-	   return _msgsIn;
+   public ConnectionStats getTCPStatistics() {
+	   return _tcpStats;
    }
    
    /**
-    * Returns the number of ACARS messages sent by the server.
-    * @return the number of messages
+    * Returns voice statistics.
+    * @return a ConnectionStats bean
     */
-   public int getMsgsOut() {
-	   return _msgsOut;
-   }
-   
-   /**
-    * Returns the number of bytes sent by the client.
-    * @return the number of bytes
-    */
-   public long getBytesIn() {
-	   return _bytesIn;
-   }
-   
-   /**
-    * Returns the number of bytes sent by the server.
-    * @return the number of bytes
-    */
-   public long getBytesOut() {
-	 return _bytesOut;  
-   }
-
-   /**
-    * Returns the number of input I/O buffer reads completed by the server.
-    * @return the number of reads
-    */
-   public int getBufferReads() {
-	   return _bufferReads;
-   }
-   
-   /**
-    * Returns the number of output I/O buffer writes completed by the server.
-    * @return the number of writes
-    */
-   public int getBufferWrites() {
-	   return _bufferWrites;
+   public ConnectionStats getUDPStatistics() {
+	   return _udpStats;
    }
    
    /**
@@ -298,12 +268,14 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    }
    
    /**
-    * Returns the number of write errors on this connection.
-    * @return the number of errors
-    * @see ConnectionEntry#setWriteErrors(int)
+    * Updates connection statistics.
+    * @param tcp TCP statistics
+    * @param udp UDP statistics
     */
-   public int getWriteErrors() {
-	   return _errors;
+   public void setStatistics(ConnectionStats tcp, ConnectionStats udp) {
+	   _tcpStats = new LocalConnectionStats(tcp);
+	   if (udp != null)
+		   _udpStats = new LocalConnectionStats(udp);
    }
    
    /**
@@ -384,58 +356,6 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
 	   _addrInfo = info;
    }
 
-   /**
-    * Updates the number of network I/O buffer reads for this connection.
-    * @param reads the number of reads
-    * @see ConnectionEntry#getBufferReads()
-    */
-   public void setBufferReads(int reads) {
-	   _bufferReads = reads;
-   }
-   
-   /**
-    * Updates the number of network I/O buffer writes for this connection.
-    * @param writes the number of writes
-    * @see ConnectionEntry#getBufferWrites()
-    */
-   public void setBufferWrites(int writes) {
-	   _bufferWrites = writes;
-   }
-   
-   /**
-    * Updates the number of messages sent on this connection.
-    * @param in the number of messages received by the server
-    * @param out the number of messages sent by the server
-    * @see ConnectionEntry#getMsgsIn()
-    * @see ConnectionEntry#getMsgsOut()
-    */
-   public void setMessages(int in, int out) {
-	   _msgsIn = in;
-	   _msgsOut = out;
-   }
-   
-   
-   /**
-    * Updates the number of bytes sent on this connection.
-    * @param in the number of bytes received by the server
-    * @param out the number of bytes sent by the server
-    * @see ConnectionEntry#getBytesIn()
-    * @see ConnectionEntry#getBytesOut()
-    */
-   public void setBytes(long in, long out) {
-	   _bytesIn = in;
-	   _bytesOut = out;
-   }
-   
-   /**
-    * Updates the number of write errors on this connection.
-    * @param errors the number of errors
-    * @see ConnectionEntry#getWriteErrors()
-    */
-   public void setWriteErrors(int errors) {
-	   _errors = errors;
-   }
-   
    /**
     * Updates the ACARS client build number.
     * @param ver the build number
