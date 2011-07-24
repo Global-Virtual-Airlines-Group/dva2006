@@ -108,6 +108,6 @@ public abstract class ConnectionStats implements java.io.Serializable {
 	}
 
 	public int hashCode() {
-		return Long.valueOf(_id).hashCode();
+		return _id.hashCode();
 	}
 }
