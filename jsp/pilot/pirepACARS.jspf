@@ -78,7 +78,8 @@
  <a href="javascript:void zoomTo(${pirep.takeoffLocation.latitude}, ${pirep.takeoffLocation.longitude})">Zoom to Takeoff</a>
 <c:if test="${access.canDispose && (!empty dRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></td>
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if>
+<c:if test="${Access.canDispose}"> | <el:cmd url="rwyrecalc" link="${flightInfo}">RECALCULATE RUNWAY</el:cmd></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -128,7 +129,8 @@
  <a href="javascript:void zoomTo(${pirep.landingLocation.latitude}, ${pirep.landingLocation.longitude})">Zoom to Landing</a>
 <c:if test="${access.canDispose && (!empty aRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
- <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if></td>
+ <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" /></c:if>
+<c:if test="${Access.canDispose}"> | <el:cmd url="rwyrecalc" link="${flightInfo}">RECALCULATE RUNWAY</el:cmd></c:if></td>
 </tr>
 </c:if>
 <tr>
