@@ -1135,6 +1135,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="rwyrecalc">
+		<name>Recalculate Runways</name>	
+		<class>org.deltava.commands.pirep.RunwayCalculateCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
 	<command id="updrwy">
 		<name>PIREP Update Runway</name>	
 		<class>org.deltava.commands.pirep.UpdateRunwayCommand</class>
