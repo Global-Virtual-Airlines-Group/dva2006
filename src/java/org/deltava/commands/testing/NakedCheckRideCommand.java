@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -13,12 +13,14 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.PilotAccessControl;
+
+import org.deltava.util.bbcode.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -37,7 +39,6 @@ public class NakedCheckRideCommand extends AbstractCommand {
 
 		// Get command result
 		CommandResult result = ctx.getResult();
-
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -122,6 +123,12 @@ public class NakedCheckRideCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
+			
+			// Get the message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("RIDEASSIGN"));
+			mctxt.addData("pilot", p);
+			mctxt.addData("eqType", eqType);
 
 			// Check if we are using the script
 			String comments = ctx.getParameter("comments");
@@ -129,8 +136,19 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			if (useScript) {
 				GetExamProfiles epdao = new GetExamProfiles(con);
 				CheckRideScript sc = epdao.getScript(ctx.getParameter("crType"));
-				if (sc != null)
-					comments = comments + "\n\n" + sc.getDescription();
+				if (sc != null) {
+					String desc = sc.getDescription();
+					boolean hasBBCode = ((desc.indexOf('[') > -1) && (desc.indexOf(']') > -1));
+					if (hasBBCode) {
+						mctxt.getTemplate().setIsHTML(true);
+						BBCodeHandler bbHandler = new BBCodeHandler();
+						bbHandler.init();
+						for (BBCode bb : bbHandler.getAll())
+							desc = desc.replaceAll(bb.getRegex(), bb.getReplace());
+					}
+					
+					comments = comments + "\n\n" + desc;
+				}
 			}
 
 			// Create the checkride bean
@@ -145,18 +163,13 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			cr.setEquipmentType(eqType.getName());
 			cr.setComments(comments);
 
-			// Get the message template
-			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-			mctxt.setTemplate(mtdao.get("RIDEASSIGN"));
-			mctxt.addData("pilot", p);
-			mctxt.addData("eqType", eqType);
-			mctxt.addData("checkRide", cr);
 
 			// Write the checkride to the database
 			SetExam exwdao = new SetExam(con);
 			exwdao.write(cr);
 
 			// Save the checkride in the request
+			mctxt.addData("checkRide", cr);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
