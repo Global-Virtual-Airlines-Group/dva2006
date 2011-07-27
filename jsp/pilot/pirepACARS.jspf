@@ -220,7 +220,7 @@
 <c:set var="isForm" value="true" scope="request" />
 <tr>
  <td class="label top">Check Ride Instructions</td>
- <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>
+ <td class="data" colspan="${cspan}"><fmt:msg value="${checkRide.comments}" bbCode="true" /></td>
 </tr>
 <tr>
  <td class="label top">Reviewer Comments</td>

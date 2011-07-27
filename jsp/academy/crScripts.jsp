@@ -41,7 +41,7 @@
 <c:if test="${!ac.canEdit}">
  <td class="pri bld">${sc.certificationName}</td>
 </c:if>
- <td class="small left" colspan="2"><fmt:text value="${sc.description}" /></td>
+ <td class="small left" colspan="2"><fmt:msg value="${sc.description}" bbCode="true" /></td>
 </view:row>
 </c:forEach>
 

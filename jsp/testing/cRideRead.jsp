@@ -102,7 +102,7 @@ return true;
 </c:if>
 <tr id="crComments" style="display:none;">
  <td class="label top">Description</td>
- <td class="data top"><fmt:msg value="${checkRide.comments}" /></td>
+ <td class="data top"><fmt:msg value="${checkRide.comments}" bbCode="true" /></td>
 </tr>
 <c:if test="${!empty pirep}">
 <tr id="frComments">
