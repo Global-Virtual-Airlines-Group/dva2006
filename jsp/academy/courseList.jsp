@@ -59,12 +59,12 @@ return true;
 
 <!-- Table View data -->
 <c:forEach var="course" items="${viewContext.results}">
+<c:set var="pilotLoc" value="${userData[course.pilotID]}" scope="page" />
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="page" />
 <view:row entry="${isPending ? pilot : course}">
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${course.stage}" /></td>
- <td><el:cmd url="profile" link="${pilot}" className="sec bld">${pilot.name}</el:cmd>
- <span class="small">(${pilot.pilotCode})</span></td>
+ <td><el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile> <span class="small">(${pilot.pilotCode})</span></td>
  <td class="pri bld">${course.statusName}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>
  <td class="sec small"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
