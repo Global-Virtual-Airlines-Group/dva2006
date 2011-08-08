@@ -41,11 +41,16 @@ return true;
 
 function toggleAnswerBox()
 {
+var aRow = document.getElementById('answerRow');
+var mcRows = getElementsByClass('mcRow', 'tr');
 var f = document.forms[0];
 if (f.isMultiChoice) {
 	if (f.correct) f.correct.disabled = f.isMultiChoice.checked;
 	f.answerChoices.disabled = (!f.isMultiChoice.checked);
 	f.correctChoice.disabled = (!f.isMultiChoice.checked);
+	aRow.style.display = f.isMultiChoice.checked ? 'none' : '';
+	for (var x = 0; x < mcRows.length; x++)
+		mcRows[x].style.display = f.isMultiChoice.checked ? '' : 'none';
 }
 
 return true;
@@ -101,8 +106,8 @@ return true;
  <td class="label">Question Text</td>
  <td class="data bld"><el:text name="question" idx="*" size="120" className="req" max="255" value="${question.question}" /></td>
 </tr>
-<c:if test="${!isMC}">
-<tr>
+<c:if test="${!isMC || (empty question)}">
+<tr id="answerRow">
  <td class="label">Correct Answer</td>
  <td class="data"><el:text name="correct" idx="*" size="120" className="req" max="255" value="${question.correctAnswer}" /></td>
 </tr>
@@ -159,11 +164,11 @@ return true;
  <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" checked="true" onChange="void toggleAnswerBox()" /></td>
 </tr>
 </c:if>
-<tr>
+<tr class="mcRow">
  <td class="label top">Answer Choices</td>
  <td class="data"><el:textbox name="answerChoices" idx="*" width="90%" height="5" onBlur="void updateAnswerCombo()">${qChoices}</el:textbox></td>
 </tr>
-<tr>
+<tr class="mcRow">
  <td class="label">Correct Answer</td>
  <td class="data"><el:combo name="correctChoice" size="1" idx="*" className="req" options="${question.choices}" firstEntry="-" value="${question.correctAnswer}" /></td>
 </tr>
