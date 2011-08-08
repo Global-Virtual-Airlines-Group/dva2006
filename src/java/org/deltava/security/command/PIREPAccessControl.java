@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Pilot;
@@ -9,7 +9,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An access controller for Flight Report operations.
  * @author Luke
- * @version 3.1
+ * @version 4.0
  * @since 1.0
  */
 
@@ -63,7 +63,8 @@ public class PIREPAccessControl extends AccessControl {
 		
 		// Set role variables
 		final int status = _pirep.getStatus();
-		final boolean isPirep = _ctx.isUserInRole("PIREP");
+		final boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
+		final boolean isPirep = _pirep.hasAttribute(FlightReport.ATTR_ACADEMY) ? isAcademy : _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(DatabaseID.PILOT) == _ctx.getUser().getID());
 		
 		// Set status variables
