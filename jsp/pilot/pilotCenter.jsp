@@ -241,7 +241,7 @@ Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
 <c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}"><br />
 To view statistics about your flights, <el:cmd className="sec bld" url="mystats">Click Here</el:cmd>.</c:if>
 <c:if test="${pilot.legs > 10}"><br />
-To view airports you have yet to vist, <el:cmd className="sec bld" url="mynewairports">Click Here</el:cmd>.</c:if>
+To view airports you have yet to visit, <el:cmd className="sec bld" url="mynewairports">Click Here</el:cmd>.</c:if>
 </td>
 </tr>
 </c:if>
