@@ -412,7 +412,7 @@
 	<command id="imgdelete">
 		<name>Delete Gallery Image</name>
 		<class>org.deltava.commands.gallery.GalleryDeleteCommand</class>
-		<roles>Gallery</roles>
+		<roles>Pilot</roles>
 	</command>
 
 

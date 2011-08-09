@@ -47,14 +47,6 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       assertTrue(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
       
-      _user.addRole("Gallery");
-      _ac.validate();
-
-      assertTrue(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
-      assertTrue(_ac.getCanCreate());
-      assertFalse(_ac.getCanDelete());
-      
       _user.removeRole("Pilot");
       _ac.validate();
       
