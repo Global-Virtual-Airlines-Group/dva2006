@@ -75,7 +75,6 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			mctxt.setTemplate(mtdao.get("RIDEASSIGN"));
 			mctxt.addData("pilot", p);
 			mctxt.addData("eqType", eq);
-			mctxt.addData("checkRide", cr);
 
 			// Check if we are using the script
 			String comments = ctx.getParameter("comments");
@@ -129,6 +128,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Save the checkride in the request
+			mctxt.addData("checkRide", cr);
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 		} catch (DAOException de) {
