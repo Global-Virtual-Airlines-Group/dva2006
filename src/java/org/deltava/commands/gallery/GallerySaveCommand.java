@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import org.deltava.security.command.GalleryAccessControl;
 /**
  * A Web Site Command to save Image Gallery images and metadata.
  * @author Luke
- * @version 1.0
+ * @version 4.0
  * @since 1.0
  */
 
@@ -50,7 +50,7 @@ public class GallerySaveCommand extends AbstractCommand {
 				// Create setName() and setDescription()
 				img.setName(ctx.getParameter("title"));
 				img.setDescription(ctx.getParameter("desc"));
-				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Fleet"))
+				if (ctx.isUserInRole("Fleet"))
 					img.setFleet(Boolean.valueOf(ctx.getParameter("isFleet")).booleanValue());
 			} else {
 				// Check our access
@@ -61,7 +61,7 @@ public class GallerySaveCommand extends AbstractCommand {
 				
 				img = new Image(ctx.getParameter("title"), ctx.getParameter("desc"));
 				img.setAuthorID(ctx.getUser().getID());
-				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Fleet"))
+				if (ctx.isUserInRole("Fleet"))
 					img.setFleet(Boolean.valueOf(ctx.getParameter("isFleet")).booleanValue());
 				
 				// Get the image itself
