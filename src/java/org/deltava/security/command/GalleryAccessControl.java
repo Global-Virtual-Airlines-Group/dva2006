@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.gallery.Image;
@@ -8,7 +8,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller to support Image Gallery operations.
  * @author Luke
- * @version 1.0
+ * @version 4.0
  * @since 1.0
  */
 
@@ -43,10 +43,11 @@ public class GalleryAccessControl extends AccessControl {
 			_canEdit = _canCreate;
 			return;
 		}
-
+		
 		// Calculate access rights
-		_canEdit = _ctx.isUserInRole("Gallery");
-		_canDelete = _ctx.isUserInRole("Admin");
+		boolean isOurs = _ctx.isAuthenticated() && (_img.getAuthorID() == _ctx.getUser().getID());
+		_canEdit = _ctx.isUserInRole("HR") || (isOurs && (_img.getVoteCount() == 0));
+		_canDelete = _canEdit;
 		_canVote = _ctx.isAuthenticated() && _canCreate && !_img.hasVoted(_ctx.getUser());
 	}
 	
