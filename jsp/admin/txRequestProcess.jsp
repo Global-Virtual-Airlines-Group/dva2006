@@ -17,7 +17,6 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 
-// Validate response
 var act = form.action;
 if (act.indexOf('txreqdelete.do') != -1)
 	if (!validateText(form.rejectComments, 1, 'Rejection Comments')) return false;
@@ -33,6 +32,7 @@ disableButton('ProfileButton');
 disableButton('CheckRideButton');
 disableButton('AssignButton');
 disableButton('ApproveButton');
+disableButton('ToggleButton');
 disableButton('RejectButton');
 disableButton('DeleteButton');
 return true;
@@ -172,7 +172,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="useScript" idx="*" value="true" label="Append Check Ride script to comments" /></td>
+ <td class="data"><el:box name="useScript" idx="*" value="true" checked="true" label="Append Check Ride script to comments" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canReject}">
