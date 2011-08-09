@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * An Access Controller for Document Library entries.
  * @author Luke
- * @version 3.4
+ * @version 4.0
  * @since 1.0
  */
 
@@ -37,7 +37,7 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 	 * @throws SecurityException if e is not a manual
 	 */
 	public final void setEntry(LibraryEntry e) {
-		if (!(e instanceof Manual))
+		if ((e != null) && (!(e instanceof Manual)))
 			throw new SecurityException("Invalid object - " + e.getClass().getSimpleName());
 
 		super.setEntry(e);
