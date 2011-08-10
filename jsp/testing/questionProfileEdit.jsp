@@ -103,13 +103,13 @@ return true;
  <td colspan="2">EXAMINATION QUESTION PROFILE</td>
 </tr>
 <tr>
- <td class="label">Question Text</td>
- <td class="data bld"><el:text name="question" idx="*" size="120" className="req" max="255" value="${question.question}" /></td>
+ <td class="label top">Question Text</td>
+ <td class="data bld"><el:textbox name="question" idx="*" width="80%" height="3" className="req">${question.question}</el:textbox></td>
 </tr>
 <c:if test="${!isMC || (empty question)}">
 <tr id="answerRow">
- <td class="label">Correct Answer</td>
- <td class="data"><el:text name="correct" idx="*" size="120" className="req" max="255" value="${question.correctAnswer}" /></td>
+ <td class="label top">Correct Answer</td>
+ <td class="data"><el:textbox name="correct" idx="*" width="80%" height="3" className="req">${question.correctAnswer}</el:textbox></td>
 </tr>
 </c:if>
 <tr>
