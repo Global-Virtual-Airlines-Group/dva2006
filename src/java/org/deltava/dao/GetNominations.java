@@ -131,7 +131,7 @@ public class GetNominations extends DAO {
 			+ "NOMINATION_COMMENTS NC WHERE (N.ID=?) AND (N.ID=NC.ID) AND (N.QUARTER=NC.QUARTER)");
 		if (q != null)
 			buf.append("AND (N.QUARTER=?) ");
-		buf.append("HAVING (CREATED IS NOT NULL) ORDER BY N.QUARTER DESC LIMIT 1");
+		buf.append("GROUP BY N.QUARTER DESC HAVING (CREATED IS NOT NULL) LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
