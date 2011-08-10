@@ -139,7 +139,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
          // Check our access level
          ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
          access.validate();
-         if (!access.getCanEdit())
+         boolean canExec = (ep == null) ? access.getCanCreate() : access.getCanEdit();
+         if (!canExec)
          	throw securityException("Cannot edit Examination Profile");
 
          // Get Equipment Type programs
