@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cached external routes from the database.
  * @author Luke
- * @version 3.4
+ * @version 4.0
  * @since 2.6
  */
 
@@ -53,10 +53,11 @@ public class GetCachedRoutes extends DAO {
 	 * Loads all the cached routes between two airports.
 	 * @param aD the departure Airport bean
 	 * @param aA the arrival Airport bean
+	 * @param includeInternal TRUE to include internal routes, otherwise FALSE
 	 * @return a Collection of FlightRoute beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<? extends FlightRoute> getRoutes(Airport aD, Airport aA) throws DAOException {
+	public Collection<? extends FlightRoute> getRoutes(Airport aD, Airport aA, boolean includeInternal) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.ROUTE_CACHE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) "
 					+ "ORDER BY CREATED");
