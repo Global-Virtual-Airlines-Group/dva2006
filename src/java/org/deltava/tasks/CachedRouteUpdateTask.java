@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 2.6
  */
 
@@ -84,6 +84,7 @@ public class CachedRouteUpdateTask extends Task {
 						ExternalRoute rt = new ExternalRoute("Internal");
 						rt.setAirportD(rp.getAirportD());
 						rt.setAirportA(rp.getAirportA());
+						rt.setSource(ExternalRoute.INTERNAL);
 						rt.setComments("Auto-generated dummy route");
 						rt.setCruiseAltitude("35000");
 						rt.setCreatedOn(new Date());
