@@ -102,7 +102,7 @@ public class RouteLoadHelper {
 	 */
 	public void loadCachedRoutes() throws DAOException {
 		GetCachedRoutes rcdao = new GetCachedRoutes(_c);
-		Collection<? extends FlightRoute> routes = rcdao.getRoutes(_aD, _aA);
+		Collection<? extends FlightRoute> routes = rcdao.getRoutes(_aD, _aA, false);
 		log.info("Loaded " + routes.size() + " Cached FlightAware Routes");
 		_routes.addAll(routes);
 	}
