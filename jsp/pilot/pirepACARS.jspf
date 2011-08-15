@@ -79,7 +79,7 @@
 <c:if test="${access.canDispose && (!empty dRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyD" size="1" idx="*" options="${dRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" />
-<c:if test="${access.canDispose}"> | <el:cmd url="rwyrecalc" link="${flightInfo}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
+<c:if test="${access.canDispose && (empty rwy)}"> | <el:cmd url="rwyrecalc" link="${flightInfo}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
 </tr>
 </c:if>
 <tr>
@@ -130,7 +130,7 @@
 <c:if test="${access.canDispose && (!empty aRunways)}"> <span class="ita">Change Runway to</span> 
  <el:combo name="newRwyA" size="1" idx="*" options="${aRunways}" value="${rwy}" /> 
  <el:cmdbutton url="updrwy" post="true" link="${flightInfo}" label="UPDATE" />
-<c:if test="${access.canDispose}"> | <el:cmd url="rwyrecalc" link="${flightInfo}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
+<c:if test="${access.canDispose && (empty rwy)}"> | <el:cmd url="rwyrecalc" link="${flightInfo}">RECALCULATE RUNWAY</el:cmd></c:if></c:if></td>
 </tr>
 </c:if>
 <tr>
