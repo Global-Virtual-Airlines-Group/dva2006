@@ -28,7 +28,6 @@ setSubmit();
 disableButton('SaveButton');
 disableButton('EditButton');
 disableButton('RouteButton');
-disableButton('PlanButton');
 disableButton('CancelButton');
 disableButton('DeleteButton');
 disableButton('AssignButton');
@@ -165,27 +164,6 @@ return true;
  <td class="sec">${chart.typeName}</td>
 </c:otherwise>
 </c:choose>
-</view:row>
-</c:forEach>
-</c:if>
-<c:if test="${!empty event.plans}">
-<!-- Flight Plans Section -->
-<tr class="title caps">
- <td colspan="6" class="left">FLIGHT PLANS - <fmt:int value="${fn:sizeof(event.plans)}" /> PLANS</td>
-</tr>
-<tr class="title caps">
- <td colspan="4">FLIGHT PLAN NAME</td>
- <td>SIZE</td>
- <td>PLAN TYPE</td>
-</tr>
-<c:forEach var="plan" items="${event.plans}">
-<c:set var="rt" value="${routes[plan.routeID]}" scope="page" />
-<view:row entry="${plan}">
- <td class="pri bld"><fmt:int value="${plan.routeID}" /></td>
- <td colspan="3"><el:link url="/fplan/${event.hexID}/${plan.routeID}.${plan.extension}"><c:if test="${!empty rt.name}"><span class="bld">(${rt.name})</span> </c:if>
-${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
- <td class="sec"><fmt:int value="${plan.size}" /> bytes</td>
- <td class="pri bld">${plan.typeName}</td>
 </view:row>
 </c:forEach>
 </c:if>
@@ -332,11 +310,8 @@ ${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
 <c:if test="${access.canSignup}">
  <el:button ID="SaveButton" type="submit" label="SIGN UP FOR THIS EVENT" />
 </c:if>
-<c:if test="${access.canAddPlan}">
- <el:cmdbutton ID="PlanButton" url="eventplan" link="${event}" label="ADD FLIGHT PLAN" />
- <el:cmdbutton ID="RouteButton" url="eventroutes" link="${event}" label="UPDATE ROUTES" />
-</c:if>
 <c:if test="${access.canEdit}">
+ <el:cmdbutton ID="RouteButton" url="eventroutes" link="${event}" label="UPDATE ROUTES" />
  <el:cmdbutton ID="EditButton" url="eventedit" link="${event}" label="EDIT EVENT" />
 </c:if>
 <c:if test="${access.canAssignFlights}">

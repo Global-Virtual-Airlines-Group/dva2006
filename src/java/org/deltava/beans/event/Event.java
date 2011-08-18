@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 3.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -48,7 +48,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
     
     private final Collection<Chart> _charts = new TreeSet<Chart>();
-    private final Collection<FlightPlan> _plans = new ArrayList<FlightPlan>();
     
     private final Collection<Signup> _signups = new LinkedHashSet<Signup>();
     private final Collection<Route> _routes = new TreeSet<Route>();
@@ -250,15 +249,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     	return _contactAddrs;
     }
     
-    /**
-     * Returns the Flight Plans available for this Online Event.
-     * @return a Collection of FlightPlan beans
-     * @see Event#addPlan(FlightPlan)
-     */
-    public Collection<FlightPlan> getPlans() {
-        return _plans;
-    }
-
     /**
      * Returns the available equipment types for this Online Event.
      * @return a Collection of equipment names
@@ -575,15 +565,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
 		if (ai != null)
 			_airlines.add(ai);
 	}
-    
-    /**
-     * Adds a Flight Plan to this Online Event.
-     * @param fp a FlightPlan bean
-     * @see Event#getPlans()
-     */
-    public void addPlan(FlightPlan fp) {
-        _plans.add(fp);
-    }
     
     /**
      * Adds a Signup to this Online Event.

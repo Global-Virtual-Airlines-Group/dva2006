@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 2.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -108,24 +108,6 @@ public class SetEvent extends DAO {
 	}
 	
 	/**
-	 * Saves an Online Event flight plan.
-	 * @param fp the FlightPlan bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void save(FlightPlan fp) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO events.EVENT_PLANS (ID, ROUTE_ID, PLANTYPE, PLANDATA) VALUES (?, ?, ?, ?)");
-			_ps.setInt(1, fp.getID());
-			_ps.setInt(2, fp.getRouteID());
-			_ps.setInt(3, fp.getType());
-			_ps.setBinaryStream(4, fp.getInputStream(), fp.getSize());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Deletes an Online Event.
 	 * @param e the Event bean 
 	 * @throws DAOException if a JDBC error occurs
@@ -151,23 +133,6 @@ public class SetEvent extends DAO {
 			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
 			_ps.setInt(1, s.getID());
 			_ps.setInt(2, s.getPilotID());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Deletes an Online Event flight plan.
-	 * @param fp the FlightPlan bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void delete(FlightPlan fp) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM events.EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (ROUTE_ID=?)");
-			_ps.setInt(1, fp.getID());
-			_ps.setInt(2, fp.getType());
-			_ps.setInt(3, fp.getRouteID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

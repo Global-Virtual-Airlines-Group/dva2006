@@ -60,11 +60,9 @@ public class TestEvent extends AbstractBeanTestCase {
     
     public void testEmptyLists() {
         assertNotNull(_e.getCharts());
-        assertNotNull(_e.getPlans());
         assertNotNull(_e.getSignups());
         assertNotNull(_e.getAssignments());
         assertEquals(0, _e.getCharts().size());
-        assertEquals(0, _e.getPlans().size());
         assertEquals(0, _e.getSignups().size());
         assertEquals(0, _e.getAssignments().size());
     }
@@ -112,14 +110,11 @@ public class TestEvent extends AbstractBeanTestCase {
     public void testLists() {
         Chart c = new Chart("MACEY TWO ARRIVAL", new Airport("ATL", "KATL", "Atlanta GA"));
         AssignmentInfo info = new AssignmentInfo("CRJ-200");
-        FlightPlan fp = new FlightPlan(1);
         
         _e.addAssignment(info);
         _e.addChart(c);
-        _e.addPlan(fp);
         
         assertEquals(1, _e.getAssignments().size());
         assertEquals(1, _e.getCharts().size());
-        assertEquals(1, _e.getPlans().size());
     }
 }

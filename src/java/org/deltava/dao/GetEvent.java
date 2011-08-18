@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -229,7 +229,6 @@ public class GetEvent extends DAO {
 			// Get the first event and populate it
 			Event e = results.get(0);
 			loadAirlines(e);
-			loadFlightPlans(e);
 			loadEQTypes(e);
 			loadContactAddrs(e);
 			
@@ -359,31 +358,6 @@ public class GetEvent extends DAO {
 			Event e = events.get(new Integer(s.getID()));
 			if (e != null)
 				e.addSignup(s);
-		}
-
-		// Clean up
-		rs.close();
-		_ps.close();
-	}
-
-	/**
-	 * Helper method to load flight plans for an event.
-	 */
-	private void loadFlightPlans(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT EP.*, EA.AIRPORT_D, EA.AIRPORT_A FROM events.EVENT_PLANS EP, "
-			+ "events.EVENT_AIRPORTS EA WHERE (EP.ID=?) AND (EP.ID=EA.ID) AND (EP.ROUTE_ID=EA.ROUTE_ID)");
-		_ps.setInt(1, e.getID());
-
-		// Execute the query and load the flight plans
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			FlightPlan fp = new FlightPlan(rs.getInt(3));
-			fp.setID(e.getID());
-			fp.setRouteID(rs.getInt(2));
-			fp.load(rs.getBytes(4));
-			fp.setAirportD(SystemData.getAirport(rs.getString(5)));
-			fp.setAirportA(SystemData.getAirport(rs.getString(6)));
-			e.addPlan(fp);
 		}
 
 		// Clean up

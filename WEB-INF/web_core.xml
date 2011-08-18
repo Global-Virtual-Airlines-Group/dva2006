@@ -79,13 +79,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<load-on-startup>3</load-on-startup>
 	</servlet>
 
-	<!-- Flight Plan servlet -->
-	<servlet>
-		<servlet-name>flightPlan</servlet-name>
-		<servlet-class>org.deltava.servlet.FlightPlanServlet</servlet-class>
-		<load-on-startup>4</load-on-startup>
-	</servlet>
-	
 	<!-- Library Donwload servlet -->
 	<servlet>
 		<servlet-name>fleetLibrary</servlet-name>
@@ -135,17 +128,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<filter-mapping>
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<url-pattern>/gallery/*</url-pattern>
-	</filter-mapping>
-
-
-	<!-- Filter mappings to Flight Plans -->
-	<filter-mapping>
-		<filter-name>SecurityCookieFilter</filter-name>
-		<servlet-name>flightPlan</servlet-name>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>SecurityRequestWrapperFilter</filter-name>
-		<servlet-name>flightPlan</servlet-name>
 	</filter-mapping>
 
 	<!-- Filter mappings to Fleet Library -->
@@ -231,11 +213,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<servlet-mapping>
 		<servlet-name>fleetLibrary</servlet-name>
 		<url-pattern>/newsletter/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>flightPlan</servlet-name>
-		<url-pattern>/fplan/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- [INSERT FRAGMENT HERE] -->

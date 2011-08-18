@@ -813,12 +813,6 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<command id="eventplan">
-		<name>Event Flight Plan</name>
-		<class>org.deltava.commands.event.EventPlanCommand</class>
-		<roles>Event</roles>
-	</command>
-
 	<command id="eventroutes">
 		<name>Event Flight Routes</name>
 		<class>org.deltava.commands.event.EventRoutesCommand</class>

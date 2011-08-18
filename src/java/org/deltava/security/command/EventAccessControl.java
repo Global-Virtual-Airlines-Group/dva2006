@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Iterator;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Online Events.
  * @author Luke
- * @version 2.4
+ * @version 4.0
  * @since 1.0
  */
 
@@ -24,7 +24,6 @@ public class EventAccessControl extends AccessControl {
 	private boolean _canCreate;
 	private boolean _canSignup;
 	private boolean _canEdit;
-	private boolean _canAddPlan;
 	private boolean _canBalance;
 	private boolean _canAssignFlights;
 	private boolean _canCancel;
@@ -75,7 +74,6 @@ public class EventAccessControl extends AccessControl {
 		boolean hasSignups = (!_ev.getSignups().isEmpty());
 		_canSignup = (_ev.getStatus() == Event.OPEN) && _ev.getCanSignup() && hasID && isRouteAvailable
 				&& canParticipate && (!_ev.isSignedUp(_ctx.getUser().getID()));
-		_canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
 		_canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
 		_canBalance = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && hasSignups 
 			&& isEvent && (_ev.getRoutes().size() > 1);
@@ -109,14 +107,6 @@ public class EventAccessControl extends AccessControl {
 		return _canEdit;
 	}
 
-	/**
-	 * Returns if a Flight Plan can be added to this Online Event.
-	 * @return TRUE if a Flight Plan can be added, otherwise FALSE
-	 */
-	public boolean getCanAddPlan() {
-		return _canAddPlan;
-	}
-	
 	/**
 	 * Returns if Signups can be balanced for this Online Event.
 	 * @return TRUE if signups can be balanced, otherwise FALSE

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update flight routes for an Online Event.
  * @author Luke
- * @version 2.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);
 			access.validate();
-			if (!access.getCanAddPlan())
+			if (!access.getCanEdit())
 				throw securityException("Cannot update Flight Routes");
 			
 			// Start transaction
@@ -123,7 +123,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);
 			access.validate();
-			if (!access.getCanAddPlan())
+			if (!access.getCanEdit())
 				throw securityException("Cannot update Flight Routes");
 			
 			// Save route IDs
