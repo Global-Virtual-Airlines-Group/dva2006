@@ -94,7 +94,8 @@ public class GetCachedRoutes extends DAO {
 				} else
 					rt.setRoute(rawRoute);
 				
-				results.add(rt);
+				if (!rt.isInternal() || includeInternal)
+					results.add(rt);
 			}
 			
 			// Clean up and return
