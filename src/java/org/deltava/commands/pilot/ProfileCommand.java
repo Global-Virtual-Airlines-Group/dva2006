@@ -2,8 +2,6 @@
 package org.deltava.commands.pilot;
 
 import java.util.*;
-import java.awt.*;
-
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -396,12 +394,18 @@ public class ProfileCommand extends AbstractFormCommand {
 					if (isAuth) {
 						SignatureImage si = new SignatureImage(p.getID());
 						si.load(imgData.getBuffer());
-						si.watermark("Approved Signature", new Point(si.getWidth() - 120, si.getHeight() - 4));
+						si.watermark("Approved Signature", si.getWidth() - 120, si.getHeight() - 4);
 						try {
 							p.load(si.getImage("png"));
 						} catch (Exception e) {
 							throw new DAOException(e);
 						}
+						
+						// Write status update
+						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+						upd.setAuthorID(ctx.getUser().getID());
+						upd.setDescription("Approved Signature");
+						updates.add(upd);
 					} else
 						p.load(imgData.getBuffer());
 

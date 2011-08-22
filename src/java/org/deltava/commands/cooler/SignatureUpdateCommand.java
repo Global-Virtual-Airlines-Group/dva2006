@@ -1,13 +1,12 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
-
-import java.awt.*;
 
 import java.io.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.SignatureImage;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -19,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 2.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -30,6 +29,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -76,8 +76,8 @@ public class SignatureUpdateCommand extends AbstractCommand {
 
 			// Check the image dimensions
 			boolean isHR = ctx.isUserInRole("HR");
-			int maxX = SystemData.getInt("cooler.sig_max.x");
-			int maxY = SystemData.getInt("cooler.sig_max.y");
+			int maxX = SystemData.getInt("cooler.sig_max.x", 600);
+			int maxY = SystemData.getInt("cooler.sig_max.y", 200);
 			if (!isHR && ((si.getWidth() > maxX) || (si.getHeight() > maxY))) {
 				ctx.release();
 				ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = "
@@ -96,20 +96,33 @@ public class SignatureUpdateCommand extends AbstractCommand {
 
 			// Check if signature is authorized
 			boolean isAuth = (isHR || ctx.isUserInRole("Signature")) && Boolean.valueOf(ctx.getParameter("isAuth")).booleanValue();
+			
+			// Start transaction
+			ctx.startTX();
 				
 			// Write the data
 			SetSignatureImage wdao = new SetSignatureImage(con);
 			if (isAuth) {
-				si.watermark("Approved Signature", new Point(si.getWidth() - 120, si.getHeight() - 4));
+				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Approved Signature");
+	
+				SetStatusUpdate sudao = new SetStatusUpdate(con);
+				si.watermark("Approved Signature", si.getWidth() - 120, si.getHeight() - 4);
 				p.load(si.getImage("png"));
 				wdao.write(p, si.getWidth(), si.getHeight(), "png", isAuth);
+				sudao.write(upd);
 			} else {
 				p.load(imgData.getBuffer());
 				wdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName(), isAuth);
 			}
+			
+			ctx.commitTX();
 		} catch (IOException ie) {
+			ctx.rollbackTX();
 			throw new CommandException(ie);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -121,8 +134,6 @@ public class SignatureUpdateCommand extends AbstractCommand {
 		// Forward to the update JSP
 		result.setType(ResultType.REQREDIRECT);
 		result.setURL("/jsp/pilot/pilotUpdate.jsp");
-
-		// Forward to the JSP
 		result.setSuccess(true);
 	}
 }
