@@ -1,11 +1,9 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
-
-import java.awt.Point;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.SignatureImage;
 
 import org.deltava.commands.*;
@@ -16,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve a Pilot's Water Cooler signature image.
  * @author Luke
- * @version 3.2
+ * @version 4.0
  * @since 2.3
  */
 
@@ -27,6 +25,7 @@ public class SignatureApproveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -44,14 +43,26 @@ public class SignatureApproveCommand extends AbstractCommand {
 			if (!isAuth) {
 				SignatureImage si = new SignatureImage(p.getID());
 				si.load(idao.getSignatureImage(ctx.getID(), SystemData.get("airline.db")));
-				si.watermark("Approved Signature", new Point(si.getWidth() - 120, si.getHeight() - 4));
+				si.watermark("Approved Signature", si.getWidth() - 120, si.getHeight() - 4);
 				p.load(si.getImage("png"));
 				
+				// Create status update
+				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Approved Signature");
+				
+				// Start transaction
+				ctx.startTX();
+				
 				// Save the data
+				SetStatusUpdate sudao = new SetStatusUpdate(con);
 				SetSignatureImage swdao = new SetSignatureImage(con);
 				swdao.write(p, si.getWidth(), si.getHeight(), "png", true);
+				sudao.write(upd);
+				ctx.commitTX();
 			}
 		} catch (Exception e) {
+			ctx.rollbackTX();
 			throw new CommandException(e);
 		} finally {
 			ctx.release();

@@ -1,22 +1,24 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.io.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
+import javax.imageio.*;
 
 import org.deltava.beans.DatabaseBlobBean;
 
 /**
  * A bean to store Signature Images for processing.
  * @author Luke
- * @version 2.3
+ * @version 4.0
  * @since 2.3
  */
 
 public class SignatureImage extends DatabaseBlobBean {
+	
+	private static final int WMIN = 180;
 	
 	private BufferedImage _img;
 	private boolean _isApproved;
@@ -78,30 +80,38 @@ public class SignatureImage extends DatabaseBlobBean {
 	/**
 	 * Marks the signature with a watermark. 
 	 * @param txt the watermark text
-	 * @param loc the location of the text
+	 * @param tx the x-coordinate of the text
+	 * @param ty the y-coordinate of the text
 	 */
-	public void watermark(String txt, Point loc) {
+	public void watermark(String txt, int tx, int ty) {
 		if (_isApproved || (_img == null)) 
 			return;
 		
 		// Get the color
 		int whiteCount = 0;
-		for (int x = loc.x; x < Math.min(_img.getWidth() - 1, (loc.x + (txt.length() * 8))); x++) {
-			for (int y = loc.y; y > Math.max(0, loc.y - 30); y--) {
+		for (int x = tx; x < Math.min(_img.getWidth() - 1, (tx + (txt.length() * 8))); x++) {
+			for (int y = ty; y > Math.max(0, ty - 30); y--) {
 				Color c = new Color(_img.getRGB(x, y));
-				if ((c.getBlue() > 192) && (c.getRed() > 192) && (c.getGreen() > 192))
+				if ((c.getBlue() > WMIN) && (c.getRed() > WMIN) && (c.getGreen() > WMIN))
 					whiteCount++;
 			}
 		}
 		
 		// Get the percentage that is white
-		float whitePct = whiteCount / (30.0f * txt.length() * 8);
+		float whitePct = whiteCount / (240.0f * txt.length());
 		
 		// Draw the text
+		boolean useShadow = (whitePct < .71); 
 		Graphics2D g = _img.createGraphics();
-		g.setColor((whitePct < .71) ? Color.WHITE : Color.BLACK);
+		if (useShadow) {
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.225f));
+			g.setColor(Color.BLACK);
+			g.drawString(txt, tx+1, ty+1);	
+		}
+		
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.275f));
-		g.drawString(txt, loc.x, loc.y);
+		g.setColor(useShadow ? Color.WHITE : Color.BLACK);
+		g.drawString(txt, tx, ty);
 		g.dispose();
 		_isApproved = true;
 	}
