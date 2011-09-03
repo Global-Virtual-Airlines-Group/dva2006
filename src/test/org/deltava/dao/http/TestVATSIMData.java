@@ -1,0 +1,27 @@
+// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao.http;
+
+import org.deltava.beans.servinfo.Certificate;
+
+import org.deltava.dao.DAOException;
+
+import org.deltava.util.system.SystemData;
+
+import junit.framework.TestCase;
+
+public class TestVATSIMData extends TestCase {
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		SystemData.init();
+		assertNotNull(SystemData.get("online.vatsim.validation_url"));
+	}
+	
+	public void testValidID() throws DAOException {
+		
+		GetVATSIMData dao = new GetVATSIMData();
+		Certificate c = dao.getInfo("837789");
+		assertNotNull(c);
+		assertTrue(c.isActive());
+	}
+}
