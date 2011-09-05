@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -152,7 +152,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Get Active Equipment programs
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
-			ctx.setAttribute("eqTypeStats", eqdao.getPilotCounts(), REQUEST);
 
 			// Get the questionnaire
 			GetQuestionnaire exdao = new GetQuestionnaire(con);
@@ -224,7 +223,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Get Active Equipment programs and counts
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
-			ctx.setAttribute("eqTypeStats", eqdao.getPilotCounts(), REQUEST);
 
 			// Get the applicant home airport
 			ctx.setAttribute("homeAirport", SystemData.getAirport(a.getHomeAirport()), REQUEST);
