@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -40,12 +40,14 @@ public class ImageLinkTestTask extends Task {
 		
 		ImageLinkWorker(int id, Queue<LinkedImage> work, Collection<String> badHosts, Queue<LinkedImage> out) {
 			super("ImageLinkWorker-" + String.valueOf(id));
+			setDaemon(true);
 			tLog = Logger.getLogger(ImageLinkTestTask.class.getPackage().getName() + "." + getName());
 			_work = work;
 			_invalidHosts = badHosts;
 			_output = out;
 		}
 		
+		@Override
 		public void run() {
 			HttpClient hc = new HttpClient();
 			hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
@@ -133,9 +135,11 @@ public class ImageLinkTestTask extends Task {
 			Queue<LinkedImage> badImgs = new ConcurrentLinkedQueue<LinkedImage>();
 			
 			// Fire up the workers
+			int tpSize = Math.max(1, Math.min(12, work.size() / 16));
 			Collection<Thread> workers = new ArrayList<Thread>();
-			for (int x = 1; x <= 10; x++) {
+			for (int x = 1; x <= tpSize; x++) {
 				ImageLinkWorker wrk = new ImageLinkWorker(x, work, invalidHosts, badImgs);
+				wrk.setUncaughtExceptionHandler(this);
 				workers.add(wrk);
 				wrk.start();
 			}
@@ -184,7 +188,6 @@ public class ImageLinkTestTask extends Task {
 			ctx.release();
 		}
 
-		// Log completion
 		log.info("Processing Complete");
 	}
 }
