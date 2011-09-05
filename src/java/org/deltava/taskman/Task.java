@@ -16,11 +16,11 @@ import org.deltava.util.system.SystemData;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 3.7
+ * @version 4.0
  * @since 1.0
  */
 
-public abstract class Task implements Runnable, Comparable<Task> {
+public abstract class Task implements Runnable, Comparable<Task>, Thread.UncaughtExceptionHandler {
 	
 	/**
 	 * Time interval options.
@@ -295,6 +295,13 @@ public abstract class Task implements Runnable, Comparable<Task> {
     
     public int hashCode() {
     	return _name.hashCode();
+    }
+    
+    /**
+     * Uncaught exception logger for child threads.
+     */
+    public void uncaughtException(Thread t, Throwable e) {
+    	log.error("Error in child thread " + t.getName(), e);
     }
     
     /**
