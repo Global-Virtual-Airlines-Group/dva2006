@@ -218,8 +218,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td class="label top">Equipment Program Sizes</td>
  <td class="data"><c:forEach var="eqType" items="${eqTypes}">
-<c:set var="eqSize" value="${eqTypeStats[eqType.name]}" scope="page" />
-<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqSize}" /> Pilots</b><br />
+<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqType.size}" /> Pilots</b><br />
 </c:forEach></td>
 </tr>
 </c:if>

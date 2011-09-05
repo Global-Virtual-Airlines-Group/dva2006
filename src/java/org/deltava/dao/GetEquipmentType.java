@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -90,6 +90,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results);
+			loadSize(results);
 			_cache.addAll(results);
 			return results.get(0);
 		} catch (SQLException se) {
@@ -125,6 +126,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results);
+			loadSize(results);
 			_cache.addAll(results);
 			return results;
 		} catch (SQLException se) {
@@ -181,6 +183,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				loadRatings(exams, db);
 				loadExams(exams, db);
 				loadAirlines(exams);
+				loadSize(exams);
 				results.addAll(new TreeSet<EquipmentType>(exams));
 			}
 			
@@ -216,6 +219,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results);
+			loadSize(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -246,6 +250,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			List<EquipmentType> results = execute();
 			loadRatings(results, SystemData.get("airline.db"));
 			loadExams(results, SystemData.get("airline.db"));
+			loadSize(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -272,40 +277,10 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			_ps.setString(2, eqType);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			Collection<String> results = new LinkedHashSet<String>();
+			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.add(rs.getString(1));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns the number of Active Pilots in each Equipment Program.
-	 * @return a Map of pilot numbers, keyed by Equipment Type name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Map<String, Integer> getPilotCounts() throws DAOException {
-		try {
-			prepareStatement("SELECT P.EQTYPE, COUNT(P.ID) FROM PILOTS P, common.EQPROGRAMS EP WHERE "
-				+ "(P.STATUS=?) AND (P.EQTYPE=EP.EQTYPE) AND (EP.OWNER=?) GROUP BY P.EQTYPE ORDER BY "
-				+ "EP.STAGE DESC, P.EQTYPE");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setString(2, SystemData.get("airline.code"));
-
-			// Execute the query
-			Map<String, Integer> results = new LinkedHashMap<String, Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.put(rs.getString(1), new Integer(rs.getInt(2)));
 
 			// Clean up and return
 			rs.close();
@@ -444,6 +419,29 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 		// Clean up
 		rs.close();
 		_ps.close();
+	}
+	
+	/**
+	 * Helper method to load program sizes.
+	 */
+	private void loadSize(Collection<EquipmentType> eTypes) throws SQLException {
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		
+		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM PILOTS P WHERE ((P.STATUS=?) OR "
+				+ "(P.STATUS=?)) GROUP BY P.EQTYPE");
+			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, Pilot.ON_LEAVE);
+		
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				EquipmentType eq = types.get(rs.getString(1));
+				if (eq != null)
+					eq.setSize(rs.getInt(2));
+			}
+			
+			rs.close();
+			_ps.close();
 	}
 
 	/**

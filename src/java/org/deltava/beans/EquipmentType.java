@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
     private String _cpName;
     private String _cpEmail;
     private int _cpID;
+    private int _size;
     
     private int _promotionLegs;
     private int _promotionHours;
@@ -104,6 +105,15 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
      */
     public int getStage() {
         return _stage;
+    }
+    
+    /**
+     * Returns the number of active pilots in the Equipment Program.
+     * @return the number of active pilots.
+     * @see EquipmentType#setSize(int)
+     */
+    public int getSize() {
+    	return _size;
     }
     
     /**
@@ -489,12 +499,21 @@ public class EquipmentType implements Serializable, Cacheable, Comparable<Equipm
     }
     
     /**
-     * Sets the stage for this equipment type program
+     * Sets the stage for this equipment program.
      * @param stage The stage number for this program
      * @see EquipmentType#getStage()
      */
     public void setStage(int stage) {
         _stage = Math.max(1, stage);
+    }
+    
+    /**
+     * Sets the number of active Pilots in this equipment program.
+     * @param size the number of pilots
+     * @see EquipmentType#getSize()
+     */
+    public void setSize(int size) {
+    	_size = Math.max(0, size);
     }
     
     /**

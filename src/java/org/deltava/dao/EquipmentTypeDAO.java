@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.Connection;
@@ -11,13 +11,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for {@link EquipmentType} beans.
  * @author Luke
- * @version 3.2
+ * @version 4.0
  * @since 2.7
  */
 
 public abstract class EquipmentTypeDAO extends DAO implements CachingDAO {
 	
-	protected static final Cache<EquipmentType> _cache = new AgingCache<EquipmentType>(16);
+	protected static final Cache<EquipmentType> _cache = new ExpiringCache<EquipmentType>(16, 3600);
 
 	/**
 	 * Initializes the Data Access Object.
