@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.crypt;
 
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 /**
  * A class to generate MD5/SHA message digests.
  * @author Luke
- * @version 1.0
+ * @version 4.0
  * @since 1.0
  */
 
@@ -65,8 +65,7 @@ public class MessageDigester {
      * @param size the new buffer size in bytes. Must be > 64
      */
     public final void setBufferSize(int size) {
-        if (size > 64)
-            _bufferSize = size;
+    	_bufferSize = Math.max(64, size);
     }
 
     /**
@@ -75,9 +74,7 @@ public class MessageDigester {
      * @return the message digest
      */
     public byte[] digest(byte[] data) {
-        synchronized (_md) {
-            return _md.digest(data);
-        }
+    	return _md.digest(data);
     }
 
     /**
@@ -88,15 +85,13 @@ public class MessageDigester {
      */
     public byte[] digest(InputStream is) throws IOException {
         byte[] buffer = new byte[_bufferSize];
-        synchronized (_md) {
-            int bytesRead = is.read(buffer);
-            while (bytesRead > 0) {
-                _md.update(buffer, 0, bytesRead);
-                bytesRead = is.read(buffer);
-            }
-
-            return _md.digest();
+        int bytesRead = is.read(buffer);
+        while (bytesRead > 0) {
+        	_md.update(buffer, 0, bytesRead);
+            bytesRead = is.read(buffer);
         }
+
+        return _md.digest();
     }
     
     /**
