@@ -18,21 +18,22 @@ import org.deltava.taskman.*;
 import org.deltava.util.ThreadUtils;
 
 /**
- * A Scheduled Task to validate Facbook tokens.
+ * A Scheduled Task to validate Facebook security tokens.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 3.6
  */
 
 public class FacebookValidationTask extends Task {
 
 	private class FacebookWorker extends Thread {
-		private Logger tLog;
-		private Queue<Pilot> _work;
-		private Queue<Pilot> _output;
+		private final Logger tLog;
+		private final Queue<Pilot> _work;
+		private final Queue<Pilot> _output;
 		
 		FacebookWorker(int id, Queue<Pilot> in, Queue<Pilot> out) {
 			super("FacebookWorker-" + String.valueOf(id));
+			setDaemon(true);
 			tLog = Logger.getLogger(FacebookValidationTask.class.getPackage().getName() + "." + getName());
 			_work = in;
 			_output = out;
@@ -89,10 +90,12 @@ public class FacebookValidationTask extends Task {
 			ctx.release();
 			
 			// Fire up the workers
+			int tpSize = Math.max(1, Math.min(8, totalPilots / 16));
 			Queue<Pilot> pilots = new LinkedBlockingQueue<Pilot>();
 			Collection<Thread> workers = new ArrayList<Thread>();
-			for (int x = 1; x <= 6; x++) {
+			for (int x = 1; x <= tpSize; x++) {
 				FacebookWorker wrk = new FacebookWorker(x, work, pilots);
+				wrk.setUncaughtExceptionHandler(this);
 				workers.add(wrk);
 				wrk.start();
 			}
