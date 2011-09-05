@@ -30,7 +30,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -266,6 +266,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 */
 	private void spawnDaemon(Runnable sd) {
 		Thread dt = new Thread(_daemonGroup, sd, sd.toString());
+		dt.setDaemon(true);
 		dt.setUncaughtExceptionHandler(this);
 		_daemons.put(dt, sd);
 		dt.start();
