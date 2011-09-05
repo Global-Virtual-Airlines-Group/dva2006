@@ -33,12 +33,15 @@
 <content:filter roles="HR">
  PROGRAM <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${eqType.name}" />
  RANK <el:combo name="rank" size="1" idx="*" options="${ranks}" firstEntry="All Pilots" value="${param.rank}" /></content:filter>
- <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" />
- <el:button type="submit" label="UPDATE" /></td>
+ <el:box name="isDesc" idx="*" value="true" label="Descending" checked="${param.isDesc}" /> <el:button type="submit" label="UPDATE" /></td>
+</tr>
+<tr class="title">
+ <td colspan="7" class="left caps">PROGRAM ROSTER - <fmt:int value="${viewContext.start+1}" /> TO <fmt:int value="${viewContext.end}" /> OF
+ <fmt:int value="${eqType.size}" /> PILOTS - <span class="und" onclick="void toggleExpand(this, 'prgRoster')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar -->
-<tr class="title caps">
+<tr class="title caps prgRoster">
  <td width="10%">PILOT CODE</td>
  <td width="18%">PILOT NAME</td>
  <td width="12%">RANK</td>
@@ -50,7 +53,7 @@
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${viewContext.results}">
-<tr>
+<tr class="prgRoster">
  <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.pilotCode}</el:cmd></td>
  <td>${pilot.name}</td>
  <td class="sec bld">${pilot.rank.name}</td>
@@ -62,17 +65,18 @@
 </c:forEach>
 
 <!-- Scroll Bar -->
-<tr class="title">
+<tr class="title prgRoster">
  <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <c:if test="${!empty examQueue}">
 <el:table className="view">
 <tr class="title">
- <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${fn:sizeof(examQueue)}" /> EXAMS</td>
+ <td colspan="6" class="left caps">SUBMITTED EXAMINATIONS - <fmt:int value="${fn:sizeof(examQueue)}" /> EXAMS
+ - <span class="und" onclick="void toggleExpand(this, 'prgExamQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
-<tr class="title caps">
+<tr class="title caps prgExamQueue">
  <td width="25%">EXAMINATION NAME</td>
  <td width="20%">PILOT NAME</td>
  <td width="20%">RANK / EQUIPMENT</td>
@@ -84,7 +88,7 @@
 <!-- Table Data -->
 <c:forEach var="exam" items="${examQueue}">
 <c:set var="pilot" value="${pilots[exam.pilotID]}" scope="page" />
-<tr>
+<tr class="prgExamQueue">
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td>${pilot.rank.name}, ${pilot.equipmentType}</td>
@@ -98,10 +102,11 @@
 <c:if test="${!empty crQueue}">
 <el:table className="view">
 <tr class="title">
- <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${fn:sizeof(crQueue)}" /> CHECK RIDES</td>
+ <td colspan="5" class="left caps">SUBMITTED CHECK RIDES - <fmt:int value="${fn:sizeof(crQueue)}" /> CHECK RIDES
+ - <span class="und" onclick="void toggleExpand(this, 'prgRideQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
-<tr class="title caps">
+<tr class="title caps prgRideQueue">
  <td width="8%">DATE</td>
  <td width="7%">&nbsp;</td>
  <td width="20%">PILOT NAME</td>
@@ -112,7 +117,7 @@
 <!-- Table View data -->
 <c:forEach var="ride" items="${crQueue}">
 <c:set var="pilot" value="${pilots[ride.pilotID]}" scope="page" />
-<tr>
+<tr class="prgRideQueue">
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
 <c:if test="${ride.flightID > 0}">
  <td><el:cmd url="crview" link="${ride}" className="pri small bld">SCORE</el:cmd></td>
@@ -130,11 +135,12 @@
 <c:if test="${!empty txQueue}">
 <view:table className="view" cmd="prgroster">
 <tr class="title">
- <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${fn:sizeof(txQueue)}" /> TRANSFERS</td>
+ <td colspan="5" class="left caps">${eqType.name} TRANSFER REQUESTS - <fmt:int value="${fn:sizeof(txQueue)}" /> TRANSFERS
+ - <span class="und" onclick="void toggleExpand(this, 'prgTxQueue')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar-->
-<tr class="title caps">
+<tr class="title caps prgTxQueue">
  <td width="35%"><el:cmd url="txrequests" className="title" sort="P.LASTNAME">PILOT NAME</el:cmd></td>
  <td width="10%">PILOT ID</td>
  <td width="20%">CURRENT RANK</td>
@@ -145,7 +151,7 @@
 <!-- Table Data -->
 <c:forEach var="txreq" items="${txQueue}">
 <c:set var="pilot" value="${pilots[txreq.ID]}" scope="page" />
-<view:row entry="${txreq}">
+<view:row entry="${txreq}" className="prgTxQueue">
  <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
  <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>
  <td class="sec bld">${pilot.rank.name}</td>
@@ -153,15 +159,21 @@
  <td class="sec"><fmt:date fmt="d" date="${txreq.date}" /></td>
 </view:row>
 </c:forEach>
+
+<!-- Legend -->
+<tr class="title prgTxQueue">
+ <td colspan="5"><view:legend width="150" labels="Needs Check Ride,Ride Assigned,Ride Submitted,Complete" classes="opt2,opt1,opt3, " /></td>
+</tr>
 </view:table>
 </c:if>
 <c:if test="${!empty promoQueue}">
 <view:table className="view" cmd="prgroster">
 <tr class="title">
- <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${fn:sizeof(promoQueue)}" /> PILOTS</td>
+ <td colspan="7" class="left caps">${eqType.name} PROMOTION QUEUE - <fmt:int value="${fn:sizeof(promoQueue)}" /> PILOTS
+ - <span class="und" onclick="void toggleExpand(this, 'prgPromoQueue')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar -->
-<tr class="title caps">
+<tr class="title caps prgPromoQueue">
  <td width="15%">&nbsp;</td>
  <td width="10%">PILOT CODE</td>
  <td width="30%">PILOT NAME</td>
@@ -174,7 +186,7 @@
 <!-- Table Data -->
 <c:forEach var="pilot" items="${promoQueue}">
 <c:set var="access" value="${promoAccess[pilot.ID]}" scope="page" />
-<view:row entry="${pilot}">
+<view:row entry="${pilot}" className="prgPromoQueue">
 <c:if test="${access.canPromote}">
  <td><el:cmdbutton url="promote" link="${pilot}" label="PROMOTE" /></td>
 </c:if>
@@ -195,11 +207,11 @@
 <!-- Check Ride Statistics -->
 <view:table className="view" cmd="prgroster">
 <tr class="title caps">
- <td class="left" colspan="7">CHECK RIDE STATISTICS</td>
+ <td class="left" colspan="7">CHECK RIDE STATISTICS - <span class="und" onclick="void toggleExpand(this, 'crStats')">COLLAPSE</span></td>
 </tr>
 
 <!-- Table Header Bar -->
-<tr class="title caps">
+<tr class="title caps crStats">
  <td width="20%">MONTH</td>
  <td width="20%">SCORER</td>
  <td width="10%">PASSED</td>
@@ -209,9 +221,9 @@
  <td>AVG. TRIES</td>
 </tr>
 
-<!-- Table Data -->
+<!-- Table Statistics Data -->
 <c:forEach var="crStat" items="${crStats}">
-<tr>
+<tr class="crStats">
  <td class="pri bld">${crStat.label}</td>
  <td class="bld">${crStat.subLabel}</td>
  <td class="sec bld"><fmt:int value="${crStat.passed}" /></td>
@@ -226,10 +238,11 @@
 <!-- Flight Report Statistics -->
 <el:table className="view">
 <tr class="title caps">
- <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)</td>
+ <td class="left" colspan="10">FLIGHT REPORT STATISTICS (PAST <fmt:int value="${flightStatsInterval}" /> DAYS)
+ - <span class="und" onclick="void toggleExpand(this, 'frStats')">COLLAPSE</span></td>
 </tr>
 <!-- Table Header Bar-->
-<tr class="title caps">
+<tr class="title caps frStats">
  <td width="5%">#</td>
  <td width="20%">ENTRY</td>
  <td width="8%">HOURS</td>
@@ -245,7 +258,7 @@
 <!-- Table Statistics Data -->
 <c:set var="entryNumber" value="0" scope="page" />
 <c:forEach var="stat" items="${pirepStats}">
-<view:row entry="${stat}">
+<view:row entry="${stat}" className="frStats">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="page" />
  <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
