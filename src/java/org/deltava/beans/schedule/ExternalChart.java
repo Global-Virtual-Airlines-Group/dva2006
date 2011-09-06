@@ -1,8 +1,6 @@
 // Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
-
 /**
  * A bean to store data about an externally hosted Chart. These typically have a
  * reflector URL that redirects the user to the "real" URL for the chart.
@@ -13,7 +11,7 @@ import java.util.Date;
 
 public class ExternalChart extends Chart {
 
-	private Date _lastMod;
+	private String _source;
 	private String _url;
 	
 	/**
@@ -23,6 +21,15 @@ public class ExternalChart extends Chart {
 	 */
 	public ExternalChart(String name, Airport a) {
 		super(name, a);
+	}
+	
+	/**
+	 * Returns whther this is an external chart.
+	 * @return TRUE
+	 */
+	@Override
+	public final boolean getIsExternal() {
+		return true;
 	}
 
 	/**
@@ -34,19 +41,11 @@ public class ExternalChart extends Chart {
 	}
 	
 	/**
-	 * Returns the last modification date of the chart.
-	 * @return the modification date/time
+	 * Returns the source of the chart.
+	 * @return the source
 	 */
-	public Date getLastModified() {
-		return _lastMod;
-	}
-	
-	/**
-	 * Updates the last modification date of the chart.
-	 * @param dt the modification date/time
-	 */
-	public void setLastModified(Date dt) {
-		_lastMod = dt;
+	public String getSource() {
+		return _source;
 	}
 	
 	/**
@@ -55,5 +54,13 @@ public class ExternalChart extends Chart {
 	 */
 	public void setURL(String url) {
 		_url = url;
+	}
+
+	/**
+	 * Updates the source of the chart.
+	 * @param src the source
+	 */
+	public void setSource(String src) {
+		_source = src;
 	}
 }
