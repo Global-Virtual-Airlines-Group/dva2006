@@ -1,6 +1,8 @@
 // Copyright 2004, 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
+import java.util.Date;
+
 import org.deltava.beans.*;
 
 import org.deltava.util.StringUtils;
@@ -8,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 3.0
+ * @version 4.0
  * @since 1.0
  */
 
@@ -51,8 +53,10 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	private int _type;
 	private String _name;
 	private int _size;
+	private int _useCount;
 
 	private Airport _airport;
+	private Date _lastMod;
 
 	/**
 	 * Create a new Chart with a name and an Airport.
@@ -124,12 +128,45 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	}
 
 	/**
+	 * Returns whther this is an external chart.
+	 * @return FALSE
+	 */
+	public boolean getIsExternal() {
+		return false;
+	}
+	
+	/**
 	 * Return the size of the chart image.
 	 * @return the size of the image in bytes
 	 * @see Chart#setSize(int)
 	 */
 	public int getSize() {
 		return (_buffer == null) ? _size : _buffer.length;
+	}
+	
+	/**
+	 * Returns the number of times this chart has been viewed.
+	 * @return the number of views
+	 * @see Chart#setUseCount(int)
+	 */
+	public int getUseCount() {
+		return _useCount;
+	}
+	
+	/**
+	 * Returns the last modification date of the chart.
+	 * @return the modification date/time
+	 */
+	public Date getLastModified() {
+		return _lastMod;
+	}
+	
+	/**
+	 * Updates the last modification date of the chart.
+	 * @param dt the modification date/time
+	 */
+	public void setLastModified(Date dt) {
+		_lastMod = dt;
 	}
 
 	/**
@@ -195,10 +232,19 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	 * @throws IllegalArgumentException if the size is zero or negative
 	 */
 	public void setSize(int size) {
-		if (size < 1)
-			throw new IllegalArgumentException("Image Size cannot be zero or negative");
+		if (size < 0)
+			throw new IllegalArgumentException("Image Size cannot be negative");
 
 		_size = size;
+	}
+	
+	/**
+	 * Updates the number of times this chart has been viewed.
+	 * @param cnt the number of views
+	 * @see Chart#getUseCount()
+	 */
+	public void setUseCount(int cnt) {
+		_useCount = Math.max(0, cnt);
 	}
 
 	/**

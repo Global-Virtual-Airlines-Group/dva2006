@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
-import org.deltava.beans.schedule.Chart;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
@@ -23,7 +23,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -122,9 +122,21 @@ public class ImageServlet extends BasicAuthServlet {
 			GetImage dao = new GetImage(c);
 			switch (imgType) {
 				case IMG_CHART:
-					imgBuffer = dao.getChart(imgID);
-					rsp.setHeader("Cache-Control", "private");
-					rsp.setIntHeader("max-age", 600);
+					GetChart cdao = new GetChart(c);
+					Chart cht = cdao.get(imgID);
+					if (cht instanceof ExternalChart) {
+						ExternalChart ec = (ExternalChart) cht;
+						rsp.setHeader("Cache-Control", "private");
+						rsp.sendRedirect(ec.getURL());
+					} else {
+						imgBuffer = dao.getChart(imgID);
+						rsp.setHeader("Cache-Control", "private");
+						rsp.setIntHeader("max-age", 3600);
+					}
+					
+					// Log usage
+					SetChart swdao = new SetChart(c);
+					swdao.logUse(cht);
 					break;
 
 				case IMG_GALLERY:
@@ -150,7 +162,7 @@ public class ImageServlet extends BasicAuthServlet {
 					// Serve the image
 					imgBuffer = dao.getGalleryImage(imgID, url.getLastPath());
 					rsp.setHeader("Cache-Control", "public");
-					rsp.setIntHeader("max-age", 600);
+					rsp.setIntHeader("max-age", 3600);
 					break;
 
 				case IMG_EXAM:
@@ -162,7 +174,7 @@ public class ImageServlet extends BasicAuthServlet {
 				case IMG_EVENT:
 					imgBuffer = dao.getEventBanner(imgID);
 					rsp.setHeader("Cache-Control", "public");
-					rsp.setIntHeader("max-age", 600);
+					rsp.setIntHeader("max-age", 3600);
 					break;
 
 				default:

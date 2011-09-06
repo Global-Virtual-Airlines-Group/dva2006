@@ -68,18 +68,18 @@ return true;
 
 <!-- Table Header/Filter Bars-->
 <tr class="title caps">
- <td colspan="5" class="left"><content:airline /> AIRPORT / APPROACH / PROCEDURE CHARTS</td>
+ <td colspan="6" class="left"><content:airline /> AIRPORT / APPROACH / PROCEDURE CHARTS</td>
 </tr>
 <tr>
- <td class="priB right" style="color: #FFFFFF; font-size: 8pt;">Filter Options</td>
- <td colspan="4" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void updateVisibility()" /></td>
+ <td class="priB right" style="color: #ffffff; font-size: 8pt;">Filter Options</td>
+ <td colspan="5" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" onChange="void updateVisibility()" /></td>
 </tr>
 <tr class="title">
  <td colspan="2">CHART NAME</td>
  <td width="20%">CHART TYPE</td>
- <td width="10%"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
- <td class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport()" size="1" idx="*" options="${emptyList}" value="${airport}" />
- <el:text name="idCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].id, this.value); updateAirport();" /></td>
+ <td width="8%"><c:if test="${access.canCreate}"><el:cmdbutton url="chart" op="edit" label="NEW CHART" /></c:if> </td>
+ <td colspan="2" class="right" width="35%">AIRPORT <el:combo name="id" onChange="void updateAirport()" size="1" idx="*" options="${emptyList}" value="${airport}" />
+ <el:text name="idCode" idx="*" size="4" max="4" className="bld caps" value="${airport.ICAO}" onBlur="setAirport(document.forms[0].id, this.value); updateAirport();" /></td>
 </tr>
 
 <!-- Table Chart Data -->
@@ -92,23 +92,27 @@ return true;
  <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
  <td class="sec">${chart.typeName}</td>
 <c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
- <td colspan="${cspan}">Adobe PDF document, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
+ <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
+ <td colspan="${cspan}">Adobe PDF document<c:if test="${chart.size > 0}">, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K</c:if>
+<c:if test="${chart.isExternal}"><span class="small"> (${chart.source})</span></c:if></td>
 </c:when>
 <c:otherwise>
  <td colspan="2"><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
  <td class="sec">${chart.typeName}</td>
 <c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
- <td colspan="${cspan}">${chart.imgTypeName} image, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
+ <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
+ <td colspan="${cspan}">${chart.imgTypeName} image, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K
+<c:if test="${chart.isExternal}"><span class="small"> (${chart.source})</span></c:if></td>
 </c:otherwise>
 </c:choose>
 </view:row>
 </c:forEach>
 
 <c:if test="${anyPDF}">
-<!-- Download Acrobat -->
+<!-- Download Acrobat link -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="4">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 6</span> or newer 
+ <td colspan="5">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 6</span> or newer 
 in order to be viewed. If you are having difficulties viewing our charts, please click on the link to the 
 left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
@@ -116,7 +120,7 @@ left to download the latest version of Adobe Acrobat Reader. This is a free down
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="6">&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

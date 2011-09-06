@@ -26,24 +26,27 @@ public class GetExternalCharts extends DAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public void populate(ExternalChart c) throws DAOException {
-		if (!StringUtils.isEmpty(c.getURL()) || c.isLoaded())
+		if ((c.getSize() > 0) || c.isLoaded())
 			return;
 		
 		try {
 			URL u = new URL(c.getURL());
 			HttpURLConnection urlCon = (HttpURLConnection) u.openConnection();
 			urlCon.setRequestMethod("HEAD");
+			urlCon.setInstanceFollowRedirects(true);
 			
 			// Fetch the data
 			int rspCode = urlCon.getResponseCode();
 			if (rspCode != HttpURLConnection.HTTP_OK)
-				throw new DAOException("Unknown Status Code - " + rspCode);
+				throw new HTTPDAOException("Unknown Response Code", rspCode);
 
 			// Get size
 			c.setSize(urlCon.getContentLength());
-			c.setLastModified(new Date(urlCon.getLastModified()));
+			c.setLastModified(new Date());
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			reset();
 		}
 	}
 	
@@ -53,7 +56,7 @@ public class GetExternalCharts extends DAO {
 	 * @throws DAOException if an error occurs
 	 */
 	public void load(ExternalChart c) throws DAOException {
-		if (!StringUtils.isEmpty(c.getURL()) || c.isLoaded())
+		if (StringUtils.isEmpty(c.getURL()) || c.isLoaded())
 			return;
 		
 		try {
@@ -62,6 +65,8 @@ public class GetExternalCharts extends DAO {
 			c.setLastModified(new Date());
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			reset();
 		}
 	}
 }

@@ -37,11 +37,11 @@ public class GetAirCharts extends DAO {
 	private Document loadXML() throws IOException, DAOException {
 		int statusCode = getResponseCode();
 		if (statusCode != HTTP_OK)
-			throw new DAOException("Invalid response code - " + statusCode);
+			throw new HTTPDAOException("Invalid Response Code", statusCode);
 		
 		try {
-			SAXBuilder builder = new SAXBuilder();
-			return builder.build(getIn());
+			SAXBuilder builder = new SAXBuilder(false);
+			return builder.build(new InputStreamReader(getIn()));
 		} catch (JDOMException je) {
 			throw new DAOException(je);
 		}
@@ -54,7 +54,7 @@ public class GetAirCharts extends DAO {
 	 */
 	public Collection<Country> getCountries() throws DAOException {
 		try {
-			init("http://www.aircharts.org/API/countries/" + SystemData.get("security.key.airCharts"));
+			init("http://www.aircharts.org/API/countries/XML/" + SystemData.get("security.key.airCharts"));
 			Document doc = loadXML();
 			
 			// Parse the XML
@@ -70,6 +70,8 @@ public class GetAirCharts extends DAO {
 			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			reset();
 		}
 	}
 
@@ -81,7 +83,7 @@ public class GetAirCharts extends DAO {
 	 */
 	public Collection<Airport> getAirports(Country c) throws DAOException {
 		try {
-			init("http://www.aircharts.org/API/airports/" + c.getCode() + "/" + SystemData.get("security.key.airCharts"));
+			init("http://www.aircharts.org/API/airports/" + c.getCode() + "/XML/" + SystemData.get("security.key.airCharts"));
 			Document doc = loadXML();
 			
 			// Parse the XML
@@ -97,6 +99,8 @@ public class GetAirCharts extends DAO {
 			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			reset();
 		}
 	}
 	
@@ -108,7 +112,7 @@ public class GetAirCharts extends DAO {
 	 */
 	public Collection<ExternalChart> getCharts(Airport a) throws DAOException {
 		try {
-			init("http://www.aircharts.org/API/airport/" + a.getICAO() + "/" + SystemData.get("security.key.airCharts"));
+			init("http://www.aircharts.org/API/airport/" + a.getICAO() + "/XML/" + SystemData.get("security.key.airCharts"));
 			Document doc = loadXML();
 			
 			// Parse the XML
@@ -135,8 +139,13 @@ public class GetAirCharts extends DAO {
 					for (Iterator<?> ci = cce.getChildren("Chart").iterator(); ci.hasNext(); ) {
 						Element ce = (Element) ci.next();
 						ExternalChart c = new ExternalChart(ce.getAttributeValue("Name"), a);
+						c.setImgType(Chart.PDF);
+						c.setSource("AirCharts");
 						c.setType(CAT_TYPE_MAP[type]);
-						c.setLastModified(new Date(StringUtils.parse(ce.getAttributeValue("LastModified"), 0) * 1000));
+						if ((c.getType() == Chart.ILS) && (!c.getName().contains("ILS")))
+							c.setType(Chart.APR);
+						
+						c.setLastModified(new Date());
 						c.setURL(ce.getTextTrim());
 						results.add(c);
 					}
@@ -146,6 +155,8 @@ public class GetAirCharts extends DAO {
 			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
+		} finally {
+			reset();
 		}
 	}
 }

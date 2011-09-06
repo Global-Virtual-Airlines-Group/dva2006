@@ -275,4 +275,16 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<!-- External Chart loader -->
+	<task id="extchartload" enabled="true">
+		<class>org.deltava.tasks.ExternalChartLoadTask</class>
+		<time>
+			<min>30</min>
+			<hour>10</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>

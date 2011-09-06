@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AirChartsAPI>
+  <AirportInfo Name="Tel-aviv Ben-Gurion" ICAO='LLBG' IATA='' CountryCode='IL'>
+    <ChartCategory id='1' name='General'>
+      <Chart Name="INS Coordinates for Aircraft stands GND East" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=231da3cd-c011-52ec-b92a-63311eb195b2&amp;api=1</Chart>
+      <Chart Name="Aircraft Parking Chart Term 3" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=ba30a7af-4927-5b45-b5a7-5e498d6ec7fa&amp;api=1</Chart>
+      <Chart Name="Aircraft Parking Chart Terminal 3 Apron A" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=dff844d9-6907-5513-bfe9-2e9baff85d9f&amp;api=1</Chart>
+      <Chart Name="Area Chart - TMA ATS ROUTES" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=ab0c2668-dcba-5b93-a026-813aa6cc9c73&amp;api=1</Chart>
+      <Chart Name="Aerodrome Ground Chart" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=df0c7a1b-4717-5f06-b732-0e49cbfb8657&amp;api=1</Chart>
+      <Chart Name="Aircraft Parking/Docking Term 1" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=f76ef98b-9bfc-52db-9c25-d6de3a8fe2da&amp;api=1</Chart>
+      <Chart Name="Visual Circuit Chart" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=8296eee4-b063-5555-aa6a-b5f531925bc9&amp;api=1</Chart>
+      <Chart Name="Aerodrome Chart" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=b84aafd5-b962-5922-9fdd-a38aaf80631e&amp;api=1</Chart>
+    </ChartCategory>
+    <ChartCategory id='2' name='Departures'>
+      <Chart Name="NAT 3E, 3F, 3F Special" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=c4e1fe2d-5bb8-5a41-a079-74bc902daee9&amp;api=1</Chart>
+      <Chart Name="PURLA 1B RWY 08" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=7844b460-727e-5572-af66-cf26bac6cfb0&amp;api=1</Chart>
+      <Chart Name="TALMI 2E, 2F, 2F Special" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=6aa554df-77b0-543e-bd09-145d3982df25&amp;api=1</Chart>
+      <Chart Name="PURLA 1C RWY 12" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=a7164073-6d5b-5f51-8973-e809cf3dc940&amp;api=1</Chart>
+      <Chart Name="SOLIN 3E, 3F, 3F Special" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=0012cb4f-d61f-5d4f-862a-80d31738b35c&amp;api=1</Chart>
+      <Chart Name="SALAM 2E, 2F, 2F Special" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=93fec73c-a44d-5853-b08a-acab32b2119f&amp;api=1</Chart>
+      <Chart Name="SOLIN 3B, 3C RWY 08/12" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=3a3e7f98-f64f-5e9a-bf09-a110c9f3fdaa&amp;api=1</Chart>
+      <Chart Name="SALAM 2A, 2B, 2C, 2D" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=b389a4dc-a9ba-5526-8087-371bfdaf532e&amp;api=1</Chart>
+      <Chart Name="PURLA 1A, 1D" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=d16e8d8e-65ff-5fd1-b7f5-5bf2fb067aa9&amp;api=1</Chart>
+      <Chart Name="NAT 3B, 3C" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=eb17790d-ef26-526e-b238-7f950da5a086&amp;api=1</Chart>
+      <Chart Name="TALMI 2B, 2C" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=12bde307-59a8-57f0-98ce-1c2074f82735&amp;api=1</Chart>
+      <Chart Name="Eastbound 2 Departure" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=f7895825-2914-5e64-b479-1c425f7c7f55&amp;api=1</Chart>
+      <Chart Name="PURLA 1E 1F 1F SPEC" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=ac277303-b4e0-5011-8a73-b14d8a0802c5&amp;api=1</Chart>
+    </ChartCategory>
+    <ChartCategory id='5' name='Charted Approaches'>
+      <Chart Name="VOR/DME RWY 30" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=67f89538-9cc6-58d3-8f54-d3d25b9a3c6d&amp;api=1</Chart>
+      <Chart Name="VOR/DME Z RWY 08" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=cc2f83eb-f174-571e-9002-1438a23b83b8&amp;api=1</Chart>
+      <Chart Name="ILS CATII RWY 12" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=df965510-b3a6-56bf-a4c7-f7315420e0b7&amp;api=1</Chart>
+      <Chart Name="VOR/DME RWY 12" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=81e19448-68bb-59af-9e8c-7fd1ef064d5f&amp;api=1</Chart>
+      <Chart Name="RNAV Visual RWY 26" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=3cb34ae3-4595-599a-a52f-7828a55684e2&amp;api=1</Chart>
+      <Chart Name="LDA or LOC RWY 30" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=eba78507-e0a1-5120-8e1b-57f581a9a37f&amp;api=1</Chart>
+      <Chart Name="RNAV Visual RWY 08" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=98347724-9605-575f-be75-58acc15a65de&amp;api=1</Chart>
+      <Chart Name="RNAV Visual RWY 30" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=7a31aff4-70ba-5b13-a50b-d0da172d94c6&amp;api=1</Chart>
+      <Chart Name="ILS RWY 26" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=14383932-4be0-573d-a871-ffb16a91202a&amp;api=1</Chart>
+      <Chart Name="ILS/DME RWY 12" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=f7f70aea-da37-5276-bed0-d3812e8326c8&amp;api=1</Chart>
+      <Chart Name="ILS RWY 08" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=2c02f611-562e-5c3b-a550-0d18eb57ae40&amp;api=1</Chart>
+      <Chart Name="VOR/DME Y RWY 08" cnflag='N' LastModified='1312935097'>http://www.aircharts.org/data/view.php?id=9474df03-0082-52ca-a435-505db063ca52&amp;api=1</Chart>
+    </ChartCategory>
+  </AirportInfo>
+</AirChartsAPI>
