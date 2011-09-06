@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Rank;
 import org.deltava.beans.Staff;
 
 /**
  * A Data Access Object to return Staff Profiles.
  * @author Luke
- * @version 2.2
+ * @version 4.0
  * @since 1.0
  */
 
@@ -31,26 +32,24 @@ public class GetStaff extends DAO {
      */
     public Staff get(int id) throws DAOException {
         try {
-            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, PILOTS P "
-            		+ "WHERE (S.ID=P.ID) AND (S.ID=?) LIMIT 1");
+            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANK, S.* "
+            	+ "FROM STAFF S, PILOTS P WHERE (S.ID=P.ID) AND (S.ID=?) LIMIT 1");
             _ps.setInt(1, id);
             
             // Execute the query and get the result; if none return null
+            Staff s = null;
             ResultSet rs = _ps.executeQuery();
-            if (!rs.next()) {
-            	rs.close();
-            	_ps.close();
-            	return null;
+            if (rs.next()) {
+            	s = new Staff(rs.getString(1), rs.getString(2));
+            	s.setEmail(rs.getString(3));
+            	s.setEquipmentType(rs.getString(4));
+            	s.setRank(Rank.fromName(rs.getString(5)));
+            	s.setID(rs.getInt(6));
+            	s.setTitle(rs.getString(7));
+            	s.setSortOrder(rs.getInt(8));
+            	s.setBody(rs.getString(9));
+            	s.setArea(rs.getString(10));
             }
-            
-            // Create the staff object
-            Staff s = new Staff(rs.getString(1), rs.getString(2));
-            s.setEmail(rs.getString(3));
-            s.setID(rs.getInt(4));
-            s.setTitle(rs.getString(5));
-            s.setSortOrder(rs.getInt(6));
-            s.setBody(rs.getString(7));
-            s.setArea(rs.getString(8));
             
             // Clean up and return
             rs.close();
@@ -68,8 +67,8 @@ public class GetStaff extends DAO {
      */
     public Collection<Staff> getStaff() throws DAOException {
         try {
-            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, "
-            		+ "PILOTS P WHERE (S.ID=P.ID)");
+            prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, P.EQTYPE, P.RANK, "
+            	+ "S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID)");
             
             // Execute the query
             Collection<Staff> results = new ArrayList<Staff>();
@@ -77,13 +76,13 @@ public class GetStaff extends DAO {
             while (rs.next()) {
                 Staff s = new Staff(rs.getString(1), rs.getString(2));
                 s.setEmail(rs.getString(3));
-                s.setID(rs.getInt(4));
-                s.setTitle(rs.getString(5));
-                s.setSortOrder(rs.getInt(6));
-                s.setBody(rs.getString(7));
-                s.setArea(rs.getString(8));
-
-                // Add to the results
+            	s.setEquipmentType(rs.getString(4));
+            	s.setRank(Rank.fromName(rs.getString(5)));
+            	s.setID(rs.getInt(6));
+            	s.setTitle(rs.getString(7));
+            	s.setSortOrder(rs.getInt(8));
+            	s.setBody(rs.getString(9));
+            	s.setArea(rs.getString(10));
                 results.add(s);
             }
             

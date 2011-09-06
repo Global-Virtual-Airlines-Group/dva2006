@@ -1,16 +1,14 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
 
 import org.deltava.beans.Staff;
 
-import org.deltava.util.CollectionUtils;
-
 /**
  * A Comparator for Staff Profiles.
  * @author Luke
- * @version 2.1
+ * @version 4.0
  * @since 1.0
  */
 
@@ -22,7 +20,7 @@ public class StaffComparator extends AbstractComparator<Staff> {
 
 	public static final String[] TYPES = { "Sort Order", "Functional Area", "Last Name" };
 
-	private List<String> _areas;
+	private final List<String> _areas = new ArrayList<String>();
 
 	/**
 	 * Initializes the comparator.
@@ -51,7 +49,7 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	 * @return TRUE if areas are present, otherwise FALSE
 	 */
 	public boolean hasAreas() {
-		return !CollectionUtils.isEmpty(_areas);
+		return !_areas.isEmpty();
 	}
 
 	/**
@@ -61,7 +59,7 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	 */
 	public void setAreas(Collection<String> areas) {
 		if (areas != null)
-			_areas = new ArrayList<String>(areas);
+			_areas.addAll(areas);
 	}
 
 	/**
@@ -69,22 +67,28 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	 * @throws ClassCastException if either object is not a Staff
 	 * @see java.util.Comparator#compare(Object, Object)
 	 */
-	@SuppressWarnings("fallthrough")
 	protected int compareImpl(Staff o1, Staff o2) {
+		int tmpResult = 0;
 		switch (_comparisonType) {
 			case AREA:
-				if (_areas != null) {
-					int a1 = _areas.indexOf(o1.getArea());
-					int a2 = _areas.indexOf(o2.getArea());
-					int tmpResult = new Integer(a1).compareTo(new Integer(a2));
-					if (tmpResult != 0)
-						return tmpResult;
-				}
+				int a1 = _areas.indexOf(o1.getArea());
+				int a2 = _areas.indexOf(o2.getArea());
+				tmpResult = Integer.valueOf(a1).compareTo(Integer.valueOf(a2));
+				if (tmpResult == 0)
+					tmpResult = Integer.valueOf(o1.getSortOrder()).compareTo(Integer.valueOf(o2.getSortOrder()));
+				if (tmpResult == 0)
+					tmpResult = o1.getRank().compareTo(o2.getRank()) * -1;
+				if (tmpResult == 0)
+					tmpResult = o1.getEquipmentType().compareTo(o2.getEquipmentType());
+					
+				return tmpResult;
 
 			case SORT:
-				int tmpResult = new Integer(o1.getSortOrder()).compareTo(new Integer(o2.getSortOrder()));
-				if (tmpResult != 0)
-					return tmpResult;
+				tmpResult = Integer.valueOf(o1.getSortOrder()).compareTo(Integer.valueOf(o2.getSortOrder()));
+				if (tmpResult == 0)
+					tmpResult = o1.getLastName().compareTo(o2.getLastName());
+				
+				return tmpResult;
 
 			default:
 			case LASTNAME:
