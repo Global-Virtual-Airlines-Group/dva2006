@@ -157,6 +157,7 @@ public class ChartLoader extends TestCase {
 			c.setType(rs.getInt(3));
 			c.setImgType(rs.getInt(4));
 			c.setSize(rs.getInt(6));
+			c.setLastModified(new java.util.Date());
 			c.setHash(rs.getString(7));
 			results.add(c);
 		}

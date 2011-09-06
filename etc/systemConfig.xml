@@ -452,7 +452,22 @@
 			<cache>/var/cache/innovata/sched_cache</cache>
 		</innovata>
 		<cache>/var/cache/sched</cache>
-		
+
+		<!-- External Chart data -->
+		<chart>
+			<map name="sources">
+				<ie>internal</ie>
+				<il>AirCharts</il>
+				<nz>AirCharts</nz>
+				<uk>AirCharts</uk>
+				<us>internal</us>
+				<za>internal</za>
+			</map>
+
+			<default>AirCharts</default>
+			<maxAge type="Integer">14</maxAge>
+		</chart>
+
 		<!-- FlightAware download data -->
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
