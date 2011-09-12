@@ -90,7 +90,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results);
-			loadSize(results);
+			loadSize(results, dbName);
 			_cache.addAll(results);
 			return results.get(0);
 		} catch (SQLException se) {
@@ -126,7 +126,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results);
-			loadSize(results);
+			loadSize(results, dbName);
 			_cache.addAll(results);
 			return results;
 		} catch (SQLException se) {
@@ -183,7 +183,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				loadRatings(exams, db);
 				loadExams(exams, db);
 				loadAirlines(exams);
-				loadSize(exams);
+				loadSize(exams, db);
 				results.addAll(new TreeSet<EquipmentType>(exams));
 			}
 			
@@ -219,7 +219,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
 			loadAirlines(results);
-			loadSize(results);
+			loadSize(results, dbName);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -250,7 +250,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			List<EquipmentType> results = execute();
 			loadRatings(results, SystemData.get("airline.db"));
 			loadExams(results, SystemData.get("airline.db"));
-			loadSize(results);
+			loadSize(results, SystemData.get("airline.db"));
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -424,10 +424,10 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	/**
 	 * Helper method to load program sizes.
 	 */
-	private void loadSize(Collection<EquipmentType> eTypes) throws SQLException {
+	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
 		
-		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM PILOTS P WHERE ((P.STATUS=?) OR "
+		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE ((P.STATUS=?) OR "
 				+ "(P.STATUS=?)) GROUP BY P.EQTYPE");
 			_ps.setInt(1, Pilot.ACTIVE);
 			_ps.setInt(2, Pilot.ON_LEAVE);
