@@ -8,7 +8,7 @@ import javax.servlet.http.*;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  * @see Command
  */
@@ -69,10 +69,24 @@ public class CommandContext extends HTTPContext {
 		Object obj = getCmdParameter(Command.ID, Integer.valueOf(0));
 		if (obj instanceof Integer)
 			return ((Integer) obj).intValue();
+		else if (obj == null)
+			throw new CommandException("Invalid Database ID - null", false);
+		
+		// Remove anything other than digit or letter "x"
+		String s = obj.toString().toLowerCase(); int radix = 10;
+		StringBuilder buf = new StringBuilder();
+		for (int x = 0; x < s.length(); x++) {
+			char c = s.charAt(x);
+			if (c == 'x') {
+				radix = 16;
+				buf.append('x');
+			} else if (Character.isDigit(c) || ((c >= 'a') && (c <= 'f')))
+				buf.append(c);
+		}
 
 		// Try and convert into an integer
 		try {
-			return Integer.parseInt(obj.toString());
+			return Integer.parseInt(buf.toString(), radix);
 		} catch (Exception e) {
 			throw new CommandException("Invalid Database ID - " + obj, false);
 		}
