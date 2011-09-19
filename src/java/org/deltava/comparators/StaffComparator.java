@@ -14,11 +14,10 @@ import org.deltava.beans.Staff;
 
 public class StaffComparator extends AbstractComparator<Staff> {
 
-	public static final int SORT = 0;
-	public static final int AREA = 1;
-	public static final int LASTNAME = 2;
+	public static final int AREA = 0;
+	public static final int LASTNAME = 1;
 
-	public static final String[] TYPES = { "Sort Order", "Functional Area", "Last Name" };
+	public static final String[] TYPES = { "Functional Area", "Last Name" };
 
 	private final List<String> _areas = new ArrayList<String>();
 
@@ -26,24 +25,12 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	 * Initializes the comparator.
 	 * @param comparisonType the comparison type code
 	 * @throws IllegalArgumentException if an invalide code is specified
-	 * @see StaffComparator#StaffComparator(String)
 	 */
 	public StaffComparator(int comparisonType) {
 		super(TYPES);
 		setComparisonType(comparisonType);
 	}
 
-	/**
-	 * Initializes the comparator.
-	 * @param comparisonType the comparison type label
-	 * @throws IllegalArgumentException if an invalid label is specified
-	 * @see StaffComparator#StaffComparator(int)
-	 */
-	public StaffComparator(String comparisonType) {
-		super(TYPES);
-		setComparisonType(comparisonType);
-	}
-	
 	/**
 	 * Returns whether functional areas have been loaded.
 	 * @return TRUE if areas are present, otherwise FALSE
@@ -60,6 +47,14 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	public void setAreas(Collection<String> areas) {
 		if (areas != null)
 			_areas.addAll(areas);
+	}
+	
+	/**
+	 * Helper method to compare names.
+	 */
+	private int compareNames(Staff s1, Staff s2) {
+		int tmpResult = s1.getLastName().compareTo(s2.getLastName());
+		return (tmpResult == 0) ? s1.getFirstName().compareTo(s2.getFirstName()) : tmpResult;
 	}
 
 	/**
@@ -80,19 +75,14 @@ public class StaffComparator extends AbstractComparator<Staff> {
 					tmpResult = o1.getRank().compareTo(o2.getRank()) * -1;
 				if (tmpResult == 0)
 					tmpResult = o1.getEquipmentType().compareTo(o2.getEquipmentType());
-					
-				return tmpResult;
-
-			case SORT:
-				tmpResult = Integer.valueOf(o1.getSortOrder()).compareTo(Integer.valueOf(o2.getSortOrder()));
 				if (tmpResult == 0)
-					tmpResult = o1.getLastName().compareTo(o2.getLastName());
-				
+					tmpResult = compareNames(o1, o2);
+					
 				return tmpResult;
 
 			default:
 			case LASTNAME:
-				return o1.getLastName().compareTo(o2.getLastName());
+				return compareNames(o1, o2);
 		}
 	}
 }
