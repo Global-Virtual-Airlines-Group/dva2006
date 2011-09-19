@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 3.7
+ * @version 4.0
  * @since 1.0
  */
 
@@ -247,9 +247,6 @@ public class SetFlightReport extends DAO {
 		if (fr.getID() == 0)
 			fr.setID(getNewID());
 
-		// Write the comments into the database
-		writeComments(fr, dbName);
-		
 		// Write the route into the database
 		if (!StringUtils.isEmpty(fr.getRoute())) {
 			prepareStatementWithoutLimits("REPLACE INTO " + dbName + ".PIREP_ROUTE (ID, ROUTE) VALUES (?, ?)");
