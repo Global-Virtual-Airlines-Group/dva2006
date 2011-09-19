@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 3.6
+ * @version 4.0
  * @since 1.0
  */
 
@@ -61,8 +61,9 @@ public class FindFlightCommand extends AbstractCommand {
 				i.remove();
 		}
 		
-		// Save airlines
+		// Save airlines and ratings
 		ctx.setAttribute("airlines", airlines, REQUEST);
+		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
 		
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();

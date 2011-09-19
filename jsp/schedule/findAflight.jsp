@@ -208,7 +208,8 @@ return true;
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="9"><el:button ID="BuildButton" type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;
+ <td colspan="9">SET EQUIPMENT <el:combo name="eqOverride" size="1" firstEntry="-" options="${myEQ}" />&nbsp;
+<el:button ID="BuildButton" type="submit" label="ADD TO FLIGHT ASSIGNMENT" />&nbsp;
 <el:cmdbutton ID="BuildResetButton" url="resetassign" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
