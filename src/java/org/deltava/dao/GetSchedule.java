@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 3.4
+ * @version 4.0
  * @since 1.0
  */
 
@@ -176,13 +176,16 @@ public class GetSchedule extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
+		sqlBuf.append(".SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?)");
+		if (f.getLeg() != 0)
+			sqlBuf.append("AND (LEG=?)");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, f.getAirline().getCode());
 			_ps.setInt(2, f.getFlightNumber());
-			_ps.setInt(3, f.getLeg());
+			if (f.getLeg() != 0)
+				_ps.setInt(3, f.getLeg());
 
 			// Execute the query, return null if not found
 			List<ScheduleEntry> results = execute();
@@ -334,15 +337,15 @@ public class GetSchedule extends DAO {
 	 * @param airportD the origin Airport
 	 * @param airportA the destination Airport
 	 * @param dbName the database name
-	 * @return a Flight bean with the Airline, Flight and Leg number or null if none found
+	 * @return a ScheduleEntry bean with the Airline, Flight and Leg number or null if none found
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
-	public Flight getFlightNumber(Airport airportD, Airport airportA, String dbName) throws DAOException {
+	public ScheduleEntry getFlightNumber(Airport airportD, Airport airportA, String dbName) throws DAOException {
 		
 		// Build the SQL Statement
 		String db = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, AI.CODE FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, AI.CODE FROM ");
 		sqlBuf.append(db);
 		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRPORT_D=?) "
 			+ "AND (S.AIRPORT_A=?) AND (S.ACADEMY=?) ORDER BY IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
@@ -355,10 +358,11 @@ public class GetSchedule extends DAO {
 			_ps.setBoolean(4, false);
 			
 			// Execute the query
-			Flight f = null;
+			ScheduleEntry f = null;
 			ResultSet rs = _ps.executeQuery();
 			if (rs.next()) {
 				f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+				f.setEquipmentType(rs.getString(4));
 				f.setAirportD(airportD);
 				f.setAirportA(airportA);
 			}
