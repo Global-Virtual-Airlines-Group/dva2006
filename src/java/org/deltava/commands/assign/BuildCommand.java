@@ -1,7 +1,8 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 3.3
+ * @version 4.0
  * @since 1.0
  */
 
@@ -37,7 +38,7 @@ public class BuildCommand extends AbstractCommand {
 		List<?> results = (List<?>) ctx.getSession().getAttribute("fafResults");
 		Collection<String> ids = ctx.getParameters("addFA");
 		if ((ids == null) || (results == null)) {
-			result.setURL("/jsp/schedule/findAflight.jsp");
+			result.setURL("findflight.do", null, 0);
 			result.setSuccess(true);
 			return;
 		}
@@ -67,12 +68,18 @@ public class BuildCommand extends AbstractCommand {
 				info.setPurgeable(true);
 				info.setAssignDate(new Date());
 			}
+			
+			// Get equipment override
+			String eqOv = ctx.getParameter("eqOverride");
+			if ((eqOv != null) && (eqOv.length() < 3))
+				eqOv = null;
 
 			// Populate the legs
-			for (Iterator<Flight> i = fList.iterator(); i.hasNext();) {
-				Flight f = i.next();
+			for (Flight f : fList) {
 				info.addAssignment(new AssignmentLeg(f));
 				DraftFlightReport fr = new DraftFlightReport(f);
+				if (eqOv != null)
+					fr.setEquipmentType(eqOv);
 				
 				// Copy arrival/departure times
 				if (f instanceof ScheduleEntry) {
@@ -99,17 +106,23 @@ public class BuildCommand extends AbstractCommand {
 
 		// Load the airports from the criteria
 		ScheduleSearchCriteria criteria = (ScheduleSearchCriteria) ctx.getSession().getAttribute("fafCriteria");
-		if (criteria != null) {
-			try {
-				// Get departure/arrival airports
-				GetScheduleAirport adao = new GetScheduleAirport(ctx.getConnection());
+		try {
+			Connection con = ctx.getConnection();
+				
+			// Get departure/arrival airports
+			if (criteria != null) {
+				GetScheduleAirport adao = new GetScheduleAirport(con);
 				ctx.setAttribute("airports", adao.getOriginAirports(criteria.getAirline()), REQUEST);
 				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
-			} catch (DAOException de) {
-				throw new CommandException(de);
-			} finally {
-				ctx.release();
 			}
+				
+			// Get the equipment types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
 		}
 
 		// Get Airlines
@@ -120,16 +133,14 @@ public class BuildCommand extends AbstractCommand {
 				i.remove();
 		}
 
-		// Save airlines
+		// Save airlines and combo variables for JSP
 		ctx.setAttribute("airlines", airlines, REQUEST);
-
-		// Set combo variables for JSP
 		ctx.setAttribute("sortTypes", ScheduleSearchCriteria.SORT_OPTIONS, REQUEST);
 		ctx.setAttribute("hours", ScheduleSearchCriteria.HOURS, REQUEST);
+		ctx.setAttribute("myEQ", ctx.getUser().getRatings(), REQUEST);
 
 		// Redirect back to the find-a-flight page
 		result.setURL("/jsp/schedule/findAflight.jsp");
 		result.setSuccess(true);
-		return;
 	}
 }
