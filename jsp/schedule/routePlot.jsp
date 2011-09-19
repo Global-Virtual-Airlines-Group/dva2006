@@ -117,6 +117,10 @@ return true;
  <td class="label">Cruising Altitude</td>
  <td class="data"><el:text name="cruiseAlt" size="5" max="5" idx="*" value="35000" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="saveDraft" label="Save as Draft Flight Report" value="true" checked="true" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
