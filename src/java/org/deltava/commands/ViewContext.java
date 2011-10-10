@@ -1,4 +1,4 @@
-// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store scrollable view page parameters.
  * @author Luke
- * @version 2.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -41,18 +41,17 @@ public class ViewContext {
      */
     private static final String[] RESERVED_PARAMS = {START, COUNT, SORTBY};
 
-    private Map<String, Object> _params;
+    private final Map<String, Object> _params = new HashMap<String, Object>();
     private Collection<? extends Object> _results;
     
-    private int _start;
-    private int _count;
+    private final int _start;
+    private final int _count;
     private String _sortType;
     
     /**
      * Initializes the view context from the HTTP request.
      * @param req the HTTP request
      */
-    @SuppressWarnings("unchecked")
     public ViewContext(HttpServletRequest req, int size) {
         super();
         _start = StringUtils.parse(req.getParameter(START), 0);
@@ -60,7 +59,7 @@ public class ViewContext {
         _sortType = req.getParameter(SORTBY);
         
         // Remove the reserved parameters
-        _params = new HashMap<String, Object>(req.getParameterMap());
+        _params.putAll(req.getParameterMap());
         for (int x = 0; x < ViewContext.RESERVED_PARAMS.length; x++) {
             String rParam = ViewContext.RESERVED_PARAMS[x];
             if (_params.containsKey(rParam))
@@ -128,8 +127,7 @@ public class ViewContext {
      * @see ViewContext#getStart()
      */
     public int getPreviousStart() {
-        int tmpResult = _start - _count;
-        return (tmpResult < 0) ? 0 : tmpResult;
+        return Math.max(0, _start - _count);
     }
     
     /**
