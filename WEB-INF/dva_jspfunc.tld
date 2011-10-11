@@ -161,6 +161,13 @@
 		<function-signature>boolean isMSFS(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for X-Plane Flight Report -->
+	<function>
+		<name>isXPlane</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isXPlane(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Check Flight -->
 	<function>
 		<name>isCheckFlight</name>

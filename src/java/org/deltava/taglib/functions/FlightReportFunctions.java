@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -67,6 +67,15 @@ public class FlightReportFunctions {
      */
     public static boolean isMSFS(FlightReport fr) {
     	return (fr != null) && (fr.getFSVersion() != 100) && (fr.getFSVersion() != 0);
+    }
+    
+    /**
+     * Returns if this Flight was logged using Laminar Research X-Plane.
+     * @param fr the Flight Report
+     * @return TRUE if the Flight was logged using X-Plane
+     */
+    public static boolean isXPlane(FlightReport fr) {
+    	return (fr != null) && (fr.getFSVersion() == 100);
     }
     
     /**
