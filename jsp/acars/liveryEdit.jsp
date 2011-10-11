@@ -64,7 +64,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isDefault" idx="*" value="true" checked="${livery.default}" label="This is the default livery for the Airline" /></td>
+ <td class="data"><el:box name="isDefault" idx="*" value="true" checked="${livery.getDefault()}" label="This is the default livery for the Airline" /></td>
 </tr>
 </el:table>
 

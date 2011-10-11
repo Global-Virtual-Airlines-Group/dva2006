@@ -94,7 +94,7 @@ return true;
 <c:if test="${access.canUpdateStatus}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.public}" /><br />
+ <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.getPublic()}" /><br />
 <el:box name="sendIssue" idx="*" value="true" checked="${true}" label="Send Notification to Assignee" /></td>
 </tr>
 <tr class="title">

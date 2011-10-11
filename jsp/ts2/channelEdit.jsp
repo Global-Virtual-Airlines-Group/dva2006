@@ -73,7 +73,7 @@ return true;
 <tr>
  <td class="label top">Channel Options</td>
  <td class="data"><el:box name="isModerated" idx="*" value="true" checked="${channel.moderated}" label="Channel is Moderated" /><br />
-<el:box name="isDefault" idx="*" value="true" checked="${channel.default}" label="Default Channel for this Virtual Server" /></td>
+<el:box name="isDefault" idx="*" value="true" checked="${channel.getDefault()}" label="Default Channel for this Virtual Server" /></td>
 </tr>
 </el:table>
 
