@@ -55,7 +55,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPrivate" idx="*" value="true" label="Journal Entry is Private" checked="${entry.private}" /><br />
+ <td class="data"><el:box name="isPrivate" idx="*" value="true" label="Journal Entry is Private" checked="${entry.getPrivate()}" /><br />
 <el:box name="isLocked" idx="*" value="true" label="Journal Entry is Locked" checked="${entry.locked}" /></td>
 </tr>
 <tr>

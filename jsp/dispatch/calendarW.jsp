@@ -59,7 +59,7 @@ return true;
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="dspcalendar">
 <calendar:entry name="entry">
 <c:choose>
-<c:when test="${entry.class.simpleName == 'DispatchScheduleEntry'}">
+<c:when test="${entry.getClass().simpleName == 'DispatchScheduleEntry'}">
 <c:set var="dispatcher" value="${pilots[entry.authorID]}" scope="page" />
 <c:set var="eAccess" value="${accessMap[entry]}" scope="page" />
 <div class="small"><span class="pri bld">${dispatcher.name}</span> (${dispatcher.pilotCode})<br />

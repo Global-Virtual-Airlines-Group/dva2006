@@ -32,7 +32,7 @@ This is the message: <b>${servlet_error}</b><br />
 <br />
 </c:if>
 <c:choose>
-<c:when test="${(ex.class.name == 'javax.servlet.ServletException') && (!empty ex.rootCause)}">
+<c:when test="${(ex.getClass().name == 'javax.servlet.ServletException') && (!empty ex.rootCause)}">
 This is the root cause of the exception: <b>${ex.rootCause.class.name}</b> ${ex.rootCause.message}<br />
 <pre><fmt:stack exception="${ex.rootCause}" /></pre>
 <br />

@@ -82,7 +82,7 @@ return true;
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.public}" label="This is a public Web Resource" /></td>
+ <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.getPublic()}" label="This is a public Web Resource" /></td>
 </tr>
 </c:if>
 </el:table>
