@@ -78,7 +78,7 @@ public class FileUploadFilter implements Filter {
 			   log.warn(ie.getMessage());
 			}
 			
-			Part p = (parser != null) ? parser.readNextPart() : null;
+			com.oreilly.servlet.multipart.Part p = (parser != null) ? parser.readNextPart() : null;
 			while (p != null) {
 				if (p.isFile()) {
 					FilePart fp = (FilePart) p;

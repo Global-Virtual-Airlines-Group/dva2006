@@ -332,7 +332,6 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	 * @return EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs  
 	 */
-	@SuppressWarnings("unchecked")
 	public int doEndTag() throws JspException {
 		if (!_showScrollTags)
 			return EVAL_PAGE;
