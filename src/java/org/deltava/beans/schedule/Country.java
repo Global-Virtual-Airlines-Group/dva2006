@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.ComboAlias;
 /**
  * A bean to store country names and ISO-3316 codes.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 3.2
  */
 
@@ -18,14 +18,16 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	
 	private String _code;
 	private String _name;
+	private String _continent;
 	
 	/**
 	 * Initializes a country bean.
 	 * @param code the ISO-3316 country code
 	 * @param name the country name
+	 * @param cont the continent name
 	 */
-	public static synchronized void init(String code, String name) {
-		Country c = new Country(code, name);
+	public static synchronized void init(String code, String name, String cont) {
+		Country c = new Country(code, name, cont);
 		if (!_countries.containsKey(c.getCode()))
 			_countries.put(c.getCode(), c);
 	}
@@ -52,12 +54,14 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	 * Creates the bean. This is private so no country can be initialized twice.
 	 * @param code the ISO-3316 country code
 	 * @param name the country name
+	 * @param cont the continent name
 	 * @throws NullPointerException if code is null
 	 */
-	private Country(String code, String name) {
+	private Country(String code, String name, String cont) {
 		super();
 		_code = code.toUpperCase().trim();
 		_name = name;
+		_continent = cont;
 	}
 	
 	/**
@@ -74,6 +78,14 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	 */
 	public String getName() {
 		return _name;
+	}
+	
+	/**
+	 * Returns the continent name.
+	 * @return the continent
+	 */
+	public String getContinent() {
+		return _continent;
 	}
 	
 	public String getComboName() {
