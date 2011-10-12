@@ -1,4 +1,4 @@
- // Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to determine what Accomplishments a Pilot has achieved. 
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 3.2
  */
 
@@ -63,6 +63,7 @@ public class AccomplishmentHistoryHelper {
 		private final Collection<Airport> _airports = new HashSet<Airport>();
 		private final Collection<Airline> _airlines = new HashSet<Airline>();
 		private final Collection<Country> _countries = new TreeSet<Country>();
+		private final Collection<String> _conts = new TreeSet<String>();
 		private final Collection<State> _states = new TreeSet<State>();
 		private final Map<String, MutableInteger> _eqLegs = new TreeMap<String, MutableInteger>();
 
@@ -94,6 +95,7 @@ public class AccomplishmentHistoryHelper {
 		private void add(Airport a) {
 			_airports.add(a);
 			_countries.add(a.getCountry());
+			_conts.add(a.getCountry().getContinent());
 			if ("US".equals(a.getCountry().getCode())) {
 				String state = a.getName().substring(a.getName().lastIndexOf(' ') + 1);
 				if (state.length() == 2) {
@@ -112,6 +114,10 @@ public class AccomplishmentHistoryHelper {
 		
 		public Collection<Country> getCountries() {
 			return _countries;
+		}
+		
+		public Collection<String> getContinents() {
+			return _conts;
 		}
 		
 		public Collection<State> getStates() {
@@ -236,6 +242,8 @@ public class AccomplishmentHistoryHelper {
 				return AccomplishmentFilter.filter(cnt.getEquipmentTypes(), a).size();
 			case COUNTRIES:
 				return AccomplishmentFilter.filter(cnt.getCountries(), a).size();
+			case CONTINENTS:
+				return AccomplishmentFilter.filter(cnt.getContinents(), a).size();
 			case STATES:
 				return AccomplishmentFilter.filter(cnt.getStates(), a).size();
 			case AIRLINES:
@@ -291,6 +299,10 @@ public class AccomplishmentHistoryHelper {
 					results.add(SystemData.getAirport(code));
 				break;
 			
+			case CONTINENTS:
+				results.addAll(AccomplishmentFilter.missing(_totals.getContinents(), a));
+				break;
+				
 			case COUNTRIES:
 				codes.addAll(AccomplishmentFilter.missing(_totals.getCountries(), a));
 				for (String code : codes)
