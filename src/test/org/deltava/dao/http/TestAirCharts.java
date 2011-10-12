@@ -26,8 +26,8 @@ public class TestAirCharts extends TestCase {
 		PropertyConfigurator.configure("etc/log4j.properties");
 		log = Logger.getLogger(TestAirCharts.class);
 		
-		Country.init("US", "United States");
-		Country.init("IL", "Israel");
+		Country.init("US", "United States", "North America");
+		Country.init("IL", "Israel", "Asia");
 		SystemData.init();
 		
 		final Airport a = new Airport("ATL", "KATL", "Atlanta GA");
