@@ -48,6 +48,10 @@ case 'STATES':
 case 'AIRLINES':
 	displayObject(document.getElementById('valueAirline'), true);
 	break;
+	
+case 'CONTINENTS':
+	displayObject(document.getElementById('valueCont'), true);
+	break;
 
 case 'AIRCRAFT':
 case 'EQLEGS':
@@ -103,6 +107,10 @@ return true;
  <td class="data"><el:check name="countries" idx="*" width="190" cols="5" className="small" newLine="true" checked="${ap.choices}" options="${activeCountries}"/>
 <div style="clear:both;"></div><hr />
 <el:check name="countries" idx="*" width="190" cols="5" className="small ita" newLine="true" checked="${ap.choices}" options="${inactiveCountries}"/></td>
+</tr>
+<tr id="valueCont" style="display:none;" class="valueRow">
+ <td class="label top">Valid Continents</td>
+ <td class="data"><el:check name="continents" idx="*" width="150" cols="6" checked="${ap.choices}" options="${continents}" /></td>
 </tr>
 <tr id="valueState" style="display:none;" class="valueRow">
  <td class="label top">Valid States</td>
