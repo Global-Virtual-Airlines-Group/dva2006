@@ -47,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="issuecomment.do" link="${issue}" validate="return validate(this)">
+<el:form method="post" action="issuecomment.do" link="${issue}" allowUpload="true" validate="return validate(this)">
 <el:table className="form">
 <!-- Title Bar -->
 <tr class="title">
@@ -96,7 +96,7 @@ return true;
 
 <!-- Issue Comments -->
 <tr class="title caps left">
- <td colspan="2">ISSUE COMMENTS</td>
+ <td colspan="2"><c:if test="${fn:sizeof(issue.comments) > 1}"><fmt:int value="${fn:sizeof(issue.comments)}" /> </c:if>ISSUE COMMENTS</td>
 </tr>
 <c:if test="${empty issue.comments}">
 <tr class="pri bld mid caps">
@@ -109,7 +109,11 @@ return true;
 <tr>
  <td class="label top">${author.name} (${author.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" t="HH:mm" /></td>
- <td class="data top"><fmt:msg value="${comment.comments}" bbCode="true" /></td>
+ <td class="data top"><fmt:msg value="${comment.comments}" bbCode="true" />
+<c:if test="${!empty comment.name}">
+<hr />
+Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${comment.size / 1024}" />K)
+ <a href="/issue/${issue.hexID}/${comment.hexID}">Click to download</a></c:if></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -119,6 +123,10 @@ return true;
 <tr>
  <td class="label top">New Comment</td>
  <td><el:textbox name="comment" width="80%" height="4" idx="*" resize="true" className="req"></el:textbox></td>
+</tr>
+<tr>
+ <td class="label">Attach File</td>
+ <td><el:file name="attach" className="small" size="96" max="160" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
