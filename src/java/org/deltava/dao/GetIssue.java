@@ -1,16 +1,15 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
 
-import org.deltava.beans.system.Issue;
-import org.deltava.beans.system.IssueComment;
+import org.deltava.beans.system.*;
 
 /**
  * A Data Access object to retrieve Issues and Issue Comments.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -42,7 +41,7 @@ public class GetIssue extends DAO {
 			
 			// Populate the bean, get comments and return
 			Issue i = results.get(0);
-			getComments(i);
+			loadComments(i);
 			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -169,11 +168,41 @@ public class GetIssue extends DAO {
 	}
 	
 	/**
+	 * Loads an attached File.
+	 * @param fileID the file database ID
+	 * @return the file data
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public IssueComment getFile(int fileID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT SIZE, NAME, BODY FROM common.ISSUE_FILES WHERE (ID=?) LIMIT 1");
+			_ps.setInt(1, fileID);
+			
+			// Execute the query
+			IssueComment ic = null;
+			ResultSet rs = _ps.executeQuery();
+			if (rs.next()) {
+				ic = new IssueComment(fileID, "");
+				ic.setSize(rs.getInt(1));
+				ic.setName(rs.getString(2));
+				ic.load(rs.getBytes(3));
+			}
+			
+			rs.close();
+			_ps.close();
+			return ic;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Helper method to return all comments for a particular issue.
 	 */
-	private void getComments(Issue i) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ID, AUTHOR, CREATED, COMMENTS FROM common.ISSUE_COMMENTS "
-		      + "WHERE (ISSUE_ID=?) ORDER BY CREATED");
+	private void loadComments(Issue i) throws SQLException {
+		prepareStatementWithoutLimits("SELECT IC.ID, IC.AUTHOR, IC.CREATED, IC.COMMENTS, IFNULL(IFL.SIZE, -1), IFL.NAME "
+			+ "FROM common.ISSUE_COMMENTS IC LEFT JOIN common.ISSUE_FILES IFL ON (IC.ID=IFL.ID) WHERE (IC.ISSUE_ID=?) "
+			+ "ORDER BY IC.CREATED");
 		_ps.setInt(1, i.getID());
 		
 		// Execute the query
@@ -183,21 +212,29 @@ public class GetIssue extends DAO {
 			ic.setIssueID(i.getID());
 			ic.setAuthorID(rs.getInt(2));
 			ic.setCreatedOn(rs.getTimestamp(3));
+			int size = rs.getInt(5);
+			if (size > 0) {
+				ic.setSize(size);
+				ic.setName(rs.getString(6));
+			}
 			
-			// add to Issue
-			i.addComment(ic);
+			i.add(ic);
 		}
 		
-		// Clean up and return
 		rs.close();
 		_ps.close();
 	}
 	
+	/**
+	 * Helper method to parse Issue result sets.
+	 */
 	private List<Issue> execute() throws SQLException {
 		
 		// Execute the result
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
+		boolean hasCommentCount = (md.getColumnCount() > 15);
+		
 		List<Issue> results = new ArrayList<Issue>();
 		while (rs.next()) {
 			Issue i = new Issue(rs.getInt(1), rs.getString(6));
@@ -213,18 +250,14 @@ public class GetIssue extends DAO {
 			i.setMajorVersion(rs.getInt(12));
 			i.setMinorVersion(rs.getInt(13));
 			i.setSecurity(rs.getInt(14));
-			
-			// Check if we have a column 15/16 for last comment date & comment count
-			if (md.getColumnCount() > 15) {
+			if (hasCommentCount) {
 				i.setLastCommentOn(rs.getTimestamp(15));
 				i.setCommentCount(rs.getInt(16));
 			}
 
-			// Add to results
 			results.add(i);
 		}
 
-		// Clean up and return
 		rs.close();
 		_ps.close();
 		return results;

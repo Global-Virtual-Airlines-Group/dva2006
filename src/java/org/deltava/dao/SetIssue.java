@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,9 +6,9 @@ import java.sql.*;
 import org.deltava.beans.system.*;
 
 /**
- * A Data Access Object to update Issues.
+ * A Data Access Object to update development Issues.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -74,13 +74,14 @@ public class SetIssue extends DAO {
 	 */
 	public void write(Issue i) throws DAOException {
 		try {
+			startTransaction();
+			
 			// Initialize the prepared statement depending on the type of operation we are doing
 			if (i.getID() == 0)
 				insert(i);
 			else
 				update(i);
 
-			// Update the database
 			executeUpdate(1);
 
 			// If we wrote a new Issue, don't bother with the comments but get the issue ID
@@ -89,32 +90,46 @@ public class SetIssue extends DAO {
 			else {
 				for (IssueComment ic : i.getComments()) {
 					if (ic.getID() == 0)
-						writeComment(ic);
+						write(ic);
 				}
 			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
 
 	/**
-	 * Writes an Issue comment to the database. This can both update and create comments.
+	 * Writes a new Issue comment to the database.
 	 * @param ic the IssueComment to write
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeComment(IssueComment ic) throws DAOException {
+	public void write(IssueComment ic) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO common.ISSUE_COMMENTS (ID, ISSUE_ID, AUTHOR, CREATED, "
-					+ "COMMENTS) VALUES (?, ?, ?, NOW(), ?)");
-			_ps.setInt(1, ic.getID());
-			_ps.setInt(2, ic.getIssueID());
-			_ps.setInt(3, ic.getAuthorID());
-			_ps.setString(4, ic.getComments());
+			startTransaction();
+			prepareStatementWithoutLimits("INSERT INTO common.ISSUE_COMMENTS (ISSUE_ID, AUTHOR, CREATED, "
+					+ "COMMENTS) VALUES (?, ?, NOW(), ?)");
+			_ps.setInt(1, ic.getIssueID());
+			_ps.setInt(2, ic.getAuthorID());
+			_ps.setString(3, ic.getComments());
 			executeUpdate(1);
-
-			// Update the issue comment ID if inserting a new record
 			ic.setID(getNewID());
+			
+			// Write file if necessary
+			if (ic.isLoaded()) {
+				prepareStatementWithoutLimits("INSERT INTO common.ISSUE_FILES (ID, SIZE, NAME, BODY) VALUES (?, ?, ?, ?)");
+				_ps.setInt(1, ic.getID());
+				_ps.setInt(2, ic.getSize());
+				_ps.setString(3, ic.getName());
+				_ps.setBinaryStream(4, ic.getInputStream(), ic.getSize());
+				executeUpdate(1);
+			}
+			
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

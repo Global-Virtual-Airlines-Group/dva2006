@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to convert a devlopemnt Issue into a Help Desk Issue.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 3.6
  */
 
@@ -106,7 +106,7 @@ public class IssueConvertCommand extends AbstractCommand {
 				IssueComment ic = new IssueComment("Converted to Help Desk Issue at " + url.toString());
 				ic.setIssueID(i.getID());
 				ic.setAuthorID(ctx.getUser().getID());
-				iwdao.writeComment(ic);
+				iwdao.write(ic);
 			} catch (MalformedURLException mue) {
 				// empty
 			}
