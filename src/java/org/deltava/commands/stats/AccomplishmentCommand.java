@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Accomplishment profiles. 
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 3.2
  */
 
@@ -67,6 +67,10 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 			switch (a.getUnit()) {
 			case COUNTRIES:
 				a.setChoices(StringUtils.nullTrim(ctx.getParameters("countries")));
+				break;
+				
+			case CONTINENTS:
+				a.setChoices(StringUtils.nullTrim(ctx.getParameters("continents")));
 				break;
 
 			case STATES:
@@ -119,6 +123,7 @@ public class AccomplishmentCommand extends AbstractFormCommand {
 		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		ctx.setAttribute("units", Arrays.asList(Accomplishment.Unit.values()), REQUEST);
 		ctx.setAttribute("states", Arrays.asList(State.values()), REQUEST);
+		ctx.setAttribute("continents", Country.getContinents(), REQUEST);
 		
 		// Get the Accomplishment code - if we're new, check if the airport exists
 		boolean isNew = (ctx.getID() == 0);

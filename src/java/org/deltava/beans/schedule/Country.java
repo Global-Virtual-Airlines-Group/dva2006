@@ -15,6 +15,7 @@ import org.deltava.beans.ComboAlias;
 public class Country implements java.io.Serializable, Comparable<Country>, ComboAlias {
 
 	private static final Map<String, Country> _countries = new TreeMap<String, Country>();
+	private static final Collection<String> _continents = new TreeSet<String>();
 	
 	private String _code;
 	private String _name;
@@ -28,8 +29,10 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	 */
 	public static synchronized void init(String code, String name, String cont) {
 		Country c = new Country(code, name, cont);
-		if (!_countries.containsKey(c.getCode()))
+		if (!_countries.containsKey(c.getCode())) {
 			_countries.put(c.getCode(), c);
+			_continents.add(cont);
+		}
 	}
 	
 	/**
@@ -48,6 +51,14 @@ public class Country implements java.io.Serializable, Comparable<Country>, Combo
 	 */
 	public static Collection<Country> getAll() {
 		return new ArrayList<Country>(_countries.values());
+	}
+	
+	/**
+	 * Returns all Continents.
+	 * @return a Collection of Continent names
+	 */
+	public static Collection<String> getContinents() {
+		return new ArrayList<String>(_continents);
 	}
 	
 	/**
