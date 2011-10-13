@@ -48,6 +48,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
 	 */
+	@Override
 	public String getServletInfo() {
 		return "Command Controller Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
@@ -63,6 +64,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			_maxSize = Math.max(1, maxSize);
 		}
 
+		@Override
 		public void run() {
 			tlog.info("Started");
 			while (!isInterrupted()) {
@@ -105,6 +107,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 * @throws ServletException if an error occurs
 	 * @see CommandFactory#load(String)
 	 */
+	@Override
 	public void init() throws ServletException {
 		log.info("Initializing");
 		try {
@@ -139,9 +142,11 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	/**
 	 * Shuts down the servlet. This just logs a message to the servlet log.
 	 */
+	@Override
 	public void destroy() {
 		log.info("Shutting Down");
-		ThreadUtils.kill(_logThread, 500);
+		Thread t = _logThread; _logThread = null;
+		ThreadUtils.kill(t, 500);
 	}
 
 	/**
@@ -166,6 +171,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 * @param rsp the HTTP response
 	 * @see CommandServlet#doGet(HttpServletRequest, HttpServletResponse)
 	 */
+	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
 		doGet(req, rsp);
 	}
@@ -177,6 +183,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 * @throws IOException if a network I/O error occurs
 	 * @throws ServletException if the error handler cannot forward to the error page
 	 */
+	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
 		long startTime = System.currentTimeMillis();
 
@@ -286,6 +293,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
 				rd.forward(req, rsp);
 			} catch (Exception fe) {
+				log.error("Error forwarding - " + fe.getMessage(), fe);
 				try {
 					rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				} catch (Exception ee) {
