@@ -11,9 +11,9 @@ import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.system.VersionInfo;
+import org.deltava.beans.system.*;
 
-import org.deltava.security.command.CoolerThreadAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.dao.*;
 import org.deltava.util.*;
@@ -23,7 +23,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -38,13 +38,15 @@ public class ImageServlet extends BasicAuthServlet {
 	private static final int IMG_GALLERY = 1;
 	private static final int IMG_EXAM = 2;
 	private static final int IMG_EVENT = 3;
+	private static final int IMG_ISSUE = 4;
 
-	private static final String[] IMG_TYPES = { "charts", "gallery", "exam_rsrc", "event" };
+	private static final String[] IMG_TYPES = { "charts", "gallery", "exam_rsrc", "event", "issue" };
 
 	/**
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
 	 */
+	@Override
 	public String getServletInfo() {
 		return "Database Image Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
@@ -67,6 +69,7 @@ public class ImageServlet extends BasicAuthServlet {
 	 * @param rsp the HTTP response
 	 * @throws IOException if a network I/O error occurs
 	 */
+	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 
 		// Parse the URL to figure out what kind of image we want
@@ -164,6 +167,26 @@ public class ImageServlet extends BasicAuthServlet {
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 3600);
 					break;
+					
+				case IMG_ISSUE:
+					// Validate that we can view the issue
+					GetIssue idao = new GetIssue(c);
+					Issue i = idao.get(StringUtils.parse(url.getLastPath(), -1));
+					if (i == null)
+						rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+					
+					// Validate access to the thread
+					IssueAccessControl access = new IssueAccessControl(new ServletSecurityContext(req), i);
+					access.validate();
+					if (!access.getCanRead())
+						throw new NotFoundException("Cannot view Image - Cannot read Issue " + i.getID());
+					
+					// Serve the file
+					IssueComment iFile = idao.getFile(imgID);
+					imgBuffer = iFile.getBuffer();
+					rsp.setHeader("Content-disposition", "attachment; filename=" + iFile.getName());
+					rsp.setHeader("Cache-Control", "private");
+					break;
 
 				case IMG_EXAM:
 					imgBuffer = dao.getExamResource(imgID);
@@ -204,21 +227,24 @@ public class ImageServlet extends BasicAuthServlet {
 		}
 
 		// Check for PDF
-		boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
-		for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
-			isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
+		if (imgType != IMG_ISSUE) {
+			boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
+			for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
+				isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
 
-		// Get the image type
-		if (!isPDF) {
-			ImageInfo info = new ImageInfo(imgBuffer);
-			if (!info.check()) {
-				rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-				return;
-			}
+			// Get the image type
+			if (!isPDF) {
+				ImageInfo info = new ImageInfo(imgBuffer);
+				if (!info.check()) {
+					rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+					return;
+				}
 			
-			rsp.setContentType(info.getMimeType());
+				rsp.setContentType(info.getMimeType());
+			} else
+				rsp.setContentType("application/pdf");
 		} else
-			rsp.setContentType("application/pdf");
+			rsp.setContentType("application/octet-stream");
 
 		// Set the content-type and content length
 		rsp.setStatus(HttpServletResponse.SC_OK);

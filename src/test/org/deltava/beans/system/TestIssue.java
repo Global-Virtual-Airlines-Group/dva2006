@@ -75,7 +75,7 @@ public class TestIssue extends AbstractBeanTestCase {
 		validateInput("status", null, IllegalArgumentException.class);
 		validateInput("priority", null, IllegalArgumentException.class);
 		
-		_i.addComment(new IssueComment(1, "Comment"));
+		_i.add(new IssueComment(1, "Comment"));
 		validateInput("commentCount", Integer.valueOf(2), IllegalStateException.class);
 		
 		try {
@@ -98,12 +98,12 @@ public class TestIssue extends AbstractBeanTestCase {
 		IssueComment ic2 = new IssueComment(2, "Comment 2");
 		ic2.setCreatedOn(new Date(System.currentTimeMillis() - 100));
 		
-		_i.addComment(ic);
+		_i.add(ic);
 		assertEquals(1, _i.getComments().size());
 		assertEquals(_i.getComments().size(), _i.getCommentCount());
 		assertEquals(ic, new ArrayList<IssueComment>(_i.getComments()).get(0));
 		
-		_i.addComment(ic2);
+		_i.add(ic2);
 		assertEquals(2, _i.getComments().size());
 		assertEquals(ic2, new ArrayList<IssueComment>(_i.getComments()).get(0));
 		assertEquals(_i.getComments().size(), _i.getCommentCount());

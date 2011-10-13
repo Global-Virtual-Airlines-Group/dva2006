@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,9 +6,9 @@ import java.util.*;
 import org.deltava.beans.*;
 
 /**
- * A bean for tracking Web Site/Fleet issues.
+ * A bean for tracking development issues.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -155,7 +155,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	/**
 	 * Returns all the comments associated with this issue.
 	 * @return a Collection of IssueComments
-	 * @see Issue#addComment(IssueComment)
+	 * @see Issue#add(IssueComment)
 	 */
 	public Collection<IssueComment> getComments() {
 		return _comments;
@@ -331,9 +331,10 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	/**
 	 * Adds an IssueComment to this Issue. The issue ID will be automatically copied to the comment.
 	 * @param ic the new comment
+	 * @throws NullPointerException if ic is null
 	 * @see Issue#getComments()
 	 */
-	public void addComment(IssueComment ic) {
+	public void add(IssueComment ic) {
 		ic.setIssueID(getID());
 		_comments.add(ic);
 	}
@@ -389,29 +390,21 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	/**
 	 * Updates the major version for this Issue.
 	 * @param v the major version
-	 * @throws IllegalArgumentException if v is negative
 	 * @see Issue#getMajorVersion()
 	 * @see Issue#setMinorVersion(int)
 	 */
 	public void setMajorVersion(int v) {
-		if (v < 0)
-			throw new IllegalArgumentException("Major Version cannot be negative");
-		
-		_majorVersion = v;
+		_majorVersion = Math.max(0, v);
 	}
 	
 	/**
 	 * Updates the minor version for this Issue.
 	 * @param v the minor version
-	 * @throws IllegalArgumentException if v is negative
 	 * @see Issue#getMinorVersion()
 	 * @see Issue#setMajorVersion(int)
 	 */
 	public void setMinorVersion(int v) {
-		if (v < 0)
-			throw new IllegalArgumentException("Minor Version cannot be negative");
-		
-		_minorVersion = v;		
+		_minorVersion = Math.max(0, v);		
 	}
 	
 	/**
@@ -442,14 +435,13 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @throws IllegalStateException if comments have already been loaded
 	 * @throws IllegalArgumentException if count is negative
 	 * @see Issue#getCommentCount()
-	 * @see Issue#addComment(IssueComment)
+	 * @see Issue#add(IssueComment)
 	 */
 	public void setCommentCount(int count) {
-	   if (_comments.size() > 0) {
+	   if (_comments.size() > 0)
 	      throw new IllegalStateException("Comments already loaded");
-	   } else if (count < 0) {
+	   else if (count < 0)
 	      throw new IllegalArgumentException("Comment Count cannot be negative");
-	   }
 	   
 	   _commentCount = count;
 	}

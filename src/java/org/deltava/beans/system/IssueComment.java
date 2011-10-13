@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.Date;
@@ -6,16 +6,19 @@ import java.util.Date;
 import org.deltava.beans.*;
 
 /**
- * A bean for storing web site issue comments.
+ * A bean for storing development issue comments.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
-public class IssueComment extends DatabaseBean implements AuthoredBean {
+public class IssueComment extends DatabaseBlobBean {
 	
 	private int _createdBy;
 	private int _issueID;
+	
+	private String _name;
+	private int _size;
 	
 	private Date _createdOn;
 	private String _comments;
@@ -83,6 +86,67 @@ public class IssueComment extends DatabaseBean implements AuthoredBean {
 	 */
 	public Date getCreatedOn() {
 		return _createdOn;
+	}
+	
+	/**
+	 * Returns the size of the attachment.
+	 * @return the size in bytes
+	 * @see IssueComment#setSize(int)
+	 */
+	public int getSize() {
+		return isLoaded() ? super.getSize() : _size;
+	}
+	
+	/**
+	 * Returns the file extension.
+	 * @return the extension, or the file name if none
+	 */
+	public String getExtension() {
+		int pos = _name.lastIndexOf('.');
+		return _name.substring(pos + 1);
+	}
+	
+	/**
+	 * Returns the name of the attachment.
+	 * @return the file name
+	 * @see IssueComment#setName(String)
+	 */
+	public String getName() {
+		return _name;
+	}
+	
+	/**
+	 * Returns the file buffer.
+	 * @return the buffer
+	 * @throws IllegalStateException if not loaded
+	 */
+	public byte[] getBuffer() {
+		if (!isLoaded())
+			throw new IllegalStateException("Not loaded");
+		
+		return _buffer;
+	}
+	
+	/**
+	 * Updates the name of the attachment.
+	 * @param name the file name
+	 * @see IssueComment#getName()
+	 */
+	public void setName(String name) {
+		_name = name;
+	}
+	
+	/**
+	 * Updates the size of the attachment.
+	 * @param size the size in bytes
+	 * @throws IllegalArgumentException if the attachment has been loaded
+	 * @see IssueComment#getSize()
+	 */
+	public void setSize(int size) {
+		if (isLoaded())
+			throw new IllegalArgumentException("Attachment already loaded");
+		
+		_size = Math.max(0, size);
 	}
 	
 	/**

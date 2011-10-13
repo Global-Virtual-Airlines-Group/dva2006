@@ -1,11 +1,10 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to manipulate issues.
  * @author Luke
- * @version 2.8
+ * @version 4.1
  * @since 1.0
  */
 
@@ -31,8 +30,9 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
-		
+
 		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
@@ -69,7 +69,7 @@ public class IssueCommand extends AbstractFormCommand {
 				access.validate();
 				if (!access.getCanEdit())
 					throw securityException("Cannot save Issue " + ctx.getID());
-				
+
 				// Update the subject
 				i.setSubject(ctx.getParameter("subject"));
 				if (ctx.getParameter("security") != null)
@@ -79,7 +79,7 @@ public class IssueCommand extends AbstractFormCommand {
 			// Update the issue from the request
 			i.setArea(StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area")));
 			i.setPriority(StringUtils.arrayIndexOf(Issue.PRIORITY, ctx.getParameter("priority")));
-			i.setType(StringUtils.arrayIndexOf(Issue.TYPE,ctx.getParameter("issueType")));
+			i.setType(StringUtils.arrayIndexOf(Issue.TYPE, ctx.getParameter("issueType")));
 			i.setDescription(ctx.getParameter("desc"));
 
 			// Set the version
@@ -108,21 +108,21 @@ public class IssueCommand extends AbstractFormCommand {
 				MessageContext mctx = new MessageContext();
 				mctx.addData("issue", i);
 				mctx.addData("user", ctx.getUser());
-				
+
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctx.setTemplate(mtdao.get("ISSUECREATE"));
-				
+
 				// Get the Assignee
 				GetPilot pdao = new GetPilot(con);
 				Pilot usr = pdao.get(i.getAssignedTo());
 				mctx.addData("assignee", usr);
-				
+
 				// Send the message
 				Mailer mailer = new Mailer(ctx.getUser());
 				mailer.setContext(mctx);
 				mailer.send(usr);
-				
+
 				// Save user info
 				ctx.setAttribute("assignee", usr, REQUEST);
 				ctx.setAttribute("emailSent", Boolean.TRUE, REQUEST);
@@ -151,6 +151,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		boolean isNew = (ctx.getID() == 0);
@@ -181,21 +182,21 @@ public class IssueCommand extends AbstractFormCommand {
 				// Save the issue in the request
 				ctx.setAttribute("issue", i, REQUEST);
 			}
-			
+
 			// Get the Pilot DAO
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			
+
 			// Get developers
 			Collection<Pilot> devs = new HashSet<Pilot>();
 			Collection<?> apps = ((Map<?, ?>) SystemData.getObject("apps")).values();
-			for (Iterator<?> it = apps.iterator(); it.hasNext(); ) {
-			   AirlineInformation aInfo = (AirlineInformation) it.next();
-			   devs.addAll(pdao.getByRole("Developer", aInfo.getDB()));
+			for (Iterator<?> it = apps.iterator(); it.hasNext();) {
+				AirlineInformation aInfo = (AirlineInformation) it.next();
+				devs.addAll(pdao.getByRole("Developer", aInfo.getDB()));
 			}
-			
+
 			// Save developers in request
 			ctx.setAttribute("devs", devs, REQUEST);
-			
+
 			// Get the Pilots posting in this issue
 			if (!isNew) {
 				GetUserData uddao = new GetUserData(con);
@@ -231,6 +232,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -240,24 +242,23 @@ public class IssueCommand extends AbstractFormCommand {
 			Issue i = dao.get(ctx.getID());
 			if (i == null)
 				throw notFoundException("Invalid Issue - " + ctx.getID());
-			
+
 			// Check our access
 			IssueAccessControl access = new IssueAccessControl(ctx, i);
 			access.validate();
 			if (!access.getCanRead())
 				throw securityException("Cannot view Issue - " + ctx.getID());
-			
+
 			// Get the userData DAO
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
 			UserDataMap udm = uddao.get(getPilotIDs(i));
 			ctx.setAttribute("userData", udm, REQUEST);
 			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
-
+			
 			// Save the issue and the access in the request
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
-
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -275,16 +276,12 @@ public class IssueCommand extends AbstractFormCommand {
 	 */
 	private Collection<Integer> getPilotIDs(Issue i) {
 		Collection<Integer> results = new HashSet<Integer>();
-
-		// Add Creator / Assignee
 		results.add(new Integer(i.getAuthorID()));
 		results.add(new Integer(i.getAssignedTo()));
 
 		// Add comment authors
-		for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext();) {
-			IssueComment ic = ici.next();
+		for (IssueComment ic : i.getComments())
 			results.add(new Integer(ic.getAuthorID()));
-		}
 
 		return results;
 	}
