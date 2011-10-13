@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.net.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to convert a Help Desk Issue into a Development Issue.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -74,7 +74,7 @@ public class IssueConvertCommand extends AbstractCommand {
 				ic.setCreatedOn(hic.getCreatedOn());
 				ic.setAuthorID(hic.getAuthorID());
 				ic.setIssueID(i.getID());
-				wdao.writeComment(ic);
+				wdao.write(ic);
 			}
 			
 			// Add a dummy issue comment
@@ -83,7 +83,7 @@ public class IssueConvertCommand extends AbstractCommand {
 				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment("Converted Help Desk Issue at " + url.toString());
 				ic.setAuthorID(ctx.getUser().getID());
 				ic.setIssueID(i.getID());
-				wdao.writeComment(ic);
+				wdao.write(ic);
 			} catch (MalformedURLException mue) {
 				// empty
 			}
