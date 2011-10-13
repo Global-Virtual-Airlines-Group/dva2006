@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -278,6 +278,38 @@ public class GetSchedule extends DAO {
 				results.add(SystemData.getAirline(rs.getString(1)));
 			
 			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns Airports only serviced by Flight Academy flights.
+	 * @return a Collection of Airports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getAcademyAirports() throws DAOException {
+		try {
+			Collection<Airport> results = new TreeSet<Airport>();
+			
+			// Select departure airports
+			prepareStatementWithoutLimits("SELECT AIRPORT_D, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_D HAVING (CNT=FACNT)");
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(SystemData.getAirport(rs.getString(1)));
+			
+			rs.close();
+			_ps.close();
+			
+			// Arrivate departure airports
+			prepareStatementWithoutLimits("SELECT AIRPORT_A, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_A HAVING (CNT=FACNT)");
+			rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(SystemData.getAirport(rs.getString(1)));
+			
 			rs.close();
 			_ps.close();
 			return results;
