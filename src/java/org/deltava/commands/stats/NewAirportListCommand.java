@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display airports a Pilot has not flown to.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 4.0
  */
 
@@ -56,6 +56,10 @@ public class NewAirportListCommand extends AbstractCommand {
 				myAirports.add(rp.getAirportD());
 				myAirports.add(rp.getAirportA());
 			}
+			
+			// Add academy airports
+			GetSchedule sdao = new GetSchedule(con);
+			myAirports.addAll(sdao.getAcademyAirports());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
