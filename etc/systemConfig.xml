@@ -653,6 +653,20 @@
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">15000</reload>
 		</livemap>
+
+		<!-- XACARS sim versions -->
+		<xacars>
+			<list name="sims" unique="true" attr="sim">
+				<sim>MSFS</sim>
+				<sim>XPLANE</sim>
+				<sim>UNKNOWN</sim>
+			</list>
+
+			<protocol>
+				<major type="Integer">2</major>
+				<minor type="Integer">0</minor>
+			</protocol>
+		</xacars>
 	</acars>
 
 	<!-- Flight Academy Data -->
