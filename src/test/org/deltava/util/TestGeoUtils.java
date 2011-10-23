@@ -87,4 +87,10 @@ public class TestGeoUtils extends TestCase {
 		assertNotNull(fmt9);
 		assertNotNull(fmtX);
 	}
+	
+	public void testXACARS() {
+		
+		GeoLocation loc = GeoUtils.parseXACARS("N40 37.3453 W73 47.117");
+		assertNotNull(loc);
+	}
 }

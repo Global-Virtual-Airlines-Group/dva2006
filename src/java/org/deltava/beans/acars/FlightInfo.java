@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -407,6 +407,14 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public boolean isDispatchPlan() {
 		return _dispatchPlan;
 	}
+	
+	/**
+	 * Returns whether this flight was logged using XACARS.
+	 * @return TRUE if using XACARS, otherwise FALSE
+	 */
+	public boolean isXACARS() {
+		return (_fsVersion == 100);
+	}
 
 	/**
 	 * Updates the ACARS Connection ID used for this flight.
@@ -671,7 +679,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 * @see FlightInfo#getRouteData()
 	 * @see FlightInfo#hasRouteData()
 	 */
-	public void setRouteData(Collection<RouteEntry> entries) {
+	public void setRouteData(Collection<? extends RouteEntry> entries) {
 		_routeData = new TreeSet<RouteEntry>(entries);
 	}
 

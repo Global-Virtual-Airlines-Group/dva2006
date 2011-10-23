@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Airline Total statistics.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -22,8 +22,9 @@ public class AirlineTotalsCommand extends AbstractCommand {
 	/**
 	 * Execute the command.
 	 * @param ctx the Command context
-	 * @throws CommandException if an unhandled error occrurs. Login failures are not considered errors.
+	 * @throws CommandException if an unhandled error occrurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		AirlineTotals totals = null;
@@ -41,6 +42,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
 			tableStatus.addAll(tsdao.getStatus("exams"));
 			tableStatus.addAll(tsdao.getStatus("events"));
 			tableStatus.addAll(tsdao.getStatus("acars"));
+			tableStatus.addAll(tsdao.getStatus("xacars"));
 			tableStatus.addAll(tsdao.getStatus("geoip"));
 			tableStatus.addAll(tsdao.getStatus("postfix"));
 			tableStatus.addAll(tsdao.getStatus("teamspeak"));
@@ -55,8 +57,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
 		// Calculate database size
 		long dbSize = 0;
 		long dbRows = 0;
-		for (Iterator<TableInfo> i = tableStatus.iterator(); i.hasNext();) {
-			TableInfo info = i.next();
+		for (TableInfo info : tableStatus) {
 			dbSize += info.getSize();
 			dbSize += info.getIndexSize();
 			dbRows += info.getRows();

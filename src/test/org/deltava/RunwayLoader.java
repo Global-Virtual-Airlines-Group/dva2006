@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 import org.apache.log4j.*;
 
 import org.deltava.beans.acars.*;
-import org.deltava.beans.flight.ACARSFlightReport;
+import org.deltava.beans.flight.FDRFlightReport;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -90,9 +90,9 @@ public class RunwayLoader extends TestCase {
 				continue;
 			
 			// Get the runway data
-			List<RouteEntry> tdEntries = addao.getTakeoffLanding(info.getID(), info.getArchived());
+			List<ACARSRouteEntry> tdEntries = addao.getTakeoffLanding(info.getID(), info.getArchived());
 			if (tdEntries.size() > 2) {
-				int ofs = 0; RouteEntry entry = tdEntries.get(0);
+				int ofs = 0; ACARSRouteEntry entry = tdEntries.get(0);
 				GeoPosition adPos = new GeoPosition(info.getAirportD());
 				while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
 					ofs++;
@@ -115,7 +115,7 @@ public class RunwayLoader extends TestCase {
 			}
 			
 			// Get the PIREP
-			ACARSFlightReport afr = frdao.getACARS("dva", id);
+			FDRFlightReport afr = frdao.getACARS("dva", id);
 			if (afr == null)
 				afr = frdao.getACARS("afv", id);
 			if (afr == null) {

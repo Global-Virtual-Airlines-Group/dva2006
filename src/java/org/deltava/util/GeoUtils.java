@@ -1,15 +1,16 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.navdata.Hemisphere;
 import org.deltava.beans.schedule.GeoPosition;
 
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -85,7 +86,7 @@ public class GeoUtils {
 	public static String format3D(GeospaceLocation loc) {
 		StringBuilder buf = new StringBuilder(format2D(loc));
 		buf.append(',');
-		buf.append(StringUtils.format(loc.getAltitude() * 0.3048, "#####0"));
+		buf.append(StringUtils.format(loc.getAltitude() * 0.3048d, "#####0"));
 		return buf.toString();
 	}
 
@@ -370,5 +371,30 @@ public class GeoUtils {
 		}
 		
 		return locs;
+	}
+	
+	/**
+	 * Parses XACARS-format geolocations. 
+	 * @param pos an XACARS format geolocation
+	 * @return a GeoLocation
+	 */
+	public static GeoLocation parseXACARS(String pos) {
+		List<String> parts = StringUtils.split(pos, " ");
+		if ((parts == null) || (parts.size() < 4))
+			return null;
+		
+		// Parse latitude
+		String ltd = parts.get(0);
+		Hemisphere lth = Hemisphere.valueOf(ltd.substring(0, 1).toUpperCase());
+		int latD = StringUtils.parse(ltd.substring(1), 0);
+		double lat = (StringUtils.parse(parts.get(1), 0.0d) / 60.0d + latD) * lth.getLatitudeFactor();
+		
+		// Parse longitude
+		String lnd = parts.get(2);
+		Hemisphere lnh = Hemisphere.valueOf(lnd.substring(0, 1).toUpperCase());
+		int lngD = StringUtils.parse(lnd.substring(1), 0);
+		double lng = (StringUtils.parse(parts.get(3), 0.0d) / 60.0d + lngD) * lnh.getLongitudeFactor();
+		
+		return new GeoPosition(lat, lng);
 	}
 }

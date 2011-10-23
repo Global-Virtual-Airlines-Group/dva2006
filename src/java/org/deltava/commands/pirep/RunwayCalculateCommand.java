@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate the runways used.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 4.0
  */
 
@@ -37,7 +37,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 			
 			// Get the PIREP
 			GetFlightReportACARS prdao = new GetFlightReportACARS(con);
-			ACARSFlightReport afr = prdao.getACARS(SystemData.get("airline.db"), ctx.getID());
+			FDRFlightReport afr = prdao.getACARS(SystemData.get("airline.db"), ctx.getID());
 			if (afr == null)
 				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
 			

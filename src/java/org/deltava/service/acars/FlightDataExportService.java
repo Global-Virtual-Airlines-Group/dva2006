@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -30,22 +30,26 @@ public class FlightDataExportService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the ACARS Flight ID
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		if (id < 1)
-			throw error(SC_BAD_REQUEST, "Invalid ID", false);
+			return SC_NOT_FOUND;
 
 		// Get the ACARS data
-		List<RouteEntry> routeData = null; 
+		FlightInfo info = null;
+		List<RouteEntry> routeData = new ArrayList<RouteEntry>(); 
 		try {
 			GetACARSData dao = new GetACARSData(ctx.getConnection());
-			FlightInfo info = dao.getInfo(id);
-			if (info != null) 
-				routeData = dao.getRouteEntries(id, info.getArchived());
-			else 
-				routeData = Collections.emptyList();
+			info = dao.getInfo(id);
+			if (info == null)
+				return SC_NOT_FOUND;
+			else if (info.isXACARS())
+				routeData.addAll(dao.getXACARSEntries(id));
+			else
+				routeData.addAll(dao.getRouteEntries(id, info.getArchived()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -53,80 +57,19 @@ public class FlightDataExportService extends WebService {
 		}
 
 		// Write the CSV header
-		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-		ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,COM1,ATC,WARN");
+		if (!info.isXACARS()) {
+			ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
+			ctx.println("WindSpeed,WindHdg,Visibility,FuelFlow,Fuel,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,COM1,ATC,WARN");
+		} else
+			ctx.println("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Mach,WindSpeed,WindHdg,Fuel");
 
 		// Format the ACARS data
-		for (Iterator<RouteEntry> i = routeData.iterator(); i.hasNext();) {
+		for (Iterator<? extends RouteEntry> i = routeData.iterator(); i.hasNext();) {
 			RouteEntry entry = i.next();
-			ctx.print(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getLatitude(), "##0.0000"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getLongitude(), "##0.0000"));
-			ctx.print(",");
-			ctx.print(String.valueOf(entry.getAltitude()));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getHeading(), "000"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getAirSpeed(), "##0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getGroundSpeed(), "##0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getMach(), "#.000"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getVerticalSpeed(), "##0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getN1(), "##0.0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getN2(), "##0.0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getBank(), "##0.0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getPitch(), "##0.0"));
-			ctx.print(",");
-			ctx.print((entry.getFlaps() == 0) ? "" : String.valueOf(entry.getFlaps()));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getWindSpeed(), "##0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getWindHeading(), "000"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getVisibility(), "#0.00"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getFuelFlow(), "###0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getFuelRemaining(), "###0"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getG(), "#0.000"));
-			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getAOA(), "##0.000"));
-			ctx.print(",");
-			ctx.print(entry.isFlagSet(FLAG_AP_NAV) ? "NAV," : ",");
-			ctx.print(entry.isFlagSet(FLAG_AP_HDG) ? "HDG," : ",");
-			ctx.print(entry.isFlagSet(FLAG_AP_APR) ? "APR," : ",");
-			ctx.print(entry.isFlagSet(FLAG_AP_ALT) ? "ALT," : ",");
-			if (entry.isFlagSet(FLAG_AT_IAS))
-				ctx.print("IAS");
-			else if (entry.isFlagSet(FLAG_AT_MACH))
-				ctx.print("MACH");
-			
-			ctx.print(",");
-			ctx.print(String.valueOf(entry.getFrameRate()));
-			ctx.print(",");
-			if (entry.getController() != null) {
-				ctx.print(entry.getCOM1());
-				ctx.print(",");
-				ctx.print(entry.getController().getCallsign());
-				ctx.print(",");
-			} else
-				ctx.print(",,");
-			
-			if (entry.isFlagSet(FLAG_STALL))
-				ctx.println("STALL");
-			else if (entry.isFlagSet(FLAG_OVERSPEED))
-				ctx.println("OVERSPEED");
-			else
-				ctx.println("");
+			if (entry instanceof ACARSRouteEntry)
+				ctx.println(format((ACARSRouteEntry) entry));
+			else if (entry instanceof XARouteEntry)
+				ctx.println(format((XARouteEntry) entry));
 		}
 
 		// Write the response
@@ -140,5 +83,109 @@ public class FlightDataExportService extends WebService {
 
 		// Write success code
 		return SC_OK;
+	}
+	
+	/**
+	 * Helper method to format an XACARS position entry.
+	 */
+	private String format(XARouteEntry entry) {
+		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getLatitude(), "##0.0000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getLongitude(), "##0.0000"));
+		buf.append(',');
+		buf.append(String.valueOf(entry.getAltitude()));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getHeading(), "000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getAirSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getGroundSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getMach(), "#.000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getVerticalSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getWindSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getWindHeading(), "000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getFuelRemaining(), "###0"));
+		return buf.toString();
+	}
+
+	/**
+	 * Helper method to format an ACARS position entry.
+	 */
+	private String format(ACARSRouteEntry entry) {
+		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getLatitude(), "##0.0000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getLongitude(), "##0.0000"));
+		buf.append(',');
+		buf.append(String.valueOf(entry.getAltitude()));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getHeading(), "000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getAirSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getGroundSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getMach(), "#.000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getVerticalSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getN1(), "##0.0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getN2(), "##0.0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getBank(), "##0.0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getPitch(), "##0.0"));
+		buf.append(',');
+		buf.append((entry.getFlaps() == 0) ? "" : String.valueOf(entry.getFlaps()));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getWindSpeed(), "##0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getWindHeading(), "000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getVisibility(), "#0.00"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getFuelFlow(), "###0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getFuelRemaining(), "###0"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getG(), "#0.000"));
+		buf.append(',');
+		buf.append(StringUtils.format(entry.getAOA(), "##0.000"));
+		buf.append(',');
+		buf.append(entry.isFlagSet(FLAG_AP_NAV) ? "NAV," : ",");
+		buf.append(entry.isFlagSet(FLAG_AP_HDG) ? "HDG," : ",");
+		buf.append(entry.isFlagSet(FLAG_AP_APR) ? "APR," : ",");
+		buf.append(entry.isFlagSet(FLAG_AP_ALT) ? "ALT," : ",");
+		if (entry.isFlagSet(FLAG_AT_IAS))
+			buf.append("IAS");
+		else if (entry.isFlagSet(FLAG_AT_MACH))
+			buf.append("MACH");
+		
+		buf.append(',');
+		buf.append(String.valueOf(entry.getFrameRate()));
+		buf.append(',');
+		if (entry.getController() != null) {
+			buf.append(entry.getCOM1());
+			buf.append(',');
+			buf.append(entry.getController().getCallsign());
+			buf.append(',');
+		} else
+			buf.append(",,");
+		
+		if (entry.isFlagSet(FLAG_STALL))
+			buf.append("STALL");
+		else if (entry.isFlagSet(FLAG_OVERSPEED))
+			buf.append("OVERSPEED");
+		
+		return buf.toString();
 	}
 }

@@ -9,44 +9,15 @@ import org.deltava.beans.schedule.*;
 /**
  * A class for storing ACARS-submitted Flight Reports.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
-public class ACARSFlightReport extends FlightReport {
+public class ACARSFlightReport extends FDRFlightReport {
 	
-	private enum StateChange {
-		START, TAXI_OUT, TAKEOFF, LAND, END
-	}
-	
-    private final Map<StateChange, Date> _stateChangeTimes = new HashMap<StateChange, Date>();
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     
-    private int _taxiWeight;
-    private int _taxiFuel;
-    
-    private int _takeoffDistance;
-    private int _takeoffSpeed;
-    private double _takeoffN1;
-    private int _takeoffWeight;
-    private int _takeoffFuel;
-    private int _takeoffHdg = -1;
-    private GeospaceLocation _takeoffPos = new GeoPosition(0, 0);
-    
-    private int _landingDistance;
-    private int _landingSpeed;
-    private int _landingVspeed;
     private double _landingG;
-    private double _landingN1;
-    private int _landingWeight;
-    private int _landingFuel;
-    private int _landingHdg = -1;
-    private GeospaceLocation _landingPos = new GeoPosition(0, 0);
-    
-    private int _gateWeight;
-    private int _gateFuel;
-    
-    private int _totalFuel;
     
     private String _fde;
     private String _code;
@@ -62,7 +33,7 @@ public class ACARSFlightReport extends FlightReport {
      * @param leg the Leg Number
      * @throws NullPointerException if the Airline Code is null
      * @throws IllegalArgumentException if the Flight Report is zero or negative
-     * @throws IllegalArgumentException if the Leg is less than 1 or greater than 5
+     * @throws IllegalArgumentException if the Leg is less than 1 or greater than 8
      * @see Flight#setAirline(Airline)
      * @see Flight#setFlightNumber(int)
      * @see Flight#setLeg(int)
@@ -72,263 +43,12 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
-     * Returns the start time of this flight.
-     * @return the start date/time
-     * @see ACARSFlightReport#setStartTime(Date)
-     */
-    public Date getStartTime() {
-        return _stateChangeTimes.get(StateChange.START);
-    }
-    
-    /**
-     * Returns the date/time of pushback.
-     * @return the date/time the aircraft was pushed back
-     * @see ACARSFlightReport#setTaxiTime(Date)
-     */
-    public Date getTaxiTime() {
-        return _stateChangeTimes.get(StateChange.TAXI_OUT);
-    }
-    
-    /**
-     * Returns the aircraft weight at pushback.
-     * @return the weight in pounds
-     * @see ACARSFlightReport#setTaxiWeight(int)
-     */
-    public int getTaxiWeight() {
-        return _taxiWeight;
-    }
-    
-    /**
-     * Returns the amount of fuel at pushback.
-     * @return the amount of fuel in pounds
-     * @see ACARSFlightReport#setTaxiFuel(int)
-     */
-    public int getTaxiFuel() {
-        return _taxiFuel;
-    }
-    
-    /**
-     * Returns the date/time of takeoff.
-     * @return the date/time the aircraft left the ground
-     * @see ACARSFlightReport#setTakeoffTime(Date)
-     */
-    public Date getTakeoffTime() {
-        return _stateChangeTimes.get(StateChange.TAKEOFF);
-    }
-    
-    /**
-     * Returns the distance from the origin airport at takeoff. This is used to validate the provided airports.
-     * @return the distance from the origin airport, in miles
-     * @see ACARSFlightReport#setTakeoffDistance(int)
-     * @see ACARSFlightReport#getLandingDistance()
-     * @see org.deltava.beans.schedule.GeoPosition#distanceTo(org.deltava.beans.GeoLocation)
-     */
-    public int getTakeoffDistance() {
-        return _takeoffDistance;
-    }
-    
-    /**
-     * Returns the aircraft airspeed at takeoff.
-     * @return the airspeed in knots
-     * @see ACARSFlightReport#setTakeoffSpeed(int)
-     */
-    public int getTakeoffSpeed() {
-        return _takeoffSpeed;
-    }
-    
-    /**
-     * Returns the average N1 speed of the engines at takeoff.
-     * @return the average N1 percentage, mulitiplied by 100
-     * @see ACARSFlightReport#setTakeoffN1(double)
-     * @see ACARSFlightReport#getLandingN1()
-     */
-    public double getTakeoffN1() {
-        return _takeoffN1;
-    }
-    
-    /**
-     * Returns the weight of the aircraft at takeoff.
-     * @return the weight in pounds
-     * @see ACARSFlightReport#setTakeoffWeight(int)
-     */
-    public int getTakeoffWeight() {
-        return _takeoffWeight;
-    }
-    
-    /**
-     * Returns the amount of fuel at takeoff.
-     * @return the amount of fuel in pounds
-     * @see ACARSFlightReport#setTakeoffFuel(int)
-     */
-    public int getTakeoffFuel() {
-        return _takeoffFuel;
-    }
-    
-    /**
-     * Returns the heading at takeoff.
-     * @return the takeoff heading in degrees
-     * @see ACARSFlightReport#setTakeoffHeading(int)
-     */
-    public int getTakeoffHeading() {
-    	return _takeoffHdg;
-    }
-    
-    /**
-     * Returns the position at takeoff.
-     * @return the takeoff position
-     * @see ACARSFlightReport#setTakeoffLocation(GeospaceLocation)
-     */
-    public GeospaceLocation getTakeoffLocation() {
-    	return _takeoffPos;
-    }
-    
-    /**
-     * Returns the date/time that the aircraft touched down.
-     * @return the date/time of touchdown
-     * @see ACARSFlightReport#setLandingTime(Date)
-     */
-    public Date getLandingTime() {
-        return _stateChangeTimes.get(StateChange.LAND);
-    }
-    
-    /**
-     * Returns the distance from the destination airport at landing. This is used to validate the provided airports.
-     * @return the distance from the destination airport, in miles
-     * @see ACARSFlightReport#setLandingDistance(int)
-     * @see ACARSFlightReport#getTakeoffDistance()
-     * @see org.deltava.beans.schedule.GeoPosition#distanceTo(org.deltava.beans.GeoLocation)
-     */
-    public int getLandingDistance() {
-        return _landingDistance;
-    }
-    
-    /**
-     * Returns the aircraft airspeed at touchdown.
-     * @return the airspeed in knots
-     * @see ACARSFlightReport#setLandingSpeed(int)
-     */
-    public int getLandingSpeed() {
-        return _landingSpeed;
-    }
-
-    /**
-     * Returns the vertical speed of the aircraft at touchdown.
-     * @return the vertical speed in feet per minute
-     * @see ACARSFlightReport#setLandingVSpeed(int)
-     */
-    public int getLandingVSpeed() {
-        return _landingVspeed;
-    }
-    
-    /**
      * Returns the G-Forces at touchdown.
      * @return the G-Forces in G
      * @see ACARSFlightReport#setLandingG(double)
      */
     public double getLandingG() {
     	return _landingG;
-    }
-    
-    /**
-     * Returns the average N1 speed of the engines at touchdown.
-     * @return the average N1 percentage, multiplied by 100
-     * @see ACARSFlightReport#setLandingN1(double)
-     * @see ACARSFlightReport#getTakeoffN1()
-     */
-    public double getLandingN1() {
-        return _landingN1;
-    }
-    
-    /**
-     * Returns the weight of the aircraft at touchdown.
-     * @return the weight in pounds
-     * @see ACARSFlightReport#setLandingWeight(int)
-     */
-    public int getLandingWeight() {
-        return _landingWeight;
-    }
-    
-    /**
-     * Returns the amount of fuel at touchdown.
-     * @return the amount of fuel in pounds
-     * @see ACARSFlightReport#setLandingFuel(int)
-     */
-    public int getLandingFuel() {
-        return _landingFuel;
-    }
-    
-    /**
-     * Returns the heading at touchdown.
-     * @return the touchdown heading in degrees
-     * @see ACARSFlightReport#setLandingHeading(int)
-     */
-    public int getLandingHeading() {
-    	return _landingHdg;
-    }
-    
-    /**
-     * Returns the position at touchdown.
-     * @return the touchdown heading
-     * @see ACARSFlightReport#setLandingLocation(GeospaceLocation)
-     */
-    public GeospaceLocation getLandingLocation() {
-    	return _landingPos;
-    }
-
-    /**
-     * Returns the end date/time of the flight.
-     * @return the date/time the flight ended at the gate
-     */
-    public Date getEndTime() {
-        return _stateChangeTimes.get(StateChange.END);
-    }
-
-    /**
-     * Returns the weight of the aircraft at the end of the flight.
-     * @return the weight in pounds
-     * @see ACARSFlightReport#setGateWeight(int)
-     */
-    public int getGateWeight() {
-        return _gateWeight;
-    }
-    
-    /**
-     * Returns the amount of fuel at the end of the flight.
-     * @return the amount of fuel in pounds
-     * @see ACARSFlightReport#setGateFuel(int)
-     */
-    public int getGateFuel() {
-        return _gateFuel;
-    }
-
-    /**
-     * Returns the time that the aircraft was airborne for this flight.
-     * @return the time the aircraft was airborne, in milliseconds
-     * @throws IllegalStateException if either the landing or takeoff time are not set
-     * @see ACARSFlightReport#setTakeoffTime(Date)
-     * @see ACARSFlightReport#setLandingTime(Date)
-     */
-    public Date getAirborneTime() {
-        try {
-            return new Date(getLandingTime().getTime() - getTakeoffTime().getTime()); 
-        } catch (NullPointerException npe) {
-            throw new IllegalStateException("Landing or Takeoff time not set");
-        }
-    }
-    
-    /**
-     * Returns the total time of the flight.
-     * @return the total time, in milliseconds
-     * @throws IllegalStateException if either the start or end time are not set
-     * @see ACARSFlightReport#setStartTime(Date)
-     * @see ACARSFlightReport#setEndTime(Date)
-     */
-    public Date getBlockTime() {
-        try {
-            return new Date(getEndTime().getTime() - getStartTime().getTime()); 
-        } catch (NullPointerException npe) {
-            throw new IllegalStateException("End or Start time not set");
-        }
     }
     
     /**
@@ -411,161 +131,6 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
-     * Returns the total amount of fuel burned.
-     * @return the total amount of fuel in pounds
-     * @see ACARSFlightReport#setTotalFuel(int)
-     */
-    public int getTotalFuel() {
-    	return _totalFuel;
-    }
-    
-    /**
-     * Updates the start time of the flight.
-     * @param dt the date/time the flight started
-     * @see ACARSFlightReport#getEndTime()
-     */
-    public void setStartTime(Date dt) {
-        _stateChangeTimes.put(StateChange.START, dt);
-    }
-    
-    /**
-     * Updates the time the aircraft was pushed back.
-     * @param dt the date/time of pushback
-     * @see ACARSFlightReport#getTaxiTime()
-     */
-    public void setTaxiTime(Date dt) {
-        _stateChangeTimes.put(StateChange.TAXI_OUT, dt);
-    }
-
-    /**
-     * Updates the weight of the aircraft at pushback.
-     * @param w the weight in pounds
-     * @see ACARSFlightReport#getTaxiWeight()
-     */
-    public void setTaxiWeight(int w) {
-        _taxiWeight = Math.max(0, w);
-    }
-    
-    /**
-     * Updates the fuel amount at pushback.
-     * @param f the amount of fuel in pounds
-     * @see ACARSFlightReport#getTaxiFuel()
-     */
-    public void setTaxiFuel(int f) {
-        _taxiFuel = Math.max(0, f);
-    }
-    
-    /**
-     * Updates the takeoff date/time.
-     * @param dt the date/time at takeoff
-     * @see ACARSFlightReport#getTakeoffTime()
-     */
-    public void setTakeoffTime(Date dt) {
-        _stateChangeTimes.put(StateChange.TAKEOFF, dt);
-    }
-
-    /**
-     * Updates the distance from the origin airport where takeoff occured.
-     * @param d the distance in miles
-     * @see ACARSFlightReport#getTakeoffDistance()
-     */
-    public void setTakeoffDistance(int d) {
-        _takeoffDistance = Math.max(0, d);
-    }
-    
-    /**
-     * Updates the airspeed at takeoff.
-     * @param s the airspeed in knots
-     * @see ACARSFlightReport#getTakeoffSpeed()
-     */
-    public void setTakeoffSpeed(int s) {
-        _takeoffSpeed = Math.max(0, s);
-    }
-    
-    /**
-     * Updates the average N1 of the engines at takeoff.
-     * @param n1 the average N1, multiplied by 100
-     * @see ACARSFlightReport#getTakeoffN1()
-     */
-    public void setTakeoffN1(double n1) {
-    	if (!Double.isNaN(n1))
-    		_takeoffN1 = Math.max(0, n1);
-    }
-    
-    /**
-     * Updates the aircraft weight at takeoff.
-     * @param w the weight in pounds
-     * @see ACARSFlightReport#getTakeoffWeight()
-     */
-    public void setTakeoffWeight(int w) {
-        _takeoffWeight = Math.max(0, w);
-    }
-    
-    /**
-     * Updates the amount of fuel at takeoff. 
-     * @param f the amount of fuel in pounds
-     * @see ACARSFlightReport#getTakeoffFuel()
-     */
-    public void setTakeoffFuel(int f) {
-        _takeoffFuel = Math.max(0, f);
-    }
-
-    /**
-     * Updates the heading at takeoff.
-     * @param hdg the takeoff heading in degrees
-     * @see ACARSFlightReport#getTakeoffHeading()
-     */
-    public void setTakeoffHeading(int hdg) {
-    	_takeoffHdg = hdg;
-    }
-
-    /**
-     * Updates the position at takeoff.
-     * @param loc the takeoff location
-     * @see ACARSFlightReport#getTakeoffLocation()
-     */
-    public void setTakeoffLocation(GeospaceLocation loc) {
-    	if (loc != null)
-    		_takeoffPos = loc;
-    }
-    
-    /**
-     * Updates the landing date/time.
-     * @param dt the date/time the aircraft touched down
-     * @see ACARSFlightReport#getLandingTime()
-     */
-    public void setLandingTime(Date dt) {
-        _stateChangeTimes.put(StateChange.LAND, dt);
-    }
-    
-    /**
-     * Updates the distance from the destination airport where touchdown occured.
-     * @param d the distance in miles
-     * @see ACARSFlightReport#getLandingDistance()
-     */
-    public void setLandingDistance(int d) {
-        _landingDistance = Math.max(0, d);
-    }
-    
-    /**
-     * Updates the airspeed at touchdown.
-     * @param s the airpseed in knots
-     * @see ACARSFlightReport#getLandingSpeed()
-     */
-    public void setLandingSpeed(int s) {
-        _landingSpeed = Math.max(0, s);
-    }
-
-    /**
-     * Updates the vertical speed at touchdown.
-     * @param s the vertical speed in feet per minute
-     * @see ACARSFlightReport#getLandingVSpeed()
-     */
-    public void setLandingVSpeed(int s) {
-        _landingVspeed = (s > 0) ? s * -1 : s;
-    }
-    
-    /**
      * Updates the G-Forces at touchdown.
      * @param g the G-forces in G
      * @see ACARSFlightReport#getLandingG()
@@ -573,89 +138,6 @@ public class ACARSFlightReport extends FlightReport {
     public void setLandingG(double g) {
     	if (!Double.isNaN(g))
     		_landingG = g;
-    }
-    
-    /**
-     * Updates the average N1 speed of the engines at touchdown.
-     * @param n1 the average N1 speed, multiplied by 100
-     * @see ACARSFlightReport#getLandingN1()
-     */
-    public void setLandingN1(double n1) {
-    	if (!Double.isNaN(n1))
-    		_landingN1 = Math.max(0, n1);
-    }
-    
-    /**
-     * Updates the weight of the aircraft at touchdown.
-     * @param w the weight in pounds
-     * @see ACARSFlightReport#getLandingWeight()
-     */
-    public void setLandingWeight(int w) {
-        _landingWeight = Math.max(0, w);
-    }
-    
-    /**
-     * Updates the amount of fuel at touchdown.
-     * @param f the amount of fuel in pounds
-     * @see ACARSFlightReport#getLandingFuel()
-     */
-    public void setLandingFuel(int f) {
-        _landingFuel = Math.max(0, f);
-    }
-    
-    /**
-     * Updates the heading at touchdown.
-     * @param hdg the touchdown heading in degrees
-     * @see ACARSFlightReport#getLandingHeading() 
-     */
-    public void setLandingHeading(int hdg) {
-    	_landingHdg = hdg;
-    }
-    
-    /**
-     * Updates the position at touchdown.
-     * @param loc the position
-     * @see ACARSFlightReport#getLandingLocation()
-     */
-    public void setLandingLocation(GeospaceLocation loc) {
-    	if (loc != null)
-    		_landingPos = loc;
-    }
-    
-    /**
-     * Updates the end time of the flight.
-     * @param dt the date/time the flight ended
-     * @see ACARSFlightReport#getEndTime()
-     */
-    public void setEndTime(Date dt) {
-        _stateChangeTimes.put(StateChange.END, dt);
-    }
-    
-    /**
-     * Updates the weight of the aircraft at the end of the flight. 
-     * @param w the weight in pounds
-     * @see ACARSFlightReport#getGateWeight()
-     */
-    public void setGateWeight(int w) {
-        _gateWeight = Math.max(0, w);
-    }
-    
-    /**
-     * Updates the amount of fuel at the end of the flight.
-     * @param f the amount of fuel in pounds
-     * @see ACARSFlightReport#getGateFuel()
-     */
-    public void setGateFuel(int f) {
-        _gateFuel = Math.max(0, f);
-    }
-    
-    /**
-     * Updates the total amount of fuel burned during the flight.
-     * @param f the amount of fuel in punds
-     * @see ACARSFlightReport#getTotalFuel()
-     */
-    public void setTotalFuel(int f) {
-    	_totalFuel = Math.max(0, f);
     }
     
     /**
@@ -705,7 +187,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see org.deltava.beans.acars.ConnectionEntry#getClientBuild()
      */
     public void setClientBuild(int ver) {
-       _clientBuild = ver;
+       _clientBuild = Math.max(1, ver);
     }
     
     /**

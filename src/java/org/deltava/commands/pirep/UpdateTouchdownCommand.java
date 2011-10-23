@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.List;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.*;
-import org.deltava.beans.flight.ACARSFlightReport;
+import org.deltava.beans.flight.FDRFlightReport;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.commands.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 3.1
  */
 
@@ -47,7 +47,7 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			
 			// Load the Flight Report
 			GetFlightReportACARS frdao = new GetFlightReportACARS(con);
-			ACARSFlightReport afr = frdao.getACARS(SystemData.get("airline.db"), info.getID());
+			FDRFlightReport afr = frdao.getACARS(SystemData.get("airline.db"), info.getID());
 			if (afr == null)
 				throw notFoundException("Invalid ACARS Flight ID - " + info.getID());
 			
@@ -59,10 +59,10 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			
 			// Load the takeoff/touchdown data
 			pirepID = afr.getID();
-			List<RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
+			List<ACARSRouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
 			if (tdEntries.size() > 2) {
 				int ofs = 0;
-				RouteEntry entry = tdEntries.get(0);
+				ACARSRouteEntry entry = tdEntries.get(0);
 				GeoPosition adPos = new GeoPosition(info.getAirportD());
 				while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
 					ofs++;

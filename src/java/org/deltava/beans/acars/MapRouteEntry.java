@@ -13,11 +13,11 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
-public class MapRouteEntry extends RouteEntry implements TabbedMapEntry {
+public class MapRouteEntry extends ACARSRouteEntry implements TabbedMapEntry {
 	
 	private static final List<String> TAB_NAMES = Collections.unmodifiableList(Arrays.asList("Pilot", "Flight Data"));
 

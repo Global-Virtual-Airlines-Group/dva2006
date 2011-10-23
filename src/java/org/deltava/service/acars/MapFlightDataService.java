@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -31,20 +31,24 @@ public class MapFlightDataService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
    public int execute(ServiceContext ctx) throws ServiceException {
       
 		// Get the Flight ID
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
 		
 		// Get the DAO and the route data
-		Collection<GeoLocation> routePoints = null;
+		Collection<? extends GeoLocation> routePoints = null;
 		try {
 			GetACARSData dao = new GetACARSData(ctx.getConnection());
 			FlightInfo info = dao.getInfo(id);
-			if (info != null)
-				routePoints = dao.getRouteEntries(id, false, info.getArchived());
-			else
+			if (info == null)
 				routePoints = Collections.emptyList();
+			else if (info.isXACARS())
+				routePoints = dao.getXACARSEntries(id);
+			else
+				routePoints = dao.getRouteEntries(id, false, info.getArchived());
+				
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -57,7 +61,7 @@ public class MapFlightDataService extends WebService {
 		doc.setRootElement(re);
 		
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
-		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext(); ) {
+		for (Iterator<? extends GeoLocation> i = routePoints.iterator(); i.hasNext(); ) {
 			GeoLocation entry = i.next();
 			
 			Element e = null;
@@ -75,8 +79,8 @@ public class MapFlightDataService extends WebService {
 			
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			if (entry instanceof RouteEntry) {
-				RouteEntry rte = (RouteEntry) entry;
+			if (entry instanceof ACARSRouteEntry) {
+				ACARSRouteEntry rte = (ACARSRouteEntry) entry;
 				if (rte.getController() != null) {
 					Element ae = new Element("atc");
 					Controller ctr = rte.getController();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.UserData;
 import org.deltava.beans.acars.FlightInfo;
-import org.deltava.beans.flight.ACARSFlightReport;
+import org.deltava.beans.flight.FDRFlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to delete ACARS Flight Info entries.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the flight IDs
@@ -38,8 +39,8 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 		else
 			flightIDs.addAll(IDs);			
 
-		Collection<String> deletedIDs = new HashSet<String>();
-		Collection<String> skippedIDs = new HashSet<String>();
+		Collection<String> deletedIDs = new LinkedHashSet<String>();
+		Collection<String> skippedIDs = new LinkedHashSet<String>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -63,7 +64,7 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 				else {
 				   UserData uloc = uddao.get(info.getPilotID());
 				   String dbName = (uloc == null) ? SystemData.get("airline.db") : uloc.getDB();
-				   ACARSFlightReport afr = frdao.getACARS(dbName, id);
+				   FDRFlightReport afr = frdao.getACARS(dbName, id);
 				   if (afr == null) {
 						wdao.deleteInfo(info.getID());
 						deletedIDs.add(StringUtils.formatHex(id));

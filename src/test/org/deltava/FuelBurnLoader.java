@@ -85,7 +85,7 @@ public class FuelBurnLoader extends TestCase {
 			}
 			
 			// Calculate fuel burn
-			Collection<RouteEntry> entries = acdao.getRouteEntries(id, info.getArchived());
+			Collection<? extends RouteEntry> entries = acdao.getRouteEntries(id, info.getArchived());
 			FuelUse use = FuelUse.validate(entries);
 			
 			// Update the data

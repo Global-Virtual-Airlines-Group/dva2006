@@ -8,7 +8,7 @@ import org.deltava.beans.EquipmentType;
 /**
  * A utility class to determine whether a Flight counts for promotion to Captain in a particular Equipment Type program.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.7
  */
 
@@ -47,10 +47,11 @@ public class FlightPromotionHelper {
 		if ((_fr == null) || (eq == null))
 			return false;
 
+		FDRFlightReport ffr = (_fr instanceof FDRFlightReport) ? (FDRFlightReport) _fr : null;
 		ACARSFlightReport afr = (_fr instanceof ACARSFlightReport) ? (ACARSFlightReport) _fr : null;
-		if ((afr == null) && eq.getACARSPromotionLegs()) {
-			log.info(eq.getName() + " requires flights using ACARS for promotion");
-			_comment = eq.getName() + " requires flights using ACARS for promotion";
+		if ((ffr == null) && eq.getACARSPromotionLegs()) {
+			log.info(eq.getName() + " requires flights using ACARS/XACARS for promotion");
+			_comment = eq.getName() + " requires flights using ACARS/XACARS for promotion";
 			return false;
 		} else if (_fr.getDistance() < eq.getPromotionMinLength()) {
 			log.info("Minimum " + eq.getName() + " flight length is "  +  eq.getPromotionMinLength() + ", distance=" + _fr.getDistance());
