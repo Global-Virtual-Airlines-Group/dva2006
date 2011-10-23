@@ -27,18 +27,18 @@ Oops. Something bad happened. Really, really bad - and I have no idea what to do
 This is the message: <b>${servlet_error}</b><br />
 <br />
 <c:if test="${!empty ex}">
-<b>${ex.class.name}</b><br />
+<b>${ex.getClass().name}</b><br />
 <pre><fmt:stack exception="${ex}" /></pre>
 <br />
 </c:if>
 <c:choose>
 <c:when test="${(ex.getClass().name == 'javax.servlet.ServletException') && (!empty ex.rootCause)}">
-This is the root cause of the exception: <b>${ex.rootCause.class.name}</b> ${ex.rootCause.message}<br />
+This is the root cause of the exception: <b>${ex.rootCause.getClass().name}</b> ${ex.rootCause.message}<br />
 <pre><fmt:stack exception="${ex.rootCause}" /></pre>
 <br />
 </c:when>
 <c:when test="${!empty ex.cause}">
-This is the root cause of the exception: <b>${ex.cause.class.name}</b> ${ex.cause.message}<br />
+This is the root cause of the exception: <b>${ex.cause.getClass().name}</b> ${ex.cause.message}<br />
 <pre><fmt:stack exception="${ex.cause}" /></pre>
 <br />
 </c:when>
