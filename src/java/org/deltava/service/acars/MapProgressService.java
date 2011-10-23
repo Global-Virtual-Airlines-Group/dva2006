@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class MapProgressService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Flight ID
@@ -42,16 +43,18 @@ public class MapProgressService extends WebService {
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("route")).booleanValue();
 
 		// Get the DAO and the route data
-		FlightInfo info = null;
 		final Collection<GeoLocation> routePoints = new ArrayList<GeoLocation>();
 		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSData dao = new GetACARSData(con);
-			routePoints.addAll(dao.getRouteEntries(id, false, false));
+			FlightInfo info = dao.getInfo(id);
+			if ((info != null) && info.isXACARS())
+				routePoints.addAll(dao.getXACARSEntries(id));
+			else
+				routePoints.addAll(dao.getRouteEntries(id, false, false));
 
 			// Load the route and the route waypoints
-			info = dao.getInfo(id);
 			if ((info != null) && doRoute) {
 				Collection<MarkerMapEntry> wps = new LinkedHashSet<MarkerMapEntry>(); 
 				GetNavRoute navdao = new GetNavRoute(con);
@@ -109,8 +112,7 @@ public class MapProgressService extends WebService {
 
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

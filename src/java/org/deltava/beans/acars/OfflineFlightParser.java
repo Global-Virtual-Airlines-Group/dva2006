@@ -1,5 +1,5 @@
 // Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.util;
+package org.deltava.beans.acars;
 
 import java.util.*;
 import java.io.StringReader;
@@ -10,16 +10,16 @@ import org.jdom.*;
 import org.jdom.input.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 2.4
  */
 
@@ -65,7 +65,7 @@ public class OfflineFlightParser {
 	 * @param xml the XML to parse
 	 * @return an OfflineFlight bean
 	 */
-	public static OfflineFlight create(String xml) {
+	public static OfflineFlight<ACARSFlightReport, ACARSRouteEntry> create(String xml) {
 		
 		// Get the XML
 		Document doc = null;
@@ -98,7 +98,7 @@ public class OfflineFlightParser {
 			al = SystemData.getAirline(SystemData.get("airline.code"));
 		
 		// Create the resulting bean
-		OfflineFlight result = new OfflineFlight();
+		OfflineFlight<ACARSFlightReport, ACARSRouteEntry> result = new OfflineFlight<ACARSFlightReport, ACARSRouteEntry>();
 		
 		// Build a connection entry
 		ConnectionEntry ce = new ConnectionEntry(new IDGenerator().generate());
@@ -146,7 +146,7 @@ public class OfflineFlightParser {
 				// Build a position entry
 				try {
 					GeoLocation loc = new GeoPosition(parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
-					RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), loc);
+					ACARSRouteEntry pos = new ACARSRouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), loc);
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));

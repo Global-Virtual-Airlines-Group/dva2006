@@ -441,13 +441,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			navdao.setEffectiveDate(fr.getDate());
 
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
-			boolean isACARS = (fr instanceof ACARSFlightReport);
+			boolean isACARS = (fr instanceof FDRFlightReport);
 			if (isACARS) {
-				if (mapType == Pilot.MAP_FALLINGRAIN)
-					mapType = Pilot.MAP_GOOGLE;
-				
+				mapType = Pilot.MAP_GOOGLE;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
-				ACARSFlightReport afr = (ACARSFlightReport) fr;
+				FDRFlightReport afr = (FDRFlightReport) fr;
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
 
 				// Get the route data from the DAFIF database

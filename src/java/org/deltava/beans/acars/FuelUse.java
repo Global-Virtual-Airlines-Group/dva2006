@@ -8,7 +8,7 @@ import org.gvagroup.acars.ACARSFlags;
 /**
  * A bean to track fuel usage and in-flight refueling on ACARS flights.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 3.7
  */
 
@@ -59,7 +59,7 @@ public class FuelUse {
 	 * @param positions a Collection of RouteEntry beans
 	 * @return a FuelUse bean
 	 */
-	public static FuelUse validate(Collection<RouteEntry> positions) {
+	public static FuelUse validate(Collection<? extends RouteEntry> positions) {
 		FuelUse fu = new FuelUse(); int lastFuel = 0;
 		for (RouteEntry re : positions) {
 			int fuel = re.getFuelRemaining();

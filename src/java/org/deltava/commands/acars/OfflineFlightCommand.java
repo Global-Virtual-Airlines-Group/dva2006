@@ -31,7 +31,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 2.4
  */
 
@@ -99,7 +99,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		}
 		
 		// Convert the files to strings
-		OfflineFlight flight = null;
+		OfflineFlight<ACARSFlightReport, ACARSRouteEntry> flight = null;
 		boolean noValidate = (ctx.isUserInRole("HR") || ctx.isSuperUser()) && Boolean.valueOf(ctx.getParameter("noValidate")).booleanValue();
 		try {
 			if (sha == null)
@@ -326,16 +326,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// If we don't have takeoff/touchdown points from Build 97+, derive them
 			if (afr.getTakeoffHeading() == -1) {
-				List<RouteEntry> tdEntries = new ArrayList<RouteEntry>();
-				for (Iterator<RouteEntry> i = flight.getPositions().iterator(); i.hasNext(); ) {
-					RouteEntry re = i.next();
+				List<ACARSRouteEntry> tdEntries = new ArrayList<ACARSRouteEntry>();
+				for (Iterator<ACARSRouteEntry> i = flight.getPositions().iterator(); i.hasNext(); ) {
+					ACARSRouteEntry re = i.next();
 					if (re.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN))
 						tdEntries.add(re);
 				}
 					
 				if (tdEntries.size() > 2) {
 					int ofs = 0;
-					RouteEntry entry = tdEntries.get(0);
+					ACARSRouteEntry entry = tdEntries.get(0);
 					GeoPosition adPos = new GeoPosition(inf.getAirportD());
 					while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
 						ofs++;

@@ -1,41 +1,30 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
  * An enumeration to list valid ACARS flight phases. 
  * @author Luke
- * @version 2.1
+ * @version 4.1
  * @since 2.1
  */
 
 public enum FlightPhase {
 	
-	UNKNOWN(0),
-	PREFLIGHT(1),
-	PUSHBACK(2),
-	TAXIOUT(3),
-	TAKEOFF(4),
-	AIRBORNE(5),
-	ROLLOUT(6),
-	TAXIIN(7),
-	ATGATE(8),
-	SHUTDOWN(9),
-	COMPLETE(10),
-	ABORTED(11),
-	ERROR(12),
-	PIREPFILE(13);
-
-	private int _phase;
+	UNKNOWN("Unknown"), PREFLIGHT("Pre-Flight"), PUSHBACK("Pushback"), TAXIOUT("Taxi Out"), TAKEOFF("Takeoff"),
+	AIRBORNE("Airborne"), ROLLOUT("Rollout"), TAXIIN("Taxi In"), ATGATE("At Gate"), SHUTDOWN("Shutdown"),
+	COMPLETE("Completed"), ABORTED("Abort"), ERROR("Error"), PIREPFILE("File PIREP");
 	
-	FlightPhase(int phase) {
-		_phase = phase;
+	private String _name;
+
+	FlightPhase(String name) {
+		_name = name;
 	}
 	
 	/**
-	 * Returns the flight phase.
-	 * @return the phase code
+	 * Returns the phase name.
+	 * @return the name
 	 */
-	public int getPhase() {
-		return _phase;
+	public String getName() {
+		return _name;
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -35,14 +35,15 @@ public class SetACARSData extends DAO {
 	public void createConnection(ConnectionEntry ce) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO acars.CONS (ID, PILOT_ID, DATE, REMOTE_ADDR, REMOTE_HOST, "
-					+ "CLIENT_BUILD, DISPATCH) VALUES (CONV(?,10,16), ?, ?, INET_ATON(?), ?, ?, ?)");
+					+ "CLIENT_BUILD, BETA_BUILD, DISPATCH) VALUES (CONV(?,10,16), ?, ?, INET_ATON(?), ?, ?, ?, ?)");
 			_ps.setLong(1, ce.getID());
 			_ps.setInt(2, ce.getPilotID());
 			_ps.setTimestamp(3, createTimestamp(ce.getStartTime()));
 			_ps.setString(4, ce.getRemoteAddr());
 			_ps.setString(5, ce.getRemoteHost());
 			_ps.setInt(6, ce.getClientBuild());
-			_ps.setBoolean(7, ce.getDispatch());
+			_ps.setInt(7, ce.getBeta());
+			_ps.setBoolean(8, ce.getDispatch());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -183,7 +184,7 @@ public class SetACARSData extends DAO {
 	 * @param entries a Collection of RouteEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writePositions(int flightID, Collection<RouteEntry> entries) throws DAOException {
+	public void writePositions(int flightID, Collection<ACARSRouteEntry> entries) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO acars.POSITIONS (FLIGHT_ID, REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, "
 					+ "R_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, N2, MACH, FUEL, PHASE, SIM_RATE, FLAGS, FLAPS, PITCH, BANK, "
@@ -192,8 +193,8 @@ public class SetACARSData extends DAO {
 
 			// Loop through the positions
 			_ps.setInt(1, flightID);
-			for (Iterator<RouteEntry> i = entries.iterator(); i.hasNext();) {
-				RouteEntry re = i.next();
+			for (Iterator<ACARSRouteEntry> i = entries.iterator(); i.hasNext();) {
+				ACARSRouteEntry re = i.next();
 				_ps.setTimestamp(2, createTimestamp(re.getDate()));
 				_ps.setInt(3, CalendarUtils.getInstance(re.getDate()).get(Calendar.MILLISECOND));
 				_ps.setDouble(4, re.getLatitude());
@@ -208,7 +209,7 @@ public class SetACARSData extends DAO {
 				_ps.setDouble(13, re.getN2());
 				_ps.setDouble(14, re.getMach());
 				_ps.setInt(15, re.getFuelRemaining());
-				_ps.setInt(16, re.getPhase().getPhase());
+				_ps.setInt(16, re.getPhase().ordinal());
 				_ps.setInt(17, re.getSimRate());
 				_ps.setInt(18, re.getFlags());
 				_ps.setInt(19, re.getFlaps());
@@ -332,8 +333,7 @@ public class SetACARSData extends DAO {
 			
 			// If we are now the default livery, update the others
 			if (l.getDefault()) {
-				prepareStatementWithoutLimits("UPDATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) "
-						+ "AND (LIVERY<>?)");
+				prepareStatementWithoutLimits("UPDATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) AND (LIVERY<>?)");
 				_ps.setBoolean(1, false);
 				_ps.setString(2, l.getAirline().getCode());
 				_ps.setString(3, l.getCode());

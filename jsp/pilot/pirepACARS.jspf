@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <c:set var="acLoaded" value="${!empty acInfo}" scope="page" />
+<c:set var="isXACARS" value="${fn:isXPlane(pirep)}" scope="page" />
 <!-- ACARS PIREP Data -->
 <tr class="title">
  <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS FLIGHT DATA</td>
@@ -16,7 +17,7 @@
  <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></td>
 </tr>
 </c:if>
-<c:if test="${(!empty conInfo) || (pirep.clientBuild > 0)}">
+<c:if test="${!isXACARS && ((!empty conInfo) || (pirep.clientBuild > 0))}">
 <tr>
  <td class="label">ACARS Client</td>
  <td class="data" colspan="${cspan}"><c:if test="${pirep.clientBuild > 0}">Build <fmt:int value="${pirep.clientBuild}" />
@@ -27,8 +28,17 @@
 <c:if test="${pirep.hasReload}"> <span class="small ita">(ACARS Flight Restore)</span></c:if></td>
 </tr>
 </c:if>
-<content:filter roles="HR,Examination,PIREP,Dispatch">
-<c:if test="${!empty pirep.FDE}">
+<c:if test="${isXACARS}">
+<tr>
+ <td class="label">ACARS Client</td>
+ <td class="data" colspan="${cspan}">XACARS ${pirep.majorVersion}.${pirep.minorVersion}
+<c:if test="${!empty conInfo}"> 
+<content:filter roles="HR"> from ${conInfo.remoteHost}
+<c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" /> ${ipInfo.location}</c:if></content:filter></c:if></td>
+</tr>
+</c:if>
+<content:filter roles="HR,Examination,PIREP,Dispatch,Instructor,AcademyAdmin,AcademyAudit">
+<c:if test="${!isXACARS && !empty pirep.FDE}">
 <tr>
  <td class="label">FDE File</td>
  <td class="data" colspan="${cspan}">${pirep.FDE}<c:if test="${!empty pirep.aircraftCode}"> ${pirep.aircraftCode}</c:if></td>
@@ -135,8 +145,8 @@
 </c:if>
 <tr>
  <td class="label">Landing Information</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
- feet/minute<c:if test="${pirep.landingG > 0.0}"> (<fmt:dec value="${pirep.landingG}" fmt="#0.0000" />G)</c:if>,
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots,<c:if test="${!isXACARS}"> <fmt:int value="${pirep.landingVSpeed}" />
+ feet/minute<c:if test="${pirep.landingG > 0.0}"> (<fmt:dec value="${pirep.landingG}" fmt="#0.0000" />G)</c:if>,</c:if>
 <c:choose>
 <c:when test="${pirep.landingN1 > 150}">
  <fmt:int value="${pirep.landingN1}" /> RPM,
@@ -162,15 +172,18 @@
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" /> lbs fuel</td>
 </tr>
 </c:if>
+<c:if test="${pirep.totalFuel > 0}">
 <tr>
  <td class="label">Total Fuel Used</td>
  <td class="data" colspan="${cspan}"><fmt:int value="${pirep.totalFuel}" /> lbs</td>
 </tr>
+</c:if>
 <tr>
  <td class="label">Flight Time</td>
  <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, total time
  <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
 </tr>
+<c:if test="${!isXACARS}">
 <c:set var="times" value="${pirep.times}" scope="page" />
 <c:if test="${(times[0] > 30) || (times[2] > 0) || (times[4] > 0)}">
 <c:if test="${times[0] > 90}">
@@ -194,6 +207,7 @@
  <td class="label">Flight Time (4X)</td>
  <td class="data bld" colspan="${cspan}"><fmt:int value="${times[4] / 60}" /> minutes <fmt:int value="${times[4] % 60}" /> seconds</td>
 </tr>
+</c:if>
 </c:if>
 </c:if>
 <c:if test="${flightInfo.averageFrameRate > 0}">

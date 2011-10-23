@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check if we add position records
@@ -56,7 +57,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 		for (Iterator<String> i = rawIDs.iterator(); (IDs.size() <= maxFlights) && i.hasNext(); ) {
 			String rawID = i.next();
 			try {
-				IDs.add(new Integer(StringUtils.parseHex(rawID)));
+				IDs.add(Integer.valueOf(StringUtils.parseHex(rawID)));
 			} catch (NumberFormatException nfe) {
 				log.warn("Invalid ACARS flight ID - " + rawID);
 			}
@@ -74,7 +75,7 @@ public class FlightDataEarthService extends GoogleEarthService {
 				int id = i.next().intValue();
 				FlightInfo info = dao.getInfo(id);
 				if (info != null) {
-					Collection<RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived());
+					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived());
 					info.setRouteData(routeData);
 					if (showRoute) {
 						List<String> routeEntries = StringUtils.split(info.getRoute(), " ");

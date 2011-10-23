@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to render the ACARS Map in Google Earth.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -40,6 +40,7 @@ public class EarthMapService extends GoogleEarthService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the ACARS connection data
@@ -64,7 +65,7 @@ public class EarthMapService extends GoogleEarthService {
 				FlightInfo info = dao.getInfo(flightID.intValue());
 				if (info != null) {
 					userIDs.add(new Integer(info.getPilotID()));
-					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID.intValue(), info.getArchived());
+					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(flightID.intValue(), info.getArchived());
 					info.setRouteData(routeData);
 					if (positions.containsKey(flightID))
 						info.setPosition((RouteEntry) positions.get(flightID));

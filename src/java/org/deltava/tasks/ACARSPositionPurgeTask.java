@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge orphaned ACARS position entries. 
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 3.2
  */
 
@@ -86,7 +86,7 @@ public class ACARSPositionPurgeTask extends Task {
 				} else {
 					ConnectionEntry ce = dao.getConnection(fInfo.getConnectionID());
 					UserData ud = uddao.get(ce.getAuthorID());
-					ACARSFlightReport afr = frdao.getACARS(ud.getDB(), id);
+					FDRFlightReport afr = frdao.getACARS(ud.getDB(), id);
 					CheckRide cr = exdao.getACARSCheckRide(id);
 					if (afr == null) {
 						ctx.startTX();

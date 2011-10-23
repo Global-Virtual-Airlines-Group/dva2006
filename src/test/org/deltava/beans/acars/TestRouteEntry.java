@@ -20,7 +20,7 @@ public class TestRouteEntry extends AbstractBeanTestCase {
    protected void setUp() throws Exception {
       super.setUp();
       _dt = new Date();
-      _entry = new RouteEntry(_dt, new GeoPosition(45.6789, -112.2334));
+      _entry = new ACARSRouteEntry(_dt, new GeoPosition(45.6789, -112.2334));
       setBean(_entry);
    }
 
@@ -62,7 +62,7 @@ public class TestRouteEntry extends AbstractBeanTestCase {
    }
    
    public void testComparator() {
-      RouteEntry e2 = new RouteEntry(new Date(_dt.getTime() + 5), new GeoPosition(1, 1));
+      RouteEntry e2 = new ACARSRouteEntry(new Date(_dt.getTime() + 5), new GeoPosition(1, 1));
       assertTrue(e2.getDate().getTime() > _entry.getDate().getTime());
       assertTrue(e2.compareTo(_entry) > 0);
    }

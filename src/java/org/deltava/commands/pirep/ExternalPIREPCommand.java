@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.0
  */
 
@@ -33,6 +33,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -63,7 +64,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			
 			// Get the Flight Report
 			GetFlightReports frdao = new GetFlightReports(con);
-			ACARSFlightReport fr = frdao.getACARS(ud.getDB(), cr.getFlightID());
+			FDRFlightReport fr = frdao.getACARS(ud.getDB(), cr.getFlightID());
 			if (fr == null)
 				throw notFoundException("Unknown Flight Report ID - " + cr.getFlightID());
 			
