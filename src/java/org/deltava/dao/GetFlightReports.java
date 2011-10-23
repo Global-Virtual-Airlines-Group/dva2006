@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -87,7 +87,7 @@ public class GetFlightReports extends DAO {
 	 * @return the ACARSFlightReport, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public ACARSFlightReport getACARS(String dbName, int acarsID) throws DAOException {
+	public FDRFlightReport getACARS(String dbName, int acarsID) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -110,11 +110,11 @@ public class GetFlightReports extends DAO {
 
 			// Check that it's really an ACARSFlightReport object
 			FlightReport fr = results.get(0);
-			if (!(fr instanceof ACARSFlightReport))
+			if (!(fr instanceof FDRFlightReport))
 				return null;
 
 			// Get the primary equipment types
-			ACARSFlightReport afr = (ACARSFlightReport) fr;
+			FDRFlightReport afr = (FDRFlightReport) fr;
 			afr.setCaptEQType(getCaptEQType(afr.getID(), dbName));
 			afr.setRoute(getRoute(afr.getID(), dbName));
 			return afr;
@@ -488,11 +488,13 @@ public class GetFlightReports extends DAO {
 
 		// Build the prepared statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, S.TIME_D, S.TIME_A FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, S.TIME_D, S.TIME_A, PRT.ROUTE FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_ROUTE PRT ON (PR.ID=PRT.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".SCHEDULE S ON (S.AIRLINE=PR.AIRLINE) AND (S.FLIGHT=PR.FLIGHT) AND (S.LEG=PR.LEG) AND "
 				+ "(S.AIRPORT_D=PR.AIRPORT_D) AND (S.AIRPORT_A=PR.AIRPORT_A) WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?)");
@@ -559,19 +561,24 @@ public class GetFlightReports extends DAO {
 		boolean hasACARS = (md.getColumnCount() > 64);
 		boolean hasComments = (md.getColumnCount() > 23);
 		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
+		boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 26));
 
 		// Iterate throught the results
 		List<FlightReport> results = new ArrayList<FlightReport>();
 		while (rs.next()) {
 			int status = rs.getInt(4);
+			int FSVersion = rs.getInt(12);
 			boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
+			boolean isXACARS = isACARS && (FSVersion == 100);
 			boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
 			// Build the PIREP as a standard one, or an ACARS pirep
 			Airline a = SystemData.getAirline(rs.getString(6));
 			int flight = rs.getInt(7); int leg = rs.getInt(8);
 			FlightReport p = null;
-			if (isACARS)
+			if (isXACARS)
+				p = new XACARSFlightReport(a, flight, leg);
+			else if (isACARS)
 				p = new ACARSFlightReport(a, flight, leg);
 			else if (isDraft)
 				p = new DraftFlightReport(a, flight, leg);
@@ -587,7 +594,7 @@ public class GetFlightReports extends DAO {
 			p.setAirportD(SystemData.getAirport(rs.getString(9)));
 			p.setAirportA(SystemData.getAirport(rs.getString(10)));
 			p.setEquipmentType(rs.getString(11));
-			p.setFSVersion(rs.getInt(12));
+			p.setFSVersion(FSVersion);
 			p.setAttributes(rs.getInt(13));
 			// Skip column #14 - we calculate this in the flight report
 			p.setLength(Math.round(rs.getFloat(15) * 10));
@@ -611,11 +618,14 @@ public class GetFlightReports extends DAO {
 					dp.setTimeD(dts);
 					dp.setTimeA(rs.getTimestamp(26));
 				}
+				
+				if (hasDraftRoute)
+					dp.setRoute(rs.getString(27));
 			}
 
-			// Load ACARS pirep data
-			if (isACARS) {
-				ACARSFlightReport ap = (ACARSFlightReport) p;
+			// Load generic ACARS pirep data
+			if (isACARS || isXACARS) {
+				FDRFlightReport ap = (FDRFlightReport) p;
 				ap.setAttribute(FlightReport.ATTR_ACARS, true);
 				ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(26));
 				ap.setStartTime(rs.getTimestamp(27));
@@ -634,7 +644,7 @@ public class GetFlightReports extends DAO {
 				ap.setLandingDistance(rs.getInt(42));
 				ap.setLandingSpeed(rs.getInt(43));
 				ap.setLandingVSpeed(rs.getInt(44));
-				ap.setLandingG(rs.getDouble(45));
+				// Load column #45 with DVA ACARS only
 				ap.setLandingN1(rs.getDouble(46));
 				ap.setLandingHeading(rs.getInt(47));
 				ap.setLandingLocation(new GeoPosition(rs.getDouble(48), rs.getDouble(49), rs.getInt(50)));
@@ -644,6 +654,12 @@ public class GetFlightReports extends DAO {
 				ap.setGateWeight(rs.getInt(54));
 				ap.setGateFuel(rs.getInt(55));
 				ap.setTotalFuel(rs.getInt(56));
+			}
+			
+			// Load DVA ACARS pirep data
+			if (isACARS && !isXACARS) {
+				ACARSFlightReport ap = (ACARSFlightReport) p;
+				ap.setLandingG(rs.getDouble(45));
 				ap.setTime(0, rs.getInt(57));
 				ap.setTime(1, rs.getInt(58));
 				ap.setTime(2, rs.getInt(59));
@@ -653,13 +669,15 @@ public class GetFlightReports extends DAO {
 				ap.setHasReload(rs.getBoolean(63));
 				ap.setClientBuild(rs.getInt(64));
 				ap.setBeta(rs.getInt(65));
+			} else if (isXACARS) {
+				XACARSFlightReport ap = (XACARSFlightReport) p;
+				ap.setMajorVersion(rs.getInt(64));
+				ap.setMinorVersion(rs.getInt(65));
 			}
 
-			// Add the flight report to the results
 			results.add(p);
 		}
 
-		// Clean up and return results
 		rs.close();
 		_ps.close();
 		return results;

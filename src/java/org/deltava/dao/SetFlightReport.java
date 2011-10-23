@@ -327,11 +327,11 @@ public class SetFlightReport extends DAO {
 
 	/**
 	 * Writes an ACARS-enabled Flight Report into the database. This can handle INSERT and UPDATE operations.
-	 * @param afr the Flight Report
+	 * @param fr the Flight Report
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeACARS(ACARSFlightReport afr, String dbName) throws DAOException {
+	public void writeACARS(FDRFlightReport fr, String dbName) throws DAOException {
 		String db = formatDBName(dbName);
 
 		// Build the SQL statement
@@ -340,65 +340,82 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
 			+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_HDG, TAKEOFF_LAT, "
 			+ "TAKEOFF_LNG, TAKEOFF_ALT, TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, "
-			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_G, LANDING_N1, LANDING_HDG, LANDING_LAT, "
-			+ "LANDING_LNG, LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
-			+ "TOTAL_FUEL, TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD) "
+			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, "
+			+ "LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, "
+			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G) "
 			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
 
 			// Write the regular fields
-			writeCore(afr, db);
-			writeComments(afr, db);
-			writePromoEQ(afr.getID(), db, afr.getCaptEQType());
+			writeCore(fr, db);
+			writeComments(fr, db);
+			writePromoEQ(fr.getID(), db, fr.getCaptEQType());
 
 			// Write the ACARS fields
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, afr.getID());
-			_ps.setInt(2, afr.getDatabaseID(DatabaseID.ACARS));
-			_ps.setTimestamp(3, createTimestamp(afr.getStartTime()));
-			_ps.setTimestamp(4, createTimestamp(afr.getTaxiTime()));
-			_ps.setInt(5, afr.getTaxiWeight());
-			_ps.setInt(6, afr.getTaxiFuel());
-			_ps.setTimestamp(7, createTimestamp(afr.getTakeoffTime()));
-			_ps.setInt(8, afr.getTakeoffDistance());
-			_ps.setInt(9, afr.getTakeoffSpeed());
-			_ps.setDouble(10, afr.getTakeoffN1());
-			_ps.setInt(11, afr.getTakeoffHeading());
-			_ps.setDouble(12, afr.getTakeoffLocation().getLatitude());
-			_ps.setDouble(13, afr.getTakeoffLocation().getLongitude());
-			_ps.setInt(14, afr.getTakeoffLocation().getAltitude());
-			_ps.setInt(15, afr.getTakeoffWeight());
-			_ps.setInt(16, afr.getTakeoffFuel());
-			_ps.setTimestamp(17, createTimestamp(afr.getLandingTime()));
-			_ps.setInt(18, afr.getLandingDistance());
-			_ps.setInt(19, afr.getLandingSpeed());
-			_ps.setInt(20, afr.getLandingVSpeed());
-			_ps.setDouble(21, afr.getLandingG());
-			_ps.setDouble(22, afr.getLandingN1());
-			_ps.setInt(23, afr.getLandingHeading());
-			_ps.setDouble(24, afr.getLandingLocation().getLatitude());
-			_ps.setDouble(25, afr.getLandingLocation().getLongitude());
-			_ps.setInt(26, afr.getLandingLocation().getAltitude());
-			_ps.setInt(27, afr.getLandingWeight());
-			_ps.setInt(28, afr.getLandingFuel());
-			_ps.setTimestamp(29, createTimestamp(afr.getEndTime()));
-			_ps.setInt(30, afr.getGateWeight());
-			_ps.setInt(31, afr.getGateFuel());
-			_ps.setInt(32, afr.getTotalFuel());
-			_ps.setInt(33, afr.getTime(0));
-			_ps.setInt(34, afr.getTime(1));
-			_ps.setInt(35, afr.getTime(2));
-			_ps.setInt(36, afr.getTime(4));
-			_ps.setString(37, afr.getFDE());
-			_ps.setString(38, afr.getAircraftCode());
-			_ps.setBoolean(39, afr.getHasReload());
-			_ps.setInt(40, afr.getClientBuild());
-			_ps.setInt(41, afr.getBeta());
-			executeUpdate(1);
+			_ps.setInt(1, fr.getID());
+			_ps.setInt(2, fr.getDatabaseID(DatabaseID.ACARS));
+			_ps.setTimestamp(3, createTimestamp(fr.getStartTime()));
+			_ps.setTimestamp(4, createTimestamp(fr.getTaxiTime()));
+			_ps.setInt(5, fr.getTaxiWeight());
+			_ps.setInt(6, fr.getTaxiFuel());
+			_ps.setTimestamp(7, createTimestamp(fr.getTakeoffTime()));
+			_ps.setInt(8, fr.getTakeoffDistance());
+			_ps.setInt(9, fr.getTakeoffSpeed());
+			_ps.setDouble(10, fr.getTakeoffN1());
+			_ps.setInt(11, fr.getTakeoffHeading());
+			_ps.setDouble(12, fr.getTakeoffLocation().getLatitude());
+			_ps.setDouble(13, fr.getTakeoffLocation().getLongitude());
+			_ps.setInt(14, fr.getTakeoffLocation().getAltitude());
+			_ps.setInt(15, fr.getTakeoffWeight());
+			_ps.setInt(16, fr.getTakeoffFuel());
+			_ps.setTimestamp(17, createTimestamp(fr.getLandingTime()));
+			_ps.setInt(18, fr.getLandingDistance());
+			_ps.setInt(19, fr.getLandingSpeed());
+			_ps.setInt(20, fr.getLandingVSpeed());
+			_ps.setDouble(21, fr.getLandingN1());
+			_ps.setInt(22, fr.getLandingHeading());
+			_ps.setDouble(23, fr.getLandingLocation().getLatitude());
+			_ps.setDouble(24, fr.getLandingLocation().getLongitude());
+			_ps.setInt(25, fr.getLandingLocation().getAltitude());
+			_ps.setInt(26, fr.getLandingWeight());
+			_ps.setInt(27, fr.getLandingFuel());
+			_ps.setTimestamp(28, createTimestamp(fr.getEndTime()));
+			_ps.setInt(29, fr.getGateWeight());
+			_ps.setInt(30, fr.getGateFuel());
+			_ps.setInt(31, fr.getTotalFuel());
+			
+			// ACARS
+			if (fr instanceof ACARSFlightReport) {
+				ACARSFlightReport afr = (ACARSFlightReport) fr; 
+				_ps.setInt(32, afr.getTime(0));
+				_ps.setInt(33, afr.getTime(1));
+				_ps.setInt(34, afr.getTime(2));
+				_ps.setInt(35, afr.getTime(4));
+				_ps.setString(36, afr.getFDE());
+				_ps.setString(37, afr.getAircraftCode());
+				_ps.setBoolean(38, afr.getHasReload());
+				_ps.setInt(39, afr.getClientBuild());
+				_ps.setInt(40, afr.getBeta());
+				_ps.setDouble(41, afr.getLandingG());
+			} else if (fr instanceof XACARSFlightReport) {
+				XACARSFlightReport xfr = (XACARSFlightReport) fr;
+				_ps.setInt(32, 0);
+				_ps.setInt(33, 0);
+				_ps.setInt(34, 0);
+				_ps.setInt(35, 0);
+				_ps.setString(36, null);
+				_ps.setString(37, null);
+				_ps.setBoolean(38, false);
+				_ps.setInt(39, xfr.getMajorVersion());
+				_ps.setInt(40, xfr.getMinorVersion());
+				_ps.setDouble(41, 0);
+			}
 
 			// Commit the transaction
+			executeUpdate(1);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

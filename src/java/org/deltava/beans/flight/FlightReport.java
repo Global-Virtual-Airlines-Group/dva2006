@@ -9,11 +9,11 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
-public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
+public class FlightReport extends Flight implements AuthoredBean, CalendarEntry, ViewEntry {
 
 	public static final int DRAFT = 0;
 	public static final int SUBMITTED = 1;
@@ -273,6 +273,10 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	public int getDatabaseID(DatabaseID idType) {
 		Integer dbID = _dbIds.get(idType);
 		return (dbID == null) ? 0 : dbID.intValue();
+	}
+	
+	public int getAuthorID() {
+		return getDatabaseID(DatabaseID.PILOT);
 	}
 
 	/**
@@ -619,6 +623,10 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 			throw new IllegalArgumentException(idType + " Datbase ID cannot be negative");
 
 		_dbIds.put(idType, Integer.valueOf(id));
+	}
+	
+	public void setAuthorID(int id) {
+		setDatabaseID(DatabaseID.PILOT, id);
 	}
 
 	/**

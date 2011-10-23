@@ -177,8 +177,7 @@ public abstract class GoogleEarthService extends WebService {
 				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
 				pp.addContent(XMLUtils.createElement("altitudeMode", "clampToGround"));
 			} else if (entry.getRadarAltitude() < 1000) {
-				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry
-						.getRadarAltitude())));
+				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry.getRadarAltitude())));
 				pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
 			} else {
 				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(entry, entry.getAltitude())));

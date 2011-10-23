@@ -1,30 +1,29 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
 
-import org.deltava.beans.flight.ACARSFlightReport;
+import org.deltava.beans.flight.FDRFlightReport;
 
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 2.4
  */
 
-public class OfflineFlight {
+public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 
 	private ConnectionEntry _con;
 	private FlightInfo _flight;
-	private final Collection<RouteEntry> _positions = 
-		new TreeSet<RouteEntry>(new PositionComparator());
+	private final Collection<P> _positions = new TreeSet<P>(new PositionComparator());
 	
 	private String _sid;
 	private String _star;
 
-	private ACARSFlightReport _pirep;
+	private T _pirep;
 	
-	class PositionComparator implements Comparator<RouteEntry> {
+	static class PositionComparator implements Comparator<RouteEntry> {
 		
 		public int compare(RouteEntry re1, RouteEntry re2) {
 			return re1.getDate().compareTo(re2.getDate());
@@ -43,7 +42,6 @@ public class OfflineFlight {
 	/**
 	 * Returns the Flight Information.
 	 * @return the FlightIno bean
-	 * @see OfflineFlight#setFlightReport(ACARSFlightReport)
 	 */
 	public FlightInfo getInfo() {
 		return _flight;
@@ -54,16 +52,15 @@ public class OfflineFlight {
 	 * @return a Collection of RouteEntry beans
 	 * @see OfflineFlight#addPosition(RouteEntry)
 	 */
-	public Collection<RouteEntry> getPositions() {
+	public Collection<P> getPositions() {
 		return _positions;
 	}
 	
 	/**
 	 * Returns the Flight Report.
-	 * @return an ACARSFlightReport bean
-	 * @see OfflineFlight#setFlightReport(ACARSFlightReport)
+	 * @return an FDRFlightReport bean
 	 */
-	public ACARSFlightReport getFlightReport() {
+	public T getFlightReport() {
 		return _pirep;
 	}
 	
@@ -110,17 +107,17 @@ public class OfflineFlight {
 	 * @param e a RouteEntry bean
 	 * @see OfflineFlight#getPositions()
 	 */
-	public void addPosition(RouteEntry e) {
+	public void addPosition(P e) {
 		_positions.add(e);
 	}
 	
 	/**
 	 * Updates the Flight Report.
-	 * @param afr an ACARSFlightReport bean
+	 * @param fr an FDRFlightReport bean
 	 * @see OfflineFlight#getFlightReport()
 	 */
-	public void setFlightReport(ACARSFlightReport afr) {
-		_pirep = afr;
+	public void setFlightReport(T fr) {
+		_pirep = fr;
 	}
 	
 	/**
