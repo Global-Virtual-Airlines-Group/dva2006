@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/flightaware.jar" sourcepath="lib/src/flightaware.zip"/>
@@ -25,8 +24,9 @@
 	<classpathentry kind="lib" path="lib/deploy/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-1.00.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.13-bin.jar" sourcepath="lib/src/mysql-connector-java-5.1.13.zip"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.50.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.4.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.60.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
