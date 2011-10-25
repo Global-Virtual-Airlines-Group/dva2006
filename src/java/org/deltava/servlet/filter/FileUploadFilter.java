@@ -1,52 +1,38 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
-import java.util.Enumeration;
-import java.io.IOException;
-
-import java.nio.charset.Charset;
+import java.io.*;
+import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import com.oreilly.servlet.multipart.*;
-
 import static org.deltava.commands.CommandContext.*;
 
 import org.deltava.beans.FileUpload;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 2.6
- * @since 1.0 
+ * @version 4.1
+ * @since 1.0
  */
 
 public class FileUploadFilter implements Filter {
 
 	private static final Logger log = Logger.getLogger(FileUploadFilter.class);
 	private static final String CONTENT_TYPE = "multipart/form-data";
-	
-	private String _encoding = "UTF-8";
-	private int _maxReqSize;
 
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message.
 	 * @param cfg the Filter Configuration
 	 */
+	@Override
 	public void init(FilterConfig cfg) throws ServletException {
-		String encoding = cfg.getInitParameter("encoding");
-		if (encoding != null) {
-			if (!Charset.availableCharsets().containsKey(encoding))
-				log.error("Unknown character set - " + encoding);
-			else
-				_encoding = encoding;
-		}
-		
-		_maxReqSize = StringUtils.parse(cfg.getInitParameter("maxRequestSize"), 10240000);
 		log.info("Started");
 	}
 
@@ -58,50 +44,43 @@ public class FileUploadFilter implements Filter {
 	 * @throws IOException if an I/O error occurs
 	 * @throws ServletException if a general error occurs
 	 */
+	@Override
 	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
 		// Convert the request type and encoding
 		HttpServletRequest hreq = (HttpServletRequest) req;
-		hreq.setCharacterEncoding(_encoding);
-		
+		hreq.setCharacterEncoding("UTF-8");
+
 		// Check if we're doing a POST
 		if (("POST".equalsIgnoreCase(hreq.getMethod())) && (hreq.getContentType().startsWith(CONTENT_TYPE))) {
 			FileUploadRequestWrapper reqWrap = new FileUploadRequestWrapper(hreq);
 			if (log.isDebugEnabled())
 				log.debug("Processing form upload request");
 
-			// Parse the request
-			MultipartParser parser = null;
-			try {
-			   parser = new MultipartParser(hreq, _maxReqSize, true, true, _encoding);
-			} catch (IOException ie) {
-			   log.warn(ie.getMessage());
-			}
-			
-			com.oreilly.servlet.multipart.Part p = (parser != null) ? parser.readNextPart() : null;
-			while (p != null) {
-				if (p.isFile()) {
-					FilePart fp = (FilePart) p;
+			for (Part p : hreq.getParts()) {
+				if (log.isDebugEnabled())
+					log.debug(p.getName() + " " + p.getHeaderNames());
+				String fName = getFileName(p);
 
-					// Save the file data in the request
-					if (fp.getFileName() != null) {
-						if (log.isDebugEnabled())
-							log.debug("Found File element " + p.getName() + ", file=" + fp.getFileName());
-						
-						FileUpload upload = new FileUpload(fp.getFileName());
-						try {
-							upload.load(fp.getInputStream());
-							hreq.setAttribute("FILE$" + p.getName(), upload);
-						} catch (IOException ie) {
-							log.warn("Cannot load attachment - " + ie.getMessage());
-							reqWrap.setAttribute(INVALIDREQ_ATTR_NAME, ie);
-						}
+				if (!StringUtils.isEmpty(fName)) {
+					if (log.isDebugEnabled())
+						log.debug("Found File element " + p.getName() + ", file=" + fName);
+
+					FileUpload upload = new FileUpload(fName);
+					try {
+						upload.load(p.getInputStream());
+						hreq.setAttribute("FILE$" + p.getName(), upload);
+					} catch (IOException ie) {
+						log.warn("Cannot load attachment - " + ie.getMessage());
+						reqWrap.setAttribute(INVALIDREQ_ATTR_NAME, ie);
+					} finally {
+						p.delete();
 					}
-				} else if (p.isParam())
-					reqWrap.addParameter(p.getName(), ((ParamPart) p).getStringValue());
-
-				// Get next part
-				p = parser.readNextPart();
+				} else {
+					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
+					if (br.ready())
+						reqWrap.addParameter(p.getName(), br.readLine());
+				}
 			}
 
 			// Add requests from the command line and convert to the proper character set
@@ -110,8 +89,8 @@ public class FileUploadFilter implements Filter {
 				String pName = (String) pNames.nextElement();
 				String[] rawValues = hreq.getParameterValues(pName);
 				for (int x = 0; x < rawValues.length; x++)
-					rawValues[x] = new String(rawValues[x].getBytes("ISO-8859-1"), _encoding);
-				
+					rawValues[x] = new String(rawValues[x].getBytes("ISO-8859-1"), "UTF-8");
+
 				reqWrap.addParameter(pName, rawValues);
 			}
 
@@ -122,8 +101,22 @@ public class FileUploadFilter implements Filter {
 	}
 
 	/**
+	 * Gets the file name of a Part.
+	 */
+	private String getFileName(Part p) {
+		String hdr = p.getHeader("content-disposition");
+		for (String cd : hdr.split(";")) {
+			if (cd.trim().startsWith("filename"))
+				return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
+		}
+
+		return null;
+	}
+
+	/**
 	 * Called by the servlet container when the filter is stopped. Logs a message.
 	 */
+	@Override
 	public void destroy() {
 		log.info("Stopped");
 	}
