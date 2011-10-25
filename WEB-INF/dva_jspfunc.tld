@@ -147,6 +147,13 @@
 		<function-signature>boolean isACARS(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for ACARS Flight Report -->
+	<function>
+		<name>isXACARS</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isXACARS(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Draft Flight Report -->
 	<function>
 		<name>isDraft</name>
