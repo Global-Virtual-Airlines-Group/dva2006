@@ -1,4 +1,4 @@
-// Copyright 2004, 2008 Global Virtual Airlines Grouup. All Rights Reserved.
+// Copyright 2004, 2008, 2011 Global Virtual Airlines Grouup. All Rights Reserved.
 package org.deltava.crypt;
 
 import java.security.spec.KeySpec;
@@ -8,13 +8,13 @@ import javax.crypto.*;
 /**
  * A class to support encrypting/decrypting data using a symetric secret key. 
  * @author Luke
- * @version 2.2
+ * @version 4.1
  * @since 1.0
  */
 
 public abstract class SecretKeyEncryptor {
 
-    private String _algorithm;
+    private final String _algorithm;
     
     private Cipher _cipher;
     private SecretKey _key;
@@ -71,7 +71,7 @@ public abstract class SecretKeyEncryptor {
      * @return the encrypted data
      * @throws CryptoException if something bad happens
      */
-    public synchronized byte[] encrypt(byte[] data) throws CryptoException {
+    public byte[] encrypt(byte[] data) throws CryptoException {
         try {
             _cipher.init(Cipher.ENCRYPT_MODE, _key);
             return _cipher.doFinal(data);
@@ -86,7 +86,7 @@ public abstract class SecretKeyEncryptor {
      * @return the clear-text data
      * @throws CryptoException if something bad happens
      */
-    public synchronized byte[] decrypt(byte[] data) throws CryptoException {
+    public byte[] decrypt(byte[] data) throws CryptoException {
         try {
             _cipher.init(Cipher.DECRYPT_MODE, _key);
             return _cipher.doFinal(data);
