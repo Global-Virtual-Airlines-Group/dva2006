@@ -37,14 +37,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<filter>
 		<filter-name>FileUploadFilter</filter-name>
 		<filter-class>org.deltava.servlet.filter.FileUploadFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-		<init-param>
-			<param-name>maxRequestSize</param-name>
-			<param-value>16384000</param-value>
-		</init-param>
 	</filter>
 
 	<!-- Web Services servlet -->
