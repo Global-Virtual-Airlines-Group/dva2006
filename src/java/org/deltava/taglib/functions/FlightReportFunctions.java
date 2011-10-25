@@ -61,6 +61,15 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight was logged using ACARS.
+     * @param fr the Flight Report
+     * @return TRUE if this flight used ACARS, otherwise FALSE
+     */
+    public static boolean isXACARS(FlightReport fr) {
+        return (fr instanceof XACARSFlightReport) || (fr.hasAttribute(FlightReport.ATTR_XACARS));
+    }
+    
+    /**
      * Returns if this Flight was logged using Microsoft Flight Simulator.
      * @param fr the Flight Report
      * @return TRUE if the Flight was logged using a version of MSFS
