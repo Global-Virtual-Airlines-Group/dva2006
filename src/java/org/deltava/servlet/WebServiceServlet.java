@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import javax.servlet.annotation.MultipartConfig;
 
 import org.apache.log4j.Logger;
 
@@ -20,10 +21,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 2.3
+ * @version 4.1
  * @since 1.0
  */
 
+@MultipartConfig
 public class WebServiceServlet extends BasicAuthServlet {
 
 	// Web services realm
