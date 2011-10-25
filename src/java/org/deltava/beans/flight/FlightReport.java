@@ -116,6 +116,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * Flight flown with excessive weights for Aircraft.
 	 */
 	public static final int ATTR_WEIGHTWARN = 0x8000;
+	
+	/**
+	 * Flight flown using XACARS.
+	 */
+	public static final int ATTR_XACARS = 0x10000;
 
 	/**
 	 * Attribute mask for all warnings.

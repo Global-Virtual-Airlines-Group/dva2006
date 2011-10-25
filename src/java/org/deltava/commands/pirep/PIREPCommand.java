@@ -445,6 +445,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (isACARS) {
 				mapType = Pilot.MAP_GOOGLE;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("isXACARS", Boolean.valueOf(fr.hasAttribute(FlightReport.ATTR_XACARS)), REQUEST);
 				FDRFlightReport afr = (FDRFlightReport) fr;
 				int flightID = afr.getDatabaseID(DatabaseID.ACARS);
 
