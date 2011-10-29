@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A Data Access Object to load Airline codes and names.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -77,46 +77,40 @@ public class GetAirline extends DAO {
 	 */
 	private Map<String, Airline> execute() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
-		while (rs.next()) {
-			Airline a = new Airline(rs.getString(1), rs.getString(2));
-			a.setColor(rs.getString(3));
-			a.setActive(rs.getBoolean(4));
-			results.put(a.getCode(), a);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Airline a = new Airline(rs.getString(1), rs.getString(2));
+				a.setColor(rs.getString(3));
+				a.setActive(rs.getBoolean(4));
+				results.put(a.getCode(), a);
+			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 		
 		// Load alternate codes
 		prepareStatementWithoutLimits("SELECT * FROM common.AIRLINE_CODES");
-		rs = _ps.executeQuery();
-		while (rs.next()) {
-			Airline a = results.get(rs.getString(1).trim());
-			if (a != null)
-				a.addCode(rs.getString(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Airline a = results.get(rs.getString(1).trim());
+				if (a != null)
+					a.addCode(rs.getString(2));
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 
 		// Load web app information
 		prepareStatementWithoutLimits("SELECT UCASE(CODE), UCASE(APPCODE) FROM common.APP_AIRLINES");
-		rs = _ps.executeQuery();
-		while (rs.next()) {
-			Airline a = results.get(rs.getString(1).trim());
-			if (a != null)
-				a.addApp(rs.getString(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Airline a = results.get(rs.getString(1).trim());
+				if (a != null)
+					a.addApp(rs.getString(2));
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

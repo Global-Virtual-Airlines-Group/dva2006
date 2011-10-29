@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.fleet.SystemInformation;
 /**
  * A Data Access Object to retrieve Fleet Installer System Information data.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -32,17 +32,12 @@ public class GetInstallerSystemInfo extends DAO {
 	public List<String> getOperatingSystems() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT OS FROM common.SYSINFODATA ORDER BY OS DESC");
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			List<String> results = new ArrayList<String>();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -58,17 +53,12 @@ public class GetInstallerSystemInfo extends DAO {
 	public List<String> getInstallerCodes() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT INSTALLER FROM common.SYSINFODATA ORDER BY INSTALLER DESC");
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			List<String> results = new ArrayList<String>();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -146,17 +136,12 @@ public class GetInstallerSystemInfo extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			
-			// Iterate through the results
 			List<InstallerStatistics> results = new ArrayList<InstallerStatistics>();
-			while (rs.next())
-				results.add(new InstallerStatistics(rs.getString(1), rs.getInt(2)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(new InstallerStatistics(rs.getString(1), rs.getInt(2)));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -168,29 +153,22 @@ public class GetInstallerSystemInfo extends DAO {
 	 * Helper method to iterate through the result set.
 	 */
 	private List<SystemInformation> execute() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<SystemInformation> results = new ArrayList<SystemInformation>();
-		while (rs.next()) {
-			SystemInformation sysinfo = new SystemInformation(rs.getString(1));
-			sysinfo.setOS(rs.getString(2));
-			sysinfo.setGPU(rs.getString(3));
-			sysinfo.setCPU(rs.getString(4));
-			sysinfo.setDirectX(rs.getString(5));
-			sysinfo.setRAM(rs.getInt(6));
-			sysinfo.setFSVersion(rs.getInt(7));
-			sysinfo.setCode(rs.getString(8));
-			sysinfo.setDate(rs.getTimestamp(9));
-
-			// Add to results
-			results.add(sysinfo);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				SystemInformation sysinfo = new SystemInformation(rs.getString(1));
+				sysinfo.setOS(rs.getString(2));
+				sysinfo.setGPU(rs.getString(3));
+				sysinfo.setCPU(rs.getString(4));
+				sysinfo.setDirectX(rs.getString(5));
+				sysinfo.setRAM(rs.getInt(6));
+				sysinfo.setFSVersion(rs.getInt(7));
+				sysinfo.setCode(rs.getString(8));
+				sysinfo.setDate(rs.getTimestamp(9));
+				results.add(sysinfo);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

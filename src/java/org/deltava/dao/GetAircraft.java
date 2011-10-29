@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -37,8 +37,6 @@ public class GetAircraft extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
-
-			// Load the result
 			List<Aircraft> results = execute();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -92,51 +90,48 @@ public class GetAircraft extends DAO {
 	 */
 	private List<Aircraft> execute() throws SQLException {
 		Map<String, Aircraft> results = new LinkedHashMap<String, Aircraft>();
-
-		// Exeucte the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Aircraft a = new Aircraft(rs.getString(1));
-			a.setFullName(rs.getString(2));
-			a.setRange(rs.getInt(3));
-			a.setIATA(StringUtils.split(rs.getString(4), ","));
-			a.setHistoric(rs.getBoolean(5));
-			a.setETOPS(rs.getBoolean(6));
-			a.setSeats(rs.getInt(7));
-			a.setEngines(rs.getByte(8));
-			a.setEngineType(rs.getString(9));
-			a.setCruiseSpeed(rs.getInt(10));
-			a.setFuelFlow(rs.getInt(11));
-			a.setBaseFuel(rs.getInt(12));
-			a.setTaxiFuel(rs.getInt(13));
-			a.setTanks(Aircraft.TankType.PRIMARY, rs.getInt(14));
-			a.setPct(Aircraft.TankType.PRIMARY, rs.getInt(15));
-			a.setTanks(Aircraft.TankType.SECONDARY, rs.getInt(16));
-			a.setPct(Aircraft.TankType.SECONDARY, rs.getInt(17));
-			a.setTanks(Aircraft.TankType.OTHER, rs.getInt(18));
-			a.setMaxWeight(rs.getInt(19));
-			a.setMaxTakeoffWeight(rs.getInt(20));
-			a.setMaxLandingWeight(rs.getInt(21));
-			results.put(a.getName(), a);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Aircraft a = new Aircraft(rs.getString(1));
+				a.setFullName(rs.getString(2));
+				a.setRange(rs.getInt(3));
+				a.setIATA(StringUtils.split(rs.getString(4), ","));
+				a.setHistoric(rs.getBoolean(5));
+				a.setETOPS(rs.getBoolean(6));
+				a.setSeats(rs.getInt(7));
+				a.setEngines(rs.getByte(8));
+				a.setEngineType(rs.getString(9));
+				a.setCruiseSpeed(rs.getInt(10));
+				a.setFuelFlow(rs.getInt(11));
+				a.setBaseFuel(rs.getInt(12));
+				a.setTaxiFuel(rs.getInt(13));
+				a.setTanks(Aircraft.TankType.PRIMARY, rs.getInt(14));
+				a.setPct(Aircraft.TankType.PRIMARY, rs.getInt(15));
+				a.setTanks(Aircraft.TankType.SECONDARY, rs.getInt(16));
+				a.setPct(Aircraft.TankType.SECONDARY, rs.getInt(17));
+				a.setTanks(Aircraft.TankType.OTHER, rs.getInt(18));
+				a.setMaxWeight(rs.getInt(19));
+				a.setMaxTakeoffWeight(rs.getInt(20));
+				a.setMaxLandingWeight(rs.getInt(21));
+				results.put(a.getName(), a);
+			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 
 		// Load the webapp data
 		prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT_AIRLINE");
-		rs = _ps.executeQuery();
-		while (rs.next()) {
-			String alCode = rs.getString(2);
-			Aircraft a = results.get(rs.getString(1));
-			AirlineInformation al = SystemData.getApp(alCode);
-			if ((al != null) && (a != null))
-				a.addApp(al);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				String alCode = rs.getString(2);
+				Aircraft a = results.get(rs.getString(1));
+				AirlineInformation al = SystemData.getApp(alCode);
+				if ((al != null) && (a != null))
+					a.addApp(al);
+			}
 		}
 
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return new ArrayList<Aircraft>(results.values());
 	}

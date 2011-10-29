@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -230,19 +230,16 @@ public class GetPerformance extends DAO {
 	 */
 	private List<PerformanceMetrics> execute() throws SQLException {
 		List<PerformanceMetrics> results = new ArrayList<PerformanceMetrics>();
-		
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			PerformanceMetrics pm = new PerformanceMetrics(rs.getString(1));
-			pm.setAverage(rs.getDouble(2));
-			pm.setLimits(rs.getDouble(3), rs.getDouble(4));
-			pm.setCount(rs.getLong(5));
-			results.add(pm);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				PerformanceMetrics pm = new PerformanceMetrics(rs.getString(1));
+				pm.setAverage(rs.getDouble(2));
+				pm.setLimits(rs.getDouble(3), rs.getDouble(4));
+				pm.setCount(rs.getLong(5));
+				results.add(pm);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

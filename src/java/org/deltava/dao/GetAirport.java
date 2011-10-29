@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -124,21 +124,20 @@ public class GetAirport extends DAO {
 
 			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-				a.setCountry(Country.get(rs.getString(5)));
-				a.setTZ(rs.getString(3));
-				a.setLocation(rs.getDouble(6), rs.getDouble(7));
-				a.setADSE(rs.getBoolean(8));
-				a.setAltitude(rs.getInt(9));
-				a.setRegion(rs.getString(10));
-				a.setMagVar(rs.getDouble(12));
-				results.add(a);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+					a.setCountry(Country.get(rs.getString(5)));
+					a.setTZ(rs.getString(3));
+					a.setLocation(rs.getDouble(6), rs.getDouble(7));
+					a.setADSE(rs.getBoolean(8));
+					a.setAltitude(rs.getInt(9));
+					a.setRegion(rs.getString(10));
+					a.setMagVar(rs.getDouble(12));
+					results.add(a);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -159,14 +158,13 @@ public class GetAirport extends DAO {
 			
 			// Execute the query
 			Collection<Airport> results = new LinkedHashSet<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				results.add(SystemData.getAirport(rs.getString(1)));
-				results.add(SystemData.getAirport(rs.getString(2)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					results.add(SystemData.getAirport(rs.getString(1)));
+					results.add(SystemData.getAirport(rs.getString(2)));
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -186,18 +184,17 @@ public class GetAirport extends DAO {
 			
 			// Execute the query
 			Collection<Airport> results = new LinkedHashSet<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Airport aD = (Airport) SystemData.getAirport(rs.getString(1)).clone();
-				aD.addAirlineCode(_appCode);
-				results.add(aD);
-				Airport aA = (Airport) SystemData.getAirport(rs.getString(2)).clone();
-				aA.addAirlineCode(_appCode);
-				results.add(aA);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airport aD = (Airport) SystemData.getAirport(rs.getString(1)).clone();
+					aD.addAirlineCode(_appCode);
+					results.add(aD);
+					Airport aA = (Airport) SystemData.getAirport(rs.getString(2)).clone();
+					aA.addAirlineCode(_appCode);
+					results.add(aA);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -214,15 +211,14 @@ public class GetAirport extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT ICAO FROM common.SID_STAR");
 			Collection<Airport> results = new LinkedHashSet<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Airport a = SystemData.getAirport(rs.getString(1));
-				if (a != null)
-					results.add(a);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					if (a != null)
+						results.add(a);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -242,27 +238,25 @@ public class GetAirport extends DAO {
 				+ "LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) LEFT JOIN common.MAGVAR MV "
 				+ "ON (MV.ICAO=A.ICAO)");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
-			while (rs.next()) {
-				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-				a.setTZ(rs.getString(3));
-				a.setCountry(Country.get(rs.getString(5)));
-				a.setLocation(rs.getDouble(6), rs.getDouble(7));
-				a.setADSE(rs.getBoolean(8));
-				a.setAltitude(rs.getInt(9));
-				a.setRegion(rs.getString(10));
-				a.setMagVar(rs.getDouble(11));
-
-				// Save in the map
-				results.put(a.getIATA(), a);
-				if (!results.containsKey(a.getICAO()))
-					results.put(a.getICAO(), a);
+			
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+					a.setTZ(rs.getString(3));
+					a.setCountry(Country.get(rs.getString(5)));
+					a.setLocation(rs.getDouble(6), rs.getDouble(7));
+					a.setADSE(rs.getBoolean(8));
+					a.setAltitude(rs.getInt(9));
+					a.setRegion(rs.getString(10));
+					a.setMagVar(rs.getDouble(11));
+					
+					// Save in the map
+					results.put(a.getIATA(), a);
+					if (!results.containsKey(a.getICAO()))
+						results.put(a.getICAO(), a);
+				}
 			}
 
-			// Clean up the first query
-			rs.close();
 			_ps.close();
 			
 			// Load the airlines for each airport and execute the query
@@ -273,16 +267,15 @@ public class GetAirport extends DAO {
 				prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE");
 			
 			// Iterate through the results
-			rs = _ps.executeQuery();
-			while (rs.next()) {
-				String code = rs.getString(2);
-				Airport a = results.get(code);
-				if (a != null)
-					a.addAirlineCode(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					String code = rs.getString(2);
+					Airport a = results.get(code);
+					if (a != null)
+						a.addAirlineCode(rs.getString(1));
+				}
 			}
 
-			// Clean up the second query and return results
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -304,12 +297,12 @@ public class GetAirport extends DAO {
 			prepareStatementWithoutLimits("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?) LIMIT 1");
 			_ps.setString(1, iata.toUpperCase());
 			
-			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			String code = rs.next() ? rs.getString(1) : null;
+			String code = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					code = rs.getString(1);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return code;
 		} catch (SQLException se) {

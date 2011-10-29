@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.*;
 /**
  * A Data Access Object to load Login IP address data.
  * @author Luke
- * @version 2.5
+ * @version 4.1
  * @since 1.0
  */
 
@@ -81,20 +81,17 @@ public class GetLoginData extends DAO {
 	 * Helper method to parse result sets.
 	 */
 	private Collection<LoginAddress> execute() throws SQLException {
-		
-		// Execute the query
 		Collection<LoginAddress> results = new ArrayList<LoginAddress>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			LoginAddress addr = new LoginAddress(rs.getInt(1));
-			addr.setRemoteAddr(rs.getString(2));
-			addr.setRemoteHost(rs.getString(3));
-			addr.setLoginCount(rs.getInt(4));
-			results.add(addr);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				LoginAddress addr = new LoginAddress(rs.getInt(1));
+				addr.setRemoteAddr(rs.getString(2));
+				addr.setRemoteHost(rs.getString(3));
+				addr.setLoginCount(rs.getInt(4));
+				results.add(addr);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

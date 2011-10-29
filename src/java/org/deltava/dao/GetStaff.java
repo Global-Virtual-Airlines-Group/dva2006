@@ -10,7 +10,7 @@ import org.deltava.beans.Staff;
 /**
  * A Data Access Object to return Staff Profiles.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -38,21 +38,20 @@ public class GetStaff extends DAO {
             
             // Execute the query and get the result; if none return null
             Staff s = null;
-            ResultSet rs = _ps.executeQuery();
-            if (rs.next()) {
-            	s = new Staff(rs.getString(1), rs.getString(2));
-            	s.setEmail(rs.getString(3));
-            	s.setEquipmentType(rs.getString(4));
-            	s.setRank(Rank.fromName(rs.getString(5)));
-            	s.setID(rs.getInt(6));
-            	s.setTitle(rs.getString(7));
-            	s.setSortOrder(rs.getInt(8));
-            	s.setBody(rs.getString(9));
-            	s.setArea(rs.getString(10));
+            try (ResultSet rs = _ps.executeQuery()) {
+            	if (rs.next()) {
+            		s = new Staff(rs.getString(1), rs.getString(2));
+            		s.setEmail(rs.getString(3));
+            		s.setEquipmentType(rs.getString(4));
+            		s.setRank(Rank.fromName(rs.getString(5)));
+            		s.setID(rs.getInt(6));
+            		s.setTitle(rs.getString(7));
+            		s.setSortOrder(rs.getInt(8));
+            		s.setBody(rs.getString(9));
+            		s.setArea(rs.getString(10));
+            	}
             }
             
-            // Clean up and return
-            rs.close();
             _ps.close();
             return s;
         } catch (SQLException se) {
@@ -72,22 +71,21 @@ public class GetStaff extends DAO {
             
             // Execute the query
             Collection<Staff> results = new ArrayList<Staff>();
-            ResultSet rs = _ps.executeQuery();
-            while (rs.next()) {
-                Staff s = new Staff(rs.getString(1), rs.getString(2));
-                s.setEmail(rs.getString(3));
-            	s.setEquipmentType(rs.getString(4));
-            	s.setRank(Rank.fromName(rs.getString(5)));
-            	s.setID(rs.getInt(6));
-            	s.setTitle(rs.getString(7));
-            	s.setSortOrder(rs.getInt(8));
-            	s.setBody(rs.getString(9));
-            	s.setArea(rs.getString(10));
-                results.add(s);
+            try (ResultSet rs = _ps.executeQuery()) {
+            	while (rs.next()) {
+            		Staff s = new Staff(rs.getString(1), rs.getString(2));
+            		s.setEmail(rs.getString(3));
+            		s.setEquipmentType(rs.getString(4));
+            		s.setRank(Rank.fromName(rs.getString(5)));
+            		s.setID(rs.getInt(6));
+            		s.setTitle(rs.getString(7));
+            		s.setSortOrder(rs.getInt(8));
+            		s.setBody(rs.getString(9));
+            		s.setArea(rs.getString(10));
+            		results.add(s);
+            	}
             }
             
-            // Clean up and return
-            rs.close();
             _ps.close();
             return results;
         } catch (SQLException se) {

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 2.0
  */
 
@@ -61,15 +61,12 @@ public class GetACARSRoute extends DAO {
 	public Collection<Integer> getAuthorIDs() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT AUTHOR FROM acars.ROUTES");
-			
-			// Execute the query
 			Collection<Integer> results = new HashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -116,17 +113,14 @@ public class GetACARSRoute extends DAO {
 	public Collection<Airport> getAirports() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM acars.ROUTES");
-			
-			// Execute the query
 			Collection<Airport> results = new HashSet<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				results.add(SystemData.getAirport(rs.getString(1)));
-				results.add(SystemData.getAirport(rs.getString(2)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					results.add(SystemData.getAirport(rs.getString(1)));
+					results.add(SystemData.getAirport(rs.getString(2)));
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -219,11 +213,11 @@ public class GetACARSRoute extends DAO {
 			_ps.setString(5, route);
 			
 			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			int id = rs.next() ? rs.getInt(1) : 0;
+			int id = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) id = rs.getInt(1);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return id;
 		} catch (SQLException se) {
@@ -236,30 +230,29 @@ public class GetACARSRoute extends DAO {
 	 */
 	private List<DispatchRoute> execute() throws SQLException {
 		List<DispatchRoute> results = new ArrayList<DispatchRoute>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			DispatchRoute rp = new DispatchRoute();
-			rp.setID(rs.getInt(1));
-			rp.setAuthorID(rs.getInt(2));
-			rp.setAirline(SystemData.getAirline(rs.getString(3)));
-			rp.setAirportD(SystemData.getAirport(rs.getString(4)));
-			rp.setAirportA(SystemData.getAirport(rs.getString(5)));
-			rp.setAirportL(SystemData.getAirport(rs.getString(6)));
-			rp.setCreatedOn(rs.getTimestamp(7));
-			rp.setLastUsed(rs.getTimestamp(8));
-			rp.setUseCount(rs.getInt(9));
-			rp.setActive(rs.getBoolean(10));
-			rp.setSID(rs.getString(11));
-			rp.setSTAR(rs.getString(12));
-			rp.setCruiseAltitude(rs.getString(13));
-			rp.setDispatchBuild(rs.getInt(14));
-			rp.setComments(rs.getString(15));
-			rp.setRoute(rs.getString(16));
-			results.add(rp);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				DispatchRoute rp = new DispatchRoute();
+				rp.setID(rs.getInt(1));
+				rp.setAuthorID(rs.getInt(2));
+				rp.setAirline(SystemData.getAirline(rs.getString(3)));
+				rp.setAirportD(SystemData.getAirport(rs.getString(4)));
+				rp.setAirportA(SystemData.getAirport(rs.getString(5)));
+				rp.setAirportL(SystemData.getAirport(rs.getString(6)));
+				rp.setCreatedOn(rs.getTimestamp(7));
+				rp.setLastUsed(rs.getTimestamp(8));
+				rp.setUseCount(rs.getInt(9));
+				rp.setActive(rs.getBoolean(10));
+				rp.setSID(rs.getString(11));
+				rp.setSTAR(rs.getString(12));
+				rp.setCruiseAltitude(rs.getString(13));
+				rp.setDispatchBuild(rs.getInt(14));
+				rp.setComments(rs.getString(15));
+				rp.setRoute(rs.getString(16));
+				results.add(rp);
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -284,22 +277,21 @@ public class GetACARSRoute extends DAO {
 		
 		// Execute the query
 		Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, "ID");
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			DispatchRoute rp = data.get(new Integer(rs.getInt(1)));
-			if (rp != null) {
-				double lat = rs.getDouble(5);
-				double lng = rs.getDouble(6);
-				String type = NavigationDataBean.NAVTYPE_NAMES[rs.getInt(4)];
-				NavigationDataBean nd = NavigationDataBean.create(type, lat, lng);
-				nd.setCode(rs.getString(3));
-				nd.setRegion(rs.getString(8));
-				rp.addWaypoint(nd, rs.getString(7));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				DispatchRoute rp = data.get(new Integer(rs.getInt(1)));
+				if (rp != null) {
+					double lat = rs.getDouble(5);
+					double lng = rs.getDouble(6);
+					String type = NavigationDataBean.NAVTYPE_NAMES[rs.getInt(4)];
+					NavigationDataBean nd = NavigationDataBean.create(type, lat, lng);
+					nd.setCode(rs.getString(3));
+					nd.setRegion(rs.getString(8));
+					rp.addWaypoint(nd, rs.getString(7));
+				}	
 			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

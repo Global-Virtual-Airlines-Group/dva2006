@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -59,42 +59,40 @@ public class GetExam extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				boolean isMC = (rs.getInt(7) > 0);
-				boolean isRP = (rs.getString(13) != null);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					boolean isMC = (rs.getInt(7) > 0);
+					boolean isRP = (rs.getString(13) != null);
 
-				// Create the question
-				Question q = null;
-				if (isRP) {
-					RoutePlotQuestion rpq = new RoutePlotQuestion(rs.getString(3));
-					rpq.setAirportD(SystemData.getAirport(rs.getString(12)));
-					rpq.setAirportA(SystemData.getAirport(rs.getString(13)));
-					q = rpq;
-				} else if (isMC)
-					q = new MultiChoiceQuestion(rs.getString(3));
-				else
-					q = new Question(rs.getString(3));
+					// Create the question
+					Question q = null;
+					if (isRP) {
+						RoutePlotQuestion rpq = new RoutePlotQuestion(rs.getString(3));
+						rpq.setAirportD(SystemData.getAirport(rs.getString(12)));
+						rpq.setAirportA(SystemData.getAirport(rs.getString(13)));
+						q = rpq;
+					} else if (isMC)
+						q = new MultiChoiceQuestion(rs.getString(3));
+					else
+						q = new Question(rs.getString(3));
 				
-				// Populate the fields
-				q.setID(rs.getInt(1));
-				q.setNumber(rs.getInt(2));
-				q.setCorrectAnswer(rs.getString(4));
-				q.setAnswer(rs.getString(5));
-				q.setCorrect(rs.getBoolean(6));
-				if (rs.getInt(9) > 0) {
-					q.setType(rs.getInt(8));
-					q.setSize(rs.getInt(9));
-					q.setWidth(rs.getInt(10));
-					q.setHeight(rs.getInt(11));
-				}
+					// Populate the fields
+					q.setID(rs.getInt(1));
+					q.setNumber(rs.getInt(2));
+					q.setCorrectAnswer(rs.getString(4));
+					q.setAnswer(rs.getString(5));
+					q.setCorrect(rs.getBoolean(6));
+					if (rs.getInt(9) > 0) {
+						q.setType(rs.getInt(8));
+						q.setSize(rs.getInt(9));
+						q.setWidth(rs.getInt(10));
+						q.setHeight(rs.getInt(11));
+					}
 
-				// Add question to the examination
-				e.addQuestion(q);
+					e.addQuestion(q);
+				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 
 			// Load multiple choice questions
@@ -105,17 +103,16 @@ public class GetExam extends DAO {
 				_ps.setInt(1, e.getID());
 
 				// Execute the query
-				rs = _ps.executeQuery();
-				while (rs.next()) {
-					Question q = qMap.get(Integer.valueOf(rs.getInt(1)));
-					if (q != null) {
-						MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
-						mq.addChoice(rs.getString(3));
+				try (ResultSet rs = _ps.executeQuery()) {
+					while (rs.next()) {
+						Question q = qMap.get(Integer.valueOf(rs.getInt(1)));
+						if (q != null) {
+							MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+							mq.addChoice(rs.getString(3));
+						}
 					}
 				}
 
-				// Clean up
-				rs.close();
 				_ps.close();
 			}
 
@@ -340,12 +337,11 @@ public class GetExam extends DAO {
 			
 			// Do the query
 			Collection<String> results = new TreeSet<String>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -421,11 +417,12 @@ public class GetExam extends DAO {
 			_ps.setInt(3, Test.SUBMITTED);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int testID = rs.next() ? rs.getInt(1) : 0;
+			int testID = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					testID = rs.getInt(1);
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return testID;
 		} catch (SQLException se) {
@@ -437,45 +434,41 @@ public class GetExam extends DAO {
 	 * Helper method to parse the examination result set.
 	 */
 	private List<Examination> execute() throws SQLException {
+		List<Examination> results = new ArrayList<Examination>();
 
 		// Execute the Query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasName = (rs.getMetaData().getColumnCount() > 19);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasName = (rs.getMetaData().getColumnCount() > 19);
+			while (rs.next()) {
+				Examination e = new Examination(rs.getString(2));
+				e.setID(rs.getInt(1));
+				e.setPilotID(rs.getInt(3));
+				e.setStatus(rs.getInt(4));
+				e.setDate(rs.getTimestamp(5));
+				e.setExpiryDate(rs.getTimestamp(6));
+				e.setSubmittedOn(rs.getTimestamp(7));
+				e.setScoredOn(rs.getTimestamp(8));
+				e.setScorerID(rs.getInt(9));
+				e.setPassFail(rs.getBoolean(10));
+				e.setEmpty(rs.getBoolean(11));
+				e.setAutoScored(rs.getBoolean(12));
+				e.setComments(rs.getString(13));
+				e.setSize(rs.getInt(14));
+				e.setScore(rs.getInt(15));
+				e.setStage(rs.getInt(16));
+				e.setAcademy(rs.getBoolean(17));
+				e.setOwner(SystemData.getApp(rs.getString(18)));
 
-		// Iterate through the results
-		List<Examination> results = new ArrayList<Examination>();
-		while (rs.next()) {
-			Examination e = new Examination(rs.getString(2));
-			e.setID(rs.getInt(1));
-			e.setPilotID(rs.getInt(3));
-			e.setStatus(rs.getInt(4));
-			e.setDate(rs.getTimestamp(5));
-			e.setExpiryDate(rs.getTimestamp(6));
-			e.setSubmittedOn(rs.getTimestamp(7));
-			e.setScoredOn(rs.getTimestamp(8));
-			e.setScorerID(rs.getInt(9));
-			e.setPassFail(rs.getBoolean(10));
-			e.setEmpty(rs.getBoolean(11));
-			e.setAutoScored(rs.getBoolean(12));
-			e.setComments(rs.getString(13));
-			e.setSize(rs.getInt(14));
-			e.setScore(rs.getInt(15));
-			e.setStage(rs.getInt(16));
-			e.setAcademy(rs.getBoolean(17));
-			e.setOwner(SystemData.getApp(rs.getString(18)));
+				// If we're joining with pilots, get the pilot name
+				if (hasName) {
+					e.setFirstName(rs.getString(19));
+					e.setLastName(rs.getString(20));
+				}
 
-			// If we're joining with pilots, get the pilot name
-			if (hasName) {
-				e.setFirstName(rs.getString(19));
-				e.setLastName(rs.getString(20));
+				results.add(e);
 			}
-
-			// Add to results
-			results.add(e);
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -484,39 +477,34 @@ public class GetExam extends DAO {
 	 * Helper method to parse the check ride result set.
 	 */
 	private List<CheckRide> executeCheckride() throws SQLException {
-
-		// Execute the Query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasAcademy = (rs.getMetaData().getColumnCount() > 16);
-
-		// Iterate through the results
 		List<CheckRide> results = new ArrayList<CheckRide>();
-		while (rs.next()) {
-			CheckRide cr = new CheckRide(rs.getString(2));
-			cr.setID(rs.getInt(1));
-			cr.setPilotID(rs.getInt(3));
-			cr.setStatus(rs.getInt(4));
-			cr.setDate(rs.getTimestamp(5));
-			cr.setSubmittedOn(rs.getTimestamp(6));
-			cr.setScoredOn(rs.getTimestamp(7));
-			cr.setScorerID(rs.getInt(8));
-			cr.setPassFail(rs.getBoolean(9));
-			cr.setComments(rs.getString(10));
-			cr.setAircraftType(rs.getString(11));
-			cr.setEquipmentType(rs.getString(12));
-			cr.setAcademy(rs.getBoolean(13));
-			cr.setFlightID(rs.getInt(14));
-			cr.setStage(rs.getInt(15));
-			cr.setOwner(SystemData.getApp(rs.getString(16)));
-			if (hasAcademy)
-				cr.setCourseID(rs.getInt(17));
 
-			// Add to results
-			results.add(cr);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasAcademy = (rs.getMetaData().getColumnCount() > 16);
+			while (rs.next()) {
+				CheckRide cr = new CheckRide(rs.getString(2));
+				cr.setID(rs.getInt(1));
+				cr.setPilotID(rs.getInt(3));
+				cr.setStatus(rs.getInt(4));
+				cr.setDate(rs.getTimestamp(5));
+				cr.setSubmittedOn(rs.getTimestamp(6));
+				cr.setScoredOn(rs.getTimestamp(7));
+				cr.setScorerID(rs.getInt(8));
+				cr.setPassFail(rs.getBoolean(9));
+				cr.setComments(rs.getString(10));
+				cr.setAircraftType(rs.getString(11));
+				cr.setEquipmentType(rs.getString(12));
+				cr.setAcademy(rs.getBoolean(13));
+				cr.setFlightID(rs.getInt(14));
+				cr.setStage(rs.getInt(15));
+				cr.setOwner(SystemData.getApp(rs.getString(16)));
+				if (hasAcademy)
+					cr.setCourseID(rs.getInt(17));
+
+				results.add(cr);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

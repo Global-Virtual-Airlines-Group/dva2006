@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read ACARS multi-player livery profiles.
  * @author Luke
- * @version 2.2
+ * @version 4.1
  * @since 2.2
  */
 
@@ -43,15 +43,14 @@ public class GetACARSLivery extends DAO {
 			
 			// Execute the query
 			Livery l = null;
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				l = new Livery(a, code);
-				l.setDescription(rs.getString(1));
-				l.setDefault(rs.getBoolean(2));
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					l = new Livery(a, code);
+					l.setDescription(rs.getString(1));
+					l.setDefault(rs.getBoolean(2));
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return l;
 		} catch (SQLException se) {
@@ -80,16 +79,15 @@ public class GetACARSLivery extends DAO {
 			
 			// Execute the query
 			Collection<Livery> results = new ArrayList<Livery>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Livery l = new Livery(SystemData.getAirline(rs.getString(1)), rs.getString(2));
-				l.setDescription(rs.getString(3));
-				l.setDefault(rs.getBoolean(4));
-				results.add(l);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Livery l = new Livery(SystemData.getAirline(rs.getString(1)), rs.getString(2));
+					l.setDescription(rs.getString(3));
+					l.setDefault(rs.getBoolean(4));
+					results.add(l);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

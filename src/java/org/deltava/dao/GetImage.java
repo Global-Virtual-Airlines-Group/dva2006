@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.CacheableLong;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -36,23 +36,22 @@ public class GetImage extends PilotSignatureDAO {
             _ps.setInt(1, id);
 
             // Execute the query, if not found return null
-            ResultSet rs = _ps.executeQuery();
-            if (!rs.next())
-                return null;
+            byte[] imgBuffer = null;
+            try (ResultSet rs = _ps.executeQuery()) {
+            	if (!rs.next()) {
+            		_ps.close();
+            		return null;
+            	}
             
-            // Get the image data
-            ResultSetMetaData md = rs.getMetaData();
-            byte[] imgBuffer = rs.getBytes(1);
-            if (md.getColumnCount() > 1) {
-            	Timestamp lastMod = rs.getTimestamp(2);
-            	_sigCache.add(new CacheableLong(Integer.valueOf(id), lastMod.getTime()));
+            	// Get the image data
+            	imgBuffer = rs.getBytes(1);
+            	if (rs.getMetaData().getColumnCount() > 1) {
+            		Timestamp lastMod = rs.getTimestamp(2);
+            		_sigCache.add(new CacheableLong(Integer.valueOf(id), lastMod.getTime()));
+            	}
             }
-
-            // Close the result set
-            rs.close();
-            _ps.close();
             
-            // Return the image data
+            _ps.close();
             return imgBuffer;
         } catch (SQLException se) {
             throw new DAOException(se);
@@ -92,9 +91,12 @@ public class GetImage extends PilotSignatureDAO {
     	try {
     		prepareStatement(sqlBuf.toString());
     		_ps.setInt(1, id);
-    		ResultSet rs = _ps.executeQuery();
-    		java.util.Date dt = rs.next() ? rs.getTimestamp(1) : null;
-    		rs.close();
+    		java.util.Date dt = null;
+    		try (ResultSet rs = _ps.executeQuery()) {
+    			if (rs.next())
+    				dt = rs.getTimestamp(1);
+    		}
+    		
     		_ps.close();
     		
     		// Update the cache and return
@@ -163,11 +165,12 @@ public class GetImage extends PilotSignatureDAO {
     		_ps.setInt(1, id);
     		
     		// Execute the query
-    		ResultSet rs = _ps.executeQuery();
-    		boolean isOK = rs.next() ? rs.getBoolean(1) : false;
+    		boolean isOK = false;
+    		try (ResultSet rs = _ps.executeQuery()) {
+    			if (rs.next())
+    				isOK = rs.getBoolean(1);
+    		}
     		
-    		// Clean up and return
-    		rs.close();
     		_ps.close();
     		return isOK;
     	} catch (SQLException se) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -95,22 +95,17 @@ public class GetPilotEMail extends DAO {
     * Helper method to load EMail information.
     */
    private List<IMAPConfiguration> execute() throws SQLException {
-      
-      // Execute the Query
       Map<String, IMAPConfiguration> results = new HashMap<String, IMAPConfiguration>();
-      ResultSet rs = _ps.executeQuery();
-      while (rs.next()) {
-         IMAPConfiguration result = new IMAPConfiguration(rs.getInt(1), rs.getString(2));
-         result.setMailDirectory(rs.getString(3));
-         result.setQuota(rs.getInt(4));
-         result.setActive(rs.getBoolean(5));
-
-         // Add to result map
-         results.put(result.getAddress(), result);
+      try (ResultSet rs = _ps.executeQuery()) {
+    	  while (rs.next()) {
+    		  IMAPConfiguration result = new IMAPConfiguration(rs.getInt(1), rs.getString(2));
+    		  result.setMailDirectory(rs.getString(3));
+    		  result.setQuota(rs.getInt(4));
+    		  result.setActive(rs.getBoolean(5));
+    		  results.put(result.getAddress(), result);
+    	  }
       }
       
-      // Clean up result set
-      rs.close();
       _ps.close();
 
       // If we've retrieved nothing, exit
@@ -128,15 +123,15 @@ public class GetPilotEMail extends DAO {
       
       // Fetch aliases
       prepareStatementWithoutLimits(sqlBuf.toString());
-      rs = _ps.executeQuery();
-      while (rs.next()) {
-         IMAPConfiguration cfg = results.get(rs.getString(1));
-         if (cfg != null)
-            cfg.addAlias(rs.getString(2));
+      try (ResultSet rs = _ps.executeQuery()) {
+    	  while (rs.next()) {
+    		  IMAPConfiguration cfg = results.get(rs.getString(1));
+    		  if (cfg != null)
+    			  cfg.addAlias(rs.getString(2));
+    	  }
       }
       
       // Clean up and return
-      rs.close();
       _ps.close();
       return new ArrayList<IMAPConfiguration>(results.values());
    }

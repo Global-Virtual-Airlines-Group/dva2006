@@ -9,7 +9,7 @@ import org.deltava.beans.StatusUpdate;
 /**
  * A Data Access Object to read Status Update log entries.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -61,11 +61,12 @@ public class GetStatusUpdate extends DAO {
 			_ps.setInt(2, StatusUpdate.SR_CAPTAIN);
 			
 			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			boolean isSC = rs.next() ? (rs.getInt(1) > 0) : false;
+			boolean isSC = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					isSC = (rs.getInt(1) > 0);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return isSC;
 		} catch (SQLException se) {
@@ -115,17 +116,16 @@ public class GetStatusUpdate extends DAO {
 	 */
 	private List<StatusUpdate> execute() throws SQLException {
 		List<StatusUpdate> results = new ArrayList<StatusUpdate>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));
-			upd.setCreatedOn(rs.getTimestamp(2));
-			upd.setAuthorID(rs.getInt(3));
-			upd.setDescription(rs.getString(5));
-			results.add(upd);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));
+				upd.setCreatedOn(rs.getTimestamp(2));
+				upd.setAuthorID(rs.getInt(3));
+				upd.setDescription(rs.getString(5));
+				results.add(upd);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

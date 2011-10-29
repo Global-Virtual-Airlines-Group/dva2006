@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object for Oceanic Routes.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -65,21 +65,17 @@ public class GetOceanicRoute extends GetNavAirway {
      * Helper method to load Oceanic Route data.
      */
     private List<OceanicNOTAM> execute() throws SQLException {
-        // Execute the query
-        ResultSet rs = _ps.executeQuery();
-        List<OceanicNOTAM> results = new ArrayList<OceanicNOTAM>();
-        
-        // Iterate through the results
-        while (rs.next()) {
-        	OceanicTrackInfo.Type rType = OceanicTrackInfo.Type.values()[rs.getInt(1)];
-            OceanicNOTAM or = new OceanicNOTAM(rType, expandDate(rs.getDate(2)));
-            or.setSource(rs.getString(3));
-            or.setRoute(rs.getString(4));
-            results.add(or);
-        }
-        
-        // Clean up and return
-        rs.close();
+    	List<OceanicNOTAM> results = new ArrayList<OceanicNOTAM>();
+        try (ResultSet rs = _ps.executeQuery()) {
+        	while (rs.next()) {
+        		OceanicTrackInfo.Type rType = OceanicTrackInfo.Type.values()[rs.getInt(1)];
+        		OceanicNOTAM or = new OceanicNOTAM(rType, expandDate(rs.getDate(2)));
+        		or.setSource(rs.getString(3));
+        		or.setRoute(rs.getString(4));
+        		results.add(or);
+        	}
+        }	
+        	
         _ps.close();
         return results;
     }
@@ -98,12 +94,11 @@ public class GetOceanicRoute extends GetNavAirway {
     		
     		// Execute the query
     		Collection<java.util.Date> results = new LinkedHashSet<java.util.Date>();
-    		ResultSet rs = _ps.executeQuery();
-    		while (rs.next())
-    			results.add(rs.getDate(1));
+    		try (ResultSet rs = _ps.executeQuery()) {
+    			while (rs.next())
+    				results.add(rs.getDate(1));
+    		}
     		
-    		// Clean up and return
-    		rs.close();
     		_ps.close();
     		return results;
     	} catch (SQLException se) {
@@ -139,47 +134,46 @@ public class GetOceanicRoute extends GetNavAirway {
     		OceanicTrack wp = null;
     		DailyOceanicTracks results = new DailyOceanicTracks(routeType, dt);
     		Map<String, NavigationDataBean> wps = new HashMap<String, NavigationDataBean>();
-    		ResultSet rs = _ps.executeQuery();
-    		while (rs.next()) {
-    			String newTrack = rs.getString(3);
-    			if ((wp == null) || (!newTrack.equals(wp.getTrack()))) {
-    				wp = new OceanicTrack(routeType, newTrack);
-    				wp.setDate(rs.getTimestamp(2));
-    				results.addTrack(wp);
-    			}
+    		try (ResultSet rs = _ps.executeQuery()) {
+    			while (rs.next()) {
+    				String newTrack = rs.getString(3);
+    				if ((wp == null) || (!newTrack.equals(wp.getTrack()))) {
+    					wp = new OceanicTrack(routeType, newTrack);
+    					wp.setDate(rs.getTimestamp(2));
+    					results.addTrack(wp);
+    				}
     			
-    			// Get the waypoint
-    			String code = rs.getString(5);
-    			NavigationDataBean nd = wps.get(code);
-    			if (nd != null) {
-    				StringBuilder buf = new StringBuilder(nd.getAirway());
-    				buf.append(", ");
-    				buf.append(wp.getCode());
-    				nd.setAirway(buf.toString());
-    			} else {
-    				NavigationDataMap ndmap = get(code);
-    				nd = ndmap.get(code, new GeoPosition(rs.getDouble(6), rs.getDouble(7)));
+    				// Get the waypoint
+    				String code = rs.getString(5);
+    				NavigationDataBean nd = wps.get(code);
     				if (nd != null) {
-    					try {
-    						NavigationDataBean nd2 = (NavigationDataBean) nd.clone();
-    						if (StringUtils.isEmpty(nd2.getAirway()))
-    							nd2.setAirway(wp.getCode());
-    					
-    						wps.put(code, nd2);
-    						nd = nd2;
-    					} catch (CloneNotSupportedException cnse) {
-    						// empty
+    					StringBuilder buf = new StringBuilder(nd.getAirway());
+    					buf.append(", ");
+    					buf.append(wp.getCode());
+    					nd.setAirway(buf.toString());
+    				} else {
+    					NavigationDataMap ndmap = get(code);
+    					nd = ndmap.get(code, new GeoPosition(rs.getDouble(6), rs.getDouble(7)));
+    					if (nd != null) {
+    						try {
+    							NavigationDataBean nd2 = (NavigationDataBean) nd.clone();
+    							if (StringUtils.isEmpty(nd2.getAirway()))
+    								nd2.setAirway(wp.getCode());
+    							
+    							wps.put(code, nd2);
+    							nd = nd2;
+    						} catch (CloneNotSupportedException cnse) {
+    							// 	empty
+    						}
     					}
     				}
-    			}
     			
-    			// Add the waypoint
-   				if (nd != null)
-   					wp.addWaypoint(nd);
+    				// Add the waypoint
+    				if (nd != null)
+    					wp.addWaypoint(nd);
+    			}
     		}
     		
-    		// Clean up and return
-    		rs.close();
     		_ps.close();
     		return results;
     	} catch (SQLException se) {

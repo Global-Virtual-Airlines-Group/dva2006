@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
  * A Data Access Object to load Pilot IDs for Pilots who meet the entrance
  * qualifications for an Equipment Type program.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 2.3
  */
 
@@ -44,12 +44,11 @@ public class GetExamQualifications extends DAO {
 			
 			// Load checkrides
 			Collection<Integer> crIDs = new HashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				crIDs.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					crIDs.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Build the SQL statement
@@ -70,18 +69,17 @@ public class GetExamQualifications extends DAO {
 			prepareStatementWithoutLimits(buf.toString());
 			_ps.setInt(++pos, Test.SCORED);
 			_ps.setBoolean(++pos, true);
-			for (Iterator<String> i = examNames.iterator(); i.hasNext(); )
-				_ps.setString(++pos, i.next());
+			for (String eName : examNames)
+				_ps.setString(++pos, eName);
 			_ps.setInt(++pos, examNames.size());
 			
 			// Load exams
 			Collection<Integer> examIDs = new HashSet<Integer>();
-			rs = _ps.executeQuery();
-			while (rs.next())
-				examIDs.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					examIDs.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Return the union of the two

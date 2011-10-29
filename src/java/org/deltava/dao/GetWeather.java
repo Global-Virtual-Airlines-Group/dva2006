@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.wx.*;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 2.7
  */
 
@@ -61,20 +61,19 @@ public class GetWeather extends WeatherDAO {
 			_ps.setString(2, code);
 			
 			// Load the METAR
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				String data = rs.getString(2);
-				m = MetarParser.parse(data);
-				m.setDate(rs.getTimestamp(1));
-				m.setData(data);
-				AirportLocation loc = new AirportLocation(rs.getDouble(3), rs.getDouble(4));
-				loc.setCode(code);
-				m.setAirport(loc);
-				_wxCache.add(m);
-			}
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					String data = rs.getString(2);
+					m = MetarParser.parse(data);
+					m.setDate(rs.getTimestamp(1));
+					m.setData(data);
+					AirportLocation loc = new AirportLocation(rs.getDouble(3), rs.getDouble(4));
+					loc.setCode(code);
+					m.setAirport(loc);
+					_wxCache.add(m);
+				}
+			}				
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return m;
 		} catch (SQLException se) {
@@ -102,20 +101,19 @@ public class GetWeather extends WeatherDAO {
 			_ps.setString(2, code);
 
 			// Load the TAF
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				t = new TAF();
-				t.setDate(rs.getTimestamp(1));
-				t.setAmended(rs.getBoolean(2));
-				t.setData(rs.getString(3));
-				AirportLocation loc = new AirportLocation(rs.getDouble(4), rs.getDouble(5));
-				loc.setCode(code);
-				t.setAirport(loc);
-				_tafCache.add(t);
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					t = new TAF();
+					t.setDate(rs.getTimestamp(1));
+					t.setAmended(rs.getBoolean(2));
+					t.setData(rs.getString(3));
+					AirportLocation loc = new AirportLocation(rs.getDouble(4), rs.getDouble(5));
+					loc.setCode(code);
+					t.setAirport(loc);
+					_tafCache.add(t);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return t;
 		} catch (SQLException se) {

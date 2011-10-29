@@ -567,9 +567,9 @@ public class GetFlightReports extends DAO {
 		List<FlightReport> results = new ArrayList<FlightReport>();
 		while (rs.next()) {
 			int status = rs.getInt(4);
-			int FSVersion = rs.getInt(12);
+			int attr = rs.getInt(13);
 			boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
-			boolean isXACARS = isACARS && (FSVersion == 100);
+			boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
 			boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
 			// Build the PIREP as a standard one, or an ACARS pirep
@@ -594,8 +594,8 @@ public class GetFlightReports extends DAO {
 			p.setAirportD(SystemData.getAirport(rs.getString(9)));
 			p.setAirportA(SystemData.getAirport(rs.getString(10)));
 			p.setEquipmentType(rs.getString(11));
-			p.setFSVersion(FSVersion);
-			p.setAttributes(rs.getInt(13));
+			p.setFSVersion(rs.getInt(12));
+			p.setAttributes(attr);
 			// Skip column #14 - we calculate this in the flight report
 			p.setLength(Math.round(rs.getFloat(15) * 10));
 			p.setDatabaseID(DatabaseID.DISPOSAL, rs.getInt(16));

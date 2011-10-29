@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object used to get information for purging the ACARS data tables. 
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 3.2
  */
 
@@ -79,12 +79,11 @@ public class GetACARSPurge extends GetACARSData {
 			
 			// Execute the query
 			Collection<Integer> results = new TreeSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

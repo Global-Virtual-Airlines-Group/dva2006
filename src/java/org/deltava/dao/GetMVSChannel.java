@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load permanent voice channel data.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 4.0
  */
 
@@ -95,18 +95,18 @@ public class GetMVSChannel extends DAO {
 	 * Helper method to parse Channel result sets.
 	 */
 	private List<Channel> execute() throws SQLException {
-		ResultSet rs = _ps.executeQuery();
 		List<Channel> results = new ArrayList<Channel>();
-		while (rs.next()) {
-			Channel c = new Channel(rs.getString(2));
-			c.setID(rs.getInt(1));
-			c.setDescription(rs.getString(3));
-			c.setSampleRate(SampleRate.getRate(rs.getInt(4)));
-			c.setRange(rs.getInt(5));
-			results.add(c);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Channel c = new Channel(rs.getString(2));
+				c.setID(rs.getInt(1));
+				c.setDescription(rs.getString(3));
+				c.setSampleRate(SampleRate.getRate(rs.getInt(4)));
+				c.setRange(rs.getInt(5));
+				results.add(c);
+			}
 		}
 
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -117,11 +117,11 @@ public class GetMVSChannel extends DAO {
 	private void loadAirlines(Channel c) throws SQLException {
 		prepareStatementWithoutLimits("SELECT CODE FROM acars.CHANNEL_AIRLINES WHERE (ID=?)");
 		_ps.setInt(1, c.getID());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			c.addAirline(SystemData.getApp(rs.getString(1)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				c.addAirline(SystemData.getApp(rs.getString(1)));
+		}
 		
-		rs.close();
 		_ps.close();
 	}
 	
@@ -131,13 +131,13 @@ public class GetMVSChannel extends DAO {
 	private void loadRoles(Channel c) throws SQLException {
 		prepareStatementWithoutLimits("SELECT TYPE, ROLE FROM acars.CHANNEL_ROLES WHERE (ID=?)");
 		_ps.setInt(1, c.getID());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Channel.Access a = Channel.Access.values()[rs.getInt(1)];
-			c.addRole(a, rs.getString(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Channel.Access a = Channel.Access.values()[rs.getInt(1)];
+				c.addRole(a, rs.getString(2));
+			}
 		}
 		
-		rs.close();
 		_ps.close();
 	}
 }

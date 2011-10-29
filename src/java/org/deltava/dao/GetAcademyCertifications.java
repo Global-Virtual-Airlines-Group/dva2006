@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Academy Certifications and Check Ride scripts. 
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -137,16 +137,17 @@ public class GetAcademyCertifications extends DAO {
 	 * Helper method to parse Check Ride script result sets.
 	 */
 	private List<AcademyRideScript> executeScript() throws SQLException {
-		ResultSet rs = _ps.executeQuery();
+		
 		List<AcademyRideScript> results = new ArrayList<AcademyRideScript>();
-		while (rs.next()) {
-			AcademyRideScript sc = new AcademyRideScript(rs.getString(1));
-			sc.setDescription(rs.getString(2));
-			results.add(sc);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				AcademyRideScript sc = new AcademyRideScript(rs.getString(1));
+				sc.setDescription(rs.getString(2));
+				results.add(sc);
+			}
 		}
 		
 		// Clean up
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -156,31 +157,27 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	private List<Certification> execute() throws SQLException {
 		
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 9);
-		
-		// Iterate through the results
 		List<Certification> results = new ArrayList<Certification>();
-		while (rs.next()) {
-			Certification cert = new Certification(rs.getString(1));
-			cert.setCode(rs.getString(2));
-			cert.setStage(rs.getInt(3));
-			cert.setReqs(rs.getInt(4));
-			cert.setActive(rs.getBoolean(5));
-			cert.setAutoEnroll(rs.getBoolean(6));
-			cert.setHasCheckRide(rs.getBoolean(7));
-			cert.setDescription(rs.getString(8));
-			if (cert.getReqs() == Certification.REQ_SPECIFIC)
-				cert.setReqCert(rs.getString(9));
-			if (hasReqCount)
-				cert.setReqCount(rs.getInt(10));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasReqCount = (rs.getMetaData().getColumnCount() > 9);
+			while (rs.next()) {
+				Certification cert = new Certification(rs.getString(1));
+				cert.setCode(rs.getString(2));
+				cert.setStage(rs.getInt(3));
+				cert.setReqs(rs.getInt(4));
+				cert.setActive(rs.getBoolean(5));
+				cert.setAutoEnroll(rs.getBoolean(6));
+				cert.setHasCheckRide(rs.getBoolean(7));
+				cert.setDescription(rs.getString(8));
+				if (cert.getReqs() == Certification.REQ_SPECIFIC)
+					cert.setReqCert(rs.getString(9));
+				if (hasReqCount)
+					cert.setReqCount(rs.getInt(10));
 			
-			results.add(cert);
+				results.add(cert);
+			}
 		}
-		
-		// Clean up and return
-		rs.close();
+			
 		_ps.close();
 		return results;
 	}
@@ -191,18 +188,15 @@ public class GetAcademyCertifications extends DAO {
 	private void loadRequirements(Certification cert) throws SQLException {
 		prepareStatementWithoutLimits("SELECT SEQ, EXAMNAME, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
 		_ps.setString(1, cert.getName());
-		
-		// Load the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			CertificationRequirement cr = new CertificationRequirement(rs.getInt(1));
-			cr.setExamName(rs.getString(2));
-			cr.setText(rs.getString(3));
-			cert.addRequirement(cr);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				CertificationRequirement cr = new CertificationRequirement(rs.getInt(1));
+				cr.setExamName(rs.getString(2));
+				cr.setText(rs.getString(3));
+				cert.addRequirement(cr);
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
@@ -212,14 +206,11 @@ public class GetAcademyCertifications extends DAO {
 	private void loadRoles(Certification cert) throws SQLException {
 		prepareStatementWithoutLimits("SELECT ROLE FROM exams.CERTROLES WHERE (CERTNAME=?)");
 		_ps.setString(1, cert.getName());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				cert.addRole(rs.getString(1));
+		}
 		
-		// Load the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			cert.addRole(rs.getString(1));
-		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 
@@ -229,14 +220,11 @@ public class GetAcademyCertifications extends DAO {
 	private void loadExams(Certification cert) throws SQLException {
 		prepareStatementWithoutLimits("SELECT EXAMNAME FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
 		_ps.setString(1, cert.getName());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				cert.addExamName(rs.getString(1));
+		}
 		
-		// Load the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			cert.addExamName(rs.getString(1));
-		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 
@@ -246,14 +234,11 @@ public class GetAcademyCertifications extends DAO {
 	private void loadAirlines(Certification cert) throws SQLException {
 		prepareStatementWithoutLimits("SELECT AIRLINE FROM exams.CERTAPPS WHERE (CERTNAME=?)");
 		_ps.setString(1, cert.getName());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				cert.addAirline(SystemData.getApp(rs.getString(1)));
+		}
 		
-		// Load the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			cert.addAirline(SystemData.getApp(rs.getString(1)));
-		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

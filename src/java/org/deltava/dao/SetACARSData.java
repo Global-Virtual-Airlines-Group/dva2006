@@ -61,11 +61,11 @@ public class SetACARSData extends DAO {
 			if (info.getID() == 0)
 				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, "
 					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, ROUTE, REMARKS, FSVERSION, OFFLINE, "
-					+ "PIREP, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CONV(?,10,16))");
+					+ "PIREP, XACARS, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CONV(?,10,16))");
 			else
 				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
 					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, CON_ID=CONV(?,10,16) WHERE (ID=?)");
+					+ "FSVERSION=?, OFFLINE=?, PIREP=?, XACARS=?, CON_ID=CONV(?,10,16) WHERE (ID=?)");
 			
 			// Write the flight info record
 			_ps.setString(1, info.getFlightCode());
@@ -80,9 +80,10 @@ public class SetACARSData extends DAO {
 			_ps.setInt(10, info.getFSVersion());
 			_ps.setBoolean(11, info.getOffline());
 			_ps.setBoolean(12, true);
-			_ps.setLong(13, info.getConnectionID());
+			_ps.setBoolean(13, info.isXACARS());
+			_ps.setLong(14, info.getConnectionID());
 			if (info.getID() != 0)
-				_ps.setInt(14, info.getID());
+				_ps.setInt(15, info.getID());
 			
 			executeUpdate(1);
 

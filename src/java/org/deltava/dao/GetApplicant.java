@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -215,8 +215,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
 		try {
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE "
-					+ "(UPPER(LEFT(LASTNAME, 1))=?) ORDER BY CREATED DESC");
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LEFT(LASTNAME, 1)=?) ORDER BY CREATED DESC");
 			_ps.setString(1, letter.substring(0, 1).toUpperCase());
 			return execute();
 		} catch (SQLException se) {
@@ -422,12 +421,11 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 		prepareStatementWithoutLimits("SELECT * FROM APPLICANT_STAGE_CHOICES WHERE (ID=?)");
 		_ps.setInt(1, a.getID());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				a.setTypeChoice(rs.getInt(2), rs.getString(3));
+		}
 		
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			a.setTypeChoice(rs.getInt(2), rs.getString(3));
-		
-		rs.close();
 		_ps.close();
 	}
 
@@ -436,47 +434,45 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	private List<Applicant> execute() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
 		List<Applicant> results = new ArrayList<Applicant>();
-		while (rs.next()) {
-			Applicant a = new Applicant(rs.getString(4), rs.getString(5));
-			a.setID(rs.getInt(1));
-			a.setStatus(rs.getInt(3));
-			a.setPilotID(rs.getInt(2)); // Status must be populated first
-			a.setEmail(rs.getString(6));
-			a.setLocation(rs.getString(7));
-			a.setIMHandle(IMAddress.AIM, rs.getString(8));
-			a.setIMHandle(IMAddress.MSN, rs.getString(9));
-			a.setNetworkID(OnlineNetwork.VATSIM, rs.getString(10));
-			a.setNetworkID(OnlineNetwork.IVAO, rs.getString(11));
-			a.setLegacyHours(rs.getDouble(12));
-			a.setLegacyURL(rs.getString(13));
-			a.setLegacyVerified(rs.getBoolean(14));
-			a.setHomeAirport(rs.getString(15));
-			a.setEquipmentType(rs.getString(16));
-			a.setRank(Rank.fromName(rs.getString(17)));
-			a.setNotificationCode(rs.getInt(18));
-			a.setEmailAccess(rs.getInt(19));
-			a.setCreatedOn(rs.getTimestamp(20));
-			// skip 21
-			a.setRegisterHostName(rs.getString(22));
-			a.setDateFormat(rs.getString(23));
-			a.setTimeFormat(rs.getString(24));
-			a.setNumberFormat(rs.getString(25));
-			a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
-			a.setDistanceType(rs.getInt(27));
-			a.setSimVersion(rs.getInt(28));
-			a.setTZ(TZInfo.get(rs.getString(29)));
-			a.setUIScheme(rs.getString(30));
-			a.setComments(rs.getString(31));
-			a.setHRComments(rs.getString(32));
-			a.setRegisterAddress(rs.getString(33));
-			results.add(a);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Applicant a = new Applicant(rs.getString(4), rs.getString(5));
+				a.setID(rs.getInt(1));
+				a.setStatus(rs.getInt(3));
+				a.setPilotID(rs.getInt(2)); // Status must be populated first
+				a.setEmail(rs.getString(6));
+				a.setLocation(rs.getString(7));
+				a.setIMHandle(IMAddress.AIM, rs.getString(8));
+				a.setIMHandle(IMAddress.MSN, rs.getString(9));
+				a.setNetworkID(OnlineNetwork.VATSIM, rs.getString(10));
+				a.setNetworkID(OnlineNetwork.IVAO, rs.getString(11));
+				a.setLegacyHours(rs.getDouble(12));
+				a.setLegacyURL(rs.getString(13));
+				a.setLegacyVerified(rs.getBoolean(14));
+				a.setHomeAirport(rs.getString(15));
+				a.setEquipmentType(rs.getString(16));
+				a.setRank(Rank.fromName(rs.getString(17)));
+				a.setNotificationCode(rs.getInt(18));
+				a.setEmailAccess(rs.getInt(19));
+				a.setCreatedOn(rs.getTimestamp(20));
+				// skip 21
+				a.setRegisterHostName(rs.getString(22));
+				a.setDateFormat(rs.getString(23));
+				a.setTimeFormat(rs.getString(24));
+				a.setNumberFormat(rs.getString(25));
+				a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
+				a.setDistanceType(rs.getInt(27));
+				a.setSimVersion(rs.getInt(28));
+				a.setTZ(TZInfo.get(rs.getString(29)));
+				a.setUIScheme(rs.getString(30));
+				a.setComments(rs.getString(31));
+				a.setHRComments(rs.getString(32));
+				a.setRegisterAddress(rs.getString(33));
+				results.add(a);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

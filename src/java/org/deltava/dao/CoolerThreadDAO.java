@@ -122,13 +122,11 @@ abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 	protected Collection<Integer> executeIDs() throws SQLException {
 		Collection<Integer> IDs = new LinkedHashSet<Integer>();
 		
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			IDs.add(new Integer(rs.getInt(1)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				IDs.add(Integer.valueOf(rs.getInt(1)));
+		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return IDs;
 	}
@@ -140,36 +138,35 @@ abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 		List<MessageThread> results = new ArrayList<MessageThread>();
 
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasImgCount = (rs.getMetaData().getColumnCount() > 17);
-		while (rs.next()) {
-			MessageThread t = new MessageThread(rs.getString(2));
-			t.setID(rs.getInt(1));
-			t.setChannel(rs.getString(3));
-			t.setImage(rs.getInt(hasImgCount ? 18 : 4));
-			t.setStickyUntil(rs.getTimestamp(5));
-			t.setHidden(rs.getBoolean(6));
-			t.setLocked(rs.getBoolean(7));
-			t.setStickyInChannelOnly(rs.getBoolean(8));
-			t.setViews(rs.getInt(9));
-			t.setPostCount(rs.getInt(10));
-			t.setAuthorID(rs.getInt(11));
-			t.setLastUpdatedOn(rs.getTimestamp(12));
-			t.setLastUpdateID(rs.getInt(13));
-			t.setReportCount(rs.getInt(15));
-			t.setPoll(rs.getInt(17) > 0);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasImgCount = (rs.getMetaData().getColumnCount() > 17);
+			while (rs.next()) {
+				MessageThread t = new MessageThread(rs.getString(2));
+				t.setID(rs.getInt(1));
+				t.setChannel(rs.getString(3));
+				t.setImage(rs.getInt(hasImgCount ? 18 : 4));
+				t.setStickyUntil(rs.getTimestamp(5));
+				t.setHidden(rs.getBoolean(6));
+				t.setLocked(rs.getBoolean(7));
+				t.setStickyInChannelOnly(rs.getBoolean(8));
+				t.setViews(rs.getInt(9));
+				t.setPostCount(rs.getInt(10));
+				t.setAuthorID(rs.getInt(11));
+				t.setLastUpdatedOn(rs.getTimestamp(12));
+				t.setLastUpdateID(rs.getInt(13));
+				t.setReportCount(rs.getInt(15));
+				t.setPoll(rs.getInt(17) > 0);
 
-			// Clean out sticky if less than SD column
-			if ((t.getStickyUntil() != null) && (t.getLastUpdatedOn().after(t.getStickyUntil())))
-				t.setStickyUntil(null);
+				// Clean out sticky if less than SD column
+				if ((t.getStickyUntil() != null) && (t.getLastUpdatedOn().after(t.getStickyUntil())))
+					t.setStickyUntil(null);
 
-			// Add to results
-			results.add(t);
-			_tCache.add(t);
+				results.add(t);
+				_tCache.add(t);
+			}
 		}
 
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

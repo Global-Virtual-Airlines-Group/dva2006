@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 		super(c);
 	}
 	
+	@Override
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_cache);
 	}
@@ -183,12 +184,11 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 
 			// Execute the query
 			Collection<String> results = new LinkedHashSet<String>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return new ArrayList<String>(results);
 		} catch (SQLException se) {
@@ -212,11 +212,12 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			_ps.setInt(3, FlightReport.OK);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int results = rs.next() ? rs.getInt(1) : 0;
+			int results = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					results = rs.getInt(1);
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -240,11 +241,12 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			_ps.setString(4, eqType);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int results = rs.next() ? rs.getInt(1) : 0;
-
-			// Clean up and return
-			rs.close();
+			int results = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					results = rs.getInt(1);
+			}
+			
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

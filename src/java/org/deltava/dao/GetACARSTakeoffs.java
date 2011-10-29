@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.TakeoffLanding;
 /**
  * A Data Access Objec to load ACARS Takeoff/Landing data. 
  * @author Luke
- * @version 2.8
+ * @version 4.1
  * @since 2.8
  */
 
@@ -34,15 +34,14 @@ public class GetACARSTakeoffs extends DAO {
 			
 			// Execute the query
 			Collection<TakeoffLanding> results = new ArrayList<TakeoffLanding>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				TakeoffLanding tl = new TakeoffLanding(rs.getInt(1), rs.getBoolean(2));
-				tl.setDate(rs.getTimestamp(3));
-				results.add(tl);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					TakeoffLanding tl = new TakeoffLanding(rs.getInt(1), rs.getBoolean(2));
+					tl.setDate(rs.getTimestamp(3));
+					results.add(tl);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

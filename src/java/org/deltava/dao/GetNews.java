@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to read System News entries.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -114,37 +114,28 @@ public class GetNews extends DAO {
 	 * Helper method to iterate through the result set.
 	 */
 	private List<? extends News> execute() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean isNOTAM = (rs.getMetaData().getColumnCount() > 7);
-
-		// Iterate through the results
 		List<News> results = new ArrayList<News>();
-		while (rs.next()) {
-			String authorName = rs.getString(1) + " " + rs.getString(2);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean isNOTAM = (rs.getMetaData().getColumnCount() > 7);
+			while (rs.next()) {
+				String authorName = rs.getString(1) + " " + rs.getString(2);
 
-			News n;
-			if (isNOTAM) {
-				Notice notam = new Notice(rs.getString(6), authorName, rs.getString(7));
-				notam.setActive(rs.getBoolean(8));
-				notam.setIsHTML(rs.getBoolean(9));
-				n = notam;
-			} else {
-				n = new News(rs.getString(6), authorName, rs.getString(7));
+				News n;
+				if (isNOTAM) {
+					Notice notam = new Notice(rs.getString(6), authorName, rs.getString(7));
+					notam.setActive(rs.getBoolean(8));
+					notam.setIsHTML(rs.getBoolean(9));
+					n = notam;
+				} else
+					n = new News(rs.getString(6), authorName, rs.getString(7));
+
+				n.setID(rs.getInt(3));
+				n.setAuthorID(rs.getInt(4));
+				n.setDate(expandDate(rs.getDate(5)));
+				results.add(n);
 			}
-
-			// Set common properties
-			n.setID(rs.getInt(3));
-			n.setAuthorID(rs.getInt(4));
-			n.setDate(expandDate(rs.getDate(5)));
-
-			// Add the object to the results
-			results.add(n);
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

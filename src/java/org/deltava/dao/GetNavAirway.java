@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class GetNavAirway extends GetNavData {
 	/**
 	 * Returns information about the caches.
 	 */
+	@Override
 	public CacheInfo getCacheInfo() {
 		CacheInfo info = new CacheInfo(_rCache);
 		info.add(_aCache);
@@ -48,6 +49,7 @@ public class GetNavAirway extends GetNavData {
 	/**
 	 * Clears the caches.
 	 */
+	@Override
 	public void clear() {
 		_rCache.clear();
 		_aCache.clear();
@@ -247,9 +249,12 @@ public class GetNavAirway extends GetNavData {
 			}
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			String code = rs.next() ? rs.getString(1) : null;
-			rs.close();
+			String code = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					code = rs.getString(1);
+			}
+			
 			_ps.close();
 			
 			// Fetch the route itself
@@ -282,15 +287,14 @@ public class GetNavAirway extends GetNavData {
 			
 			// Execute the query
 			results = new CacheableSet<String>(code);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				String rwy = rs.getString(1);
-				if (!"ALL".equals(rwy))
-					results.add(rwy);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					String rwy = rs.getString(1);
+					if (!"ALL".equals(rwy))
+						results.add(rwy);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			_rwCache.add(results);
 			return results;
@@ -360,25 +364,24 @@ public class GetNavAirway extends GetNavData {
 
 			// Execute the query
 			Airway a = null; int lastID = -1;
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				int id = rs.getInt(1);
-				if (id != lastID) {
-					lastID = id;
-					a = new Airway(name, id);
-					a.setHighLevel(rs.getBoolean(7));
-					a.setLowLevel(rs.getBoolean(8));
-					results.add(a);
-				}
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					if (id != lastID) {
+						lastID = id;
+						a = new Airway(name, id);
+						a.setHighLevel(rs.getBoolean(7));
+						a.setLowLevel(rs.getBoolean(8));
+						results.add(a);
+					}
 				
-				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
-				nd.setCode(rs.getString(2));
-				nd.setRegion(rs.getString(6));
-				a.addWaypoint(nd);
+					NavigationDataBean nd = NavigationDataBean.create(rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
+					nd.setCode(rs.getString(2));
+					nd.setRegion(rs.getString(6));
+					a.addWaypoint(nd);
+				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -401,27 +404,26 @@ public class GetNavAirway extends GetNavData {
 			
 			// Execute the query
 			Airway a = null; int lastID = -1; String lastCode = "";
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				int id = rs.getInt(2);
-				String code = rs.getString(1).toUpperCase();
-				if ((lastID != id) || (!lastCode.equals(code))) {
-					lastID = id;
-					lastCode = code;
-					a = new Airway(code, id);
-					a.setHighLevel(rs.getBoolean(9));
-					a.setLowLevel(rs.getBoolean(10));
-					results.add(a);
-				}
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(2);
+					String code = rs.getString(1).toUpperCase();
+					if ((lastID != id) || (!lastCode.equals(code))) {
+						lastID = id;
+						lastCode = code;
+						a = new Airway(code, id);
+						a.setHighLevel(rs.getBoolean(9));
+						a.setLowLevel(rs.getBoolean(10));
+						results.add(a);
+					}
 				
-				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(5), rs.getDouble(6), rs.getDouble(7));
-				nd.setCode(rs.getString(4));
-				nd.setRegion(rs.getString(8));
-				a.addWaypoint(nd);
+					NavigationDataBean nd = NavigationDataBean.create(rs.getInt(5), rs.getDouble(6), rs.getDouble(7));
+					nd.setCode(rs.getString(4));
+					nd.setRegion(rs.getString(8));
+					a.addWaypoint(nd);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -433,34 +435,31 @@ public class GetNavAirway extends GetNavData {
 	 * Helper method to iterate through a SID_STAR result set.
 	 */
 	private List<TerminalRoute> executeSIDSTAR() throws SQLException {
-		
-		// Execute the Query
-		TerminalRoute tr = null;
-		ResultSet rs = _ps.executeQuery();
-		int columnCount = rs.getMetaData().getColumnCount();
 		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
-		while (rs.next()) {
-			TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
-			tr2.setTransition(rs.getString(4));
-			tr2.setRunway(rs.getString(5));
-			if (columnCount > 10)
-				tr2.setCanPurge(rs.getBoolean(11));
-			if ((tr == null) || (tr2.hashCode() != tr.hashCode())) {
-				results.add(tr2);
-				tr = tr2;
-			}
-			
-			// Add the waypoint if present
-			if (columnCount > 10) {
-				NavigationDataBean nd = NavigationDataBean.create(rs.getInt(8), rs.getDouble(9), rs.getDouble(10));
-				nd.setCode(rs.getString(7));
-				nd.setRegion(rs.getString(11));
-				tr.addWaypoint(nd);
+		try (ResultSet rs = _ps.executeQuery()) {
+			int columnCount = rs.getMetaData().getColumnCount();
+			TerminalRoute tr = null;
+			while (rs.next()) {
+				TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
+				tr2.setTransition(rs.getString(4));
+				tr2.setRunway(rs.getString(5));
+				if (columnCount > 10)
+					tr2.setCanPurge(rs.getBoolean(11));
+				if ((tr == null) || (tr2.hashCode() != tr.hashCode())) {
+					results.add(tr2);
+					tr = tr2;
+				}
+				
+				// Add the waypoint if present
+				if (columnCount > 10) {
+					NavigationDataBean nd = NavigationDataBean.create(rs.getInt(8), rs.getDouble(9), rs.getDouble(10));
+					nd.setCode(rs.getString(7));
+					nd.setRegion(rs.getString(11));
+					tr.addWaypoint(nd);
+				}
 			}
 		}
-
-		// Clean up and return
-		rs.close();
+		
 		_ps.close();
 		return results;
 	}

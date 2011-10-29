@@ -9,7 +9,7 @@ import org.deltava.beans.*;
 /**
  * A Data Access Object to get Pilot notification lists.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -67,12 +67,11 @@ public class GetPilotNotify extends GetPilot {
          
          // Execute the query
          List<EMailAddress> results = new ArrayList<EMailAddress>();
-         ResultSet rs = _ps.executeQuery();
-         while (rs.next())
-            results.add(new EMailNotificationImpl(rs.getString(1), rs.getString(2), rs.getString(3)));
+         try (ResultSet rs = _ps.executeQuery()) {
+        	 while (rs.next())
+            results.add(new EMailNotificationImpl(rs.getString(1), rs.getString(2), rs.getString(3)));	
+         }
          
-         // Clean up and return
-         rs.close();
          _ps.close();
          return results;
       } catch (SQLException se) {

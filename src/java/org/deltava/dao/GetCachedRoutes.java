@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cached external routes from the database.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 2.6
  */
 
@@ -39,9 +39,13 @@ public class GetCachedRoutes extends DAO {
 					+ "WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
 			_ps.setString(1, aD.getICAO());
 			_ps.setString(2, aA.getICAO());
-			ResultSet rs = _ps.executeQuery();
-			int avgAge = rs.next() ? rs.getInt(1) : -1;
-			rs.close();
+
+			int avgAge = -1;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					avgAge = rs.getInt(1);
+			}
+			
 			_ps.close();
 			return avgAge;
 		} catch (SQLException se) {
@@ -66,40 +70,39 @@ public class GetCachedRoutes extends DAO {
 			
 			// Execute the query
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				ExternalRoute rt = new ExternalRoute(rs.getString(5));
-				rt.setAirportD(SystemData.getAirport(rs.getString(1)));
-				rt.setAirportA(SystemData.getAirport(rs.getString(2)));
-				rt.setCreatedOn(rs.getTimestamp(3));
-				rt.setCruiseAltitude(rs.getString(4));
-				rt.setComments(rs.getString(6));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ExternalRoute rt = new ExternalRoute(rs.getString(5));
+					rt.setAirportD(SystemData.getAirport(rs.getString(1)));
+					rt.setAirportA(SystemData.getAirport(rs.getString(2)));
+					rt.setCreatedOn(rs.getTimestamp(3));
+					rt.setCruiseAltitude(rs.getString(4));
+					rt.setComments(rs.getString(6));
 				
-				// Get the SID/STAR out of the route
-				String rawRoute = rs.getString(7);
-				List<String> wps = StringUtils.split(rawRoute, " ");
-				if (wps.size() > 1) {
-					if (TerminalRoute.isNameValid(wps.get(0))) {
-						rt.setSID(wps.get(0) + "." + wps.get(1));
-						wps.remove(0);
-					}
+					// Get the SID/STAR out of the route
+					String rawRoute = rs.getString(7);
+					List<String> wps = StringUtils.split(rawRoute, " ");
+					if (wps.size() > 1) {
+						if (TerminalRoute.isNameValid(wps.get(0))) {
+							rt.setSID(wps.get(0) + "." + wps.get(1));
+							wps.remove(0);
+						}
 					
-					String last = wps.get(wps.size() - 1);
-					if (TerminalRoute.isNameValid(last) && (wps.size() > 1)) {
-						rt.setSTAR(last + "." + wps.get(wps.size() - 2));
-						wps.remove(wps.size() - 1);
-					}
-					
-					rt.setRoute(StringUtils.listConcat(wps, " "));
-				} else
-					rt.setRoute(rawRoute);
+						String last = wps.get(wps.size() - 1);
+						if (TerminalRoute.isNameValid(last) && (wps.size() > 1)) {
+							rt.setSTAR(last + "." + wps.get(wps.size() - 2));
+							wps.remove(wps.size() - 1);
+						}
+						
+						rt.setRoute(StringUtils.listConcat(wps, " "));
+					} else
+						rt.setRoute(rawRoute);
 				
-				if (!rt.isInternal() || includeInternal)
-					results.add(rt);
+					if (!rt.isInternal() || includeInternal)
+						results.add(rt);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

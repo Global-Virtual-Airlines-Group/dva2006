@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.2
  */
 
@@ -151,17 +151,17 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	private List<DispatchScheduleEntry> execute() throws SQLException {
 		List<DispatchScheduleEntry> results = new ArrayList<DispatchScheduleEntry>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			DispatchScheduleEntry e = new DispatchScheduleEntry(rs.getInt(2));
-			e.setStartTime(rs.getTimestamp(3));
-			e.setEndTime(rs.getTimestamp(4));
-			e.setID(rs.getInt(1));
-			e.setComments(rs.getString(5));
-			results.add(e);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				DispatchScheduleEntry e = new DispatchScheduleEntry(rs.getInt(2));
+				e.setStartTime(rs.getTimestamp(3));
+				e.setEndTime(rs.getTimestamp(4));
+				e.setID(rs.getInt(1));
+				e.setComments(rs.getString(5));
+				results.add(e);
+			}
 		}
 		
-		rs.close();
 		_ps.close();
 		return results;
  	}

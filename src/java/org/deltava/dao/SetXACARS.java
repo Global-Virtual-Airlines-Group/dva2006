@@ -33,7 +33,7 @@ public class SetXACARS extends DAO {
 	public void create(XAFlightInfo inf) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO xacars.FLIGHTS (PILOT_ID, AIRLINE, FLIGHT, AIRPORT_D, AIRPORT_A, "
-				+ "AIRPORT_L, EQTYPE, START_TIME, PHASE, ROUTE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "AIRPORT_L, EQTYPE, START_TIME, PHASE, ROUTE, FSVERSION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, inf.getAuthorID());
 			_ps.setString(2, inf.getAirline().getCode());
 			_ps.setInt(3, inf.getFlightNumber());
@@ -44,6 +44,7 @@ public class SetXACARS extends DAO {
 			_ps.setTimestamp(8, createTimestamp(inf.getStartTime()));
 			_ps.setInt(9, inf.getPhase().ordinal());
 			_ps.setString(10, inf.getRoute());
+			_ps.setInt(11, inf.getFSVersion());
 			executeUpdate(1);
 			inf.setID(getNewID());
 		} catch (SQLException se) {
@@ -62,7 +63,7 @@ public class SetXACARS extends DAO {
 				+ "TAKEOFF_DISTANCE=?, TAKEOFF_SPEED=?, TAKEOFF_N1=?, TAKEOFF_HDG=?, TAKEOFF_LAT=?, TAKEOFF_LNG=?, "
 				+ "TAKEOFF_ALT=?, TAKEOFF_WEIGHT=?, TAKEOFF_FUEL=?, LANDING_TIME=?, LANDING_DISTANCE=?, LANDING_SPEED=?, "
 				+ "LANDING_N1=?, LANDING_HDG=?, LANDING_LAT=?, LANDING_LNG=?, LANDING_ALT=?, LANDING_WEIGHT=?, "
-				+ "LANDING_FUEL=?, END_TIME=?, PHASE=?, CPHASE=?, ZFW=?, ROUTE=? WHERE (ID=?)");
+				+ "LANDING_FUEL=?, END_TIME=?, PHASE=?, CPHASE=?, ZFW=?, ROUTE=?, FSVERSION=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(inf.getTaxiTime()));
 			_ps.setInt(2, inf.getTaxiWeight());
 			_ps.setInt(3, inf.getTaxiFuel());
@@ -91,7 +92,8 @@ public class SetXACARS extends DAO {
 			_ps.setInt(26, inf.getClimbPhase().ordinal());
 			_ps.setInt(27, inf.getZeroFuelWeight());
 			_ps.setString(28, inf.getRoute());
-			_ps.setInt(29, inf.getID());
+			_ps.setInt(29, inf.getFSVersion());
+			_ps.setInt(30, inf.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
- * @version 3.5
+ * @version 4.1
  * @since 1.0
  */
 
@@ -117,15 +117,14 @@ public class GetExamProfiles extends DAO {
 
 			// Execute the Query - return null if nothing found
 			EquipmentRideScript result = null;
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				result = new EquipmentRideScript(rs.getString(1));
-				result.setProgram(rs.getString(2));
-				result.setDescription(rs.getString(3));
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					result = new EquipmentRideScript(rs.getString(1));
+					result.setProgram(rs.getString(2));
+					result.setDescription(rs.getString(3));
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return result;
 		} catch (SQLException se) {
@@ -144,16 +143,15 @@ public class GetExamProfiles extends DAO {
 
 			// Execute the query
 			List<EquipmentRideScript> results = new ArrayList<EquipmentRideScript>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				EquipmentRideScript sc = new EquipmentRideScript(rs.getString(1));
-				sc.setProgram(rs.getString(2));
-				sc.setDescription(rs.getString(3));
-				results.add(sc);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					EquipmentRideScript sc = new EquipmentRideScript(rs.getString(1));
+					sc.setProgram(rs.getString(2));
+					sc.setDescription(rs.getString(3));
+					results.add(sc);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -165,29 +163,24 @@ public class GetExamProfiles extends DAO {
 	 * Helper method to parse ExamProfile result sets.
 	 */
 	private List<ExamProfile> execute() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<ExamProfile> results = new ArrayList<ExamProfile>();
-		while (rs.next()) {
-			ExamProfile ep = new ExamProfile(rs.getString(1));
-			ep.setStage(rs.getInt(2));
-			ep.setMinStage(rs.getInt(3));
-			ep.setEquipmentType(rs.getString(4));
-			ep.setSize(rs.getInt(5));
-			ep.setPassScore(rs.getInt(6));
-			ep.setTime(rs.getInt(7));
-			ep.setActive(rs.getBoolean(8));
-			ep.setAcademy(rs.getBoolean(9));
-			ep.setNotify(rs.getBoolean(10));
-			ep.setOwner(SystemData.getApp(rs.getString(11)));
-			results.add(ep);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				ExamProfile ep = new ExamProfile(rs.getString(1));
+				ep.setStage(rs.getInt(2));
+				ep.setMinStage(rs.getInt(3));
+				ep.setEquipmentType(rs.getString(4));
+				ep.setSize(rs.getInt(5));
+				ep.setPassScore(rs.getInt(6));
+				ep.setTime(rs.getInt(7));
+				ep.setActive(rs.getBoolean(8));
+				ep.setAcademy(rs.getBoolean(9));
+				ep.setNotify(rs.getBoolean(10));
+				ep.setOwner(SystemData.getApp(rs.getString(11)));
+				results.add(ep);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -215,15 +208,14 @@ public class GetExamProfiles extends DAO {
 
 		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			ExamProfile ep = exams.get(rs.getString(1));
-			if (ep != null)
-				ep.addAirline(SystemData.getApp(rs.getString(2)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				ExamProfile ep = exams.get(rs.getString(1));
+				if (ep != null)
+					ep.addAirline(SystemData.getApp(rs.getString(2)));
+			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
@@ -250,15 +242,14 @@ public class GetExamProfiles extends DAO {
 		
 		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			ExamProfile ep = exams.get(rs.getString(1));
-			if (ep != null)
-				ep.addScorerID(rs.getInt(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				ExamProfile ep = exams.get(rs.getString(1));
+				if (ep != null)
+					ep.addScorerID(rs.getInt(2));
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

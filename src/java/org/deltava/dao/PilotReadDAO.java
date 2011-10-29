@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -243,11 +243,11 @@ abstract class PilotReadDAO extends PilotDAO {
 	 */
 	protected List<Integer> executeIDs() throws SQLException {
 		Collection<Integer> results = new LinkedHashSet<Integer>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			results.add(new Integer(rs.getInt(1)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				results.add(Integer.valueOf(rs.getInt(1)));	
+		}
 		
-		rs.close();
 		_ps.close();
 		return new ArrayList<Integer>(results);
 	}
@@ -258,80 +258,78 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final List<Pilot> execute() throws SQLException {
+		String airlineCode = SystemData.get("airline.code");
 		List<Pilot> results = new ArrayList<Pilot>();
 
 		// Get the pilot info from the list
-		ResultSet rs = _ps.executeQuery();
-		int columnCount = rs.getMetaData().getColumnCount();
-		String airlineCode = SystemData.get("airline.code");
+		try (ResultSet rs = _ps.executeQuery()) {
+			int columnCount = rs.getMetaData().getColumnCount();
+			while (rs.next()) {
+				Pilot p = new Pilot(rs.getString(3), rs.getString(4));
+				p.setID(rs.getInt(1));
+				p.setPilotCode(airlineCode + String.valueOf(rs.getInt(2)));
+				p.setStatus(rs.getInt(5));
+				p.setDN(rs.getString(6));
+				p.setEmail(rs.getString(7));
+				p.setLocation(rs.getString(8));
+				p.setLegacyHours(rs.getDouble(9));
+				p.setHomeAirport(rs.getString(10));
+				p.setEquipmentType(rs.getString(11));
+				p.setRank(Rank.fromName(rs.getString(12)));
+				p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(13));
+				p.setNetworkID(OnlineNetwork.IVAO, rs.getString(14));
+				p.setCreatedOn(rs.getTimestamp(15));
+				p.setLoginCount(rs.getInt(16));
+				p.setLastLogin(rs.getTimestamp(17));
+				p.setLastLogoff(rs.getTimestamp(18));
+				p.setTZ(TZInfo.get(rs.getString(19)));
+				p.setNotificationCode(rs.getInt(20));
+				p.setEmailAccess(rs.getInt(21));
+				p.setShowSignatures(rs.getBoolean(22));
+				p.setShowSSThreads(rs.getBoolean(23));
+				p.setHasDefaultSignature(rs.getBoolean(24));
+				p.setShowNewPosts(rs.getBoolean(25));
+				p.setUIScheme(rs.getString(26));
+				p.setShowNavBar(rs.getBoolean(27));
+				p.setViewCount(rs.getInt(28));
+				p.setLoginHost(rs.getString(29));
+				p.setDateFormat(rs.getString(30));
+				p.setTimeFormat(rs.getString(31));
+				p.setNumberFormat(rs.getString(32));
+				p.setAirportCodeType(Airport.Code.values()[rs.getInt(33)]);
+				p.setDistanceType(rs.getInt(34));
+				p.setMapType(rs.getInt(35));
+				p.setNoExams(rs.getBoolean(36));
+				p.setNoVoice(rs.getBoolean(37));
+				p.setNoCooler(rs.getBoolean(38));
+				p.setACARSRestriction(rs.getInt(39));
+				p.setLDAPName(rs.getString(40));
+				p.setMotto(rs.getString(41));
 
-		while (rs.next()) {
-			Pilot p = new Pilot(rs.getString(3), rs.getString(4));
-			p.setID(rs.getInt(1));
-			p.setPilotCode(airlineCode + String.valueOf(rs.getInt(2)));
-			p.setStatus(rs.getInt(5));
-			p.setDN(rs.getString(6));
-			p.setEmail(rs.getString(7));
-			p.setLocation(rs.getString(8));
-			p.setLegacyHours(rs.getDouble(9));
-			p.setHomeAirport(rs.getString(10));
-			p.setEquipmentType(rs.getString(11));
-			p.setRank(Rank.fromName(rs.getString(12)));
-			p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(13));
-			p.setNetworkID(OnlineNetwork.IVAO, rs.getString(14));
-			p.setCreatedOn(rs.getTimestamp(15));
-			p.setLoginCount(rs.getInt(16));
-			p.setLastLogin(rs.getTimestamp(17));
-			p.setLastLogoff(rs.getTimestamp(18));
-			p.setTZ(TZInfo.get(rs.getString(19)));
-			p.setNotificationCode(rs.getInt(20));
-			p.setEmailAccess(rs.getInt(21));
-			p.setShowSignatures(rs.getBoolean(22));
-			p.setShowSSThreads(rs.getBoolean(23));
-			p.setHasDefaultSignature(rs.getBoolean(24));
-			p.setShowNewPosts(rs.getBoolean(25));
-			p.setUIScheme(rs.getString(26));
-			p.setShowNavBar(rs.getBoolean(27));
-			p.setViewCount(rs.getInt(28));
-			p.setLoginHost(rs.getString(29));
-			p.setDateFormat(rs.getString(30));
-			p.setTimeFormat(rs.getString(31));
-			p.setNumberFormat(rs.getString(32));
-			p.setAirportCodeType(Airport.Code.values()[rs.getInt(33)]);
-			p.setDistanceType(rs.getInt(34));
-			p.setMapType(rs.getInt(35));
-			p.setNoExams(rs.getBoolean(36));
-			p.setNoVoice(rs.getBoolean(37));
-			p.setNoCooler(rs.getBoolean(38));
-			p.setACARSRestriction(rs.getInt(39));
-			p.setLDAPName(rs.getString(40));
-			p.setMotto(rs.getString(41));
+				// Check if this result set has columns 42-45, which is the PIREP totals
+				if (columnCount > 44) {
+					p.setLegs(rs.getInt(42));
+					p.setMiles(rs.getLong(43));
+					p.setHours(rs.getDouble(44));
+					p.setLastFlight(expandDate(rs.getDate(45)));
+				}
 
-			// Check if this result set has columns 42-45, which is the PIREP totals
-			if (columnCount > 44) {
-				p.setLegs(rs.getInt(42));
-				p.setMiles(rs.getLong(43));
-				p.setHours(rs.getDouble(44));
-				p.setLastFlight(expandDate(rs.getDate(45)));
+				// Check if this result set has columns 46/47, which is the signature extension
+				if (columnCount > 46) {
+					p.setSignatureExtension(rs.getString(46));
+					p.setSignatureModified(rs.getTimestamp(47));
+				}
+
+				// Check if this result set has columns 48/49, which are online legs/hours
+				if (columnCount > 48) {
+					p.setOnlineLegs(rs.getInt(48));
+					p.setOnlineHours(rs.getDouble(49));
+				}
+
+				results.add(p);
 			}
-
-			// Check if this result set has columns 46/47, which is the signature extension
-			if (columnCount > 46) {
-				p.setSignatureExtension(rs.getString(46));
-				p.setSignatureModified(rs.getTimestamp(47));
-			}
-
-			// CHeck if this result set has columns 48/49, which are online legs/hours
-			if (columnCount > 48) {
-				p.setOnlineLegs(rs.getInt(48));
-				p.setOnlineHours(rs.getDouble(49));
-			}
-
-			results.add(p);
 		}
 
-		// Close everything down
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -376,15 +374,14 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-			if (p != null)
-				p.addAccomplishmentID(new DatedAccomplishmentID(rs.getTimestamp(3), rs.getInt(2)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+				if (p != null)
+					p.addAccomplishmentID(new DatedAccomplishmentID(rs.getTimestamp(3), rs.getInt(2)));
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 	}
 	
@@ -413,15 +410,14 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-			if (p != null)
-				p.addRole(rs.getString(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+				if (p != null)
+					p.addRole(rs.getString(2));
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 	}
 
@@ -450,22 +446,21 @@ abstract class PilotReadDAO extends PilotDAO {
 		
 		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-			if (p != null) {
-				String imType = rs.getString(2);
-				try {
-					IMAddress addrType = IMAddress.valueOf(imType);
-					p.setIMHandle(addrType, rs.getString(3));
-				} catch (Exception e) {
-					log.warn("Unknown IM address type - " + imType);
-				}
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+				if (p != null) {
+					String imType = rs.getString(2);
+					try {
+						IMAddress addrType = IMAddress.valueOf(imType);
+						p.setIMHandle(addrType, rs.getString(3));
+					} catch (Exception e) {
+						log.warn("Unknown IM address type - " + imType);
+					}
+				}	
 			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 	}
 	
@@ -494,15 +489,14 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
-			if (p != null)
-				p.addRating(rs.getString(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+				if (p != null)
+					p.addRating(rs.getString(2));
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 	}
 	

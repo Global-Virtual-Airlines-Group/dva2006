@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.beans.system.InactivityPurge;
  * A Data Access Object to read Inactivity purge entries. This DAO extends PilotReadDAO since it is used
  * to query pilots who may not have an Inactivity purge table entry, but are eligible for one.
  * @author Luke
- * @version 2.8
+ * @version 4.1
  * @since 1.0
  */
 
@@ -36,8 +36,6 @@ public class GetInactivity extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT * FROM INACTIVITY WHERE (ID=?)");
 			_ps.setInt(1, pilotID);
-			
-			// Execute query, return null if empty 
 			List<InactivityPurge> results = executeInactivity();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -114,19 +112,16 @@ public class GetInactivity extends PilotReadDAO {
 	 */
 	private List<InactivityPurge> executeInactivity() throws SQLException {
 		List<InactivityPurge> results = new ArrayList<InactivityPurge>();
-		
-		// Iterate through the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			InactivityPurge ip = new InactivityPurge(rs.getInt(1));
-			ip.setPurgeDate(expandDate(rs.getDate(2)));
-			ip.setNotify(rs.getBoolean(3));
-			ip.setInterval(rs.getInt(4));
-			results.add(ip);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				InactivityPurge ip = new InactivityPurge(rs.getInt(1));
+				ip.setPurgeDate(expandDate(rs.getDate(2)));
+				ip.setNotify(rs.getBoolean(3));
+				ip.setInterval(rs.getInt(4));
+				results.add(ip);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

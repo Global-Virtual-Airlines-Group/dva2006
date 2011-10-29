@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -34,13 +34,13 @@ public class GetUserData extends DAO implements CachingDAO {
 	public GetUserData(Connection c) {
 		super(c);
 	}
-	
+
 	public CacheInfo getCacheInfo() {
 		CacheInfo info = new CacheInfo(_appCache);
 		info.add(_usrCache);
 		return info;
 	}
-	
+
 	/**
 	 * Removes an entry from the user cache.
 	 * @param id the database ID
@@ -48,7 +48,7 @@ public class GetUserData extends DAO implements CachingDAO {
 	static void invalidate(int id) {
 		_usrCache.remove(Integer.valueOf(id));
 	}
-	
+
 	/**
 	 * Removes an entry from the web application cache.
 	 * @param id the airline code
@@ -129,12 +129,12 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public UserData get(int id) throws DAOException {
-		
+
 		// Check the cache
 		UserData ud = _usrCache.get(Integer.valueOf(id));
 		if (ud != null)
 			return ud;
-		
+
 		try {
 			setQueryMax(1);
 			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) "
@@ -208,7 +208,7 @@ public class GetUserData extends DAO implements CachingDAO {
 		// Strip out entries already in the cache
 		if (log.isDebugEnabled())
 			log.debug("Raw set size = " + ids.size());
-		
+
 		int querySize = 0;
 		UserDataMap result = new UserDataMap();
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
@@ -228,7 +228,7 @@ public class GetUserData extends DAO implements CachingDAO {
 		// Only execute the prepared statement if we haven't gotten anything from the cache
 		if (log.isDebugEnabled())
 			log.debug("Uncached set size = " + querySize);
-		
+
 		if (querySize > 0) {
 			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
 				sqlBuf.setLength(sqlBuf.length() - 1);
@@ -239,14 +239,13 @@ public class GetUserData extends DAO implements CachingDAO {
 			try {
 				prepareStatementWithoutLimits(sqlBuf.toString());
 				_ps.setString(1, ",");
-				Map<Integer, UserData> results = CollectionUtils.createMap(execute(), "ID"); 
+				Map<Integer, UserData> results = CollectionUtils.createMap(execute(), "ID");
 				result.putAll(results);
 			} catch (SQLException se) {
 				throw new DAOException(se);
 			}
 		}
 
-		// Return the result container
 		return result;
 	}
 
@@ -254,36 +253,33 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * Helper method to iterate through the result set.
 	 */
 	private List<UserData> execute() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
+		
 		List<UserData> results = new ArrayList<UserData>();
-		while (rs.next()) {
-			UserData usr = new UserData(rs.getInt(1));
-			usr.setAirlineCode(rs.getString(2));
-			usr.setTable(rs.getString(3));
-			usr.setDomain(rs.getString(4));
-			usr.setDB(rs.getString(5));
-			
-			// Get the crossdomain IDs
-			Collection<String> xdb_ids = StringUtils.split(rs.getString(6), ",");
-			if (xdb_ids != null) {
-				for (Iterator<String> i = xdb_ids.iterator(); i.hasNext(); ) {
-					int xdb_id = StringUtils.parse(i.next(), 0);
-					if (xdb_id > 0)
-						usr.addID(xdb_id);
-				}
-			}
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				UserData usr = new UserData(rs.getInt(1));
+				usr.setAirlineCode(rs.getString(2));
+				usr.setTable(rs.getString(3));
+				usr.setDomain(rs.getString(4));
+				usr.setDB(rs.getString(5));
 
-			// Add to results and the cache
-			results.add(usr);
-			_usrCache.add(usr);
+				// Get the crossdomain IDs
+				Collection<String> xdb_ids = StringUtils.split(rs.getString(6), ",");
+				if (xdb_ids != null) {
+					for (Iterator<String> i = xdb_ids.iterator(); i.hasNext();) {
+						int xdb_id = StringUtils.parse(i.next(), 0);
+						if (xdb_id > 0)
+							usr.addID(xdb_id);
+					}
+				}
+
+				// Add to results and the cache
+				results.add(usr);
+				_usrCache.add(usr);
+			}
 		}
 
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -292,20 +288,18 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * Helper method to iterate through AirlineInformation result sets.
 	 */
 	private List<AirlineInformation> executeAirlineInfo() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
+		
 		List<AirlineInformation> results = new ArrayList<AirlineInformation>();
-		while (rs.next()) {
-			AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
-			info.setDB(rs.getString(3));
-			info.setDomain(rs.getString(4));
-			info.setCanTransfer(rs.getBoolean(5));
-			results.add(info);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
+				info.setDB(rs.getString(3));
+				info.setDomain(rs.getString(4));
+				info.setCanTransfer(rs.getBoolean(5));
+				results.add(info);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

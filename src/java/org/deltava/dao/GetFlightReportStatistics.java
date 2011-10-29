@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.1
  */
 
@@ -140,17 +140,16 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			// Execute the query
 			Airline a = SystemData.getAirline(SystemData.get("airline.code"));
 			Collection<ScheduleRoute> results = new ArrayList<ScheduleRoute>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				DispatchScheduleRoute rp = new DispatchScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
-				rp.setFlights(rs.getInt(3));
-				rp.setRoutes(rs.getInt(4));
-				rp.setInactiveRoutes(rs.getInt(5));
-				results.add(rp);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					DispatchScheduleRoute rp = new DispatchScheduleRoute(a, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					rp.setFlights(rs.getInt(3));
+					rp.setRoutes(rs.getInt(4));
+					rp.setInactiveRoutes(rs.getInt(5));
+					results.add(rp);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -201,25 +200,24 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				LandingStatistics ls = new LandingStatistics(rs.getString(2), null);
-				ls.setID(rs.getInt(1));
-				ls.setLegs(rs.getInt(3));
-				ls.setHours(rs.getDouble(4));
-				ls.setAverageSpeed(rs.getDouble(5));
-				ls.setStdDeviation(rs.getDouble(6));
-				double dist = rs.getDouble(7);
-				if (!rs.wasNull()) {
-					ls.setAverageDistance(dist);
-					ls.setDistanceStdDeviation(rs.getDouble(8));
-				}
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					LandingStatistics ls = new LandingStatistics(rs.getString(2), null);
+					ls.setID(rs.getInt(1));
+					ls.setLegs(rs.getInt(3));
+					ls.setHours(rs.getDouble(4));
+					ls.setAverageSpeed(rs.getDouble(5));
+					ls.setStdDeviation(rs.getDouble(6));
+					double dist = rs.getDouble(7);
+					if (!rs.wasNull()) {
+						ls.setAverageDistance(dist);
+						ls.setDistanceStdDeviation(rs.getDouble(8));
+					}
 				
-				results.add(ls);
+					results.add(ls);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			_cache.add(results);
 			return results.clone();
@@ -266,25 +264,24 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			results = new CacheableList<LandingStatistics>(key);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
-				ls.setID(pilotID);
-				ls.setLegs(rs.getInt(2));
-				ls.setHours(rs.getDouble(3));
-				ls.setAverageSpeed(rs.getDouble(4));
-				ls.setStdDeviation(rs.getDouble(5));
-				double avgDist = rs.getDouble(6);
-				if (!rs.wasNull()) {
-					ls.setAverageDistance(avgDist);
-					ls.setDistanceStdDeviation(rs.getDouble(7));
-				}
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
+					ls.setID(pilotID);
+					ls.setLegs(rs.getInt(2));
+					ls.setHours(rs.getDouble(3));
+					ls.setAverageSpeed(rs.getDouble(4));
+					ls.setStdDeviation(rs.getDouble(5));
+					double avgDist = rs.getDouble(6);
+					if (!rs.wasNull()) {
+						ls.setAverageDistance(avgDist);
+						ls.setDistanceStdDeviation(rs.getDouble(7));
+					}
 				
-				results.add(ls);
+					results.add(ls);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			_cache.add(results);
 			return results.clone();
@@ -317,14 +314,13 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			_ps.setInt(4, pilotID);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				int vs = Math.max(-1200, rs.getInt(1));
-				results.put(Integer.valueOf(vs), Integer.valueOf(rs.getInt(2)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					int vs = Math.max(-1200, rs.getInt(1));
+					results.put(Integer.valueOf(vs), Integer.valueOf(rs.getInt(2)));
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -376,19 +372,18 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			results = new CacheableList<FlightStatsEntry>(cacheKey);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
-				entry.setFSVersionLegs(10, rs.getInt(5));
-				entry.setFSVersionLegs(9, rs.getInt(6));
-				entry.setFSVersionLegs(8, rs.getInt(7));
-				entry.setFSVersionLegs(7, rs.getInt(8));
-				entry.setFSVersionLegs(0, rs.getInt(9));
-				results.add(entry);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
+					entry.setFSVersionLegs(10, rs.getInt(5));
+					entry.setFSVersionLegs(9, rs.getInt(6));
+					entry.setFSVersionLegs(8, rs.getInt(7));
+					entry.setFSVersionLegs(7, rs.getInt(8));
+					entry.setFSVersionLegs(0, rs.getInt(9));
+					results.add(entry);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			_statCache.add(results);
 			return results.clone();
@@ -531,9 +526,12 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				_ps.setInt(4, days);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int count = rs.next() ? rs.getInt(1) : 0;
-			rs.close();
+			int count = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					count = rs.getInt(1);
+			}
+			
 			_ps.close();
 			return count;
 		} catch (SQLException se) {
@@ -618,23 +616,22 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	 */
 	private List<FlightStatsEntry> execute() throws SQLException {
 		List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
-		ResultSet rs = _ps.executeQuery();
-		boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 11);
-		while (rs.next()) {
-			FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
-			entry.setACARSLegs(rs.getInt(7));
-			entry.setVATSIMLegs(rs.getInt(8));
-			entry.setIVAOLegs(rs.getInt(9));
-			entry.setHistoricLegs(rs.getInt(10));
-			entry.setDispatchLegs(rs.getInt(11));
-			if (hasPilotIDs)
-				entry.setPilotIDs(rs.getInt(12));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasPilotIDs = (rs.getMetaData().getColumnCount() > 11);
+			while (rs.next()) {
+				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
+				entry.setACARSLegs(rs.getInt(7));
+				entry.setVATSIMLegs(rs.getInt(8));
+				entry.setIVAOLegs(rs.getInt(9));
+				entry.setHistoricLegs(rs.getInt(10));
+				entry.setDispatchLegs(rs.getInt(11));
+				if (hasPilotIDs)
+					entry.setPilotIDs(rs.getInt(12));
 			
-			results.add(entry);
+				results.add(entry);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

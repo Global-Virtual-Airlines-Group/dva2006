@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -57,28 +57,25 @@ public class GetGallery extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query - return null if no image found
-			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				_ps.close();
-				return null;
+			Image img = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					img = new Image(rs.getString(1), rs.getString(2));
+					img.setID(id);
+					img.setType(rs.getInt(3));
+					img.setWidth(rs.getInt(4));
+					img.setHeight(rs.getInt(5));
+					img.setSize(rs.getInt(6));
+					img.setCreatedOn(rs.getTimestamp(7));
+					img.setFleet(rs.getBoolean(8));
+					img.setAuthorID(rs.getInt(9));
+					img.setThreadID(rs.getInt(10));
+				}
 			}
 
-			// Create the image bean
-			Image img = new Image(rs.getString(1), rs.getString(2));
-			img.setID(id);
-			img.setType(rs.getInt(3));
-			img.setWidth(rs.getInt(4));
-			img.setHeight(rs.getInt(5));
-			img.setSize(rs.getInt(6));
-			img.setCreatedOn(rs.getTimestamp(7));
-			img.setFleet(rs.getBoolean(8));
-			img.setAuthorID(rs.getInt(9));
-			img.setThreadID(rs.getInt(10));
-
-			// Clean up
-			rs.close();
 			_ps.close();
+			if (img == null)
+				return null;
 
 			// Load gallery image votes
 			sqlBuf = new StringBuilder("SELECT * FROM ");
@@ -86,12 +83,11 @@ public class GetGallery extends DAO {
 			sqlBuf.append(".GALLERYSCORE WHERE (IMG_ID=?)");
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
-			rs = _ps.executeQuery();
-			while (rs.next())
-				img.addVote(new Vote(rs.getInt(2), rs.getInt(3), rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+				img.addVote(new Vote(rs.getInt(2), rs.getInt(3), rs.getInt(1)));	
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return img;
 		} catch (SQLException se) {
@@ -165,7 +161,6 @@ public class GetGallery extends DAO {
 				_ps.setInt(2, StringUtils.parse(tkns.nextToken(), Calendar.getInstance().get(Calendar.YEAR)));
 			}
 
-			// Execute the query
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -181,15 +176,12 @@ public class GetGallery extends DAO {
 		try {
 			prepareStatement("SELECT DISTINCT CONCAT_WS(' ', MONTHNAME(DATE), YEAR(DATE)) FROM GALLERY "
 					+ "ORDER BY DATE DESC");
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			Collection<String> results = new LinkedHashSet<String>();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -201,36 +193,32 @@ public class GetGallery extends DAO {
 	 * Helper method to parse Image result sets.
 	 */
 	private List<Image> execute() throws SQLException {
-		ResultSet rs = _ps.executeQuery();
-		boolean hasVotes = (rs.getMetaData().getColumnCount() > 11);
-		boolean hasThreadInfo = (rs.getMetaData().getColumnCount() > 12); 
-
-		// Iterate through the results
 		List<Image> results = new ArrayList<Image>();
-		while (rs.next()) {
-			Image img = new Image(rs.getString(1), rs.getString(2));
-			img.setID(rs.getInt(3));
-			img.setAuthorID(rs.getInt(4));
-			img.setCreatedOn(rs.getTimestamp(5));
-			img.setFleet(rs.getBoolean(6));
-			img.setType(rs.getInt(7));
-			img.setWidth(rs.getInt(8));
-			img.setHeight(rs.getInt(9));
-			img.setSize(rs.getInt(10));
-			if (hasVotes) {
-				img.setVoteCount(rs.getInt(11));
-				img.setScore(rs.getDouble(12));
-			}
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasVotes = (rs.getMetaData().getColumnCount() > 11);
+			boolean hasThreadInfo = (rs.getMetaData().getColumnCount() > 12); 
+			while (rs.next()) {
+				Image img = new Image(rs.getString(1), rs.getString(2));
+				img.setID(rs.getInt(3));
+				img.setAuthorID(rs.getInt(4));
+				img.setCreatedOn(rs.getTimestamp(5));
+				img.setFleet(rs.getBoolean(6));
+				img.setType(rs.getInt(7));
+				img.setWidth(rs.getInt(8));
+				img.setHeight(rs.getInt(9));
+				img.setSize(rs.getInt(10));
+				if (hasVotes) {
+					img.setVoteCount(rs.getInt(11));
+					img.setScore(rs.getDouble(12));
+				}
 			
-			if (hasThreadInfo)
-				img.setThreadID(rs.getInt(13));
+				if (hasThreadInfo)
+					img.setThreadID(rs.getInt(13));
 
-			// Add to results
-			results.add(img);
+				results.add(img);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

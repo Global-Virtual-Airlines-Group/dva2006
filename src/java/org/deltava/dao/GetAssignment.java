@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * A Data Access Object to load Flight Assignments. All calls in this DAO will populate the legs for any returned Flight
  * Assignments, but will <i>not </i> populate any Flight Reports.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -170,15 +170,12 @@ public class GetAssignment extends DAO {
 	public Collection<String> getEquipmentTypes() throws DAOException {
 		try {
 			prepareStatement("SELECT DISTINCT EQTYPE FROM ASSIGNMENTS ORDER BY EQTYPE");
+			Collection<String> results = new ArrayList<String>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 			
-			// Execute the statement
-			List<String> results = new ArrayList<String>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(rs.getString(1));
-			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -191,27 +188,22 @@ public class GetAssignment extends DAO {
 	 */
 	private List<AssignmentInfo> loadInfo() throws SQLException {
 		List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			AssignmentInfo info = new AssignmentInfo(rs.getString(5));
-			info.setID(rs.getInt(1));
-			info.setStatus(rs.getInt(2));
-			info.setPilotID(rs.getInt(3));
-			info.setEventID(rs.getInt(4));
-			info.setAssignDate(rs.getTimestamp(6));
-			info.setCompletionDate(rs.getTimestamp(7));
-			info.setRepeating(rs.getBoolean(8));
-			info.setRandom(rs.getBoolean(9));
-			info.setPurgeable(rs.getBoolean(10));
-
-			// Add to results
-			results.add(info);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				AssignmentInfo info = new AssignmentInfo(rs.getString(5));
+				info.setID(rs.getInt(1));
+				info.setStatus(rs.getInt(2));
+				info.setPilotID(rs.getInt(3));
+				info.setEventID(rs.getInt(4));
+				info.setAssignDate(rs.getTimestamp(6));
+				info.setCompletionDate(rs.getTimestamp(7));
+				info.setRepeating(rs.getBoolean(8));
+				info.setRandom(rs.getBoolean(9));
+				info.setPurgeable(rs.getBoolean(10));
+				results.add(info);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -225,22 +217,21 @@ public class GetAssignment extends DAO {
 
 		// Execute the Query
 		Map<Integer, AssignmentInfo> infoMap = CollectionUtils.createMap(assignments, "ID");
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			int assignID = rs.getInt(1);
-			AssignmentInfo info = infoMap.get(Integer.valueOf(assignID));
-			if (info != null) {
-				AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(rs.getString(2)), rs.getInt(3), rs.getInt(4));
-				leg.setID(assignID);
-				leg.setEquipmentType(info.getEquipmentType());
-				leg.setAirportD(SystemData.getAirport(rs.getString(5)));
-				leg.setAirportA(SystemData.getAirport(rs.getString(6)));
-				info.addAssignment(leg);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				int assignID = rs.getInt(1);
+				AssignmentInfo info = infoMap.get(Integer.valueOf(assignID));
+				if (info != null) {
+					AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(rs.getString(2)), rs.getInt(3), rs.getInt(4));
+					leg.setID(assignID);
+					leg.setEquipmentType(info.getEquipmentType());
+					leg.setAirportD(SystemData.getAirport(rs.getString(5)));
+					leg.setAirportA(SystemData.getAirport(rs.getString(6)));
+					info.addAssignment(leg);
+				}
 			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 	}
 }

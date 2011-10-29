@@ -15,7 +15,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -46,19 +46,18 @@ public class GetSystemData extends DAO implements CachingDAO {
 			prepareStatement("SELECT * FROM SYS_HTTPLOG ORDER BY " + orderBy);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			List<HTTPStatistics> results = new ArrayList<HTTPStatistics>();
-			while (rs.next()) {
-				HTTPStatistics stats = new HTTPStatistics(expandDate(rs.getDate(1)));
-				stats.setRequests(rs.getInt(2));
-				stats.setHomePageHits(rs.getInt(3));
-				stats.setExecutionTime(rs.getLong(4));
-				stats.setBandwidth(rs.getLong(5));
-				results.add(stats);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					HTTPStatistics stats = new HTTPStatistics(expandDate(rs.getDate(1)));
+					stats.setRequests(rs.getInt(2));
+					stats.setHomePageHits(rs.getInt(3));
+					stats.setExecutionTime(rs.getLong(4));
+					stats.setBandwidth(rs.getLong(5));
+					results.add(stats);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -81,19 +80,13 @@ public class GetSystemData extends DAO implements CachingDAO {
 
 		try {
 			prepareStatement("SELECT SUM(REQUESTS), SUM(HOMEHITS), SUM(BANDWIDTH) FROM SYS_HTTPLOG");
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			rs.next();
-
-			// Create the result bean
-			totals = new HTTPTotals(rs.getInt(1), rs.getInt(2), rs.getLong(3));
-
-			// Clean up
-			rs.close();
-			_ps.close();
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					totals = new HTTPTotals(rs.getInt(1), rs.getInt(2), rs.getLong(3));
+			}
 
 			// Add to the cache and return
+			_ps.close();
 			_cache.add(totals);
 			return totals;
 		} catch (SQLException se) {
@@ -157,28 +150,22 @@ public class GetSystemData extends DAO implements CachingDAO {
 	 */
 	private List<CommandLog> executeCommandLog() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<CommandLog> results = new ArrayList<CommandLog>();
-		while (rs.next()) {
-			CommandLog cmd = new CommandLog(rs.getTimestamp(1));
-			cmd.setPilotID(rs.getInt(2));
-			cmd.setRemoteAddr(rs.getString(3));
-			cmd.setRemoteHost(rs.getString(4));
-			cmd.setName(rs.getString(5));
-			cmd.setResult(rs.getString(6));
-			cmd.setTime(rs.getInt(7));
-			cmd.setBackEndTime(rs.getInt(8));
-			cmd.setSuccess(rs.getBoolean(9));
-
-			// Add to results
-			results.add(cmd);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				CommandLog cmd = new CommandLog(rs.getTimestamp(1));
+				cmd.setPilotID(rs.getInt(2));
+				cmd.setRemoteAddr(rs.getString(3));
+				cmd.setRemoteHost(rs.getString(4));
+				cmd.setName(rs.getString(5));
+				cmd.setResult(rs.getString(6));
+				cmd.setTime(rs.getInt(7));
+				cmd.setBackEndTime(rs.getInt(8));
+				cmd.setSuccess(rs.getBoolean(9));
+				results.add(cmd);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -200,24 +187,19 @@ public class GetSystemData extends DAO implements CachingDAO {
 		List<CommandStatsEntry> results = new ArrayList<CommandStatsEntry>();
 		try {
 			prepareStatement(sqlBuf.toString());
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
-				stat.setAvgTime(rs.getInt(2));
-				stat.setAvgBackEndTime(rs.getInt(3));
-				stat.setMaxTime(rs.getInt(4));
-				stat.setMaxBackEndTime(rs.getInt(5));
-				stat.setSuccessCount(rs.getInt(6));
-				stat.setCount(rs.getInt(7));
-
-				// Add to results
-				results.add(stat);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
+					stat.setAvgTime(rs.getInt(2));
+					stat.setAvgBackEndTime(rs.getInt(3));
+					stat.setMaxTime(rs.getInt(4));
+					stat.setMaxBackEndTime(rs.getInt(5));
+					stat.setSuccessCount(rs.getInt(6));
+					stat.setCount(rs.getInt(7));
+					results.add(stat);
+				}
 			}
 
-			// Clean up after ourselves
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -231,25 +213,19 @@ public class GetSystemData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, TaskLastRun> getTaskExecution() throws DAOException {
-
-		Collection<TaskLastRun> results = new ArrayList<TaskLastRun>();
 		try {
+			Collection<TaskLastRun> results = new ArrayList<TaskLastRun>();
 			prepareStatementWithoutLimits("SELECT * FROM SYS_TASKS");
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2), rs.getLong(3)));
+			}
 
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2), rs.getLong(3)));
-
-			// Clean up after ourselves
-			rs.close();
 			_ps.close();
+			return CollectionUtils.createMap(results, "name");
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Return as a map
-		return CollectionUtils.createMap(results, "name");
 	}
 
 	/**
@@ -264,11 +240,12 @@ public class GetSystemData extends DAO implements CachingDAO {
 			_ps.setString(1, taskID);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			Timestamp lastRun = rs.next() ? rs.getTimestamp(1) : null;
+			Timestamp lastRun = null;
+			try (ResultSet rs = _ps.executeQuery()) { 
+				if (rs.next())
+					lastRun = rs.getTimestamp(1);
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return lastRun;
 		} catch (SQLException se) {
@@ -288,25 +265,20 @@ public class GetSystemData extends DAO implements CachingDAO {
 			_ps.setInt(1, id);
 
 			// Execute the query and return if not found
-			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				_ps.close();
-				return null;
+			RegistrationBlock rb = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
+					rb.setID(rs.getInt(1));
+					rb.setNetMask(rs.getInt(5));
+					rb.setAddress(rs.getInt(4));
+					rb.setHostName(rs.getString(6));
+					rb.setComments(rs.getString(7));
+					rb.setHasUserFeedback(rs.getBoolean(8));
+					rb.setActive(rs.getBoolean(9));
+				}
 			}
 
-			// Create the bean
-			RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
-			rb.setID(rs.getInt(1));
-			rb.setNetMask(rs.getInt(5));
-			rb.setAddress(rs.getInt(4));
-			rb.setHostName(rs.getString(6));
-			rb.setComments(rs.getString(7));
-			rb.setHasUserFeedback(rs.getBoolean(8));
-			rb.setActive(rs.getBoolean(9));
-
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return rb;
 		} catch (SQLException se) {
@@ -322,24 +294,21 @@ public class GetSystemData extends DAO implements CachingDAO {
 	public Collection<RegistrationBlock> getBlocks() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM REG_BLOCKS");
-
-			// Execute the query
 			Collection<RegistrationBlock> results = new ArrayList<RegistrationBlock>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
-				rb.setID(rs.getInt(1));
-				rb.setNetMask(rs.getInt(5));
-				rb.setAddress(rs.getInt(4));
-				rb.setHostName(rs.getString(6));
-				rb.setComments(rs.getString(7));
-				rb.setHasUserFeedback(rs.getBoolean(8));
-				rb.setActive(rs.getBoolean(9));
-				results.add(rb);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
+					rb.setID(rs.getInt(1));
+					rb.setNetMask(rs.getInt(5));
+					rb.setAddress(rs.getInt(4));
+					rb.setHostName(rs.getString(6));
+					rb.setComments(rs.getString(7));
+					rb.setHasUserFeedback(rs.getBoolean(8));
+					rb.setActive(rs.getBoolean(9));
+					results.add(rb);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

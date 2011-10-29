@@ -14,7 +14,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -35,6 +35,7 @@ public class GetStatistics extends DAO implements CachingDAO {
 	/**
 	 * Returns the cache status.
 	 */
+	@Override
 	public CacheInfo getCacheInfo() {
 		CacheInfo info = new CacheInfo(_cache);
 		info.add(_aCache);
@@ -71,20 +72,20 @@ public class GetStatistics extends DAO implements CachingDAO {
 				_ps.setInt(4, FlightReport.OK);
 
 				// Count all airline totals
-				ResultSet rs = _ps.executeQuery();
-				if (rs.next()) {
-					result.setTotalLegs(rs.getInt(1));
-					result.setTotalHours(rs.getDouble(2));
-					result.setTotalMiles(rs.getLong(3));
-					result.setOnlineLegs(rs.getInt(4));
-					result.setOnlineHours(rs.getDouble(5));
-					result.setOnlineMiles(rs.getLong(6));
-					result.setACARSLegs(rs.getInt(7));
-					result.setACARSHours(rs.getDouble(8));
-					result.setACARSMiles(rs.getInt(9));
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next()) {
+						result.setTotalLegs(rs.getInt(1));
+						result.setTotalHours(rs.getDouble(2));
+						result.setTotalMiles(rs.getLong(3));
+						result.setOnlineLegs(rs.getInt(4));
+						result.setOnlineHours(rs.getDouble(5));
+						result.setOnlineMiles(rs.getLong(6));
+						result.setACARSLegs(rs.getInt(7));
+						result.setACARSHours(rs.getDouble(8));
+						result.setACARSMiles(rs.getInt(9));
+					}
 				}
 
-				rs.close();
 				_ps.close();
 
 				// Get MTD/YTD start dates
@@ -108,17 +109,17 @@ public class GetStatistics extends DAO implements CachingDAO {
 				_ps.setInt(8, FlightReport.OK);
 
 				// Do the query
-				rs = _ps.executeQuery();
-				if (rs.next()) {
-					result.setMTDLegs(rs.getInt(1));
-					result.setMTDHours(rs.getDouble(2));
-					result.setMTDMiles(rs.getInt(3));
-					result.setYTDLegs(rs.getInt(4));
-					result.setYTDHours(rs.getDouble(5));
-					result.setYTDMiles(rs.getInt(6));
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next()) {
+						result.setMTDLegs(rs.getInt(1));
+						result.setMTDHours(rs.getDouble(2));
+						result.setMTDMiles(rs.getInt(3));
+						result.setYTDLegs(rs.getInt(4));
+						result.setYTDHours(rs.getDouble(5));
+						result.setYTDMiles(rs.getInt(6));
+					}
 				}
 
-				rs.close();
 				_ps.close();
 
 				// Get Pilot Totals
@@ -126,11 +127,13 @@ public class GetStatistics extends DAO implements CachingDAO {
 				_ps.setQueryTimeout(10);
 				_ps.setInt(1, Pilot.ACTIVE);
 				_ps.setInt(2, Pilot.ON_LEAVE);
-				rs = _ps.executeQuery();
-				rs.next();
-				result.setTotalPilots(rs.getInt(1));
-				result.setActivePilots(rs.getInt(2));
-				rs.close();
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next()) {
+						result.setTotalPilots(rs.getInt(1));
+						result.setActivePilots(rs.getInt(2));
+					}
+				}
+						
 				_ps.close();
 			} catch (SQLException se) {
 				throw new DAOException(se);

@@ -10,7 +10,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 3.2
  */
 
@@ -39,21 +39,21 @@ public class GetACARSDispatchStats extends DAO {
 					+ "acars.CONS WHERE (PILOT_ID=?) AND (DISPATCH=?) AND (ENDDATE IS NOT NULL)");
 			_ps.setInt(1, p.getID());
 			_ps.setBoolean(2, true);
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next())
-				p.setDispatchHours(rs.getDouble(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					p.setDispatchHours(rs.getDouble(1));
+			}
 			
-			rs.close();
 			_ps.close();
 			
 			// Load legs
 			prepareStatement("SELECT COUNT(ID) FROM acars.FLIGHT_DISPATCHER WHERE (DISPATCHER_ID=?)");
 			_ps.setInt(1, p.getID());
-			rs = _ps.executeQuery();
-			if (rs.next())
-				p.setDispatchFlights(rs.getInt(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					p.setDispatchFlights(rs.getInt(1));
+			}
 			
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -76,14 +76,14 @@ public class GetACARSDispatchStats extends DAO {
 			
 			// Load the Hours
 			Map<Integer, DispatchStatistics> results = new LinkedHashMap<Integer, DispatchStatistics>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				DispatchStatistics ds = new DispatchStatistics(rs.getInt(1));
-				ds.setHours(rs.getDouble(2));
-				results.put(Integer.valueOf(ds.getID()), ds);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					DispatchStatistics ds = new DispatchStatistics(rs.getInt(1));
+					ds.setHours(rs.getDouble(2));
+					results.put(Integer.valueOf(ds.getID()), ds);
+				}
 			}
 			
-			rs.close();
 			_ps.close();
 			
 			// Load the Legs
@@ -91,14 +91,14 @@ public class GetACARSDispatchStats extends DAO {
 				+ " (F.ID=FD.ID) AND (F.CREATED >= ?) AND (F.CREATED<?) GROUP BY FD.DISPATCHER_ID");
 			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
 			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
-			rs = _ps.executeQuery();
-			while (rs.next()) {
-				DispatchStatistics ds = results.get(Integer.valueOf(rs.getInt(1)));
-				if (ds != null)
-					ds.setLegs(rs.getInt(2));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					DispatchStatistics ds = results.get(Integer.valueOf(rs.getInt(1)));
+					if (ds != null)
+						ds.setLegs(rs.getInt(2));
+				}
 			}
 
-			rs.close();
 			_ps.close();
 			return results.values();
 		} catch (SQLException se) {
@@ -119,19 +119,20 @@ public class GetACARSDispatchStats extends DAO {
 			// Execute the query
 			Calendar cld = Calendar.getInstance();
 			cld.set(Calendar.DAY_OF_MONTH, 1);
-			ResultSet rs = _ps.executeQuery();
+			
 			Collection<DateRange> years = new LinkedHashSet<DateRange>();
 			List<DateRange> results = new ArrayList<DateRange>();
-			while (rs.next()) {
-				cld.set(Calendar.MONTH, rs.getInt(1) - 1);
-				cld.set(Calendar.YEAR, rs.getInt(2));
-				java.util.Date dt = cld.getTime();
-				results.add(DateRange.createMonth(dt));
-				years.add(DateRange.createYear(dt));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					cld.set(Calendar.MONTH, rs.getInt(1) - 1);
+					cld.set(Calendar.YEAR, rs.getInt(2));
+					java.util.Date dt = cld.getTime();
+					results.add(DateRange.createMonth(dt));
+					years.add(DateRange.createYear(dt));
+				}
 			}
 			
 			// Clean up and merge
-			rs.close();
 			_ps.close();
 			results.addAll(0, years);
 			return results;

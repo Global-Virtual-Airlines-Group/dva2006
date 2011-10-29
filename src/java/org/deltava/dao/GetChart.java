@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -35,16 +35,15 @@ public class GetChart extends DAO {
 					+ "WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME");
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			List<Airport> results = new ArrayList<Airport>();
-			while (rs.next()) {
-				Airport a = SystemData.getAirport(rs.getString(1));
-				if (a != null)
-					results.add(a);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					if (a != null)
+						results.add(a);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -64,9 +63,12 @@ public class GetChart extends DAO {
 			_ps.setString(1, a.getICAO());
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int result = rs.next() ? rs.getInt(1) : -1;
-			rs.close();
+			int result = -1;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					result = rs.getInt(1);
+			}
+
 			_ps.close();
 			return result;
 		} catch (SQLException se) {
@@ -165,30 +167,29 @@ public class GetChart extends DAO {
 		List<Chart> results = new ArrayList<Chart>();
 
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasExt = (rs.getMetaData().getColumnCount() > 10);
-		while (rs.next()) {
-			String url = hasExt ? rs.getString(11) : null;
-			Chart c = null;
-			if (url != null) {
-				ExternalChart ec = new ExternalChart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
-				ec.setSource(rs.getString(10));
-				ec.setURL(url);
-				c = ec;
-			} else
-				c = new Chart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasExt = (rs.getMetaData().getColumnCount() > 10);
+			while (rs.next()) {
+				String url = hasExt ? rs.getString(11) : null;
+				Chart c = null;
+				if (url != null) {
+					ExternalChart ec = new ExternalChart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
+					ec.setSource(rs.getString(10));
+					ec.setURL(url);
+					c = ec;
+				} else
+					c = new Chart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
 			
-			c.setID(rs.getInt(1));
-			c.setType(rs.getInt(3));
-			c.setImgType(rs.getInt(4));
-			c.setSize(rs.getInt(6));
-			c.setUseCount(rs.getInt(7));
-			c.setLastModified(rs.getTimestamp(8));
-			results.add(c);
+				c.setID(rs.getInt(1));
+				c.setType(rs.getInt(3));
+				c.setImgType(rs.getInt(4));
+				c.setSize(rs.getInt(6));
+				c.setUseCount(rs.getInt(7));
+				c.setLastModified(rs.getTimestamp(8));
+				results.add(c);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to load Online Help and Help Desk entries.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -47,17 +47,16 @@ public class GetHelp extends DAO {
 			// Load the comments
 			prepareStatementWithoutLimits("SELECT * FROM HELPDESK_COMMENTS WHERE (ID=?) ORDER BY CREATED_ON");
 			_ps.setInt(1, id);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				IssueComment ic = new IssueComment(rs.getInt(2));
-				ic.setCreatedOn(rs.getTimestamp(3));
-				ic.setFAQ(rs.getBoolean(4));
-				ic.setBody(rs.getString(5));
-				i.addComment(ic);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					IssueComment ic = new IssueComment(rs.getInt(2));
+					ic.setCreatedOn(rs.getTimestamp(3));
+					ic.setFAQ(rs.getBoolean(4));
+					ic.setBody(rs.getString(5));
+					i.addComment(ic);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return i;
 		} catch (SQLException se) {
@@ -110,12 +109,12 @@ public class GetHelp extends DAO {
 	public Collection<Integer> getAssignees() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT ASSIGNEDTO FROM HELPDESK WHERE (ASSIGNEDTO<>0)");
-			Collection<Integer> results = new HashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			Collection<Integer> results = new LinkedHashSet<Integer>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -205,22 +204,21 @@ public class GetHelp extends DAO {
 				// Execute the Query
 				sqlBuf.append(')');
 				prepareStatementWithoutLimits(sqlBuf.toString());
-				ResultSet rs = _ps.executeQuery();
-				while (rs.next()) {
-					IssueComment ic = new IssueComment(rs.getInt(2));
-					ic.setID(rs.getInt(1));
-					ic.setCreatedOn(rs.getTimestamp(3));
-					ic.setFAQ(rs.getBoolean(4));
-					ic.setBody(rs.getString(5));
+				try (ResultSet rs = _ps.executeQuery()) {
+					while (rs.next()) {
+						IssueComment ic = new IssueComment(rs.getInt(2));
+						ic.setID(rs.getInt(1));
+						ic.setCreatedOn(rs.getTimestamp(3));
+						ic.setFAQ(rs.getBoolean(4));
+						ic.setBody(rs.getString(5));
 
-					// Stuff into issue
-					Issue i = results.get(new Integer(ic.getID()));
-					if (i != null)
+						// Stuff into issue
+						Issue i = results.get(Integer.valueOf(ic.getID()));
+						if (i != null)
 						i.addComment(ic);
+					}
 				}
 
-				// Clean up and return
-				rs.close();
 				_ps.close();
 			}
 
@@ -264,36 +262,30 @@ public class GetHelp extends DAO {
 	 * Helper method to parse Issue result sets.
 	 */
 	private List<Issue> executeIssue() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasCount = (rs.getMetaData().getColumnCount() > 12);
-
-		// Load results
 		List<Issue> results = new ArrayList<Issue>();
-		while (rs.next()) {
-			Issue i = new Issue(rs.getString(9));
-			i.setID(rs.getInt(1));
-			i.setAuthorID(rs.getInt(2));
-			i.setAssignedTo(rs.getInt(3));
-			i.setCreatedOn(rs.getTimestamp(4));
-			i.setResolvedOn(rs.getTimestamp(5));
-			i.setStatus(rs.getInt(6));
-			i.setPublic(rs.getBoolean(7));
-			i.setFAQ(rs.getBoolean(8));
-			i.setBody(rs.getString(10));
-			if (hasCount) {
-				i.setCommentCount(rs.getInt(11));
-				i.setLastComment(rs.getTimestamp(12));
-				i.setLastCommentAuthorID(rs.getInt(13));
-			}
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasCount = (rs.getMetaData().getColumnCount() > 12);
+			while (rs.next()) {
+				Issue i = new Issue(rs.getString(9));
+				i.setID(rs.getInt(1));
+				i.setAuthorID(rs.getInt(2));
+				i.setAssignedTo(rs.getInt(3));
+				i.setCreatedOn(rs.getTimestamp(4));
+				i.setResolvedOn(rs.getTimestamp(5));
+				i.setStatus(rs.getInt(6));
+				i.setPublic(rs.getBoolean(7));
+				i.setFAQ(rs.getBoolean(8));
+				i.setBody(rs.getString(10));
+				if (hasCount) {
+					i.setCommentCount(rs.getInt(11));
+					i.setLastComment(rs.getTimestamp(12));
+					i.setLastCommentAuthorID(rs.getInt(13));
+				}
 
-			// Add to results
-			results.add(i);
+				results.add(i);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

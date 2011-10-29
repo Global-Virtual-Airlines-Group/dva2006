@@ -273,12 +273,11 @@ public class GetSchedule extends DAO {
 			
 			// Execute the query
 			Collection<Airline> results = new TreeSet<Airline>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(SystemData.getAirline(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+				results.add(SystemData.getAirline(rs.getString(1)));	
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -297,20 +296,20 @@ public class GetSchedule extends DAO {
 			
 			// Select departure airports
 			prepareStatementWithoutLimits("SELECT AIRPORT_D, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_D HAVING (CNT=FACNT)");
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(SystemData.getAirport(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+				results.add(SystemData.getAirport(rs.getString(1)));	
+			}
 			
-			rs.close();
 			_ps.close();
 			
 			// Arrivate departure airports
 			prepareStatementWithoutLimits("SELECT AIRPORT_A, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_A HAVING (CNT=FACNT)");
-			rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(SystemData.getAirport(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(SystemData.getAirport(rs.getString(1)));	
+			}
 			
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -340,11 +339,12 @@ public class GetSchedule extends DAO {
 			_ps.setBoolean(3, false);
 
 			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			int result = rs.next() ? rs.getInt(1) : 0;
+			int result = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					result = rs.getInt(1);
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return result;
 		} catch (SQLException se) {
@@ -391,16 +391,15 @@ public class GetSchedule extends DAO {
 			
 			// Execute the query
 			ScheduleEntry f = null;
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-				f.setEquipmentType(rs.getString(4));
-				f.setAirportD(airportD);
-				f.setAirportA(airportA);
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+					f.setEquipmentType(rs.getString(4));
+					f.setAirportD(airportD);
+					f.setAirportA(airportA);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return f;
 		} catch (SQLException se) {
@@ -438,36 +437,31 @@ public class GetSchedule extends DAO {
 	 * Helper method to query the database.
 	 */
 	private List<ScheduleEntry> execute() throws SQLException {
-
-		// Execute the query
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
-		ResultSet rs = _ps.executeQuery();
-		boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);
-		while (rs.next()) {
-			ScheduleEntry entry = null;
-			if (hasDispatch) {
-				ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
-				sse.setDispatchRoutes(rs.getInt(14));
-				entry = sse;
-			} else
-				entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);
+			while (rs.next()) {
+				ScheduleEntry entry = null;
+				if (hasDispatch) {
+					ScheduleSearchEntry sse = new ScheduleSearchEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+					sse.setDispatchRoutes(rs.getInt(14));
+					entry = sse;
+				} else
+					entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 			
-			entry.setAirportD(SystemData.getAirport(rs.getString(4)));
-			entry.setAirportA(SystemData.getAirport(rs.getString(5)));
-			entry.setEquipmentType(rs.getString(7));
-			entry.setLength(rs.getInt(8));
-			entry.setTimeD(rs.getTimestamp(9));
-			entry.setTimeA(rs.getTimestamp(10));
-			entry.setHistoric(rs.getBoolean(11));
-			entry.setCanPurge(rs.getBoolean(12));
-			entry.setAcademy(rs.getBoolean(13));
-
-			// Add to results
-			results.add(entry);
+				entry.setAirportD(SystemData.getAirport(rs.getString(4)));
+				entry.setAirportA(SystemData.getAirport(rs.getString(5)));
+				entry.setEquipmentType(rs.getString(7));
+				entry.setLength(rs.getInt(8));
+				entry.setTimeD(rs.getTimestamp(9));
+				entry.setTimeA(rs.getTimestamp(10));
+				entry.setHistoric(rs.getBoolean(11));
+				entry.setCanPurge(rs.getBoolean(12));
+				entry.setAcademy(rs.getBoolean(13));
+				results.add(entry);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

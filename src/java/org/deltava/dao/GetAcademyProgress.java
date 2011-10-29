@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,9 +7,9 @@ import java.util.*;
 import org.deltava.beans.academy.*;
 
 /**
- * A Data Access Object for Flight Academy Course progress beans. 
+ * A Data Access Object for Flight Academy Course progress beans.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 3.4
  */
 
@@ -33,27 +33,27 @@ public class GetAcademyProgress extends DAO {
 	public Collection<CourseProgress> getRequirements(String examName, int pilotID) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT CP.* FROM exams.COURSEPROGRESS CP, exams.COURSES C WHERE (CP.ID=C.ID) AND "
-				+ "(C.STATUS=?) AND (CP.COMPLETE=?) AND (CP.EXAMNAME=?) AND (C.PILOT_ID=?) ORDER BY SEQ");
+					+ "(C.STATUS=?) AND (CP.COMPLETE=?) AND (CP.EXAMNAME=?) AND (C.PILOT_ID=?) ORDER BY SEQ");
 			_ps.setInt(1, Course.STARTED);
 			_ps.setBoolean(2, false);
 			_ps.setString(3, examName);
 			_ps.setInt(4, pilotID);
-			
+
 			// Load the result set
 			Collection<CourseProgress> results = new ArrayList<CourseProgress>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				CourseProgress cp = new CourseProgress(rs.getInt(1), rs.getInt(2));
-				cp.setAuthorID(rs.getInt(3));
-				cp.setText(rs.getString(4));
-				cp.setExamName(rs.getString(5));
-				cp.setComplete(rs.getBoolean(6));
-				cp.setCompletedOn(rs.getTimestamp(7));
-				results.add(cp);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					CourseProgress cp = new CourseProgress(rs.getInt(1), rs.getInt(2));
+					cp.setAuthorID(rs.getInt(3));
+					cp.setText(rs.getString(4));
+					cp.setExamName(rs.getString(5));
+					cp.setComplete(rs.getBoolean(6));
+					cp.setCompletedOn(rs.getTimestamp(7));
+					results.add(cp);
+				}
 			}
-			
+
 			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

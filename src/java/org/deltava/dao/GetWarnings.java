@@ -9,7 +9,7 @@ import org.deltava.beans.mvs.Warning;
 /**
  * A Data Access Object to load MVS warnings.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 4.0
  */
 
@@ -36,15 +36,14 @@ public class GetWarnings extends DAO {
 			
 			// Execute the query
 			Collection<Warning> results = new ArrayList<Warning>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Warning w = new Warning(rs.getInt(1), rs.getInt(2));
-				w.setDate(rs.getTimestamp(3));
-				results.add(w);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Warning w = new Warning(rs.getInt(1), rs.getInt(2));
+					w.setDate(rs.getTimestamp(3));
+					results.add(w);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -64,11 +63,12 @@ public class GetWarnings extends DAO {
 			_ps.setInt(1, pilotID);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int cnt = rs.next() ? rs.getInt(1) : 0;
+			int cnt = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					cnt = rs.getInt(1);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return cnt;
 		} catch (SQLException se) {

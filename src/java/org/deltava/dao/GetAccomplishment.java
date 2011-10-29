@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 3.2
  */
 
@@ -81,23 +81,21 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 			_ps.setInt(1, id);
 			_ps.setString(2, db);
 			
-			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				a = new Accomplishment(rs.getString(2));
-				a.setID(rs.getInt(1));
-				a.setUnit(Accomplishment.Unit.values()[rs.getInt(3)]);
-				a.setValue(rs.getInt(4));
-				a.setColor(rs.getInt(5));
-				a.setChoices(StringUtils.split(rs.getString(6), ","));
-				a.setActive(rs.getBoolean(7));
-				a.setOwner(SystemData.getApp(rs.getString(8)));
-				a.setPilots(rs.getInt(9));
-				_cache.add(a);
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					a = new Accomplishment(rs.getString(2));
+					a.setID(rs.getInt(1));
+					a.setUnit(Accomplishment.Unit.values()[rs.getInt(3)]);
+					a.setValue(rs.getInt(4));
+					a.setColor(rs.getInt(5));
+					a.setChoices(StringUtils.split(rs.getString(6), ","));
+					a.setActive(rs.getBoolean(7));
+					a.setOwner(SystemData.getApp(rs.getString(8)));
+					a.setPilots(rs.getInt(9));
+					_cache.add(a);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return a;
 		} catch (SQLException se) {
@@ -118,11 +116,11 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 			
 			// Execute the query
 			Collection<Integer> IDs = new LinkedHashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				IDs.add(Integer.valueOf(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			rs.close();
 			_ps.close();
 			
 			// Load the accomplishments 
@@ -151,23 +149,22 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 			prepareStatement("SELECT A.*, COUNT(DISTINCT PA.PILOT_ID) AS CNT FROM ACCOMPLISHMENTS A "
 				+ "LEFT JOIN PILOT_ACCOMPLISHMENTS PA ON (A.ID=PA.AC_ID) GROUP BY A.ID ORDER BY A.UNIT, A.VAL");
 			Collection<Accomplishment> results = new ArrayList<Accomplishment>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Accomplishment a = new Accomplishment(rs.getString(2));
-				a.setID(rs.getInt(1));
-				a.setUnit(Accomplishment.Unit.values()[rs.getInt(3)]);
-				a.setValue(rs.getInt(4));
-				a.setColor(rs.getInt(5));
-				a.setChoices(StringUtils.split(rs.getString(6), ","));
-				a.setActive(rs.getBoolean(7));
-				a.setPilots(rs.getInt(8));
-				a.setOwner(ai);
-				_cache.add(a);
-				results.add(a);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Accomplishment a = new Accomplishment(rs.getString(2));
+					a.setID(rs.getInt(1));
+					a.setUnit(Accomplishment.Unit.values()[rs.getInt(3)]);
+					a.setValue(rs.getInt(4));
+					a.setColor(rs.getInt(5));
+					a.setChoices(StringUtils.split(rs.getString(6), ","));
+					a.setActive(rs.getBoolean(7));
+					a.setPilots(rs.getInt(8));
+					a.setOwner(ai);
+					results.add(a);
+					_cache.add(a);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -209,9 +206,12 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 			_ps.setInt(2, a.getID());
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			boolean isOK = rs.next() ? (rs.getTimestamp(1) != null) : false;
-			rs.close();
+			boolean isOK = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					isOK = (rs.getTimestamp(1) != null);
+			}
+			
 			_ps.close();
 			return isOK;
 		} catch (SQLException se) {

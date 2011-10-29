@@ -11,7 +11,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -55,12 +55,11 @@ public class GetTransferRequest extends DAO {
 		try {
 			Collection<String> dbNames = new LinkedHashSet<String>();
 			prepareStatementWithoutLimits("SELECT DISTINCT DBNAME FROM common.AIRLINEINFO");
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				dbNames.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					dbNames.add(rs.getString(1));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Iterate through the databases to find out if they have a checkride
@@ -69,9 +68,10 @@ public class GetTransferRequest extends DAO {
 				String db = formatDBName(i.next());
 				prepareStatementWithoutLimits("SELECT COUNT(*) FROM " + db + ".TXREQUESTS WHERE (ID=?)");
 				_ps.setInt(1, pilotID);
-				rs = _ps.executeQuery();
-				hasTX = rs.next() ? (rs.getInt(1) > 0) : false;
-				rs.close();
+				try (ResultSet rs = _ps.executeQuery()) {
+					hasTX = rs.next() ? (rs.getInt(1) > 0) : false;
+				}
+					
 				_ps.close();
 			}
 			
@@ -100,11 +100,12 @@ public class GetTransferRequest extends DAO {
 				_ps.setString(1, eqType);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int result = rs.next() ? rs.getInt(1) : 0;
+			int result = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					result = rs.getInt(1);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return result;
 		} catch (SQLException se) {
@@ -210,17 +211,16 @@ public class GetTransferRequest extends DAO {
 	 */
 	private List<TransferRequest> execute() throws SQLException {
 		List<TransferRequest> results = new ArrayList<TransferRequest>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(3));
-			txreq.setStatus(rs.getInt(2));
-			txreq.setDate(rs.getTimestamp(4));
-			txreq.setRatingOnly(rs.getBoolean(5));
-			results.add(txreq);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(3));
+				txreq.setStatus(rs.getInt(2));
+				txreq.setDate(rs.getTimestamp(4));
+				txreq.setRatingOnly(rs.getBoolean(5));
+				results.add(txreq);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -246,18 +246,17 @@ public class GetTransferRequest extends DAO {
 		prepareStatement(sqlBuf.toString());
 		
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			TransferRequest tx = reqs.get(Integer.valueOf(rs.getInt(1)));
-			if (tx != null) {
-				tx.addCheckRideID(rs.getInt(2));
-				if (!tx.getCheckRideSubmitted())
-					tx.setCheckRideSubmitted(rs.getInt(3) == Test.SUBMITTED);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				TransferRequest tx = reqs.get(Integer.valueOf(rs.getInt(1)));
+				if (tx != null) {
+					tx.addCheckRideID(rs.getInt(2));
+					if (!tx.getCheckRideSubmitted())
+						tx.setCheckRideSubmitted(rs.getInt(3) == Test.SUBMITTED);
+				}
 			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

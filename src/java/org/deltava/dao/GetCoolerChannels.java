@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -80,21 +80,19 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			_ps.setString(1, channelName);
 
 			// Execute the query - if nothing is returned, return null
-			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				_ps.close();
-				rs.close();
-				return null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (!rs.next()) {
+					_ps.close();
+					return null;
+				}
+
+				// Initialize the channel
+				c = new Channel(channelName);
+				c.setDescription(rs.getString(2));
+				c.setActive(rs.getBoolean(3));
+				c.setAllowNewPosts(rs.getBoolean(4));
 			}
 
-			// Initialize the channel
-			c = new Channel(channelName);
-			c.setDescription(rs.getString(2));
-			c.setActive(rs.getBoolean(3));
-			c.setAllowNewPosts(rs.getBoolean(4));
-
-			// Clean up the first set of JDBC resources
-			rs.close();
 			_ps.close();
 
 			// Load the roles and airlines
@@ -139,23 +137,22 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 				_ps.setBoolean(++pos, true);
 
 			// Execute the query - we store results in a map for now
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Channel c = new Channel(rs.getString(1));
-				c.setDescription(rs.getString(2));
-				c.setActive(rs.getBoolean(3));
-				c.setAllowNewPosts(rs.getBoolean(4));
-				c.setLastThreadID(rs.getInt(5));
-				c.setPostCount(rs.getInt(6));
-				c.setThreadCount(rs.getInt(7));
-				c.setViewCount(rs.getInt(8));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Channel c = new Channel(rs.getString(1));
+					c.setDescription(rs.getString(2));
+					c.setActive(rs.getBoolean(3));
+					c.setAllowNewPosts(rs.getBoolean(4));
+					c.setLastThreadID(rs.getInt(5));
+					c.setPostCount(rs.getInt(6));
+					c.setThreadCount(rs.getInt(7));
+					c.setViewCount(rs.getInt(8));
 
-				// Add to the results with the channel name as the key
-				results.put(c.getName(), c);
+					// Add to the results with the channel name as the key
+					results.put(c.getName(), c);
+				}
 			}
 
-			// Clean up the first set of JDBC resources
-			rs.close();
 			_ps.close();
 
 			// Load the roles and airlines
@@ -223,20 +220,19 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO");
 
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Channel c = channels.get(rs.getString(1));
-			if (c != null) {
-				int type = rs.getInt(2);
-				if (type == Channel.INFOTYPE_AIRLINE)
-					c.addAirline(rs.getString(3));
-				else
-					c.addRole(type, rs.getString(3));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Channel c = channels.get(rs.getString(1));
+				if (c != null) {
+					int type = rs.getInt(2);
+					if (type == Channel.INFOTYPE_AIRLINE)
+						c.addAirline(rs.getString(3));
+					else
+						c.addRole(type, rs.getString(3));
+				}
 			}
 		}
 
-		// Clean up after ourselves
-		rs.close();
 		_ps.close();
 	}
 
@@ -280,18 +276,17 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 
 			// Execute the query and build the results list
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				LastPostMessage msg = new LastPostMessage(rs.getInt(13));
-				msg.setThreadID(rs.getInt(1));
-				msg.setID(msg.getThreadID());
-				msg.setSubject(rs.getString(2));
-				msg.setCreatedOn(rs.getTimestamp(12));
-				results.add(msg);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					LastPostMessage msg = new LastPostMessage(rs.getInt(13));
+					msg.setThreadID(rs.getInt(1));
+					msg.setID(msg.getThreadID());
+					msg.setSubject(rs.getString(2));
+					msg.setCreatedOn(rs.getTimestamp(12));
+					results.add(msg);
+				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
