@@ -63,6 +63,13 @@ public class StartFlightService extends XAService {
 		else
 			info.setRoute(StringUtils.listConcat(rte, " "));
 		
+		// Get the simulator version
+		String sim = getSimulator(ctx);
+		if (sim.contains("MSFS"))
+			info.setFSVersion(2004);
+		else
+			info.setFSVersion(100);
+		
 		// Parse the position data
 		XARouteEntry pos = new XARouteEntry(GeoUtils.parseXACARS(data.get(6)), new Date());
 		pos.setHeading(StringUtils.parse(data.get(12), 0));
