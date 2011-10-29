@@ -31,13 +31,13 @@ public class GetCountry extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT CODE, NAME, CONTINENT FROM common.COUNTRY");
 			int rowsLoaded = 0;
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Country.init(rs.getString(1), rs.getString(2), rs.getString(3));
-				rowsLoaded++;
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Country.init(rs.getString(1), rs.getString(2), rs.getString(3));
+					rowsLoaded++;
+				}
 			}
 			
-			rs.close();
 			_ps.close();
 			return rowsLoaded;
 		} catch (SQLException se) {

@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 2.5
  */
 
@@ -56,18 +56,17 @@ public class GetIPLocation extends DAO implements CachingDAO {
 			
 			// Do the range start query
 			long ip_start = -1;
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				String cidr = rs.getString(1);
-				if (cidr != null) {
-					result = new IPAddressInfo(addr);
-					result.setBlock(new IPBlock(cidr));
-					ip_start = rs.getLong(2);
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					String cidr = rs.getString(1);
+					if (cidr != null) {
+						result = new IPAddressInfo(addr);
+						result.setBlock(new IPBlock(cidr));
+						ip_start = rs.getLong(2);
+					}
 				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Load the IP info
@@ -75,19 +74,17 @@ public class GetIPLocation extends DAO implements CachingDAO {
 				+ "geoip.locations l LEFT JOIN geoip.fips_regions r ON (l.region_code=r.code) AND (l.country_code=r.country_code) "
 				+ "WHERE (ic.location=l.id) AND (ic.ip_start >= ?) ORDER BY ic.ip_start LIMIT 1");
 			_ps.setLong(1, ip_start);
-			rs = _ps.executeQuery();
-			if (rs.next() && (result != null)) {
-				result.setCountry(Country.get(rs.getString(1)));
-				result.setCity(rs.getString(2));
-				result.setRegion(rs.getString(3));
-				result.setLocation(rs.getDouble(4), rs.getDouble(5));
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next() && (result != null)) {
+					result.setCountry(Country.get(rs.getString(1)));
+					result.setCity(rs.getString(2));
+					result.setRegion(rs.getString(3));
+					result.setLocation(rs.getDouble(4), rs.getDouble(5));
+				}
 			}
 			
-			// Clean up
-			rs.close();
-			_ps.close();
-			
 			// Add to cache and return
+			_ps.close();
 			_cache.add(result);
 			return result;
 		} catch (SQLException se) {

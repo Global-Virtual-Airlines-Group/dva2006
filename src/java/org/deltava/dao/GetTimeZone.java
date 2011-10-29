@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.TZInfo;
 /**
  * A Data Access Object for loading Time Zones.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -33,15 +33,14 @@ public class GetTimeZone extends DAO {
             
             // Execute the query
             int rowsLoaded = 0;
-            ResultSet rs = _ps.executeQuery();
-            while (rs.next()) {
-            	String id = rs.getString(1);
-                TZInfo.init(id, rs.getString(2), rs.getString(3));
-                rowsLoaded++;
+            try (ResultSet rs = _ps.executeQuery()) {
+            	while (rs.next()) {
+            		String id = rs.getString(1);
+            		TZInfo.init(id, rs.getString(2), rs.getString(3));
+            		rowsLoaded++;
+            	}
             }
             
-            // Clean up after ourselves
-            rs.close();
             _ps.close();
             return rowsLoaded;
         } catch (SQLException se) {

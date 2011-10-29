@@ -539,15 +539,13 @@ public class GetACARSData extends DAO {
 			info.setScheduleValidated(rs.getBoolean(17));
 			info.setDispatchPlan(rs.getBoolean(18));
 			info.setIsMP(rs.getBoolean(19));
-			info.setRouteID(rs.getInt(20));
-			info.setDispatcherID(rs.getInt(21));
-			info.setPilotID(rs.getInt(22));
-
-			// Add to results
+			info.setXACARS(rs.getBoolean(20));
+			info.setRouteID(rs.getInt(21));
+			info.setDispatcherID(rs.getInt(22));
+			info.setPilotID(rs.getInt(23));
 			results.add(info);
 		}
 
-		// Clean up and return
 		rs.close();
 		_ps.close();
 		return results;

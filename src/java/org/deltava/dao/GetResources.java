@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.fleet.Resource;
 /**
  * A Data Access Object to load Web Resource data.
  * @author Luke
- * @version 3.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -33,8 +33,6 @@ public class GetResources extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.RESOURCES WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
-			
-			// Get first result
 			List<Resource> results = execute();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -105,26 +103,23 @@ public class GetResources extends DAO {
 	 * Helper method to parse result sets.
 	 */
 	private List<Resource> execute() throws SQLException {
-	
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
 		List<Resource> results = new ArrayList<Resource>();
-		while (rs.next()) {
-			Resource r = new Resource(rs.getString(2));
-			r.setID(rs.getInt(1));
-			r.setTitle(rs.getString(3));
-			r.setDescription(rs.getString(4));
-			r.setCreatedOn(expandDate(rs.getDate(5)));
-			r.setCategory(rs.getString(6));
-			r.setAuthorID(rs.getInt(7));
-			r.setLastUpdateID(rs.getInt(8));
-			r.setHits(rs.getInt(9));
-			r.setPublic(rs.getBoolean(10));
-			results.add(r);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Resource r = new Resource(rs.getString(2));
+				r.setID(rs.getInt(1));
+				r.setTitle(rs.getString(3));
+				r.setDescription(rs.getString(4));
+				r.setCreatedOn(expandDate(rs.getDate(5)));
+				r.setCategory(rs.getString(6));
+				r.setAuthorID(rs.getInt(7));
+				r.setLastUpdateID(rs.getInt(8));
+				r.setHits(rs.getInt(9));
+				r.setPublic(rs.getBoolean(10));
+				results.add(r);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,11 +11,11 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load equipment program metrics.
  * @author Luke
- * @version 2.1
+ * @version 4.1
  * @since 2.1
  */
 
-public class GetProgramStatistics extends DAO {
+public class GetProgramStatistics extends DAO implements CachingDAO {
 	
 	private static final Cache<ProgramMetrics> _cache = new ExpiringCache<ProgramMetrics>(8, 7200);
 
@@ -25,6 +25,11 @@ public class GetProgramStatistics extends DAO {
 	 */
 	public GetProgramStatistics(Connection c) {
 		super(c);
+	}
+	
+	@Override
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 
 	/**
@@ -45,19 +50,18 @@ public class GetProgramStatistics extends DAO {
 			// Load pilot data
 			prepareStatementWithoutLimits("SELECT ID, RANK, STATUS, CREATED FROM PILOTS WHERE (EQTYPE=?)");
 			_ps.setString(1, eqType.getName());
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Pilot p = new Pilot("x", "x");
-				p.setID(rs.getInt(1));
-				p.setEquipmentType(eqType.getName());
-				p.setRank(Rank.fromName(rs.getString(2)));
-				p.setStatus(rs.getInt(3));
-				p.setCreatedOn(rs.getTimestamp(4));
-				pm.addPilot(p);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = new Pilot("x", "x");
+					p.setID(rs.getInt(1));
+					p.setEquipmentType(eqType.getName());
+					p.setRank(Rank.fromName(rs.getString(2)));
+					p.setStatus(rs.getInt(3));
+					p.setCreatedOn(rs.getTimestamp(4));
+					pm.addPilot(p);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);

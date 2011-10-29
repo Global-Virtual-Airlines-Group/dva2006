@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Schedule route data.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -114,17 +114,14 @@ public class GetScheduleAirport extends DAO {
 	 */
 	private List<Airport> execute() throws SQLException {
 		List<Airport> results = new ArrayList<Airport>();
-		
-		// Do the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Airport ap = SystemData.getAirport(rs.getString(1));
-			if (ap != null)
-				results.add(ap);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Airport ap = SystemData.getAirport(rs.getString(1));
+				if (ap != null)
+					results.add(ap);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -169,10 +169,8 @@ public class GetACARSLog extends GetACARSData {
 			int psOfs = 0;
 			if (criteria.getPilotID() != 0)
 				_ps.setInt(++psOfs, criteria.getPilotID());
-
 			if (criteria.getStartDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
-
 			if (criteria.getEndDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
 
@@ -187,23 +185,17 @@ public class GetACARSLog extends GetACARSData {
 	 */
 	private List<TextMessage> executeMsg() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the requests
 		List<TextMessage> results = new ArrayList<TextMessage>();
-		while (rs.next()) {
-			TextMessage msg = new TextMessage(rs.getTimestamp(1));
-			msg.setAuthorID(rs.getInt(2));
-			msg.setRecipientID(rs.getInt(3));
-			msg.setMessage(rs.getString(4));
-
-			// Add to results
-			results.add(msg);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				TextMessage msg = new TextMessage(rs.getTimestamp(1));
+				msg.setAuthorID(rs.getInt(2));
+				msg.setRecipientID(rs.getInt(3));
+				msg.setMessage(rs.getString(4));
+				results.add(msg);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

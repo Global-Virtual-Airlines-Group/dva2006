@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load TeamSpeak 2 configuration data.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -42,11 +42,8 @@ public class GetTS2Data extends DAO implements CachingDAO {
 	 * Helper method to convert a date from the godawful TS2 format.
 	 */
 	private java.util.Date getDate(String dt) {
-		if (dt == null)
-			return null;
-
 		try {
-			return _df.parse(dt);
+			return (dt == null) ? null : _df.parse(dt);
 		} catch (ParseException pe) {
 			log.warn("Error parsing date " + dt);
 			return new java.util.Date();
@@ -63,8 +60,6 @@ public class GetTS2Data extends DAO implements CachingDAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_channels WHERE (i_channel_id=?) LIMIT 1");
 			_ps.setInt(1, id);
-
-			// Execute the query and return
 			List<Channel> results = executeChannels();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -231,30 +226,25 @@ public class GetTS2Data extends DAO implements CachingDAO {
 	 */
 	private List<Channel> executeChannels() throws SQLException {
 		List<Channel> results = new ArrayList<Channel>();
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Channel c = new Channel(rs.getString(10));
-			c.setID(rs.getInt(1));
-			c.setServerID(rs.getInt(2));
-			c.setModerated(rs.getInt(4) == -1);
-			c.setHierarchical(rs.getInt(5) == -1);
-			c.setDefault(rs.getInt(6) == -1);
-			c.setCodec(rs.getInt(7));
-			c.setMaxUsers(rs.getInt(9));
-			c.setTopic(rs.getString(11));
-			c.setDescription(rs.getString(12));
-			c.setPassword(rs.getString(13));
-			c.setCreatedOn(getDate(rs.getString(14)));
-
-			// Add to cache and results
-			_cache.add(c);
-			results.add(c);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Channel c = new Channel(rs.getString(10));
+				c.setID(rs.getInt(1));
+				c.setServerID(rs.getInt(2));
+				c.setModerated(rs.getInt(4) == -1);
+				c.setHierarchical(rs.getInt(5) == -1);
+				c.setDefault(rs.getInt(6) == -1);
+				c.setCodec(rs.getInt(7));
+				c.setMaxUsers(rs.getInt(9));
+				c.setTopic(rs.getString(11));
+				c.setDescription(rs.getString(12));
+				c.setPassword(rs.getString(13));
+				c.setCreatedOn(getDate(rs.getString(14)));
+				_cache.add(c);
+				results.add(c);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -267,25 +257,24 @@ public class GetTS2Data extends DAO implements CachingDAO {
 		Collection<Integer> userIDs = new HashSet<Integer>();
 
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Client usr = new Client(rs.getString(4));
-			usr.setID(rs.getInt(1));
-			usr.setServerID(rs.getInt(2));
-			usr.setServerAdmin(rs.getInt(3) == -1);
-			usr.setPassword(rs.getString(5));
-			usr.setCreatedOn(getDate(rs.getString(6)));
-			usr.setLastOnline(getDate(rs.getString(7)));
-			usr.setIsACARS(rs.getBoolean(8));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Client usr = new Client(rs.getString(4));
+				usr.setID(rs.getInt(1));
+				usr.setServerID(rs.getInt(2));
+				usr.setServerAdmin(rs.getInt(3) == -1);
+				usr.setPassword(rs.getString(5));
+				usr.setCreatedOn(getDate(rs.getString(6)));
+				usr.setLastOnline(getDate(rs.getString(7)));
+				usr.setIsACARS(rs.getBoolean(8));
 
-			// Add to cache and results
-			_cache.add(usr);
-			userIDs.add(new Integer(usr.getID()));
-			results.put(usr.cacheKey().toString(), usr);
+				// Add to cache and results
+				_cache.add(usr);
+				userIDs.add(Integer.valueOf(usr.getID()));
+				results.put(usr.cacheKey().toString(), usr);
+			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 
 		// Load client privileges
@@ -302,24 +291,23 @@ public class GetTS2Data extends DAO implements CachingDAO {
 			}
 			
 			prepareStatementWithoutLimits(buf.toString());
-			rs = _ps.executeQuery();
-			while (rs.next()) {
-				// Build the key
-				StringBuilder keyBuf = new StringBuilder(String.valueOf(rs.getInt(4)));
-				keyBuf.append('-');
-				keyBuf.append(String.valueOf(rs.getInt(2)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					// Build the key
+					StringBuilder keyBuf = new StringBuilder(String.valueOf(rs.getInt(4)));
+					keyBuf.append('-');
+					keyBuf.append(String.valueOf(rs.getInt(2)));
 				
-				// Get the client record
-				Client c = results.get(keyBuf.toString());
-				if (c != null) {
-					c.setServerAdmin(rs.getInt(5) == -1);
-					c.setServerOperator(rs.getInt(6) == -1);
-					c.setAutoVoice(rs.getInt(7) == -1);
+					// Get the client record
+					Client c = results.get(keyBuf.toString());
+					if (c != null) {
+						c.setServerAdmin(rs.getInt(5) == -1);
+						c.setServerOperator(rs.getInt(6) == -1);
+						c.setAutoVoice(rs.getInt(7) == -1);
+					}
 				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 		}
 
@@ -328,58 +316,50 @@ public class GetTS2Data extends DAO implements CachingDAO {
 
 	private List<Server> executeServers() throws SQLException {
 		Map<Integer, Server> results = new TreeMap<Integer, Server>();
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Server srv = new Server(rs.getString(2));
-			srv.setID(rs.getInt(1));
-			srv.setWelcomeMessage(rs.getString(3));
-			srv.setMaxUsers(rs.getInt(4));
-			srv.setPort(rs.getInt(5));
-			srv.setPassword(rs.getString(6));
-			srv.setActive(rs.getInt(7) == -1);
-			srv.setCreatedOn(getDate(rs.getString(8)));
-			srv.setDescription(rs.getString(9));
-			srv.setACARSOnly(rs.getBoolean(10));
-
-			// Add to results
-			results.put(new Integer(srv.getID()), srv);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Server srv = new Server(rs.getString(2));
+				srv.setID(rs.getInt(1));
+				srv.setWelcomeMessage(rs.getString(3));
+				srv.setMaxUsers(rs.getInt(4));
+				srv.setPort(rs.getInt(5));
+				srv.setPassword(rs.getString(6));
+				srv.setActive(rs.getInt(7) == -1);
+				srv.setCreatedOn(getDate(rs.getString(8)));
+				srv.setDescription(rs.getString(9));
+				srv.setACARSOnly(rs.getBoolean(10));
+				results.put(Integer.valueOf(srv.getID()), srv);
+			}
 		}
 
-		// Clean up first query
-		rs.close();
 		_ps.close();
 
 		// Load roles for each server
 		prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_server_roles");
-		rs = _ps.executeQuery();
-		while (rs.next()) {
-			Server srv = results.get(new Integer(rs.getInt(1)));
-			if (srv != null) {
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Server srv = results.get(Integer.valueOf(rs.getInt(1)));
+				if (srv == null)
+					continue;
+				
 				String role = rs.getString(2);
 				srv.addRole(Server.ACCESS, role);
 				if (rs.getBoolean(3))
 					srv.addRole(Server.ADMIN, role);
-
 				if (rs.getBoolean(4))
 					srv.addRole(Server.OPERATOR, role);
-
 				if (rs.getBoolean(5))
 					srv.addRole(Server.VOICE, role);
 			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 
 		// Load servers
 		prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_channels ORDER BY s_channel_name");
 		Collection<Channel> channels = executeChannels();
-		for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
-			Channel c = i.next();
-			Server srv = results.get(new Integer(c.getServerID()));
+		for (Channel c : channels) {
+			Server srv = results.get(Integer.valueOf(c.getServerID()));
 			if (srv != null)
 				srv.addChannel(c);
 		}

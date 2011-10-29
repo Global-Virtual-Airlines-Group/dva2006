@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -33,10 +33,12 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		super(c);
 	}
 	
+	@Override
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_cache);
 	}
 	
+	@Override
 	public void clear() {
 		_cache.clear();
 	}
@@ -248,17 +250,17 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 				_ps.setString(1, a.getICAO());
 				_ps.setInt(2, Math.max(2004, simVersion));
 				
-				ResultSet rs = _ps.executeQuery();
-				while (rs.next()) {
-					Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
-					r.setCode(rs.getString(1));
-					r.setName(rs.getString(2));
-					r.setHeading(rs.getInt(6));
-					r.setLength(rs.getInt(7));
-					results.put(r.getName(), r);
+				try (ResultSet rs = _ps.executeQuery()) {
+					while (rs.next()) {
+						Runway r = new Runway(rs.getDouble(4), rs.getDouble(5));
+						r.setCode(rs.getString(1));
+						r.setName(rs.getString(2));
+						r.setHeading(rs.getInt(6));
+						r.setLength(rs.getInt(7));
+						results.put(r.getName(), r);
+					}
 				}
 				
-				rs.close();
 				_ps.close();
 			}
 			
@@ -315,12 +317,9 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		
 		// Check the cache
 		NavigationDataMap results = new NavigationDataMap();
-		for (Iterator<String> i = ids.iterator(); i.hasNext(); ) {
-			String id = i.next();
+		for (String id : ids)
 			results.addAll(get(id).getAll());
-		}
 		
-		// Add to the cache and return
 		results.setCacheKey(ids);
 		return results;
 	}
@@ -400,73 +399,67 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	 * Helper method to iterate through a NAVDATA result set.
 	 */
 	private List<NavigationDataBean> execute() throws SQLException {
-
-		// Execute the Query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
-		while (rs.next()) {
-			NavigationDataBean obj = null;
-			switch (rs.getInt(1)) {
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				NavigationDataBean obj = null;
+				switch (rs.getInt(1)) {
 				case NavigationDataBean.AIRPORT:
-					AirportLocation a = new AirportLocation(rs.getDouble(3), rs.getDouble(4));
-					a.setCode(rs.getString(2));
-					a.setAltitude(rs.getInt(6));
-					a.setName(rs.getString(7));
-					a.setRegion(rs.getString(9));
-					obj = a;
-					break;
+						AirportLocation a = new AirportLocation(rs.getDouble(3), rs.getDouble(4));
+						a.setCode(rs.getString(2));
+						a.setAltitude(rs.getInt(6));
+						a.setName(rs.getString(7));
+						a.setRegion(rs.getString(9));
+						obj = a;
+						break;
 
-				case NavigationDataBean.INT:
-					obj = new Intersection(rs.getString(2), rs.getDouble(3), rs.getDouble(4));
-					obj.setRegion(rs.getString(9));
-					break;
+					case NavigationDataBean.INT:
+						obj = new Intersection(rs.getString(2), rs.getDouble(3), rs.getDouble(4));
+						obj.setRegion(rs.getString(9));
+						break;
 
-				case NavigationDataBean.VOR:
-					VOR vor = new VOR(rs.getDouble(3), rs.getDouble(4));
-					vor.setCode(rs.getString(2));
-					vor.setFrequency(rs.getString(5));
-					vor.setName(rs.getString(7));
-					vor.setRegion(rs.getString(9));
-					obj = vor;
-					break;
+					case NavigationDataBean.VOR:
+						VOR vor = new VOR(rs.getDouble(3), rs.getDouble(4));
+						vor.setCode(rs.getString(2));
+						vor.setFrequency(rs.getString(5));
+						vor.setName(rs.getString(7));
+						vor.setRegion(rs.getString(9));
+						obj = vor;
+						break;
 
-				case NavigationDataBean.NDB:
-					NDB ndb = new NDB(rs.getDouble(3), rs.getDouble(4));
-					ndb.setCode(rs.getString(2));
-					ndb.setFrequency(rs.getString(5));
-					ndb.setName(rs.getString(7));
-					ndb.setRegion(rs.getString(9));
-					obj = ndb;
-					break;
+					case NavigationDataBean.NDB:
+						NDB ndb = new NDB(rs.getDouble(3), rs.getDouble(4));
+						ndb.setCode(rs.getString(2));
+						ndb.setFrequency(rs.getString(5));
+						ndb.setName(rs.getString(7));
+						ndb.setRegion(rs.getString(9));
+						obj = ndb;
+						break;
 
-				case NavigationDataBean.RUNWAY:
-					Runway rwy = new Runway(rs.getDouble(3), rs.getDouble(4));
-					rwy.setCode(rs.getString(2));
-					rwy.setFrequency(rs.getString(5));
-					rwy.setLength(rs.getInt(6));
-					rwy.setName(rs.getString(7));
-					rwy.setHeading(rs.getInt(8));
-					rwy.setRegion(rs.getString(9));
-					obj = rwy;
-					break;
+					case NavigationDataBean.RUNWAY:
+						Runway rwy = new Runway(rs.getDouble(3), rs.getDouble(4));
+						rwy.setCode(rs.getString(2));
+						rwy.setFrequency(rs.getString(5));
+						rwy.setLength(rs.getInt(6));
+						rwy.setName(rs.getString(7));
+						rwy.setHeading(rs.getInt(8));
+						rwy.setRegion(rs.getString(9));
+						obj = rwy;
+						break;
 
-				default:
+					default:
+				}
+
+				results.add(obj);
 			}
-
-			// Add to results
-			results.add(obj);
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
 
 	/**
-	 * Helper method to filter objects based on distance from a certain point
+	 * Helper method to filter objects based on distance from a certain point.
 	 */
 	private void distanceFilter(Collection<NavigationDataBean> entries, GeoLocation loc, int distance) {
 		for (Iterator<NavigationDataBean> i = entries.iterator(); i.hasNext();) {

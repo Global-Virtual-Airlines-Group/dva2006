@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Examination and Check Ride statistics.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 3.0
  */
 
@@ -55,12 +55,12 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			results = new CacheableSet<Integer>(CheckRide.class);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
 			// Clean up and return
-			rs.close();
 			_ps.close();
 			_cache.add(results);
 			return results.clone();
@@ -93,12 +93,12 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			results = new CacheableSet<Integer>(Examination.class);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
 			// Clean up and return
-			rs.close();
 			_ps.close();
 			_cache.add(results);
 			return results.clone();
@@ -151,18 +151,17 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			Collection<ExamStatsEntry> results = new ArrayList<ExamStatsEntry>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				ExamStatsEntry entry = new ExamStatsEntry(rs.getString(1));
-				entry.setSubLabel(rs.getString(3));
-				entry.setPassed(rs.getInt(4));
-				entry.setTotal(rs.getInt(5));
-				entry.setUsers(rs.getInt(6));
-				results.add(entry);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ExamStatsEntry entry = new ExamStatsEntry(rs.getString(1));
+					entry.setSubLabel(rs.getString(3));
+					entry.setPassed(rs.getInt(4));
+					entry.setTotal(rs.getInt(5));
+					entry.setUsers(rs.getInt(6));
+					results.add(entry);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -226,18 +225,17 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 			
 			// Execute the query
 			Collection<ExamStatsEntry> results = new ArrayList<ExamStatsEntry>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				ExamStatsEntry entry = new ExamStatsEntry(rs.getString(1));
-				entry.setSubLabel(rs.getString(3));
-				entry.setPassed(rs.getInt(4));
-				entry.setTotal(rs.getInt(5));
-				entry.setUsers(rs.getInt(6));
-				results.add(entry);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ExamStatsEntry entry = new ExamStatsEntry(rs.getString(1));
+					entry.setSubLabel(rs.getString(3));
+					entry.setPassed(rs.getInt(4));
+					entry.setTotal(rs.getInt(5));
+					entry.setUsers(rs.getInt(6));
+					results.add(entry);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

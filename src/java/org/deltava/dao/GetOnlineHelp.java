@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object for Online Help entries.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -75,20 +75,15 @@ public class GetOnlineHelp extends DAO implements CachingDAO {
 	 * Helper method to parse the result set.
 	 */
 	private List<OnlineHelpEntry> executeHelp() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<OnlineHelpEntry> results = new ArrayList<OnlineHelpEntry>();
-		while (rs.next()) {
-			OnlineHelpEntry entry = new OnlineHelpEntry(rs.getString(1), rs.getString(2));
-			results.add(entry);
-			_cache.add(entry);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				OnlineHelpEntry entry = new OnlineHelpEntry(rs.getString(1), rs.getString(2));
+				results.add(entry);
+				_cache.add(entry);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

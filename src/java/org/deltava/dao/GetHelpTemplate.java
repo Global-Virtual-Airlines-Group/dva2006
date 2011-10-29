@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.help.ResponseTemplate;
 /**
  * A Data Access Object for Help Desk response templates. 
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 3.2
  */
 
@@ -59,15 +59,15 @@ public class GetHelpTemplate extends DAO {
 	 */
 	private List<ResponseTemplate> execute() throws SQLException {
 		List<ResponseTemplate> results = new ArrayList<ResponseTemplate>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			ResponseTemplate tmp = new ResponseTemplate();
-			tmp.setTitle(rs.getString(1));
-			tmp.setBody(rs.getString(2));
-			results.add(tmp);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				ResponseTemplate tmp = new ResponseTemplate();
+				tmp.setTitle(rs.getString(1));
+				tmp.setBody(rs.getString(2));
+				results.add(tmp);
+			}
 		}
 		
-		rs.close();
 		_ps.close();
 		return results;
 	}

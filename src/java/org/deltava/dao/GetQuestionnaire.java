@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -54,27 +54,26 @@ public class GetQuestionnaire extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				boolean isMC = (rs.getInt(8) > 0);
-				Question q = isMC ? new MultiChoiceQuestion(rs.getString(4)) : new Question(rs.getString(4));
-				q.setID(rs.getInt(2));
-				q.setCorrectAnswer(rs.getString(5));
-				q.setAnswer(rs.getString(6));
-				q.setCorrect(rs.getBoolean(7));
-				if (rs.getInt(10) > 0) {
-					q.setType(rs.getInt(9));
-					q.setSize(rs.getInt(10));
-					q.setWidth(rs.getInt(11));
-					q.setHeight(rs.getInt(12));
-				}
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					boolean isMC = (rs.getInt(8) > 0);
+					Question q = isMC ? new MultiChoiceQuestion(rs.getString(4)) : new Question(rs.getString(4));
+					q.setID(rs.getInt(2));
+					q.setCorrectAnswer(rs.getString(5));
+					q.setAnswer(rs.getString(6));
+					q.setCorrect(rs.getBoolean(7));
+					if (rs.getInt(10) > 0) {
+						q.setType(rs.getInt(9));
+						q.setSize(rs.getInt(10));
+						q.setWidth(rs.getInt(11));
+						q.setHeight(rs.getInt(12));
+					}
 
-				// Add question to the examination
-				e.addQuestion(q);
+					e.addQuestion(q);
+				}
 			}
 
 			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Load multiple choice questions
@@ -85,17 +84,16 @@ public class GetQuestionnaire extends DAO {
 				_ps.setInt(1, e.getID());
 
 				// Execute the query
-				rs = _ps.executeQuery();
-				while (rs.next()) {
-					Question q = qMap.get(new Integer(rs.getInt(1)));
-					if (q != null) {
-						MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
-						mq.addChoice(rs.getString(3));
+				try (ResultSet rs = _ps.executeQuery()) {
+					while (rs.next()) {
+						Question q = qMap.get(Integer.valueOf(rs.getInt(1)));
+						if (q != null) {
+							MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+							mq.addChoice(rs.getString(3));
+						}
 					}
 				}
 
-				// Clean up
-				rs.close();
 				_ps.close();
 			}
 			
@@ -119,11 +117,11 @@ public class GetQuestionnaire extends DAO {
 			_ps.setInt(1, applicantID);
 
 			// Get the ID
-			ResultSet rs = _ps.executeQuery();
-			examID = rs.next() ? rs.getInt(1) : 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					examID = rs.getInt(1);
+			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -185,41 +183,35 @@ public class GetQuestionnaire extends DAO {
 	 * Helper method to iterate through the result set.
 	 */
 	private List<Examination> execute() throws SQLException {
-
-		// Execute the Query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasName = (rs.getMetaData().getColumnCount() > 13);
-
-		// Iterate through the result set
 		List<Examination> results = new ArrayList<Examination>();
-		while (rs.next()) {
-			Examination e = new Examination(SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME);
-			e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-			e.setID(rs.getInt(1));
-			e.setPilotID(rs.getInt(2));
-			e.setStatus(rs.getInt(3));
-			e.setDate(rs.getTimestamp(4));
-			e.setExpiryDate(rs.getTimestamp(5));
-			e.setSubmittedOn(rs.getTimestamp(6));
-			e.setScoredOn(rs.getTimestamp(7));
-			e.setScorerID(rs.getInt(8));
-			e.setAutoScored(rs.getBoolean(9));
-			e.setComments(rs.getString(10));
-			e.setSize(rs.getInt(11));
-			e.setScore(rs.getInt(12));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasName = (rs.getMetaData().getColumnCount() > 13);
+			while (rs.next()) {
+				Examination e = new Examination(SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME);
+				e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
+				e.setID(rs.getInt(1));
+				e.setPilotID(rs.getInt(2));
+				e.setStatus(rs.getInt(3));
+				e.setDate(rs.getTimestamp(4));
+				e.setExpiryDate(rs.getTimestamp(5));
+				e.setSubmittedOn(rs.getTimestamp(6));
+				e.setScoredOn(rs.getTimestamp(7));
+				e.setScorerID(rs.getInt(8));
+				e.setAutoScored(rs.getBoolean(9));
+				e.setComments(rs.getString(10));
+				e.setSize(rs.getInt(11));
+				e.setScore(rs.getInt(12));
 
-			// Add name data if present
-			if (hasName) {
-				e.setFirstName(rs.getString(13));
-				e.setLastName(rs.getString(14));
+				// Add name data if present
+				if (hasName) {
+					e.setFirstName(rs.getString(13));
+					e.setLastName(rs.getString(14));
+				}
+
+				results.add(e);
 			}
-
-			// Add to results
-			results.add(e);
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

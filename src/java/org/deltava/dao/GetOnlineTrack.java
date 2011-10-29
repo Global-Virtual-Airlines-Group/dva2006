@@ -14,7 +14,7 @@ import org.deltava.beans.servinfo.PositionData;
  * from the online track database which contains information for all Airlines populated from the ServInfo feed by the 
  * {@link org.deltava.tasks.OnlineTrackTask} scheduled task. 
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.4
  */
 
@@ -51,9 +51,12 @@ public class GetOnlineTrack extends DAO {
 			_ps.setInt(6, 18);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int id = rs.next() ? rs.getInt(1) : 0;
-			rs.close();
+			int id = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					id = rs.getInt(1);
+			}
+			
 			_ps.close();
 			return id;
 		} catch (SQLException se) {
@@ -71,11 +74,12 @@ public class GetOnlineTrack extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT ROUTE FROM online.TRACKS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, trackID);
+			String route = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					route = rs.getString(1);
+			}
 			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			String route = rs.next() ? rs.getString(1) : null;
-			rs.close();
 			_ps.close();
 			return route;
 		} catch (SQLException se) {
@@ -96,20 +100,19 @@ public class GetOnlineTrack extends DAO {
 			_ps.setInt(1, trackID);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			List<PositionData> results = new ArrayList<PositionData>();
-			while (rs.next()) {
-				PositionData pd = new PositionData(rs.getTimestamp(2));
-				pd.setFlightID(rs.getInt(1));
-				pd.setPosition(rs.getDouble(3), rs.getDouble(4), rs.getInt(5));
-				pd.setHeading(rs.getInt(6));
-				pd.setAirSpeed(rs.getInt(7));
-				pd.setPilotID(rs.getInt(8));
-				results.add(pd);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					PositionData pd = new PositionData(rs.getTimestamp(2));
+					pd.setFlightID(rs.getInt(1));
+					pd.setPosition(rs.getDouble(3), rs.getDouble(4), rs.getInt(5));
+					pd.setHeading(rs.getInt(6));
+					pd.setAirSpeed(rs.getInt(7));
+					pd.setPilotID(rs.getInt(8));
+					results.add(pd);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -127,11 +130,12 @@ public class GetOnlineTrack extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT PILOT_ID FROM ONLINE_TRACK WHERE (PIREP_ID=?) LIMIT 1");
 			_ps.setInt(1, pirepID);
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			boolean hasTrack = rs.next() ? (rs.getInt(1) != 0) : false;
-			rs.close();
+			boolean hasTrack = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					hasTrack = (rs.getInt(1) != 0);
+			}
+			
 			_ps.close();
 			return hasTrack;
 		} catch (SQLException se) {
@@ -151,20 +155,19 @@ public class GetOnlineTrack extends DAO {
 			_ps.setInt(1, pirepID);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			List<PositionData> results = new ArrayList<PositionData>();
-			while (rs.next()) {
-				PositionData pd = new PositionData(rs.getTimestamp(3));
-				pd.setPilotID(rs.getInt(1));
-				pd.setFlightID(rs.getInt(2));
-				pd.setPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6));
-				pd.setHeading(rs.getInt(7));
-				pd.setAirSpeed(rs.getInt(8));
-				results.add(pd);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					PositionData pd = new PositionData(rs.getTimestamp(3));
+					pd.setPilotID(rs.getInt(1));
+					pd.setFlightID(rs.getInt(2));
+					pd.setPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6));
+					pd.setHeading(rs.getInt(7));
+					pd.setAirSpeed(rs.getInt(8));
+					results.add(pd);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

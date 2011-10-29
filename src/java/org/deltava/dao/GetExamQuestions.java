@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Examination questions.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.1
  */
 
@@ -41,58 +41,55 @@ public class GetExamQuestions extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				_ps.close();
-				return null;
-			}
+			QuestionProfile qp = null; boolean isMultiChoice = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (!rs.next()) {
+					_ps.close();
+					return null;
+				}
 			
-			// Check if we are multiple choice/have an image
-			boolean isMultiChoice = (rs.getInt(8) > 0);
-			boolean isImage = (rs.getInt(10) > 0);
-			boolean isRP = (rs.getString(14) != null);
+				// Check if we are multiple choice/have an image
+				isMultiChoice = (rs.getInt(8) > 0);
+				boolean isImage = (rs.getInt(10) > 0);
+				boolean isRP = (rs.getString(14) != null);
 
-			// Populate the Question Profile
-			QuestionProfile qp = null;
-			if (isRP) {
-				RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
-				rpqp.setAirportD(SystemData.getAirport(rs.getString(13)));
-				rpqp.setAirportA(SystemData.getAirport(rs.getString(14)));
-				qp = rpqp;
-			} else if (isMultiChoice)
-				qp = new MultiChoiceQuestionProfile(rs.getString(2));
-			else
-				qp = new QuestionProfile(rs.getString(2));
+				// Populate the Question Profile
+				if (isRP) {
+					RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
+					rpqp.setAirportD(SystemData.getAirport(rs.getString(13)));
+					rpqp.setAirportA(SystemData.getAirport(rs.getString(14)));
+					qp = rpqp;
+				} else if (isMultiChoice)
+					qp = new MultiChoiceQuestionProfile(rs.getString(2));
+				else
+					qp = new QuestionProfile(rs.getString(2));
 			
-			qp.setID(rs.getInt(1));
-			qp.setCorrectAnswer(rs.getString(3));
-			qp.setActive(rs.getBoolean(4));
-			qp.setOwner(SystemData.getApp(rs.getString(5)));
-			qp.setTotalAnswers(rs.getInt(6));
-			qp.setCorrectAnswers(rs.getInt(7));
+				qp.setID(rs.getInt(1));
+				qp.setCorrectAnswer(rs.getString(3));
+				qp.setActive(rs.getBoolean(4));
+				qp.setOwner(SystemData.getApp(rs.getString(5)));
+				qp.setTotalAnswers(rs.getInt(6));
+				qp.setCorrectAnswers(rs.getInt(7));
 
-			// Load image data
-			if (isImage) {
-				qp.setType(rs.getInt(9));
-				qp.setSize(rs.getInt(10));
-				qp.setWidth(rs.getInt(11));
-				qp.setHeight(rs.getInt(12));
+				// Load image data
+				if (isImage) {
+					qp.setType(rs.getInt(9));
+					qp.setSize(rs.getInt(10));
+					qp.setWidth(rs.getInt(11));
+					qp.setHeight(rs.getInt(12));
+				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Load airlines
 			prepareStatementWithoutLimits("SELECT AIRLINE FROM exams.QUESTIONAIRLINES WHERE (ID=?)");
 			_ps.setInt(1, qp.getID());
-			rs = _ps.executeQuery();
-			while (rs.next())
-				qp.addAirline(SystemData.getApp(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					qp.addAirline(SystemData.getApp(rs.getString(1)));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 
 			// Get multiple choice choices
@@ -100,28 +97,22 @@ public class GetExamQuestions extends DAO {
 				MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
 				prepareStatementWithoutLimits("SELECT ANSWER FROM exams.QUESTIONMINFO WHERE (ID=?) ORDER BY SEQ");
 				_ps.setInt(1, qp.getID());
+				try (ResultSet rs = _ps.executeQuery()) {
+					while (rs.next())
+					mqp.addChoice(rs.getString(1));	
+				}
 
-				// Execute the Query
-				rs = _ps.executeQuery();
-				while (rs.next())
-					mqp.addChoice(rs.getString(1));
-
-				// Clean up
-				rs.close();
 				_ps.close();
 			}
 			
 			// Get the exams for this question
 			prepareStatementWithoutLimits("SELECT QE.EXAM_NAME FROM exams.QE_INFO QE WHERE (QE.QUESTION_ID=?)");
 			_ps.setInt(1, id);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+				qp.addExam(rs.getString(1));	
+			}
 
-			// Populate the exam names
-			rs = _ps.executeQuery();
-			while (rs.next())
-				qp.addExam(rs.getString(1));
-
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return qp;
 		} catch (SQLException se) {
@@ -287,46 +278,42 @@ public class GetExamQuestions extends DAO {
 	 */
 	private List<QuestionProfile> execute() throws SQLException {
 		List<QuestionProfile> results = new ArrayList<QuestionProfile>();
-		
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			boolean isMultiChoice = (rs.getInt(8) > 0);
-			boolean isRP = (rs.getString(14) != null);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				boolean isMultiChoice = (rs.getInt(8) > 0);
+				boolean isRP = (rs.getString(14) != null);
 
-			// Populate the Question Profile
-			QuestionProfile qp = null;
-			if (isRP) {
-				RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
-				rpqp.setAirportD(SystemData.getAirport(rs.getString(13)));
-				rpqp.setAirportA(SystemData.getAirport(rs.getString(14)));	
-				qp = rpqp;
-			} else if (isMultiChoice)
-				qp = new MultiChoiceQuestionProfile(rs.getString(2));
-			else
-				qp = new QuestionProfile(rs.getString(2));
+				// Populate the Question Profile
+				QuestionProfile qp = null;
+				if (isRP) {
+					RoutePlotQuestionProfile rpqp = new RoutePlotQuestionProfile(rs.getString(2));
+					rpqp.setAirportD(SystemData.getAirport(rs.getString(13)));
+					rpqp.setAirportA(SystemData.getAirport(rs.getString(14)));	
+					qp = rpqp;
+				} else if (isMultiChoice)
+					qp = new MultiChoiceQuestionProfile(rs.getString(2));
+				else
+					qp = new QuestionProfile(rs.getString(2));
 			
-			qp.setID(rs.getInt(1));
-			qp.setCorrectAnswer(rs.getString(3));
-			qp.setActive(rs.getBoolean(4));
-			qp.setOwner(SystemData.getApp(rs.getString(5)));
-			qp.setTotalAnswers(rs.getInt(6));
-			qp.setCorrectAnswers(rs.getInt(7));
+				qp.setID(rs.getInt(1));
+				qp.setCorrectAnswer(rs.getString(3));
+				qp.setActive(rs.getBoolean(4));
+				qp.setOwner(SystemData.getApp(rs.getString(5)));
+				qp.setTotalAnswers(rs.getInt(6));
+				qp.setCorrectAnswers(rs.getInt(7));
 
-			// Load image metadata
-			if (rs.getInt(10) > 0) {
-				qp.setType(rs.getInt(9));
-				qp.setSize(rs.getInt(10));
-				qp.setWidth(rs.getInt(11));
-				qp.setHeight(rs.getInt(12));
+				// Load image metadata
+				if (rs.getInt(10) > 0) {
+					qp.setType(rs.getInt(9));
+					qp.setSize(rs.getInt(10));
+					qp.setWidth(rs.getInt(11));
+					qp.setHeight(rs.getInt(12));
+				}
+			
+				results.add(qp);
 			}
-			
-			// Add to results
-			results.add(qp);
 		}
 		
-		// clean up
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -342,15 +329,14 @@ public class GetExamQuestions extends DAO {
 		_ps.setString(1, examName);
 
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) resultMap.get(Integer.valueOf(rs.getInt(1)));
-			if (mqp != null)
-				mqp.addChoice(rs.getString(3));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) resultMap.get(Integer.valueOf(rs.getInt(1)));
+				if (mqp != null)
+					mqp.addChoice(rs.getString(3));
+			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -254,27 +254,25 @@ public class GetAcademyCourses extends DAO {
 			_ps.setInt(1, Course.COMPLETE);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Integer id = new Integer(rs.getInt(1));
-				Collection<String> certs = results.get(id);
-				if (certs == null) {
-					certs = new LinkedHashSet<String>();
-					results.put(id, certs);
-				}
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Integer id = Integer.valueOf(rs.getInt(1));
+					Collection<String> certs = results.get(id);
+					if (certs == null) {
+						certs = new LinkedHashSet<String>();
+						results.put(id, certs);
+					}
 				
-				// Add the certification
-				certs.add(rs.getString(2));
+					certs.add(rs.getString(2));
+				}
 			}
 			
 			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 		
-		// Return results
 		return results;
 	}
 	
@@ -305,31 +303,27 @@ public class GetAcademyCourses extends DAO {
 	 */
 	private List<Course> execute() throws SQLException {
 
-		// Execute the Query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 10);
-		
-		// Iterate through the results
 		List<Course> results = new ArrayList<Course>();
-		while (rs.next()) {
-			Course c = new Course(rs.getString(2), rs.getInt(3));
-			c.setID(rs.getInt(1));
-			c.setInstructorID(rs.getInt(4));
-			c.setStatus(rs.getInt(5));
-			c.setStartDate(rs.getTimestamp(6));
-			c.setEndDate(rs.getTimestamp(7));
-			c.setHasCheckRide(rs.getBoolean(8));
-			c.setStage(rs.getInt(9));
-			c.setCode(rs.getString(10));
-			if (hasLastChat)
-				c.setLastComment(rs.getTimestamp(11));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasLastChat = (rs.getMetaData().getColumnCount() > 10);
+			while (rs.next()) {
+				Course c = new Course(rs.getString(2), rs.getInt(3));
+				c.setID(rs.getInt(1));
+				c.setInstructorID(rs.getInt(4));
+				c.setStatus(rs.getInt(5));
+				c.setStartDate(rs.getTimestamp(6));
+				c.setEndDate(rs.getTimestamp(7));
+				c.setHasCheckRide(rs.getBoolean(8));
+				c.setStage(rs.getInt(9));
+				c.setCode(rs.getString(10));
+				if (hasLastChat)
+					c.setLastComment(rs.getTimestamp(11));
 			
-			// Add to results
-			results.add(c);
+				results.add(c);
+			}
 		}
 		
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -339,21 +333,19 @@ public class GetAcademyCourses extends DAO {
 	 */
 	private void loadComments(Course c) throws SQLException {
 		
-		// Prepare the statement
 		prepareStatementWithoutLimits("SELECT * FROM exams.COURSECHAT WHERE (COURSE_ID=?)");
 		_ps.setInt(1, c.getID());
 
-		// Load the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
-			cc.setCreatedOn(rs.getTimestamp(3));
-			cc.setText(rs.getString(4));
-			c.addComment(cc);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				CourseComment cc = new CourseComment(c.getID(), rs.getInt(2));
+				cc.setCreatedOn(rs.getTimestamp(3));
+				cc.setText(rs.getString(4));
+				c.addComment(cc);
+			}
 		}
 		
 		// Clean up after ourselves
-		rs.close();
 		_ps.close();
 	}
 	
@@ -362,24 +354,22 @@ public class GetAcademyCourses extends DAO {
 	 */
 	private void loadProgress(Course c) throws SQLException {
 
-		// Prepare the statement
 		prepareStatementWithoutLimits("SELECT * FROM exams.COURSEPROGRESS WHERE (ID=?) ORDER BY SEQ");
 		_ps.setInt(1, c.getID());
 		
-		// Load the result set
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
-			cp.setAuthorID(rs.getInt(3));
-			cp.setText(rs.getString(4));
-			cp.setExamName(rs.getString(5));
-			cp.setComplete(rs.getBoolean(6));
-			cp.setCompletedOn(rs.getTimestamp(7));
-			c.addProgress(cp);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
+				cp.setAuthorID(rs.getInt(3));
+				cp.setText(rs.getString(4));
+				cp.setExamName(rs.getString(5));
+				cp.setComplete(rs.getBoolean(6));
+				cp.setCompletedOn(rs.getTimestamp(7));
+				c.addProgress(cp);
+			}
 		}
 		
 		// Clean up after ourselves
-		rs.close();
 		_ps.close();
 	}
 }

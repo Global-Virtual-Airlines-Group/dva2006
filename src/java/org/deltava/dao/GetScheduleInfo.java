@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 		super(c);
 	}
 	
+	@Override
 	public CacheInfo getCacheInfo() {
 		return new CacheInfo(_schedSizeCache);
 	}
@@ -70,13 +71,12 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 				_ps.setInt(3, end);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -102,13 +102,14 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 			_ps.setInt(2, flightNumber);
 
 			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			int leg = (rs.next()) ? rs.getInt(1) : 0;
+			int leg = 1;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					leg = rs.getInt(1) + 1;
+			}
 
-			// Clean up, increment and return
-			rs.close();
 			_ps.close();
-			return ++leg;
+			return leg;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -126,17 +127,14 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE "
 					+ "ORDER BY AIRPORT_D, AIRPORT_A");
-
-			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Airline a = SystemData.getAirline(rs.getString(1));
-				svcMap.add(a, SystemData.getAirport(rs.getString(2)));
-				svcMap.add(a, SystemData.getAirport(rs.getString(3)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airline a = SystemData.getAirline(rs.getString(1));
+					svcMap.add(a, SystemData.getAirport(rs.getString(2)));
+					svcMap.add(a, SystemData.getAirport(rs.getString(3)));
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return svcMap;
 		} catch (SQLException se) {
@@ -158,13 +156,10 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 		
 		try {
 			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
+			try (ResultSet rs = _ps.executeQuery()) {
+				result = new CacheableLong(GetSchedule.class, rs.next() ? rs.getInt(1) : 0);
+			}
 
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			result = new CacheableLong(GetSchedule.class, rs.next() ? rs.getInt(1) : 0);
-
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			_schedSizeCache.add(result);
 			return (int) result.getValue();
@@ -185,12 +180,11 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 			
 			// Execute the Query
 			Collection<Country> results = new LinkedHashSet<Country>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(Country.get(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Country.get(rs.getString(1)));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
