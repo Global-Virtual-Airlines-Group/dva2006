@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -110,6 +110,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetCoolerChannels(null));
 		daoCaches.add(new GetCoolerThreads(null));
 		daoCaches.add(new GetEquipmentType(null));
+		daoCaches.add(new GetProgramStatistics(null));
 		daoCaches.add(new GetExamStatistics(null));
 		daoCaches.add(new GetMessageTemplate(null));
 		daoCaches.add(new GetImage(null));
