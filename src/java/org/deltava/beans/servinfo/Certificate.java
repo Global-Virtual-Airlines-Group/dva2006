@@ -2,11 +2,14 @@
 package org.deltava.beans.servinfo;
 
 import java.util.*;
+import java.text.Collator;
+
+import org.deltava.beans.Person;
 
 /**
  * A bean to store VATSIM registration data.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 2.6
  */
 
@@ -96,6 +99,22 @@ public class Certificate extends NetworkUser {
 		_active = active;
 	}
 
+	/**
+	 * Performs a case- and accent-insensitive name comparison.
+	 * @param p a Person
+	 * @return TRUE if the names match, otherwise FALSE
+	 */
+	public boolean comapreName(Person p) {
+		Collator cl = Collator.getInstance();
+		cl.setStrength(Collator.PRIMARY);
+		int tmpResult = cl.compare(getFirstName(), p.getFirstName());
+		if (tmpResult == 0)
+			tmpResult = cl.compare(getLastName(), p.getLastName());
+
+		return (tmpResult == 0);
+	}
+
+	@Override
 	public Type getType() {
 		return Type.PILOT;
 	}
