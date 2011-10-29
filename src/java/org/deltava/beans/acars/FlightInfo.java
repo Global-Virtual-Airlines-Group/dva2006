@@ -49,6 +49,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	private boolean _hasPIREP;
 	private boolean _archived;
 	private boolean _isMP;
+	private boolean _isXACARS;
 	
 	private int _dispatcherID;
 	private int _routeID;
@@ -413,9 +414,9 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 * @return TRUE if using XACARS, otherwise FALSE
 	 */
 	public boolean isXACARS() {
-		return (_fsVersion == 100);
+		return _isXACARS;
 	}
-
+	
 	/**
 	 * Updates the ACARS Connection ID used for this flight.
 	 * @param id the connection ID
@@ -626,6 +627,8 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 			_fsVersion = FSUIPC_FS_VERSIONS[ver - 1];
 		else
 			_fsVersion = 2004;
+		
+		_isXACARS |= (_fsVersion == 100);
 	}
 
 	/**
@@ -636,6 +639,14 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 */
 	public void setFlightCode(String code) {
 		_flightCode = code.toUpperCase();
+	}
+	
+	/**
+	 * Marks this flight as logged using XACARS.
+	 * @param isXACARS TRUE if logged using XACARS, otherwise FALSE
+	 */
+	public void setXACARS(boolean isXACARS) {
+		_isXACARS = isXACARS;
 	}
 
 	/**

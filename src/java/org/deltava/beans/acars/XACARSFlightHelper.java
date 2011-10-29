@@ -41,6 +41,7 @@ public class XACARSFlightHelper {
 		fi.setStartTime(inf.getStartTime());
 		fi.setEndTime(inf.getEndTime());
 		fi.setRoute(inf.getRoute());
+		fi.setXACARS(true);
 		
 		// Basic PIREP fields
 		XACARSFlightReport xfr = new XACARSFlightReport(inf.getAirline(), inf.getFlightNumber(), inf.getLeg());
@@ -51,8 +52,8 @@ public class XACARSFlightHelper {
 		xfr.setDate(new Date());
 		xfr.setSubmittedOn(new Date());
 		xfr.setEquipmentType(inf.getEquipmentType());
-		xfr.setFSVersion(100);
-		xfr.setAttribute(FlightReport.ATTR_ACARS, true);
+		xfr.setFSVersion(inf.getFSVersion());
+		xfr.setAttribute(FlightReport.ATTR_XACARS, true);
 		xfr.setLength(inf.getLength());
 		xfr.setPassengers(inf.getPassengers());
 		xfr.setLoadFactor(inf.getLoadFactor());
