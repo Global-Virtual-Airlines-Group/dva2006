@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.Pilot;
 /**
  * A Data Access Object to load Online Event signup totals.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 2.4
  */
 
@@ -57,17 +57,14 @@ public class GetEventSignups extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Pilot p = pilots.get(new Integer(rs.getInt(1)));
-				if (p != null)
-					p.setEventSignups(rs.getInt(2));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+					if (p != null)
+						p.setEventSignups(rs.getInt(2));
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);

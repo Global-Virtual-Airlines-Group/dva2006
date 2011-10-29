@@ -168,6 +168,7 @@ public class GetXACARS extends DAO {
 			inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
 			inf.setZeroFuelWeight(rs.getInt(36));
 			inf.setRoute(rs.getString(37));
+			inf.setFSVersion(rs.getInt(38));
 			results.add(inf);
 		}
 		

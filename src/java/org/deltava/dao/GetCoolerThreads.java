@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -182,21 +182,20 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			_ps.setInt(1, id);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Message msg = new Message(rs.getInt(2));
-				msg.setThreadID(id);
-				msg.setID(rs.getInt(1));
-				msg.setCreatedOn(rs.getTimestamp(3));
-				msg.setRemoteAddr(rs.getString(4));
-				msg.setRemoteHost(rs.getString(5));
-				msg.setBody(rs.getString(6));
-				msg.setContentWarning(rs.getBoolean(7));
-				mt.addPost(msg);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Message msg = new Message(rs.getInt(2));
+					msg.setThreadID(id);
+					msg.setID(rs.getInt(1));
+					msg.setCreatedOn(rs.getTimestamp(3));
+					msg.setRemoteAddr(rs.getString(4));
+					msg.setRemoteHost(rs.getString(5));
+					msg.setBody(rs.getString(6));
+					msg.setContentWarning(rs.getBoolean(7));
+					mt.addPost(msg);
+				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Fetch the thread updates
@@ -205,17 +204,16 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			_ps.setInt(1, id);
 			
 			// Execute the query
-			rs = _ps.executeQuery();
-			while (rs.next()) {
-				ThreadUpdate upd = new ThreadUpdate(id);
-				upd.setDate(rs.getTimestamp(1));
-				upd.setAuthorID(rs.getInt(2));
-				upd.setMessage(rs.getString(3));
-				mt.addUpdate(upd);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ThreadUpdate upd = new ThreadUpdate(id);
+					upd.setDate(rs.getTimestamp(1));
+					upd.setAuthorID(rs.getInt(2));
+					upd.setMessage(rs.getString(3));
+					mt.addUpdate(upd);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Fetch the thread reports
@@ -223,12 +221,11 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			_ps.setInt(1, id);
 
 			// Execute the query
-			rs = _ps.executeQuery();
-			while (rs.next())
-				mt.addReportID(rs.getInt(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					mt.addReportID(rs.getInt(1));
+			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 			return mt;
 		} catch (SQLException se) {
@@ -249,12 +246,11 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			_ps.setInt(1, id);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				result.addUser(rs.getInt(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					result.addUser(rs.getInt(1));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return result;
 		} catch (SQLException se) {

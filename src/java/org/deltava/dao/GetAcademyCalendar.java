@@ -10,7 +10,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to load Flight Academy calendars.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -252,24 +252,23 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	private List<InstructionSession> executeCalendar() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
 		List<InstructionSession> results = new ArrayList<InstructionSession>();
-		while (rs.next()) {
-			InstructionSession s = new InstructionSession(rs.getInt(3), rs.getInt(4));
-			s.setName(rs.getString(1));
-			s.setPilotID(rs.getInt(2));
-			s.setInstructorID(rs.getInt(5));
-			s.setStartTime(rs.getTimestamp(6));
-			s.setEndTime(rs.getTimestamp(7));
-			s.setStatus(rs.getInt(8));
-			s.setNoShow(rs.getBoolean(9));
-			s.setComments(rs.getString(10));
-			results.add(s);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				InstructionSession s = new InstructionSession(rs.getInt(3), rs.getInt(4));
+				s.setName(rs.getString(1));
+				s.setPilotID(rs.getInt(2));
+				s.setInstructorID(rs.getInt(5));
+				s.setStartTime(rs.getTimestamp(6));
+				s.setEndTime(rs.getTimestamp(7));
+				s.setStatus(rs.getInt(8));
+				s.setNoShow(rs.getBoolean(9));
+				s.setComments(rs.getString(10));
+				results.add(s);
+			}
 		}
 	
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -279,30 +278,26 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	private List<InstructionFlight> executeFlightCalendar() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasCourseInfo = (rs.getMetaData().getColumnCount() > 7);
-
-		// Iterate through the results
 		List<InstructionFlight> results = new ArrayList<InstructionFlight>();
-		while (rs.next()) {
-			InstructionFlight entry = new InstructionFlight(rs.getInt(2), rs.getInt(3));
-			entry.setID(rs.getInt(1));
-			entry.setEquipmentType(rs.getString(4));
-			entry.setDate(expandDate(rs.getDate(5)));
-			entry.setLength(Math.round(rs.getFloat(6) * 10));
-			entry.setComments(rs.getString(7));
-			if (hasCourseInfo) {
-				entry.setCourseName(rs.getString(8));
-				entry.setPilotID(rs.getInt(9));
-			}
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasCourseInfo = (rs.getMetaData().getColumnCount() > 7);
+			while (rs.next()) {
+				InstructionFlight entry = new InstructionFlight(rs.getInt(2), rs.getInt(3));
+				entry.setID(rs.getInt(1));
+				entry.setEquipmentType(rs.getString(4));
+				entry.setDate(expandDate(rs.getDate(5)));
+				entry.setLength(Math.round(rs.getFloat(6) * 10));
+				entry.setComments(rs.getString(7));
+				if (hasCourseInfo) {
+					entry.setCourseName(rs.getString(8));
+					entry.setPilotID(rs.getInt(9));
+				}
 			
-			// Add to results
-			results.add(entry);
+				results.add(entry);
+			}
 		}
 
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -312,19 +307,19 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	private List<InstructionBusy> executeBusy() throws SQLException {
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
+		
 		List<InstructionBusy> results = new ArrayList<InstructionBusy>();
-		while (rs.next()) {
-			InstructionBusy ib = new InstructionBusy(rs.getInt(1));
-			ib.setStartTime(rs.getTimestamp(2));
-			ib.setEndTime(rs.getTimestamp(3));
-			ib.setComments(rs.getString(4));
-			results.add(ib);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				InstructionBusy ib = new InstructionBusy(rs.getInt(1));
+				ib.setStartTime(rs.getTimestamp(2));
+				ib.setEndTime(rs.getTimestamp(3));
+				ib.setComments(rs.getString(4));
+				results.add(ib);
+			}
 		}
 		
 		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

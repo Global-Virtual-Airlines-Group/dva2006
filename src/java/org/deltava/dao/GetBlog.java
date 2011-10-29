@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.blog.*;
 /**
  * A Data Access Object to load blog entries.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -31,13 +31,11 @@ public class GetBlog extends DAO {
 	 */
 	public Entry get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM BLOG WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT * FROM BLOG WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Execute the query, return null if empty
 			List<Entry> results = execute();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			
@@ -113,13 +111,12 @@ public class GetBlog extends DAO {
 				_ps.setBoolean(1, false);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			Collection<Integer> results = new HashSet<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -132,29 +129,24 @@ public class GetBlog extends DAO {
 	 */
 	private List<Entry> execute() throws SQLException {
 		
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasCounts = (rs.getMetaData().getColumnCount() > 7);
-		
-		// Iterate through the results
 		List<Entry> results = new ArrayList<Entry>();
-		while (rs.next()) {
-			Entry e = new Entry(rs.getString(4));
-			e.setID(rs.getInt(1));
-			e.setDate(rs.getTimestamp(2));
-			e.setAuthorID(rs.getInt(3));
-			e.setPrivate(rs.getBoolean(5));
-			e.setLocked(rs.getBoolean(6));
-			e.setBody(rs.getString(7));
-			if (hasCounts)
-				e.setSize(rs.getInt(8));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasCounts = (rs.getMetaData().getColumnCount() > 7);
+			while (rs.next()) {
+				Entry e = new Entry(rs.getString(4));
+				e.setID(rs.getInt(1));
+				e.setDate(rs.getTimestamp(2));
+				e.setAuthorID(rs.getInt(3));
+				e.setPrivate(rs.getBoolean(5));
+				e.setLocked(rs.getBoolean(6));
+				e.setBody(rs.getString(7));
+				if (hasCounts)
+					e.setSize(rs.getInt(8));
 			
-			// Add to results
-			results.add(e);
+				results.add(e);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -167,21 +159,18 @@ public class GetBlog extends DAO {
 		// Prepare the statement
 		prepareStatementWithoutLimits("SELECT *, INET_NTOA(REMOTE_ADDR) FROM BLOGCOMMENTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
-		
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Comment c = new Comment(rs.getString(3), rs.getString(7));
-			c.setID(rs.getInt(1));
-			c.setDate(rs.getTimestamp(2));
-			c.setEmail(rs.getString(4));
-			c.setRemoteHost(rs.getString(6));
-			c.setRemoteAddr(rs.getString(8));
-			e.addComment(c);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Comment c = new Comment(rs.getString(3), rs.getString(7));
+				c.setID(rs.getInt(1));
+				c.setDate(rs.getTimestamp(2));
+				c.setEmail(rs.getString(4));
+				c.setRemoteHost(rs.getString(6));
+				c.setRemoteAddr(rs.getString(8));
+				e.addComment(c);
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

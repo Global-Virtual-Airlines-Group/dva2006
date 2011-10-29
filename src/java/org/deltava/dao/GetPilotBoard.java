@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A Data Access Object to display pilot locations.
  * @author Luke
- * @version 2.5
+ * @version 4.1
  * @since 2.5
  */
 
@@ -34,13 +34,12 @@ public class GetPilotBoard extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT LAT, LNG FROM PILOT_MAP WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
+			GeoLocation gl = null;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					gl = new GeoPosition(rs.getDouble(1), rs.getDouble(2));
+			}
 			
-			// Execute the query and get results
-			ResultSet rs = _ps.executeQuery();
-			GeoLocation gl = (rs.next()) ? new GeoPosition(rs.getDouble(1), rs.getDouble(2)) : null;
-			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return gl;
 		} catch (SQLException se) {
@@ -61,15 +60,14 @@ public class GetPilotBoard extends DAO {
 			_ps.setInt(2, Pilot.ON_LEAVE);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			Map<Integer, GeoLocation> results = new LinkedHashMap<Integer, GeoLocation>();
-			while (rs.next()) {
-				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
-				results.put(new Integer(rs.getInt(1)), gp);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
+					results.put(Integer.valueOf(rs.getInt(1)), gp);
+				}
 			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -100,17 +98,14 @@ public class GetPilotBoard extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits(buf.toString());
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
 			Map<Integer, GeoLocation> results = new LinkedHashMap<Integer, GeoLocation>();
-			while (rs.next()) {
-				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
-				results.put(new Integer(rs.getInt(1)), gp);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
+					results.put(Integer.valueOf(rs.getInt(1)), gp);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

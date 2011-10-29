@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 3.2
  */
 
@@ -67,44 +67,43 @@ public class GetFIR extends DAO implements CachingDAO {
 			_ps.setBoolean(3, isOceanic);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				fir = new FIR(rs.getString(1));
-				fir.setName(rs.getString(2));
-				fir.setOceanic(rs.getBoolean(3));
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					fir = new FIR(rs.getString(1));
+					fir.setName(rs.getString(2));
+					fir.setOceanic(rs.getBoolean(3));
+				}
+			}
 				
-				// Clean up
-				rs.close();
-				_ps.close();
+			_ps.close();
+			if (fir == null)
+				return null;
 				
-				// Load border coordinates
-				prepareStatementWithoutLimits("SELECT LAT, LNG FROM common.FIRDATA WHERE (ID=?) AND (OCEANIC=?) ORDER BY SEQ");
-				_ps.setString(1, fir.getID());
-				_ps.setBoolean(2, fir.isOceanic());				
-				rs = _ps.executeQuery();
+			// Load border coordinates
+			prepareStatementWithoutLimits("SELECT LAT, LNG FROM common.FIRDATA WHERE (ID=?) AND (OCEANIC=?) ORDER BY SEQ");
+			_ps.setString(1, fir.getID());
+			_ps.setBoolean(2, fir.isOceanic());				
+			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					fir.addBorderPoint(new GeoPosition(rs.getDouble(1), rs.getDouble(2)));
+			}
 				
-				// Clean up
-				rs.close();
-				_ps.close();
+			_ps.close();
 				
-				// Load aliases
-				prepareStatementWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)");
-				_ps.setString(1, fir.getID());
-				_ps.setBoolean(2, fir.isOceanic());				
-				rs = _ps.executeQuery();
+			// Load aliases
+			prepareStatementWithoutLimits("SELECT ALIAS FROM common.FIRALIAS WHERE (ID=?) AND (OCEANIC=?)");
+			_ps.setString(1, fir.getID());
+			_ps.setBoolean(2, fir.isOceanic());				
+			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					fir.addAlias(rs.getString(1));
 					_idCache.add(new CacheableString(id, rs.getString(1)));
 				}
-				
-				// Clean up and add to cache
-				rs.close();
-				_ps.close();
-				_cache.add(fir);
 			}
-			
+				
+			// Clean up and add to cache
+			_ps.close();
+			_cache.add(fir);
 			return fir;
 		} catch (SQLException se) {
 			throw new DAOException(se);

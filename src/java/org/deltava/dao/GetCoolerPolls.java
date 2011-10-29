@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to load Water Cooler poll data.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -38,16 +38,15 @@ public class GetCoolerPolls extends DAO {
 			
 			// Execute the Query
 			Collection<PollOption> results = new ArrayList<PollOption>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				PollOption opt = new PollOption(rs.getInt(1), rs.getString(3));
-				opt.setOptionID(rs.getInt(2));
-				opt.setVotes(rs.getInt(4));
-				results.add(opt);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					PollOption opt = new PollOption(rs.getInt(1), rs.getString(3));
+					opt.setOptionID(rs.getInt(2));
+					opt.setVotes(rs.getInt(4));
+					results.add(opt);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -68,15 +67,14 @@ public class GetCoolerPolls extends DAO {
 			
 			// Execute the query
 			Collection<PollVote> results = new ArrayList<PollVote>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				PollVote vote = new PollVote(rs.getInt(1), rs.getInt(2));
-				vote.setOptionID(rs.getInt(3));
-				results.add(vote);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					PollVote vote = new PollVote(rs.getInt(1), rs.getInt(2));
+					vote.setOptionID(rs.getInt(3));
+					results.add(vote);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

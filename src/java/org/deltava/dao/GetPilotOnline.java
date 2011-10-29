@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -59,12 +59,11 @@ public class GetPilotOnline extends PilotReadDAO {
 			
 			// Execute the Query
 			results = new CacheableMap<String, Integer>(network);
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.put(rs.getString(2), new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.put(rs.getString(2), Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			_idCache.add(results);
 			return new LinkedHashMap<String, Integer>(results); 

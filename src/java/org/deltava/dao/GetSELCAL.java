@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.SelectCall;
 /**
  * A Data Access Object to read aircraft SELCAL data.
  * @author Luke
- * @version 2.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -34,8 +34,6 @@ public class GetSELCAL extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM SELCAL WHERE (CODE=?) LIMIT 1");
 			_ps.setString(1, code.toUpperCase());
-			
-			// Return result or null if empty
 			List<SelectCall> results = execute();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -52,12 +50,11 @@ public class GetSELCAL extends DAO {
 		try {
 			Collection<String> results = new LinkedHashSet<String>();
 			prepareStatementWithoutLimits("SELECT DISTINCT EQTYPE FROM SELCAL ORDER BY EQTYPE");
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -118,17 +115,16 @@ public class GetSELCAL extends DAO {
 	 */
 	private List<SelectCall> execute() throws SQLException {
 		List<SelectCall> results = new ArrayList<SelectCall>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			SelectCall sc = new SelectCall(rs.getString(1), rs.getString(2));
-			sc.setEquipmentType(rs.getString(3));
-			sc.setReservedBy(rs.getInt(4));
-			sc.setReservedOn(rs.getTimestamp(5));
-			results.add(sc);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				SelectCall sc = new SelectCall(rs.getString(1), rs.getString(2));
+				sc.setEquipmentType(rs.getString(3));
+				sc.setReservedBy(rs.getInt(4));
+				sc.setReservedOn(rs.getTimestamp(5));
+				results.add(sc);
+			}
 		}
 		
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

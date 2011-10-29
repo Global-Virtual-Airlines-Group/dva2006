@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CalendarUtils;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 2.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -201,17 +201,9 @@ public abstract class DAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected int getNewID() throws SQLException {
-
-		// Get the new thread ID
-		Statement s = _c.createStatement();
-		ResultSet rs = s.executeQuery("SELECT LAST_INSERT_ID()");
-		int threadID = rs.next() ? rs.getInt(1) : 0;
-
-		// Clean up and return
-		rs.close();
-		s.close();
-		s = null;
-		return threadID;
+		try (Statement s = _c.createStatement(); ResultSet rs = s.executeQuery("SELECT LAST_INSERT_ID()")) {
+			return rs.next() ? rs.getInt(1) : 0;
+		}
 	}
 	
 	/**

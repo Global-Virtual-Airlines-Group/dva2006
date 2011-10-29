@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 3.0
+ * @version 4.1
  * @since 2.6
  */
 
@@ -128,22 +128,21 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 			// Execute the Query
 			int max = 0;
 			Collection<Runway> results = new LinkedHashSet<Runway>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				SelectableRunway r = new SelectableRunway(rs.getDouble(3), rs.getDouble(4));
-				r.setName(rs.getString(1));
-				r.setCode(rs.getString(2));
-				r.setLength(rs.getInt(5));
-				r.setHeading(rs.getInt(6));
-				r.setFrequency(rs.getString(7));
-				r.setUseCount(rs.getInt(8));
-				max = Math.max(max, r.getUseCount());
-				if (r.getUseCount() > (max / 10))
-					results.add(r);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					SelectableRunway r = new SelectableRunway(rs.getDouble(3), rs.getDouble(4));
+					r.setName(rs.getString(1));
+					r.setCode(rs.getString(2));
+					r.setLength(rs.getInt(5));
+					r.setHeading(rs.getInt(6));
+					r.setFrequency(rs.getString(7));
+					r.setUseCount(rs.getInt(8));
+					max = Math.max(max, r.getUseCount());
+					if (r.getUseCount() > (max / 10))
+						results.add(r);
+				}
 			}
 				
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Add to the cache and return

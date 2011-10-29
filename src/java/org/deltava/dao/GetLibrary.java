@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -98,12 +98,11 @@ public class GetLibrary extends DAO implements CachingDAO {
 			_ps.setString(1, fName);
 			
 			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				i.addApp(SystemData.getApp(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					i.addApp(SystemData.getApp(rs.getString(1)));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return i;
 		} catch (SQLException se) {
@@ -142,12 +141,11 @@ public class GetLibrary extends DAO implements CachingDAO {
 			_ps.setString(1, i.getFileName());
 			
 			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				i.addApp(SystemData.getApp(rs.getString(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					i.addApp(SystemData.getApp(rs.getString(1)));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return i;
 		} catch (SQLException se) {
@@ -227,30 +225,26 @@ public class GetLibrary extends DAO implements CachingDAO {
 		
 		// Determine the path
 		String path = SystemData.get(isVideo ? "path.video" : "path.userfiles");
+		List<FileEntry> results = new ArrayList<FileEntry>();
 
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
+			while (rs.next()) {
+				File f = new File(path, rs.getString(1));
+				FileEntry entry = isVideo ? new Video(f.getPath()) : new FileEntry(f.getPath());
+				entry.setName(rs.getString(2));
+				entry.setCategory(rs.getString(3));
+				entry.setSecurity(rs.getInt(5));
+				entry.setAuthorID(rs.getInt(6));
+				entry.setDescription(rs.getString(7));
+				if (hasTotals)
+					entry.setDownloadCount(rs.getInt(8));
 
-		// Iterate through the result set
-		List<FileEntry> results = new ArrayList<FileEntry>();
-		while (rs.next()) {
-			File f = new File(path, rs.getString(1));
-			FileEntry entry = isVideo ? new Video(f.getPath()) : new FileEntry(f.getPath());
-			entry.setName(rs.getString(2));
-			entry.setCategory(rs.getString(3));
-			entry.setSecurity(rs.getInt(5));
-			entry.setAuthorID(rs.getInt(6));
-			entry.setDescription(rs.getString(7));
-			if (hasTotals)
-				entry.setDownloadCount(rs.getInt(8));
-
-			// Add to results
-			results.add(entry);
+				results.add(entry);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -259,34 +253,28 @@ public class GetLibrary extends DAO implements CachingDAO {
 	 * Helper method to load from the Fleet Library table.
 	 */
 	private List<Installer> loadInstallers() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 11);
-
-		// Iterate through the result set
 		List<Installer> results = new ArrayList<Installer>();
-		while (rs.next()) {
-			File f = new File(SystemData.get("path.library"), rs.getString(1));
-			Installer entry = new Installer(f.getPath());
-			entry.setName(rs.getString(2));
-			entry.setImage(rs.getString(3));
-			entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));
-			entry.setSecurity(rs.getInt(8));
-			entry.setCode(rs.getString(9));
-			entry.setFSVersions(rs.getString(10));
-			entry.setDescription(rs.getString(11));
-			if (f.exists())
-				entry.setLastModified(new java.util.Date(f.lastModified()));
-			if (hasTotals)
-				entry.setDownloadCount(rs.getInt(12));
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasTotals = (rs.getMetaData().getColumnCount() > 11);
+			while (rs.next()) {
+				File f = new File(SystemData.get("path.library"), rs.getString(1));
+				Installer entry = new Installer(f.getPath());
+				entry.setName(rs.getString(2));
+				entry.setImage(rs.getString(3));
+				entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));
+				entry.setSecurity(rs.getInt(8));
+				entry.setCode(rs.getString(9));
+				entry.setFSVersions(rs.getString(10));
+				entry.setDescription(rs.getString(11));
+				if (f.exists())
+					entry.setLastModified(new java.util.Date(f.lastModified()));
+				if (hasTotals)
+					entry.setDownloadCount(rs.getInt(12));
 
-			// Add to results
-			results.add(entry);
+				results.add(entry);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -321,17 +309,17 @@ public class GetLibrary extends DAO implements CachingDAO {
 		prepareStatement(sqlBuf.toString());
 		
 		// Parse the results
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			FleetEntry fe = is.get(rs.getString(1));
-			if (fe != null) {
-				fe.setDownloadCount(rs.getInt(2));
-				CacheableLong cnt = new CacheableLong(fe.getFileName(), fe.getDownloadCount());
-				_dlCache.add(cnt);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				FleetEntry fe = is.get(rs.getString(1));
+				if (fe != null) {
+					fe.setDownloadCount(rs.getInt(2));
+					CacheableLong cnt = new CacheableLong(fe.getFileName(), fe.getDownloadCount());
+					_dlCache.add(cnt);
+				}
 			}
 		}
 		
-		rs.close();
 		_ps.close();
 	}
 }

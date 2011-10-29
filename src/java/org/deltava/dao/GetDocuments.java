@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Documents from the Libraries.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -45,13 +45,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 
 		try {
-			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-
-			// Get results - if empty return null
 			List<Manual> results = loadManuals();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			
@@ -82,13 +78,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
 
 		try {
-			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-
-			// Get results - if empty return null
 			List<Newsletter> results = loadNewsletters();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -174,8 +166,6 @@ public class GetDocuments extends GetLibrary {
 			loadDownloadCounts(results);
 			Map<String, Manual> docMap = CollectionUtils.createMap(results, "fileName");
 			loadCertifications(docMap);
-			
-			// Return results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -211,18 +201,15 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to load Flight Academy Certifications into Manual beans.
 	 */
 	private void loadCertifications(Map<String, Manual> manuals) throws SQLException {
-		
-		// Prepare and execute the statement
 		prepareStatementWithoutLimits("SELECT * FROM exams.CERTDOCS");
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Manual m = manuals.get(rs.getString(1));
-			if (m != null)
-				m.addCertification(rs.getString(2));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Manual m = manuals.get(rs.getString(1));
+				if (m != null)
+					m.addCertification(rs.getString(2));
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
@@ -230,19 +217,15 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to return all Flight Academy Certifications associated with a particular Manual.
 	 */
 	private Collection<String> getCertifications(String fileName) throws SQLException {
-
-		// Prepare the statement
 		prepareStatementWithoutLimits("SELECT CERT FROM exams.CERTDOCS WHERE (FILENAME=?) ORDER BY CERT");
 		_ps.setString(1, fileName);
-
-		// Execute the Query
-		ResultSet rs = _ps.executeQuery();
+		
 		Collection<String> results = new LinkedHashSet<String>();
-		while (rs.next())
-			results.add(rs.getString(1));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				results.add(rs.getString(1));
+		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -251,33 +234,28 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to load from the Document Library table.
 	 */
 	private List<Manual> loadManuals() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
-
-		// Iterate through the result set
 		List<Manual> results = new ArrayList<Manual>();
-		while (rs.next()) {
-			File f = new File(SystemData.get("path.library"), rs.getString(1));
-			Manual doc = new Manual(f.getPath());
-			doc.setName(rs.getString(2));
-			doc.setVersion(rs.getInt(4));
-			doc.setSecurity(rs.getInt(5));
-			doc.setShowOnRegister(rs.getBoolean(6));
-			doc.setIgnoreCertifcations(rs.getBoolean(7));
-			doc.setDescription(rs.getString(8));
-			if (f.exists())
-				doc.setLastModified(new java.util.Date(f.lastModified()));
-			if (hasTotals)
-				doc.setDownloadCount(rs.getInt(9));
 
-			// Add to results
-			results.add(doc);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasTotals = (rs.getMetaData().getColumnCount() > 8);
+			while (rs.next()) {
+				File f = new File(SystemData.get("path.library"), rs.getString(1));
+				Manual doc = new Manual(f.getPath());
+				doc.setName(rs.getString(2));
+				doc.setVersion(rs.getInt(4));
+				doc.setSecurity(rs.getInt(5));
+				doc.setShowOnRegister(rs.getBoolean(6));
+				doc.setIgnoreCertifcations(rs.getBoolean(7));
+				doc.setDescription(rs.getString(8));
+				if (f.exists())
+					doc.setLastModified(new java.util.Date(f.lastModified()));
+				if (hasTotals)
+					doc.setDownloadCount(rs.getInt(9));
+
+				results.add(doc);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -286,29 +264,25 @@ public class GetDocuments extends GetLibrary {
 	 * Helper method to load from the Newsletter Library table.
 	 */
 	private List<Newsletter> loadNewsletters() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
-
-		// Iterate through the result set
 		List<Newsletter> results = new ArrayList<Newsletter>();
-		while (rs.next()) {
-			File f = new File(SystemData.get("path.newsletter"), rs.getString(1));
-			Newsletter nws = new Newsletter(f.getPath());
-			nws.setName(rs.getString(2));
-			nws.setCategory(rs.getString(3));
-			nws.setSecurity(rs.getInt(5));
-			nws.setDate(expandDate(rs.getDate(6)));
-			nws.setDescription(rs.getString(7));
-			if (hasTotals)
-				nws.setDownloadCount(rs.getInt(8));
 
-			results.add(nws);
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
+			while (rs.next()) {
+				File f = new File(SystemData.get("path.newsletter"), rs.getString(1));
+				Newsletter nws = new Newsletter(f.getPath());
+				nws.setName(rs.getString(2));
+				nws.setCategory(rs.getString(3));
+				nws.setSecurity(rs.getInt(5));
+				nws.setDate(expandDate(rs.getDate(6)));
+				nws.setDescription(rs.getString(7));
+				if (hasTotals)
+					nws.setDownloadCount(rs.getInt(8));
+
+				results.add(nws);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load flight routes from approved Flight Reports. 
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 3.3
  */
 
@@ -73,46 +73,45 @@ public class GetFlightReportRoutes extends DAO {
 			// Execute the query
 			int maxCount = 0; boolean doMore = true; int id = 0;
 			Collection<FlightRoute> results = new ArrayList<FlightRoute>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next() && doMore) {
-				ExternalRoute rt = new ExternalRoute("ACARS");
-				rt.setID(++id);
-				rt.setAirportD(aD);
-				rt.setAirportA(aA);
-				rt.setCreatedOn(rs.getTimestamp(2));
-				rt.setCruiseAltitude(rs.getString(5));
-				int useCount = rs.getInt(6);
-				maxCount = Math.max(maxCount, useCount);
-				rt.setComments("ACARS Flight #" + StringUtils.format(rs.getInt(4), "#,##0") + " by " + rs.getString(3) + " on " + 
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next() && doMore) {
+					ExternalRoute rt = new ExternalRoute("ACARS");
+					rt.setID(++id);
+					rt.setAirportD(aD);
+					rt.setAirportA(aA);
+					rt.setCreatedOn(rs.getTimestamp(2));
+					rt.setCruiseAltitude(rs.getString(5));
+					int useCount = rs.getInt(6);
+					maxCount = Math.max(maxCount, useCount);
+					rt.setComments("ACARS Flight #" + StringUtils.format(rs.getInt(4), "#,##0") + " by " + rs.getString(3) + " on " + 
 						StringUtils.format(rt.getCreatedOn(), "dd-MMM-yyyy"));
 				
-				// Get the SID/STAR out of the route
-				String rawRoute = rs.getString(1);
-				List<String> wps = StringUtils.split(rawRoute, " ");
-				if (wps.size() > 1) {
-					if (TerminalRoute.isNameValid(wps.get(0))) {
-						rt.setSID(wps.get(0) + "." + wps.get(1));
-						wps.remove(0);
-					}
+					// Get the SID/STAR out of the route
+					String rawRoute = rs.getString(1);
+					List<String> wps = StringUtils.split(rawRoute, " ");
+					if (wps.size() > 1) {
+						if (TerminalRoute.isNameValid(wps.get(0))) {
+							rt.setSID(wps.get(0) + "." + wps.get(1));
+							wps.remove(0);
+						}
 					
-					String last = wps.get(wps.size() - 1);
-					if (TerminalRoute.isNameValid(last) && (wps.size() > 1)) {
-						rt.setSTAR(last + "." + wps.get(wps.size() - 2));
-						wps.remove(wps.size() - 1);
-					}
+						String last = wps.get(wps.size() - 1);
+						if (TerminalRoute.isNameValid(last) && (wps.size() > 1)) {
+							rt.setSTAR(last + "." + wps.get(wps.size() - 2));
+							wps.remove(wps.size() - 1);
+						}
 					
-					rt.setRoute(StringUtils.listConcat(wps, " "));
-				} else
-					rt.setRoute(rawRoute);
+						rt.setRoute(StringUtils.listConcat(wps, " "));
+					} else
+						rt.setRoute(rawRoute);
 
-				// Restrict to routes tht are at least 25% as popular as the most popular route, and we have at least 4
-				doMore = (useCount >= (maxCount >> 2)) && (results.size() < 4);
-				if (doMore)
-					results.add(rt);
+					// Restrict to routes tht are at least 25% as popular as the most popular route, and we have at least 4
+					doMore = (useCount >= (maxCount >> 2)) && (results.size() < 4);
+					if (doMore)
+						results.add(rt);
+				}
 			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {

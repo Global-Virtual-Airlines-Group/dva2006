@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -46,8 +46,6 @@ public class GetEvent extends DAO {
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
 			loadSignups(eMap);
-			
-			// Return the results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -75,8 +73,6 @@ public class GetEvent extends DAO {
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
 			loadSignups(eMap);
-			
-			// Return the results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -104,11 +100,12 @@ public class GetEvent extends DAO {
 			_ps.setInt(3, network.getValue());
 			
 			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			int eventID = rs.next() ? rs.getInt(1) : 0;
+			int eventID = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					eventID = rs.getInt(1);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return eventID;
 		} catch (SQLException se) {
@@ -137,8 +134,6 @@ public class GetEvent extends DAO {
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
 			loadSignups(eMap);
-			
-			// Return the results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -158,11 +153,12 @@ public class GetEvent extends DAO {
 			_ps.setString(2, SystemData.get("airline.code"));
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			boolean hasEvents = rs.next() ? (rs.getInt(1) > 0) : false;
+			boolean hasEvents = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					hasEvents = (rs.getInt(1) > 0);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return hasEvents;
 		} catch (SQLException se) {
@@ -185,8 +181,6 @@ public class GetEvent extends DAO {
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
-			
-			// Return the results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -234,7 +228,7 @@ public class GetEvent extends DAO {
 			
 			// Create a map and load the airports
 			Map<Integer, Event> eMap = new HashMap<Integer, Event>();
-			eMap.put(new Integer(e.getID()), e);
+			eMap.put(Integer.valueOf(e.getID()), e);
 			loadRoutes(eMap);
 			loadSignups(eMap);
 			return e;
@@ -262,29 +256,26 @@ public class GetEvent extends DAO {
 
 		sqlBuf.append(")) GROUP BY EA.ID, EA.ROUTE_ID ORDER BY EA.ID");
 
-		// Init the prepared statement
-		prepareStatementWithoutLimits(sqlBuf.toString());
-
 		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Event e = events.get(new Integer(rs.getInt(1)));
-			if (e != null) {
-				Route r = new Route(e.getID(), rs.getString(5));
-				r.setRouteID(rs.getInt(2));
-				r.setAirportD(SystemData.getAirport(rs.getString(3)));
-				r.setAirportA(SystemData.getAirport(rs.getString(4)));
-				r.setActive(rs.getBoolean(6));
-				r.setIsRNAV(rs.getBoolean(7));
-				r.setMaxSignups(rs.getInt(8));
-				r.setName(rs.getString(9));
-				r.setSignups(rs.getInt(10));
-				e.addRoute(r);
+		prepareStatementWithoutLimits(sqlBuf.toString());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Event e = events.get(Integer.valueOf(rs.getInt(1)));
+				if (e != null) {
+					Route r = new Route(e.getID(), rs.getString(5));
+					r.setRouteID(rs.getInt(2));
+					r.setAirportD(SystemData.getAirport(rs.getString(3)));
+					r.setAirportA(SystemData.getAirport(rs.getString(4)));
+					r.setActive(rs.getBoolean(6));
+					r.setIsRNAV(rs.getBoolean(7));
+					r.setMaxSignups(rs.getInt(8));
+					r.setName(rs.getString(9));
+					r.setSignups(rs.getInt(10));
+					e.addRoute(r);
+				}
 			}
 		}
 
-		// Clean up after ourselves
-		rs.close();
 		_ps.close();
 	}
 
@@ -293,31 +284,27 @@ public class GetEvent extends DAO {
 	 */
 	private List<Event> execute() throws SQLException {
 		List<Event> results = new ArrayList<Event>();
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasBanner = (rs.getMetaData().getColumnCount() > 11);
+			while (rs.next()) {
+				Event e = new Event(rs.getString(2));
+				e.setID(rs.getInt(1));
+				e.setStatus(rs.getInt(3));
+				e.setNetwork(OnlineNetwork.values()[rs.getInt(4)]);
+				e.setStartTime(rs.getTimestamp(5));
+				e.setEndTime(rs.getTimestamp(6));
+				e.setSignupDeadline(rs.getTimestamp(7));
+				e.setBriefing(rs.getString(8));
+				e.setCanSignup(rs.getBoolean(9));
+				e.setSignupURL(rs.getString(10));
+				e.setOwner(SystemData.getApp(rs.getString(11)));
+				if (hasBanner)
+					e.setBannerExtension(rs.getString(12));
 
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		boolean hasBanner = (rs.getMetaData().getColumnCount() > 11);
-		while (rs.next()) {
-			Event e = new Event(rs.getString(2));
-			e.setID(rs.getInt(1));
-			e.setStatus(rs.getInt(3));
-			e.setNetwork(OnlineNetwork.values()[rs.getInt(4)]);
-			e.setStartTime(rs.getTimestamp(5));
-			e.setEndTime(rs.getTimestamp(6));
-			e.setSignupDeadline(rs.getTimestamp(7));
-			e.setBriefing(rs.getString(8));
-			e.setCanSignup(rs.getBoolean(9));
-			e.setSignupURL(rs.getString(10));
-			e.setOwner(SystemData.getApp(rs.getString(11)));
-			if (hasBanner)
-				e.setBannerExtension(rs.getString(12));
-
-			// Add to results
-			results.add(e);
+				results.add(e);
+			}
 		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -341,69 +328,57 @@ public class GetEvent extends DAO {
 
 		sqlBuf.append("))");
 
-		// Init the prepared statement
-		prepareStatementWithoutLimits(sqlBuf.toString());
-
 		// Execute the query and load the signups
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Signup s = new Signup(rs.getInt(1), rs.getInt(3));
-			s.setRouteID(rs.getInt(2));
-			s.setEquipmentType(rs.getString(4));
-			s.setRemarks(rs.getString(5));
-			s.setAirportD(SystemData.getAirport(rs.getString(6)));
-			s.setAirportA(SystemData.getAirport(rs.getString(7)));
+		prepareStatementWithoutLimits(sqlBuf.toString());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Signup s = new Signup(rs.getInt(1), rs.getInt(3));
+				s.setRouteID(rs.getInt(2));
+				s.setEquipmentType(rs.getString(4));
+				s.setRemarks(rs.getString(5));
+				s.setAirportD(SystemData.getAirport(rs.getString(6)));
+				s.setAirportA(SystemData.getAirport(rs.getString(7)));
 
-			// Add to results
-			Event e = events.get(new Integer(s.getID()));
-			if (e != null)
-				e.addSignup(s);
+				// Add to results
+				Event e = events.get(Integer.valueOf(s.getID()));
+				if (e != null)
+					e.addSignup(s);
+			}
 		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 
 	private void loadEQTypes(Event e) throws SQLException {
 		prepareStatementWithoutLimits("SELECT RATING FROM events.EVENT_EQTYPES WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				e.addEquipmentType(rs.getString(1));
+		}
 
-		// Execute the query and load the equipment types
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			e.addEquipmentType(rs.getString(1));
-
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
 	private void loadContactAddrs(Event e) throws SQLException {
 		prepareStatementWithoutLimits("SELECT ADDRESS FROM events.EVENT_CONTACTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
-		
-		// Execute the query and load the addresses
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			e.addContactAddr(rs.getString(1));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				e.addContactAddr(rs.getString(1));
+		}
 
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
 	private void loadAirlines(Event e) throws SQLException {
 		prepareStatementWithoutLimits("SELECT AIRLINE FROM events.AIRLINES WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+			e.addAirline(SystemData.getApp(rs.getString(1)));	
+		}
 		
-		// Execute the query and load the addresses
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			e.addAirline(SystemData.getApp(rs.getString(1)));
-		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 }

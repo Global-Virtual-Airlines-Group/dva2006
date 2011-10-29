@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -54,9 +54,11 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 				_ps.setString(2, eqType);
 			
 				// Execute the query
-				ResultSet rs = _ps.executeQuery();
-				dbName = rs.next() ? rs.getString(1) : null;
-				rs.close();
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next())
+						dbName = rs.getString(1);
+				}
+				
 				_ps.close();
 				if (dbName == null)
 					return null;
@@ -150,12 +152,11 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			
 			// Execute the query
 			Collection<String> dbs = new LinkedHashSet<String>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				dbs.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					dbs.add(rs.getString(1));
+			}
 			
-			// Clean up
-			rs.close();
 			_ps.close();
 			
 			// Loop through the databases and load the programs
@@ -278,12 +279,11 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 
 			// Execute the query
 			Collection<String> results = new LinkedHashSet<String>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(rs.getString(1));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(rs.getString(1));
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -318,21 +318,18 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			_ps.setString(1, eq.getName());
 
 			int x = 1;
-			for (Iterator<String> i = allRatings.iterator(); i.hasNext();) {
-				String rating = i.next();
+			for (String rating : allRatings)
 				_ps.setString(++x, rating);
-			}
 
 			_ps.setInt(++x, allRatings.size());
 
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(Integer.valueOf(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+				results.add(Integer.valueOf(rs.getInt(1)));	
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -345,28 +342,25 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	private void loadRatings(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
-
-		// Execute the query
 		prepareStatementWithoutLimits("SELECT * FROM " + db + ".EQRATINGS");
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			EquipmentType eq = types.get(rs.getString(1));
-			if (eq != null) {
-				switch (rs.getInt(2)) {
-				case EquipmentType.PRIMARY_RATING:
-					eq.addPrimaryRating(rs.getString(3));
-					break;
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				EquipmentType eq = types.get(rs.getString(1));
+				if (eq != null) {
+					switch (rs.getInt(2)) {
+					case EquipmentType.PRIMARY_RATING:
+						eq.addPrimaryRating(rs.getString(3));
+						break;
 
-				default:
-				case EquipmentType.SECONDARY_RATING:
-					eq.addSecondaryRating(rs.getString(3));
-					break;
+					default:
+					case EquipmentType.SECONDARY_RATING:
+						eq.addSecondaryRating(rs.getString(3));
+						break;
+					}
 				}
 			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 
@@ -375,28 +369,25 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	private void loadExams(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
-		
-		// Execute the query
 		prepareStatementWithoutLimits("SELECT EQTYPE, EXAMTYPE, EXAM FROM " + db + ".EQEXAMS");
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			EquipmentType eq = types.get(rs.getString(1));
-			if (eq != null) {
-				switch (rs.getInt(2)) {
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				EquipmentType eq = types.get(rs.getString(1));
+				if (eq != null) {
+					switch (rs.getInt(2)) {
 					default:
 					case EquipmentType.EXAM_FO:
-						eq.addExam(Rank.FO, rs.getString(3));
-						break;
+							eq.addExam(Rank.FO, rs.getString(3));
+							break;
 						
-					case EquipmentType.EXAM_CAPT:
-						eq.addExam(Rank.C, rs.getString(3));
-						break;
+						case EquipmentType.EXAM_CAPT:
+							eq.addExam(Rank.C, rs.getString(3));
+							break;
+					}
 				}
 			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
@@ -405,19 +396,16 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	private void loadAirlines(Collection<EquipmentType> eTypes) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
-		
-		// Execute the query
 		prepareStatementWithoutLimits("SELECT EQTYPE, OWNER, AIRLINE FROM common.EQAIRLINES");
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			EquipmentType eq = types.get(rs.getString(1));
-			String ownerCode = rs.getString(2);
-			if ((eq != null) && (eq.getOwner().getCode().equals(ownerCode)))
-				eq.addAirline(SystemData.getApp(rs.getString(3)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				EquipmentType eq = types.get(rs.getString(1));
+				String ownerCode = rs.getString(2);
+				if ((eq != null) && (eq.getOwner().getCode().equals(ownerCode)))
+					eq.addAirline(SystemData.getApp(rs.getString(3)));
+			}
 		}
 		
-		// Clean up
-		rs.close();
 		_ps.close();
 	}
 	
@@ -426,22 +414,20 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	private void loadSize(Collection<EquipmentType> eTypes, String db) throws SQLException {
 		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
-		
 		prepareStatementWithoutLimits("SELECT P.EQTYPE, COUNT(P.ID) FROM " + db + ".PILOTS P WHERE ((P.STATUS=?) OR "
 				+ "(P.STATUS=?)) GROUP BY P.EQTYPE");
-			_ps.setInt(1, Pilot.ACTIVE);
-			_ps.setInt(2, Pilot.ON_LEAVE);
+		_ps.setInt(1, Pilot.ACTIVE);
+		_ps.setInt(2, Pilot.ON_LEAVE);
 		
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
+		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				EquipmentType eq = types.get(rs.getString(1));
 				if (eq != null)
 					eq.setSize(rs.getInt(2));
 			}
+		}
 			
-			rs.close();
-			_ps.close();
+		_ps.close();
 	}
 
 	/**
@@ -449,29 +435,27 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	private List<EquipmentType> execute() throws SQLException {
 		List<EquipmentType> results = new ArrayList<EquipmentType>();
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			EquipmentType eq = new EquipmentType(rs.getString(1));
-			eq.setCPID(rs.getInt(2));
-			eq.addRanks(rs.getString(3), ",");
-			eq.setActive(rs.getBoolean(4));
-			eq.setPromotionLegs(rs.getInt(5));
-			eq.setPromotionHours(rs.getInt(6));
-			eq.setACARSPromotionLegs(rs.getBoolean(7));
-			eq.setPromotionMinLength(rs.getInt(8));
-			eq.setPromotionSwitchLength(rs.getInt(9));
-			eq.setMinimum1XTime(rs.getInt(10));
-			eq.setMaximumAccelTime(rs.getInt(11));
-			eq.setOwner(SystemData.getApp(rs.getString(12)));
-			eq.setStage(rs.getInt(13));
-			eq.setCPName(rs.getString(14));
-			eq.setCPEmail(rs.getString(15));
-			results.add(eq);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {	
+				EquipmentType eq = new EquipmentType(rs.getString(1));
+				eq.setCPID(rs.getInt(2));
+				eq.addRanks(rs.getString(3), ",");
+				eq.setActive(rs.getBoolean(4));
+				eq.setPromotionLegs(rs.getInt(5));
+				eq.setPromotionHours(rs.getInt(6));
+				eq.setACARSPromotionLegs(rs.getBoolean(7));
+				eq.setPromotionMinLength(rs.getInt(8));
+				eq.setPromotionSwitchLength(rs.getInt(9));
+				eq.setMinimum1XTime(rs.getInt(10));
+				eq.setMaximumAccelTime(rs.getInt(11));
+				eq.setOwner(SystemData.getApp(rs.getString(12)));
+				eq.setStage(rs.getInt(13));
+				eq.setCPName(rs.getString(14));
+				eq.setCPEmail(rs.getString(15));
+				results.add(eq);
+			}
 		}
 
-		rs.close();
 		_ps.close();
 		return results;
 	}

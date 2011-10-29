@@ -9,7 +9,7 @@ import org.deltava.beans.hr.*;
 /**
  * A Data Access Object to load Senior Captain nominations.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 3.3
  */
 
@@ -141,24 +141,20 @@ public class GetNominations extends DAO {
 			
 			// Do the query
 			Nomination n = null;
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				n = new Nomination(rs.getInt(1));
-				n.setQuarter(new Quarter(rs.getInt(2)));
-				n.setScore(rs.getInt(3));
-				n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
-				n.setCreatedOn(rs.getTimestamp(5));
-				
-				// Clean up
-				rs.close();
-				_ps.close();
-				
-				// Load comments
-				loadComments(n);
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next()) {
+					n = new Nomination(rs.getInt(1));
+					n.setQuarter(new Quarter(rs.getInt(2)));
+					n.setScore(rs.getInt(3));
+					n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
+					n.setCreatedOn(rs.getTimestamp(5));
+				}
 			}
-			
-			rs.close();
+				
 			_ps.close();
+			if (n != null)
+				loadComments(n);
+			
 			return n;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -188,18 +184,18 @@ public class GetNominations extends DAO {
 	 */
 	private List<Nomination> execute() throws SQLException {
 		List<Nomination> results = new ArrayList<Nomination>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			Nomination n = new Nomination(rs.getInt(1));
-			n.setQuarter(new Quarter(rs.getInt(2)));
-			n.setScore(rs.getInt(3));
-			n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
-			n.setCreatedOn(rs.getTimestamp(5));
-			n.setCommentCount(rs.getInt(6));
-			results.add(n);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				Nomination n = new Nomination(rs.getInt(1));
+				n.setQuarter(new Quarter(rs.getInt(2)));
+				n.setScore(rs.getInt(3));
+				n.setStatus(Nomination.Status.values()[rs.getInt(4)]);
+				n.setCreatedOn(rs.getTimestamp(5));
+				n.setCommentCount(rs.getInt(6));
+				results.add(n);
+			}
 		}
 		
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -212,15 +208,15 @@ public class GetNominations extends DAO {
 				+ "WHERE (ID=?) AND (QUARTER=?)");
 		_ps.setInt(1, n.getID());
 		_ps.setInt(2, n.getQuarter().getYearQuarter());
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));
-			nc.setSupport(rs.getBoolean(2));
-			nc.setCreatedOn(rs.getTimestamp(3));
-			n.addComment(nc);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				NominationComment nc = new NominationComment(rs.getInt(1), rs.getString(4));
+				nc.setSupport(rs.getBoolean(2));
+				nc.setCreatedOn(rs.getTimestamp(3));
+				n.addComment(nc);
+			}
 		}
 
-		rs.close();
 		_ps.close();
 	}
 }

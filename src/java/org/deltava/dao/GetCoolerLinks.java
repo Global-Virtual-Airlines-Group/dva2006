@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.LinkedImage;
 /**
  * A Data Access Object to load Water Cooler image links.
  * @author Luke
- * @version 2.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -34,12 +34,11 @@ public class GetCoolerLinks extends DAO {
 			
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -60,16 +59,15 @@ public class GetCoolerLinks extends DAO {
 			
 			// Execute the query
 			Collection<LinkedImage> results = new TreeSet<LinkedImage>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				LinkedImage img = new LinkedImage(rs.getInt(1), rs.getString(2));
-				img.setDescription(rs.getString(3));
-				img.setThreadID(id);
-				results.add(img);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					LinkedImage img = new LinkedImage(rs.getInt(1), rs.getString(2));
+					img.setDescription(rs.getString(3));
+					img.setThreadID(id);
+					results.add(img);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
