@@ -10,6 +10,7 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
@@ -17,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -28,6 +29,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -41,6 +43,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 		boolean isRating = "rating".equals(ctx.getCmdParameter(OPERATION, null));
 		ctx.setAttribute("isRating", Boolean.valueOf(isRating), REQUEST);
 
+		MessageContext mctxt = new MessageContext();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -110,19 +113,36 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			} catch (IneligibilityException ie) {
 				txreq.setStatus(TransferRequest.PENDING);
 			}
+			
+			// Set mailer variables
+			mctxt.addData("user", p);
+			mctxt.addData("eqType", eq);
+			
+			// Get the message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("XFERNEW"));
 
 			// Save the transfer request
 			SetTransferRequest wdao = new SetTransferRequest(con);
 			wdao.create(txreq, eq.getOwner().getDB());
-
+			
 			// Store the transfer request in the request
 			ctx.setAttribute("txReq", txreq, REQUEST);
+			mctxt.addData("txReq", txreq);
+			
+			// Send message
+			GetPilot pdao = new GetPilot(con);
+			Mailer m = new Mailer(p);
+			for (Pilot acp : pdao.getPilotsByEQ(eq, null, true, Rank.ACP))
+				m.setCC(acp);
+			
+			m.send(Mailer.makeAddress(eq.getCPEmail(), eq.getCPName()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-
+		
 		// Set status for JSP
 		ctx.setAttribute("isNew", Boolean.TRUE, REQUEST);
 
