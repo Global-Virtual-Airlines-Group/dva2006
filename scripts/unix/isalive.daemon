@@ -237,10 +237,7 @@ do
 				kill -3 `cat /var/run/tomcat60.pid`
 				sleep 10
 				kill -9 `cat /var/run/tomcat60.pid`
-				sleep 1.25
-				logger -p local3.err "Archiving Tomcat log"
-				echo `date +%H:%M:%S`" Archiving Tomcat log" >> /var/cache/isalive.txt
-				/usr/local/sbin/www/tomcat_log_reset
+				sleep 2
 				/etc/init.d/tomcat start
 			fi
 
