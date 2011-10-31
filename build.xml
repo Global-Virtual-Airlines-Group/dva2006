@@ -126,8 +126,8 @@
 		
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
-		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true"
-		 debuglevel="lines,vars,source" source="1.6" target="1.6" compiler="modern">
+		<javac srcdir="src/java" destdir="${java.io.tmpdir}/build/classes" debug="true" includeantruntime="false"
+		 debuglevel="lines,vars,source" source="1.7" target="1.7" compiler="modern">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -166,14 +166,14 @@
 		<echo message="Pre-compiling JSP files" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.6" compilerSourceVM="1.6" trimSpaces="false"
+	    	compilerTargetVM="1.7" compilerSourceVM="1.7" trimSpaces="false"
 			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp"
-			debug="on" debuglevel="source" optimize="on" target="1.6" source="1.6">
+			debug="on" debuglevel="source" target="1.7" source="1.7" includeantruntime="false">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
