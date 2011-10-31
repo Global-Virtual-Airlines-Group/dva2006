@@ -30,6 +30,7 @@ echo `date +%H:%M:%S`' Writing table definitions'
 $mysqldump -e -K -d --single-transaction --skip-triggers `cat /usr/local/etc/sqlbackup` common > common.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` events > event.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` acars > acars.sql
+$mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` xacars > xacars.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` exams > exams.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` dva > dva.sql
 $mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` afv > afv.sql
