@@ -133,6 +133,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			// Send message
 			GetPilot pdao = new GetPilot(con);
 			Mailer m = new Mailer(p);
+			m.setContext(mctxt);
 			for (Pilot acp : pdao.getPilotsByEQ(eq, null, true, Rank.ACP))
 				m.setCC(acp);
 			
