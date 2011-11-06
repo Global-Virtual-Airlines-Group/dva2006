@@ -328,7 +328,10 @@ public class GeoUtils {
 		
 		double d1 = Math.abs(ln1 - lng2);
 		double d2 = Math.abs(ln2 - lng2);
-		return ((d1 + d2) <= Math.abs(ln1 - ln2));
+		double dn1 = Math.min(d1, 360 - d1);
+		double dn2 = Math.min(d2, 360 - d2);
+		
+		return ((dn1 + dn2) <= Math.abs(ln1 - ln2));
 	}
 	
 	/**
