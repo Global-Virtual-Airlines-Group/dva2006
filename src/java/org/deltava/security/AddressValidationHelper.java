@@ -1,9 +1,11 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.zip.CRC32;
 
 import org.deltava.crypt.*;
+
+import org.deltava.beans.Helper;
 
 import org.deltava.util.Base64;
 import org.deltava.util.system.SystemData;
@@ -11,10 +13,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to calculate hash code values for e-mail address validation.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
+@Helper(String.class)
 public final class AddressValidationHelper {
 
    // We're a singleton, alone and lonely.

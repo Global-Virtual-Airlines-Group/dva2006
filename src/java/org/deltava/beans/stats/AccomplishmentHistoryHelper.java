@@ -3,7 +3,7 @@ package org.deltava.beans.stats;
 
 import java.util.*;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
@@ -19,6 +19,7 @@ import org.deltava.util.system.SystemData;
  * @since 3.2
  */
 
+@Helper(Accomplishment.class)
 public class AccomplishmentHistoryHelper {
 
 	/**
@@ -28,7 +29,7 @@ public class AccomplishmentHistoryHelper {
 		NOTYET, MEET, EXCEED;
 	}
 	
-	private Pilot _usr;
+	private final Pilot _usr;
 	private final Collection<FlightReport> _pireps = new TreeSet<FlightReport>(new FlightReportComparator(FlightReportComparator.DATE));
 	private final Collection<DispatchConnectionEntry> _cons = new TreeSet<DispatchConnectionEntry>();
 	
