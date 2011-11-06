@@ -58,6 +58,7 @@ public class TestGeoUtils extends TestCase {
 		GeoLocation jfk = new GeoPosition(40+(48/60.0), (73+(47/60.0)) * -1);
 		GeoLocation lax = new GeoPosition(33+(57/60.0), (118+(24/60.0)) * -1);
 		GeoLocation hkg = new GeoPosition(22.32830, 114.19400);
+		GeoLocation arn = new GeoPosition(59.6564, 17.9331);
 		
 		double lat = GeoUtils.meridianLatitude(jfk, lax, -111);
 		double lat2 = GeoUtils.meridianLatitude(lax, jfk, -111);
@@ -77,6 +78,8 @@ public class TestGeoUtils extends TestCase {
 		assertTrue(GeoUtils.crossesMeridian(lax, hkg, -179.9));
 		assertTrue(GeoUtils.crossesMeridian(lax, hkg, 179.9));
 		assertFalse(GeoUtils.crossesMeridian(jfk, hkg, 11));
+		
+		assertTrue(GeoUtils.crossesMeridian(jfk, arn, -30));
 	}
 	
 	public void testFormat() {
