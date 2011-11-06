@@ -3,6 +3,7 @@ package org.deltava.beans.acars;
 
 import java.util.Date;
 
+import org.deltava.beans.Helper;
 import org.deltava.beans.flight.*;
 
 /**
@@ -12,7 +13,8 @@ import org.deltava.beans.flight.*;
  * @since 4.1
  */
 
-public class XACARSFlightHelper {
+@Helper(OfflineFlight.class)
+public final class XACARSFlightHelper {
 
 	// static class
 	private XACARSFlightHelper() {

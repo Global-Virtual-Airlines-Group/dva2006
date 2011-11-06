@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -14,11 +14,12 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
-public class TestingHistoryHelper {
+@Helper(Test.class)
+public final class TestingHistoryHelper {
 	
 	private static final Logger log = Logger.getLogger(TestingHistoryHelper.class);
 
@@ -28,8 +29,8 @@ public class TestingHistoryHelper {
 	
 	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
-	private Pilot _usr;
-	private EquipmentType _myEQ;
+	private final Pilot _usr;
+	private final EquipmentType _myEQ;
 	private final SortedSet<Test> _tests = new TreeSet<Test>();
 	private final Collection<FlightReport> _pireps = new ArrayList<FlightReport>();
 	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();

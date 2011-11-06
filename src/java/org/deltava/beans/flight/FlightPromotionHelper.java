@@ -3,7 +3,7 @@ package org.deltava.beans.flight;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.EquipmentType;
+import org.deltava.beans.*;
 
 /**
  * A utility class to determine whether a Flight counts for promotion to Captain in a particular Equipment Type program.
@@ -12,11 +12,12 @@ import org.deltava.beans.EquipmentType;
  * @since 2.7
  */
 
-public class FlightPromotionHelper {
+@Helper(FlightReport.class)
+public final class FlightPromotionHelper {
 
 	private static final Logger log = Logger.getLogger(FlightPromotionHelper.class);
 
-	private FlightReport _fr;
+	private final FlightReport _fr;
 	private String _comment;
 
 	/**

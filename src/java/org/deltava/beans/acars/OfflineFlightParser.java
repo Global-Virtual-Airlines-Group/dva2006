@@ -23,7 +23,8 @@ import org.deltava.util.system.SystemData;
  * @since 2.4
  */
 
-public class OfflineFlightParser {
+@Helper(OfflineFlight.class)
+public final class OfflineFlightParser {
 	
 	private static final Logger log = Logger.getLogger(OfflineFlightParser.class);
 	

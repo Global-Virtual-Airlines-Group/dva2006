@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Helper;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.METAR;
@@ -20,18 +21,19 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 3.4
  */
 
-public class RouteLoadHelper {
+@Helper(FlightRoute.class)
+public final class RouteLoadHelper {
 	
 	private static final Logger log = Logger.getLogger(RouteLoadHelper.class);
 	
-	private Connection _c;
+	private transient final Connection _c;
 
-	private Airport _aD; private METAR _mD;
-	private Airport _aA; private METAR _mA;
+	private final Airport _aD; private METAR _mD;
+	private final Airport _aA; private METAR _mA;
 	private String _preferredRunway;
 	
 	private final Collection<FlightRoute> _routes = new ArrayList<FlightRoute>();

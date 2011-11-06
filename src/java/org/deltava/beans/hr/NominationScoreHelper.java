@@ -1,21 +1,21 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.hr;
 
 import java.util.*;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.Rank;
+import org.deltava.beans.*;
 
 /**
  * A helper class to score Nominations.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 3.3
  */
 
-public class NominationScoreHelper {
+@Helper(Nomination.class)
+public final class NominationScoreHelper {
 	
-	private Nomination _n;
+	private final Nomination _n;
 	private final Map<Integer, Pilot> _authors = new HashMap<Integer, Pilot>();
 
 	/**
@@ -34,7 +34,7 @@ public class NominationScoreHelper {
 	public Collection<Integer> getAuthorIDs() {
 		Collection<Integer> results = new HashSet<Integer>();
 		for (NominationComment nc : _n.getComments())
-			results.add(new Integer(nc.getAuthorID()));
+			results.add(Integer.valueOf(nc.getAuthorID()));
 		
 		return results;
 	}

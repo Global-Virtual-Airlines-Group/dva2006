@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.redirect;
 
 import java.util.*;
@@ -6,14 +6,17 @@ import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Helper;
+
 /**
  * A utility class to save and restore servlet request state.
  * @author Luke
- * @version 3.0
+ * @version 4.1
  * @since 1.0
  */
 
-public class RequestStateHelper {
+@Helper(HttpServletRequest.class)
+public final class RequestStateHelper {
 
 	private static final Logger log = Logger.getLogger(RequestStateHelper.class);
 
@@ -21,6 +24,11 @@ public class RequestStateHelper {
 	 * The name of the HTTP session attribute used to save servlet request state.
 	 */
 	public static final String STATE_ATTR_NAME = "$requestState$";
+	
+	// singleton
+	private RequestStateHelper() {
+		super();
+	}
 
 	/**
 	 * Restores the current servlet request state. This will load the request state from the current HTTP session and

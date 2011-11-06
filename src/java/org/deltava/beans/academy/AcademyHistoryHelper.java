@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -15,15 +15,16 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
-public class AcademyHistoryHelper {
+@Helper(Course.class)
+public final class AcademyHistoryHelper {
 	
 	private static final Logger log = Logger.getLogger(AcademyHistoryHelper.class);
 
-	private Pilot _p; 
+	private final Pilot _p; 
 	private boolean _debugLog;
 	private boolean _allowInactive;
 	
