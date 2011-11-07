@@ -6,13 +6,18 @@ import java.lang.ref.*;
 /**
  * An abstract class to handle cache entries.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
 abstract class CacheEntry<T extends Cacheable> extends SoftReference<T> implements Comparable<CacheEntry<T>> {
 	
 	private Object _key;
+	
+	/**
+	 * A Helper variable used to track either creation or expiry time.
+	 */
+	protected long _createExpire;
 
 	/**
 	 * Initializes the entry.

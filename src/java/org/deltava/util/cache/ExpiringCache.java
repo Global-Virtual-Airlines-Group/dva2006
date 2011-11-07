@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -19,26 +19,23 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 
 	protected class ExpiringCacheEntry<U extends T> extends CacheEntry<U> {
 
-		private long _expiryTime;
-
 		public ExpiringCacheEntry(U entryData) {
 			super(entryData, _refQueue);
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
 			if (entryData instanceof ExpiringCacheable)
-				_expiryTime = ((ExpiringCacheable) entryData).getExpiryDate().getTime();
+				_createExpire = ((ExpiringCacheable) entryData).getExpiryDate().getTime();
 			else
-				_expiryTime = createdOn + _expiry;
+				_createExpire = createdOn + _expiry;
 		}
 
 		public boolean isExpired() {
-			return (_expiryTime < System.currentTimeMillis());
+			return (_createExpire < System.currentTimeMillis());
 		}
 
 		public int compareTo(CacheEntry<U> e2) {
-			ExpiringCacheEntry<U> ee2 = (ExpiringCacheEntry<U>) e2;
-			return Long.valueOf(_expiryTime).compareTo(Long.valueOf(ee2._expiryTime));
+			return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
 		}
 	}
 	
