@@ -36,8 +36,8 @@ public class GetSchedule extends DAO {
 	public List<ScheduleEntry> search(ScheduleSearchCriteria criteria) throws DAOException {
 
 		// Build the conditions
-		final Collection<String> conditions = new LinkedHashSet<String>();
-		final List<String> params = new ArrayList<String>();
+		Collection<String> conditions = new LinkedHashSet<String>();
+		List<String> params = new ArrayList<String>();
 		if (criteria.getDispatchOnly())
 			criteria.setCheckDispatchRoutes(true);
 		
@@ -108,59 +108,100 @@ public class GetSchedule extends DAO {
 			params.add("0");
 		}
 		
-		// Build the query string
-		StringBuilder buf = new StringBuilder("SELECT S.*");
-		if (criteria.getCheckDispatch())
-			buf.append(", COUNT(R.ID) AS RCNT");
-		buf.append(" FROM ");
-		buf.append(formatDBName(criteria.getDBName()));
-		buf.append(".SCHEDULE S");
-		if (criteria.getCheckDispatch())
-			buf.append(" LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1))");
-		buf.append(" WHERE ");
-		for (Iterator<String> i = conditions.iterator(); i.hasNext();) {
-			buf.append('(');
-			buf.append(i.next());
-			buf.append(')');
-			if (i.hasNext())
-				buf.append(" AND ");
-		}
-		
-		// Build the equipment type query
+		// Concat the criteria into a string so we can reuse
+		StringBuilder cndBuf = new StringBuilder("(");
+		cndBuf.append(StringUtils.listConcat(conditions, ") AND ("));
+		cndBuf.append(')');
 		if (!CollectionUtils.isEmpty(criteria.getEquipmentTypes())) {
 			if (!conditions.isEmpty())
-				buf.append(" AND (");
+				cndBuf.append(" AND (");
 			
 			for (Iterator<String> i = criteria.getEquipmentTypes().iterator(); i.hasNext(); ) {
 				String eqType = i.next();
-				buf.append("(S.EQTYPE=?)");
+				cndBuf.append("(S.EQTYPE=?)");
 				params.add(eqType);
 				if (i.hasNext())
-					buf.append(" OR ");
+					cndBuf.append(" OR ");
 			}
 
 			if (!conditions.isEmpty())
-				buf.append(')');
+				cndBuf.append(')');
 		}
 		
-		// Add sort column
-		if (criteria.getCheckDispatch())
-			buf.append(" GROUP BY S.AIRLINE, S.FLIGHT, S.LEG");
+		// Load the route pairs that match the criteria
+		String db = formatDBName(criteria.getDBName());
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT S.AIRPORT_D, S.AIRPORT_A, COUNT(R.ID) AS RCNT FROM ");
+		buf.append(db);
+		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
+		buf.append(cndBuf.toString());
+		buf.append(" GROUP BY S.AIRPORT_D, S.AIRPORT_A");
+		if (criteria.getDispatchOnly())
+			buf.append(" HAVING (RCNT>0)");
+		buf.append(" ORDER BY ");
+		buf.append(criteria.getSortBy());
+		
+		Collection<RoutePair> rts = new LinkedHashSet<RoutePair>();
+		try {
+			prepareStatementWithoutLimits(buf.toString());
+			for (int x = 1; x <= params.size(); x++)
+				_ps.setString(x, params.get(x - 1));
+			
+			// Execute the query
+			Airline al = SystemData.getAirline(SystemData.get("airline.code"));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					RoutePair fr = new ScheduleRoute(al, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
+					rts.add(fr);
+				}
+			}
+			
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+		
+		// Load all of the flights that match each route pair and the criteria
+		buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT FROM ");
+		buf.append(db);
+		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
+		buf.append(cndBuf.toString());
+		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
 		if (criteria.getDispatchOnly())
 			buf.append(" HAVING (RCNT>0)");
 		buf.append(" ORDER BY ");
 		buf.append(criteria.getSortBy());
 
 		// Prepare the satement and execute the query
+		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
 		try {
-			prepareStatement(buf.toString());
-			for (int x = 1; x <= params.size(); x++)
-				_ps.setString(x, params.get(x - 1));
-			
-			return execute();
+			for (RoutePair fr : rts) {
+				prepareStatement(buf.toString());
+				for (int x = 1; x <= params.size(); x++)
+					_ps.setString(x, params.get(x - 1));
+				
+				_ps.setString(params.size() + 1, fr.getAirportD().getIATA());
+				_ps.setString(params.size() + 2, fr.getAirportA().getIATA());
+				entries.put(fr, execute());
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Iterate through each collection of route pairs, adding flights until we hit the max
+		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
+		while ((results.size() < _queryMax) && (entries.size() > 0)) {
+			for (Iterator<List<ScheduleEntry>> i = entries.values().iterator(); i.hasNext() && (results.size() < _queryMax); ) {
+				List<ScheduleEntry> entryList = i.next();
+				if (entryList.size() > 0) {
+					ScheduleEntry se = entryList.get(0);
+					results.add(se);
+					entryList.remove(0);
+				} else
+					i.remove();
+			}
+		}
+
+		return results;
 	}
 
 	/**
