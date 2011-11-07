@@ -78,8 +78,15 @@ public class FileUploadFilter implements Filter {
 					}
 				} else {
 					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
-					if (br.ready())
-						reqWrap.addParameter(p.getName(), br.readLine());
+					StringBuilder buf = new StringBuilder();
+					while (br.ready()) {
+						buf.append(br.readLine());
+						if (br.ready())
+							buf.append('\n');
+					}
+					
+					if (buf.length() > 0)
+						reqWrap.addParameter(p.getName(), buf.toString());
 				}
 			}
 
