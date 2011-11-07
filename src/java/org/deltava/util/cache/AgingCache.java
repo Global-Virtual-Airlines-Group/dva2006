@@ -6,7 +6,7 @@ package org.deltava.util.cache;
  * that this cache does not purge an entry until the cache overflows, whereas an {@link ExpiringCache} invalidates data
  * based on age.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -21,18 +21,15 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	 */
 	protected class AgingCacheEntry<U extends T> extends CacheEntry<U> {
 
-		private long _createdOn;
-
 		public AgingCacheEntry(U entry) {
 			super(entry, _refQueue);
 			long now = System.currentTimeMillis();
-			_createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
-			_lastCreationTime = _createdOn;
+			_createExpire = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
+			_lastCreationTime = _createExpire;
 		}
-
+		
 		public int compareTo(CacheEntry<U> e2) {
-			AgingCacheEntry<U> ae2 = (AgingCacheEntry<U>) e2;
-			return Long.valueOf(_createdOn).compareTo(Long.valueOf(ae2._createdOn));
+			return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
 		}
 	}
 	
