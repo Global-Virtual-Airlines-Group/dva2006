@@ -4,18 +4,17 @@
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.6" use="false"
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.7" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
-        	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
+        	author="true" version="true" nodeprecatedlist="false" nodeprecated="false" package="true">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
         	</fileset>
-            <link href="http://java.sun.com/javase/6/docs/api/" />
-        	<link href="http://java.sun.com/j2ee/1.4/docs/api/" />
+            <link href="http://download.oracle.com/javase/7/docs/api/" />
+        	<link href="http://download.oracle.com/javaee/6/api/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/1.2/apidocs/" />
-        	<link href="http://www.servlets.com/cos/javadoc" />
         	<link href="http://lucene.apache.org/java/2_4_1/api/core/" />
 
    	    	<classpath>
@@ -26,7 +25,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2010 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2011 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
