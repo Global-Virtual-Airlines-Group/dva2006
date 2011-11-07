@@ -31,7 +31,7 @@ public abstract class DAO {
 	 */
 	protected int _queryStart;
 
-	private Connection _c;
+	private transient Connection _c;
 	private boolean _commitLevel;
 	private boolean _manualCommit = false;
 
@@ -43,7 +43,7 @@ public abstract class DAO {
 	/**
 	 * A prepared statement that can be used to perform SQL queries.
 	 */
-	protected PreparedStatement _ps;
+	protected transient PreparedStatement _ps;
 
 	/**
 	 * Creates a Data Access Object with access to a particular connection. <i>If the autoCommit property for the JDBC
@@ -182,15 +182,15 @@ public abstract class DAO {
 	 * updated
 	 */
 	protected int executeUpdate(int minUpdateCount) throws SQLException {
-		int rowsUpdated = _ps.executeUpdate();
-		_ps.close();
-		_ps = null;
+		try {
+			int rowsUpdated = _ps.executeUpdate();
+			if ((rowsUpdated >= 0) && (rowsUpdated < minUpdateCount))
+				throw new SQLException("Unexpected Row Update count - " + rowsUpdated + ", expected " + minUpdateCount);
 
-		// Check if we've updated the expected number of rows
-		if ((rowsUpdated >= 0) && (rowsUpdated < minUpdateCount))
-			throw new SQLException("Unexpected Row Update count - " + rowsUpdated + ", expected " + minUpdateCount);
-
-		return rowsUpdated;
+			return rowsUpdated;
+		} finally {
+			_ps.close();
+		}
 	}
 
 	/**
