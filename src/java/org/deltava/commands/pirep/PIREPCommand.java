@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -67,6 +67,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we are doing a submit & save
@@ -228,6 +229,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Get command results
@@ -373,6 +375,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Calculate what map type to use
@@ -430,7 +433,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Calculate the average time between the airports
 			if (ac.getCanDispose()) {
 				GetSchedule scdao = new GetSchedule(con);
-				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA())), REQUEST);
+				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr)), REQUEST);
 				
 				// Display user's networks
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);

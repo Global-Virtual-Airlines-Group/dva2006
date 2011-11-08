@@ -360,13 +360,11 @@ public class GetSchedule extends DAO {
 
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
-	 * @param airportD the origin Airport
-	 * @param airportA the destination Airport
+	 * @param rp the RoutePair
 	 * @return the average time between the two airports in hours <i>multiplied by 10</i>, or 0 if no flights found
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws NullPointerException if airportD or airportA are null
 	 */
-	public int getFlightTime(Airport airportD, Airport airportA, String dbName) throws DAOException {
+	public int getFlightTime(RoutePair rp, String dbName) throws DAOException {
 
 		// Build the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM ");
@@ -375,8 +373,8 @@ public class GetSchedule extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, airportD.getIATA());
-			_ps.setString(2, airportA.getIATA());
+			_ps.setString(1, rp.getAirportD().getIATA());
+			_ps.setString(2, rp.getAirportA().getIATA());
 			_ps.setBoolean(3, false);
 
 			// Execute the Query
@@ -395,14 +393,12 @@ public class GetSchedule extends DAO {
 	
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
-	 * @param airportD the origin Airport
-	 * @param airportA the destination Airport
+	 * @param rp the RoutePair
 	 * @return the average time between the two airports in hours <i>multiplied by 10</i>, or 0 if no flights found
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws NullPointerException if airportD or airportA are null
 	 */
-	public int getFlightTime(Airport airportD, Airport airportA) throws DAOException {
-		return getFlightTime(airportD, airportA, SystemData.get("airline.db"));
+	public int getFlightTime(RoutePair rp) throws DAOException {
+		return getFlightTime(rp, SystemData.get("airline.db"));
 	}
 	
 	/**
