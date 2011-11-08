@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 import org.deltava.beans.GeoLocation;
@@ -10,21 +9,13 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A comparator to sort geographic locations by their distance from a fixed point.
  * @author Luke
- * @version 3.0
+ * @version 4.1
  * @since 1.0
  */
 
-public class GeoComparator implements Comparator<GeoLocation>, Serializable {
+public class GeoComparator implements Comparator<GeoLocation>, java.io.Serializable {
    
-   private GeoPosition _point;
-
-   /**
-    * Creates a new GeoComparator, comparing distance from 0,0.
-    */
-   public GeoComparator() {
-      super();
-      _point = new GeoPosition(0, 0);
-   }
+   private final GeoPosition _point;
 
    /**
     * Creates a new GeoComparator, comparing distance from an arbitrary location.
@@ -34,18 +25,22 @@ public class GeoComparator implements Comparator<GeoLocation>, Serializable {
       super();
       _point = (loc == null) ? new GeoPosition(0, 0) : new GeoPosition(loc);
    }
+   
+   /**
+    * Returns the reference location.
+    * @return a GeoLocation
+    */
+   public GeoLocation getLocation() {
+	   return _point;
+   }
 
    /**
     * Compares two GeoLocations by comparing their distance from a common point.
     * @see Comparator#compare(Object, Object)
     */
    public int compare(GeoLocation l1, GeoLocation l2) {
-
-      // Get the distances
       int d1 = _point.distanceTo(l1);
       int d2 = _point.distanceTo(l2);
-      
-      // Compare the distances
       return Integer.valueOf(d1).compareTo(Integer.valueOf(d2));
    }
 }
