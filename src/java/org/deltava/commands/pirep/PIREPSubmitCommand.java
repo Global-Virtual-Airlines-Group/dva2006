@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -36,6 +36,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -159,7 +160,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Check the schedule database and check the route pair
 			boolean isAssignment = (pirep.getDatabaseID(DatabaseID.ASSIGN) != 0);
-			int avgHours = sdao.getFlightTime(pirep.getAirportD(), pirep.getAirportA());
+			int avgHours = sdao.getFlightTime(pirep);
 			if ((avgHours == 0) && (!isAcademy) && (!isAssignment)) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);

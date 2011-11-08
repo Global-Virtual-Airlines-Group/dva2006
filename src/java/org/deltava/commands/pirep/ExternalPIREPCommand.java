@@ -91,7 +91,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			// Calculate the average time between the airports
 			if (ac.getCanDispose()) {
 				GetSchedule scdao = new GetSchedule(con);
-				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA(), ud.getDB())), REQUEST);
+				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr, ud.getDB())), REQUEST);
 				
 				// Display user's networks
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
