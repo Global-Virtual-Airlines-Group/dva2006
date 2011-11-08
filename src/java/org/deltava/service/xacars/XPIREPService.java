@@ -197,7 +197,7 @@ public class XPIREPService extends XAService {
 			xfr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
 			
 			// Check the schedule database and check the route pair
-			int avgHours = sdao.getFlightTime(xfr.getAirportD(), xfr.getAirportA());
+			int avgHours = sdao.getFlightTime(xfr);
 			if (avgHours == 0)
 				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else {
