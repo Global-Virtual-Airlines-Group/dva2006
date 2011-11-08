@@ -23,6 +23,8 @@ if (!validateNumber(form.seats, 0, 'Passenger Capacity')) return false;
 if (!validateNumber(form.maxWeight, 1, 'Maximum Weight')) return false;
 if (!validateNumber(form.maxTWeight, 1, 'Maximum Takeoff Weight')) return false;
 if (!validateNumber(form.maxLWeight, 1, 'Maximum Landing Weight')) return false;
+if (!validateNumber(form.toRunwayLength, 0, 'Minimum Takeoff Runway Length')) return false;
+if (!validateNumber(form.lndRunwayLength, 0, 'Minimum Landing Runway Length')) return false;
 if (!validateNumber(form.engineCount, 1, 'Engine Count')) return false;
 if (!validateText(form.engineType, 4, 'Engine Count')) return false;
 if (!validateNumber(form.cruiseSpeed, 50, 'Cruise Speed')) return false;
@@ -63,6 +65,14 @@ return true;
 <tr>
  <td class="label">Maximum Range</td>
  <td class="data"><el:text name="range" idx="*" className="req" size="4" max="5" value="${aircraft.range}" /> miles</td>
+</tr>
+<tr>
+ <td class="label">Minimum Takeoff Runway Length</td>
+ <td class="data"><el:text name="toRunwayLength" idx="*" className="req" size="4" max="5" value="${aircraft.takeoffRunwayLength}" /> feet</td>
+</tr>
+<tr>
+ <td class="label">Minimum Landing Runway Length</td>
+ <td class="data"><el:text name="lndRunwayLength" idx="*" className="req" size="4" max="5" value="${aircraft.landingRunwayLength}" /> feet</td>
 </tr>
 <tr>
  <td class="label">Passenger Capacity</td>

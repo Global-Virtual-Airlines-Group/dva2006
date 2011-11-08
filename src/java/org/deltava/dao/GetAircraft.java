@@ -113,6 +113,8 @@ public class GetAircraft extends DAO {
 				a.setMaxWeight(rs.getInt(19));
 				a.setMaxTakeoffWeight(rs.getInt(20));
 				a.setMaxLandingWeight(rs.getInt(21));
+				a.setTakeoffRunwayLength(rs.getInt(22));
+				a.setLandingRunwayLength(rs.getInt(23));
 				results.put(a.getName(), a);
 			}
 		}

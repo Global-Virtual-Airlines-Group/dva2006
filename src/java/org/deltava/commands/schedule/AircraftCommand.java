@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Aircraft profiles.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class AircraftCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the aircraft code
@@ -58,6 +59,8 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
 			a.setSeats(StringUtils.parse(ctx.getParameter("seats"), 0));
+			a.setTakeoffRunwayLength(StringUtils.parse(ctx.getParameter("toRunwayLength"), 0));
+			a.setLandingRunwayLength(StringUtils.parse(ctx.getParameter("lndRunwayLength"), 0));
 			a.setEngines((byte) StringUtils.parse(ctx.getParameter("engineCount"), 2));
 			a.setEngineType(ctx.getParameter("engineType"));
 			a.setCruiseSpeed(StringUtils.parse(ctx.getParameter("cruiseSpeed"), 0));
@@ -109,6 +112,7 @@ public class AircraftCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the aircraft code
@@ -118,10 +122,7 @@ public class AircraftCommand extends AbstractFormCommand {
 		// If we're editing an existing aircraft, load it
 		if (!isNew) {
 			try {
-				Connection con = ctx.getConnection();
-			
-				// Get the DAO and the Aircraft
-				GetAircraft dao = new GetAircraft(con);
+				GetAircraft dao = new GetAircraft(ctx.getConnection());
 				Aircraft a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Unknown Aircraft - " + aCode);
@@ -145,6 +146,7 @@ public class AircraftCommand extends AbstractFormCommand {
 	 * Callback method called when reading the Aircraft profile.
 	 * @param ctx the Command context
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}
