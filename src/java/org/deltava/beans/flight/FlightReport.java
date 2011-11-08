@@ -121,11 +121,16 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * Flight flown using XACARS.
 	 */
 	public static final int ATTR_XACARS = 0x10000;
+	
+	/**
+	 * Flight flown using a too-short takeoff or landing runway.
+	 */
+	public static final int ATTR_RWYWARN = 0x20000;
 
 	/**
 	 * Attribute mask for all warnings.
 	 */
-	public static final int ATTR_WARN_MASK = 0xB861;
+	public static final int ATTR_WARN_MASK = 0x2B861;
 	
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.

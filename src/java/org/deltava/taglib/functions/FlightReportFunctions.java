@@ -189,6 +189,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if the takeoff or landing runway exceeds the Aircraft's minimums.
+     * @param fr the Flight Report
+     * @return TRUE if the RWYWARN attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_RWYWARN
+     */
+    public static boolean runwayWarn(FlightReport fr) {
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_RWYWARN);
+    }
+    
+    /**
      * Returns if the Flight's duration exceeds the parameters in the Schedule database.
      * @param fr the Flight Report
      * @return TRUE if the TIMEWARN attribute is present, otherwise FALSE

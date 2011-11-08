@@ -287,6 +287,13 @@
 		<function-signature>boolean refuelWarn(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for runway length warning flag -->
+	<function>
+		<name>rwyWarn</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean runwayWarn(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for any warning flag -->
 	<function>
 		<name>anyWarn</name>
