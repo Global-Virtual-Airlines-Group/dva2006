@@ -5,7 +5,9 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.navdata.Runway;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -17,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -106,6 +108,11 @@ public class AirportCommand extends AbstractFormCommand {
 			} catch (NumberFormatException nfe) {
 				throw new CommandException("Error parsing Airport latitude/longitude", false);
 			}
+			
+			// Load maximum runway length
+			GetNavData navdao = new GetNavData(con);
+			for (Runway r : navdao.getRunways(a.getICAO()))
+				a.setMaximumRunwayLength(r.getLength());
 
 			// Get the DAO and write the airport
 			SetSchedule wdao = new SetSchedule(con);
@@ -125,10 +132,8 @@ public class AirportCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 
-		// Update the Airports
+		// Update the Airports and set status update flag
 		EventDispatcher.send(new SystemEvent(SystemEvent.Type.AIRPORT_RELOAD));
-
-		// Set status update flag
 		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
