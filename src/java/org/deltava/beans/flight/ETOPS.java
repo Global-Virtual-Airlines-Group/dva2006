@@ -1,0 +1,54 @@
+// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.flight;
+
+/**
+ * An enumeration of ETOPS classifications. 
+ * @author Luke
+ * @version 4.1
+ * @since 4.1
+ */
+
+public enum ETOPS {
+	ETOPS60(60), ETOPS75(75), ETOPS90(90), ETOPS120(120), ETOPS138(138), ETOPS180(180), ETOPS207(207);
+	
+	// ETOPS rule speed - 389kts
+	private static final int EO_SPEED = 389;
+	
+	private final int _time;
+	private final int _range;
+	
+	ETOPS(int time) {
+		_time = time;
+		_range = _time * EO_SPEED / 75; // Range is speed * time * .8;  (X * 4/5/60 == X / 75)
+	}
+
+	/**
+	 * Returns the single-engine operating time.
+	 * @return the time in minutes
+	 */
+	public int getTime() {
+		return _time;
+	}
+	
+	/**
+	 * Returns the maximum single-engine range. 
+	 * @return the range in nautical miles
+	 */
+	public int getRange() {
+		return _range; 
+	}
+	
+	/**
+	 * Returns the ETOPS classification to fly a particular distance. 
+	 * @param range the range in nautical miles
+	 * @return the ETOPS classification, or null if exceeding ETOPS207
+	 */
+	public static ETOPS getClassification(int range) {
+		for (ETOPS e : values()) {
+			if (e.getRange() > range)
+				return e;
+		}
+		
+		return null;
+	}
+}
