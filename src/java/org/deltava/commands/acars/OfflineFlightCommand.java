@@ -264,30 +264,33 @@ public class OfflineFlightCommand extends AbstractCommand {
 					afr.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 			
-			// Check if the user is rated to fly the aircraft
-			EquipmentType eq = eqdao.get(p.getEquipmentType());
-			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
-				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
-			
 			// Check for historic aircraft
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(afr.getEquipmentType());
-			if (a == null) {
-				log.warn("Invalid equipment type from " + p.getName() + " - " + afr.getEquipmentType());
-				afr.setRemarks(afr.getRemarks() + " (Invalid equipment: " + afr.getEquipmentType());
-				afr.setEquipmentType(p.getEquipmentType());
-			} else {
-				afr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
-				
-				// Check for excessive distance
-				if (afr.getDistance() > a.getRange())
-					afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
+			if (a == null)
+				throw notFoundException("Invalid equipment type - " + afr.getEquipmentType());
+			
+			// Check if the user is rated to fly the aircraft
+			afr.setAttribute(FlightReport.ATTR_HISTORIC, a.getHistoric());
+			EquipmentType eq = eqdao.get(p.getEquipmentType());
+			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
+				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
 
-				// Check for excessive weight
-				if ((a.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > a.getMaxTakeoffWeight()))
-					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
-				else if ((a.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
-					afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+			// Check for excessive distance
+			if (afr.getDistance() > a.getRange())
+				afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
+
+			// Check for excessive weight
+			if ((a.getMaxTakeoffWeight() != 0) && (afr.getTakeoffWeight() > a.getMaxTakeoffWeight()))
+				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+			else if ((a.getMaxLandingWeight() != 0) && (afr.getLandingWeight() > a.getMaxLandingWeight()))
+				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
+			
+			// Check ETOPS
+			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, afr));
+			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN)) {
+				ETOPS etopsClass = ETOPSHelper.classify(flight.getPositions());
+				comments.add("ETOPS classificataion: " + etopsClass.toString());
 			}
 			
 			// Calculate the load factor
@@ -310,7 +313,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			afr.setTotalFuel(fuelUse.getTotalFuel());
 
 			// Check the schedule database and check the route pair
-			int avgHours = sdao.getFlightTime(afr.getAirportD(), afr.getAirportA());
+			int avgHours = sdao.getFlightTime(afr);
 			if ((avgHours == 0) && !inf.isScheduleValidated())
 				afr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else if (avgHours > 0) {
@@ -368,6 +371,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
 					rD = new RunwayDistance(r, dist);
+					if (r.getLength() < a.getTakeoffRunwayLength())
+						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
 				}
 			}
 
@@ -378,6 +383,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
+					if (r.getLength() < a.getLandingRunwayLength())
+						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
 				}
 			}
 			

@@ -149,6 +149,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				ctx.setAttribute("rangeWarning", Boolean.TRUE, REQUEST);
 			}
 			
+			// Check ETOPS
+			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, pirep));
+			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 			if (eInfo != null) {
