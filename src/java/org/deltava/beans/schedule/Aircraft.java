@@ -14,7 +14,7 @@ import org.deltava.util.cache.Cacheable;
  * secondary and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank
  * types.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -59,7 +59,10 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	private int _maxLandingWeight;
 	
 	private int _seats;
-
+	
+	private int _toRunwayLength;
+	private int _lndRunwayLength;
+	
 	// Fuel Tank loading codes and percentages
 	private int[] _tankCodes = { 0, 0, 0 };
 	private int[] _tankPct = { 0, 0, 0 };
@@ -193,6 +196,24 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 */
 	public int getSeats() {
 		return _seats;
+	}
+	
+	/**
+	 * Returns the Aircraft's minimum takeoff runway length.
+	 * @return the runway length in feet
+	 * @see Aircraft#setTakeoffRunwayLength(int)
+	 */
+	public int getTakeoffRunwayLength() {
+		return _toRunwayLength;
+	}
+	
+	/**
+	 * Returns the Aircraft's minimum landing runway length.
+	 * @return the runway length in feet
+	 * @see Aircraft#setLandingRunwayLength(int)
+	 */
+	public int getLandingRunwayLength() {
+		return _lndRunwayLength;
 	}
 
 	/**
@@ -391,12 +412,30 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	/**
 	 * Updates the maximum landing weight of the Aircraft.
 	 * @param weight the weight in pounds
-	 * @see Aircraft#setMaxLandingWeight(int)
+	 * @see Aircraft#getMaxLandingWeight()
 	 */
 	public void setMaxLandingWeight(int weight) {
 		_maxLandingWeight = Math.min(_maxWeight, Math.max(0, weight));
 	}
 
+	/**
+	 * Updates the minimum takeoff runway length of the Aircraft.
+	 * @param len the runway length in feet
+	 * @see Aircraft#getTakeoffRunwayLength()
+	 */
+	public void setTakeoffRunwayLength(int len) {
+		_toRunwayLength = Math.max(0, len);
+	}
+	
+	/**
+	 * Updates the minimum landing runway length of the Aircraft.
+	 * @param len the runway length in feet
+	 * @see Aircraft#getLandingRunwayLength()
+	 */
+	public void setLandingRunwayLength(int len) {
+		_lndRunwayLength = Math.max(0, len);
+	}
+	
 	/**
 	 * Links an IATA equipment code to this aircraft.
 	 * @param code the equipment code
