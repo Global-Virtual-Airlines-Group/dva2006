@@ -51,13 +51,12 @@ return true;
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="11%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" /></td>
- <td width="12%">AIRPORT NAME</td>
+ <td width="11%">AIRPORT NAME</td>
  <td width="6%">IATA</td>
  <td width="6%">ICAO</td>
- <td width="15%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" />
- <el:button ID="EditButton" type="submit" label="GO" /></td>
- <td width="10%">TIME ZONE</td>
- <td colspan="2" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
+ <td width="14%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" /> <el:button ID="EditButton" type="submit" label="GO" /></td>
+ <td width="9%">TIME ZONE</td>
+ <td colspan="3" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
  AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void updateSort()" /></td>
 </tr>
 
@@ -69,13 +68,14 @@ return true;
  <td class="bld">${airport.ICAO}</td>
  <td class="sec small" colspan="2">${airport.TZ}</td>
  <td class="small">${airport.country}</td>
- <td><fmt:geo pos="${airport.position}" /></td>
+ <td class="small"><fmt:int value="${airport.maximumRunwayLength}" /> ft</td>
+ <td class="small"><fmt:geo pos="${airport.position}" /></td>
 </tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 <el:text name="op" type="hidden" value="edit" />

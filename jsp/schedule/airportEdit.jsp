@@ -97,6 +97,12 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 <el:text name="lonS" idx="*" size="2" max="2" value="${lonS}" /> seconds 
 <el:combo name="lonDir" idx="*" size="1" options="${lonDir}" value="${lonEW}" /></td>
 </tr>
+<c:if test="${airport.maximumRunwayLength > 0}">
+<tr>
+ <td class="label">Maximum Runway Length</td>
+ <td class="data"><fmt:int value="${airport.maximumRunwayLength}" /> feet</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Time Zone</td>
  <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" className="req" firstEntry="-" value="${airport.TZ}" /></td>

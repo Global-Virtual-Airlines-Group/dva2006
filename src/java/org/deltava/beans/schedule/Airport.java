@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -37,6 +37,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private String _icao;
 	private String _name;
 	private int _alt;
+	private int _maxRunwayLength;
 	private double _magVar;
 	private String _region;
 	private boolean _adseX;
@@ -110,6 +111,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public void setMagVar(double mv) {
 		_magVar = mv;
+	}
+	
+	/**
+	 * Updates the length of the longest runway at this Airport.
+	 * @param len the length in feet
+	 * @see Airport#getMaximumRunwayLength()
+	 */
+	public void setMaximumRunwayLength(int len) {
+		_maxRunwayLength = Math.max(_maxRunwayLength, len);
 	}
 	
 	/**
@@ -229,6 +239,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public double getMagVar() {
 		return _magVar;
+	}
+	
+	/**
+	 * Returns the maximum length of all runways at this airport.
+	 * @return the length in feet of the longest runway
+	 * @see Airport#setMaximumRunwayLength(int)
+	 */
+	public int getMaximumRunwayLength() {
+		return _maxRunwayLength; 
 	}
 
 	/**
@@ -445,6 +464,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		a2._region = _region;
 		a2._adseX = _adseX;
 		a2._tz = _tz;
+		a2._maxRunwayLength = _maxRunwayLength;
 		a2._country = _country;
 		a2.setLocation(_position.getLatitude(), _position.getLongitude());
 		a2._aCodes.addAll(_aCodes);
