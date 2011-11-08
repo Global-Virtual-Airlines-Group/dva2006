@@ -10,6 +10,8 @@ import org.apache.log4j.*;
 
 import org.deltava.beans.econ.EconomyInfo;
 import org.deltava.beans.fb.FacebookCredentials;
+import org.deltava.beans.flight.ETOPSHelper;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.AirlineTotals;
 
 import org.deltava.dao.*;
@@ -30,13 +32,13 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
 public class SystemBootstrap implements ServletContextListener, Thread.UncaughtExceptionHandler {
 
-	private Logger log;
+	private final Logger log;
 
 	private ConnectionPool _jdbcPool;
 	private final ThreadGroup _daemonGroup = new ThreadGroup("System Daemons");
@@ -152,7 +154,10 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			// Load airports
 			log.info("Loading Airports");
 			GetAirport dao2 = new GetAirport(c);
-			SystemData.add("airports", dao2.getAll());
+			Map<String, Airport> airports = dao2.getAll(); 
+			SystemData.add("airports", airports);
+			ETOPSHelper.init(airports.values());
+			log.info("Initialized ETOPS helper");
 
 			// Load last execution date/times for Scheduled Tasks
 			if (taskSched != null) {
