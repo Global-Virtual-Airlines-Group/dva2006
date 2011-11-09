@@ -127,19 +127,22 @@ public class ImageServlet extends BasicAuthServlet {
 				case IMG_CHART:
 					GetChart cdao = new GetChart(c);
 					Chart cht = cdao.get(imgID);
+					
+					// Log use
+					SetChart swdao = new SetChart(c);
+					swdao.logUse(cht);
+					
+					// Redirect and exit if external
 					if (cht instanceof ExternalChart) {
 						ExternalChart ec = (ExternalChart) cht;
 						rsp.setHeader("Cache-Control", "private");
 						rsp.sendRedirect(ec.getURL());
-					} else {
-						imgBuffer = dao.getChart(imgID);
-						rsp.setHeader("Cache-Control", "private");
-						rsp.setIntHeader("max-age", 3600);
+						return;
 					}
-					
-					// Log usage
-					SetChart swdao = new SetChart(c);
-					swdao.logUse(cht);
+
+					imgBuffer = dao.getChart(imgID);
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 3600);
 					break;
 
 				case IMG_GALLERY:

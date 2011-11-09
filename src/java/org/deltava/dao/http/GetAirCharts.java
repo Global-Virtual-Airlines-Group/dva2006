@@ -138,7 +138,14 @@ public class GetAirCharts extends DAO {
 					// Walk through charts
 					for (Iterator<?> ci = cce.getChildren("Chart").iterator(); ci.hasNext(); ) {
 						Element ce = (Element) ci.next();
-						ExternalChart c = new ExternalChart(ce.getAttributeValue("Name"), a);
+						String name = ce.getAttributeValue("Name", "?");
+						if (name.length() > 94) {
+							log.warn("Truncating chart name " + name);
+							name = name.substring(0, 95);
+						}
+						
+						// Create the chart
+						ExternalChart c = new ExternalChart(name, a);
 						c.setImgType(Chart.PDF);
 						c.setSource("AirCharts");
 						c.setType(CAT_TYPE_MAP[type]);
