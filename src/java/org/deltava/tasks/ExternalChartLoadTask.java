@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to load external approach charts.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 4.0
  */
 
@@ -50,8 +50,8 @@ public class ExternalChartLoadTask extends Task {
 		@Override
 		public void run() {
 			GetExternalCharts ecdao = new GetExternalCharts();
-			ecdao.setConnectTimeout(1500);
-			ecdao.setReadTimeout(2000);
+			ecdao.setConnectTimeout(2500);
+			ecdao.setReadTimeout(4000);
 			
 			ExternalChart ec = _work.poll();
 			while (ec != null) {
@@ -80,6 +80,43 @@ public class ExternalChartLoadTask extends Task {
 		}
 	}
 
+	private class AirportChartWorker extends Thread {
+		private final Logger tLog;
+		private final Queue<Airport> _work;
+		private final Queue<Airport> _loaded;
+		private final Queue<ExternalChart> _results;
+		
+		AirportChartWorker(int id, Queue<Airport> work, Queue<Airport> loaded, Queue<ExternalChart> results) {
+			super("AirportChart-" + String.valueOf(id));
+			setDaemon(true);
+			tLog = Logger.getLogger(ExternalChartLoadTask.class.getPackage().getName() + "." + getName());
+			_work = work;
+			_loaded = loaded;
+			_results = results;
+		}
+		
+		@Override
+		public void run() {
+			GetAirCharts ecdao = new GetAirCharts();
+			ecdao.setConnectTimeout(2500);
+			ecdao.setReadTimeout(5000);
+			
+			Airport a = _work.poll();
+			while (a != null) {
+				try {
+					Collection<ExternalChart> exC = ecdao.getCharts(a);
+					_results.addAll(exC);
+					_loaded.add(a);
+					tLog.info("Loaded " + exC.size() + " charts for " + a);
+				} catch (DAOException de) {
+					tLog.error("Error loading charts for " + a + " - " + de.getMessage());
+				}
+				
+				a = isInterrupted() ? null : _work.poll();
+			}
+		}
+	}
+	
 	/**
 	 * Initializes the Scheduled Task.
 	 */
@@ -117,10 +154,10 @@ public class ExternalChartLoadTask extends Task {
 			
 			// Get the airports for each country
 			Queue<ExternalChart> extCharts = new LinkedBlockingQueue<ExternalChart>();
-			Collection<Airport> loadedAirports = new HashSet<Airport>();
+			Queue<Airport> loadedAirports = new LinkedBlockingQueue<Airport>();
 			for (Iterator<Country> i = countries.iterator(); i.hasNext(); ) {
 				Country c = i.next();
-				Collection<Airport> ecAirports = acdao.getAirports(c);
+				Queue<Airport> ecAirports = new LinkedBlockingQueue<Airport>(acdao.getAirports(c));
 				log.info("Loaded " + ecAirports.size() + " Airports for " + c);
 				
 				// Go through each airport, and check the max age
@@ -136,22 +173,23 @@ public class ExternalChartLoadTask extends Task {
 				// Release connection
 				ctx.release();
 				
-				// Load the Charts for the airport
-				for (Airport a : ecAirports) {
-					try {
-						Collection<ExternalChart> exC = acdao.getCharts(a);
-						extCharts.addAll(exC);
-						loadedAirports.add(a);
-						log.info("Loaded " + exC.size() + " charts for " + a);
-					} catch (DAOException de) {
-						log.error("Error loading charts for " + a + " - " + de.getMessage());
-					}
+				// Load the Charts for the airports
+				int tpSize = Math.max(1, Math.min(4, (ecAirports.size() / 4)));
+				Collection<Thread> workers = new ArrayList<Thread>();
+				for (int x = 1; x <= tpSize; x++) {
+					AirportChartWorker wrk = new AirportChartWorker(x, ecAirports, loadedAirports, extCharts);
+					wrk.setUncaughtExceptionHandler(this);
+					workers.add(wrk);
+					wrk.start();
 				}
+				
+				// Wait for the workers to finish
+				ThreadUtils.waitOnPool(workers);
 			}
 			
 			// Populate the charts for each airport, using a thread pool
 			Queue<ExternalChart> results = new LinkedBlockingQueue<ExternalChart>();
-			int tpSize = Math.max(1, Math.min(8, (extCharts.size() / 16)));
+			int tpSize = Math.max(1, Math.min(12, (extCharts.size() / 16)));
 			Collection<Thread> workers = new ArrayList<Thread>();
 			for (int x = 1; x <= tpSize; x++) {
 				ChartInfoWorker wrk = new ChartInfoWorker(x, extCharts, results);
