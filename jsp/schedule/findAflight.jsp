@@ -134,7 +134,8 @@ return true;
  <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" onChange="void updateSort(this)" />
  <el:box ID="sortDesc" name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" /></td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 25 : fafCriteria.maxResults}" />
+ total, <el:text name="maxFlights" idx="*" size="2" max="2" value="${fafCriteria.flightsPerRoute}" /> preferred between airports</td>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr>

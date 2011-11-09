@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Flight Schedule.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class FindFlightCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Set combo variables for JSP
@@ -86,6 +87,7 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setDBName(SystemData.get("airline.db"));
 		criteria.setCheckDispatchRoutes(Boolean.valueOf(ctx.getParameter("checkDispatch")).booleanValue());
 		criteria.setDispatchOnly(Boolean.valueOf(ctx.getParameter("dispatchOnly")).booleanValue());
+		criteria.setFlightsPerRoute(StringUtils.parse(ctx.getParameter("maxFlights"), 0));
 		criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") || ctx.isUserInRole("Operations"));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
 			criteria.setMaxResults(150);
@@ -118,7 +120,7 @@ public class FindFlightCommand extends AbstractCommand {
 				Connection con = ctx.getConnection();
 				
 				// Get the DAO and execute
-				GetSchedule dao = new GetSchedule(con);
+				GetScheduleSearch dao = new GetScheduleSearch(con);
 				dao.setQueryMax(criteria.getMaxResults());
 
 				// Save results in the session - since other commands may reference these
@@ -135,10 +137,8 @@ public class FindFlightCommand extends AbstractCommand {
 			}
 		}
 		
-		// Save UTC time zone
+		// Save UTC time zone and forward
 		ctx.setAttribute("utc", TZInfo.UTC, REQUEST);
-
-		// Forward to the JSP
 		result.setSuccess(true);
 	}
 }
