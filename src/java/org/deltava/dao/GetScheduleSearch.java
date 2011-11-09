@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.schedule.*;
 
+import org.deltava.comparators.ScheduleEntryComparator;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -230,8 +232,6 @@ public class GetScheduleSearch extends GetSchedule {
 		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
 		if (ssc.getDispatchOnly())
 			buf.append(" HAVING (RCNT>0)");
-		buf.append(" ORDER BY ");
-		buf.append(ssc.getSortBy());
 
 		// Prepare the satement and execute the query
 		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
@@ -267,6 +267,13 @@ public class GetScheduleSearch extends GetSchedule {
 			}
 		}
 
+		// Do a sort
+		int sortType = StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, ssc.getSortBy(), 0);
+		if (sortType == 0)
+			Collections.shuffle(results);
+		else
+			Collections.sort(results, new ScheduleEntryComparator(sortType));
+			
 		return results;
 	}
 }
