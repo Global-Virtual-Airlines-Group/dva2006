@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to search the schedule to build a flight assignment that consists of a single leg selected at
  * random from the last Airport the Pilot completed a flight to in the selected aircraft.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 2.2
  */
 
@@ -29,6 +29,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the result
@@ -92,7 +93,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			Collection<ScheduleEntry> flightEntries = new ArrayList<ScheduleEntry>();
 			
 			// Load the schedule entries - allow multiple legs
-			GetSchedule sdao = new GetSchedule(con);
+			GetScheduleSearch sdao = new GetScheduleSearch(con);
 			sdao.setQueryMax(1);
 			for (int x = 0; x < totalLegs; x++) {
 				List<ScheduleEntry> legs = sdao.search(criteria);	

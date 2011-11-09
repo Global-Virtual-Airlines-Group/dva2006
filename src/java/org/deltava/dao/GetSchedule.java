@@ -7,7 +7,6 @@ import java.util.*;
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
-import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -25,183 +24,6 @@ public class GetSchedule extends DAO {
 	 */
 	public GetSchedule(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Searches the Schedule database for flights matching particular criteria.
-	 * @param criteria the search criteria. Null properties are ignored
-	 * @return a List of Flights
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<ScheduleEntry> search(ScheduleSearchCriteria criteria) throws DAOException {
-
-		// Build the conditions
-		Collection<String> conditions = new LinkedHashSet<String>();
-		List<String> params = new ArrayList<String>();
-		if (criteria.getDispatchOnly())
-			criteria.setCheckDispatchRoutes(true);
-		
-		// Add airline
-		if (criteria.getAirline() != null) {
-			conditions.add("S.AIRLINE=?");
-			params.add(criteria.getAirline().getCode());
-		}
-			
-		// Add flight number
-		if (criteria.getFlightNumber() != 0) {
-			conditions.add("S.FLIGHT=?");
-			params.add(String.valueOf(criteria.getFlightNumber()));
-		}
-			
-		// Add leg
-		if (criteria.getLeg() != 0) {
-			conditions.add("S.LEG=?");
-			params.add(String.valueOf(criteria.getLeg()));
-		}
-		
-		// Add departure airport
-		if (criteria.getAirportD() != null) {
-			conditions.add("S.AIRPORT_D=?");
-			params.add(criteria.getAirportD().getIATA());
-		}
-		
-		// Add arrival airport
-		if (criteria.getAirportA() != null) {
-			conditions.add("S.AIRPORT_A=?");
-			params.add(criteria.getAirportA().getIATA());
-		}
-			
-		// Set distance criteria +/- 150 miles
-		if (criteria.getDistance() != 0) {
-			conditions.add("S.DISTANCE >= ?");
-			conditions.add("S.DISTANCE <= ?");
-			params.add(String.valueOf(criteria.getDistance() - criteria.getDistanceRange()));
-			params.add(String.valueOf(criteria.getDistance() + criteria.getDistanceRange()));
-		}
-
-		// Set flight time criteria +/- 1 hour
-		if (criteria.getLength() != 0) {
-			conditions.add("S.FLIGHT_TIME >= ?");
-			conditions.add("S.FLIGHT_TIME <= ?");
-			params.add(String.valueOf((criteria.getLength() / 10.0) - 1));
-			params.add(String.valueOf((criteria.getLength() / 10.0) + 1));
-		}
-
-		// Set departure/arrival time criteria +/- 2 hours
-		if (criteria.getHourD() != -1) {
-			conditions.add("S.TIME_D >= ?");
-			conditions.add("S.TIME_D <= ?");
-			params.add(StringUtils.format(criteria.getHourD() - 1, "00") + ":00\'");
-			params.add(StringUtils.format(criteria.getHourD() + 1, "00") + ":00\'");
-		}
-
-		if (criteria.getHourA() != -1) {
-			conditions.add("S.TIME_A >= ?");
-			conditions.add("S.TIME_A <= ?");
-			params.add(StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
-			params.add(StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
-		}
-		
-		// Check whether to include Flight Academy flights
-		if (!criteria.getIncludeAcademy()) {
-			conditions.add("S.ACADEMY=?");
-			params.add("0");
-		}
-		
-		// Concat the criteria into a string so we can reuse
-		StringBuilder cndBuf = new StringBuilder("(");
-		cndBuf.append(StringUtils.listConcat(conditions, ") AND ("));
-		cndBuf.append(')');
-		if (!CollectionUtils.isEmpty(criteria.getEquipmentTypes())) {
-			if (!conditions.isEmpty())
-				cndBuf.append(" AND (");
-			
-			for (Iterator<String> i = criteria.getEquipmentTypes().iterator(); i.hasNext(); ) {
-				String eqType = i.next();
-				cndBuf.append("(S.EQTYPE=?)");
-				params.add(eqType);
-				if (i.hasNext())
-					cndBuf.append(" OR ");
-			}
-
-			if (!conditions.isEmpty())
-				cndBuf.append(')');
-		}
-		
-		// Load the route pairs that match the criteria
-		String db = formatDBName(criteria.getDBName());
-		StringBuilder buf = new StringBuilder("SELECT DISTINCT S.AIRPORT_D, S.AIRPORT_A, COUNT(R.ID) AS RCNT FROM ");
-		buf.append(db);
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
-		buf.append(cndBuf.toString());
-		buf.append(" GROUP BY S.AIRPORT_D, S.AIRPORT_A");
-		if (criteria.getDispatchOnly())
-			buf.append(" HAVING (RCNT>0)");
-		buf.append(" ORDER BY ");
-		buf.append(criteria.getSortBy());
-		
-		Collection<RoutePair> rts = new LinkedHashSet<RoutePair>();
-		try {
-			prepareStatementWithoutLimits(buf.toString());
-			for (int x = 1; x <= params.size(); x++)
-				_ps.setString(x, params.get(x - 1));
-			
-			// Execute the query
-			Airline al = SystemData.getAirline(SystemData.get("airline.code"));
-			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					RoutePair fr = new ScheduleRoute(al, SystemData.getAirport(rs.getString(1)), SystemData.getAirport(rs.getString(2)));
-					rts.add(fr);
-				}
-			}
-			
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-		
-		// Load all of the flights that match each route pair and the criteria
-		buf = new StringBuilder("SELECT S.*, COUNT(R.ID) AS RCNT FROM ");
-		buf.append(db);
-		buf.append(".SCHEDULE S LEFT JOIN acars.ROUTES R ON ((S.AIRPORT_D=R.AIRPORT_D) AND (S.AIRPORT_A=R.AIRPORT_A) AND (R.ACTIVE=1)) WHERE ");
-		buf.append(cndBuf.toString());
-		buf.append(" AND (S.AIRPORT_D=?) AND (S.AIRPORT_A=?) GROUP BY S.AIRLINE, S.FLIGHT, S.LEG ");
-		if (criteria.getDispatchOnly())
-			buf.append(" HAVING (RCNT>0)");
-		buf.append(" ORDER BY ");
-		buf.append(criteria.getSortBy());
-
-		// Prepare the satement and execute the query
-		Map<RoutePair, List<ScheduleEntry>> entries = new LinkedHashMap<>();
-		try {
-			for (RoutePair fr : rts) {
-				prepareStatement(buf.toString());
-				for (int x = 1; x <= params.size(); x++)
-					_ps.setString(x, params.get(x - 1));
-				
-				_ps.setString(params.size() + 1, fr.getAirportD().getIATA());
-				_ps.setString(params.size() + 2, fr.getAirportA().getIATA());
-				entries.put(fr, execute());
-			}
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-		
-		// Iterate through each collection of route pairs, adding flights until we hit the max
-		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
-		while ((results.size() < _queryMax) && (entries.size() > 0)) {
-			for (Iterator<List<ScheduleEntry>> i = entries.values().iterator(); i.hasNext() && (results.size() < _queryMax); ) {
-				List<ScheduleEntry> entryList = i.next();
-				if (entryList.size() > 0) {
-					ScheduleEntry se = entryList.get(0);
-					results.add(se);
-					entryList.remove(0);
-				} else
-					i.remove();
-			}
-		}
-
-		return results;
 	}
 
 	/**
@@ -473,7 +295,7 @@ public class GetSchedule extends DAO {
 	/**
 	 * Helper method to query the database.
 	 */
-	private List<ScheduleEntry> execute() throws SQLException {
+	protected List<ScheduleEntry> execute() throws SQLException {
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasDispatch = (rs.getMetaData().getColumnCount() > 13);

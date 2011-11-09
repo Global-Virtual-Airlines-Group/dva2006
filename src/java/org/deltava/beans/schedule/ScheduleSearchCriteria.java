@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A bean to store search criteria for the Flight Schedule.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private boolean _includeAcademy;
 	private boolean _dispatchRouteCounts;
 	private boolean _dispatchOnly;
+	private int _maxPerRoute;
 
 	private int _hourD = -1;
 	private int _hourA = -1;
@@ -84,6 +85,10 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public boolean getDispatchOnly() {
 		return _dispatchOnly;
+	}
+	
+	public int getFlightsPerRoute() {
+		return _maxPerRoute;
 	}
 
 	public Date getTimeD() {
@@ -164,6 +169,14 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setMaxResults(int results) {
 		_maxResults = Math.max(1, results);
+	}
+	
+	/**
+	 * Sets the preferred number of flights per route to return.
+	 * @param maxFlights the preferred number of entries
+	 */
+	public void setFlightsPerRoute(int maxFlights) {
+		_maxPerRoute = Math.max(0, maxFlights);
 	}
 
 	/**
