@@ -48,7 +48,7 @@ public class FuelUse {
 	
 	/**
 	 * Sets whether refueling occured in-flight.
-	 * @paraam inflightRefuel TRUE if refueling occured, otherwise FALSE
+	 * @param inflightRefuel TRUE if refueling occured, otherwise FALSE
 	 */
 	public void setRefuel(boolean inflightRefuel) {
 		_hasRefuel = inflightRefuel;

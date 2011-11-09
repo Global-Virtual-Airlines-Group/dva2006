@@ -82,7 +82,7 @@ public class PopulatedChannel implements java.io.Serializable {
 	/**
 	 * Removes a user from the channel.
 	 * @param conID the connection ID of the user
-	 * @returnn TRUE if the user was removed, otherwise FALSE
+	 * @return TRUE if the user was removed, otherwise FALSE
 	 */
 	public boolean remove(long conID) {
 		return (_users.remove(new Long(conID)) != null);

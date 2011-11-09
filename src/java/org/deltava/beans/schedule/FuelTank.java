@@ -40,7 +40,7 @@ public enum FuelTank implements ComboAlias {
 	
 	/**
 	 * Returns the tank name.
-	 * @retun the tank name
+	 * @return the tank name
 	 */
 	public String getName() {
 		return _name;
