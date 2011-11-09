@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
         <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.7" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
-        	author="true" version="true" nodeprecatedlist="false" nodeprecated="false" package="true">
+        	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
