@@ -110,7 +110,7 @@ public class GetAirport extends DAO {
 				+ "LEFT JOIN common.MAGVAR MV ON (A.ICAO=MV.ICAO) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) "
 				+ "WHERE ");
 		sqlBuf.append((al == null) ? "(AA.CODE IS NULL)" : "(AA.CODE=?)");
-		sqlBuf.append(" GROUP BY A.ICAO");
+		sqlBuf.append(" GROUP BY A.IATA");
 		if (!StringUtils.isEmpty(sortBy)) {
 			sqlBuf.append(" ORDER BY A.");
 			sqlBuf.append(sortBy);
@@ -164,6 +164,7 @@ public class GetAirport extends DAO {
 				while (rs.next()) {
 					results.add(SystemData.getAirport(rs.getString(1)));
 					results.add(SystemData.getAirport(rs.getString(2)));
+					if (results.contains(null)) throw new NullPointerException(rs.getString(1) + " - " + rs.getString(2));
 				}
 			}
 			
@@ -239,7 +240,7 @@ public class GetAirport extends DAO {
 			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR, MAX(R.LENGTH) FROM "
 				+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) "
 				+ "LEFT JOIN common.MAGVAR MV ON (MV.ICAO=A.ICAO) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) "
-				+ "GROUP BY A.ICAO");
+				+ "GROUP BY A.IATA");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
 			
 			try (ResultSet rs = _ps.executeQuery()) {
