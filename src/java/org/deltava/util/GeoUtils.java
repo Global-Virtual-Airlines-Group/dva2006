@@ -325,13 +325,15 @@ public class GeoUtils {
 		double lng2 = normalize(lng);
 		double ln1 = normalize(l1.getLongitude());
 		double ln2 = normalize(l2.getLongitude());
+		double ld = Math.abs(ln1 - ln2);
+		double ld2 = Math.min(ld, 360 - ld);
 		
 		double d1 = Math.abs(ln1 - lng2);
 		double d2 = Math.abs(ln2 - lng2);
 		double dn1 = Math.min(d1, 360 - d1);
 		double dn2 = Math.min(d2, 360 - d2);
 		
-		return ((dn1 + dn2) <= Math.abs(ln1 - ln2));
+		return ((dn1 + dn2) <= ld2);
 	}
 	
 	/**

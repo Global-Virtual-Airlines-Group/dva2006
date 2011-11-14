@@ -53,6 +53,18 @@ public class TestETOPSHelper extends AbstractDAOTestCase {
 		LogManager.shutdown();
 		super.tearDown();
 	}
+	
+	public void testAirports() throws DAOException {
+		
+		Aircraft a = _acdao.get("B737-700");
+		assertNotNull(a);
+		
+		Airport ams = SystemData.getAirport("AMS");
+		Airport bhx = SystemData.getAirport("BHX");
+		ScheduleRoute rt = new ScheduleRoute(SystemData.getAirline("DVA"),ams, bhx);
+		
+		assertFalse(ETOPSHelper.validate(a, rt));
+	}
 
 	public void testShortRange() throws DAOException {
 		
