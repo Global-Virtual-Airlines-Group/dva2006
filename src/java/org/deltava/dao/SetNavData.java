@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 2.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -31,7 +31,7 @@ public class SetNavData extends DAO {
 	public void write(NavigationDataBean ndata) throws DAOException {
 		try {
 			// Prepare the statement if not already done
-			if (_ps == null)
+			if ((_ps == null) || _ps.isClosed())
 				prepareStatement("INSERT INTO common.NAVDATA (ITEMTYPE, CODE, LATITUDE, LONGITUDE, FREQ, ALTITUDE, NAME, HDG) "
 						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
