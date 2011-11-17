@@ -32,8 +32,6 @@ public class InsertGoogleAPITag extends TagSupport {
 
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
-	private boolean _doCurrent = false;
-	private boolean _doStable = false;
 
 	/**
 	 * Sets the Google API version to pull down.
@@ -52,27 +50,10 @@ public class InsertGoogleAPITag extends TagSupport {
 	}
 
 	/**
-	 * Controls whether the pre-release API version should be used.
-	 * @param doCurrent TRUE if the pre-release API should be used, otherwise FALSE
-	 */
-	public void setCurrent(boolean doCurrent) {
-		_doCurrent = doCurrent;
-	}
-	
-	/**
-	 * Controls whether the stable API version should be used.
-	 * @param doStable TRUE if the stable API should be used, otherwise FALSE
-	 */
-	public void setStable(boolean doStable) {
-		_doStable = doStable;
-	}
-
-	/**
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
 		super.release();
-		_doCurrent = false;
 		_majorVersion = MIN_API_VERSION;
 		_minorVersion = null;
 	}
@@ -88,17 +69,10 @@ public class InsertGoogleAPITag extends TagSupport {
 			pageContext.setAttribute(USAGE_ATTR_NAME, USAGE_COUNT, PageContext.APPLICATION_SCOPE);
 		
 		// Translate stable/release v3 to minor version
-		if ((_majorVersion == 3) && (_minorVersion == null)) {
-			if (_doStable) {
-				_minorVersion = "4";
-				_doStable = false;
-			} else if (!_doCurrent)
-				_minorVersion = "5";
-			else {
-				_doCurrent = false;
-				_minorVersion = "6";
-			}
-		}
+		if ((_majorVersion == 3) && (_minorVersion == null))
+			_minorVersion = "6";
+		else if ((_majorVersion == 2) && (_minorVersion == null))
+			_minorVersion = "s";
 		
 		return super.doStartTag();
 	}
@@ -136,10 +110,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			if (_minorVersion != null) {
 				out.print('.');
 				out.print(_minorVersion);
-			} else if (_doStable)
-				out.print(".s");
-			else if (_doCurrent)
-				out.print(".x");
+			}
 
 			if (_majorVersion < 3) {
 				out.print("&amp;key=");
