@@ -503,6 +503,30 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	}
 	
 	/**
+	 * Returns the total number of passengers carried by a Pilot.
+	 * @param pilotID the Pilot's database ID
+	 * @return the number of passengers
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getPassengers(int pilotID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT SUM(PAX) FROM PIREPS WHERE (STATUS=?) AND (PILOT_ID=?)");
+			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(2, pilotID);
+			
+			int result = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				result = rs.next() ? rs.getInt(1) : 0;
+			}
+			
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns the number of Charter flights flown by a Pilot in a particular time interval.
 	 * @param pilotID the Pilot's datbase ID
 	 * @param days the number of days, zero for all
