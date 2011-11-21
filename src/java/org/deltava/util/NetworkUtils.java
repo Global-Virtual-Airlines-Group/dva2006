@@ -1,12 +1,13 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
+import java.net.*;
 import java.util.*;
 
 /**
  * A utility class to handle TCP/IP network operations.
  * @author Luke
- * @version 2.5
+ * @version 4.1
  * @since 1.0
  */
 
@@ -129,5 +130,18 @@ public class NetworkUtils {
 			return NetworkType.D;
 		
 		return NetworkType.E;
+	}
+
+	/**
+	 * Returns a address in host:port format.
+	 * @param sa the address
+	 * @return the address in host:port format
+	 */
+	public static String getSourceAddress(SocketAddress sa) {
+		InetSocketAddress addr = (InetSocketAddress) sa;
+		StringBuilder buf = new StringBuilder(addr.getAddress().getHostAddress());
+		buf.append(':');
+		buf.append(addr.getPort());
+		return buf.toString();
 	}
 }
