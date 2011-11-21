@@ -174,7 +174,7 @@ public class ExternalChartLoadTask extends Task {
 				ctx.release();
 				
 				// Load the Charts for the airports
-				int tpSize = Math.max(1, Math.min(4, (ecAirports.size() / 4)));
+				int tpSize = Math.min(4, (ecAirports.size() / 4));
 				Collection<Thread> workers = new ArrayList<Thread>();
 				for (int x = 1; x <= tpSize; x++) {
 					AirportChartWorker wrk = new AirportChartWorker(x, ecAirports, loadedAirports, extCharts);
@@ -189,7 +189,7 @@ public class ExternalChartLoadTask extends Task {
 			
 			// Populate the charts for each airport, using a thread pool
 			Queue<ExternalChart> results = new LinkedBlockingQueue<ExternalChart>();
-			int tpSize = Math.max(1, Math.min(12, (extCharts.size() / 16)));
+			int tpSize = Math.min(12, (extCharts.size() / 16));
 			Collection<Thread> workers = new ArrayList<Thread>();
 			for (int x = 1; x <= tpSize; x++) {
 				ChartInfoWorker wrk = new ChartInfoWorker(x, extCharts, results);
