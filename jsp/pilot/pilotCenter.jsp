@@ -217,7 +217,7 @@ You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchF
 <c:if test="${manualPIREP}"><br />
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
  <td class="data">You have flown <fmt:quantity value="${pilot.legs}" single="flight" />, for a total of
- <fmt:dec value="${pilot.hours}" /> hours and <fmt:distance value="${pilot.miles}" longUnits="true" />.<br />
+ <fmt:dec className="bld" value="${pilot.hours}" /> hours and <fmt:distance className="bld" value="${pilot.miles}" longUnits="true" />.<br />
 <c:if test="${pilot.onlineLegs > 0}">
 <span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and 
 <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br /></c:if>
@@ -227,9 +227,11 @@ You are an ACARS Flight Dispatcher, dispatched <fmt:int value="${pilot.dispatchF
 <c:if test="${pilot.totalLegs > pilot.legs}">
 You have flown <fmt:int value="${pilot.totalLegs}" /> flights and <fmt:dec value="${pilot.totalHours}" /> hours combined between 
 <content:airline /> and our partner airlines.<br /></c:if>
+<c:if test="${totalPax > 0}">
+You have carried <fmt:int value="${totalPax}" /> passengers on your flights.<br /></c:if>
 <c:if test="${!empty lastFlight}">
 <br />
-Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
+Your last flight was on <fmt:date className="sec bld" date="${lastFlight.date}" fmt="d" />:<br />
 <el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
  (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
  in a ${lastFlight.equipmentType}.</c:if></td>

@@ -97,6 +97,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			manualPIREP &= (heldPIREPs < SystemData.getInt("users.pirep.maxHeld", 5));
 			ctx.setAttribute("manualPIREP", Boolean.valueOf(manualPIREP), REQUEST);
 			ctx.setAttribute("heldPIREPCount", Integer.valueOf(heldPIREPs), REQUEST);
+			
+			// Check passenger count
+			GetFlightReportStatistics prsdao = new GetFlightReportStatistics(con);
+			ctx.setAttribute("totalPax", Integer.valueOf(prsdao.getPassengers(p.getID())), REQUEST);
 
 			// Save the pilot location
 			GetPilotBoard pbdao = new GetPilotBoard(con);
