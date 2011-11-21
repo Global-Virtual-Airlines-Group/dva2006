@@ -18,9 +18,7 @@ import junit.framework.TestCase;
 
 public class LoadPassengerCounts extends TestCase {
 	
-	private static Logger log;
-
-	private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/dva";
+	private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/dva";
 
 	private Connection _c;
 	private EconomyInfo _econ;
@@ -30,8 +28,6 @@ public class LoadPassengerCounts extends TestCase {
 		
 		// Init Log4j
 		PropertyConfigurator.configure("etc/log4j.properties");
-		log = Logger.getLogger(LoadPassengerCounts.class);
-		
 		SystemData.init();
 		
 		// Load economy data
@@ -44,7 +40,7 @@ public class LoadPassengerCounts extends TestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
+		_c = DriverManager.getConnection(JDBC_URL, "test", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());
@@ -75,6 +71,7 @@ public class LoadPassengerCounts extends TestCase {
 		int totalFlights = 0;
 		GetAircraft acdao = new GetAircraft(_c);
 		PreparedStatement ps = _c.prepareStatement("SELECT ID, IFNULL(SUBMITTED, DATE), EQTYPE FROM PIREPS WHERE (LOADFACTOR=0) AND (STATUS<>0)");
+		ps.setFetchSize(100);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			totalFlights++;
@@ -83,7 +80,7 @@ public class LoadPassengerCounts extends TestCase {
 			if (a == null) {
 				a = acdao.get(eqType);
 				if (a == null) {
-					log.warn("Unknown aircraft type - " + eqType);
+					System.out.println("Unknown aircraft type - " + eqType);
 					continue;
 				}
 				
@@ -98,10 +95,11 @@ public class LoadPassengerCounts extends TestCase {
 			ps2.setInt(1, pax);
 			ps2.setDouble(2, loadFactor);
 			ps2.setInt(3, rs.getInt(1));
-			ps2.executeUpdate();
+			ps2.addBatch();
 			
-			if ((totalFlights % 250) == 0) {
-				log.info(totalFlights + " flights updated");
+			if ((totalFlights % 50) == 0) {
+				System.out.println(totalFlights + " flights updated");
+				ps2.executeBatch();
 				_c.commit();
 			}
 		}
@@ -110,6 +108,6 @@ public class LoadPassengerCounts extends TestCase {
 		ps.close();
 		ps2.close();
 		_c.commit();
-		log.info(totalFlights + " flights updated");
+		System.out.println(totalFlights + " flights updated");
 	}
 }
