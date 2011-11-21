@@ -38,6 +38,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
 	 */
+	@Override
 	public String getServletInfo() {
 		return "Web Service Servlet " + VersionInfo.TXT_COPYRIGHT;
 	}
@@ -47,6 +48,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	 * @throws ServletException if an error occurs
 	 * @see ServiceFactory#load(String)
 	 */
+	@Override
 	public void init() throws ServletException {
 		log.info("Initializing");
 		try {
@@ -69,6 +71,7 @@ public class WebServiceServlet extends BasicAuthServlet {
     * @param rsp the HTTP response
     * @throws IOException if a network I/O error occurs
     */
+	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
 
 		// Get the web service
@@ -96,6 +99,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 			log.info("Executing Web Service " + svc.getClass().getName());
 
 		// Execute the Web Service
+		long execTime = System.currentTimeMillis();
 		try {
 			rsp.setStatus(svc.execute(ctx));
 		} catch (ServiceException se) {
@@ -112,7 +116,12 @@ public class WebServiceServlet extends BasicAuthServlet {
 		} finally {
 			// Disable the cache
 			rsp.setHeader("Cache-Control", "no-cache");
+			execTime = System.currentTimeMillis() - execTime;
 		}
+		
+		// Log excessive execution
+		if (execTime > 5000)
+			log.warn("Excessive execution time for " + parser.getName().toLowerCase() + " - " + execTime + "ms");
 	}
 
 	/**
@@ -122,6 +131,7 @@ public class WebServiceServlet extends BasicAuthServlet {
     * @throws IOException if a network I/O error occurs
     * @see WebServiceServlet#doGet(HttpServletRequest, HttpServletResponse)
     */
+	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
 		doGet(req, rsp);
 	}
