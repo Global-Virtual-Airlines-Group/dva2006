@@ -91,7 +91,7 @@ return true;
 </el:form>
 <script type="text/javascript">
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:new google.maps.LatLng(36.44, -100.14), zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:new google.maps.LatLng(36.44, -100.14), zoom:6, minZoom:2, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Load the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);

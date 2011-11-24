@@ -149,13 +149,12 @@ return false;
 </content:region>
 </content:page>
 <script type="text/javascript">
-<map:point var="mapC" point="${mapCenter}" />
-
 // Create map options
+<map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:7, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, zoom:7, minZoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
-//Create the map
+// Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
