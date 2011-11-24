@@ -286,11 +286,31 @@ public class METAR extends WeatherDataBean {
 	 * @param ilscat the ILSCategory
 	 */
 	public void setILS(ILSCategory ilscat) {
-		_ils = ilscat;
+		if (ilscat != null)
+			_ils = ilscat;
 	}
 	
 	public String getIconColor() {
-		return WHITE;
+		switch (_ils) {
+			case CATI:
+				return BLUE;
+				
+			case CATII:
+				return YELLOW;
+					
+			case CATIIIa:
+				return ORANGE;
+				
+			case CATIIIb:
+				return PURPLE;
+				
+			case CATIIIc:
+				return RED;
+		
+			case NONE:
+			default:
+				return WHITE;
+		}
 	}
 	
 	public Type getType() {

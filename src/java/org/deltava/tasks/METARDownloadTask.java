@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Scheduled Task to download METAR data.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 2.7
  */
 
@@ -38,7 +38,9 @@ public class METARDownloadTask extends Task {
 		try {
 			GetNOAAWeather wxdao = new GetNOAAWeather();
 			log.info("Loading METAR cycle for " + StringUtils.format(hour, "00") + "00Z");
-			Map<String, METAR> metars = wxdao.getMETARCycle(hour);
+			Map<String, METAR> data = wxdao.getMETARCycle(hour);
+			for (METAR m : data.values())
+				m.setILS(WeatherUtils.getILS( m));
 			
 			// Get the DAO
 			SetWeather wxwdao = new SetWeather(ctx.getConnection());
@@ -48,13 +50,12 @@ public class METARDownloadTask extends Task {
 			wxwdao.purgeMETAR(90);
 			
 			// Save the METARs
-			log.info("Saving METAR cycle - " + metars.size() + " entries");
-			for (Iterator<METAR> i = metars.values().iterator(); i.hasNext(); ) {
+			log.info("Saving METAR cycle - " + data.size() + " entries");
+			for (Iterator<METAR> i = data.values().iterator(); i.hasNext(); ) {
 				METAR m = i.next();
 				wxwdao.write(m);
 			}
 			
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

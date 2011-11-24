@@ -2,10 +2,14 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.flight.ILSCategory;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.wx.*;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load weather data from the database.
@@ -123,5 +127,33 @@ public class GetWeather extends WeatherDAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}		
+	}
+
+	/**
+	 * Returns Airports with ILS conditions. 
+	 * @param ilscat the ILSCategory
+	 * @return a Collection of Airport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getILSAirports(ILSCategory ilscat) throws DAOException {
+		try {
+			prepareStatement("SELECT M.AIRPORT FROM common.METARS M, common.AIRPORTS A, SCHEDULE S WHERE (M.AIRPORT=A.ICAO) "
+				+ "AND ((A.IATA=S.AIRPORT_D) OR (A.IATA=S.AIRPORT_A)) AND (M.ILS>=?)");
+			_ps.setInt(1, ilscat.ordinal());
+			
+			Collection<Airport> results = new LinkedHashSet<Airport>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airport a = SystemData.getAirport(rs.getString(1));
+					if (a != null)
+						results.add(a);
+				}
+			}
+			
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }

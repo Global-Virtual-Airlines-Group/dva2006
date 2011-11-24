@@ -1213,6 +1213,12 @@
 		<roles>Pilot</roles>	
 	</command>
 
+	<command id="wxfinder">
+		<name>Airport Weather Finder</name>	
+		<class>org.deltava.commands.main.WeatherFinderCommand</class>
+		<roles>Pilot</roles>	
+	</command>
+
 
 	<!-- Flight Assignment commands -->
 	<command id="findflight">
