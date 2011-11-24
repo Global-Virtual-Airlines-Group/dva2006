@@ -3,6 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.beans.flight.ILSCategory;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.wx.*;
 
@@ -55,8 +56,9 @@ public class GetWeather extends WeatherDAO {
 			return m;
 		
 		try {
-			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, ND.LATITUDE, ND.LONGITUDE FROM common.METARS M LEFT "
-				+ "JOIN common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (M.AIRPORT=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, M.ILS, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE FROM "
+				+ "common.METARS M LEFT JOIN common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) WHERE "
+				+ "(M.AIRPORT=?) LIMIT 1");
 			_ps.setInt(1, NavigationDataBean.AIRPORT);
 			_ps.setString(2, code);
 			
@@ -66,8 +68,10 @@ public class GetWeather extends WeatherDAO {
 					String data = rs.getString(2);
 					m = MetarParser.parse(data);
 					m.setDate(rs.getTimestamp(1));
+					m.setILS(ILSCategory.values()[rs.getInt(3)]);
 					m.setData(data);
-					AirportLocation loc = new AirportLocation(rs.getDouble(3), rs.getDouble(4));
+					AirportLocation loc = new AirportLocation(rs.getDouble(4), rs.getDouble(5));
+					loc.setAltitude(rs.getInt(6));
 					loc.setCode(code);
 					m.setAirport(loc);
 					_wxCache.add(m);

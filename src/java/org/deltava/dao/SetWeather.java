@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.wx.*;
 /**
  * A Data Access Object to save weather data in the database.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 2.7
  */
 
@@ -29,10 +29,11 @@ public class SetWeather extends WeatherDAO {
 	 */
 	public void write(METAR m) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO common.METARS (AIRPORT, DATE, DATA) VALUES (?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO common.METARS (AIRPORT, DATE, ILS, DATA) VALUES (?, ?, ?, ?)");
 			_ps.setString(1, m.getCode());
 			_ps.setTimestamp(2, createTimestamp(m.getDate()));
-			_ps.setString(3, m.getData());
+			_ps.setInt(3, m.getILS().ordinal());
+			_ps.setString(4, m.getData());
 			executeUpdate(1);
 			_wxCache.remove(m.getCode());
 		} catch (SQLException se) {
