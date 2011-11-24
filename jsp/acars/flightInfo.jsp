@@ -156,7 +156,7 @@ var routeMarkers = [];
 
 // Build the map
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center: mapC, zoom: getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center: mapC, minZoom:2, zoom: getDefaultZoom(${pirep.distance}), scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });

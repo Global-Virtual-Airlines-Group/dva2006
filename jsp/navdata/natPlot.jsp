@@ -187,7 +187,7 @@ return true;
 <script type="text/javascript">
 //Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:new google.maps.LatLng(52.0, -35.0), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:new google.maps.LatLng(52.0, -35.0), zoom:4, minZoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
