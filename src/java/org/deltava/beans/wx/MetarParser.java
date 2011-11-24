@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A parser for METAR data. 
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 2.6
  */
 
@@ -70,6 +70,7 @@ public class MetarParser {
 				result.setIsCorrected(true);
 			} else if (token.equals("CAVOK")) {
 				isRemark = false;
+				result.setVisibility(Distance.SM.getFeet(50), false);
 
 			// Parse date
 			} else if (isDate(token)) {
@@ -97,6 +98,12 @@ public class MetarParser {
 					pos++; int pos2 = pos;
 					while (Character.isDigit(token.charAt(pos2))) pos2++;
 					result.setWindGust(StringUtils.parse(token.substring(pos, pos2), 0));
+				}
+				
+				// Convert from MPS to KTS
+				if (token.endsWith("MPS")) {
+					result.setWindSpeed(Math.round(result.getWindSpeed() * 1.9438f));
+					result.setWindGust(Math.round(result.getWindGust() * 1.9438f));
 				}
 			} else if (isTemperature(token)) {
 				isRemark = false;
@@ -161,12 +168,13 @@ public class MetarParser {
 					pos  += 3;
 				}
 				
-				CloudLayer cl = new CloudLayer(h);
+				CloudLayer cl = new CloudLayer(h * 100);
 				cl.setThickness(a);
 				if (pos < token.length()) 
 					cl.setType(CloudLayer.Type.valueOf(token.substring(pos)));
 				
-				result.add(cl);
+				if (a.ordinal() > Amount.CLR.ordinal())
+					result.add(cl);
 			} else if (isRVR(token)) {
 				int pos = token.indexOf('/');
 				RunwayVisualRange rvr = new RunwayVisualRange(token.substring(1, pos));
@@ -188,26 +196,33 @@ public class MetarParser {
 					double hp = StringUtils.parse(token.substring(1), 0.0d);
 					result.setPressure(hp * 0.02952875d);
 				}
-			} else if (isVisibility(token)) {
+			} else if (isVisibility(token, result.getCode())) {
 				isRemark = false;
 				boolean lessThan = (token.charAt(0) == 'M');
-				String tmpToken = token.substring(lessThan ? 1 : 0, token.length() - 2);
+				Distance dst = Distance.METERS; int ePos = 0;
+				if (token.endsWith("SM")) {
+					ePos = 2;
+					dst = Distance.SM;
+				} else if (token.endsWith("M"))
+					ePos = 1;
+				
+				String tmpToken = token.substring(lessThan ? 1 : 0, token.length() - ePos);
 				int pos = tmpToken.indexOf('/');
 				if (pos > -1) {
 					double viz = StringUtils.parse(tmpToken.substring(0, pos), -1.0d) /
 						StringUtils.parse(tmpToken.substring(pos + 1), 1.0d);
 					if (viz < 0) {
 						log.warn("Unparseable visibility - " + token);
-						result.setVisibility(10, false);
+						result.setVisibility(Distance.SM.getFeet(15), false);
 					} else
-						result.setVisibility(viz, lessThan);
+						result.setVisibility(dst.getFeet(viz), lessThan);
 				} else {
 					int viz = StringUtils.parse(tmpToken, -1);
 					if (viz == -1) {
 						log.warn("Unparseable visibility - " + token);
-						result.setVisibility(10, false);
+						result.setVisibility(Distance.SM.getFeet(15), false);
 					} else
-						result.setVisibility(viz, lessThan);
+						result.setVisibility(dst.getFeet(viz), lessThan);
 				}
 			} else if (isRemark) {
 				rmk.append(token);
@@ -232,7 +247,7 @@ public class MetarParser {
 		char[] buf = tkn.toCharArray();
 		if (buf.length < 7)
 			return false;
-		if (!tkn.endsWith("KT"))
+		if (!tkn.endsWith("KT") && !tkn.endsWith("MPS"))
 			return false;
 		
 		// Wind: 3 digit true-north direction,
@@ -363,13 +378,26 @@ public class MetarParser {
 		return true;
 	}
 
-	private static boolean isVisibility(String tkn) {
+	private static boolean isVisibility(String tkn, String apCode) {
 		
-		// must have at least one digit and end in "SM"
-		if ("9999".equals(tkn))
-			return true;
-		else if ((tkn.length() < 3) || (!tkn.endsWith("SM")))
+		// must have at least one digit and end in "SM", or be only four digits
+		if ((tkn.length() < 3) && !tkn.endsWith("SM"))
 			return false;
+		else if (!tkn.endsWith("SM")) {
+			boolean isNA = (apCode.startsWith("C") || apCode.startsWith("K") || apCode.startsWith("PA")
+					|| apCode.startsWith("PG") || apCode.startsWith("MM") || apCode.startsWith("TJ"));
+			if ((tkn.length() > 2) && (tkn.length() < 6) && !isNA) {
+				int endPos = tkn.endsWith("M") ? 1 : 0;
+				for (int j = 0; j < (tkn.length() - endPos); j++) {
+					if (!Character.isDigit(tkn.charAt(j)))
+						return false;
+				}
+				
+				return true;
+			}
+			
+			return false;
+		}
 		
 		char lastChar = '0';
 		boolean foundDigit = false, foundSpace = false, foundFraction = false;
@@ -391,9 +419,8 @@ public class MetarParser {
 					return false;
 				foundDigit = false;
 				foundFraction = true;
-			} else {
+			} else
 				return false;
-			}
 			
 			lastChar = tkn.charAt(pos);
 		}
@@ -403,6 +430,6 @@ public class MetarParser {
 	}
 	
 	private static boolean isRVR(String tkn) {
-		return (tkn.startsWith("R") && tkn.contains("/") && !tkn.endsWith("FT"));
+		return (tkn.startsWith("R") && tkn.contains("/") && (tkn.length() > 4) && !tkn.endsWith("FT"));
 	}
 }
