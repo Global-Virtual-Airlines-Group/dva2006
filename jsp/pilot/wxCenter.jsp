@@ -204,7 +204,7 @@ this.isOpen = true;
 return true;
 }
 </script>
-<map:wxList layers="radar,sat,temp,windspeed,future_radar_ff" />
+<map:wxList layers="radar,eurorad,sat,temp,windspeed,future_radar_ff" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -263,9 +263,9 @@ return true;
 <script type="text/javascript">
 <map:point var="mapC" point="${homeAirport}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:5, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
-//Map marker codes
+// Map marker codes
 var wxMarkers = [];
 
 // Create the map
@@ -294,7 +294,7 @@ for (var i = 0; i < ffLayers.length; i++) {
 		getFFOverlay(layerName, 0.45, dates[x]);
 }
 
-//Build the layer controls
+// Build the layer controls
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
