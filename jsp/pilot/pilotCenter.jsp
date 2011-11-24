@@ -417,6 +417,10 @@ departing today.</td>
  and the world.</td>  
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="wxfinder">Airport Weather Finder</el:cmd></td>
+ <td class="data">You can search for airports served by <content:airline /> that are experiencing unusual or severe weather.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="navsearch">Navigation Aids</el:cmd></td>
  <td class="data">You can search the DAFIF database for a particular Airport, VOR, NDB or Intersection.</td>
 </tr>
