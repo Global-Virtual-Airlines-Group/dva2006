@@ -155,6 +155,8 @@
  <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>,
 </c:otherwise>
 </c:choose>
+<c:if test="${!isXACARS && (pirep.landingCategory != 'NONE')}">
+ <span class="sec bld">(ILS ${pirep.landingCategory})</span></c:if>
  <fmt:int value="${pirep.landingWeight}" /> lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel
 <c:if test="${acLoaded && (pirep.landingWeight > acInfo.maxLandingWeight)}">
  <span class="small bld">(<fmt:int value="${pirep.landingWeight - acInfo.maxLandingWeight}" /> lbs overweight)</span></c:if>
