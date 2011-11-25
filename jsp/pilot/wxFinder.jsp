@@ -17,29 +17,22 @@
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}">
 <content:js name="acarsMapWX" />
-<content:js name="acarsMapFF" />
-<content:js name="progressBar" />
-</c:if>
+<map:wxList layers="radar,sat,temp,windspeed" /></c:if>
 <script type="text/javascript">
-function validate(form)
+function filterTypes(combo)
 {
-return (form.ils.selectedIndex > 0);
+var minIDX = Math.max(1, combo.selectedIndex + 1);
+for (var x = 0; x < wxAirports.length; x++) {
+	var mrk = wxAirports[x];
+	if ((mrk.ILS < minIDX) && mrk.getVisible())
+		mrk.setVisible(false);
+	else if ((mrk.ILS >= minIDX) && !mrk.getVisible())
+		mrk.setVisible(true);
 }
-
-function updateMap()
-{
-return document.forms[0].submit();	
-}
-
-function updateCenter()
-{
-var f = document.forms[0];
-f.lat.value = map.getCenter().lat();
-f.lng.value = map.getCenter().lng();
+	
 return true;
 }
 </script>
-<map:wxList layers="radar,sat,temp,windspeed" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -50,26 +43,24 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="wxfinder.do" method="post" validate="return validate(this)">
+<el:form action="wxfinder.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> AIRPORT WEATHER FINDER</td>
 </tr>
 <tr>
  <td class="label">ILS Category</td>
- <td class="data"><el:combo name="ils" size="1" idx="*" firstEntry="-" options="${ilsClasses}" value="${ils}" onChange="void updateMap()" /></td>
+ <td class="data"><el:combo name="ils" size="1" idx="*" options="${ilsClasses}" onChange="void filterTypes(this)" /></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
- <td class="data"><map:legend color="blue" legend="CATI" /> <map:legend color="yellow" legend="CATII" /> <map:legend color="orange" legend="CATIIIa" />
+ <td class="data"><map:legend color="green" legend="CATI" /> <map:legend color="blue" legend="CATII" /> <map:legend color="orange" legend="CATIIIa" />
  <map:legend color="purple" legend="CATIIIb" /> <map:legend color="red" legend="CATIIIc" /></td>
 </tr>
 <tr>
  <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div></td>
 </tr>
 </el:table>
-<el:text type="hidden" name="lat" value="${param.lat}" />
-<el:text type="hidden" name="lng" value="${param.lng}" />
 </el:form>
 <br />
 <content:copyright />
@@ -86,10 +77,14 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content: ''});
 google.maps.event.addListener(map, 'click', function () { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
-google.maps.event.addListener(map, 'center_changed', updateCenter);
 
-// Add airports
-<map:markers var="wxAirports" items="${metars}" />
+// Add airports -- don't use the standard TAG so we can add some info to the tags
+var wxAirports = [];
+<c:forEach var="ap" items="${metars}">
+<map:marker var="mrk" marker="true" point="${ap}" color="${ap.iconColor}" label="${ap.infoBox}" />
+mrk.ILS = ${ap.ILS.ordinal()};
+wxAirports.push(mrk);
+</c:forEach>
 addMarkers(map, 'wxAirports');
 
 <c:if test="${!empty tileHost}">
@@ -106,14 +101,13 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl(
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Wind Speed', 'windspeed'));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
-google.maps.event.addListener(map, 'maptypeid_changed', hideAllSlices);
 
 // Display the copyright notice
 var d = new Date();
 var cp = document.getElementById('copyright');
 cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
 
-//Update text color
+// Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');</c:if>
 </script>
 </body>

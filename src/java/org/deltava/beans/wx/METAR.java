@@ -293,10 +293,10 @@ public class METAR extends WeatherDataBean {
 	public String getIconColor() {
 		switch (_ils) {
 			case CATI:
-				return BLUE;
+				return GREEN;
 				
 			case CATII:
-				return YELLOW;
+				return BLUE;
 					
 			case CATIIIa:
 				return ORANGE;
