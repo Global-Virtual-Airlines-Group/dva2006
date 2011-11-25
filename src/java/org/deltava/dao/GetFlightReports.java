@@ -650,29 +650,32 @@ public class GetFlightReports extends DAO {
 				ap.setLandingLocation(new GeoPosition(rs.getDouble(48), rs.getDouble(49), rs.getInt(50)));
 				ap.setLandingWeight(rs.getInt(51));
 				ap.setLandingFuel(rs.getInt(52));
-				ap.setEndTime(rs.getTimestamp(53));
-				ap.setGateWeight(rs.getInt(54));
-				ap.setGateFuel(rs.getInt(55));
-				ap.setTotalFuel(rs.getInt(56));
+				// Load column #53 with DVA ACARS only
+				ap.setEndTime(rs.getTimestamp(54));
+				ap.setGateWeight(rs.getInt(55));
+				ap.setGateFuel(rs.getInt(56));
+				ap.setTotalFuel(rs.getInt(57));
 			}
 			
 			// Load DVA ACARS pirep data
 			if (isACARS && !isXACARS) {
 				ACARSFlightReport ap = (ACARSFlightReport) p;
 				ap.setLandingG(rs.getDouble(45));
-				ap.setTime(0, rs.getInt(57));
-				ap.setTime(1, rs.getInt(58));
-				ap.setTime(2, rs.getInt(59));
-				ap.setTime(4, rs.getInt(60));
-				ap.setFDE(rs.getString(61));
-				ap.setAircraftCode(rs.getString(62));
-				ap.setHasReload(rs.getBoolean(63));
-				ap.setClientBuild(rs.getInt(64));
-				ap.setBeta(rs.getInt(65));
+				int ils = rs.getInt(53);
+				ap.setLandingCategory(ILSCategory.values()[ils]);
+				ap.setTime(0, rs.getInt(58));
+				ap.setTime(1, rs.getInt(59));
+				ap.setTime(2, rs.getInt(60));
+				ap.setTime(4, rs.getInt(61));
+				ap.setFDE(rs.getString(62));
+				ap.setAircraftCode(rs.getString(63));
+				ap.setHasReload(rs.getBoolean(64));
+				ap.setClientBuild(rs.getInt(65));
+				ap.setBeta(rs.getInt(66));
 			} else if (isXACARS) {
 				XACARSFlightReport ap = (XACARSFlightReport) p;
-				ap.setMajorVersion(rs.getInt(64));
-				ap.setMinorVersion(rs.getInt(65));
+				ap.setMajorVersion(rs.getInt(65));
+				ap.setMinorVersion(rs.getInt(66));
 			}
 
 			results.add(p);

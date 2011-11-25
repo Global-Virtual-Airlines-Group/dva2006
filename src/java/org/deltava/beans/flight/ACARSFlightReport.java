@@ -17,6 +17,7 @@ public class ACARSFlightReport extends FDRFlightReport {
 	
     private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     
+    private ILSCategory _ils;
     private double _landingG;
     
     private String _fde;
@@ -130,6 +131,14 @@ public class ACARSFlightReport extends FDRFlightReport {
  	   return _beta;
     }
     
+	/**
+	 * Returns the ILS category.
+	 * @return the ILS Category
+	 */
+	public ILSCategory getLandingCategory() {
+		return _ils;
+	}
+    
     /**
      * Updates the G-Forces at touchdown.
      * @param g the G-forces in G
@@ -198,4 +207,12 @@ public class ACARSFlightReport extends FDRFlightReport {
     public void setBeta(int beta) {
  	   _beta = Math.max(0, beta);
     }
+    
+	/**
+	 * Sets the ILS category.
+	 * @param ilscat the ILS category
+	 */
+	public void setLandingCategory(ILSCategory ilscat) {
+		_ils = ilscat;
+	}
 } 
