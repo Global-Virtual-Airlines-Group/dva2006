@@ -72,6 +72,10 @@
 	<service id="apsidstar" class="org.deltava.service.navdata.AirportTerminalRouteService" />
 	<service id="trouteupdate" class="org.deltava.service.navdata.TerminalRouteUpdateService" />
 
+	<!-- ACARS client autoupdate -->
+	<service id="incupdatecheck" class="org.deltava.service.acars.UpdateAvailableService" />
+	<service id="incupdate" class="org.deltava.service.acars.UpdateDownloadService" />
+
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />
 	<service id="acars_error" class="org.deltava.service.acars.ErrorLogService" />
