@@ -22,13 +22,10 @@ import org.deltava.security.command.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.acars.ACARSClientInfo;
-import org.gvagroup.common.SharedData;
-
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 3.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -286,12 +283,6 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
-		}
-		
-		// Get latest acars version
-		if (ctx.isUserInRole("Admin") && SystemData.getBoolean("acars.enabled")) {
-			ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
-			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
 		}
 		
 		// Set facebook requested permissions
