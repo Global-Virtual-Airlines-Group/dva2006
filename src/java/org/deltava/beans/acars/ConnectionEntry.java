@@ -13,7 +13,7 @@ import org.deltava.beans.system.IPAddressInfo;
  * @since 1.0
  */
 
-public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, TimeSpan, AuthoredBean {
+public class ConnectionEntry implements java.io.Serializable, ClientVersion, ACARSLogEntry, TimeSpan, AuthoredBean {
 
    private long _id;
    private int _pilotID;
@@ -26,6 +26,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    private String _remoteHost;
    private String _remoteAddr;
    
+   private int _clientVersion;
    private int _clientBuild;
    private int _beta;
    
@@ -156,21 +157,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    public IPAddressInfo getAddressInfo() {
 	   return _addrInfo;
    }
+
+   public int getVersion() {
+	   return _clientVersion;
+   }
    
-   /**
-    * Returns the ACARS client build number.
-    * @return the client build number
-    * @see ConnectionEntry#setClientBuild(int)
-    */
    public int getClientBuild() {
       return _clientBuild;
    }
    
-   /**
-    * Returns the ACARS beta build number.
-    * @return the beta number
-    * @see ConnectionEntry#setBeta(int)
-    */
    public int getBeta() {
 	   return _beta;
    }
@@ -355,21 +350,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry, Tim
    public void setAddressInfo(IPAddressInfo info) {
 	   _addrInfo = info;
    }
+   
+   public void setVersion(int ver) {
+	   _clientVersion = Math.max(1, ver);
+   }
 
-   /**
-    * Updates the ACARS client build number.
-    * @param ver the build number
-    * @see ConnectionEntry#getClientBuild()
-    */
    public void setClientBuild(int ver) {
       _clientBuild = ver;
    }
    
-   /**
-    * Updates the ACARS beta build number.
-    * @param beta the beta number
-    * @see ConnectionEntry#getBeta()
-    */
    public void setBeta(int beta) {
 	   _beta = Math.max(0, beta);
    }
