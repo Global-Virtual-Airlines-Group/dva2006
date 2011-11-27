@@ -80,6 +80,9 @@ public final class OfflineFlightParser {
 		// Parse out the XML and get the build
 		Element re = doc.getRootElement();
 		int clientBuild = StringUtils.parse(re.getAttributeValue("build"), 76);
+		int clientVersion = StringUtils.parse(re.getAttributeValue("version"), 2);
+		if (clientBuild < 80)
+			clientVersion = 1;
 		
 		// Get aircraft information
 		Element ae = re.getChild("aircraft");
@@ -104,6 +107,7 @@ public final class OfflineFlightParser {
 		// Build a connection entry
 		ConnectionEntry ce = new ConnectionEntry(new IDGenerator().generate());
 		ce.setStartTime(new Date());
+		ce.setVersion(clientVersion);
 		ce.setClientBuild(clientBuild);
 		ce.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		result.setConnection(ce);
