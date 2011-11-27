@@ -26,7 +26,6 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.*;
-import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
@@ -44,6 +43,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get command result and check for post
@@ -139,34 +139,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 		ce.setRemoteHost(ctx.getRequest().getRemoteHost());
 		ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		
-		// Check that the build isn't deprecated
-		int minBuild = Integer.MAX_VALUE; int build = ce.getClientBuild();
-		ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
-		if (build < 80)
-			minBuild = cInfo.getMinimumBuild("v1.4");
-		else if (build < 100)
-			minBuild = cInfo.getMinimumBuild("v2.2");
-		else
-			minBuild = cInfo.getMinimumBuild("v3.0");
-		
-		if (build < minBuild) {
-			String msg = "ACARS Build " + build + " not supported";
-			if (minBuild > 0)
-				msg += " Minimum build is Build " + minBuild;	
-			ctx.setMessage(msg);
-			return;
-		}
-		
-		// Check for BETA
-		if (ce.getBeta() > 0) {
-			int minBeta = cInfo.getMinimumBetaBuild(ce.getClientBuild());
-			if ((ce.getBeta() < minBeta) || (minBeta == 0)) {
-				String msg = "ACARS Build " + build + " Beta " + ce.getBeta() + " deprecated";
-				ctx.setMessage(msg);
-				return;	
-			}
-		}
-		
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
 		DateTime dt = new DateTime(inf.getEndTime());
@@ -187,8 +159,30 @@ public class OfflineFlightCommand extends AbstractCommand {
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(dt.getDate());
 		
+		// Get the client version
+		ClientInfo cInfo = new ClientInfo(ce.getVersion(), ce.getClientBuild(), ce.getBeta());
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Check that the build isn't deprecated
+			GetACARSBuilds abdao = new GetACARSBuilds(con);
+			boolean isBuildOK = abdao.isValid(cInfo);
+			if (!isBuildOK) {
+				ClientInfo latestBuild = null;
+				if (cInfo.isBeta())
+					latestBuild = abdao.getLatestBeta(cInfo.getVersion(), cInfo.getClientBuild());
+				if (latestBuild == null)
+					latestBuild = abdao.getLatestBuild(cInfo.getVersion());
+				ctx.release();
+				
+				// Set message
+				String msg = "ACARS Build " + cInfo.toString() + " not supported.";
+				if (latestBuild != null)
+					msg += " Minimum " + cInfo.getVersion() + " build is Build " + latestBuild.getClientBuild();
+				
+				ctx.setMessage(msg);
+				return;
+			}
 			
 			// Get the user information
 			GetPilot pdao = new GetPilot(con);

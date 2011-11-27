@@ -859,14 +859,6 @@ performed each time the Terminal Routes have been imported from AIRAC data.</td>
  <td class="data">You can view the <content:airline /> ACARS server text message log.</td>
 </tr>
 </content:filter>
-<content:filter roles="Admin">
-<tr>
- <td class="mid"><el:cmd className="bld" url="acarsversion">ACARS Client Versions</el:cmd></td>
- <td class="data">You can control which versions of the <content:airline /> ACARS client are allowed to 
-connect to the ACARS Server, as well as inform users of a new ACARS Client version. <span class="ita">The latest
-ACARS build is Build <fmt:int value="${latestBuild}" />.</span></td>
-</tr>
-</content:filter>
 </content:filter>
 </c:if>
 <content:filter roles="HR,Developer">
