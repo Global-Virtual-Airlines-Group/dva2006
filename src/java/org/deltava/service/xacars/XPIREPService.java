@@ -43,9 +43,10 @@ public class XPIREPService extends XAService {
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		log(ctx);
-		
 		List<String> data = StringUtils.split(ctx.getParameter("DATA2"), "~");
+		if (data == null)
+			throw error(SC_BAD_REQUEST, "No DATA2 parameter", false);
+		
 		Flight f = FlightCodeParser.parse(data.get(2));
 		try {
 			Pilot usr = authenticate(ctx, data.get(0), data.get(1));
@@ -57,7 +58,7 @@ public class XPIREPService extends XAService {
 			int flightID = xdao.getID(usr.getID(), f);
 			XAFlightInfo inf = xdao.getFlight(flightID);
 			if (inf == null)
-				throw new InvalidDataException("Invalid Flight ID");
+				throw new InvalidDataException("Invalid Flight ID - " + flightID);
 			
 			// Validate simulator
 			List<?> simVersions = (List<?>) SystemData.getObject("acars.xacars.sims");
