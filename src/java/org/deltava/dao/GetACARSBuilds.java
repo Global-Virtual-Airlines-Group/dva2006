@@ -107,9 +107,11 @@ public class GetACARSBuilds extends DAO {
 				_ps.setInt(2, inf.getVersion());
 				_ps.setString(3, String.valueOf(inf.getClientBuild()) + ".%");
 				try (ResultSet rs = _ps.executeQuery()) {
-					String info = rs.getString(1);
-					int beta = StringUtils.parse(info.substring(info.indexOf('.') + 1), 0);
-					isOK = (inf.getBeta() >= beta);
+					if (rs.next()) {
+						String info = rs.getString(1);
+						int beta = StringUtils.parse(info.substring(info.indexOf('.') + 1), 0);
+						isOK = (inf.getBeta() >= beta);
+					}
 				}
 				
 				_ps.close();
