@@ -73,7 +73,7 @@ public class TerminalRouteService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error", false);
+			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error");
 		}
 		
 		// Return success code
