@@ -16,6 +16,11 @@ import org.deltava.util.StringUtils;
  */
 
 public class GetACARSBuilds extends DAO {
+	
+	// Enumeration to store access roles
+	public enum AccessRole {
+		CONNECT, UPLOAD;
+	}
 
 	/**
 	 * Initializes the Data Access Object.
@@ -87,11 +92,25 @@ public class GetACARSBuilds extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public boolean isValid(ClientInfo inf) throws DAOException {
+		return isValid(inf, AccessRole.CONNECT);
+	}
+	
+	/**
+	 * Returns whether a particular client/build/beta combination can access ACARS.
+	 * @param inf a ClientInfo bean
+	 * @param role the Access role
+	 * @return TRUE if can connect, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean isValid(ClientInfo inf, AccessRole role) throws DAOException {
 		try {
 			prepareStatement("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA>=?)");
-			_ps.setString(1, inf.isDispatch() ? "minDispatch" : "minBuild");
 			_ps.setInt(2, inf.getVersion());
 			_ps.setInt(3, inf.getClientBuild());
+			if (role == AccessRole.CONNECT)
+				_ps.setString(1, inf.isDispatch() ? "minDispatch" : "minBuild");
+			else
+				_ps.setString(1, "minUpload");
 
 			// Check if the build is OK
 			boolean isOK = false;
@@ -103,7 +122,7 @@ public class GetACARSBuilds extends DAO {
 			_ps.close();
 			if (isOK && inf.isBeta() && !inf.isDispatch()) {
 				prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA LIKE ?)");
-				_ps.setString(1, "minBeta");
+				_ps.setString(1, (role == AccessRole.CONNECT) ? "minBeta" : "minUploadBeta");
 				_ps.setInt(2, inf.getVersion());
 				_ps.setString(3, String.valueOf(inf.getClientBuild()) + ".%");
 				try (ResultSet rs = _ps.executeQuery()) {
