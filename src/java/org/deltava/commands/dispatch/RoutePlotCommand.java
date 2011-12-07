@@ -1,11 +1,9 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
 
 import org.deltava.beans.schedule.Airport;
-
-import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 2.2
  */
 
@@ -28,11 +26,8 @@ public class RoutePlotCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
-		// Set request attributes
-		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
-		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		
 		// Check for dispatch route creation access
 		DispatchRouteAccessControl access = new DispatchRouteAccessControl(ctx, null);
@@ -45,12 +40,8 @@ public class RoutePlotCommand extends AbstractCommand {
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		ctx.setAttribute("airportD", aD, REQUEST);
 		ctx.setAttribute("airportA", aA, REQUEST);
+		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		
-		// Get all airports
-		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-		airports.addAll(SystemData.getAirports().values());
-		ctx.setAttribute("airports", airports, REQUEST);
-			
 		// Load the airlines
 		if ((aD != null) && (aA != null)) {
 			try {
@@ -61,7 +52,8 @@ public class RoutePlotCommand extends AbstractCommand {
 			} finally {
 				ctx.release();
 			}
-		}
+		} else
+			ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

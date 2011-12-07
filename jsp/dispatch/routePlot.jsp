@@ -53,7 +53,7 @@ return true;
 }
 }
 </script>
-<map:wxList layers="radar,eurorad,sat" />
+<map:wxList layers="radar,eurorad,sat,windspeed" />
 </head>
 <content:copyright visible="false" />
 <body onload="disableButton('RouteSaveButton')">
@@ -75,18 +75,18 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" value="${airportD}" onChange="void updateRoute(true, true)" />
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" value="${airportD}" onChange="void updateRoute(true, true)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airports}" firstEntry="-" value="${airportA}" onChange="void updateRoute(true)" />
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" value="${airportA}" onChange="void updateRoute(true)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
 </tr>
 <tr>
  <td class="label">Alternate</td>
- <td class="data"><el:combo name="airportL" size="1" idx="*" options="${airports}" firstEntry="-" onChange="updateRoute(); plotMap()" />
+ <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" />
  <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportL, this.value); plotMap()" /></td>
 </tr>
 <tr id="sids" style="display:none;">
@@ -143,14 +143,20 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 var f = document.forms[0];
 enableObject(f.routes, false);
 enableElement('SearchButton', (f.airportD.selectedIndex > 0) && (f.airportA.selectedIndex > 0));
 
+//Load the airports
+updateAirports(f.airportD, 'airline=all', ${useICAO}, getValue(f.airportD));
+window.setTimeout("updateAirports(f.airportA, 'airline=all', ${useICAO}, getValue(f.airportA))", 1250);
+window.setTimeout("updateAirports(f.airportL, 'airline=all', ${useICAO}, getValue(f.airportL))", 1750);
+
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, minZoom:2, maxZoom:12, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -161,8 +167,10 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 getTileOverlay('radar', 0.45);
 getTileOverlay('eurorad', 0.45);
 getTileOverlay('sat', 0.35);
+getTileOverlay('windspeed', 0.35);
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Wind Speed', 'windspeed'));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
 </c:if>
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
