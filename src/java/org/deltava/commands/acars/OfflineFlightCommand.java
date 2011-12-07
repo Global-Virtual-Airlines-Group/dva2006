@@ -178,7 +178,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				// Set message
 				String msg = "ACARS Build " + cInfo.toString() + " not supported.";
 				if (latestBuild != null)
-					msg += " Minimum " + cInfo.getVersion() + " build is Build " + latestBuild.getClientBuild();
+					msg += " Minimum ACARS " + cInfo.getVersion() + ".x build is Build " + latestBuild.getClientBuild() + "-release.";
 				
 				ctx.setMessage(msg);
 				return;

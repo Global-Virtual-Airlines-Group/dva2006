@@ -67,7 +67,7 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 	}
 	
 	public String toString() {
-		StringBuilder buf = new StringBuilder(_version);
+		StringBuilder buf = new StringBuilder(String.valueOf(_version));
 		buf.append('.');
 		buf.append(_build);
 		if (isBeta()) {
