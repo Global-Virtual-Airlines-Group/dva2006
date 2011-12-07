@@ -104,7 +104,7 @@ public class GetACARSBuilds extends DAO {
 	 */
 	public boolean isValid(ClientInfo inf, AccessRole role) throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA>=?)");
+			prepareStatement("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<=?)");
 			_ps.setInt(2, inf.getVersion());
 			_ps.setInt(3, inf.getClientBuild());
 			if (role == AccessRole.CONNECT)
@@ -130,7 +130,8 @@ public class GetACARSBuilds extends DAO {
 						String info = rs.getString(1);
 						int beta = StringUtils.parse(info.substring(info.indexOf('.') + 1), 0);
 						isOK = (inf.getBeta() >= beta);
-					}
+					} else
+						isOK = false;
 				}
 				
 				_ps.close();
