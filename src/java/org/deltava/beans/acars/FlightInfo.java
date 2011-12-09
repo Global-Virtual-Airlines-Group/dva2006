@@ -245,13 +245,6 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	}
 	
 	/**
-     * Returns whether this route crosses a particular meridian.
-     */
-    public boolean crosses(double lng) {
-    	return GeoUtils.crossesMeridian(_airportD, _airportA, lng);
-    }
-
-	/**
 	 * Returns the filed route for this flight.
 	 * @return the route
 	 * @see FlightInfo#setRoute(String)

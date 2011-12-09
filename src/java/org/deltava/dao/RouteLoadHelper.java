@@ -41,14 +41,13 @@ public final class RouteLoadHelper {
 	/**
 	 * Initializes the helper.
 	 * @param c the JDBC connection to use
-	 * @param aD the departure Airport
-	 * @param aA the arrival Airport
+	 * @param rp the RoutePar
 	 */
-	public RouteLoadHelper(Connection c, Airport aD, Airport aA) {
+	public RouteLoadHelper(Connection c, RoutePair rp) {
 		super();
 		_c = c;
-		_aD = aD;
-		_aA = aA;
+		_aD = rp.getAirportD();
+		_aA = rp.getAirportA();
 	}
 	
 	/**
