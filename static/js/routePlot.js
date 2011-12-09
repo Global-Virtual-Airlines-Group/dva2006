@@ -151,13 +151,12 @@ var f = document.forms[0];
 var aD = f.airportD.options[f.airportD.selectedIndex].value;
 var aA = f.airportA.options[f.airportA.selectedIndex].value;
 var rwy = f.runway.options[f.runway.selectedIndex].value;
-var ext = true;
-if (f.external)
-	ext = f.external.checked;
+var ext = (f.external) ? f.external.checked : false;
+var faReload = (f.forceFAReload) ? f.forceFAReload.checked : false;
 
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open('get', 'dsproutes.ws?airportD=' + aD + '&airportA=' + aA + '&external=' + ext + '&runway=' + rwy, true);
+xmlreq.open('get', 'dsproutes.ws?airportD=' + aD + '&airportA=' + aA + '&external=' + ext + '&runway=' + rwy + '&faReload=' + faReload, true);
 
 // Build the update handler	
 xmlreq.onreadystatechange = function() {
@@ -198,6 +197,7 @@ xmlreq.onreadystatechange = function() {
 }
 
 xmlreq.send(null);
+if (faReload) f.forceFAReload.checked = false;
 gaEvent('Route Plotter', 'Route Search', aD + '-' + aA, ext ? 1 : 0);
 return true;
 }
