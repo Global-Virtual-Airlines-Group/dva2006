@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 2.2
  */
 
@@ -32,6 +32,7 @@ public class DispatchRouteListService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the airports
@@ -40,8 +41,9 @@ public class DispatchRouteListService extends WebService {
 		
 		// Check if loading from FlightAware
 		boolean doFA = Boolean.valueOf(ctx.getParameter("external")).booleanValue() && SystemData.getBoolean("schedule.flightaware.enabled");
-		boolean hasFARole = ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch");
+		boolean hasFARole = ctx.isUserInRole("Route") || ctx.isUserInRole("Dispatch") || ctx.isUserInRole("Operations");
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("fullRoute")).booleanValue();
+		boolean forceFAReload = hasFARole && Boolean.valueOf(ctx.getParameter("faReload")).booleanValue();
 		
 		// Check for default runway
 		String rwy = ctx.getParameter("runway");
@@ -51,7 +53,7 @@ public class DispatchRouteListService extends WebService {
 		// Get the Data
 		Collection<FlightRoute> routes = new ArrayList<FlightRoute>();
 		try {
-			RouteLoadHelper helper = new RouteLoadHelper(ctx.getConnection(), aD, aA);
+			RouteLoadHelper helper = new RouteLoadHelper(ctx.getConnection(), new ScheduleRoute(aD, aA));
 			helper.setPreferredRunway(rwy);
 			helper.loadDispatchRoutes();
 			
@@ -59,7 +61,7 @@ public class DispatchRouteListService extends WebService {
 			helper.loadCachedRoutes();
 			
 			// Load flight aware routes
-			if (doFA && hasFARole && !helper.hasRoutes())
+			if (forceFAReload || (doFA && hasFARole && !helper.hasRoutes()))
 				helper.loadFlightAwareRoutes(true);
 			
 			// Load PIREP routes
@@ -147,10 +149,9 @@ public class DispatchRouteListService extends WebService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error", false);
+			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 }

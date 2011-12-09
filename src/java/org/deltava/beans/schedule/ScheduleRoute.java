@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,20 +10,29 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store route pair information.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
 public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, ViewEntry {
 	
-	private Airline _a;
-	private Airport _aD;
-	private Airport _aA;
+	private final Airline _a;
+	private final Airport _aD;
+	private final Airport _aA;
 	
-	private String _code;
+	private final String _code;
 	
 	private int _flights;
 	private int _routes;
+	
+	/**
+	 * Creates a new Route Pair.
+	 * @param ad the departure Airport bean
+	 * @param aa the arrival Airport bean
+	 */
+	public ScheduleRoute(Airport ad, Airport aa) {
+		this(null, ad, aa);
+	}
 	
 	/**
 	 * Creates a new Route Pair.
@@ -87,12 +96,7 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	 * @return a Collection of GeoLocations
 	 */
 	public Collection<? extends GeoLocation> getPoints() {
-		
-		// Check if we cross the date line
-		if (crosses(-179.9))
-			return GeoUtils.greatCircle(_aD, _aA, 100);
-
-		return getAirports();
+		return GeoUtils.greatCircle(_aD, _aA, 100);
 	}
 	
 	/**
@@ -121,13 +125,6 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	public int getDistance() {
 		return GeoUtils.distance(_aD, _aA);
 	}
-	
-	/**
-     * Returns whether this route crosses a particular meridian.
-     */
-    public boolean crosses(double lng) {
-    	return GeoUtils.crossesMeridian(_aD, _aA, lng);
-    }
 
 	/**
 	 * Updates the number of flights between these two airports. 
