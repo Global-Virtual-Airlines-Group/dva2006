@@ -1,15 +1,14 @@
-// Copyright 2004, 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.*;
 
 import org.deltava.beans.schedule.*;
-import org.deltava.util.GeoUtils;
 
 /**
  * A class to store Flight information.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -99,13 +98,6 @@ public abstract class Flight extends DatabaseBean implements RoutePair {
 
         // Calculate distance
         return _airportA.getPosition().distanceTo(_airportD.getPosition());
-    }
-
-    /**
-     * Returns whether this route crosses a particular meridian.
-     */
-    public boolean crosses(double lng) {
-    	return GeoUtils.crossesMeridian(_airportD, _airportA, lng);
     }
 
     /**

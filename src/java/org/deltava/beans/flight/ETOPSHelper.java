@@ -38,6 +38,10 @@ public final class ETOPSHelper {
 		Collection<Airport> apSet = new HashSet<Airport>(airports);
 		_airports.addAll(apSet);
 	}
+	
+	private static boolean crosses(RoutePair rp, double lng) {
+		return GeoUtils.crossesMeridian(rp.getAirportD(), rp.getAirportA(), lng);
+	}
 
 	/**
 	 * Validates whether a Route Pair should trigger an ETOPS warning.
@@ -54,25 +58,25 @@ public final class ETOPSHelper {
 			return false;
 		
 		// Check for North/South Atlantic - exclude Iceland/Greenland runs
-		if (rp.crosses(-30)) {
+		if (crosses(rp, -30)) {
 			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), -30);
-			return ((lat < 61) || rp.crosses(-55));
+			return ((lat < 61) || crosses(rp, -55));
 		}
 		
 		// Check for Indian Ocean
-		if (rp.crosses(75)) {
+		if (crosses(rp, 75)) {
 			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), 75);
 			return (lat < -1);
 		}
 		
 		// Check for Eastern Pacific
-		if (rp.crosses(-143)) {
+		if (crosses(rp, -143)) {
 			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), -143);
 			return (lat > 55);
 		}
 		
 		// Check for Western Pacific
-		if (rp.crosses(172)) {
+		if (crosses(rp, 172)) {
 			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), 172);
 			return (lat > -1);
 		}

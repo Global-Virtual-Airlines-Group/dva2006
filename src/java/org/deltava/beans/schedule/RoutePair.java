@@ -27,11 +27,4 @@ public interface RoutePair {
 	 * @return the distance in miles
 	 */
 	public int getDistance();
-	
-	/**
-	 * Returns whether the route crosses a particular meridian.
-	 * @param lng the longitude in degrees
-	 * @return TRUE if it crosses the meridian, otherwise FALSE
-	 */
-	public boolean crosses(double lng);
 }
