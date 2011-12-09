@@ -93,7 +93,8 @@ return true;
 <tr>
  <td class="label">Saved Routes</td>
  <td class="data"><el:combo name="routes" idx="*" size="1" className="small req" options="${emptyList}" firstEntry="No Routes Loaded" onChange="void setRoute(this)" />
-<el:button ID="SearchButton" onClick="void searchRoutes()" label="SEARCH" /></td>
+<el:button ID="SearchButton" onClick="void searchRoutes()" label="SEARCH" />
+<content:filter roles="Route,Dispatch,Operations"><el:box name="forceFAReload" value="true" checked="false" label="Force FlightAware refresh" /></content:filter></td>
 </tr>
 <tr>
  <td class="label top">Comments</td>
