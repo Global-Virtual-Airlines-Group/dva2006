@@ -4,6 +4,7 @@ package org.deltava.service.acars;
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.acars.ClientInfo;
+import org.deltava.beans.acars.ClientType;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -31,7 +32,12 @@ public class UpdateAvailableService extends WebService {
 		// Parse the info
 		ClientInfo cInfo = new ClientInfo(StringUtils.parse(ctx.getParameter("version"), 3),
 				StringUtils.parse(ctx.getParameter("build"), 100), StringUtils.parse(ctx.getParameter("beta"), 0));
-		cInfo.setDispatch(Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue());
+		if (Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue())
+			cInfo.setClientType(ClientType.DISPATCH);
+		else if (Boolean.valueOf(ctx.getParameter("viewer")).booleanValue())
+			cInfo.setClientType(ClientType.VIEWER);
+		else if (Boolean.valueOf(ctx.getParameter("atc")).booleanValue())
+			cInfo.setClientType(ClientType.ATC);
 
 		ClientInfo latest = null;
 		try {
@@ -39,7 +45,7 @@ public class UpdateAvailableService extends WebService {
 			if (cInfo.isBeta())
 				latest = abdao.getLatestBeta(cInfo.getVersion(), cInfo.getClientBuild());
 			else
-				latest = abdao.getLatestBuild(cInfo.getVersion());
+				latest = abdao.getLatestBuild(cInfo);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());			
 		} finally {

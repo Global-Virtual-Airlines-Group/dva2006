@@ -14,7 +14,7 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 	private final int _build;
 	private final int _beta;
 	
-	private boolean _dispatch;
+	private ClientType _type = ClientType.PILOT;
 
 	/**
 	 * Creates a new client information bean.
@@ -50,6 +50,10 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		return _beta;
 	}
 	
+	public ClientType getClientType() {
+		return _type;
+	}
+	
 	/**
 	 * Returns whether this is a beta build.
 	 * @return TRUE if a beta build, otherwise FALSE
@@ -58,12 +62,24 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		return (_beta < Integer.MAX_VALUE);
 	}
 	
-	public boolean isDispatch() {
-		return _dispatch;
+	public boolean isATC() {
+		return (_type == ClientType.ATC);
 	}
 	
-	public void setDispatch(boolean isDispatch) {
-		_dispatch = isDispatch;
+	public boolean isDispatch() {
+		return (_type == ClientType.DISPATCH);
+	}
+	
+	public boolean isViewer() {
+		return (_type == ClientType.VIEWER);
+	}
+	
+	/**
+	 * Updates the client type.
+	 * @param ct the ClientType
+	 */
+	public void setClientType(ClientType ct) {
+		_type = ct;
 	}
 	
 	public String toString() {
@@ -79,11 +95,13 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 	}
 	
 	public int hashCode() {
-		return toString().hashCode();
+		StringBuilder buf = new StringBuilder(_type.toString());
+		buf.append(toString());
+		return buf.toString().hashCode();
 	}
 	
 	public int compareTo(ClientInfo c2) {
-		int tmpResult = Boolean.compare(_dispatch, c2._dispatch);
+		int tmpResult = _type.compareTo(c2._type);
 		if (tmpResult == 0)
 			tmpResult = Integer.valueOf(_version).compareTo(Integer.valueOf(c2._version));
 		if (tmpResult == 0)

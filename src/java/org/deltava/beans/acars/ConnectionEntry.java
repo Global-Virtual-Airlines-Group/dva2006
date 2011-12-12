@@ -9,7 +9,7 @@ import org.deltava.beans.system.IPAddressInfo;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -168,6 +168,10 @@ public class ConnectionEntry implements java.io.Serializable, ClientVersion, ACA
    
    public int getBeta() {
 	   return _beta;
+   }
+   
+   public ClientType getClientType() {
+	   return ClientType.PILOT;
    }
    
    /**

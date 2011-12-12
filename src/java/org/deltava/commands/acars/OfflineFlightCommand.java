@@ -172,7 +172,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				if (cInfo.isBeta())
 					latestBuild = abdao.getLatestBeta(cInfo.getVersion(), cInfo.getClientBuild());
 				if (latestBuild == null)
-					latestBuild = abdao.getLatestBuild(cInfo.getVersion());
+					latestBuild = abdao.getLatestBuild(cInfo);
 				ctx.release();
 				
 				// Set message
