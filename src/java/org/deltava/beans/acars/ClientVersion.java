@@ -27,4 +27,10 @@ public interface ClientVersion {
 	 * @return the beta, or zero if non-beta
 	 */
 	public int getBeta();
+	
+	/**
+	 * Returns the client type.
+	 * @return the type
+	 */
+	public ClientType getClientType();
 }

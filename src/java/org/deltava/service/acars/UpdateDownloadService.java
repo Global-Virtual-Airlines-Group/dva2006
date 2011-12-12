@@ -29,7 +29,7 @@ public class UpdateDownloadService extends DownloadService {
 		
 		// Get the installer to download
 		boolean isDispatch = Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue();
-		String fName = SystemData.get("airline.code") + (isDispatch ? "DispatchInc.exe" : "ACARS3Inc.exe");
+		String fName = SystemData.get("airline.code") + (isDispatch ? "-DispatchInc.exe" : "-ACARS3Inc.exe");
 
 		// Get the installer
 		File f = new File(SystemData.get("path.library"), fName);

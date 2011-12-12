@@ -61,21 +61,40 @@ public class GetACARSBuilds extends DAO {
 	}
 	
 	/**
-	 * Returns the latest build for a particular ACARS version.
-	 * @param version the ACARS version
+	 * Returns the latest build for a particular ACARS version and client type.
+	 * @param info the ClientInfo
 	 * @return a ClientInfo bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public ClientInfo getLatestBuild(int version) throws DAOException {
+	public ClientInfo getLatestBuild(ClientInfo info) throws DAOException {
 		try {
 			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
-			_ps.setString(1, "latest");
-			_ps.setInt(2, version);
+			_ps.setInt(2, info.getVersion());
+			switch (info.getClientType()) {
+				case DISPATCH:
+					_ps.setString(1, "latestDispatch");
+					break;
+			
+				case VIEWER:
+					_ps.setString(1, "latestViewer");
+					break;
+					
+				case ATC:
+					_ps.setString(1, "latestATC");
+					break;
+					
+				case PILOT:
+				default:
+					_ps.setString(1, "latest");
+					break;
+			}
 			
 			ClientInfo inf = null;
 			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					inf = new ClientInfo(version, Integer.valueOf(rs.getString(1)).intValue());
+				if (rs.next()) {
+					inf = new ClientInfo(info.getVersion(), Integer.valueOf(rs.getString(1)).intValue());
+					inf.setClientType(info.getClientType());
+				}
 			}
 			
 			_ps.close();
@@ -107,9 +126,26 @@ public class GetACARSBuilds extends DAO {
 			prepareStatement("SELECT COUNT(*) FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA<=?)");
 			_ps.setInt(2, inf.getVersion());
 			_ps.setInt(3, inf.getClientBuild());
-			if (role == AccessRole.CONNECT)
-				_ps.setString(1, inf.isDispatch() ? "minDispatch" : "minBuild");
-			else
+			if (role == AccessRole.CONNECT) {
+				switch (inf.getClientType()) {
+					case DISPATCH: 
+						_ps.setString(1, "minDispatch");
+						break;
+					
+					case VIEWER:
+						_ps.setString(1, "minViewer");
+						break;
+						
+					case ATC:
+						_ps.setString(1, "minATC");
+						break;
+				
+					case PILOT:
+					default:
+						_ps.setString(1, "minBuild");
+						break;
+				}
+			} else
 				_ps.setString(1, "minUpload");
 
 			// Check if the build is OK
