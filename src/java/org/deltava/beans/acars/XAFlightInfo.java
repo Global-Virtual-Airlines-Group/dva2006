@@ -84,6 +84,10 @@ public class XAFlightInfo extends FDRFlightReport {
 		return _zfw;
 	}
 	
+    public final int getLength() {
+    	return (super.getLength() != 0) ? super.getLength() : (int)((getStartTime().getTime() - getEndTime().getTime()) / 360000);
+    }
+	
 	/**
 	 * Updates the aircraft weight without fuel.
 	 * @param zfw the weight in pounds
