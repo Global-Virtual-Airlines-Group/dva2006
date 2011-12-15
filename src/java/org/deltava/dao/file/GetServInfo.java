@@ -39,7 +39,7 @@ public class GetServInfo extends DAO implements CachingDAO {
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
 	private static final Cache<NetworkStatus> _netCache = new ExpiringCache<NetworkStatus>(3, 43200); // 12 hours
-	private static final ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 180); // 3 minutes
+	private static final ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 60); // 1 minute
 	
 	/**
 	 * Initializes the DAO with a particular stream.
