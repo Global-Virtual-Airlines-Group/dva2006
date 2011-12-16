@@ -44,7 +44,8 @@ return true;
 <c:if test="${!checkRide.academy}">
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />)</td>
+ <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />) -
+ ${checkRide.owner.name}</td>
 </tr>
 </c:if>
 <tr>
