@@ -131,9 +131,10 @@ public class GetExam extends DAO {
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.OWNER, CRR.COURSE "
-					+ "FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
-					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
-					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.ID=?) LIMIT 1");
+				+ "FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ, common.USERDATA UD) LEFT JOIN "
+				+ "exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON "
+				+ "(CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (UD.ID=CR.PILOT_ID) AND "
+				+ "(CR.ID=?) ORDER BY IF(UD.AIRLINE=EQ.OWNER,0,1) LIMIT 1");
 			_ps.setInt(1, id);
 			List<CheckRide> results = executeCheckride();
 			return results.isEmpty() ? null : results.get(0);
@@ -151,9 +152,10 @@ public class GetExam extends DAO {
 	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.OWNER, CRR.COURSE FROM "
-					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
-					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
-					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CF.ACARS_ID=?) LIMIT 1");
+				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ, common.USERDATA UD) LEFT JOIN "
+				+ "exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON "
+				+ "(CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (UD.ID=CR.PILOT_ID) AND "
+				+ "(CF.ACARS_ID=?) ORDER BY IF(UD.AIRLINE=EQ.OWNER,0,1) LIMIT 1");
 			_ps.setInt(1, acarsID);
 			List<CheckRide> results = executeCheckride();
 			return results.isEmpty() ? null : results.get(0);
@@ -192,9 +194,11 @@ public class GetExam extends DAO {
 	public CheckRide getCheckRide(int pilotID, String eqType, int status) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.OWNER, CRR.COURSE FROM "
-					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
-					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
-					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.ACTYPE=?) AND (CR.STATUS=?) LIMIT 1");
+				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ, common.USERDATA UD) LEFT JOIN "
+				+ "exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON "
+				+ "(CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (UD.ID=CR.PILOT_ID) AND "
+				+ "(CR.PILOT_ID=?) AND (CR.ACTYPE=?) AND (CR.STATUS=?) ORDER BY IF(UD.AIRLINE=EQ.OWNER,0,1) "
+				+ "LIMIT 1");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
 			_ps.setInt(3, status);
@@ -215,10 +219,13 @@ public class GetExam extends DAO {
 	 */
 	public List<CheckRide> getCheckRides(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.OWNER, CRR.COURSE FROM "
-					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
-					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) "
-					+ "WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) ORDER BY CR.CREATED");
+			prepareStatement("SELECT CR.*, CF.ACARS_ID, (SELECT EQ.OWNER FROM common.EQPROGRAMS EQ "
+				+ "WHERE (CR.EQTYPE=EQ.EQTYPE) ORDER BY IF(UD.AIRLINE=EQ.OWNER,0,1) LIMIT 1) AS EQOWNER, " 
+				+ "(SELECT EQ.STAGE FROM common.EQPROGRAMS EQ WHERE (CR.EQTYPE=EQ.EQTYPE) ORDER BY " 
+				+ "IF(UD.AIRLINE=EQ.OWNER,0,1) LIMIT 1) AS EQSTAGE, CRR.COURSE FROM " 
+				+ "(exams.CHECKRIDES CR, common.USERDATA UD) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON "
+				+ "(CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
+				+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) ORDER BY CR.CREATED");
 			_ps.setInt(1, pilotID);
 			return executeCheckride();
 		} catch (SQLException se) {
