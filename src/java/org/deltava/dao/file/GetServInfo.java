@@ -186,7 +186,7 @@ public class GetServInfo extends DAO implements CachingDAO {
 
 			String iData = br.readLine();
 			while ((iData != null) && (!Thread.currentThread().isInterrupted())) {
-				if ((iData.length() > 0) && (iData.charAt(0) == '!')) {
+				if ((iData.length() > 7) && (iData.charAt(0) == '!')) {
 					String sectionName = iData.substring(1, 8).toUpperCase();
 					if (log.isDebugEnabled())
 						log.debug("Loading Section " + sectionName);
