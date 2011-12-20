@@ -127,6 +127,8 @@ public class ImageServlet extends BasicAuthServlet {
 				case IMG_CHART:
 					GetChart cdao = new GetChart(c);
 					Chart cht = cdao.get(imgID);
+					if (cht == null)
+						break;
 					
 					// Log use
 					SetChart swdao = new SetChart(c);
