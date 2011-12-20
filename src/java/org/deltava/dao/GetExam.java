@@ -225,7 +225,7 @@ public class GetExam extends DAO {
 				+ "IF(UD.AIRLINE=EQ.OWNER,0,1) LIMIT 1) AS EQSTAGE, CRR.COURSE FROM " 
 				+ "(exams.CHECKRIDES CR, common.USERDATA UD) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON "
 				+ "(CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
-				+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) ORDER BY CR.CREATED");
+				+ "(CR.PILOT_ID=?) AND (UD.ID=CR._PILOT_ID) ORDER BY CR.CREATED");
 			_ps.setInt(1, pilotID);
 			return executeCheckride();
 		} catch (SQLException se) {
