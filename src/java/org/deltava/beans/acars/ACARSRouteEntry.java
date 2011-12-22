@@ -358,6 +358,8 @@ public class ACARSRouteEntry extends RouteEntry {
 			warnings.add("STALL");
 		if (isFlagSet(FLAG_OVERSPEED))
 			warnings.add("OVERSPEED");
+		if ((getAltitude() > 45000) && (getMach() < 1.05))
+			warnings.add("ALTITUDE");
 		if (isFlagSet(FLAG_GEARDOWN) && (getAirSpeed() > 250))
 			warnings.add("GEAR SPEED");
 		if (!isFlagSet(FLAG_GEARDOWN) && isFlagSet(FLAG_ONGROUND))
