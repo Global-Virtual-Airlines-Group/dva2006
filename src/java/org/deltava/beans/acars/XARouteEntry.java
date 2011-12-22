@@ -97,6 +97,8 @@ public class XARouteEntry extends RouteEntry {
 			warnings.add("250 UNDER 10K");
 		if (getFuelRemaining() <= 20)
 			warnings.add("NO FUEL");
+		if (getAltitude() > 45000)
+			warnings.add("ALTITUDE");
 		
 		return warnings.isEmpty() ? null : StringUtils.listConcat(warnings, " ");
 	}
