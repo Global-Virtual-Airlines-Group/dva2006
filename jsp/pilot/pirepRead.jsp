@@ -83,9 +83,10 @@ return true;
 <!-- Pirep Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank.name}, ${pilot.equipmentType})</td>
+ <td class="data"><c:if test="${!empty pilot.pilotCode}">${pilot.pilotCode} </c:if>(${pilot.rank.name}, ${pilot.equipmentType})
+ - <el:cmd url="logbook" link="${pilot}" className="sec bld">VIEW LOG BOOK</el:cmd></td>
 </tr>
-<content:filter roles="HR,PIREP,Examination">
+<content:filter roles="HR,PIREP,Examination,Operations">
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
