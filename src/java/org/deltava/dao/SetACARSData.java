@@ -367,6 +367,8 @@ public class SetACARSData extends DAO {
 			// Restore the default livery
 			prepareStatementWithoutLimits("UDPATE acars.LIVERIES SET ISDEFAULT=? WHERE (AIRLINE=?) "
 					+ "ORDER BY ISDEFAULT DESC, LIVERY LIMIT 1");
+			_ps.setBoolean(1, true);
+			_ps.setString(2, code);
 			executeUpdate(0);
 			commitTransaction();
 		} catch (SQLException se) {
