@@ -295,8 +295,6 @@ public class SetSchedule extends DAO {
 			_ps.setBoolean(11, entry.getHistoric());
 			_ps.setBoolean(12, entry.getCanPurge());
 			_ps.setBoolean(13, entry.getAcademy());
-
-			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -311,33 +309,34 @@ public class SetSchedule extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, ACRANGE, IATA, HISTORIC, ETOPS, SEATS, "
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ACRANGE, IATA, HISTORIC, ETOPS, SEATS, "
 				+ "ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
 				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, TO_RWLENGTH, LN_RWLENGTH) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
-			_ps.setInt(3, a.getRange());
-			_ps.setString(4, StringUtils.listConcat(a.getIATA(), ","));
-			_ps.setBoolean(5, a.getHistoric());
-			_ps.setBoolean(6, a.getETOPS());
-			_ps.setInt(7, a.getSeats());
-			_ps.setByte(8, a.getEngines());
-			_ps.setString(9, a.getEngineType());
-			_ps.setInt(10, a.getCruiseSpeed());
-			_ps.setInt(11, a.getFuelFlow());
-			_ps.setInt(12, a.getBaseFuel());
-			_ps.setInt(13, a.getTaxiFuel());
-			_ps.setInt(14, a.getTanks(Aircraft.TankType.PRIMARY));
-			_ps.setInt(15, a.getPct(Aircraft.TankType.PRIMARY));
-			_ps.setInt(16, a.getTanks(Aircraft.TankType.SECONDARY));
-			_ps.setInt(17, a.getPct(Aircraft.TankType.SECONDARY));
-			_ps.setInt(18, a.getTanks(Aircraft.TankType.OTHER));
-			_ps.setInt(19, a.getMaxWeight());
-			_ps.setInt(20, a.getMaxTakeoffWeight());
-			_ps.setInt(21, a.getMaxLandingWeight());
-			_ps.setInt(22, a.getTakeoffRunwayLength());
-			_ps.setInt(23, a.getLandingRunwayLength());
+			_ps.setString(3, a.getFamily());
+			_ps.setInt(4, a.getRange());
+			_ps.setString(5, StringUtils.listConcat(a.getIATA(), ","));
+			_ps.setBoolean(6, a.getHistoric());
+			_ps.setBoolean(7, a.getETOPS());
+			_ps.setInt(8, a.getSeats());
+			_ps.setByte(9, a.getEngines());
+			_ps.setString(10, a.getEngineType());
+			_ps.setInt(11, a.getCruiseSpeed());
+			_ps.setInt(12, a.getFuelFlow());
+			_ps.setInt(13, a.getBaseFuel());
+			_ps.setInt(14, a.getTaxiFuel());
+			_ps.setInt(15, a.getTanks(Aircraft.TankType.PRIMARY));
+			_ps.setInt(16, a.getPct(Aircraft.TankType.PRIMARY));
+			_ps.setInt(17, a.getTanks(Aircraft.TankType.SECONDARY));
+			_ps.setInt(18, a.getPct(Aircraft.TankType.SECONDARY));
+			_ps.setInt(19, a.getTanks(Aircraft.TankType.OTHER));
+			_ps.setInt(20, a.getMaxWeight());
+			_ps.setInt(21, a.getMaxTakeoffWeight());
+			_ps.setInt(22, a.getMaxLandingWeight());
+			_ps.setInt(23, a.getTakeoffRunwayLength());
+			_ps.setInt(24, a.getLandingRunwayLength());
 			executeUpdate(1);
 			
 			// Add the webapps
@@ -370,7 +369,7 @@ public class SetSchedule extends DAO {
 			prepareStatement("UPDATE common.AIRCRAFT SET ACRANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 				+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
 				+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, SEATS=?, "
-				+ "TO_RWLENGTH=?, LN_RWLENGTH=?, FULLNAME=?, NAME=? WHERE (NAME=?)");
+				+ "TO_RWLENGTH=?, LN_RWLENGTH=?, FULLNAME=?, FAMILY=?, NAME=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
@@ -393,8 +392,9 @@ public class SetSchedule extends DAO {
 			_ps.setInt(20, a.getTakeoffRunwayLength());
 			_ps.setInt(21, a.getLandingRunwayLength());
 			_ps.setString(22, a.getFullName());
-			_ps.setString(23, a.getName());
-			_ps.setString(24, oldName);
+			_ps.setString(23, a.getFamily());
+			_ps.setString(24, a.getName());
+			_ps.setString(25, oldName);
 			executeUpdate(1);
 
 			// Clean out the webapps

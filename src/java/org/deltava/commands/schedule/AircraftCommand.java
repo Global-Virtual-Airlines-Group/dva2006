@@ -51,6 +51,7 @@ public class AircraftCommand extends AbstractFormCommand {
 
 			// Update the aircraft from the request
 			a.setFullName(ctx.getParameter("fullName"));
+			a.setFamily(ctx.getParameter("family"));
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setMaxWeight(StringUtils.parse(ctx.getParameter("maxWeight"), 0));
 			a.setMaxTakeoffWeight(StringUtils.parse(ctx.getParameter("maxTWeight"), 0));

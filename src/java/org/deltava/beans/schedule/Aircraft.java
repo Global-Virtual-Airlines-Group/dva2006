@@ -45,6 +45,8 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	private String _fullName;
 	private boolean _historic;
 	private boolean _etops;
+	
+	private String _family;
 
 	private int _maxRange;
 	private byte _engineCount;
@@ -87,6 +89,15 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 */
 	public String getName() {
 		return _name;
+	}
+	
+	/**
+	 * Returns the aircraft family name.
+	 * @return the family name
+	 * @see Aircraft#setFamily(String)
+	 */
+	public String getFamily() {
+		return _family;
 	}
 
 	/**
@@ -365,6 +376,16 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 		_fullName = name.trim();
 	}
 
+	/**
+	 * Updates the aircraft family code, using for multi-player fallback rendering.
+	 * @param family the family code
+	 * @throws NullPointerException if family is null
+	 * @see Aircraft#getFamily()
+	 */
+	public void setFamily(String family) {
+		_family = family.toUpperCase();
+	}
+	
 	/**
 	 * Updates the maximum range of the aircraft.
 	 * @param range the range in miles
