@@ -57,7 +57,7 @@ return true;
 <el:table className="form">
 <tr class="title">
 <c:if test="${!empty issue}">
- <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
+ <td class="caps" colspan="2">ISSUE #<fmt:int value="${issue.ID}" /> - ${issue.subject}</td>
 </c:if>
 <c:if test="${empty issue}">
  <td class="caps" colspan="2">NEW <content:airline /> HELP DESK ISSUE</td>
@@ -70,7 +70,8 @@ return true;
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="page" />
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><span class="bld">${author.name}</span><c:if test="${!empty author.pilotCode}"> (${author.pilotCode})</c:if> on
+ <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <c:if test="${access.canUpdateStatus}">
 <tr>
@@ -95,7 +96,7 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.getPublic()}" /><br />
-<el:box name="sendIssue" idx="*" value="true" checked="${true}" label="Send Notification to Assignee" /></td>
+<el:box name="sendIssue" idx="*" value="true" checked="true" label="Send Notification to Assignee" /></td>
 </tr>
 <tr class="title">
  <td colspan="2" class="left caps">CONVERT TO DEVELOPMENT ISSUE</td>
