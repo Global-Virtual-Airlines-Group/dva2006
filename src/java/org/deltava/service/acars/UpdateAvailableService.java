@@ -34,8 +34,6 @@ public class UpdateAvailableService extends WebService {
 				StringUtils.parse(ctx.getParameter("build"), 100), StringUtils.parse(ctx.getParameter("beta"), 0));
 		if (Boolean.valueOf(ctx.getParameter("dispatch")).booleanValue())
 			cInfo.setClientType(ClientType.DISPATCH);
-		else if (Boolean.valueOf(ctx.getParameter("viewer")).booleanValue())
-			cInfo.setClientType(ClientType.VIEWER);
 		else if (Boolean.valueOf(ctx.getParameter("atc")).booleanValue())
 			cInfo.setClientType(ClientType.ATC);
 

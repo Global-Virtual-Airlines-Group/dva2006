@@ -70,10 +70,6 @@ public class ClientInfo implements ClientVersion, Comparable<ClientInfo>, java.i
 		return (_type == ClientType.DISPATCH);
 	}
 	
-	public boolean isViewer() {
-		return (_type == ClientType.VIEWER);
-	}
-	
 	/**
 	 * Updates the client type.
 	 * @param ct the ClientType
