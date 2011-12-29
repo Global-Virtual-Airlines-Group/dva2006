@@ -39,7 +39,7 @@ return true;
 <el:table className="form">
 <tr class="title caps">
 <c:if test="${!empty issue}">
- <td colspan="2"><content:airline /> DEVELOPMENT ISSUE #${issue.ID} - ${issue.subject}</td>
+ <td colspan="2"><content:airline /> DEVELOPMENT ISSUE #<fmt:int value="${issue.ID}" /> - ${issue.subject}</td>
 </c:if>
 <c:if test="${empty issue}">
  <td colspan="2">NEW <content:airline /> DEVELOPMENT ISSUE</td>
@@ -51,7 +51,8 @@ return true;
 <c:set var="author" value="${pilots[issue.authorID]}" scope="page" />
 <tr>
  <td class="label">Reported by</td>
- <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><span class="bld">${author.name}</span><c:if test="${!empty author.pilotCode}"> (${author.pilotCode})</c:if> on
+ <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Status</td>
