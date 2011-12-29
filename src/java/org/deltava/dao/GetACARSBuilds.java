@@ -75,10 +75,6 @@ public class GetACARSBuilds extends DAO {
 					_ps.setString(1, "latestDispatch");
 					break;
 			
-				case VIEWER:
-					_ps.setString(1, "latestViewer");
-					break;
-					
 				case ATC:
 					_ps.setString(1, "latestATC");
 					break;
@@ -132,10 +128,6 @@ public class GetACARSBuilds extends DAO {
 						_ps.setString(1, "minDispatch");
 						break;
 					
-					case VIEWER:
-						_ps.setString(1, "minViewer");
-						break;
-						
 					case ATC:
 						_ps.setString(1, "minATC");
 						break;
