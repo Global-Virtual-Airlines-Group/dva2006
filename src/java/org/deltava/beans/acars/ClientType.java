@@ -9,7 +9,7 @@ package org.deltava.beans.acars;
  */
 
 public enum ClientType {
-	PILOT, DISPATCH, VIEWER, ATC;
+	PILOT, DISPATCH, ATC;
 	
 	/**
 	 * Returns a formatted name.
