@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
@@ -13,13 +13,13 @@ public interface VersionInfo {
     public static final int MAJOR = 4;
     public static final int MINOR = 1;
     
-    public static final int BUILD = 392;
+    public static final int BUILD = 393;
     public static final boolean FINAL = false;
     
     //public static final String BUILD_DATE="$BUILD";
     
-    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2011 Global Virtual Airlines Group. All Rights Reserved.";
-    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2011 <a rel=\"external\" class=\"small\" href=\"http://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
+    public static final String TXT_COPYRIGHT = "Copyright 2004 - 2012 Global Virtual Airlines Group. All Rights Reserved.";
+    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004 - 2012 <a rel=\"external\" class=\"small\" href=\"http://www.gvagroup.org/\">Global Virtual Airlines Group</a>. All Rights Reserved.";
     
     public static final String APPNAME = "(Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
     public static final String USERAGENT = "Golgotha/" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + "-b" + String.valueOf(BUILD);
