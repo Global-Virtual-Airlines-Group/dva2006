@@ -1,6 +1,6 @@
 #!/bin/bash
 # ServInfo download script
-# (c) 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set the file to download to
 if [ -z "$2" ]; then
@@ -15,14 +15,13 @@ if [ -z "$3" ]; then
 fi
 
 # Get the status URL
+TrimCount=0
 if [ "IVAO" == "$1" ]; then
  StatusURL="http://www.ivao.aero/whazzup/status.txt"
  network="ivao"
-elif [ "INTVAS" == "$1" ]; then
- StatusURL="http://www.intvas.net/whazzup/status.txt"
- network="intvas"
 else
- StatusURL="http://usa-s1.vatsim.net/data/status.txt"
+ StatusURL="http://stats.vatsim.net/status.txt"
+ TrimCount=1
  network="vatsim"
 fi
 
@@ -71,7 +70,7 @@ RandomLine=$((1 + ($UpperBound * $RANDOM) / (32767 + 1) ))
 # Use sed to grab the random line and get rid of the trailing newline
 MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network/urls")
 URLSize=$(echo -n "$MyURL" | wc -c | sed "s/ //g")
-URLSize=`expr $URLSize "-" 1`
+URLSize=`expr $URLSize "-" $TrimCount`
 MyURL=$(echo -n "$MyURL" | cut -b 1-${URLSize})
 FileField=$(echo -n "$MyURL" | awk -F / '{print NF}')
 InfoFile=$(echo -n "$MyURL" | cut -d / -f $FileField)
