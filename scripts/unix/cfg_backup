@@ -1,6 +1,6 @@
 #!/bin/bash
 # Configuration backup script
-# (c) 2005, 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 
 # Goto backup directory
 cd /home/backup/cfg
@@ -24,6 +24,13 @@ chown backup:gva *.tar.gz
 # Copy data directories
 cd /home/www/deltava.org
 tar --exclude="www/tracks/*" --exclude="www/wx/*" --exclude="www/luke/*" -vcf /home/backup/sites/www.deltava.org.tar *
+
+cd /home/www/gvagroup.org
+tar -vcf /home/backup/sites/www.gvagroup.org.tar *
+
+cd /home/www/kolin.org
+tar -vcf /home/backup/sites/www.kolin.org.tar *
+
 cd /home/www/afva.net
 tar -vcf /home/backup/sites/www.afva.net.tar *
 gzip -f7 /home/backup/sites/*.tar
