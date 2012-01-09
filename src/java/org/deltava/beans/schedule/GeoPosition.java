@@ -1,13 +1,12 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.GeospaceLocation;
+import org.deltava.beans.*;
 
 /**
  * A class for working with latitude/longitude pairs.
  * @author Luke
- * @version 3.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -132,13 +131,9 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	/**
 	 * Sets the latitude and ensures its validity.
 	 * @param lat The latitude to set in degrees (values < 0 are South of the Equator)
-	 * @throws IllegalArgumentException The latitude is < 90 or > -90 degrees
 	 */
 	public void setLatitude(double lat) {
-		if (Math.abs(lat) > 90)
-			throw new IllegalArgumentException("Latitude cannot exceed 90 degrees - " + lat);
-
-		_lat = lat;
+		_lat = Math.max(-89.99999, Math.min(89.99999, lat));
 	}
 
 	/**
@@ -147,12 +142,13 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @param lng The longitude to set in degrees (values < 0 are West of the Greenwich Meridian)
 	 */
 	public void setLongitude(double lng) {
+		double lon = lng;
 		if (lng > 180)
-			_lon = -180 + (lng - 180.0);
+			lon = -180 + (lng - 180.0);
 		else if (lng < -180)
-			_lon = 180 + (lng + 180.0);
-		else
-			_lon = lng;
+			lon = 180 + (lng + 180.0);
+		
+		_lon = Math.max(-179.99999, Math.min(179.99999, lon));
 	}
 
 	/**
@@ -187,8 +183,6 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @return The distance in statute miles between the two positions, or -1 if gp2 is null
 	 */
 	public int distanceTo(GeoLocation gp2) {
-	   
-	   // Do null check
 	   if (gp2 == null)
 	      return -1;
 
