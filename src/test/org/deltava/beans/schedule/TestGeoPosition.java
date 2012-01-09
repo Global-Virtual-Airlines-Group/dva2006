@@ -92,23 +92,4 @@ public class TestGeoPosition extends AbstractBeanTestCase {
        assertEquals(39.54707861, mp2.getLatitude(), 0.0001);
        assertEquals(-97.201534, mp2.getLongitude(), 0.0001);
     }
-    
-    public void testValidation() {
-       validateInput("latitude", new Double(-90.0001), IllegalArgumentException.class);
-       validateInput("latitude", new Double(90.0001), IllegalArgumentException.class);
-        
-        try {
-            _gp.setLatitude(90, 0, 1);
-            fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) {
-        	// empty
-        }
-
-        try {
-            _gp.setLatitude(-90, 0, 1);
-            fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException iae) { 
-        	// empty
-        }
-    }
 }
