@@ -39,49 +39,21 @@ public final class ETOPSHelper {
 		_airports.addAll(apSet);
 	}
 	
-	private static boolean crosses(RoutePair rp, double lng) {
-		return GeoUtils.crossesMeridian(rp.getAirportD(), rp.getAirportA(), lng);
-	}
-
 	/**
-	 * Validates whether a Route Pair should trigger an ETOPS warning.
+	 * Validates whether an ETOPS classification should trigger an ETOPS warning.
 	 * @param a the Aircraft used, or null for a generic 2-engine aircraft
-	 * @param rp the RoutePair
+	 * @param e the ETOPS classification
 	 * @return TRUE if an ETOPS warning should be triggered, otherwise FALSE
 	 * @throws NullPointerException if rp is null 
 	 */
-	public static boolean validate(Aircraft a, RoutePair rp) {
+	public static boolean validate(Aircraft a, ETOPS e) {
 		if (a == null) a = DUMMY;
 		
 		// Check if aircraft is ETOPS or >2 engines
 		if (a.getETOPS() || (a.getEngines() > 2))
 			return false;
 		
-		// Check for North/South Atlantic - exclude Iceland/Greenland runs
-		if (crosses(rp, -30)) {
-			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), -30);
-			return ((lat < 61) || crosses(rp, -55));
-		}
-		
-		// Check for Indian Ocean
-		if (crosses(rp, 75)) {
-			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), 75);
-			return (lat < -1);
-		}
-		
-		// Check for Eastern Pacific
-		if (crosses(rp, -143)) {
-			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), -143);
-			return (lat > 55);
-		}
-		
-		// Check for Western Pacific
-		if (crosses(rp, 172)) {
-			double lat = GeoUtils.meridianLatitude(rp.getAirportD(), rp.getAirportA(), 172);
-			return (lat > -1);
-		}
-		
-		return false;
+		return (e.getTime() > 75);
 	}
 
 	/**
