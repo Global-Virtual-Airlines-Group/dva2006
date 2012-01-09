@@ -17,7 +17,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -58,6 +58,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			GetPilot.invalidateID(pirep.getDatabaseID(DatabaseID.PILOT));
 			Pilot p = pdao.get(pirep.getDatabaseID(DatabaseID.PILOT));
 			
+			// Create comments field
+			Collection<String> comments = new ArrayList<String>();
+			
 			// If we found a draft flight report, save its database ID and copy its ID to the PIREP we will file
 			List<FlightReport> dFlights = frdao.getDraftReports(p.getID(), pirep.getAirportD(), pirep.getAirportA(), SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
@@ -68,7 +71,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				pirep.setDatabaseID(DatabaseID.EVENT, fr.getDatabaseID(DatabaseID.EVENT));
 				pirep.setAttribute(FlightReport.ATTR_CHARTER, fr.hasAttribute(FlightReport.ATTR_CHARTER));
 				if (!StringUtils.isEmpty(fr.getComments()))
-					pirep.setComments(fr.getComments());
+					comments.add(fr.getComments());
 			}
 
 			// Save the Pilot profile
@@ -95,8 +98,11 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pType = i.next();
 					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
-					if (!helper.canPromote(pEQ))
+					if (!helper.canPromote(pEQ)) {
 						i.remove();
+						if (!StringUtils.isEmpty(helper.getLastComment()))
+							comments.add("Not eligible for promotion: " + helper.getLastComment());
+					}
 				}
 				
 				// Add programs if we still have any that do not require ACARS legs
@@ -130,17 +136,13 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				if (e != null) {
 					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 1000;
 					if (timeSinceEnd > 86400) {
-						log.warn("Flight logged over 24 hours after Event completion");
+						comments.add("Flight logged over 24 hours after Event completion");
 						pirep.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
 					pirep.setDatabaseID(DatabaseID.EVENT, 0);
 			}
 
-			// Update the status of the PIREP
-			pirep.setStatus(FlightReport.SUBMITTED);
-			pirep.setSubmittedOn(new Date());
-			
 			// Check the range
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(pirep.getEquipmentType());
@@ -150,7 +152,11 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			}
 			
 			// Check ETOPS
-			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, pirep));
+			Collection<GeoLocation> gc = GeoUtils.greatCircle(pirep.getAirportD(), pirep.getAirportA(), 25);
+			ETOPS e = ETOPSHelper.classify(gc);
+			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, e));
+			if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
+				comments.add("ETOPS classificataion: " + e.toString());
 			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
@@ -177,6 +183,12 @@ public class PIREPSubmitCommand extends AbstractCommand {
 					ctx.setAttribute("avgTime", new Double(avgHours), REQUEST);
 				}
 			}
+			
+			// Update the status of the PIREP
+			pirep.setStatus(FlightReport.SUBMITTED);
+			pirep.setSubmittedOn(new Date());
+			if (!comments.isEmpty())
+				pirep.setComments(StringUtils.listConcat(comments, "\r\n"));
 
 			// Get the DAO and write the PIREP to the database
 			SetFlightReport fwdao = new SetFlightReport(con);

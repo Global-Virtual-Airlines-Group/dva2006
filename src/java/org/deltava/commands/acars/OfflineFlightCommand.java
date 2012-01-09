@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.io.*;
@@ -281,11 +281,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 			
 			// Check ETOPS
-			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, afr));
-			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN)) {
-				ETOPS etopsClass = ETOPSHelper.classify(flight.getPositions());
+			ETOPS etopsClass = ETOPSHelper.classify(flight.getPositions()); 
+			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass));
+			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
 				comments.add("ETOPS classificataion: " + etopsClass.toString());
-			}
 			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
