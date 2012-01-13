@@ -300,7 +300,9 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
 			
 			case Channel.INFOTYPE_NROLE:
 				_nRoles.clear();
-				_nRoles.addAll(roles);
+				if (roles != null)
+					_nRoles.addAll(roles);
+				
 				break;
     	}
     }
