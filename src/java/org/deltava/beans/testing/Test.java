@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -33,7 +33,7 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
      */
     public static final String[] EXAMSTATUS = {"New", "Submitted", "OK"};
     
-    private String _name;
+    private final String _name;
     private int _status;
     private int _pilotID;
     private int _scorerID;
@@ -325,14 +325,10 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
     /**
      * Sets the stage level for this Examination.
      * @param stage the stage
-     * @throws IllegalArgumentException if stage is zero or negative
      * @see Test#getStage()
      */
     public void setStage(int stage) {
-        if (stage < 1)
-            throw new IllegalArgumentException("Stage cannot be zero or negative");
-        
-        _stage = stage;
+        _stage = Math.max(1, stage);
     }
     
     /**
