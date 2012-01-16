@@ -156,7 +156,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ETOPS e = ETOPSHelper.classify(gc);
 			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, e));
 			if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + e.toString());
+				comments.add("ETOPS classificataion: " + String.valueOf(e));
 			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
