@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 2.2
  */
 
@@ -107,6 +108,9 @@ public class RoutePlanService extends WebService {
 				GetSchedule sdao = new GetSchedule(con);
 				GetFlightReports frdao = new GetFlightReports(con);
 				List<FlightReport> dFlights = frdao.getDraftReports(ctx.getUser().getID(), aD, aA, SystemData.get("airline.db"));
+				ctx.startTX();
+				
+				AssignmentInfo ai = null;
 				FlightReport dfr = dFlights.isEmpty() ? null : dFlights.get(0);
 				if (dfr == null) {
 					ScheduleEntry schedInfo = sdao.getFlightNumber(aD, aA, SystemData.get("airline.db"));
@@ -115,20 +119,37 @@ public class RoutePlanService extends WebService {
 						dfr.setAirportD(aD);
 						dfr.setAirportA(aD);
 						dfr.setEquipmentType(ctx.getUser().getEquipmentType());
-					} else
+						dfr.setAuthorID(ctx.getUser().getID());
+					} else {
 						dfr = new DraftFlightReport(schedInfo);
+						
+						// Create a flight assignment
+						ai = new AssignmentInfo(schedInfo.getEquipmentType());
+						ai.setPilotID(ctx.getUser());
+						ai.setStatus(AssignmentInfo.RESERVED);
+						ai.setAssignDate(new Date());
+						ai.addAssignment(new AssignmentLeg(dfr));
+						ai.addFlight(dfr);
+					}
 					
-					dfr.setAuthorID(ctx.getUser().getID());
 					dfr.setRank(ctx.getUser().getRank());
 					dfr.setDate(new Date());
 				}
 				
-				// Save the route
+				// Save the flight assignment
+				if (ai != null) {
+					SetAssignment awdao = new SetAssignment(con);
+					awdao.write(ai, SystemData.get("airline.db"));
+				}
+				
+				// Save the route and commit
 				SetFlightReport frwdao = new SetFlightReport(con);
 				dfr.setRoute(rteBuf.toString());
 				frwdao.write(dfr);
+				ctx.commitTX();
 			}
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
 			ctx.release();
@@ -141,7 +162,7 @@ public class RoutePlanService extends WebService {
 			ctx.getResponse().getOutputStream().write(fpgen.generate(routePoints));
 			ctx.getResponse().getOutputStream().flush();
 		} catch (Exception e) {
-			throw error(SC_CONFLICT, "I/O Error", false);
+			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
 		}
 
 		return SC_OK;
