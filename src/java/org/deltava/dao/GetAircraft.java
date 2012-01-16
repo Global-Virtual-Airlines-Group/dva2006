@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.schedule.Aircraft;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -17,7 +18,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetAircraft extends DAO {
+public class GetAircraft extends DAO implements CachingDAO {
+	
+	private static final Cache<Aircraft> _cache = new ExpiringCache<Aircraft>(32, 1800);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -25,6 +28,10 @@ public class GetAircraft extends DAO {
 	 */
 	public GetAircraft(Connection c) {
 		super(c);
+	}
+	
+	public CacheInfo getCacheInfo() {
+		return new CacheInfo(_cache);
 	}
 
 	/**
@@ -34,6 +41,10 @@ public class GetAircraft extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Aircraft get(String name) throws DAOException {
+		Aircraft a = _cache.get(name);
+		if (a != null)
+			return a;
+		
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
@@ -134,8 +145,12 @@ public class GetAircraft extends DAO {
 			}
 		}
 
-		// Clean up and return
 		_ps.close();
+		
+		// Add to cache and return
+		for (Aircraft a : results.values())
+			_cache.add(a);
+		
 		return new ArrayList<Aircraft>(results.values());
 	}
 }

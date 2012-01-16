@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -110,6 +110,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetCoolerChannels(null));
 		daoCaches.add(new GetCoolerThreads(null));
 		daoCaches.add(new GetEquipmentType(null));
+		daoCaches.add(new GetAircraft(null));
 		daoCaches.add(new GetProgramStatistics(null));
 		daoCaches.add(new GetExamStatistics(null));
 		daoCaches.add(new GetMessageTemplate(null));
