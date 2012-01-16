@@ -284,7 +284,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			ETOPS etopsClass = ETOPSHelper.classify(flight.getPositions()); 
 			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass));
 			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + etopsClass.toString());
+				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			
 			// Calculate the load factor
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
