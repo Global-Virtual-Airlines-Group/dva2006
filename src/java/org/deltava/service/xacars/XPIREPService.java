@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -113,7 +113,6 @@ public class XPIREPService extends XAService {
 			CheckRide cr = exdao.getCheckRide(usr.getID(), xfr.getEquipmentType(), Test.NEW);
 			if (cr != null) {
 				cr.setStatus(Test.SUBMITTED);
-				cr.setFlightID(inf.getID());
 				cr.setSubmittedOn(new Date());
 				xfr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			}
@@ -277,11 +276,12 @@ public class XPIREPService extends XAService {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(xfr);
 			fwdao.writeACARS(xfr, SystemData.get("airline.db"));
-			// xwdao.delete(flightID);
+			xwdao.delete(flightID);
 			
 			// Write the check ride if necessary
 			if ((cr != null) && xfr.hasAttribute(FlightReport.ATTR_CHECKRIDE)) {
 				SetExam exwdao = new SetExam(con);
+				cr.setFlightID(fi.getID());
 				exwdao.write(cr);
 			}
 			
