@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -66,7 +66,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			// Get the last airport we flew into
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.setQueryMax(10);
-			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("ID DESC"));
+			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("PR.SUBMITTED DESC"));
 			for (Iterator<FlightReport> i = pireps.iterator(); (criteria.getAirportD() == null) && i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED))
