@@ -61,8 +61,8 @@ public class UpdateRunwayCommand extends AbstractCommand {
 			
 			// Get the runways
 			GetNavData navdao = new GetNavData(con);
-			Runway rD = navdao.getRunway(afr.getAirportD().getICAO(), dRwy.get(1));
-			Runway rA = navdao.getRunway(afr.getAirportA().getICAO(), aRwy.get(1));
+			Runway rD = (dRwy == null) ? null : navdao.getRunway(afr.getAirportD().getICAO(), dRwy.get(1));
+			Runway rA = (aRwy == null) ? null : navdao.getRunway(afr.getAirportA().getICAO(), aRwy.get(1));
 			
 			// Check if we've changed anything
 			boolean isUpdated = false;
