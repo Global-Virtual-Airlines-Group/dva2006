@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -82,8 +82,8 @@ public class AirportListService extends WebService {
 			Connection con = ctx.getConnection();
 
 			String al = ctx.getParameter("airline");
+			boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
 			if (al != null) {
-				boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
 				Airline a = SystemData.getAirline(al);
 
 				// Either search the schedule or return the SystemData list
@@ -109,6 +109,12 @@ public class AirportListService extends WebService {
 				// Get the airports from the schedule database
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
+			} else if (useSched) {
+				GetScheduleAirport dao = new GetScheduleAirport(con);
+				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
+				schedAirports.addAll(dao.getOriginAirports(null));
+				schedAirports.addAll(dao.getDestinationAirports(null));
+				filter = new AirportListFilter(schedAirports);
 			}
 			
 			// Add forced airport
@@ -148,7 +154,7 @@ public class AirportListService extends WebService {
 		try {
 			ctx.getResponse().setContentType("text/xml");
 			ctx.getResponse().setCharacterEncoding("UTF-8");
-			ctx.getResponse().setDateHeader("Expires", System.currentTimeMillis() + 120000);
+			ctx.getResponse().setDateHeader("Expires", System.currentTimeMillis() + 360000);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
