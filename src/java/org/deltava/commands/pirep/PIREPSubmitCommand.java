@@ -159,6 +159,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				comments.add("ETOPS classificataion: " + String.valueOf(e));
 			
 			// Calculate the load factor
+			pirep.setSubmittedOn(new Date());
 			EconomyInfo eInfo = (EconomyInfo) SystemData.getObject(SystemData.ECON_DATA);
 			if (eInfo != null) {
 				LoadFactor lf = new LoadFactor(eInfo);
@@ -186,7 +187,6 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Update the status of the PIREP
 			pirep.setStatus(FlightReport.SUBMITTED);
-			pirep.setSubmittedOn(new Date());
 			if (!comments.isEmpty())
 				pirep.setComments(StringUtils.listConcat(comments, "\r\n"));
 
