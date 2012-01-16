@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.net.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -63,6 +63,7 @@ public class MessageFormatTag extends TagSupport {
 	 * @return TagSupport.SKIP_BODY
 	 * @throws JspException if common.js is not included
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 
 		// Ensure that the common JS file has been included
@@ -80,6 +81,7 @@ public class MessageFormatTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_bbCode = false;
@@ -90,6 +92,7 @@ public class MessageFormatTag extends TagSupport {
 	 * @return the formatted text
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 
 		// Break out the string
@@ -111,11 +114,14 @@ public class MessageFormatTag extends TagSupport {
 				} catch (MalformedURLException mue) {
 					buf.append(token);
 				}
-			} else if ((token.charAt(0) == ':') && (token.length() > 2) && (token.charAt(token.length() - 1) == ':')) {
-				int iCode = StringUtils.arrayIndexOf(Emoticons.ICON_NAMES, token.substring(1, token.length() - 1));
-				if (iCode != -1)
+			} else if ((token.charAt(0) == ':') && (token.length() > 2) && (token.indexOf(':', 2) > 0)) {
+				int endPos = token.indexOf(':', 2);
+				String emIcon = token.substring(1, endPos); 
+				int iCode = StringUtils.arrayIndexOf(Emoticons.ICON_NAMES, emIcon);
+				if (iCode != -1) {
 					buf.append(emoticonURL(Emoticons.ICON_NAMES[iCode]));
-				else
+					buf.append(token.substring(endPos + 1));
+				} else
 					buf.append(StringUtils.stripInlineHTML(token));
 			} else if (((token.charAt(0) == ':') || (token.charAt(0) == ';')) && (token.length() == 2)) {
 				for (int x = 0; x < Emoticons.ICON_CODES.length; x++) {
@@ -142,8 +148,7 @@ public class MessageFormatTag extends TagSupport {
 		}
 		
 		try {
-			JspWriter out = pageContext.getOut();
-			out.print(msg);
+			pageContext.getOut().print(msg);
 		} catch (Exception e) {
 			throw new JspException(e);
 		} finally {
