@@ -66,7 +66,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 			// Get the last airport we flew into
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.setQueryMax(10);
-			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("PR.SUBMITTED DESC"));
+			List<FlightReport> pireps = prdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
 			for (Iterator<FlightReport> i = pireps.iterator(); (criteria.getAirportD() == null) && i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED))
