@@ -105,7 +105,7 @@ return true;
  <td class="label">Airline</td>
  <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${empty fafCriteria ? aCode : fafCriteria.airline}" onChange="void updateAirline(this)" /></td>
  <td class="label">Equipment</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${fafCriteria.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${param.myEQTypes ? '-' : fafCriteria.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
