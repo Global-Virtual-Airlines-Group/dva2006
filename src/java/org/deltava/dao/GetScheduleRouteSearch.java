@@ -49,33 +49,34 @@ public class GetScheduleRouteSearch extends GetSchedule {
 				+ "IF(AIRPORT_A=?,0,1) AS ISDST FROM SCHEDULE S WHERE (AIRPORT_D=?) GROUP BY S.AIRPORT_A "
 				+ "ORDER BY ISDST, LEG2 DESC, CNT DESC");
 			_ps.setString(1, rp.getAirportA().getIATA());
-			_ps.setString(2, rp.getAirportD().getIATA());
-			_ps.setString(3, rp.getAirportA().getIATA());
+			_ps.setString(2, rp.getAirportA().getIATA());
+			_ps.setString(3, rp.getAirportD().getIATA());
 			
 			// See if we can find anything
 			Collection<Airport> results = new LinkedHashSet<Airport>();
 			Collection<RoutePair> legInfo = new LinkedHashSet<RoutePair>();
-			results.add(rp.getAirportD());
+			results.add(rp.getAirportD()); boolean foundDest = false;
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Airport a = SystemData.getAirport(rs.getString(1));
 					int leg2 = rs.getInt(3); boolean isDest = (rs.getInt(4) == 0);
 					if (isDest || (leg2 > 0)) {
+						 foundDest = true;
 						results.add(a);
 						if (!isDest)
-							results.add(rp.getAirportA());
-							
+							 results.add(rp.getAirportA());
+						
 						break;
 					}
 					
-					legInfo.add(new ScheduleRoute(rp.getAirportD(), a));
+					legInfo.add(new ScheduleRoute(a, rp.getAirportA()));
 				}
 			}
 			
 			_ps.close();
 			
 			// If we got back some results, return them
-			if (results.size() > 1)
+			if (foundDest)
 				return new ArrayList<Airport>(results);
 			else if (level > 4)
 				return Collections.emptyList();

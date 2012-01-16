@@ -1318,6 +1318,18 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="routeassign">
+		<name>Route Flight Assignment</name>
+		<class>org.deltava.commands.assign.RouteAssignmentSearchCommand</class>
+		<roles>Pilot</roles>	
+	</command>
+
+	<command id="routebuild">
+		<name>Route Assignment Build</name>	
+		<class>org.deltava.commands.assign.RouteAssignmentBuildCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 
 	<!-- HR-related commands -->
 	<command id="massmail">
