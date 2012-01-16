@@ -390,6 +390,11 @@ departing today.</td>
 </tr>
 </c:if>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="routeassign">Multi-Leg Route</el:cmd></td>
+ <td class="data">You can build a route of one or more flight legs between two different airports using flights from the <content:airline />
+ Flight Schedule.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="myassign">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
  'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
