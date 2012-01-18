@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import org.deltava.beans.flight.*;
@@ -85,7 +85,7 @@ public class XAFlightInfo extends FDRFlightReport {
 	}
 	
     public final int getLength() {
-    	return (super.getLength() != 0) ? super.getLength() : (int)((getStartTime().getTime() - getEndTime().getTime()) / 360000);
+    	return (super.getLength() != 0) ? super.getLength() : (int)((getStartTime().getTime() - getEndTime().getTime()) / 3600000);
     }
 	
 	/**
