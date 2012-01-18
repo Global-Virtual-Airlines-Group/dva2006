@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -17,13 +17,13 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 
 import org.deltava.security.*;
 
-import org.deltava.util.Base64;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -59,11 +59,15 @@ public abstract class BasicAuthServlet extends GenericServlet {
 
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			String userID = tkns.nextToken();
-			p = dao.getByCode(userID);
+			UserID id = new UserID(tkns.nextToken());
+			if (id.hasAirlineCode())
+				p = dao.getByCode(id.toString());
+			else
+				p = dao.get(id.getUserID());
+			
 			if (p == null)
-				throw new SecurityException("Unknown User ID - " + userID);
-
+				throw new SecurityException("Unknown User ID - " + id);
+			
 			// Authenticate the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
