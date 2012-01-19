@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -128,10 +128,19 @@ public final class RouteLoadHelper {
 		_routes.addAll(routes);
 		
 		// Save in the cache
-		if (saveRoutes && !routes.isEmpty()) {
-			SetCachedRoutes rcwdao = new SetCachedRoutes(_c);
-			rcwdao.write(routes);
-			log.info("Saved " + routes.size() + " FlightAware Routes");
+		if (saveRoutes) {
+			try {
+				_c.setAutoCommit(false);
+				SetCachedRoutes rcwdao = new SetCachedRoutes(_c);
+				rcwdao.purge(new ScheduleRoute(_aD, _aA));
+				if (!routes.isEmpty())
+					rcwdao.write(routes);
+				
+				_c.commit();
+				log.info("Saved " + routes.size() + " FlightAware Routes");
+			} catch (Exception e) {
+				throw new DAOException(e);
+			}
 		}
 	}
 	

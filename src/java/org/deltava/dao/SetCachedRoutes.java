@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A Data Access Object to saved cached flight routes to the database.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 2.6
  */
 
@@ -54,15 +54,14 @@ public class SetCachedRoutes extends DAO {
 	
 	/**
 	 * Purges all saved routes between two airports from the database.
-	 * @param aD the departure Airport bean
-	 * @param aA the arrival Airport bean
+	 * @param rp the RoutePair
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purge(Airport aD, Airport aA) throws DAOException {
+	public void purge(RoutePair rp) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.ROUTE_CACHE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
-			_ps.setString(1, aD.getICAO());
-			_ps.setString(2, aA.getICAO());
+			_ps.setString(1, rp.getAirportD().getICAO());
+			_ps.setString(2, rp.getAirportA().getICAO());
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -77,8 +76,7 @@ public class SetCachedRoutes extends DAO {
 	 */
 	public int purge(int days) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("DELETE FROM common.ROUTE_CACHE WHERE "
-					+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? DAY))");
+			prepareStatementWithoutLimits("DELETE FROM common.ROUTE_CACHE WHERE (CREATED < DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
 			return executeUpdate(0);
 		} catch (SQLException se) {
