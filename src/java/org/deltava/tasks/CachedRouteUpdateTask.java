@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled task to update cached FlightAware routes.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 2.6
  */
 
@@ -77,7 +77,7 @@ public class CachedRouteUpdateTask extends Task {
 					Collection<? extends FlightRoute> faroutes = fwdao.getRouteData(rp.getAirportD(), rp.getAirportA());
 					if (!faroutes.isEmpty()) {
 						log.warn("Loaded " + faroutes.size() + " routes between " + rp.getAirportD() + " and " + rp.getAirportA());
-						rcwdao.purge(rp.getAirportD(), rp.getAirportA());
+						rcwdao.purge(rp);
 						rcwdao.write(faroutes);
 					} else {
 						log.warn("Created dummy route between " + rp.getAirportD() + " and " + rp.getAirportA());
