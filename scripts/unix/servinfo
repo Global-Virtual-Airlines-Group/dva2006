@@ -18,10 +18,10 @@ fi
 TrimCount=0
 if [ "IVAO" == "$1" ]; then
  StatusURL="http://www.ivao.aero/whazzup/status.txt"
+ TrimCount=1
  network="ivao"
 else
  StatusURL="http://stats.vatsim.net/status.txt"
- TrimCount=1
  network="vatsim"
 fi
 
