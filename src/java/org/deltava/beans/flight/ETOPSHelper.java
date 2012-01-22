@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -52,6 +52,8 @@ public final class ETOPSHelper {
 		// Check if aircraft is ETOPS or >2 engines
 		if (a.getETOPS() || (a.getEngines() > 2))
 			return false;
+		else if (e == null)
+			return true;
 		
 		return (e.getTime() > 75);
 	}
