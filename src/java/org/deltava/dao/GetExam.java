@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -171,12 +171,33 @@ public class GetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<CheckRide> getAcademyCheckRides(int courseID) throws DAOException {
-		try {
-			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.OWNER, CRR.COURSE FROM "
+		return getAcademyCheckRides(courseID, -1);
+	}
+	
+	/**
+	 * Loads all Check Rides for a particular Flight Academy Course.
+	 * @param courseID the Course database ID
+	 * @param status the CheckRide status, or -1 for none
+	 * @return a List of CheckRide beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<CheckRide> getAcademyCheckRides(int courseID, int status) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.OWNER, CRR.COURSE FROM "
 				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
 				+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
-				+ "(CR.EQTYPE=EQ.EQTYPE) AND (CRR.COURSE=?) ORDER BY CR.CREATED DESC");
+				+ "(CR.EQTYPE=EQ.EQTYPE) AND (CRR.COURSE=?)");
+		if (status >= 0)
+			sqlBuf.append(" AND (CR.STATUS=?)");
+		sqlBuf.append(" ORDER BY CR.CREATED DESC");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, courseID);
+			if (status >= 0)
+				_ps.setInt(2, status);
+			
 			return executeCheckride();
 		} catch (SQLException se) {
 			throw new DAOException(se);
