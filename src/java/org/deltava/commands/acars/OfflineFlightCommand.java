@@ -298,7 +298,15 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Check if it's a Flight Academy flight
 			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(afr);
-			afr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
+			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
+			// FIXME: Course c = null;
+			if (isAcademy) {
+				
+				
+				
+				
+				afr.setAttribute(FlightReport.ATTR_ACADEMY, true);
+			}
 			
 			// Check for inflight refueling
 			FuelUse fuelUse = FuelUse.validate(flight.getPositions());
