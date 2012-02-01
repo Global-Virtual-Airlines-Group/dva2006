@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
@@ -117,7 +118,15 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(pirep);
 			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
-			pirep.setAttribute(FlightReport.ATTR_ACADEMY, isAcademy);
+			if (isAcademy) {
+				GetAcademyCourses crsdao = new GetAcademyCourses(con);
+				Collection<Course> courses = crsdao.getByPilot(p.getID());
+				for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
+					Course c = i.next();
+					if (c.getStatus() == Course.STARTED)
+						pirep.setAttribute(FlightReport.ATTR_ACADEMY, true);
+				}
+			}
 			
 			// Check if it's an Online Event flight
 			GetEvent evdao = new GetEvent(con);
