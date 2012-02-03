@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -32,7 +32,6 @@ public class IssueCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
-
 		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
@@ -70,11 +69,12 @@ public class IssueCommand extends AbstractFormCommand {
 				if (!access.getCanEdit())
 					throw securityException("Cannot save Issue " + ctx.getID());
 
-				// Update the subject
 				i.setSubject(ctx.getParameter("subject"));
-				if (ctx.getParameter("security") != null)
-					i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security")));
 			}
+			
+			// Update security
+			if (ctx.getParameter("security") != null)
+				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security")));
 
 			// Update the issue from the request
 			i.setArea(StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area")));
