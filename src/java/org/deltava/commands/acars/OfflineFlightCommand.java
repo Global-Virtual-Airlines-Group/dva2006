@@ -9,6 +9,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.event.Event;
@@ -299,13 +300,17 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(afr);
 			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
-			// FIXME: Course c = null;
+			Course c = null;
 			if (isAcademy) {
+				GetAcademyCourses crsdao = new GetAcademyCourses(con);
+				Collection<Course> courses = crsdao.getByPilot(ctx.getUser().getID());
+				for (Iterator<Course> i = courses.iterator(); (c == null) && i.hasNext(); ) {
+					Course crs = i.next();
+					if (crs.getStatus() == Course.STARTED)
+						c = crs;
+				}
 				
-				
-				
-				
-				afr.setAttribute(FlightReport.ATTR_ACADEMY, true);
+				afr.setAttribute(FlightReport.ATTR_ACADEMY, (c != null));
 			}
 			
 			// Check for inflight refueling
@@ -439,7 +444,16 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(p.getID(), afr.getEquipmentType(), Test.NEW);
+			CheckRide cr = null;
+			if (c != null) {
+				List<CheckRide> cRides = exdao.getAcademyCheckRides(c.getID(), Test.NEW);
+				if (!cRides.isEmpty())
+					cr = cRides.get(0);
+			}
+			
+			if (cr == null)
+				cr = exdao.getCheckRide(p.getID(), afr.getEquipmentType(), Test.NEW);
+			
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
 				cr.setSubmittedOn(new Date());
