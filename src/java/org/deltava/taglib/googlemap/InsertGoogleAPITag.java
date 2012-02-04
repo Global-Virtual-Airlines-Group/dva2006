@@ -70,7 +70,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null))
-			_minorVersion = "6";
+			_minorVersion = "7";
 		else if ((_majorVersion == 2) && (_minorVersion == null))
 			_minorVersion = "s";
 		
