@@ -529,6 +529,9 @@
 			<addr>luke@deltava.org</addr>
 			<addr>info@deltava.org</addr>
 		</list>
+
+		<!-- Max stage for eq choices -->
+		<max_stage type="Integer">3</max_stage>
 	</registration>
 
 	<!-- PICS content ratings -->
