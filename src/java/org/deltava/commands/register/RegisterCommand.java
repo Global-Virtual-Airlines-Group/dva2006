@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -42,6 +42,7 @@ public class RegisterCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -93,9 +94,10 @@ public class RegisterCommand extends AbstractCommand {
 				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				
 				// Load program names
+				int maxStage = SystemData.getInt("registration.max_stage", 3);
 				Map<Long, Collection<ComboAlias>> eqTypes = new HashMap<Long, Collection<ComboAlias>>();
 				GetEquipmentType eqdao = new GetEquipmentType(con);
-				for (int stage = 1; stage <= 3; stage++) {
+				for (int stage = 1; stage <= maxStage; stage++) {
 					Collection<EquipmentType> types = eqdao.getByStage(stage, SystemData.get("airline.db"));
 					if (types.size() > 1) {
 						Collection<ComboAlias> choices = new ArrayList<ComboAlias>();
