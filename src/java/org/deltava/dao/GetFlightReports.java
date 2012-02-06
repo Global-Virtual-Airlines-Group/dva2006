@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -245,12 +245,12 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(1, FlightReport.HOLD);
 			_ps.setInt(2, pilotID);
 			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int results = rs.next() ? rs.getInt(1) : 0;
+			int results = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					results = rs.getInt(1);
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -336,7 +336,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns all Flight Reports for a particular Pilot, using a sort column.
 	 * @param id the Pilot database ID
@@ -345,11 +345,29 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria) throws DAOException {
+		String db = criteria.getDBName();
+		return getByPilot(id, criteria, StringUtils.isEmpty(db) ? SystemData.get("airline.db") : db);
+	}
+
+	/**
+	 * Returns all Flight Reports for a particular Pilot, using a sort column.
+	 * @param id the Pilot database ID
+	 * @param criteria the search criteria
+	 * @param dbName the database name
+	 * @return a List of FlightReports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria, String dbName) throws DAOException {
 
 		// Build the statement
-		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM PIREPS PR LEFT JOIN "
-				+ "PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
-				+ "WHERE (PR.PILOT_ID=?)");
+		String db = formatDBName(dbName);
+		StringBuilder buf = new StringBuilder("SELECT PR.*, PC.COMMENTS, PC.REMARKS, APR.* FROM ");
+		buf.append(db);
+		buf.append(".PIREPS PR LEFT JOIN ");
+		buf.append(db);
+		buf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		buf.append(db);
+		buf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=?)");
 		if (criteria != null) {
 			if (criteria.getEquipmentType() != null)
 				buf.append(" AND (PR.EQTYPE=?)");
@@ -445,10 +463,12 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(5, FlightReport.OK);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Pilot p = pilots.get(new Integer(rs.getInt(1)));
-				if (p != null) {
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Pilot p = pilots.get(Integer.valueOf(rs.getInt(1)));
+					if (p == null)
+						continue;
+					
 					p.setOnlineLegs(rs.getInt(2));
 					p.setOnlineHours(rs.getDouble(3));
 					p.setACARSLegs(rs.getInt(4));
@@ -458,8 +478,6 @@ public class GetFlightReports extends DAO {
 				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -512,7 +530,6 @@ public class GetFlightReports extends DAO {
 				_ps.setString(4, airportA.getIATA());
 			}
 
-			// Execute the query
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -534,15 +551,14 @@ public class GetFlightReports extends DAO {
 			
 			// Execute the query
 			Collection<RoutePair> results = new TreeSet<RoutePair>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				ScheduleRoute rp = new ScheduleRoute(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)),
-						SystemData.getAirport(rs.getString(3)));
-				results.add(rp);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					ScheduleRoute rp = new ScheduleRoute(SystemData.getAirline(rs.getString(1)), 
+							SystemData.getAirport(rs.getString(2)), SystemData.getAirport(rs.getString(3)));
+					results.add(rp);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -714,15 +730,14 @@ public class GetFlightReports extends DAO {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				FlightReport fr = pMap.get(Integer.valueOf(rs.getInt(1)));
-				if (fr != null)
-					fr.setCaptEQType(rs.getString(2));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					FlightReport fr = pMap.get(Integer.valueOf(rs.getInt(1)));
+					if (fr != null)
+						fr.setCaptEQType(rs.getString(2));
+				}
 			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -738,13 +753,16 @@ public class GetFlightReports extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT ROUTE FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PIREP_ROUTE WHERE (ID=?) LIMIT 1");
+		String rt = null;
 		
 		// Build the prepared statement and execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
 		_ps.setInt(1, id);
-		ResultSet rs = _ps.executeQuery();
-		String rt = rs.next() ? rs.getString(1) : null;
-		rs.close();
+		try (ResultSet rs = _ps.executeQuery()) {
+			if (rs.next())
+				rt = rs.getString(1);
+		}
+		
 		_ps.close();
 		return rt;
 	}
@@ -762,15 +780,14 @@ public class GetFlightReports extends DAO {
 		// Build the prepared statement and execute the query
 		prepareStatementWithoutLimits(sqlBuf.toString());
 		_ps.setInt(1, id);
-		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
 		Collection<String> results = new TreeSet<String>();
-		while (rs.next())
-			results.add(rs.getString(1));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				results.add(rs.getString(1));
+		}
 
-		// Clean up and return
-		rs.close();
 		_ps.close();
 		return results;
 	}
