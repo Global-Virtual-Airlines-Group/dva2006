@@ -349,7 +349,9 @@ public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocati
 	 */
 	public String getInfoBox() {
 		StringBuilder buf = new StringBuilder(128);
-		buf.append("<span class=\"mapInfoBox\">Position: <span class=\"bld\">");
+		buf.append("<span class=\"mapInfoBox\">Time: ");
+		buf.append(StringUtils.format(_date, "MM/dd/yyyy HH:mm:ss"));
+		buf.append(" UTC<br />Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
 		buf.append("</span><br />Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
