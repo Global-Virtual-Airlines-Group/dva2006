@@ -345,7 +345,7 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria) throws DAOException {
-		String db = criteria.getDBName();
+		String db = (criteria == null) ? null : criteria.getDBName();
 		return getByPilot(id, criteria, StringUtils.isEmpty(db) ? SystemData.get("airline.db") : db);
 	}
 
