@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -392,7 +392,9 @@ public class ACARSRouteEntry extends RouteEntry {
 		StringBuilder buf = new StringBuilder(192);
 		buf.append("<span class=\"mapInfoBox\">Position: <span class=\"bld\">");
 		buf.append(StringUtils.format(_pos, true, GeoLocation.ALL));
-		buf.append("</span><br />Altitude: ");
+		buf.append("</span><br />Time: ");
+		buf.append(StringUtils.format(getDate(), "MM/dd/yyyy HH:mm:ss"));
+		buf.append(" UTC<br />Altitude: ");
 		buf.append(StringUtils.format(getAltitude(), "#,000"));
 		buf.append(" feet");
 		if ((_radarAlt > 0) && (_radarAlt < 2500)) {
