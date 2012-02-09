@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Equipment Type profiles. 
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the equipment type
@@ -79,6 +80,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the equipment type
@@ -132,7 +134,9 @@ public class EquipmentCommand extends AbstractFormCommand {
 			
 			// Determine who is missing the ratings
 			GetPilot pdao = new GetPilot(con);
+			GetExamQualifications exdao = new GetExamQualifications(con);
 			Collection<Integer> pilotIDs = rdao.getPilotsWithMissingRatings(eq);
+			pilotIDs.addAll(exdao.getRatedPilots(eq));
 			Collection<Pilot> pilots = pdao.getByID(pilotIDs, "PILOTS").values();
 			
 			// Start transaction
@@ -203,6 +207,7 @@ public class EquipmentCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @see EquipmentCommand#execEdit(CommandContext)
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}

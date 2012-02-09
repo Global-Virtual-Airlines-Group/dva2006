@@ -298,36 +298,19 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getPilotsWithMissingRatings(EquipmentType eq) throws DAOException {
-
-		// Build the SQL statement
-		Collection<String> allRatings = new HashSet<String>(eq.getPrimaryRatings());
-		allRatings.addAll(eq.getSecondaryRatings());
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID, COUNT(R.RATING) AS CNT FROM PILOTS P LEFT JOIN "
-				+ "RATINGS R ON (P.ID=R.ID) WHERE (P.EQTYPE=?) AND R.RATING IN (");
-		for (Iterator<String> i = allRatings.iterator(); i.hasNext();) {
-			i.next();
-			sqlBuf.append('?');
-			if (i.hasNext())
-				sqlBuf.append(',');
-		}
-
-		sqlBuf.append(") GROUP BY P.ID HAVING (CNT < ?)");
-
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+			prepareStatementWithoutLimits("SELECT P.ID, COUNT(R.RATING) AS PCNT, (SELECT COUINT(RATED_EQ) FROM EQRATINGS "
+				+ "WHERE (EQTYPE=?)) AS EQCNT FROM PILOTS P LEFT JOIN RATINGS R ON (P.ID=R.ID) AND (R.RATING IN (SELECT RATED_EQ "
+				+ "FROM EQRATINGS WHERE (EQTYPE=?))) WHERE (P.EQTYPE=?) GROUP BY P.ID HAVING (PCNT<EQCNT)");
 			_ps.setString(1, eq.getName());
-
-			int x = 1;
-			for (String rating : allRatings)
-				_ps.setString(++x, rating);
-
-			_ps.setInt(++x, allRatings.size());
+			_ps.setString(2, eq.getName());
+			_ps.setString(3, eq.getName());
 
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-				results.add(Integer.valueOf(rs.getInt(1)));	
+					results.add(Integer.valueOf(rs.getInt(1)));	
 			}
 
 			_ps.close();
