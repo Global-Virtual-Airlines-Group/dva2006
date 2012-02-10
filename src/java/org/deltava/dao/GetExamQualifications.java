@@ -51,8 +51,12 @@ public class GetExamQualifications extends DAO {
 			
 			_ps.close();
 			
-			// Build the SQL statement
+			// Check for FO exams
 			Collection<String> examNames = eq.getExamNames(Rank.FO);
+			if (examNames.isEmpty())
+				return crIDs;
+
+			// Build the SQL statement
 			StringBuilder buf = new StringBuilder("SELECT PILOT_ID, COUNT(ID) AS CNT FROM exams.EXAMS "
 					+ "WHERE (STATUS=?) AND (PASS=?) AND (");
 			for (Iterator<String> i = examNames.iterator(); i.hasNext(); ) {

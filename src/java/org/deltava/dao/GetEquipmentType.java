@@ -299,7 +299,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 	 */
 	public Collection<Integer> getPilotsWithMissingRatings(EquipmentType eq) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT P.ID, COUNT(R.RATING) AS PCNT, (SELECT COUINT(RATED_EQ) FROM EQRATINGS "
+			prepareStatementWithoutLimits("SELECT P.ID, COUNT(R.RATING) AS PCNT, (SELECT COUNT(RATED_EQ) FROM EQRATINGS "
 				+ "WHERE (EQTYPE=?)) AS EQCNT FROM PILOTS P LEFT JOIN RATINGS R ON (P.ID=R.ID) AND (R.RATING IN (SELECT RATED_EQ "
 				+ "FROM EQRATINGS WHERE (EQTYPE=?))) WHERE (P.EQTYPE=?) GROUP BY P.ID HAVING (PCNT<EQCNT)");
 			_ps.setString(1, eq.getName());
