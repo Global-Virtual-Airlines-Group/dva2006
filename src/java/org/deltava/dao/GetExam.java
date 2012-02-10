@@ -298,11 +298,7 @@ public class GetExam extends DAO {
 				+ "common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN "
 				+ "exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.PILOT_ID=?) AND (CR.EQTYPE=EQ.EQTYPE) "
 				+ "AND (EQ.OWNER=CR.OWNER)");
-			
-			// Execute the query
 			_ps.setInt(1, id);
-			_ps.setString(2, SystemData.get("airline.code"));
-			_ps.setBoolean(3, true);
 			results.addAll(executeCheckride());
 			
 			// Sort the results to merge them in by date
