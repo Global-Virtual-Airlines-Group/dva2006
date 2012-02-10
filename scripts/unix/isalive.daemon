@@ -1,6 +1,6 @@
 #!/bin/bash
 # System daemon checking script
-# (c) 2005-2011 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2012 Global Virtual Airlines Group. All Rights Reserved.
 
 # Loop control variable
 ISALIVE=true;
@@ -148,9 +148,9 @@ do
 		fi
 
 		# Check IMAP Authorization daemon
-		if [ -f "/var/run/authdaemon.pid" ]
+		if [ -f "/var/run/authdaemond.pid" ]
 		then
-			if [ ! -d "/proc/`cat /var/run/authdaemon.pid`" ]
+			if [ ! -d "/proc/`cat /var/run/authdaemond.pid`" ]
 			then
 				logger -p local3.err "Authentication Server is DOWN"
 				echo `date +%H:%M:%S`" Authentication Server is DOWN" >> /var/cache/isalive.txt
