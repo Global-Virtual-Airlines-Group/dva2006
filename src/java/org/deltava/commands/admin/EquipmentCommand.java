@@ -132,13 +132,6 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setExamNames(Rank.FO, ctx.getParameters("examFO"));
 			eq.setExamNames(Rank.C, ctx.getParameters("examC"));
 			
-			// Determine who is missing the ratings
-			GetPilot pdao = new GetPilot(con);
-			GetExamQualifications exdao = new GetExamQualifications(con);
-			Collection<Integer> pilotIDs = rdao.getPilotsWithMissingRatings(eq);
-			pilotIDs.addAll(exdao.getRatedPilots(eq));
-			Collection<Pilot> pilots = pdao.getByID(pilotIDs, "PILOTS").values();
-			
 			// Start transaction
 			ctx.startTX();
 			
@@ -152,7 +145,14 @@ public class EquipmentCommand extends AbstractFormCommand {
 
 			// Update pilot ratings
 			boolean updatePilots = Boolean.valueOf(ctx.getParameter("updateRatings")).booleanValue();
-			if (updatePilots && (!pilots.isEmpty())) {
+			if (updatePilots && !isNew) {
+				// Determine who is missing the ratings
+				GetPilot pdao = new GetPilot(con);
+				GetExamQualifications exdao = new GetExamQualifications(con);
+				Collection<Integer> pilotIDs = rdao.getPilotsWithMissingRatings(eq);
+				pilotIDs.addAll(exdao.getRatedPilots(eq));
+				Collection<Pilot> pilots = pdao.getByID(pilotIDs, "PILOTS").values();
+				
 				final Collection<String> newRatings = eq.getRatings();
 				Map<Pilot, Collection<String>> updatedRatings = new LinkedHashMap<Pilot, Collection<String>>();
 				Collection<StatusUpdate> updates = new ArrayList<StatusUpdate>();
