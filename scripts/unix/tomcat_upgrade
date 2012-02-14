@@ -1,6 +1,6 @@
 #!/bin/bash
 # Tomcat upgrade script
-# (c) 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2006, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 
 # Check the version argument is preset
 if [ "$1" == "" ]
@@ -21,9 +21,9 @@ cd /usr/local/apache-tomcat-$1
 
 # Clean out default webapps
 echo "Cleaning default installation"
-rm -Rd webapps/docs
-rm -Rd webapps/examples
-rm -Rd webapps/ROOT
+rm -r webapps/docs
+rm -r webapps/examples
+rm -r webapps/ROOT
 rm temp/*
 rm LICENSE
 rm NOTICE
@@ -36,7 +36,7 @@ rm bin/*.bat
 rm bin/*.tar.gz
 
 # Create the logging symlink
-rm -Rd logs
+rm -r logs
 ln -s /var/log/tomcat logs
 
 # Copy over common libraries
