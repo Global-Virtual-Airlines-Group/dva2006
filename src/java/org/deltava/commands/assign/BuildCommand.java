@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -12,13 +12,12 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build a Flight Assignment.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -29,6 +28,7 @@ public class BuildCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command results and set the default return operation
@@ -87,15 +87,7 @@ public class BuildCommand extends AbstractCommand {
 					fr.setTimeD(se.getTimeD());
 					fr.setTimeA(se.getTimeA());
 					fr.setAttribute(FlightReport.ATTR_HISTORIC, se.getHistoric());
-					StringBuilder buf = new StringBuilder("Scheduled departure at ");
-					buf.append(StringUtils.format(se.getTimeD(), ctx.getUser().getTimeFormat()));
-					buf.append(' ');
-					buf.append(se.getAirportD().getTZ());
-					buf.append(", scheduled arrival at ");
-					buf.append(StringUtils.format(se.getTimeA(), ctx.getUser().getTimeFormat()));
-					buf.append(' ');
-					buf.append(se.getAirportA().getTZ());
-					fr.setRemarks(buf.toString());
+					fr.setRemarks(fr.getDraftComments());
 				}
 				
 				info.addFlight(fr);
