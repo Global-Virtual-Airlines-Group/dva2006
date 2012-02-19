@@ -117,6 +117,7 @@ public class SingleAssignmentSearchCommand extends AbstractCommand {
 					fr.setTimeD(entry.getTimeD());
 					fr.setTimeA(entry.getTimeA());
 					fr.setAttribute(FlightReport.ATTR_HISTORIC, entry.getHistoric());
+					fr.setRemarks(fr.getDraftComments());
 					ai.addFlight(fr);
 					flightEntries.add(entry);
 					
