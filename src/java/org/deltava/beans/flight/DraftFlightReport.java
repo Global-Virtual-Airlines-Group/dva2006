@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.Date;
@@ -6,11 +6,12 @@ import java.util.Date;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.ScheduleEntry;
+import org.deltava.util.StringUtils;
 
 /**
  * A class to store draft Flight Report data, with scheduled departure/arrival times. 
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 2.8
  */
 
@@ -96,5 +97,20 @@ public class DraftFlightReport extends FlightReport {
 	public void setTimeA(Date dt) {
 		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportA().getTZ();
 		_timeA = new DateTime(dt, tz);
+	}
+	
+	/**
+	 * Returns default comments with departure and arrival times.
+	 */
+	public String getDraftComments() {
+		StringBuilder buf = new StringBuilder("Scheduled departure at ");
+		buf.append(StringUtils.format(getTimeD(), "HH:mm"));
+		buf.append(' ');
+		buf.append(getAirportD().getTZ());
+		buf.append(", scheduled arrival at ");
+		buf.append(StringUtils.format(getTimeA(), "HH:mm"));
+		buf.append(' ');
+		buf.append(getAirportA().getTZ());
+		return buf.toString();
 	}
 }

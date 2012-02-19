@@ -63,6 +63,7 @@ public class RouteAssignmentBuildCommand extends AbstractCommand {
 				dfr.setRank(ctx.getUser().getRank());
 				dfr.setDate(new Date());
 				dfr.setEquipmentType((eqOv == null) ? se.getEquipmentType() : eqOv);
+				dfr.setRemarks(dfr.getDraftComments());
 				
 				// Add to the assignment
 				info.addAssignment(new AssignmentLeg(se));
