@@ -364,10 +364,3 @@ for (var y = 0; y < rows.length; y++) {
 
 return true;
 }
-
-function showHelp(helpname)
-{
-var URLflags = 'height=460,width=660,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes';
-var w = window.open('/help.do?id=' + helpname, 'HELP', URLflags);
-return true;
-}
