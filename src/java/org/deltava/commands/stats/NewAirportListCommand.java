@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -21,6 +21,36 @@ import org.deltava.util.system.SystemData;
 
 public class NewAirportListCommand extends AbstractCommand {
 
+	/**
+	 * Helper class for connecting airport lists.
+	 */
+	public class ConnectingAirportList extends ArrayList<Airport> {
+		
+		private final boolean _isSource;
+		
+		ConnectingAirportList(boolean isSource, Collection<Airport> airports) {
+			super(airports);
+			_isSource = isSource;
+		}
+		
+		public boolean isSource() {
+			return _isSource;
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder buf = new StringBuilder();
+			for (Iterator<Airport> i = iterator(); i.hasNext(); ) {
+				Airport a = i.next();
+				buf.append(a.toString());
+				if (i.hasNext())
+					buf.append(", ");
+			}
+			
+			return buf.toString();
+		}
+	}
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -96,8 +126,30 @@ public class NewAirportListCommand extends AbstractCommand {
 		if (defaultAirlineList.isEmpty())
 			airports.remove(defaultCode);
 		
-		// Save in request
+		// Load source airports
+		Map<Airport, ConnectingAirportList> srcAirports = new HashMap<Airport, ConnectingAirportList>();
+		try {
+			Connection con = ctx.getConnection();
+			GetScheduleAirport apdao = new GetScheduleAirport(con);
+			for (Collection<Airport> aps : airports.values()) {
+				for (Airport a : aps) {
+					Collection<Airport> cAps = apdao.getConnectingAirports(a, false, null);
+					if (cAps.isEmpty()) {
+						cAps = apdao.getConnectingAirports(a, true, null);
+						srcAirports.put(a, new ConnectingAirportList(true, cAps));
+					} else 
+						srcAirports.put(a, new ConnectingAirportList(false, cAps));
+				}
+			}
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Save request attributes
 		ctx.setAttribute("airports", airports, REQUEST);
+		ctx.setAttribute("srcAirports", srcAirports, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
