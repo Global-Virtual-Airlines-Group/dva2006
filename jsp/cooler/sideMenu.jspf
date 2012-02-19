@@ -29,6 +29,7 @@
  <content:subitem><el:cmd url="clearunread">Clear Unread</el:cmd></content:subitem>
  <content:subitem><el:cmd url="mythreads">My Threads</el:cmd></content:subitem>
  <content:subitem><el:cmd url="notifythreads">My Watched Threads</el:cmd></content:subitem>
+ <content:subitem><el:cmd url="channel" linkID="SSHOTS">Screen Shots</el:cmd></content:subitem>
 <c:if test="${!empty channel}">
  <content:subitem><el:cmd url="threadpost" linkID="${channel}">Start New Thread</el:cmd></content:subitem>
 </c:if>
