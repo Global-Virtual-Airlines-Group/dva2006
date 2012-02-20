@@ -22,20 +22,20 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	public static final int REJECTED = 4;
 
 	/**
-	 * Valid PIREP statuses
+	 * Valid PIREP statuses.
 	 */
 	public static final String STATUS[] = { "Draft", "Submitted", "Hold", "OK", "Rejected" };
 	private static final String[] ROW_CLASSES = { "opt2", "opt1", "warn", null, "err" };
 
 	/**
-	 * Valid Flight Simulator version strings
+	 * Valid Flight Simulator version strings.
 	 */
-	public static final String FSVERSION[] = { "Unknown", "X-Plane", "FS98", "FS2000", "FS2002", "FS2004", "FS X" };
+	public static final String FSVERSION[] = { "Unknown", "X-Plane", "FS98", "FS2000", "FS2002", "FS2004", "FSX", "Prepar3D" };
 
 	/**
-	 * Valid Flight Simulator version values
+	 * Valid Flight Simulator version values.
 	 */
-	public static final int FSVERSION_CODE[] = { 0, 100, 98, 2000, 2002, 2004, 2006 };
+	public static final int FSVERSION_CODE[] = { 0, 100, 98, 2000, 2002, 2004, 2006, 2008 };
 
 	/**
 	 * Flight flown without Equipment Type Rating.
