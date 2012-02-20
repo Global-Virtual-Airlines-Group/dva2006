@@ -158,6 +158,9 @@ return true;
 <c:when test="${pirep.FSVersion == 2006}">
  <td class="data sec bld">Microsoft Flight Simulator X</td>
 </c:when>
+<c:when test="${pirep.FSVersion == 2008}">
+ <td class="data sec bld">Lockheed-Martin Prepar3D</td>
+</c:when>
 <c:when test="${fn:isMSFS(pirep)}">
  <td class="data sec bld">Microsoft Flight Simulator ${pirep.FSVersion}</td>
 </c:when>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -612,7 +612,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 * @see FlightInfo#getFSVersion()
 	 */
 	public void setFSVersion(int ver) {
-		if ((ver < 0) || (ver > 2006))
+		if ((ver < 0) || (ver > 2008))
 			throw new IllegalArgumentException("Invalid FS Version - " + ver);
 		else if (ver > 20)
 			_fsVersion = ver;
