@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -343,8 +343,8 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" AS LABEL, COUNT(F.FSVERSION) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
 				+ "AS HOURS, SUM(IF(F.FSVERSION=?,1,0)) AS FSX, SUM(IF(F.FSVERSION=?,1,0)) AS FS9, "
-				+ "SUM(IF(F.FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION<?,1,0)) AS FSO "
-				+ "FROM PIREPS F");
+				+ "SUM(IF(F.FSVERSION=?,1,0)) AS FS8, SUM(IF(FSVERSION=?,1,0)) AS FS7, SUM(IF(FSVERSION<?,1,0)) AS FSO, "
+				+ "SUM(IF(F.FSVERSION=?,1,0)) AS P3D FROM PIREPS F");
 		if (isPilot)
 			sqlBuf.append(", PILOTS P");
 		sqlBuf.append(" WHERE (F.STATUS=?)");
@@ -360,7 +360,8 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			_ps.setInt(3, 2002);
 			_ps.setInt(4, 2000);
 			_ps.setInt(5, 2000);
-			_ps.setInt(6, FlightReport.OK);
+			_ps.setInt(6, 2008);
+			_ps.setInt(7, FlightReport.OK);
 			
 			// Check the cache
 			String cacheKey = getCacheKey(_ps.toString());
@@ -380,6 +381,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 					entry.setFSVersionLegs(8, rs.getInt(7));
 					entry.setFSVersionLegs(7, rs.getInt(8));
 					entry.setFSVersionLegs(0, rs.getInt(9));
+					entry.setFSVersionLegs(11, rs.getInt(10));
 					results.add(entry);
 				}
 			}
@@ -622,6 +624,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			CacheableCollection<FlightStatsEntry> results = _statCache.get(cacheKey);
 			if (results != null) {
 				_ps.close();
+				_ps = null;
 				return results.clone();
 			}
 			
