@@ -1,10 +1,11 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.flight.*;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.testing.*;
 
@@ -29,7 +30,6 @@ public class CheckRideFlagCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -41,70 +41,74 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			else if (!(fr instanceof ACARSFlightReport))
 				throw notFoundException("Flight Report does not use ACARS");
 			
-			// Look for a transfer request
-			GetTransferRequest txdao = new GetTransferRequest(con);
-			TransferRequest tx = txdao.get(fr.getDatabaseID(DatabaseID.PILOT));
-			int crID = (tx == null) ? 0 : tx.getLatestCheckRideID();
+			// Look for a transfer request or an academy course
+			int crID = 0; int pilotID = fr.getDatabaseID(DatabaseID.PILOT);
+			TransferRequest tx = null; Course crs = null;
+			if (fr.hasAttribute(FlightReport.ATTR_ACADEMY)) {
+				GetAcademyCourses crsdao = new GetAcademyCourses(con);
+				Collection<Course> courses = crsdao.getByPilot(pilotID);
+				for (Iterator<Course> i = courses.iterator(); i.hasNext() && (crs == null); ) {
+					Course c = i.next();
+					if (c.getStatus() == Course.STARTED)
+						crs = c;
+				}
+			} else {
+				GetTransferRequest txdao = new GetTransferRequest(con);	
+				tx = txdao.get(fr.getDatabaseID(DatabaseID.PILOT));
+				if (tx != null)
+					crID = tx.getLatestCheckRideID();
+			}
 			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(fr.getDatabaseID(DatabaseID.PILOT), 
-					fr.getEquipmentType(), Test.NEW);
+			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(pilotID, fr.getEquipmentType(), Test.NEW);
 			boolean newCR = (cr == null);
-			if (newCR) {
+			if (newCR)
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
-				cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
-				cr.setAircraftType(fr.getEquipmentType());
-				cr.setDate(fr.getDate());
-				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-				cr.setStatus(Test.SUBMITTED);
-				cr.setSubmittedOn(fr.getSubmittedOn());
-				cr.setScorerID(ctx.getUser().getID());
-				cr.setPilotID(fr.getDatabaseID(DatabaseID.PILOT));
-				
-				// Determine the equipment type based on the primary type
-				GetEquipmentType eqdao = new GetEquipmentType(con);
-				Collection<String> eqTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
-				if (eqTypes.isEmpty())
-					throw notFoundException("No Equipment Type for " + fr.getEquipmentType());
-				
-				// Set the equipment type
-				cr.setEquipmentType(eqTypes.iterator().next());
-			} else if (cr.getStatus() == Test.NEW) {
-				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-				cr.setStatus(Test.SUBMITTED);
-				cr.setSubmittedOn(fr.getSubmittedOn());
+			else if (cr.getStatus() == Test.NEW) {
+				// empty
 			} else if (cr.getStatus() == Test.SUBMITTED) {
 				if (cr.getFlightID() != 0) {
 					FDRFlightReport ofr = frdao.getACARS(SystemData.get("airline.db"), cr.getFlightID()); 
 					if (ofr != null)
 						throw securityException("Check Ride ACARS ID #" + cr.getFlightID() + " already has PIREP");
 				}
-						
-				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-				cr.setSubmittedOn(fr.getSubmittedOn());
 			} else if ((cr.getStatus() == Test.SCORED) && !cr.getPassFail()) {
 				newCR = true;
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
+			} else
+				throw securityException("Cannot update " + cr.getStatusName() + " Check Ride");
+			
+			// Set common checkride fields
+			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
+			cr.setStatus(Test.SUBMITTED);
+			cr.setSubmittedOn(fr.getSubmittedOn());
+			if (newCR) {
 				cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 				cr.setAircraftType(fr.getEquipmentType());
 				cr.setDate(fr.getDate());
-				cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-				cr.setStatus(Test.SUBMITTED);
-				cr.setSubmittedOn(fr.getSubmittedOn());
 				cr.setScorerID(ctx.getUser().getID());
 				cr.setPilotID(fr.getDatabaseID(DatabaseID.PILOT));
 				
-				// Determine the equipment type based on the primary type
-				GetEquipmentType eqdao = new GetEquipmentType(con);
-				Collection<String> eqTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
-				if (eqTypes.isEmpty())
-					throw notFoundException("No Equipment Type for " + fr.getEquipmentType());
+				// Determine the equipment type based on the primary type or academy type
+				if (crs == null) {
+					GetEquipmentType eqdao = new GetEquipmentType(con);
+					Collection<String> eqTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
+					if (eqTypes.isEmpty())
+						throw notFoundException("No Equipment Type for " + fr.getEquipmentType());
 				
-				// Set the equipment type
-				cr.setEquipmentType(eqTypes.iterator().next());
-			} else
-				throw securityException("Cannot update " + cr.getStatusName() + " Check Ride");
+					// Set the equipment type
+					cr.setEquipmentType(eqTypes.iterator().next());
+				} else
+						cr.setEquipmentType(SystemData.get("academy.eqType"));
+			}
+			
+			// Set academy fields
+			if (crs != null)
+			{
+				cr.setAcademy(true);
+				cr.setCourseID(crs.getID());
+			}
 			
 			// Update the flight report
 			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
