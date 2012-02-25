@@ -126,9 +126,13 @@ public class GetScheduleSearch extends GetSchedule {
 		}
 		
 		// Concat the criteria into a string so we can reuse
-		StringBuilder cndBuf = new StringBuilder("(");
-		cndBuf.append(StringUtils.listConcat(conditions, ") AND ("));
-		cndBuf.append(')');
+		StringBuilder cndBuf = new StringBuilder();
+		if (!conditions.isEmpty()) {
+			cndBuf.append('(');
+			cndBuf.append(StringUtils.listConcat(conditions, ") AND ("));
+			cndBuf.append(')');
+		}
+			
 		if (!CollectionUtils.isEmpty(criteria.getEquipmentTypes())) {
 			if (!conditions.isEmpty())
 				cndBuf.append(" AND (");
