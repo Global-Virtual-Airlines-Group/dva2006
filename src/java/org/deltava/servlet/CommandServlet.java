@@ -59,7 +59,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	private class CommandLogger extends Thread {
 		
 		private final Logger tlog = Logger.getLogger(CommandLogger.class);
-		private int _maxSize;
+		private final int _maxSize;
 
 		CommandLogger(int maxSize) {
 			super(SystemData.get("airline.code") + " Command Logger");
@@ -193,9 +193,13 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 		// Get the command
 		Command cmd = getCommand(req.getRequestURI());
 		if (cmd == null) {
+			String referer = req.getHeader("Referer");
+			if (!StringUtils.isEmpty(referer))
+				referer = " - " + referer;
+			
 			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "Command not found");
-			log.warn("Command not found - " + req.getRequestURI());
+			log.warn("Command not found - " + req.getRequestURI() + referer);
 			rd.forward(req, rsp);
 			return;
 		}
