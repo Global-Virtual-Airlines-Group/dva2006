@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.util.*;
@@ -11,15 +11,15 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store information about Fleet Library installers.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
 public class Installer extends FleetEntry implements ComboAlias {
 	
 	public static final String[] FS_NAMES = new String[] {"Microsoft Flight Simulator 2002", "Microsoft Flight Simulator 2004", 
-		"Microsoft Flight Simulator X"};
-	public static final String[] FS_CODES = new String[] {"FS2002", "FS2004", "FSX"};
+		"Microsoft Flight Simulator X", "Lockheed-Martin Prepar3D"};
+	public static final String[] FS_CODES = new String[] {"FS2002", "FS2004", "FSX", "P3D"};
 
 	private final Collection<AirlineInformation> _apps = new TreeSet<AirlineInformation>();
 	
