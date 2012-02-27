@@ -110,7 +110,7 @@ public class XPIREPService extends XAService {
 			
 			// FIXME: Remove when we have flight times fixed
 			long timeS = (inf.getEndTime().getTime() - inf.getStartTime().getTime()) / 1000;
-			log.info("Actual time = " + StringUtils.format(timeS / 3600.0,  "#0.0") + "hrs, PIREP = " + xfr.getLength());
+			log.warn("Actual time = " + StringUtils.format(timeS / 3600.0,  "#0.0") + "hrs, PIREP = " + xfr.getLength());
 			
 			// Check for a check ride
 			GetExam exdao = new GetExam(con);
