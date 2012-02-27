@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -41,6 +41,7 @@ public class ThreadPostCommand extends AbstractCommand {
 	 * @throws CommandException if the command name is null
 	 * @throws IllegalStateException if the command has already been initialized
 	 */
+	@Override
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 		_imgMimeTypes = (Collection<?>) SystemData.getObject("cooler.imgurls.mime_types");
@@ -51,6 +52,7 @@ public class ThreadPostCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Set result URL
@@ -310,7 +312,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				// Validate this user's access to the channel
 				access.updateContext(sctx);
 				access.validate();
-				if (!access.getCanAccess())
+				if (!access.getCanAccess() || (usr.getStatus() != Pilot.ACTIVE))
 					i.remove();
 			}
 			
