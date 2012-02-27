@@ -112,28 +112,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Load the pilot's equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
-
-			// Check if this flight was flown with an equipment type in our primary ratings
-			/* Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
-			if (pTypeNames.contains(p.getEquipmentType())) {
-				FlightPromotionHelper helper = new FlightPromotionHelper(fr);
-				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
-					String pType = i.next();
-					EquipmentType pEQ = eqdao.get(pType, SystemData.get("airline.db"));
-					boolean promoOK = helper.canPromote(pEQ);
-					if (!promoOK) {
-						i.remove();
-						if (!StringUtils.isEmpty(helper.getLastComment()))
-							comments.add("Not eligible for promotion: " + helper.getLastComment());
-					}
-				}
-				
-				// Update the PIREP
-				fr.setCaptEQType(pTypeNames);
-				if (CollectionUtils.hasDelta(pTypeNames, fr.getCaptEQType()))
-					log.warn("Updating Promotion to Captain types - was " + fr.getCaptEQType() + ", now " + pTypeNames);
-			} else
-				fr.setCaptEQType(new HashSet<String>()); */
 			
 			// Check if the pilot is rated in the equipment type
 			Collection<String> allRatings = new HashSet<String>(p.getRatings());
