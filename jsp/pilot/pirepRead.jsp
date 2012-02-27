@@ -105,7 +105,8 @@ return true;
 </content:filter>
 <tr>
  <td class="label">Status</td>
- <td class="data bld sec">${statusMsg} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
+ <td class="data bld sec">${statusMsg}<c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" t="HH:MM" /></c:if> 
+<c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
