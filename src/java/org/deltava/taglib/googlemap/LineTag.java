@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -80,6 +80,7 @@ public class LineTag extends GoogleMapEntryTag {
 	 * @throws IllegalStateException if the JavaScript definitions are not in place
 	 * @see GoogleMapEntryTag#doStartTag()
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
 
@@ -95,6 +96,7 @@ public class LineTag extends GoogleMapEntryTag {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 
 		JspWriter out = pageContext.getOut();
@@ -129,9 +131,10 @@ public class LineTag extends GoogleMapEntryTag {
 				out.print(String.valueOf(_width));
 				out.print(',');
 				out.print(StringUtils.format(_transparency, "0.00"));
+				out.print(",{zIndex: golgotha.maps.z.POLYLINE");
 				if (_useGC)
-					out.print(", { geodesic:true }");
-				out.print(");");
+					out.print(", geodesic:true");
+				out.print("});");
 			}
 		} catch (Exception e) {
 			throw new JspException(e);

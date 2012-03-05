@@ -97,7 +97,7 @@ var mapOpts = {center:new google.maps.LatLng(36.44, -100.14), zoom:6, minZoom:2,
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.getOptions = function() { return mapOpts; };
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 <c:if test="${!empty tileHost}">

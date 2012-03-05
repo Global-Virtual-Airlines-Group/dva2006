@@ -77,7 +77,7 @@ var mapOpts = {center: new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwhee
 // Create the map
 var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
 

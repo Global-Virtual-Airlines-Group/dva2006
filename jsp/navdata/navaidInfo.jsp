@@ -168,7 +168,7 @@ var mapOpts = {center:mapC, minZoom:3, zoom: getDefaultZoom(110), scrollwheel:fa
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 //Build the navaid list

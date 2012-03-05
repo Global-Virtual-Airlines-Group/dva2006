@@ -44,7 +44,7 @@ xmlreq.onreadystatechange = function() {
 			google.maps.event.addListener(mrk, 'click', hideATC);
 	}
 
-	gRoute = new google.maps.Polyline({path:routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true});
+	gRoute = new google.maps.Polyline({path:routePoints, strokeColor:'#4080af', strokeWeight:3, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	gaEvent('ACARS', 'Flight Data');
 	
 	// Enable checkboxes
@@ -70,7 +70,7 @@ return true;
 function showAPP(ctr, range)
 {
 hideATC();
-var c = new google.maps.Circle({center:ctr, radius:(range*1609.344), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25});
+var c = new google.maps.Circle({center:ctr, radius:(range*1609.344), strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
 selectedFIRs.push(c);
 c.setMap(map);
 return true;
@@ -102,7 +102,7 @@ xmlreq.onreadystatechange = function() {
 
 		if (bPts.length > 0) {
 			bPts.push(bPts[0]);
-			var rt = new google.maps.Polygon({path:[bPts], strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25});
+			var rt = new google.maps.Polygon({path:[bPts], strokeColor:'#efefff', strokeWeight:1, strokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
 			selectedFIRs.push(rt);
 			rt.setMap(map);
 		}

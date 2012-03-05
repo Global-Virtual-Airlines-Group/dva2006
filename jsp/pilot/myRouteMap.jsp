@@ -47,7 +47,7 @@ var mapOpts = {center:mapC, zoom:3, scrollwheel:false, streetViewControl:false, 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Create the routes
@@ -57,12 +57,12 @@ var routes = [];
 <c:choose>
 <c:when test="${fn:sizeof(route.points) > 2}">
 <map:points var="rtPoints" items="${route.points}" />
-var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:false, clickable:false});
+var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
 </c:when>
 <c:otherwise>
 <map:point var="aD" point="${route.airportD}" />
 <map:point var="aA" point="${route.airportA}" />
-var route = new google.maps.Polyline({path:[aD, aA], strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:true, clickable:false});
+var route = new google.maps.Polyline({path:[aD, aA], strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:true, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
 </c:otherwise>
 </c:choose>
 

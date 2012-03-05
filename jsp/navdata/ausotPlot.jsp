@@ -128,7 +128,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Draw the route
-		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute("color"), strokeWeight:2, strokeOpacity:0.7, geodesic:true});
+		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute("color"), strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		trackLine.setMap(map);
 		
 		// Save the route/points
@@ -202,7 +202,7 @@ getTileOverlay('sat', 0.35);
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
 </c:if>
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
 

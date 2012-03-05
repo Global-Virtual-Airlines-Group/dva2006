@@ -364,7 +364,7 @@ var mapOpts = {center:mapC, minZoom:2, maxZoom:18, zoom:getDefaultZoom(${pirep.d
 // Build the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 

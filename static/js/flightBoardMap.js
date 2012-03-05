@@ -146,7 +146,7 @@ xmlreq.onreadystatechange = function() {
 
 		if (bPts.length > 0) {
 			bPts.push(bPts[0]);
-			selectedRoute = new google.maps.Polygon({paths:[bPts], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25});
+			selectedRoute = new google.maps.Polygon({paths:[bPts], strokeColor:'#efefff', strokeWeight:1, stokeOpacity:0.85, fillColor:'#7f7f80', fillOpacity:0.25, zIndex:golgotha.maps.z.POLYGON});
 			selectedRoute.setMap(map);
 		}
 	}
@@ -187,11 +187,11 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	if (wpoints.length > 0) {
-		selectedRoute = new google.maps.Polyline({path:wpoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.85, geodesic:true});
+		selectedRoute = new google.maps.Polyline({path:wpoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.85, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		selectedRoute.setMap(map);
 	}
 	if (tpoints.length > 0) {
-		selectedTrack = new google.maps.Polyline({path:tpoints, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.75, geodesic:true});
+		selectedTrack = new google.maps.Polyline({path:tpoints, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.75, geodesic:true, zIndex:(golgotha.maps.z.POLYLINE-1)});
 		selectedTrack.setMap(map);
 	}
 	

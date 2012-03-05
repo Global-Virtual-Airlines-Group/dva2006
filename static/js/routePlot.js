@@ -93,7 +93,7 @@ xmlreq.onreadystatechange = function() {
 	} // for
 	
 	// Draw the route
-	var rt = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true});
+	var rt = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	rt.setMap(map);
 	
 	// Save the codes

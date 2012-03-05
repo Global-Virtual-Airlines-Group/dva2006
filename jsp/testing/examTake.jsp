@@ -37,7 +37,7 @@ for (var x = 0; x < rpQuestions.length; x++) {
 	info.map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
 	info.aD.setMap(info.map);
 	info.aA.setMap(info.map);
-	var rt = new google.maps.Polyline({path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true});
+	var rt = new google.maps.Polyline({path:[info.aD.getPosition(), info.aA.getPosition()], strokeColor:'#4080af', strokeWeight:1.75, strokeOpacity:0.65, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	rt.setMap(info.map);
 }
 

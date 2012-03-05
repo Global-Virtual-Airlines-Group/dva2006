@@ -113,7 +113,7 @@ xmlreq.onreadystatechange = function() {
 			} // for
 
 			// Draw the line
-			var routeLine = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic: true});
+			var routeLine = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 			routeLine.setMap(map);
 			routes.push(routeLine);
 		}
