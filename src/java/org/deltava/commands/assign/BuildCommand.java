@@ -38,7 +38,7 @@ public class BuildCommand extends AbstractCommand {
 		List<?> results = (List<?>) ctx.getSession().getAttribute("fafResults");
 		Collection<String> ids = ctx.getParameters("addFA");
 		if ((ids == null) || (results == null)) {
-			result.setURL("findflight.do", null, 0);
+			result.setURL("findflight", null, 0);
 			result.setSuccess(true);
 			return;
 		}
