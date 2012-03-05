@@ -5,6 +5,7 @@ golgotha.maps.S_ICON_SIZE = new google.maps.Size(24, 24);
 golgotha.maps.S_ICON_SHADOW_SIZE = new google.maps.Size(24 * (59 / 32), 24);
 golgotha.maps.ICON_ANCHOR = new google.maps.Point(12, 12);
 golgotha.maps.DEFAULT_TYPES = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN];
+golgotha.maps.z = {INFOWINDOW: 100, POLYLINE: 25, POLYGON: 35, MARKER: 50, OVERLAY: 10};
 
 // Set best text color for map types
 golgotha.maps.TextColor = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010'};
@@ -46,7 +47,7 @@ function googleMarker(color, point, label)
 {
 if (color == 'null') return point;
 var icn = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/point_' + color + '.png', null, null, null, golgotha.maps.PIN_SIZE);
-var marker = new google.maps.Marker({position:point, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW});
+var marker = new google.maps.Marker({position:point, icon:icn, shadow:golgotha.maps.DEFAULT_SHADOW, zIndex:golgotha.maps.z.MARKER});
 if (label != null) {
 	marker.info = label;
 	google.maps.event.addListener(marker, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });
@@ -65,7 +66,7 @@ else
 
 var icn = new google.maps.MarkerImage(imgBase + '.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SIZE);
 var shd = new google.maps.MarkerImage(imgBase + 's.png', null, null, golgotha.maps.ICON_ANCHOR, golgotha.maps.S_ICON_SHADOW_SIZE);
-var marker = new google.maps.Marker({position:point, icon:icn, shadow:shd});
+var marker = new google.maps.Marker({position:point, icon:icn, shadow:shd, zIndex:golgotha.maps.z.MARKER});
 if (label != null) {
 	marker.info = label;
 	google.maps.event.addListener(marker, 'click', function() { map.infoWindow.setContent(this.info); map.infoWindow.open(map, this); });

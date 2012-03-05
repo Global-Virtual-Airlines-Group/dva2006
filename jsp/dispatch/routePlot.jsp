@@ -160,7 +160,7 @@ var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, minZoom:2, 
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 <c:if test="${!empty tileHost}">
 // Build the weather layer controls

@@ -255,7 +255,7 @@ xreq.onreadystatechange = function() {
 		} // for
 
 		gaEvent('ACARS', 'Flight Route Info');
-		routeWaypoints = new google.maps.Polyline({path:waypoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.7, geodesic:true});
+		routeWaypoints = new google.maps.Polyline({path:waypoints, strokeColor:'#af8040', strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		routeWaypoints.setMap(map);
 	}
 
@@ -271,7 +271,7 @@ xreq.onreadystatechange = function() {
 
 		// Draw the line
 		gaEvent('ACARS', 'Flight Progress Info');
-		routeData = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8});
+		routeData = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, , zIndex:(golgotha.maps.z.POLYLINE-1)});
 		routeData.setMap(map);
 	}
 
@@ -284,10 +284,10 @@ return true;
 
 function getServiceRange(marker, range)
 {
-var bColor = marker.isBusy ? '#c02020' : '#20c060';
-var fColor = marker.isBusy ? '#802020' : '#208040';
-var fOpacity = marker.isBusy ? 0.1 : 0.2;
-return new google.maps.Circle({center:marker.getPosition(), radius:(range*1609.344), strokeColor:bColor, strokeWeight:1, strokeOpacity:0.65, fillColor:fColor, fillOpacity:fOpacity});
+var bC = marker.isBusy ? '#c02020' : '#20c060';
+var fC = marker.isBusy ? '#802020' : '#208040';
+var fOp = marker.isBusy ? 0.1 : 0.2;
+return new google.maps.Circle({center:marker.getPosition(), radius:(range*1609.344), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
 }
 
 function zoomTo(combo)
