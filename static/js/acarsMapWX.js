@@ -38,7 +38,7 @@ return true;
 
 function getTileOverlay(name, tx)
 {
-var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
+var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256), zIndex:golgotha.maps.z.OVERLAY};
 layerOpts.myBaseURL = 'http://' + golgotha.maps.tileHost + '/TileServer/imgs/' + name + '/u' + document.seriesDate[name] + '/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 if (zoom > this.maxZoom) return '';

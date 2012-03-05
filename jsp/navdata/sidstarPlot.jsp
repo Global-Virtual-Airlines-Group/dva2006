@@ -156,7 +156,7 @@ var mapOpts = {center:mapC, zoom:7, minZoom:4, scrollwheel:false, streetViewCont
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.infoWindow = new google.maps.InfoWindow({content: ''});
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 
 // Global airport/waypoint markers

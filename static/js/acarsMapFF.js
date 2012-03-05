@@ -75,7 +75,7 @@ return true;
 
 function getFFOverlay(name, tx, date)
 {
-var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256)};
+var layerOpts = {minZoom:1, maxZoom:document.maxZoom[name], isPng:true, opacity:tx, tileSize:new google.maps.Size(256,256), zIndex:golgotha.maps.z.OVERLAY};
 layerOpts.myBaseURL = 'http://' + golgotha.maps.tileHost + '/TileServer/ff/' + name + '/u' + document.seriesDate[name] + '/u' + date.getTime() + '/';
 layerOpts.getTileUrl = function(pnt, zoom) {
 if (zoom > this.maxZoom) return '';

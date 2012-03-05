@@ -181,7 +181,7 @@ if (!tr.SID)
 
 // Display the route and the markers
 mm.refresh();
-routeTrack = new google.maps.Polyline({path:track, strokeColor:map.getCurrentMapType().getTextColor(), strokeWeight:2, strokeOpacity:0.8});
+routeTrack = new google.maps.Polyline({path:track, strokeColor:map.getCurrentMapType().getTextColor(), strokeWeight:2, strokeOpacity:0.8, zIndex:golgotha.maps.z.POLYLINE});
 routeTrack.setMap(map);
 return true;
 }
