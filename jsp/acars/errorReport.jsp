@@ -35,7 +35,7 @@
 </tr>
 <tr>
  <td class="label">Client Build</td>
- <td class="data">Build <fmt:int value="${err.clientBuild}" /></td>
+ <td class="data">Build <fmt:int value="${err.clientBuild}" /><c:if test="${err.beta > 0}"> Beta <fmt:int value="${err.beta}" /></c:if></td>
 </tr>
 <c:if test="${err.FSVersion > 0}">
 <c:set var="fsVersion" value="${(err.FSVersion == 2006) ? 'X' : err.FSVersion}" scope="page" />

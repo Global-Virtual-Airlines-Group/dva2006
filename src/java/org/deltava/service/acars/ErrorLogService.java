@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.Date;
@@ -8,6 +8,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.ACARSError;
+import org.deltava.beans.acars.ClientType;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -16,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -47,6 +48,16 @@ public class ErrorLogService extends WebService {
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
 		err.setStateData(ctx.getParameter("stateData"));
+		err.setClientType(ClientType.PILOT);
+		if (err.getClientBuild() < 75) {
+			err.setClientType(ClientType.DISPATCH);
+			err.setVersion(1);
+		} else if (err.getClientBuild() < 80)
+			err.setVersion(1);
+		 else if (err.getClientBuild() < 100)
+			 err.setVersion(2);
+		 else
+			 err.setVersion(3);
 		
 		try {
 			SetACARSLog dao = new SetACARSLog(ctx.getConnection());
@@ -58,7 +69,6 @@ public class ErrorLogService extends WebService {
 			ctx.release();
 		}
 
-		// Return status code
 		return SC_OK;
 	}
 
