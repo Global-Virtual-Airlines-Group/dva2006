@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,20 +8,23 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store ACARS error dumps.
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
-public class ACARSError extends DatabaseBean {
+public class ACARSError extends DatabaseBean implements ClientVersion {
 	
 	private int _userID;
 	private Date _createdOn;
 	private String _remoteAddr;
 	private String _remoteHost;
+	private int _version;
 	private int _clientBuild;
 	private int _beta;
 	private int _fsVersion;
 	private String _fsuipcVersion;
+	
+	private ClientType _type;
 	
 	private String _msg;
 	private String _stackDump;
@@ -91,6 +94,24 @@ public class ACARSError extends DatabaseBean {
 	 */
 	public int getBeta() {
 		return _beta;
+	}
+	
+	/**
+	 * Returns the ACARS client type.
+	 * @return the ClienTtype
+	 * @see ACARSError#setClientType(ClientType)
+	 */
+	public ClientType getClientType() {
+		return _type;
+	}
+	
+	/**
+	 * Returns the ACARS major version.
+	 * @return the major version number
+	 * @see ACARSError#setVersion(int)
+	 */
+	public int getVersion() {
+		return _version;
 	}
 	
 	/**
@@ -210,6 +231,24 @@ public class ACARSError extends DatabaseBean {
 	 */
 	public void setFSUIPCVersion(String ver) {
 		_fsuipcVersion = ver;
+	}
+	
+	/**
+	 * Sets the ACARS client type.
+	 * @param ct the ClientType
+	 * @see ACARSError#getClientType()
+	 */
+	public void setClientType(ClientType ct) {
+		_type = ct;
+	}
+	
+	/**
+	 * Sets the ACARS client major version.
+	 * @param ver the major version
+	 * @see ACARSError#getVersion()
+	 */
+	public void setVersion(int ver) {
+		_version = ver;
 	}
 	
 	/**
