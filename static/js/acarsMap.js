@@ -271,7 +271,7 @@ xreq.onreadystatechange = function() {
 
 		// Draw the line
 		gaEvent('ACARS', 'Flight Progress Info');
-		routeData = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, , zIndex:(golgotha.maps.z.POLYLINE-1)});
+		routeData = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, zIndex:(golgotha.maps.z.POLYLINE-1)});
 		routeData.setMap(map);
 	}
 
