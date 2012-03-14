@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -24,7 +24,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to import Flight Schedule data.
  * @author Luke
- * @version 3.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -44,6 +44,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 	 * @throws CommandException if the command name is null
 	 * @throws IllegalStateException if the command has already been initialized
 	 */
+	@Override
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 
@@ -84,6 +85,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Save schedule types
@@ -118,7 +120,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 					break;
 
 				case INNOVATA:
-					GetSchedule ivdao = new GetSchedule(csvData.getInputStream());
+					GetFullSchedule ivdao = new GetFullSchedule(csvData.getInputStream());
 					ivdao.load();
 					dao = ivdao;
 					break;
