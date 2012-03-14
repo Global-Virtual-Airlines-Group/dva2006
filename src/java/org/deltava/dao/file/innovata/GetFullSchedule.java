@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
- * @version 2.7
+ * @version 4.1
  * @since 1.0
  */
 
@@ -50,6 +50,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * Initializes the list of airlines.
 	 * @param airlines a Collection of Airline beans
 	 */
+	@Override
 	public void setAirlines(Collection<Airline> airlines) {
 		super.setAirlines(airlines);
 		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
@@ -171,6 +172,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 * @return a Collection of ScheduleEntry beans
 	 * @throws DAOException if an I/O error occurs
 	 */
+	@Override
 	public Collection<ScheduleEntry> process() throws DAOException {
 
 		Map<String, DailyScheduleEntry> results = new HashMap<String, DailyScheduleEntry>();
@@ -182,10 +184,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			Airport airportA = SystemData.getAirport(entries.get(22));
 			
 			// Ensure all BSL/MLH comes from a common airport.
-			if ((airportD != null) && ("LFSB".equals(airportD.getICAO())))
-				airportD = SystemData.getAirport("LFSB");
-			if ((airportA != null) && ("LFSB".equals(airportA.getICAO())))
-				airportA = SystemData.getAirport("LFSB");
+			if ((airportD == null) && ("MLH".equals(entries.get(14))))
+				airportD = SystemData.getAirport("BSL");
+			if ((airportA == null) && ("MLH".equals(entries.get(22))))
+				airportA = SystemData.getAirport("BSL");
 
 			// Look up the equipment type
 			String eqType = getEquipmentType(entries.get(27));
