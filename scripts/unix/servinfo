@@ -15,10 +15,9 @@ if [ -z "$3" ]; then
 fi
 
 # Get the status URL
-TrimCount=0
+TrimCount=1
 if [ "IVAO" == "$1" ]; then
  StatusURL="http://www.ivao.aero/whazzup/status.txt"
- TrimCount=1
  network="ivao"
 else
  StatusURL="http://stats.vatsim.net/status.txt"
@@ -70,8 +69,8 @@ RandomLine=$((1 + ($UpperBound * $RANDOM) / (32767 + 1) ))
 # Use sed to grab the random line and get rid of the trailing newline
 MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network/urls")
 URLSize=$(echo -n "$MyURL" | wc -c | sed "s/ //g")
-URLSize=`expr $URLSize "-" $TrimCount`
-MyURL=$(echo -n "$MyURL" | cut -b 1-${URLSize})
+# URLSize=`expr $URLSize "-" $TrimCount`
+MyURL=$(echo -n "$MyURL" | cut -b 1-${URLSize} | tr -d "\r")
 FileField=$(echo -n "$MyURL" | awk -F / '{print NF}')
 InfoFile=$(echo -n "$MyURL" | cut -d / -f $FileField)
 
