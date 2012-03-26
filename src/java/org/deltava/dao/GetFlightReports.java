@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.RouteStats;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -542,25 +543,29 @@ public class GetFlightReports extends DAO {
 	 * @return a Collection of RoutePair beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<RoutePair> getRoutePairs(int pilotID) throws DAOException {
+	public Collection<RouteStats> getRoutePairs(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM PIREPS WHERE "
-					+ "(PILOT_ID=?) AND (STATUS=?)");
+			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A, COUNT(ID) AS CNT FROM "
+				+ "PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) GROUP BY AIRPORT_D, AIRPORT_A");
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightReport.OK);
 			
 			// Execute the query
-			Collection<RoutePair> results = new TreeSet<RoutePair>();
+			Map<String, RouteStats> results = new HashMap<String, RouteStats>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					ScheduleRoute rp = new ScheduleRoute(SystemData.getAirline(rs.getString(1)), 
-							SystemData.getAirport(rs.getString(2)), SystemData.getAirport(rs.getString(3)));
-					results.add(rp);
+					RouteStats rp = new RouteStats(SystemData.getAirport(rs.getString(1)),
+						SystemData.getAirport(rs.getString(2)), rs.getInt(3));
+					RouteStats rp2 = results.get(rp.toString());
+					if (rp2 != null)
+						rp.add(rp.getFlights());
+					else
+						results.put(rp.toString(), rp);
 				}
 			}
 			
 			_ps.close();
-			return results;
+			return results.values();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
