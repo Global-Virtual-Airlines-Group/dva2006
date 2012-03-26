@@ -54,18 +54,9 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 var routes = [];
 <c:forEach var="route" items="${routes}">
 // ${route}
-<c:choose>
-<c:when test="${fn:sizeof(route.points) > 2}">
+<c:set var="opacity" value="${route.flights * 0.75 / maxFlights}" scope="page" />
 <map:points var="rtPoints" items="${route.points}" />
-var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
-</c:when>
-<c:otherwise>
-<map:point var="aD" point="${route.airportD}" />
-<map:point var="aA" point="${route.airportA}" />
-var route = new google.maps.Polyline({path:[aD, aA], strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:0.55, geodesic:true, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
-</c:otherwise>
-</c:choose>
-
+var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:${opacity}, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
 route.setMap(map);
 routes.push(route);
 </c:forEach>

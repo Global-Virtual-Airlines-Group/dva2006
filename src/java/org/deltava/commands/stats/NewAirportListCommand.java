@@ -81,7 +81,7 @@ public class NewAirportListCommand extends AbstractCommand {
 
 			// Load airports
 			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<RoutePair> routes = frdao.getRoutePairs(userID);
+			Collection<? extends RoutePair> routes = frdao.getRoutePairs(userID);
 			for (RoutePair rp : routes) {
 				myAirports.add(rp.getAirportD());
 				myAirports.add(rp.getAirportA());
