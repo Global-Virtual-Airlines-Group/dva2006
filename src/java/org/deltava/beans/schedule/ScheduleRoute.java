@@ -1,11 +1,7 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.*;
-
-import org.deltava.beans.*;
-
-import org.deltava.util.GeoUtils;
+import org.deltava.beans.ViewEntry;
 
 /**
  * A bean to store route pair information.
@@ -14,15 +10,9 @@ import org.deltava.util.GeoUtils;
  * @since 1.0
  */
 
-public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, ViewEntry {
+public class ScheduleRoute extends AbstractRoute implements Comparable<ScheduleRoute>, ViewEntry {
 	
 	private final Airline _a;
-	private final Airport _aD;
-	private final Airport _aA;
-	
-	private final String _code;
-	
-	private int _flights;
 	private int _routes;
 	
 	/**
@@ -41,16 +31,8 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	 * @param aa the arrival Airport bean
 	 */
 	public ScheduleRoute(Airline a, Airport ad, Airport aa) {
-		super();
+		super(ad, aa);
 		_a = a;
-		_aD = ad;
-		_aA = aa;
-		
-		// Build code
-		Collection<String> airports = new TreeSet<String>();
-		airports.add(ad.getICAO());
-		airports.add(aa.getICAO());
-		_code = airports.toString();
 	}
 	
 	/**
@@ -62,54 +44,6 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	}
 	
 	/**
-	 * Returns the departure Airport.
-	 * @return the Airport bean
-	 * @see ScheduleRoute#getAirports()
-	 */
-	public Airport getAirportD() {
-		return _aD;
-	}
-
-	/**
-	 * Returns the arrival Airport.
-	 * @return the Airport bean
-	 * @see ScheduleRoute#getAirports()
-	 */
-	public Airport getAirportA() {
-		return _aA;
-	}
-	
-	/**
-	 * Returns the sorted airports in this route pair. 
-	 * @return a Collection of Airport beans
-	 * @see ScheduleRoute#getAirportA()
-	 * @see ScheduleRoute#getAirportD()
-	 */
-	public Collection<Airport> getAirports() {
-		return Arrays.asList(_aD, _aA);
-	}
-	
-	/**
-	 * Returns a list of route points for inclusion on a Google Map. If this route crosses the 
-	 * International Date Line, internal Great Circle calculations are used to get around a
-	 * Google Maps bug.
-	 * @return a Collection of GeoLocations
-	 */
-	public Collection<? extends GeoLocation> getPoints() {
-		return GeoUtils.greatCircle(_aD, _aA, 100);
-	}
-	
-	/**
-	 * Returns the number of flights between these two airports.
-	 * @return the number of flights
-	 * @see ScheduleRoute#setFlights(int)
-	 * @see ScheduleRoute#getRoutes()
-	 */
-	public int getFlights() {
-		return _flights;
-	}
-
-	/**
 	 * Returns the number of Dispatch rotues between these two airports.
 	 * @return the number of routes
 	 * @see ScheduleRoute#setRoutes(int)
@@ -120,20 +54,13 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	}
 	
 	/**
-	 * Returns the distance between the airports.
-	 */
-	public int getDistance() {
-		return GeoUtils.distance(_aD, _aA);
-	}
-
-	/**
 	 * Updates the number of flights between these two airports. 
 	 * @param count  the number of flights
 	 * @see ScheduleRoute#getFlights()
 	 * @see ScheduleRoute#setRoutes(int)
 	 */
 	public void setFlights(int count) {
-		_flights = Math.max(0, count);
+		_frequency = Math.max(0, count);
 	}
 	
 	/**
@@ -156,7 +83,7 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	 * @see Comparable#compareTo(Object)
 	 */
 	public int compareTo(ScheduleRoute rp2) {
-		return _code.compareTo(rp2._code);
+		return toString().compareTo(rp2.toString());
 	}
 	
 	/**
@@ -165,23 +92,5 @@ public class ScheduleRoute implements RoutePair, Comparable<ScheduleRoute>, View
 	 */
 	public boolean equals(Object o) {
 		return (o instanceof ScheduleRoute) ? (compareTo((ScheduleRoute) o) == 0) : false;
-	}
-	
-	/**
-	 * Returns the route pair's hash code.
-	 * @see ScheduleRoute#toString()
-	 */
-	public int hashCode() {
-		return _code.hashCode();
-	}
-
-	/**
-	 * Returns the route pair.
-	 */
-	public String toString() {
-		StringBuilder buf = new StringBuilder(_aD.getICAO());
-		buf.append('-');				
-		buf.append(_aA.getICAO());
-		return buf.toString();
 	}
 }

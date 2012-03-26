@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.stats.RouteStats;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to disply all the routes the pilot has flown.
  * @author LKolin
- * @version 2.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -26,6 +27,7 @@ public class PilotRouteMapCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the pilot ID
@@ -42,22 +44,25 @@ public class PilotRouteMapCommand extends AbstractCommand {
 			if (usr == null)
 				throw notFoundException("Unknown Pilot ID - " + userID);
 			
-			// Get the routes
+			// Get the routes and sort them
+			SortedSet<RouteStats> routes = new TreeSet<RouteStats>(Collections.reverseOrder());
 			GetFlightReports frdao = new GetFlightReports(con);
-			Collection<RoutePair> routes = frdao.getRoutePairs(userID);
+			routes.addAll(frdao.getRoutePairs(userID));
 			
-			// Save the user's home airport
+			// Save the user's home airport and max flights
+			int maxFlights = routes.isEmpty() ? 1 : routes.first().getFlights();
 			Airport airportH = SystemData.getAirport(usr.getHomeAirport());
 			
-			// Get the airports
+			// Get the airports and maximum
 			Collection<Airport> airports = new LinkedHashSet<Airport>();
-			for (Iterator<RoutePair> i = routes.iterator(); i.hasNext(); ) {
+			for (Iterator<? extends RoutePair> i = routes.iterator(); i.hasNext(); ) {
 				RoutePair rp = i.next();
 				airports.add(rp.getAirportD());
 				airports.add(rp.getAirportA());
 			}
 			
 			// Save in request
+			ctx.setAttribute("maxFlights", Integer.valueOf(maxFlights), REQUEST);
 			ctx.setAttribute("routes", routes, REQUEST);
 			ctx.setAttribute("home", airportH, REQUEST);
 			airports.remove(airportH);
