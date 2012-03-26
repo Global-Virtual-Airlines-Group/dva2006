@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -56,7 +56,7 @@ public final class XACARSFlightHelper {
 		xfr.setEquipmentType(inf.getEquipmentType());
 		xfr.setFSVersion(inf.getFSVersion());
 		xfr.setAttribute(FlightReport.ATTR_XACARS, true);
-		xfr.setLength(inf.getLength());
+		xfr.setLength(inf.getLength() / 10);
 		xfr.setPassengers(inf.getPassengers());
 		xfr.setLoadFactor(inf.getLoadFactor());
 		xfr.setRoute(inf.getRoute());
