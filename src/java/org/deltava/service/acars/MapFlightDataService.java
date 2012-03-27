@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -40,7 +40,7 @@ public class MapFlightDataService extends WebService {
 		// Get the DAO and the route data
 		Collection<? extends GeoLocation> routePoints = null;
 		try {
-			GetACARSData dao = new GetACARSData(ctx.getConnection());
+			GetACARSPositions dao = new GetACARSPositions(ctx.getConnection());
 			FlightInfo info = dao.getInfo(id);
 			if (info == null)
 				routePoints = Collections.emptyList();

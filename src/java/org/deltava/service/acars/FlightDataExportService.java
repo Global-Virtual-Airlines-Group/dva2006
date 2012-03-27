@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public class FlightDataExportService extends WebService {
 		FlightInfo info = null;
 		List<RouteEntry> routeData = new ArrayList<RouteEntry>(); 
 		try {
-			GetACARSData dao = new GetACARSData(ctx.getConnection());
+			GetACARSPositions dao = new GetACARSPositions(ctx.getConnection());
 			info = dao.getInfo(id);
 			if (info == null)
 				return SC_NOT_FOUND;
