@@ -45,12 +45,13 @@ public class PilotRouteMapCommand extends AbstractCommand {
 				throw notFoundException("Unknown Pilot ID - " + userID);
 			
 			// Get the routes and sort them
-			SortedSet<RouteStats> routes = new TreeSet<RouteStats>(Collections.reverseOrder());
+			List<RouteStats> routes = new ArrayList<RouteStats>();
 			GetFlightReports frdao = new GetFlightReports(con);
 			routes.addAll(frdao.getRoutePairs(userID));
+			Collections.sort(routes, Collections.reverseOrder());
 			
 			// Save the user's home airport and max flights
-			int maxFlights = routes.isEmpty() ? 1 : routes.first().getFlights();
+			int maxFlights = routes.isEmpty() ? 1 : routes.get(0).getFlights();
 			Airport airportH = SystemData.getAirport(usr.getHomeAirport());
 			
 			// Get the airports and maximum

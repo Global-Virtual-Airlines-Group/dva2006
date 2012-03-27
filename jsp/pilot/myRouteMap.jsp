@@ -54,9 +54,11 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 var routes = [];
 <c:forEach var="route" items="${routes}">
 // ${route}
-<c:set var="opacity" value="${route.flights * 0.75 / maxFlights}" scope="page" />
+<c:set var="opacity" value="${(route.flights * 0.75 / maxFlights * 0.4) + 0.3}" scope="page" />
 <map:points var="rtPoints" items="${route.points}" />
-var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.5, strokeOpacity:${opacity}, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
+var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.25, strokeOpacity:${opacity}, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
+route.srcA = '${route.airportD.ICAO}';
+route.dstA = '${route.airportA.ICAO}';
 route.setMap(map);
 routes.push(route);
 </c:forEach>
