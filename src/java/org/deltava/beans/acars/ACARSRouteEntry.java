@@ -1,10 +1,14 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.servinfo.Controller;
+import org.deltava.beans.servinfo.Facility;
 
 import org.deltava.util.StringUtils;
 
@@ -514,5 +518,62 @@ public class ACARSRouteEntry extends RouteEntry {
 
 		buf.append("</span>");
 		return buf.toString();
+	}
+	
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		super.readExternal(in);
+		_radarAlt = in.readInt();
+		_pitch = in.readFloat();
+		_bank = in.readFloat();
+		_vSpeed = in.readShort();
+		_aoa = in.readFloat();
+		_gForce = in.readFloat();
+		_n1 = in.readFloat();
+		_n2 = in.readFloat();
+		_viz = in.readFloat();
+		_fuelFlow = in.readInt();
+		_flaps = in.readShort();
+		_frameRate = in.readShort();
+		_simRate = in.readShort();
+		
+		// Check for controller
+		String com1 = in.readUTF();
+		if (!StringUtils.isEmpty(com1)) {
+			_com1 = com1;
+			_atc = new Controller(in.readInt());
+			_atc.setFacility(Facility.values()[in.readShort()]);
+			_atc.setCallsign(in.readUTF());
+			_atc.setPosition(in.readFloat(), in.readFloat());
+		}
+	}
+	
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		super.writeExternal(out);
+		out.writeInt(_radarAlt);
+		out.writeFloat((float) _pitch);
+		out.writeFloat((float) _bank);
+		out.writeShort(_vSpeed);
+		out.writeFloat((float) _aoa);
+		out.writeFloat((float) _gForce);
+		out.writeFloat((float) _n1);
+		out.writeFloat((float) _n2);
+		out.writeFloat((float) _viz);
+		out.writeInt(_fuelFlow);
+		out.writeShort(_flaps);
+		out.writeShort(_frameRate);
+		out.writeShort(_simRate);
+		
+		// Write controller
+		if (_atc != null) {
+			out.writeUTF(_com1);
+			out.writeInt(_atc.getID());
+			out.writeShort(_atc.getFacility().ordinal());
+			out.writeUTF(_atc.getCallsign());
+			out.writeFloat((float) _atc.getLatitude());
+			out.writeFloat((float) _atc.getLongitude());
+		} else
+			out.writeUTF("");
 	}
 }

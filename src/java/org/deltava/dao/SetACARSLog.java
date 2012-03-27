@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -54,51 +54,6 @@ public class SetACARSLog extends DAO {
 			_ps.setBoolean(2, false);
 			executeUpdate(0);
 		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Moves ACARS position data from the live table to the archive.
-	 * @param flightID the ACARS Flight ID
-	 * @return the number of position entries archived
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int archivePositions(int flightID) throws DAOException {
-		try {
-			startTransaction();
-
-			// Copy the data to the archive
-			prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE SELECT P.* FROM acars.POSITIONS P "
-					+ "WHERE (P.FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			int rowCount = executeUpdate(0);
-
-			// Delete the existing flight data
-			prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
-			_ps.setInt(1, flightID);
-			executeUpdate(0);
-
-			// Mark the flight as archived
-			prepareStatement("UPDATE acars.FLIGHTS SET ARCHIVED=?, PIREP=? WHERE (ID=?)");
-			_ps.setBoolean(1, true);
-			_ps.setBoolean(2, true);
-			_ps.setInt(3, flightID);
-			boolean hasInfo = (executeUpdate(0) > 0);
-			
-			// Update archive log
-			if (hasInfo) {
-				prepareStatementWithoutLimits("INSERT INTO acars.ARCHIVE_UPDATES (ID, ARCHIVED) VALUES (?, NOW()) ON "
-						+" DUPLICATE KEY UPDATE ARCHIVED=NOW()");
-				_ps.setInt(1, flightID);
-				executeUpdate(0);
-			}
-
-			// Commit the transaction
-			commitTransaction();
-			return rowCount;
-		} catch (SQLException se) {
-			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

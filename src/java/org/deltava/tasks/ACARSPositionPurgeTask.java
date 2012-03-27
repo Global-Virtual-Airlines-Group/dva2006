@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -58,8 +58,9 @@ public class ACARSPositionPurgeTask extends Task {
 			SetExam exwdao = new SetExam(con);
 			
 			// Loop through the IDs
-			GetACARSData dao = new GetACARSData(con);
+			GetACARSPositions dao = new GetACARSPositions(con);
 			SetACARSPurge wdao = new SetACARSPurge(con);
+			SetACARSArchive arcdao = new SetACARSArchive(con);
 			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 				int id = i.next().intValue();
 				
@@ -71,8 +72,9 @@ public class ACARSPositionPurgeTask extends Task {
 				
 				// If we're supposed to be archived, archive positions
 				} else if (fInfo.getArchived()) {
-					int rowCount = wdao.archivePositions(id);
-					log.warn("Flight ID " + id + " archived, moved " + rowCount + " poistions");
+					Collection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
+					arcdao.archive(id, entries);
+					log.warn("Flight ID " + id + " archived, moved " + entries.size() + " poistions");
 
 				// If we don't have a PIREP, nuke
 				} else if (!fInfo.getHasPIREP()) {
@@ -104,8 +106,9 @@ public class ACARSPositionPurgeTask extends Task {
 						ctx.commitTX();
 						log.warn("Flight ID " + id + " has no PIREP, purged " + purgeCount + " poistions");
 					} else if ((afr.getStatus() == FlightReport.OK) || (afr.getStatus() == FlightReport.REJECTED)) {
-						int archiveCount = wdao.archivePositions(id);
-						log.warn("Flight ID " + id + " is not archived, moved " + archiveCount + " poistions");
+						Collection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
+						arcdao.archive(id, entries);
+						log.warn("Flight ID " + id + " is not archived, moved " + entries.size() + " poistions");
 					}
 				}
 			}
