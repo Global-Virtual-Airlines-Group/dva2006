@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.sql.*;
@@ -72,7 +72,7 @@ public class FuelBurnLoader extends TestCase {
 		
 		// Load the ACARS data
 		int totalFlights = 0;
-		GetACARSData acdao = new GetACARSData(_c);
+		GetACARSPositions acdao = new GetACARSPositions(_c);
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
 			int id = i.next().intValue();
 			totalFlights++;

@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -127,7 +127,7 @@ public class GetXACARS extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Helper method to parse Flight Info result sets.
 	 */

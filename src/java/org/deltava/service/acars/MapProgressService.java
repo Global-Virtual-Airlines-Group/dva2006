@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class MapProgressService extends WebService {
 		final Collection<MarkerMapEntry> routeWaypoints = new ArrayList<MarkerMapEntry>();
 		try {
 			Connection con = ctx.getConnection();
-			GetACARSData dao = new GetACARSData(con);
+			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(id);
 			if ((info != null) && info.isXACARS())
 				routePoints.addAll(dao.getXACARSEntries(id));

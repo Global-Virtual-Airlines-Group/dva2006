@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -37,7 +37,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and Flight Information
-			GetACARSLog dao = new GetACARSLog(con);
+			GetACARSPositions dao = new GetACARSPositions(con);
 			FlightInfo info = dao.getInfo(ctx.getID());
 			if (info == null)
 				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());

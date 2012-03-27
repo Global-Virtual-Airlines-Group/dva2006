@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -58,19 +58,18 @@ public class EarthMapService extends GoogleEarthService {
 			Connection con = ctx.getConnection();
 			
 			// Loop through the flights
-			GetACARSData dao = new GetACARSData(con);
+			GetACARSPositions dao = new GetACARSPositions(con);
 			Collection<Integer> userIDs = new HashSet<Integer>();
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
 				Integer flightID = i.next();
 				FlightInfo info = dao.getInfo(flightID.intValue());
 				if (info != null) {
-					userIDs.add(new Integer(info.getPilotID()));
+					userIDs.add(Integer.valueOf(info.getPilotID()));
 					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(flightID.intValue(), info.getArchived());
 					info.setRouteData(routeData);
 					if (positions.containsKey(flightID))
 						info.setPosition((RouteEntry) positions.get(flightID));
 					
-					// Add the flight data
 					flights.add(info);
 				}
 			}

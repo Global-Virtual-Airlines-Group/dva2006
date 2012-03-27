@@ -1,10 +1,12 @@
-// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
+import java.util.Collection;
 import java.util.Date;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.acars.ACARSRouteEntry;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.testing.*;
@@ -20,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 2.0
  */
 
@@ -31,6 +33,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Initialize the Message Context
@@ -110,8 +113,11 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			
 			// Archive the Position data
 			if (fr instanceof ACARSFlightReport) {
-				SetACARSLog acdao = new SetACARSLog(con);
-				acdao.archivePositions(fr.getDatabaseID(DatabaseID.ACARS));
+				GetACARSPositions posdao = new GetACARSPositions(con);
+				SetACARSArchive acdao = new SetACARSArchive(con);
+				int acarsID = fr.getDatabaseID(DatabaseID.ACARS);
+				Collection<ACARSRouteEntry> entries = posdao.getRouteEntries(acarsID, false);
+				acdao.archive(acarsID, entries);
 				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
 			}
 			
