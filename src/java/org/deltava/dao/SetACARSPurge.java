@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A Data Access Object to purge ACARS data.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 3.2
  */
 
@@ -64,18 +64,17 @@ public class SetACARSPurge extends SetACARSLog {
 			
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())	
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
 			// Clean up and remove active
-			rs.close();
 			_ps.close();
 			results.removeAll(activeIDs);
 
 			// Purge the ones we want to
-			for (Iterator<Integer> i = results.iterator(); i.hasNext(); ) {
-				Integer id = i.next();
+			for (Integer id : results) {
 				log.info("Deleting Flight #" + id.toString());
 				deleteInfo(id.intValue());
 			}
@@ -85,24 +84,6 @@ public class SetACARSPurge extends SetACARSLog {
 			return results;
 		} catch (SQLException se) {
 			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Purges old ACARS command logs from the database older than a specified number of hours.
-	 * @param hours the number of hours
-	 * @return the number of entries purged
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public int purgeLogs(int hours) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.COMMAND_STATS WHERE (CMDDATE < DATE_SUB(NOW(), "
-					+ "INTERVAL ? HOUR))");
-			_ps.setInt(1, hours);
-			return executeUpdate(0);
-		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
