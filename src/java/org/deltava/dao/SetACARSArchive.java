@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.acars.RouteEntry;
+import org.deltava.dao.file.SetSerializedPosition;
 
 /**
  * A Data Access Object to write to the ACARS position archive.
@@ -32,13 +33,8 @@ public class SetACARSArchive extends DAO {
 	public void archive(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream(32768);
-			try (ObjectOutputStream oo = new ObjectOutputStream(out)) {
-				oo.writeInt(flightID);
-				oo.writeInt(positions.size());
-				for (RouteEntry re : positions)
-					oo.writeObject(re);
-			}
-			
+			SetSerializedPosition psdao = new SetSerializedPosition(out);
+			psdao.archivePositions(flightID, positions);
 			startTransaction();
 			
 			// Write serialized data
@@ -63,9 +59,9 @@ public class SetACARSArchive extends DAO {
 			
 			// Commit the transaction
 			commitTransaction();
-		} catch (SQLException | IOException sie) {
+		} catch (SQLException se) {
 			rollbackTransaction();
-			throw new DAOException(sie);
+			throw new DAOException(se);
 		}
 	}
 }

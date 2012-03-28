@@ -11,6 +11,7 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.servinfo.*;
+import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.util.StringUtils;
 
@@ -146,16 +147,12 @@ public class GetACARSPositions extends GetACARSData {
 				return Collections.emptyList();
 			
 			// Deserialize and validate
-			ObjectInputStream oi = new ObjectInputStream(in);
-			int id = oi.readInt();
-			int size = oi.readInt();
-			if (id != flightID)
-				throw new IOException ("Expected Flight " + flightID + " retrieved " + id);
+			GetSerializedPosition psdao = new GetSerializedPosition(in);
+			Collection<? extends RouteEntry> entries = psdao.read();
 
 			// Deserialize
 			List<GeoLocation> results = new ArrayList<GeoLocation>();
-			for (int x = 0; x < size; x++) {
-				RouteEntry entry = (RouteEntry) oi.readObject();
+			for (RouteEntry entry : entries) {
 				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround)
 					results.add(new GeoPosition(entry));
 				else
@@ -163,8 +160,8 @@ public class GetACARSPositions extends GetACARSData {
 			}
 			
 			return results;
-		} catch (SQLException | IOException | ClassNotFoundException sie) {
-			throw new DAOException(sie);
+		} catch (SQLException se) {
+			throw new DAOException(se);
 		}
 	}
 

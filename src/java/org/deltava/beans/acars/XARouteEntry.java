@@ -1,12 +1,10 @@
 // Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.*;
 
 import org.deltava.beans.*;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -104,17 +102,5 @@ public class XARouteEntry extends RouteEntry {
 			warnings.add("ALTITUDE");
 		
 		return warnings.isEmpty() ? null : StringUtils.listConcat(warnings, " ");
-	}
-	
-	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		super.readExternal(in);
-		_vSpeed = in.readShort();
-	}
-	
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-		super.writeExternal(out);
-		out.writeShort(_vSpeed);
 	}
 }

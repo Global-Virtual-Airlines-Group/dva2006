@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -9,21 +9,18 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to save a Java properties file.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
-public class SetProperties {
+public class SetProperties extends WriteableDAO {
 	
-	private OutputStream _os;
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param os the OutputStream to write to
 	 */
 	public SetProperties(OutputStream os) {
-		super();
-		_os = os;
+		super(os);
 	}
 
 	/**

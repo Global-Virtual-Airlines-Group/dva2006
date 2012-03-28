@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -8,20 +8,20 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to write a buffer to the file system.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
-public class WriteBuffer {
+public class WriteBuffer extends WriteableDAO {
 	
-	protected File _f;
+	protected final File _f;
 
    /**
     * Initializes the Data Access Object.
     * @param f the file to write to
     */
    public WriteBuffer(File f) {
-      super();
+      super(null);
       _f = f;
    }
    
@@ -41,10 +41,10 @@ public class WriteBuffer {
     */
    public void write(byte[] buffer) throws DAOException {
       try {
-         OutputStream out = new FileOutputStream(_f);
-         out.write(buffer);
-         out.flush();
-         out.close();
+         _os = new FileOutputStream(_f);
+         _os.write(buffer);
+         _os.flush();
+         _os.close();
       } catch (IOException ie) {
          throw new DAOException(ie);
       }
