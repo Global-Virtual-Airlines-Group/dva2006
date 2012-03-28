@@ -1,11 +1,9 @@
 // Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.io.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
 
@@ -18,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
  * @since 1.0
  */
 
-public abstract class RouteEntry extends ACARSMapEntry implements Externalizable, GeospaceLocation {
+public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
 
 	private Date _date;
 	private FlightPhase _phase;
@@ -384,36 +382,5 @@ public abstract class RouteEntry extends ACARSMapEntry implements Externalizable
 		
 		buf.append("</span>");
 		return buf.toString();
-	}
-	
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		_pos = new GeoPosition(in.readDouble(), in.readDouble());
-		_date = new Date(in.readLong());
-		_phase = FlightPhase.values()[in.readShort()];
-		_flags = in.readInt();
-		_alt = in.readInt();
-		_hdg = in.readShort();
-		_aSpeed = in.readShort();
-		_gSpeed = in.readShort();
-		_mach = in.readFloat();
-		_wSpeed = in.readShort();
-		_wHdg = in.readShort();
-		_fuelRemaining = in.readInt();
-	}
-	
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeDouble(_pos.getLatitude());
-		out.writeDouble(_pos.getLongitude());
-		out.writeLong(_date.getTime());
-		out.writeShort(_phase.ordinal());
-		out.writeInt(_flags);
-		out.writeInt(_alt);
-		out.writeShort(_hdg);
-		out.writeShort(_aSpeed);
-		out.writeShort(_gSpeed);
-		out.writeFloat((float) _mach);
-		out.writeShort(_wSpeed);
-		out.writeShort(_wHdg);
-		out.writeInt(_fuelRemaining);
 	}
 }

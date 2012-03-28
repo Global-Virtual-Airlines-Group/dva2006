@@ -6,14 +6,17 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.deltava.beans.acars.*;
+
 import org.deltava.dao.GetACARSPositions;
+import org.deltava.dao.file.*;
+
 import org.deltava.util.ThreadUtils;
 
 import junit.framework.TestCase;
 
 public class TestConvertArchive extends TestCase {
 	
-	private static final int WORKERS = 8;
+	private static final int WORKERS = 1;
 	private static final String URL = "jdbc:mysql://localhost/acars?user=luke&password=14072";
 	
 	protected final Queue<Integer> _IDwork = new ConcurrentLinkedQueue<Integer>();
@@ -37,16 +40,22 @@ public class TestConvertArchive extends TestCase {
 				int id = i.intValue();
 				try {
 					Collection<? extends RouteEntry> entries = addao.getRouteEntries(id, true);
+					assertFalse(entries.isEmpty());
+					File f = new File("/tmp", String.valueOf(id) + ".data");
 					
-					OutputStream out = new FileOutputStream(new File("/tmp", String.valueOf(id) + ".data.gz"));
-					ObjectOutputStream oo = new ObjectOutputStream(new BufferedOutputStream(out, 32768));
-					oo.writeInt(id);
-					oo.writeInt(entries.size());
-					for (RouteEntry re : entries)
-						oo.writeObject(re);
-						
-					oo.flush();
-					out.close();
+					// Write data
+					try (OutputStream out = new FileOutputStream(f)) {
+						SetSerializedPosition pwdao = new SetSerializedPosition(out);
+						pwdao.archivePositions(id, entries);
+					}
+					
+					// Validate
+					try (InputStream in = new FileInputStream(f)) {
+						GetSerializedPosition prdao = new GetSerializedPosition(in);
+						Collection<? extends RouteEntry> positions = prdao.read();
+						assertNotNull(positions);
+						assertEquals(entries.size(), positions.size());
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -73,8 +82,8 @@ public class TestConvertArchive extends TestCase {
 		try (Connection c = DriverManager.getConnection(URL)) {
 			c.setReadOnly(true);
 			try (Statement s = c.createStatement()) {
-				s.setFetchSize(500);
-				try (ResultSet rs = s.executeQuery("SELECT ID FROM ARCHIVE_UPDATES")) {
+				s.setFetchSize(750);
+				try (ResultSet rs = s.executeQuery("SELECT ID FROM ARCHIVE_UPDATES LIMIT 20")) {
 					while (rs.next())
 						_IDwork.add(Integer.valueOf(rs.getInt(1)));
 				}
