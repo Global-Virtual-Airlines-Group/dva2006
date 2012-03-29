@@ -107,20 +107,27 @@ to your Facebook news feed.</c:if></td>
 </tr>
 </c:when>
 <c:when test="${!empty fbPerms}">
-<c:set var="serverName" value="${req.serverName}" scope="page" />
 <c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
 <script type="text/javascript">
 function fbAuthorize()
 {
 var URLflags = 'height=340,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
-window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
+window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
 return true;
 }
 </script>
 <tr>
  <td class="mid"><a class="bld" href="javascript:void fbAuthorize()">Authorize Us</a></td>
+<c:choose>
+<c:when test="${fn:hasIM(pilot, 'FB')}">
+ <td class="data"><span class="pri bld">The Facebook authorization token you have gven <content:airline /> has expired.</span> Further updates to your
+ Facebook wall cannot be made until <content:airline /> has been authorized to publish to Facebook.</td>
+</c:when>
+<c:otherwise>
  <td class="data">If you are a Facebook member, you can connect to Facebook and allow <content:airline /> to post updates about your virtual career to
  your Facebook wall<c:if test="${acarsEnabled}">, as well as information about your flights flown using <content:airline /> ACARS</c:if>.</td>
+</c:otherwise>
+</c:choose>
 </tr>
 </c:when>
 </c:choose>
