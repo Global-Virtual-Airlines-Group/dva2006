@@ -89,6 +89,8 @@ public class GetSerializedPosition extends DAO {
 				atc.setPosition(in.readFloat(), in.readFloat());
 				re.setController(atc);
 			}
+			
+			results.add(re);
 		}
 		
 		return results;
@@ -111,6 +113,7 @@ public class GetSerializedPosition extends DAO {
 			re.setWindHeading(in.readShort());
 			re.setFuelRemaining(in.readInt());
 			re.setVerticalSpeed(in.readShort());
+			results.add(re);
 		}
 		
 		return results;
