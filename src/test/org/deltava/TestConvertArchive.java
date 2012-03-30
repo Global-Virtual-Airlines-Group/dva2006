@@ -6,18 +6,19 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.servinfo.*;
+import org.deltava.beans.schedule.GeoPosition;
 
-import org.deltava.dao.GetACARSPositions;
+import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-
-import org.deltava.util.ThreadUtils;
+import org.deltava.util.*;
 
 import junit.framework.TestCase;
 
 public class TestConvertArchive extends TestCase {
 	
-	private static final int WORKERS = 1;
-	private static final String URL = "jdbc:mysql://localhost/acars?user=luke&password=14072";
+	private static final int WORKERS = 16;
+	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=test&password=test";
 	
 	protected final Queue<Integer> _IDwork = new ConcurrentLinkedQueue<Integer>();
 
@@ -28,34 +29,43 @@ public class TestConvertArchive extends TestCase {
 			super("ConvertWorker-" + id);
 			setDaemon(true);
 			_c = DriverManager.getConnection(URL);
-			_c.setReadOnly(true);
 		}
 		
 		@Override
 		public void run() {
-			GetACARSPositions addao = new GetACARSPositions(_c);
+			GetACARSArchive addao = new GetACARSArchive(_c);
+			SetACARSArchive awdao = new SetACARSArchive(_c);
 			
 			Integer i = _IDwork.poll();
 			while (i !=  null) {
 				int id = i.intValue();
 				try {
-					Collection<? extends RouteEntry> entries = addao.getRouteEntries(id, true);
-					assertFalse(entries.isEmpty());
-					File f = new File("/tmp", String.valueOf(id) + ".data");
-					
+					Collection<RouteEntry> entries = addao.getArchivedEntries(id);
+					assertNotNull(entries);
+					if (entries.isEmpty())
+						throw new IllegalStateException(getName() + " - " + i + " is empty");
+						
 					// Write data
-					try (OutputStream out = new FileOutputStream(f)) {
+					byte[] data = null;
+					try (ByteArrayOutputStream out = new ByteArrayOutputStream(10240)) {
 						SetSerializedPosition pwdao = new SetSerializedPosition(out);
 						pwdao.archivePositions(id, entries);
+						data = out.toByteArray();
 					}
 					
 					// Validate
-					try (InputStream in = new FileInputStream(f)) {
+					assertTrue(data.length > 0);
+					try (InputStream in = new ByteArrayInputStream(data)) {
 						GetSerializedPosition prdao = new GetSerializedPosition(in);
 						Collection<? extends RouteEntry> positions = prdao.read();
 						assertNotNull(positions);
 						assertEquals(entries.size(), positions.size());
 					}
+					
+					// Write to database
+					awdao.archive(id, entries);
+				} catch (IllegalStateException ise) {
+					System.out.println(ise.getMessage());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -67,6 +77,79 @@ public class TestConvertArchive extends TestCase {
 				_c.close();
 			} catch (Exception e) { 
 				// empty
+			}
+		}
+	}
+	
+	private class GetACARSArchive extends org.deltava.dao.DAO {
+		
+		GetACARSArchive(Connection c) {
+			super(c);
+		}
+		
+		public Collection<RouteEntry> getArchivedEntries(int flightID) throws DAOException {
+
+			try {
+				prepareStatementWithoutLimits("SELECT P.REPORT_TIME, P.TIME_MS, P.LAT, P.LNG, P.B_ALT, P.R_ALT, P.HEADING, "
+					+ "P.PITCH, P.BANK, P.ASPEED, P.GSPEED, P.VSPEED, P.MACH, P.N1, P.N2, P.FLAPS, P.WIND_HDG, P.WIND_SPEED, P.FUEL, "
+					+ "P.FUELFLOW, P.AOA, P.GFORCE, P.FLAGS, P.FRAMERATE, P.SIM_RATE, P.PHASE, PA.COM1, PA.CALLSIGN, PA.LAT, PA.LNG, "
+					+ "PA.NETWORK_ID FROM acars.POSITION_ARCHIVE P LEFT JOIN acars.POSITION_ATC PA ON (PA.FLIGHT_ID=P.FLIGHT_ID) AND "
+					+ "(PA.REPORT_TIME=P.REPORT_TIME) AND (PA.TIME_MS=P.TIME_MS) WHERE (P.FLIGHT_ID=?) ORDER BY P.REPORT_TIME, P.TIME_MS");
+				_ps.setInt(1, flightID);
+
+				// Execute the query
+				List<RouteEntry> results = new ArrayList<RouteEntry>();
+				try (ResultSet rs = _ps.executeQuery()) {
+					while (rs.next()) {
+						java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
+						ACARSRouteEntry entry = new ACARSRouteEntry(dt, new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
+						entry.setFlags(rs.getInt(23));
+						entry.setAltitude(rs.getInt(5));
+						entry.setRadarAltitude(rs.getInt(6));
+						entry.setHeading(rs.getInt(7));
+						entry.setPitch(rs.getDouble(8));
+						entry.setBank(rs.getDouble(9));
+						entry.setAirSpeed(rs.getInt(10));
+						entry.setGroundSpeed(rs.getInt(11));
+						entry.setVerticalSpeed(rs.getInt(12));
+						entry.setMach(rs.getDouble(13));
+						entry.setN1(rs.getDouble(14));
+						entry.setN2(rs.getDouble(15));
+						entry.setFlaps(rs.getInt(16));
+						entry.setWindHeading(rs.getInt(17));
+						entry.setWindSpeed(rs.getInt(18));
+						entry.setFuelRemaining(rs.getInt(19));
+						entry.setFuelFlow(rs.getInt(20));
+						entry.setAOA(rs.getDouble(21));
+						entry.setG(rs.getDouble(22));
+						entry.setFrameRate(rs.getInt(24));
+						entry.setSimRate(rs.getInt(25));
+						entry.setPhase(rs.getInt(26));
+						
+						// Load ATC info
+						String atcID = rs.getString(28);
+						if (!StringUtils.isEmpty(atcID)) {
+							entry.setCOM1(rs.getString(27));
+							Controller ctr = new Controller(rs.getInt(31));
+							ctr.setPosition(rs.getDouble(29), rs.getDouble(30));
+							ctr.setCallsign(atcID);
+							try {
+								ctr.setFacility(Facility.valueOf(atcID.substring(atcID.lastIndexOf('_') + 1)));
+							} catch (IllegalArgumentException iae) {
+								ctr.setFacility(Facility.CTR);
+							} finally {
+								entry.setController(ctr);
+							}
+						}
+						
+						results.add(entry);
+					}
+				}
+
+				_ps.close();
+				return results;
+			} catch (SQLException se) {
+				throw new DAOException(se);
 			}
 		}
 	}
@@ -83,7 +166,7 @@ public class TestConvertArchive extends TestCase {
 			c.setReadOnly(true);
 			try (Statement s = c.createStatement()) {
 				s.setFetchSize(750);
-				try (ResultSet rs = s.executeQuery("SELECT ID FROM ARCHIVE_UPDATES LIMIT 20")) {
+				try (ResultSet rs = s.executeQuery("SELECT ID FROM FLIGHTS WHERE ARCHIVED=1")) {
 					while (rs.next())
 						_IDwork.add(Integer.valueOf(rs.getInt(1)));
 				}
