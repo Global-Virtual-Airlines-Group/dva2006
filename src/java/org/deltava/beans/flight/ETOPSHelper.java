@@ -21,7 +21,6 @@ import org.deltava.util.GeoUtils;
 public final class ETOPSHelper {
 	
 	private static final List<Airport> _airports = new ArrayList<Airport>();
-	
 	private static final Aircraft DUMMY = new Aircraft("ETOPS") {{ setEngines((byte) 2); }};
 
 	// singleton
@@ -55,7 +54,7 @@ public final class ETOPSHelper {
 		else if (e == null)
 			return true;
 		
-		return (e.getTime() > 75);
+		return (e.getTime() > 90);
 	}
 
 	/**
@@ -63,9 +62,9 @@ public final class ETOPSHelper {
 	 * @param entries a Collection of GeoLocations
 	 * @return an ETOPS classification
 	 */
-	public static ETOPS classify(Collection<? extends GeoLocation> entries) {
+	public static ETOPSResult classify(Collection<? extends GeoLocation> entries) {
 		if (entries.size() < 2)
-			return ETOPS.ETOPS60;
+			return new ETOPSResult(ETOPS.ETOPS60);
 
 		// Get the starting point
 		Iterator<? extends GeoLocation> i = entries.iterator();
@@ -76,25 +75,28 @@ public final class ETOPSHelper {
 		Arrays.sort(airports, cmp);
 		
 		// Iterate through the list and determine the closest airport
-		ETOPS result = ETOPS.ETOPS60;
+		ETOPS result = ETOPS.ETOPS60; 
+		int maxDistance = 0; Collection<String> msgs = new LinkedHashSet<String>();
 		while (i.hasNext()) {
 			GeoLocation pos = i.next();
 			int gap = GeoUtils.distance(cmp.getLocation(), pos);
-			if (gap > 40) {
+			if (gap > 30) {
 				cmp = new GeoComparator(pos);
 				Arrays.sort(airports, cmp);
 			}
 			
 			// Get the distance/ETOPS classification to the closest airport
-			int dist = GeoUtils.distance(pos, airports[0]);
+			int dist = GeoUtils.distance(pos, airports[0]); maxDistance = Math.max(maxDistance, dist);
 			ETOPS e = ETOPS.getClassification(dist);
 			if (e == null)
 				return null;
-			else if (e.ordinal() > result.ordinal())
+			else if (e.ordinal() > result.ordinal()) {
+				msgs.add(e.toString() + " - " + airports[0].toString() + " - " + dist + " > " + result.getRange());
 				result = e;
+			}
 		}
 		
-		return result;
+		return new ETOPSResult(result, maxDistance, msgs);
 	}
 
 	/**
@@ -102,7 +104,7 @@ public final class ETOPSHelper {
 	 * @param pr a PopulatedRoute bean
 	 * @return an ETOPS classification
 	 */
-	public static ETOPS classify(PopulatedRoute pr) {
+	public static ETOPSResult classify(PopulatedRoute pr) {
 		Collection<GeoLocation> entries = new LinkedHashSet<GeoLocation>();
 		Collection<? extends GeoLocation> wps = pr.getWaypoints();
 		Iterator<? extends GeoLocation> i = wps.iterator(); GeoLocation lastPos = i.next(); entries.add(lastPos);

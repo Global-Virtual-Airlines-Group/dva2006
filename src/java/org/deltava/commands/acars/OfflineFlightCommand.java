@@ -282,8 +282,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, true);
 			
 			// Check ETOPS
-			ETOPS etopsClass = ETOPSHelper.classify(flight.getPositions()); 
-			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass));
+			ETOPSResult etopsClass = ETOPSHelper.classify(flight.getPositions()); 
+			afr.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, etopsClass.getResult()));
 			if (afr.hasAttribute(FlightReport.ATTR_ETOPSWARN))
 				comments.add("ETOPS classificataion: " + String.valueOf(etopsClass));
 			

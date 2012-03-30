@@ -162,10 +162,10 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			
 			// Check ETOPS
 			Collection<GeoLocation> gc = GeoUtils.greatCircle(pirep.getAirportD(), pirep.getAirportA(), 25);
-			ETOPS e = ETOPSHelper.classify(gc);
-			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, e));
+			ETOPSResult er = ETOPSHelper.classify(gc);
+			pirep.setAttribute(FlightReport.ATTR_ETOPSWARN, ETOPSHelper.validate(a, er.getResult()));
 			if (pirep.hasAttribute(FlightReport.ATTR_ETOPSWARN))
-				comments.add("ETOPS classificataion: " + String.valueOf(e));
+				comments.add("ETOPS classificataion: " + String.valueOf(er));
 			
 			// Calculate the load factor
 			pirep.setSubmittedOn(new Date());

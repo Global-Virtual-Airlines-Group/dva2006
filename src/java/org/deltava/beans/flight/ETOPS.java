@@ -20,7 +20,7 @@ public enum ETOPS {
 	
 	ETOPS(int time) {
 		_time = time;
-		_range = _time * EO_SPEED / 75; // Range is speed * time * .8;  (X * 4/5/60 == X / 75)
+		_range = _time * EO_SPEED / 60; // Range is speed * time * .8;  (X * 4/5/60 == X / 75)
 	}
 
 	/**
