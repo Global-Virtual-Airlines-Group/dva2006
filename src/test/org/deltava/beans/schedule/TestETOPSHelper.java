@@ -34,7 +34,7 @@ public class TestETOPSHelper extends TestCase {
 	public void testGC() {
 		
 		Collection<GeoLocation> gc = GeoUtils.greatCircle(_jfk, _dkr, 25);
-		ETOPS e = ETOPSHelper.classify(gc);
+		ETOPS e = ETOPSHelper.classify(gc).getResult();
 		assertNotNull(e);
 	}
 }
