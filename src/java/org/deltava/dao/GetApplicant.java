@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -282,11 +282,12 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			_ps.setInt(3, Math.max(1, days));
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			boolean result = rs.next() ? (rs.getInt(1) > 0) : false;
+			boolean result = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					result = (rs.getInt(1) > 0);
+			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return result;
 		} catch (SQLException se) {
@@ -405,11 +406,11 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	private List<Integer> executeIDs() throws SQLException {
 		Collection<Integer> results = new LinkedHashSet<Integer>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			results.add(new Integer(rs.getInt(1)));
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				results.add(Integer.valueOf(rs.getInt(1)));
+		}
 		
-		rs.close();
 		_ps.close();
 		return new ArrayList<Integer>(results);
 	}
