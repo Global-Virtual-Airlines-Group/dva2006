@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -11,10 +11,12 @@ import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
 
+import org.gvagroup.common.*;
+
 /**
  * A Web Site Command to edit time zone profiles.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -25,6 +27,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the ID
@@ -50,6 +53,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}
@@ -59,6 +63,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		String id = (String) ctx.getCmdParameter(ID, null);
@@ -80,6 +85,9 @@ public class TimeZoneCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Notify other webapps
+		EventDispatcher.send(new SystemEvent(SystemEvent.Type.TZ_RELOAD));
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
