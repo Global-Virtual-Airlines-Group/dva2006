@@ -181,9 +181,12 @@ public class SetTS2Data extends DAO {
 			_ps.setInt(2, -1);
 			
 			// Check for a default channel
-			ResultSet rs = _ps.executeQuery();
-			boolean hasDefault = rs.next() ? (rs.getInt(1) > 0) : false;
-			rs.close();
+			boolean hasDefault = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					hasDefault = (rs.getInt(1) > 0); 
+			}
+
 			_ps.close();
 			if (hasDefault)
 				return;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -164,11 +164,12 @@ public class GetStatistics extends DAO implements CachingDAO {
 			_ps.setInt(2, Pilot.ON_LEAVE);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int result = rs.next() ? rs.getInt(1) : 0;
+			int result = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					result = rs.getInt(1);
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return result;
 		} catch (SQLException se) {
@@ -197,9 +198,12 @@ public class GetStatistics extends DAO implements CachingDAO {
 			_ps.setInt(2, Pilot.ON_LEAVE);
 
 			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
-			int totalSize = (rs.next()) ? rs.getInt(1) : 0;
-			rs.close();
+			int totalSize = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					totalSize = rs.getInt(1);
+			}
+			
 			_ps.close();
 			if (totalSize == 0)
 				return Collections.emptyMap();
@@ -217,12 +221,11 @@ public class GetStatistics extends DAO implements CachingDAO {
 				_ps.setInt(2, Pilot.ON_LEAVE);
 
 				// Execute the Query
-				rs = _ps.executeQuery();
-				if (rs.next())
-					results.put(Integer.valueOf(Math.round(key)), rs.getDate(1));
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next())
+						results.put(Integer.valueOf(Math.round(key)), rs.getDate(1));
+				}
 
-				// Clean up
-				rs.close();
 				_ps.close();
 			}
 
@@ -246,17 +249,17 @@ public class GetStatistics extends DAO implements CachingDAO {
 			_ps.setInt(2, Pilot.ON_LEAVE);
 
 			// Execute the Query
-			ResultSet rs = _ps.executeQuery();
 			Collection<MembershipTotals> results = new ArrayList<MembershipTotals>();
-			while (rs.next()) {
-				MembershipTotals mt = new MembershipTotals(rs.getDate(2));
-				mt.setID(rs.getInt(1));
-				mt.setCount(rs.getInt(3));
-				results.add(mt);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					MembershipTotals mt = new MembershipTotals(rs.getDate(2));
+					mt.setID(rs.getInt(1));
+					mt.setCount(rs.getInt(3));
+					results.add(mt);
+				}
 			}
 
 			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -304,14 +307,11 @@ public class GetStatistics extends DAO implements CachingDAO {
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.put(Integer.valueOf(rs.getInt(1)), Long.valueOf(rs.getInt(2)));
+			}
 
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.put(new Integer(rs.getInt(1)), Long.valueOf(rs.getInt(2)));
-
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -340,17 +340,14 @@ public class GetStatistics extends DAO implements CachingDAO {
 		sqlBuf.append(orderBy);
 
 		try {
-			// Execute the query
 			prepareStatement(sqlBuf.toString());
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			List<CoolerStatsEntry<String>> results = new ArrayList<CoolerStatsEntry<String>>();
-			while (rs.next())
-				results.add(new CoolerStatsEntry<String>(rs.getString(1), rs.getInt(2), rs.getInt(3)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(new CoolerStatsEntry<String>(rs.getString(1), rs.getInt(2), rs.getInt(3)));
+			}
 
 			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -377,11 +374,10 @@ public class GetStatistics extends DAO implements CachingDAO {
 			_ps.setInt(1, days);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			result = new CacheableLong(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
+			try (ResultSet rs = _ps.executeQuery()) {
+				result = new CacheableLong(Integer.valueOf(days), rs.next() ? rs.getInt(1) : 0);
+			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);

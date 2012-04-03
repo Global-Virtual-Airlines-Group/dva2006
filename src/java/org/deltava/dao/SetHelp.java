@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.help.*;
 /**
  * A Data Access Object to update Online Help entries and Help Desk Issues.
  * @author Luke
- * @version 3.2
+ * @version 4.1
  * @since 1.0
  */
 
@@ -203,9 +203,11 @@ public class SetHelp extends DAO {
 			_ps.setTimestamp(3, createTimestamp(createdOn));
 			
 			// Do the check
-			ResultSet rs = _ps.executeQuery();
-			boolean isFAQAnswer = rs.next() ? (rs.getInt(1) == 1) : false;
-			rs.close();
+			boolean isFAQAnswer = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					isFAQAnswer = (rs.getInt(1) == 1);
+			}
 			
 			// Delete the comment
 			prepareStatementWithoutLimits("DELETE FROM HELPDESK_COMMENTS WHERE (ID=?) AND (CREATED_ON=?)");
