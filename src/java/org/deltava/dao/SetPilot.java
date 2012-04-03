@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -182,11 +182,10 @@ public class SetPilot extends PilotWriteDAO {
 			
 			// Get the next available Pilot ID
 			prepareStatementWithoutLimits("SELECT MAX(PILOT_ID)+1 FROM " + formatDBName(db) + ".PILOTS");
-			ResultSet rs = _ps.executeQuery();
-			p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
+			try (ResultSet rs = _ps.executeQuery()) {
+				p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
+			}
 
-			// Clean up
-			rs.close();
 			_ps.close();
 
 			// Write the new Pilot ID
