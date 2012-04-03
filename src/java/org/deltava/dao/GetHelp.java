@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -89,11 +89,11 @@ public class GetHelp extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT AUTHOR FROM HELPDESK");
 			Collection<Integer> results = new HashSet<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					results.add(Integer.valueOf(rs.getInt(1)));
+			}
 			
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
