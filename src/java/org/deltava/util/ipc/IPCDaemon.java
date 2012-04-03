@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ipc;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.gvagroup.jdbc.*;
 /**
  * A daemon to listen for inter-process events.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -53,6 +53,13 @@ public class IPCDaemon implements Runnable {
 								con = cPool.getConnection();
 								GetAirline aldao = new GetAirline(con);
 								SystemData.add("airlines", aldao.getAll());
+								break;
+								
+							case TZ_RELOAD:
+								log.warn(SystemData.get("airline.code") + " Reloading Time Zones");
+								con = cPool.getConnection();
+								GetTimeZone tzdao = new GetTimeZone(con);
+								tzdao.initAll();
 								break;
 								
 							case AIRPORT_RELOAD:
