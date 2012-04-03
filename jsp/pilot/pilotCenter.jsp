@@ -425,8 +425,7 @@ departing today.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="wxcenter">Weather Center</el:cmd></td>
  <td class="data">The <content:airline /> Weather Center allows you to view Airport conditions and forecast
- information, along with a number of interactive weather maps coveting the continental United States
- and the world.</td>  
+ information, along with a number of interactive weather maps covering the continental United States and the world.</td>  
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="wxfinder">Airport Weather Finder</el:cmd></td>
