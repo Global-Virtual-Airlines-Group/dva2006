@@ -178,27 +178,51 @@ public class GetACARSPositions extends GetACARSData {
 			
 			// Execute the query
 			List<XARouteEntry> results = new ArrayList<XARouteEntry>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				java.util.Date dt = new java.util.Date(rs.getTimestamp(2).getTime() + rs.getInt(3));
-				XARouteEntry re = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5)), dt);
-				re.setAltitude(rs.getInt(6));
-				re.setHeading(rs.getInt(7));
-				re.setAirSpeed(rs.getInt(8));
-				re.setGroundSpeed(rs.getInt(9));
-				re.setVerticalSpeed(rs.getInt(10));
-				re.setMach(rs.getDouble(11));
-				re.setFuelRemaining(rs.getInt(12));
-				re.setPhase(rs.getInt(13));
-				re.setFlags(rs.getInt(14));
-				re.setWindHeading(rs.getInt(15));
-				re.setWindSpeed(rs.getInt(16));
-				results.add(re);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					java.util.Date dt = new java.util.Date(rs.getTimestamp(2).getTime() + rs.getInt(3));
+					XARouteEntry re = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5)), dt);
+					re.setAltitude(rs.getInt(6));
+					re.setHeading(rs.getInt(7));
+					re.setAirSpeed(rs.getInt(8));
+					re.setGroundSpeed(rs.getInt(9));
+					re.setVerticalSpeed(rs.getInt(10));
+					re.setMach(rs.getDouble(11));
+					re.setFuelRemaining(rs.getInt(12));
+					re.setPhase(rs.getInt(13));
+					re.setFlags(rs.getInt(14));
+					re.setWindHeading(rs.getInt(15));
+					re.setWindSpeed(rs.getInt(16));
+					results.add(re);
+				}
 			}
 			
-			rs.close();
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the average frame rate for a Flight.
+	 * @param flightID the ACARS flight ID
+	 * @return the rate in frames per second
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public double getFrameRate(int flightID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT AVG(FRAMERATE) FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
+			_ps.setInt(1, flightID);
+			
+			double frameRate = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					frameRate = rs.getDouble(1);
+			}
+			
+			_ps.close();
+			return frameRate;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -5,20 +5,23 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.servinfo.*;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 import junit.framework.TestCase;
 
 public class TestConvertArchive extends TestCase {
 	
-	private static final int WORKERS = 16;
-	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=test&password=test";
+	private static final int WORKERS = 20;
+	private static final String URL = "jdbc:mysql://cerberus.deltava.org/acars?user=test&password=test";
 	
 	protected final Queue<Integer> _IDwork = new ConcurrentLinkedQueue<Integer>();
 
@@ -33,6 +36,7 @@ public class TestConvertArchive extends TestCase {
 		
 		@Override
 		public void run() {
+			GetACARSPositions adao = new GetACARSPositions(_c);
 			GetACARSArchive addao = new GetACARSArchive(_c);
 			SetACARSArchive awdao = new SetACARSArchive(_c);
 			
@@ -40,11 +44,15 @@ public class TestConvertArchive extends TestCase {
 			while (i !=  null) {
 				int id = i.intValue();
 				try {
-					Collection<RouteEntry> entries = addao.getArchivedEntries(id);
+					FlightInfo inf = adao.getInfo(id);
+					if (inf == null)
+						throw new IllegalStateException(getName() + " - " + i + " has no FlightInfo");
+					
+					Collection<? extends RouteEntry> entries = inf.isXACARS() ? adao.getXACARSEntries(id) : addao.getArchivedEntries(id);
 					assertNotNull(entries);
 					if (entries.isEmpty())
 						throw new IllegalStateException(getName() + " - " + i + " is empty");
-						
+					
 					// Write data
 					byte[] data = null;
 					try (ByteArrayOutputStream out = new ByteArrayOutputStream(10240)) {
@@ -60,6 +68,19 @@ public class TestConvertArchive extends TestCase {
 						Collection<? extends RouteEntry> positions = prdao.read();
 						assertNotNull(positions);
 						assertEquals(entries.size(), positions.size());
+					}
+					
+					// Write frame rate
+					if (!inf.isXACARS()) {
+						int totalFrames = 0;
+						for (RouteEntry re : entries)
+							totalFrames += ((ACARSRouteEntry) re).getFrameRate();
+						
+						try (PreparedStatement ps = _c.prepareStatement("REPLACE INTO acars.FR (ID, FRAMERATE) VALUES (?, ?)")) {
+							ps.setInt(1, id);
+							ps.setInt(2, totalFrames * 10 / entries.size());
+							ps.executeUpdate();
+						}
 					}
 					
 					// Write to database
@@ -118,7 +139,7 @@ public class TestConvertArchive extends TestCase {
 						entry.setFlaps(rs.getInt(16));
 						entry.setWindHeading(rs.getInt(17));
 						entry.setWindSpeed(rs.getInt(18));
-						entry.setFuelRemaining(rs.getInt(19));
+						entry.setFuelRemaining(rs.getInt(19));	
 						entry.setFuelFlow(rs.getInt(20));
 						entry.setAOA(rs.getDouble(21));
 						entry.setG(rs.getDouble(22));
@@ -158,6 +179,21 @@ public class TestConvertArchive extends TestCase {
 		super.setUp();
 		Class<?> c = Class.forName("com.mysql.jdbc.Driver");
 		assertNotNull(c);
+		Connection con = DriverManager.getConnection(URL);
+		assertNotNull(con);
+
+		// Init Log4j
+		PropertyConfigurator.configure("etc/log4j.properties");
+		
+		SystemData.init();
+		GetTimeZone tzdao = new GetTimeZone(con);
+		tzdao.initAll();
+		GetAirline aldao = new GetAirline(con);
+		SystemData.add("airlines", aldao.getAll());
+
+		GetAirport apdao = new GetAirport(con);
+		Map<String, Airport> airports = apdao.getAll();
+		SystemData.add("airports", airports);
 	}
 
 	public void testConvert() throws SQLException {
@@ -169,6 +205,14 @@ public class TestConvertArchive extends TestCase {
 				try (ResultSet rs = s.executeQuery("SELECT ID FROM FLIGHTS WHERE ARCHIVED=1")) {
 					while (rs.next())
 						_IDwork.add(Integer.valueOf(rs.getInt(1)));
+				}
+			}
+			
+			try (Statement s = c.createStatement()) {
+				s.setFetchSize(750);
+				try (ResultSet rs = s.executeQuery("SELECT ID FROM POS_ARCHIVE")) {
+					while (rs.next())
+						_IDwork.remove(Integer.valueOf(rs.getInt(1)));
 				}
 			}
 		}

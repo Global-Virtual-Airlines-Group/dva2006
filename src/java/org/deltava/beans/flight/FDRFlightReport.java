@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -308,6 +308,12 @@ public abstract class FDRFlightReport extends FlightReport {
             throw new IllegalStateException("End or Start time not set");
         }
     }
+
+    /**
+     * Returns the average frame rate for this flight.
+     * @return the average frame rate in frames per second
+     */
+    public abstract double getAverageFrameRate();
 
     /**
      * Updates the start time of the flight.

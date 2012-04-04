@@ -329,6 +329,15 @@ public class OfflineFlightCommand extends AbstractCommand {
 					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}
 			
+			// Calculate average frame rate
+			if (!CollectionUtils.isEmpty(flight.getPositions())) {
+				int totalFrames = 0;
+				for (ACARSRouteEntry rte : flight.getPositions())
+					totalFrames += rte.getFrameRate();
+					
+				afr.setAverageFrameRate(((double) totalFrames) / flight.getPositions().size());  
+			}
+				
 			// Save comments
 			if (!comments.isEmpty())
 				afr.setComments(StringUtils.listConcat(comments, "\r\n"));
