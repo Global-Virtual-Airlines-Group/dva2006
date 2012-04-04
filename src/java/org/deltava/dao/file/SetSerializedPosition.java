@@ -95,6 +95,9 @@ public class SetSerializedPosition extends WriteableDAO {
 			out.writeUTF("");
 	}
 	
+	/*
+	 * Helper method to write an XACARS position entry.
+	 */
 	private void write(XARouteEntry re, DataOutputStream out) throws IOException {
 		out.writeDouble(re.getLatitude());
 		out.writeDouble(re.getLongitude());
