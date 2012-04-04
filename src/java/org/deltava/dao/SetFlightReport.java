@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -343,7 +343,8 @@ public class SetFlightReport extends DAO {
 			+ "LANDING_SPEED, LANDING_VSPEED, LANDING_N1, LANDING_HDG, LANDING_LAT, LANDING_LNG, "
 			+ "LANDING_ALT, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TOTAL_FUEL, "
 			+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X, FDE, CODE, RELOAD, CLIENT_BUILD, BETA_BUILD, LANDING_G, "
-			+ "LANDING_CAT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			+ "LANDING_CAT, FRAMERATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -401,6 +402,7 @@ public class SetFlightReport extends DAO {
 				_ps.setInt(40, afr.getBeta());
 				_ps.setDouble(41, afr.getLandingG());
 				_ps.setInt(42, afr.getLandingCategory().ordinal());
+				_ps.setInt(43, (int)(afr.getAverageFrameRate() * 10));
 			} else if (fr instanceof XACARSFlightReport) {
 				XACARSFlightReport xfr = (XACARSFlightReport) fr;
 				_ps.setInt(32, 0);
@@ -414,6 +416,7 @@ public class SetFlightReport extends DAO {
 				_ps.setInt(40, xfr.getMinorVersion());
 				_ps.setDouble(41, 0);
 				_ps.setInt(42, 0);
+				_ps.setInt(43, 0);
 			}
 
 			// Commit the transaction

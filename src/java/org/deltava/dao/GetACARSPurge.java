@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -86,6 +86,56 @@ public class GetACARSPurge extends GetACARSData {
 			
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the IDs of all ACARS flights marked as archived with unarchived position entries.
+	 * @return a Collection of flight IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getUnsynchedACARSFlights() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT P.FLIGHT_ID FROM acars.POSITIONS P, acars.FLIGHTS F WHERE "
+					+ "(F.ARCHIVED=?) AND (P.FLIGHT_ID=F.ID)");
+			_ps.setBoolean(1, true);
+			
+			// Get ACARS flight IDs
+			Collection<Integer> IDs = new LinkedHashSet<Integer>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+
+			_ps.close();
+			return IDs;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the IDs of all ACARS flights marked as archived with unarchived position entries.
+	 * @return a Collection of flight IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getUnsynchedXACARSFlights() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT XP.FLIGHT_ID FROM acars.POSITION_XARCHIVE XP, acars.FLIGHTS F "
+				+ "WHERE (F.ARCHIVED=?) AND (P.FLIGHT_ID=F.ID)");
+			_ps.setBoolean(1, true);
+			
+			// Get XACARS flight IDs
+			Collection<Integer> IDs = new LinkedHashSet<Integer>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+
+			_ps.close();
+			return IDs;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

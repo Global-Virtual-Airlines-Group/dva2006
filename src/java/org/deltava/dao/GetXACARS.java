@@ -43,9 +43,12 @@ public class GetXACARS extends DAO {
 			_ps.setInt(3, f.getFlightNumber());
 			
 			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			int flightID = rs.next() ? rs.getInt(1) : 0;
-			rs.close();
+			int flightID = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					flightID = rs.getInt(1);
+			}
+
 			_ps.close();
 			return flightID;
 		} catch (SQLException se) {
@@ -102,25 +105,24 @@ public class GetXACARS extends DAO {
 			
 			// Execute the query
 			Collection<XARouteEntry> results = new ArrayList<XARouteEntry>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				java.util.Date dt = new java.util.Date(rs.getTimestamp(2).getTime() + rs.getInt(3));
-				XARouteEntry pos = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6)), dt);
-				pos.setFlightID(rs.getInt(1));
-				pos.setHeading(rs.getInt(7));
-				pos.setAirSpeed(rs.getInt(8));
-				pos.setGroundSpeed(rs.getInt(9));
-				pos.setVerticalSpeed(rs.getInt(10));
-				pos.setMach(rs.getDouble(11));
-				pos.setFuelRemaining(rs.getInt(12));
-				pos.setPhase(rs.getInt(13));
-				pos.setWindHeading(rs.getInt(14));
-				pos.setWindSpeed(rs.getInt(15));
-				results.add(pos);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					java.util.Date dt = new java.util.Date(rs.getTimestamp(2).getTime() + rs.getInt(3));
+					XARouteEntry pos = new XARouteEntry(new GeoPosition(rs.getDouble(4), rs.getDouble(5), rs.getInt(6)), dt);
+					pos.setFlightID(rs.getInt(1));
+					pos.setHeading(rs.getInt(7));
+					pos.setAirSpeed(rs.getInt(8));
+					pos.setGroundSpeed(rs.getInt(9));
+					pos.setVerticalSpeed(rs.getInt(10));
+					pos.setMach(rs.getDouble(11));
+					pos.setFuelRemaining(rs.getInt(12));
+					pos.setPhase(rs.getInt(13));
+					pos.setWindHeading(rs.getInt(14));
+					pos.setWindSpeed(rs.getInt(15));
+					results.add(pos);
+				}
 			}
 			
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -134,45 +136,45 @@ public class GetXACARS extends DAO {
 	private List<XAFlightInfo> execute() throws SQLException {
 
 		List<XAFlightInfo> results = new ArrayList<XAFlightInfo>();
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next()) {
-			XAFlightInfo inf = new XAFlightInfo(SystemData.getAirline(rs.getString(3)), rs.getInt(4));
-			inf.setID(rs.getInt(1));
-			inf.setAuthorID(rs.getInt(2));
-			inf.setAirportD(SystemData.getAirport(rs.getString(5)));
-			inf.setAirportA(SystemData.getAirport(rs.getString(6)));
-			inf.setAirportL(SystemData.getAirport(rs.getString(7)));
-			inf.setEquipmentType(rs.getString(8));
-			inf.setStartTime(rs.getTimestamp(9));
-			inf.setTaxiTime(rs.getTimestamp(10));
-			inf.setTaxiWeight(rs.getInt(11));
-			inf.setTaxiFuel(rs.getInt(12));
-			inf.setTakeoffTime(rs.getTimestamp(13));
-			inf.setTakeoffDistance(rs.getInt(14));
-			inf.setTakeoffSpeed(rs.getInt(15));
-			inf.setTakeoffN1(rs.getDouble(16));
-			inf.setTakeoffHeading(rs.getInt(17));
-			inf.setTakeoffLocation(new GeoPosition(rs.getDouble(18), rs.getDouble(19), rs.getInt(20)));
-			inf.setTakeoffWeight(rs.getInt(21));
-			inf.setTakeoffFuel(rs.getInt(22));
-			inf.setLandingTime(rs.getTimestamp(23));
-			inf.setLandingDistance(rs.getInt(24));
-			inf.setLandingSpeed(rs.getInt(25));
-			inf.setLandingN1(rs.getDouble(26));
-			inf.setLandingHeading(rs.getInt(27));
-			inf.setLandingLocation(new GeoPosition(rs.getDouble(28), rs.getDouble(29), rs.getInt(30)));
-			inf.setLandingWeight(rs.getInt(31));
-			inf.setLandingFuel(rs.getInt(32));
-			inf.setEndTime(rs.getTimestamp(33));
-			inf.setPhase(FlightPhase.values()[rs.getInt(34)]);
-			inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
-			inf.setZeroFuelWeight(rs.getInt(36));
-			inf.setRoute(rs.getString(37));
-			inf.setFSVersion(rs.getInt(38));
-			results.add(inf);
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next()) {
+				XAFlightInfo inf = new XAFlightInfo(SystemData.getAirline(rs.getString(3)), rs.getInt(4));
+				inf.setID(rs.getInt(1));
+				inf.setAuthorID(rs.getInt(2));
+				inf.setAirportD(SystemData.getAirport(rs.getString(5)));
+				inf.setAirportA(SystemData.getAirport(rs.getString(6)));
+				inf.setAirportL(SystemData.getAirport(rs.getString(7)));
+				inf.setEquipmentType(rs.getString(8));
+				inf.setStartTime(rs.getTimestamp(9));
+				inf.setTaxiTime(rs.getTimestamp(10));
+				inf.setTaxiWeight(rs.getInt(11));
+				inf.setTaxiFuel(rs.getInt(12));
+				inf.setTakeoffTime(rs.getTimestamp(13));
+				inf.setTakeoffDistance(rs.getInt(14));
+				inf.setTakeoffSpeed(rs.getInt(15));
+				inf.setTakeoffN1(rs.getDouble(16));
+				inf.setTakeoffHeading(rs.getInt(17));
+				inf.setTakeoffLocation(new GeoPosition(rs.getDouble(18), rs.getDouble(19), rs.getInt(20)));
+				inf.setTakeoffWeight(rs.getInt(21));
+				inf.setTakeoffFuel(rs.getInt(22));
+				inf.setLandingTime(rs.getTimestamp(23));
+				inf.setLandingDistance(rs.getInt(24));
+				inf.setLandingSpeed(rs.getInt(25));
+				inf.setLandingN1(rs.getDouble(26));
+				inf.setLandingHeading(rs.getInt(27));
+				inf.setLandingLocation(new GeoPosition(rs.getDouble(28), rs.getDouble(29), rs.getInt(30)));
+				inf.setLandingWeight(rs.getInt(31));
+				inf.setLandingFuel(rs.getInt(32));
+				inf.setEndTime(rs.getTimestamp(33));
+				inf.setPhase(FlightPhase.values()[rs.getInt(34)]);
+				inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
+				inf.setZeroFuelWeight(rs.getInt(36));
+				inf.setRoute(rs.getString(37));
+				inf.setFSVersion(rs.getInt(38));
+				results.add(inf);
+			}
 		}
 		
-		rs.close();
 		_ps.close();
 		return results;
 	}

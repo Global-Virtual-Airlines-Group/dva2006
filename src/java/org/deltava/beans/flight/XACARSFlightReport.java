@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import org.deltava.beans.schedule.*;
@@ -39,6 +39,10 @@ public class XACARSFlightReport extends FDRFlightReport {
      */
     public int getMinorVersion() {
     	return _minorVersion;
+    }
+    
+    public double getAverageFrameRate() {
+    	return 0;
     }
     
     /**
