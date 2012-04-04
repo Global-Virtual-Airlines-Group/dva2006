@@ -85,7 +85,11 @@ public class XAFlightInfo extends FDRFlightReport {
 	}
 	
     public final int getLength() {
-    	return (int)((getStartTime().getTime() - getEndTime().getTime()) / 3600000);
+    	return (int)((getStartTime().getTime() - getEndTime().getTime()) / 3_600_000);
+    }
+    
+    public double getAverageFrameRate() {
+    	return 0;
     }
 	
 	/**

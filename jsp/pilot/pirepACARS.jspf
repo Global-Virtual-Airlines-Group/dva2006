@@ -212,10 +212,10 @@
 </c:if>
 </c:if>
 </c:if>
-<c:if test="${flightInfo.averageFrameRate > 0}">
+<c:if test="${pirep.averageFrameRate > 0}">
 <tr>
  <td class="label">Average Frame Rate</td>
- <td class="data"><fmt:dec value="${flightInfo.averageFrameRate}" /> frames per second</td>
+ <td class="data"><fmt:dec value="${pirep.averageFrameRate}" /> frames per second</td>
 </tr>
 </c:if>
 <c:if test="${!empty flightInfo.route}">

@@ -32,21 +32,28 @@ public class SetACARSArchive extends DAO {
 	 */
 	public void archive(int flightID, Collection<? extends RouteEntry> positions) throws DAOException {
 		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream(32768);
+			ByteArrayOutputStream out = new ByteArrayOutputStream(20480);
 			SetSerializedPosition psdao = new SetSerializedPosition(out);
 			psdao.archivePositions(flightID, positions);
 			startTransaction();
 			
 			// Write serialized data
 			if (positions.size() > 0) {
-				prepareStatementWithoutLimits("INSERT INTO acars.POS_ARCHIVE (ID, ARCHIVED, DATA) VALUES (?, NOW(), ?)");
+				prepareStatementWithoutLimits("INSERT INTO acars.POS_ARCHIVE (ID, CNT, ARCHIVED, DATA) "
+					+ "VALUES (?, ?, NOW(), ?)");
 				_ps.setInt(1, flightID);
-				_ps.setBytes(2, out.toByteArray());
+				_ps.setInt(2, positions.size());
+				_ps.setBytes(3, out.toByteArray());
 				executeUpdate(1);
 			}
 			
 			// Delete the existing flight data
 			prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
+			_ps.setInt(1, flightID);
+			executeUpdate(0);
+			
+			// Delete the existing XACARS flight data
+			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?)");
 			_ps.setInt(1, flightID);
 			executeUpdate(0);
 

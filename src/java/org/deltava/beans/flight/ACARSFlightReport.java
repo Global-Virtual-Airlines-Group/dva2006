@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -22,6 +22,8 @@ public class ACARSFlightReport extends FDRFlightReport {
     
     private String _fde;
     private String _code;
+    
+    private double _avgFrames;
     
     private boolean _hasReload;
     private int _clientBuild;
@@ -104,6 +106,10 @@ public class ACARSFlightReport extends FDRFlightReport {
     	return _code;
     }
     
+	public double getAverageFrameRate() {
+		return _avgFrames;
+	}
+
     /**
      * Returns if the flight was reloaded by ACARS mid-flight.
      * @return TRUE if reloaded, otherwise FALSE
@@ -181,6 +187,15 @@ public class ACARSFlightReport extends FDRFlightReport {
     	_code = code;
     }
     
+	/**
+	 * Updates the average simulator frame rate for this flight.
+	 * @param avgRate the average rate in frames per second
+	 * @see FDRFlightReport#getAverageFrameRate()
+	 */
+	public void setAverageFrameRate(double avgRate) {
+		_avgFrames = Math.max(0, avgRate);
+	}
+    
     /**
      * Sets if the flight was restored by ACARS mid-flight.
      * @param hasReload TRUE if a reload occured, otherwise FALSE
@@ -215,4 +230,4 @@ public class ACARSFlightReport extends FDRFlightReport {
 	public void setLandingCategory(ILSCategory ilscat) {
 		_ils = ilscat;
 	}
-} 
+}

@@ -180,11 +180,12 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(1, FlightReport.SUBMITTED);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int results = rs.next() ? rs.getInt(1) : 0;
+			int results = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					results = rs.getInt(1);
+			}
 
-			// Clean up and return
-			rs.close();
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -215,11 +216,12 @@ public class GetFlightReports extends DAO {
 				_ps.setString(4, eqType);
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			int results = rs.next() ? rs.getInt(1) : 0;
-
-			// Clean up and return
-			rs.close();
+			int results = 0;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					results = rs.getInt(1);
+			}
+			
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
@@ -576,133 +578,133 @@ public class GetFlightReports extends DAO {
 	 */
 	protected List<FlightReport> execute() throws SQLException {
 		
-		// Do the query and get metadata
-		ResultSet rs = _ps.executeQuery();
-		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() > 64);
-		boolean hasComments = (md.getColumnCount() > 23);
-		boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
-		boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 26));
-
-		// Iterate throught the results
 		List<FlightReport> results = new ArrayList<FlightReport>();
-		while (rs.next()) {
-			int status = rs.getInt(4);
-			int attr = rs.getInt(13);
-			boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
-			boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
-			boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
+		try (ResultSet rs = _ps.executeQuery()) {
+			ResultSetMetaData md = rs.getMetaData();
+			boolean hasACARS = (md.getColumnCount() > 66);
+			boolean hasComments = (md.getColumnCount() > 23);
+			boolean hasSchedTimes = (!hasACARS && (md.getColumnCount() > 25));
+			boolean hasDraftRoute = (hasSchedTimes && (md.getColumnCount() > 26));
 
-			// Build the PIREP as a standard one, or an ACARS pirep
-			Airline a = SystemData.getAirline(rs.getString(6));
-			int flight = rs.getInt(7); int leg = rs.getInt(8);
-			FlightReport p = null;
-			if (isXACARS)
-				p = new XACARSFlightReport(a, flight, leg);
-			else if (isACARS)
-				p = new ACARSFlightReport(a, flight, leg);
-			else if (isDraft)
-				p = new DraftFlightReport(a, flight, leg);
-			else
-				p = new FlightReport(a, flight, leg);
+			// Iterate throught the results
+			while (rs.next()) {
+				int status = rs.getInt(4);
+				int attr = rs.getInt(13);
+				boolean isACARS = (hasACARS && (rs.getInt(26) != 0));
+				boolean isXACARS = isACARS && ((attr & FlightReport.ATTR_XACARS) != 0);
+				boolean isDraft = (hasSchedTimes && (status == FlightReport.DRAFT));
 
-			// Populate the data
-			p.setID(rs.getInt(1));
-			p.setDatabaseID(DatabaseID.PILOT, rs.getInt(2));
-			p.setRank(Rank.fromName(rs.getString(3)));
-			p.setStatus(status);
-			p.setDate(expandDate(rs.getDate(5)));
-			p.setAirportD(SystemData.getAirport(rs.getString(9)));
-			p.setAirportA(SystemData.getAirport(rs.getString(10)));
-			p.setEquipmentType(rs.getString(11));
-			p.setFSVersion(rs.getInt(12));
-			p.setAttributes(attr);
-			// Skip column #14 - we calculate this in the flight report
-			p.setLength(Math.round(rs.getFloat(15) * 10));
-			p.setDatabaseID(DatabaseID.DISPOSAL, rs.getInt(16));
-			p.setSubmittedOn(rs.getTimestamp(17));
-			p.setDisposedOn(rs.getTimestamp(18));
-			p.setDatabaseID(DatabaseID.EVENT, rs.getInt(19));
-			p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(20));
-			p.setPassengers(rs.getInt(21));
-			p.setLoadFactor(rs.getDouble(22));
-			if (hasComments) {
-				p.setComments(rs.getString(23));
-				p.setRemarks(rs.getString(24));
-			}
-			
-			// Load scheduled times
-			if (isDraft) {
-				DraftFlightReport dp = (DraftFlightReport) p;
-				Timestamp dts = rs.getTimestamp(25);
-				if (dts != null) {
-					dp.setTimeD(dts);
-					dp.setTimeA(rs.getTimestamp(26));
+				// Build the PIREP as a standard one, or an ACARS pirep
+				Airline a = SystemData.getAirline(rs.getString(6));
+				int flight = rs.getInt(7); int leg = rs.getInt(8);
+				FlightReport p = null;
+				if (isXACARS)
+					p = new XACARSFlightReport(a, flight, leg);
+				else if (isACARS)
+					p = new ACARSFlightReport(a, flight, leg);
+				else if (isDraft)
+					p = new DraftFlightReport(a, flight, leg);
+				else
+					p = new FlightReport(a, flight, leg);
+
+				// Populate the data
+				p.setID(rs.getInt(1));
+				p.setDatabaseID(DatabaseID.PILOT, rs.getInt(2));
+				p.setRank(Rank.fromName(rs.getString(3)));
+				p.setStatus(status);
+				p.setDate(expandDate(rs.getDate(5)));
+				p.setAirportD(SystemData.getAirport(rs.getString(9)));
+				p.setAirportA(SystemData.getAirport(rs.getString(10)));
+				p.setEquipmentType(rs.getString(11));
+				p.setFSVersion(rs.getInt(12));
+				p.setAttributes(attr);
+				// Skip column #14 - we calculate this in the flight report
+				p.setLength(Math.round(rs.getFloat(15) * 10));
+				p.setDatabaseID(DatabaseID.DISPOSAL, rs.getInt(16));
+				p.setSubmittedOn(rs.getTimestamp(17));
+				p.setDisposedOn(rs.getTimestamp(18));
+				p.setDatabaseID(DatabaseID.EVENT, rs.getInt(19));
+				p.setDatabaseID(DatabaseID.ASSIGN, rs.getInt(20));
+				p.setPassengers(rs.getInt(21));
+				p.setLoadFactor(rs.getDouble(22));
+				if (hasComments) {
+					p.setComments(rs.getString(23));
+					p.setRemarks(rs.getString(24));
 				}
-				
-				if (hasDraftRoute)
-					dp.setRoute(rs.getString(27));
-			}
-
-			// Load generic ACARS pirep data
-			if (isACARS || isXACARS) {
-				FDRFlightReport ap = (FDRFlightReport) p;
-				ap.setAttribute(FlightReport.ATTR_ACARS, true);
-				ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(26));
-				ap.setStartTime(rs.getTimestamp(27));
-				ap.setTaxiTime(rs.getTimestamp(28));
-				ap.setTaxiWeight(rs.getInt(29));
-				ap.setTaxiFuel(rs.getInt(30));
-				ap.setTakeoffTime(rs.getTimestamp(31));
-				ap.setTakeoffDistance(rs.getInt(32));
-				ap.setTakeoffSpeed(rs.getInt(33));
-				ap.setTakeoffN1(rs.getDouble(34));
-				ap.setTakeoffHeading(rs.getInt(35));
-				ap.setTakeoffLocation(new GeoPosition(rs.getDouble(36), rs.getDouble(37), rs.getInt(38)));
-				ap.setTakeoffWeight(rs.getInt(39));
-				ap.setTakeoffFuel(rs.getInt(40));
-				ap.setLandingTime(rs.getTimestamp(41));
-				ap.setLandingDistance(rs.getInt(42));
-				ap.setLandingSpeed(rs.getInt(43));
-				ap.setLandingVSpeed(rs.getInt(44));
-				// Load column #45 with DVA ACARS only
-				ap.setLandingN1(rs.getDouble(46));
-				ap.setLandingHeading(rs.getInt(47));
-				ap.setLandingLocation(new GeoPosition(rs.getDouble(48), rs.getDouble(49), rs.getInt(50)));
-				ap.setLandingWeight(rs.getInt(51));
-				ap.setLandingFuel(rs.getInt(52));
-				// Load column #53 with DVA ACARS only
-				ap.setEndTime(rs.getTimestamp(54));
-				ap.setGateWeight(rs.getInt(55));
-				ap.setGateFuel(rs.getInt(56));
-				ap.setTotalFuel(rs.getInt(57));
-			}
 			
-			// Load DVA ACARS pirep data
-			if (isACARS && !isXACARS) {
-				ACARSFlightReport ap = (ACARSFlightReport) p;
-				ap.setLandingG(rs.getDouble(45));
-				int ils = rs.getInt(53);
-				ap.setLandingCategory(ILSCategory.values()[ils]);
-				ap.setTime(0, rs.getInt(58));
-				ap.setTime(1, rs.getInt(59));
-				ap.setTime(2, rs.getInt(60));
-				ap.setTime(4, rs.getInt(61));
-				ap.setFDE(rs.getString(62));
-				ap.setAircraftCode(rs.getString(63));
-				ap.setHasReload(rs.getBoolean(64));
-				ap.setClientBuild(rs.getInt(65));
-				ap.setBeta(rs.getInt(66));
-			} else if (isXACARS) {
-				XACARSFlightReport ap = (XACARSFlightReport) p;
-				ap.setMajorVersion(rs.getInt(65));
-				ap.setMinorVersion(rs.getInt(66));
-			}
+				// Load scheduled times
+				if (isDraft) {
+					DraftFlightReport dp = (DraftFlightReport) p;
+					Timestamp dts = rs.getTimestamp(25);
+					if (dts != null) {	
+						dp.setTimeD(dts);
+						dp.setTimeA(rs.getTimestamp(26));
+					}
+				
+					if (hasDraftRoute)
+						dp.setRoute(rs.getString(27));
+				}
 
-			results.add(p);
+				// Load generic ACARS pirep data
+				if (isACARS || isXACARS) {
+					FDRFlightReport ap = (FDRFlightReport) p;
+					ap.setAttribute(FlightReport.ATTR_ACARS, true);
+					ap.setDatabaseID(DatabaseID.ACARS, rs.getInt(26));
+					ap.setStartTime(rs.getTimestamp(27));
+					ap.setTaxiTime(rs.getTimestamp(28));
+					ap.setTaxiWeight(rs.getInt(29));
+					ap.setTaxiFuel(rs.getInt(30));
+					ap.setTakeoffTime(rs.getTimestamp(31));
+					ap.setTakeoffDistance(rs.getInt(32));
+					ap.setTakeoffSpeed(rs.getInt(33));
+					ap.setTakeoffN1(rs.getDouble(34));
+					ap.setTakeoffHeading(rs.getInt(35));
+					ap.setTakeoffLocation(new GeoPosition(rs.getDouble(36), rs.getDouble(37), rs.getInt(38)));
+					ap.setTakeoffWeight(rs.getInt(39));
+					ap.setTakeoffFuel(rs.getInt(40));
+					ap.setLandingTime(rs.getTimestamp(41));
+					ap.setLandingDistance(rs.getInt(42));
+					ap.setLandingSpeed(rs.getInt(43));
+					ap.setLandingVSpeed(rs.getInt(44));
+					// Load column #45 with DVA ACARS only
+					ap.setLandingN1(rs.getDouble(46));
+					ap.setLandingHeading(rs.getInt(47));
+					ap.setLandingLocation(new GeoPosition(rs.getDouble(48), rs.getDouble(49), rs.getInt(50)));
+					ap.setLandingWeight(rs.getInt(51));
+					ap.setLandingFuel(rs.getInt(52));
+					// Load column #53 with DVA ACARS only
+					ap.setEndTime(rs.getTimestamp(54));
+					ap.setGateWeight(rs.getInt(55));
+					ap.setGateFuel(rs.getInt(56));
+					ap.setTotalFuel(rs.getInt(57));
+				}
+			
+				// Load DVA ACARS pirep data
+				if (isACARS && !isXACARS) {
+					ACARSFlightReport ap = (ACARSFlightReport) p;
+					ap.setLandingG(rs.getDouble(45));
+					int ils = rs.getInt(53);
+					ap.setLandingCategory(ILSCategory.values()[ils]);
+					ap.setTime(0, rs.getInt(58));
+					ap.setTime(1, rs.getInt(59));
+					ap.setTime(2, rs.getInt(60));
+					ap.setTime(4, rs.getInt(61));
+					ap.setFDE(rs.getString(62));
+					ap.setAircraftCode(rs.getString(63));
+					ap.setHasReload(rs.getBoolean(64));
+					ap.setAverageFrameRate(rs.getInt(65) / 10d);
+					ap.setClientBuild(rs.getInt(66));
+					ap.setBeta(rs.getInt(67));
+				} else if (isXACARS) {
+					XACARSFlightReport ap = (XACARSFlightReport) p;
+					ap.setMajorVersion(rs.getInt(66));
+					ap.setMinorVersion(rs.getInt(67));
+				}
+
+				results.add(p);
+			}
 		}
 
-		rs.close();
 		_ps.close();
 		return results;
 	}
@@ -713,10 +715,7 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getCaptEQType(Collection<FlightReport> pireps) throws DAOException {
-
-		// Do nothing if empty
-		if (pireps.isEmpty())
-			return;
+		if (pireps.isEmpty()) return;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
@@ -733,8 +732,6 @@ public class GetFlightReports extends DAO {
 		Map<Integer, FlightReport> pMap = CollectionUtils.createMap(pireps, "ID");
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					FlightReport fr = pMap.get(Integer.valueOf(rs.getInt(1)));
