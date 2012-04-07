@@ -109,6 +109,10 @@
 		<url-pattern>/gallery/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<url-pattern>/issue/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<url-pattern>/charts/*</url-pattern>
 	</filter-mapping>
@@ -116,10 +120,13 @@
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<url-pattern>/exam_rsrc/*</url-pattern>
 	</filter-mapping>
-
 	<filter-mapping>
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<url-pattern>/gallery/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<url-pattern>/issue/*</url-pattern>
 	</filter-mapping>
 
 	<!-- Filter mappings to Fleet Library -->
