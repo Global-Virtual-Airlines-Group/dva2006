@@ -1,4 +1,3 @@
-// Copyright 2008 The Weather Channel Interactive. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -12,6 +11,10 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import junit.framework.TestCase;
+
+import org.deltava.beans.acars.RouteEntry;
+import org.deltava.dao.DAOException;
+import org.deltava.dao.file.GetSerializedPosition;
 
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.tile.*;
@@ -49,9 +52,9 @@ public class TestPlotPositions extends TestCase {
 	}
 	
 	private class ProjectInfo implements Comparable<ProjectInfo> {
-		private int _zoom;
-		private int _max;
-		private int _min;
+		private final int _zoom;
+		private final int _max;
+		private final int _min;
 		
 		ProjectInfo(int zoom, int maxPPP, int minPPP) {
 			super();
@@ -78,7 +81,7 @@ public class TestPlotPositions extends TestCase {
 	}
 
 	private class ZoomData implements Comparable<ZoomData> {
-		private int _zoom;
+		private final int _zoom;
 		private int _max;
 		private final ConcurrentMap<Point, Integer> _pts = new ConcurrentHashMap<Point, Integer>(1024000);
 		private final Map<TileAddress, Collection<Point>> _tiles = new HashMap<TileAddress, Collection<Point>>();
@@ -139,9 +142,9 @@ public class TestPlotPositions extends TestCase {
 	}
 	
 	private class WriteWorker extends Thread {
-		private TarOutputStream _out;
-		private int _maxPPP;
-		private int _minPPP;
+		private final TarOutputStream _out;
+		private final int _maxPPP;
+		private final int _minPPP;
 		
 		WriteWorker(int id, TarOutputStream out, int max, int min) {
 			super("WriteWorker-" + id);
@@ -180,14 +183,14 @@ public class TestPlotPositions extends TestCase {
 						ImageIO.write(img, "png", buf);
 						entry.setSize(buf.size());
 						entry.setUnixTarFormat();
-						entry.setIds(0, 0);
+						entry.setIds(500, 500);
 						synchronized (_out) {
 							_out.putNextEntry(entry);
 							_out.write(buf.toByteArray());
 							_out.closeEntry();
 						}
 					} catch (IOException ie) {
-						System.err.println("Error writing " + entry.getName() + " " + ie.getMessage());
+						System.err.println("Error writing " + entry.getName() + " - " + ie.getMessage());
 					}
 				}
 			}
@@ -195,8 +198,8 @@ public class TestPlotPositions extends TestCase {
 	}
 	
 	private class ReadWorker extends Thread {
-		private Connection _c;
-		private MercatorProjection _mp;
+		private final Connection _c;
+		private final MercatorProjection _mp;
 
 		ReadWorker(int id, String url, int zoom) throws SQLException {
 			super("ReadWorker-" + id);
@@ -207,34 +210,33 @@ public class TestPlotPositions extends TestCase {
 
 		public void run() {
 			try {
-				PreparedStatement ps = _c.prepareStatement("SELECT LAT, LNG FROM POSITION_ARCHIVE WHERE (FLIGHT_ID=?) AND ((FLAGS & ?) = 0)");	
-				ps.setInt(2, 12);
-				//PreparedStatement ps = _c.prepareStatement("SELECT LAT, LNG FROM TRACKPOS WHERE (ID=?) AND "
-					//	+ "((LAT < 36) AND (LAT >= 32)) AND ((LNG > -87) AND (LNG <= -82))");
-				ps.setFetchSize(1600);
-				while (!_IDwork.isEmpty() && !isInterrupted()) {
-					Integer id = _IDwork.poll();
-					if (id != null) {
-						ps.setInt(1, id.intValue());
-						ResultSet rs = ps.executeQuery();			
-						while (rs.next()) {
-							Point pt = _mp.getPixelAddress(rs.getDouble(1), rs.getDouble(2));
-							Integer cnt = _points.putIfAbsent(pt, Integer.valueOf(1));
-							if (cnt != null)
-								_points.put(pt, Integer.valueOf(cnt.intValue() + 1));
-						}
+				try (PreparedStatement ps = _c.prepareStatement("SELECT DATA FROM POS_ARCHIVE WHERE (ID=?) LIMIT 1")) {	
+					while (!_IDwork.isEmpty() && !isInterrupted()) {
+						Integer id = _IDwork.poll();
+						if (id != null) {
+							ps.setInt(1, id.intValue());
+							try (ResultSet rs = ps.executeQuery()) {			
+								if (rs.next()) {
+									InputStream in = new ByteArrayInputStream(rs.getBytes(1));
+									GetSerializedPosition psdao = new GetSerializedPosition(in);
+									Collection<? extends RouteEntry> entries = psdao.read();
+									for (RouteEntry re : entries) {
+										Point pt = _mp.getPixelAddress(re.getLatitude(), re.getLongitude());
+										Integer cnt = _points.putIfAbsent(pt, Integer.valueOf(1));
+										if (cnt != null)
+											_points.put(pt, Integer.valueOf(cnt.intValue() + 1));	
+									}
+								}
+							}
 						
-						// Write the rows
-						rs.close();
-						if ((id.intValue() % 2500) == 0)
-							System.out.println("Processed " + id);
+							// Write the rows
+							if ((id.intValue() % 2500) == 0)
+								System.out.println("Processed " + id);
+						}
 					}
-				}			
-			
-				// Clean up
-				ps.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
+				}
+			} catch (SQLException | DAOException sie) {
+				sie.printStackTrace(System.err);
 			} finally {
 				try {
 					_c.close();
@@ -247,23 +249,22 @@ public class TestPlotPositions extends TestCase {
 
 	public void testLoadPositions() throws Exception {
 
-		Connection c = DriverManager.getConnection(URL);
-		Statement s = c.createStatement();
-		s.setFetchSize(500);
-		ResultSet rs = s.executeQuery("SELECT ID FROM IDS");
-		while (rs.next())
-			_IDwork.add(Integer.valueOf(rs.getInt(1)));
+		try (Connection c = DriverManager.getConnection(URL)) {
+			try (Statement s = c.createStatement()) {
+				s.setFetchSize(500);
+				try (ResultSet rs = s.executeQuery("SELECT ID FROM POS_ARCHIVE")) {
+					while (rs.next())
+						_IDwork.add(Integer.valueOf(rs.getInt(1)));
+				}
+			}
+		}
 
-		rs.close();
-		s.close();
-		c.close();
-		
 		// Get the first zoom level
 		ProjectInfo pInf = _zooms.first();
 
 		// Spawn the workers
 		Collection<Thread> workers = new ArrayList<Thread>(16);
-		for (int x = 1; x <= 14; x++) {
+		for (int x = 1; x <= 15; x++) {
 			ReadWorker worker = new ReadWorker(x, URL, pInf.getZoom() + 1);
 			worker.start();
 			workers.add(worker);
