@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -8,6 +8,7 @@ import org.jdom.*;
 import org.jdom.input.*;
 import org.jdom.filter.ElementFilter;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.stats.GeocodeResult;
 
@@ -19,100 +20,80 @@ import org.deltava.util.StringUtils;
  * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
  * URL is http://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 2.3
  */
 
 public class GetGoogleGeocode extends DAO {
 	
-	private String _apiKey;
-	
-	private InputStream getStream(double lat, double lng) throws IOException {
-		StringBuilder buf = new StringBuilder("http://maps.google.com/maps/geo?sensor=false&oe=utf-8&output=xml&q=");
-		buf.append(lat);
+	private InputStream getStream(GeoLocation loc) throws IOException {
+		StringBuilder buf = new StringBuilder("http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&oe=utf-8&address=");
+		buf.append(loc.getLatitude());
 		buf.append(',');
-		buf.append(lng);
-		buf.append("&key=");
-		buf.append(_apiKey);
+		buf.append(loc.getLongitude());
 		init(buf.toString());
 		return getIn();
 	}
 	
 	/**
-	 * Sets the Google Maps API key to use for this request.
-	 * @param key the API key
-	 */
-	public void setAPIKey(String key) {
-		_apiKey = key;
-	}
-
-	/**
 	 * Retrieves the Geocoding results for the location.
-	 * @param lat the Latitude of the location in degrees
-	 * @param lng the Longitude of the location in degrees
+	 * @param loc the GeoLocation
 	 * @return a List of GeocodeResult beans
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public List<GeocodeResult> getGeoData(double lat, double lng) throws DAOException {
+	public GeocodeResult getGeoData(GeoLocation loc) throws DAOException {
 		Document doc = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			doc = builder.build(new InputStreamReader(getStream(lat, lng), "UTF-8"));
+			doc = builder.build(new InputStreamReader(getStream(loc), "UTF-8"));
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
 		
 		// Process the document
 		Element re = doc.getRootElement();
-		List<GeocodeResult> results = new ArrayList<GeocodeResult>();
-		for (Iterator<?> i = re.getDescendants(new ElementFilter("Placemark")); i.hasNext(); ) {
-			Element ple = (Element) i.next();
+		Element rse = re.getChild("result");
+		if (rse == null)
+			throw new DAOException("No resulte element");
+		
+		GeocodeResult result = new GeocodeResult();
+		result.setAddress(rse.getChildTextTrim("formatted_address"));
+		for (Iterator<?> i = rse.getDescendants(new ElementFilter("address_component")); i.hasNext(); ) {
+			Element ace = (Element) i.next();
 			
 			// Get the details
-			Element de = (Element) ple.getDescendants(new ElementFilter("AddressDetails")).next();
-			Element pe = ple.getChild("Point", ple.getNamespace());
-			Element ce = (de == null) ? null : de.getChild("Country", de.getNamespace());
-			if ((ce != null) && (pe != null)) {
-				int accuracy = StringUtils.parse(de.getAttributeValue("Accuracy", "1"), 1);
-				
-				// Get the lat/lon
-				StringTokenizer tk = new StringTokenizer(pe.getChildTextTrim("coordinates", pe.getNamespace()), ",");
-				double pLng = StringUtils.parse(tk.nextToken(), 0.0d);
-				double pLat = StringUtils.parse(tk.nextToken(), 0.0d);
-				GeoPosition pos = new GeoPosition(pLat, pLng, StringUtils.parse(tk.nextToken(), 0));
-				
-				// Create the result
-				GeocodeResult gr = new GeocodeResult(pos, GeocodeResult.GeocodeAccuracy.values()[accuracy]);
-				gr.setCountryCode(ce.getChildTextTrim("CountryNameCode", ce.getNamespace()));
-				gr.setCountry(ce.getChildTextTrim("CountryName", ce.getNamespace()));
-				
-				// Load the state
-				Element se = ce.getChild("AdministrativeArea", ce.getNamespace());
-				if ((accuracy > 1) && (se != null)) {
-					gr.setState(se.getChildTextTrim("AdministrativeAreaName", se.getNamespace()));
+			String type = ace.getChildTextTrim("type");
+			String value = ace.getChildTextTrim("long_name");
+			if (value == null)
+				value = ace.getChildTextTrim("short_name");
+			
+			// Set fields
+			switch (type) {
+				case "locality":
+					result.setCity(value);
+					break;
 					
-					// Load the city or county
-					Iterator<?> cti = se.getDescendants(new ElementFilter("Locality"));
-					if (cti.hasNext()) {
-						Element cte = (Element) cti.next();
-						gr.setCity(cte.getChildTextTrim("LocalityName", cte.getNamespace()));
-						Element pce = cte.getChild("PostalCode", cte.getNamespace());
-						if (pce != null)
-							gr.setPostalCode(pce.getChildTextTrim("PostalCodeNumber", pce.getNamespace()));
-						Element ae = cte.getChild("Thoroughfare", cte.getNamespace());
-						if (ae != null)
-							gr.setAddress(ae.getChildTextTrim("ThoroughfareName", ae.getNamespace()));
-					} else
-						gr.setCity(se.getChildTextTrim("AddressLine"));
-				}
-				
-				// Add to results
-				results.add(gr);
-			}			
+				case "postal_code":
+					result.setPostalCode(value);
+					break;
+					
+				case "country":
+					result.setCountry(value);
+					result.setCountryCode(ace.getChildTextTrim("short_name"));
+					break;
+					
+				case "administrative_area_level_1":
+					result.setState(value);
+					break;
+					
+				default:
+					break;
+			}
 		}
-		
-		// Sort the results based on accuracy
-		Collections.sort(results, Collections.reverseOrder());
-		return results;
+			
+		// Get the lat/lon
+		Element le = rse.getChild("geometry").getChild("location");
+		result.setLocation(new GeoPosition(StringUtils.parse(le.getChildTextTrim("lat"), 0.0d), StringUtils.parse(le.getChildTextTrim("lng"), 0.0d)));
+		return result;
 	}
 }
