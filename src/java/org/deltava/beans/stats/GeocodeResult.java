@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.GeoLocation;
@@ -7,29 +7,13 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A bean to store Google Geocoding results. 
  * @author Luke
- * @version 2.6
+ * @version 4.1
  * @since 2.3
  */
 
-public class GeocodeResult implements GeoLocation, Comparable<GeocodeResult> {
-	
-	public enum GeocodeAccuracy implements Comparable<GeocodeAccuracy> {
-		UNKNOWN(0), COUNTRY(1), STATE(2), COUNTY(3), TOWN(4), POSTALCODE(5),
-			STREET(6), INTERSECTION(7), ADDRESS(8), BUILDING(9);
-
-		private int _value;
-		
-		GeocodeAccuracy(int value) {
-			_value = value;
-		}
-		
-		public int intValue() {
-			return _value;
-		}
-	}
+public class GeocodeResult implements GeoLocation {
 	
 	private GeoLocation _loc;
-	private GeocodeAccuracy _precision;
 
 	private String _address;
 	private String _city;
@@ -38,31 +22,12 @@ public class GeocodeResult implements GeoLocation, Comparable<GeocodeResult> {
 	private String _countryCode;
 	private String _postalCode;
 
-	/**
-	 * Initializes the result.
-	 * @param loc the location coordinates
-	 * @param precision the accuracy of the result
-	 */
-	public GeocodeResult(GeoLocation loc, GeocodeAccuracy precision) {
-		super();
-		_loc = new GeoPosition(loc);
-		_precision = precision;
-	}
-
 	public double getLatitude() {
 		return _loc.getLatitude();
 	}
 	
 	public double getLongitude() {
 		return _loc.getLongitude();
-	}
-	
-	/**
-	 * Returns the accuracy of the resut.
-	 * @return the accuracy of the result
-	 */
-	public GeocodeAccuracy getAccuracy() {
-		return _precision;
 	}
 	
 	/**
@@ -174,14 +139,11 @@ public class GeocodeResult implements GeoLocation, Comparable<GeocodeResult> {
 		if (code != null)
 			_countryCode = code.toUpperCase();
 	}
-
-	/**
-	 * Compares two results by comparing their accuracy.
-	 */
-	public int compareTo(GeocodeResult r2) {
-		return _precision.compareTo(r2._precision);
-	}
 	
+	public void setLocation(GeoLocation loc) {
+		_loc = new GeoPosition(loc);
+	}
+
 	/**
 	 * Displays the city and state, and the country code if not US.
 	 */
@@ -202,12 +164,6 @@ public class GeocodeResult implements GeoLocation, Comparable<GeocodeResult> {
 	}
 	
 	public String toString() {
-		StringBuilder buf = new StringBuilder(getCityState());
-		buf.append('-');
-		buf.append(_precision.toString());
-		buf.append('(');
-		buf.append(_precision.intValue());
-		buf.append(')');
-		return buf.toString();
+		return getCityState();
 	}
 }

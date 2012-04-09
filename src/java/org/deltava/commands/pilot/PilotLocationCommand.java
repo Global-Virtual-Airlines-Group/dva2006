@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -15,12 +15,11 @@ import org.deltava.dao.*;
 import org.deltava.dao.http.GetGoogleGeocode;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -35,6 +34,7 @@ public class PilotLocationCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result and the user
@@ -86,26 +86,11 @@ public class PilotLocationCommand extends AbstractCommand {
 				// Update the pilot location
 				GeocodeResult geoCode = null;
 				if ((loc.getLatitude() != 0.0) && (loc.getLongitude() != 0.0)) {
-					Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
-					if ((apiKeys != null) && (!apiKeys.isEmpty())) {
-						String hostName = ctx.getRequest().getServerName().toLowerCase();
-						String apiKey = (String) apiKeys.get(hostName);
-						if (apiKey == null)
-							apiKey = (String) apiKeys.values().iterator().next();
-
-						// Connect and get the data
-						try {
-							GetGoogleGeocode gcdao = new GetGoogleGeocode();
-							gcdao.setAPIKey(apiKey);
-							List<GeocodeResult> locations = gcdao.getGeoData(loc.getLatitude(), loc.getLongitude());
-							if (!locations.isEmpty()) {
-								GeocodeResult gr = locations.get(0);
-								if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue())
-									geoCode = gr;
-							}
-						} catch (Exception e) {
-							log.error(e.getMessage(), e);
-						}
+					try {
+						GetGoogleGeocode gcdao = new GetGoogleGeocode();
+						geoCode = gcdao.getGeoData(loc);
+					} catch (Exception e) {
+						log.error(e.getMessage(), e);
 					}
 
 					// Start a transaction
