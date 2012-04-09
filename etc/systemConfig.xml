@@ -200,6 +200,8 @@
 		
 		<map name="connectProperties">
 			<useCompression>false</useCompression>
+			<useUnicode>true</useUnicode>
+			<characterEncoding>UTF-8</characterEncoding>
 			<connectTimeout>1000</connectTimeout>
 			<autoReconnect>false</autoReconnect>
 			<cachePrepStmts>true</cachePrepStmts>
