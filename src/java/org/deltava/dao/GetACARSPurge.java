@@ -124,7 +124,7 @@ public class GetACARSPurge extends GetACARSData {
 	public Collection<Integer> getUnsynchedXACARSFlights() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT XP.FLIGHT_ID FROM acars.POSITION_XARCHIVE XP, acars.FLIGHTS F "
-				+ "WHERE (F.ARCHIVED=?) AND (P.FLIGHT_ID=F.ID)");
+				+ "WHERE (F.ARCHIVED=?) AND (XP.FLIGHT_ID=F.ID)");
 			_ps.setBoolean(1, true);
 			
 			// Get XACARS flight IDs
