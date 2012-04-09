@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -46,13 +46,36 @@ public class GetPilotBoard extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Returns the locations of pilots who have signed up for the Pilot location board.
+	 * Returns the locations of all Pilots who have signed up for the Pilot location board.
 	 * @return a Map of GeoLocation objects, keyed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, GeoLocation> getAll() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT * FROM PILOT_MAP ORDER BY ID");
+			Map<Integer, GeoLocation> results = new LinkedHashMap<Integer, GeoLocation>();
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
+					results.put(Integer.valueOf(rs.getInt(1)), gp);
+				}
+			}
+
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns the locations of active/on leave Pilots who have signed up for the Pilot location board.
+	 * @return a Map of GeoLocation objects, keyed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, GeoLocation> getActive() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT M.* FROM PILOT_MAP M, PILOTS P WHERE (M.ID=P.ID) AND "
 					+ "((P.STATUS=?) OR (P.STATUS=?)) ORDER BY M.ID");
