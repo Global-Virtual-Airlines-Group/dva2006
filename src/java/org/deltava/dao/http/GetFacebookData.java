@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to fetch user data from Facebook via the Graph API. 
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 3.4
  */
 
@@ -42,6 +42,12 @@ public class GetFacebookData extends FacebookDAO {
 			JSONTokener jtk = new JSONTokener(new InputStreamReader(is));
 			JSONObject jo = new JSONObject(jtk);
 			is.close();
+			
+			// Check for error
+			if (jo.has("error")) {
+				JSONObject jerr = jo.getJSONObject("error");
+				throw new IOException(jerr.optString("message", "HTTP Error " + getResponseCode()));
+			}
 			
 			// Construct the bean
 			ProfileInfo inf = new ProfileInfo(jo.getString("id"));
