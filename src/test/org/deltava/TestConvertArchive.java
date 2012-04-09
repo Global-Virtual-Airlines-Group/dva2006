@@ -183,7 +183,7 @@ public class TestConvertArchive extends TestCase {
 		assertNotNull(con);
 
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		
 		SystemData.init();
 		GetTimeZone tzdao = new GetTimeZone(con);

@@ -22,7 +22,7 @@ public class LoadResourceDomain extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		SystemData.init();
 
 		// Connect to the database

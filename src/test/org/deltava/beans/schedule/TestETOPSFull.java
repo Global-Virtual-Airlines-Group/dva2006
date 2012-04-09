@@ -28,7 +28,7 @@ public class TestETOPSFull extends TestCase {
 		_c = DriverManager.getConnection(URL);
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		
 		SystemData.init();
 		GetTimeZone tzdao = new GetTimeZone(_c);

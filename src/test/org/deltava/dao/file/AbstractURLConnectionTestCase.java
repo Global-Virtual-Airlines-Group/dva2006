@@ -12,7 +12,7 @@ public class AbstractURLConnectionTestCase extends TestCase {
 	
 	protected void setUp(String fileName) throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		_is = new FileInputStream(fileName);
 	}
 }
