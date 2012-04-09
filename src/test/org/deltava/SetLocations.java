@@ -14,6 +14,7 @@ import org.deltava.beans.stats.GeocodeResult;
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetGoogleGeocode;
 
+import org.deltava.util.GeoUtils;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -66,14 +67,11 @@ public class SetLocations extends TestCase {
 			if (StringUtils.isEmpty(usr.getLocation())) {
 				try {
 					GetGoogleGeocode gcdao = new GetGoogleGeocode();
-					gcdao.setAPIKey("ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA");
-					List<GeocodeResult> locations = gcdao.getGeoData(loc.getLatitude(), loc.getLongitude());
-					if (!locations.isEmpty()) {
-						GeocodeResult gr = locations.get(0);
-						if (gr.getAccuracy().intValue() > GeocodeResult.GeocodeAccuracy.COUNTRY.intValue()) {
-							log.info("Setting " + e.getKey() + " home town to " + gr.getCityState());
-							pwdao.setHomeTown(e.getKey().intValue(), gr);
-						}
+					GeocodeResult gr = gcdao.getGeoData(loc);
+					int distance = GeoUtils.distance(loc, gr);
+					if (distance < 30) {
+						log.info("Setting " + e.getKey() + " home town to " + gr.getCityState());
+						pwdao.setHomeTown(e.getKey().intValue(), gr);
 					}
 				} catch (Exception ex) {
 					log.error("Cannot update " + e.getKey() + " - " + ex.getMessage());
