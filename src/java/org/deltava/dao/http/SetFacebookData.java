@@ -1,9 +1,7 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-
 import org.json.*;
 
 import org.apache.log4j.Logger;
@@ -17,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to send data to Facebook via the Graph API.
  * @author Luke
- * @version 4.0
+ * @version 4.1
  * @since 3.4
  */
 
@@ -70,16 +68,18 @@ public class SetFacebookData extends FacebookDAO {
 			out.flush();
 			out.close();
 			
-			// Get the response code
-			int resultCode = getResponseCode();
-			if (resultCode != HttpURLConnection.HTTP_OK)
-				throw new HTTPDAOException("Invalid Result Code", resultCode);
-			
 			// Parse the return value
 			InputStream is = getIn();
 			JSONTokener jtk = new JSONTokener(new InputStreamReader(is));
 			JSONObject jo = new JSONObject(jtk);
 			is.close();
+			
+			// Get the response code
+			int resultCode = getResponseCode();
+			if (jo.has("error")) {
+				JSONObject jerr = jo.getJSONObject("error");
+				throw new HTTPDAOException(jerr.optString("message", "Invalid Result Code"), resultCode);
+			}
 			
 			// Set the ID
 			nws.setID(jo.getString("id"));
