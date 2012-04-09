@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 public class TestFacebookDAO extends TestCase {
 
 	private static final String TOKEN = "93603160577|02faa99c85a2e78c9eaf8dff-521227914|bQRcIuPZcvp0fhqq6wj3Iw1VVk1";
+	private static final String TOKEN2 = "205671896115290|c3f36cd31f4aa4b37e3a2755.1-100000044952035|ReicmZp8Y_F-pbUuGaoppSkNPBE";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -42,5 +43,14 @@ public class TestFacebookDAO extends TestCase {
 		fbdao.setToken(TOKEN);
 		fbdao.write(nws);
 		assertNotNull(nws.getID());
+	}
+	
+	public void testBadToken() throws Exception {
+		
+		GetFacebookData fbdao = new GetFacebookData();
+		fbdao.setToken(TOKEN2);
+		ProfileInfo info = fbdao.getUserInfo();
+		assertNotNull(info);		
+		
 	}
 }
