@@ -18,6 +18,7 @@ public class GeocodeResult implements GeoLocation {
 	private String _address;
 	private String _city;
 	private String _state;
+	private String _stateCode;
 	private String _country;
 	private String _countryCode;
 	private String _postalCode;
@@ -58,12 +59,21 @@ public class GeocodeResult implements GeoLocation {
 	}
 	
 	/**
-	 * Returns the state code.
-	 * @return the state code
+	 * Returns the state name.
+	 * @return the state name
 	 * @see GeocodeResult#setState(String)
 	 */
 	public String getState() {
 		return _state;
+	}
+	
+	/**
+	 * Returns the state code.
+	 * @return the state code
+	 * @see GeocodeResult#setStateCode(String)
+	 */
+	public String getStateCode() {
+		return _stateCode;
 	}
 	
 	/**
@@ -122,6 +132,16 @@ public class GeocodeResult implements GeoLocation {
 	}
 	
 	/**
+	 * Sets the state/province code.
+	 * @param code the state/province code
+	 * @see GeocodeResult#getStateCode()
+	 */
+	public void setStateCode(String code) {
+		if (code != null)
+			_stateCode = code;
+	}
+	
+	/**
 	 * Sets the country name.
 	 * @param country the country name
 	 * @see GeocodeResult#getCountry()
@@ -154,13 +174,20 @@ public class GeocodeResult implements GeoLocation {
 			buf.append(", ");
 		}
 		
-		if ((_state != null) && (!_state.equals(_city))) {
+		boolean isUS ="US".equals(_countryCode);
+		boolean hasStateCode = isUS || "CA".equals(_countryCode);
+		if (hasStateCode && (_stateCode != null)) {
+			buf.append(_stateCode);
+			buf.append(' ');
+		} else if ((_state != null) && (!_state.equals(_city))) {
 			buf.append(_state);
 			buf.append(' ');
 		}
 		
-		if (_country != null)
-			buf.append((_country.length() > 8) ? _countryCode : _country);
+		if (!isUS && (_country != null)) {
+			int total = buf.length() + _country.length();
+			buf.append((total > 60) ? _countryCode : _country);
+		}
 		
 		return buf.toString();
 	}

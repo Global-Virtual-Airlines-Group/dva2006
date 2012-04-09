@@ -92,6 +92,7 @@ public class GetGoogleGeocode extends DAO {
 					
 				case "administrative_area_level_1":
 					result.setState(value);
+					result.setStateCode(ace.getChildTextTrim("short_name"));
 					break;
 					
 				default:
