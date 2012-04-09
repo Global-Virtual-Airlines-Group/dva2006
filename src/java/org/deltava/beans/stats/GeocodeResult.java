@@ -159,7 +159,9 @@ public class GeocodeResult implements GeoLocation {
 			buf.append(' ');
 		}
 		
-		buf.append((_country.length() > 8) ? _countryCode : _country);
+		if (_country != null)
+			buf.append((_country.length() > 8) ? _countryCode : _country);
+		
 		return buf.toString();
 	}
 	

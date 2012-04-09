@@ -54,15 +54,23 @@ public class GetGoogleGeocode extends DAO {
 		Element re = doc.getRootElement();
 		Element rse = re.getChild("result");
 		if (rse == null)
-			throw new DAOException("No resulte element");
+			return null;
+		
+		// Get the address for sanity checking
+		String addr = rse.getChildTextTrim("formatted_address");
+		if (StringUtils.isEmpty(addr))
+			return null;
 		
 		GeocodeResult result = new GeocodeResult();
-		result.setAddress(rse.getChildTextTrim("formatted_address"));
+		result.setAddress(addr);
 		for (Iterator<?> i = rse.getDescendants(new ElementFilter("address_component")); i.hasNext(); ) {
 			Element ace = (Element) i.next();
 			
 			// Get the details
 			String type = ace.getChildTextTrim("type");
+			if (type == null)
+				continue;
+			
 			String value = ace.getChildTextTrim("long_name");
 			if (value == null)
 				value = ace.getChildTextTrim("short_name");
