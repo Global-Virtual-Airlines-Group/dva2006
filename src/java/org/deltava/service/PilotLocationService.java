@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Pilot Locations on a map.
  * @author Luke
- * @version 3.3
+ * @version 4.1
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class PilotLocationService extends WebService {
 			Connection con = ctx.getConnection();
 			GetPilot dao = new GetPilot(con);
 			GetPilotBoard pbdao = new GetPilotBoard(con);
-			locations = pbdao.getAll();
+			locations = pbdao.getActive();
 			pilots = dao.getActivePilots(null);
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
