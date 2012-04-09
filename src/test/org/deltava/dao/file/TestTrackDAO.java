@@ -16,7 +16,7 @@ public class TestTrackDAO extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 	}
 	
 	public void testValidKeyNAT() throws Exception {

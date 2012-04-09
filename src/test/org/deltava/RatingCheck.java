@@ -29,7 +29,7 @@ public class RatingCheck extends TestCase {
 		super.setUp();
 
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		log = Logger.getLogger(SetLocations.class);
 		
 		SystemData.init();

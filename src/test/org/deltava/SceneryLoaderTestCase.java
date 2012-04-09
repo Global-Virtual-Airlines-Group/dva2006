@@ -111,7 +111,7 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 		super.setUp();
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 	}
 
 	protected void tearDown() throws Exception {
