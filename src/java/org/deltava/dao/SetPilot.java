@@ -127,6 +127,7 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void setLocation(int pilotID, GeoLocation loc) throws DAOException {
 		try {
+			invalidate(pilotID);
 			prepareStatementWithoutLimits("REPLACE INTO PILOT_MAP (ID, LAT, LNG) VALUES (?, ?, ?)");
 			_ps.setInt(1, pilotID);
 			_ps.setDouble(2, loc.getLatitude());
@@ -145,6 +146,7 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void setHomeTown(int pilotID, GeocodeResult gr) throws DAOException {
 		try {
+			invalidate(pilotID);
 			prepareStatementWithoutLimits("UPDATE PILOTS SET LOCATION=? WHERE (ID=?)");
 			_ps.setString(1, gr.getCityState());
 			_ps.setInt(2, pilotID);
