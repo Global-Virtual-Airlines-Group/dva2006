@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a registered Pilot's e-mail address.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -32,6 +32,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occrurs.
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get Command results
@@ -68,7 +69,8 @@ public class UpdateEmailCommand extends AbstractCommand {
 			}
 			
 			// If the user has a Facebook account, validate through them
-			if (p.hasIM(IMAddress.FBTOKEN)) {
+			String fbToken = p.getIMHandle(IMAddress.FBTOKEN);
+			if (!StringUtils.isEmpty(fbToken)) {
 				GetFacebookData fbdao = new GetFacebookData();
 				fbdao.setToken(p.getIMHandle(IMAddress.FBTOKEN));
 				ProfileInfo fbInfo = fbdao.getUserInfo();

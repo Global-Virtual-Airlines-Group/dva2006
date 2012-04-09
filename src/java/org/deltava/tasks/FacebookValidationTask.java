@@ -54,7 +54,7 @@ public class FacebookValidationTask extends Task {
 						tLog.info("Validating Facebook token for " + p.getName() + ", attempt #" + retryCount);
 						info = fbdao.getUserInfo();
 					} catch (DAOException de) {
-						// empty
+						tLog.warn("Error validataing Facebook token for " + p.getName() + " - " + de.getMessage());
 					}
 				}
 				
