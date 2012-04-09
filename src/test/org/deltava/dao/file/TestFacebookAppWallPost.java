@@ -13,7 +13,7 @@ public class TestFacebookAppWallPost extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		SystemData.init();
 	}
 

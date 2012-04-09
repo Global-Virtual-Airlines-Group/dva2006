@@ -74,7 +74,7 @@ public class ChartLoader extends TestCase {
 		assertTrue(xml.exists());
 		
 		// Init Log4j
-		PropertyConfigurator.configure("etc/log4j.properties");
+		PropertyConfigurator.configure("etc/log4j.test.properties");
 		log = Logger.getLogger(ChartLoader.class);
 		
 		// Init SystemData
