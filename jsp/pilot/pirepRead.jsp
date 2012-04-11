@@ -129,7 +129,7 @@ return true;
 <c:if test="${isACARS && (!empty flightInfo.SID)}">
 <tr>
  <td class="label">Departure Route</td>
- <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}</td>
+ <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}<content:filter roles="Developer">.${flightInfo.SID.runway}</content:filter></td>
 </tr>
 </c:if>
 <c:set var="isDivert" value="${isACARS && (flightInfo.airportA.ICAO != pirep.airportA.ICAO)}" scope="page" />
@@ -141,7 +141,7 @@ return true;
 <c:if test="${isACARS && !isDivert && (!empty flightInfo.STAR)}">
 <tr>
  <td class="label">Arrival Route</td>
- <td class="data">${flightInfo.STAR.name}.${flightInfo.STAR.transition}</td>
+ <td class="data">${flightInfo.STAR.name}.${flightInfo.STAR.transition}<content:filter roles="Developer">.${flightInfo.STAR.runway}</content:filter></td>
 </tr>
 </c:if>
 <c:if test="${isACARS && (!empty flightInfo.airportL)}">
