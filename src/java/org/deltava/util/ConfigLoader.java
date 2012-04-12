@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.io.*;
@@ -7,12 +7,17 @@ import java.io.*;
  * A utility class to support loading configuration resources on the local filesystem. This class ensures similar
  * behavior when running in a servlet container or within the Eclipse Workbench.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
 public class ConfigLoader {
    
+	// singleton
+	private ConfigLoader() {
+		super();
+	}
+	
    /**
     * Retrieves a resource as an input stream.
     * @param fName the file name
