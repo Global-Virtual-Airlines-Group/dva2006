@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -7,8 +7,8 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
-import org.jdom.filter.ElementFilter;
+import org.jdom2.*;
+import org.jdom2.filter.ElementFilter;
 
 public class MagVarLoader extends BGLLoaderTestCase {
 	
@@ -73,9 +73,9 @@ public class MagVarLoader extends BGLLoaderTestCase {
 			}
 			
 			// Get the airports
-			Iterator<?> eli = doc.getDescendants(new ElementFilter("Airport"));
+			Iterator<Element> eli = doc.getDescendants(new ElementFilter("Airport"));
 			while (eli.hasNext()) {
-				Element e = (Element) eli.next();
+				Element e = eli.next();
 				double mv = Double.parseDouble(e.getAttributeValue("magvar"));
 				mv = Math.min(50, Math.max(-50, mv));
 				String icao = e.getAttributeValue("ident");

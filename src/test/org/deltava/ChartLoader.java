@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -9,9 +9,9 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.*;
 
-import org.jdom.*;
-import org.jdom.filter.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.filter.*;
+import org.jdom2.input.*;
 
 import org.deltava.beans.schedule.*;
 
@@ -170,9 +170,9 @@ public class ChartLoader extends TestCase {
 	public void testUpdatedCharts() throws Exception {
 		Element re = _doc.getRootElement();
 		Collection<Element> chartEs = new ArrayList<Element>();
-		Iterator<?> aI = re.getDescendants(new ElementFilter("airport_name"));
+		Iterator<Element> aI = re.getDescendants(new ElementFilter("airport_name"));
 		while (aI.hasNext()) {
-			Element e = (Element) aI.next();
+			Element e = aI.next();
 			String id = e.getAttributeValue("icao_ident").toUpperCase();
 			if (airports.containsKey(id))
 				chartEs.add(e);
@@ -197,9 +197,9 @@ public class ChartLoader extends TestCase {
 			log.info("Processing " + a.getName());
 			
 			// Get the charts
-			Collection<?> cEs = e.getChildren("record");
-			for (Iterator<?> ci = cEs.iterator(); ci.hasNext(); ) {
-				Element ce = (Element) ci.next();
+			Collection<Element> cEs = e.getChildren("record");
+			for (Iterator<Element> ci = cEs.iterator(); ci.hasNext(); ) {
+				Element ce = ci.next();
 				
 				// Get the chart name
 				String chartName = ce.getChildTextTrim("chart_name").replace(",", "");

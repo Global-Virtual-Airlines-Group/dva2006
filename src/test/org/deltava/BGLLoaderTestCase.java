@@ -1,10 +1,10 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
 import java.util.*;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 
 public abstract class BGLLoaderTestCase extends SceneryLoaderTestCase {
 	
