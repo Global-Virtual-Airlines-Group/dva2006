@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -93,18 +93,17 @@ public class SetNavData extends DAO {
 	      _ps.setBoolean(9, a.isLowLevel());
 	      
 	      // Write the waypoints
-	      List<NavigationDataBean> wps = a.getWaypoints();
-	      for (int x = 0; x < wps.size(); x++) {
-	    	  NavigationDataBean ai = wps.get(x);
+	      int x = 1;
+	      for (NavigationDataBean ai : a.getWaypoints()) {
 	    	  _ps.setInt(3, x + 1);
 	    	  _ps.setString(4, ai.getCode());
 	    	  _ps.setInt(5, ai.getType());
 	    	  _ps.setDouble(6, ai.getLatitude());
 	    	  _ps.setDouble(7, ai.getLongitude());
 	    	  _ps.addBatch();
+	    	  x++;
 	      }
 
-	      // Write and clean up
 	      _ps.executeBatch();
 	      _ps.close();
 	   } catch (SQLException se) {
@@ -192,7 +191,7 @@ public class SetNavData extends DAO {
 	public int updateRegions(int navaidType) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.NAVDATA ND, common.NAVREGIONS NR SET ND.REGION=NR.REGION WHERE "
-					+ "(ROUND(ND.LATITUDE,1)=NR.LATITUDE) AND (ROUND(ND.LONGITUDE,1)=NR.LONGITUDE) AND (ND.REGION IS NULL) "
+					+ "(ROUND(ND.LATITUDE,0)=NR.LATITUDE) AND (ROUND(ND.LONGITUDE,0)=NR.LONGITUDE) AND (ND.REGION IS NULL) "
 					+ "AND (ND.ITEMTYPE=?)");
 			_ps.setInt(1, navaidType);
 			return executeUpdate(0);
