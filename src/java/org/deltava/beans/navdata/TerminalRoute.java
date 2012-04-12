@@ -1,16 +1,17 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.Airport;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 3.4
+ * @version 4.1
  * @since 1.0
  */
 
@@ -21,7 +22,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
    
    public static final String[] TYPES = {"SID", "STAR"};
    
-   private String _airport;
+   private final String _airport;
    private int _type;
    private boolean _canPurge;
    
@@ -47,14 +48,18 @@ public class TerminalRoute extends Airway implements ComboAlias {
     * Utlity method to convert the SID/STAR name to a generic name using a percent sign
     * so that mySQL can select any revision of the procedure.
     * @param name the SID/STAR name
-    * @return a genericized name with the trailing digit replaced by a percent sign
+    * @return a genericized name with the digit replaced by a percent sign
     */
    public static String makeGeneric(String name) {
 	   if (!isNameValid(name))
 		   return name;
 	   
-	   StringBuilder buf = new StringBuilder(name.substring(0, name.length() - 1));
-	   buf.append('%');
+	   StringBuilder buf = new StringBuilder();
+	   for (int x = 0; x < name.length(); x++) {
+		   char c = name.charAt(x);
+		   buf.append(Character.isDigit(c) ? '%' : c);
+	   }
+	   
 	   return buf.toString();
    }
    
