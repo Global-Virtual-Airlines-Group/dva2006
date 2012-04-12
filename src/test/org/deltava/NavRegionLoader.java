@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -7,8 +7,8 @@ import java.util.*;
 
 import org.apache.log4j.*;
 
-import org.jdom.*;
-import org.jdom.filter.ElementFilter;
+import org.jdom2.*;
+import org.jdom2.filter.ElementFilter;
 
 public class NavRegionLoader extends BGLLoaderTestCase {
 	
@@ -69,9 +69,9 @@ public class NavRegionLoader extends BGLLoaderTestCase {
 			for (Iterator<String> ei = XML_ENAMES.iterator(); ei.hasNext(); ) {
 				String wpType = ei.next();
 				boolean isWP = "Waypoint".equals(wpType);
-				Iterator<?> eli = doc.getDescendants(new ElementFilter(wpType));
+				Iterator<Element> eli = doc.getDescendants(new ElementFilter(wpType));
 				while (eli.hasNext()) {
-					Element e = (Element) eli.next();
+					Element e = eli.next();
 					double lat = Double.parseDouble(e.getAttributeValue("lat"));
 					double lng = Double.parseDouble(e.getAttributeValue("lon"));
 					String region = e.getAttributeValue(isWP ? "waypointRegion" : "region");

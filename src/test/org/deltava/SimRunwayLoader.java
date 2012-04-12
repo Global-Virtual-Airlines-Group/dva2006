@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.navdata.*;
 import org.deltava.util.StringUtils;
 
-import org.jdom.*;
-import org.jdom.filter.ElementFilter;
+import org.jdom2.*;
+import org.jdom2.filter.ElementFilter;
 
 public class SimRunwayLoader extends SceneryLoaderTestCase {
 	
@@ -140,9 +140,9 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 			assertNotNull(doc);
 			
 			// Get the airports
-			Iterator<?> ali = doc.getDescendants(new ElementFilter("Airport"));
+			Iterator<Element> ali = doc.getDescendants(new ElementFilter("Airport"));
 			while (ali.hasNext()) {
-				Element ae = (Element) ali.next();
+				Element ae = ali.next();
 				String apCode = ae.getAttributeValue("ident").toUpperCase();
 				if (!codes.contains(apCode))
 					continue;
@@ -151,9 +151,9 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				
 				float magVar = Float.parseFloat(ae.getAttributeValue("magvar", "0.0"));
 				Map<String, Runway> runways = new HashMap<String, Runway>();
-				Iterator<?> rli = ae.getDescendants(new ElementFilter("Runway"));
+				Iterator<Element> rli = ae.getDescendants(new ElementFilter("Runway"));
 				while (rli.hasNext()) {
-					Element re = (Element) rli.next();
+					Element re = rli.next();
 					double lat = Double.parseDouble(re.getAttributeValue("lat"));
 					double lng = Double.parseDouble(re.getAttributeValue("lon"));
 					
@@ -193,9 +193,9 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				// Load the runway starts
 				ps.setString(1, apCode);
 				boolean hasData = false;
-				Iterator<?> sli = ae.getDescendants(new ElementFilter("Start"));
+				Iterator<Element> sli = ae.getDescendants(new ElementFilter("Start"));
 				while (sli.hasNext()) {
-					Element se = (Element) sli.next();
+					Element se = sli.next();
 					String type = se.getAttributeValue("type");
 					if (!"RUNWAY".equalsIgnoreCase(type))
 						continue;

@@ -6,8 +6,8 @@ import java.util.*;
 import javax.servlet.http.*;
 import javax.servlet.jsp.tagext.Tag;
 
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
 
 import junit.framework.TestCase;
 import com.kizna.servletunit.*;

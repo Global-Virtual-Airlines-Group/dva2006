@@ -2,8 +2,8 @@ package org.deltava.util;
 
 import java.io.*;
 
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
 
 import junit.framework.TestCase;
 
@@ -47,7 +47,7 @@ public class TestKMLMerge extends TestCase {
 				if (pe == null) {
 					System.err.println("No Placemark element");
 				} else {
-					Element pe2 = (Element) pe.clone();
+					Element pe2 = pe.clone();
 					KMLUtils.setVisibility(pe2, false);
 					_de.addContent(pe2);
 				}
