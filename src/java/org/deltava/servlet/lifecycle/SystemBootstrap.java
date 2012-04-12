@@ -171,11 +171,12 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 			
 			// Load User Pool max values
-			InputStream is = ConfigLoader.getStream("/etc/maxUsers.properties");
-			if (is != null) {
-				GetProperties pdao = new GetProperties(is);
-				Properties p = pdao.read();
-				UserPool.init(StringUtils.parse(p.getProperty("users"), 0), StringUtils.parseDate(p.getProperty("date"), "MM/dd/yyyy HH:mm"));
+			try (InputStream is = ConfigLoader.getStream("/etc/maxUsers.properties")) {
+				if (is != null) {
+					GetProperties pdao = new GetProperties(is);
+					Properties p = pdao.read();
+					UserPool.init(StringUtils.parse(p.getProperty("users"), 0), StringUtils.parseDate(p.getProperty("date"), "MM/dd/yyyy HH:mm"));
+				}
 			}
 
 			// Load TS2 server info if enabled
