@@ -247,6 +247,7 @@
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc"
 			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset dir="etc" includes="*.*">
+				<exclude name="log4j.test.properties" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
