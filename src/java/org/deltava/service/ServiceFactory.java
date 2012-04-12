@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -6,15 +6,15 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.*;
+import org.jdom2.input.SAXBuilder;
 
 import org.deltava.util.ConfigLoader;
 
 /**
  * A Factory to load Web Service configuration data.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -38,9 +38,9 @@ public class ServiceFactory {
 
       // Create the builder and load the file into an XML in-memory document
       Document doc = null;
-      try {
+      try (InputStream in = ConfigLoader.getStream(configXML)) {
           SAXBuilder builder = new SAXBuilder();
-          doc = builder.build(ConfigLoader.getStream(configXML));
+          doc = builder.build(in);
       } catch (JDOMException je) {
           throw new IOException("XML Parse Error in " + configXML, je);
       }
@@ -51,8 +51,8 @@ public class ServiceFactory {
           throw new IOException("Empty XML Document");
       
       // Parse through the services
-      for (Iterator<?> i = root.getChildren("service").iterator(); i.hasNext(); ) {
-          Element e = (Element) i.next();
+      for (Iterator<Element> i = root.getChildren("service").iterator(); i.hasNext(); ) {
+          Element e = i.next();
           String svcID = e.getAttributeValue("id");
           String svcClassName = e.getAttributeValue("class");
           
@@ -67,7 +67,6 @@ public class ServiceFactory {
           }
       }
       
-      // Return results
       log.info("Loaded " + results.size() + " services");
       return results;
    }

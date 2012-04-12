@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -119,7 +119,6 @@ public class MapProgressService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 

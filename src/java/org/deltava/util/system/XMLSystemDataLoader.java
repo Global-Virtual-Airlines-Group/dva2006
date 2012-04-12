@@ -1,8 +1,8 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
-import org.jdom.*;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.*;
+import org.jdom2.input.SAXBuilder;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +15,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A SystemData loader that parses an XML file.
  * @author Luke
- * @version 3.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -33,19 +33,13 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      */
     public Map<String, Object> load() throws IOException {
 
-        // Get the input stream to parse
-        InputStream is = ConfigLoader.getStream(XML_FILENAME);
-
         // Create the builder and load the file into an XML in-memory document
         Document doc = null;
-        try {
+        try (InputStream is = ConfigLoader.getStream(XML_FILENAME)) {
             SAXBuilder builder = new SAXBuilder();
             doc = builder.build(is);
-            is.close();
         } catch (JDOMException je) {
-            IOException ie = new IOException("XML Parse Error");
-            ie.initCause(je);
-            throw ie;
+            throw new IOException("XML Parse Error", je);
         }
 
         // Get the root element
@@ -124,8 +118,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         }
 
         // Get all elements with the given attribute name
-        for (Iterator<?> i = root.getChildren(root.getAttributeValue("attr")).iterator(); i.hasNext();) {
-            Element e = (Element) i.next();
+        for (Iterator<Element> i = root.getChildren(root.getAttributeValue("attr")).iterator(); i.hasNext();) {
+            Element e = i.next();
             results.add(getElementWithType(e));
         }
 
@@ -145,8 +139,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         Map<String, Object> results = new HashMap<String, Object>();
 
         // Iterate through the child elements
-        for (Iterator<?> i = root.getChildren().iterator(); i.hasNext();) {
-            Element e = (Element) i.next();
+        for (Iterator<Element> i = root.getChildren().iterator(); i.hasNext();) {
+            Element e = i.next();
             Object value = getElementWithType(e);
             results.put(e.getName(), value);
         }
@@ -164,8 +158,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
             rootName = rootName + ".";
 
         // Iterate through this entry's children
-        for (Iterator<?> i = re.getChildren().iterator(); i.hasNext();) {
-            Element e = (Element) i.next();
+        for (Iterator<Element> i = re.getChildren().iterator(); i.hasNext();) {
+            Element e = i.next();
             String eType = e.getName();
 
             /* The rules for recursive processing are this; if the element is a list or map, then we process

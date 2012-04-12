@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -6,8 +6,8 @@ import java.io.StringReader;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.4
  */
 
@@ -140,10 +140,10 @@ public final class OfflineFlightParser {
 		
 		// Build the position entries
 		Element ppe = re.getChild("positions");
-		List<?> pL = (ppe != null) ? ppe.getChildren("position") : null;
+		List<Element> pL = (ppe != null) ? ppe.getChildren("position") : null;
 		if (!CollectionUtils.isEmpty(pL)) {
-			for (Iterator<?> i = pL.iterator(); i.hasNext();) {
-				Element pe = (Element) i.next();
+			for (Iterator<Element> i = pL.iterator(); i.hasNext();) {
+				Element pe = i.next();
 				String dt = pe.getChildTextTrim("date");
 				if (dt.indexOf('.') == -1)
 					dt += ".000";

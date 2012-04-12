@@ -1,11 +1,11 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.navdata.AirportLocation;
 import org.deltava.beans.wx.METAR;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to fetch METAR data. 
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 2.3
  */
 
@@ -32,6 +32,7 @@ public class METARService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check if using FlightAware data services
@@ -83,15 +84,13 @@ public class METARService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (Exception ex) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 	

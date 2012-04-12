@@ -10,7 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.UserDataMap;
@@ -26,7 +26,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to render the ACARS Map in Google Earth.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -170,7 +170,6 @@ public class EarthMapService extends GoogleEarthService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 

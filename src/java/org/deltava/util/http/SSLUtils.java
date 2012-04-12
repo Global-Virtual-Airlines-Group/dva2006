@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.http;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ConfigLoader;
 /**
  * A utility class to allow SSL connections based on non-standard certificates.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -22,20 +22,24 @@ public final class SSLUtils {
 	
 	private static final Logger log = Logger.getLogger(SSLUtils.class);
 	
+	// singleton
+	private SSLUtils() {
+		super();
+	}
+	
 	/**
 	 * Loads an X.509 certitifcate from a file.
 	 * @param fileName the file name
 	 * @return an X.509 certificate
 	 * @throws IOException if the file cannot be read
 	 * @throws CertificateException if the certificate is invalid
-	 * @see ConfigLoader#getStream(String)
 	 */
 	public static X509Certificate load(String fileName) throws IOException, CertificateException {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		InputStream is = ConfigLoader.getStream(fileName);
-		X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
-		is.close();
-		return cert;
+		try (InputStream is = ConfigLoader.getStream(fileName)) {
+			X509Certificate cert = (X509Certificate) cf.generateCertificate(is);
+			return cert;
+		}
 	}
 
 	/**

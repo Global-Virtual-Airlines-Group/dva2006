@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.net.*;
@@ -8,7 +8,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.blog.*;
@@ -36,6 +36,7 @@ public class BlogSyndicationService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		Pilot usr = null;

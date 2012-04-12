@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -6,15 +6,15 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.*;
+import org.jdom2.input.SAXBuilder;
 
 import org.deltava.util.*;
 
 /**
  * A factory class to initalize the web command map.
  * @author Luke
- * @version 3.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -52,15 +52,11 @@ public class CommandFactory {
 			return Collections.emptyMap();
 		}
 
-		// Get the file
-		InputStream is = ConfigLoader.getStream(configXML);
-
 		// Create the builder and load the file into an XML in-memory document
 		Document doc = null;
-		try {
+		try (InputStream is = ConfigLoader.getStream(configXML)) {
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(is);
-			is.close();
 		} catch (JDOMException je) {
 			throw new IOException("XML Parse Error in " + configXML, je);
 		}
@@ -72,9 +68,9 @@ public class CommandFactory {
 
 		// Parse through the commands
 		Map<String, Command> results = new LinkedHashMap<String, Command>();
-		List<?> cmds = root.getChildren("command");
-		for (Iterator<?> i = cmds.iterator(); i.hasNext();) {
-			Element e = (Element) i.next();
+		List<Element> cmds = root.getChildren("command");
+		for (Iterator<Element> i = cmds.iterator(); i.hasNext();) {
+			Element e = i.next();
 			String cmdID = e.getAttributeValue("id").trim();
 			String cmdClassName = e.getChildTextTrim("class");
 

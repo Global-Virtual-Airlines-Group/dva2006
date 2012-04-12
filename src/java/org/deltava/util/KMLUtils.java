@@ -1,17 +1,17 @@
-// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 
-import org.jdom.*;
-import org.jdom.filter.ElementFilter;
+import org.jdom2.*;
+import org.jdom2.filter.ElementFilter;
 
 import org.deltava.beans.GeospaceLocation;
 
 /**
  * A utility class for performing Google Earth KML operations.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -28,9 +28,10 @@ public class KMLUtils extends XMLUtils {
 	 */
 	public static Document createKMLRoot() {
 		Document doc = new Document();
-		Element re = new Element("kml", Namespace.getNamespace("http://earth.google.com/kml/2.1"));
-		re.setAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		re.setAttribute("schemaLocation", "http://earth.google.com/kml/2.1 http://code.google.com/apis/kml/schema/kml21.xsd");
+		Element re = new Element("kml", Namespace.getNamespace("http://www.opengis.net/kml/2.2"));
+		re.addNamespaceDeclaration(Namespace.getNamespace("gx", "http://www.google.com/kml/ext/2.2"));
+		//re.setAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		//re.setAttribute("schemaLocation", "http://earth.google.com/kml/2.1 http://code.google.com/apis/kml/schema/kml21.xsd");
 		doc.setRootElement(re);
 		return doc;
 	}
@@ -42,8 +43,8 @@ public class KMLUtils extends XMLUtils {
 	 */
 	public static void copyNamespace(Document doc) {
 		Element re = doc.getRootElement();
-		for (Iterator<?> i = re.getDescendants(new ElementFilter()); i.hasNext(); ) {
-			Element e = (Element) i.next();
+		for (Iterator<Element> i = re.getDescendants(new ElementFilter()); i.hasNext(); ) {
+			Element e = i.next();
 			if (e.getNamespace() != re.getNamespace())
 				e.setNamespace(re.getNamespace());
 		}
