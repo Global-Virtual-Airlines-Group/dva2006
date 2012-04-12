@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static org.deltava.commands.stats.AbstractStatsCommand.*;
 
 import java.util.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.stats.FlightStatsEntry;
 
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display Flight Report statistics to an Amline Flash chart.
  * @author Luke
- * @version 3.0
+ * @version 4.2
  * @since 2.1
  */
 
@@ -31,6 +31,7 @@ public class AllFlightsService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check if we're displaying legs or hours
@@ -84,22 +85,22 @@ public class AllFlightsService extends WebService {
 			ve.setAttribute("xid", String.valueOf(xid));
 			
 			// Add legs
-			Element ve2 = (Element) ve.clone();
+			Element ve2 = ve.clone();
 			ve2.setText(String.valueOf(isHours ? entry.getHours() : entry.getLegs()));
 			axes[0].addContent(ve2);
 			
 			// Add Online legs
-			ve2 = (Element) ve.clone();
+			ve2 = ve.clone();
 			ve2.setText(String.valueOf(entry.getOnlineLegs()));
 			axes[1].addContent(ve2);
 			
 			// Add ACARS legs
-			ve2 = (Element) ve.clone();
+			ve2 = ve.clone();
 			ve2.setText(String.valueOf(entry.getACARSLegs()));
 			axes[2].addContent(ve2);
 			
 			// Add historic legs
-			ve2 = (Element) ve.clone();
+			ve2 = ve.clone();
 			ve2.setText(String.valueOf(entry.getHistoricLegs()));
 			axes[3].addContent(ve2);
 			xid++;
@@ -107,14 +108,13 @@ public class AllFlightsService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.setContentType("text/xml", "UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 }

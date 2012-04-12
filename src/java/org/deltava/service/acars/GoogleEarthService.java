@@ -1,11 +1,11 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static org.deltava.beans.navdata.NavigationDataBean.*;
 
 import java.util.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
@@ -22,7 +22,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 1.0
  */
 

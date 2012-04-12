@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import static javax.servlet.http.HttpServletResponse.*;
 import static org.deltava.commands.stats.AbstractStatsCommand.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.stats.FlightStatsEntry;
 
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to an Ampie Flash chart.
  * @author Luke
- * @version 3.0
+ * @version 4.2
  * @since 2.1
  */
 
@@ -31,6 +31,7 @@ public class MyFlightsService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get sorting type

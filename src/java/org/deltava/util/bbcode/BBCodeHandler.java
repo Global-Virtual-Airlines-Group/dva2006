@@ -67,14 +67,10 @@ public class BBCodeHandler extends DefaultHandler
 	private BBCode bb;
 	
 	public void init() {
-		try
-		{
+		try (InputStream is = ConfigLoader.getStream("/etc/bb_config.xml")) {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-			InputStream is = ConfigLoader.getStream("/etc/bb_config.xml");
-			parser.parse(new InputSource(is), this);
-		}
-		catch (Exception e)
-		{
+			parser.parse(is, this);
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 	}

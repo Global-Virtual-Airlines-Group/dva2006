@@ -1,11 +1,11 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.stats;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.acars.Bandwidth;
 
@@ -16,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS bandwidth statistics to an Amline Flash chart.
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 2.1
  */
 
@@ -98,43 +98,43 @@ public class BandwidthInfoService extends WebService {
 			ve.setAttribute("xid", String.valueOf(xid));
 			
 			// Add Connections
-			Element ve2 = (Element) ve.clone();
+			Element ve2 = ve.clone();
 			ve2.setText(String.valueOf(bw.getConnections()));
 			axes[0].addContent(ve2);
 			
 			// Add Messages In
-			Element ve3 = (Element) ve.clone();
+			Element ve3 = ve.clone();
 			ve3.setText(String.valueOf(bw.getMsgsIn() / 1000));
 			axes[1].addContent(ve3);
 			
 			// Add Messages Out
-			Element ve4 = (Element) ve.clone();
+			Element ve4 = ve.clone();
 			ve4.setText(String.valueOf(bw.getMsgsOut() / 1000));
 			axes[2].addContent(ve4);
 			
 			// Add Bytes In
-			Element ve5 = (Element) ve.clone();
+			Element ve5 = ve.clone();
 			ve5.setText(String.valueOf(bw.getBytesIn() / 1000000));
 			axes[3].addContent(ve5);
 
 			// Add Bytes Out
-			Element ve6 = (Element) ve.clone();
+			Element ve6 = ve.clone();
 			ve6.setText(String.valueOf(bw.getBytesOut() / 1000000));
 			axes[4].addContent(ve6);
 			
 			if (!isRaw) {
 				// Add Max Connections
-				Element ve7 = (Element) ve.clone();
+				Element ve7 = ve.clone();
 				ve7.setText(String.valueOf(bw.getMaxConnections()));
 				axes[5].addContent(ve7);
 
 				// Add Max Messages
-				Element ve8 = (Element) ve.clone();
+				Element ve8 = ve.clone();
 				ve8.setText(String.valueOf(bw.getMaxMsgs() / 1000));
 				axes[6].addContent(ve8);
 
 				// Add Max Bytes
-				Element ve9 = (Element) ve.clone();
+				Element ve9 = ve.clone();
 				ve9.setText(String.valueOf(bw.getMaxBytes() / 1000000));
 				axes[7].addContent(ve9);
 			}
@@ -144,14 +144,13 @@ public class BandwidthInfoService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.setContentType("text/xml", "UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 

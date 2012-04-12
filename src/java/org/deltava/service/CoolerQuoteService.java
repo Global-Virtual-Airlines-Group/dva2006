@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.io.IOException;
 import java.sql.Connection;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to allow Water Cooler quoting.
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 2.7
  */
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import java.text.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.navdata.*;
 
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS clients.
  * @author Luke
- * @version 2.4
+ * @version 4.2
  * @since 2.4
  */
 
@@ -33,6 +33,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Ensure we are a dispatcher
@@ -135,7 +136,6 @@ public class XMLTerminalRouteService extends DispatchDataService {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", e);
 		}
 		
-		// Write success code
 		return SC_OK;
 	}
 	

@@ -1,12 +1,12 @@
-// Copyright 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
 import java.util.*;
 import static java.net.HttpURLConnection.HTTP_OK;
 
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
 
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.dao.DAOException;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read VATSIM CERT data.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 1.0
  */
 

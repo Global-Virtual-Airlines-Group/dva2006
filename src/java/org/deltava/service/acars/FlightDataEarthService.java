@@ -10,7 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
@@ -24,7 +24,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to format ACARS flight data for Google Earth.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -193,7 +193,6 @@ public class FlightDataEarthService extends GoogleEarthService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 }

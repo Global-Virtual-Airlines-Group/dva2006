@@ -1,11 +1,11 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.io.IOException;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.help.ResponseTemplate;
 import org.deltava.security.command.HelpDeskAccessControl;
@@ -16,7 +16,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to return back Help Desk Response Template text.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 3.2
  */
 

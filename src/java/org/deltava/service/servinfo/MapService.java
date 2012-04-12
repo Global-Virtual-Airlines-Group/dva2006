@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.io.*;
 import java.util.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an online network map. 
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 3.2
  */
 
