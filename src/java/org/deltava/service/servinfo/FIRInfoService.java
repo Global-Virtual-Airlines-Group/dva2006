@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.FIR;
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display FIR boundaries on a map.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 3.2
  */
 

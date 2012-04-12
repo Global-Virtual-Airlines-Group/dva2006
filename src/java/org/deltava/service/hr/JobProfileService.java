@@ -1,11 +1,11 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.io.IOException;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.hr.Profile;
 
@@ -17,7 +17,7 @@ import org.deltava.util.XMLUtils;
 /**
  * A Web Service to return a saved Applicant profile to a user.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 3.4
  */
 

@@ -1,11 +1,11 @@
-// Copyright 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.*;
 import org.deltava.dao.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download network IDs.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class OnlineIDService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Determine if we format using XML
@@ -95,7 +96,6 @@ public class OnlineIDService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Write result code
 		return SC_OK;
 	}
 }

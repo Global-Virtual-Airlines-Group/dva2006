@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.apache.log4j.Logger;
 
@@ -22,7 +22,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to plot maps for route plotting Examination questions. 
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 2.3
  */
 
@@ -36,6 +36,7 @@ public class RoutePlotService extends MapPlotService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		int examID = 0; int questionID = 0;
@@ -152,7 +153,6 @@ public class RoutePlotService extends MapPlotService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 	

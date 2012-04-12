@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.navdata.TerminalRoute;
 import org.deltava.beans.schedule.Airport;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the SIDs and STARs for a particular Airport pair.
  * @author Luke
- * @version 2.3
+ * @version 4.2
  * @since 2.2
  */
 
@@ -32,6 +32,7 @@ public class TerminalRouteService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Load Airports
@@ -68,15 +69,13 @@ public class TerminalRouteService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error");
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 }

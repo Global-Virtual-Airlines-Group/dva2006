@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,7 +6,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.schedule.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the available Dispatch Routes between two Airports.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.2
  */
 

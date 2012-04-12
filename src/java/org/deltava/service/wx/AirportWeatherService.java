@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.wx;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to provide aggregated METAR/TAF data for an Airport.
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 2.3
  */
 
@@ -35,6 +35,7 @@ public class AirportWeatherService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Check if using FlightAware data services

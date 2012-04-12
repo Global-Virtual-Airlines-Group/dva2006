@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.text.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to search for navigation aids in a particular area.
  * @author Luke
- * @version 2.8
+ * @version 4.2
  * @since 2.1
  */
 
@@ -32,6 +32,7 @@ public class NavaidSearchService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the navaid to search for
@@ -79,15 +80,13 @@ public class NavaidSearchService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 	

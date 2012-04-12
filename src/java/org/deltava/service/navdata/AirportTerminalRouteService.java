@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.text.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display all Terminal Routes for an Airport.
  * @author Luke
- * @version 2.3
+ * @version 4.2
  * @since 2.1
  */
 
@@ -33,6 +33,7 @@ public class AirportTerminalRouteService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the airport
@@ -106,15 +107,13 @@ public class AirportTerminalRouteService extends WebService {
 
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 
@@ -127,8 +126,7 @@ public class AirportTerminalRouteService extends WebService {
 	}
 
 	/**
-	 * Returns whether this web service calls are logged. High volume services like the Map/ServInfo route services will
-	 * not be logged.
+	 * Returns whether this web service calls are logged.
 	 * @return TRUE if invocation logging should be performed by the servlet, otherwise FALSE
 	 */
 	public final boolean isLogged() {

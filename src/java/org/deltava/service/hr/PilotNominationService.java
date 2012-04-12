@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.hr;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -6,21 +6,20 @@ import static javax.servlet.http.HttpServletResponse.*;
 import java.util.*;
 import java.io.IOException;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.Pilot;
+
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
+import org.deltava.service.*;
 
-import org.deltava.service.ServiceContext;
-import org.deltava.service.ServiceException;
-import org.deltava.service.WebService;
 import org.deltava.util.XMLUtils;
 
 /**
  * A Web Service to display Pilots eligible for promotion to Senior Captain.
  * @author Luke
- * @version 3.3
+ * @version 4.2
  * @since 3.3
  */
 

@@ -1,11 +1,11 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.servinfo.Certificate;
 
@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to validate VATSIM membership data.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class PilotValidationService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the validation URL
@@ -73,7 +74,6 @@ public class PilotValidationService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 	

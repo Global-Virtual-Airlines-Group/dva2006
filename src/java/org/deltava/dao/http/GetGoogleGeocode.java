@@ -4,9 +4,9 @@ package org.deltava.dao.http;
 import java.io.*;
 import java.util.*;
 
-import org.jdom.*;
-import org.jdom.input.*;
-import org.jdom.filter.ElementFilter;
+import org.jdom2.*;
+import org.jdom2.input.*;
+import org.jdom2.filter.ElementFilter;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
  * A Data Access Object to do reverse geocoding using the Google HTTP API. The GeoLocation
  * URL is http://maps.google.com/maps/geo?q=(lat),(long)&sensor=false&key=(key)
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.3
  */
 
@@ -63,8 +63,8 @@ public class GetGoogleGeocode extends DAO {
 		
 		GeocodeResult result = new GeocodeResult();
 		result.setAddress(addr);
-		for (Iterator<?> i = rse.getDescendants(new ElementFilter("address_component")); i.hasNext(); ) {
-			Element ace = (Element) i.next();
+		for (Iterator<Element> i = rse.getDescendants(new ElementFilter("address_component")); i.hasNext(); ) {
+			Element ace = i.next();
 			
 			// Get the details
 			String type = ace.getChildTextTrim("type");

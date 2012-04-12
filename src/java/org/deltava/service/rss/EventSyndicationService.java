@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.event.Event;
 import org.deltava.beans.system.VersionInfo;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display an Online Event RSS feed.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class EventSyndicationService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		List<Event> entries = null;
@@ -63,8 +64,6 @@ public class EventSyndicationService extends WebService {
 		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
 		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
 		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.events"))));
-
-		// Add the channel
 		re.addContent(ch);
 		
 		// Convert the entries to RSS items
@@ -78,8 +77,6 @@ public class EventSyndicationService extends WebService {
 				item.addContent(XMLUtils.createElement("title", e.getName()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
 				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
-
-				// Add the item element
 				ch.addContent(item);
 			} catch (MalformedURLException mue) {
 				// empty
@@ -88,15 +85,13 @@ public class EventSyndicationService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Return result code
 		return SC_OK;
 	}
 }

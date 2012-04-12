@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
@@ -6,15 +6,15 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
 
 import org.deltava.util.ConfigLoader;
 
 /**
  * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -27,27 +27,27 @@ public class TaskFactory {
 	   super();
    }
 
+   /**
+    * Loads tasks from an XML configuration file.
+    * @param configXML the file name
+    * @return a Collection of Task objects
+    * @throws IOException if an I/O error occurs
+    */
    public static Collection<Task> load(String configXML) throws IOException {
       
       // Gracefully fail if no commands found
       if (configXML == null) {
-          log.warn("No ScheduledTasks loaded");
-          return new HashSet<Task>();
+          log.warn("No Scheduled Tasks loaded");
+          return Collections.emptySet();
       }
       
-      // Get the file
-      InputStream is = ConfigLoader.getStream(configXML);
-
       // Create the builder and load the file into an XML in-memory document
       Document doc = null;
-      try {
+      try (InputStream is = ConfigLoader.getStream(configXML)) {
           SAXBuilder builder = new SAXBuilder();
           doc = builder.build(is);
-          is.close();
       } catch (JDOMException je) {
-          IOException ie = new IOException("XML Parse Error in " + configXML);
-          ie.initCause(je);
-          throw ie;
+          throw new IOException("XML Parse Error in " + configXML, je);
       }
       
       // Get the root element
@@ -57,8 +57,8 @@ public class TaskFactory {
 
       // Parse through the tasks
       Collection<Task> results = new HashSet<Task>();
-      for (Iterator<?> i = root.getChildren("task").iterator(); i.hasNext(); ) {
-         Element e = (Element) i.next();
+      for (Iterator<Element> i = root.getChildren("task").iterator(); i.hasNext(); ) {
+         Element e = i.next();
          String id = e.getAttributeValue("id");
          String className = e.getChildTextTrim("class");
          
@@ -66,16 +66,16 @@ public class TaskFactory {
          try {
             Class<?> c = Class.forName(className);
             Task t = (Task) c.newInstance();
-            log.debug("Validated task " + c.getName());
             t.setID(id);
             t.setEnabled(Boolean.valueOf(e.getAttributeValue("enabled")).booleanValue());
-            log.debug(id + " enabled = " + t.getEnabled());
+            if (log.isDebugEnabled())
+            	log.debug(id + " enabled = " + t.getEnabled());
             
             // Load the time
             Element te = e.getChild("time");
             if (te != null) {
-            	for (Iterator<?> ti = te.getChildren().iterator(); ti.hasNext(); ) {
-            		Element tte = (Element) ti.next();
+            	for (Iterator<Element> ti = te.getChildren().iterator(); ti.hasNext(); ) {
+            		Element tte = ti.next();
             		t.setRunTimes(tte.getName(), tte.getTextNormalize());
             	}
             } else { 
@@ -92,7 +92,6 @@ public class TaskFactory {
         }
       }
 
-      // Return results
       log.info("Loaded " + results.size() + " tasks");
       return results;
    }

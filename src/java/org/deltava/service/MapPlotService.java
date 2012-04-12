@@ -1,9 +1,9 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 2.3
  */
 

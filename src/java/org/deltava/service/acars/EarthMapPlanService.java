@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +23,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS flight plan data in Google Earth.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -37,6 +37,7 @@ public class EarthMapPlanService extends GoogleEarthService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Load the flight information
@@ -113,7 +114,6 @@ public class EarthMapPlanService extends GoogleEarthService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 }

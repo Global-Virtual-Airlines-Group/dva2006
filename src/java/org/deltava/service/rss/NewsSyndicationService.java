@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-import org.jdom.*;
+import org.jdom2.*;
 
 import org.deltava.beans.News;
 import org.deltava.beans.system.VersionInfo;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display a System News RSS feed.
  * @author Luke
- * @version 2.3
+ * @version 4.2
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class NewsSyndicationService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		List<?> entries = null;
@@ -78,8 +79,6 @@ public class NewsSyndicationService extends WebService {
 				item.addContent(XMLUtils.createElement("title", n.getSubject()));
 				item.addContent(XMLUtils.createElement("link", url.toString(), true));
 				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
-			
-				// Add the item element
 				ch.addContent(item);
 			} catch (MalformedURLException mue) {
 				// empty
@@ -88,15 +87,13 @@ public class NewsSyndicationService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Auto-generated method stub
 		return SC_OK;
 	}
 }

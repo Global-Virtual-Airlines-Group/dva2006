@@ -1,14 +1,13 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
-import org.jdom.*;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.*;
+import org.jdom2.output.*;
 
 /**
  * A utility class for performing XML operations.
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 1.0
  */
 

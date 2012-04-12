@@ -3,6 +3,7 @@ package org.deltava.commands.schedule;
 
 import java.util.*;
 import java.sql.Connection;
+import java.io.InputStream;
 
 import org.apache.log4j.Logger;
 
@@ -24,7 +25,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to import Flight Schedule data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -50,8 +51,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 
 		// Load the airlines
 		if (_codeShareInfo == null) {
-			try {
-				GetPartnerAirlines pdao = new GetPartnerAirlines(ConfigLoader.getStream("/etc/codeshares.txt"));
+			try (InputStream in = ConfigLoader.getStream("/etc/codeshares.txt")) {
+				GetPartnerAirlines pdao = new GetPartnerAirlines(in);
 				_codeShareInfo = pdao.getPartners();
 				_codeShareInfo.add(PartnerAirline.IGNORE);
 			} catch (Exception e) {
