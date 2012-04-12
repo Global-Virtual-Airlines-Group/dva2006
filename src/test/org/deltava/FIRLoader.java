@@ -6,9 +6,9 @@ import java.util.*;
 
 import org.apache.log4j.*;
 
-import org.jdom.*;
-import org.jdom.filter.ElementFilter;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.filter.ElementFilter;
+import org.jdom2.input.*;
 
 import junit.framework.TestCase;
 
@@ -68,8 +68,8 @@ public class FIRLoader extends TestCase {
 		Namespace ns = Namespace.getNamespace("http://earth.google.com/kml/2.0");
 		
 		// Loop through each placemark
-		for (Iterator<?> i = re.getDescendants(new ElementFilter("Placemark", ns)); i.hasNext(); ) {
-			Element pe = (Element) i.next();
+		for (Iterator<Element> i = re.getDescendants(new ElementFilter("Placemark", ns)); i.hasNext(); ) {
+			Element pe = i.next();
 			
 			FIR fir = new FIR(pe.getChildTextTrim("name", ns));
 			fir.setName(pe.getChildTextTrim("description", ns));

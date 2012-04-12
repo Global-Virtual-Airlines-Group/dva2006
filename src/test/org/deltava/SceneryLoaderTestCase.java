@@ -6,8 +6,8 @@ import java.util.*;
 
 import org.apache.log4j.*;
 
-import org.jdom.*;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.*;
+import org.jdom2.input.SAXBuilder;
 
 import junit.framework.TestCase;
 
@@ -46,7 +46,6 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 	
 	protected Document loadXML(Reader r) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
-		builder.setValidation(false);
 		return builder.build(r);
 	}
 	
