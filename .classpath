@@ -26,6 +26,6 @@
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.19-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.0.jar" sourcepath="lib/src/jdom-2.0.0-sources.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK1.7.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
