@@ -48,6 +48,9 @@ public class XPIREPService extends XAService {
 			throw error(SC_BAD_REQUEST, "No DATA2 parameter", false);
 		
 		Flight f = FlightCodeParser.parse(data.get(2));
+		if (f.getAirline() == null)
+			f.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
+		
 		try {
 			Pilot usr = authenticate(ctx, data.get(0), data.get(1));
 			GetPilot.invalidateID(usr.getID());
