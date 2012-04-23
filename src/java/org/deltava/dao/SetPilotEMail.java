@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.system.IMAPConfiguration;
 /**
  * A Data Access Object to update Pilot IMAP data.
  * @author Luke
- * @version 1.0
+ * @version 4.1
  * @since 1.0
  */
 
@@ -109,11 +109,10 @@ public class SetPilotEMail extends DAO {
 	 */
 	public void updatePassword(int id, String pwd) throws DAOException {
 		try {
-			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=ENCRYPT(?) WHERE (ID=?)");
+			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=ENCRYPT(?), sha_pw=SHA2(?, 256) WHERE (ID=?)");
 			_ps.setString(1, pwd);
-			_ps.setInt(2, id);
-			
-			// Execute the query
+			_ps.setString(2, pwd);
+			_ps.setInt(3, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
