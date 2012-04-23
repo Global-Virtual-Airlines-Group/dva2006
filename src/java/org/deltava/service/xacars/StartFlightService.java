@@ -53,6 +53,11 @@ public class StartFlightService extends XAService {
 		
 		// Parse the flight data
 		ScheduleEntry se = FlightCodeParser.parse(data.get(2));
+		if (se.getAirline() == null) {
+			ctx.print("0|Invalid Airline - " + data.get(2));
+			return SC_OK;
+		}
+		
 		XAFlightInfo info = new XAFlightInfo(se.getAirline(), se.getFlightNumber());
 		info.setEquipmentType(data.get(3));
 		info.setAirportD(SystemData.getAirport(rte.get(0)));
