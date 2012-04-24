@@ -109,7 +109,7 @@ public class SetPilotEMail extends DAO {
 	 */
 	public void updatePassword(int id, String pwd) throws DAOException {
 		try {
-			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=ENCRYPT(?), sha_pw=SHA2(?, 256) WHERE (ID=?)");
+			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=ENCRYPT(?), sha_pw=SHA1(?) WHERE (ID=?)");
 			_ps.setString(1, pwd);
 			_ps.setString(2, pwd);
 			_ps.setInt(3, id);
