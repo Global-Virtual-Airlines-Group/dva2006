@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class EventCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get command results and event ID
@@ -73,11 +74,9 @@ public class EventCommand extends AbstractCommand {
 			if (e == null)
 				throw notFoundException("Invalid Online Event - " + eventID);
 
-			// Calculate our access
+			// Calculate our access - if we can sign up, save us in the request
 			EventAccessControl eAccess = new EventAccessControl(ctx, e);
 			eAccess.validate();
-			
-			// If we can sign up, save us in the request
 			if (eAccess.getCanSignup())
 				ctx.setAttribute("user", ctx.getUser(), REQUEST);
 
@@ -87,7 +86,7 @@ public class EventCommand extends AbstractCommand {
 				Signup s = i.next();
 				SignupAccessControl sAccess = new SignupAccessControl(ctx, e, s);
 				sAccess.validate();
-				sAccessMap.put(new Integer(s.getPilotID()), sAccess);
+				sAccessMap.put(Integer.valueOf(s.getPilotID()), sAccess);
 			}
 			
 			// Get the DAO and load the Charts
@@ -138,12 +137,14 @@ public class EventCommand extends AbstractCommand {
 						FlightReport fr = fi.next();
 						int pilotID = fr.getDatabaseID(DatabaseID.PILOT);
 						if (!udm.contains(pilotID))
-							newIDs.add(new Integer(pilotID));
+							newIDs.add(Integer.valueOf(pilotID));
 					}
 				
 					// Load additional pilots
-					if (!newIDs.isEmpty())
+					if (!newIDs.isEmpty()) {
+						udm.putAll(usrdao.get(newIDs));
 						evPilots.putAll(pdao.getByID(newIDs, tableName));
+					}
 				}
 				
 				// Load event stats and save pilots
@@ -160,7 +161,7 @@ public class EventCommand extends AbstractCommand {
 				float predictedPilots = 0;
 				for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
 					Signup s = i.next();
-					Pilot p = pilots.get(new Integer(s.getPilotID()));
+					Pilot p = pilots.get(Integer.valueOf(s.getPilotID()));
 					if ((p != null) && (p.getEventSignups() > 2))
 						predictedPilots += Math.min(1.0d, (p.getEventLegs() * 1.0d) / p.getEventSignups());
 					else
