@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to convert XACARS Flight Information records into Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.1
  */
 
@@ -56,7 +56,6 @@ public final class XACARSFlightHelper {
 		xfr.setEquipmentType(inf.getEquipmentType());
 		xfr.setFSVersion(inf.getFSVersion());
 		xfr.setAttribute(FlightReport.ATTR_XACARS, true);
-		xfr.setLength(inf.getLength() / 10);
 		xfr.setPassengers(inf.getPassengers());
 		xfr.setLoadFactor(inf.getLoadFactor());
 		xfr.setRoute(inf.getRoute());
