@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.1
  */
 
@@ -113,6 +113,7 @@ public class XPIREPService extends XAService {
 			
 			// FIXME: Remove when we have flight times fixed
 			long timeS = (inf.getEndTime().getTime() - inf.getStartTime().getTime()) / 1000;
+			xfr.setLength((int)(timeS / 360));
 			log.warn("Actual time = " + StringUtils.format(timeS / 3600.0,  "#0.0") + "hrs, PIREP = " + xfr.getLength());
 			
 			// Check for a check ride
