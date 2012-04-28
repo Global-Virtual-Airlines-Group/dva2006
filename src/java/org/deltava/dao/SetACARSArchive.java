@@ -11,7 +11,7 @@ import org.deltava.dao.file.SetSerializedPosition;
 /**
  * A Data Access Object to write to the ACARS position archive.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.1
  */
 
@@ -54,6 +54,11 @@ public class SetACARSArchive extends DAO {
 			
 			// Delete the existing XACARS flight data
 			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_XARCHIVE WHERE (FLIGHT_ID=?)");
+			_ps.setInt(1, flightID);
+			executeUpdate(0);
+			
+			// Delete the ATC data
+			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_ATC WHERE (FLIGHT_ID=?)");
 			_ps.setInt(1, flightID);
 			executeUpdate(0);
 
