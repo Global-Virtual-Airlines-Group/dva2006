@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 1.0
  */
 
@@ -154,6 +154,23 @@ public class SetAcademy extends DAO {
 			_ps.setTimestamp(2, createTimestamp(sd));
 			_ps.setInt(3, Course.COMPLETE);
 			_ps.setInt(4, courseID);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Assigns a Flight Academy course to a different pilot, when transferring airlines.
+	 * @param courseID the database ID of the course
+	 * @param newPilotID the database ID of the new Pilot
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void reassign(int courseID, int newPilotID) throws DAOException {
+		try {
+			prepareStatement("UPDATE exams.COURSES SET PILOT_ID=? WHERE (ID=?)");
+			_ps.setInt(1, newPilotID);
+			_ps.setInt(2, courseID);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
