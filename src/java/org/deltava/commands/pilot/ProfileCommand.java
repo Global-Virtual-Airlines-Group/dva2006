@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -793,7 +793,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			Pilot p = dao.get(usrInfo);
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
-
+			
 			// Get the access controller
 			PilotAccessControl access = crossDB ? new CrossAppPilotAccessControl(ctx, p) : new PilotAccessControl(ctx, p);
 			access.validate();
@@ -801,7 +801,21 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Check if we can view examinations
 			if (access.getCanViewExams()) {
 				GetExam exdao = new GetExam(con);
-				Collection<Test> exams = exdao.getExams(p.getID());
+				Collection<Test> exams = new ArrayList<Test>();
+				for (Integer id : usrInfo.getIDs()) {
+					int dbID = id.intValue();
+					Collection<Test> aExams = exdao.getExams(dbID);
+					if (dbID != p.getID()) {
+						 for (Iterator<Test> i = aExams.iterator(); i.hasNext(); ) {
+							 Test t = i.next();
+							 if (!t.getAcademy())
+								 i.remove();
+						 }
+					}
+
+					exams.addAll(aExams);
+				}
+				
 				for (Iterator<Test> i = exams.iterator(); i.hasNext();) {
 					Test t = i.next();
 					try {
@@ -826,8 +840,15 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Get Academy Certifications
 			GetAcademyCourses fadao = new GetAcademyCourses(con);
-			ctx.setAttribute("certs", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
-			Collection<Course> courses = fadao.getByPilot(p.getID());
+			Collection<Course> certs = new ArrayList<Course>();
+			Collection<Course> courses = new ArrayList<Course>();
+			for (Integer id : usrInfo.getIDs()) {
+				int dbID = id.intValue();
+				certs.addAll(fadao.getCompleted(dbID, "C.STARTDATE"));
+				courses.addAll(fadao.getByPilot(dbID));
+			}
+			
+			ctx.setAttribute("certs", certs, REQUEST);
 			ctx.setAttribute("courses", courses, REQUEST);
 			
 			// Get Accomplishments
@@ -836,10 +857,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			
 			// Load instructor IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
-				Course c = i.next();
+			for (Course c : courses)
 				IDs.add(new Integer(c.getInstructorID()));
-			}
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
@@ -847,10 +866,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("statusUpdates", upds, REQUEST);
 			
 			// Get Author IDs from Status Updates
-			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
-				StatusUpdate upd = i.next();
+			for (StatusUpdate upd : upds)
 				IDs.add(new Integer(upd.getAuthorID()));
-			}
 			
 			// Load authors
 			UserDataMap udm = uddao.get(IDs);

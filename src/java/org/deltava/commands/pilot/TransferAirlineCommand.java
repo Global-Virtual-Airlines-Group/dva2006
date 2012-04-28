@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -23,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 3.3
+ * @version 4.2
  * @since 1.0
  */
 
@@ -36,6 +37,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occrurs.
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -106,6 +108,10 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 			// Add equipment ratings
 			p.addRatings(eqdao.getPrimaryTypes(aInfo.getDB(), ctx.getParameter("eqType")));
+			
+			// Look for active/pending Academy Courses
+			GetAcademyCourses acdao = new GetAcademyCourses(con);
+			Collection<Course> courses = acdao.getByPilot(p.getID());
 
 			// Start Transaction
 			ctx.startTX();
@@ -176,6 +182,18 @@ public class TransferAirlineCommand extends AbstractCommand {
 			su2.setAuthorID(ctx.getUser().getID());
 			su2.setDescription("Transferred from " + SystemData.get("airline.name"));
 			sudao.write(aInfo.getDB(), su2);
+			
+			// Assign any incomplete courses to the new pilot
+			SetAcademy awdao = new SetAcademy(con);
+			for (Course c : courses) {
+				if (c.getStatus() != Course.COMPLETE) {
+					CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
+					cc.setCreatedOn(new Date());
+					cc.setText("Transferred to " + aInfo.getName());
+					awdao.reassign(c.getID(), newUser.getID());
+					awdao.comment(cc);
+				}
+			}
 			
 			// Calculate the new password
 			newUser.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
