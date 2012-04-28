@@ -16,9 +16,9 @@ import org.deltava.taskman.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Scheduled Task to purge orphaned ACARS position entries. 
+ * A Scheduled Task to purge orphaned ACARS position entries.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.2
  */
 
@@ -37,39 +37,39 @@ public class ACARSPositionPurgeTask extends Task {
 	@Override
 	protected void execute(TaskContext ctx) {
 		log.info("Executing");
-		
+
 		// Get active flights
 		GetACARSPool acdao = new GetACARSPool();
 		Collection<Integer> activeIDs = acdao.getFlightIDs();
-		
+
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the flight IDs
 			GetACARSPurge prdao = new GetACARSPurge(con);
-			Collection<Integer> IDs = prdao.getPositionFlightIDs(Math.round(flightPurge * 1.5f) / 24);
+			Collection<Integer> IDs = prdao.getPositionFlightIDs(Math.round(flightPurge * 1.5f));
 			IDs.removeAll(activeIDs);
-			
+
 			// Get the DAOs
 			GetUserData uddao = new GetUserData(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			GetExam exdao = new GetExam(con);
 			SetExam exwdao = new SetExam(con);
-			
+
 			// Loop through the IDs
 			GetACARSPositions dao = new GetACARSPositions(con);
 			SetACARSPurge wdao = new SetACARSPurge(con);
 			SetACARSArchive arcdao = new SetACARSArchive(con);
-			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+			for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
 				int id = i.next().intValue();
-				
+
 				// Load the flight ID
 				FlightInfo fInfo = dao.getInfo(id);
 				if (fInfo == null) {
 					int purgeCount = wdao.deletePositions(id);
 					log.warn("Flight ID " + id + " not found, purged " + purgeCount + " poistions");
-				
+
 				// If we're supposed to be archived, archive positions
 				} else if (fInfo.getArchived()) {
 					Collection<ACARSRouteEntry> entries = dao.getRouteEntries(id, false);
@@ -83,7 +83,7 @@ public class ACARSPositionPurgeTask extends Task {
 					int purgeCount = wdao.deletePositions(id);
 					ctx.commitTX();
 					log.warn("Flight ID " + id + " has no PIREP, purged " + purgeCount + " poistions");
-				
+
 				// Validate that the PIREP does exist
 				} else {
 					ConnectionEntry ce = dao.getConnection(fInfo.getConnectionID());
@@ -96,11 +96,11 @@ public class ACARSPositionPurgeTask extends Task {
 							cr.setFlightID(0);
 							if (cr.getStatus() == Test.SUBMITTED)
 								cr.setStatus(Test.NEW);
-							
+
 							exwdao.write(cr);
 							log.warn("Reset Check Ride " + cr.getID() + " for Flight ID " + id);
 						}
-						
+
 						wdao.deleteInfo(id);
 						int purgeCount = wdao.deletePositions(id);
 						ctx.commitTX();
@@ -118,7 +118,7 @@ public class ACARSPositionPurgeTask extends Task {
 		} finally {
 			ctx.release();
 		}
-		
+
 		log.info("Completed");
 	}
 }

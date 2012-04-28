@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object used to get information for purging the ACARS data tables. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.2
  */
 
@@ -67,15 +67,15 @@ public class GetACARSPurge extends GetACARSData {
 	}
 	
 	/**
-	 * Retrieves Flight IDs for position entries older than a particular number of days.
-	 * @param days the number of days
+	 * Retrieves Flight IDs for position entries older than a particular number of hours.
+	 * @param hours the number of hours
 	 * @return a Collection of ACARS Flight IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Integer> getPositionFlightIDs(int days) throws DAOException {
+	public Collection<Integer> getPositionFlightIDs(int hours) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT FLIGHT_ID FROM acars.POSITIONS WHERE (REPORT_TIME < DATE_SUB(NOW(), INTERVAL ? DAY))");
-			_ps.setInt(1, days);
+			prepareStatementWithoutLimits("SELECT DISTINCT FLIGHT_ID FROM acars.POSITIONS WHERE (REPORT_TIME < DATE_SUB(NOW(), INTERVAL ? HOUR))");
+			_ps.setInt(1, hours);
 			
 			// Execute the query
 			Collection<Integer> results = new TreeSet<Integer>();
