@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
- * @version 3.6
+ * @version 4.1
  * @since 1.0
  */
 
@@ -34,6 +34,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Initialze the Mailer context
@@ -89,7 +90,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 				for (Iterator<Map.Entry<Integer, Pilot>> i = pilots.entrySet().iterator(); i.hasNext(); ) {
 					Map.Entry<Integer, Pilot> me = i.next();
 					UserData ud = udm.get(me.getKey());
-					if (ud != null)
+					if ((ud != null) && (me.getValue().getStatus() == Pilot.ACTIVE))
 						notifyList.put(ud, me.getValue());
 				}
 
