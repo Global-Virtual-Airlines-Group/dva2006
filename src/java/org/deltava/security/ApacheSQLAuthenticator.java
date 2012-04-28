@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.gvagroup.jdbc.*;
  * class, this uses the existing JDBC Connection Pool. Since this implements {@link SQLAuthenticator}, this behavior can
  * be overriden by providing a JDBC Connection to use.
  * @author Luke
- * @version 3.1
+ * @version 4.1
  * @since 1.0
  */
 
@@ -42,42 +42,29 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" WHERE (ID=?)");
 
-		boolean isOK = false;
 		Connection con = null;
 		try {
-			con = getConnection();
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, usr.getID());
-
-			// Execute the Query
-			ResultSet rs = ps.executeQuery();
-			String goodPwd = rs.next() ? rs.getString(1) : null;
-
-			// Clean up
-			rs.close();
-			ps.close();
-
-			// If we got nothing, throw an exception
-			isOK = pwdHash.equals(goodPwd);
-			if (goodPwd == null) {
-				SecurityException se = new SecurityException("Unknown User ID - " + usr.getName() + " (" + usr.getID() + ")");
-				log.warn(se.getMessage());
-				throw se;
+			String goodPwd = null; con = getConnection(); 
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setInt(1, usr.getID());
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next())
+						goodPwd = rs.getString(1);
+				}
 			}
+
+			// If we got nothing or failed, throw an exception
+			boolean isOK = pwdHash.equals(goodPwd);
+			if (goodPwd == null)
+				throw new SecurityException("Unknown User ID - " + usr.getName() + " (" + usr.getID() + ")");
+			if (!isOK)
+				throw new SecurityException("Cannot authenticate " + usr.getName() + " (" + usr.getID() + ") - Invalid Credentials");
 		} catch (ConnectionPoolException cpe) {
 			throw new SecurityException(cpe);
 		} catch (SQLException se) {
 			throw new SecurityException(se);
 		} finally {
 			closeConnection(con);
-		}
-
-		// Fail if we're not authenticated
-		if (!isOK) {
-			SecurityException se = new SecurityException("Cannot authenticate " + usr.getName() + " (" + usr.getID()
-					+ ") - Invalid Credentials");
-			log.warn(se.getMessage());
-			throw se;
 		}
 	}
 
@@ -104,17 +91,15 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 
 		Connection con = null;
 		try {
-			con = getConnection();
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, usr.getID());
+			boolean hasUser = false; con = getConnection();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setInt(1, usr.getID());
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next())
+						hasUser = (rs.getInt(1) > 0);
+				}
+			}
 
-			// Execute the query
-			ResultSet rs = ps.executeQuery();
-			boolean hasUser = rs.next() ? (rs.getInt(1) > 0) : false;
-
-			// Clean up and return
-			rs.close();
-			ps.close();
 			return hasUser;
 		} catch (Exception e) {
 			throw new SecurityException(e);
@@ -133,9 +118,9 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		log.debug("Updating password for " + usr.getDN() + " in Directory");
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
-		sqlBuf.append(" (ID, PWD, ENABLED) VALUES (?, ?, ?)");
+		sqlBuf.append(" SET PWD=?, ENABLED=? WHERE (ID=?)");
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
@@ -144,14 +129,12 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		Connection con = null;
 		try {
 			con = getConnection();
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, usr.getID());
-			ps.setString(2, pwdHash);
-			ps.setBoolean(3, true);
-
-			// Execute the update and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, pwdHash);
+				ps.setBoolean(2, true);
+				ps.setInt(3, usr.getID());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
@@ -188,22 +171,23 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 			if (isAutoCommit)
 				con.setAutoCommit(false);
 			
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, id);
-			ps.setString(2, pwdHash);
-			ps.setBoolean(3, true);
-
-			// Write the row
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setInt(1, id);
+				ps.setString(2, pwdHash);
+				ps.setBoolean(3, true);
+				ps.executeUpdate();
+			}
 
 			// If we have an alias, then update it
 			if ((usr instanceof Pilot) && (((Pilot) usr).getLDAPName() != null)) {
-				ps = con.prepareStatement("INSERT INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)");
-				ps.setInt(1, usr.getID());
-				ps.setString(2, ((Pilot) usr).getLDAPName());
-				ps.executeUpdate();
-				ps.close();
+				sqlBuf = new StringBuilder("INSERT INTO ");
+				sqlBuf.append(_props.getProperty("apachesql.alias", "common.AUTH_ALIAS"));
+				sqlBuf.append(" (ID, USERID) VALUES (?, ?)");
+				try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+					ps.setInt(1, usr.getID());
+					ps.setString(2, ((Pilot) usr).getLDAPName());
+					ps.executeUpdate();
+				}
 			}
 			
 			// Commit the transaction
@@ -245,13 +229,11 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		Connection con = null;
 		try {
 			con = getConnection();
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setBoolean(1, false);
-			ps.setInt(2, usr.getID());
-			
-			// Execute the update and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setBoolean(1, false);
+				ps.setInt(2, usr.getID());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
@@ -275,12 +257,10 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		Connection con = null;
 		try {
 			con = getConnection();
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, usr.getID());
-
-			// Execute the update and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setInt(1, usr.getID());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
