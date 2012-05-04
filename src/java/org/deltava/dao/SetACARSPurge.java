@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A Data Access Object to purge ACARS data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.2
  */
 
@@ -112,10 +112,22 @@ public class SetACARSPurge extends SetACARSLog {
 	 */
 	public int deletePositions(int flightID) throws DAOException {
 		try {
+			startTransaction();
+			
+			// Purge positions
 			prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
 			_ps.setInt(1, flightID);
-			return executeUpdate(0);
+			int posCount = executeUpdate(0);
+			
+			// Purge ATC
+			prepareStatementWithoutLimits("DELETE FROM acars.POSITION_ATC WHERE (FLIGHT_ID=?)");
+			_ps.setInt(1, flightID);
+			executeUpdate(0);
+			
+			commitTransaction();
+			return posCount;
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
