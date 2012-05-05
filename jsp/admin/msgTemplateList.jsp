@@ -27,7 +27,10 @@
  <td width="20%">TEMPLATE NAME</td>
  <td width="5%">&nbsp;</td>
  <td width="30%">MESSAGE SUBJECT</td>
- <td>DESCRIPTION</td>
+ <td width="30%">DESCRIPTION</td>
+ <td><c:if test="${access.canCreate}">
+<el:cmdbutton url="msgtemplate" op="edit" label="NEW MESSAGE TEMPLATE" /> 
+</c:if>&nbsp;</td>
 </tr>
 
 <!-- Table data -->
@@ -36,17 +39,13 @@
  <td><el:cmd url="msgtemplate" className="pri bld" linkID="${template.name}" op="edit">${template.name}</el:cmd></td>
  <td class="sec bld">${template.isHTML ? 'HTML' : '&nbsp;'}</td>
  <td class="sec">${template.subject}</td>
- <td class="left">${template.description}</td>
+ <td colspan="2" class="left">${template.description}</td>
 </view:row>
 </c:forEach>
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;
-<c:if test="${access.canCreate}">
-<el:cmdbutton url="msgtemplate" op="edit" label="NEW MESSAGE TEMPLATE" />
-</c:if>
- </td>
+ <td colspan="5">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
