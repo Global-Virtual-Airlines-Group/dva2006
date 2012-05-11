@@ -498,6 +498,11 @@
 			<maxAge type="Integer">14</maxAge>
 		</chart>
 
+		<!-- Charter calculations -->
+		<charter>
+			<count_days type="Integer">90</count_days>
+		</charter>
+
 		<!-- FlightAware download data -->
 		<flightaware>
 			<enabled type="Boolean">true</enabled>

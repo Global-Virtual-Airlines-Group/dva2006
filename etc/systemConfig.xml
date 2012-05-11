@@ -470,6 +470,11 @@
 			<maxAge type="Integer">14</maxAge>
 		</chart>
 
+		<!-- Charter calculations -->
+		<charter>
+			<count_days type="Integer">90</count_days>
+		</charter>
+
 		<!-- FlightAware download data -->
 		<flightaware>
 			<enabled type="Boolean">true</enabled>
@@ -548,7 +553,7 @@
 			<version>2.2</version>
 			<version>3.0</version>
 			<version>4.0</version>
-			<version>4.1</version>
+			<version>4.2</version>
 		</list>
 		
 		<assignto type="Integer">043</assignto>
