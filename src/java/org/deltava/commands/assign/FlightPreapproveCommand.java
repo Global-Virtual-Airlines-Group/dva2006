@@ -70,9 +70,10 @@ public class FlightPreapproveCommand extends AbstractCommand {
 				ctx.setAttribute("eqTypes", adao.getAircraftTypes(), REQUEST);
 				
 				// Get the number of charter flights
+				int interval = SystemData.getInt("schedule.charter.count_days", 90);
 				GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
 				ctx.setAttribute("charterFlights", Integer.valueOf(stdao.getCharterCount(usr.getID(), 0)), REQUEST);
-				ctx.setAttribute("recentCharterFlights", Integer.valueOf(stdao.getCharterCount(usr.getID(), 90)), REQUEST);
+				ctx.setAttribute("charterFlightsInterval", Integer.valueOf(stdao.getCharterCount(usr.getID(), interval)), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {

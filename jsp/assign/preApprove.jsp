@@ -36,6 +36,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:sysdata name="schedule.charter.count_days" var="countDays" default="90" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -47,8 +48,8 @@ return true;
 <c:if test="${charterFlights > 0}">
 <tr>
  <td class="label">Charter Flights</td>
- <td class="data"><fmt:int value="${charterFlights}" /> total Charters flown, <fmt:int value="${recentCharterFlights}" /> Charters
- within the past 90 days</td>
+ <td class="data"><fmt:int value="${charterFlights}" /> total Charters flown, <fmt:int value="${charterFlightsInterval}" /> Charters
+ within the past <fmt:int value="${countDays}" /> days</td>
 </tr>
 </c:if>
 <tr>
