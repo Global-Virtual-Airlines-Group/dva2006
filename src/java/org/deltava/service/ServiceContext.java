@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -77,7 +77,7 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 	 */
 	public void commit() throws IOException {
 		HttpServletResponse rsp = getResponse();
-		rsp.setBufferSize((_buf.length() < 32768) ? _buf.length() + 16 : 32768);
+		rsp.setBufferSize(Math.min(32768,  _buf.length() + 16));
 		rsp.setContentLength(_buf.length());
 		rsp.getWriter().print(_buf);
 		rsp.flushBuffer();
