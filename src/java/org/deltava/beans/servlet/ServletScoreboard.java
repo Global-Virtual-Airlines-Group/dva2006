@@ -1,9 +1,12 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.*;
+import java.util.concurrent.locks.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.deltava.util.CollectionUtils;
 
 /**
  * A scoreboard to track servlet activity.
@@ -15,6 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 public class ServletScoreboard implements java.io.Serializable {
 
 	private static final Map<Long, ServletScoreboardEntry> _entries = new TreeMap<Long, ServletScoreboardEntry>();
+	
+	private static final ReentrantReadWriteLock _l = new ReentrantReadWriteLock(true);
+	private static final Lock _r = _l.readLock();
+	private static final Lock _w = _l.writeLock();
 	
 	// singleton
 	private ServletScoreboard() {
@@ -34,9 +41,14 @@ public class ServletScoreboard implements java.io.Serializable {
 	 */
 	public static void complete() {
 		Long id = new Long(Thread.currentThread().getId());
-		ServletScoreboardEntry entry = _entries.get(id);
-		if (entry != null)
-			entry.complete();
+		try {
+			_r.lock();
+			ServletScoreboardEntry entry = _entries.get(id);
+			if (entry != null)
+				entry.complete();	
+		} finally {
+			_r.unlock();
+		}
 	}
 
 	/**
@@ -45,15 +57,46 @@ public class ServletScoreboard implements java.io.Serializable {
 	 */
 	public static void add(HttpServletRequest req) {
 		Thread t = Thread.currentThread();
-		ServletScoreboardEntry entry = _entries.get(new Long(t.getId()));
-		if (entry == null)
+		ServletScoreboardEntry entry = null;
+		try {
+			_r.lock();
+			entry = _entries.get(new Long(t.getId()));
+		} finally {
+			_r.unlock();
+		}
+			
+		if (entry == null) {
 			entry = new ServletScoreboardEntry(t.getName());
-		else
+			try {
+				_w.lock();
+				_entries.put(new Long(t.getId()), entry);
+			} finally {
+				_w.unlock();
+			}
+		} else
 			entry.start();
 		
 		entry.setRemoteAddr(req.getRemoteAddr());
 		entry.setRemoteHost(req.getRemoteHost());
 		entry.setURL(req.getMethod() + " " + req.getRequestURI());
-		_entries.put(new Long(t.getId()), entry);
+	}
+	
+	/**
+	 * Updates threads that are still alive.
+	 */
+	public static void updateActiveThreads() {
+		ThreadGroup tg = Thread.currentThread().getThreadGroup();
+		try {
+			_w.lock();
+			Thread[] threads = new Thread[tg.activeCount()];
+			tg.enumerate(threads);
+			Map<String, Thread> threadMap = CollectionUtils.createMap(Arrays.asList(threads), "name");
+			for (ServletScoreboardEntry entry : _entries.values()) {
+				Thread t = threadMap.get(entry.getName());
+				entry.setAlive((t != null) && t.isAlive());
+			}
+		} finally {
+			_w.unlock();
+		}
 	}
 }
