@@ -1,14 +1,16 @@
-// Copyright 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
+import java.io.*;
 import java.util.*;
 import java.sql.Connection;
-import java.io.InputStream;
 
+import org.deltava.beans.EMailAddress;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.innovata.*;
+import org.deltava.mail.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
@@ -18,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically update the flight Schedule from Innovata.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -114,8 +116,18 @@ public class ScheduleImportTask extends Task {
 		}
 
 		// Save the entries in the database
+		Exception saveError = null; Collection<EMailAddress> notifyUsers = new ArrayList<EMailAddress>();
+		MessageContext mctxt = new MessageContext();
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Get notification template and pilots
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("SCHEDERROR"));
+			notifyUsers.addAll(pdao.getByRole("Schedule", SystemData.get("airline.db")));
+			
+			// Purge the schedule
 			SetSchedule dao = new SetSchedule(con);
 			ctx.startTX();
 			if (doPurge)
@@ -149,12 +161,27 @@ public class ScheduleImportTask extends Task {
 			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
+			saveError = de;
 			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
-
+		
+		// Log an error
+		if ((saveError != null) && (!notifyUsers.isEmpty()) && (mctxt.getTemplate() != null)) {
+			StringWriter sw = new StringWriter();
+			saveError.printStackTrace(new PrintWriter(sw));
+			mctxt.addData("error", saveError);
+			mctxt.addData("stackTrace", sw.toString());
+			
+			// Send notification
+			EMailAddress addr = Mailer.makeAddress(SystemData.get("airline.mail.webmaster"), SystemData.get("airline.name"));
+			Mailer m = new Mailer(addr);
+			m.setContext(mctxt);
+			m.send(notifyUsers);
+		}
+		
 		// Log completion
 		log.info("Import Complete");
 	}
