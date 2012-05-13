@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -41,6 +41,7 @@ public class DiagnosticCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get system uptime and load average if running on Linux
@@ -65,6 +66,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
 		
 		// Get servlet scoreboard
+		ServletScoreboard.updateActiveThreads();
 		ctx.setAttribute("scoreBoard", ServletScoreboard.getScoreboard(), REQUEST);
 
 		// Get ACARS server data

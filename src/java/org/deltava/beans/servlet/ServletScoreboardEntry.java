@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.Date;
@@ -8,19 +8,20 @@ import org.deltava.beans.ViewEntry;
 /**
  * A bean to store servlet scoreboard entries.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
 public class ServletScoreboardEntry implements java.io.Serializable, Comparable<ServletScoreboardEntry>, ViewEntry {
 
-	private String _threadName;
+	private final String _threadName;
 	private String _remoteAddr;
 	private String _remoteHost;
 	
 	private long _startTime;
 	private long _endTime;
 	private long _execCount;
+	private boolean _isAlive = true;
 	
 	private String _url;
 	
@@ -112,6 +113,15 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	}
 	
 	/**
+	 * Returns whether the thread is still alive.
+	 * @return TRUE if alive, otherwise FALSE
+	 * @see ServletScoreboardEntry#setAlive(boolean)
+	 */
+	public boolean isAlive() {
+		return _isAlive;
+	}
+	
+	/**
 	 * Marks the request as complete and sets the completion time.
 	 */
 	public void complete() {
@@ -146,6 +156,15 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	public void setRemoteHost(String remoteHost) {
 		_remoteHost = remoteHost;
 	}
+	
+	/**
+	 * Updates whether the thread is still alive.
+	 * @param isAlive TRUE if alive, otherwise FALSE
+	 * @see ServletScoreboardEntry#isAlive()
+	 */
+	public void setAlive(boolean isAlive) {
+		_isAlive = isAlive;
+	}
 
 	/**
 	 * Sets the URL of the request.
@@ -154,6 +173,10 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable<
 	 */
 	public void setURL(String url) {
 		_url = url;
+	}
+	
+	public int hashCode() {
+		return _threadName.hashCode();
 	}
 	
 	/**
