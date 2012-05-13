@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -83,13 +83,12 @@ public class GetAircraft extends DAO implements CachingDAO {
 	 * @param airlineCode the Airline code
 	 * @return a Collection of Aircraft beans
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws NullPointerException if airlineCode is null
 	 */
 	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE "
+			prepareStatement("SELECT A.* FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE "
 					+ "(A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
-			_ps.setString(1, airlineCode.toUpperCase());
+			_ps.setString(1, airlineCode);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -148,9 +147,10 @@ public class GetAircraft extends DAO implements CachingDAO {
 		_ps.close();
 		
 		// Add to cache and return
-		for (Aircraft a : results.values())
+		List<Aircraft> ac = new ArrayList<Aircraft>(results.values());
+		for (Aircraft a : ac)
 			_cache.add(a);
 		
-		return new ArrayList<Aircraft>(results.values());
+		return ac;
 	}
 }
