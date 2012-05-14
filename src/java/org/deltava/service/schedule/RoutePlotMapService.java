@@ -139,15 +139,17 @@ public class RoutePlotMapService extends MapPlotService {
 				}
 				
 				// If the selected alternate isn't in the list, clear it
-				boolean noAlt = true;
-				for (Iterator<Airport> i = alternates.iterator(); noAlt && i.hasNext(); ) {
-					Airport ap = i.next();
-					if (ap.getICAO().equals(aL.getICAO()))
-						noAlt = false;
-				}
+				if (aL != null) {
+					boolean noAlt = true;
+					for (Iterator<Airport> i = alternates.iterator(); noAlt && i.hasNext(); ) {
+						Airport ap = i.next();
+						if (ap.getICAO().equals(aL.getICAO()))
+							noAlt = false;
+					}
 				
-				if (noAlt)
-					aL = null;
+					if (noAlt)
+						aL = null;
+				}
 			}
 			
 			// Add the alternate
