@@ -10,6 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom2.*;
 
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
 
 import org.deltava.comparators.RunwayComparator;
@@ -44,11 +45,12 @@ public class RoutePlotMapService extends MapPlotService {
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
 		Collection<METAR> wx = new ArrayList<METAR>();
+		List<Airport> alternates = new ArrayList<Airport>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
+		AirportLocation aD = null;
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
-			GetACARSRunways acdao = new GetACARSRunways(con);
 			GetWeather wxdao = new GetWeather(con);
 			
 			// Translate IATA to ICAO codes
@@ -57,7 +59,7 @@ public class RoutePlotMapService extends MapPlotService {
 			String airportLCode = txIATA(ctx.getParameter("airportL"));
 			
 			// Get the departure/arrival airports
-			AirportLocation aD = dao.getAirport(airportDCode);
+			aD = dao.getAirport(airportDCode);
 			AirportLocation aA = dao.getAirport(airportACode);
 			AirportLocation aL = dao.getAirport(airportLCode);
 			String route = ctx.getParameter("route");
@@ -78,9 +80,10 @@ public class RoutePlotMapService extends MapPlotService {
 				
 				// Add popular departure runways
 				if (doRunways) {
-					Collection<Runway> popRunways = acdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
+					GetACARSRunways rwdao = new GetACARSRunways(con);
+					Collection<Runway> popRunways = rwdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
 					if (popRunways.isEmpty())
-						popRunways.addAll(acdao.getPopularRunways(SystemData.getAirport(airportDCode), null, true));
+						popRunways.addAll(rwdao.getPopularRunways(SystemData.getAirport(airportDCode), null, true));
 					
 					Collection<String> sidRunways = dao.getSIDRunways(aD.getCode());
 					for (Runway r : popRunways) {
@@ -125,6 +128,26 @@ public class RoutePlotMapService extends MapPlotService {
 				routePoints.add(aA);
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
 				tRoutes.addAll(stars);
+				
+				// Calculate alternates
+				GetAircraft acdao = new GetAircraft(con);
+				Aircraft a = acdao.get(ctx.getParameter("eqType"));
+				if (a != null) {
+					alternates.addAll(AlternateAirportHelper.calculateAlternates(a, aA));
+					if (alternates.size() > 10)
+						alternates.subList(10, alternates.size()).clear();
+				}
+				
+				// If the selected alternate isn't in the list, clear it
+				boolean noAlt = true;
+				for (Iterator<Airport> i = alternates.iterator(); noAlt && i.hasNext(); ) {
+					Airport ap = i.next();
+					if (ap.getICAO().equals(aL.getICAO()))
+						noAlt = false;
+				}
+				
+				if (noAlt)
+					aL = null;
 			}
 			
 			// Add the alternate
@@ -144,8 +167,7 @@ public class RoutePlotMapService extends MapPlotService {
 		Element re = doc.getRootElement();
 
 		// Add SID/STAR names to XML document
-		for (Iterator<TerminalRoute> i = tRoutes.iterator(); i.hasNext();) {
-			TerminalRoute tr = i.next();
+		for (TerminalRoute tr : tRoutes) {
 			Element e = new Element(tr.getTypeName().toLowerCase());
 			e.setAttribute("name", tr.getName());
 			e.setAttribute("transition", tr.getTransition());
@@ -155,12 +177,11 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 		
 		// Add runways
-		for (Iterator<Runway> i = runways.iterator(); i.hasNext(); ) {
-			Runway r = i.next();
+		for (Runway r : runways) {
 			Element e = new Element("runway");
 			e.setAttribute("code", "RW" + r.getName());
 			
-			// Build the labe
+			// Build the label
 			StringBuilder buf = new StringBuilder("Runway ");
 			buf.append(r.getName());
 			buf.append(" (");
@@ -173,12 +194,19 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 		
 		// Add weather
-		for (Iterator<METAR> i = wx.iterator(); i.hasNext(); ) {
-			METAR m = i.next();
-			Element e = XMLUtils.createElement("data", m.getData(), true);
-			e.setAttribute("wHdg", String.valueOf(m.getWindDirection()));
-			e.setAttribute("wSpeed", String.valueOf(m.getWindSpeed()));
-			e.setAttribute("wGust", String.valueOf(m.getWindGust()));
+		for (METAR m : wx) {
+			Element e = XMLUtils.createElement("wx", m.getData(), true);
+			e.setAttribute("icao", m.getCode());
+			e.setAttribute("dst", String.valueOf(!m.getCode().equals(aD.getCode())));
+			re.addContent(e);
+		}
+		
+		// Add alternates
+		for (Airport alt : alternates) {
+			Element e = new Element("alt");
+			e.setAttribute("iata", alt.getIATA());
+			e.setAttribute("icao", alt.getICAO());
+			e.setAttribute("name", alt.getName());
 			re.addContent(e);
 		}
 		

@@ -27,6 +27,7 @@ var getInactive = false;
 
 function validate(form)
 {
+if (!validateCombo(form.eqType, 'EquipmentType')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
 if (!validateText(form.route, 3, 'Flight Route')) return false;
@@ -47,26 +48,32 @@ return true;
 <el:form action="routeplan.ws" method="post" target="_new" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER</td>
+ <td colspan="2"><content:airline /> FLIGHT PLAN PLOTTER</td>
 </tr>
-<c:if test="${access.canCreate}">
 <tr>
- <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" firstEntry="-" value="${aCode}" /></td>
+ <td class="label">Aircraft</td>
+ <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="" onChange="void updateRoute(true)" /></td>
 </tr>
-</c:if>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, true)" />
+ <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, true)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
 </tr>
-<tr>
- <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
+<tr id="wxDr" style="display:none;">
+ <td class="label">Origin Weather</td>
+ <td class="data"><span id="wxDmetar" /></td>
 </tr>
 <tr>
+ <td class="label">Arriving at</td>
+ <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true)" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
+</tr>
+<tr id="wxAr" style="display:none;">
+ <td class="label">Destination Weather</td>
+ <td class="data"><span id="wxAmetar" /></td>
+</tr>
+<tr id="airportL" style="display:none;">
  <td class="label">Alternate</td>
  <td class="data"><el:combo name="airportL" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" />
  <el:text ID="airportLCode" name="airportLCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportL, this.value); plotMap()" /></td>
@@ -81,7 +88,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Waypoints</td>
- <td class="data"><el:text name="route" size="80" max="320" idx="*" value="" onChange="void plotMap()" /></td>
+ <td class="data"><el:text name="route" size="100" max="320" idx="*" value="" onChange="void plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -144,9 +151,9 @@ enableObject(f.routes, false);
 enableElement('SearchButton', false);
 
 // Load the airports
+document.doICAO = ${useICAO};
 updateAirports(f.airportD, 'airline=all', ${useICAO}, getValue(f.airportD));
 window.setTimeout("updateAirports(f.airportA, 'airline=all', ${useICAO}, getValue(f.airportA))", 1250);
-window.setTimeout("updateAirports(f.airportL, 'airline=all', ${useICAO}, getValue(f.airportL))", 1750);
 
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};

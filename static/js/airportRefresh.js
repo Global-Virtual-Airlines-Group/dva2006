@@ -4,22 +4,10 @@ if (combo == null) return false;
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'airports.ws?' + cmdURL, true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xmlDoc = xmlreq.responseXML;
-	var ac = xmlDoc.documentElement.getElementsByTagName("airport");
-	var codeAttr = (doICAO) ? "icao" : "iata";
-	combo.options.length = ac.length + 1;
-	combo.options[0] = new Option("-", "");
-	for (var i = 0; i < ac.length; i++) {
-		var a = ac[i];
-		var apCode = a.getAttribute(codeAttr);
-		var apName = a.getAttribute("name") + " (" + apCode + ")";
-		var opt = new Option(apName, apCode);
-		opt.icao = a.getAttribute("icao");
-		opt.iata = a.getAttribute("iata");
-		combo.options[i+1] = opt;
-	} // for
-
+	var ac = xmlDoc.documentElement.getElementsByTagName('airport');
+	createAirportCombo(combo, ac, doICAO);
 	combo.disabled = false;
 	setAirport(combo, oldCode);
 	changeAirport(combo);
@@ -29,6 +17,24 @@ xmlreq.onreadystatechange = function() {
 
 combo.disabled = true;
 xmlreq.send(null);
+return true;
+}
+
+function createAirportCombo(combo, nodes, doICAO)
+{
+combo.options.length = nodes.length + 1;
+combo.options[0] = new Option('-', '');
+var codeAttr = (doICAO) ? 'icao' : 'iata';
+for (var i = 0; i < nodes.length; i++) {
+	var a = nodes[i];
+	var apCode = a.getAttribute(codeAttr);
+	var apName = a.getAttribute('name') + ' (' + apCode + ')';
+	var opt = new Option(apName, apCode);
+	opt.icao = a.getAttribute('icao');
+	opt.iata = a.getAttribute('iata');
+	combo.options[i+1] = opt;
+}
+
 return true;
 }
 
@@ -83,16 +89,16 @@ function updateSIDSTAR(combo, code, type)
 if (combo == null) return false;
 var oldValue = combo.options[combo.selectedIndex].value;
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "troutes.ws?airportD=" + code + "&airportA=" + code, true);
+xmlreq.open('get', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
 	var trs = xmlDoc.documentElement.getElementsByTagName(type.toLowerCase());	
 	combo.options.length = trs.length + 1;
-	combo.options[0] = new Option("-", "");
+	combo.options[0] = new Option('-', '');
 	for (var i = 0; i < trs.length; i++) {
 		var tr = trs[i];
-		var trCode = tr.getAttribute("code")
+		var trCode = tr.getAttribute('code')
 		var opt = new Option(trCode, trCode);
 		combo.options[i+1] = opt;		
 	}

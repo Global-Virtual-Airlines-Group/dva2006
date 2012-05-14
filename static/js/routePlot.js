@@ -2,24 +2,26 @@ function getAJAXParams()
 {
 var f = document.forms[0];
 var params = [];
-if (f.airportD.selectedIndex > 0) {
+if (comboSet(f.airportD)) {
 	params['airportD'] = f.airportD.options[f.airportD.selectedIndex].value;
 	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
 }
-if (f.airportA.selectedIndex > 0) {
+if (comboSet(f.airportA)) {
 	params['airportA'] = f.airportA.options[f.airportA.selectedIndex].value;
 	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
 }
-if ((f.airportL) && (f.airportL.selectedIndex > 0)) {
+if (comboSet(f.airportL)) {
 	params['airportL'] = f.airportL.options[f.airportL.selectedIndex].value;
 	f.airportLCode.value = f.airportL.options[f.airportL.selectedIndex].value;
 }
-	
-if ((f.sid) && (f.sid.selectedIndex > 0))
+
+if (comboSet(f.eqType))
+	params['eqType'] = f.eqType.options[f.eqType.selectedIndex].value;
+if (comboSet(f.sid))
 	params['sid'] = f.sid.options[f.sid.selectedIndex].value;
-if ((f.star) && (f.star.selectedIndex > 0))
+if (comboSet(f.star))
 	params['star'] = f.star.options[f.star.selectedIndex].value;
-if ((f.route) && (f.route.value.length > 0))
+if (comboSet(f.route))
 	params['route'] = f.route.value;
 if (getInactive)
 	params['getInactive'] = 'true';
@@ -42,7 +44,7 @@ function updateRoutes(combo, elements)
 {
 // Save the old value
 if (!combo) return false;
-var oldCode = (combo.selectedIndex == -1) ? '' : combo.options[combo.selectedIndex].value;
+var oldCode = getValue(combo);
 
 // Update the combobox choices
 combo.options.length = elements.length + 1;
@@ -95,7 +97,7 @@ xmlreq.onreadystatechange = function() {
 	// Draw the route
 	var rt = new google.maps.Polyline({path:positions, strokeColor:'#4080af', strokeWeight:2, strokeOpacity:0.8, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 	rt.setMap(map);
-	
+
 	// Save the codes
 	var f = document.forms[0];
 	if (f.routeCodes)
@@ -113,14 +115,12 @@ xmlreq.onreadystatechange = function() {
 
 	// Set the distance
 	var dstE = document.getElementById('rtDistance');
-	if (dstE != null) {
-		var dst = xdoc.getAttribute('distance');
-		if (dst) {
-			if(dst > 0)
-				dstE.innerHTML = ' - ' + dst + ' miles';
-			else
-				dstE.innerHTML = '';
-		}
+	var dst = xdoc.getAttribute('distance');
+	if (dst) {
+		if(dst > 0)
+			dstE.innerHTML = ' - ' + dst + ' miles';
+		else
+			dstE.innerHTML = '';
 	}
 
 	// Load the runways
@@ -133,6 +133,32 @@ xmlreq.onreadystatechange = function() {
 	displayObject(document.getElementById('sids'), (f.sid.options.length > 1));
 	updateRoutes(f.star, xdoc.getElementsByTagName('star'));
 	displayObject(document.getElementById('stars'), (f.star.options.length > 1));
+
+	// Load the alternate list
+	var alts = xdoc.getElementsByTagName('alt');
+	if (alts.length > 0) {
+		displayObject(document.getElementById('airportL'), true);
+		var oldAL = getValue(f.airportL);
+		createAirportCombo(f.airportL, alts, document.doICAO);
+		if (!setAirport(f.airportL, oldAL))
+			f.airportLCode.value = '';
+	} else
+		displayObject(document.getElementById('airportL'), false);
+
+	// Get weather
+	displayObject(document.getElementById('wxDr'), false);
+	displayObject(document.getElementById('wxAr'), false);
+	var wxs = xdoc.getElementsByTagName('wx');
+	for (var i = 0; i < wxs.length; i++) {
+		var wx = wxs[i];
+
+		// Figure out which row to put it in
+		var isDst = (wx.getAttribute('dst') == 'true');
+		displayObject(document.getElementById(isDst ? 'wxAr' : 'wxDr'), true);
+		var metarSpan = document.getElementById(isDst ? 'wxAmetar' : 'wxDmetar');
+		metarSpan.innerHTML = wx.firstChild.data;
+	}
+
 	return true;
 }
 

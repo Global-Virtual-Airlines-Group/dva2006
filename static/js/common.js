@@ -199,6 +199,11 @@ self.location = '/' + url;
 return true;
 }
 
+function comboSet(combo)
+{
+return ((combo) && (combo.selectedIndex > 0));	
+}
+
 function validateText(text, min, title)
 {
 if ((!text) || (text.disabled)) return true;
