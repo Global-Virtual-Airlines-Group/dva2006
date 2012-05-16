@@ -21,7 +21,7 @@ if (comboSet(f.sid))
 	params['sid'] = f.sid.options[f.sid.selectedIndex].value;
 if (comboSet(f.star))
 	params['star'] = f.star.options[f.star.selectedIndex].value;
-if (comboSet(f.route))
+if ((f.route) && (f.route.value.length > 0))
 	params['route'] = f.route.value;
 if (getInactive)
 	params['getInactive'] = 'true';
