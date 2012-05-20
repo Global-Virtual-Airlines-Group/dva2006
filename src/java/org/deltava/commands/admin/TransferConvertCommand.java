@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to toggle the additional ratings flag on a Transfer Request.
  * @author Luke
- * @version 3.3
+ * @version 4.2
  * @since 2.1
  */
 
@@ -24,6 +24,7 @@ public class TransferConvertCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -37,7 +38,7 @@ public class TransferConvertCommand extends AbstractCommand {
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, tx);
 			access.validate();
-			if (!access.getCanApprove())
+			if (!access.getCanToggleRatings())
 				throw securityException("Cannot toggle Transfer type");
 			
 			// Toggle the flag
