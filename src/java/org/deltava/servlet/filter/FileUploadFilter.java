@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -91,9 +91,9 @@ public class FileUploadFilter implements Filter {
 			}
 
 			// Add requests from the command line and convert to the proper character set
-			Enumeration<?> pNames = hreq.getParameterNames();
+			Enumeration<String> pNames = hreq.getParameterNames();
 			while (pNames.hasMoreElements()) {
-				String pName = (String) pNames.nextElement();
+				String pName = pNames.nextElement();
 				String[] rawValues = hreq.getParameterValues(pName);
 				for (int x = 0; x < rawValues.length; x++)
 					rawValues[x] = new String(rawValues[x].getBytes("ISO-8859-1"), "UTF-8");
@@ -110,7 +110,7 @@ public class FileUploadFilter implements Filter {
 	/**
 	 * Gets the file name of a Part.
 	 */
-	private String getFileName(Part p) {
+	private static String getFileName(Part p) {
 		String hdr = p.getHeader("content-disposition");
 		for (String cd : hdr.split(";")) {
 			if (cd.trim().startsWith("filename"))

@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.redirect;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.Helper;
 /**
  * A utility class to save and restore servlet request state.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -51,8 +51,7 @@ public final class RequestStateHelper {
 			throw new IllegalStateException("Request state not found in HTTP session");
 
 		// Restore the request attributes
-		for (Iterator<String> i = rc.getAttributeNames().iterator(); i.hasNext();) {
-			String attrName = i.next();
+		for (String attrName : rc.getAttributeNames()) {
 			req.setAttribute(attrName, rc.getAttribute(attrName));
 			if (log.isDebugEnabled())
 				log.debug("Restoring attribute " + attrName);
@@ -73,9 +72,9 @@ public final class RequestStateHelper {
 		RequestContent rc = new RequestContent(url);
 
 		// Save the attributes
-		Enumeration<?> attrs = req.getAttributeNames();
+		Enumeration<String> attrs = req.getAttributeNames();
 		while (attrs.hasMoreElements()) {
-			String attrName = (String) attrs.nextElement();
+			String attrName = attrs.nextElement();
 			Object o = req.getAttribute(attrName);
 			if (!(o instanceof Cookie)) {
 				rc.setAttribute(attrName, o);
