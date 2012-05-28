@@ -80,7 +80,7 @@ for (var x = 0; x < sdata.seriesNames.length; x++) {
 	var sliceData = eval('sdata.seriesInfo.' + series);
 
 	// Create the layer and get the slices
-	var layer = new golgotha.maps.WeatherLayer(series, slicData.nativeZoom, sliceData.maxZoom);
+	var layer = new golgotha.maps.WeatherLayer(series, sliceData.nativeZoom, sliceData.maxZoom);
 	layer.isFF = (series.substr(series.length - 3) == '_ff');
 	var slices = layer.isFF ? sliceData.series[0].ff : sliceData.series;
 	if (layer.isFF)
