@@ -70,6 +70,13 @@
 		<load-on-startup>3</load-on-startup>
 	</servlet>
 
+	<!-- ACARS Track Image servlet -->
+	<servlet>
+		<servlet-name>trackImage</servlet-name>
+		<servlet-class>org.deltava.servlet.TileServlet</servlet-class>
+		<load-on-startup>4</load-on-startup>
+	</servlet>
+
 	<!-- Library Donwload servlet -->
 	<servlet>
 		<servlet-name>fleetLibrary</servlet-name>
@@ -182,6 +189,11 @@
 	<servlet-mapping>
 		<servlet-name>sigImage</servlet-name>
 		<url-pattern>/sig/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+		<servlet-name>trackImage</servlet-name>
+		<url-pattern>/track/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
