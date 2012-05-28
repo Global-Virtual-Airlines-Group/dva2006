@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,24 +13,35 @@ import javax.imageio.ImageIO;
 
 import junit.framework.TestCase;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.RouteEntry;
-import org.deltava.dao.DAOException;
+
+import org.deltava.dao.*;
 import org.deltava.dao.file.GetSerializedPosition;
 
+import org.deltava.util.GeoUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.ThreadUtils;
+import org.deltava.util.system.SystemData;
 import org.deltava.util.tile.*;
 
-public class TestPlotPositions extends TestCase {
+public class TestPlotZoomPositions extends TestCase {
 
 	private static final String URL = "jdbc:mysql://polaris.sce.net/acars?user=test&password=test";
 
 	protected final Queue<Integer> _IDwork = new ConcurrentLinkedQueue<Integer>();
 	protected final Queue<Map.Entry<TileAddress, Collection<Point>>> _imgWork = new ConcurrentLinkedQueue<Map.Entry<TileAddress, Collection<Point>>>();
 	
+	protected static final AtomicInteger _fcnt = new AtomicInteger();
+	
 	protected final ConcurrentMap<Point, Integer> _points = new ConcurrentHashMap<Point, Integer>(10240000);
 	protected final Map<TileAddress, Collection<Point>> _tileMap = new HashMap<TileAddress, Collection<Point>>(1024);
 	
 	private final SortedSet<ProjectInfo> _zooms = new TreeSet<ProjectInfo>(Collections.reverseOrder()); 
+
+	private static final int MAX_DISTANCE = 110;
+	private final java.util.List<String> _airports = Arrays.asList("ATL", "JFK", "CDG", "LAS", "LAX", "DCA", "BOS", "YYZ", "SLC", "MCO", "MIA", "OGG", "HKG");
+	protected final Collection<GeoLocation> _locs = new HashSet<GeoLocation>();
 	
 	protected int[] _colors;
 
@@ -39,14 +51,20 @@ public class TestPlotPositions extends TestCase {
 		assertNotNull(c);
 		
 		// Build Zoom levels
-		_zooms.add(new ProjectInfo(3, 144, 12));
-		_zooms.add(new ProjectInfo(4, 128, 8));
-		_zooms.add(new ProjectInfo(5, 96, 6));
-		_zooms.add(new ProjectInfo(6, 64, 5));
-		_zooms.add(new ProjectInfo(7, 56, 5));
-		_zooms.add(new ProjectInfo(8, 48, 4));
-		_zooms.add(new ProjectInfo(9, 40, 4));
 		//_zooms.add(new ProjectInfo(10, 32, 3));
+		//_zooms.add(new ProjectInfo(11, 24, 2));
+		_zooms.add(new ProjectInfo(12, 12, 2));
+		
+		// Init
+		SystemData.init();
+		
+		// Load airports
+		try (Connection con = DriverManager.getConnection(URL)) {
+			GetAirport apdao = new GetAirport(con);
+			apdao.setAppCode("DVA");
+			for (String aCode : _airports)
+				_locs.add(apdao.get(aCode));
+		}
 	}
 	
 	private class ProjectInfo implements Comparable<ProjectInfo> {
@@ -219,17 +237,27 @@ public class TestPlotPositions extends TestCase {
 									GetSerializedPosition psdao = new GetSerializedPosition(in);
 									Collection<? extends RouteEntry> entries = psdao.read();
 									for (RouteEntry re : entries) {
-										Point pt = _mp.getPixelAddress(re.getLatitude(), re.getLongitude());
-										Integer cnt = _points.putIfAbsent(pt, Integer.valueOf(1));
-										if (cnt != null)
-											_points.put(pt, Integer.valueOf(cnt.intValue() + 1));	
+										boolean includeMe = false;
+										for (Iterator<GeoLocation> ai = _locs.iterator(); ai.hasNext() && !includeMe; ) {
+											int dst = GeoUtils.distance(ai.next(), re);
+											if (dst <= MAX_DISTANCE)
+												includeMe = true;
+										}
+										
+										if (includeMe) {
+											Point pt = _mp.getPixelAddress(re.getLatitude(), re.getLongitude());
+											Integer cnt = _points.putIfAbsent(pt, Integer.valueOf(1));
+											if (cnt != null)
+												_points.put(pt, Integer.valueOf(cnt.intValue() + 1));
+										}
 									}
 								}
 							}
 						
-							// Write the rows
-							if ((id.intValue() % 2500) == 0)
-								System.out.println("Processed " + id);
+							// Write the rows processed
+							int cnt = _fcnt.incrementAndGet();
+							if ((cnt % 2500) == 0)
+								System.out.println("Processed " + cnt);
 						}
 					}
 				}
@@ -247,10 +275,17 @@ public class TestPlotPositions extends TestCase {
 
 	public void testLoadPositions() throws Exception {
 
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT ID FROM FLIGHTS WHERE ((AIRPORT_D IN (\'");
+		buf.append(StringUtils.listConcat(_airports, "\',\'"));
+		buf.append("\')) OR (AIRPORT_A IN (\'");
+		buf.append(StringUtils.listConcat(_airports, "\',\'"));
+		buf.append("\')))");
+		
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (Statement s = c.createStatement()) {
 				s.setFetchSize(500);
-				try (ResultSet rs = s.executeQuery("SELECT ID FROM POS_ARCHIVE")) {
+				try (ResultSet rs = s.executeQuery(buf.toString())) {
 					while (rs.next())
 						_IDwork.add(Integer.valueOf(rs.getInt(1)));
 				}
@@ -261,22 +296,21 @@ public class TestPlotPositions extends TestCase {
 		ProjectInfo pInf = _zooms.first();
 
 		// Spawn the workers
-		Collection<Thread> workers = new ArrayList<Thread>(24);
-		for (int x = 1; x <= 20; x++) {
+		Collection<Thread> workers = new ArrayList<Thread>(20);
+		for (int x = 1; x <= 16; x++) {
 			ReadWorker worker = new ReadWorker(x, URL, pInf.getZoom() + 1);
 			worker.start();
 			workers.add(worker);
 		}
 		
-		// Truncate the table
+		// Truncaate the table
 		try (Connection c = DriverManager.getConnection(URL)) {
 			try (Statement s = c.createStatement()) {
-				s.executeUpdate("TRUNCATE acars.TRACKS");
+				s.executeUpdate("DELETE FROM acars.TRACKS WHERE (Z > 11)");
 			}
 		}
 
 		// Wait for the pool to finish
-		System.out.println("Truncated Tracks table");
 		ThreadUtils.waitOnPool(workers);
 		assertFalse(_points.isEmpty());
 		System.out.println("Loaded " + _points.size() + " points at Zoom " + (pInf.getZoom() + 1));

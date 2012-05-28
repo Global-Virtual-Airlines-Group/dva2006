@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.util.cache.CacheableLong;
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -101,7 +101,7 @@ public class GetImage extends PilotSignatureDAO {
     		
     		// Update the cache and return
     		if (dt != null)
-    			_sigCache.add(new CacheableLong(new Integer(id), dt.getTime()));
+    			_sigCache.add(new CacheableLong(Integer.valueOf(id), dt.getTime()));
     		
     		return dt;
     	} catch (SQLException se) {
@@ -151,6 +151,34 @@ public class GetImage extends PilotSignatureDAO {
      */
     public byte[] getExamResource(int id) throws DAOException {
     	return execute(id, "SELECT IMG FROM exams.QUESTIONIMGS WHERE (ID=?) LIMIT 1");
+    }
+    
+    /**
+     * Returns an ACARS track tile.
+     * @param x the X-coordnate
+     * @param y the Y-coordinate
+     * @param z the zoom level
+     * @return the PNG tile data, or null if not found
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getTile(int x, int y, int z) throws DAOException {
+    	try {
+    		prepareStatementWithoutLimits("SELECT IMG FROM acars.TRACKS WHERE (X=?) AND (Y=?) AND (Z=?) LIMIT 1");
+    		_ps.setInt(1, x);
+    		_ps.setInt(2, y);
+    		_ps.setInt(3, z);
+    		
+    		byte[] results = null;
+    		try (ResultSet rs = _ps.executeQuery()) {
+    			if (rs.next())
+    				results = rs.getBytes(1);
+    		}
+
+    		_ps.close();
+    		return results;
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
     }
     
     /**
