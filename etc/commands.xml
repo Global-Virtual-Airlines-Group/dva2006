@@ -2013,6 +2013,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="trackmap">
+		<name>ACARS Saved Tracks Map</name>
+		<class>org.deltava.commands.acars.TrackMapCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="acarsoffline">
 		<name>ACARS Offline Flight Submit</name>
 		<class>org.deltava.commands.acars.OfflineFlightCommand</class>
