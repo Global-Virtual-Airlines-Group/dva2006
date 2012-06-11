@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -243,7 +243,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Runway getBestRunway(ICAOAirport a, int simVersion, GeoLocation loc, int hdg) throws DAOException {
-		Map<String, Runway> results = new LinkedHashMap<String, Runway>();
+		Collection<Runway> results = new LinkedHashSet<Runway>();
 		try {
 			if (simVersion > 0) {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
@@ -257,21 +257,23 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 						r.setName(rs.getString(2));
 						r.setHeading(rs.getInt(6));
 						r.setLength(rs.getInt(7));
-						results.put(r.getName(), r);
+						results.add(r);
 					}
 				}
 				
 				_ps.close();
 			}
 			
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
-			_ps.setInt(1, NavigationDataBean.RUNWAY);
-			_ps.setString(2, a.getICAO());
-			Collection<NavigationDataBean> r2 = execute();
-			for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
-				NavigationDataBean nd = i.next();
-				if ((nd.getType() == NavigationDataBean.RUNWAY) && (!results.containsKey(nd.getName())))
-					results.put(nd.getName(), (Runway) nd);
+			if (results.isEmpty()) {
+				prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
+				_ps.setInt(1, NavigationDataBean.RUNWAY);
+				_ps.setString(2, a.getICAO());
+				Collection<NavigationDataBean> r2 = execute();
+				for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
+					NavigationDataBean nd = i.next();
+					if (nd.getType() == NavigationDataBean.RUNWAY)
+						results.add((Runway) nd);
+				}
 			}
 		} catch (SQLException se) { 
 			throw new DAOException(se);
@@ -279,7 +281,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		
 		// Iterate through the list
 		Runway rwy = null; long lastBrgDiff = 360;
-		for (Iterator<Runway> i = results.values().iterator(); i.hasNext(); ) {
+		for (Iterator<Runway> i = results.iterator(); i.hasNext(); ) {
 			Runway r = i.next();
 				
 			// Calculate the heading difference between us and the runway heading
