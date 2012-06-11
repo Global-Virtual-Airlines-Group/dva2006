@@ -60,6 +60,7 @@ bzcat $DBDIR/xacars.sql.bz2 | $MYSQL_CLIENT -p$1 xacars
 echo 'Restoring ACARS position archive'
 bzcat $DBDIR/acars_pos.sql.bz2 | $MYSQL_CLIENT -p$1 acars
 bzcat $DBDIR/acars_pos_inc.sql.bz2 | $MYSQL_CLIENT -p$1 acars
+bzcat $DBDIR/acars_tracks.sql.bz2 | $MYSQL_CLIENT -p$1 acars
 
 echo 'Restoring Image Galleries'
 bzcat $DBDIR/dva_gallery.sql.bz2 | $MYSQL_CLIENT -p$1 dva
