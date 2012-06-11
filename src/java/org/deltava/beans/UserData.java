@@ -1,19 +1,17 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
-
-import org.deltava.util.cache.Cacheable;
 
 /**
  * A class to store cross-Airline User data. This is used to track locations of users in parts of the application (Water
  * Cooler, Online Events) that allow users from other airlines to write database entries.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
-public class UserData extends DatabaseBean implements Cacheable {
+public class UserData extends DatabaseBean {
 
 	private String _aCode;
 	private String _dbName;
