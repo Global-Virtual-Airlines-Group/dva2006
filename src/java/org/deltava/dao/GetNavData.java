@@ -8,10 +8,12 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.ICAOAirport;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to read Navigation data.
@@ -90,7 +92,6 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 			}
 		}
 		
-		// Add to the cache and return
 		return ndmap;
 	}
 	
@@ -271,8 +272,11 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 				Collection<NavigationDataBean> r2 = execute();
 				for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
 					NavigationDataBean nd = i.next();
-					if (nd.getType() == NavigationDataBean.RUNWAY)
-						results.add((Runway) nd);
+					if (nd.getType() == NavigationDataBean.RUNWAY) {
+						Runway r = (Runway) nd;
+						r.setHeading((int) (r.getHeading() + a.getMagVar()));
+						results.add(r);
+					}
 				}
 			}
 		} catch (SQLException se) { 
@@ -293,7 +297,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 			int brg = (int) Math.round(GeoUtils.course(r, loc));
 			int brgDiff = Math.abs(r.getHeading() - brg);
 			if (brgDiff >= 300)
-				brgDiff = Math.abs(hdgDiff - 360);
+				brgDiff = Math.abs(brgDiff - 360);
 				
 			if ((hdgDiff < 45) && (brgDiff < 35)) {
 				log.info("Runway " + r.getName() + " - hdg=" + r.getHeading() + " (" + hdgDiff + "), brg=" +  brg + " (" + brgDiff + ")");
@@ -412,6 +416,10 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 						a.setAltitude(rs.getInt(6));
 						a.setName(rs.getString(7));
 						a.setRegion(rs.getString(9));
+						Airport ap = SystemData.getAirport(a.getCode());
+						if (ap != null)
+							a.setMagVar(ap.getMagVar());
+						
 						obj = a;
 						break;
 
@@ -463,7 +471,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	/**
 	 * Helper method to filter objects based on distance from a certain point.
 	 */
-	private void distanceFilter(Collection<NavigationDataBean> entries, GeoLocation loc, int distance) {
+	private static void distanceFilter(Collection<NavigationDataBean> entries, GeoLocation loc, int distance) {
 		for (Iterator<NavigationDataBean> i = entries.iterator(); i.hasNext();) {
 			NavigationDataBean ndb = i.next();
 			if (ndb.getPosition().distanceTo(loc) > distance)

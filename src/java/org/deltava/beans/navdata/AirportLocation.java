@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.schedule.*;
@@ -8,13 +8,14 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 1.0
  */
 
 public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 
 	private int _altitude;
+	private double _magVar;
 
 	/**
 	 * Creates a new Airport location object.
@@ -36,6 +37,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 		setName(a.getName());
 		setAltitude(a.getAltitude());
 		setRegion(a.getRegion());
+		_magVar = a.getMagVar();
 	}
 	
 	/**
@@ -66,11 +68,24 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	}
 	
 	/**
+	 * Updates the airport's magnetic variation.
+	 * @param var the variation in degrees
+	 */
+	public void setMagVar(double var) {
+		_magVar = Math.min(50, Math.max(-50, var));
+	}
+	
+	/**
 	 * Returns the airway code.
 	 */
 	@Override
 	public final String getAirway() {
 		return null;
+	}
+
+	@Override
+	public double getMagVar() {
+		return _magVar;
 	}
 
 	/**
@@ -107,7 +122,14 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 		buf.append(getHTMLPosition());
 		buf.append("Altitude: ");
 		buf.append(StringUtils.format(_altitude, "#,##0"));
-		buf.append(" feet MSL</span>");
+		buf.append(" feet MSL");
+		if (Math.abs(_magVar) > 0.01) {
+			buf.append("<br />Magnetic variation: ");
+			buf.append(StringUtils.format(_magVar, "#0.00"));
+			buf.append(" degrees");
+		}
+		
+		buf.append("</span>");
 		return buf.toString();
 	}
 }
