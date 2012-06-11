@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -6,16 +6,15 @@ import java.util.*;
 import org.deltava.beans.*;
 
 import org.deltava.util.ComboUtils;
-import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store TeamSpeak voice channel information.
+ * A bean to store TeamSpeak 2 voice channel information.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
-public class Channel extends DatabaseBean implements Cacheable, ViewEntry {
+public class Channel extends DatabaseBean implements ViewEntry {
 	
 	public static final Collection<ComboAlias> CODECS = ComboUtils.fromArray(new String[] { "CELP 5.1 kbit",
 			"CELP 6.3 kbit", "GSM 14.8 kbit", "GSM 16.4 kbit", "CELP Windows 5.2 kbit", "Speex 3.4 kbit", "Speex 5.2 kbit",

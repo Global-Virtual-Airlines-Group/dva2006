@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.*;
@@ -6,16 +6,14 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
-import org.deltava.util.cache.Cacheable;
-
 /**
  * A bean to define Pilot accomplishments.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.2
  */
 
-public class Accomplishment extends DatabaseBean implements Cacheable, ComboAlias, ViewEntry {
+public class Accomplishment extends DatabaseBean implements ComboAlias, ViewEntry {
 
 	/**
 	 * Enumeration to track Accomplishment Units.
@@ -28,8 +26,8 @@ public class Accomplishment extends DatabaseBean implements Cacheable, ComboAlia
 		AIRLINES("Airlines", 14), DFLIGHTS("Flights Dispatched", 15), DHOURS("Dispatch Hours", 16),
 		EQLEGS("Legs in Aircraft", 17), CONTINENTS("Continents Visited", 18);
 			
-		private String _name;
-		private int _code;
+		private final String _name;
+		private final int _code;
 		
 		Unit(String name, int code) {
 			_code = code;

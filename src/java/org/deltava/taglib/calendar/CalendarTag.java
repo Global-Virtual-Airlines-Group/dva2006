@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -19,11 +19,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to display a calendar view table.
  * @author Luke
- * @version 3.1
+ * @version 4.2
  * @since 1.0
  */
 
-abstract class CalendarTag extends TagSupport implements IterationTag {
+abstract class CalendarTag extends TagSupport {
 	
 	private final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 	private static final Collection<String> RESERVED_PARAMS = Collections.singleton("startDate");

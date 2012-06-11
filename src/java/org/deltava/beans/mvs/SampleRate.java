@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.mvs;
 
 import org.deltava.beans.ComboAlias;
@@ -6,15 +6,15 @@ import org.deltava.beans.ComboAlias;
 /**
  * Valid MVS sample rates.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 4.0
  */
 
-public enum SampleRate implements Comparable<SampleRate>, ComboAlias {
+public enum SampleRate implements ComboAlias {
 
 	SR5K(5000), SR6K(6000), SR8K(8000);
 	
-	private int _rate;
+	private final int _rate;
 	
 	/**
 	 * Creates a SampleRate from a numeric bit rate.

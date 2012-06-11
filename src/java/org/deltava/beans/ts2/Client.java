@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -6,16 +6,15 @@ import java.util.*;
 import org.deltava.beans.DatabaseBean;
 
 import org.deltava.util.UserID;
-import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store TeamSpeak 2 user information.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
-public class Client extends DatabaseBean implements Cacheable {
+public class Client extends DatabaseBean {
 	
 	private String _userID;
 	private String _pwd;
@@ -270,7 +269,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	 * @see Client#getChannelIDs()
 	 */
 	public void addChannelID(int id) {
-		_channelIDs.add(new Integer(id));
+		_channelIDs.add(Integer.valueOf(id));
 	}
 	
 	/**
@@ -302,7 +301,7 @@ public class Client extends DatabaseBean implements Cacheable {
 	public Object cacheKey() {
 		StringBuilder buf = new StringBuilder(String.valueOf(getID()));
 		buf.append('-');
-		buf.append(String.valueOf(_serverID));
+		buf.append(_serverID);
 		return buf.toString();
 	}
 }

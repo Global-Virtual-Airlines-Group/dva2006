@@ -1,23 +1,20 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.DatabaseBean;
-
-import org.deltava.util.cache.Cacheable;
+import org.deltava.beans.*;
 
 /**
  * A bean to store notifications for a Water Cooler message thread.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
-public class ThreadNotifications extends DatabaseBean implements Cacheable {
+public class ThreadNotifications extends DatabaseBean {
 
-   private Set<Integer> _notifications;
+   private final Collection<Integer> _notifications = new HashSet<Integer>();
    
    /**
     * Creates a new Thread Notifcation bean.
@@ -26,7 +23,6 @@ public class ThreadNotifications extends DatabaseBean implements Cacheable {
    public ThreadNotifications(int id) {
       super();
       setID(id);
-      _notifications = new HashSet<Integer>();
    }
    
    /**
@@ -36,7 +32,7 @@ public class ThreadNotifications extends DatabaseBean implements Cacheable {
     * @see ThreadNotifications#removeUser(int)
     */
    public void addUser(int id) {
-      _notifications.add(new Integer(id));
+      _notifications.add(Integer.valueOf(id));
    }
    
    /**
@@ -56,7 +52,7 @@ public class ThreadNotifications extends DatabaseBean implements Cacheable {
     * @see ThreadNotifications#addUser(int)
     */
    public void removeUser(int id) {
-      _notifications.remove(new Integer(id));
+      _notifications.remove(Integer.valueOf(id));
    }
    
    /**
@@ -83,14 +79,6 @@ public class ThreadNotifications extends DatabaseBean implements Cacheable {
     * @return TRUE if the Person is signed up, otherwise FALSE
     */
    public boolean contains(int id) {
-      return _notifications.contains(new Integer(id));
-   }
-   
-   /**
-    * Returns the cache key for this bean.
-    * @return the message thread ID as an Integer
-    */
-   public Object cacheKey() {
-      return new Integer(getID());
+      return _notifications.contains(Integer.valueOf(id));
    }
 }

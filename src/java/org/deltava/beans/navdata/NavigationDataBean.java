@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -11,12 +11,12 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 1.0
  */
 
 public abstract class NavigationDataBean implements java.io.Serializable, Cloneable, Comparable<NavigationDataBean>, 
-	GeoLocation, MarkerMapEntry, IconMapEntry {
+	MarkerMapEntry, IconMapEntry {
 
 	/**
 	 * Object type names.
