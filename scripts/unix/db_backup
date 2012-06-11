@@ -82,6 +82,9 @@ then
 
   echo `date +%H:%M:%S`' Writing ACARS Position Archive'
   $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` acars POS_ARCHIVE | $arc_util > acars_pos.sql.bz2
+  
+  echo `date +%H:%M:%S`' Writing ACARS Track Images'
+  $mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` acars TRACKS | $arc_util > acars_tracks.sql.bz2
 else
   echo `date +%H:%M:%S`' Writing Incremental ACARS Positions'
   $mysqldump $dump_create_opt -t `cat /usr/local/etc/sqlbackup` --where="ARCHIVED > FROM_UNIXTIME(`cat lastbackuptime`)" acars POS_ARCHIVE  | $arc_util > acars_pos_inc.sql.bz2
@@ -89,7 +92,7 @@ fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` --ignore-table=acars.POS_ARCHIVE acars | $arc_util > acars.sql.bz2
+$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` --ignore=table=acars.TRACKS --ignore-table=acars.POS_ARCHIVE acars | $arc_util > acars.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
