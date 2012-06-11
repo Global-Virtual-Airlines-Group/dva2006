@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import org.deltava.beans.CalendarEntry;
 /**
  * A JSP tag to save Calendar entries to the request context for rendering to a JSP.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
-public class CalendarEntryTag extends TagSupport implements IterationTag {
+public class CalendarEntryTag extends TagSupport {
 
 	private String _attrName;
 	private Iterator<CalendarEntry> _entries;
