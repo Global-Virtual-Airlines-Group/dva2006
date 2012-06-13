@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -9,7 +9,7 @@ import org.deltava.beans.Applicant;
 /**
  * An Access Controller to support Applicant profile operations.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -54,7 +54,7 @@ public final class ApplicantAccessControl extends AccessControl {
 		// Set state variables
 		_canRead = (isOurs || isHR);
 		_canEdit = (isHR && isPending);
-		_canApprove = _canEdit;
+		_canApprove = isHR && (_ap.getStatus() != Applicant.APPROVED);
 		_canReject = _canEdit;
 		_canNotify = isHR && (_ap.getStatus() != Applicant.REJECTED);
 		_canDelete = (isHR && isPending) || (_ctx.isUserInRole("Admin") && (_ap.getStatus() == Applicant.REJECTED));  
