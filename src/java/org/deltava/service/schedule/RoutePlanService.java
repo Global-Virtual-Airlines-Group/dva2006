@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.2
  */
 
@@ -33,6 +33,7 @@ public class RoutePlanService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the airports and altitude
@@ -94,8 +95,13 @@ public class RoutePlanService extends WebService {
 			// Load the STAR
 			TerminalRoute star = dao.getRoute(aA, TerminalRoute.STAR, ctx.getParameter("star"));
 			if (star != null) {
-				routePoints.addAll(star.getWaypoints());
 				fpgen.setSTAR(star);
+				routePoints.addAll(star.getWaypoints());
+				if (rteBuf.indexOf(star.getTransition()) == -1) {
+					rteBuf.append(' ');
+					rteBuf.append(star.getTransition());
+				}
+					
 				rteBuf.append(' ');
 				rteBuf.append(star.getName());
 			}
@@ -105,6 +111,11 @@ public class RoutePlanService extends WebService {
 
 			// If we're saving a draft PIREP
 			if (saveDraft) {
+				GetAircraft acdao = new GetAircraft(con);
+				Aircraft ac = acdao.get(ctx.getParameter("eqType"));
+				if (ac == null)
+					ac = acdao.get(ctx.getUser().getEquipmentType());
+				
 				GetSchedule sdao = new GetSchedule(con);
 				GetFlightReports frdao = new GetFlightReports(con);
 				List<FlightReport> dFlights = frdao.getDraftReports(ctx.getUser().getID(), aD, aA, SystemData.get("airline.db"));
@@ -118,13 +129,14 @@ public class RoutePlanService extends WebService {
 						dfr = new DraftFlightReport(SystemData.getAirline(SystemData.get("airline.code")), ctx.getUser().getPilotNumber(), 1);
 						dfr.setAirportD(aD);
 						dfr.setAirportA(aD);
-						dfr.setEquipmentType(ctx.getUser().getEquipmentType());
+						dfr.setEquipmentType(ac.getName());
 						dfr.setAuthorID(ctx.getUser().getID());
 					} else {
 						dfr = new DraftFlightReport(schedInfo);
+						dfr.setEquipmentType(ac.getName());
 						
 						// Create a flight assignment
-						ai = new AssignmentInfo(schedInfo.getEquipmentType());
+						ai = new AssignmentInfo(ac.getName());
 						ai.setPilotID(ctx.getUser());
 						ai.setStatus(AssignmentInfo.RESERVED);
 						ai.setAssignDate(new Date());
