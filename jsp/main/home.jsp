@@ -6,11 +6,12 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xml:lang="en" lang="en">
 <head>
 <title><content:airline /></title>
 <content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="airlineName" name="airline.name" />
+<content:sysdata var="airlineURL" name="airline.url" />
 <content:sysdata var="desc" name="airline.meta.desc" />
 <content:sysdata var="keywords" name="airline.meta.keywords" />
 <content:css name="main" browserSpecific="true" />
@@ -20,6 +21,14 @@
 <content:pics />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
+<meta property="og:title" content="<content:airline />" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://${airlineURL}" />
+<meta property="og:description" content="${desc}" />
+<meta property="og:site_name" content="<content:airline />" />
+<meta property="og:locality" content="Atlanta" />
+<meta property="og:region" content="GA" />
+<meta property="og:country-name" content="USA" />
 </head>
 <content:copyright visible="false" />
 <body onload="void initLinks()">
@@ -227,7 +236,7 @@ If you have questions or comments, please direct them to our Corporate Offices a
 </c:when>
 <c:otherwise>
 <div style="float:right; margin-right:70px;">
-<iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D${fbClientID}&amp;width=292&amp;colorscheme=light&amp;connections=0&amp;stream=false&amp;header=false&amp;height=62" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:62px;" allowTransparency="true"></iframe>
+<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D${fbClientID}&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=tahoma&amp;height=62&amp;appId=${fbClientID}" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
 </div>
 <div style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" border="0" /></a></div>
 <div style="clear:both;"></div>
