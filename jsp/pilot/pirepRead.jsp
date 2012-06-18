@@ -13,6 +13,12 @@
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<meta property="og:title" content="<content:airline /> Flight Report - ${pirep.flightCode}" />
+<meta property="og:type" content="game.achievement" />
+<meta property="og:url" content="http://${airlineURL}/pirep.do?id=${pirep.hexID}" />
+<meta property="og:description" content="${desc}" />
+<meta property="og:site_name" content="<content:airline />" />
+<meta property="game:points" content="1" />
 <content:pics />
 <content:js name="common" />
 <content:googleAnalytics eventSupport="true" />
@@ -46,8 +52,7 @@ map.setZoom(12);
 map.panTo(new google.maps.LatLng(lat, lng));
 return true;
 }
-</script>
-</c:if>
+</script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onload="initLinks()">
