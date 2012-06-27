@@ -15,16 +15,16 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.1
  */
 
 public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	
 	private static final Cache<CacheableCollection<LandingStatistics>> _cache =
-		new ExpiringCache<CacheableCollection<LandingStatistics>>(64, 3600);
+		new ExpiringCache<CacheableCollection<LandingStatistics>>(64, 1800);
 	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache =
-		new ExpiringCache<CacheableCollection<FlightStatsEntry>>(16, 1800);
+		new ExpiringCache<CacheableCollection<FlightStatsEntry>>(16, 600);
 	
 	private int _dayFilter;
 
