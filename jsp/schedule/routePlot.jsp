@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <map:xhtml>
 <head>
 <title><content:airline /> Route Plotter</title>
@@ -42,6 +43,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
+<c:set var="emptyList" value="${fn:emptyList()}" scope="page" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -52,11 +54,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft</td>
- <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="" onChange="void updateRoute(true)" /></td>
+ <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="${flight.equipmentType}" onChange="void updateRoute(true)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, true)" />
+ <td class="data"><el:combo name="airportD" className="req" size="1" idx="*" options="${airportsD}" firstEntry="-" value="${flight.airportD}" onChange="void updateRoute(true, true)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
 </tr>
@@ -66,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true)" />
+ <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${flight.airportA}" onChange="void updateRoute(true)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
 </tr>
 <tr id="wxAr" style="display:none;">
@@ -151,10 +153,16 @@ enableObject(f.routes, false);
 enableElement('SearchButton', false);
 
 // Load the airports
+<c:choose>
+<c:when test="${empty flight}">
 document.doICAO = ${useICAO};
 updateAirports(f.airportD, 'airline=all', ${useICAO}, getValue(f.airportD));
 window.setTimeout("updateAirports(f.airportA, 'airline=all', ${useICAO}, getValue(f.airportA))", 1250);
-
+</c:when>
+<c:otherwise>
+updateRoute(true, false);
+</c:otherwise>
+</c:choose>
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
 var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};

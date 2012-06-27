@@ -46,19 +46,27 @@ public class RoutePlanService extends WebService {
 			alt = "35000";
 
 		// Validate the airports
+		String simVersion = ctx.getParameter("simVersion");
 		if (aD == null)
 			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), false);
 		else if (aA == null)
 			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
+		else if (StringUtils.isEmpty(simVersion))
+			throw error(SC_BAD_REQUEST, "Invalid Simulator", false);
 
 		// Get the Flight Plan generator
 		FlightPlanGenerator fpgen = null;
-		if ("FSX".equals(ctx.getParameter("simVersion")))
-			fpgen = new FS9Generator();
-		else if ("XP9".equals(ctx.getParameter("simVersion")))
-			fpgen = new XP9Generator();
-		else
-			fpgen = new FS9Generator();
+		switch (simVersion.toUpperCase()) {
+			case "XP9":
+				fpgen = new XP9Generator();
+				break;
+		
+			case "FS9":
+			case "FSX":
+			case "P3D":
+			default:
+				fpgen = new FS9Generator();
+		}
 
 		// Update the flight plan
 		fpgen.setAirports(aD, aA);

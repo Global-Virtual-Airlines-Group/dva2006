@@ -25,6 +25,13 @@
 <div class="updateHdr">Flight Assignment Created</div>
 <br />
 This <content:airline /> Flight Assigment has been successfully saved in the database.<br />
+<br />
+<fmt:int value="${fn:sizeof(assign.flights)}" /> draft Flight Reports have been pre-populated within
+our database.<br />
+<br />
+<c:forEach var="pirep" items="${assign.flights}">
+<el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd> - <el:cmd url="routeplot" link="${pirep}">Plot Route </el:cmd><br />
+</c:forEach>
 </c:when>
 <c:when test="${isDelete}">
 <div class="updateHdr">Flight Assignment Deleted</div>
