@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -9,12 +9,17 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
 public class MiscFunctions {
 
+	// static class
+	private MiscFunctions() {
+		super();
+	}
+	
 	/**
 	 * A JSP-friendly way of getting the size of a Collection.
 	 * @param c the Collection
@@ -32,6 +37,15 @@ public class MiscFunctions {
 	 */
 	public static int length(Object o) {
 		return (o == null) ? 0 : String.valueOf(o).length();
+	}
+	
+	/**
+	 * A JSP function to return an empty collection.
+	 * @return an empty Collection
+	 * @see Collections#emptyList()
+	 */
+	public static Collection<?> empty() {
+		return Collections.emptyList();
 	}
 	
 	/**

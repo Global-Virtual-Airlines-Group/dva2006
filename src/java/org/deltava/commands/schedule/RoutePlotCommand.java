@@ -2,6 +2,9 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -19,7 +22,7 @@ import org.deltava.util.system.SystemData;
 public class RoutePlotCommand extends AbstractCommand {
 	
 	private static final List<?> SIM_VERSIONS = ComboUtils.fromArray(new String[] {"Flight Simulator X", 
-			"Flight Simulator 2004", "X-Plane 9"}, new String[] {"FSX", "FS9", "XP9"}); 
+			"Flight Simulator 2004", "X-Plane 9", "Prepar3D"}, new String[] {"FSX", "FS9", "XP9", "P3D"}); 
 
 	/**
 	 * Executes the command.
@@ -28,21 +31,35 @@ public class RoutePlotCommand extends AbstractCommand {
 	 */
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-
-		// Set request attributes
-		ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
-		ctx.setAttribute("simVersions", SIM_VERSIONS, REQUEST);
-		ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
-		
 		try {
-			GetAircraft acdao = new GetAircraft(ctx.getConnection());
+			Connection con = ctx.getConnection();
+			
+			// Look for a draft PIREP
+			GetFlightReports frdao = new GetFlightReports(con);
+			FlightReport dfr = frdao.get(ctx.getID());
+			if (dfr != null) {
+				ctx.setAttribute("flight", dfr, REQUEST);
+				ctx.setAttribute("airlines", Collections.singleton(dfr.getAirline()), REQUEST);
+				ctx.setAttribute("airportsD", Collections.singleton(dfr.getAirportD()), REQUEST);
+				ctx.setAttribute("airportsA", Collections.singleton(dfr.getAirportA()), REQUEST);
+			} else {
+				ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
+				ctx.setAttribute("airportsD", Collections.emptyList(), REQUEST);
+				ctx.setAttribute("airportsA", Collections.emptyList(), REQUEST);
+			}
+			
+			// Load aircraft types
+			GetAircraft acdao = new GetAircraft(con);
 			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(SystemData.get("airline.code")), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-
+		
+		// Set request attributes
+		ctx.setAttribute("simVersions", SIM_VERSIONS, REQUEST);
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/routePlot.jsp");
