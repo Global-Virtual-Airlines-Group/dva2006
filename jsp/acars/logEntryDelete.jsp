@@ -26,8 +26,6 @@
 <br />
 The ACARS log entry for Flight ID <fmt:int value="${info.ID}" /> has been successfully removed from 
 the database. All Position reports for this Flight have also been removed.<br />
-<br />
-To return to the list of empty ACARS Flight Log entries, <el:cmd url="acarsempty" linkID="info" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${pirep}">
 <div class="updateHdr">Cannot remove ACARS Flight Log Entry</div>
@@ -50,8 +48,6 @@ The ACARS Connection log entries for Connections <fmt:list value="${skippedIDs}"
 associated Flight Information entries and therefore cannot be removed from the ACARS log database. 
 The Flight Information log entries must be removed first.<br />
 </c:if>
-<br />
-To return to the list of empty ACARS Connection Log entries, <el:cmd url="acarsempty" linkID="con" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${!empty info && !infoDelete}">
 To view this flight's ACARS log entry, <el:cmd url="acarsinfo" link="${info}" className="sec bld">Click Here</el:cmd>.<br />
