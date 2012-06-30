@@ -2025,12 +2025,6 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<command id="acarsempty">
-		<name>ACARS Empty Log Entries</name>
-		<class>org.deltava.commands.acars.EmptyLogEntriesCommand</class>
-		<roles>Admin</roles>
-	</command>
-
 	<command id="acarserrors">
 		<name>ACARS Error Reports</name>
 		<class>org.deltava.commands.acars.ErrorLogCommand</class>
