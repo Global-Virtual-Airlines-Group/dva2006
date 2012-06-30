@@ -30,6 +30,13 @@ setSubmit();
 disableButton('SortButton');
 return true;
 }
+
+function setViewType(idx)
+{
+var f = document.forms[0];	
+f.viewType.selectedIndex = idx;
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -46,8 +53,8 @@ return true;
 <tr class="title">
  <td colspan="2" class="left">ACARS CLIENT ERROR LOGS</td>
  <td colspan="4" class="right">FILTER BY <el:combo name="viewType" idx="*" size="1" firstEntry="-" options="${filterOpts}" value="${param.viewType}" onChange="void switchType(this)" />
- BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" />
- USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" />
+ BUILD <el:combo name="build" idx="*" size="1" firstEntry="-" options="${clientBuilds}" value="${param.build}" onChange="void setViewType(3)" />
+ USER <el:combo name="author" idx="*" size="1" firstEntry="-" options="${authors}" value="${param.author}" onChange="void setViewType(2)" />
  <el:button ID="SortButton" type="submit" label="GO" /></td>
 </tr>
 
@@ -74,6 +81,9 @@ return true;
 <c:choose>
 <c:when test="${err.FSVersion == 2006}">
  <td class="small">FSX</td>
+</c:when>
+<c:when test="${err.FSVersion == 2008}">
+ <td class="small">Prepar3D</td>
 </c:when>
 <c:when test="${err.FSVersion > 0}">
  <td class="small">FS${err.FSVersion}</td>
