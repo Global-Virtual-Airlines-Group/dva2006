@@ -1,7 +1,7 @@
-// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
-import java.util.*;
+import java.util.Collections;
 
 import org.deltava.beans.schedule.Airport;
 
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.2
  */
 
@@ -40,13 +40,14 @@ public class RoutePlotCommand extends AbstractCommand {
 		Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
 		ctx.setAttribute("airportD", aD, REQUEST);
 		ctx.setAttribute("airportA", aA, REQUEST);
-		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		
 		// Load the airlines
 		if ((aD != null) && (aA != null)) {
+			ctx.setAttribute("airportsD", Collections.singleton(aD), REQUEST);
+			ctx.setAttribute("airportsA", Collections.singleton(aA), REQUEST);
 			try {
 				GetSchedule sdao = new GetSchedule(ctx.getConnection());
-				ctx.setAttribute("airlnes", sdao.getAirlines(aD, aA), REQUEST);
+				ctx.setAttribute("airlines", sdao.getAirlines(aD, aA), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
