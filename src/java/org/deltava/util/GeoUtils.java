@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -150,6 +150,17 @@ public class GeoUtils {
 			degrees += amt;
 
 		return degrees;
+	}
+	
+	/**
+	 * Calculates the delta between two headings.
+	 * @param hdg1 the first heading in degrees
+	 * @param hdg2 the second heading in degrees
+	 * @return the delta in degrees
+	 */
+	public static double delta(double hdg1, double hdg2) {
+		double delta = Math.abs(normalize(hdg1) - normalize(hdg2));
+		return (delta > 180) ? (360 - delta) : delta;
 	}
 
 	/**
