@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to recalculate takeoff and touchdown points. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.1
  */
 
@@ -59,14 +59,14 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 			
 			// Load the takeoff/touchdown data
 			pirepID = afr.getID();
-			List<ACARSRouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
+			List<? extends RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
 			if (tdEntries.size() > 2) {
 				int ofs = 0;
-				ACARSRouteEntry entry = tdEntries.get(0);
+				ACARSRouteEntry entry = (ACARSRouteEntry) tdEntries.get(0);
 				GeoPosition adPos = new GeoPosition(info.getAirportD());
 				while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
 					ofs++;
-					entry = tdEntries.get(ofs);
+					entry = (ACARSRouteEntry) tdEntries.get(ofs);
 				}
 
 				// Trim out spurious takeoff entries
@@ -74,22 +74,22 @@ public class UpdateTouchdownCommand extends AbstractCommand {
 					tdEntries.subList(0, ofs - 1).clear();
 				if (tdEntries.size() > 2)
 					tdEntries.subList(1, tdEntries.size() - 1).clear();
+			}
 				
-				// Save the entry points
-				if (tdEntries.size() > 0) {
-					afr.setTakeoffLocation(tdEntries.get(0));
-					afr.setTakeoffHeading(tdEntries.get(0).getHeading());
-					if (tdEntries.size() > 1) {
-						afr.setLandingLocation(tdEntries.get(1));
-						afr.setLandingHeading(tdEntries.get(1).getHeading());
-					}
-
-					// Save the flight report
-					SetFlightReport frwdao = new SetFlightReport(con);
-					frwdao.writeACARS(afr, SystemData.get("airline.db"));
+			// Save the entry points
+			if (tdEntries.size() > 0) {
+				afr.setTakeoffLocation(tdEntries.get(0));
+				afr.setTakeoffHeading(tdEntries.get(0).getHeading());
+				if (tdEntries.size() > 1) {
+					afr.setLandingLocation(tdEntries.get(1));
+					afr.setLandingHeading(tdEntries.get(1).getHeading());
 				}
+
+				// Save the flight report
+				SetFlightReport frwdao = new SetFlightReport(con);
+				frwdao.writeACARS(afr, SystemData.get("airline.db"));
 			} else
-				log.warn("Cannot updated takeoff/touchdown - " + tdEntries.size() + " touchdown points");
+				log.warn("Cannot update takeoff/touchdown - " + tdEntries.size() + " touchdown points");
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
