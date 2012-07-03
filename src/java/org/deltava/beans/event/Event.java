@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -95,7 +95,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     /**
      * Null-safe helper method to compare dates.
      */
-    private boolean before(Date d2) {
+    private static boolean before(Date d2) {
     	long now = System.currentTimeMillis();    	
     	return (d2 == null) ? true : (now < d2.getTime());
     }

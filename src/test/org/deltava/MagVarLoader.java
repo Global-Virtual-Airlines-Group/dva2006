@@ -56,17 +56,18 @@ public class MagVarLoader extends BGLLoaderTestCase {
 			log.info("Processing " + xmls[x].getName());
 			Document doc = null;
 			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(xmls[x])));
-				StringWriter xw = new StringWriter();
-				PrintWriter pw = new PrintWriter(xw);
-				while (br.ready()) {
-					String data = br.readLine();
-					data = data.replace('&', '_');
-					pw.println(data);
-				}
+				try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(xmls[x])))) {
+					StringWriter xw = new StringWriter();
+					PrintWriter pw = new PrintWriter(xw);
+					while (br.ready()) {
+						String data = br.readLine();
+						data = data.replace('&', '_');
+						pw.println(data);
+					}
 				
-				doc = loadXML(new StringReader(xw.toString()));
-				assertNotNull(doc);
+					doc = loadXML(new StringReader(xw.toString()));
+					assertNotNull(doc);
+				}
 			} catch (Exception e) {
 				log.info("Cannot load " + xmls[x].getName());
 				continue;

@@ -1,33 +1,29 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 /**
  * A class to support form editing/saving web site commands.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
 public abstract class AbstractFormCommand extends AbstractCommand {
 
-    public static final int READ = 0;
-    public static final int EDIT = 1;
-    public static final int SAVE = 2;
-    
-    public static final String[] OPS = {"read", "edit", "save"};
-    
+	private enum Operation {
+		READ, EDIT, SAVE
+	}
+	
     /**
      * Returns the operation we wish to perform on the bean.
      */
-    private int getOperation(CommandContext ctx) {
-        String opName = (String) ctx.getCmdParameter(Command.OPERATION, "read");
-        for (int x = 0; x < AbstractFormCommand.OPS.length; x++) {
-            if (AbstractFormCommand.OPS[x].equalsIgnoreCase(opName))
-                return x;
+    private static Operation getOperation(CommandContext ctx) {
+        try {
+        	String opName = (String) ctx.getCmdParameter(Command.OPERATION, "read");
+        	return Operation.valueOf(opName.toUpperCase());
+        } catch (Exception e) {
+        	return Operation.READ;	
         }
-        
-        // default is read
-        return READ;
     }
     
     /**
@@ -37,18 +33,17 @@ public abstract class AbstractFormCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occurs
      */
     public final void execute(CommandContext ctx) throws CommandException {
-        int cmdOp = getOperation(ctx);
-        switch (cmdOp) {
-        		case SAVE :
-        		    execSave(ctx);
-        		    break;
+        switch (getOperation(ctx)) {
+        	case SAVE :
+        	    execSave(ctx);
+        	    break;
         		    
-        		case EDIT:
-        		    execEdit(ctx);
-        		    break;
+        	case EDIT:
+        	    execEdit(ctx);
+        	    break;
         		    
-        		default :
-        		    execRead(ctx);
+        	default :
+        	    execRead(ctx);
         }
     }
     

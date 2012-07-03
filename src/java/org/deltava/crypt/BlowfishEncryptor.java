@@ -1,4 +1,4 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.crypt;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -6,14 +6,14 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * A class to encrypt/decrypt data using Blowfish.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
 public final class BlowfishEncryptor extends SecretKeyEncryptor {
 
     // This helper method ensure the key is 8 bytes long
-    private byte[] trimKeySize(byte[] rawKey) {
+    private static byte[] trimKeySize(byte[] rawKey) {
         byte[] result = new byte[8];
         System.arraycopy(rawKey, 0, result, 0, 8);
         return result;

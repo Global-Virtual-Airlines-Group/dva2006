@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A parser for METAR data. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.6
  */
 
@@ -42,7 +42,8 @@ public class MetarParser {
 		StringBuilder rmk = new StringBuilder();
 		
 		StringTokenizer st = new StringTokenizer(data, " ");
-		String token, lastToken = null; 
+		String token = null;
+		//String lastToken = null; 
 		while (st.hasMoreTokens()) {
 			token = st.nextToken();
 			
@@ -109,7 +110,7 @@ public class MetarParser {
 				isRemark = false;
 				boolean minus = (token.charAt(0) == 'M');
 				int pos = minus ? 1 : 0; int pos2;
-				for (pos2 = pos; token.charAt(pos2) != '/'; pos2++);
+				for (pos2 = pos; token.charAt(pos2) != '/'; pos2++) { /* empty */ }
 				result.setTemperature(StringUtils.parse(token.substring(pos, pos2), 0) * (minus ? -1 : 1));
 				
 				minus = (token.charAt(++pos2) == 'M');
@@ -230,7 +231,7 @@ public class MetarParser {
 			} else if (log.isDebugEnabled())
 				log.debug("Unknown METAR token - " + token);
 			
-			lastToken = token;
+			//lastToken = token;
 		}
 		
 		if (rmk.length() > 0)
@@ -271,7 +272,7 @@ public class MetarParser {
 		// Check for gusts
 		if (buf[i] == 'G') {
 			int j;
-			for (j = 1; Character.isDigit(buf[i + j]) && (i + j) < buf.length; j++);
+			for (j = 1; Character.isDigit(buf[i + j]) && (i + j) < buf.length; j++) { /* empty */ }
 			if (j == 3 || j == 4)
 				i += j;
 			else

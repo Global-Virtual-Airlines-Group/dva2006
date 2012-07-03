@@ -17,9 +17,9 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A web site command to manipulate issues.
+ * A Web Site Command to manipulate issues.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -271,17 +271,17 @@ public class IssueCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 	}
 
-	/**
+	/*
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
-	private Collection<Integer> getPilotIDs(Issue i) {
+	private static Collection<Integer> getPilotIDs(Issue i) {
 		Collection<Integer> results = new HashSet<Integer>();
-		results.add(new Integer(i.getAuthorID()));
-		results.add(new Integer(i.getAssignedTo()));
+		results.add(Integer.valueOf(i.getAuthorID()));
+		results.add(Integer.valueOf(i.getAssignedTo()));
 
 		// Add comment authors
 		for (IssueComment ic : i.getComments())
-			results.add(new Integer(ic.getAuthorID()));
+			results.add(Integer.valueOf(ic.getAuthorID()));
 
 		return results;
 	}

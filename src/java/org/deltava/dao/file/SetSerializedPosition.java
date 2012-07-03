@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to serialize ACARS position records.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.1
  */
 
@@ -54,7 +54,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	/*
 	 * Helper method to write an ACARS position entry.
 	 */
-	private void write(ACARSRouteEntry re, DataOutputStream out) throws IOException {
+	private static void write(ACARSRouteEntry re, DataOutputStream out) throws IOException {
 		out.writeDouble(re.getLatitude());
 		out.writeDouble(re.getLongitude());
 		out.writeLong(re.getDate().getTime());
@@ -98,7 +98,7 @@ public class SetSerializedPosition extends WriteableDAO {
 	/*
 	 * Helper method to write an XACARS position entry.
 	 */
-	private void write(XARouteEntry re, DataOutputStream out) throws IOException {
+	private static void write(XARouteEntry re, DataOutputStream out) throws IOException {
 		out.writeDouble(re.getLatitude());
 		out.writeDouble(re.getLongitude());
 		out.writeLong(re.getDate().getTime());

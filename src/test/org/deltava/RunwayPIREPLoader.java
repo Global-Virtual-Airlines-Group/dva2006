@@ -54,19 +54,18 @@ public class RunwayPIREPLoader extends TestCase {
 		super.tearDown();
 	}
 
+	@SuppressWarnings("all")
 	public void testSetRunways() throws Exception {
 		
 		// Load the PIREPs
-		Statement s = _c.createStatement();
-		s.setFetchSize(2000);
-		ResultSet rs = s.executeQuery("SELECT ACARS_ID FROM ACARS_PIREPS WHERE (TAKEOFF_HDG=-1)");
-		
 		Collection<Integer> IDs = new LinkedHashSet<Integer>();
-		while (rs.next())
-			IDs.add(Integer.valueOf(rs.getInt(1)));
-		
-		rs.close();
-		s.close();
+		try (Statement s = _c.createStatement()) {
+			s.setFetchSize(2000);
+			try (ResultSet rs = s.executeQuery("SELECT ACARS_ID FROM ACARS_PIREPS WHERE (TAKEOFF_HDG=-1)")) {
+				while (rs.next())
+					IDs.add(Integer.valueOf(rs.getInt(1)));
+			}
+		}
 		
 		// Build the update statements
 		PreparedStatement tps = _c.prepareStatement("UPDATE ACARS_PIREPS SET TAKEOFF_LAT=?, TAKEOFF_LNG=?,"
@@ -83,24 +82,22 @@ public class RunwayPIREPLoader extends TestCase {
 		int flightsDone = 0;
 		for (Integer id : IDs) {
 			rps.setInt(2, id.intValue());
-			rs = rps.executeQuery();
-			while (rs.next()) {
-				boolean isTakeoff = rs.getBoolean(4);
-				PreparedStatement ps = isTakeoff ? tps : lps;
-				ps.setDouble(1, rs.getDouble(5));
-				ps.setDouble(2, rs.getDouble(6));
-				ps.setInt(3, rs.getInt(7));
-				ps.setInt(4, rs.getInt(1));
-				ps.executeUpdate();
-				flightsDone++;
-				if ((flightsDone % 100) == 0)
-					log.info(flightsDone + " flights updated");
+			try (ResultSet rs = rps.executeQuery()) {
+				while (rs.next()) {
+					boolean isTakeoff = rs.getBoolean(4);
+					PreparedStatement ps = isTakeoff ? tps : lps;
+					ps.setDouble(1, rs.getDouble(5));
+					ps.setDouble(2, rs.getDouble(6));
+					ps.setInt(3, rs.getInt(7));
+					ps.setInt(4, rs.getInt(1));
+					ps.executeUpdate();
+					flightsDone++;
+					if ((flightsDone % 100) == 0)
+						log.info(flightsDone + " flights updated");
+				}
 			}
-			
-			rs.close();
 		}
 		
-		rs.close();
 		rps.close();
 		tps.close();
 		lps.close();

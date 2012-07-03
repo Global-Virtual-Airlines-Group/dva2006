@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -33,12 +33,12 @@ public class EventAssignTask extends Task {
 		super("Event Assignment", EventAssignTask.class);
 	}
 	
-	private boolean hasFlightReports(Connection c, int eventID, UserDataMap udmap) throws DAOException {
+	private static boolean hasFlightReports(Connection c, int eventID, UserDataMap udmap) throws DAOException {
 		
 		// Load the flight reports
 		GetFlightReports frdao = new GetFlightReports(c);
 		Collection<FlightReport> pireps = new ArrayList<FlightReport>();
-		for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = udmap.getTableNames().iterator(); pireps.isEmpty() && i.hasNext(); ) {
 			String tableName = i.next();
 			pireps.addAll(frdao.getByEvent(eventID, tableName));
 		}
@@ -188,7 +188,6 @@ public class EventAssignTask extends Task {
 			ctx.release();
 		}
 
-		// Log completion
 		log.info("Processing Complete");
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we are doing a hire at the same time
@@ -115,6 +116,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Save the notification options
@@ -180,6 +182,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -243,10 +246,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 	}
 
-	/**
+	/*
 	 * Helper method to perform the netmask check.
 	 */
-	private void netmaskCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
+	private static void netmaskCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
 		
 		// Get the user's netblock
 		GetIPLocation ipdao = new GetIPLocation(c);
@@ -290,10 +293,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 		ctx.setAttribute("netmaskUsers", users, REQUEST);
 	}
 
-	/**
+	/*
 	 * Helper method to perform the soundex check.
 	 */
-	private void soundexCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
+	private static void soundexCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
 
 		// Initialize the DAOs
 		GetApplicant dao = new GetApplicant(c);

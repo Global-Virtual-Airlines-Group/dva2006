@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to read from the Linux /proc filesystem.
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -29,21 +29,20 @@ public class GetProcData extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public int getUptime() throws DAOException {
-		try {
-			InputStream is = new FileInputStream("/proc/uptime");
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			String data = br.readLine();
-			if (data == null)
-				throw new IOException("Empty /proc/uptime");
+		try (InputStream is = new FileInputStream("/proc/uptime")) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+				String data = br.readLine();
+				if (data == null)
+					throw new IOException("Empty /proc/uptime");
 			
-			// Get the first entry
-			is.close();
-			if (data.indexOf(' ') != -1)
-				data = data.substring(0, data.indexOf(' '));
-			try {
-				return (int) Math.floor(Double.parseDouble(data));
-			} catch (NumberFormatException nfe) {
-				throw new IOException("Unparseable uptime - " + data);
+				// Get the first entry
+				if (data.indexOf(' ') != -1)
+					data = data.substring(0, data.indexOf(' '));
+				try {
+					return (int) Math.floor(Double.parseDouble(data));
+				} catch (NumberFormatException nfe) {
+					throw new IOException("Unparseable uptime - " + data);
+				}
 			}
 		} catch (IOException ie) {
 			throw new DAOException(ie);
@@ -56,26 +55,26 @@ public class GetProcData extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public List<Double> getLoad() throws DAOException {
-		try {
-			InputStream is = new FileInputStream("/proc/loadavg");
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			String data = br.readLine();
-			if (data == null)
-				throw new IOException("Empty /proc/loadavg");
-			
-			// Split the entries
-			is.close();
+		try (InputStream is = new FileInputStream("/proc/loadavg")) {
 			List<Double> results = new ArrayList<Double>(3);
-			StringTokenizer tkns = new StringTokenizer(data, " ");
-			if (tkns.countTokens() < 3)
-				throw new IOException("Unparseable load average - " + data);
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+				String data = br.readLine();
+				if (data == null)
+					throw new IOException("Empty /proc/loadavg");
 			
-			// Parse the entries
-			for (int x = 0; x < 3; x++) {
-				try {
-					results.add(new Double(Double.parseDouble(tkns.nextToken())));
-				} catch (NumberFormatException nfe) {
-					results.add(new Double(0.0));
+				// Split the entries
+				
+				StringTokenizer tkns = new StringTokenizer(data, " ");
+				if (tkns.countTokens() < 3)
+					throw new IOException("Unparseable load average - " + data);
+			
+				// Parse the entries
+				for (int x = 0; x < 3; x++) {
+					try {
+						results.add(new Double(Double.parseDouble(tkns.nextToken())));
+					} catch (NumberFormatException nfe) {
+						results.add(new Double(0.0));
+					}
 				}
 			}
 			
@@ -91,27 +90,23 @@ public class GetProcData extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public Map<String, Integer> getMemory() throws DAOException {
-		try {
+		try (InputStream is = new FileInputStream("/proc/meminfo")) {
 			Map<String, Integer> results = new LinkedHashMap<String, Integer>();
-			InputStream is = new FileInputStream("/proc/meminfo");
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			
-			// Parse the file
-			String data = br.readLine();
-			while (data != null) {
-				int pos = data.indexOf(':');
-				if ((pos != -1) && data.endsWith(" kB")) {
-					String key = data.substring(0, pos);
-					String rawValue = data.substring(pos + 1, data.lastIndexOf(' '));
-					int value = StringUtils.parse(rawValue.substring(rawValue.lastIndexOf(' ') + 1), 0);
-					results.put(key, Integer.valueOf(value));
-				}
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+				String data = br.readLine();
+				while (data != null) {
+					int pos = data.indexOf(':');
+					if ((pos != -1) && data.endsWith(" kB")) {
+						String key = data.substring(0, pos);
+						String rawValue = data.substring(pos + 1, data.lastIndexOf(' '));
+						int value = StringUtils.parse(rawValue.substring(rawValue.lastIndexOf(' ') + 1), 0);
+						results.put(key, Integer.valueOf(value));
+					}
 				
-				data = br.readLine();
+					data = br.readLine();
+				}
 			}
 			
-			// Close and return
-			is.close();
 			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);

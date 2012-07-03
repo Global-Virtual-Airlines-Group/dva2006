@@ -64,14 +64,13 @@ public class EarthMapLinkService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 	
 	/**
 	 * Helper method to generate the Url element.
 	 */
-	private Element createLink(String name, String url, int refreshSeconds, boolean isVisible) {
+	private static Element createLink(String name, String url, int refreshSeconds, boolean isVisible) {
 		Element le = new Element("NetworkLink");
 		le.addContent(XMLUtils.createElement("name", name));
 		KMLUtils.setVisibility(le, isVisible);

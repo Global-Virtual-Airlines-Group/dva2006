@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -9,9 +9,9 @@ import org.deltava.beans.Pilot;
 /**
  * An access controller for Pilot profile operations performed by users in another
  * airline. This is designed to allow HR staffs in one airline to review the status of
- * a Pilot before a Transfer..
+ * a Pilot before a Transfer.
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -86,14 +86,6 @@ public final class CrossAppPilotAccessControl extends PilotAccessControl {
 	 * @return FALSE
 	 */
 	public boolean getCanChangeStatus() {
-		return false;
-	}
-	
-	/**
-	 * Returns if the Pilot can be suspended/blocked.
-	 * @return FALSE
-	 */
-	public boolean getCanSuspend() {
 		return false;
 	}
 	

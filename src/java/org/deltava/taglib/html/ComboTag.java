@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to support generating HTML combo/list boxes.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class ComboTag extends FormElementTag {
 	/**
 	 * Helper method to check if an option value is selected.
 	 */
-	private boolean checkOption(Object optValue, Object setValue) {
+	private static boolean checkOption(Object optValue, Object setValue) {
 		if ((optValue instanceof ComboAlias) && (setValue instanceof ComboAlias)) {
 			String vAlias = ((ComboAlias) setValue).getComboAlias();
 			ComboAlias ca = (ComboAlias) optValue;

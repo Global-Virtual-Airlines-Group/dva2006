@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to support writing formatted text with URLs and emoticons.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class MessageFormatTag extends TagSupport {
 	/**
 	 * Helper method to generate an emotion IMG tag.
 	 */
-	private String emoticonURL(String name) {
+	private static String emoticonURL(String name) {
 		StringBuilder imgbuf = new StringBuilder("<img src=\"");
 		imgbuf.append(SystemData.get("path.img"));
 		imgbuf.append("/cooler/emoticons/");

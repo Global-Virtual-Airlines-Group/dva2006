@@ -32,7 +32,7 @@ public class TestLoadFactorCalculator extends TestCase {
 	/**
 	 * Convert from 365 to 360.
 	 */
-	private double factor(int daysPerCycle) {
+	private static double factor(int daysPerCycle) {
 		return (2 * Math.PI ) / daysPerCycle;
 	}
 	

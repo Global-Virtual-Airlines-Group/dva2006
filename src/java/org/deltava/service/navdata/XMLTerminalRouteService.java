@@ -76,9 +76,10 @@ public class XMLTerminalRouteService extends DispatchDataService {
 				boolean isNewAirport = !tr.getICAO().equals(lastAirport);
 				if (isNewAirport) {
 					if (doc != null) {
-						PrintWriter pw = new PrintWriter(zout);
-						pw.println(XMLUtils.format(doc, "UTF-8"));
-						pw.flush();
+						try (PrintWriter pw = new PrintWriter(zout)) {
+							pw.println(XMLUtils.format(doc, "UTF-8"));
+							pw.flush();
+						}
 					}
 					
 					lastAirport = tr.getICAO();
@@ -118,9 +119,10 @@ public class XMLTerminalRouteService extends DispatchDataService {
 			
 			// Write the last entry
 			if (doc != null) {
-				PrintWriter pw = new PrintWriter(zout);
-				pw.println(XMLUtils.format(doc, "UTF-8"));
-				pw.flush();
+				try (PrintWriter pw = new PrintWriter(zout)) {
+					pw.println(XMLUtils.format(doc, "UTF-8"));
+					pw.flush();
+				}
 			}
 			
 			// Close the file and add to the cache

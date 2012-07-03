@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A comparator for sorting Pilot objects.
  * @author Luke
- * @version 3.3
+ * @version 4.2
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class PilotComparator extends PersonComparator<Pilot> {
         setComparisonType(comparisonType);
     }
     
-    private int comparePilotCodes(int pc1, int pc2) {
+    private static int comparePilotCodes(int pc1, int pc2) {
         // Handle the fact that unassinged pilots appear later in the list
         if ((pc1 == 0) && (pc2 > 0))
             return 1;

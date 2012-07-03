@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
  * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object. Since
  * this implements {@link SQLAuthenticator}, this behavior can be overriden by providing a JDBC Connection to use.
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the supplied password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 
 		// Ensure we are a Pilot, not a Person
@@ -49,26 +50,19 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients WHERE (UCASE(s_client_name)=?) AND (s_client_password=");
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(?)) AND (i_client_server_id > 0)");
+		sqlBuf.append("(?)) AND (i_client_server_id > 0) LIMIT 1");
 
 		boolean isAuth = false;
 		Connection c = null;
 		try {
 			c = getConnection();
-
-			// Prepare the statement
-			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, p.getPilotCode());
-			ps.setString(2, pwd);
-			ps.setMaxRows(1);
-
-			// Execute the query
-			ResultSet rs = ps.executeQuery();
-			isAuth = rs.next() ? (rs.getInt(1) > 0) : false;
-
-			// Clean up
-			rs.close();
-			ps.close();
+			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, p.getPilotCode());
+				ps.setString(2, pwd);
+				try (ResultSet rs = ps.executeQuery()) {
+					isAuth = rs.next() ? (rs.getInt(1) > 0) : false;
+				}
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
@@ -86,6 +80,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @return TRUE if the user exists, otherwise FALSE
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public boolean contains(Person usr) throws SecurityException {
 
 		// Ensure we are a Pilot, not a Person
@@ -101,18 +96,13 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		boolean hasUser = false;
 		try {
 			c = getConnection();
-
-			// Prepare the statement
-			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, ((Pilot) usr).getPilotCode());
-			ResultSet rs = ps.executeQuery();
-
-			// Count the results
-			hasUser = rs.next() ? (rs.getInt(1) > 0) : false;
-
-			// Clean up after ourselves
-			rs.close();
-			ps.close();
+			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, ((Pilot) usr).getPilotCode());
+				try (ResultSet rs = ps.executeQuery()) {
+					// Count the results
+					hasUser = rs.next() ? (rs.getInt(1) > 0) : false;
+				}
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
@@ -130,6 +120,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the new password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 
 		// Ensure we are a Pilot, not a Person
@@ -154,16 +145,12 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		Connection c = null;
 		try {
 			c = getConnection();
-
-			// Prepare the statement
-			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, pwd);
-			ps.setBoolean(2, true);
-			ps.setString(3, ((Pilot) usr).getPilotCode());
-
-			// Execute the update and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, pwd);
+				ps.setBoolean(2, true);
+				ps.setString(3, ((Pilot) usr).getPilotCode());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
@@ -177,6 +164,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param usr the user bean
 	 * @return TRUE if the User is a Pilot and has access to at least one server, otherwise FALSE
 	 */
+	@Override
 	public boolean accepts(Person usr) {
 		if (!(usr instanceof Pilot))
 			return false;
@@ -187,17 +175,16 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			return false;
 
 		// Check the servers
-		Connection con = null;
+		Connection con = null; boolean isOK = false;
 		try {
 			con = getConnection();
 
 			// Get the DAO and the active server
 			GetTS2Data dao = new GetTS2Data(con);
 			Collection<Server> srvs = dao.getServers(usr.getRoles());
-			for (Iterator<Server> i = srvs.iterator(); i.hasNext();) {
+			for (Iterator<Server> i = srvs.iterator(); !isOK && i.hasNext();) {
 				Server srv = i.next();
-				if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS)))
-					return true;
+				isOK = RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS));
 			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
@@ -205,7 +192,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			closeConnection(con);
 		}
 
-		return false;
+		return isOK;
 	}
 
 	/**
@@ -216,6 +203,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Ensure we are a Pilot, not a Person
@@ -281,13 +269,11 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			wdao.write(usrs);
 
 			// Encrypt the password
-			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setString(1, pwd);
-			ps.setString(2, ((Pilot) usr).getPilotCode());
-
-			// Execute the update and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = con.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, pwd);
+				ps.setString(2, ((Pilot) usr).getPilotCode());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
@@ -298,6 +284,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	/**
 	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
 	 */
+	@Override
 	public void rename(Person usr, String newName) throws SecurityException {
 		log.warn("Rename not supported");
 	}
@@ -307,6 +294,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
+	@Override
 	public void disable(Person usr) throws SecurityException {
 		
 		// Ensure we are a Pilot, not a Person
@@ -323,15 +311,11 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		Connection c = null;
 		try {
 			c = getConnection();
-			
-			// Prepare the statement
-			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setBoolean(1, false);
-			ps.setString(2, ((Pilot) usr).getPilotCode());
-
-			// Execute the update and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
+				ps.setBoolean(1, false);
+				ps.setString(2, ((Pilot) usr).getPilotCode());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
@@ -344,6 +328,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
+	@Override
 	public void remove(Person usr) throws SecurityException {
 
 		// Build the SQL query
@@ -354,14 +339,10 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		Connection c = null;
 		try {
 			c = getConnection();
-
-			// Prepare the statement
-			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, ((Pilot) usr).getPilotCode().toUpperCase());
-
-			// Execute the query and clean up
-			ps.executeUpdate();
-			ps.close();
+			try (PreparedStatement ps = c.prepareStatement(sqlBuf.toString())) {
+				ps.setString(1, ((Pilot) usr).getPilotCode().toUpperCase());
+				ps.executeUpdate();
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
 		} finally {

@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.commands.*;
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search for duplicate Pilots.
  * @author Luke
- * @version 3.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -29,13 +28,14 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command results
 		CommandResult result = ctx.getResult();
 		if (ctx.getParameter("firstName") == null) {
 			ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
-			ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
+			ctx.setAttribute("maxResults", Integer.valueOf(DEFAULT_RESULTS), REQUEST);
 			result.setURL("/jsp/roster/dupeSearch.jsp");
 			result.setSuccess(true);
 			return;
@@ -57,10 +57,7 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 
 		Collection<Pilot> results = new TreeSet<Pilot>(new PilotComparator(PilotComparator.PILOTCODE));
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO and search
-			GetPilot dao = new GetPilot(con);
+			GetPilot dao = new GetPilot(ctx.getConnection());
 			dao.setQueryMax(maxResults);
 			results.addAll(dao.search(SystemData.get("airline.db"), fName1, lName1, null));
 			results.addAll(dao.search(SystemData.get("airline.db"), fName2, lName2, null));
@@ -99,10 +96,10 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 		result.setSuccess(true);
 	}
 
-	/**
+	/*
 	 * Helper method to take a parameter and add LIKE wildcards.
 	 */
-	private String buildParameter(String pValue, boolean exMatch) {
+	private static String buildParameter(String pValue, boolean exMatch) {
 		if (StringUtils.isEmpty(pValue))
 			return null;
 		return exMatch ? pValue : "%" + pValue + "%";
