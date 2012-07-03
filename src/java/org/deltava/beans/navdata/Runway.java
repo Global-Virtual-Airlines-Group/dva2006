@@ -134,6 +134,17 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	public String getComboAlias() {
-		return getCode() + " RW" + getName();
+		StringBuilder buf = new StringBuilder(getCode());
+		buf.append(" RW");
+		buf.append(getName());
+		return buf.toString();
+	}
+	
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		return (o instanceof Runway) && (o.hashCode() == hashCode());
 	}
 }
