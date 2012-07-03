@@ -114,7 +114,7 @@ public class FIRInfoService extends WebService {
 		return false;
 	}
 	
-	private String getID(String code) {
+	private static String getID(String code) {
 		int pos = code.indexOf('_');
 		return (pos != -1) ? code.substring(0, pos) : code;
 	}

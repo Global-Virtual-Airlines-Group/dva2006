@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to fetch authentication data from Facebook via the Graph API. 
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 3.4
  */
 
@@ -46,6 +46,7 @@ public class GetFacebookAuth extends FacebookDAO {
 			InputStream is = getIn();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String rawToken = br.readLine();
+			br.close();
 			is.close();
 			
 			// Parse the token
@@ -98,6 +99,7 @@ public class GetFacebookAuth extends FacebookDAO {
 			InputStream is = getIn();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String rawToken = br.readLine();
+			br.close();
 			is.close();
 			
 			// Parse the token

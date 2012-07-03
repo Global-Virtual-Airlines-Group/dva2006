@@ -21,7 +21,7 @@ public class TestTaskTimes extends TestCase {
 		}
 	}
 
-	private Calendar time(int h, int m) {
+	private static Calendar time(int h, int m) {
 		Calendar c = CalendarUtils.getInstance(null);
 		c.set(Calendar.HOUR_OF_DAY, h);
 		c.set(Calendar.MINUTE, m);

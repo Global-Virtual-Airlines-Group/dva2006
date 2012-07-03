@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public class GetServInfo extends DAO implements CachingDAO {
 		}
 	}
 
-	private Airport getAirport(String airportCode) {
+	private static Airport getAirport(String airportCode) {
 		Airport a = SystemData.getAirport(airportCode);
 		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}

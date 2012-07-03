@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -20,19 +20,20 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search for Pilots.
  * @author Luke
- * @version 2.1
+ * @version 4.2
  * @since 1.0
  */
 
 public class PilotSearchCommand extends AbstractCommand {
 
-	private static final int DEFAULT_RESULTS = 20;
+	private static final int DEFAULT_RESULTS = 25;
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command results
@@ -115,10 +116,8 @@ public class PilotSearchCommand extends AbstractCommand {
 			
 			// Load the pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Pilot> i = results.iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
-				IDs.add(new Integer(p.getID()));
-			}
+			for (Pilot p : results)
+				IDs.add(Integer.valueOf(p.getID()));
 			
 			// Load the user locations
 			udmap = uddao.get(IDs);
@@ -153,10 +152,10 @@ public class PilotSearchCommand extends AbstractCommand {
 		result.setSuccess(true);
 	}
 
-	/**
+	/*
 	 * Helper method to take a parameter and add LIKE wildcards.
 	 */
-	private String buildParameter(String pValue, boolean exMatch) {
+	private static String buildParameter(String pValue, boolean exMatch) {
 		if (StringUtils.isEmpty(pValue))
 			return null;
 

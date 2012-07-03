@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to deserialize ACARS/XACARS position records.  
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.1
  */
 
@@ -49,7 +49,7 @@ public class GetSerializedPosition extends DAO {
 		}
 	}
 	
-	private Collection<ACARSRouteEntry> loadACARS(DataInputStream in) throws IOException {
+	private static Collection<ACARSRouteEntry> loadACARS(DataInputStream in) throws IOException {
 		int size = in.readInt();
 		Collection<ACARSRouteEntry> results = new ArrayList<ACARSRouteEntry>(size);
 		for (int x = 0; x < size; x++) {
@@ -96,7 +96,7 @@ public class GetSerializedPosition extends DAO {
 		return results;
 	}
 	
-	private Collection<XARouteEntry> loadXACARS(DataInputStream in) throws IOException {
+	private static Collection<XARouteEntry> loadXACARS(DataInputStream in) throws IOException {
 		int size = in.readInt();
 		Collection<XARouteEntry> results = new ArrayList<XARouteEntry>(size);
 		for (int x = 0; x < size; x++) {

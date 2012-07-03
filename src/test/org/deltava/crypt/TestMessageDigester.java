@@ -106,6 +106,7 @@ public class TestMessageDigester extends TestCase {
     	assertNotNull(hash);
     	byte[] tData2 = MessageDigester.parse(hash);
     	assertNotNull(tData2);
+    	br.close();
     	
     	// Compare the values
     	assertEquals(tData2.length, tData.length);

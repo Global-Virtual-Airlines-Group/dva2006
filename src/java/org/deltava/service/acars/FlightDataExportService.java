@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -88,7 +88,7 @@ public class FlightDataExportService extends WebService {
 	/**
 	 * Helper method to format an XACARS position entry.
 	 */
-	private String format(XARouteEntry entry) {
+	private static String format(XARouteEntry entry) {
 		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getLatitude(), "##0.0000"));
@@ -118,7 +118,7 @@ public class FlightDataExportService extends WebService {
 	/**
 	 * Helper method to format an ACARS position entry.
 	 */
-	private String format(ACARSRouteEntry entry) {
+	private static String format(ACARSRouteEntry entry) {
 		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getDate(), "MM/dd/yyyy HH:mm:ss"));
 		buf.append(',');
 		buf.append(StringUtils.format(entry.getLatitude(), "##0.0000"));

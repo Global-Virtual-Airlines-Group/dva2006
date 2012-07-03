@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class for viewing ACARS logs.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -50,26 +50,24 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	}
 
 	/**
-	 * Returns a Set of Pilot IDs from the view results.
+	 * Returns a Collection of Pilot IDs from the view results.
 	 * @param viewEntries the view result entries
-	 * @return a Set of Pilot IDs
+	 * @return a Collection of Pilot IDs
 	 */
-	protected Set<Integer> getPilotIDs(Collection<?> viewEntries) {
-		Set<Integer> results = new HashSet<Integer>();
+	protected Collection<Integer> getPilotIDs(Collection<?> viewEntries) {
+		Collection<Integer> results = new HashSet<Integer>();
 		for (Iterator<?> i = viewEntries.iterator(); i.hasNext();) {
 			ACARSLogEntry entry = (ACARSLogEntry) i.next();
-			results.add(new Integer(entry.getPilotID()));
+			results.add(Integer.valueOf(entry.getPilotID()));
 		}
 
 		return results;
 	}
 
-	/**
+	/*
 	 * Validates that a Pilot Code contains a valid database name.
-	 * @param pCode the Pilot Code
-	 * @return TRUE if the Pilot Code starts with a valid database, otherwise FALSE
 	 */
-	private boolean validatePilotCode(String pCode) {
+	private static boolean validatePilotCode(String pCode) {
 		if (pCode == null)
 			return false;
 

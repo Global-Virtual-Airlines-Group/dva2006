@@ -102,6 +102,7 @@ public class LoadHistoric extends TestCase {
 			log.info("Saved " + se);
 		}
 		
+		lr.close();
 		_c.commit();
 	}
 }

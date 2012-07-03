@@ -57,8 +57,7 @@ public abstract class BGLLoaderTestCase extends SceneryLoaderTestCase {
 			
 			// Load the XML
 			Document doc = null;
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(xml)));
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(xml)))) {
 				StringWriter xw = new StringWriter();
 				PrintWriter pw = new PrintWriter(xw);
 				while (br.ready()) {
@@ -66,7 +65,7 @@ public abstract class BGLLoaderTestCase extends SceneryLoaderTestCase {
 					data = data.replace('&', '_');
 					pw.println(data);
 				}
-				
+			
 				doc = loadXML(new StringReader(xw.toString()));
 				assertNotNull(doc);
 			} catch (Exception e) {

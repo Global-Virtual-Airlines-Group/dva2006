@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Airline users on VATSIM/IVAO for ServInfo.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -36,6 +36,7 @@ public class DataService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Pilots and their network IDs
@@ -113,12 +114,12 @@ public class DataService extends WebService {
 		return SC_OK;
 	}
 
-	/**
+	/*
 	 * Helper method to extract airline members from ServInfo data.
 	 */
-	private Collection<Pilot> combineUsers(NetworkInfo info, Map<String, ?> pilots) {
+	private static Collection<Pilot> combineUsers(NetworkInfo info, Map<String, ?> pilots) {
 
-		List<Pilot> results = new ArrayList<Pilot>();
+		Collection<Pilot> results = new ArrayList<Pilot>();
 		for (int x = 0; x < NETWORKS.length; x++) {
 			for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
 				Pilot p = i.next();

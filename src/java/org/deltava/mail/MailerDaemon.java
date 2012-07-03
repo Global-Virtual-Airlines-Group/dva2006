@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
  * A daemon thread to send e-mail messages in the background. SMTP messages are not designed for critical information;
  * they are designed to fail silently on an error.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class MailerDaemon implements Runnable {
 			log.debug("Queued message for " + addr[0]);
 	}
 
-	private void send(Session s, SMTPEnvelope env) {
+	private static void send(Session s, SMTPEnvelope env) {
 		if ((env == null) || (!env.hasRecipients()))
 			return;
 
@@ -103,6 +103,7 @@ public class MailerDaemon implements Runnable {
 	/**
 	 * Executes the Thread.
 	 */
+	@Override
 	public void run() {
 		log.info("Starting");
 

@@ -162,6 +162,7 @@ public class FIRLoader extends TestCase {
 		}
 		
 		// Commit
+		lr.close();
 		_c.commit();
 		ps.close();
 	}
