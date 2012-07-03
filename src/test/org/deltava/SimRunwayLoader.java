@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -18,11 +18,11 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	private static final String JDBC_URL ="jdbc:mysql://polaris.sce.net/common";
 	private Connection _c;
 
-	private static final String SCENERY_ROOT = "E:\\Program Files\\Flight Simulator X\\Scenery";
-	private static final String XML_PATH = "C:\\temp\\bgxml";
+	private static final String SCENERY_ROOT = "D:\\Program Files\\Prepar3D\\Scenery";
+	private static final String XML_PATH = "E:\\temp\\bgxml_p3d";
 	
 	private static final String BGLXML = "data/bglxml/bglxml.exe";
-	private static final int SIM_VERSION = 2006;
+	private static final int SIM_VERSION = 2008;
 	
 	private static final String[] NAMES = {"NORTH", "SOUTH", "EAST", "WEST", "NORTHWEST", "SOUTHEAST", "NORTHEAST", "SOUTHWEST"};
 	private static final String[] CODES = {"N", "S", "E", "W", "NW", "SE", "NE", "SW"};
@@ -45,7 +45,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 	}
@@ -129,7 +129,8 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		ps.close();
 		
 		// Init the prepared statement
-		ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, LENGTH) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, "
+				+ "LENGTH, MAGVAR) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		ps.setInt(3, SIM_VERSION);
 
 		// Load the XML files
@@ -159,7 +160,6 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					
 					// Get the heading
 					float hdg = Float.parseFloat(re.getAttributeValue("heading"));
-					hdg += magVar;
 					
 					// Get the runway length
 					String rawLength = re.getAttributeValue("length");
@@ -219,9 +219,6 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 					double lat = Double.parseDouble(se.getAttributeValue("lat"));
 					double lng = Double.parseDouble(se.getAttributeValue("lon"));
 					float hdg = Float.parseFloat(se.getAttributeValue("heading"));
-					hdg += magVar;
-					if (hdg < 0)
-						hdg += 360;
 					
 					// Get the length
 					Runway r = runways.get(number);
@@ -262,6 +259,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 						ps.setDouble(5, lng);
 						ps.setInt(6, Math.round(hdg));
 						ps.setInt(7, r.getLength());
+						ps.setDouble(8, magVar);
 						ps.addBatch();
 						hasData = true;
 					} else
