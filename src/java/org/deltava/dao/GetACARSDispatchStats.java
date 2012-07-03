@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.2
  */
 
@@ -36,9 +36,8 @@ public class GetACARSDispatchStats extends DAO {
 		try {
 			// Load hours
 			prepareStatement("SELECT SUM(UNIX_TIMESTAMP(ENDDATE)-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS FROM "
-					+ "acars.CONS WHERE (PILOT_ID=?) AND (DISPATCH=?) AND (ENDDATE IS NOT NULL)");
+					+ "acars.CONS WHERE (PILOT_ID=?) AND (ENDDATE IS NOT NULL)");
 			_ps.setInt(1, p.getID());
-			_ps.setBoolean(2, true);
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
 					p.setDispatchHours(rs.getDouble(1));
@@ -69,10 +68,9 @@ public class GetACARSDispatchStats extends DAO {
 	public Collection<DispatchStatistics> getTopDispatchers(DateRange dr) throws DAOException {
 		try {
 			prepareStatement("SELECT PILOT_ID, SUM(UNIX_TIMESTAMP(IFNULL(ENDDATE, NOW()))-UNIX_TIMESTAMP(DATE)) / 3600 AS HRS "
-				+ "FROM acars.CONS WHERE (DISPATCH=?) AND (DATE >= ?) AND (ENDDATE<?) GROUP BY PILOT_ID ORDER BY HRS DESC");
-			_ps.setBoolean(1, true);
-			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
-			_ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
+				+ "FROM acars.CONS WHERE (DATE >= ?) AND (ENDDATE<?) GROUP BY PILOT_ID ORDER BY HRS DESC");
+			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
+			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
 			
 			// Load the Hours
 			Map<Integer, DispatchStatistics> results = new LinkedHashMap<Integer, DispatchStatistics>();

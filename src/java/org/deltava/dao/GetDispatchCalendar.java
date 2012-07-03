@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to read the ACARS Dispatcher service calendar.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.2
  */
 
@@ -33,11 +33,10 @@ public class GetDispatchCalendar extends GetACARSData {
 	public List<ConnectionEntry> getDispatchConnections(DateRange dr) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH FROM acars.CONS C WHERE "
-				+ "(C.DISPATCH=?) AND (C.DATE > ?) AND (C.DATE < ?) ORDER BY C.ID");
-			_ps.setBoolean(1, true);
-			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
-			_ps.setTimestamp(3, createTimestamp(dr.getEndDate()));
+				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C WHERE (C.DATE > ?) AND "
+				+ "(C.DATE < ?) ORDER BY C.ID");
+			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
+			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
 			return executeConnectionInfo();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -52,10 +51,10 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public Collection<FlightInfo> getDispatchedFlights(DispatchConnectionEntry ce) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM "
-					+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN "
-					+ "acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
-					+ "WHERE (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
+			prepareStatementWithoutLimits("SELECT F.*, INET_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
+				+ "FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (FDR.DISPATCHER_ID=?) AND "
+				+ "(F.CREATED >= ?) AND (F.CREATED < DATE_ADD(?, INTERVAL ? MINUTE))");
 			_ps.setInt(1, ce.getPilotID());
 			_ps.setTimestamp(2, createTimestamp(ce.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ce.getEndTime()));
@@ -75,10 +74,9 @@ public class GetDispatchCalendar extends GetACARSData {
 	 */
 	public List<FlightInfo> getDispatchedFlights(int id, DateRange dr) throws DAOException {
 		try {
-			prepareStatement("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID FROM acars.CONS C, "
+			prepareStatement("SELECT F.*, INET_NTOA(F.REMOTE_ADDR),FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
 				+ "acars.FLIGHTS F, acars.FLIGHT_DISPATCHER FDR LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "WHERE (C.ID=F.CON_ID) AND (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND "
-				+ "(F.CREATED < ?)");
+				+ "WHERE (F.ID=FDR.ID) AND (FDR.DISPATCHER_ID=?) AND (F.CREATED >= ?) AND (F.CREATED < ?)");
 			_ps.setInt(1, id);
 			_ps.setTimestamp(2, createTimestamp(dr.getStartDate()));
 			_ps.setTimestamp(3, createTimestamp(dr.getEndDate()));

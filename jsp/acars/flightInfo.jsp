@@ -37,7 +37,11 @@
  <td class="label">Pilot Name</td>
  <td class="data">${pilot.rank.name} <span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
  <td class="label">ACARS Client Build</td>
- <td class="data">Build <fmt:int value="${conInfo.clientBuild}" /></td>
+ <td class="data">Build <fmt:int value="${info.clientBuild}" /><c:if test="${info.beta > 0}"> (Beta ${info.beta})</c:if></td>
+</tr>
+<tr>
+ <td class="label">Remote Address</td>
+ <td class="data" colspan="3">${info.remoteAddr} (${info.remoteHost})</td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
@@ -82,23 +86,6 @@
  <td class="data" colspan="${cspan}"><fmt:int value="${route.ID}" />, used <fmt:int value="${route.useCount}" /> times</td>
 </c:if>
 </c:if>
-<c:if test="${!empty conInfo}">
-<!-- ACARS Connection Information -->
-<tr class="title caps">
- <td colspan="4">ACARS CONNECTION DATA</td>
-</tr>
-<tr>
- <td class="label">Remote Address</td>
- <td class="data" colspan="3">${conInfo.remoteAddr} (${conInfo.remoteHost})</td>
-</tr>
-<tr>
- <td class="label">Connection ID</td>
- <td class="data"><fmt:hex value="${conInfo.ID}" /></td>
- <td class="label">Connected at</td>
- <td class="data"><fmt:date date="${conInfo.startTime}" /></td>
-</tr>
-</c:if>
-
 <c:if test="${!empty pirep}">
 <!-- ACARS PIREP data -->
 <c:set var="cspan" value="3" scope="page" />

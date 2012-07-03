@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -8,13 +8,12 @@ import org.deltava.beans.flight.FDRFlightReport;
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.4
  */
 
 public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 
-	private ConnectionEntry _con;
 	private FlightInfo _flight;
 	private final Collection<P> _positions = new TreeSet<P>(new PositionComparator());
 	
@@ -28,15 +27,6 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 		public int compare(RouteEntry re1, RouteEntry re2) {
 			return re1.getDate().compareTo(re2.getDate());
 		}
-	}
-	
-	/**
-	 * Returns the ACARS connection entry.
-	 * @return the ConnectionEntry bean
-	 * @see OfflineFlight#setConnection(ConnectionEntry)
-	 */
-	public ConnectionEntry getConnection() {
-		return _con;
 	}
 	
 	/**
@@ -82,15 +72,6 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 	 */
 	public String getSTAR() {
 		return _star;
-	}
-	
-	/**
-	 * Updates the Connection entry.
-	 * @param ce a ConnectionEntry bean
-	 * @see OfflineFlight#getConnection()
-	 */
-	public void setConnection(ConnectionEntry ce) {
-		_con = ce;
 	}
 	
 	/**

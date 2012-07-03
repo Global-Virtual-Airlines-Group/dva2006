@@ -44,9 +44,7 @@ public class GetACARSLog extends GetACARSData {
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, COUNT(DISTINCT F.ID), "
-				+ "COUNT(P.FLIGHT_ID) FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) "
-				+ "LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID)");
+				+ "C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD FROM acars.CONS C ");
 
 		// Add the terms
 		if (!terms.isEmpty()) {

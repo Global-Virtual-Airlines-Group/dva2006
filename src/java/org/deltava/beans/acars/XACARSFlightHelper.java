@@ -28,14 +28,8 @@ public final class XACARSFlightHelper {
 	 */
 	public static OfflineFlight<XACARSFlightReport, XARouteEntry> build(XAFlightInfo inf) {
 		
-		// Create the connection entry
-		ConnectionEntry ce = new ConnectionEntry(System.currentTimeMillis());
-		ce.setAuthorID(inf.getAuthorID());
-		ce.setStartTime(inf.getStartTime());
-		ce.setEndTime(inf.getEndTime());
-		
 		// Create the flight entry
-		FlightInfo fi = new FlightInfo(ce.getID());
+		FlightInfo fi = new FlightInfo(0);
 		fi.setFlightCode(inf.getFlightCode());
 		fi.setAirportD(inf.getAirportD());
 		fi.setAirportA(inf.getAirportA());
@@ -97,7 +91,6 @@ public final class XACARSFlightHelper {
 
 		// Create the offline flight
 		OfflineFlight<XACARSFlightReport, XARouteEntry> ofr = new OfflineFlight<XACARSFlightReport, XARouteEntry>();
-		ofr.setConnection(ce);
 		ofr.setInfo(fi);
 		ofr.setFlightReport(xfr);
 		return ofr;

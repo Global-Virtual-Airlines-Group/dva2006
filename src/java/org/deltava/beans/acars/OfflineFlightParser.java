@@ -40,28 +40,6 @@ public final class OfflineFlightParser {
 	}
 	
 	/**
-	 * Helper class to let us override Flight IDs if required without throwing an error.
-	 */
-	public static class OfflineFlightInfo extends FlightInfo {
-		private int _id;
-		
-		OfflineFlightInfo(long conID) {
-			super(conID);
-		}
-		
-		public int getID() {
-			return _id;
-		}
-		
-		public void setID(int newID) {
-			if (newID != 0)
-				validateID(_id, newID);
-			
-			_id = newID;
-		}
-	}
-	
-	/**
 	 * Parses an Offline Flight XML document.
 	 * @param xml the XML to parse
 	 * @return an OfflineFlight bean
@@ -104,19 +82,12 @@ public final class OfflineFlightParser {
 		// Create the resulting bean
 		OfflineFlight<ACARSFlightReport, ACARSRouteEntry> result = new OfflineFlight<ACARSFlightReport, ACARSRouteEntry>();
 		
-		// Build a connection entry
-		ConnectionEntry ce = new ConnectionEntry(new IDGenerator().generate());
-		ce.setStartTime(new Date());
-		ce.setVersion(clientVersion);
-		ce.setClientBuild(clientBuild);
-		ce.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
-		result.setConnection(ce);
-		
 		// Build a flight data entry
-		FlightInfo inf = new OfflineFlightInfo(ce.getID());
 		int flightID = StringUtils.parse(ie.getChildTextTrim("id"), 0);
-		if (flightID > 0)
-			inf.setID(flightID);
+		FlightInfo inf = new FlightInfo(flightID);
+		inf.setVersion(clientVersion);
+		inf.setClientBuild(clientBuild);
+		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
 		inf.setEndTime(StringUtils.parseDate(ie.getChildTextTrim("shutdownTime"), "MM/dd/yyyy HH:mm:ss"));
@@ -198,8 +169,8 @@ public final class OfflineFlightParser {
 		inf.setFlightCode(afr.getFlightCode());
 		afr.setAircraftCode(ie.getChildTextTrim("code"));
 		afr.setFDE(ae.getChildTextTrim("airFile"));
-		afr.setClientBuild(ce.getClientBuild());
-		afr.setBeta(ce.getBeta());
+		afr.setClientBuild(inf.getClientBuild());
+		afr.setBeta(inf.getBeta());
 		
 		// Check if it's a checkride
 		afr.setAttribute(FlightReport.ATTR_CHECKRIDE, Boolean.valueOf(ie.getChildTextTrim("checkRide")).booleanValue());

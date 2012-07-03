@@ -134,14 +134,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 			return;
 		}
 
-		// Add connection fields from the request
-		ConnectionEntry ce = flight.getConnection();
-		ce.setAuthorID(ctx.getUser().getID());
-		ce.setRemoteHost(ctx.getRequest().getRemoteHost());
-		ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-		
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
+		inf.setRemoteHost(ctx.getRequest().getRemoteHost());
+		inf.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		DateTime dt = new DateTime(inf.getEndTime());
 		dt.convertTo(ctx.getUser().getTZ());
 		
@@ -161,7 +157,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 		afr.setDate(dt.getDate());
 		
 		// Get the client version
-		ClientInfo cInfo = new ClientInfo(ce.getVersion(), ce.getClientBuild(), ce.getBeta());
+		ClientInfo cInfo = new ClientInfo(inf.getVersion(), inf.getClientBuild(), inf.getBeta());
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -382,7 +378,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetNavAirway navdao = new GetNavAirway(con);
 			Runway rD = null;
 			if (afr.getTakeoffHeading() > -1) {
-				Runway r = navdao.getBestRunway(inf.getAirportD(), afr.getFSVersion(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
+				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), afr.getFSVersion(), afr.getTakeoffLocation(), afr.getTakeoffHeading());
+				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getTakeoffLocation());
 					rD = new RunwayDistance(r, dist);
@@ -394,7 +391,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 			// Load the arrival runway
 			Runway rA = null;
 			if (afr.getLandingHeading() > -1) {
-				Runway r = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), afr.getLandingLocation(), afr.getLandingHeading());
+				LandingRunways lr = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), afr.getLandingLocation(), afr.getLandingHeading());
+				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, afr.getLandingLocation());
 					rA = new RunwayDistance(r, dist);
@@ -438,7 +436,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 			// Write the connection/info records
 			SetACARSData awdao = new SetACARSData(con);
-			awdao.createConnection(ce);
 			awdao.createFlight(inf);
 			afr.setDatabaseID(DatabaseID.ACARS, inf.getID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());

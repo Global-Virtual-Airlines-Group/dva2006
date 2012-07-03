@@ -14,12 +14,11 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to view all collected ACARS information about a flight.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -42,24 +41,19 @@ public class FlightInfoCommand extends AbstractCommand {
 			if (info == null)
 				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
 
-			// Get the Connection data
-			ConnectionEntry conInfo = dao.getConnection(info.getConnectionID());
-			
 			// Get the user location and database
 			GetUserData uddao = new GetUserData(con);
-			UserData uloc = (conInfo == null) ? null : uddao.get(conInfo.getPilotID());
-			String dbName = (uloc == null) ? SystemData.get("airline.db") : uloc.getDB();
+			UserData uloc = uddao.get(info.getPilotID());
+			if (uloc == null)
+				throw notFoundException("Invalid Pilot ID - " + info.getPilotID());
 
 			// Get the PIREP itself (this too might be null, but one or the other won't be)
 			GetFlightReports prdao = new GetFlightReports(con);
-			FDRFlightReport afr = prdao.getACARS(dbName, info.getID());
+			FDRFlightReport afr = prdao.getACARS(uloc.getDB(), info.getID());
 
-			// Load the Pilot based on the connection/PIREP data
-			int pilotID = (conInfo == null) ? afr.getDatabaseID(DatabaseID.PILOT) : conInfo.getPilotID();
+			// Load the Pilot
 			GetPilot pdao = new GetPilot(con);
-			Pilot usr = pdao.get(pilotID);
-			if (usr == null)
-				throw notFoundException("Invalid Pilot ID - " + pilotID);
+			Pilot usr = pdao.get(uloc);
 			
 			// Load the dispatcher
 			if (info.getDispatcherID() != 0) {
@@ -76,7 +70,6 @@ public class FlightInfoCommand extends AbstractCommand {
 			// Save the data we have loaded
 			ctx.setAttribute("pilot", usr, REQUEST);
 			ctx.setAttribute("pirep", afr, REQUEST);
-			ctx.setAttribute("conInfo", conInfo, REQUEST);
 			ctx.setAttribute("info", info, REQUEST);
 
 			// Get the route data from the DAFIF database

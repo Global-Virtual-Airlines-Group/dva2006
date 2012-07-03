@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to delete ACARS Connection log entries.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -25,13 +25,14 @@ public class ConnectionInfoDeleteCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the connection IDs
       Collection<String> conIDs = ctx.getParameters("conID");
       
-      Set<String> deletedIDs = new HashSet<String>();
-      Set<String> skippedIDs = new HashSet<String>();
+      Collection<String> deletedIDs = new HashSet<String>();
+      Collection<String> skippedIDs = new HashSet<String>();
       try {
          Connection con = ctx.getConnection();
          
@@ -50,14 +51,11 @@ public class ConnectionInfoDeleteCommand extends AbstractCommand {
             ConnectionEntry c = dao.getConnection(id);
             if (c == null)
                skippedIDs.add(StringUtils.formatHex(id));
-            else if (c.getFlightInfoCount() > 0)
-               skippedIDs.add(StringUtils.formatHex(id));
             else
                wdao.deleteConnection(id);
                deletedIDs.add(StringUtils.formatHex(id));
          }
          
-         // Commit the transaction
          ctx.commitTX();
       } catch (DAOException de) {
          ctx.rollbackTX();
