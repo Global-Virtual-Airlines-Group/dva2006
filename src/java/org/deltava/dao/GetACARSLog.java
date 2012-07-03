@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.acars.*;
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -39,8 +39,6 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(C.DATE > ?)");
 		if (criteria.getEndDate() != null)
 			terms.add("(C.DATE < ?)");
-		if (criteria.isDispatch())
-			terms.add("(C.DISPATCH=?)");
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, C.ENDDATE, INET_NTOA(C.REMOTE_ADDR), "
@@ -67,8 +65,6 @@ public class GetACARSLog extends GetACARSData {
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
 			if (criteria.getEndDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
-			if (criteria.isDispatch())
-				_ps.setBoolean(++psOfs, true);
 			
 			return executeConnectionInfo();
 		} catch (SQLException se) {
@@ -148,11 +144,11 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID, C.PILOT_ID "
-				+ "FROM acars.CONS C, acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
-				+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID) WHERE (C.ID=F.CON_ID) ");
+		StringBuilder buf = new StringBuilder("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
+			+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN "
+			+ "acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID)");
 		if (!terms.isEmpty()) {
-			buf.append("AND");
+			buf.append(" WHERE ");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
 				buf.append(i.next());
 				if (i.hasNext())
@@ -178,7 +174,7 @@ public class GetACARSLog extends GetACARSData {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse Message result sets.
 	 */
 	private List<TextMessage> executeMsg() throws SQLException {
