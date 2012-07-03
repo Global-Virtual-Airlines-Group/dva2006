@@ -121,9 +121,9 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			buf.append("AND ((P.ATTR & ?) > 0) ");
 		if (_dayFilter > 0)
 			buf.append("AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
-		buf.append("GROUP BY P.AIRPORT_D, P.AIRPORT_A ");
+		buf.append("GROUP BY P.AIRPORT_D, P.AIRPORT_A HAVING (CNT>?) ");
 		if (noRoutes)
-			buf.append("HAVING (RCNT=0) ");
+			buf.append("AND (RCNT=0) ");
 		buf.append("ORDER BY CNT DESC");
 		
 		try {
@@ -136,6 +136,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				_ps.setInt(++pos, FlightReport.ATTR_ACARS);
 			if (_dayFilter > 0)
 				_ps.setInt(++pos, _dayFilter);	
+			_ps.setInt(++pos, 5);
 			
 			// Execute the query
 			Airline a = SystemData.getAirline(SystemData.get("airline.code"));
