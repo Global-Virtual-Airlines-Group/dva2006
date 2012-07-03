@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract Command class to support Calendar views.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	/**
 	 * Helper method to get the start of the month.
 	 */
-	private Date getStartOfMonth(Date dt) {
+	private static Date getStartOfMonth(Date dt) {
 		Calendar cld = CalendarUtils.getInstance(dt, true);
 		cld.set(Calendar.DAY_OF_MONTH, 1);
 		return cld.getTime();
@@ -56,7 +56,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	/**
 	 * Helper method to get the start of the week.
 	 */
-	private Date getStartOfWeek(Date dt) {
+	private static Date getStartOfWeek(Date dt) {
 		Calendar cld = CalendarUtils.getInstance(dt, true);
 		cld.add(Calendar.DATE, 1 - cld.get(Calendar.DAY_OF_WEEK));
 		return cld.getTime();

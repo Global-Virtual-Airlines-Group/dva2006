@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import java.io.*;
  * directory on the filesystem, and can therefore be preloaded from the filesystem
  * on JVM statrup.  
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 2.2
  */
 
@@ -26,7 +26,7 @@ public class FileSystemCache extends FileCache {
 	/**
 	 * Helper method to move files.
 	 */
-	private void move(File f, File f2) {
+	private static void move(File f, File f2) {
 		int bufferSize = (int) Math.max(65536, f.length());
 		byte[] buf = new byte[bufferSize];
 		try {

@@ -103,8 +103,10 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Get output file
 		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + ".csv");
-		if (of.exists())
+		if (of.exists()) {
+			zip.close();
 			return;
+		}
 		
 		// Create the output file
 		PrintWriter out = new PrintWriter(of);
@@ -176,6 +178,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		}
 
 		// Close the streams
+		zip.close();
 		lr.close();
 		out.close();
 		
@@ -205,6 +208,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		
 		// Load the legs
 		Collection<CSVTokens> tkns = dao.load();
+		zip.close();
 		
 		// Get output file
 		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + "2.csv");

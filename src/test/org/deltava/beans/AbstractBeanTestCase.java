@@ -23,7 +23,7 @@ public abstract class AbstractBeanTestCase extends TestCase {
     }
     
     // Get the name of a get/set method from a property name
-    private String getMethod(String propertyName, boolean isSet) {
+    private static String getMethod(String propertyName, boolean isSet) {
         StringBuffer buf = new StringBuffer(isSet ? "set" : "get");
         buf.append(Character.toUpperCase(propertyName.charAt(0)));
         buf.append(propertyName.substring(1));
@@ -31,7 +31,7 @@ public abstract class AbstractBeanTestCase extends TestCase {
     }
     
     // If the Object is a numeric primitive wrapper, return the result of the static TYPE field
-    private Class<?> getNumericPrimitiveWrapper(Object value) {
+    private static Class<?> getNumericPrimitiveWrapper(Object value) {
         try {
             Field f = value.getClass().getField("TYPE");
             return (Class<?>) f.get(null);

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.Staff;
 /**
  * A Comparator for Staff Profiles.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class StaffComparator extends AbstractComparator<Staff> {
 	/**
 	 * Helper method to compare names.
 	 */
-	private int compareNames(Staff s1, Staff s2) {
+	private static int compareNames(Staff s1, Staff s2) {
 		int tmpResult = s1.getLastName().compareTo(s2.getLastName());
 		return (tmpResult == 0) ? s1.getFirstName().compareTo(s2.getFirstName()) : tmpResult;
 	}

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Help Desk Issues.
  * @author Luke
- * @version 3.7
+ * @version 4.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		boolean sendIssue = false;
@@ -160,6 +161,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		boolean isNew = (ctx.getID() == 0);
 		try {
@@ -235,6 +237,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -277,14 +280,14 @@ public class IssueCommand extends AbstractFormCommand {
 	/**
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
-	private Collection<Integer> getPilotIDs(Issue i) {
+	private static Collection<Integer> getPilotIDs(Issue i) {
 		Collection<Integer> results = new HashSet<Integer>(16);
 
 		// Add creator/assignee and comment authors
-		results.add(new Integer(i.getAuthorID()));
-		results.add(new Integer(i.getAssignedTo()));
+		results.add(Integer.valueOf(i.getAuthorID()));
+		results.add(Integer.valueOf(i.getAssignedTo()));
 		for (IssueComment ic : i.getComments())
-			results.add(new Integer(ic.getAuthorID()));
+			results.add(Integer.valueOf(ic.getAuthorID()));
 
 		return results;
 	}

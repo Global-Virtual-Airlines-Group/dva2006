@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display performance metrics.
  * @author Luke
- * @version 2.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -159,15 +159,15 @@ public class DashboardCommand extends AbstractCommand {
 		result.setSuccess(true);
 	}
 	
-	/**
+	/*
 	 * Helper method to extract database IDs from metrics bean categories.
 	 */
-	private Collection<Integer> getUserIDs(Collection<PerformanceMetrics> metrics) {
+	private static Collection<Integer> getUserIDs(Collection<PerformanceMetrics> metrics) {
 		Collection<Integer> results = new HashSet<Integer>();
 		for (Iterator<PerformanceMetrics> i = metrics.iterator(); i.hasNext(); ) {
 			PerformanceMetrics pm = i.next();
 			try {
-				results.add(new Integer(pm.getName()));
+				results.add(Integer.valueOf(pm.getName()));
 			} catch (NumberFormatException nfe) {
 				// not a number
 			}
@@ -176,14 +176,14 @@ public class DashboardCommand extends AbstractCommand {
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to update Pilot names.
 	 */
-	private void updatePilotNames(Map<Integer, Pilot> users, Collection<PerformanceMetrics> metrics) {
+	private static void updatePilotNames(Map<Integer, Pilot> users, Collection<PerformanceMetrics> metrics) {
 		for (Iterator<PerformanceMetrics> i = metrics.iterator(); i.hasNext(); ) {
 			PerformanceMetrics pm = i.next();
 			try {
-				Pilot usr = users.get(new Integer(pm.getName()));
+				Pilot usr = users.get(Integer.valueOf(pm.getName()));
 				if (usr != null)
 					pm.setName(usr.getName());
 			} catch (NumberFormatException nfe) {

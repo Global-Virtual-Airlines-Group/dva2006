@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
  * crtieria.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -505,7 +505,7 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * @param pilots a Collection of Pilot beans to update
 	 * @param dbName the database name
 	 */
-	protected final void updatePilotCodes(Collection<Pilot> pilots, String dbName) {
+	protected static final void updatePilotCodes(Collection<Pilot> pilots, String dbName) {
 		if (SystemData.get("airline.db").equals(dbName))
 			return;
 		

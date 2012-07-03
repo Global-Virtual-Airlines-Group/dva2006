@@ -58,7 +58,7 @@ public class SingleTile extends AbstractTile implements RasterTile {
 	 * @param r the Raster to check
 	 * @return TRUE if the Raster is empty, otherwise FALSE
 	 */
-	private boolean checkRaster(Raster r) {
+	private static boolean checkRaster(Raster r) {
 		boolean isEmpty = true;
 		
 		// Get the image size

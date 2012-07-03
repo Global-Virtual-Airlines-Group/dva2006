@@ -1,4 +1,4 @@
-// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.lang.reflect.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to store and retrieve message context data.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -145,7 +145,7 @@ public class MessageContext {
     /**
      * Helper method to determine if an object contains a particuar field.
      */
-    private boolean hasField(Object obj, String fieldName) {
+    private static boolean hasField(Object obj, String fieldName) {
         try {
             obj.getClass().getField(fieldName);
             return true;
@@ -157,7 +157,7 @@ public class MessageContext {
     /**
      * Helper method to determine if an object contains a particular method.
      */
-    private boolean hasMethod(Object obj, String methodName) {
+    private static boolean hasMethod(Object obj, String methodName) {
         try {
             obj.getClass().getMethod(methodName, (Class []) null);
             return true;
@@ -169,7 +169,7 @@ public class MessageContext {
     /**
      * Helper method to determine if an object contains a particular property.
      */
-    private boolean hasProperty(Object obj, String propertyName) {
+    private static boolean hasProperty(Object obj, String propertyName) {
     	return hasMethod(obj, StringUtils.getPropertyMethod(propertyName));
     }
     

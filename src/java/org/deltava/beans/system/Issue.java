@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean for tracking development issues.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -120,7 +120,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	/**
 	 * Helper method to validate a property code.
 	 */
-	private void validateCode(int code, String[] names) {
+	private static void validateCode(int code, String[] names) {
 		if ((code < 0) || (code >= names.length))
 			throw new IllegalArgumentException("Property value cannot be negative or >= " + names.length);
 	}

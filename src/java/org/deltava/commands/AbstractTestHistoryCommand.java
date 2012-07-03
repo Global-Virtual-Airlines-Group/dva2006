@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 3.3
+ * @version 4.2
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 	 * @param c the JDBC connection to use
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	protected final TestingHistoryHelper initTestHistory(Person p, Connection c) throws DAOException {
+	protected static final TestingHistoryHelper initTestHistory(Person p, Connection c) throws DAOException {
 
 		// Load the PIREP beans
 		GetFlightReports frdao = new GetFlightReports(c);
