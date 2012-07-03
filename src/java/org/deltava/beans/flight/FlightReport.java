@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.flight;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -617,7 +617,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 * @see FlightReport#getLoadFactor()
 	 */
 	public void setLoadFactor(double lf) {
-		_load = Math.max(0, Math.min(100, lf));
+		_load = Math.max(0, Math.min(1, lf));
 	}
 
 	/**
