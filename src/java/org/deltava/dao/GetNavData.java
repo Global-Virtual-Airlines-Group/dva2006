@@ -4,12 +4,9 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.ICAOAirport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
@@ -24,7 +21,6 @@ import org.deltava.util.system.SystemData;
 
 public class GetNavData extends DAO implements ClearableCachingDAO {
 	
-	private static final Logger log = Logger.getLogger(GetNavData.class);
 	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(5120);
 
 	/**
@@ -243,8 +239,8 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	 * @return a Runway, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Runway getBestRunway(ICAOAirport a, int simVersion, GeoLocation loc, int hdg) throws DAOException {
-		Collection<Runway> results = new LinkedHashSet<Runway>();
+	public LandingRunways getBestRunway(ICAOAirport a, int simVersion, GeoLocation loc, int hdg) throws DAOException {
+		Collection<Runway> results = new HashSet<Runway>();
 		try {
 			if (simVersion > 0) {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
@@ -265,50 +261,23 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 				_ps.close();
 			}
 			
-			if (results.isEmpty()) {
-				prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
-				_ps.setInt(1, NavigationDataBean.RUNWAY);
-				_ps.setString(2, a.getICAO());
-				Collection<NavigationDataBean> r2 = execute();
-				for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
-					NavigationDataBean nd = i.next();
-					if (nd.getType() == NavigationDataBean.RUNWAY) {
-						Runway r = (Runway) nd;
-						r.setHeading((int) (r.getHeading() + a.getMagVar()));
-						results.add(r);
-					}
-				}
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
+			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setString(2, a.getICAO());
+			Collection<NavigationDataBean> r2 = execute();
+			for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
+				NavigationDataBean nd = i.next();
+				if (nd.getType() == NavigationDataBean.RUNWAY)
+					results.add((Runway) nd);
 			}
 		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}
 		
 		// Iterate through the list
-		Runway rwy = null; long lastBrgDiff = 360;
-		for (Iterator<Runway> i = results.iterator(); i.hasNext(); ) {
-			Runway r = i.next();
-				
-			// Calculate the heading difference between us and the runway heading
-			int hdgDiff = Math.abs(r.getHeading() - hdg);
-			if (hdgDiff >= 300)
-				hdgDiff = Math.abs(hdgDiff - 360);
-				
-			// Calculate the bearing difference between our position and the runway heading
-			int brg = (int) Math.round(GeoUtils.course(r, loc));
-			int brgDiff = Math.abs(r.getHeading() - brg);
-			if (brgDiff >= 300)
-				brgDiff = Math.abs(brgDiff - 360);
-				
-			if ((hdgDiff < 45) && (brgDiff < 35)) {
-				log.info("Runway " + r.getName() + " - hdg=" + r.getHeading() + " (" + hdgDiff + "), brg=" +  brg + " (" + brgDiff + ")");
-				if (brgDiff < lastBrgDiff) {
-					rwy = r;
-					lastBrgDiff = brgDiff;
-				}
-			}
-		}
-		
-		return rwy;
+		LandingRunways lr = new LandingRunways(a, loc, hdg);
+		lr.addAll(results);
+		return lr;
 	}
 
 	/**
