@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -20,6 +20,9 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 	
 	private static final Cache<CacheableList<FlightReport>> _cache = 
 		new ExpiringCache<CacheableList<FlightReport>>(16, 1800);
+	
+	private static final double RUNWAY_LDG_ZONE_RATIO = 0.375;
+	private static final int TD_ZONE = 1500;
 	
 	private int _dayFilter;
 
@@ -58,18 +61,24 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PIREPS PR, ACARS_PIREPS APR WHERE "
-				+ "(PR.ID=APR.ID) AND (APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PIREPS PR, ACARS_PIREPS APR, "
+			+ "acars.RWYDATA R WHERE (R.ID=APR.ACARS_ID) AND (R.ISTAKEOFF=?) AND (PR.ID=APR.ID) AND "
+			+ "(APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0) AND "
+			+ "((R.DISTANCE/R.LENGTH) <= ?)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
+		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, ABS(?-CAST(R.DISTANCE AS SIGNED)), PR.DATE DESC");
 
 		try {
+			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setBoolean(++pos, false);
+			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
+			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
 			if (_dayFilter > 0)
-				_ps.setInt(3, _dayFilter);
+				_ps.setInt(++pos, _dayFilter);
+			_ps.setInt(++pos, TD_ZONE);
 
 			// Add to the cache
 			results = new CacheableList<FlightReport>("ALL" + _dayFilter);
@@ -95,18 +104,23 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM STAFF S LEFT JOIN (PIREPS PR, "
-				+ "ACARS_PIREPS APR) ON (PR.PILOT_ID=S.ID) WHERE (PR.ID=APR.ID) AND (APR.CLIENT_BUILD >= ?) "
-				+ "AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
+			+ "ACARS_PIREPS APR, acars.RWYDATA R) ON (PR.PILOT_ID=S.ID) WHERE (PR.ID=APR.ID) AND (R.ID=APR.ACARS_ID) "
+			+ "AND (APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (R.ISTAKEOFF=?) AND (APR.LANDING_VSPEED < 0) "
+			+ "AND ((R.DISTANCE/R.LENGTH) <= ?)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
+		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, ABS(?-CAST(R.DISTANCE AS SIGNED)), PR.DATE DESC");
 
 		try {
+			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
+			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setBoolean(++pos, false);
+			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
 			if (_dayFilter > 0)
-				_ps.setInt(3, _dayFilter);
+				_ps.setInt(++pos, _dayFilter);
+			_ps.setInt(++pos, TD_ZONE);
 
 			// Add to the cache
 			results = new CacheableList<FlightReport>("STAFF" + _dayFilter);
@@ -132,20 +146,25 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			return results;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PIREPS PR LEFT JOIN ACARS_PIREPS APR "
-				+ "ON (PR.ID=APR.ID) WHERE (PR.EQTYPE=?) AND (APR.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND "
-				+ "(APR.LANDING_VSPEED < 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PR.*, NULL, NULL, APR.* FROM PIREPS PR, ACARS_PIREPS APR, "
+			+ "acars.RWYDATA R WHERE (PR.ID=APR.ID) AND (PR.EQTYPE=?) AND (APR.ACARS_ID=R.ID) AND (PR.STATUS=?) "
+			+ "AND (R.ISTAKEOFF=?) AND (APR.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0) AND "
+			+ "((R.DISTANCE/R.LENGTH) <= ?)");
 		if (_dayFilter > 0)
 			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
-		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
+		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, ABS(?-CAST(R.DISTANCE AS SIGNED)), PR.DATE DESC");
 		
 		try {
+			int pos = 0;
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, eqType);
-			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
-			_ps.setInt(3, FlightReport.OK);
+			_ps.setString(++pos, eqType);
+			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setBoolean(++pos, false);
+			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
+			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
 			if (_dayFilter > 0)
-				_ps.setInt(4, _dayFilter);
+				_ps.setInt(++pos, _dayFilter);
+			_ps.setInt(++pos, TD_ZONE);
 			
 			// Add to the cache
 			results = new CacheableList<FlightReport>("EQ" + eqType + "$" + _dayFilter);
@@ -166,8 +185,9 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 	public List<String> getACARSEquipmentTypes(int minLegs) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT P.EQTYPE, COUNT(P.ID) AS CNT FROM PIREPS P, ACARS_PIREPS APR "
-				+ "WHERE (P.ID=APR.ID) AND (P.STATUS=?) AND (APR.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0)");
+		StringBuilder buf = new StringBuilder("SELECT P.EQTYPE, COUNT(P.ID) AS CNT FROM PIREPS P, ACARS_PIREPS APR, "
+			+ "acars.RWYDATA R WHERE (P.ID=APR.ID) AND (APR.ACARS_ID=R.ID) AND (P.STATUS=?) AND (R.ISTAKEOFF=?) "
+			+ "AND (APR.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0) AND ((R.DISTANCE/R.LENGTH) <= ?)");
 		if (_dayFilter > 0)
 			buf.append(" AND (P.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		buf.append(" GROUP BY P.EQTYPE HAVING (CNT >= ?) ORDER BY CNT DESC");
@@ -176,10 +196,11 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 			int pos = 0;
 			prepareStatement(buf.toString());
 			_ps.setInt(++pos, FlightReport.OK);
+			_ps.setBoolean(++pos, false);
 			_ps.setInt(++pos, FlightReport.MIN_ACARS_CLIENT);
+			_ps.setDouble(++pos, RUNWAY_LDG_ZONE_RATIO);
 			if (_dayFilter > 0)
 				_ps.setInt(++pos, _dayFilter);
-			
 			_ps.setInt(++pos, minLegs);
 
 			// Execute the query
