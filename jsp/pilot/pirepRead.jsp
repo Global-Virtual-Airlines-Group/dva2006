@@ -52,6 +52,14 @@ map.setZoom(12);
 map.panTo(new google.maps.LatLng(lat, lng));
 return true;
 }
+<content:filter roles="PIREP,HR,Developer,Operations">
+function showRunwayChoices()
+{
+var URLflags = 'height=310,width=680,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no';
+window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', URLflags);
+return true;
+}
+</content:filter> 
 </script></c:if>
 </head>
 <content:copyright visible="false" />
@@ -319,7 +327,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canSubmit}">
  <el:cmdbutton url="submit" link="${pirep}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
-<c:if test="${access.canApprove && (!scoreCR)}">
+<c:if test="${access.canApprove && !scoreCR}">
  <el:cmdbutton url="dispose" link="${pirep}" op="approve" post="true" key="A" label="APPROVE FLIGHT" />
 </c:if>
 <c:if test="${access.canHold}">
@@ -339,14 +347,18 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" />
 </c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton url="pirep" link="${pirep}" op="edit" label="EDIT REPORT" />
+ <el:cmdbutton url="pirep" link="${pirep}" op="edit" key="E" label="EDIT REPORT" />
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton url="pirepdelete" link="${pirep}" label="DELETE REPORT" />
 <c:if test="${isACARS}">
  <el:cmdbutton url="acarsdelete" link="${pirep}" label="DELETE ACARS DATA" />
-</c:if> 
+</c:if> </c:if>
+<content:filter roles="PIREP,HR,Developer,Operations">
+<c:if test="${isACARS}">
+ <el:button label="RUNWAY CHOICES" key="R" onClick="void showRunwayChoices()" />
 </c:if>
+</content:filter>
 <c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && (assignAccess.canRelease)}">
  <el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" />
 </c:if>
