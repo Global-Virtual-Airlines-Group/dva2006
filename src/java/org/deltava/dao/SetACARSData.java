@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -28,29 +28,6 @@ public class SetACARSData extends DAO {
 	}
 
 	/**
-	 * Writes an ACARS connection entry to the database.
-	 * @param ce the ConnectionEntry bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void createConnection(ConnectionEntry ce) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO acars.CONS (ID, PILOT_ID, DATE, REMOTE_ADDR, REMOTE_HOST, "
-					+ "CLIENT_BUILD, BETA_BUILD, DISPATCH) VALUES (CONV(?,10,16), ?, ?, INET_ATON(?), ?, ?, ?, ?)");
-			_ps.setLong(1, ce.getID());
-			_ps.setInt(2, ce.getPilotID());
-			_ps.setTimestamp(3, createTimestamp(ce.getStartTime()));
-			_ps.setString(4, ce.getRemoteAddr());
-			_ps.setString(5, ce.getRemoteHost());
-			_ps.setInt(6, ce.getClientBuild());
-			_ps.setInt(7, ce.getBeta());
-			_ps.setBoolean(8, ce.getDispatch());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Writes a Flight Information entry to the database.
 	 * @param info the FlightInfo bean
 	 * @throws DAOException if a JDBC error occurs
@@ -60,12 +37,14 @@ public class SetACARSData extends DAO {
 			// Prepare the statement
 			if (info.getID() == 0)
 				prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, "
-					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, ROUTE, REMARKS, FSVERSION, OFFLINE, "
-					+ "PIREP, XACARS, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CONV(?,10,16))");
+					+ "CRUISE_ALT, AIRPORT_D, AIRPORT_A, AIRPORT_L, ROUTE, REMARKS, FSVERSION, OFFLINE, "
+					+ "PIREP, XACARS, REMOTE_HOST, REMOTE_ADDR, CLIENT_BUILD, BETA_BUILD, PILOT_ID) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?)");
 			else
 				prepareStatement("UPDATE acars.FLIGHTS SET FLIGHT_NUM=?, CREATED=?, END_TIME=?, "
-					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, ROUTE=?, REMARKS=?, "
-					+ "FSVERSION=?, OFFLINE=?, PIREP=?, XACARS=?, CON_ID=CONV(?,10,16) WHERE (ID=?)");
+					+ "EQTYPE=?, CRUISE_ALT=?, AIRPORT_D=?, AIRPORT_A=?, AIRPORT_L=?, ROUTE=?, REMARKS=?, "
+					+ "FSVERSION=?, OFFLINE=?, PIREP=?, XACARS=?, REMOTE_HOST=?, REMOTE_ADDR=INET_ATON(?), "
+					+ "CLIENT_BUILD=?, BETA_BUILD=?, PILOT_ID=? WHERE (ID=?)");
 			
 			// Write the flight info record
 			_ps.setString(1, info.getFlightCode());
@@ -75,15 +54,20 @@ public class SetACARSData extends DAO {
 			_ps.setString(5, info.getAltitude());
 			_ps.setString(6, info.getAirportD().getIATA());
 			_ps.setString(7, info.getAirportA().getIATA());
-			_ps.setString(8, info.getRoute());
-			_ps.setString(9, info.getRemarks());
-			_ps.setInt(10, info.getFSVersion());
-			_ps.setBoolean(11, info.getOffline());
-			_ps.setBoolean(12, true);
-			_ps.setBoolean(13, info.isXACARS());
-			_ps.setLong(14, info.getConnectionID());
+			_ps.setString(8, info.getAirportL().getIATA());
+			_ps.setString(9, info.getRoute());
+			_ps.setString(10, info.getRemarks());
+			_ps.setInt(11, info.getFSVersion());
+			_ps.setBoolean(12, info.getOffline());
+			_ps.setBoolean(13, true);
+			_ps.setBoolean(14, info.isXACARS());
+			_ps.setString(15, info.getRemoteHost());
+			_ps.setString(16, info.getRemoteAddr());
+			_ps.setInt(17, info.getClientBuild());
+			_ps.setInt(18, info.getBeta());
+			_ps.setInt(19, info.getPilotID());
 			if (info.getID() != 0)
-				_ps.setInt(15, info.getID());
+				_ps.setInt(20, info.getID());
 			
 			executeUpdate(1);
 
