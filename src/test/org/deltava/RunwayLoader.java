@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.sql.*;
@@ -90,13 +90,13 @@ public class RunwayLoader extends TestCase {
 				continue;
 			
 			// Get the runway data
-			List<ACARSRouteEntry> tdEntries = addao.getTakeoffLanding(info.getID(), info.getArchived());
+			List<? extends RouteEntry> tdEntries = addao.getTakeoffLanding(info.getID(), info.getArchived());
 			if (tdEntries.size() > 2) {
-				int ofs = 0; ACARSRouteEntry entry = tdEntries.get(0);
+				int ofs = 0; ACARSRouteEntry entry = (ACARSRouteEntry) tdEntries.get(0);
 				GeoPosition adPos = new GeoPosition(info.getAirportD());
 				while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
 					ofs++;
-					entry = tdEntries.get(ofs);
+					entry = (ACARSRouteEntry) tdEntries.get(ofs);
 				}
 				
 				// Trim out spurious takeoff entries
@@ -125,7 +125,8 @@ public class RunwayLoader extends TestCase {
 			
 			// Load the runways
 			boolean newData = false;
-			Runway rwyD = navdao.getBestRunway(info.getAirportD(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
+			LandingRunways lrD = navdao.getBestRunway(info.getAirportD(), afr.getFSVersion(), tdEntries.get(0), tdEntries.get(0).getHeading());
+			Runway rwyD = lrD.getBestRunway();
 			if ((rwyD != null) && ((info.getRunwayD() == null) || (!rwyD.getCode().equals(info.getRunwayD().getCode())))) {
 				if (info.getRunwayD() != null)
 					log.warn("For Flight " + info.getID() + " runwayD was " + info.getRunwayD().getCode() + ", now" + rwyD.getCode());
@@ -137,7 +138,8 @@ public class RunwayLoader extends TestCase {
 				}
 			}
 			
-			Runway rwyA = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
+			LandingRunways lrA = navdao.getBestRunway(afr.getAirportA(), afr.getFSVersion(), tdEntries.get(1), tdEntries.get(1).getHeading());
+			Runway rwyA = lrA.getBestRunway();
 			if ((rwyA != null) && ((info.getRunwayA() == null) || (!rwyA.getCode().equals(info.getRunwayA().getCode())))) {
 				if (info.getRunwayA() != null)
 					log.warn("For Flight " + info.getID() + " runwayA was " + info.getRunwayA().getCode() + ", now" + rwyA.getCode());
