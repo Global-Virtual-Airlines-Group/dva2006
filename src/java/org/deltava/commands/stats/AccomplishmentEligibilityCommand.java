@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to check eligibility for particular Accomplishments.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 3.2
  */
 
@@ -97,7 +97,7 @@ public class AccomplishmentEligibilityCommand extends AbstractCommand {
 			
 			// Load the Pilot's dispatch connections
 			GetACARSLog acdao = new GetACARSLog(con);
-			Collection<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID(), true));
+			Collection<ConnectionEntry> cons = acdao.getConnections(new LogSearchCriteria(p.getID()));
 			for (ConnectionEntry ce : cons)
 				helper.add(ce);
 
