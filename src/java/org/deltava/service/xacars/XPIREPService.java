@@ -79,16 +79,16 @@ public class XPIREPService extends XAService {
 			
 			// Convert the flight information to a PIREP
 			OfflineFlight<XACARSFlightReport, XARouteEntry> ofl = XACARSFlightHelper.build(inf);
-			ConnectionEntry ce = ofl.getConnection();
-			ce.setRemoteHost(ctx.getRequest().getRemoteHost());
-			ce.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+			FlightInfo fi = ofl.getInfo();
+			fi.setRemoteHost(ctx.getRequest().getRemoteHost());
+			fi.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 			
 			// Get XACARS version
 			String ver = getProtocolVersion(ctx);
 			int pos = ver.indexOf('.');
-			ce.setClientBuild(StringUtils.parse(ver.substring(0, pos), 1));
-			ce.setBeta(StringUtils.parse(ver.substring(pos + 1), 0));
-			if (ce.getClientBuild() < SystemData.getInt("acars.xacars.protocol.major", 1))
+			fi.setClientBuild(StringUtils.parse(ver.substring(0, pos), 1));
+			fi.setBeta(StringUtils.parse(ver.substring(pos + 1), 0));
+			if (fi.getClientBuild() < SystemData.getInt("acars.xacars.protocol.major", 1))
 				throw new InvalidDataException("Invalid XACARS protocol version - " + ver);
 			
 			// Create comments field
@@ -97,8 +97,8 @@ public class XPIREPService extends XAService {
 			// Check for Draft PIREPs by this Pilot
 			XACARSFlightReport xfr = ofl.getFlightReport();
 			xfr.setRank(usr.getRank());
-			xfr.setMajorVersion(ce.getClientBuild());
-			xfr.setMinorVersion(ce.getBeta());
+			xfr.setMajorVersion(fi.getClientBuild());
+			xfr.setMinorVersion(fi.getBeta());
 			GetFlightReports prdao = new GetFlightReports(con);
 			List<FlightReport> dFlights = prdao.getDraftReports(usr.getID(), xfr.getAirportD(), xfr.getAirportA(), SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
@@ -220,10 +220,10 @@ public class XPIREPService extends XAService {
 				xfr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
 			// Load the departure runway
-			FlightInfo fi = ofl.getInfo();
 			GetNavRoute navdao = new GetNavRoute(con);
 			if (xfr.getTakeoffHeading() > -1) {
-				Runway r = navdao.getBestRunway(inf.getAirportD(), xfr.getFSVersion(), xfr.getTakeoffLocation(), xfr.getTakeoffHeading());
+				LandingRunways lr = navdao.getBestRunway(inf.getAirportD(), xfr.getFSVersion(), xfr.getTakeoffLocation(), xfr.getTakeoffHeading());
+				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, xfr.getTakeoffLocation());
 					fi.setRunwayD(new RunwayDistance(r, dist));
@@ -232,7 +232,8 @@ public class XPIREPService extends XAService {
 
 			// Load the arrival runway
 			if (xfr.getLandingHeading() > -1) {
-				Runway r = navdao.getBestRunway(xfr.getAirportA(), xfr.getFSVersion(), xfr.getLandingLocation(), xfr.getLandingHeading());
+				LandingRunways lr = navdao.getBestRunway(xfr.getAirportA(), xfr.getFSVersion(), xfr.getLandingLocation(), xfr.getLandingHeading());
+				Runway r = lr.getBestRunway();
 				if (r != null) {
 					int dist = GeoUtils.distanceFeet(r, xfr.getLandingLocation());
 					fi.setRunwayA(new RunwayDistance(r, dist));
@@ -269,7 +270,6 @@ public class XPIREPService extends XAService {
 			
 			// Write the ACARS data
 			SetACARSData awdao = new SetACARSData(con);
-			awdao.createConnection(ce);
 			awdao.createFlight(fi);
 			awdao.writeSIDSTAR(fi.getID(), fi.getSID());
 			awdao.writeSIDSTAR(fi.getID(), fi.getSTAR());
