@@ -1,4 +1,4 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -8,16 +8,15 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A bean to store ACARS log search criteria.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 1.0
  */
 
 public class LogSearchCriteria implements java.io.Serializable {
 
 	private int _pilotID;
-	private Date _startDate;
-	private Date _endDate;
-	private boolean _isDispatch;
+	private final Date _startDate;
+	private final Date _endDate;
 	
 	/**
 	 * Creates a new search criteria bean.
@@ -33,12 +32,10 @@ public class LogSearchCriteria implements java.io.Serializable {
 	/**
 	 * Creates a new search criteria bean to load all connections for a user.
 	 * @param pilotID the user's database ID
-	 * @param isDispatch TRUE if dispatch connections only, otherwise FALSE
 	 */
-	public LogSearchCriteria(int pilotID, boolean isDispatch) {
+	public LogSearchCriteria(int pilotID) {
 		this(null, null);
 		_pilotID = pilotID;
-		_isDispatch = isDispatch;
 	}
 
 	/**
@@ -66,22 +63,6 @@ public class LogSearchCriteria implements java.io.Serializable {
 		return _endDate;
 	}
 	
-	/**
-	 * Returns if only Dispatch connections should be included.
-	 * @return TRUE if only Dispatch connections should be included, otherwise FALSE
-	 */
-	public boolean isDispatch() {
-		return _isDispatch;
-	}
-	
-	/**
-	 * Sets whether only Dispatch connections should be included.
-	 * @param isDispatch TRUE if only Dispatch connections should be included, otherwise FALSE
-	 */
-	public void setDispatch(boolean isDispatch) {
-		_isDispatch = isDispatch;
-	}
-
 	/**
 	 * Updates the Pilot ID to search for.
 	 * @param id the Pilot's database ID, or zero
