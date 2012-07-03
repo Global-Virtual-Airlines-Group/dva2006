@@ -10,13 +10,12 @@ import org.deltava.dao.*;
 import org.deltava.dao.ipc.GetACARSPool;
 import org.deltava.taskman.*;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to purge old ACARS log data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -32,6 +31,7 @@ public class ACARSDataPurgeTask extends Task {
 	/**
 	 * Executes the task.
 	 */
+	@Override
 	protected void execute(TaskContext ctx) {
 		log.info("Executing");
 
@@ -41,7 +41,6 @@ public class ACARSDataPurgeTask extends Task {
 
 		// Determine the purge intervals
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
-		int conPurge = SystemData.getInt("log.purge.cons", 48);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -70,26 +69,6 @@ public class ACARSDataPurgeTask extends Task {
 
 			// Purge old takeoffs
 			log.warn("Purged " + pwdao.purgeTakeoffs(flightPurge) + " takeoff/landing entries");
-
-			// Get connections
-			GetACARSPurge dao = new GetACARSPurge(con);
-			Collection<ConnectionEntry> cons = dao.getUnusedConnections(conPurge);
-
-			// Purge the connections
-			int purgeCount = 0;
-			for (ConnectionEntry ce : cons) {
-				if (!ce.getDispatch()) {
-					try {
-						pwdao.deleteConnection(ce.getID());
-						purgeCount++;
-						log.info("Purged Connection " + StringUtils.formatHex(ce.getID()));
-					} catch (DAOException de) {
-						log.error("Error purging Connection " + StringUtils.formatHex(ce.getID()) + " - " + de.getMessage());
-					}
-				}
-			}
-
-			log.info("Purged " + purgeCount + " connection entries");
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 		} finally {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -458,12 +458,10 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					
-					// Get the connection info and the IP address
-					ConnectionEntry conInfo = ardao.getConnection(info.getConnectionID());
-					ctx.setAttribute("conInfo", conInfo, REQUEST);
-					if (ctx.isUserInRole("HR") && (conInfo != null)) {
+					// Get the IP address
+					if (ctx.isUserInRole("HR")) {
 						GetIPLocation ipdao = new GetIPLocation(con);
-						ctx.setAttribute("ipInfo", ipdao.get(conInfo.getRemoteAddr()), REQUEST);
+						ctx.setAttribute("ipInfo", ipdao.get(info.getRemoteAddr()), REQUEST);
 					}
 					
 					// Load the dispatcher if there is one

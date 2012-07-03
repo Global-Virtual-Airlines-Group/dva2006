@@ -22,27 +22,6 @@ public class GetACARSPurge extends GetACARSData {
 	public GetACARSPurge(Connection c) {
 		super(c);
 	}
-
-	/**
-	 * Returns all ACARS connection log entries with no associated Flight Info logs or text messages. A cutoff interval
-	 * is provided to prevent the accidental inclusion of flights still in progress.
-	 * @param cutoff the cutoff interval for connection entries, in hours
-	 * @return a List of ConnectionEntry beans sorted by date
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<ConnectionEntry> getUnusedConnections(int cutoff) throws DAOException {
-		try {
-			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, IFNULL(C.ENDDATE, DATE_ADD(C.DATE, INTERVAL 18 HOUR)) "
-					+ "AS ED, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, C.CLIENT_BUILD, C.BETA_BUILD, C.DISPATCH, "
-					+ "COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM acars.CONS C LEFT JOIN "
-					+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) GROUP BY "
-					+ "C.ID HAVING (ED < DATE_SUB(NOW(), INTERVAL ? HOUR)) AND (FC=0) AND (PC=0)");
-			_ps.setInt(1, cutoff);
-			return executeConnectionInfo();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 	
 	/**
 	 * Returns all Flight Information entries without an associated Flight Report. A cutoff interval is provided to

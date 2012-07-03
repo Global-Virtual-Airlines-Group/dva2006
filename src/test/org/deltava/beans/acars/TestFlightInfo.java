@@ -13,7 +13,6 @@ import org.deltava.beans.schedule.Airport;
 public class TestFlightInfo extends AbstractBeanTestCase {
 
    private FlightInfo _info;
-   private long _conID;
    
    public static Test suite() {
       return new CoverageDecorator(TestFlightInfo.class, new Class[] { FlightInfo.class } );
@@ -21,8 +20,7 @@ public class TestFlightInfo extends AbstractBeanTestCase {
    
    protected void setUp() throws Exception {
       super.setUp();
-      _conID = System.currentTimeMillis();
-      _info = new FlightInfo(1, _conID);
+      _info = new FlightInfo(1);
       setBean(_info);
    }
 
@@ -33,7 +31,6 @@ public class TestFlightInfo extends AbstractBeanTestCase {
 
    public void testProperties() {
       assertEquals(1, _info.getID());
-      assertEquals(_conID, _info.getConnectionID());
       checkProperty("pilotID", Integer.valueOf(1234));
       checkProperty("startTime", new Date());
       checkProperty("endTime", new Date());
@@ -74,7 +71,7 @@ public class TestFlightInfo extends AbstractBeanTestCase {
       long now = System.currentTimeMillis();
       _info.setStartTime(new Date(now));
       
-      FlightInfo i2 = new FlightInfo(2, _conID);
+      FlightInfo i2 = new FlightInfo(2);
       i2.setStartTime(new Date(now + 1));
       assertTrue(_info.getStartTime().before(i2.getStartTime()));
       assertTrue(_info.compareTo(i2) < 0);

@@ -12,13 +12,12 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
-public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair, ViewEntry {
+public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, ViewEntry {
 
-	private long _conID;
 	private int _pilotID;
 	private int _positionCount;
 
@@ -32,10 +31,10 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	private Airport _airportD;
 	private Airport _airportA;
 	private Airport _airportL;
-	
+
 	private Runway _rwyD;
 	private Runway _rwyA;
-	
+
 	private TerminalRoute _sid;
 	private TerminalRoute _star;
 
@@ -50,10 +49,10 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	private boolean _archived;
 	private boolean _isMP;
 	private boolean _isXACARS;
-	
+
 	private int _dispatcherID;
 	private int _routeID;
-	
+
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
 	private Collection<NavigationDataBean> _planData;
@@ -61,33 +60,14 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	private static final int[] FSUIPC_FS_VERSIONS = { 95, 98, 2000, 1002, 1001, 2002, 2004, 2006 };
 
 	/**
-	 * Creates an empty Flight Information record.
-	 * @param conID the connection ID
-	 */
-	public FlightInfo(long conID) {
-		super();
-		setConnectionID(conID);
-	}
-
-	/**
 	 * Creates a new Flight Information record.
 	 * @param id the flight ID
-	 * @param conID the connection ID
 	 * @throws IllegalArgumentException if id or conID are zero or negative
 	 */
-	public FlightInfo(int id, long conID) {
-		this(conID);
-		setID(id);
-	}
-
-	/**
-	 * Returns the flight's ACARS connection ID.
-	 * @return the connection ID
-	 * @see FlightInfo#setConnectionID(long)
-	 * @see FlightInfo#getPilotID()
-	 */
-	public long getConnectionID() {
-		return _conID;
+	public FlightInfo(int id) {
+		super();
+		if (id != 0)
+			setID(id);
 	}
 
 	/**
@@ -95,22 +75,20 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	 * @return the database ID of the pilot flying this flight
 	 * @see FlightInfo#setPilotID(int)
 	 * @see FlightInfo#getDispatcherID()
-	 * @see FlightInfo#getConnectionID()
 	 */
 	public int getPilotID() {
 		return _pilotID;
 	}
-	
+
 	/**
 	 * Returns the flight's dispatcher ID.
 	 * @return the database ID of the dispatcher, or zero if none
 	 * @see FlightInfo#getPilotID()
-	 * @see FlightInfo#getConnectionID()
 	 */
 	public int getDispatcherID() {
 		return _dispatcherID;
 	}
-	
+
 	/**
 	 * Returns the database ID of the Dispatch route used.
 	 * @return the route database ID
@@ -119,22 +97,14 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 		return _routeID;
 	}
 
-	/**
-	 * Returns the flight's start time.
-	 * @return the date/time the flight started
-	 * @see FlightInfo#setStartTime(Date)
-	 * @see FlightInfo#getEndTime()
-	 */
+	public Date getDate() {
+		return _startTime;
+	}
+	
 	public Date getStartTime() {
 		return _startTime;
 	}
 
-	/**
-	 * Returns the flight's end time. This may be null.
-	 * @return the date/time the flight ended
-	 * @see FlightInfo#setEndTime(Date)
-	 * @see FlightInfo#getStartTime()
-	 */
 	public Date getEndTime() {
 		return _endTime;
 	}
@@ -175,7 +145,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public Airport getAirportA() {
 		return _airportA;
 	}
-	
+
 	/**
 	 * Returns the arrival Runway for this flight.
 	 * @return the arrival Runway, or null if unknown
@@ -195,7 +165,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public Airport getAirportD() {
 		return _airportD;
 	}
-	
+
 	/**
 	 * Returns the departure Runway for this flight.
 	 * @return the departure Runway, or null if unknown
@@ -205,7 +175,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public Runway getRunwayD() {
 		return _rwyD;
 	}
-	
+
 	/**
 	 * Returns the divert Airport for this flight.
 	 * @return the alternate Airport bean
@@ -214,7 +184,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public Airport getAirportL() {
 		return _airportL;
 	}
-	
+
 	/**
 	 * Returns the Departure Route for this flight.
 	 * @return the SID TerminalRoute bean
@@ -224,9 +194,9 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public TerminalRoute getSID() {
 		return _sid;
 	}
-	
+
 	/**
-	 * Returns the Arrival Route for this flight. 
+	 * Returns the Arrival Route for this flight.
 	 * @return the STAR TerminalRoute bean
 	 * @see FlightInfo#setSTAR(TerminalRoute)
 	 * @see FlightInfo#getSID()
@@ -234,14 +204,14 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public TerminalRoute getSTAR() {
 		return _star;
 	}
-	
+
 	/**
 	 * Returns the distance between the Airports.
 	 */
 	public int getDistance() {
 		return GeoUtils.distance(_airportD, _airportA);
 	}
-	
+
 	/**
 	 * Returns the filed route for this flight.
 	 * @return the route
@@ -277,7 +247,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public boolean getOffline() {
 		return _offline;
 	}
-	
+
 	/**
 	 * Returns if this flight was flown using ACARS multi-player.
 	 * @return TRUE if multi-player, otherwise FALSE
@@ -344,7 +314,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public Collection<NavigationDataBean> getPlanData() {
 		return _planData;
 	}
-	
+
 	/**
 	 * Returns if this bean contains route data.
 	 * @return TRUE if route data exists within the bean, otherwise FALSE
@@ -364,7 +334,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public boolean hasPlanData() {
 		return !CollectionUtils.isEmpty(_planData);
 	}
-	
+
 	/**
 	 * Returns if runway data for this flight has been loaded.
 	 * @return TRUE if runway data exists, otherwise FALSE
@@ -374,7 +344,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public boolean hasRunwayData() {
 		return (_rwyD != null) || (_rwyA != null);
 	}
-	
+
 	/**
 	 * Returns if this flight has been validated as being in the schedule.
 	 * @return TRUE if the route was validated, otherwise FALSE
@@ -382,7 +352,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public boolean isScheduleValidated() {
 		return _scheduleValidated;
 	}
-	
+
 	/**
 	 * Returns if this flight was planned by a Dispatcher.
 	 * @return TRUE if planned by a Dispatcher, otherwise FALSE
@@ -390,22 +360,13 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public boolean isDispatchPlan() {
 		return _dispatchPlan;
 	}
-	
+
 	/**
 	 * Returns whether this flight was logged using XACARS.
 	 * @return TRUE if using XACARS, otherwise FALSE
 	 */
 	public boolean isXACARS() {
 		return _isXACARS;
-	}
-	
-	/**
-	 * Updates the ACARS Connection ID used for this flight.
-	 * @param id the connection ID
-	 * @see FlightInfo#getConnectionID()
-	 */
-	public void setConnectionID(long id) {
-		_conID = Math.max(0, id);
 	}
 
 	/**
@@ -416,7 +377,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setPilotID(int id) {
 		_pilotID = Math.max(0, id);
 	}
-	
+
 	/**
 	 * Updates the Disaptcher ID for the flight.
 	 * @param id the database ID of the dispatcher, or zero if none
@@ -425,7 +386,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setDispatcherID(int id) {
 		_dispatcherID = Math.max(0, id);
 	}
-	
+
 	/**
 	 * Updates the Dispatch Route ID used in this flight.
 	 * @param id the database ID of the route, or zero if none
@@ -443,7 +404,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setOffline(boolean offline) {
 		_offline = offline;
 	}
-	
+
 	/**
 	 * Updates whether this flight was flown using ACARS multi-player.
 	 * @param isMP TRUE if multi-player, otherwise FALSE
@@ -470,7 +431,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setArchived(boolean archived) {
 		_archived = archived;
 	}
-	
+
 	/**
 	 * Marks this Flight as having a valid flight route.
 	 * @param isOK TRUE if the Flight is valid, otherwise FALSE
@@ -478,7 +439,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setScheduleValidated(boolean isOK) {
 		_scheduleValidated = isOK;
 	}
-	
+
 	/**
 	 * Marks this Flight as being planned by a Dispatcher.
 	 * @param isDP TRUE if planned by a Dispatcher, otherwise FALSE
@@ -516,7 +477,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setAirportA(Airport a) {
 		_airportA = a;
 	}
-	
+
 	/**
 	 * Updates the arrival Runway for this flight.
 	 * @param r a Runway bean
@@ -536,7 +497,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setAirportD(Airport a) {
 		_airportD = a;
 	}
-	
+
 	/**
 	 * Updates the departure Runway for this flight.
 	 * @param r a Runway bean
@@ -546,7 +507,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setRunwayD(Runway r) {
 		_rwyD = r;
 	}
-	
+
 	/**
 	 * Updates the alternate Airport for this flight.
 	 * @param a an Airport bean
@@ -565,7 +526,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setSID(TerminalRoute sid) {
 		_sid = sid;
 	}
-	
+
 	/**
 	 * Updates the Arrival Route used on this flight.
 	 * @param star the STAR TerminalRoute bean
@@ -575,7 +536,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setSTAR(TerminalRoute star) {
 		_star = star;
 	}
-	
+
 	/**
 	 * Updates the filed altitude for this flight.
 	 * @param alt the altitude in feet or as a flight level
@@ -609,7 +570,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 			_fsVersion = FSUIPC_FS_VERSIONS[ver - 1];
 		else
 			_fsVersion = 2004;
-		
+
 		_isXACARS |= (_fsVersion == 100);
 	}
 
@@ -622,7 +583,7 @@ public class FlightInfo extends DatabaseBean implements ACARSLogEntry, RoutePair
 	public void setFlightCode(String code) {
 		_flightCode = code.toUpperCase();
 	}
-	
+
 	/**
 	 * Marks this flight as logged using XACARS.
 	 * @param isXACARS TRUE if logged using XACARS, otherwise FALSE
