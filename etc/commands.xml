@@ -1135,6 +1135,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="rwychoices">
+		<name>Runway Choices</name>
+		<class>org.deltava.commands.pirep.RunwayChoiceCommand</class>
+		<roles>Developer,HR,Operations,PIREP</roles>
+	</command>
+
 	<command id="updrwy">
 		<name>PIREP Update Runway</name>	
 		<class>org.deltava.commands.pirep.UpdateRunwayCommand</class>
