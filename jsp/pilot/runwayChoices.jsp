@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%@ page session="false" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Runway Options - ${pirep.flightCode}</title>
+<content:css name="main" browserSpecific="true" />
+<content:pics />
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<div class="updateHdr">Runway Choices for ${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />)</div>
+<br />
+Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Variation at Airport: 
+<fmt:dec value="${pirep.airportD.magVar}" />&deg;<br />
+<br />
+<c:forEach var="rc" items="${rwysD.runways}">
+<span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading =
+${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
+<fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg;<br />  
+</c:forEach>
+<br />
+<div class="updateHdr">Runway Choices for ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</div>
+<br />
+Landing Heading = <fmt:int value="${pirep.landingHeading}" />&deg;, Magnetic Variation at Airport: 
+<fmt:dec value="${pirep.airportA.magVar}" />&deg;<br />
+<br />
+<c:forEach var="rc" items="${rwysA.runways}">
+<span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading =
+${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
+<fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg;<br />  
+</c:forEach>
+<br />
+<el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br />
+<br />
+<content:copyright />
+</content:region>
+</content:page>
+<content:googleAnalytics />
+</body>
+</html>
