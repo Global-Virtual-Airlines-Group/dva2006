@@ -85,19 +85,16 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		_dayFilter = Math.max(0, days);
 	}
 
-	/**
-	 * Returns cache statistics.
-	 */
 	public CacheInfo getCacheInfo() {
 		CacheInfo result = new CacheInfo(_cache);
 		result.add(_statCache);
 		return result;
 	}
 	
-	/**
+	/*
 	 * Helper method to extract a cache key from a prepared statment.
 	 */
-	private String getCacheKey(String ps) {
+	private static String getCacheKey(String ps) {
 		int ofs = ps.indexOf("SELECT");
 		return (ofs == -1) ? ps : ps.substring(ofs);
 	}
@@ -667,7 +664,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	/**
 	 * Private helper method to return SQL statement that doesn't involve joins on the <i>PILOTS</i> table.
 	 */
-	private String getSQL() {
+	private static String getSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
 				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
 				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OILEGS, "
@@ -678,7 +675,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	/**
 	 * Private helper method to return SQL statement that involves a join on the <i>PILOTS</i> table.
 	 */
-	private String getPilotJoinSQL() {
+	private static String getPilotJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
@@ -690,7 +687,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	/**
 	 * Private helper method to return SQL statement that involves a join on the <i>AIRLINES</i> table.
 	 */
-	private String getAirlineJoinSQL() {
+	private static String getAirlineJoinSQL() {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
@@ -702,7 +699,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	/**
 	 * Private helper method to return SQL statement that involves a join on the <i>AIRPORTS</i> table.
 	 */
-	private String getAirportJoinSQL(String apColumn) {
+	private static String getAirportJoinSQL(String apColumn) {
 		return " AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
 				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OVLEGS, "
