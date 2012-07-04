@@ -144,7 +144,7 @@ public class GetDispatchCalendar extends GetACARSData {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse result sets.
 	 */
 	private List<DispatchScheduleEntry> execute() throws SQLException {
