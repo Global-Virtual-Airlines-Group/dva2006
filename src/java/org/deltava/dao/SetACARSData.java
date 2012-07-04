@@ -54,7 +54,7 @@ public class SetACARSData extends DAO {
 			_ps.setString(5, info.getAltitude());
 			_ps.setString(6, info.getAirportD().getIATA());
 			_ps.setString(7, info.getAirportA().getIATA());
-			_ps.setString(8, info.getAirportL().getIATA());
+			_ps.setString(8, (info.getAirportL() == null) ? null : info.getAirportL().getIATA());
 			_ps.setString(9, info.getRoute());
 			_ps.setString(10, info.getRemarks());
 			_ps.setInt(11, info.getFSVersion());
