@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 2.2
  */
 
@@ -27,18 +27,21 @@ public class RouteSaveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the airports
 		DispatchRoute rp = new DispatchRoute();
 		rp.setAuthorID(ctx.getUser().getID());
-		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		rp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		rp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		rp.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
 		rp.setCruiseAltitude(ctx.getParameter("cruiseAlt"));
 		rp.setRoute(ctx.getParameter("route"));
 		rp.setComments(ctx.getParameter("comments"));
+		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
+		if (rp.getAirline() == null)
+			rp.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
 		
 		// Update the route ID
 		int routeID = StringUtils.parse(ctx.getParameter("routeID"), 0);
