@@ -136,6 +136,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
+		inf.setPilotID(ctx.getUser().getID());
 		inf.setRemoteHost(ctx.getRequest().getRemoteHost());
 		inf.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		DateTime dt = new DateTime(inf.getEndTime());
@@ -152,7 +153,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 		// Add PIREP fields from the request
 		ACARSFlightReport afr = flight.getFlightReport();
-		afr.setDatabaseID(DatabaseID.PILOT, ctx.getUser().getID());
+		afr.setDatabaseID(DatabaseID.PILOT, inf.getPilotID());
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(dt.getDate());
 		

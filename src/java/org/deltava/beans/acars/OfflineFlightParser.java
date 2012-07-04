@@ -99,6 +99,8 @@ public final class OfflineFlightParser {
 		String fsVersion = ie.getChildTextTrim("fs_ver");
 		if ("FSX".equals(fsVersion))
 			fsVersion = "2006";
+		else if ("P3D".equals(fsVersion))
+			fsVersion = "2008";
 		inf.setFSVersion(StringUtils.parse(fsVersion, 2004));
 		inf.setOffline(Boolean.valueOf(ie.getChildTextTrim("offline")).booleanValue());
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
