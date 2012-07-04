@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -23,7 +23,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The Image serving Servlet. This serves all database-contained images.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -34,14 +34,20 @@ public class ImageServlet extends BasicAuthServlet {
 	private static final String CHART_REALM = "\"Approach Charts\"";
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
-	private static final int IMG_CHART = 0;
-	private static final int IMG_GALLERY = 1;
-	private static final int IMG_EXAM = 2;
-	private static final int IMG_EVENT = 3;
-	private static final int IMG_ISSUE = 4;
-
-	private static final String[] IMG_TYPES = { "charts", "gallery", "exam_rsrc", "event", "issue" };
-
+	private enum ImageType {
+		CHART("charts"), GALLERY("gallery"), EXAM("exam_rsrc"), EVENT("event"), ISSUE("issue");
+		
+		private final String _urlPart;
+		
+		ImageType(String urlPart) {
+			_urlPart = urlPart;
+		}
+		
+		public String getURLPart() {
+			return _urlPart;
+		}
+	}
+	
 	/**
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
@@ -54,13 +60,14 @@ public class ImageServlet extends BasicAuthServlet {
 	/**
 	 * A helper method to get the image type from the URL.
 	 */
-	private int getImageType(URLParser up) {
-		for (int x = 0; x < IMG_TYPES.length; x++) {
-			if (up.containsPath(IMG_TYPES[x]))
-				return x;
+	private static ImageType getImageType(URLParser up) {
+		for (int x = 0; x < ImageType.values().length; x++) {
+			ImageType t = ImageType.values()[x];
+			if (up.containsPath(t.getURLPart()))
+				return t;
 		}
 
-		return -1;
+		return null;
 	}
 
 	/**
@@ -74,15 +81,15 @@ public class ImageServlet extends BasicAuthServlet {
 
 		// Parse the URL to figure out what kind of image we want
 		URLParser url = new URLParser(req.getRequestURI());
-		int imgType = getImageType(url);
-		if (imgType == -1) {
+		ImageType imgType = getImageType(url);
+		if (imgType == null) {
 			log.warn("Invalid Image type - " + url.getLastPath());
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
 
 		// If we're loading a chart, make sure we are authenticated
-		if ((imgType == IMG_CHART) || (imgType == IMG_EXAM)) {
+		if ((imgType == ImageType.CHART) || (imgType == ImageType.EXAM)) {
 			Pilot usr = (Pilot) req.getUserPrincipal();
 			if (usr == null)
 				usr = authenticate(req);
@@ -92,8 +99,8 @@ public class ImageServlet extends BasicAuthServlet {
 			boolean fromQ = (referer != null) && referer.contains("/questionnaire.do");
 
 			// Don't challenge if coming from a questionnaire and unauthenticated
-			if ((usr == null) && ((imgType == IMG_CHART) || !fromQ)) {
-				challenge(rsp, (imgType == IMG_CHART) ? CHART_REALM : EXAM_REALM);
+			if ((usr == null) && ((imgType == ImageType.CHART) || !fromQ)) {
+				challenge(rsp, (imgType == ImageType.CHART) ? CHART_REALM : EXAM_REALM);
 				return;
 			}
 		}
@@ -116,7 +123,8 @@ public class ImageServlet extends BasicAuthServlet {
 		ConnectionPool jdbcPool = getConnectionPool();
 
 		byte[] imgBuffer = null;
-		log.debug("Getting " + IMG_TYPES[imgType] + " image ID" + String.valueOf(imgID));
+		if (log.isDebugEnabled())
+			log.debug("Getting " + imgType.name() + " image ID" + String.valueOf(imgID));
 		Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
@@ -124,7 +132,7 @@ public class ImageServlet extends BasicAuthServlet {
 			// Get the retrieve image DAO and execute the right method
 			GetImage dao = new GetImage(c);
 			switch (imgType) {
-				case IMG_CHART:
+				case CHART:
 					GetChart cdao = new GetChart(c);
 					Chart cht = cdao.get(imgID);
 					if (cht == null)
@@ -147,7 +155,7 @@ public class ImageServlet extends BasicAuthServlet {
 					rsp.setIntHeader("max-age", 3600);
 					break;
 
-				case IMG_GALLERY:
+				case GALLERY:
 					// Validate that we can view the image
 					GetGallery gdao = new GetGallery(c);
 					Image img = gdao.getImageData(imgID, url.getLastPath());
@@ -173,7 +181,7 @@ public class ImageServlet extends BasicAuthServlet {
 					rsp.setIntHeader("max-age", 3600);
 					break;
 					
-				case IMG_ISSUE:
+				case ISSUE:
 					// Validate that we can view the issue
 					GetIssue idao = new GetIssue(c);
 					Issue i = idao.get(StringUtils.parse(url.getLastPath(), -1));
@@ -193,13 +201,13 @@ public class ImageServlet extends BasicAuthServlet {
 					rsp.setHeader("Cache-Control", "private");
 					break;
 
-				case IMG_EXAM:
+				case EXAM:
 					imgBuffer = dao.getExamResource(imgID);
 					rsp.setHeader("Cache-Control", "private");
 					rsp.setIntHeader("max-age", 60);
 					break;
 					
-				case IMG_EVENT:
+				case EVENT:
 					imgBuffer = dao.getEventBanner(imgID);
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 3600);
@@ -232,7 +240,7 @@ public class ImageServlet extends BasicAuthServlet {
 		}
 
 		// Check for PDF
-		if (imgType != IMG_ISSUE) {
+		if (imgType != ImageType.ISSUE) {
 			boolean isPDF = (imgBuffer.length > Chart.PDF_MAGIC.length());
 			for (int x = 0; isPDF && (x < Chart.PDF_MAGIC.length()); x++)
 				isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
