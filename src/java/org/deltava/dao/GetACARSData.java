@@ -384,18 +384,14 @@ public class GetACARSData extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to parse Connection result sets.
 	 */
 	protected List<ConnectionEntry> executeConnectionInfo() throws SQLException {
-
-		// Execute the query
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				boolean isDispatch = rs.getBoolean(9);
-				long id = Long.parseLong(rs.getString(1), 16);
-				ConnectionEntry entry = isDispatch ? new DispatchConnectionEntry(id) : new ConnectionEntry(id);
+				ConnectionEntry entry = new DispatchConnectionEntry(Long.parseLong(rs.getString(1), 16));
 				entry.setAuthorID(rs.getInt(2));
 				entry.setStartTime(rs.getTimestamp(3));
 				entry.setEndTime(rs.getTimestamp(4));
