@@ -39,7 +39,7 @@ public class SetACARSArchive extends DAO {
 			
 			// Write serialized data
 			if (positions.size() > 0) {
-				prepareStatementWithoutLimits("INSERT INTO acars.POS_ARCHIVE (ID, CNT, ARCHIVED, DATA) "
+				prepareStatementWithoutLimits("REPLACE INTO acars.POS_ARCHIVE (ID, CNT, ARCHIVED, DATA) "
 					+ "VALUES (?, ?, NOW(), ?)");
 				_ps.setInt(1, flightID);
 				_ps.setInt(2, positions.size());
