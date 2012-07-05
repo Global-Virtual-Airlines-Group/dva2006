@@ -350,7 +350,7 @@ public class GetACARSData extends DAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				FlightInfo info = new FlightInfo(rs.getInt(1));
-				info.setPilotID(rs.getInt(2));
+				info.setAuthorID(rs.getInt(2));
 				info.setStartTime(rs.getTimestamp(3));
 				info.setEndTime(rs.getTimestamp(4));
 				info.setFlightCode(rs.getString(5));

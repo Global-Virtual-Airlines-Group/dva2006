@@ -4,7 +4,7 @@ package org.deltava.commands.acars;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -57,8 +57,11 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	protected Collection<Integer> getPilotIDs(Collection<?> viewEntries) {
 		Collection<Integer> results = new HashSet<Integer>();
 		for (Iterator<?> i = viewEntries.iterator(); i.hasNext();) {
-			ACARSLogEntry entry = (ACARSLogEntry) i.next();
-			results.add(Integer.valueOf(entry.getPilotID()));
+			Object o = i.next();
+			if (o instanceof AuthoredBean) {
+				AuthoredBean entry = (AuthoredBean) o;
+				results.add(Integer.valueOf(entry.getAuthorID()));
+			}
 		}
 
 		return results;

@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class ConnectionEntry extends ACARSLogEntry implements TimeSpan, AuthoredBean {
+public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
 
    private long _id;
    private int _pilotID;
@@ -96,7 +96,6 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan, Authored
     * 0 if the user was never authenticated. If a Pilot bean has been passed in, this will
     * return the Database ID of that bean.
     * @return the database ID
-    * @see ConnectionEntry#setPilotID(int)
     * @see ConnectionEntry#getUser()
     */
    public int getPilotID() {
@@ -249,7 +248,6 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan, Authored
     * Updates the Pilot bean for the user who created this connection.
     * @param usr the Pilot bean
     * @see ConnectionEntry#getUser()
-    * @see ConnectionEntry#setPilotID(int)
     */
    public void setUser(Pilot usr) {
       _usr = usr;
@@ -290,16 +288,12 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan, Authored
     * @see ConnectionEntry#getPilotID()
     * @see ConnectionEntry#setUser(Pilot)
     */
-   public void setPilotID(int id) {
+   public void setAuthorID(int id) {
       if (_usr != null)
          throw new IllegalStateException("User bean already set");
       
       DatabaseBean.validateID(_pilotID, id);
       _pilotID = id;
-   }
-   
-   public void setAuthorID(int id) {
-	   setPilotID(id);
    }
    
    /**

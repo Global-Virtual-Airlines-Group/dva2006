@@ -43,9 +43,9 @@ public class FlightInfoCommand extends AbstractCommand {
 
 			// Get the user location and database
 			GetUserData uddao = new GetUserData(con);
-			UserData uloc = uddao.get(info.getPilotID());
+			UserData uloc = uddao.get(info.getAuthorID());
 			if (uloc == null)
-				throw notFoundException("Invalid Pilot ID - " + info.getPilotID());
+				throw notFoundException("Invalid Pilot ID - " + info.getAuthorID());
 
 			// Get the PIREP itself (this too might be null, but one or the other won't be)
 			GetFlightReports prdao = new GetFlightReports(con);

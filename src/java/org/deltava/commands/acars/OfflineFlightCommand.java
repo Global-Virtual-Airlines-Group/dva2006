@@ -31,7 +31,7 @@ import org.gvagroup.acars.*;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.4
  */
 
@@ -136,7 +136,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 		// Convert the PIREP date into the user's local time zone
 		FlightInfo inf = flight.getInfo();
-		inf.setPilotID(ctx.getUser().getID());
+		inf.setAuthorID(ctx.getUser().getID());
 		inf.setRemoteHost(ctx.getRequest().getRemoteHost());
 		inf.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		DateTime dt = new DateTime(inf.getEndTime());
@@ -153,7 +153,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 		// Add PIREP fields from the request
 		ACARSFlightReport afr = flight.getFlightReport();
-		afr.setDatabaseID(DatabaseID.PILOT, inf.getPilotID());
+		afr.setDatabaseID(DatabaseID.PILOT, inf.getAuthorID());
 		afr.setRank(ctx.getUser().getRank());
 		afr.setDate(dt.getDate());
 		

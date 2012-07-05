@@ -65,7 +65,7 @@ public class SetACARSData extends DAO {
 			_ps.setString(16, info.getRemoteAddr());
 			_ps.setInt(17, info.getClientBuild());
 			_ps.setInt(18, info.getBeta());
-			_ps.setInt(19, info.getPilotID());
+			_ps.setInt(19, info.getAuthorID());
 			if (info.getID() != 0)
 				_ps.setInt(20, info.getID());
 			
