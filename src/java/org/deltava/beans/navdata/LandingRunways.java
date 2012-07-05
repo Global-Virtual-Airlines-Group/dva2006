@@ -68,7 +68,7 @@ public class LandingRunways {
 		}
 		
 		public int compareTo(PossibleRunway pr) {
-			int tmpResult = Double.valueOf(_hdgDiff / 45).compareTo(Double.valueOf(pr._hdgDiff / 45));
+			int tmpResult = Integer.valueOf((int) _hdgDiff / 45).compareTo(Integer.valueOf((int) pr._hdgDiff / 45));
 			return (tmpResult == 0) ? Double.valueOf(_brgDiff).compareTo(Double.valueOf(pr._brgDiff)) : tmpResult;
 		}
 	}
