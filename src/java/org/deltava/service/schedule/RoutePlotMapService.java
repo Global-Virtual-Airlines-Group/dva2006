@@ -199,7 +199,8 @@ public class RoutePlotMapService extends MapPlotService {
 		for (METAR m : wx) {
 			Element e = XMLUtils.createElement("wx", m.getData(), true);
 			e.setAttribute("icao", m.getCode());
-			e.setAttribute("dst", String.valueOf(!m.getCode().equals(aD.getCode())));
+			if (aD != null)
+				e.setAttribute("dst", String.valueOf(!m.getCode().equals(aD.getCode())));
 			re.addContent(e);
 		}
 		
@@ -218,7 +219,7 @@ public class RoutePlotMapService extends MapPlotService {
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw error(SC_CONFLICT, "I/O Error", false);
+			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
 		}
 
 		return SC_OK;
