@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.0
  */
 
@@ -78,10 +78,10 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctx.setTemplate(mtdao.get(crApproved ? "CRPASS" : "CRFAIL"));
 			
-			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted
-			int pirepCount = p.getLegs();
+			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted)
+			/* int pirepCount = p.getLegs();
 			if (crApproved)
-				pirepCount++;
+				pirepCount++; */
 			
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);

@@ -3,7 +3,7 @@ package org.deltava.beans.acars;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 import org.deltava.beans.system.IPAddressInfo;
 
 /**
@@ -13,7 +13,7 @@ import org.deltava.beans.system.IPAddressInfo;
  * @since 1.0
  */
 
-public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersion {
+public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersion, AuthoredBean {
 
 	private IPAddressInfo _addrInfo;
 
@@ -23,12 +23,6 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 
 	private String _remoteHost;
 	private String _remoteAddr;
-
-	/**
-	 * Returns the database ID of the Pilot.
-	 * @return the Pilot's database ID
-	 */
-	public abstract int getPilotID();
 
 	/**
 	 * Returns the date/time of this entry.
