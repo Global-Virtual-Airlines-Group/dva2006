@@ -1,4 +1,4 @@
-// Copyright 2005, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to delete ACARS Flight Info entries.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -62,7 +62,7 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 				if (info == null)
 					skippedIDs.add(StringUtils.formatHex(id));
 				else {
-				   UserData uloc = uddao.get(info.getPilotID());
+				   UserData uloc = uddao.get(info.getAuthorID());
 				   String dbName = (uloc == null) ? SystemData.get("airline.db") : uloc.getDB();
 				   FDRFlightReport afr = frdao.getACARS(dbName, id);
 				   if (afr == null) {

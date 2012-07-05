@@ -70,20 +70,14 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 			setID(id);
 	}
 
-	/**
-	 * Returns the flight's pilot ID.
-	 * @return the database ID of the pilot flying this flight
-	 * @see FlightInfo#setPilotID(int)
-	 * @see FlightInfo#getDispatcherID()
-	 */
-	public int getPilotID() {
+	public int getAuthorID() {
 		return _pilotID;
 	}
 
 	/**
 	 * Returns the flight's dispatcher ID.
 	 * @return the database ID of the dispatcher, or zero if none
-	 * @see FlightInfo#getPilotID()
+	 * @see FlightInfo#getAuthorID()
 	 */
 	public int getDispatcherID() {
 		return _dispatcherID;
@@ -372,9 +366,8 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	/**
 	 * Updates the Pilot ID for the flight.
 	 * @param id the database ID of the pilot flying this flight
-	 * @see FlightInfo#getPilotID()
 	 */
-	public void setPilotID(int id) {
+	public void setAuthorID(int id) {
 		_pilotID = Math.max(0, id);
 	}
 

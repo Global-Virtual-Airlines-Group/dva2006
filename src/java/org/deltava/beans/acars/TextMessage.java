@@ -38,10 +38,6 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
       return _date;
    }
    
-   public Date getStartTime() {
-      return getDate();
-   }
-
    /**
     * Returns the database ID of the message author.
     * @return the database ID
@@ -53,10 +49,6 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
       return _authorID;
    }
    
-   public int getPilotID() {
-      return getAuthorID();
-   }
-
    /**
     * Returns the database ID of the message recipient.
     * @return the database ID, or zero if a public message
@@ -117,6 +109,6 @@ public class TextMessage implements AuthoredBean, Comparable<TextMessage> {
     * Compares two messages by comparing their dates.
     */
    public int compareTo(TextMessage m2) {
-      return _date.compareTo(m2.getStartTime());
+      return _date.compareTo(m2._date);
    }
 }

@@ -86,7 +86,7 @@ public class ACARSPositionPurgeTask extends Task {
 
 				// Validate that the PIREP does exist
 				} else {
-					UserData ud = uddao.get(fInfo.getPilotID());
+					UserData ud = uddao.get(fInfo.getAuthorID());
 					FDRFlightReport afr = frdao.getACARS(ud.getDB(), id);
 					CheckRide cr = exdao.getACARSCheckRide(id);
 					if (afr == null) {

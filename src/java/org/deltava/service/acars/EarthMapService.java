@@ -64,7 +64,7 @@ public class EarthMapService extends GoogleEarthService {
 				Integer flightID = i.next();
 				FlightInfo info = dao.getInfo(flightID.intValue());
 				if (info != null) {
-					userIDs.add(Integer.valueOf(info.getPilotID()));
+					userIDs.add(Integer.valueOf(info.getAuthorID()));
 					Collection<? extends RouteEntry> routeData = dao.getRouteEntries(flightID.intValue(), info.getArchived());
 					info.setRouteData(routeData);
 					if (positions.containsKey(flightID))
@@ -99,7 +99,7 @@ public class EarthMapService extends GoogleEarthService {
 		Collection<Airport> airports = new TreeSet<Airport>();
 		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
 			FlightInfo info = i.next();
-			Pilot usr = pilots.get(new Integer(info.getPilotID()));
+			Pilot usr = pilots.get(Integer.valueOf(info.getAuthorID()));
 			
 			// Increment the line color 
 			colorOfs++;
