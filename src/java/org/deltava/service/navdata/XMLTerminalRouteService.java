@@ -135,7 +135,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 			ctx.getResponse().setIntHeader("max-age", 600);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
-			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", e);
+			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
 		}
 		
 		return SC_OK;
