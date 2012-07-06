@@ -430,12 +430,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
 			
-			// Calculate the average time between the airports
+			// Calculate the average time between the airports and user's networks
 			if (ac.getCanDispose()) {
 				GetSchedule scdao = new GetSchedule(con);
-				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr)), REQUEST);
-				
-				// Display user's networks
+				FlightTime ft = scdao.getFlightTime(fr);
+				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
 			}
 
