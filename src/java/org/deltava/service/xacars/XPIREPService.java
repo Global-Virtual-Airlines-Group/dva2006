@@ -205,12 +205,12 @@ public class XPIREPService extends XAService {
 			xfr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
 			
 			// Check the schedule database and check the route pair
-			int avgHours = sdao.getFlightTime(xfr);
-			if (avgHours == 0)
+			FlightTime avgHours = sdao.getFlightTime(xfr);
+			if (avgHours.getFlightTime() == 0)
 				xfr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else {
-				int minHours = (int) ((avgHours * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
-				int maxHours = (int) ((avgHours * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
+				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
+				int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 				if ((xfr.getLength() < minHours) || (xfr.getLength() > maxHours))
 					xfr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}

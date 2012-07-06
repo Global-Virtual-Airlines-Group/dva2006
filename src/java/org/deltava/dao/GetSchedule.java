@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -183,13 +183,14 @@ public class GetSchedule extends DAO {
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
 	 * @param rp the RoutePair
-	 * @return the average time between the two airports in hours <i>multiplied by 10</i>, or 0 if no flights found
+	 * @return a FlightTime bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getFlightTime(RoutePair rp, String dbName) throws DAOException {
+	public FlightTime getFlightTime(RoutePair rp, String dbName) throws DAOException {
 
 		// Build the prepared statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0), SUM(1) AS CNT, "
+			+ "SUM(HISTORIC) AS HST FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".SCHEDULE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) AND (ACADEMY=?)");
 		
@@ -200,10 +201,12 @@ public class GetSchedule extends DAO {
 			_ps.setBoolean(3, false);
 
 			// Execute the Query
-			int result = 0;
+			FlightTime result = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
-					result = rs.getInt(1);
+					result = new FlightTime(rs.getInt(1), (rs.getInt(3) > 0), (rs.getInt(2) > rs.getInt(3)));
+				else
+					result = new FlightTime(0, false, false);
 			}
 
 			_ps.close();
@@ -216,10 +219,10 @@ public class GetSchedule extends DAO {
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
 	 * @param rp the RoutePair
-	 * @return the average time between the two airports in hours <i>multiplied by 10</i>, or 0 if no flights found
+	 * @return a FlightTime bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getFlightTime(RoutePair rp) throws DAOException {
+	public FlightTime getFlightTime(RoutePair rp) throws DAOException {
 		return getFlightTime(rp, SystemData.get("airline.db"));
 	}
 	

@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.FlightTime;
 import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.commands.*;
@@ -18,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.0
  */
 
@@ -91,7 +92,8 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			// Calculate the average time between the airports
 			if (ac.getCanDispose()) {
 				GetSchedule scdao = new GetSchedule(con);
-				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr, ud.getDB())), REQUEST);
+				FlightTime ft = scdao.getFlightTime(fr, ud.getDB());
+				ctx.setAttribute("avgTime", Integer.valueOf(ft.getFlightTime()), REQUEST);
 				
 				// Display user's networks
 				ctx.setAttribute("networks", p.getNetworks(), REQUEST);
