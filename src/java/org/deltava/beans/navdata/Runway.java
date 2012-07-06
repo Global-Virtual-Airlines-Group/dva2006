@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.ComboAlias;
@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store runway information.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 1.0
  */
 
@@ -141,7 +141,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	}
 	
 	public int hashCode() {
-		return getName().hashCode();
+		return (getName() == null) ? super.hashCode() : getName().hashCode();
 	}
 	
 	public boolean equals(Object o) {
