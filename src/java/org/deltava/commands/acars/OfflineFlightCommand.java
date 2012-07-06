@@ -316,12 +316,12 @@ public class OfflineFlightCommand extends AbstractCommand {
 			afr.setTotalFuel(fuelUse.getTotalFuel());
 
 			// Check the schedule database and check the route pair
-			int avgHours = sdao.getFlightTime(afr);
-			if ((avgHours == 0) && !inf.isScheduleValidated())
+			FlightTime avgHours = sdao.getFlightTime(afr);
+			if ((avgHours.getFlightTime() == 0) && !inf.isScheduleValidated())
 				afr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
-			else if (avgHours > 0) {
-				int minHours = (int) ((avgHours * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
-				int maxHours = (int) ((avgHours * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
+			else if (avgHours.getFlightTime() > 0) {
+				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
+				int maxHours = (int) ((avgHours.getFlightTime() * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
 					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}
