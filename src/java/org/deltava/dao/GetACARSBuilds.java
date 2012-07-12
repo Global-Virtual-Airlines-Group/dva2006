@@ -1,17 +1,17 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.acars.ClientInfo;
+import org.deltava.beans.acars.*;
 
 import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.1
  */
 
@@ -32,24 +32,23 @@ public class GetACARSBuilds extends DAO {
 
 	/**
 	 * Returns the latest beta version for a particular ACARS build.
-	 * @param version the ACARS version
-	 * @param build the build number
+	 * @param ver the ClientVersion
 	 * @return a ClientInfo bean, or null if none
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public ClientInfo getLatestBeta(int version, int build) throws DAOException {
+	public ClientInfo getLatestBeta(ClientVersion ver) throws DAOException {
 		try {
 			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?) AND (DATA LIKE ?)");
 			_ps.setString(1, "beta");
-			_ps.setInt(2, version);
-			_ps.setString(3, String.valueOf(build) + ".%");
+			_ps.setInt(2, ver.getVersion());
+			_ps.setString(3, String.valueOf(ver.getClientBuild()) + ".%");
 			
 			ClientInfo inf = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
 					String info = rs.getString(1);
 					int beta = StringUtils.parse(info.substring(info.indexOf('.') + 1), 0);
-					inf = new ClientInfo(version, build, beta);
+					inf = new ClientInfo(ver.getVersion(), ver.getClientBuild(), beta);
 				}
 			}
 			
@@ -177,7 +176,7 @@ public class GetACARSBuilds extends DAO {
 	 * @return TRUE if Dispatch service can be requested, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public boolean isDispatchAvailable(ClientInfo inf) throws DAOException {
+	public boolean isDispatchAvailable(ClientVersion inf) throws DAOException {
 		try {
 			prepareStatement("SELECT DATA FROM acars.VERSION_INFO WHERE (NAME=?) AND (VER=?)");
 			_ps.setString(1, "noDispatch");
