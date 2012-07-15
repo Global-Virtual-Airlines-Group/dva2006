@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -187,7 +187,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Set the center of the map
 			if (qp == null) {
 				ctx.setAttribute("mapCenter", SystemData.getAirport(ctx.getUser().getHomeAirport()), REQUEST);
-				ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
 				isRP = Boolean.valueOf(ctx.getParameter("isRP")).booleanValue();
 			} else if (qp instanceof RoutePlot)
 				isRP = true;

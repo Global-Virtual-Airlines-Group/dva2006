@@ -59,6 +59,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 <c:set var="cspan" value="${access.canEdit ? 1 : 2}" scope="page" />
 
 <!-- Main Body Frame -->

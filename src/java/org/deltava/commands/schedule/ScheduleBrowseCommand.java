@@ -1,7 +1,5 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
-
-import java.util.Collections;
 
 import org.deltava.beans.schedule.*;
 
@@ -13,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to browse the Flight Schedule.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -41,7 +39,8 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
       criteria.setSortBy("AIRPORT_D, AIRPORT_A");
       criteria.setDBName(SystemData.get("airline.db"));
-      criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));
+      criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR") 
+    		  || ctx.isUserInRole("AcademyAudit"));
       
       // Save the search criteria
       ctx.setAttribute("airportD", aD, REQUEST);
@@ -61,9 +60,6 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
          ctx.release();
       }
       
-      // Save empty list
-      ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
-
       // Forward to the JSP
       CommandResult result = ctx.getResult();
       result.setURL("/jsp/schedule/browse.jsp");

@@ -36,6 +36,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 <content:sysdata name="schedule.charter.count_days" var="countDays" default="90" />
 
 <!-- Main Body Frame -->

@@ -40,15 +40,6 @@ public class MiscFunctions {
 	}
 	
 	/**
-	 * A JSP function to return an empty collection.
-	 * @return an empty Collection
-	 * @see Collections#emptyList()
-	 */
-	public static Collection<?> empty() {
-		return Collections.emptyList();
-	}
-	
-	/**
 	 * A JSP function to return a Map's keys.
 	 * @param m the Map
 	 * @return a Collection of keys, or null if m is null

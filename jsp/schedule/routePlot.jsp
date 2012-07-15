@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <map:xhtml>
 <head>
 <title><content:airline /> Route Plotter</title>
@@ -43,7 +42,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
-<c:set var="emptyList" value="${fn:emptyList()}" scope="page" />
+<content:empty var="emptyList" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

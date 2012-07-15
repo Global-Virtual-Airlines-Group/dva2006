@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display Senior Captain nominations.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 3.3
  */
 
@@ -102,7 +102,6 @@ public class NominationCenterCommand extends AbstractCommand {
 		ctx.setAttribute("qtr", qNow, REQUEST);
 		ctx.setAttribute("access", ac, REQUEST);
 		ctx.setAttribute("canSeeScore", Boolean.valueOf(ctx.getUser().getRank().isCP() || ctx.isUserInRole("HR")), REQUEST);
-		ctx.setAttribute("emptyList", Collections.emptySet(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

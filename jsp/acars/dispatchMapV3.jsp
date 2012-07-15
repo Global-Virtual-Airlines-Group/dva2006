@@ -13,6 +13,7 @@
 <content:js name="common" />
 <map:api version="3" />
 <content:googleAnalytics eventSupport="true" />
+<content:empty var="emptyList" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}">
