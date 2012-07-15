@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 2.1
  */
 
@@ -31,6 +31,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get command result
@@ -45,7 +46,6 @@ public class FlightPreapproveCommand extends AbstractCommand {
 		// Check for a GET and redirect
 		if (ctx.getParameter("airportD") == null) {
 			ctx.setAttribute("pilotID", new Integer(ctx.getID()), REQUEST);
-			ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
 
 			// Build Airline list
 			Collection<ComboAlias> airlines = new ArrayList<ComboAlias>();

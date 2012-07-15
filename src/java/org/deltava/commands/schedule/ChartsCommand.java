@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web site Command to display Approach Charts.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class ChartsCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
     public void execute(CommandContext ctx) throws CommandException {
     	
         // Get airport code to display and save it into the request
@@ -63,7 +64,6 @@ public class ChartsCommand extends AbstractViewCommand {
         ctx.setAttribute("chartTypeNames", typeNames.subList(1, typeNames.size()), REQUEST);
         ctx.setAttribute("chartTypes", types.subList(1, types.size()), REQUEST);
         ctx.setAttribute("selectedTypes", ctx.getParameters("chartType"), REQUEST);
-        ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
         
         // Redirect to the home page
         CommandResult result = ctx.getResult();

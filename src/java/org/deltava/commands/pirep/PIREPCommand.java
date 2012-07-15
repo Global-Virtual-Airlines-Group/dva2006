@@ -357,7 +357,6 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("fsVersions", _fsVersions, REQUEST);
 
 		// Set basic lists for the JSP
-		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 		ctx.setAttribute("months", months, REQUEST);
 		ctx.setAttribute("years", years, REQUEST);

@@ -20,13 +20,6 @@
 		<function-signature>int length(java.lang.Object)</function-signature>	
 	</function>
 
-	<!-- Create an empty collection -->
-	<function>
-		<name>emptyList</name>
-		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
-		<function-signature>java.util.Collection empty()</function-signature>
-	</function>
-
 	<!-- Get a subset of a collection -->
 	<function>
 		<name>subset</name>
