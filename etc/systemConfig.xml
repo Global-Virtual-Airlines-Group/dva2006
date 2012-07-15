@@ -451,7 +451,7 @@
 			</import>
 
 			<!-- downloaded file cache -->
-			<cache>/var/cache/innovata/sched_cache</cache>
+			<cache>/var/cache/sched</cache>
 		</innovata>
 		<cache>/var/cache/sched</cache>
 
