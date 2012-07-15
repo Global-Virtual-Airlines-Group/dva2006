@@ -1,9 +1,9 @@
 // Copyright 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
-import java.util.Collections;
+import java.util.*;
 
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -53,8 +53,16 @@ public class RoutePlotCommand extends AbstractCommand {
 			} finally {
 				ctx.release();
 			}
-		} else
-			ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
+		} else {
+			Collection<Airline> allAirlines = SystemData.getAirlines().values();
+			for (Iterator<Airline> i = allAirlines.iterator(); i.hasNext(); ) {
+				Airline a = i.next();
+				if (!a.getActive())
+					i.remove();
+			}
+			
+			ctx.setAttribute("airlines", allAirlines, REQUEST);
+		}
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
