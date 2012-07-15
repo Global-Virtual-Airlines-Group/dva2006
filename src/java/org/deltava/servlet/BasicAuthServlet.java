@@ -12,8 +12,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.Pilot;
 
 import org.deltava.dao.*;
-import org.gvagroup.jdbc.ConnectionPool;
-import org.gvagroup.jdbc.ConnectionPoolException;
+import org.gvagroup.jdbc.*;
 
 import org.deltava.security.*;
 
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet that supports basic HTTP authentication.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -59,13 +58,13 @@ public abstract class BasicAuthServlet extends GenericServlet {
 
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			UserID id = new UserID(tkns.nextToken());
+			UserID id = new UserID(tkns.nextToken()); Pilot usr = null;
 			if (id.hasAirlineCode())
-				p = dao.getByCode(id.toString());
+				usr = dao.getByCode(id.toString());
 			else
-				p = dao.get(id.getUserID());
+				usr = dao.get(id.getUserID());
 			
-			if (p == null)
+			if (usr == null)
 				throw new SecurityException("Unknown User ID - " + id);
 			
 			// Authenticate the user
@@ -73,10 +72,12 @@ public abstract class BasicAuthServlet extends GenericServlet {
 			if (auth instanceof SQLAuthenticator) {
 				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
 				sqlAuth.setConnection(con);
-				sqlAuth.authenticate(p, tkns.nextToken());
+				sqlAuth.authenticate(usr, tkns.nextToken());
 				sqlAuth.clearConnection();
 			} else
-				auth.authenticate(p, tkns.nextToken());
+				auth.authenticate(usr, tkns.nextToken());
+			
+			p = usr;
 		} catch (SecurityException se) {
 			log.warn("Authentication failure - " + se.getMessage());
 		} catch (DAOException de) {
@@ -87,7 +88,6 @@ public abstract class BasicAuthServlet extends GenericServlet {
 			pool.release(con);
 		}
 
-		// Return the Pilot data
 		return p;
 	}
 	
