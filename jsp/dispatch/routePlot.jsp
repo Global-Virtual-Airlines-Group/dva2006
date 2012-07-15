@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <map:xhtml>
 <head>
 <title><content:airline /> ACARS Dispatch Route Plotter</title>
@@ -22,6 +21,7 @@
 <content:sysdata var="multiHost" name="weather.multiHost" />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 var routeUpdated = false;
 var getInactive = false;
@@ -52,6 +52,14 @@ return true;
 	return false;
 }
 }
+
+function updateAirline(combo)
+{
+var f = document.forms[0];
+updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportD));
+updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), ${useICAO}, getValue(f.airportA));
+return true;
+}
 </script>
 <map:wxList layers="radar,eurorad,sat,windspeed" />
 </head>
@@ -61,7 +69,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="aCode" name="airline.code" />
-<c:set var="emptyList" value="${fn:emptyList()}" scope="page" />
+<content:empty var="emptyList" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -72,7 +80,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" value="${aCode}" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" options="${airlines}" value="${aCode}" onChange="void updateAirline(this)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
