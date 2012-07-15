@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a live ACARS Map.
  * @author Luke
- * @version 3.3
+ * @version 4.2
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class MapCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Calcualte the settings cookie expiry date
@@ -49,7 +50,6 @@ public class MapCommand extends AbstractCommand {
 
 		// Save the map center
 		ctx.setAttribute("mapCenter", ctr, REQUEST);
-		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 
 		// Check if we're retrieving this from the ACARS client
 		boolean isACARSClient = Boolean.valueOf(ctx.getParameter("acarsClient")).booleanValue();

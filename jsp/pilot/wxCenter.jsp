@@ -211,6 +211,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->

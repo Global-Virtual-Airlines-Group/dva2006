@@ -95,6 +95,18 @@
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
 		</attribute>
+	</tag>
+
+	<tag>
+		<description>Adds an empty List as a page attribute</description>
+		<name>empty</name>
+		<tag-class>org.deltava.taglib.content.EmptyListTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
 	</tag>		
 
 	<tag>

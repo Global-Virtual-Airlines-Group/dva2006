@@ -35,6 +35,7 @@ return true;
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
+<content:empty var="emptyList" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

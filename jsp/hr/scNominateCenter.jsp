@@ -59,6 +59,7 @@ return true;
 <content:sysdata var="maxNoms" name="users.sc.maxNominations" default="5" />
 <content:sysdata var="minFlights" name="users.sc.minFlights" default="5" />
 <content:sysdata var="minAge" name="users.sc.minAge" default="120" />
+<content:empty var="emptyList" />
 <c:set var="cspan" value="${canSeeScore ? 8 : 6}" scope="page" />
 
 <!-- Main Body Frame -->
