@@ -13,10 +13,10 @@
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:sysdata var="airlineURL" name="airline.url" />
 <meta property="og:title" content="<content:airline /> Flight Report - ${pirep.flightCode}" />
 <meta property="og:type" content="game.achievement" />
 <meta property="og:url" content="http://${airlineURL}/pirep.do?id=${pirep.hexID}" />
-<meta property="og:description" content="${desc}" />
 <meta property="og:site_name" content="<content:airline />" />
 <meta property="game:points" content="1" />
 <content:pics />
