@@ -191,8 +191,7 @@ public class GetACARSBuilds extends DAO {
 						if (build == inf.getClientBuild())
 							isOK =false;
 					}
-				} else
-					isOK = false;
+				}
 			}
 			
 			_ps.close();
