@@ -16,7 +16,6 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
