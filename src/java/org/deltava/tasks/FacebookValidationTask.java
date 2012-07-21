@@ -8,7 +8,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.fb.ProfileInfo;
+import org.deltava.beans.fb.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetFacebookData;
@@ -16,15 +16,20 @@ import org.deltava.dao.http.GetFacebookData;
 import org.deltava.taskman.*;
 
 import org.deltava.util.ThreadUtils;
+import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.SharedData;
 
 /**
  * A Scheduled Task to validate Facebook security tokens.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.6
  */
 
 public class FacebookValidationTask extends Task {
+	
+	private static final Random rnd = new Random();
 
 	private class FacebookWorker extends Thread {
 		private final Logger tLog;
@@ -133,6 +138,19 @@ public class FacebookValidationTask extends Task {
 				
 				// Commit
 				ctx.commitTX();
+			}
+			
+			// Get a facebook app token, preferrably the same one
+			GetFacebookPageToken fbpdao = new GetFacebookPageToken(con);
+			List<String> pageTokens = fbpdao.getAllTokens();
+			if (!pageTokens.isEmpty()) {
+				String currentToken = SystemData.get("users.facebook.pageToken");
+				if (!pageTokens.contains(currentToken)) {
+					String pageToken = pageTokens.get(rnd.nextInt(pageTokens.size()));
+					log.warn("Switching Facebook page token");
+					FacebookCredentials fbCreds = (FacebookCredentials) SharedData.get(SharedData.FB_CREDS + SystemData.get("airline.code"));
+					fbCreds.setPageToken(pageToken);
+				}
 			}
 		} catch (DAOException de) {
 			ctx.rollbackTX();

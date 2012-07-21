@@ -387,6 +387,7 @@
 			<role>Examination</role>
 			<role>ExamUpdate</role>
 			<role>Event</role>
+			<role>Facebook</role>
 			<role>Fleet</role>
 			<role>HireMgr</role>			
 			<role>HR</role>
@@ -613,7 +614,6 @@
 		<facebook>
 			<id>93603160577</id>		
 			<pageID>105017132650</pageID>
-			<pageToken>93603160577|02faa99c85a2e78c9eaf8dff-521227914|105017132650|2P4YqopcOxromOY-JcQmO6TpZUg</pageToken>
 			<secret>79fd42ccde86c4d60055b6ddc8501a40</secret>
 			<img>http://www.deltava.org/img/fleet/dva_side.png</img>
 			<url>
