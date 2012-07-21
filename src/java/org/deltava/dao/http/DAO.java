@@ -12,7 +12,7 @@ import javax.net.ssl.*;
  * DAOs create their own stream to a URL. This is used in situations where
  * request-specific data is encoded into the URL. 
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 2.4
  */
 
@@ -65,10 +65,12 @@ public abstract class DAO {
      * @throws IOException if an error occurs
      */
     protected void init(String url) throws IOException {
-    	if (_urlcon != null)
-    		return;
-    	
     	URL u = new URL(url);
+    	if (_urlcon != null) {
+    		if (!_urlcon.getURL().equals(u))
+    			throw new InterruptedIOException("Already connected to " + _urlcon.getURL().toExternalForm());
+    	}
+    	
     	_urlcon = (HttpURLConnection) u.openConnection();
     	if ("https".equals(u.getProtocol()) && (_sslCtxt != null)) {
     		HttpsURLConnection sslcon = (HttpsURLConnection) _urlcon;

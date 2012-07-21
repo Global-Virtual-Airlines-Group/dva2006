@@ -178,6 +178,22 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 					UserPool.init(StringUtils.parse(p.getProperty("users"), 0), StringUtils.parseDate(p.getProperty("date"), "MM/dd/yyyy HH:mm"));
 				}
 			}
+			
+			// Load facebook credentials
+			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
+				GetFacebookPageToken fbpdao = new GetFacebookPageToken(c);
+				List<String> pageTokens = fbpdao.getAllTokens();
+				String pageToken = pageTokens.isEmpty() ? null : pageTokens.get(0);
+				if (!StringUtils.isEmpty(pageToken))
+					SystemData.add("users.facebook.pageToken", pageToken);
+				
+				// Set FB credentials
+				FacebookCredentials creds = new FacebookCredentials(SystemData.get("users.facebook.id"));
+				creds.setPageID(SystemData.get("users.facebook.pageID"));
+				creds.setPageToken(pageToken);
+				SharedData.addData(SharedData.FB_CREDS + SystemData.get("airline.code"), creds);
+				log.info("Loaded Facebook application credentials");
+			}
 
 			// Load TS2 server info if enabled
 			if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
@@ -205,15 +221,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			log.info("Loaded Economic parameters");
 		}
 		
-		// Load facebook credentials
-		if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
-			FacebookCredentials creds = new FacebookCredentials(SystemData.get("users.facebook.id"));
-			creds.setPageID(SystemData.get("users.facebook.pageID"));
-			creds.setPageToken(SystemData.get("users.facebook.pageToken"));
-			SharedData.addData(SharedData.FB_CREDS + SystemData.get("airline.code"), creds);
-			log.info("Loaded Facebook application credentials");
-		}
-
 		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
 		spawnDaemon(new IPCDaemon());

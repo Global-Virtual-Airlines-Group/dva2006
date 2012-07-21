@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to send data to Facebook via the Graph API.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 3.4
  */
 
@@ -63,16 +63,17 @@ public class SetFacebookData extends FacebookDAO {
 			
 			// Send the data
 			init(url);
-			DataOutputStream out = new DataOutputStream(getOut());
-			out.writeBytes(postData.getBody());
-			out.flush();
-			out.close();
+			try (DataOutputStream out = new DataOutputStream(getOut())) {
+				out.writeBytes(postData.getBody());
+				out.flush();
+			}
 			
 			// Parse the return value
-			InputStream is = getIn();
-			JSONTokener jtk = new JSONTokener(new InputStreamReader(is));
-			JSONObject jo = new JSONObject(jtk);
-			is.close();
+			JSONObject jo = null;
+			try (InputStream is = getIn()) {
+				JSONTokener jtk = new JSONTokener(new InputStreamReader(is));
+				jo = new JSONObject(jtk);
+			}
 			
 			// Get the response code
 			int resultCode = getResponseCode();
@@ -81,7 +82,6 @@ public class SetFacebookData extends FacebookDAO {
 				throw new HTTPDAOException(jerr.optString("message", "Invalid Result Code"), resultCode);
 			}
 			
-			// Set the ID
 			nws.setID(jo.getString("id"));
 		} catch (Exception e) {
 			if (_warnMode)

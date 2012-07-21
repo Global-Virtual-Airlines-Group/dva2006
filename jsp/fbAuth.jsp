@@ -33,6 +33,12 @@ return true;
 <br />
 The Facebook authorization has completed successfully. <content:airline /> can now publish news
 about your career with us to your Facebook news feed, and use Facebook to validate your e-mail address.<br />
+<c:if test="${fbPageAuth}">
+<br />
+You are a <content:airline /> Facebook Page Administrator. You have been given access to publish content
+to <content:airline />'s Facebook page, and your credentials may be used by the application server to publish
+content on behalf of <content:airline />.<br />
+</c:if>
 </c:when>
 <c:when test="${fbDeauth}">
 <div class="updateHdr">Facebook Credentials Removed</div>

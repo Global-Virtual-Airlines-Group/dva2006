@@ -1,10 +1,11 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.fb.ProfileInfo;
+import org.deltava.beans.fb.*;
 
 import org.deltava.commands.*;
 
@@ -14,10 +15,12 @@ import org.deltava.dao.http.*;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.common.SharedData;
+
 /**
  * A Web Site Command to handle Facebook authorization commands.
  * @author Luke
- * @version 3.4
+ * @version 4.2
  * @since 3.4
  */
 
@@ -51,7 +54,6 @@ public class FacebookAuthCommand extends AbstractCommand {
 		}
 		
 		try {
-			// Load the user
 			Connection con = ctx.getConnection();
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getUser().getID());
@@ -63,7 +65,7 @@ public class FacebookAuthCommand extends AbstractCommand {
 			fadao.setAppID(SystemData.get("users.facebook.id"));
 			fadao.setSecret(SystemData.get("users.facebook.secret"));
 			String token = fadao.getAccessToken(code, ctx.getRequest().getRequestURL().toString());
-			if (ctx.isUserInRole("Admin"))
+			if (ctx.isUserInRole("Facebook"))
 				ctx.setAttribute("fbToken", token, REQUEST);
 			
 			// Get the user's information
@@ -76,9 +78,34 @@ public class FacebookAuthCommand extends AbstractCommand {
 			p.setIMHandle(IMAddress.FBTOKEN, token);
 			
 			// Create status update
+			Collection<StatusUpdate> upds = new ArrayList<StatusUpdate>();
 			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
 			upd.setDescription("Facebook Authorized");
 			upd.setAuthorID(p.getID());
+			upds.add(upd);
+
+			// Get page authentication data
+			if (ctx.isUserInRole("Facebook")) {
+				fbdao.reset();
+				String appToken = fbdao.getPageToken();
+				if (!StringUtils.isEmpty(appToken)) {
+					p.setIMHandle(IMAddress.FBPAGE, appToken);
+					ctx.setAttribute("fbPageAuth", Boolean.TRUE, REQUEST);
+					
+					// Create status update
+					StatusUpdate upd2 = new StatusUpdate(p.getID(), StatusUpdate.EXT_AUTH);
+					upd2.setDescription("Facebook Page Publishing Authorized");
+					upd2.setAuthorID(p.getID());
+					upds.add(upd2);
+					
+					// Set page token
+					if (!SystemData.has("users.facebook.pageToken")) {
+						SystemData.add("users.facebook.pageToken", appToken);
+						FacebookCredentials fbCreds = (FacebookCredentials) SharedData.get(SharedData.FB_CREDS + SystemData.get("airline.code"));
+						fbCreds.setPageToken(appToken);
+					}
+				}
+			}
 			
 			// Start transaction
 			ctx.startTX();
@@ -87,7 +114,7 @@ public class FacebookAuthCommand extends AbstractCommand {
 			SetPilot pwdao = new SetPilot(con);
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			pwdao.write(p);
-			sudao.write(upd);
+			sudao.write(upds);
 			
 			// Commit
 			ctx.commitTX();
