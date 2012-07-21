@@ -1,4 +1,4 @@
-// Copyright 2005, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An JSP Tag to generate an IMG element.
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class ImageTag extends ElementTag {
      * Generates this image's HTML.
      * @throws JspException if an error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         try {
             _out.print(_data.open(true, true));
@@ -80,6 +81,6 @@ public class ImageTag extends ElementTag {
      * @param caption the caption for this mage
      */
     public void setCaption(String caption) {
-        _data.setAttribute("alt", caption);
+        _data.setAttribute("title", caption);
     }
 }
