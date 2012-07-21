@@ -593,7 +593,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		
 		if (pilotID != 0)
 			sqlBuf.append("AND (F.PILOT_ID=?) ");
-		if (activeOnly && sqlBuf.toString().contains("P."))
+		if (activeOnly && sqlBuf.toString().contains(" P."))
 			sqlBuf.append("AND (P.STATUS=?) ");
 		else
 			activeOnly = false;
