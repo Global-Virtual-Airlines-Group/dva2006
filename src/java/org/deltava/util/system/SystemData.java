@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
  * A singleton object containing all of the configuration data for the application. This object is internally synchronized
  * to allow thread-safe read and write access to the configuration data.
  * @author Luke
- * @version 3.7
+ * @version 4.2
  * @since 1.0
  */
 
@@ -50,10 +50,11 @@ public final class SystemData implements Serializable {
 		try {
 			Class<?> ldClass = Class.forName(loaderClassName);
 			loader = (SystemDataLoader) ldClass.newInstance();
-			log.debug("Instantiated " + loaderClassName);
+			if (log.isDebugEnabled())
+				log.debug("Instantiated " + loaderClassName);
 		} catch (Exception e) {
 			loader = new XMLSystemDataLoader();
-			log.debug("Using default loader class " + loader.getClass().getSimpleName());
+			log.info("Using default loader class " + loader.getClass().getSimpleName());
 		}
 		
 		// Reset the properties
@@ -82,11 +83,12 @@ public final class SystemData implements Serializable {
 	}
 	
 	/**
-	 * Returns the property names.
-	 * @return a Collection of names
+	 * Returns whether a particular property exists.
+	 * @param propertyName the property name
+	 * @return TRUE if the property exists, otherwise FALSE
 	 */
-	public static Collection<String> getNames() {
-		return Collections.unmodifiableCollection(_properties.keySet());
+	public static boolean has(String propertyName) {
+		return _properties.containsKey(propertyName);
 	}
 
 	/**
