@@ -45,6 +45,7 @@
 <content:sysdata var="scMinAge" name="users.sc.minAge" default="120" />
 <content:sysdata var="fbAuthURL" name="users.facebook.url.authorize" />
 <content:sysdata var="fbClientID" name="users.facebook.id" />
+<content:sysdata var="fbPageID" name="users.facebook.pageID" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
@@ -108,10 +109,12 @@ to your Facebook news feed.</c:if></td>
 </c:when>
 <c:when test="${!empty fbPerms}">
 <c:set var="fbPermissions" value="${fn:splice(fbPerms, ',')}" scope="page" />
+<c:if test="${!empty fbPageID}"><content:filter roles="Facebook">
+<c:set var="fbPermissions" value="${fbPermissions},manage_pages" scope="page" /></content:filter></c:if>
 <script type="text/javascript">
 function fbAuthorize()
 {
-var URLflags = 'height=340,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
+var URLflags = 'height=360,width=860,menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no';
 window.open('${fbAuthURL}?client_id=${fbClientID}&redirect_uri=http://${req.serverName}/fbauth.do&scope=${fbPermissions}&display=popup', 'fbAuth', URLflags);
 return true;
 }
