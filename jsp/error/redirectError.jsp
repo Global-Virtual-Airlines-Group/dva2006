@@ -2,7 +2,6 @@
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isErrorPage="true" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -21,10 +20,9 @@
 <content:region id="main">
 <div class="updateHdr">REDIRECTION ERROR</div>
 <br />
-Oops. The server lost track of where you were supported to go from ${referer}.<br />
+Oops. The server lost track of where you were supposed to go from ${referer}.<br />
 <br />
-<el:link url="/" className="sec bld">Click Here</el:link> to return to the <content:airline /> home 
-page.<br />
+<el:link url="/" className="sec bld">Click Here</el:link> to return to the <content:airline /> home page.<br />
 <br />
 <content:copyright />
 </content:region>
