@@ -123,7 +123,6 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 	 */
 	public AirportServiceMap getRoutePairs() throws DAOException {
 		AirportServiceMap svcMap = new AirportServiceMap();
-
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM SCHEDULE "
 					+ "ORDER BY AIRPORT_D, AIRPORT_A");

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -434,6 +434,33 @@ public class SetSchedule extends DAO {
 			_ps.setInt(3, entry.getLeg());
 			executeUpdate(1);
 		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Regenerates the mapping of airports to airlines.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void remapAirportAirlines() throws DAOException {
+		try {
+			startTransaction();
+			prepareStatementWithoutLimits("DELETE FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)");
+			_ps.setString(1, SystemData.get("airline.code"));
+			executeUpdate(0);
+			
+			prepareStatementWithoutLimits("INSERT INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? "
+				+ "FROM SCHEDULE)");
+			_ps.setString(1, SystemData.get("airline.code"));
+			executeUpdate(0);
+			
+			prepareStatementWithoutLimits("REPLACE INTO common.AIRPORT_AIRLINE (SELECT DISTINCT AIRLINE, AIRPORT_D, ? "
+					+ "FROM SCHEDULE)");
+			_ps.setString(1, SystemData.get("airline.code"));
+			executeUpdate(0);
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -6,11 +6,12 @@ import java.util.Date;
 import java.util.zip.*;
 
 import org.apache.log4j.Logger;
+import org.deltava.util.FileUtils;
 
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 2.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -18,7 +19,7 @@ public class FTPCache {
 
 	private static final Logger log = Logger.getLogger(FTPCache.class);
 
-	protected String _cachePath;
+	private final String _cachePath;
 	private String _host;
 	private String _user;
 	private String _pwd;
@@ -63,35 +64,32 @@ public class FTPCache {
 	/**
 	 * Returns the newest file on the remote server.
 	 * @param dirName the directory on the server
+	 * @param filter a FilenameFilter or null if none
 	 * @return the file name, or null if no files found
-	 * @see FTPConnection#getNewest(String)
+	 * @see FTPConnection#getNewest(String, FilenameFilter)
 	 */
-	public String getNewest(String dirName) {
+	public String getNewest(String dirName, FilenameFilter filter) {
 
 		// Init the FTPConnection object
 		FTPConnection con = new FTPConnection(_host);
 		try {
 			con.connect(_user, _pwd);
 			log.info("Connected to " + _host);
-			return con.getNewest(dirName);
+			String fileName = con.getNewest(dirName, filter); 
+			if (fileName != null)
+				return fileName;
 		} catch (FTPClientException ce) {
 			log.error(ce.getMessage() + " to " + _host);
+		} finally {
+			con.close();
 		}
 
 		// Return the newest from the cache if this has an exception
-		File f = null;
-		File[] cacheFiles = new File(_cachePath).listFiles();
-		for (int x = 0; (cacheFiles != null) && (x < cacheFiles.length); x++) {
-			File cf = cacheFiles[x];
-			if ((f == null) || (cf.lastModified() > f.lastModified()))
-				f = cf;
-		}
-
+		File f = FileUtils.findNewest(_cachePath, filter);
 		if (f == null)
 			return null;
 
-		// Return newest file
-		log.warn("Newest cache file is " + f.getName());
+		log.info("Newest cache file is " + f.getName());
 		return f.getName();
 	}
 
@@ -114,8 +112,14 @@ public class FTPCache {
 
 		// Check the remote file date
 		Date rdt = con.getTimestamp("", fileName);
-		if (rdt == null)
-			throw new FTPClientException("Cannot find " + fileName + " on " + _host);
+		if (rdt == null) {
+			if (!cf.exists()) {
+				con.close();	
+				throw new FTPClientException("Cannot find " + fileName + " on local or " + _host);
+			}
+			
+			rdt = new Date(0);
+		}
 
 		InputStream is = null;
 		try {
@@ -154,7 +158,6 @@ public class FTPCache {
 			}
 		}
 
-		// Return the stream
 		return is;
 	}
 }
