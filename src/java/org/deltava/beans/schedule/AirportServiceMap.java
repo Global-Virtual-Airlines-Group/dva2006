@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -6,13 +6,11 @@ import java.util.*;
 /**
  * A bean to track which Airports are served by particular Airlines. 
  * @author Luke
- * @version 1.0
+ * @version 4.2
  * @since 1.0
  */
 
-public class AirportServiceMap {
-
-	private final Map<Airline, Collection<Airport>> _airports = new HashMap<Airline, Collection<Airport>>();
+public class AirportServiceMap extends TreeMap<Airline, Collection<Airport>> {
 
 	/**
 	 * Adds a particular Airport/Airline pair.
@@ -20,10 +18,10 @@ public class AirportServiceMap {
 	 * @param ap the Airport bean
 	 */
 	public void add(Airline a, Airport ap) {
-		Collection<Airport> airports = _airports.get(a);
+		Collection<Airport> airports = get(a);
 		if (airports == null) {
 			airports = new HashSet<Airport>();
-			_airports.put(a, airports);
+			put(a, airports);
 		}
 
 		airports.add(ap);
@@ -36,11 +34,8 @@ public class AirportServiceMap {
 	 * @return TRUE if the Airline serves the Airport, otherwise FALSE
 	 */
 	public boolean isServiced(Airport ap, Airline a) {
-		Collection<Airport> airports = _airports.get(a);
-		if (airports == null)
-			return false;
-
-		return airports.contains(ap);
+		Collection<Airport> airports = get(a);
+		return (airports != null) && airports.contains(ap);
 	}
 
 	/**
@@ -52,8 +47,8 @@ public class AirportServiceMap {
 	 */
 	public Collection<String> getAirlineCodes(Airport a) {
 		Collection<String> results = new HashSet<String>();
-		for (Iterator<Airline> i = _airports.keySet().iterator(); i.hasNext();) {
-			Airline al = i.next();
+		for (Iterator<Map.Entry<Airline, Collection<Airport>>> i = entrySet().iterator(); i.hasNext();) {
+			Airline al = i.next().getKey();
 			if (isServiced(a, al))
 				results.add(al.getCode());
 		}

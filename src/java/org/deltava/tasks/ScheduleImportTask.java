@@ -36,6 +36,7 @@ public class ScheduleImportTask extends Task {
 	/**
 	 * Executes the Task.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void execute(TaskContext ctx) {
 
@@ -54,8 +55,8 @@ public class ScheduleImportTask extends Task {
 		Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 		try {
 			// If we haven't specified a file name, get the newest file
-			if (fileName == null)
-				fileName = cache.getNewest("");
+			if ((fileName == null) || fileName.contains("*"))
+				fileName = cache.getNewest("", FileUtils.fileFilter(fileName, ".zip"));
 
 			// Download the file
 			InputStream is = cache.getFile(fileName);
@@ -135,30 +136,24 @@ public class ScheduleImportTask extends Task {
 
 			// Write the entries
 			log.info("Saving " + entries.size() + " updated Schedule Entries");
-			for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext();) {
-				ScheduleEntry se = i.next();
+			for (ScheduleEntry se : entries)
 				dao.write(se, false);
-			}
 			
 			// Get route pairs
 			GetScheduleInfo sidao = new GetScheduleInfo(con);
 			AirportServiceMap svcMap = sidao.getRoutePairs();
 			
 			// Determine unserviced airports
-			synchronized (SystemData.class) {
-				Collection<Airport> allAirports = SystemData.getAirports().values();
-				for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
-					Airport ap = i.next();
-					Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
-					if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
-						log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
-						ap.setAirlines(svcMap.getAirlineCodes(ap));
-						dao.update(ap, ap.getIATA());
-					}
+			Collection<Airport> allAirports = SystemData.getAirports().values();
+			for (Airport ap : allAirports) {
+				Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
+				if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
+					log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
+					ap.setAirlines(svcMap.getAirlineCodes(ap));
+					dao.update(ap, ap.getIATA());
 				}
 			}
 
-			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
 			saveError = de;
@@ -182,7 +177,6 @@ public class ScheduleImportTask extends Task {
 			m.send(notifyUsers);
 		}
 		
-		// Log completion
 		log.info("Import Complete");
 	}
 }

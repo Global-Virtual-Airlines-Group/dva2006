@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -8,17 +8,17 @@ import com.enterprisedt.net.ftp.*;
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 2.7
+ * @version 4.2
  * @since 1.0
  */
 
-public class FTPConnection {
+public class FTPConnection implements Closeable {
 
-	private FTPClient _client;
+	private final FTPClient _client = new FTPClient();
 
 	class TempInputStream extends FileInputStream {
 
-		private File _f;
+		private final File _f;
 
 		TempInputStream(File f) throws FileNotFoundException {
 			super(f);
@@ -40,7 +40,6 @@ public class FTPConnection {
 	 */
 	public FTPConnection(String host) {
 		super();
-		_client = new FTPClient();
 		try {
 			_client.setTimeout(5000);
 			_client.setRemoteHost(host);
@@ -184,10 +183,12 @@ public class FTPConnection {
 
 	/**
 	 * Returns the name of the newest file on the FTP server.
+	 * @param dirName the directory name
+	 * @param filter a FilenameFilter, or null if none
 	 * @return the file name, or null if not found
 	 * @throws FTPClientException if an error occurs
 	 */
-	public String getNewest(String dirName) throws FTPClientException {
+	public String getNewest(String dirName, FilenameFilter filter) throws FTPClientException {
 		try {
 			FTPFile[] files = _client.dirDetails(dirName);
 			if (files == null)
@@ -198,12 +199,15 @@ public class FTPConnection {
 			for (int x = 0; x < files.length; x++) {
 				FTPFile f = files[x];
 				if (!f.isDir() && !f.isLink()) {
-					if ((latest == null) || (f.lastModified().after(latest.lastModified())))
-						latest = f;
+					boolean isOK = (filter == null) || (filter.accept(null, f.getName()));
+					if (isOK) {
+						if ((latest == null) || (f.lastModified().after(latest.lastModified())))
+							latest = f;
+					}
 				}
 			}
 
-			return latest.getName();
+			return (latest == null) ? null : latest.getName();
 		} catch (Exception e) {
 			throw new FTPClientException(e);
 		}
