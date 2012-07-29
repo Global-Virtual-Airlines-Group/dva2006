@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -11,14 +11,14 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.innovata.*;
 
-import org.deltava.util.CalendarUtils;
+import org.deltava.util.*;
 import org.deltava.util.ftp.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to download and import Innovata LLC schedule data.
  * @author Luke
- * @version 3.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 
@@ -45,8 +46,8 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 			
 			// If we haven't specified a file name, get the newest file
-			if (fileName == null)
-				fileName = cache.getNewest("");
+			if ((fileName == null) || fileName.contains("*"))
+				fileName = cache.getNewest("", FileUtils.fileFilter(fileName, ".zip"));
 
 			// Download the files
 			boolean isCached = false;
