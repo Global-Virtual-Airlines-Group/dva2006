@@ -154,8 +154,8 @@ public class ChartLoader extends TestCase {
 		while (rs.next()) {
 			MD5Chart c = new MD5Chart(rs.getString(5), airports.get(rs.getString(2)));
 			c.setID(rs.getInt(1));
-			c.setType(rs.getInt(3));
-			c.setImgType(rs.getInt(4));
+			c.setType(Chart.Type.values()[rs.getInt(3)]);
+			c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
 			c.setSize(rs.getInt(6));
 			c.setLastModified(new java.util.Date());
 			c.setHash(rs.getString(7));
@@ -223,16 +223,16 @@ public class ChartLoader extends TestCase {
 					MD5Chart c = new MD5Chart(chartName.replace("  ", " "), a);
 					c.setID(oc.getID());
 					c.load(new FileInputStream(f));
-					c.setImgType(Chart.PDF);
+					c.setImgType(Chart.ImageType.PDF);
 					String typeCode = ce.getChildTextTrim("chart_code");
-					c.setType(StringUtils.arrayIndexOf(TYPES, typeCode, 0));
-					if ((c.getType() == Chart.ILS) && (!c.getName().contains("ILS")))
-						c.setType(Chart.APR);
-					else if ((c.getType() == Chart.UNKNOWN) && ("DPO".equals(typeCode)))
-						c.setType(Chart.SID);
+					c.setType(Chart.Type.values()[StringUtils.arrayIndexOf(TYPES, typeCode, 0)]);
+					if ((c.getType() == Chart.Type.ILS) && (!c.getName().contains("ILS")))
+						c.setType(Chart.Type.APR);
+					else if ((c.getType() == Chart.Type.UNKNOWN) && ("DPO".equals(typeCode)))
+						c.setType(Chart.Type.SID);
 					
 					// Check if the hash changed
-					if ((c.getType() > 0) && (!c.getHash().equals(oc.getHash()))) {
+					if ((c.getType() != Chart.Type.UNKNOWN) && (!c.getHash().equals(oc.getHash()))) {
 						apCharts.remove(chartName);
 						apCharts.put(chartName, c);
 						log.info("Updated " + c.getName());
@@ -242,15 +242,15 @@ public class ChartLoader extends TestCase {
 				} else {
 					MD5Chart c = new MD5Chart(chartName, a);
 					c.load(new FileInputStream(f));
-					c.setImgType(Chart.PDF);
+					c.setImgType(Chart.ImageType.PDF);
 					String typeCode = ce.getChildTextTrim("chart_code");
-					c.setType(StringUtils.arrayIndexOf(TYPES, typeCode, 0));
-					if ((c.getType() == Chart.ILS) && (!c.getName().contains("ILS")))
-						c.setType(Chart.APR);
-					else if ((c.getType() == Chart.UNKNOWN) && ("DPO".equals(typeCode)))
-						c.setType(Chart.SID);
+					c.setType(Chart.Type.values()[StringUtils.arrayIndexOf(TYPES, typeCode, 0)]);
+					if ((c.getType() == Chart.Type.ILS) && (!c.getName().contains("ILS")))
+						c.setType(Chart.Type.APR);
+					else if ((c.getType() == Chart.Type.UNKNOWN) && ("DPO".equals(typeCode)))
+						c.setType(Chart.Type.SID);
 			
-					if (c.getType() > 0) {
+					if (c.getType() != Chart.Type.UNKNOWN) {
 						apCharts.put(chartName, c);
 						log.info("Added " + c.getName());
 						cwdao.write(c);

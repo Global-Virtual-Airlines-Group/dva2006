@@ -30,7 +30,8 @@ public class GetAirCharts extends DAO {
 	
 	private static final Logger log = Logger.getLogger(GetAirCharts.class);
 	
-	private static final int[] CAT_TYPE_MAP = {Chart.UNKNOWN, Chart.GROUND, Chart.SID, Chart.STAR, Chart.APR, Chart.ILS};
+	private static final Chart.Type[] CAT_TYPE_MAP = {Chart.Type.UNKNOWN, Chart.Type.GROUND, 
+		Chart.Type.SID, Chart.Type.STAR, Chart.Type.APR, Chart.Type.ILS};
 	
 	/**
 	 * Helper method to parse XML from remote HTTP host.
@@ -147,11 +148,11 @@ public class GetAirCharts extends DAO {
 						
 						// Create the chart
 						ExternalChart c = new ExternalChart(name, a);
-						c.setImgType(Chart.PDF);
+						c.setImgType(Chart.ImageType.PDF);
 						c.setSource("AirCharts");
 						c.setType(CAT_TYPE_MAP[type]);
-						if ((c.getType() == Chart.ILS) && (!c.getName().contains("ILS")))
-							c.setType(Chart.APR);
+						if ((c.getType() == Chart.Type.ILS) && (!c.getName().contains("ILS")))
+							c.setType(Chart.Type.APR);
 						
 						c.setLastModified(new Date());
 						c.setURL(ce.getTextTrim());

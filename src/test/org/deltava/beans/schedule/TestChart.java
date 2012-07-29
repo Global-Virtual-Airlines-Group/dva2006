@@ -32,12 +32,8 @@ public class TestChart extends AbstractBeanTestCase {
         assertEquals("MACEY TWO ARRIVAL", _c.getName());
         checkProperty("ID", Integer.valueOf(123));
         checkProperty("size", Integer.valueOf(123400));
-        checkProperty("type", Integer.valueOf(5));
-        assertEquals(Chart.TYPENAMES[5], _c.getTypeName());
-        checkProperty("imgType", Integer.valueOf(1));
-        assertEquals(Chart.IMG_TYPE[1].toUpperCase(), _c.getImgTypeName());
-        _c.setType(Chart.TYPES[Chart.GROUND]);
-        assertEquals(Chart.GROUND, _c.getType());
+        _c.setType(Chart.Type.GROUND);
+        assertEquals(Chart.Type.GROUND, _c.getType());
         
         InputStream imgS = _c.getInputStream();
         assertNotNull(imgS);
