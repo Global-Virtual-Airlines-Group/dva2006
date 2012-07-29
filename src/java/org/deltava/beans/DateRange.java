@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -8,15 +8,15 @@ import org.deltava.util.*;
 /**
  * A bean to store date/time ranges.
  * @author Luke
- * @version 3.6
+ * @version 4.2
  * @since 3.6
  */
 
 public class DateRange implements java.io.Serializable, Comparable<DateRange>, ComboAlias {
 
-	private String _label;
-	private Date _startDate;
-	private Date _endDate;
+	private final String _label;
+	private final Date _startDate;
+	private final Date _endDate;
 
 	/**
 	 * Creates a date range for a specific day.
@@ -25,9 +25,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 */
 	public static DateRange createDay(Date dt) {
 		Date sd = CalendarUtils.getInstance(dt, true).getTime();
-		DateRange dr = new DateRange(sd, CalendarUtils.adjust(sd, 1));
-		dr._label = StringUtils.format(sd, "MMM dd yyyy");
-		return dr;
+		return new DateRange(sd, CalendarUtils.adjust(sd, 1), StringUtils.format(sd, "MMM dd yyyy"));
 	}
 	
 	/**
@@ -37,10 +35,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 */
 	public static DateRange createWeek(Date dt) {
 		Calendar sc = CalendarUtils.getInstance(dt, true);
-		sc.set(Calendar.DAY_OF_WEEK, 0);
-		DateRange dr = new DateRange(sc.getTime(), CalendarUtils.adjust(sc.getTime(), 7));
-		dr._label = StringUtils.format(sc.getTime(), "MMM dd yyyy");
-		return dr;
+		return new DateRange(sc.getTime(), CalendarUtils.adjust(sc.getTime(), 7), StringUtils.format(sc.getTime(), "MMM dd yyyy"));
 	}
 	
 	/**
@@ -50,12 +45,9 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 */
 	public static DateRange createMonth(Date dt) {
 		Calendar sc = CalendarUtils.getInstance(dt, true);
-		sc.set(Calendar.DAY_OF_MONTH, 1);
 		Calendar ec = CalendarUtils.getInstance(sc.getTime());
 		ec.add(Calendar.MONTH, 1);
-		DateRange dr = new DateRange(sc.getTime(), ec.getTime());
-		dr._label = StringUtils.format(sc.getTime(), "MMMM yyyy");
-		return dr;
+		return new DateRange(sc.getTime(), ec.getTime(), StringUtils.format(sc.getTime(), "MMMM yyyy"));
 	}
 	
 	/**
@@ -65,13 +57,9 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 */
 	public static DateRange createYear(Date dt) {
 		Calendar sc = CalendarUtils.getInstance(dt, true);
-		sc.set(Calendar.MONTH, 0);
-		sc.set(Calendar.DAY_OF_MONTH, 1);
 		Calendar ec = CalendarUtils.getInstance(sc.getTime());
 		ec.add(Calendar.YEAR, 1);
-		DateRange dr = new DateRange(sc.getTime(), ec.getTime());
-		dr._label = String.valueOf(sc.get(Calendar.YEAR));
-		return dr;
+		return new DateRange(sc.getTime(), ec.getTime(), String.valueOf(sc.get(Calendar.YEAR)));
 	}
 	
 	/**
@@ -101,6 +89,16 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param endDate the end date/time
 	 */
 	public DateRange(Date startDate, Date endDate) {
+		this(startDate, endDate, startDate.toString());
+	}
+	
+	/**
+	 * Creates a date range.
+	 * @param startDate the start date/time
+	 * @param endDate the end date/time
+	 * @param label the label override
+	 */
+	private DateRange(Date startDate, Date endDate, String label) {
 		super();
 		_startDate = startDate;
 		_endDate = endDate;
