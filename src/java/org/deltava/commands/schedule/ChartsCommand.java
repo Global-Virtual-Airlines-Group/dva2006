@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ChartsCommand extends AbstractViewCommand {
+public class ChartsCommand extends AbstractCommand {
 
     /**
      * Executes the command.
@@ -46,10 +46,9 @@ public class ChartsCommand extends AbstractViewCommand {
         ctx.setAttribute("access", access, REQUEST);
 
         // Get charts for the airport
-        ViewContext vc = initView(ctx);
         try {
             GetChart dao = new GetChart(ctx.getConnection());
-            vc.setResults(dao.getCharts(a));
+            ctx.setAttribute("charts", dao.getCharts(a), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
@@ -57,11 +56,11 @@ public class ChartsCommand extends AbstractViewCommand {
         }
         
         // Calculate chart types
-        List<String> typeNames = Arrays.asList(Chart.TYPES);
-        List<ComboAlias> types = ComboUtils.fromArray(Chart.TYPENAMES, Chart.TYPES);
+        List<Chart.Type> typeNames = Arrays.asList(Chart.Type.values());
+        List<ComboAlias> types = ComboUtils.fromArray(Chart.Type.values());
 
         // Save charts and types
-        ctx.setAttribute("chartTypeNames", typeNames.subList(1, typeNames.size()), REQUEST);
+        ctx.setAttribute("typeCodes", typeNames.subList(1, typeNames.size()), REQUEST);
         ctx.setAttribute("chartTypes", types.subList(1, types.size()), REQUEST);
         ctx.setAttribute("selectedTypes", ctx.getParameters("chartType"), REQUEST);
         

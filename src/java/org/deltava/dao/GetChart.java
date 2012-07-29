@@ -1,4 +1,4 @@
-//Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -33,8 +33,6 @@ public class GetChart extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT C.ICAO FROM common.CHARTS C, common.AIRPORTS A "
 					+ "WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME");
-
-			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
@@ -61,8 +59,6 @@ public class GetChart extends DAO {
 		try {
 			prepareStatement("SELECT IFNULL(MAX(TIMESTAMPDIFF(DAY, LASTMODIFIED, NOW())), -1) FROM common.CHARTS WHERE (ICAO=?)");
 			_ps.setString(1, a.getICAO());
-			
-			// Execute the query
 			int result = -1;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
@@ -147,11 +143,9 @@ public class GetChart extends DAO {
 				sqlBuf.append(',');
 		}
 
-		// Clear off the trailing comma
 		sqlBuf.append("))");
 		setQueryMax(IDs.size());
 
-		// Load from the database
 		try {
 			prepareStatement(sqlBuf.toString());
 			return execute();
@@ -160,13 +154,11 @@ public class GetChart extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to load chart metadata.
 	 */
 	private List<Chart> execute() throws SQLException {
 		List<Chart> results = new ArrayList<Chart>();
-
-		// Execute the query
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasExt = (rs.getMetaData().getColumnCount() > 10);
 			while (rs.next()) {
@@ -181,8 +173,8 @@ public class GetChart extends DAO {
 					c = new Chart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
 			
 				c.setID(rs.getInt(1));
-				c.setType(rs.getInt(3));
-				c.setImgType(rs.getInt(4));
+				c.setType(Chart.Type.values()[rs.getInt(3)]);
+				c.setImgType(Chart.ImageType.values()[rs.getInt(4)]);
 				c.setSize(rs.getInt(6));
 				c.setUseCount(rs.getInt(7));
 				c.setLastModified(rs.getTimestamp(8));
