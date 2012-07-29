@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class ChartCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new Chart
@@ -61,7 +62,13 @@ public class ChartCommand extends AbstractFormCommand {
 			// Load data from the request
 			c.setName(ctx.getParameter("name"));
 			c.setAirport(SystemData.getAirport(ctx.getParameter("airport")));
-			c.setType(ctx.getParameter("chartType"));
+			try {
+				Chart.Type ct = Chart.Type.valueOf(ctx.getParameter("chartType"));
+				c.setType(ct);
+			} catch (Exception e) {
+				c.setType(Chart.Type.UNKNOWN);
+			}
+				
 			
 			// Load the image data
 			FileUpload imgData = ctx.getFile("img");
@@ -78,9 +85,9 @@ public class ChartCommand extends AbstractFormCommand {
 				if (!isPDF) {
 					ImageInfo info = new ImageInfo(buffer);
 					info.check();
-					c.setImgType(info.getFormat());
+					c.setImgType(Chart.ImageType.values()[info.getFormat()]);
 				} else
-					c.setImgType(Chart.PDF);
+					c.setImgType(Chart.ImageType.PDF);
 			
 				c.load(buffer);
 			}
@@ -119,6 +126,7 @@ public class ChartCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new Chart
@@ -132,7 +140,7 @@ public class ChartCommand extends AbstractFormCommand {
 			throw securityException("Cannot create/edit Approach Chart");
 		
 		// Get chart types (and remove Unknown)
-		List<ComboAlias> cTypes = ComboUtils.fromArray(Chart.TYPENAMES, Chart.TYPES);
+		List<ComboAlias> cTypes = ComboUtils.fromArray(Chart.Type.values());
 		cTypes.remove(0);
 
 		// Save chart types and ICAO
@@ -173,6 +181,7 @@ public class ChartCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Get our access level
@@ -192,7 +201,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 			// Save the chart and the available charts for this airport
 			ctx.setAttribute("chart", c, REQUEST);
-			ctx.setAttribute("isPDF", Boolean.valueOf(c.getImgType() == Chart.PDF), REQUEST);
+			ctx.setAttribute("isPDF", Boolean.valueOf(c.getImgType() == Chart.ImageType.PDF), REQUEST);
 			ctx.setAttribute("charts", dao.getCharts(c.getAirport()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -203,7 +212,7 @@ public class ChartCommand extends AbstractFormCommand {
 		// Get comamnd result - if we're a PDF, just redirect there
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
-		if (c.getImgType() == Chart.PDF) {
+		if (c.getImgType() == Chart.ImageType.PDF) {
 			result.setType(ResultType.REDIRECT);
 			result.setURL("/charts/" + c.getHexID() + ".pdf");
 		} else {

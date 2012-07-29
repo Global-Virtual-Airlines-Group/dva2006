@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import static java.net.HttpURLConnection.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to load external approach charts.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 4.0
  */
 
@@ -50,8 +50,8 @@ public class ExternalChartLoadTask extends Task {
 		@Override
 		public void run() {
 			GetExternalCharts ecdao = new GetExternalCharts();
-			ecdao.setConnectTimeout(2500);
-			ecdao.setReadTimeout(4000);
+			ecdao.setConnectTimeout(3500);
+			ecdao.setReadTimeout(5000);
 			
 			ExternalChart ec = _work.poll();
 			while (ec != null) {
@@ -205,6 +205,8 @@ public class ExternalChartLoadTask extends Task {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 			
+			// FIXME: Don't clean out airports (since we lose chart links)
+			
 			// Clear out the loaded airports
 			SetChart cwdao = new SetChart(con);
 			for (Airport a : loadedAirports)
@@ -212,7 +214,7 @@ public class ExternalChartLoadTask extends Task {
 			
 			// Write the charts
 			for (ExternalChart ec : results)
-				cwdao.writeExternal(ec);
+				cwdao.write(ec);
 			
 			ctx.commitTX();
 		} catch (DAOException de) {

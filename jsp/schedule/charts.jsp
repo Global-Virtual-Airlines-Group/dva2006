@@ -84,8 +84,8 @@ return true;
 </tr>
 
 <!-- Table Chart Data -->
-<c:forEach var="chart" items="${viewContext.results}">
-<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="page" />
+<c:forEach var="chart" items="${charts}">
+<c:set var="hasPDF" value="${chart.imgType.name == 'PDF'}" scope="page" />
 <c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>

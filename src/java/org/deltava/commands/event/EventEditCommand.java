@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 3.2
+ * @version 4.2
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class EventEditCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the command results
@@ -106,13 +107,13 @@ public class EventEditCommand extends AbstractCommand {
 				if (!e.isDestination(a)) {
 					for (Iterator<Chart> ci = aCharts.iterator(); ci.hasNext(); ) {
 						Chart ch = ci.next();
-						if (ch.getType() == Chart.STAR)
+						if (ch.getType() == Chart.Type.STAR)
 							ci.remove();
 					}
 				} else if (!e.isOrigin(a)) {
 					for (Iterator<Chart> ci = aCharts.iterator(); ci.hasNext(); ) {
 						Chart ch = ci.next();
-						if (ch.getType() == Chart.SID)
+						if (ch.getType() == Chart.Type.SID)
 							ci.remove();
 					}
 				}

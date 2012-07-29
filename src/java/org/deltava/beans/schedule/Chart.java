@@ -1,56 +1,51 @@
-// Copyright 2004, 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 4.0
+ * @version 4.2
  * @since 1.0
  */
 
 public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 
-	public static final int UNKNOWN = 0;
-	public static final int ILS = 1;
-	public static final int APR = 2;
-	public static final int STAR = 3;
-	public static final int SID = 4;
-	public static final int GROUND = 5;
+	/**
+	 * Chart type enumeration.
+	 */
+	public enum Type {
+		UNKNOWN("???"), ILS("ILS Approach"), APR("Approach"), STAR("Standard Terminal Arrival"), 
+		SID("Standard Instrument Departure"), GROUND("Facility"), PACKAGE("Combined Package");
+		
+		private final String _desc;
+		
+		Type(String desc) {
+			_desc = desc;
+		}
+		
+		public String getDescription() {
+			return _desc;
+		}
+	}
 
 	/**
-	 * Chart type descriptions.
+	 * Chart Image type enumeration.
 	 */
-	public static final String[] TYPES = { "???", "ILS", "APR", "STAR", "SID", "GROUND" };
-
-	/**
-	 * Human-readable type descriptions.
-	 */
-	public static final String[] TYPENAMES = { "Unknown", "ILS Approach", "Approach", "Standard Terminal Arrival",
-			"Standard Instrument Departure", "Facility" };
-
-	public static final int GIF = 0;
-	public static final int JPEG = 1;
-	public static final int PNG = 2;
-	public static final int PDF = 3;
-
-	/**
-	 * Image type codes.
-	 */
-	public static final String[] IMG_TYPE = { "gif", "jpg", "png", "pdf" };
-
+	public enum ImageType {
+		GIF, JPG, PNG, PDF;
+	}
+	
 	/**
 	 * Adobe Portable Document Format magic number.
 	 */
 	public static final String PDF_MAGIC = "%PDF-";
 
-	private int _imgType;
-	private int _type;
+	private ImageType _imgType;
+	private Type _type;
 	private String _name;
 	private int _size;
 	private int _useCount;
@@ -90,45 +85,24 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 
 	/**
 	 * Return the chart's image type.
-	 * @return the image type code
-	 * @see Chart#getImgTypeName()
-	 * @see Chart#setImgType(int)
+	 * @return the ImageType
+	 * @see Chart#setImgType(ImageType)
 	 */
-	public int getImgType() {
+	public ImageType getImgType() {
 		return _imgType;
-	}
-
-	/**
-	 * Return the chart's image type name.
-	 * @return the image type name
-	 * @see Chart#getImgType()
-	 */
-	public String getImgTypeName() {
-		return Chart.IMG_TYPE[_imgType].toUpperCase();
 	}
 
 	/**
 	 * Returns the chart type.
 	 * @return the chart type
-	 * @see Chart#getTypeName()
-	 * @see Chart#setType(int)
-	 * @see Chart#setType(String)
+	 * @see Chart#setType(Type)
 	 */
-	public int getType() {
+	public Type getType() {
 		return _type;
 	}
 
 	/**
-	 * Returns the chart type name.
-	 * @return the chart type name
-	 * @see Chart#getType()
-	 */
-	public String getTypeName() {
-		return Chart.TYPENAMES[_type];
-	}
-
-	/**
-	 * Returns whther this is an external chart.
+	 * Returns whether this is an external chart.
 	 * @return FALSE
 	 */
 	public boolean getIsExternal() {
@@ -190,52 +164,27 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 
 	/**
 	 * Set the chart type.
-	 * @param type the chart type code
-	 * @throws IllegalArgumentException if the chart type is negative or not in ChartConstants
+	 * @param t the chart Type
 	 */
-	public void setType(int type) {
-		if ((type < 0) || (type >= Chart.TYPES.length))
-			throw new IllegalArgumentException("Invalid Chart Type - " + type);
-
-		_type = type;
-	}
-
-	/**
-	 * Set the chart type
-	 * @param type the chart type
-	 * @throws IllegalArgumentException if the chart type is not in ChartConstants
-	 */
-	public void setType(String type) {
-		int ofs = StringUtils.arrayIndexOf(Chart.TYPES, type);
-		if (ofs == -1)
-			throw new IllegalArgumentException("Invalid Chart Type - " + type);
-		
-		setType(ofs);
+	public void setType(Type t) {
+		_type = t;
 	}
 
 	/**
 	 * Set the chart image type
-	 * @param imgType the image type code
-	 * @throws IllegalArgumentException if the image type is not in ChartConstants
+	 * @param t the ImageType
 	 * @see Chart#getImgType()
 	 */
-	public void setImgType(int imgType) {
-		if ((imgType < 0) || (imgType >= Chart.IMG_TYPE.length))
-			throw new IllegalArgumentException("Invalid Chart image type - " + imgType);
-
-		_imgType = imgType;
+	public void setImgType(ImageType t) {
+		_imgType = t;
 	}
 
 	/**
 	 * Set the size of the chart image.
 	 * @param size the image size in bytes
-	 * @throws IllegalArgumentException if the size is zero or negative
 	 */
 	public void setSize(int size) {
-		if (size < 0)
-			throw new IllegalArgumentException("Image Size cannot be negative");
-
-		_size = size;
+		_size = Math.max(0, size);
 	}
 	
 	/**
@@ -254,16 +203,16 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	 */
 	public int compareTo(Object o2) {
 		Chart c2 = (Chart) o2;
-		int tmp = _airport.compareTo(c2.getAirport());
-		return (tmp == 0) ? _name.compareTo(c2.getName()) : tmp;
+		int tmp = _airport.compareTo(c2._airport);
+		return (tmp == 0) ? _name.compareTo(c2._name) : tmp;
 	}
 	
 	public String getRowClassName() {
-		return (_type == 0) ? null : TYPES[_type].toLowerCase();
+		return (_type == Type.UNKNOWN) ? null : _type.name().toLowerCase();
 	}
 
 	/**
-	 * Determine equality by calling compareTo()
+	 * Determine equality by calling compareTo().
 	 */
 	public boolean equals(Object o) {
 		return (o instanceof Chart) && (compareTo(o) == 0);
@@ -274,7 +223,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	}
 
 	public String getComboAlias() {
-		return StringUtils.formatHex(getID());
+		return getHexID();
 	}
 	
 	public String toString() {
