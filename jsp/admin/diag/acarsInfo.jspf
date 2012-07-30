@@ -55,7 +55,7 @@ so.write('flashcontent');
 <c:set var="tcp" value="${con.TCPStatistics}" scope="request" />
 <c:set var="udp" value="${con.UDPStatistics}" scope="request" />
 <view:row entry="${con}">
- <td class="priB"><fmt:hex value="${con.ID}" /></td>
+ <td class="priB"><fmt:hex value="${con.connectionID}" /></td>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})
 <c:if test="${!empty con.addressInfo}"> <el:flag countryCode="${con.addressInfo.country.code}" caption="${con.addressInfo.location}" /></c:if></td>
