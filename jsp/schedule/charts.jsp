@@ -39,7 +39,7 @@ for (var x = 0; x < f.chartType.length; x++) {
 }
 
 // Hide/select rows
-<fmt:jsarray var="cTypes" items="${chartTypeNames}" />
+<fmt:jsarray var="cTypes" items="${chartTypes}" />
 for (var x = 0; x < cTypes.length; x++) {
 	var chartClass = cTypes[x].toLowerCase();
 	var isDisplayed = ((chartTypes.length == 0) || (chartTypes.indexOf(chartClass) > -1));
@@ -85,13 +85,13 @@ return true;
 
 <!-- Table Chart Data -->
 <c:forEach var="chart" items="${charts}">
-<c:set var="hasPDF" value="${chart.imgType.name == 'PDF'}" scope="page" />
+<c:set var="hasPDF" value="${chart.imgType == 'PDF'}" scope="page" />
 <c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="page" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
  <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
- <td class="sec">${chart.typeName}</td>
+ <td class="sec">${chart.type}</td>
 <c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
  <td colspan="${cspan}">Adobe PDF document<c:if test="${chart.size > 0}">, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K</c:if>
@@ -99,10 +99,10 @@ return true;
 </c:when>
 <c:otherwise>
  <td colspan="2"><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
- <td class="sec">${chart.typeName}</td>
+ <td class="sec">${chart.type}</td>
 <c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
- <td colspan="${cspan}">${chart.imgTypeName} image, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K
+ <td colspan="${cspan}">${chart.imgType} image, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K
 <c:if test="${chart.isExternal}"><span class="small"> (${chart.source})</span></c:if></td>
 </c:otherwise>
 </c:choose>
