@@ -44,7 +44,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     */
    public ConnectionEntry(long id) {
       super();
-      setID(id);
+      setConnectionID(id);
    }
    
    /**
@@ -85,7 +85,7 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
    /**
     * Returns this connection's ID.
     * @return the connection ID
-    * @see ConnectionEntry#setID(long)
+    * @see ConnectionEntry#setConnectionID(long)
     */
    public long getConnectionID() {
       return _id;
@@ -201,11 +201,8 @@ public class ConnectionEntry extends ACARSLogEntry implements TimeSpan {
     * @throws IllegalArgumentException if id is negative
     * @see ConnectionEntry#getID()
     */
-   public void setID(long id) {
-      if (id < 0)
-         throw new IllegalArgumentException("Invalid connection ID - " + id);
-      
-      _id = id;
+   public void setConnectionID(long id) {
+      _id = Math.max(0, id);
    }
    
    /**
