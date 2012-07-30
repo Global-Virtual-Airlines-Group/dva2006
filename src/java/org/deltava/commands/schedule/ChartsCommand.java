@@ -3,7 +3,6 @@ package org.deltava.commands.schedule;
 
 import java.util.*;
 
-import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -11,11 +10,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.ChartAccessControl;
 
-import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web site Command to display Approach Charts.
+ * A Web Site Command to display Approach Charts.
  * @author Luke
  * @version 4.2
  * @since 1.0
@@ -55,13 +53,9 @@ public class ChartsCommand extends AbstractCommand {
             ctx.release();
         }
         
-        // Calculate chart types
-        List<Chart.Type> typeNames = Arrays.asList(Chart.Type.values());
-        List<ComboAlias> types = ComboUtils.fromArray(Chart.Type.values());
-
         // Save charts and types
-        ctx.setAttribute("typeCodes", typeNames.subList(1, typeNames.size()), REQUEST);
-        ctx.setAttribute("chartTypes", types.subList(1, types.size()), REQUEST);
+        List<Chart.Type> typeNames = Arrays.asList(Chart.Type.values());
+        ctx.setAttribute("chartTypes", typeNames.subList(1, typeNames.size()), REQUEST);
         ctx.setAttribute("selectedTypes", ctx.getParameters("chartType"), REQUEST);
         
         // Redirect to the home page
