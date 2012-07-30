@@ -17,7 +17,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	/**
 	 * Chart type enumeration.
 	 */
-	public enum Type {
+	public enum Type implements ComboAlias {
 		UNKNOWN("???"), ILS("ILS Approach"), APR("Approach"), STAR("Standard Terminal Arrival"), 
 		SID("Standard Instrument Departure"), GROUND("Facility"), PACKAGE("Combined Package");
 		
@@ -28,6 +28,14 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 		}
 		
 		public String getDescription() {
+			return _desc;
+		}
+
+		public String getComboAlias() {
+			return name();
+		}
+
+		public String getComboName() {
 			return _desc;
 		}
 	}
