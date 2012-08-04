@@ -1,7 +1,7 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.jsp.*;
@@ -9,12 +9,13 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.taglib.ContentHelper;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -32,6 +33,7 @@ public class InsertGoogleAPITag extends TagSupport {
 
 	private int _majorVersion = MIN_API_VERSION;
 	private String _minorVersion;
+	private final Collection<String> _libraries = new LinkedHashSet<String>();
 
 	/**
 	 * Sets the Google API version to pull down.
@@ -48,12 +50,21 @@ public class InsertGoogleAPITag extends TagSupport {
 	public void setMinor(String ver) {
 		_minorVersion = ver;
 	}
+	
+	/**
+	 * Sets the Google Maps v3 libraries to load.
+	 * @param libList a comma-separated list of libraries.
+	 */
+	public void setLibraries(String libList) {
+		_libraries.addAll(StringUtils.split(libList, ","));
+	}
 
 	/**
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
 		super.release();
+		_libraries.clear();
 		_majorVersion = MIN_API_VERSION;
 		_minorVersion = null;
 	}
@@ -84,16 +95,19 @@ public class InsertGoogleAPITag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 
-		// Get the API keymap
-		Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
-		if ((_majorVersion < 3) && (apiKeys == null) || (apiKeys.isEmpty()))
-			throw new JspException("Google Maps API keys not defined");
+		// Get the API key
+		String apiKey = null;
+		if (_majorVersion < 3) {
+			Map<?, ?> apiKeys = (Map<?, ?>) SystemData.getObject("security.key.googleMaps");
+			if ((_majorVersion < 3) && (apiKeys == null) || (apiKeys.isEmpty()))
+				throw new JspException("Google Maps API keys not defined");
 
-		// Get the API key for this hostname
-		String hostName = pageContext.getRequest().getServerName().toLowerCase();
-		String apiKey = (String) apiKeys.get(hostName);
-		if (apiKey == null)
-			apiKey = (String) apiKeys.values().iterator().next();
+			// Get the API key for this hostname
+			String hostName = pageContext.getRequest().getServerName().toLowerCase();
+			apiKey = (String) apiKeys.get(hostName);
+			if (apiKey == null)
+				apiKey = (String) apiKeys.values().iterator().next();
+		}
 
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
@@ -115,6 +129,13 @@ public class InsertGoogleAPITag extends TagSupport {
 			if (_majorVersion < 3) {
 				out.print("&amp;key=");
 				out.print(apiKey);
+			} else if (!_libraries.isEmpty()) {
+				out.print("&amp;libraries=");
+				for (Iterator<String> i = _libraries.iterator(); i.hasNext(); ) {
+					out.print(i.next());
+					if (i.hasNext())
+						out.print(',');
+				}
 			}
 			
 			out.println("\"></script>");
