@@ -1,10 +1,10 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
  * A bean to store data about the current HTTP request. 
  * @author Luke
- * @version 3.7
+ * @version 4.2
  * @since 3.7
  */
 
@@ -12,8 +12,8 @@ public class HTTPContextData implements java.io.Serializable {
 	
 	private String _userAgent;
 	
-	private OperatingSystem _os;
-	private BrowserType _browser;
+	private final OperatingSystem _os;
+	private final BrowserType _browser;
 	
 	private int _major;
 	private int _minor;
