@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A servlet filter to detect the browser type.
  * @author Luke
- * @version 3.7
+ * @version 4.2
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class BrowserTypeFilter implements Filter {
 	 * Called by the servlet container when the filter is started. Logs a message.
 	 * @param cfg the Filter Configuration
 	 */
+	@Override
 	public void init(FilterConfig cfg) throws ServletException {
 		_defaultCode = cfg.getInitParameter("default");
 		log.info("Started");
@@ -42,6 +43,7 @@ public class BrowserTypeFilter implements Filter {
 	 * @throws IOException if an I/O error occurs
 	 * @throws ServletException if a general error occurs
 	 */
+	@Override
 	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
 		// Get the user agent
@@ -55,6 +57,7 @@ public class BrowserTypeFilter implements Filter {
 		HTTPContextData ctxt = new HTTPContextData(OperatingSystem.detect(userAgent), ver.getType());
 		int pos = ver.getVersion().indexOf('.');
 		ctxt.setVersion(StringUtils.parse(ver.getVersion().substring(0, pos), 0), StringUtils.parse(ver.getVersion().substring(pos + 1), 0));
+		ctxt.setHTML5((ver.getType() == BrowserType.CHROME) && (ctxt.getMajor() >= 20));
 		req.setAttribute(HTTPContext.HTTPCTXT_ATTR_NAME, ctxt);
 
 		// Execute the next filter in the chain
@@ -64,6 +67,7 @@ public class BrowserTypeFilter implements Filter {
 	/**
 	 * Called by the servlet container when the filter is stopped. Logs a message.
 	 */
+	@Override
 	public void destroy() {
 		log.info("Stopped");
 	}
