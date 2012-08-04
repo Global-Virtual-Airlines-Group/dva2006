@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display ACARS client error reports.
  * @author Luke
- * @version 2.6
+ * @version 4.2
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view context and the search type
@@ -39,8 +40,12 @@ public class ErrorLogCommand extends AbstractViewCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the DAO and the log
+			// Get the DAO and view options
 			GetACARSErrors dao = new GetACARSErrors(con);
+			ctx.setAttribute("clientBuilds", dao.getBuilds(), REQUEST);
+			Collection<Integer> authorIDs = dao.getPilots();
+			
+			// Get the error log
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			switch (searchType) {
@@ -56,12 +61,6 @@ public class ErrorLogCommand extends AbstractViewCommand {
 				default:
 					vc.setResults(dao.getAll());
 			}
-			
-			// Load client builds
-			ctx.setAttribute("clientBuilds", dao.getBuilds(), REQUEST);
-			
-			// Load Pilot IDs who have reported errors
-			Collection<Integer> authorIDs = dao.getPilots();
 			
 			// Get user IDs
 			Collection<Integer> IDs = new HashSet<Integer>(authorIDs);
@@ -80,8 +79,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			
 			// Get report author IDs
 			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator(PersonComparator.FIRSTNAME));
-			for (Iterator<Integer> i = authorIDs.iterator(); i.hasNext(); ) {
-				Integer id = i.next();
+			for (Integer id : authorIDs) {
 				Pilot usr = pilots.get(id);
 				if (usr != null)
 					authors.add(usr);
