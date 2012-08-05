@@ -1,6 +1,7 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
+import java.util.List;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -10,21 +11,25 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Pilot locations.
  * @author Luke
- * @version 2.5
+ * @version 4.2
  * @since 1.0
  */
 
 public class PilotBoardCommand extends AbstractCommand {
+	
+	private static final String[] MT_NAMES = {"Pilot Locations", "Heat Map"};
+	private static final String[] MT_OPTS = {"LOC", "MAP"};
+	private static final List<?> MAP_TYPES = ComboUtils.fromArray(MT_NAMES, MT_OPTS);
 
 	private class SpecialLocation implements MarkerMapEntry {
 
-		private GeoPosition _gPos;
+		private final GeoPosition _gPos;
 
 		SpecialLocation(double lat, double lon) {
 			super();
@@ -62,6 +67,7 @@ public class PilotBoardCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the HQ
@@ -69,6 +75,7 @@ public class PilotBoardCommand extends AbstractCommand {
 		ctx.setAttribute("hq", hq, REQUEST);
 
 		// Find my location
+		ctx.setAttribute("mapOptions", MAP_TYPES, REQUEST);
 		try {
 			Connection con = ctx.getConnection();
 

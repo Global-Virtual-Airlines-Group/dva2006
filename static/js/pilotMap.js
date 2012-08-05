@@ -12,10 +12,15 @@ xmlreq.onreadystatechange = function() {
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName('pilot');
-	for (var x = 0; x < ac.length; x++)
-		queue.push(ac[x]);
+	for (var x = 0; x < ac.length; x++) {
+		var a = ac[x];
+		var l = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
+		queue.push(a);
+		heatMapData.push(l);
+	}
 
 	removeMarkers('allMarkers');
+	hmap.setData(heatMapData);
 	var batchSize = Math.round(queue.length / 50);
 	pBar.start(100);
 	setTimeout('mrkLoad(' + batchSize + ')', 2);
@@ -106,6 +111,24 @@ if (mrk != null)
 else {
 	pBar.hide();
 	gaEvent('Pilot Map', 'Update');	
+}
+
+return true;
+}
+
+function updateMapOptions(opt)
+{
+gaEvent('Pilot Map', 'Switch Type');
+var toggleOpts = {checked:(opt.value != 'MAP')};
+toggleMarkers(map, 'allMarkers', toggleOpts);
+hmap.setMap(toggleOpts.checked ? null : map);
+hq.setMap(toggleOpts.checked ? map : null);
+
+// Toggle filter rows
+var rows = getElementsByClass('locFilter');
+for (var x = 0; x < rows.length; x++) {
+	var row = rows[x];
+	displayObject(row, toggleOpts.checked);
 }
 
 return true;
