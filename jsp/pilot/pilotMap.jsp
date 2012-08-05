@@ -12,7 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" minor="9" libraries="visualization" />
 <content:js name="pilotMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:js name="progressBar" />
@@ -68,16 +68,20 @@ return true;
  <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="525" /></td>
-</tr>
-<tr class="title caps">
- <td colspan="2">PILOT LOCATION FILTERING</td>
+ <td class="label">Map Type</td>
+ <td class="data"><el:check name="mapOpts" type="radio" options="${mapOptions}" value="LOC" onChange="void updateMapOptions(this)" /></td>
 </tr>
 <tr>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="525" /></td>
+</tr>
+<tr class="title caps locFilter">
+ <td colspan="2">PILOT LOCATION FILTERING</td>
+</tr>
+<tr class="locFilter">
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" size="1" firstEntry="ALL" options="${eqTypes}" onChange="void updateMarkers()" /></td>
 </tr>
-<tr>
+<tr class="locFilter">
  <td class="label">Pilot Ranks</td>
  <td class="data"><el:combo name="rank" size="1" firstEntry="ALL" options="${ranks}" onChange="void updateMarkers()" /></td>
 </tr>
@@ -97,17 +101,18 @@ return true;
 </content:region>
 </content:page>
 <script type="text/javascript">
-// Build the map
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${hq}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:6, streetViewControl:false, scrollwheel:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, zoom:6, minZoom:2, maxZoom:11, streetViewControl:false, scrollwheel:false, mapTypeControlOptions: mapTypes};
 
 var allMarkers = [];
+var heatMapData = [];
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+var hmap = new google.maps.visualization.HeatmapLayer({opacity:0.625, radius:2, dissipating:false});
 var pBar = progressBar(map, {strokeWidth:200, strokeColor:'#0000a1'});
 pBar.getDiv().style.right = '4px';
 pBar.getDiv().style.top = '30px';
