@@ -5,7 +5,8 @@ golgotha.maps.S_ICON_SIZE = new google.maps.Size(24, 24);
 golgotha.maps.S_ICON_SHADOW_SIZE = new google.maps.Size(24 * (59 / 32), 24);
 golgotha.maps.ICON_ANCHOR = new google.maps.Point(12, 12);
 golgotha.maps.DEFAULT_TYPES = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN];
-golgotha.maps.z = {INFOWINDOW: 100, POLYLINE: 25, POLYGON: 35, MARKER: 50, OVERLAY: 10};
+golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
+golgotha.maps.ovLayers = [];
 
 // Set best text color for map types
 golgotha.maps.TextColor = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010'};
@@ -41,6 +42,61 @@ google.maps.Map.prototype.clearOverlays = function() {
 google.maps.Map.prototype.addOverlay = function(mrk) {
 	mrk.setMap(this);
 	return true;
+}
+
+golgotha.maps.setButtonStyle = function(button) {
+	button.style.color = '#303030';
+	button.style.backgroundColor = 'white';
+	button.style.font = 'small Arial';
+	button.style.fontSize = '10px';
+	button.style.border = '1px solid black';
+	button.style.padding = '2px';
+	button.style.marginBottom = '3px';
+	button.style.textAlign = 'center';
+	button.style.cursor = 'pointer';
+	if (!this.buttonTitle)
+		button.style.width = '6em';
+	else if (this.buttonTitle.length > 11)
+		button.style.width = '8em';
+	else if (this.buttonTitle.length > 9)
+		button.style.width = '7em';
+	else
+		button.style.width = '6em';
+}
+
+golgotha.maps.LayerSelectControl = function(title, layer) {
+	var container = document.createElement('div');
+	var btn = document.createElement('div');
+	btn.ovLayer = layer;
+	golgotha.maps.setButtonStyle(btn);
+	container.appendChild(btn);
+	btn.appendChild(document.createTextNode(title));
+	google.maps.event.addDomListener(btn, 'click', function() {
+		if (this.ovLayer.getMap() != null)
+			return true;
+
+		golgotha.maps.ovLayers.push(this.ovLayer);
+		this.ovLayer.setMap(map);
+		return true;
+	});
+
+	return container;
+}
+
+golgotha.maps.LayerClearControl = function() {
+	var container = document.createElement('div');
+	var btn = document.createElement('div');
+	golgotha.maps.setButtonStyle(btn);
+	container.appendChild(btn);
+	btn.appendChild(document.createTextNode('None'));
+	google.maps.event.addDomListener(btn, 'click', function() {
+		for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop())
+			ov.setMap(null);
+
+		return true;
+	});
+
+	return container;
 }
 
 function googleMarker(color, point, label)
