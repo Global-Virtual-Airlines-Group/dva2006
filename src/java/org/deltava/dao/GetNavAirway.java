@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -228,24 +228,27 @@ public class GetNavAirway extends GetNavData {
 	public TerminalRoute getBestRoute(ICAOAirport a, int type, String name, String wp, String rwy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
+		StringBuilder buf = new StringBuilder("SELECT DISTINCT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
 					+ "AS PRF FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) AND ");
 		buf.append(name.contains("%") ? "(NAME LIKE ?)" : "(NAME=?)");
-		buf.append(" AND (WAYPOINT=?) ");
+		if (wp != null)
+			buf.append(" AND (WAYPOINT=?) ");
 		if (rwy != null)
 			buf.append("AND ((RUNWAY=?) OR (RUNWAY=?))");
 		buf.append(" ORDER BY PRF, SEQ");
 		
 		try {
+			int pos = 0;
 			prepareStatementWithoutLimits(buf.toString());
-			_ps.setString(1, "ALL");
-			_ps.setString(2, a.getICAO());
-			_ps.setInt(3, type);
-			_ps.setString(4, name);
-			_ps.setString(5, wp);
+			_ps.setString(++pos, "ALL");
+			_ps.setString(++pos, a.getICAO());
+			_ps.setInt(++pos, type);
+			_ps.setString(++pos, name);
+			if (wp != null)
+				_ps.setString(++pos, wp);
 			if (rwy != null) {
-				_ps.setString(6, "ALL");
-				_ps.setString(7, rwy);
+				_ps.setString(++pos, "ALL");
+				_ps.setString(++pos, rwy);
 			}
 			
 			// Execute the query
