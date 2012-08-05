@@ -12,10 +12,8 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" libraries="weather" />
 <content:googleAnalytics eventSupport="true" />
-<content:sysdata var="tileHost" name="weather.tileHost" />
-<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
 function showTrackInfo(marker)
@@ -142,7 +140,6 @@ xmlreq.send(null);
 return true;
 }
 </script>
-<map:wxList layers="sat" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -185,19 +182,18 @@ return true;
 </content:region>
 </content:page>
 <script type="text/javascript">
-//Create map options
+// Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:new google.maps.LatLng(52.0, -35.0), zoom:4, minZoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:new google.maps.LatLng(52.0, -35.0), zoom:4, minZoom:3, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
-var map = new google.maps.Map(document.getElementById("googleMap"), mapOpts);
+var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-<c:if test="${!empty tileHost}">
-// Build the sat layer control
-getTileOverlay('sat', 0.35);
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
-</c:if>
+
+// Add clouds
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl('Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl());
+
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
