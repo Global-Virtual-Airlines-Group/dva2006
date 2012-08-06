@@ -151,7 +151,7 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div>
+<div id="copyright" class="small mapTextLabel" style="bottom:20px; right:2px; visibility:hidden;"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
@@ -198,7 +198,7 @@ google.maps.event.addListener(map, 'click', infoClose);
 var pBar = progressBar({strokeWidth:225, strokeColor:'#0020ff'});
 pBar.getDiv().style.right = '4px';
 pBar.getDiv().style.top = '50px';
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Placeholders for route/positions
 var routeData;

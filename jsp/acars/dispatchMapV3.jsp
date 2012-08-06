@@ -147,7 +147,7 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 });
 
 // Initialize event listeners
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'zoomend', updateZoomLevel);
 google.maps.event.addListener(map, 'maptypeid_changed', hideAllSlices);
 </c:if>

@@ -67,7 +67,7 @@ var mapOpts = {center:mapC, minZoom:3, maxZoom:12, zoom:6, scrollwheel:false, st
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 <map:type map="map" type="SATELLITE" />
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 var trkLayer = new golgotha.maps.ShapeLayer(0.45, 3, 12);
 map.overlayMapTypes.insertAt(0, trkLayer);
 google.maps.event.addListener(map, 'zoom_changed', function() {

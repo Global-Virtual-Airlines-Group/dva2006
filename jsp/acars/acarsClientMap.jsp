@@ -72,7 +72,7 @@ return true;
  <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" /></div>
 </el:form>
 <content:copyright />
-<div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div>
+<div id="copyright" class="small mapTextLabel" style="bottom:20px; right:2px; visibility:hidden;"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
@@ -101,7 +101,7 @@ cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.
 </c:if>
 // Add map controls
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
 google.maps.event.addListener(map, 'click', infoClose);
