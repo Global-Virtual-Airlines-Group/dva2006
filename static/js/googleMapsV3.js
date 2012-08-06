@@ -9,7 +9,17 @@ golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:1
 golgotha.maps.ovLayers = [];
 
 // Set best text color for map types
-golgotha.maps.TextColor = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010'};
+golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010'};
+golgotha.maps.updateMapText = function () {
+	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
+	var elements = getElementsByClass('mapTextLabel');
+	for (var x = 0; x < elements.length; x++) {
+		var el = elements[x];
+		el.style.color = newColor;
+	}
+
+	return true;
+}
 
 golgotha.maps.displayedMarkers = [];
 golgotha.maps.setMap = function(map) {
@@ -17,8 +27,9 @@ golgotha.maps.setMap = function(map) {
 		golgotha.maps.displayedMarkers.remove(this);
 	else
 		golgotha.maps.displayedMarkers.push(this);
-	
+
 	this.setMap_OLD(map);
+	return true;
 }
 
 // Track overlays
@@ -201,18 +212,6 @@ if (!check.checked)
 	removeMarkers(arrayName);
 else
 	addMarkers(map, arrayName);
-
-return true;
-}
-
-function updateMapText()
-{
-var newColor = golgotha.maps.TextColor[this.getMapTypeId()];
-var elements = getElementsByClass('mapTextLabel');
-for (var x = 0; x < elements.length; x++) {
-	var el = elements[x];
-	el.style.color = newColor;
-}
 
 return true;
 }

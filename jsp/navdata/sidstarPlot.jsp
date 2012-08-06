@@ -172,7 +172,7 @@ var routes = [];
 map.currentAirport = '${mapCenter.ICAO}';
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 var mm = new MarkerManager(map, {maxZoom:14, borderPadding:32});
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.addListener(map, 'moveend', loadWaypoints);
 google.maps.event.trigger(map, 'maptypeid_changed');
 google.maps.event.trigger(map, 'moveend');
