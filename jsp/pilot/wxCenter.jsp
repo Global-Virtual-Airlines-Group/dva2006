@@ -275,7 +275,7 @@ map.getOptions = function() { return mapOpts; };
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function () { map.infoWindow.close(); });
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 <c:if test="${!empty tileHost}">
 // Load the tile overlays
 getTileOverlay('radar', 0.45);

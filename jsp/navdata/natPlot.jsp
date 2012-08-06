@@ -196,7 +196,7 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.Lay
 
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Create the tracks/waypoints
 var tracks = [];

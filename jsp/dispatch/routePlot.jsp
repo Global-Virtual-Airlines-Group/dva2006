@@ -186,7 +186,7 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl(
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
 </c:if>
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-google.maps.event.addListener(map, 'maptypeid_changed', updateMapText);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 google.maps.event.trigger(map, 'maptypeid_changed');
 <c:if test="${!empty airportD}">
 // Initialize the map
