@@ -13,7 +13,7 @@ golgotha.maps.ovLayers = [];
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 
 // Set best text color for map types
-golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010'};
+golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef'};
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
 	var elements = getElementsByClass('mapTextLabel');
@@ -62,16 +62,24 @@ google.maps.Map.prototype.addOverlay = function(mrk) {
 
 // Adds an overlay layer to the map
 google.maps.Map.prototype.addLayer = function(layer) {
-	this.overlayMapTypes.insertAt(0, layer);
 	golgotha.maps.ovLayers.push(layer);
+	if (layer.setMap) {
+		layer.setMap(this);
+		return true;
+	}
+
+	this.overlayMapTypes.insertAt(0, layer);
 	return true;
 }
 
 // Clears all map overlay layers
 google.maps.Map.prototype.clearLayers = function() {
-	for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop())
-		ov.setMap(null);
-
+	for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop()) {
+		if (ov.setMap)
+			ov.setMap(null);
+	}
+		
+	this.overlayMapTypes.clear();
 	return true;
 }
 
@@ -134,7 +142,7 @@ golgotha.maps.LayerSelectControl = function(map, title, layer) {
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode(title));
 	google.maps.event.addDomListener(btn, 'click', function() {
-		if (this.ovLayer.getMap() != null)
+		if ((this.ovLayer.getMap != null) && (this.ovLayer.getMap() != null))
 			return true;
 
 		map.addLayer(this.ovLayer);

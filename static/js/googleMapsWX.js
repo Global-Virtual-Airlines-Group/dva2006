@@ -1,22 +1,64 @@
+// DIV creation function
+golgotha.maps.util = {};
+golgotha.maps.util.buildTile = function(pnt, zoom, doc)
+{
+var div = doc.createElement('div');
+div.style.width = '256px';
+div.style.height = '256px';
+var img = doc.createElement('img');
+img.src = this.getTileUrl(pnt, zoom);
+img.setAttribute('class', 'wxTile ' + this.imgClass);
+img.defaultClass = img.className;
+img.opacity = this.getOpacity();
+img.style.opacity = img.opacity;
+div.appendChild(img);
+return div;	
+}
+
 // Create a ginsu weather overlay type
-golgotha.maps.WeatherLayer.prototype.constructor = google.maps.ImageMapType;
-golgotha.maps.WeatherLayer.prototype = new google.maps.ImageMapType();
-
 golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
-	opts.getTileUrl = this.getTileUrl;
-	opts.getTile = golgotha.maps.buildTile;
-	google.maps.ImageMapType.call(opts);
-	this.set('baseURL', 'http://' + golgotha.maps.tileHost + '/TileServer/imgs/' + name + '/u' + timestamp + '/';
-	this.set('layerName', name);
-	this.set('timestamp', new Date(timestamp));
+	if (!opts) opts = {};
+	opts.getTileUrl = golgotha.maps.util.getTileUrl;
+	opts.name = name;
+	if (!opts.baseURL) opts.baseURL = 'http://' + golgotha.maps.tileHost + '/TileServer/imgs/' + name + '/u' + timestamp + '/';
+	var ov = new google.maps.ImageMapType(opts);
+	ov.getTileUrl = opts.getTileUrl;
+	ov.maxZoom = opts.maxZoom;
+	ov.baseURL = opts.baseURL;
+	ov.getTile = golgotha.maps.util.buildTile;
+	ov.getTextDate = golgotha.maps.util.getTextDate;
+	ov.getCopyright = function() {
+		var d = new Date();
+		return 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
+	}
+	
+	ov.preloadTiles = function(handler) {
+		if (this.preload) return true;
+		var vizTiles = this.getMap().getVisibleTiles();
+		var imgsToLoad = [];
+		for (var x = 0; x < vizTiles.length; x++) {
+			var src = ov.getTileUrl(vizTiles[x], map.getZoom());
+			var img = new Image();
+			img.onload = function() {
+				imgsToLoad.remove(this.src);
+				if ((imgsToLoad.length == 0) && (handler != null))
+					handler.call();
+				
+				return true;
+			}
+
+			img.onerror = img.onload;
+			imgsToLoad.push(src);
+			img.src = src;
+		}
+		
+		return true;
+	}
+	
+	return ov;
 }
 
-golgotha.maps.WeatherLayer.prototype.getCopyright = function() {
-	var d = new Date();
-	return = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-}
-
-golgotha.maps.WeatherLayer.prototype.getTextDate = function()
+golgotha.maps.util.getTextDate = function()
 {
 var d = this.get('timestamp');
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -24,9 +66,9 @@ return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear() + '  '
 	+ d.getHours() + ':' + ((d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes());	
 }
 
-golgotha.maps.WeatherLayer.prototype.getTileUrl = function(pnt, zoom) {
-	if (zoom > this.get('maxZoom')) return '';
-	var url = this.get('baseURL');
+golgotha.maps.util.getTileUrl = function(pnt, zoom) {
+	if (zoom > this.maxZoom) return '';
+	var url = this.baseURL;
 	var masks = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288];
 
 	// Get the tile numbers
@@ -48,29 +90,23 @@ golgotha.maps.WeatherLayer.prototype.getTileUrl = function(pnt, zoom) {
 }; 
 
 // Create a ginsu FF weather overlay type
-golgotha.maps.FFWeatherLayer.prototype.constructor = golgotha.maps.WeatherLayer;
-golgotha.maps.FFWeatherLayer.prototype = new golgotha.maps.WeatherLayer();
-
 golgotha.maps.FFWeatherLayer = function(opts, name, timestamp, effective) {
-	golgotha.maps.WeatherLayer(opts, name, timestamp);
-	this.set('effDate', new Date(effective));
-	this.set('baseURL', 'http://' + golgotha.maps.tileHost + '/TileServer/ff/' + name + '/u' + effective + '/u' + timestamp + '/';
+	opts.effDate = new Date(effective);
+	opts.baseURL = 'http://' + golgotha.maps.tileHost + '/TileServer/ff/' + name + '/u' + effective + '/u' + timestamp + '/';
+	return golgotha.maps.WeatherLayer(opts, name, timestamp);
 }
 
 // Create a GVA/Wunderground weather overlay type
-golgotha.maps.WUWeatherLayer.prototype.constructor = golgotha.maps.WeatherLayer;
-golgotha.maps.WUWeatherLayer.prototype = new golgotha.maps.WeatherLayer();
-
 golgotha.maps.WUWeatherLayer = function(opts, name, timestamp) {
-	golgotha.maps.WeatherLayer(opts, name, timestamp);
-	this.set('baseURL', 'http://' + self.location.host + '/tile/' + name + '/u' + timestamp + '/';
+	opts.baseURL = 'http://' + self.location.host + '/tile/' + name + '/u' + timestamp + '/';
+	var ov = golgotha.maps.WeatherLayer(opts, name, timestamp);
+	ov.getCopyright = function() {
+		var d = new Date();
+		return 'Weather Data &copy; ' + d.getFullYear() + ' Weather Underground.'
+	}
+	
+	return ov;
 }
-
-golgotha.maps.WUWeatherLayer.prototype.getCopyright = function() {
-	var d = new Date();
-	return = 'Weather Data &copy; ' + d.getFullYear() + ' Weather Underground.'
-}
-
 
 // Utility functions
 golgotha.maps.convertAddr = function(pnt, srcZ, dstZ)
@@ -82,22 +118,6 @@ if (srcZ > dstZ)
 return {x:(pnt.x << deltaZ), y:(pnt.y << deltaZ)};
 }
 
-// DIV creation function
-golgotha.maps.buildTile = function wxGetTile(pnt, zoom, doc)
-{
-var div = doc.createElement('div');
-div.style.width = '256px';
-div.style.height = '256px';
-var img = doc.createElement('img');
-img.src = this.getTileUrl(pnt, zoom);
-img.setAttribute('class', 'wxTile ' + this.imgClass);
-img.defaultClass = img.className;
-img.style.opacity = 0;
-img.opacity = this.opacity;
-div.appendChild(img);
-return div;	
-}
-
 // Ginsu series list parser
 golgotha.maps.GinsuLoader = function(minZoom)
 {
@@ -106,7 +126,7 @@ golgotha.maps.GinsuLoader = function(minZoom)
 }
 
 golgotha.maps.GinsuLoader.prototype.getNames = function() { return this.layers.names; }
-golgotha.maps.GinsuLoader.prototype.getLayers = function(name) { return this.layers[name]; }
+golgotha.maps.GinsuLoader.prototype.getLayers = function(name) { return this.layers.data[name]; }
 golgotha.maps.GinsuLoader.prototype.getTime = function() { return this.layers.ts; } 
 golgotha.maps.GinsuLoader.prototype.setData = function(name, tx, imgClassName)
 {
@@ -118,7 +138,7 @@ golgotha.maps.GinsuLoader.prototype.load = function(id, seriesData)
 {
 this.layers.ts = seriesData.timestamp;
 for (var x = 0; x < seriesData.seriesNames.length; x++) {
-	var layerName = seriesData[x];
+	var layerName = seriesData.seriesNames[x];
 	var layerData = eval('seriesData.seriesInfo.' + layerName);
 	if (layerData == undefined) {
 		console.log('Cannot find ' + layerName);
@@ -135,20 +155,19 @@ for (var x = 0; x < seriesData.seriesNames.length; x++) {
 	if (myLayerData == null)
 		myLayerData = {opacity:0.5, imgClass:layerName};
 	
-	var layers = [];
+	var slices = [];
 	for (var tsX = 0; tsX < timestamps.length; tsX++) {
 		var ts = timestamps[tsX];
 		var layerOpts = {minZoom:this.minZoom, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, zIndex:golgotha.maps.z.OVERLAY};
 		var ovLayer = isFF ? new golgotha.maps.FFWeatherLayer(layerOpts, layerName, parseInt(ts.unixDate), parseInt(layerData.series[0].unixDate)) :  
-				new golgotha.maps.WeatherLayer(layerOpts, layerName, parseInt(ts.unixDate)) : 
-		ovLayer.opacity = myLayerData.opacity;
+				new golgotha.maps.WeatherLayer(layerOpts, layerName, parseInt(ts.unixDate));
 		ovLayer.imgClass = myLayerData.imgClass;
 		ovLayer.nativeZoom = layerData.nativeZoom;
-		layers.push(ovLayer);
+		slices.push(ovLayer);
 	}
 	
 	this.layers.names.push(layerName);
-	this.layers.data[layerName] = layers;
+	this.layers.data[layerName] = slices;
 }
 	
 return true;
@@ -156,7 +175,6 @@ return true;
 
 
 /* 
-
 if (zoom > this.nativeZoom) {
 	var dZ = (zoom - this.nativeZoom) + 1;
 	var nativeAddr = convertAddr(pnt, zoom, this.nativeZoom);
