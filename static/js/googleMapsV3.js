@@ -1,5 +1,6 @@
 // Initialize common data
 golgotha.maps.PIN_SIZE = new google.maps.Size(12, 20);
+golgotha.maps.TILE_SIZE = new google.maps.Size(256, 256);
 golgotha.maps.DEFAULT_SHADOW = new google.maps.MarkerImage('/' + golgotha.maps.IMG_PATH + '/maps/shadow.png', new google.maps.Size(22, 20), null, new google.maps.Point(6, 20));
 golgotha.maps.S_ICON_SIZE = new google.maps.Size(24, 24);
 golgotha.maps.S_ICON_SHADOW_SIZE = new google.maps.Size(24 * (59 / 32), 24);
@@ -7,6 +8,9 @@ golgotha.maps.ICON_ANCHOR = new google.maps.Point(12, 12);
 golgotha.maps.DEFAULT_TYPES = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN];
 golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
 golgotha.maps.ovLayers = [];
+
+// Calculate GMT offset in seconds from local
+golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010'};
@@ -50,9 +54,56 @@ google.maps.Map.prototype.clearOverlays = function() {
 	return true;
 }
 
+// Adds an overlay to the map
 google.maps.Map.prototype.addOverlay = function(mrk) {
 	mrk.setMap(this);
 	return true;
+}
+
+// Adds an overlay layer to the map
+google.maps.Map.prototype.addLayer = function(layer) {
+	this.overlayMapTypes.insertAt(0, layer);
+	golgotha.maps.ovLayers.push(layer);
+	return true;
+}
+
+// Clears all map overlay layers
+google.maps.Map.prototype.clearLayers = function() {
+	for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop())
+		ov.setMap(null);
+
+	return true;
+}
+
+// Sets a status message
+google.maps.Map.prototype.setStatus = function(msg) {
+	var sp = document.getElementById('wxLoading');
+	if (sp)	sp.innerHTML = msg;
+	return true;
+}
+
+// Prototype to calculate visible tile addresses for map
+google.maps.Map.prototype.getVisibleTiles = function()
+{
+var bnds = this.getBounds();
+var nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
+var se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
+
+// Get the pixel points of the tiles
+var p = map.getProjection();
+var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << map.getZoom()); nwp.y = Math.round(nwp.y << map.getZoom());
+var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << map.getZoom()); sep.y = Math.round(sep.y << map.getZoom());
+var nwAddr = new google.maps.Point((nwp.x >> 8), (nwp.y >> 8));
+var seAddr = new google.maps.Point((sep.x >> 8), (sep.y >> 8));
+
+// Load the tile addresses
+var tiles = [];
+for (var x = nwAddr.x; x <= seAddr.x; x++) {
+	for (var y = nwAddr.y; y <= seAddr.y; y++)
+		tiles.push(new google.maps.Point(x, y));
+}
+
+return tiles;
 }
 
 golgotha.maps.setButtonStyle = function(button) {
@@ -75,7 +126,7 @@ golgotha.maps.setButtonStyle = function(button) {
 		button.style.width = '6em';
 }
 
-golgotha.maps.LayerSelectControl = function(title, layer) {
+golgotha.maps.LayerSelectControl = function(map, title, layer) {
 	var container = document.createElement('div');
 	var btn = document.createElement('div');
 	btn.ovLayer = layer;
@@ -86,27 +137,20 @@ golgotha.maps.LayerSelectControl = function(title, layer) {
 		if (this.ovLayer.getMap() != null)
 			return true;
 
-		golgotha.maps.ovLayers.push(this.ovLayer);
-		this.ovLayer.setMap(map);
+		map.addLayer(this.ovLayer);
 		return true;
 	});
 
 	return container;
 }
 
-golgotha.maps.LayerClearControl = function() {
+golgotha.maps.LayerClearControl = function(map) {
 	var container = document.createElement('div');
 	var btn = document.createElement('div');
 	golgotha.maps.setButtonStyle(btn);
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode('None'));
-	google.maps.event.addDomListener(btn, 'click', function() {
-		for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop())
-			ov.setMap(null);
-
-		return true;
-	});
-
+	google.maps.event.addDomListener(btn, 'click', function() { map.clearLayers(); });
 	return container;
 }
 

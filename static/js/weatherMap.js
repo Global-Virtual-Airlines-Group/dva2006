@@ -1,46 +1,5 @@
 
 
-// Calculate GMT offset in seconds from local
-golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
-
-// Prototypes to add/remove weather layers from the map
-google.maps.Map.prototype.addWeather = function(layer) { this.overlayMapTypes.insertAt(0, layer); }
-google.maps.Map.prototype.removeWeather = function(layer)
-{
-for (var x = 0; x < this.overlayMapTypes.getLength(); x++) {
-	var ovLayer = this.overlayMapTypes.getAt(x);
-	if (ovLayer == layer) {
-		this.overlayMapTypes.removeAt(x);
-		return true;
-	}
-}	
-
-return false;
-}
-
-// Prototype to calculate visible tile addresses for map
-google.maps.Map.prototype.getVisibleTiles = function()
-{
-var bnds = this.getBounds();
-var nw = new google.maps.LatLng(bnds.getNorthEast().lat(), bnds.getSouthWest().lng());
-var se = new google.maps.LatLng(bnds.getSouthWest().lat(), bnds.getNorthEast().lng());
-
-// Get the pixel points of the tiles
-var p = map.getProjection();
-var nwp = p.fromLatLngToPoint(nw); nwp.x = Math.round(nwp.x << map.getZoom()); nwp.y = Math.round(nwp.y << map.getZoom());
-var sep = p.fromLatLngToPoint(se); sep.x = Math.round(sep.x << map.getZoom()); sep.y = Math.round(sep.y << map.getZoom());
-var nwAddr = new google.maps.Point((nwp.x >> 8), (nwp.y >> 8));
-var seAddr = new google.maps.Point((sep.x >> 8), (sep.y >> 8));
-
-// Load the tile addresses
-var tiles = [];
-for (var x = nwAddr.x; x <= seAddr.x; x++) {
-	for (var y = nwAddr.y; y <= seAddr.y; y++)
-		tiles.push(new google.maps.Point(x, y));
-}
-
-return tiles;
-}
 
 // Prototype to show certain types of map tile images
 google.maps.Map.prototype.showOverlay = function(ovLayer)
