@@ -12,9 +12,7 @@ return elements;
 
 function getElementsByClass(cName, eName, parent)
 {
-if (parent == null)
-	parent = document;
-
+if (parent == null) parent = document;
 var elements = [];
 var all = parent.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
