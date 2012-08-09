@@ -9,8 +9,6 @@ div.style.height = '256px';
 var img = doc.createElement('img');
 img.src = this.getTileUrl(pnt, zoom);
 img.setAttribute('class', 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date'));
-//img.defaultClass = img.className;
-//img.opacity = this.getOpacity();
 img.style.opacity = this.getOpacity();
 div.appendChild(img);
 return div;	
@@ -252,6 +250,37 @@ golgotha.maps.LayerAnimateControl = function(map, title, layers) {
 	});
 	
 	return container;
+}
+
+// You probably want to create an animator object, which gets passed the frames to animate and tracks state,etc.
+// Pass it an array of layers to animate.
+golgotha.maps.Animator = function() {
+	this.layers = [];
+	this.isPlaying = false;
+}
+
+golgotha.maps.Animator.prototype.animate = function(slices) {
+	if (this.isPlaying) stop();
+	for (var x = 0; x < slices.length; x++)
+		this.layers.push(slices[x]);
+	
+	this.ofs = 0;
+	this.imgClass = slices[0];
+	return true;
+}
+
+golgotha.maps.Animator.prototype.nextFrame = function() {
+	
+	
+	
+	return true;
+}
+
+golgotha.maps.Animator.prototype.stop = function() {
+	if (!this.isPlaying) return false;
+	
+	
+	return true;
 }
 
 /* 
