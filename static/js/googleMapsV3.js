@@ -60,24 +60,23 @@ google.maps.Map.prototype.addOverlay = function(mrk) {
 	return true;
 }
 
-// Adds an overlay layer to the map
-google.maps.Map.prototype.addLayer = function(layer) {
-	golgotha.maps.ovLayers.push(layer);
-	if (layer.setMap) {
-		layer.setMap(this);
-		return true;
-	}
-
-	this.overlayMapTypes.insertAt(0, layer);
+// Adds a layer to the map
+google.maps.Map.prototype.addLayer = function(l) {
+	golgotha.maps.ovLayers.push(l);
+	l.setMap(this);
 	return true;
 }
 
 // Clears all map overlay layers
 google.maps.Map.prototype.clearLayers = function() {
-	for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop()) {
-		if (ov.setMap)
-			ov.setMap(null);
+	if (map.animator) {
+		map.animator.stop();
+		map.animator.clear();
+		delete map.animator;
 	}
+
+	for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop())
+		ov.setMap(null);
 		
 	this.overlayMapTypes.clear();
 	return true;
@@ -85,7 +84,7 @@ google.maps.Map.prototype.clearLayers = function() {
 
 // Sets a status message
 google.maps.Map.prototype.setStatus = function(msg) {
-	var sp = document.getElementById('wxLoading');
+	var sp = document.getElementById('mapStatus');
 	if (sp)	sp.innerHTML = msg;
 	return true;
 }

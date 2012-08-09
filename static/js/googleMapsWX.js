@@ -1,6 +1,6 @@
 // DIV creation function
 golgotha.maps.util = {};
-golgotha.maps.util.progress = progressBar({strokeWidth:225, strokeColor:'#0020ff'});
+golgotha.maps.util.progress = progressBar({strokeWidth:512, strokeColor:'#0020ff'});
 golgotha.maps.util.buildTile = function(pnt, zoom, doc)
 {
 var div = doc.createElement('div');
@@ -9,7 +9,7 @@ div.style.height = '256px';
 var img = doc.createElement('img');
 img.src = this.getTileUrl(pnt, zoom);
 img.setAttribute('class', 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date'));
-img.style.opacity = this.getOpacity();
+img.style.opacity = this.tempZeroOpacity ? 0 : this.getOpacity();
 div.appendChild(img);
 return div;	
 }
@@ -24,11 +24,39 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 	ov.set('timestamp', new Date(timestamp));
 	ov.getTileUrl = golgotha.maps.util.getTileUrl;
 	ov.getTile = golgotha.maps.util.buildTile;
+	ov.getMap = function() { return this.map; }
+	ov.setMap = function(m) {
+		if ((this.map != null) && (m != null)) {
+			if (m == this.map) return false;
+			setMap(null);
+		}
+
+		if (m != null) {
+			golgotha.maps.ovLayers.push(this);
+			m.overlayMapTypes.insertAt(0, this);
+			this.map = m;
+		} else if (this.map != null) {
+			delete this.tempZeroOpacity;
+			m = this.map;
+			this.map = null;
+			golgotha.maps.ovLayers.remove(this);
+			for (var x = 0; x < m.overlayMapTypes.getLength(); x++) {
+				var l = m.overlayMapTypes.getAt(x);
+				if (l == this) {
+					m.overlayMapTypes.removeAt(x);
+					return true;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	ov.getCopyright = function() {
 		var d = this.get('timestamp');
 		return 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
 	}
-
+	
 	ov.getTextDate = function() {
 		var d = this.get('timestamp');
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -37,7 +65,12 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 	}
 
 	ov.display = function(isVisible) {
-		var imgs = getElementsByClass(this.get('imgClass') + '-' + this.get('data'), 'img');
+		if (!isVisible && (this.map == null)) {
+			this.tempZeroOpacity = true;
+			return true;
+		}
+		
+		var imgs = getElementsByClass(this.get('imgClass') + '-' + this.get('date'), 'img');
 		for (var x = 0; x < imgs.length; x++) {
 			var img = imgs[x];
 			img.style.opacity = isVisible ? this.getOpacity() : 0;
@@ -57,9 +90,9 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 	}
 	
 	ov.preload = function(map, handler, tileLoadHandler) {
-		if (this.preload) return true;
+		if (this.preloaded) return true;
 		var vizTiles = map.getVisibleTiles();
-		var imgsToLoad = [];
+		var imgsToLoad = []; var ov = this;
 		for (var x = 0; x < vizTiles.length; x++) {
 			var src = ov.getTileUrl(vizTiles[x], map.getZoom());
 			var img = new Image();
@@ -67,9 +100,10 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 				imgsToLoad.remove(this.src);
 				if (tileLoadHandler != null)
 					tileLoadHandler.call();
-				if ((imgsToLoad.length == 0) && (handler != null)) {
-					this.preload = true;
-					handler.call(this);
+				if (imgsToLoad.length == 0) {
+					this.preloaded = true;
+					if (handler != null)
+						handler(ov);
 				}
 
 				return true;
@@ -161,13 +195,10 @@ this.layers.ts = seriesData.timestamp;
 for (var x = 0; x < seriesData.seriesNames.length; x++) {
 	var layerName = seriesData.seriesNames[x];
 	var layerData = eval('seriesData.seriesInfo.' + layerName);
-	if (layerData == undefined) {
-		console.log('Cannot find ' + layerName);
+	if (layerData == undefined)
 		continue;
-	} else if (layerData.series.length == 0) {
-		console.log('No series data for ' + layerName);
+	else if (layerData.series.length == 0)
 		continue;
-	}
 
 	// Peek inside the series data - if the first entry is FF, iterate through its timestamps
 	var isFF = (layerData.series[0].ff instanceof Array) && (layerData.series[0].ff.length > 0);
@@ -188,62 +219,74 @@ for (var x = 0; x < seriesData.seriesNames.length; x++) {
 	}
 
 	this.layers.names.push(layerName);
-	if (isFF)
-		slices.reverse();
-
+	slices.reverse();
 	this.layers.data[layerName] = slices;
 }
 	
 return true;
 }
 
-golgotha.maps.LayerAnimateControl = function(map, title, layers) {
+golgotha.maps.LayerAnimateControl = function(map, title, layers, refresh) {
 	var container = document.createElement('div');
+	container.setAttribute('class', 'layerAnimate');
 	var btn = document.createElement('div');
 	container.layers = layers;
 	golgotha.maps.setButtonStyle(btn);
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode(title));
-	container.ofs = 0; container.maxOfs = layers.length;
+	container.animator = new golgotha.maps.Animator(refresh);
+	container.animator.animate(layers);
 	var layersToLoad = [];
+
 	container.complete = function(layer) {
 		layersToLoad.remove(layer);
-		if (layersToLoad.length == 0) {
-			map.preload = false;
-			golgotha.maps.util.progress.hide();
-			this.frame();
-			return true;
+		layer.display(false);
+		if (layersToLoad.length > 0)
+			return false;
+
+		// Put first two slices on the map
+		for (var x = 0; x < Math.max(1, layers.length); x++) {
+			var ov = container.layers[x];
+			ov.setMap(map);
 		}
 
-		return false;
+		map.preload = false;
+		this.isPreloaded = true;
+		golgotha.maps.util.progress.hide();
+		map.animator = container.animator;
+		container.animator.start();
+		return true;
 	}
-	
+
 	container.update = function() {
 		var pb = golgotha.maps.util.progress;
 		pb.setCurrent(pb.getCurrent() + 1);
 		return true;
 	}
 
-	container.frame = function() {
-		var ov = this.layers[this.ofs];
-		ov.display(false);
-		this.ofs++;
-		if (this.ofs > this.maxOfs)
-			this.ofs = 0;
-
-		ov = this.layers[this.ofs];
-		ov.display(true);
-		return true;
-	}
-
 	google.maps.event.addDomListener(btn, 'click', function() {
+		if (map.animator) {
+			var isPlaying = map.animator.isPlaying;
+			map.animator.stop();
+			if (map.animator != container.animator) {
+				map.animator.clear();
+				delete map.animator;
+			} else if (isPlaying)
+				return true;
+		}
+		
 		if (map.preLoad) return false;
-		map.preload = true;
-		golgotha.maps.util.progress.start(map.getVisibleTiles().length * this.ovLayers.length);
-		for (var x = 0; x < this.ovLayers.length; x++) {
-			var ov = this.ovLayers[x];
-			layersToLoad.push(ov);
-			ov.preload(map, container.complete, container.update);
+		if (!container.isPreloaded) {
+			map.preload = true;
+			golgotha.maps.util.progress.start(map.getVisibleTiles().length * container.layers.length);
+			for (var x = 0; x < container.layers.length; x++) {
+				var ov = container.layers[x];
+				layersToLoad.push(ov);
+				ov.preload(map, container.complete, container.update);
+			}
+		} else {
+			map.animator = container.animator;
+			container.animator.start();
 		}
 		
 		return true;
@@ -252,34 +295,71 @@ golgotha.maps.LayerAnimateControl = function(map, title, layers) {
 	return container;
 }
 
-// You probably want to create an animator object, which gets passed the frames to animate and tracks state,etc.
-// Pass it an array of layers to animate.
-golgotha.maps.Animator = function() {
-	this.layers = [];
+// Map animator object
+golgotha.maps.Animator = function(interval) {
+	this.layers = []; this.ofs = 0;
 	this.isPlaying = false;
+	this.interval = isNaN(interval) ? 250 : Math.max(250, interval);
 }
 
 golgotha.maps.Animator.prototype.animate = function(slices) {
-	if (this.isPlaying) stop();
+	this.clear();
 	for (var x = 0; x < slices.length; x++)
 		this.layers.push(slices[x]);
-	
-	this.ofs = 0;
-	this.imgClass = slices[0];
+
 	return true;
 }
 
+golgotha.maps.Animator.prototype.clear = function() {
+	if (this.isPlaying) this.stop();
+	for (var x = 0; x < this.layers.length; x++) {
+		var ov = this.layers[x];
+		ov.display(false);
+		ov.setMap(null);
+	}
+
+	return true;
+}
+
+golgotha.maps.Animator.prototype.previousFrame = function() {
+	return (this.ofs == 0) ? (this.layers.length-1) : (this.ofs-1);
+}
+
 golgotha.maps.Animator.prototype.nextFrame = function() {
-	
-	
-	
+	var result = this.ofs+1;
+	return (result == this.layers.length) ? 0 : result;
+}
+
+golgotha.maps.Animator.prototype.doFrame = function() {
+	if (!this.isPlaying) return false;
+	var pov = this.layers[this.ofs];
+	pov.display(false);
+	this.ofs = this.nextFrame();
+	var ov = this.layers[this.ofs];
+	ov.display(true);
+	var nov = this.layers[this.nextFrame()];
+	nov.setMap(ov.getMap());
+	pov.setMap(null);
+	pov.display(false);
+	var a = this;
+	window.setTimeout(function() { a.doFrame() }, (this.ofs == (this.layers.length-1)) ? 1250 : this.interval);
+	return true;
+}
+
+golgotha.maps.Animator.prototype.start = function() {
+	console.log('Animator started');
+	this.isPlaying = true;
+	var ov = this.layers[this.ofs];
+	ov.display(true);
+	var a = this;
+	setTimeout(function() { a.doFrame() }, this.interval);
 	return true;
 }
 
 golgotha.maps.Animator.prototype.stop = function() {
 	if (!this.isPlaying) return false;
-	
-	
+	console.log('Animator stopped');
+	this.isPlaying = false;
 	return true;
 }
 
