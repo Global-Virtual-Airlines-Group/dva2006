@@ -189,6 +189,13 @@ this.imgData[name] = {opacity:tx, imgClass:imgClassName};
 return true;
 }
 
+golgotha.maps.GinsuLoader.prototype.clear = function()
+{
+this.layers.names = [];	
+this.layers.data = [];
+return true;
+}
+
 golgotha.maps.GinsuLoader.prototype.load = function(id, seriesData)
 {
 this.layers.ts = seriesData.timestamp;
@@ -296,7 +303,8 @@ golgotha.maps.LayerAnimateControl = function(map, title, layers, refresh) {
 }
 
 // Map animator object
-golgotha.maps.Animator = function(interval) {
+golgotha.maps.Animator = function(opts) {
+	if (!opts) opts = {};
 	this.layers = []; this.ofs = 0;
 	this.isPlaying = false;
 	this.interval = isNaN(interval) ? 250 : Math.max(250, interval);
@@ -338,11 +346,14 @@ golgotha.maps.Animator.prototype.doFrame = function() {
 	var ov = this.layers[this.ofs];
 	ov.display(true);
 	var nov = this.layers[this.nextFrame()];
+	nov.display(false);
 	nov.setMap(ov.getMap());
 	pov.setMap(null);
-	pov.display(false);
 	var a = this;
 	window.setTimeout(function() { a.doFrame() }, (this.ofs == (this.layers.length-1)) ? 1250 : this.interval);
+	
+	// TODO: Fire frame handler
+	
 	return true;
 }
 
