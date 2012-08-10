@@ -1,5 +1,4 @@
 // DIV creation function
-golgotha.maps.util = {};
 golgotha.maps.util.progress = progressBar({strokeWidth:512, strokeColor:'#0020ff'});
 golgotha.maps.util.buildTile = function(pnt, zoom, doc)
 {
@@ -9,7 +8,12 @@ div.style.height = '256px';
 var img = doc.createElement('img');
 img.src = this.getTileUrl(pnt, zoom);
 img.setAttribute('class', 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date'));
-img.style.opacity = this.tempZeroOpacity ? 0 : this.getOpacity();
+var tx = this.tempZeroOpacity ? 0 : this.getOpacity();
+if (golgotha.maps.util.oldIE)
+	img.style.filter = 'alpha(opacity=' + (tx*100) + ')';
+else
+	img.style.opacity = tx;
+
 div.appendChild(img);
 return div;	
 }
@@ -303,10 +307,10 @@ golgotha.maps.LayerAnimateControl = function(map, title, layers, refresh) {
 }
 
 // Map animator object
-golgotha.maps.Animator = function(opts) {
-	if (!opts) opts = {};
+golgotha.maps.Animator = function(interval) {
 	this.layers = []; this.ofs = 0;
 	this.isPlaying = false;
+	this.eventHandlers = [];
 	this.interval = isNaN(interval) ? 250 : Math.max(250, interval);
 }
 
@@ -320,6 +324,9 @@ golgotha.maps.Animator.prototype.animate = function(slices) {
 
 golgotha.maps.Animator.prototype.clear = function() {
 	if (this.isPlaying) this.stop();
+	for (var l = this.eventHandlers.pop(); (l != null); l = this.eventHandlers.pop())
+		google.maps.event.removeListener(l);
+
 	for (var x = 0; x < this.layers.length; x++) {
 		var ov = this.layers[x];
 		ov.display(false);
@@ -351,9 +358,6 @@ golgotha.maps.Animator.prototype.doFrame = function() {
 	pov.setMap(null);
 	var a = this;
 	window.setTimeout(function() { a.doFrame() }, (this.ofs == (this.layers.length-1)) ? 1250 : this.interval);
-	
-	// TODO: Fire frame handler
-	
 	return true;
 }
 
@@ -362,6 +366,16 @@ golgotha.maps.Animator.prototype.start = function() {
 	this.isPlaying = true;
 	var ov = this.layers[this.ofs];
 	ov.display(true);
+
+	// Register a zoom listener to pause while panning zoom_changed, idle
+	var m = ov.getMap();
+	if (this.eventHandlers.length == 0) {
+		this.eventHandlers.push(google.maps.event.addListener(map, 'zoom_changed', this.pauseHandler));
+		this.eventHandlers.push(google.maps.event.addListener(map, 'dragstart', this.pauseHandler));
+		this.eventHandlers.push(google.maps.event.addListener(map, 'idle', this.idleHandler));
+	}
+
+	// Start animation
 	var a = this;
 	setTimeout(function() { a.doFrame() }, this.interval);
 	return true;
@@ -371,6 +385,26 @@ golgotha.maps.Animator.prototype.stop = function() {
 	if (!this.isPlaying) return false;
 	console.log('Animator stopped');
 	this.isPlaying = false;
+	return true;
+}
+
+golgotha.maps.Animator.prototype.pauseHandler = function() {
+	var a = this.animator;
+	if (a.isPlaying) {
+		console.log('Pausing');
+		a.stop();
+	}
+
+	return true;
+}
+
+golgotha.maps.Animator.prototype.idleHandler = function() {
+	var a = this.animator;
+	if (!a.isPlaying) {
+		console.log('Resuming');
+		a.start();
+	}
+
 	return true;
 }
 
