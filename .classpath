@@ -22,10 +22,10 @@
 	<classpathentry kind="lib" path="lib/deploy/json-1.00.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.62.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.20-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.2.jar" sourcepath="lib/src/jdom-2.0.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.63.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
