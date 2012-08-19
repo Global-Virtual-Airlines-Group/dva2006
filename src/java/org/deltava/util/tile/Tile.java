@@ -1,13 +1,11 @@
-// Copyright 2006, 2007, 2008 The Weather Channel Interactive. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
-import java.awt.image.BufferedImage;
-
 /**
- * Tiles are the core of the TileServer application.
- * @author LKolin
- * @version 2.1
- * @since 1.0
+ * An interface for Tile images.
+ * @author Luke
+ * @version 5.0
+ * @since 5.0
  */
 
 public interface Tile extends Comparable<Tile> {
@@ -48,5 +46,5 @@ public interface Tile extends Comparable<Tile> {
 	 * Sets the tile image.
 	 * @param img the rendered image
 	 */
-	public void setImage(BufferedImage img);
+	public void setImage(java.awt.image.BufferedImage img);
 }
