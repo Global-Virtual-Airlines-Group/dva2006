@@ -25,6 +25,11 @@
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.20-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.2.jar" sourcepath="lib/src/jdom-2.0.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.8.2.jar" sourcepath="lib/src/spymemcached-2.8.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/DVA2006/lib/src/spymemcached-2.8.2-javadocs.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.63.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
