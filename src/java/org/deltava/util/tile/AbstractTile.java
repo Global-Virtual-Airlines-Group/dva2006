@@ -1,18 +1,18 @@
-// Copyright 2006, 2007 The Weather Channel Interactive. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.image.*;
 
 /**
  * An abstract class to support common tile functions.
- * @author LKolin
- * @version 1.0
- * @since 1.0
+ * @author Luke
+ * @version 5.0
+ * @since 5.0
  */
 
 public abstract class AbstractTile implements Tile {
 	
-	protected TileAddress _addr;
+	protected final TileAddress _addr;
 	
 	/**
 	 * Creates a new Tile.
@@ -50,5 +50,10 @@ public abstract class AbstractTile implements Tile {
 	 */
 	public int compareTo(Tile t2) {
 		return _addr.compareTo(t2.getAddress());
+	}
+
+	@Override
+	public int hashCode() {
+		return _addr.hashCode();
 	}
 }

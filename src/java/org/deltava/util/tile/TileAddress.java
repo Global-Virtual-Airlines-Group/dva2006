@@ -1,23 +1,23 @@
-// Copyright 2006, 2007 The Weather Channel Interactive. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.util.*;
 
 /**
- * A class to store Tile addresses.
- * @author LKolin
- * @version 1.0
- * @since 1.0
+ * A class to store quadtree Tile addresses.
+ * @author Luke
+ * @version 5.0
+ * @since 5.0
  */
 
-public class TileAddress implements Comparable<TileAddress> {
+public class TileAddress implements  java.io.Serializable, Comparable<TileAddress> {
 
 	private static final int[] MASKS = { 0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384,
 			32768, 65536, 131072, 262144, 524288 };
 	
-	private int _x;
-	private int _y;
-	private int _level;
+	private final int _x;
+	private final int _y;
+	private final int _level;
 
 	/**
 	 * Creates a new Tile Address from cartesian coordinates.
@@ -43,23 +43,25 @@ public class TileAddress implements Comparable<TileAddress> {
 			name = name.substring(0, name.indexOf('.'));
 
 		// Parse the numbers
-		_level = name.length();
+		_level = name.length(); int X = 0; int Y = 0;
 		for (int x = 0; x < _level; x++) {
 			switch (name.charAt(x)) {
 				case '1':
-					_x += MASKS[_level - x];
+					X += MASKS[_level - x];
 					break;
 
 				case '2':
-					_y += MASKS[_level - x];
+					Y += MASKS[_level - x];
 					break;
 
 				case '3':
-					_x += MASKS[_level - x];
-					_y += MASKS[_level - x];
+					X += MASKS[_level - x];
+					Y += MASKS[_level - x];
 					break;
 			}
 		}
+		
+		_x = X; _y = Y;
 	}
 	
 	/**
