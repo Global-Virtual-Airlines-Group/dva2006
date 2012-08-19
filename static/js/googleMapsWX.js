@@ -202,6 +202,7 @@ return true;
 
 golgotha.maps.GinsuLoader.prototype.load = function(id, seriesData)
 {
+this.clear();
 this.layers.ts = seriesData.timestamp;
 for (var x = 0; x < seriesData.seriesNames.length; x++) {
 	var layerName = seriesData.seriesNames[x];
