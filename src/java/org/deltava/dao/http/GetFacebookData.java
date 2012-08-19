@@ -38,10 +38,11 @@ public class GetFacebookData extends FacebookDAO {
 		
 		try {
 			init(buf.toString());
-			InputStream is = getIn();
-			JSONTokener jtk = new JSONTokener(new InputStreamReader(is));
-			JSONObject jo = new JSONObject(jtk);
-			is.close();
+			JSONObject jo = null;
+			try (InputStream is = getIn()) {
+				JSONTokener jtk = new JSONTokener(new InputStreamReader(is));
+				jo = new JSONObject(jtk);
+			}
 			
 			// Check for error
 			if (jo.has("error")) {
