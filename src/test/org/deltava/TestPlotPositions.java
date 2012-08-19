@@ -219,7 +219,7 @@ public class TestPlotPositions extends TestCase {
 									GetSerializedPosition psdao = new GetSerializedPosition(in);
 									Collection<? extends RouteEntry> entries = psdao.read();
 									for (RouteEntry re : entries) {
-										Point pt = _mp.getPixelAddress(re.getLatitude(), re.getLongitude());
+										Point pt = _mp.getPixelAddress(re);
 										Integer cnt = _points.putIfAbsent(pt, Integer.valueOf(1));
 										if (cnt != null)
 											_points.put(pt, Integer.valueOf(cnt.intValue() + 1));	

@@ -245,7 +245,7 @@ public class TestPlotZoomPositions extends TestCase {
 										}
 										
 										if (includeMe) {
-											Point pt = _mp.getPixelAddress(re.getLatitude(), re.getLongitude());
+											Point pt = _mp.getPixelAddress(re);
 											Integer cnt = _points.putIfAbsent(pt, Integer.valueOf(1));
 											if (cnt != null)
 												_points.put(pt, Integer.valueOf(cnt.intValue() + 1));
