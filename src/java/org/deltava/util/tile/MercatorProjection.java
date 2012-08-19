@@ -1,17 +1,20 @@
-// Copyright 2007 The Weather Channel Interactive. All Rights Reserved.
+// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.tile;
 
 import java.awt.Point;
 
+import org.deltava.beans.GeoLocation;
+import org.deltava.beans.schedule.GeoPosition;
+
 /**
  * A utility class for translating canvas coordinates to latitude and longitude using the Microsoft Virtual
  * Earth and Google Maps modified Mercator projection.
- * @author LKolin
- * @version 1.0
- * @since 1.0
+ * @author Luke
+ * @version 5.0
+ * @since 5.0
  */
 
-public class MercatorProjection {
+public class MercatorProjection implements Projection {
 	
 	public static final double MAX_LATITUDE = 85.051111;
 	public static final double MIN_LATITUDE = -85.051111;
@@ -20,9 +23,9 @@ public class MercatorProjection {
 	private static final double minY = toMercator(MIN_LATITUDE);
 	private static final double dLat = maxY - minY;
 	
-	private int _zoomLevel;
-	private double _xScale;
-	private double _yScale;
+	private final int _zoomLevel;
+	private final double _xScale;
+	private final double _yScale;
 
 	/**
 	 * Initializes the projection.
@@ -45,58 +48,46 @@ public class MercatorProjection {
 	
 	/**
 	 * Returns the address of a Tile containing the provided point.
-	 * @param lat the latitude in degrees
-	 * @param lng the longitude in degrees
+	 * @param loc the GeoLocation
 	 * @return the TileAddress of the Tile containing this point at the current zoom level
 	 */
-	public TileAddress getAddress(double lat, double lng) {
-		Point p = getPixelAddress(lat, lng);
+	public TileAddress getAddress(GeoLocation loc) {
+		Point p = getPixelAddress(loc);
 		return new TileAddress(p.x / Tile.WIDTH, p.y / Tile.HEIGHT, _zoomLevel);
 	}
 	
-    private static double fromMercator( double lat )
-    {   
-        double ry = Math.toRadians( lat );
-        double plat = 2 * Math.atan( Math.pow( Math.E, ry ) ) - ( Math.PI / 2d );
-        return Math.toDegrees( plat );
+    private static double fromMercator(double lat) {   
+        double ry = Math.toRadians(lat);
+        double plat = 2 * StrictMath.atan(StrictMath.pow(Math.E, ry)) - (Math.PI / 2d);
+        return Math.toDegrees(plat);
     }
     
     private static double toMercator(double lat) {
-        double ry = Math.toRadians( lat );
-        double plat = Math.log( Math.tan( ry ) + ( 1 / Math.cos( ry ) ) );
-        return Math.toDegrees( plat );
+        double ry = Math.toRadians(lat);
+        double plat = StrictMath.log(StrictMath.tan(ry) + (1 / StrictMath.cos(ry)));
+        return Math.toDegrees(plat);
     }
 	
 	/**
 	 * Returns the pixel address of the provided point on the global canvas.
-	 * @param lat the latitude in degrees
-	 * @param lng the longitude in degrees
+	 * @param loc the GeoLocation
 	 * @return a Point with the pixel coordinates
 	 */
-	public Point getPixelAddress(double lat, double lng) {
+	public Point getPixelAddress(GeoLocation loc) {
 		// Bounds-check the lat
-		lat = Math.min(lat, MAX_LATITUDE);
-		lat = Math.max(lat, MIN_LATITUDE);
-		
-		// Translate longitude
-		while (lng > 180)
-			lng -= 180;
-		
-		while (lng < -180)
-			lng += 180;
+		double lat = Math.max(Math.min(loc.getLatitude(), MAX_LATITUDE), MIN_LATITUDE);
 		
 		// Convert latitude to mercator
 		double pmY = toMercator(lat);
 		double pY = (pmY - minY) / dLat;
 		
-		double pX = ((lng * -1) - 180) / 360;
-		int x = (int) Math.floor(_xScale - (pX * _xScale));
-		int y = (int) Math.floor(_yScale - (pY * _yScale));
+		double pX = ((loc.getLongitude() * -1) - 180) / 360;
+		int x = (int) StrictMath.floor(_xScale - (pX * _xScale));
+		int y = (int) StrictMath.floor(_yScale - (pY * _yScale));
 		
 		// Normalize
 		while (x > _xScale)
 			x -= _xScale;
-		
 		while (y > _yScale)
 			y -= _yScale;
 		
@@ -107,12 +98,15 @@ public class MercatorProjection {
 	 * Returns the latitude/longitude of a pixel on the global canvas.
 	 * @param x the X coordinate
 	 * @param y the Y coordinate
-	 * @return an array of double [latitude,longitude] coordinates
+	 * @return a GeoLocation
 	 */
-	public double[] getGeoPosition(int x, int y) {
+	public GeoLocation getGeoPosition(int x, int y) {
         double px = (_xScale - x ) / _xScale;
         double py = (_yScale - y ) / _yScale;
         double lon = (180 + ( px * 360 )) * -1;
-        return new double[] { fromMercator(minY + (py * dLat)), lon };
+        while (lon < -180)
+			lon += 360;
+        
+        return new GeoPosition(fromMercator(minY + (py * dLat)), lon);
 	}
 }
