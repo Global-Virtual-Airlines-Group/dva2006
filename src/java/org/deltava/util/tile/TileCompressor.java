@@ -59,13 +59,14 @@ public class TileCompressor implements Runnable {
 	public void run() {
 		
 		// Build the thread pol
-		ThreadPoolExecutor exec = new ThreadPoolExecutor(2, _maxThreads, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+		ThreadPoolExecutor exec = new ThreadPoolExecutor(_maxThreads, _maxThreads, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 		exec.allowCoreThreadTimeOut(true);
 		
 		// Get parents and create work
 		for (SingleTile st : _tiles)
 			exec.execute(new PNGWorker(st));
 		
+		exec.shutdown();
 		try {
 			exec.awaitTermination(60, TimeUnit.SECONDS);
 		} catch (InterruptedException ie) {
