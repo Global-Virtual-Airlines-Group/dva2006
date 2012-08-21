@@ -16,7 +16,7 @@ import net.spy.memcached.*;
  * @since 5.0
  */
 
-abstract class MemcachedDAO {
+public abstract class MemcachedDAO {
 	
 	/**
 	 * The spymemcached client.
@@ -41,7 +41,7 @@ abstract class MemcachedDAO {
 	        Properties systemProperties = System.getProperties();
 	        systemProperties.put("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.Log4JLogger");
 	        System.setProperties(systemProperties);
-			_client = new MemcachedClient(new BinaryConnectionFactory(), AddrUtil.getAddresses("localhost"));
+			_client = new MemcachedClient(new BinaryConnectionFactory(), AddrUtil.getAddresses("localhost:11211"));
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}

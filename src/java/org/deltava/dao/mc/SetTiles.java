@@ -16,13 +16,14 @@ import org.deltava.util.tile.*;
  * @since 5.0
  */
 
-public class SetTiles extends MemcachedDAO {
+public class SetTiles extends MemcachedDAO implements SeriesWriter {
 
 	/**
 	 * Writes an ImageSeries to memcached. 
 	 * @param is the ImageSeries
 	 * @throws DAOException
 	 */
+	@Override
 	public void write(ImageSeries is) throws DAOException {
 		checkConnection();
 		
