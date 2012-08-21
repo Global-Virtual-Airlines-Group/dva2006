@@ -2,42 +2,62 @@
 package org.deltava.servlet;
 
 import java.io.*;
-import java.sql.Connection;
+import java.util.*;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.*;
-
-import org.apache.log4j.Logger;
-
-import org.deltava.beans.system.VersionInfo;
-
-import org.deltava.dao.GetImage;
 
 import org.deltava.util.URLParser;
 import org.deltava.util.tile.*;
 
-import org.gvagroup.jdbc.*;
-
 /**
- * A servlet to display ACARS track tiles.
+ * A servlet to display Quad-tree tiles.
  * @author Luke
- * @version 4.2
- * @since 4.2
+ * @version 5.0
+ * @since 5.0
  */
 
-public class TileServlet extends GenericServlet {
+abstract class TileServlet extends GenericServlet {
 
-	private static final Logger log = Logger.getLogger(TileServlet.class);
-	
-	private byte[] EMPTY;
+	protected byte[] EMPTY;
 	
 	/**
-	 * Returns the servlet description.
-	 * @return name, author and copyright info for this servlet
+	 * A class to store Tile Addresses including type name and date.
 	 */
-	@Override
-	public String getServletInfo() {
-		return "ACARS Track Image Servlet " + VersionInfo.TXT_COPYRIGHT;
+	protected class TileAddress5D extends TileAddress {
+		private final String _name;
+		private final Date _dt;
+		
+		TileAddress5D(String type, Date effDate, String name) {
+			super(name);
+			_name = type;
+			_dt = effDate;
+		}
+		
+		/**
+		 * Returns the series type.
+		 * @return the type name
+		 */
+		public String getType() {
+			return _name;
+		}
+		
+		/**
+		 * Returns the effective date.
+		 * @return the tile date/time
+		 */
+		public Date getDate() {
+			return _dt;
+		}
+		
+		public int hashCode() {
+			return toString().hashCode();
+		}
+		
+		public String toString() {
+			StringBuilder buf = new StringBuilder(_name).append(':');
+			buf.append((_dt == null) ? 0 : _dt.getTime() / 1000).append(':');
+			return buf.append(getName()).toString();
+		}
 	}
 	
 	/**
@@ -45,10 +65,8 @@ public class TileServlet extends GenericServlet {
 	 */
 	@Override
 	public void init() {
-
-		SingleTile st = new SingleTile(new TileAddress(0, 0, 1));
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(1024)) {
+			SingleTile st = new SingleTile(new TileAddress(0, 0, 1));
 			ImageIO.write(st.getImage(), "png", out);
 			EMPTY = out.toByteArray();
 		} catch (IOException ie) {
@@ -57,55 +75,18 @@ public class TileServlet extends GenericServlet {
 	}
 
 	/**
-	 * Processes HTTP GET requests for images.
-	 * @param req the HTTP request
-	 * @param rsp the HTTP response
-	 * @throws IOException if a network I/O error occurs
+	 * Parses a URI to get the five-dimensional tile address.
+	 * @param uri the URI
+	 * @return a TileAddress5D
 	 */
-	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
+	protected TileAddress5D getTileAddress(String uri) {
 		
-		// Parse the URL and get the tile address
-		URLParser url = new URLParser(req.getRequestURI());
-		TileAddress addr = new TileAddress(url.getName());
-		byte[] data = EMPTY;
-		if (addr.getLevel() < 13) {
+		// Parse the URL and get the path parts
+		URLParser url = new URLParser(uri);
+		LinkedList<String> pathParts = url.getPath();
+		Collections.reverse(pathParts);
 		
-			// Get the connection pool
-			ConnectionPool jdbcPool = getConnectionPool();
-			Connection c = null; 
-			try {
-				c = jdbcPool.getConnection();
-				GetImage dao = new GetImage(c);
-				data = dao.getTile(addr.getX(), addr.getY(), addr.getLevel());
-				if (data == null)
-					data = EMPTY;
-			} catch (ConnectionPoolException cpe) {
-				log.error(cpe.getMessage());
-			} catch (ControllerException ce) {
-				if (ce.isWarning())
-					log.warn("Error retrieving image - " + ce.getMessage());
-				else
-					log.error("Error retrieving image - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);
-			} finally {
-				jdbcPool.release(c);
-			}
-		}
-
-		// Set headers
-		rsp.setHeader("Cache-Control", "public");
-		rsp.setIntHeader("max-age", 3600);
-		rsp.setContentType("application/octet-stream");
-		rsp.setStatus(HttpServletResponse.SC_OK);
-		rsp.setContentLength(data.length);
-		rsp.setBufferSize(Math.min(65536, data.length + 16));
-
-		// Dump the data to the output stream
-		try {
-			rsp.getOutputStream().write(data);
-			rsp.flushBuffer();
-		} catch (IOException ie) {
-			// NOOP
-		}
+		long rawDate = Long.parseLong(pathParts.poll());
+		return new TileAddress5D(pathParts.poll(), new Date(rawDate), url.getName());
 	}
 }
