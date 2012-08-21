@@ -1,4 +1,4 @@
-// Copyright 2004, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A utility class to parse URLs.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -58,6 +58,15 @@ public class URLParser {
      */
     public String getName() {
         return _elements.getLast();
+    }
+    
+    /**
+     * Returns the path entries.
+     * @return a LinkedList of path entries
+     */
+    public LinkedList<String> getPath() {
+    	return (_elements.size() == 1) ? new LinkedList<String>() : 
+    		new LinkedList<String>(_elements.subList(0, _elements.size() - 1));
     }
     
     /**
