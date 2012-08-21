@@ -4,6 +4,8 @@ package org.deltava.tasks;
 import java.util.*;
 import java.util.concurrent.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -24,6 +26,7 @@ import org.deltava.util.system.SystemData;
 
 public class RadarLoadTask extends Task {
 	
+	private final SeriesWriter _sw;
 	protected final Projection _p = new MercatorProjection(SystemData.getInt("weather.radar.zoom", 8));
 	
 	private final class SuperTileWorker implements Runnable {
@@ -38,6 +41,7 @@ public class RadarLoadTask extends Task {
 		
 		@Override
 		public void run() {
+			Logger tLog = Logger.getLogger(RadarLoadTask.class.getPackage().getName() + "-" + Thread.currentThread().getName());
 			
 			GetWUImagery dao = new GetWUImagery();
 			dao.setConnectTimeout(2000);
@@ -47,9 +51,9 @@ public class RadarLoadTask extends Task {
 			try {
 				SuperTile st = dao.getRadar(loc, 1280, 1024, _p.getZoomLevel());
 				_gt.add(st);
-				log.info("Loaded " + _addr);
+				tLog.info("Loaded " + _addr);
 			} catch (DAOException de) {
-				log.error("Cannot load SuperTile at " + _addr, de);
+				tLog.error("Cannot load SuperTile at " + _addr, de);
 			}
 		}
 	}
@@ -58,7 +62,16 @@ public class RadarLoadTask extends Task {
 	 * Initializes the Task.
 	 */
 	public RadarLoadTask() {
+		this(new SetTiles());
+	}
+	
+	/**
+	 * Initializes the task with a specific SeriesWriter. Typically used for testing.
+	 * @param sw the SeriesWriter
+	 */
+	public RadarLoadTask(SeriesWriter sw) {
 		super("Radar SuperTile loader", RadarLoadTask.class);
+		_sw = sw;
 	}
 
 	/**
@@ -86,12 +99,14 @@ public class RadarLoadTask extends Task {
 		
 		// Create the executor
 		int maxThreads = SystemData.getInt("weather.radar.threads", 12);
-		ThreadPoolExecutor exec = new ThreadPoolExecutor(1, maxThreads, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+		ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		exec.allowCoreThreadTimeOut(true);
 		SparseGlobalTile gt = new SparseGlobalTile(_p.getZoomLevel());
 		for (TileAddress addr : work)
 			exec.execute(new SuperTileWorker(gt, addr));
 		
 		// Wait on workers
+		exec.shutdown();
 		try {
 			exec.awaitTermination(60, TimeUnit.SECONDS);
 		} catch (InterruptedException ie) {
@@ -117,8 +132,7 @@ public class RadarLoadTask extends Task {
 		ImageSeries is = new ImageSeries("radar", new Date());
 		is.addAll(tc.getResults());
 		try {
-			SetTiles stwdao = new SetTiles();
-			stwdao.write(is);
+			_sw.write(is);
 		} catch (DAOException de) {
 			log.error("Error writing image series", de);
 		}
