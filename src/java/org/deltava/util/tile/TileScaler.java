@@ -71,14 +71,18 @@ public class TileScaler implements Runnable {
 		_dest.setDynamicPalette(_native.hasDynamicPalette());
 		
 		// Build the thread pol
-		ThreadPoolExecutor exec = new ThreadPoolExecutor(2, _maxThreads, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+		ThreadPoolExecutor exec = new ThreadPoolExecutor(_maxThreads, _maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 		exec.allowCoreThreadTimeOut(true);
 		
 		// Get parents and create work
-		Collection<TileAddress> parents = new HashSet<TileAddress>(_native.getAddresses());
-		for (TileAddress addr : parents)
-			exec.execute(new ScaleWorker(_native, _dest, addr));
+		Collection<TileAddress> parents = new HashSet<TileAddress>();
+		for (TileAddress addr : _native.getAddresses()) {
+			TileAddress parent = addr.getParent();
+			if (parents.add(parent))
+				exec.execute(new ScaleWorker(_native, _dest, parent));
+		}
 
+		exec.shutdown();
 		try {
 			exec.awaitTermination(45, TimeUnit.SECONDS);
 		} catch (InterruptedException ie) {
