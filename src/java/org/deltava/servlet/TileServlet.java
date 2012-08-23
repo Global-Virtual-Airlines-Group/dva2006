@@ -66,7 +66,7 @@ abstract class TileServlet extends GenericServlet {
 	@Override
 	public void init() {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(1024)) {
-			SingleTile st = new SingleTile(new TileAddress(0, 0, 1));
+			SingleTile st = new SingleTile(new TileAddress(1, 1, 1));
 			ImageIO.write(st.getImage(), "png", out);
 			EMPTY = out.toByteArray();
 		} catch (IOException ie) {

@@ -157,13 +157,13 @@ golgotha.maps.FFWeatherLayer = function(opts, name, timestamp, effective) {
 
 // Create a GVA/Wunderground weather overlay type
 golgotha.maps.WUWeatherLayer = function(opts, name, timestamp) {
-	var ov = golgotha.maps.WeatherLayer(opts, name, timestamp);
-	ov.set('baseURL', 'http://' + self.location.host + '/tile/' + name + '/u' + timestamp + '/');
+	var ov = new golgotha.maps.WeatherLayer(opts, name, timestamp);
+	ov.set('baseURL', 'http://' + self.location.host + '/wx/' + name + '/' + timestamp + '/');
 	ov.getCopyright = function() {
 		var d = this.get('timestamp');
 		return 'Weather Data &copy; ' + d.getFullYear() + ' Weather Underground.'
 	}
-	
+
 	return ov;
 }
 
@@ -236,6 +236,45 @@ for (var x = 0; x < seriesData.seriesNames.length; x++) {
 }
 	
 return true;
+}
+
+// WU Series list parser
+golgotha.maps.WULoader = function(minZoom) {
+	var ld = new golgotha.maps.GinsuLoader(minZoom);
+	ld.load = function(seriesData) {
+		this.clear();
+		this.layers.ts = new Date(seriesData.timestamp);
+		for (var x = 0; x < seriesData.names.length; x++) {
+			var layerName = seriesData.names[x];
+			var layerData = eval('seriesData.' + layerName);
+			if (layerData == undefined)
+				continue;
+			else if (layerData.length == 0)
+				continue;
+
+			var myLayerData = this.imgData[layerName];
+			if (myLayerData == null)
+				myLayerData = {opacity:0.5, imgClass:layerName};
+
+			var slices = [];
+			for (var tsX = 0; tsX < layerData.length; tsX++) {
+				var ts = layerData[tsX];
+				var layerOpts = {minZoom:this.minZoom, maxZoom:layerData.maxZoom, isPng:true, opacity:myLayerData.opacity, tileSize:golgotha.maps.TILE_SIZE, zIndex:golgotha.maps.z.OVERLAY};
+				var ovLayer = new golgotha.maps.WUWeatherLayer(layerOpts, layerName, ts);
+				ovLayer.set('imgClass', myLayerData.imgClass);
+				ovLayer.set('nativeZoom', layerData.nativeZoom);
+				slices.push(ovLayer);
+			}
+			
+			this.layers.names.push(layerName);
+			slices.reverse();
+			this.layers.data[layerName] = slices;
+		}
+		
+		return true;
+	}
+	
+	return ld;
 }
 
 golgotha.maps.LayerAnimateControl = function(map, title, layers, refresh) {

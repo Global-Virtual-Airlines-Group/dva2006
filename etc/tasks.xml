@@ -263,4 +263,16 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<!-- WU Radar Load task -->
+	<task id="wuradar" enabled="true">
+		<class>org.deltava.tasks.RadarLoadTask</class>
+		<time>
+			<min>0,5,10,15,20,25,30,35,40,45,50,55</min>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>
