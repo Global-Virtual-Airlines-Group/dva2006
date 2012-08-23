@@ -1,6 +1,8 @@
 // Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * A utility class to time operations. 
  * @author Luke
@@ -36,7 +38,7 @@ public class TaskTimer {
 	public long stop() {
 		_end = System.nanoTime();
 		_interval = (_end - _start);
-		return (_interval / 1000000);
+		return TimeUnit.MILLISECONDS.convert(_interval, TimeUnit.NANOSECONDS);
 	}
 	
 	/**
@@ -45,5 +47,13 @@ public class TaskTimer {
 	 */
 	public long getNanos() {
 		return _interval;
+	}
+	
+	/**
+	 * Returns the execution time in milliseconds.
+	 * @return the execution time
+	 */
+	public long getMillis() {
+		return TimeUnit.MILLISECONDS.convert(_interval, TimeUnit.NANOSECONDS);
 	}
 }
