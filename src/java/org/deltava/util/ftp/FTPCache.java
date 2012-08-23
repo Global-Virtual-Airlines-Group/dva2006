@@ -6,12 +6,13 @@ import java.util.Date;
 import java.util.zip.*;
 
 import org.apache.log4j.Logger;
-import org.deltava.util.FileUtils;
+
+import org.deltava.util.*;
 
 /**
  * A utility class to provide cached access to a remote FTP server.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -124,11 +125,11 @@ public class FTPCache {
 		InputStream is = null;
 		try {
 			if ((ldt == null) || (ldt.before(rdt))) {
-				long now = System.currentTimeMillis();
+				TaskTimer tt = new TaskTimer();
 				log.info("Downloading " + cf.getName() + ", local=" + ldt + ", remote=" + rdt);
 				is = con.get(fileName, cf);
 				cf.setLastModified(rdt.getTime());
-				long time = (System.currentTimeMillis() - now);
+				long time = tt.stop();
 				log.info("Download Complete. " + is.available() + " bytes, " + time + " ms");
 				_fileInfo = new FTPDownloadData(fileName, is.available(), time);
 			} else {
