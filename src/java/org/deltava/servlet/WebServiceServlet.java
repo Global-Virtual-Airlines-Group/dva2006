@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to handle Web Service data requests.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 public class WebServiceServlet extends BasicAuthServlet {
 
 	// Web services realm
-	private static final String WS_REALM = "\"DVA Web Services\"";
+	private static final String WS_REALM = "\"GVA Web Services\"";
 
 	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
 	private final Map<String, WebService> _svcs = new HashMap<String, WebService>();
@@ -99,7 +99,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 			log.info("Executing Web Service " + svc.getClass().getName());
 
 		// Execute the Web Service
-		long execTime = System.currentTimeMillis();
+		TaskTimer tt = new TaskTimer();
 		try {
 			rsp.setStatus(svc.execute(ctx));
 		} catch (ServiceException se) {
@@ -114,14 +114,13 @@ public class WebServiceServlet extends BasicAuthServlet {
 				// empty
 			}
 		} finally {
-			// Disable the cache
 			rsp.setHeader("Cache-Control", "no-cache");
-			execTime = System.currentTimeMillis() - execTime;
+			tt.stop();
 		}
 		
 		// Log excessive execution
-		if (execTime > 5000)
-			log.warn("Excessive execution time for " + parser.getName().toLowerCase() + " - " + execTime + "ms");
+		if (tt.getMillis() > 5000)
+			log.warn("Excessive execution time for " + parser.getName().toLowerCase() + " - " + tt.getMillis() + "ms");
 	}
 
 	/**
