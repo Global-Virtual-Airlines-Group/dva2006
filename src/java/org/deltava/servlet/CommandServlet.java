@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -28,7 +28,7 @@ import org.gvagroup.jdbc.ConnectionPoolException;
 /**
  * The main command controller. This is the application's brain stem.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -188,7 +188,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
-		long startTime = System.currentTimeMillis();
+		TaskTimer tt = new TaskTimer();
 
 		// Get the command
 		Command cmd = getCommand(req.getRequestURI());
@@ -308,7 +308,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 				}
 			}
 		} finally {
-			long execTime = System.currentTimeMillis() - startTime;
+			long execTime = tt.stop();
 			if (execTime < MAX_EXEC_TIME) {
 				if (log.isDebugEnabled())
 					log.debug("Completed in " + String.valueOf(execTime) + " ms");

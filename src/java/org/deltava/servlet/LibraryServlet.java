@@ -17,6 +17,7 @@ import org.deltava.dao.*;
 import org.deltava.security.SecurityContext;
 import org.deltava.security.command.FleetEntryAccessControl;
 
+import org.deltava.util.TaskTimer;
 import org.deltava.util.URLParser;
 import org.deltava.util.system.SystemData;
 
@@ -141,19 +142,20 @@ public class LibraryServlet extends GenericServlet {
 		// Stream the file
 		boolean isComplete = false;
 		rsp.setBufferSize(BUFFER_SIZE);
-		long startTime = System.currentTimeMillis();
+		TaskTimer tt = new TaskTimer();
 		try {
 			byte[] buf = new byte[BUFFER_SIZE];
-			InputStream is = new FileInputStream(entry.file());
-			OutputStream out = rsp.getOutputStream();
-			int bytesRead = is.read(buf, 0, BUFFER_SIZE);
-			while (bytesRead != -1) {
-				out.write(buf, 0, bytesRead);
-				bytesRead = is.read(buf, 0, BUFFER_SIZE);
+			try (InputStream is = new FileInputStream(entry.file())) {
+				OutputStream out = rsp.getOutputStream();
+				int bytesRead = is.read(buf, 0, BUFFER_SIZE);
+				while (bytesRead != -1) {
+					out.write(buf, 0, bytesRead);
+					bytesRead = is.read(buf, 0, BUFFER_SIZE);
+				}
+				
+				out.flush();
 			}
-
-			is.close();
-			out.flush();
+			
 			isComplete = true;
 		} catch (IOException ie) {
 			log.info("Download canceled");
@@ -162,10 +164,7 @@ public class LibraryServlet extends GenericServlet {
 		}
 
 		// Close the file and log download time
-		long totalTime = System.currentTimeMillis() - startTime;
-		if (totalTime == 0)
-			totalTime++;
-
+		long totalTime = Math.max(1, tt.stop());
 		if (isComplete)
 			log.info(entry.getFileName().toLowerCase() + " download complete, " + (totalTime / 1000) + "s, "
 				+ (entry.getSize() * 1000 / totalTime) + " bytes/sec");
