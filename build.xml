@@ -216,6 +216,7 @@
 			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<exclude name="log4j*.jar" />
+				<exclude name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
@@ -236,6 +237,7 @@
 			</fileset>
 			<fileset dir="lib/deploy">
 				<include name="log4j*.jar" />
+				<include name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
@@ -351,6 +353,7 @@
 			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="lib/deploy" includes="*.jar">
 				<exclude name="log4j*.jar" />
+				<exclude name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
@@ -371,6 +374,7 @@
 			</fileset>
 			<fileset dir="lib/deploy">
 				<include name="log4j*.jar" />
+				<include name="spymemcached*.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
