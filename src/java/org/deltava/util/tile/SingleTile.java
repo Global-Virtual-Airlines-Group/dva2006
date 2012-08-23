@@ -13,8 +13,8 @@ import java.awt.image.*;
 
 public class SingleTile extends AbstractTile implements RasterTile {
 
-	private static final IndexColorModel EMPTY_PAL = new IndexColorModel(1, 1, new byte[] {0}, new byte[] {0}, new byte[] {0}, 0);
-	private static final BufferedImage EMPTY = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, EMPTY_PAL);
+	private transient static final IndexColorModel EMPTY_PAL = new IndexColorModel(1, 1, new byte[] {0}, new byte[] {0}, new byte[] {127}, 0);
+	private transient static final BufferedImage EMPTY = new BufferedImage(Tile.WIDTH, Tile.HEIGHT, BufferedImage.TYPE_BYTE_INDEXED, EMPTY_PAL);
 	protected BufferedImage _img;
 	
 	/*

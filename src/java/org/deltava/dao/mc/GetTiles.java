@@ -18,6 +18,29 @@ import org.deltava.util.tile.*;
 public class GetTiles extends MemcachedDAO {
 
 	/**
+	 * Lists the available imagery types.
+	 * @return a Collection of types
+	 * @throws DAOException if an error occurs
+	 */
+	public Collection<String> getTypes() throws DAOException {
+		
+		setBucket("wuTiles");
+		Future<Object> f = null;
+		try {
+			checkConnection();
+			f = _client.asyncGet(createKey("types"));
+			@SuppressWarnings("unchecked")
+			Collection<String> results = (Collection<String>) f.get(100, TimeUnit.MILLISECONDS);
+			return (results == null) ? new HashSet<String>() : results;
+		} catch (Exception e) {
+			if (f != null)
+				f.cancel(true);
+			
+			throw new DAOException(e);
+		}
+	}
+	
+	/**
 	 * Reads available image dates from memcached. 
 	 * @param type the image type
 	 * @return a Collection of Dates
@@ -28,12 +51,33 @@ public class GetTiles extends MemcachedDAO {
 		setBucket("wuTiles", type);
 		Future<Object> f = null;
 		try {
+			checkConnection();
 			f  =_client.asyncGet(createKey("dates"));
 			@SuppressWarnings("unchecked")
-			Collection<Date> dates = (Collection<Date>) f.get(125, TimeUnit.MILLISECONDS);
-			return (dates == null) ? new HashSet<Date>() : dates;
+			Collection<Date> dates = (Collection<Date>) f.get(100, TimeUnit.MILLISECONDS);
+			if (dates == null)
+				return new HashSet<Date>();
+			
+			// Validate that the tiles exist
+			for (Iterator<Date> i = dates.iterator(); i.hasNext(); ) {
+				Date dt = i.next();
+				setBucket("wuTiles", type, String.valueOf(dt.getTime()));
+				try {
+					f = _client.asyncGet(createKey("$ME"));
+					Object o = f.get(100, TimeUnit.MILLISECONDS);
+					if (o == null)
+						i.remove();
+				} catch (Exception e) {
+					f.cancel(true);
+					i.remove();
+				}
+			}
+			
+			return dates;
 		} catch (Exception e) {
-			f.cancel(true);
+			if (f != null)
+				f.cancel(true);
+			
 			throw new DAOException(e);
 		}
 	}
@@ -49,11 +93,13 @@ public class GetTiles extends MemcachedDAO {
 		setBucket("wuTiles", imgType, String.valueOf(effDate.getTime()));
 		Future<Object> f = null;
 		try {
-			f = _client.asyncGet(createKey(addr));
-			PNGTile pt = (PNGTile) f.get(150, TimeUnit.MILLISECONDS);
-			return pt;
+			checkConnection();
+			f = _client.asyncGet(createKey(addr.getName()));
+			return (PNGTile) f.get(200, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
-			f.cancel(true);
+			if (f != null)
+				f.cancel(true);
+			
 			throw new DAOException(e);
 		}
 	}

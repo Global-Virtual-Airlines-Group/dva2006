@@ -20,7 +20,7 @@ public class TestRadarLoadTask extends TestCase {
 	private final class MockRadarLoadTask extends RadarLoadTask {
 		
 		MockRadarLoadTask() {
-			super(new FileSystemTileWriter("~/tiles"));
+			super(new NullTileWriter());
 		}
 		
 		@Override
@@ -29,7 +29,14 @@ public class TestRadarLoadTask extends TestCase {
 		}
 	}
 	
-	private final class FileSystemTileWriter implements SeriesWriter {
+	final class NullTileWriter implements SeriesWriter {
+		
+		public void write(ImageSeries is) {
+			// empty
+		}
+	}
+	
+	final class FileSystemTileWriter implements SeriesWriter {
 		private final Logger log = Logger.getLogger(TestRadarLoadTask.class);
 		private final File _root;
 		
@@ -63,8 +70,8 @@ public class TestRadarLoadTask extends TestCase {
 		SystemData.init();
 		
 		// Override numbers
-		SystemData.add("weather.radar.se.lat", Double.valueOf(41));
-		SystemData.add("weather.radar.se.lng", Double.valueOf(-101));
+		//SystemData.add("weather.radar.se.lat", Double.valueOf(41));
+		//SystemData.add("weather.radar.se.lng", Double.valueOf(-101));
 	}
 	
 	protected void tearDown() throws Exception {
