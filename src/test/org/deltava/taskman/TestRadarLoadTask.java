@@ -20,7 +20,7 @@ public class TestRadarLoadTask extends TestCase {
 	private final class MockRadarLoadTask extends RadarLoadTask {
 		
 		MockRadarLoadTask() {
-			super(new NullTileWriter());
+			super(new FileSystemTileWriter("/tiles"));
 		}
 		
 		@Override
@@ -51,7 +51,7 @@ public class TestRadarLoadTask extends TestCase {
 				TileAddress addr = pt.getAddress();
 				File tp = new File(_root, String.valueOf(addr.getLevel()));
 				tp.mkdirs();
-				File tF = new File(tp, addr.toString() + ".png");
+				File tF = new File(tp, addr.getName() + ".png");
 				try (FileOutputStream fos = new FileOutputStream(tF)) {
 					fos.write(pt.getData());
 					log.info("Wrote " + tF.getAbsolutePath());
