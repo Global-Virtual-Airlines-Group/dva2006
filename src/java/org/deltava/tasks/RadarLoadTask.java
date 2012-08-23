@@ -15,6 +15,9 @@ import org.deltava.dao.mc.SetTiles;
 
 import org.deltava.taskman.*;
 import org.deltava.util.tile.*;
+
+import org.deltava.util.CalendarUtils;
+import org.deltava.util.TaskTimer;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -44,8 +47,8 @@ public class RadarLoadTask extends Task {
 			Logger tLog = Logger.getLogger(RadarLoadTask.class.getPackage().getName() + "-" + Thread.currentThread().getName());
 			
 			GetWUImagery dao = new GetWUImagery();
-			dao.setConnectTimeout(2000);
-			dao.setReadTimeout(5000);
+			dao.setConnectTimeout(2500);
+			dao.setReadTimeout(7500);
 
 			GeoLocation loc = _p.getGeoPosition(_addr.getPixelX(), _addr.getPixelY());
 			try {
@@ -62,7 +65,7 @@ public class RadarLoadTask extends Task {
 	 * Initializes the Task.
 	 */
 	public RadarLoadTask() {
-		this(new SetTiles());
+		this(new SetTiles() {{ setExpiry(1800); }});
 	}
 	
 	/**
@@ -79,6 +82,11 @@ public class RadarLoadTask extends Task {
 	 */
 	@Override
 	protected void execute(TaskContext ctx) {
+		
+		// Round date downwards to nearest minute
+		Calendar cld = CalendarUtils.getInstance(new Date(), false);
+		cld.set(Calendar.SECOND, 0);
+		cld.set(Calendar.MILLISECOND, 0);
 		
 		// Get bounds
 		GeoLocation nw = new GeoPosition(SystemData.getDouble("weather.radar.nw.lat", 48), SystemData.getDouble("weather.radar.nw.lng", -127));
@@ -102,6 +110,7 @@ public class RadarLoadTask extends Task {
 		ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 		exec.allowCoreThreadTimeOut(true);
 		SparseGlobalTile gt = new SparseGlobalTile(_p.getZoomLevel());
+		TaskTimer tt = new TaskTimer();
 		for (TileAddress addr : work)
 			exec.execute(new SuperTileWorker(gt, addr));
 		
@@ -109,11 +118,13 @@ public class RadarLoadTask extends Task {
 		exec.shutdown();
 		try {
 			exec.awaitTermination(60, TimeUnit.SECONDS);
+			log.info("Loading completed in " + tt.stop() + "ms");
 		} catch (InterruptedException ie) {
 			log.warn("Timed out loading radar!");
 		}
 		
 		// Do the scale
+		tt.start();
 		SparseGlobalTile cgt = gt;
 		List<SparseGlobalTile> levels = new ArrayList<SparseGlobalTile>();
 		levels.add(cgt);
@@ -124,15 +135,21 @@ public class RadarLoadTask extends Task {
 			levels.add(cgt);
 		}
 		
+		log.info("Scaling completed in " + tt.stop() + "ms");
+		
 		// Do the conversion to PNG
+		tt.start();
 		TileCompressor tc = new TileCompressor(4, levels);
 		tc.run();
+		log.info("Compression completed in " + tt.stop() + "ms");
 		
 		// Save the tiles somewhere
-		ImageSeries is = new ImageSeries("radar", new Date());
+		tt.start();
+		ImageSeries is = new ImageSeries("radar", cld.getTime());
 		is.addAll(tc.getResults());
 		try {
 			_sw.write(is);
+			log.info("Serialization completed in " + tt.stop() + "ms");
 		} catch (DAOException de) {
 			log.error("Error writing image series", de);
 		}

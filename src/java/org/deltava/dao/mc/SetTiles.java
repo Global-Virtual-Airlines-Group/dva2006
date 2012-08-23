@@ -27,24 +27,55 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	public void write(ImageSeries is) throws DAOException {
 		checkConnection();
 		
+		addImageType(is.getType());
+		addImageDate(is.getType(), is.getDate());
+		
 		// Write the Tiles
 		setBucket("wuTiles", is.getType(), String.valueOf(is.getDate().getTime()));
+		_client.add(createKey("$ME"), _expiry, Boolean.TRUE);
+		_client.add(createKey("$SIZE"), _expiry, Integer.valueOf(is.size()));	
 		for (PNGTile pt : is) {
-			String key = createKey(pt.getAddress());
+			String key = createKey(pt.getAddress().getName());
 			_client.add(key, _expiry, pt);
 		}
+	}
+	
+	/*
+	 * Helper method to use CAS to add an image type.
+	 */
+	private void addImageType(final String type) throws DAOException {
+		setBucket("wuTiles");
 		
-		// Change the bucket
-		setBucket("wuTiles", is.getType());
-		
-	    // This is how we modify a list when we find one in the cache.
-		final Date effDate = is.getDate();
-	    CASMutation<Object> mutation = new CASMutation<Object>() {
+		CASMutation<Object> mutation = new CASMutation<Object>() {
+	    	public Collection<String> getNewValue(Object current) {
+	    		@SuppressWarnings("unchecked")
+	    		Collection<String> c = (Collection<String>) current;
+	            Collection<String> c2 = new TreeSet<String>(c);
+	            c2.add(type);
+	            return c2;
+	        }
+	    };
+
+	    try {
+	    	CASMutator<Object> m = new CASMutator<Object>(_client, _client.getTranscoder());
+	    	m.cas(createKey("types"), Collections.singletonList(type), 86400, mutation);
+	    } catch (Exception e) {
+	    	throw new DAOException(e);
+	    }
+	}
+
+	/*
+	 * Helper method to use CAS to add an imagery effective date.
+	 */
+	private void addImageDate(String type, final Date effDate) throws DAOException {
+		setBucket("wuTiles", type);
+
+		CASMutation<Object> mutation = new CASMutation<Object>() {
 	    	public List<Date> getNewValue(Object current) {
 	    		@SuppressWarnings("unchecked")
-				List<Date> c = (List<Date>) current;
+				Collection<Date> c = (Collection<Date>) current;
 	            List<Date> ll = new ArrayList<Date>(c);
-	            if(ll.size() > 10)
+	            while (ll.size() > 10)
 	                ll.remove(0);
 
 	            ll.add(effDate);
@@ -52,10 +83,9 @@ public class SetTiles extends MemcachedDAO implements SeriesWriter {
 	        }
 	    };
 
-	    // Store the effective date using CAS
 	    try {
 	    	CASMutator<Object> m = new CASMutator<Object>(_client, _client.getTranscoder());
-	    	m.cas(createKey("dates"), Collections.singletonList(effDate), 180, mutation);
+	    	m.cas(createKey("dates"), Collections.singletonList(effDate), 3600, mutation);
 	    } catch (Exception e) {
 	    	throw new DAOException(e);
 	    }

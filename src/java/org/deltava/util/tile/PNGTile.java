@@ -13,10 +13,17 @@ import java.awt.image.BufferedImage;
  * @since 5.0
  */
 
-public class PNGTile extends AbstractTile implements CompressedTile, java.io.Serializable {
+public class PNGTile extends AbstractTile implements CompressedTile, java.io.Externalizable {
 	
 	private byte[] _imgData;
 
+	/**
+	 * Deserialization constructor.
+	 */
+	public PNGTile() {
+		super(null);
+	}
+	
 	/**
 	 * Creates a new PNG tile.
 	 * @param addr the Tile address.
@@ -62,5 +69,21 @@ public class PNGTile extends AbstractTile implements CompressedTile, java.io.Ser
 	 */
 	public byte[] getData() {
 		return _imgData;
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(_addr.getX());
+		out.writeInt(_addr.getY());
+		out.writeInt(_addr.getLevel());
+		out.writeInt(_imgData.length);
+		out.write(_imgData);
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		_addr = new TileAddress(in.readInt(), in.readInt(), in.readInt());
+		_imgData = new byte[in.readInt()];
+		in.read(_imgData);
 	}
 }

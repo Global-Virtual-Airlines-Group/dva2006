@@ -10,9 +10,9 @@ import java.awt.image.*;
  * @since 5.0
  */
 
-public abstract class AbstractTile implements Tile {
+public abstract class AbstractTile implements Tile, java.io.Serializable {
 	
-	protected final TileAddress _addr;
+	protected TileAddress _addr;
 	
 	/**
 	 * Creates a new Tile.
