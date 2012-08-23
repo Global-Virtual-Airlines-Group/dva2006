@@ -1,10 +1,12 @@
 // Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.mc;
 
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.dao.DAOException;
+
 import org.deltava.util.StringUtils;
 
 import net.spy.memcached.*;
@@ -17,6 +19,8 @@ import net.spy.memcached.*;
  */
 
 public abstract class MemcachedDAO {
+	
+	private static final Logger log = Logger.getLogger(MemcachedDAO.class);
 	
 	/**
 	 * The spymemcached client.
@@ -78,8 +82,10 @@ public abstract class MemcachedDAO {
 	 */
 	public static synchronized void shutdown() {
 		try {
-			if (_client != null)
+			if (_client != null) {
 				_client.shutdown();
+				log.warn("Disconnected");
+			}
 		} finally {
 			_client = null;
 		}

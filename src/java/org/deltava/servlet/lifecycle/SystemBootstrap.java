@@ -16,6 +16,7 @@ import org.deltava.beans.stats.AirlineTotals;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
+import org.deltava.dao.mc.MemcachedDAO;
 
 import org.deltava.mail.MailerDaemon;
 
@@ -254,6 +255,9 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				_jdbcPool.release(c);
 			}
 		}
+		
+		// Shut down memcached clients
+		MemcachedDAO.shutdown();
 
 		// Shut down the JDBC connection pool
 		ThreadUtils.sleep(2000);
