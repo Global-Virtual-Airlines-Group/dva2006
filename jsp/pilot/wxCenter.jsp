@@ -155,7 +155,7 @@ xmlreq.onreadystatechange = function() {
 
 		// Add the marker
 		wxMarkers[mrk.code] = mrk;
-		map.addOverlay(mrk);
+		mrk.setMap(map);
 	}
 
 	var mrk = wxMarkers[code];
