@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
@@ -34,7 +34,7 @@ public class SetLibrary extends DAO {
 	 */
 	public void download(String fName, int pilotID) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO DOWNLOADS (FILENAME, DATE, USER_ID) VALUES (?, NOW(), ?)");
+			prepareStatement("REPLACE INTO DOWNLOADS (FILENAME, DATE, USER_ID) VALUES (?, CURDATE(), ?)");
 			_ps.setString(1, fName);
 			_ps.setInt(2, pilotID);
 			executeUpdate(1);
