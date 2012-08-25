@@ -57,12 +57,6 @@ google.maps.Map.prototype.clearOverlays = function() {
 	return true;
 }
 
-// Adds an overlay to the map
-google.maps.Map.prototype.addOverlay = function(mrk) {
-	mrk.setMap(this);
-	return true;
-}
-
 // Adds a layer to the map
 google.maps.Map.prototype.addLayer = function(l) {
 	golgotha.maps.ovLayers.push(l);
@@ -139,6 +133,7 @@ golgotha.maps.setButtonStyle = function(button) {
 golgotha.maps.LayerSelectControl = function(map, title, layer) {
 	var container = document.createElement('div');
 	var btn = document.createElement('div');
+	btn.className = 'layerSelect';
 	btn.ovLayer = layer;
 	golgotha.maps.setButtonStyle(btn);
 	container.appendChild(btn);
@@ -146,9 +141,17 @@ golgotha.maps.LayerSelectControl = function(map, title, layer) {
 	google.maps.event.addDomListener(btn, 'click', function() {
 		if ((this.ovLayer.getMap != null) && (this.ovLayer.getMap() != null))
 			return true;
-
-		map.addLayer(this.ovLayer);
-		return true;
+		
+		if (this.isSelected) {
+			removeClass(btn, 'displayed');
+			golgotha.maps.ovLayers.remove(this.ovLayer);
+			this.ovLayer.setMap(null);	
+			this.isSelected = false;
+		} else {
+			addClass(btn, 'displayed');
+			map.addLayer(this.ovLayer);
+			this.isSelected = true;
+		}
 	});
 
 	return container;
@@ -157,10 +160,19 @@ golgotha.maps.LayerSelectControl = function(map, title, layer) {
 golgotha.maps.LayerClearControl = function(map) {
 	var container = document.createElement('div');
 	var btn = document.createElement('div');
+	btn.className = 'layerClear';
 	golgotha.maps.setButtonStyle(btn);
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode('None'));
-	google.maps.event.addDomListener(btn, 'click', function() { map.clearLayers(); });
+	google.maps.event.addDomListener(btn, 'click', function() {
+		map.clearLayers();
+		var lsc = getElementsByClass('layerSelect', 'div', map.getDiv());
+		for (var x = 0; x < lsc.length; x++) {
+			var dv = lsc[x];
+			removeClass(dv, 'displayed');
+		}
+	});
+	
 	return container;
 }
 

@@ -69,10 +69,8 @@ for (var x = 0; x < trackPoints.length; x++) {
 
 // Toggle the tracks
 for (var x = 0; x < xtracks.length; x++) {
-	if (checkbox.checked)
-		map.addOverlay(xtracks[x]);
-	else
-		map.removeOverlay(xtracks[x]);
+	var xt = xtracks[x];
+	xt.setMap(checkbox.checked ? map : null);
 }
 
 return true;
