@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 /**
  * A cache for File handles.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 2.2
  */
 
@@ -19,10 +19,10 @@ public class FileCache extends Cache<CacheableFile> {
 	private long _maxAge;
 	
 	protected class FileCacheEntry extends CacheEntry<CacheableFile> {
-		private long _lastModified;
+		private final long _lastModified;
 		
 		public FileCacheEntry(CacheableFile f) {
-			super(f, _refQueue);
+			super(f);
 			_lastModified = f.lastModified();
 		}
 		
@@ -56,7 +56,6 @@ public class FileCache extends Cache<CacheableFile> {
 		if (obj == null)
 			return;
 
-		// Create the cache entry
 		FileCacheEntry e = new FileCacheEntry(obj);
 		_cache.put(obj.cacheKey(), e);
 	}
@@ -77,7 +76,7 @@ public class FileCache extends Cache<CacheableFile> {
 		_cache.remove(key);
 		if (entry != null) {
 			if (!entry.exists() || !entry.get().delete())
-				log.warn("Cannot delete file");
+				log.warn("Cannot delete file " + entry.get().getAbsolutePath());
 		}
 	}
 	
