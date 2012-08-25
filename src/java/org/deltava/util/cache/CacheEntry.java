@@ -1,18 +1,17 @@
-// Copyright 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
-
-import java.lang.ref.*;
 
 /**
  * An abstract class to handle cache entries.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-abstract class CacheEntry<T extends Cacheable> extends SoftReference<T> implements Comparable<CacheEntry<T>> {
+abstract class CacheEntry<T extends Cacheable> implements Comparable<CacheEntry<T>> {
 	
-	private Object _key;
+	private final Object _key;
+	private final T _entry;
 	
 	/**
 	 * A Helper variable used to track either creation or expiry time.
@@ -22,12 +21,17 @@ abstract class CacheEntry<T extends Cacheable> extends SoftReference<T> implemen
 	/**
 	 * Initializes the entry.
 	 * @param entry the cached data
-	 * @param q the reference queue
 	 */
-	CacheEntry(T entry, ReferenceQueue<? super T> q) {
-		super(entry, q);
-		if (entry != null)
-			_key = entry.cacheKey();
+	CacheEntry(T entry) {
+		super();
+		_entry = entry;
+		_key =  (entry != null) ? entry.cacheKey() : null;
+	}
+	
+	CacheEntry(Object key) {
+		super();
+		_entry = null;
+		_key = key;
 	}
 	
 	/**
@@ -36,6 +40,14 @@ abstract class CacheEntry<T extends Cacheable> extends SoftReference<T> implemen
 	 */
 	Object getKey() {
 		return _key;
+	}
+	
+	/**
+	 * Returns the cached object.
+	 * @return the object
+	 */
+	public T get() {
+		return _entry;
 	}
 
 	/**
@@ -47,5 +59,9 @@ abstract class CacheEntry<T extends Cacheable> extends SoftReference<T> implemen
 	
 	public int hashCode() {
 		return _key.hashCode();
+	}
+	
+	public int compareTo(CacheEntry<T> e2) {
+		return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
 	}
 }

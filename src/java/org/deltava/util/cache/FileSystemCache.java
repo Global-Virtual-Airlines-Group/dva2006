@@ -8,13 +8,13 @@ import java.io.*;
  * directory on the filesystem, and can therefore be preloaded from the filesystem
  * on JVM statrup.  
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.2
  */
 
 public class FileSystemCache extends FileCache {
 	
-	private File _location;
+	private final File _location;
 	private boolean _isLoaded;
 	
 	protected class CacheFilter implements FileFilter {
@@ -28,18 +28,14 @@ public class FileSystemCache extends FileCache {
 	 */
 	private static void move(File f, File f2) {
 		int bufferSize = (int) Math.max(65536, f.length());
-		byte[] buf = new byte[bufferSize];
-		try {
-			InputStream in = new FileInputStream(f);
-			OutputStream out = new FileOutputStream(f2);
-			int bytesRead = 0;
-			do {
-				bytesRead = in.read(buf);
-				out.write(buf, 0, bytesRead);
-			} while (bytesRead == bufferSize);
-			
-			in.close();
-			out.close();
+		try (InputStream in = new FileInputStream(f)) {
+			try (OutputStream out = new FileOutputStream(f2)) {
+				int bytesRead = 0; byte[] buf = new byte[bufferSize];
+				do {
+					bytesRead = in.read(buf);
+					out.write(buf, 0, bytesRead);
+				} while (bytesRead == bufferSize);
+			}
 		} catch (IOException ie) {
 			// empty
 		} finally {
@@ -96,7 +92,6 @@ public class FileSystemCache extends FileCache {
 			obj =  new CacheableFile(sKey, newF);
 		}
 		
-		// Add the entry
 		super.addEntry(new CacheableFile(sKey, obj));
 	}
 	

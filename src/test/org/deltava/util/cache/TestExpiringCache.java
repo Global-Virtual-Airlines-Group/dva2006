@@ -11,12 +11,12 @@ import org.deltava.beans.schedule.Airline;
 public class TestExpiringCache extends TestCase {
 
 	private ExpiringCache<Cacheable> _cache;
-	private ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> _entry;
+	private ExpiringCacheEntry<Cacheable> _entry;
 	private ExpiringCache<Cacheable>.ExpiringNullCacheEntry<Cacheable> _nullEntry;
 
 	public static Test suite() {
 		return new CoverageDecorator(TestExpiringCache.class, new Class[] { ExpiringCache.class,
-				ExpiringCache.ExpiringCacheEntry.class });
+				ExpiringCacheEntry.class });
 	}
 
 	protected void setUp() throws Exception {
@@ -32,12 +32,10 @@ public class TestExpiringCache extends TestCase {
 	public void testCacheEntry() throws Exception {
 		Cacheable e1 = new CacheableLong(Integer.valueOf(1), 1);
 		Cacheable e2 = new CacheableLong(Integer.valueOf(2), 2);
-		_cache.setExpiration(2);
-		_entry = _cache.new ExpiringCacheEntry<Cacheable>(e1);
+		_entry = _cache.new ExpiringLocalCacheEntry<Cacheable>(e1);
 		assertSame(e1, _entry.get());
-		_cache.setExpiration(1);
-		ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> entry2 = _cache.new ExpiringCacheEntry<Cacheable>(e2);
-		assertTrue(_entry.compareTo(entry2) > 0);
+		ExpiringCacheEntry<Cacheable> entry2 = _cache.new ExpiringLocalCacheEntry<Cacheable>(e2);
+		assertTrue(_entry.compareTo(entry2) < 0);
 	}
 
 	public void testNullCacheEntry() {

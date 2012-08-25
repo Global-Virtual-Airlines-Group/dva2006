@@ -1,17 +1,17 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A utility class to create a cacheable String.
  * @author Luke
- * @version 2.2
+ * @version 5.0
  * @since 2.2
  */
 
 public class CacheableString implements Cacheable {
 	
-	private Object _key;
-	private String _data;
+	private final Object _key;
+	private final String _data;
 
 	/**
 	 * Creates the Object.

@@ -1,21 +1,21 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
  * A bean to store information about a cache.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 2.6
  */
 
 public class CacheInfo implements java.io.Serializable {
 
-	private String _id;
+	private final String _id;
+	private final String _type;
 	
 	private int _instances;
 	private long _hits;
 	private long _reqs;
-	private long _clears;
 	private long _size;
 	private long _capacity;
 
@@ -35,6 +35,7 @@ public class CacheInfo implements java.io.Serializable {
 	public CacheInfo(String id, Cache<?> c) {
 		super();
 		_id = id;
+		_type = c.getClass().getSimpleName();
 		add(c);
 	}
 
@@ -43,15 +44,12 @@ public class CacheInfo implements java.io.Serializable {
 	 * @param c the Cache
 	 */
 	public void add(Cache<?> c) {
-		if (c != null) {
-			c.checkQueue();
-			_instances++;
-			_hits += c.getHits();
-			_reqs += c.getRequests();
-			_clears += c.getClears();
-			_size += c.size();
-			_capacity += c.getMaxSize();
-		}
+		if (c == null) return;
+		_instances++;
+		_hits += c.getHits();
+		_reqs += c.getRequests();
+		_size += c.size();
+		_capacity += c.getMaxSize();
 	}
 
 	/**
@@ -60,6 +58,14 @@ public class CacheInfo implements java.io.Serializable {
 	 */
 	public int getInstances() {
 		return _instances;
+	}
+	
+	/**
+	 * Returns the cache type.
+	 * @return the type
+	 */
+	public String getType() {
+		return _type;
 	}
 
 	/**
@@ -78,14 +84,6 @@ public class CacheInfo implements java.io.Serializable {
 		return _reqs;
 	}
 	
-	/**
-	 * Returns the number of cache entry garbage collections.
-	 * @return the number of collections
-	 */
-	public long getClears() {
-		return _clears;
-	}
-
 	/**
 	 * Returns the number of objects in the caches.
 	 * @return the number of objects

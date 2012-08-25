@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.LinkedHashSet;
@@ -6,14 +6,14 @@ import java.util.LinkedHashSet;
 /**
  * A utility class to create a cacheable Set.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  * @see CacheableList
  */
 
 public class CacheableSet<E> extends LinkedHashSet<E> implements CacheableCollection<E> {
 	
-	private Object _key;
+	private final Object _key;
 	
 	/**
 	 * Initializes the cachable set.

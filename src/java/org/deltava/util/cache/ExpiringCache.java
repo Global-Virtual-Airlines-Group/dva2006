@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 /**
  * An object cache that supports expiration dates.
  * @author Luke
- * @version 4.1
+ * @version 4.2
  * @since 1.0
  */
 
@@ -17,10 +17,10 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	protected long _lastCreationTime;
 	protected int _expiry;
 
-	protected class ExpiringCacheEntry<U extends T> extends CacheEntry<U> {
+	protected class ExpiringLocalCacheEntry<U extends T> extends ExpiringCacheEntry<U> {
 
-		public ExpiringCacheEntry(U entryData) {
-			super(entryData, _refQueue);
+		public ExpiringLocalCacheEntry(U entryData) {
+			super(entryData);
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
@@ -29,14 +29,6 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			else
 				_createExpire = createdOn + _expiry;
 		}
-
-		public boolean isExpired() {
-			return (_createExpire < System.currentTimeMillis());
-		}
-
-		public int compareTo(CacheEntry<U> e2) {
-			return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
-		}
 	}
 	
 	/**
@@ -44,19 +36,20 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 */
 	protected class ExpiringNullCacheEntry<U extends T> extends ExpiringCacheEntry<U> {
 		
-		private Object _cacheKey;
-		
 		public ExpiringNullCacheEntry(Object key) {
-			super(null);
-			_cacheKey = key;
+			super(key);
+			long now = System.currentTimeMillis();
+			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
+			_lastCreationTime = createdOn;
+			_createExpire = createdOn + _expiry;
 		}
 		
 		public String toString() {
-			return _cacheKey.toString();
+			return getKey().toString();
 		}
 		
 		public int hashCode() {
-			return _cacheKey.hashCode();
+			return getKey().hashCode();
 		}
 	}
 
@@ -111,7 +104,6 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 */
 	public T get(Object key, boolean ifExpired) {
 		request();
-		checkQueue();
 		if (key == null)
 			return null;
 		
@@ -150,7 +142,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 			return;
 
 		// Create the cache entry
-		ExpiringCacheEntry<T> e = new ExpiringCacheEntry<T>(obj);
+		ExpiringCacheEntry<T> e = new ExpiringLocalCacheEntry<T>(obj);
 		_cache.put(obj.cacheKey(), e);
 	}
 	
