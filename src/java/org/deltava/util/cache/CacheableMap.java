@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -6,13 +6,13 @@ import java.util.*;
 /**
  * A utility class to create a cacheable Map.
  * @author Luke
- * @version 2.2
+ * @version 5.0
  * @since 2.2
  */
 
 public class CacheableMap<K, V> extends LinkedHashMap<K, V> implements Cacheable {
 	
-	private Object _key;
+	private final Object _key;
 
 	/**
 	 * Initializes the cachable map.

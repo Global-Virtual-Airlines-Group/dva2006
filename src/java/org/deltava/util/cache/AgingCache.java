@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -6,7 +6,7 @@ package org.deltava.util.cache;
  * that this cache does not purge an entry until the cache overflows, whereas an {@link ExpiringCache} invalidates data
  * based on age.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -22,14 +22,10 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	protected class AgingCacheEntry<U extends T> extends CacheEntry<U> {
 
 		public AgingCacheEntry(U entry) {
-			super(entry, _refQueue);
+			super(entry);
 			long now = System.currentTimeMillis();
 			_createExpire = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = _createExpire;
-		}
-		
-		public int compareTo(CacheEntry<U> e2) {
-			return Long.valueOf(_createExpire).compareTo(Long.valueOf(e2._createExpire));
 		}
 	}
 	
@@ -93,9 +89,9 @@ public class AgingCache<T extends Cacheable> extends Cache<T> {
 	 * @param key the cache key
 	 * @return the cache entry, or null if not present
 	 */
+	@Override
 	public T get(Object key) {
 		request();
-		checkQueue();
 		if (key == null)
 			return null;
 		
