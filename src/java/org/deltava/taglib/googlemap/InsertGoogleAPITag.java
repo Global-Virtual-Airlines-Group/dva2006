@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to insert a JavaScript link to the Google Maps API.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -62,6 +62,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_libraries.clear();
@@ -74,6 +75,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	 * @return TagSupport.SKIP_BODY
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
 		long value = USAGE_COUNT.incrementAndGet();
 		if (value == 1)
@@ -81,7 +83,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		
 		// Translate stable/release v3 to minor version
 		if ((_majorVersion == 3) && (_minorVersion == null))
-			_minorVersion = "8";
+			_minorVersion = "9";
 		else if ((_majorVersion == 2) && (_minorVersion == null))
 			_minorVersion = "s";
 		
@@ -93,6 +95,7 @@ public class InsertGoogleAPITag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if no Google Maps API key defined
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 
 		// Get the API key
