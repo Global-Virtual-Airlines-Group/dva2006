@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.help.*;
 /**
  * A Data Access Object to update Online Help entries and Help Desk Issues.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -22,23 +22,6 @@ public class SetHelp extends DAO {
 		super(c);
 	}
 
-	/**
-	 * Writes an Online Help Entry to the database.
-	 * @param entry the HelpEntry bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(OnlineHelpEntry entry) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("REPLACE INTO HELP (ID, SUBJECT, BODY) VALUES (?, ?, ?)");
-			_ps.setString(1, entry.getTitle());
-			_ps.setString(2, entry.getSubject());
-			_ps.setString(3, entry.getBody());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
 	/**
 	 * Writes a Help Desk response template to the database.
 	 * @param rsp the ResponseTemplate bean
