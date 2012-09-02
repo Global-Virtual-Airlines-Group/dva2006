@@ -52,7 +52,14 @@ public class RadarLoadTask extends Task {
 
 			GeoLocation loc = _p.getGeoPosition(_addr.getPixelX(), _addr.getPixelY());
 			try {
-				SuperTile st = dao.getRadar(loc, 1280, 1024, _p.getZoomLevel());
+				SuperTile st = null;
+				try {
+					st = dao.getRadar(loc, 1024, 1024, _p.getZoomLevel());
+				} catch (Exception e) {
+					tLog.warn("Error loading " + _addr + " - " + e.getMessage());
+					st = dao.getRadar(loc, 1024, 1024, _p.getZoomLevel());
+				}
+					
 				_gt.add(st);
 				tLog.info("Loaded " + _addr);
 			} catch (DAOException de) {
@@ -65,7 +72,7 @@ public class RadarLoadTask extends Task {
 	 * Initializes the Task.
 	 */
 	public RadarLoadTask() {
-		this(new SetTiles() {{ setExpiry(1800); }});
+		this(new SetTiles() {{ setExpiry(3600); }});
 	}
 	
 	/**
@@ -96,23 +103,18 @@ public class RadarLoadTask extends Task {
 		TileAddress nwAddr = _p.getAddress(nw);
 		TileAddress seAddr = _p.getAddress(se);
 
-		// Get the tile addresses
-		Collection<TileAddress> work = new ArrayList<TileAddress>();
-		for (int x = nwAddr.getX(); x <= seAddr.getX(); x += 5) {
-			for (int y = nwAddr.getY(); y <= seAddr.getY(); y += 4) {
-				TileAddress addr = new TileAddress(x, y, _p.getZoomLevel());
-				work.add(addr);
-			}
-		}
-		
-		// Create the executor
+		// Create the executor and get the tile addresses
 		int maxThreads = SystemData.getInt("weather.radar.threads", 12);
 		ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 200, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 		exec.allowCoreThreadTimeOut(true);
 		SparseGlobalTile gt = new SparseGlobalTile(_p.getZoomLevel());
 		TaskTimer tt = new TaskTimer();
-		for (TileAddress addr : work)
-			exec.execute(new SuperTileWorker(gt, addr));
+		for (int x = nwAddr.getX(); x <= seAddr.getX(); x += 4) {
+			for (int y = nwAddr.getY(); y <= seAddr.getY(); y += 4) {
+				TileAddress addr = new TileAddress(x, y, _p.getZoomLevel());
+				exec.execute(new SuperTileWorker(gt, addr));
+			}
+		}
 		
 		// Wait on workers
 		exec.shutdown();
