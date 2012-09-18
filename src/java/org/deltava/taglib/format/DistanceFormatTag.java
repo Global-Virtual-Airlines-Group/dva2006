@@ -1,37 +1,34 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import javax.servlet.jsp.*;
 import javax.servlet.http.HttpServletRequest;
 
-import org.deltava.beans.Person;
-
-import org.deltava.util.StringUtils;
+import org.deltava.beans.*;
 
 /**
  * A JSP tag to convert and format distances. 
  * @author Luke
- * @version 2.4
+ * @version 5.0
  * @since 2.4
  */
 
 public class DistanceFormatTag extends IntegerFormatTag {
 	
-	private static final String[] ABBRS = {"mi", "nm", "km"};
-	
-	private int _fmtType;
+	private DistanceUnit _unit = DistanceUnit.NM;
 	private boolean _longUnits;
 
 	/**
 	 * Updates this tag's page context and loads the user object from the request.
      * @param ctxt the new JSP page context
 	 */
+	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
         java.security.Principal user = req.getUserPrincipal();
         if (user instanceof Person)
-        	_fmtType = ((Person) user).getDistanceType();
+        	_unit = ((Person) user).getDistanceType();
 	}
 	
 	/**
@@ -39,7 +36,7 @@ public class DistanceFormatTag extends IntegerFormatTag {
 	 * @param units the unit abbreviation
 	 */
 	public void setUnits(String units) {
-		_fmtType = StringUtils.arrayIndexOf(ABBRS, units, 0);
+		_unit = DistanceUnit.valueOf(units.toUpperCase());
 	}
 	
 	/**
@@ -54,37 +51,30 @@ public class DistanceFormatTag extends IntegerFormatTag {
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
-		_fmtType = 0;
+		_unit = DistanceUnit.NM;
 		_longUnits = false;
 		super.release();
 	}
 	
 	/**
 	 * Formats the number and writes it to the JSP output writer.
-     * @return TagSupport.EVAL_PAGE
+     * @return TagSupport.EVAL_PAGE always
      * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
-		
-		// Convert the units
-		double distance = _value.doubleValue();
-		if (_fmtType == 1)
-			distance *= 0.868976242;
-		else if (_fmtType == 2)
-			distance *= 1.609344;
-		
         fmtNoDecimals();
-		JspWriter out = pageContext.getOut();
 		try {
+			JspWriter out = pageContext.getOut();
 			if (_className != null) {
                 out.print("<span class=\"");
                 out.print(_className);
                 out.print("\">");
 			}
               
-			out.print(_nF.format(distance));
+			out.print(_nF.format(_value.doubleValue() * _unit.getFactor()));
 			out.print(' ');
-			out.print(_longUnits ? Person.DISTANCE_NAMES[_fmtType] : ABBRS[_fmtType]);
+			out.print(_longUnits ? _unit.getUnitName() : _unit.name().toLowerCase());
 			if (_className != null)
                 out.print("</span>");
 		} catch (Exception e) {

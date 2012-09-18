@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to extract information from a user's Flight Academy history.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -109,8 +109,7 @@ public final class AcademyHistoryHelper {
 	 * @param tests a Collection of checkride/examination objects, representing this Pilot's exam history
 	 */
 	public void addExams(Collection<Test> tests) {
-		for (Iterator<Test> i = tests.iterator(); i.hasNext(); ) {
-			Test t = i.next();
+		for (Test t : tests) {
 			if (t.getAcademy()) {
 				_tests.add(t);
 				if (t instanceof CheckRide) {
@@ -135,7 +134,7 @@ public final class AcademyHistoryHelper {
 	 */
 	public boolean hasPassed(String certName) {
 		Course c = _courses.get(certName);
-		return (c != null) && (c.getStatus() == Course.COMPLETE);
+		return (c != null) && (c.getStatus() == Status.COMPLETE);
 	}
 	
 	/**
@@ -145,7 +144,7 @@ public final class AcademyHistoryHelper {
 	 */
 	public boolean isPending(String certName) {
 		Course c = _courses.get(certName);
-		return (c != null) && (c.getStatus() != Course.COMPLETE);
+		return (c != null) && (c.getStatus() != Status.COMPLETE);
 	}
 	
 	/**
@@ -154,9 +153,8 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if the user has submitted this Examination, otherwise FALSE
 	 */
 	public boolean hasSubmitted(String examName) {
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
-			Test t = i.next();
-			if ((t.getStatus() == Test.SUBMITTED) && (t.getName().equals(examName)))
+		for (Test t : _tests) {
+			if ((t.getStatus() == TestStatus.SUBMITTED) && (t.getName().equals(examName)))
 				return true;
 		}
 
@@ -168,9 +166,8 @@ public final class AcademyHistoryHelper {
 	 * @return a Course bean, or null
 	 */
 	public Course getCurrentCourse() {
-		for (Iterator<Course> i = _courses.values().iterator(); i.hasNext(); ) {
-			Course c = i.next();
-			if ((c.getStatus() == Course.STARTED) || (c.getStatus() == Course.PENDING))
+		for (Course c : _courses.values()) {
+			if ((c.getStatus() == Status.STARTED) || (c.getStatus() == Status.PENDING))
 				return c;
 		}
 		
@@ -197,9 +194,8 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if any Certification was passed, otherwise FALSE
 	 */
 	public boolean hasAny(int stage) {
-		for (Iterator<Course> i = _courses.values().iterator(); i.hasNext(); ) {
-			Course c = i.next();
-			if ((c.getStage() == stage) && (c.getStatus() == Course.COMPLETE))
+		for (Course c : _courses.values()) {
+			if ((c.getStage() == stage) && (c.getStatus() == Status.COMPLETE))
 				return true;
 		}
 		
@@ -212,8 +208,7 @@ public final class AcademyHistoryHelper {
 	 * @return TRUE if the examination has been passed, otherwise FALSE
 	 */
 	public boolean passedExam(String examName) {
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext(); ) {
-			Test t = i.next();
+		for (Test t : _tests) {
 			if (t.getPassFail() && t.getName().equals(examName))
 				return true;
 		}
@@ -230,10 +225,10 @@ public final class AcademyHistoryHelper {
 		
 		// Check if we're enrolled in the course
 		Course cr = _courses.get(certName);
-		if ((cr == null) || (cr.getStatus() == Course.ABANDONED)) {
+		if ((cr == null) || (cr.getStatus() == Status.ABANDONED)) {
 			log(certName +  " not complete, not enrolled or abandoned");
 			return false;
-		} else if (cr.getStatus() == Course.COMPLETE) {
+		} else if (cr.getStatus() == Status.COMPLETE) {
 			log(certName +  " alread completed");
 			return true;
 		}
@@ -388,7 +383,7 @@ public final class AcademyHistoryHelper {
 		if (cr == null) {
 			log("Cannot take " + ep.getName() + " Not enrolled in a course");
 			return false;
-		} else if (cr.getStatus() == Course.PENDING) {
+		} else if (cr.getStatus() == Status.PENDING) {
 			log("Cannot take " + ep.getName() + " Course pending");
 			return false;
 		}
@@ -415,7 +410,7 @@ public final class AcademyHistoryHelper {
 			return false;
 
 		// If the test is not scored and failed, then forget
-		if (t.getStatus() != Test.SCORED)
+		if (t.getStatus() != TestStatus.SCORED)
 			return false;
 		else if (t.getPassFail())
 			return false;

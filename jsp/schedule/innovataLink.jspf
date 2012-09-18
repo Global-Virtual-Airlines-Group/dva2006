@@ -12,7 +12,7 @@ planning their travel.<br />
 flight information. Flight Reports for flights found elsewhere, including the Innovata, LLC schedule 
 search below, may not be approved!</span><br />
 <br />
-<span class="mid"><a rel="external" href="${innovata_url}"><el:img caption="Innnovata LLC Schedule Search" src="innovata_schedule.png" border="0" /></a></span><br />
+<span class="mid"><a rel="external" href="${innovata_url}"><el:img caption="Innnovata LLC Schedule Search" className="noborder" src="innovata_schedule.png" /></a></span><br />
 <br />
 </div>
 <br />

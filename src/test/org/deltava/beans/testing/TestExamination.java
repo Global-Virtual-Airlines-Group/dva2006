@@ -28,7 +28,6 @@ public class TestExamination extends AbstractBeanTestCase {
 
     public void testProperties() {
         assertEquals("737 First Officer", _exam.getName());
-        assertEquals(org.deltava.beans.testing.Test.EXAM, _exam.getType());
         checkProperty("ID", Integer.valueOf(123));
         checkProperty("pilotID", Integer.valueOf(123));
         checkProperty("scorerID", Integer.valueOf(123));

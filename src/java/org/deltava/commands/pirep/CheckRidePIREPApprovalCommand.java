@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -60,7 +60,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetExam crdao = new GetExam(con);
 			CheckRide cr = crdao.getACARSCheckRide(fr.getDatabaseID(DatabaseID.ACARS));
 			if (cr == null)
-				cr = crdao.getCheckRide(fr.getDatabaseID(DatabaseID.PILOT), fr.getEquipmentType(), Test.SUBMITTED);
+				cr = crdao.getCheckRide(fr.getDatabaseID(DatabaseID.PILOT), fr.getEquipmentType(), TestStatus.SUBMITTED);
 			
 			// Get the Pilot object
 			GetUserData uddao = new GetUserData(con);
@@ -103,7 +103,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-			cr.setStatus(Test.SCORED);
+			cr.setStatus(TestStatus.SCORED);
 			
 			// Update the flight report
 			int pirepStatus = crApproved ? FlightReport.OK : FlightReport.REJECTED;

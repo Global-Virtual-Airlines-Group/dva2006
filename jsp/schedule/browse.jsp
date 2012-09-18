@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Flight Schedule</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -78,12 +78,12 @@ updateAirports(f.airportA, 'code=${airportD.IATA}', ${useICAO}, '${airportA.IATA
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW SCHEDULE ENTRY" /></c:if></td>
 </tr>
 <tr class="title caps">
- <td width="15%">FLIGHT NUMBER</td>
- <td width="10%">EQUIPMENT</td>
- <td width="35%">AIRPORTS</td>
- <td width="10%">DEPARTS</td>
- <td width="10%">ARRIVES</td>
- <td width="10%">DISTANCE</td>
+ <td style="width:15%">FLIGHT NUMBER</td>
+ <td style="width:10%">EQUIPMENT</td>
+ <td style="width:35%">AIRPORTS</td>
+ <td style="width:10%">DEPARTS</td>
+ <td style="width:10%">ARRIVES</td>
+ <td style="width:10%">DISTANCE</td>
  <td>DURATION</td>
 </tr>
 

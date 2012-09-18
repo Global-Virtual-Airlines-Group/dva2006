@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to score Pilot Examinations.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class ExamScoreCommand extends AbstractCommand {
          // Get the Pilot profile
          GetUserData uddao = new GetUserData(con);
          GetPilot pdao = new GetPilot(con);
-         UserData ud = uddao.get(ex.getPilotID());
+         UserData ud = uddao.get(ex.getAuthorID());
          usr = pdao.get(ud);
          ctx.setAttribute("usrLoc", ud, REQUEST);
          ctx.setAttribute("pilot", usr, REQUEST);
@@ -86,11 +86,11 @@ public class ExamScoreCommand extends AbstractCommand {
          mctxt.addData("result", ex.getPassFail() ? "PASS" : "UNSATISFACTORY");
          
          // Check if we've rescored the examination
-         ctx.setAttribute("reScore", Boolean.valueOf(ex.getStatus() == Test.SCORED), REQUEST);
+         ctx.setAttribute("reScore", Boolean.valueOf(ex.getStatus() == TestStatus.SCORED), REQUEST);
          
          // Update examination
          ex.setScoredOn(new Date());
-         ex.setStatus(Test.SCORED);
+         ex.setStatus(TestStatus.SCORED);
          ex.setScore(score);
          ex.setScorerID(ctx.getUser().getID());
          ex.setComments(ctx.getParameter("comments"));
@@ -102,7 +102,7 @@ public class ExamScoreCommand extends AbstractCommand {
 		if (ex.getPassFail() && ep.getAcademy()) {
 			GetAcademyProgress apdao = new GetAcademyProgress(con);
 			SetAcademy apwdao = new SetAcademy(con);
-			Collection<CourseProgress> progs = apdao.getRequirements(ex.getName(), ex.getPilotID());
+			Collection<CourseProgress> progs = apdao.getRequirements(ex.getName(), ex.getAuthorID());
 			for (CourseProgress cp : progs)
 				apwdao.complete(cp.getCourseID(), cp.getID());
 		}

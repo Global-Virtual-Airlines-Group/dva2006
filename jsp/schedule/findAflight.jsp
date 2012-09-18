@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Schedule Search</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -117,10 +117,10 @@ return true;
 <tr>
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="changeAirport(this); updateOrigin(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value, true)" /></td>
  <td class="label">Arriving at</td>
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void changeAirport(this)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value, true)" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
@@ -168,14 +168,14 @@ return true;
 
 <!-- Search Results Header Bar -->
 <tr class="caps title">
- <td width="5%">ADD</td>
- <td width="12%">FLIGHT NUMBER</td>
- <td width="10%">EQUIPMENT</td>
- <td width="35%">AIRPORTS</td>
- <td width="8%">DEPARTS</td>
- <td width="8%">ARRIVES</td>
- <td width="8%">LENGTH</td>
- <td width="5%">ROUTES</td>
+ <td style="width:5%">ADD</td>
+ <td style="width:12%">FLIGHT NUMBER</td>
+ <td style="width:10%">EQUIPMENT</td>
+ <td style="width:35%">AIRPORTS</td>
+ <td style="width:8%">DEPARTS</td>
+ <td style="width:8%">ARRIVES</td>
+ <td style="width:8%">LENGTH</td>
+ <td style="width:5%">ROUTES</td>
  <td>DISTANCE</td>
 </tr>
 
@@ -228,13 +228,13 @@ return true;
 
 <!-- Flight Assignment Header Bar -->
 <tr class="caps title">
- <td width="15%">FLIGHT NUMBER</td>
- <td width="10%">EQUIPMENT</td>
+ <td style="width:15%">FLIGHT NUMBER</td>
+ <td style="width:10%">EQUIPMENT</td>
  <td>AIRPORTS</td>
- <td width="10%">DEPARTS</td>
- <td width="10%">ARRIVES</td>
- <td width="10%">LENGTH</td>
- <td width="10%">DISTANCE</td>
+ <td style="width:10%">DEPARTS</td>
+ <td style="width:10%">ARRIVES</td>
+ <td style="width:10%">LENGTH</td>
+ <td style="width:10%">DISTANCE</td>
 </tr>
 
 <!-- Flighrt Assignment Legs -->
@@ -286,11 +286,9 @@ function initAirports()
 var f = document.forms[0];
 <c:if test="${!empty fafCriteria}">
 changeAirport(f.airportD);
-changeAirport(f.airportA);
-</c:if>
+changeAirport(f.airportA);</c:if>
 <c:if test="${empty fafCriteria}">
-void updateAirline(f.airline);
-</c:if>
+void updateAirline(f.airline);</c:if>
 return true;
 }
 </script>

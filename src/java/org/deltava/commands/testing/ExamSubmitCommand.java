@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to submit and score Pilot Examinations.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class ExamSubmitCommand extends AbstractCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			if (allMC) {
 				ex.setScoredOn(cld.getTime());
-				ex.setStatus(Test.SCORED);
+				ex.setStatus(TestStatus.SCORED);
 				ex.setScore(score);
 				ex.setAutoScored(true);
 				ex.setScorerID(ctx.getUser().getID());
@@ -97,10 +97,10 @@ public class ExamSubmitCommand extends AbstractCommand {
 				ex.setPassFail(score >= ep.getPassScore());
 
 				// Get the Pilot profile
-				Pilot usr = pdao.get(ex.getPilotID());
+				Pilot usr = pdao.get(ex.getAuthorID());
 				ctx.setAttribute("pilot", usr, REQUEST);
 			} else {
-				ex.setStatus(Test.SUBMITTED);
+				ex.setStatus(TestStatus.SUBMITTED);
 				ctx.setAttribute("isSubmit", Boolean.TRUE, REQUEST);
 				
 				// Check if we need to notify anyone
@@ -136,17 +136,15 @@ public class ExamSubmitCommand extends AbstractCommand {
 			if (ex.getAutoScored() && ep.getAcademy() && ex.getPassFail()) {
 				GetAcademyProgress apdao = new GetAcademyProgress(con);
 				SetAcademy apwdao = new SetAcademy(con);
-				Collection<CourseProgress> progs = apdao.getRequirements(ex.getName(), ex.getPilotID());
+				Collection<CourseProgress> progs = apdao.getRequirements(ex.getName(), ex.getAuthorID());
 				for (CourseProgress cp : progs)
 					apwdao.complete(cp.getCourseID(), cp.getID());
 			}
 
-			// Write the examination to the database
+			// Write the examination to the database and commit
 			SetExam wdao = new SetExam(con);
 			wdao.update(ex);
 			wdao.update(ex);
-			
-			// Commit
 			ctx.commitTX();
 
 			// Save the exam to the request

@@ -28,6 +28,12 @@ golgotha.maps.updateMapText = function () {
 	return true;
 }
 
+golgotha.maps.updateZoom = function() {
+	var zl = document.getElementById('zoomLevel');
+	if (zl) zl.innerHTML = 'Zoom Level ' + this.getZoom();
+	return true;
+}
+
 golgotha.maps.displayedMarkers = [];
 golgotha.maps.setMap = function(map) {
 	if (map == null)
@@ -57,6 +63,13 @@ google.maps.Map.prototype.clearOverlays = function() {
 	return true;
 }
 
+// Sets copyright DIV
+google.maps.Map.prototype.setCopyright = function(msg) {
+	var sp = document.getElementById('copyright');
+	if (sp) sp.innerHTML = msg;
+	return true;
+}
+
 // Adds a layer to the map
 google.maps.Map.prototype.addLayer = function(l) {
 	golgotha.maps.ovLayers.push(l);
@@ -69,7 +82,7 @@ google.maps.Map.prototype.clearLayers = function() {
 	if (map.animator) {
 		map.animator.stop();
 		map.animator.clear();
-		delete map.animator;
+		try { delete map.animator; } catch (err) { map.animator = null; }
 	}
 
 	for (var ov = golgotha.maps.ovLayers.pop(); (ov != null); ov = golgotha.maps.ovLayers.pop())
@@ -110,47 +123,43 @@ for (var x = nwAddr.x; x <= seAddr.x; x++) {
 return tiles;
 }
 
-golgotha.maps.setButtonStyle = function(button) {
-	button.style.color = '#303030';
-	button.style.backgroundColor = 'white';
-	button.style.font = 'small Arial';
-	button.style.fontSize = '10px';
-	button.style.border = '1px solid black';
-	button.style.padding = '2px';
-	button.style.marginBottom = '3px';
-	button.style.textAlign = 'center';
-	button.style.cursor = 'pointer';
-	if (!this.buttonTitle)
-		button.style.width = '6em';
-	else if (this.buttonTitle.length > 11)
-		button.style.width = '8em';
-	else if (this.buttonTitle.length > 9)
-		button.style.width = '7em';
-	else
-		button.style.width = '6em';
-}
-
-golgotha.maps.LayerSelectControl = function(map, title, layer) {
+golgotha.maps.LayerSelectControl = function(map, title, layers) {
 	var container = document.createElement('div');
 	var btn = document.createElement('div');
 	btn.className = 'layerSelect';
-	btn.ovLayer = layer;
-	golgotha.maps.setButtonStyle(btn);
+	btn.ovLayers = (layers instanceof Array) ? layers : [layers];
+	if (title.length > 9)
+		btn.style.width = '8em';
+	else if (title.length > 7)
+		btn.style.width = '7em';
+	else
+		btn.style.width = '6em';
+
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode(title));
 	google.maps.event.addDomListener(btn, 'click', function() {
-		if ((this.ovLayer.getMap != null) && (this.ovLayer.getMap() != null))
-			return true;
-		
 		if (this.isSelected) {
-			removeClass(btn, 'displayed');
-			golgotha.maps.ovLayers.remove(this.ovLayer);
-			this.ovLayer.setMap(null);	
-			this.isSelected = false;
+			document.removeClass(btn, 'displayed');
+			try { delete btn.isSelected; } catch (err) { btn.isSelected = false; }
 		} else {
-			addClass(btn, 'displayed');
-			map.addLayer(this.ovLayer);
-			this.isSelected = true;
+			document.addClass(btn, 'displayed');
+			btn.isSelected = true;
+		}
+
+		for (var x = 0; x < this.ovLayers.length; x++) {
+			var ov = this.ovLayers[x];
+			if ((ov.getMap != null) && (ov.getMap() != null) && (ov.getMap() != map))
+				return true;
+
+			if (this.isSelected) {
+				ov.setMap(map);
+				if (ov.getCopyright) map.setCopyright(ov.getCopyright());
+				if (ov.getTextDate) map.setStatus(ov.getTextDate());
+			} else {
+				ov.setMap(null);
+				if (ov.getCopyright) map.setCopyright('');
+				if (ov.getTextDate) map.setStatus('');
+			}
 		}
 	});
 
@@ -161,7 +170,7 @@ golgotha.maps.LayerClearControl = function(map) {
 	var container = document.createElement('div');
 	var btn = document.createElement('div');
 	btn.className = 'layerClear';
-	golgotha.maps.setButtonStyle(btn);
+	btn.style.width = '6em';
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode('None'));
 	google.maps.event.addDomListener(btn, 'click', function() {
@@ -169,7 +178,10 @@ golgotha.maps.LayerClearControl = function(map) {
 		var lsc = getElementsByClass('layerSelect', 'div', map.getDiv());
 		for (var x = 0; x < lsc.length; x++) {
 			var dv = lsc[x];
-			removeClass(dv, 'displayed');
+			if (dv.isSelected) {
+				google.maps.event.trigger(dv, 'click');
+				google.maps.event.trigger(dv, 'stop');
+			}
 		}
 	});
 	
@@ -211,15 +223,18 @@ return marker;
 function addMarkers(map, arrayName)
 {
 // Get the map data
-var markers = eval(arrayName);
-if (!markers) return false;
+try {
+	var markers = eval(arrayName);
+	if (!markers) return false;
 
-// Add the map data, either an array or a single element
-if (isNaN(markers.length))
-	markers.setMap(map);
-else if (markers.length > 0) {
-	for (var x = 0; x < markers.length; x++)
-		markers[x].setMap(map);
+	// Add the map data, either an array or a single element
+	if (markers instanceof Array) {
+		for (var x = 0; x < markers.length; x++)
+			markers[x].setMap(map);
+	} else if (markers.setMap)
+		markers.setMap(map);
+} catch (err) {
+	return false;
 }
 
 return true;
@@ -231,18 +246,17 @@ function removeMarkers(arrayName)
 try {
 	var markers = eval(arrayName);
 	if (!markers) return false;
+
+	// Remove the map data, either an array or a single element
+	if (markers instanceof Array) {
+		for (var x = 0; x < markers.length; x++)
+			markers[x].setMap(null);
+	} else if (markers.setMap)
+		markers.setMap(null);
 } catch (err) {
 	return false;
 }
 
-// Remove the map data, either an array or a single element
-if (isNaN(markers.length))
-	markers.setMap(null);
-else if (markers.length > 0) {
-	for (var x = 0; x < markers.length; x++)
-		markers[x].setMap(null);
-}
-	
 return true;
 }
 

@@ -9,7 +9,7 @@ import org.deltava.beans.testing.*;
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -37,8 +37,8 @@ public class SetExam extends DAO {
 			prepareStatement("INSERT INTO exams.EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
 					+ "GRADED_ON, GRADED_BY, AUTOSCORE, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ex.getName());
-			_ps.setInt(2, ex.getPilotID());
-			_ps.setInt(3, ex.getStatus());
+			_ps.setInt(2, ex.getAuthorID());
+			_ps.setInt(3, ex.getStatus().ordinal());
 			_ps.setTimestamp(4, createTimestamp(ex.getDate()));
 			_ps.setTimestamp(5, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(6, createTimestamp(ex.getScoredOn()));
@@ -128,7 +128,7 @@ public class SetExam extends DAO {
 			// Prepare the statement for the examination
 			prepareStatement("UPDATE exams.EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, "
 					+ "PASS=?, COMMENTS=?, ISEMPTY=?, AUTOSCORE=? WHERE (ID=?)");
-			_ps.setInt(1, ex.getStatus());
+			_ps.setInt(1, ex.getStatus().ordinal());
 			_ps.setTimestamp(2, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(3, createTimestamp(ex.getScoredOn()));
 			_ps.setInt(4, ex.getScorerID());
@@ -144,10 +144,7 @@ public class SetExam extends DAO {
 				+ "EQ.CORRECT=? WHERE (EQ.EXAM_ID=EQA.EXAM_ID) AND (EQ.QUESTION_NO=EQA.QUESTION_NO) AND "
 				+ "(EQ.EXAM_ID=?) AND (EQ.QUESTION_NO=?)");
 			_ps.setInt(3, ex.getID());
-
-			// Batch the questions
-			for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext();) {
-				Question q = i.next();
+			for (Question q : ex.getQuestions()) {
 				_ps.setString(1, q.getAnswer());
 				_ps.setBoolean(2, q.isCorrect());
 				_ps.setInt(4, q.getNumber());
@@ -157,8 +154,6 @@ public class SetExam extends DAO {
 			// Update the questions
 			_ps.executeBatch();
 			_ps.close();
-
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -181,8 +176,8 @@ public class SetExam extends DAO {
 					+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY, OWNER) VALUES "
 					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
-				_ps.setInt(2, cr.getPilotID());
-				_ps.setInt(3, cr.getStatus());
+				_ps.setInt(2, cr.getAuthorID());
+				_ps.setInt(3, cr.getStatus().ordinal());
 				_ps.setString(4, cr.getEquipmentType());
 				_ps.setString(5, cr.getAircraftType());
 				_ps.setInt(6, cr.getScorerID());
@@ -195,7 +190,7 @@ public class SetExam extends DAO {
 			} else {
 				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, GRADED_BY=?, "
 						+ "PASS=?, COMMENTS=? WHERE (ID=?)");
-				_ps.setInt(1, cr.getStatus());
+				_ps.setInt(1, cr.getStatus().ordinal());
 				_ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));
 				_ps.setTimestamp(3, createTimestamp(cr.getScoredOn()));
 				_ps.setInt(4, cr.getScorerID());
@@ -221,8 +216,6 @@ public class SetExam extends DAO {
 			
 			// Write the Flight Academy data
 			linkCheckRide(cr);
-
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

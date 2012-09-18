@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to fetch Air Charts data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 4.0
  */
 
@@ -33,7 +33,7 @@ public class GetAirCharts extends DAO {
 	private static final Chart.Type[] CAT_TYPE_MAP = {Chart.Type.UNKNOWN, Chart.Type.GROUND, 
 		Chart.Type.SID, Chart.Type.STAR, Chart.Type.APR, Chart.Type.ILS};
 	
-	/**
+	/*
 	 * Helper method to parse XML from remote HTTP host.
 	 */
 	private Document loadXML() throws IOException, DAOException {
@@ -41,9 +41,9 @@ public class GetAirCharts extends DAO {
 		if (statusCode != HTTP_OK)
 			throw new HTTPDAOException("Invalid Response Code", statusCode);
 		
-		try {
+		try (InputStream is = getIn()) {
 			SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
-			return builder.build(new InputStreamReader(getIn()));
+			return builder.build(new InputStreamReader(is));
 		} catch (JDOMException je) {
 			throw new DAOException(je);
 		}
@@ -62,8 +62,7 @@ public class GetAirCharts extends DAO {
 			// Parse the XML
 			Collection<Country> results = new TreeSet<Country>();
 			Element re = doc.getRootElement();
-			for (Iterator<Element> i = re.getChildren("CountryInfo").iterator(); i.hasNext(); ) {
-				Element ce = i.next();
+			for (Element ce : re.getChildren("CountryInfo")) {
 				Country c = Country.get(ce.getAttributeValue("CountryCode", ""));
 				if (c != null)
 					results.add(c);
@@ -91,8 +90,7 @@ public class GetAirCharts extends DAO {
 			// Parse the XML
 			Collection<Airport> results = new TreeSet<Airport>();
 			Element re = doc.getRootElement();
-			for (Iterator<Element> i = re.getChildren("AirportInfo").iterator(); i.hasNext(); ) {
-				Element ae = i.next();	
+			for (Element ae : re.getChildren("AirportInfo")) {
 				Airport a = SystemData.getAirport(ae.getAttributeValue("ICAO"));
 				if (a != null)
 					results.add(a);
@@ -120,8 +118,7 @@ public class GetAirCharts extends DAO {
 			// Parse the XML
 			Collection<ExternalChart> results = new ArrayList<ExternalChart>();
 			Element re = doc.getRootElement();
-			for (Iterator<Element> i = re.getChildren("AirportInfo").iterator(); i.hasNext(); ) {
-				Element ae = i.next();
+			for (Element ae : re.getChildren("AirportInfo")) {
 				Airport aC = SystemData.getAirport(ae.getAttributeValue("ICAO"));
 				if (!a.equals(aC)) {
 					log.warn("Unexpected airport code - " + ae.getAttributeValue("ICAO"));
@@ -129,8 +126,7 @@ public class GetAirCharts extends DAO {
 				}
 
 				// Walk through categories
-				for (Iterator<Element> cci = ae.getChildren("ChartCategory").iterator(); cci.hasNext(); ) {
-					Element cce = cci.next();
+				for (Element cce : ae.getChildren("ChartCategory")) {
 					int type = StringUtils.parse(cce.getAttributeValue("id"), 0);
 					if ((type < 1) || (type >=  CAT_TYPE_MAP.length)) {
 						log.warn("Unexpected Chart category - " + cce.getAttributeValue("id"));
@@ -138,13 +134,16 @@ public class GetAirCharts extends DAO {
 					}
 					
 					// Walk through charts
-					for (Iterator<Element> ci = cce.getChildren("Chart").iterator(); ci.hasNext(); ) {
-						Element ce = ci.next();
+					for (Element ce : cce.getChildren("Chart")) {
 						String name = ce.getAttributeValue("Name", "?");
 						if (name.length() > 94) {
 							log.warn("Truncating chart name " + name);
 							name = name.substring(0, 95);
 						}
+						
+						// Extract the ID from the URL
+						String url = ce.getTextTrim();
+						Map<String, String> params = StringUtils.getURLParameters(url);
 						
 						// Create the chart
 						ExternalChart c = new ExternalChart(name, a);
@@ -155,7 +154,8 @@ public class GetAirCharts extends DAO {
 							c.setType(Chart.Type.APR);
 						
 						c.setLastModified(new Date());
-						c.setURL(ce.getTextTrim());
+						c.setURL(url);
+						c.setExternalID(params.get("id"));
 						results.add(c);
 					}
 				}

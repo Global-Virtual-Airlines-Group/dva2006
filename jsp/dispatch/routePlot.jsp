@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,20 +6,30 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatch Route Plotter</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<map:api version="3" />
+<map:api version="3" libraries="weather" />
+<content:js name="progressBar" />
+<content:js name="googleMapsWX" />
 <content:js name="routePlot" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<content:sysdata var="multiHost" name="weather.multiHost" />
-<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
+<c:if test="${!empty tileHost}">
+<script type="text/javascript">
+var gsLoader;
+gsLoader = new golgotha.maps.GinsuLoader(2);
+gsLoader.setData('radar', 0.45, 'wxRadar');
+gsLoader.setData('eurorad', 0.45, 'wxRadar');
+gsLoader.setData('temp', 0.275, 'wxTemp');
+gsLoader.setData('windspeed', 0.325, 'wxWind');
+</script>
+<map:wxList layers="radar,eurorad,temp,windspeed" function="gsLoader.load" max="2" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <fmt:aptype var="useICAO" />
 <script type="text/javascript">
@@ -61,7 +71,6 @@ updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), 
 return true;
 }
 </script>
-<map:wxList layers="radar,eurorad,sat,windspeed" />
 </head>
 <content:copyright visible="false" />
 <body onload="disableButton('RouteSaveButton')">
@@ -120,10 +129,11 @@ return true;
  <el:button ID="SearchButton" onClick="void searchRoutes()" label="SEARCH" /></td>
 </tr>
 <tr class="title caps">
- <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance" /></td>
+ <td colspan="2" class="left">PLOTTED ROUTE<span id="rtDistance"></span></td>
 </tr>
 <tr>
- <td colspan="2" class="data"><map:div ID="googleMap" x="100%" y="580" /></td>
+ <td colspan="2" class="data"><map:div ID="googleMap" x="100%" y="580" /><div id="copyright" class="small mapTextLabel"></div>
+<div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 <tr>
  <td class="label">Waypoints</td>
@@ -168,29 +178,31 @@ window.setTimeout("updateAirports(f.airportL, 'airline=all', ${useICAO}, getValu
 
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, minZoom:2, maxZoom:11, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
+<map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
 <c:if test="${!empty tileHost}">
 // Build the weather layer controls
-getTileOverlay('radar', 0.45);
-getTileOverlay('eurorad', 0.45);
-getTileOverlay('sat', 0.35);
-getTileOverlay('windspeed', 0.35);
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Wind Speed', 'windspeed'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
 </c:if>
-<map:type map="map" type="${gMapType}" default="TERRAIN" />
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+// Build the standard weather layers
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+
+// Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
 <c:if test="${!empty airportD}">
 // Initialize the map
 plotMap();</c:if>
 </script>
 </body>
-</map:xhtml>
+</html>

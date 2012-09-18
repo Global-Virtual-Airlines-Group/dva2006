@@ -17,17 +17,6 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>browserSpecific</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
-		<attribute>
-			<name>defaultSuffix</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
 			<name>host</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -177,17 +166,11 @@
 
 	<tag>
 		<description>Browser Filter Tag, for filtering content based on IE/Mozilla</description>
-		<name>browserFilter</name>
+		<name>browser</name>
 		<tag-class>org.deltava.taglib.content.BrowserFilterTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
 			<name>ie</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
-		<attribute>
-			<name>ie6</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Boolean</type>
@@ -206,6 +189,12 @@
 		</attribute>
 		<attribute>
 			<name>ie9</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>html4</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Boolean</type>

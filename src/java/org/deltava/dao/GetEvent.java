@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Online Event data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -38,7 +38,7 @@ public class GetEvent extends DAO {
 			prepareStatement("SELECT E.* FROM events.EVENTS E, events.AIRLINES EA WHERE "
 					+ "(E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (E.ID=EA.ID) AND (EA.AIRLINE=?) "
 					+ "ORDER BY E.STARTTIME");
-			_ps.setInt(1, Event.CANCELED);
+			_ps.setInt(1, Status.CANCELED.ordinal());
 			_ps.setString(2, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
@@ -65,7 +65,7 @@ public class GetEvent extends DAO {
 					+ "ORDER BY E.STARTTIME DESC");
 			_ps.setTimestamp(1, now);
 			_ps.setTimestamp(2, now);
-			_ps.setInt(3, Event.CANCELED);
+			_ps.setInt(3, Status.CANCELED.ordinal());
 			_ps.setString(4, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
@@ -126,7 +126,7 @@ public class GetEvent extends DAO {
 				+ "ORDER BY E.STARTTIME");
 			_ps.setTimestamp(1, createTimestamp(dr.getStartDate()));
 			_ps.setTimestamp(2, createTimestamp(dr.getEndDate()));
-			_ps.setInt(3, Event.CANCELED);
+			_ps.setInt(3, Status.CANCELED.ordinal());
 			_ps.setString(4, SystemData.get("airline.code"));
 			List<Event> results = execute();
 			
@@ -149,7 +149,7 @@ public class GetEvent extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT E.ID FROM events.EVENTS E, events.AIRLINES EA WHERE (E.ID=EA.ID) "
 					+ "AND (E.STARTTIME > NOW()) AND (E.STATUS != ?) AND (EA.AIRLINE=?) LIMIT 1");
-			_ps.setInt(1, Event.CANCELED);
+			_ps.setInt(1, Status.CANCELED.ordinal());
 			_ps.setString(2, SystemData.get("airline.code"));
 			
 			// Execute the query
@@ -289,7 +289,7 @@ public class GetEvent extends DAO {
 			while (rs.next()) {
 				Event e = new Event(rs.getString(2));
 				e.setID(rs.getInt(1));
-				e.setStatus(rs.getInt(3));
+				e.setStatus(Status.values()[rs.getInt(3)]);
 				e.setNetwork(OnlineNetwork.values()[rs.getInt(4)]);
 				e.setStartTime(rs.getTimestamp(5));
 				e.setEndTime(rs.getTimestamp(6));

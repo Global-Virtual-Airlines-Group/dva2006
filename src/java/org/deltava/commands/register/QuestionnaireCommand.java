@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -11,12 +11,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionnaireAccessControl;
 
-import org.deltava.util.StringUtils;
-
 /**
- * A Web Site Command to handle the initial applicant questionaire.
+ * A Web Site Command to handle the initial applicant questionnaire.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,23 +25,18 @@ public class QuestionnaireCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
       
-      // Get the command result
       CommandResult result = ctx.getResult();
-      
-      // Since the ID may not be hex-encoded we need to grab it a different way
-      Object idP = ctx.getCmdParameter(ID, "0");
-      int id = (idP instanceof Integer) ? ((Integer) idP).intValue() : StringUtils.parseHex((String) idP);
-
       try {
          Connection con = ctx.getConnection();
          
          // Get the DAO and the Questionnaire
          GetQuestionnaire exdao = new GetQuestionnaire(con);
-         Examination ex = exdao.get(id);
+         Examination ex = exdao.get(ctx.getID());
          if (ex == null)
-            throw notFoundException("Invalid Questionnaire - " + id);
+            throw notFoundException("Invalid Questionnaire - " + ctx.getID());
          
          // Get our access and fail gracefully if we can no longer read it
          QuestionnaireAccessControl access = new QuestionnaireAccessControl(ctx, ex);
@@ -53,15 +46,14 @@ public class QuestionnaireCommand extends AbstractCommand {
             result.setURL("/jsp/register/qNoAccess.jsp");
             result.setSuccess(true);
             return;
-         } else if (!access.getCanRead()) {
+         } else if (!access.getCanRead())
             throw securityException("Cannot view Applicant Questionnaire");
-         }
          
          // Get the Applicant profile
          GetApplicant adao = new GetApplicant(con);
-         Applicant a = adao.get(ex.getPilotID());
+         Applicant a = adao.get(ex.getAuthorID());
          if (a == null)
-         	throw notFoundException("Invalid Applicant ID - " + ex.getPilotID());
+         	throw notFoundException("Invalid Applicant ID - " + ex.getAuthorID());
          
          // Save the questionnaire and the access controller
          ctx.setAttribute("exam", ex, REQUEST);
@@ -70,20 +62,18 @@ public class QuestionnaireCommand extends AbstractCommand {
          ctx.setAttribute("hasQImages", Boolean.valueOf(ex.hasImage()), REQUEST);
          
          // Determine the JSP to forward to
-         if (access.getCanSubmit()) {
+         if (access.getCanSubmit())
          	result.setURL("/jsp/register/qSubmit.jsp");
-         } else if (access.getCanScore()) {
+         else if (access.getCanScore())
          	result.setURL("/jsp/register/qScore.jsp");
-         } else {
+         else
          	result.setURL("/jsp/register/qView.jsp");
-         }
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
          ctx.release();
       }
 
-      // Forward to the JSP
       result.setSuccess(true);
    }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,11 +7,11 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <content:sysdata var="forumName" name="airline.forum" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ${forumName} Search</title>
 <content:sysdata var="airlineName" name="airline.name" />
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -93,9 +93,9 @@ return true;
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="50%">THREAD TITLE</td>
- <td width="20%">STARTED BY</td>
- <td width="5%">POSTS</td>
+ <td style="width:50%">THREAD TITLE</td>
+ <td style="width:20%">STARTED BY</td>
+ <td style="width:5%">POSTS</td>
  <td>LAST POST</td>
 </tr>
 

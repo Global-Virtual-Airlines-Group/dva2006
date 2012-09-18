@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +11,7 @@ import org.deltava.beans.DatabaseBean;
 /**
  * A JSP tag for generating HTML forms.
  * @author Luke
- * @version 3.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -37,7 +37,9 @@ public class FormTag extends ElementTag {
      * can get the tab index as ${thisForm.incTabIndex}.
      * @throws JspException if an I/O error occurs;  
      */
+    @Override
     public int doStartTag() throws JspException {
+    	super.doStartTag();
         
         // Sets the tab index and marks this as a parent tag
         _tabIndex = 0;
@@ -60,7 +62,6 @@ public class FormTag extends ElementTag {
             throw new JspException("UTF-8 encoding not supported - Laws of Universe no longer apply");
         }
         
-        // Update the ACTION
         _data.setAttribute("action", url.toString());
         
         // Update the encoding type if uploads are permitted
@@ -80,6 +81,7 @@ public class FormTag extends ElementTag {
      * Closes this FORM element by writing a &gt;/FORM&lt; tag.
      * @throws JspException if an I/O error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         try {
             _out.println(_data.close());
@@ -195,6 +197,7 @@ public class FormTag extends ElementTag {
     /**
      * Releases the tag's state variables.
      */
+    @Override
     public void release() {
         super.release();
         _id = null;

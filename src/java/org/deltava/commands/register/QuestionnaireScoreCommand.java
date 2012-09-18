@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 /**
  * A Web Site Command for scoring Applicant Questionnaires.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -24,8 +24,8 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
-
       try {
          Connection con = ctx.getConnection();
          
@@ -54,14 +54,14 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
          // Update examination
          Calendar cld = Calendar.getInstance();
          ex.setScoredOn(cld.getTime());
-         ex.setStatus(Test.SCORED);
+         ex.setStatus(TestStatus.SCORED);
          ex.setScore(score);
          ex.setScorerID(ctx.getUser().getID());
          ex.setPassFail(true);
 
          // Get the Applicant profile
          GetApplicant adao = new GetApplicant(con);
-         ctx.setAttribute("applicant", adao.get(ex.getPilotID()), REQUEST);
+         ctx.setAttribute("applicant", adao.get(ex.getAuthorID()), REQUEST);
 
          // Update the questionnaire in the database
          SetQuestionnaire wdao = new SetQuestionnaire(con);

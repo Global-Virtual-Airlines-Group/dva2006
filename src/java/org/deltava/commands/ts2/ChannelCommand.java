@@ -1,7 +1,8 @@
-// Copyright 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
+import java.util.Arrays;
 
 import org.deltava.beans.ts2.*;
 
@@ -13,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to update TeamSpeak 2 channel data.
  * @author Luke
- * @version 2.4
+ * @version 5.0
  * @since 1.0
  */
 
@@ -24,6 +25,7 @@ public class ChannelCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new channel
@@ -51,7 +53,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			c.setServerID(StringUtils.parseHex(ctx.getParameter("server")));
 			c.setModerated(Boolean.valueOf(ctx.getParameter("isModerated")).booleanValue());
 			c.setDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
-			c.setCodec(StringUtils.parse(ctx.getParameter("codec"), 0));
+			c.setCodec(Codec.valueOf(ctx.getParameter("codec")));
 			
 			// Start a transaction
 			ctx.startTX();
@@ -63,10 +65,8 @@ public class ChannelCommand extends AbstractFormCommand {
 			else
 				wdao.update(c);
 			
-			// Check for a default channel
+			// Check for a default channel and commit
 			wdao.setDefault(c.getServerID());
-			
-			// Commit the transaction
 			ctx.commitTX();
 
 			// Save the channel in the request
@@ -93,6 +93,7 @@ public class ChannelCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -119,7 +120,7 @@ public class ChannelCommand extends AbstractFormCommand {
 		}
 		
 		// Save the codec list
-		ctx.setAttribute("codecs", Channel.CODECS, REQUEST);
+		ctx.setAttribute("codecs", Arrays.asList(Codec.values()), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -130,9 +131,9 @@ public class ChannelCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading the channel profile. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

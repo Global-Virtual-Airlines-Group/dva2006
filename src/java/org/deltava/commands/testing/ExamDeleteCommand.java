@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to delete Pilot Examinations and Check Rides.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class ExamDeleteCommand extends AbstractCommand {
 
 			// Get the user data
 			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(t.getPilotID());
+			UserData ud = uddao.get(t.getAuthorID());
 
 			// Check our access
 			ExamAccessControl access = new ExamAccessControl(ctx, t, ud);
@@ -60,7 +60,7 @@ public class ExamDeleteCommand extends AbstractCommand {
 				wdao.updateStats((Examination) t);
 
 			// If it's a check ride, find the PIREP
-			if ((isCheckRide) && (t.getStatus() != Test.NEW)) {
+			if (isCheckRide && (t.getStatus() != TestStatus.NEW)) {
 				int acarsID = ((CheckRide) t).getFlightID();
 				GetFlightReports frdao = new GetFlightReports(con);
 				FlightReport fr = frdao.getACARS(ud.getDB(), acarsID);
@@ -71,7 +71,6 @@ public class ExamDeleteCommand extends AbstractCommand {
 				}
 			}
 
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

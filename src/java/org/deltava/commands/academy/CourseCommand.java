@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
- * @version 3.5
+ * @version 5.0
  * @since 1.0
  */
 
@@ -67,13 +67,13 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 			
 			// Get Pilot IDs from comments/progress
 			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(c.getPilotID()));
+			IDs.add(Integer.valueOf(c.getPilotID()));
 			if (c.getInstructorID() != 0)
-				IDs.add(new Integer(c.getInstructorID()));
+				IDs.add(Integer.valueOf(c.getInstructorID()));
 			for (CourseComment cc : c.getComments())
-				IDs.add(new Integer(cc.getAuthorID()));
+				IDs.add(Integer.valueOf(cc.getAuthorID()));
 			for (CourseProgress cp : c.getProgress())
-				IDs.add(new Integer(cp.getAuthorID()));
+				IDs.add(Integer.valueOf(cp.getAuthorID()));
 			
 			// Load documents/exams if its our course
 			if (access.getCanComment()) {
@@ -86,11 +86,10 @@ public class CourseCommand extends AbstractAcademyHistoryCommand {
 				
 				// Show exam status
 				Collection<Test> exams = new TreeSet<Test>();
-				for (Iterator<Test> i = helper.getExams().iterator(); i.hasNext(); ) {
-					Test t = i.next();
-					if ((t.getType() == Test.EXAM) && (cert.getExamNames().contains(t.getName())))
+				for (Test t : helper.getExams()) {
+					if ((t instanceof Examination) && (cert.getExamNames().contains(t.getName())))
 						exams.add(t);
-					else if (t.getType() == Test.CHECKRIDE) {
+					else if (t instanceof CheckRide) {
 						CheckRide cr = (CheckRide) t;
 						if (cr.getCourseID() == c.getID())
 							exams.add(t);

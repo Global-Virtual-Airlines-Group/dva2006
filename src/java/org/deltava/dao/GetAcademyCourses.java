@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -129,8 +129,8 @@ public class GetAcademyCourses extends DAO {
 				+ "exams.COURSES C LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
 				+ "AND (C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY " + sortBy);
 			_ps.setInt(1, instructorID);
-			_ps.setInt(2, Course.PENDING);
-			_ps.setInt(3, Course.STARTED);
+			_ps.setInt(2, Status.PENDING.ordinal());
+			_ps.setInt(3, Status.STARTED.ordinal());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -158,7 +158,7 @@ public class GetAcademyCourses extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Course.COMPLETE);
+			_ps.setInt(1, Status.COMPLETE.ordinal());
 			if (pilotID != 0)
 				_ps.setInt(2, pilotID);
 			
@@ -170,13 +170,13 @@ public class GetAcademyCourses extends DAO {
 
 	/**
 	 * Returns all Flight Academy Course profiles with a particular status.
-	 * @param status the Course status code
+	 * @param s the Status
 	 * @param sortBy the sort column SQL
 	 * @param c the Certification, or null for all
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getByStatus(int status, String sortBy, Certification c) throws DAOException {
+	public Collection<Course> getByStatus(Status s, String sortBy, Certification c) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, CR.ABBR, MAX(CC.CREATED) AS LC FROM exams.CERTS CR, "
@@ -192,7 +192,7 @@ public class GetAcademyCourses extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, status);
+			_ps.setInt(1, s.ordinal());
 			if (c != null)
 				_ps.setString(2, c.getName());
 			
@@ -215,7 +215,7 @@ public class GetAcademyCourses extends DAO {
 				+ "exams.CHECKRIDES CR ON (CR.ID=CCR.CHECKRIDE) LEFT JOIN exams.COURSECHAT CC ON (C.ID=CC.COURSE_ID) "
 				+ "WHERE (CRT.NAME=C.CERTNAME) AND (C.STATUS=?) AND ((C.HAS_CHECKRIDE=?) OR ((C.HAS_CHECKRIDE=?) "
 				+ "AND (CR.PASS=?))) GROUP BY C.ID HAVING (REQCNT=CREQCNT) ORDER BY LC DESC");
-			_ps.setInt(1, Course.STARTED);
+			_ps.setInt(1, Status.STARTED.ordinal());
 			_ps.setBoolean(2, false);
 			_ps.setBoolean(3, true);
 			_ps.setBoolean(4, true);
@@ -251,9 +251,7 @@ public class GetAcademyCourses extends DAO {
 		Map<Integer, Collection<String>> results = new HashMap<Integer, Collection<String>>();
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Course.COMPLETE);
-			
-			// Execute the query
+			_ps.setInt(1, Status.COMPLETE.ordinal());
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Integer id = Integer.valueOf(rs.getInt(1));
@@ -267,7 +265,6 @@ public class GetAcademyCourses extends DAO {
 				}
 			}
 			
-			// Clean up
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -310,7 +307,7 @@ public class GetAcademyCourses extends DAO {
 				Course c = new Course(rs.getString(2), rs.getInt(3));
 				c.setID(rs.getInt(1));
 				c.setInstructorID(rs.getInt(4));
-				c.setStatus(rs.getInt(5));
+				c.setStatus(Status.values()[rs.getInt(5)]);
 				c.setStartDate(rs.getTimestamp(6));
 				c.setEndDate(rs.getTimestamp(7));
 				c.setHasCheckRide(rs.getBoolean(8));

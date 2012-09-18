@@ -10,10 +10,10 @@
 
 <!-- Scoreboard Title Bar -->
 <tr class="title caps">
- <td width="12%">THREAD NAME</td>
- <td width="30%">REMOTE ADDRESS</td>
- <td width="20%">EXECUTION TIME</td>
- <td width="7%">COUNT</td>
+ <td style="width:12%">THREAD NAME</td>
+ <td style="width:30%">REMOTE ADDRESS</td>
+ <td style="width:20%">EXECUTION TIME</td>
+ <td style="width:7%">COUNT</td>
  <td class="left">REQUEST URI</td>
 </tr>
 

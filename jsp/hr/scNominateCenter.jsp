@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Senior Captain Nominations</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
@@ -92,15 +92,15 @@ We look forward to your help in recognizing those who make <content:airline /> a
 <c:if test="${showHeader}">
 <!-- Header Bar -->
 <tr class="title caps">
- <td width="20%">PILOT NAME</td>
- <td width="10%">EQUIPMENT TYPE</td>
- <td width="10%">JOINED ON</td>
- <td width="15%">LEGS / HOURS</td>
- <td width="15%">ONLINE</td>
- <td width="15%">ACARS</td>
+ <td style="width:20%">PILOT NAME</td>
+ <td style="width:10%">EQUIPMENT TYPE</td>
+ <td style="width:10%">JOINED ON</td>
+ <td style="width:15%">LEGS / HOURS</td>
+ <td style="width:15%">ONLINE</td>
+ <td style="width:15%">ACARS</td>
 <c:if test="${canSeeScore}">
  <td>NOMINATED ON</td>
- <td width="5%"">SCORE</td>
+ <td style="width:5%"">SCORE</td>
 </c:if>
 </tr>
 </c:if>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -70,7 +70,6 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Channel get(String channelName) throws DAOException {
-		// Check if we're in the cache
 		Channel c = _cache.get(channelName);
 		if (c != null)
 			return c;
@@ -224,11 +223,11 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			while (rs.next()) {
 				Channel c = channels.get(rs.getString(1));
 				if (c != null) {
-					int type = rs.getInt(2);
-					if (type == Channel.INFOTYPE_AIRLINE)
+					Channel.InfoType inf = Channel.InfoType.values()[rs.getInt(2)];
+					if (inf == Channel.InfoType.AIRLINE)
 						c.addAirline(rs.getString(3));
 					else
-						c.addRole(type, rs.getString(3));
+						c.addRole(inf, rs.getString(3));
 				}
 			}
 		}
@@ -265,17 +264,11 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 				sqlBuf.append(',');
 		}
 
-		// Strip out the trailing comma
-		if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-			sqlBuf.setLength(sqlBuf.length() - 1);
-
 		// Close and prepare the statement
 		List<Message> results = new ArrayList<Message>();
 		sqlBuf.append("))");
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-
-			// Execute the query and build the results list
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					LastPostMessage msg = new LastPostMessage(rs.getInt(13));
@@ -292,7 +285,6 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			throw new DAOException(se);
 		}
 
-		// Convert to map and return
 		return CollectionUtils.createMap(results, "ID");
 	}
 }

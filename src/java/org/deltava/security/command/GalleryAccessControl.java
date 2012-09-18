@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.gallery.Image;
@@ -8,17 +8,17 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller to support Image Gallery operations.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
 public class GalleryAccessControl extends AccessControl {
 
-	private Image _img;
+	private final Image _img;
 	
 	private boolean _canCreate;
 	private boolean _canEdit;
-	private boolean _canVote;
+	private boolean _canLike;
 	private boolean _canDelete;
 	
 	/**
@@ -46,9 +46,9 @@ public class GalleryAccessControl extends AccessControl {
 		
 		// Calculate access rights
 		boolean isOurs = _ctx.isAuthenticated() && (_img.getAuthorID() == _ctx.getUser().getID());
-		_canEdit = _ctx.isUserInRole("HR") || (isOurs && (_img.getVoteCount() == 0));
+		_canEdit = _ctx.isUserInRole("HR") || (isOurs && (_img.getLikeCount() == 0));
 		_canDelete = _canEdit;
-		_canVote = _ctx.isAuthenticated() && _canCreate && !_img.hasVoted(_ctx.getUser());
+		_canLike = _ctx.isAuthenticated() && _canCreate && !_img.hasLiked(_ctx.getUser());
 	}
 	
 	/**
@@ -68,11 +68,11 @@ public class GalleryAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns if this user can vote for this Image Gallery entry.
-	 * @return TRUE if a vote can be cast, otherwise FALSE
+	 * Returns if this user can like this Image Gallery entry.
+	 * @return TRUE if a like can be cast, otherwise FALSE
 	 */
-	public boolean getCanVote() {
-		return _canVote;
+	public boolean getCanLike() {
+		return _canLike;
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Logbook<c:if test="${!empty pilot}"> for ${pilot.name} (${pilot.pilotCode})</c:if></title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -39,11 +39,11 @@ return true;
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="10%">DATE</td>
- <td width="15%">COURSE</td>
- <td width="14%">STUDENT</td>
- <td width="14%">INSTRUCTOR</td>
- <td width="9%">DURATION</td>
+ <td style="width:10%">DATE</td>
+ <td style="width:15%">COURSE</td>
+ <td style="width:14%">STUDENT</td>
+ <td style="width:14%">INSTRUCTOR</td>
+ <td style="width:9%">DURATION</td>
  <td class="left" width="10%">COMMENTS</td>
 <content:filter roles="HR"><td class="right">INSTRUCTOR <el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" onChange="void sort(this)" /></td>
 </content:filter>

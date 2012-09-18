@@ -145,7 +145,7 @@ public class InsertGoogleAPITag extends TagSupport {
 			
 			// Init common code
 			out.println("<script type=\"text/javascript\">");
-			out.print("var golgotha = {maps: { IMG_PATH:\'");
+			out.print("golgotha.maps = { IMG_PATH:\'");
 			out.print(SystemData.get("path.img"));		
 			out.print("\', API:");
 			out.print(String.valueOf(_majorVersion));
@@ -153,8 +153,8 @@ public class InsertGoogleAPITag extends TagSupport {
 			out.print(SystemData.get("weather.tileHost"));
 			out.print("\', multiHost:");
 			out.print(SystemData.getBoolean("weather.multiHost"));
-			out.print(", seriesData: {} ");
-			out.println("}};</script>");
+			out.print(", seriesData: {}");
+			out.println("};</script>");
 			
 			// Add JS support file
 			String jsFileName = "googleMapsV" + String.valueOf(_majorVersion);

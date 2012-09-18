@@ -1,6 +1,7 @@
 package org.deltava.security.command;
 
 import org.deltava.beans.cooler.*;
+import org.deltava.beans.cooler.Channel.InfoType;
 
 public class TestCoolerThreadAccessControl extends AccessControlTestCase {
 
@@ -13,7 +14,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       super.setUp();
       _c = new Channel("Channel");
       _c.addAirline("DVA");
-      _c.addRole(Channel.INFOTYPE_RROLE, "Dummy");
+      _c.addRole(InfoType.READ, "Dummy");
       _mt = new MessageThread("Thread Subject");
       _ac = new CoolerThreadAccessControl(_ctxt);
    }
@@ -34,7 +35,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanLock());
       assertFalse(_ac.getCanUnlock());
       
-      _c.addRole(Channel.INFOTYPE_RROLE, "*");
+      _c.addRole(InfoType.READ, "*");
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -45,7 +46,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    
    public void testAnonymousAccess() throws Exception {
       _ctxt.logoff();
-      _c.addRole(Channel.INFOTYPE_RROLE, "*");
+      _c.addRole(InfoType.READ, "*");
       _ac.updateContext(_mt, _c);
       _ac.validate();
       
@@ -56,7 +57,7 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    }
    
    public void testLockingAccess() throws Exception {
-      _c.addRole(Channel.INFOTYPE_RROLE, "*");
+      _c.addRole(InfoType.READ, "*");
       _user.addRole("Moderator");
       _ac.updateContext(_mt, _c);
       _ac.validate();
@@ -76,8 +77,8 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    }
    
    public void testLockedAccess() throws Exception {
-      _c.addRole(Channel.INFOTYPE_RROLE, "*");
-      _c.addRole(Channel.INFOTYPE_WROLE, "*");
+      _c.addRole(InfoType.READ, "*");
+      _c.addRole(InfoType.WRITE, "*");
       _mt.setHidden(true);
       _ac.updateContext(_mt, _c);
       _ac.validate();

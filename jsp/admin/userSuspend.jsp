@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Pilot Account Suspension</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -39,8 +39,8 @@ return true;
 </tr>
 <tr>
  <td colspan="2" class="pri bld mid">Suspending a Pilot will remove his or her ability to log into the
- web site<c:if test="${acarsEnabled}"> and ACARS</c:if>, and will automatically disconnect the Pilot if
- already authenticated.</td>
+ <content:airline /> web site<c:if test="${acarsEnabled}"> and ACARS</c:if>, and will automatically
+ disconnect the Pilot if  already authenticated.</td>
 </tr>
 <tr>
  <td class="label top">Reason for Suspension</td>

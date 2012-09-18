@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,24 +6,31 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Live Map</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="acarsMap" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<content:sysdata var="multiHost" name="weather.multiHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="3" />
-<c:if test="${!empty tileHost}">
-<content:js name="acarsMapWX" />
-<content:js name="acarsMapFF" />
+<map:api version="3" libraries="weather" />
 <content:js name="progressBar" />
-</c:if>
+<content:js name="googleMapsWX" />
+<c:if test="${!empty tileHost}">
+<script type="text/javascript">
+var gsLoader;
+gsLoader = new golgotha.maps.GinsuLoader(2);
+gsLoader.setData('radar', 0.4, 'wxRadar');
+gsLoader.setData('eurorad', 0.4, 'wxRadar');
+gsLoader.setData('temp', 0.275, 'wxTemp');
+gsLoader.setData('windspeed', 0.325, 'wxWind');
+gsLoader.setData('future_radar_ff', 0.375, 'ffRadar');
+</script>
+<map:wxList layers="radar,eurorad,temp,windspeed,future_radar_ff" function="gsLoader.load" max="8" /></c:if>
 <script type="text/javascript">
 function reloadData(isAuto)
 {
@@ -90,7 +97,6 @@ self.location = '/acars_map_earth.ws';
 return true;
 }
 </script>
-<map:wxList layers="radar,eurorad,sat,temp,future_radar_ff" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -119,7 +125,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft Legend</td>
- <td class="data" width="45%"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
+ <td class="data" style="width:45%;"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
  <td class="label">Dispatcher Legend</td>
  <td class="data"><map:legend color="green" legend="Available" /> <map:legend color="purple" legend="Busy" /></td>
@@ -131,9 +137,8 @@ return true;
  <td class="data"><span id="wxLoading" class="small" style="width:150px;">None</span></td>
 </tr>
 <tr>
- <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="550" /><div id="ffSlices" style="top:30px; right:7px; visibility:hidden;">
- <span id="ffLabel" class="small bld mapTextLabel">Select Time</span> <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" />
- <el:button ID="AnimateButton" label="ANIMATE" onClick="void animateFF()" /></div></td>
+ <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="small mapTextLabel"></div>
+<div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
 
@@ -151,54 +156,35 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
-<div id="copyright" class="small mapTextLabel" style="bottom:20px; right:2px; visibility:hidden;"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:2, maxZoom:18, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, minZoom:2, maxZoom:17, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.getOptions = function() { return mapOpts; };
-<c:if test="${!empty tileHost}">
-// Load the tile overlays
-getTileOverlay('radar', 0.45);
-getTileOverlay('eurorad', 0.45);
-getTileOverlay('sat', 0.35);
-getTileOverlay('temp', 0.25);
-
-// Load the ff tile overlays
-var ffLayers = ['future_radar_ff'];
-for (var i = 0; i < ffLayers.length; i++) {
-	var layerName = ffLayers[i];
-	var dates = getFFSlices(layerName);
-	document.ffSlices[layerName] = dates;
-	document.ffOptions[layerName] = getFFComboOptions(dates);
-	for (var x = 0; x < dates.length; x++)
-		getFFOverlay(layerName, 0.45, dates[x]);
-}
-
-// Build the layer controls
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new FFOverlayControl('Future Radar', 'future_radar_ff'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
-
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById('copyright');
-cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-</c:if>
-// Add map controls
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
 google.maps.event.addListener(map, 'click', infoClose);
-var pBar = progressBar({strokeWidth:225, strokeColor:'#0020ff'});
-pBar.getDiv().style.right = '4px';
-pBar.getDiv().style.top = '50px';
+google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
+<c:if test="${!empty tileHost}">
+// Build the layer controls
+var ff = gsLoader.combine(8, 'radar', 'future_radar_ff');
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerAnimateControl(map, 'Radar Loop', ff, 333));
+map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
+</c:if>
+// Build the standard weather layers
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+google.maps.event.trigger(this, 'maptypeid_changed');
+google.maps.event.trigger(map, 'zoom_changed');
 
 // Placeholders for route/positions
 var routeData;
@@ -210,15 +196,6 @@ var dcPositions = [];
 document.dispatchOnline = false;
 document.doRefresh = true;
 reloadData(true);
-<c:if test="${!empty tileHost}">
-// Initialize FastForward elements
-google.maps.event.addListener(map, 'maptypeid_changed', hideAllSlices);
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
-	addOverlay(map, 'ffSlices'); 
-	addOverlay(map, 'copyright'); 
-	addOverlay(map, pBar.getDiv());
-	google.maps.event.trigger(this, 'maptypeid_changed');
-});
-</c:if></script>
+</script>
 </body>
-</map:xhtml>
+</html>

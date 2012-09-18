@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML textbox elements.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
@@ -30,14 +30,16 @@ public class TextboxTag extends FormElementTag {
      * Opens this TEXTAREA element by writing a &gt;TEXTAREA&lt; tag.
      * @throws JspException if an error occurs
      */
+    @Override
     public int doStartTag() throws JspException {
+    	super.doStartTag();
     	
     	// If resizing, enable the Javascript
     	if (_resize && ContentHelper.containsContent(pageContext, "JS", "common")) {
     		_data.setAttribute("onkeyup", "void resize(this)");
     		StringBuilder buf = new StringBuilder();
-    		if (_data.hasAttribute("class")) {
-    			buf.append(_data.getAttribute("class"));
+    		if (_data.has("class")) {
+    			buf.append(_data.get("class"));
     			buf.append(' ');
     		}
     		
@@ -47,8 +49,8 @@ public class TextboxTag extends FormElementTag {
     	
     	// If width set, adjust style as required
     	if ((_width != null) && (_width.endsWith("%"))) {
-    		if (_data.hasAttribute("style")) {
-    			StringBuilder buf = new StringBuilder(_data.getAttribute("style"));
+    		if (_data.has("style")) {
+    			StringBuilder buf = new StringBuilder(_data.get("style"));
     			buf.append("; width:");
     			buf.append(_width);
     			buf.append(';');
@@ -72,6 +74,7 @@ public class TextboxTag extends FormElementTag {
      * Closes this TEXTAREA element by writing a &gt;/TEXTAREA&lt; tag.
      * @throws JspException if an I/O error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         try {
             _out.print(_data.close());
@@ -87,6 +90,7 @@ public class TextboxTag extends FormElementTag {
     /**
      * Releases the tag's state variables.
      */
+    @Override
     public void release() {
     	super.release();
     	_resize = false;
@@ -122,8 +126,7 @@ public class TextboxTag extends FormElementTag {
      * @param readOnly TRUE if read-only, otherwise FALSE
      */
     public void setReadOnly(boolean readOnly) {
-        if (readOnly)
-            _data.setAttribute("readonly", "readonly");
+    	_data.setAttribute("readonly", String.valueOf(readOnly));
     }
     
     /**
@@ -131,8 +134,15 @@ public class TextboxTag extends FormElementTag {
      * @param disabled TRUE if disabled, otherwise FALSE
      */
     public void setDisabled(boolean disabled) {
-        if (disabled)
-            _data.setAttribute("disabled", "disabled");
+    	_data.setAttribute("disabled", String.valueOf(disabled));
+    }
+    
+    /**
+     * Marks this textbox as spellcheckable.
+     * @param sc TRUE if spellcheck enabled, otherwise FALSE
+     */
+    public void setSpellcheck(boolean sc) {
+    	_data.setAttribute("spellcheck", String.valueOf(sc));
     }
     
     /**
@@ -172,6 +182,7 @@ public class TextboxTag extends FormElementTag {
      * their body.
      * @throws UnsupportedOperationException always
      */
+    @Override
     public final void setValue(Object obj) {
         throw new UnsupportedOperationException("Value not Supported in TextBoxTag");
     }

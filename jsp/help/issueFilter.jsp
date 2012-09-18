@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
-<title><content:airline /> Help Desk</title>
-<content:css name="main" browserSpecific="true" />
+<title><content:airline /> Help Desk Issues</title>
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
@@ -33,18 +33,18 @@ return true;
 <el:form action="hdissuefilter.do" method="post" validate="return false">
 <view:table className="view" cmd="hdissuefilter">
 <tr class="title">
- <td colspan="3" class="left caps"><content:airline /> HELP DESK</td>
+ <td colspan="3" class="left caps"><content:airline /> HELP DESK ISSUES</td>
  <td colspan="3" class="right"><el:box name="activeOnly" idx="*" value="true" checked="${param.activeOnly}" label="Active Issues Only" />
  FILTER BY ${isAuthor ? 'AUTHOR' : 'ASSIGNEE'} <el:combo name="id" idx="*" size="1" options="${authors}" firstEntry="-" value="${param.id}" onChange="void update(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="8%">#</td>
- <td width="30%">SUBJECT</td>
- <td width="12%">STARTED BY</td>
- <td width="12%">ASSIGNED TO</td>
- <td width="5%">COMMENTS</td>
+ <td style="width:8%">#</td>
+ <td style="width:30%">SUBJECT</td>
+ <td style="width:12%">STARTED BY</td>
+ <td style="width:12%">ASSIGNED TO</td>
+ <td style="width:5%">COMMENTS</td>
  <td class="left">LAST COMMENT BY</td>
 </tr>
 

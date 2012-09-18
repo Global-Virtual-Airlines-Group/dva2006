@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.EquipmentType;
@@ -6,7 +6,7 @@ import org.deltava.beans.EquipmentType;
 /**
  * A class to store Check Ride data.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -55,15 +55,16 @@ public class CheckRide extends Test {
     public final int getScore() {
     	return getPassFail() ? 1 : 0;
     }
-
-    /**
-     * Returns the type of Test.
-     * @return Test.CHECKRIDE
-     */
-    public int getType() {
-        return Test.CHECKRIDE;
-    }
     
+    /**
+     * Returns whether this is an initial hire into a program, obviating the need for a First
+     * Officer's examination upon return.
+     * @return TRUE if initial hire, otherwise FALSE
+     */
+    public boolean isInitialHire() {
+    	return getName().contains("Initial Hire");
+    }
+
     /**
      * Returns the aircraft type used in this Check Ride.
      * @return the aircraft type
@@ -189,6 +190,6 @@ public class CheckRide extends Test {
      * @return the CSS class name 
      */
     public String getRowClassName() {
- 	   return CLASS_NAMES[getStatus()];
+ 	   return CLASS_NAMES[getStatus().ordinal()];
     }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,24 +7,25 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="forumName" name="airline.forum" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ${forumName} - <fmt:text value="${thread.subject}" /></title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="cooler" />
 <content:css name="form" />
 <content:sysdata var="ourDomain" name="airline.domain" />
 <c:forEach var="domain" items="${userDomains}">
 <c:if test="${domain == ourDomain}">
-<content:css name="signature" browserSpecific="true" />
+<content:css name="signature" />
 </c:if>
 <c:if test="${domain != ourDomain}">
-<content:css host="www.${domain}" name="signature" browserSpecific="true" scheme="legacy" />
+<content:css host="www.${domain}" name="signature" scheme="legacy" />
 </c:if>
 </c:forEach>
 <content:pics />
 <content:js name="common" />
 <content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
+<c:if test="${!empty img}"><content:js name="imgLike" /></c:if>
 <script type="text/javascript">
 function validate(form)
 {
@@ -32,9 +33,7 @@ if (!checkSubmit()) return false;
 
 // Validate response
 var act = form.action;
-if (act.indexOf('imgvote.do') != -1)
-	if (!validateCombo(form.score, 'Image Rating')) return false;
-else if (act.indexOf('threadmove.do') != -1)
+if (act.indexOf('threadmove.do') != -1)
 	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
 else if (act.indexOf('threadsubjectedit.do') != -1)
 	if (!validateText(form.newTitle, 5, 'New Discussion Thread Title')) return false;
@@ -54,7 +53,6 @@ disableButton('HideButton');
 disableButton('UnlockButton');
 disableButton('UnstickButton');
 disableButton('StickButton');
-disableButton('VoteButton');
 disableButton('EditButton');
 disableButton('LinkButton');
 disableButton('ImgDeleteButton');
@@ -122,7 +120,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void initLinks()">
+<body onload="void initLinks();<c:if test="${!empty img}"> void getLikes(${img.hexID})</c:if>">
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
@@ -225,7 +223,7 @@ APPLICANT<br />
 <content:enum var="imAddr" className="org.deltava.beans.IMAddress" item="AIM" />
 <c:set var="aimAddr" value="${pilot.IMHandle[imAddr]}" scope="page" />
 <c:if test="${!empty aimAddr}">
-<a href="aim:goim?screenname=${aimAddr}"><img border="0" src="http://big.oscar.aol.com/${aimAddr}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
+<a href="aim:goim?screenname=${aimAddr}"><img class="noborder" src="http://big.oscar.aol.com/${aimAddr}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
 </c:if>
 </el:showaddr></td>
 <c:set var="showPostTools" value="${(access.canReply && !doEdit) || canEdit || (access.canDelete && (postCount > 1))}" scope="page" />
@@ -263,7 +261,7 @@ APPLICANT<br />
 <!-- Default Signature Image -->
 <c:set var="sigImgHost" value="${(pilotLoc.domain == ourDomain) ? pageContext.request.serverName : pilotLoc.domain}" scope="page" />
 <c:if test="${pilotLoc.domain != ourDomain}"><c:set var="sigImgHost" value="www.${sigImgHost}" scope="page" /></c:if>
-<el:table className="${pilotLoc.airlineCode}_defaultSig" pad="0"><tr>
+<el:table className="${pilotLoc.airlineCode}_defaultSig"><tr>
  <td valign="bottom" class="sig" style="background-image: url(http://${sigImgHost}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank.name}, ${pilot.equipmentType}</span></div>
  </td>
@@ -378,7 +376,7 @@ notification each time a reply is posted in this Thread.
  <fmt:text value="${thread.subject}" /></td>
 </tr>
 <tr class="mid">
- <td colspan="3"><el:textbox name="msgText" width="90%" height="5" resize="true">${lastPost.body}</el:textbox></td>
+ <td colspan="3"><el:textbox name="msgText" width="90%" height="5" resize="true" spellcheck="true">${lastPost.body}</el:textbox></td>
 </tr>
 </c:if>
 

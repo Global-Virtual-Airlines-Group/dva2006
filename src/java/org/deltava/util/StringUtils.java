@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -8,9 +8,9 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
 /**
- * A common String utility class.
+ * A String utility class.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
@@ -397,6 +397,26 @@ public final class StringUtils {
 			String s2 = nullTrim(st);
 			if (s2 != null)
 				results.add(s2);
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Returns the query parameters on a URL
+	 * @param url the URL
+	 * @return a Map of parameters and values
+	 */
+	public static Map<String, String> getURLParameters(String url) {
+		if (isEmpty(url) || (url.indexOf('?') == -1))
+			return Collections.emptyMap();
+		
+		Map<String, String> results = new LinkedHashMap<String, String>();
+		StringTokenizer pTkns = new StringTokenizer(url.substring(url.indexOf('?') + 1), "&");
+		while (pTkns.hasMoreTokens()) {
+			StringTokenizer vTkns = new StringTokenizer(pTkns.nextToken(), "=");
+			String k = vTkns.nextToken();
+			results.put(k, vTkns.hasMoreTokens() ? vTkns.nextToken() : "");
 		}
 		
 		return results;

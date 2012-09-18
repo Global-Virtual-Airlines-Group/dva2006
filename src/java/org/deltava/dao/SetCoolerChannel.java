@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.cooler.Channel;
 /**
  * A Data Access Object to write Water Cooler Channel Profiles.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -88,37 +88,36 @@ public class SetCoolerChannel extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to write metadata.
 	 */
 	private void writeInfo(Channel c) throws SQLException {
-
 		prepareStatement("INSERT INTO common.COOLER_CHANNELINFO (CHANNEL, INFOTYPE, INFODATA) VALUES (?, ?, ?)");
 		_ps.setString(1, c.getName());
 		
 		// Dump read roles
-		_ps.setInt(2, Channel.INFOTYPE_RROLE);
+		_ps.setInt(2, Channel.InfoType.READ.ordinal());
 		for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); ) {
 			_ps.setString(3, i.next());
 			_ps.addBatch();
 		}
 		
 		// Dump write roles
-		_ps.setInt(2, Channel.INFOTYPE_WROLE);
+		_ps.setInt(2, Channel.InfoType.WRITE.ordinal());
 		for (Iterator<String> i = c.getWriteRoles().iterator(); i.hasNext(); ) {
 			_ps.setString(3, i.next());
 			_ps.addBatch();
 		}
 		
 		// Dump notify roles
-		_ps.setInt(2, Channel.INFOTYPE_NROLE);
+		_ps.setInt(2, Channel.InfoType.NOTIFY.ordinal());
 		for (Iterator<String> i = c.getNotifyRoles().iterator(); i.hasNext(); ) {
 			_ps.setString(3, i.next());
 			_ps.addBatch();
 		}
 		
 		// Dump airlines
-		_ps.setInt(2, Channel.INFOTYPE_AIRLINE);
+		_ps.setInt(2, Channel.InfoType.AIRLINE.ordinal());
 		for (Iterator<String> i = c.getAirlines().iterator(); i.hasNext(); ) {
 			_ps.setString(3, i.next());
 			_ps.addBatch();

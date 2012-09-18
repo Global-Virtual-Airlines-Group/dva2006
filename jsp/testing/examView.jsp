@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title>${exam.name} - ${pilot.name}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -94,10 +94,10 @@ return true;
 <tr>
 <c:choose>
 <c:when test="${fn:correct(q)}">
- <td class="mid"><el:img caption="Correct" border="0" src="testing/pass.png" /></td>
+ <td class="mid"><el:img caption="Correct" className="noborder" src="testing/pass.png" /></td>
 </c:when>
 <c:when test="${fn:incorrect(exam, q)}">
- <td class="mid"><el:img caption="Incorrect" border="0" src="testing/fail.png" /></td>
+ <td class="mid"><el:img caption="Incorrect" className="noborder" src="testing/fail.png" /></td>
 </c:when>
 <c:otherwise>
  <td class="mid">&nbsp;</td>
@@ -162,4 +162,4 @@ maps.push(map);
 </script></c:if>
 <content:googleAnalytics />
 </body>
-</map:xhtml>
+</html>

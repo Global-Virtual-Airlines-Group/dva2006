@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.gallery;
 
 import java.util.*;
@@ -8,11 +8,11 @@ import org.deltava.beans.*;
 /**
  * A class to store Image Gallery images.
  * @author Luke
- * @version 3.0
+ * @version 5.0
  * @since 1.0
  */
 
-public class Image extends ImageBean implements ComboAlias {
+public class Image extends ImageBean implements AuthoredBean, ComboAlias {
 
 	private int _authorID;
 	private int _threadID;
@@ -20,12 +20,10 @@ public class Image extends ImageBean implements ComboAlias {
 	private String _name;
 	private String _desc;
 	private boolean _fleet;
-	private Date _created;
+	private Date _created = new Date();
 
-	private Map<Integer, Vote> _votes;
-
-	private double _score = -1;
-	private int _voteCount;
+	private final Collection<Integer> _likes = new LinkedHashSet<Integer>();
+	private int _likeCount;
 
 	/**
 	 * Create a new Image with a particular name.
@@ -37,7 +35,6 @@ public class Image extends ImageBean implements ComboAlias {
 		super();
 		setName(name);
 		setDescription(desc);
-		_created = new Date();
 	}
 
 	/**
@@ -136,13 +133,6 @@ public class Image extends ImageBean implements ComboAlias {
 	}
 
 	/**
-	 * Helper method to check if we have loaded Votes for this Image.
-	 */
-	private boolean isPopulated() {
-		return (_votes != null);
-	}
-
-	/**
 	 * Updates the name of this Image.
 	 * @param name the new Image name
 	 * @throws NullPointerException if name is null
@@ -172,47 +162,24 @@ public class Image extends ImageBean implements ComboAlias {
 	}
 
 	/**
-	 * Adds a vote for this image.
-	 * @param v the vote to add. If the person has already voted, the previous vote is overriden.
+	 * Adds a like for this image.
+	 * @param userID the database ID of the liking user
 	 */
-	public void addVote(Vote v) {
-		if (_votes == null)
-			_votes = new HashMap<Integer, Vote>();
-
-		_votes.put(Integer.valueOf(v.getAuthorID()), v);
+	public void addLike(int userID) {
+		_likes.add(Integer.valueOf(userID));
 	}
 
 	/**
-	 * Updates the average score for this Image.
-	 * @param score the average score
+	 * Updates the number of Likes for this Image.
+	 * @param count the number of Likes
 	 * @throws IllegalStateException if the Votes have already been loaded
-	 * @throws IllegalArgumentException if score is negative or greater than 10.0
-	 * @see Image#getScore()
+	 * @see Image#getLikeCount()
 	 */
-	public void setScore(double score) {
-		checkParam((int) score, "Image Score");
-		if (isPopulated())
-			throw new IllegalStateException("Votes already loaded");
+	public void setLikeCount(int count) {
+		if (_likes.size() > 0)
+			throw new IllegalStateException("Likes already loaded");
 
-		if (score > 10.0)
-			throw new IllegalArgumentException("Score cannot be > 10.0");
-
-		_score = score;
-	}
-
-	/**
-	 * Updates the number of Votes cast for this Image.
-	 * @param count the number of Votes
-	 * @throws IllegalStateException if the Votes have already been loaded
-	 * @throws IllegalArgumentException if count is negative
-	 * @see Image#getVoteCount()
-	 */
-	public void setVoteCount(int count) {
-		checkParam(count, "Vote Count");
-		if (isPopulated())
-			throw new IllegalStateException("Votes already loaded");
-
-		_voteCount = count;
+		_likeCount = Math.max(0, count);
 	}
 
 	/**
@@ -221,61 +188,25 @@ public class Image extends ImageBean implements ComboAlias {
 	 * @return TRUE if the person has voted, otherwise FALSE
 	 * @see Person
 	 */
-	public boolean hasVoted(Person p) {
-		if (p == null)
-			return false;
-
-		return isPopulated() ? _votes.containsKey(Integer.valueOf(p.getID())) : false;
-	}
-
-	/**
-	 * Returns the vote of a particular user.
-	 * @param p the Person to check for
-	 * @return the person's vote, or -1 if the Person has not voted
-	 * @see Image#addVote(Vote)
-	 * @see Image#hasVoted(Person)
-	 * @see Vote
-	 * @see Person
-	 */
-	public int myScore(Person p) {
-		Vote v = isPopulated() ? _votes.get(Integer.valueOf(p.getID())) : null;
-		return (v == null) ? -1 : v.getScore();
+	public boolean hasLiked(Person p) {
+		return (p == null) ? false : _likes.contains(Integer.valueOf(p.getID()));
 	}
 
 	/**
 	 * Returns all votes for this image.
 	 * @return a Collection of votes for this image
-	 * @see Vote
-	 * @see Image#addVote(Vote)
+	 * @see Image#addLike(int)
 	 */
-	public Collection<Vote> getVotes() {
-		return isPopulated() ? new ArrayList<Vote>(_votes.values()) : new ArrayList<Vote>();
-	}
-
-	/**
-	 * Gets the average score for this image.
-	 * @return the average of all votes for this image, or -1 if no votes have been recorded
-	 * @see Image#setScore(double)
-	 */
-	public double getScore() {
-		if (!isPopulated())
-			return _score;
-
-		double tmpResult = 0;
-		for (Iterator<Vote> i = _votes.values().iterator(); i.hasNext();) {
-			Vote v = i.next();
-			tmpResult += v.getScore();
-		}
-
-		return (tmpResult / _votes.size());
+	public Collection<Integer> getLikes() {
+		return new ArrayList<Integer>(_likes);
 	}
 
 	/**
 	 * Returns the number of Votes cast for this Image.
 	 * @return the number of Votes
-	 * @see Image#setVoteCount(int)
+	 * @see Image#setLikeCount(int)
 	 */
-	public int getVoteCount() {
-		return isPopulated() ? _votes.size() : _voteCount;
+	public int getLikeCount() {
+		return (_likeCount > 0) ? _likeCount : _likes.size();
 	}
 }

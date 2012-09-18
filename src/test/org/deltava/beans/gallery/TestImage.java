@@ -44,8 +44,7 @@ public class TestImage extends AbstractBeanTestCase {
         checkProperty("fleet", Boolean.valueOf(true));
         checkProperty("score", new Double(3.1));
         checkProperty("voteCount", Integer.valueOf(16));
-        
-        assertFalse(_img.hasVoted(null));
+        assertFalse(_img.hasLiked(null));
     }
 
     public void testComboAlias() {
@@ -79,8 +78,8 @@ public class TestImage extends AbstractBeanTestCase {
         assertEquals(0, is.available());
         
         // Test exceptions if votes have been populated
-        _img.addVote(new Vote(1, 2, 3));
-        _img.addVote(new Vote(2, 3, 4));
+        _img.addLike(1);
+        _img.addLike(2);
         validateInput("voteCount", Integer.valueOf(123), IllegalStateException.class);
         validateInput("score", new Double(1.2), IllegalStateException.class);
     }
@@ -161,22 +160,17 @@ public class TestImage extends AbstractBeanTestCase {
     public void testVotes() {
         assertEquals("testImage", _img.getName());
         _img.setID(123);
-        assertNotNull(_img.getVotes());
-        assertEquals(0, _img.getVotes().size());
-        assertEquals(-1d, _img.getScore(), 0.001);
+        assertNotNull(_img.getLikes());
+        assertEquals(0, _img.getLikes().size());
 
         Pilot p = new Pilot("John", "Smith");
         p.setID(234);
         
-        assertFalse(_img.hasVoted(p));
-        assertEquals(-1d, _img.myScore(p), 0.001);
+        assertFalse(_img.hasLiked(p));
 
-        Vote v = new Vote(p, 3, _img.getID());
-        _img.addVote(v);
-        assertEquals(1, _img.getVotes().size());
-        assertEquals(1, _img.getVoteCount());
-        assertTrue(_img.hasVoted(p));
-        assertEquals(3d, _img.getScore(), 0.001);
-        assertEquals(3d, _img.myScore(p), 0.001);
+        _img.addLike(p.getID());
+        assertEquals(1, _img.getLikes().size());
+        assertEquals(1, _img.getLikeCount());
+        assertTrue(_img.hasLiked(p));
     }
 }

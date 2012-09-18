@@ -1,14 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Flight Report Option</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:js name="common" />
 <content:pics />
 </head>
@@ -46,7 +45,7 @@ Framework. All versions of ACARS run on Microsoft Windows 2000, XP, Vista, Windo
 Microsoft Flight Simulator 2002, 2004 and Flight Simulator X. You can also run ACARS on a seperate computer if you have a 
 registered version of <el:link external="true" url="http://www.schiratti.com/dowson.html">Peter Dowson's WideFS</el:link>.<br />
 <br />
-The final benefit to using ACARS is that it will get rid of this nag page. To continue filing your Flight Report manually, 
+The final benefit to using ACARS is that it will get rid of this page. To continue filing your Flight Report manually, 
 <el:cmd url="pirep" op="edit" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />

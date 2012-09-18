@@ -16,11 +16,11 @@
 </tr>
 <tr class="title mid caps examHistory"<c:if test="${examCollapse}"> style="display:none;"</c:if>>
  <td>&nbsp;</td>
- <td width="25%">EXAMINATION / CHECK RIDE NAME</td>
- <td width="22%">TYPE</td>
- <td width="10%">QUESTIONS</td>
- <td width="10%">SCORE</td>
- <td width="10%">PERCENT</td>
+ <td style="width:25%">EXAMINATION / CHECK RIDE NAME</td>
+ <td style="width:22%">TYPE</td>
+ <td style="width:10%">QUESTIONS</td>
+ <td style="width:10%">SCORE</td>
+ <td style="width:10%">PERCENT</td>
  <td>DATE</td>
 </tr>
  

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert an PICS-1.1 content rating.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -48,6 +48,7 @@ public class InsertPICSTag extends TagSupport {
 	/**
 	 * Releases the Tag's state data.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		setIcra(true);
@@ -60,6 +61,7 @@ public class InsertPICSTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 
 		// Check if the content has already been added
@@ -70,14 +72,14 @@ public class InsertPICSTag extends TagSupport {
 		String url = pageContext.getRequest().getProtocol();
 		url = url.substring(0, url.indexOf('/')).toLowerCase() + "://" + pageContext.getRequest().getServerName();
 
-		JspWriter out = pageContext.getOut();
 		try {
+			JspWriter out = pageContext.getOut();
 			if (_doICRA) {
 				out.print("<meta http-equiv=\"PICS-Label\" content=\'(PICS-1.1 \"http://www.icra.org/ratingsv02.html\" l gen true for \"");
 				out.print(url);
 				out.print("\" r (");
 				out.print(SystemData.get("content.icra"));
-				out.print("))\' />");
+				out.print("))\'>");
 				if (_doSafeSurf)
 					out.println();
 			}
@@ -87,15 +89,16 @@ public class InsertPICSTag extends TagSupport {
 				out.print(url);
 				out.print("\" r (");
 				out.print(SystemData.get("content.safesurf"));
-				out.print("))\' />");
+				out.print("))\'>");
 			}
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();	
 		}
 
 		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "PICS", "PICS");
-		release();
 		return EVAL_PAGE;
 	}
 }

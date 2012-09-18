@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Logbook for ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -22,8 +22,7 @@
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:authUser var="user">
 <content:attr attr="showCSV" value="true" roles="HR,PIREP" />
-<c:set var="showCSV" value="${showCSV || (user.ID == pilot.ID)}" scope="page" />
-</content:authUser> 
+<c:set var="showCSV" value="${showCSV || (user.ID == pilot.ID)}" scope="page" /></content:authUser> 
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -52,11 +51,11 @@
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="10%">DATE</td>
- <td width="10%">INFO</td>
- <td width="15%">FLIGHT NUMBER</td>
- <td width="40%">AIRPORT NAMES</td>
- <td width="10%">EQUIPMENT</td>
+ <td style="width:10%">DATE</td>
+ <td style="width:10%">INFO</td>
+ <td style="width:15%">FLIGHT NUMBER</td>
+ <td style="width:40%">AIRPORT NAMES</td>
+ <td style="width:10%">EQUIPMENT</td>
  <td>DURATION</td>
 </tr>
 

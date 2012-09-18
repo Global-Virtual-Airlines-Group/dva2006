@@ -17,14 +17,16 @@ import org.deltava.mail.*;
 import org.deltava.security.*;
 import org.deltava.security.command.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.PasswordGenerator;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -100,14 +102,17 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Load the user's cross-airline information and see if the user already exists
 			UserData ud = uddao.get(p.getID());
 			UserDataMap udm = uddao.get(ud.getIDs());
-			boolean isExisting = udm.getTableNames().contains(aInfo.getDB() + ".PILOTS");
+			boolean isExisting = udm.getDomains().contains(aInfo.getDomain());
 			
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("TXAIRLINE"));
 
-			// Add equipment ratings
-			p.addRatings(eqdao.getPrimaryTypes(aInfo.getDB(), ctx.getParameter("eqType")));
+			// Get the new program
+			Collection<String> newRatings = new TreeSet<String>();
+			EquipmentType newEQ = eqdao.get(ctx.getParameter("eqType"), aInfo.getDB());
+			if (newEQ == null)
+				throw notFoundException("Invalid " + aInfo.getCode() + " equipment program - " + ctx.getParameter("eqType"));
 			
 			// Look for active/pending Academy Courses
 			GetAcademyCourses acdao = new GetAcademyCourses(con);
@@ -135,15 +140,22 @@ public class TransferAirlineCommand extends AbstractCommand {
 				}
 			}
 			
-			if (newUser != null)
+			if (newUser != null) {
+				newRatings.addAll(CollectionUtils.getDelta(newUser.getRatings(), newEQ.getRatings()));
 				log.info("Reactivating " + newUser.getName());
-			else {
+				newUser.addRatings(newRatings);
+			} else {
 				log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
 
 				// Clone the Pilot and update the ID
 				newUser = p.cloneExceptID();
 				p.setPilotCode(aInfo.getCode() + "0");
-
+				
+				// Get new ratings
+				newRatings.addAll(newEQ.getRatings());
+				newUser.removeRatings(p.getRatings());
+				newUser.addRatings(newEQ.getRatings());
+				
 				// Change LDAP DN and assign a new password
 				newUser.setDN("cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce");
 
@@ -178,15 +190,22 @@ public class TransferAirlineCommand extends AbstractCommand {
 				wdao.write(newUser, aInfo.getDB());
 
 			// Create the second status update
-			StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
-			su2.setAuthorID(ctx.getUser().getID());
-			su2.setDescription("Transferred from " + SystemData.get("airline.name"));
-			sudao.write(aInfo.getDB(), su2);
+			su = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
+			su.setAuthorID(ctx.getUser().getID());
+			su.setDescription("Transferred from " + SystemData.get("airline.name"));
+			sudao.write(aInfo.getDB(), su);
+			
+			// List new ratings
+			su = new StatusUpdate(newUser.getID(), StatusUpdate.RATING_ADD);
+			su.setAuthorID(ctx.getUser().getID());
+			su.setCreatedOn(new Date(System.currentTimeMillis() + 1000));
+			su.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ", "));
+			sudao.write(aInfo.getDB(), su);
 			
 			// Assign any incomplete courses to the new pilot
 			SetAcademy awdao = new SetAcademy(con);
 			for (Course c : courses) {
-				if (c.getStatus() != Course.COMPLETE) {
+				if (c.getStatus() != Status.COMPLETE) {
 					CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
 					cc.setCreatedOn(new Date());
 					cc.setText("Transferred to " + aInfo.getName());

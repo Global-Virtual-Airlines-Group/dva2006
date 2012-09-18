@@ -1,14 +1,12 @@
-// Copyright 2005, 2010 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2010, 2012 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
-import org.deltava.util.system.SystemData;
-
 /**
- * A JSP tag to support HTML tables and options not rendered properly in CSS.
+ * A JSP tag to render HTML tables.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -19,24 +17,6 @@ public class TableTag extends ElementTag {
 	 */
 	public TableTag() {
 		super("table");
-		setNumericAttr("cellspacing", SystemData.getInt("html.table.spacing", 0), 0);
-		setNumericAttr("cellpadding", SystemData.getInt("html.table.padding", 0), 0);
-	}
-
-	/**
-	 * Sets the CELLSPACING value for this table.
-	 * @param cSpacing the cellspacing attribute value
-	 */
-	public void setSpace(int cSpacing) {
-		setNumericAttr("cellspacing", cSpacing, 0);
-	}
-
-	/**
-	 * Sets the CELLPADDING value for this table.
-	 * @param cPadding the cellpadding attribute value
-	 */
-	public void setPad(int cPadding) {
-		setNumericAttr("cellpadding", cPadding, 0);
 	}
 
 	/**
@@ -48,19 +28,12 @@ public class TableTag extends ElementTag {
 	}
 
 	/**
-	 * Releases the tag's state variables.
-	 */
-	public void release() {
-		super.release();
-		setNumericAttr("cellspacing", SystemData.getInt("html.table.spacing", 0), 0);
-		setNumericAttr("cellpadding", SystemData.getInt("html.table.padding", 0), 0);
-	}
-
-	/**
 	 * Opens this TABLE element by writing a &gt;TABLE&lt; tag.
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doStartTag() throws JspException {
+		super.doStartTag();
 		try {
 			_out.print(_data.open(true));
 		} catch (Exception e) {
@@ -74,6 +47,7 @@ public class TableTag extends ElementTag {
 	 * Closes this TABLE element by writing a &gt;/TABLE&lt; tag.
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		try {
 			_out.print(_data.close());

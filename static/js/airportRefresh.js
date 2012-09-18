@@ -69,7 +69,7 @@ if (combo.selectedIndex == -1) return null;
 return combo.options[combo.selectedIndex].value;
 }
 
-function setAirport(combo, code)
+function setAirport(combo, code, fireEvent)
 {
 if (code == null) return false;
 code = code.toUpperCase();
@@ -77,6 +77,9 @@ for (var x = 0; x < combo.options.length; x++) {
 	var opt = combo.options[x];
 	if ((code == opt.value) || (code == opt.icao) || (code == opt.iata)) {
 		combo.selectedIndex = x;
+		if (fireEvent && combo.onchange)
+			combo.onchange();
+
 		return true;
 	}
 }

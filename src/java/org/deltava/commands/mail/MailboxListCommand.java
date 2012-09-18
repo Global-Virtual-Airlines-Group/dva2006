@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.mail;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display all IMAP mailboxes.
  * @author Luke
- * @version 2.2
+ * @version 5.0
  * @since 2.2
  */
 
@@ -25,9 +25,8 @@ public class MailboxListCommand extends AbstractViewCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
-		
-        // Get/set start/count parameters
         ViewContext vc = initView(ctx);
         try {
         	Connection con = ctx.getConnection();
@@ -40,10 +39,8 @@ public class MailboxListCommand extends AbstractViewCommand {
         	
         	// Load the IDs
         	Collection<Integer> IDs = new HashSet<Integer>();
-        	for (Iterator<IMAPConfiguration> i = results.iterator(); i.hasNext(); ) {
-        		IMAPConfiguration cfg = i.next();
-        		IDs.add(new Integer(cfg.getID()));
-        	}
+        	for (IMAPConfiguration cfg : results)
+        		IDs.add(Integer.valueOf(cfg.getID()));
         	
         	// Load the user data
         	GetUserData uddao = new GetUserData(con);
@@ -52,10 +49,11 @@ public class MailboxListCommand extends AbstractViewCommand {
         	// Trim out anyone who isn't part of our airline
         	for (Iterator<IMAPConfiguration> i = results.iterator(); i.hasNext(); ) {
         		IMAPConfiguration cfg = i.next();
-        		UserData ud = udm.get(new Integer(cfg.getID()));
+        		Integer id = Integer.valueOf(cfg.getID());
+        		UserData ud = udm.get(id);
         		if ((ud == null) || (!ud.getDB().equals(SystemData.get("airline.db")))) {
         			i.remove();
-        			udm.remove(new Integer(cfg.getID()));
+        			udm.remove(id);
         		}
         	}
         	

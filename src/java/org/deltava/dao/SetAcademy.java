@@ -9,7 +9,7 @@ import org.deltava.beans.academy.*;
 /**
  * A Data Access Object to write Flight Academy Course data to the database.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -48,7 +48,7 @@ public class SetAcademy extends DAO {
 			_ps.setString(1, c.getName());
 			_ps.setInt(2, c.getPilotID());
 			_ps.setInt(3, c.getInstructorID());
-			_ps.setInt(4, c.getStatus());
+			_ps.setInt(4, c.getStatus().ordinal());
 			_ps.setTimestamp(5, createTimestamp(c.getStartDate()));
 			executeUpdate(1);
 			
@@ -142,17 +142,17 @@ public class SetAcademy extends DAO {
 	/**
 	 * Updates a Flight Academy Course's status.
 	 * @param courseID the database ID of the course
-	 * @param status the status code
+	 * @param s the Status
 	 * @param sd the updated course start date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void setStatus(int courseID, int status, java.util.Date sd) throws DAOException {
+	public void setStatus(int courseID, Status s, java.util.Date sd) throws DAOException {
 		try {
 			prepareStatement("UPDATE exams.COURSES SET STATUS=?, STARTDATE=?, ENDDATE=IF(STATUS=?, NOW(), NULL)"
 					+ " WHERE (ID=?)");
-			_ps.setInt(1, status);
+			_ps.setInt(1, s.ordinal());
 			_ps.setTimestamp(2, createTimestamp(sd));
-			_ps.setInt(3, Course.COMPLETE);
+			_ps.setInt(3, Status.COMPLETE.ordinal());
 			_ps.setInt(4, courseID);
 			executeUpdate(1);
 		} catch (SQLException se) {

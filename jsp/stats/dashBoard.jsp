@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Statistics Dashboard</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:css name="form" />
 <content:pics />
@@ -43,12 +43,12 @@ return true;
  <td colspan="6" class="left">FLIGHT REPORT APPROVAL DELAY</td>
 </tr>
 <tr class="title">
- <td width="15%" class="caps">${param.paGroup}</td>
- <td width="25%">ORDER BY <el:combo name="paGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.paGroup}" onChange="void updateSort()" /></td>
- <td width="15%">AVERAGE</td>
- <td width="15%">MAXIMUM</td>
- <td width="15%">MINIMUM</td>
- <td width="15%">TOTAL</td>
+ <td style="width:15%" class="caps">${param.paGroup}</td>
+ <td style="width:25%">ORDER BY <el:combo name="paGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.paGroup}" onChange="void updateSort()" /></td>
+ <td style="width:15%">AVERAGE</td>
+ <td style="width:15%">MAXIMUM</td>
+ <td style="width:15%">MINIMUM</td>
+ <td style="width:15%">TOTAL</td>
 </tr>
 <c:forEach var="metric" items="${pirepApproval}">
 <tr>
@@ -67,12 +67,12 @@ return true;
  <td colspan="6" class="left">PILOT EXAMINATION SCORING DELAY</td>
 </tr>
 <tr class="title">
- <td width="15%" class="caps">${param.examGroup}</td>
- <td width="25%">ORDER BY <el:combo name="examGroup" size="1" idx="*" options="${examGroupOptions}" value="${param.examGroup}" onChange="void updateSort()" /></td>
- <td width="15%">AVERAGE</td>
- <td width="15%">MAXIMUM</td>
- <td width="15%">MINIMUM</td>
- <td width="15%">TOTAL</td>
+ <td style="width:15%" class="caps">${param.examGroup}</td>
+ <td style="width:25%">ORDER BY <el:combo name="examGroup" size="1" idx="*" options="${examGroupOptions}" value="${param.examGroup}" onChange="void updateSort()" /></td>
+ <td style="width:15%">AVERAGE</td>
+ <td style="width:15%">MAXIMUM</td>
+ <td style="width:15%">MINIMUM</td>
+ <td style="width:15%">TOTAL</td>
 </tr>
 <c:forEach var="metric" items="${examGrade}">
 <tr>
@@ -91,12 +91,12 @@ return true;
  <td colspan="6" class="left">PILOT CHECK RIDE SCORING DELAY</td>
 </tr>
 <tr class="title">
- <td width="15%" class="caps">${param.rideGroup}</td>
- <td width="25%">ORDER BY <el:combo name="rideGroup" size="1" idx="*" options="${rideGroupOptions}" value="${param.rideGroup}" onChange="void updateSort()" /></td>
- <td width="15%">AVERAGE</td>
- <td width="15%">MAXIMUM</td>
- <td width="15%">MINIMUM</td>
- <td width="15%">TOTAL</td>
+ <td style="width:15%" class="caps">${param.rideGroup}</td>
+ <td style="width:25%">ORDER BY <el:combo name="rideGroup" size="1" idx="*" options="${rideGroupOptions}" value="${param.rideGroup}" onChange="void updateSort()" /></td>
+ <td style="width:15%">AVERAGE</td>
+ <td style="width:15%">MAXIMUM</td>
+ <td style="width:15%">MINIMUM</td>
+ <td style="width:15%">TOTAL</td>
 </tr>
 <c:forEach var="metric" items="${rideGrade}">
 <tr>
@@ -115,12 +115,12 @@ return true;
  <td colspan="6" class="left">FLIGHT REPORT STATISTICS</td>
 </tr>
 <tr class="title">
- <td width="15%" class="caps">${param.frGroup}</td>
- <td width="25%">ORDER BY <el:combo name="frGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.frGroup}" onChange="void updateSort()" /></td>
- <td width="15%">AVERAGE</td>
- <td width="15%">MAXIMUM</td>
- <td width="15%">MINIMUM</td>
- <td width="15%">TOTAL</td>
+ <td style="width:15%" class="caps">${param.frGroup}</td>
+ <td style="width:25%">ORDER BY <el:combo name="frGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.frGroup}" onChange="void updateSort()" /></td>
+ <td style="width:15%">AVERAGE</td>
+ <td style="width:15%">MAXIMUM</td>
+ <td style="width:15%">MINIMUM</td>
+ <td style="width:15%">TOTAL</td>
 </tr>
 <c:forEach var="metric" items="${frStats}">
 <tr>
@@ -139,12 +139,12 @@ return true;
  <td colspan="6" class="left">ACARS FLIGHT REPORT STATISTICS</td>
 </tr>
 <tr class="title">
- <td width="15%" class="caps">${param.afrGroup}</td>
- <td width="25%">ORDER BY <el:combo name="afrGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.afrGroup}" onChange="void updateSort()" /></td>
- <td width="15%">AVERAGE</td>
- <td width="15%">MAXIMUM</td>
- <td width="15%">MINIMUM</td>
- <td width="15%">TOTAL</td>
+ <td style="width:15%" class="caps">${param.afrGroup}</td>
+ <td style="width:25%">ORDER BY <el:combo name="afrGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.afrGroup}" onChange="void updateSort()" /></td>
+ <td style="width:15%">AVERAGE</td>
+ <td style="width:15%">MAXIMUM</td>
+ <td style="width:15%">MINIMUM</td>
+ <td style="width:15%">TOTAL</td>
 </tr>
 <c:forEach var="metric" items="${afrStats}">
 <tr>

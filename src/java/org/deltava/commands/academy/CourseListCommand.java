@@ -1,11 +1,11 @@
-// Copyright 2006, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.academy.Course;
+import org.deltava.beans.academy.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -39,6 +39,7 @@ public class CourseListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get/set start/count parameters
@@ -79,12 +80,12 @@ public class CourseListCommand extends AbstractViewCommand {
 					break;
 
 				case 1:
-					courses = dao.getByStatus(Course.STARTED, vc.getSortType(), null);
+					courses = dao.getByStatus(Status.STARTED, vc.getSortType(), null);
 					break;
 
 				case 2:
 					ctx.setAttribute("isPending", Boolean.TRUE, REQUEST);
-					courses = dao.getByStatus(Course.PENDING, vc.getSortType(), null);
+					courses = dao.getByStatus(Status.PENDING, vc.getSortType(), null);
 					break;
 
 				case 4: // Unassigned

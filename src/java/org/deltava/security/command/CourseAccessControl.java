@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Iterator;
@@ -11,13 +11,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Flight Academy Course profiles.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
 public class CourseAccessControl extends AccessControl {
 	
-	private Course _c;
+	private final Course _c;
 	private boolean _canComment;
 	private boolean _canCancel;
 	private boolean _canRestart;
@@ -53,16 +53,16 @@ public class CourseAccessControl extends AccessControl {
 		boolean isHR = _ctx.isUserInRole("HR");
 		boolean isINS = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		boolean isMine = (_ctx.getUser().getID() == _c.getPilotID());
-		boolean isStarted = (_c.getStatus() == Course.STARTED);
-		boolean isPending = (_c.getStatus() == Course.PENDING);
+		boolean isStarted = (_c.getStatus() == Status.STARTED);
+		boolean isPending = (_c.getStatus() == Status.PENDING);
 		if (!isMine && !isINS && !isHR && !_ctx.isUserInRole("AcademyAudit"))
 			throw new AccessControlException("Not Authorized");
 		
 		// Assign access rights
 		_canComment = isINS || isHR || (isMine && isStarted);
-		_canStart = (isINS || isHR) && (isPending || (_c.getStatus() == Course.ABANDONED));
+		_canStart = (isINS || isHR) && (isPending || (_c.getStatus() == Status.ABANDONED));
 		_canCancel = (isHR || isMine || _ctx.isUserInRole("AcademyAdmin")) && (isStarted || isPending);
-		_canRestart = (_c.getStatus() == Course.ABANDONED) && isMine;
+		_canRestart = (_c.getStatus() == Status.ABANDONED) && isMine;
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
 		_canAssign = (isStarted || isPending) && (isHR || _ctx.isUserInRole("AcademyAdmin"));
@@ -78,7 +78,7 @@ public class CourseAccessControl extends AccessControl {
 		// Check if we need a Check Ride
 		CheckRide cr = _c.getCheckRide();
 		boolean crComplete = !_c.getHasCheckRide() || ((cr != null) && cr.getPassFail());
-		_canAssignCheckRide = isComplete && isStarted && _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == Test.SCORED)));
+		_canAssignCheckRide = isComplete && isStarted && _c.getHasCheckRide() && ((cr == null) || (!cr.getPassFail() && (cr.getStatus() == TestStatus.SCORED)));
 		_canApprove = crComplete && isComplete && (isHR || isINS) && isStarted && !isMine;
 	}
 

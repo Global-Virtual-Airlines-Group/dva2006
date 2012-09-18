@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -8,14 +8,14 @@ import org.deltava.beans.Pilot;
 /**
  * A bean to store TeamSpeak 2 to Pilot mappings.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
 public class ClientPilotMap {
 
-	private Map<String, Client> _clients = new HashMap<String, Client>();
-	private Map<String, Pilot> _pilots = new HashMap<String, Pilot>();
+	private final Map<String, Client> _clients = new HashMap<String, Client>();
+	private final Map<String, Pilot> _pilots = new HashMap<String, Pilot>();
 
 	public void add(Pilot p, Client usr) {
 		if (p != null) {
@@ -71,10 +71,8 @@ public class ClientPilotMap {
 	}
 	
 	public void remove(String pCode) {
-		if (contains(pCode)) {
-			_pilots.remove(pCode);
-			_clients.remove(pCode);
-		}
+		_pilots.remove(pCode);
+		_clients.remove(pCode);
 	}
 	
 	public int size() {

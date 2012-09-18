@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,15 +6,13 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <c:if test="${empty img}">
-<title>New Image Gallery Entry</title>
-</c:if>
+<title>New <content:airline /> Image Gallery Entry</title></c:if>
 <c:if test="${!empty img}">
-<title><fmt:text value="${img.name}" /></title>
-</c:if>
-<content:css name="main" browserSpecific="true" />
+<title><fmt:text value="${img.name}" /></title></c:if>
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -37,19 +35,19 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@include file="/jsp/gallery/header.jspf" %> 
-<%@include file="/jsp/gallery/sideMenu.jspf" %>
+<%@ include file="/jsp/gallery/header.jspf" %> 
+<%@ include file="/jsp/gallery/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="imgsave.do" method="post" link="${img}" allowUpload="true" validate="return validate(this)">
+<el:form action="image.do" method="post" op="save" link="${img}" allowUpload="true" validate="return validate(this)">
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> IMAGE GALLERY ENTRY</td>
 </tr>
 <tr>
  <td class="label">Image Title</td>
- <td class="data"><el:text name="title" idx="*" className="pri bld req" size="48" max="96" value="${img.name}" /></td>
+ <td class="data"><el:text name="title" idx="*" className="pri bld" required="true" size="48" max="96" value="${img.name}" /></td>
 </tr>
 <tr>
  <td class="label">Created by</td>
@@ -58,7 +56,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Image Description</td>
- <td class="data"><el:text name="desc" idx="*" size="80" max="144" value="${img.description}" className="req" /></td>
+ <td class="data"><el:text name="desc" idx="*" size="80" max="144" value="${img.description}" required="true" /></td>
 </tr>
 <content:filter roles="Fleet,Gallery">
 <tr>

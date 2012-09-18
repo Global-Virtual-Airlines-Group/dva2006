@@ -1,14 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> User Login</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -20,8 +19,7 @@ if (!validateText(form.firstName, 2, 'First Name')) return false;
 if (!validateText(form.lastName, 2, 'Last Name')) return false;
 if (!validateText(form.pwd, 3, 'Password')) return false;
 <c:if test="${!empty dupeUsers}">
-if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;
-</c:if>
+if (!validateCheckBox(form.pilotCode, 1, 'Pilot Code')) return false;</c:if>
 if (form.jsOK.value.length == 0) {
 	form.jsOK.value = 'true';
 	try {
@@ -39,11 +37,10 @@ return true;
 function setFocus()
 {
 var f = document.forms[0];
-if (f.firstName.value.length > 0) {
+if (f.firstName.value.length > 0)
 	f.pwd.focus();
-} else {
+else
 	f.firstName.focus();
-}
 
 // Save screen resolution
 try {
@@ -93,13 +90,12 @@ in order to log into the site.<br />
  <td colspan="2">MULTIPLE USERS NAMED ${fname} ${lname} FOUND</td>
 </tr>
 <c:forEach var="pilot" items="${dupeUsers}">
-<c:if test="${fn:isActive(pilot)}">
 <c:set var="pCode" value="${empty pilot.pilotCode ? 'N/A' : pilot.pilotCode}" scope="page" />
 <tr>
  <td><el:radio name="pilotCode" value="${pilot.hexID}" label="${pCode}" checked="${pilotCode == pilot.hexID}" /></td>
  <td class="data"><span class="pri bld">${pilot.name}</span> (${pilot.rank.name}, ${pilot.equipmentType})</td>
 </tr>
-</c:if></c:forEach>
+</c:forEach>
 </c:if>
 <content:hasmsg>
 <tr>

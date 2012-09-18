@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -315,8 +315,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Get the active airlines
 				if (fr.getDatabaseID(DatabaseID.ASSIGN) == 0) {
-					for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
-						Airline a = i.next();
+					for (Airline a : allAirlines.values()) {
 						if (a.getActive() || (fr.getAirline().equals(a)))
 							airlines.add(a);
 					}
@@ -567,7 +566,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							ctx.setAttribute("crPassFail", crApprove, REQUEST);
 
 						// Allow Examiner to score the PIREP even if they otherwise couldn't
-						boolean canScoreCR = crAccess.getCanScore() && (cr.getStatus() == Test.SUBMITTED);
+						boolean canScoreCR = crAccess.getCanScore() && (cr.getStatus() == TestStatus.SUBMITTED);
 						canScoreCR &= (ac.getCanApprove() || cr.getAcademy());
 						ctx.setAttribute("scoreCR", Boolean.valueOf(canScoreCR), REQUEST);
 					} catch (AccessControlException ace) {

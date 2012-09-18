@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 4.1
  */
 
@@ -118,9 +118,9 @@ public class XPIREPService extends XAService {
 			
 			// Check for a check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(usr.getID(), xfr.getEquipmentType(), Test.NEW);
+			CheckRide cr = exdao.getCheckRide(usr.getID(), xfr.getEquipmentType(), TestStatus.NEW);
 			if (cr != null) {
-				cr.setStatus(Test.SUBMITTED);
+				cr.setStatus(TestStatus.SUBMITTED);
 				cr.setSubmittedOn(new Date());
 				xfr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			}

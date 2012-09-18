@@ -1,11 +1,11 @@
-// Copyright 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.testing.Test;
+import org.deltava.beans.testing.*;
 
 import org.deltava.util.CollectionUtils;
 
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
  * A Data Access Object to load Pilot IDs for Pilots who meet the entrance
  * qualifications for an Equipment Type program.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.3
  */
 
@@ -38,7 +38,7 @@ public class GetExamQualifications extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT PILOT_ID FROM exams.CHECKRIDES "
 					+ "WHERE (STATUS=?) AND (PASS=?) AND (EQTYPE=?)");
-			_ps.setInt(1, Test.SCORED);
+			_ps.setInt(1, TestStatus.SCORED.ordinal());
 			_ps.setBoolean(2, true);
 			_ps.setString(3, eq.getName());
 			
@@ -71,7 +71,7 @@ public class GetExamQualifications extends DAO {
 			// Init the SQL statement
 			int pos = 0;
 			prepareStatementWithoutLimits(buf.toString());
-			_ps.setInt(++pos, Test.SCORED);
+			_ps.setInt(++pos, TestStatus.SCORED.ordinal());
 			_ps.setBoolean(++pos, true);
 			for (String eName : examNames)
 				_ps.setString(++pos, eName);

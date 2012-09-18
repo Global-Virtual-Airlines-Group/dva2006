@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display program-specific statistics and data.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 2.1
  */
 
@@ -36,6 +36,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Init the view context
@@ -83,7 +84,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 				Pilot p = i.next();
 				PilotAccessControl ac = new PilotAccessControl(ctx, p);
 				ac.validate();
-				accessMap.put(new Integer(p.getID()), ac);
+				accessMap.put(Integer.valueOf(p.getID()), ac);
 				canPromote |= ac.getCanPromote();
 			}
 			
@@ -108,7 +109,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			Collection<TransferRequest> txs = txdao.getByEQ(eq.getName(), "CREATED");
 			for (Iterator<TransferRequest> i = txs.iterator(); i.hasNext(); ) {
 				TransferRequest tx = i.next();
-				IDs.add(new Integer(tx.getID()));
+				IDs.add(Integer.valueOf(tx.getID()));
 			}
 			
 			// Load pending checkrides
@@ -119,7 +120,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 				if (!cr.getEquipmentType().equals(eq.getName()))
 					i.remove();
 				else
-					IDs.add(new Integer(cr.getPilotID()));
+					IDs.add(Integer.valueOf(cr.getAuthorID()));
 			}
 			
 			// Load pending exams
@@ -127,9 +128,9 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			for (Iterator<Examination> i = exams.iterator(); i.hasNext(); ) {
 				Examination ex = i.next();
 				if (!examNames.contains(ex.getName()))
-						i.remove();
+					i.remove();
 				else
-					IDs.add(new Integer(ex.getPilotID()));
+					IDs.add(Integer.valueOf(ex.getAuthorID()));
 			}
 			
 			// Load checkride statistics

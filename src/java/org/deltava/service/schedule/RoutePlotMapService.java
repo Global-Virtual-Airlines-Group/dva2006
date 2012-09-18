@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class RoutePlotMapService extends MapPlotService {
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
-		Collection<METAR> wx = new ArrayList<METAR>();
+		Collection<WeatherDataBean> wxs = new ArrayList<WeatherDataBean>();
 		List<Airport> alternates = new ArrayList<Airport>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		AirportLocation aD = null;
@@ -67,10 +67,13 @@ public class RoutePlotMapService extends MapPlotService {
 			// Get the weather
 			METAR wxD = wxdao.getMETAR(airportDCode);
 			if (wxD != null)
-				wx.add(wxD);
-			METAR wxA = wxdao.getMETAR(airportACode);
-			if (wxA != null)
-				wx.add(wxA);
+				wxs.add(wxD);
+			WeatherDataBean wx = wxdao.getMETAR(airportACode);
+			if (wx != null)
+				wxs.add(wx);
+			wx = wxdao.getTAF(airportACode);
+			if (wx != null)
+				wxs.add(wx);
 
 			// Add the departure airport
 			if (aD != null) {
@@ -196,11 +199,12 @@ public class RoutePlotMapService extends MapPlotService {
 		}
 		
 		// Add weather
-		for (METAR m : wx) {
-			Element e = XMLUtils.createElement("wx", m.getData(), true);
-			e.setAttribute("icao", m.getCode());
+		for (WeatherDataBean wx : wxs) {
+			Element e = XMLUtils.createElement("wx", wx.getData(), true);
+			e.setAttribute("type", wx.getType().name().toLowerCase());
+			e.setAttribute("icao", wx.getCode());
 			if (aD != null)
-				e.setAttribute("dst", String.valueOf(!m.getCode().equals(aD.getCode())));
+				e.setAttribute("dst", String.valueOf(!wx.getCode().equals(aD.getCode())));
 			re.addContent(e);
 		}
 		

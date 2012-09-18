@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.EventAccessControl;
 /**
  * A Web Site Command to cancel an Online Event.
  * @author Luke
- * @version 3.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -28,6 +28,7 @@ public class EventCancelCommand extends AbstractCommand {
     * @param ctx the Command context
     * @throws CommandException if an unhandled error occurs
     */
+	@Override
    public void execute(CommandContext ctx) throws CommandException {
 
       try {
@@ -95,7 +96,7 @@ public class EventCancelCommand extends AbstractCommand {
          
          // Cancel the event
          SetEvent wdao = new SetEvent(con);
-         e.setStatus(Event.CANCELED);
+         e.setStatus(Status.CANCELED);
          wdao.write(e);
 
          // Commit the transaction

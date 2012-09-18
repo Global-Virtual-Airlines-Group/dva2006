@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Saved Tracks Map</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -70,10 +70,7 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 var trkLayer = new golgotha.maps.ShapeLayer(0.45, 3, 12);
 map.overlayMapTypes.insertAt(0, trkLayer);
-google.maps.event.addListener(map, 'zoom_changed', function() {
-	var zlDiv = document.getElementById('zoomLevel');
-	zlDiv.innerHTML = 'Zoom Level ' + map.getZoom();
-});
+google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
 	addOverlay(map, 'zoomLevel');
 	google.maps.event.trigger(this, 'maptypeid_changed');
@@ -81,4 +78,4 @@ google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 });
 </script>
 </body>
-</map:xhtml>
+</html>

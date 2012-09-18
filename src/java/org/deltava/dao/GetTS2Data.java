@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load TeamSpeak 2 configuration data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -24,7 +24,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 	private static final Logger log = Logger.getLogger(GetTS2Data.class);
 
 	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
-	private static final Cache<Cacheable> _cache = new ExpiringCache<Cacheable>(12, 600);
+	private static final Cache<TSObject> _cache = new ExpiringCache<TSObject>(16, 600);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -234,7 +234,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 				c.setModerated(rs.getInt(4) == -1);
 				c.setHierarchical(rs.getInt(5) == -1);
 				c.setDefault(rs.getInt(6) == -1);
-				c.setCodec(rs.getInt(7));
+				c.setCodec(Codec.values()[rs.getInt(7)]);
 				c.setMaxUsers(rs.getInt(9));
 				c.setTopic(rs.getString(11));
 				c.setDescription(rs.getString(12));
@@ -343,13 +343,13 @@ public class GetTS2Data extends DAO implements CachingDAO {
 					continue;
 				
 				String role = rs.getString(2);
-				srv.addRole(Server.ACCESS, role);
+				srv.addRole(ServerAccess.ACCESS, role);
 				if (rs.getBoolean(3))
-					srv.addRole(Server.ADMIN, role);
+					srv.addRole(ServerAccess.ADMIN, role);
 				if (rs.getBoolean(4))
-					srv.addRole(Server.OPERATOR, role);
+					srv.addRole(ServerAccess.OPERATOR, role);
 				if (rs.getBoolean(5))
-					srv.addRole(Server.VOICE, role);
+					srv.addRole(ServerAccess.VOICE, role);
 			}
 		}
 

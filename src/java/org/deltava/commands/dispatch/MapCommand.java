@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.dispatch;
 
 import org.deltava.commands.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display the ACARS dispatch map.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.1
  */
 
@@ -19,6 +19,7 @@ public class MapCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check if we're getting this from a pilot or dispatch client
@@ -30,6 +31,7 @@ public class MapCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
+		ctx.getResponse().setHeader("Cache-Control", "no-cache");
 		result.setURL("/jsp/acars/dispatchMapV" + String.valueOf(apiVersion) + ".jsp");
 		result.setSuccess(true);
 	}

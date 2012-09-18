@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicants to the database.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -110,7 +110,7 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(20, a.getTimeFormat());
 			_ps.setString(21, a.getNumberFormat());
 			_ps.setInt(22, a.getAirportCodeType().ordinal());
-			_ps.setInt(23, a.getDistanceType());
+			_ps.setInt(23, a.getDistanceType().ordinal());
 			_ps.setInt(24, a.getSimVersion());
 			_ps.setString(25, a.getTZ().getID());
 			_ps.setString(26, a.getUIScheme());

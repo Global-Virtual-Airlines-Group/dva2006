@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Image Gallery</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -48,17 +48,16 @@ return true;
  <td colspan="2">BY DATE <el:text name="imgDate" idx="*" size="10" max="10" value="${param.imgDate}" />
  <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].imgDate')" /></td>
  <td colspan="2"><el:cmd url="fleetgallery" linkID="true">FLEET GALLERY</el:cmd></td>
- <td colspan="2">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" />
+ <td>SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" />
  <el:button ID="SubmitButton" type="submit" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="25%">IMAGE TITLE</td>
- <td width="10%">SIZE</td>
- <td width="15%">AUTHOR</td>
- <td width="5%">SCORE</td>
- <td width="5%">VOTES</td>
+ <td style="width:25%">IMAGE TITLE</td>
+ <td style="width:10%">SIZE</td>
+ <td style="width:20%">AUTHOR</td>
+ <td style="width:5%">LIKES</td>
  <td>DESCRIPTION</td>
 </tr>
 
@@ -69,23 +68,23 @@ return true;
  <td class="pri bld"><el:cmd url="image" link="${img}">${img.name}</el:cmd></td>
  <td class="small"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:int value="${img.size / 1024}" />K</td>
  <td class="bld"><el:cmd url="profile" link="${author}">${author.name}</el:cmd></td>
-<c:if test="${img.voteCount == 0}">
- <td colspan="2" class="small">NOT YET RATED</td>
+<c:if test="${img.likeCount == 0}">
+ <td class="small bld">-</td>
 </c:if>
-<c:if test="${img.voteCount > 0}">
- <td class="pri bld"><fmt:dec value="${img.score}" /></td>
- <td class="bld"><fmt:int value="${img.voteCount}" /></td>
+<c:if test="${img.likeCount > 0}">
+ <td class="bld"><fmt:int value="${img.likeCount}" /></td>
 </c:if>
- <td class="small left">${img.description}</td>
+ <td class="small left"><fmt:text value="${img.description}" /></td>
 </tr>
 </c:forEach>
 
 <!-- Scroll bar row -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>

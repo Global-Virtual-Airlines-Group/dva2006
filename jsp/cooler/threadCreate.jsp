@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <content:sysdata var="forumName" name="airline.forum" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title>New <content:airline /> ${forumName} Thread</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -88,7 +88,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Thread Title</td>
- <td class="data"><el:text name="subject" className="pri bld req" idx="*" size="64" max="80" value="${param.subject}" /></td>
+ <td class="data"><el:text name="subject" className="pri bld" required="true" idx="*" size="64" max="80" value="${param.subject}" /></td>
 </tr>
 <tr>
  <td class="label">${forumName} Channel</td>
@@ -162,7 +162,7 @@ return true;
  <td colspan="2">NEW MESSAGE TEXT</td>
 </tr>
 <tr>
- <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="90%" className="req" height="5" resize="true">${param.msgText}</el:textbox></td>
+ <td class="mid" colspan="2"><el:textbox name="msgText" required="true" idx="*" width="90%" height="5" resize="true" spellcheck="true">${param.msgText}</el:textbox></td>
 </tr>
 
 <!-- Button Bar -->

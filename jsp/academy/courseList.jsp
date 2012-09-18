@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Flight Academy Courses</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
@@ -48,12 +48,12 @@ return true;
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="20%">COURSE NAME</td>
- <td width="7%">STAGE</td>
- <td width="25%">PILOT NAME</td>
- <td width="15%">STATUS</td>
- <td width="10%">STARTED</td>
- <td width="10%">LAST COMMENT</td>
+ <td style="width:20%">COURSE NAME</td>
+ <td style="width:7%">STAGE</td>
+ <td style="width:25%">PILOT NAME</td>
+ <td style="width:15%">STATUS</td>
+ <td style="width:10%">STARTED</td>
+ <td style="width:10%">LAST COMMENT</td>
  <td>COMPLETED</td>
 </tr>
 
@@ -65,7 +65,7 @@ return true;
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${course.stage}" /></td>
  <td><el:profile location="${pilotLoc}" className="pri bld">${pilot.name}</el:profile> <span class="small">(${pilot.pilotCode})</span></td>
- <td class="pri bld">${course.statusName}</td>
+ <td class="pri bld">${course.status.name}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>
  <td class="sec small"><fmt:date fmt="d" date="${course.lastComment}" default="-" /></td>
  <td class="small"><fmt:date fmt="d" date="${course.endDate}" default="N/A" /></td>

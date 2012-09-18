@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.academy.Course;
+import org.deltava.beans.academy.*;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.schedule.ScheduleSearchCriteria;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Pilot Center.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command results
@@ -266,7 +267,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("courses", courses, REQUEST);
 				if (!courses.isEmpty()) {
 					Course c = courses.get(courses.size() - 1);
-					if (c.getStatus() == Course.STARTED)
+					if (c.getStatus() == Status.STARTED)
 						ctx.setAttribute("course", c, REQUEST);
 				}
 

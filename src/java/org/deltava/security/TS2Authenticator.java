@@ -17,7 +17,7 @@ import org.deltava.util.*;
  * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object. Since
  * this implements {@link SQLAuthenticator}, this behavior can be overriden by providing a JDBC Connection to use.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -184,7 +184,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			Collection<Server> srvs = dao.getServers(usr.getRoles());
 			for (Iterator<Server> i = srvs.iterator(); !isOK && i.hasNext();) {
 				Server srv = i.next();
-				isOK = RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS));
+				isOK = RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(ServerAccess.ACCESS));
 			}
 		} catch (Exception e) {
 			throw new SecurityException(e.getMessage(), e);
@@ -241,15 +241,16 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			Collection<Client> usrs = new HashSet<Client>();
 			for (Iterator<Server> i = srvs.iterator(); i.hasNext();) {
 				Server srv = i.next();
-				if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS))) {
+				Map<ServerAccess, Collection<String>> roles = srv.getRoles();
+				if (RoleUtils.hasAccess(usr.getRoles(), roles.get(ServerAccess.ACCESS))) {
 					Client c = new Client(p.getPilotCode());
 					c.setPassword(pwd);
 					c.addChannels(srv);
 					c.setID(usr.getID());
 					c.setServerID(srv.getID());
-					c.setAutoVoice(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.VOICE)));
-					c.setServerOperator(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.OPERATOR)));
-					c.setServerAdmin(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ADMIN)));
+					c.setAutoVoice(RoleUtils.hasAccess(usr.getRoles(), roles.get(ServerAccess.VOICE)));
+					c.setServerOperator(RoleUtils.hasAccess(usr.getRoles(), roles.get(ServerAccess.OPERATOR)));
+					c.setServerAdmin(RoleUtils.hasAccess(usr.getRoles(), roles.get(ServerAccess.ADMIN)));
 					usrs.add(c);
 				} else
 					i.remove();

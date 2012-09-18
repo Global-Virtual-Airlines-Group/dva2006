@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
@@ -16,20 +16,21 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to view the Image Gallery.
  * @author Luke
- * @version 2.4
+ * @version 5.0
  * @since 1.0
  */
 
 public class GalleryCommand extends AbstractViewCommand {
 
-	private static final String[] SORT_CODE = { "I.DATE DESC", "VC DESC", "SC DESC, VC DESC" };
-	static final List<?> SORT_OPTS = ComboUtils.fromArray(new String[] { "Image Date", "Feedback Count", "Average Score" }, SORT_CODE);
+	private static final String[] SORT_CODE = { "I.DATE DESC", "LC DESC" };
+	static final List<?> SORT_OPTS = ComboUtils.fromArray(new String[] { "Image Date", "Like Count" }, SORT_CODE);
 	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get/set start/count parameters
@@ -39,9 +40,6 @@ public class GalleryCommand extends AbstractViewCommand {
 
 		// Check for a date
 		Date imgDate = parseDateTime(ctx, "img");
-
-		// Save sort options
-		ctx.setAttribute("sortOptions", SORT_OPTS, REQUEST);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -59,17 +57,13 @@ public class GalleryCommand extends AbstractViewCommand {
 			
 			// Validate our access and get author IDs
 			Collection<Integer> authorIDs = new HashSet<Integer>();
-			for (Iterator<Image> i = results.iterator(); i.hasNext();) {
-				Image img = i.next();
-				authorIDs.add(new Integer(img.getAuthorID()));
-			}
-
-			// Save the results
-			vc.setResults(results);
+			for (Image i : results)
+				authorIDs.add(Integer.valueOf(i.getAuthorID()));
 
 			// Load the Image Authors
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
+			vc.setResults(results);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -80,6 +74,9 @@ public class GalleryCommand extends AbstractViewCommand {
 		GalleryAccessControl access = new GalleryAccessControl(ctx, null);
 		access.validate();
 		ctx.setAttribute("access", access, REQUEST);
+		
+		// Save sort options
+		ctx.setAttribute("sortOptions", SORT_OPTS, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

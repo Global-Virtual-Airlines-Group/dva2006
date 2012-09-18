@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -169,32 +169,32 @@ public class GetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<CheckRide> getAcademyCheckRides(int courseID) throws DAOException {
-		return getAcademyCheckRides(courseID, -1);
+		return getAcademyCheckRides(courseID, null);
 	}
 	
 	/**
 	 * Loads all Check Rides for a particular Flight Academy Course.
 	 * @param courseID the Course database ID
-	 * @param status the CheckRide status, or -1 for none
+	 * @param status the CheckRide status, or null for all
 	 * @return a List of CheckRide beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CheckRide> getAcademyCheckRides(int courseID, int status) throws DAOException {
+	public List<CheckRide> getAcademyCheckRides(int courseID, TestStatus status) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, CRR.COURSE FROM "
 				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
 				+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
 				+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.OWNER=EQ.OWNER) AND (CRR.COURSE=?)");
-		if (status >= 0)
+		if (status != null)
 			sqlBuf.append(" AND (CR.STATUS=?)");
 		sqlBuf.append(" ORDER BY CR.CREATED DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, courseID);
-			if (status >= 0)
-				_ps.setInt(2, status);
+			if (status != null)
+				_ps.setInt(2, status.ordinal());
 			
 			return executeCheckride();
 		} catch (SQLException se) {
@@ -210,7 +210,7 @@ public class GetExam extends DAO {
 	 * @return a CheckRide, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public CheckRide getCheckRide(int pilotID, String eqType, int status) throws DAOException {
+	public CheckRide getCheckRide(int pilotID, String eqType, TestStatus status) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, CRR.COURSE FROM "
 				+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
@@ -219,7 +219,7 @@ public class GetExam extends DAO {
 				+ "AND (CR.STATUS=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
-			_ps.setInt(3, status);
+			_ps.setInt(3, status.ordinal());
 			List<CheckRide> results = executeCheckride();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -267,7 +267,7 @@ public class GetExam extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Test.SUBMITTED);
+			_ps.setInt(1, TestStatus.SUBMITTED.ordinal());
 			if (isAcademy)
 				_ps.setBoolean(2, isAcademy);
 			else
@@ -410,8 +410,8 @@ public class GetExam extends DAO {
 					+ "exams.EXAMINFO EP WHERE (E.NAME=EP.NAME) AND ((E.STATUS=?) OR ((E.STATUS=?) "
 					+ "AND (E.EXPIRY_TIME < NOW()))) AND (E.ID=EQ.EXAM_ID) AND (EP.AIRLINE=?) GROUP BY "
 					+ "E.ID ORDER BY E.CREATED_ON");
-			_ps.setInt(1, Test.SUBMITTED);
-			_ps.setInt(2, Test.NEW);
+			_ps.setInt(1, TestStatus.SUBMITTED.ordinal());
+			_ps.setInt(2, TestStatus.NEW.ordinal());
 			_ps.setString(3, SystemData.get("airline.code"));
 			return execute();
 		} catch (SQLException se) {
@@ -430,8 +430,8 @@ public class GetExam extends DAO {
 			prepareStatementWithoutLimits("SELECT ID FROM exams.EXAMS WHERE (PILOT_ID=?) AND "
 					+ "((STATUS=?) OR (STATUS=?)) LIMIT 1");
 			_ps.setInt(1, id);
-			_ps.setInt(2, Test.NEW);
-			_ps.setInt(3, Test.SUBMITTED);
+			_ps.setInt(2, TestStatus.NEW.ordinal());
+			_ps.setInt(3, TestStatus.SUBMITTED.ordinal());
 
 			// Execute the query
 			int testID = 0;
@@ -459,8 +459,8 @@ public class GetExam extends DAO {
 			while (rs.next()) {
 				Examination e = new Examination(rs.getString(2));
 				e.setID(rs.getInt(1));
-				e.setPilotID(rs.getInt(3));
-				e.setStatus(rs.getInt(4));
+				e.setAuthorID(rs.getInt(3));
+				e.setStatus(TestStatus.values()[rs.getInt(4)]);
 				e.setDate(rs.getTimestamp(5));
 				e.setExpiryDate(rs.getTimestamp(6));
 				e.setSubmittedOn(rs.getTimestamp(7));
@@ -500,8 +500,8 @@ public class GetExam extends DAO {
 			while (rs.next()) {
 				CheckRide cr = new CheckRide(rs.getString(2));
 				cr.setID(rs.getInt(1));
-				cr.setPilotID(rs.getInt(3));
-				cr.setStatus(rs.getInt(4));
+				cr.setAuthorID(rs.getInt(3));
+				cr.setStatus(TestStatus.values()[rs.getInt(4)]);
 				cr.setDate(rs.getTimestamp(5));
 				cr.setSubmittedOn(rs.getTimestamp(6));
 				cr.setScoredOn(rs.getTimestamp(7));

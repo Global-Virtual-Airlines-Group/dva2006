@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to score Check Rides.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Create the messaging context
@@ -45,7 +46,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			
 			// Get the user taking the Check Ride
 			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(cr.getPilotID());
+			UserData ud = uddao.get(cr.getAuthorID());
 
 			// Check our access level
 			ExamAccessControl access = new ExamAccessControl(ctx, cr, ud);
@@ -64,16 +65,14 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setScoredOn(new java.util.Date());
 			cr.setPassFail(Boolean.valueOf(ctx.getParameter("passFail")).booleanValue());
-			cr.setStatus(Test.SCORED);
+			cr.setStatus(TestStatus.SCORED);
 
 			// Get the message tempate
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get(cr.getPassFail() ? "CRPASS" : "CRFAIL"));
 
-			// Get the pilot profile
+			// Get the pilot profile and set status
 			ctx.setAttribute("pilot", sendTo, REQUEST);
-
-			// Set status for the JSP
 			ctx.setAttribute("isScore", Boolean.TRUE, REQUEST);
 
 			// Use a SQL Transaction

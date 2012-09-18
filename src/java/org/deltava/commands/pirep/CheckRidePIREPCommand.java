@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to view Flight Reports from a Check Ride.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.0
  */
 
@@ -42,9 +42,9 @@ public class CheckRidePIREPCommand extends AbstractCommand {
 
 			// Get the Pilot data
 			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(cr.getPilotID());
+			UserData ud = uddao.get(cr.getAuthorID());
 			if (ud == null)
-				throw notFoundException("Invalid Pilot ID - " + cr.getPilotID());
+				throw notFoundException("Invalid Pilot ID - " + cr.getAuthorID());
 
 			// Get the DAO and the ACARS Flight Report
 			GetFlightReports dao = new GetFlightReports(con);

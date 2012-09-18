@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,18 +7,18 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <content:sysdata var="forumName" name="airline.forum" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ${forumName}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@include file="/jsp/cooler/header.jspf" %> 
-<%@include file="/jsp/cooler/sideMenu.jspf" %>
+<%@ include file="/jsp/cooler/header.jspf" %> 
+<%@ include file="/jsp/cooler/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -29,10 +29,10 @@
 
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td width="35%">CHANNEL NAME / DESCRIPTION</td>
- <td width="8%">THREADS</td>
- <td width="8%">POSTS</td>
- <td width="8%">VIEWS</td>
+ <td style="width:35%">CHANNEL NAME / DESCRIPTION</td>
+ <td style="width:8%">THREADS</td>
+ <td style="width:8%">POSTS</td>
+ <td style="width:8%">VIEWS</td>
  <td>LAST POST INFORMATION</td>
 </tr>
 

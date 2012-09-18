@@ -10,9 +10,9 @@ import org.deltava.beans.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Access Object to support updating Pilot profiles.
+ * A Data Access Object to update Pilot profiles.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -89,7 +89,7 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(18, p.getTimeFormat());
 			_ps.setString(19, p.getNumberFormat());
 			_ps.setInt(20, p.getAirportCodeType().ordinal());
-			_ps.setInt(21, p.getDistanceType());
+			_ps.setInt(21, p.getDistanceType().ordinal());
 			_ps.setInt(22, p.getMapType());
 			_ps.setString(23, p.getRank().getName());
 			_ps.setString(24, p.getEquipmentType());

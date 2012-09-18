@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:set var="entryType" value="${isNews ? 'System News' : 'NOTAM'}" scope="page" />
 <c:set var="opName" value="${isCreate ? 'created' : 'updated'}" scope="page" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <c:if test="${isNews}">
 <title><content:airline /> System News Updated</title>
@@ -15,7 +15,7 @@
 <c:if test="${isNOTAM}">
 <title><content:airline /> NOTAM Updated</title>
 </c:if>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:pics />
 </head>
 <content:copyright visible="false" />

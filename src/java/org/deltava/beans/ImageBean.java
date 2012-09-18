@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import org.deltava.util.ImageInfo;
 /**
  * An abstract bean class to store common image code.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public abstract class ImageBean extends DatabaseBlobBean {
      * @see ImageBean#setType(int)
      */
     public String getTypeName() {
-    	return ImageInfo.FORMAT_NAMES[_imgType];
+    	return ImageInfo.FORMAT_NAMES[_imgType].toLowerCase();
     }
     
     /**

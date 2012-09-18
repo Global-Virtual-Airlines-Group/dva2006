@@ -10,11 +10,11 @@ import org.deltava.util.UserID;
 /**
  * A bean to store TeamSpeak 2 user information.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
-public class Client extends DatabaseBean {
+public class Client extends TSObject {
 	
 	private String _userID;
 	private String _pwd;
@@ -24,7 +24,6 @@ public class Client extends DatabaseBean {
 	private boolean _serverOperator;
 	private boolean _autoVoice;
 	
-	private Date _createdOn = new Date();
 	private Date _lastOnline;
 	
 	private boolean _isACARS;
@@ -53,8 +52,8 @@ public class Client extends DatabaseBean {
 		_pwd = usr._pwd;
 		_serverID = serverID;
 		_serverAdmin = usr._serverAdmin;
-		_createdOn = (Date) usr._createdOn.clone();
-		_lastOnline = (usr._createdOn == null) ? null : (Date) usr._createdOn.clone();
+		setCreatedOn(new Date(usr.getCreatedOn().getTime()));
+		_lastOnline = (usr._lastOnline == null) ? null : (Date) usr._lastOnline.clone();
 	}
 
 	/**
@@ -124,15 +123,6 @@ public class Client extends DatabaseBean {
 	 */
 	public boolean getAutoVoice() {
 		return _autoVoice;
-	}
-	
-	/**
-	 * Returns the date the user was created on.
-	 * @return the creation date/time
-	 * @see Client#setCreatedOn(Date)
-	 */
-	public Date getCreatedOn() {
-		return _createdOn;
 	}
 	
 	/**
@@ -239,16 +229,6 @@ public class Client extends DatabaseBean {
 	}
 	
 	/**
-	 * Updates the creation date of this Teamspeak user.
-	 * @param dt the creation date/time
-	 * @see Client#getCreatedOn()
-	 * @see Client#setLastOnline(Date)
-	 */
-	public void setCreatedOn(Date dt) {
-		_createdOn = dt;
-	}
-	
-	/**
 	 * Updates the last online date of this Teamspeak user
 	 * @param dt the last online date/time
 	 * @throws IllegalArgumentException if dt is before CreatedOn
@@ -256,7 +236,7 @@ public class Client extends DatabaseBean {
 	 * @see Client#setCreatedOn(Date)
 	 */
 	public void setLastOnline(Date dt) {
-		if ((dt != null) && dt.before(_createdOn))
+		if ((dt != null) && dt.before(getCreatedOn()))
 			throw new IllegalArgumentException("Last Online cannot be before Created");
 		
 		_lastOnline = dt;
@@ -279,10 +259,8 @@ public class Client extends DatabaseBean {
 	 * @see Client#getChannelIDs()
 	 */
 	public void addChannels(Server srv) {
-		for (Iterator<Channel> i = srv.getChannels().iterator(); i.hasNext(); ) {
-			Channel ch = i.next();
-			_channelIDs.add(new Integer(ch.getID()));
-		}
+		for (Channel ch : srv.getChannels())
+			_channelIDs.add(Integer.valueOf(ch.getID()));
 	}
 	
 	/**

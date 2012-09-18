@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to purge orphaned ACARS position entries.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 3.2
  */
 
@@ -93,8 +93,8 @@ public class ACARSPositionPurgeTask extends Task {
 						ctx.startTX();
 						if ((cr != null) && (cr.getFlightID() > 0)) {
 							cr.setFlightID(0);
-							if (cr.getStatus() == Test.SUBMITTED)
-								cr.setStatus(Test.NEW);
+							if (cr.getStatus() == TestStatus.SUBMITTED)
+								cr.setStatus(TestStatus.NEW);
 
 							exwdao.write(cr);
 							log.warn("Reset Check Ride " + cr.getID() + " for Flight ID " + id);

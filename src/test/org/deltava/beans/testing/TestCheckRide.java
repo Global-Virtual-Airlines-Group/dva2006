@@ -23,7 +23,6 @@ public class TestCheckRide extends AbstractBeanTestCase {
     public void testProperties() {
         _cr = new CheckRide("Concorde Video");
         assertEquals("Concorde Video", _cr.getName());
-        assertEquals(org.deltava.beans.testing.Test.CHECKRIDE, _cr.getType());
         setBean(_cr);
         checkProperty("fileName", "video.vid");
         checkProperty("ID", Integer.valueOf(123));
@@ -48,7 +47,6 @@ public class TestCheckRide extends AbstractBeanTestCase {
     public void testCheckRide() {
         _cr = new CheckRide("Concorde Checkride");
         assertEquals("Concorde Checkride", _cr.getName());
-        assertEquals(org.deltava.beans.testing.Test.CHECKRIDE, _cr.getType());
     }
     
     public void testValidation() {

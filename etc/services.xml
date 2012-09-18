@@ -6,6 +6,9 @@
 	<!-- Water Cooler Services -->
 	<service id="quote" class="org.deltava.service.CoolerQuoteService" />
 
+	<!-- Image Gallery Services -->
+	<service id="imglike" class="org.deltava.service.ImageLikeService" />
+
 	<!-- Facebook Services -->
 	<service id="fbdeauth" class="org.deltava.service.hr.FacebookDeauthorizeService" />
 
@@ -17,7 +20,6 @@
 	<service id="event_rss" class="org.deltava.service.rss.EventSyndicationService" />
 	<service id="notams_rss" class="org.deltava.service.rss.NoticeSyndicationService" />
 	<service id="news_rss" class="org.deltava.service.rss.NewsSyndicationService" />
-	<service id="blog_rss" class="org.deltava.service.rss.BlogSyndicationService" />
 
 	<!-- Fleet Library Services -->
 	<service id="fleet_info" class="org.deltava.service.FleetInfoService" />

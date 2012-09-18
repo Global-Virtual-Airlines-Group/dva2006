@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -9,7 +9,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP Tag to display a legend entry for a Google Maps marker.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -46,6 +46,7 @@ public class LegendTag extends TagSupport {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_class = null;
@@ -56,12 +57,11 @@ public class LegendTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
-
-		JspWriter jw = pageContext.getOut();
 		try {
-			// Write image tag
-			jw.print("<img border=\"0\" alt=\"");
+			JspWriter jw = pageContext.getOut();
+			jw.print("<img class=\"noborder\" alt=\"");
 			jw.print(_color);
 			jw.print("\" src=\"/");
 			jw.print(SystemData.get("path.img"));
@@ -76,10 +76,7 @@ public class LegendTag extends TagSupport {
 				jw.print("\">");
 			}
 
-			// Write legend
 			jw.print(_legend);
-
-			// Close className span if necessary
 			if (_class != null)
 				jw.print("</span>");
 		} catch (Exception e) {

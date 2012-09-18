@@ -1,20 +1,24 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
 
-import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
 public class FlightReportFunctions {
 
+	// static class
+	private FlightReportFunctions() {
+		super();
+	}
+	
 	/**
 	 * Returns the ACARS flight ID for this Flight Report.
 	 * @param fr the Flight Report
@@ -286,15 +290,9 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_FPI
      */
     public static String network(FlightReport fr) {
-    	if (fr == null)
+    	if ((fr == null) || (fr.getNetwork() == null))
     		return "Offline";
-    	else if (fr.hasAttribute(FlightReport.ATTR_VATSIM))
-            return OnlineNetwork.VATSIM.toString();
-        else if (fr.hasAttribute(FlightReport.ATTR_IVAO))
-            return OnlineNetwork.IVAO.toString();
-        else if (fr.hasAttribute(FlightReport.ATTR_FPI))
-            return OnlineNetwork.FPI.toString();
-        
-        return "Offline";
+    	
+    	return fr.getNetwork().name();
     }
 }

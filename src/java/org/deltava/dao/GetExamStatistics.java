@@ -51,7 +51,7 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Test.SCORED);
+			_ps.setInt(1, TestStatus.SCORED.ordinal());
 			
 			// Execute the query
 			results = new CacheableSet<Integer>(CheckRide.class);
@@ -88,7 +88,7 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Test.SCORED);
+			_ps.setInt(1, TestStatus.SCORED.ordinal());
 			_ps.setBoolean(2, false);
 			
 			// Execute the query
@@ -145,7 +145,7 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, SystemData.get("airline.code"));
 			_ps.setBoolean(2, false);
-			_ps.setInt(3, Test.SCORED);
+			_ps.setInt(3, TestStatus.SCORED.ordinal());
 			if (scorerID > 0)
 				_ps.setInt(4, scorerID);
 			
@@ -215,7 +215,7 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			int pos = 0;
-			_ps.setInt(++pos, Test.SCORED);
+			_ps.setInt(++pos, TestStatus.SCORED.ordinal());
 			if (academyOnly)
 				_ps.setBoolean(++pos, true);
 			if (scorerID > 0)

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.event.*;
@@ -8,14 +8,14 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Online Event signups.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
 public class SignupAccessControl extends AccessControl {
 
-   private Event _ev;
-   private Signup _su;
+   private final Event _ev;
+   private final Signup _su;
    
    private boolean _canRelease;
    
@@ -34,20 +34,17 @@ public class SignupAccessControl extends AccessControl {
    /**
     * Calculates access levels.
     */
+   @Override
    public void validate() {
       validateContext();
       
       // If no data provided, abort
-      if ((_ev == null) || (_su == null))
-         return;
-
-      // Do nothing if we're not authenticated
-      if (!_ctx.isAuthenticated())
+      if ((_ev == null) || (_su == null) || !_ctx.isAuthenticated())
          return;
       
       // Calculate state variables
       boolean isMine = (_su.getPilotID() == _ctx.getUser().getID());
-      boolean isEventOK = (_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED);
+      boolean isEventOK = (_ev.getStatus() == Status.OPEN) || (_ev.getStatus() == Status.CLOSED);
       
       // Set access rights
       _canRelease = (isMine || _ctx.isUserInRole("Event")) && isEventOK; 

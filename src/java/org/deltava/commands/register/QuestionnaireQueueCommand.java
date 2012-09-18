@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -12,31 +12,33 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to view pending Applicant Questionnaires.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
-public class QuestionnaireQueueCommand extends AbstractCommand {
+public class QuestionnaireQueueCommand extends AbstractViewCommand {
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		ViewContext vctxt = initView(ctx);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the questionnaire queue
 			GetQuestionnaire dao = new GetQuestionnaire(con);
-			List<Examination> queue = dao.getPending();
+			dao.setQueryStart(vctxt.getStart());
+			dao.setQueryMax(vctxt.getCount());
+			Collection<Examination> queue = dao.getPending();
 			
 			// Build a collection of applicant IDs
-			Set<Integer> applicantIDs = new HashSet<Integer>();
-			for (Iterator<Examination> i = queue.iterator(); i.hasNext(); ) {
-				Examination exam = i.next();
-				applicantIDs.add(new Integer(exam.getPilotID()));
-			}
+			Collection<Integer> applicantIDs = new HashSet<Integer>();
+			for (Examination e : queue)
+				applicantIDs.add(Integer.valueOf(e.getAuthorID()));
 			
 			// Get the DAO and save the applicant IDs in the request
 			GetApplicant adao = new GetApplicant(con);

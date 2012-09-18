@@ -244,8 +244,6 @@
 	
 	<html>
 		<table>
-			<spacing type="Integer">3</spacing>
-			<padding type="Integer">3</padding>
 			<viewSize type="Integer">60</viewSize>
 		</table>
 		
@@ -576,7 +574,6 @@
 	<!-- PICS content ratings -->
 	<content>
 		<safesurf>SS~~000 3</safesurf>
-		<icra>cz 1 lz 1 nz 1 oz 1 vz 1</icra>
 	</content>
 
 	<issue_track>

@@ -30,8 +30,8 @@ public class TestExamAccessControl extends AccessControlTestCase {
 
    public void testExaminationAccess() throws Exception {
       _user.addRole("Examination");
-      assertFalse(_user.getID() == _exam.getPilotID());
-      assertEquals(org.deltava.beans.testing.Test.NEW, _exam.getStatus());
+      assertFalse(_user.getID() == _exam.getAuthorID());
+      assertEquals(org.deltava.beans.testing.TestStatus.NEW, _exam.getStatus());
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -40,7 +40,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
       
-      _exam.setStatus(org.deltava.beans.testing.Test.SUBMITTED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SUBMITTED);
       _ac.validate();
 
       assertTrue(_ac.getCanRead());
@@ -49,7 +49,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
       
-      _exam.setStatus(org.deltava.beans.testing.Test.SCORED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SCORED);
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -61,8 +61,8 @@ public class TestExamAccessControl extends AccessControlTestCase {
    
    public void testHRAccess() throws Exception {
       _user.addRole("HR");
-      assertFalse(_user.getID() == _exam.getPilotID());
-      assertEquals(org.deltava.beans.testing.Test.NEW, _exam.getStatus());
+      assertFalse(_user.getID() == _exam.getAuthorID());
+      assertEquals(org.deltava.beans.testing.TestStatus.NEW, _exam.getStatus());
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -71,7 +71,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
       
-      _exam.setStatus(org.deltava.beans.testing.Test.SUBMITTED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SUBMITTED);
       _ac.validate();
 
       assertTrue(_ac.getCanRead());
@@ -80,7 +80,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
       
-      _exam.setStatus(org.deltava.beans.testing.Test.SCORED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SCORED);
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -92,8 +92,8 @@ public class TestExamAccessControl extends AccessControlTestCase {
    
    public void testScoreLimits() throws Exception {
       _user.addRole("HR");
-      _exam.setPilotID(_user.getID());
-      _exam.setStatus(org.deltava.beans.testing.Test.SUBMITTED);
+      _exam.setAuthorID(_user.getID());
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SUBMITTED);
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -102,7 +102,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
 
-      _exam.setStatus(org.deltava.beans.testing.Test.SCORED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SCORED);
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -113,7 +113,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
    }
    
    public void testUserAccess() throws Exception {
-      assertFalse(_user.getID() == _exam.getPilotID());
+      assertFalse(_user.getID() == _exam.getAuthorID());
       try {
          _ac.validate();
          fail("AccessControlException expected");
@@ -121,8 +121,8 @@ public class TestExamAccessControl extends AccessControlTestCase {
     	  // empty
       }
       
-      assertEquals(org.deltava.beans.testing.Test.NEW, _exam.getStatus());
-      _exam.setPilotID(_user.getID());
+      assertEquals(org.deltava.beans.testing.TestStatus.NEW, _exam.getStatus());
+      _exam.setAuthorID(_user.getID());
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -131,7 +131,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
       
-      _exam.setStatus(org.deltava.beans.testing.Test.SUBMITTED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SUBMITTED);
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
@@ -140,7 +140,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanEdit());
       assertFalse(_ac.getCanDelete());
       
-      _exam.setStatus(org.deltava.beans.testing.Test.SCORED);
+      _exam.setStatus(org.deltava.beans.testing.TestStatus.SCORED);
       _ac.validate();
 
       assertTrue(_ac.getCanRead());

@@ -16,13 +16,14 @@ import org.deltava.dao.http.*;
 
 import org.deltava.taskman.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to load external approach charts.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 4.0
  */
 
@@ -50,8 +51,8 @@ public class ExternalChartLoadTask extends Task {
 		@Override
 		public void run() {
 			GetExternalCharts ecdao = new GetExternalCharts();
-			ecdao.setConnectTimeout(3500);
-			ecdao.setReadTimeout(5000);
+			ecdao.setConnectTimeout(5000);
+			ecdao.setReadTimeout(7500);
 			
 			ExternalChart ec = _work.poll();
 			while (ec != null) {
@@ -98,8 +99,8 @@ public class ExternalChartLoadTask extends Task {
 		@Override
 		public void run() {
 			GetAirCharts ecdao = new GetAirCharts();
-			ecdao.setConnectTimeout(2500);
-			ecdao.setReadTimeout(5000);
+			ecdao.setConnectTimeout(5000);
+			ecdao.setReadTimeout(7500);
 			
 			Airport a = _work.poll();
 			while (a != null) {
@@ -201,20 +202,32 @@ public class ExternalChartLoadTask extends Task {
 			// Wait for the workers to finish
 			ThreadUtils.waitOnPool(workers);
 			
+			// Get the external chart IDs
+			Map<String, ExternalChart> charts = new HashMap<String, ExternalChart>();
+			for (ExternalChart ec : results) {
+				if (!StringUtils.isEmpty(ec.getExternalID()))
+					charts.put(ec.getExternalID(), ec);
+			}
+			
 			// Get a connection and start a transaction
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 			
-			// FIXME: Don't clean out airports (since we lose chart links)
-			
-			// Clear out the loaded airports
-			SetChart cwdao = new SetChart(con);
-			for (Airport a : loadedAirports)
-				cwdao.purge(a);
+			// Determine the external-internal ID mappings
+			GetChart cdao = new GetChart(con);
+			Map<String, Integer> idMap = cdao.getChartIDs(charts.keySet());
+			for (Map.Entry<String, Integer> me : idMap.entrySet()) {
+				ExternalChart exc = charts.get(me.getKey());
+				if (exc != null) {
+					log.info("Chart " + exc.getName() + " updating ID " + me.getValue());
+					exc.setID(me.getValue().intValue());
+				}
+			}
 			
 			// Write the charts
-			for (ExternalChart ec : results)
-				cwdao.write(ec);
+			SetChart cwdao = new SetChart(con);
+			for (ExternalChart exc : results)
+				cwdao.write(exc);
 			
 			ctx.commitTX();
 		} catch (DAOException de) {

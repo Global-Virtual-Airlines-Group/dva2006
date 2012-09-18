@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatcher Routes<c:if test="${!empty author}"> - ${author.name}</c:if></title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -44,14 +44,14 @@ return true;
  <td colspan="2" class="right">DISPATCHER <el:combo name="id" idx="*" size="1" options="${authorNames}" firstEntry="-" value="${author}" onChange="update(this)" /></td>
 </tr>
 <tr class="title caps">
- <td width="5%">ID</td>
+ <td style="width:5%">ID</td>
  <td>ROUTE</td>
- <td width="5%">USED</td> 
-<c:if test="${empty author}"><td width="20%">CREATED BY</td></c:if>
-<c:if test="${!empty author}"><td width="8%">CREATED ON</td></c:if>
- <td width="8%">LAST USED</td>
- <td width="15%">SID</td>
- <td width="15%">STAR</td>
+ <td style="width:5%">USED</td> 
+<c:if test="${empty author}"><td style="width:20%">CREATED BY</td></c:if>
+<c:if test="${!empty author}"><td style="width:8%">CREATED ON</td></c:if>
+ <td style="width:8%">LAST USED</td>
+ <td style="width:15%">SID</td>
+ <td style="width:15%">STAR</td>
 </tr>
 
 <!-- Routes -->

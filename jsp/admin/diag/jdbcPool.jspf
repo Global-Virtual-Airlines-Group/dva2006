@@ -13,13 +13,13 @@
 <c:if test="${!empty jdbcPools}">
 <!-- JDBC Data Title Bar -->
 <tr class="title caps">
- <td width="10%">ID</td>
- <td width="15%">CONNECTION TYPE</td>
- <td width="12%">STATUS</td>
- <td width="12%">USE COUNT</td>
- <td width="12%">AVERAGE USE</td>
- <td width="12%">TOTAL USE</td>
- <td width="12%">LAST/CURRENT USE</td>
+ <td style="width:10%">ID</td>
+ <td style="width:15%">CONNECTION TYPE</td>
+ <td style="width:12%">STATUS</td>
+ <td style="width:12%">USE COUNT</td>
+ <td style="width:12%">AVERAGE USE</td>
+ <td style="width:12%">TOTAL USE</td>
+ <td style="width:12%">LAST/CURRENT USE</td>
  <td>LAST USED ON</td>
 </tr>
 <c:forEach var="appName" items="${appNames}">

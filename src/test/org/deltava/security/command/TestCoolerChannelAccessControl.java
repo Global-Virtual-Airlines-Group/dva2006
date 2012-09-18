@@ -4,6 +4,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.cooler.Channel;
+import org.deltava.beans.cooler.Channel.InfoType;
 
 import org.deltava.util.system.*;
 
@@ -32,7 +33,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 	}
 
 	public void testAccess() throws Exception {
-		_c.addRole(Channel.INFOTYPE_RROLE, "X");
+		_c.addRole(InfoType.READ, "X");
 		assertFalse(_user.isInRole("X"));
 		_ac.validate();
 
@@ -51,8 +52,8 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 	}
 
 	public void testWildcardAccess() throws Exception {
-		_c.addRole(Channel.INFOTYPE_RROLE, "*");
-		_c.addRole(Channel.INFOTYPE_WROLE, "*");
+		_c.addRole(InfoType.READ, "*");
+		_c.addRole(InfoType.WRITE, "*");
 		_ac.validate();
 
 		assertTrue(_ac.getCanAccess());
@@ -80,7 +81,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 		assertFalse(_ac.getCanRead());
 		assertFalse(_ac.getCanEdit());
 
-		_c.addRole(Channel.INFOTYPE_RROLE, "Anonymous");
+		_c.addRole(InfoType.READ, "Anonymous");
 		_ac.validate();
 
 		assertTrue(_ac.getCanAccess());
@@ -115,8 +116,8 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 	}
 
 	public void testOtherAirlineAccess() throws Exception {
-		_c.addRole(Channel.INFOTYPE_RROLE, "Pilot");
-		_c.addRole(Channel.INFOTYPE_WROLE, "Pilot");
+		_c.addRole(InfoType.READ, "Pilot");
+		_c.addRole(InfoType.WRITE, "Pilot");
 		_user.setPilotCode("AFV123");
 		assertFalse(_c.getAirlines().contains("AFV"));
 		_ac.validate();

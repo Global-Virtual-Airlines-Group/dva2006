@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.io.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to Authenticate users.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class LoginCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occrurs. Login failures are not considered errors.
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -140,6 +141,12 @@ public class LoginCommand extends AbstractCommand {
 				}
 				
 				// If we got more than one pilot, save in the request and ask the user to pick
+				for (Iterator<Pilot> i = users.iterator(); i.hasNext(); ) {
+					Pilot usr = i.next();
+					if ((usr.getStatus() != Pilot.ACTIVE) && (usr.getStatus() != Pilot.ON_LEAVE))
+						i.remove();
+				}
+				
 				ctx.setAttribute("dupeUsers", users, REQUEST);
 				if (p == null)
 					throw new SecurityException("Multiple Users found - please select");

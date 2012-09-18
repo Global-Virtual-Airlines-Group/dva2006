@@ -1,21 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title>Update E-Mail Address</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script type="text/javascript">
 <fmt:jsarray var="invalidDomains" items="${badDomains}" />
-
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -59,7 +58,7 @@ log in again.</td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="40" max="80" className="req" value="${user.email}" /></td>
+ <td class="data"><el:addr name="email" required="true" idx="*" size="40" max="80" value="${user.email}" /></td>
 </tr>
 
 <!-- Button Bar -->

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Pilot IMAP mailbox information.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -54,8 +54,7 @@ public class GetPilotEMail extends DAO {
     */
    public Collection<IMAPConfiguration> getAll() throws DAOException {
       try {
-         prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox "
-        		 + "WHERE (ID>0)");
+         prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE (ID>0) ORDER BY ID");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se); 

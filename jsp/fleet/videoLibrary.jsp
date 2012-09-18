@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Video Library</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
@@ -25,15 +25,15 @@
 <view:table className="view" cmd="tvlibrary">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="25%">TITLE</td>
- <td width="7%">&nbsp;</td>
- <td width="10%">SIZE</td>
+ <td style="width:25%">TITLE</td>
+ <td style="width:7%">&nbsp;</td>
+ <td style="width:10%">SIZE</td>
 <c:choose>
 <c:when test="${access.canCreateVideo}">
- <td width="10%"><el:cmdbutton url="tvideo" op="edit" label="NEW VIDEO" /></td>
+ <td style="width:10%"><el:cmdbutton url="tvideo" op="edit" label="NEW VIDEO" /></td>
 </c:when>
 <c:otherwise>
- <td width="10%">&nbsp;</td>
+ <td style="width:10%">&nbsp;</td>
 </c:otherwise>
 </c:choose>
  <td>VIDEO DESCRIPTION</td>
@@ -48,7 +48,7 @@
 <c:if test="${!access.canEditVideo}">
  <td class="pri bld"><el:link url="/video/${video.fileName}">${video.name}</el:link></td>
 </c:if>
- <td><el:link url="/video/${video.fileName}"><el:img src="library/${video.iconName}.png" caption="Download ${video.typeName} Video" x="32" y="32" border="0" /></el:link></td>
+ <td><el:link url="/video/${video.fileName}"><el:img src="library/${video.iconName}.png" caption="Download ${video.typeName} Video" x="32" y="32" className="noborder" /></el:link></td>
  <td class="sec bld"><fmt:int value="${video.size}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${video.description}" /></td>
 </view:row>
@@ -56,7 +56,7 @@
 
 <!-- Download DiVX -->
 <tr valign="middle">
- <td><a href="http://www.divx.com/divx/play/download/" rel="external"><el:img src="library/divx.png" border="0" caption="Download DivX Player" /></a></td>
+ <td><a href="http://www.divx.com/divx/play/download/" rel="external"><el:img src="library/divx.png" className="noborder" caption="Download DivX Player" /></a></td>
  <td colspan="4">Some videos within the <content:airline /> Video Library require the 
 <span class="pri bld">DiVX Player</span> in order to be viewed. If you are having difficulties viewing 
 our videos, please click on the link to the left to download the latest version of the DiVX Player.<br />

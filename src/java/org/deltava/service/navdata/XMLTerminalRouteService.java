@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS clients.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.4
  */
 
@@ -66,6 +66,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 		f = new File(cacheDir, "sidstar.zip");
 
 		// Format routes
+		int apCount = 0;
 		final NumberFormat df = new DecimalFormat("#0.000000");
 		try {
 			Document doc = null;
@@ -89,6 +90,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 							re = new Element("routes");
 							doc.setRootElement(re);
 							zout.putNextEntry(ze);
+							apCount++;
 						}
 
 						// Create the SID/STAR element
@@ -132,6 +134,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=xmlsidstar.zip");
 			ctx.getResponse().setContentType("application/zip");
 			ctx.getResponse().setIntHeader("max-age", 600);
+			ctx.getResponse().setIntHeader("airportCount", apCount);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
