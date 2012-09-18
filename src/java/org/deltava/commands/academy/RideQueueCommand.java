@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display submitted Flight Academy Check Rides.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class RideQueueCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the view start/end
@@ -51,14 +52,14 @@ public class RideQueueCommand extends AbstractViewCommand {
 			Map<Integer, FlightReport> pireps = new HashMap<Integer, FlightReport>();
 			for (Iterator<CheckRide> i = rides.iterator(); i.hasNext(); ) {
 				CheckRide cr = i.next();
-				ids.add(new Integer(cr.getID()));
-				pids.add(new Integer(cr.getPilotID()));
+				ids.add(Integer.valueOf(cr.getID()));
+				pids.add(Integer.valueOf(cr.getAuthorID()));
 				
 				// Load the PIREP
-				UserData ud = uddao.get(cr.getPilotID());
+				UserData ud = uddao.get(cr.getAuthorID());
 				FlightReport fr = frdao.getACARS(ud.getDB(), cr.getFlightID());
 				if (fr != null)
-					pireps.put(new Integer(ud.getID()), fr);
+					pireps.put(Integer.valueOf(ud.getID()), fr);
 			}
 			
 			// Load the Courses

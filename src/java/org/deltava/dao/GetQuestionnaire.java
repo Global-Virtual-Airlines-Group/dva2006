@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Applicant Questionaires.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -141,7 +141,7 @@ public class GetQuestionnaire extends DAO {
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT), A.FIRSTNAME, "
 					+ "A.LASTNAME FROM APPEXAMS E, APPQUESTIONS Q, APPLICANTS A WHERE (E.ID=Q.EXAM_ID) AND "
 					+ "(E.APP_ID=A.ID) AND (E.STATUS=?) GROUP BY E.ID ORDER BY E.CREATED_ON");
-			_ps.setInt(1, Test.SUBMITTED);
+			_ps.setInt(1, TestStatus.SUBMITTED.ordinal());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -190,8 +190,8 @@ public class GetQuestionnaire extends DAO {
 				Examination e = new Examination(SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME);
 				e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 				e.setID(rs.getInt(1));
-				e.setPilotID(rs.getInt(2));
-				e.setStatus(rs.getInt(3));
+				e.setAuthorID(rs.getInt(2));
+				e.setStatus(TestStatus.values()[rs.getInt(3)]);
 				e.setDate(rs.getTimestamp(4));
 				e.setExpiryDate(rs.getTimestamp(5));
 				e.setSubmittedOn(rs.getTimestamp(6));

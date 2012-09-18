@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to resent the Applicant welcome message.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Create the message context
@@ -57,7 +58,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			
 			// Get the Message template - if the questionaire has been submitted or scored, then just send e-mail validation
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-			if ((ex != null) && (ex.getStatus() == Test.NEW)) {
+			if ((ex != null) && (ex.getStatus() == TestStatus.NEW)) {
 			   mctxt.setTemplate(mtdao.get("USERREGISTER"));
 			   mctxt.addData("questionnaire", ex);
 			   mctxt.addData("applicant", a);

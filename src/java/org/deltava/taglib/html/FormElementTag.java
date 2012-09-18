@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for supporting JSP tags that generate HTML input elements.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -21,7 +21,7 @@ public abstract class FormElementTag extends ElementTag {
      * The value of this input element.
      */ 
     protected Object _value;
-    private boolean _validateParent;
+    private final boolean _validateParent;
     
     /**
      * Generates an input element tag with a given name.
@@ -80,6 +80,7 @@ public abstract class FormElementTag extends ElementTag {
      */
     public void setRequired(boolean isRequired) {
     	_data.setAttribute("required", null);
+    	_classes.add("req");
     }
     
     /**
@@ -96,13 +97,10 @@ public abstract class FormElementTag extends ElementTag {
     }
     
     /**
-     * Validates that this tag has a NAME attribute. All Form elements must have a name.
-     * @throws IllegalStateException if the NAME attribute is not set
+     * Validates tag state.
+     * @throws IllegalStateException if not in a FORM and is required
      */
-    protected void validateState() throws IllegalStateException {
-       if (!(_data.hasAttribute("name")))
-           throw new IllegalStateException("Form Element must contain name");
-       
+    protected void validateState() {
        if (_validateParent) {
     	   boolean isConditional = (pageContext.getAttribute("isForm", PageContext.REQUEST_SCOPE) != null);
            if ((getParentFormTag() == null) && (!isConditional))

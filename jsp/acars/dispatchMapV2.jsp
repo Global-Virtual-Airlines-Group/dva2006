@@ -1,13 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatch Map</title>
+<meta http-equiv="cache-control" content="no-cache" />
 <content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
 <map:api version="2" />
@@ -97,8 +98,7 @@ GEvent.addListener(map, 'maptypechanged', updateMapText);
 GEvent.addListener(map, 'zoomend', updateZoomLevel);
 <c:if test="${isDispatch}">
 GEvent.addListener(map, "moveend", mapZoom);
-GEvent.trigger(map, "moveend");
-</c:if>
+GEvent.trigger(map, "moveend");</c:if>
 
 // Initialize arrays and collection
 var route = [];
@@ -113,4 +113,4 @@ var mrks_star = [];
 GEvent.trigger(map, 'maptypechanged');
 </script>
 </body>
-</map:xhtml>
+</html>

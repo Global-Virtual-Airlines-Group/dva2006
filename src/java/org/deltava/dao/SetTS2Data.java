@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -42,7 +42,7 @@ public class SetTS2Data extends DAO {
 			_ps.setInt(1, c.getServerID());
 			_ps.setInt(2, c.getModerated() ? -1 : 0);
 			_ps.setInt(3, c.getDefault() ? -1 : 0);
-			_ps.setInt(4, c.getCodec());
+			_ps.setInt(4, c.getCodec().ordinal());
 			_ps.setInt(5, c.getMaxUsers());
 			_ps.setString(6, c.getName());
 			_ps.setString(7, c.getTopic());
@@ -78,7 +78,7 @@ public class SetTS2Data extends DAO {
 					+ "s_channel_password=? WHERE (i_channel_id=?)");
 			_ps.setInt(1, c.getModerated() ? -1 : 0);
 			_ps.setInt(2, c.getDefault() ? -1 : 0);
-			_ps.setInt(3, c.getCodec());
+			_ps.setInt(3, c.getCodec().ordinal());
 			_ps.setInt(4, c.getMaxUsers());
 			_ps.setString(5, c.getName());
 			_ps.setString(6, c.getTopic());
@@ -105,8 +105,6 @@ public class SetTS2Data extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Collection<Client> usrs) throws DAOException {
-		
-		// Exit if empty
 		if (CollectionUtils.isEmpty(usrs))
 			return;
 		
@@ -336,7 +334,8 @@ public class SetTS2Data extends DAO {
 			}
 
 			// Get all of the roles
-			Collection<String> allRoles = srv.getRoles().get(Server.ACCESS);
+			Map<ServerAccess, Collection<String>> roles = srv.getRoles();
+			Collection<String> allRoles = roles.get(ServerAccess.ACCESS);
 
 			// Write the server roles
 			prepareStatement("INSERT INTO teamspeak.ts2_server_roles (i_server_id, s_role_name, b_server_admin, "
@@ -345,9 +344,9 @@ public class SetTS2Data extends DAO {
 			for (Iterator<String> i = allRoles.iterator(); i.hasNext();) {
 				String role = i.next();
 				_ps.setString(2, role);
-				_ps.setBoolean(3, srv.getRoles().get(Server.ADMIN).contains(role));
-				_ps.setBoolean(4, srv.getRoles().get(Server.OPERATOR).contains(role));
-				_ps.setBoolean(5, srv.getRoles().get(Server.VOICE).contains(role));
+				_ps.setBoolean(3, roles.get(ServerAccess.ADMIN).contains(role));
+				_ps.setBoolean(4, roles.get(ServerAccess.OPERATOR).contains(role));
+				_ps.setBoolean(5, roles.get(ServerAccess.VOICE).contains(role));
 				_ps.addBatch();
 			}
 

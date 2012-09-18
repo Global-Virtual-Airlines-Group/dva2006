@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,20 +6,19 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <c:if test="${!empty pirep}">
 <title><content:airline /> Flight ${pirep.flightCode}</title>
 <c:set var="isAssign" value="${(fn:AssignID(pirep) > 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="page" />
 </c:if>
 <c:if test="${empty pirep}">
-<title>New <content:airline /> Flight Report</title>
-</c:if>
-<content:css name="main" browserSpecific="true" />
+<title>New <content:airline /> Flight Report</title></c:if>
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="hourCalc" />
+<content:browser html4="true"><content:js name="hourCalc" /></content:browser>
 <c:if test="${!isAssign}"><content:js name="airportRefresh" /></c:if>
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
@@ -38,14 +37,13 @@ if (!validateCombo(form.airline, 'Airline')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
 </c:if>
-
 // Validate flight leg
 if (parseInt(form.flightLeg.value) > 8) {
-	alert('The Flight Leg must be less than 8.');
+	alert('The Flight Leg must be equal to or less than 8.');
 	form.flightLeg.focus();
 	return false;
 }
-
+<content:browser html4="true">
 // Validate the date
 <content:filter roles="!PIREP">
 var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
@@ -61,7 +59,7 @@ if (pDate > fwdLimit) {
 	f.dateD.focus();
 	return false;
 }
-</content:filter>
+</content:filter></content:browser>
 setSubmit();
 disableButton('SaveButton');
 disableButton('CalcButton');
@@ -76,13 +74,26 @@ f.doSubmit.value = 'true';
 return cmdPost(f.action);
 }
 
+function loadAirports()
+{
+var f = document.forms[0]
+if (f.airline.selectedIndex != 0) {
+	var aCode = getValue(f.airline);
+	updateAirports(f.airportD, 'airline=' + aCode + '&add=${pirep.airportD.ICAO}', false, '${pirep.airportD.IATA}');
+	updateAirports(f.airportA, 'airline=' + aCode + '&add=${pirep.airportA.ICAO}', false, '${pirep.airportA.IATA}');
+}
+
+f.airline.focus();	
+return true;
+}
+<content:browser html4="true">
 // Set PIREP date limitations
 <fmt:jsdate var="fwdLimit" date="${forwardDateLimit}" />
-<fmt:jsdate var="bwdLimit" date="${backwardDateLimit}" />
+<fmt:jsdate var="bwdLimit" date="${backwardDateLimit}" /></content:browser>
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void loadAirports()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -127,23 +138,23 @@ return cmdPost(f.action);
 </c:choose>
 <tr>
  <td class="label">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" className="req" value="${pirep.flightNumber}" />
- <el:text name="flightLeg" idx="*" size="1" max="1" className="req" value="${pirep.leg}" /></td>
+ <td class="data"><el:int name="flightNumber" idx="*" size="3" min="1" max="9999" required="true" value="${pirep.flightNumber}" />
+ <el:int name="flightLeg" idx="*" size="1" min="1" max="8" required="true" value="${pirep.leg}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" className="req" firstEntry="[ EQUIPMENT ]" /></td>
+ <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" required="true" firstEntry="[ EQUIPMENT ]" /></td>
 </tr>
 <c:choose>
 <c:when test="${!isAssign}">
 <tr>
  <td class="label">Departed from</td>
- <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" required="true" onChange="void changeAirport(this)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arrived at</td>
- <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" required="true" onChange="void changeAirport(this)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 </c:when>
@@ -160,9 +171,14 @@ return cmdPost(f.action);
 </c:choose>
 <tr>
  <td class="label">Flown on</td>
- <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" className="req" onChange="setDaysInMonth(this)" />
- <el:combo name="dateD" idx="*" size="1" className="req" options="${emptyList}" />&nbsp;
- <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" className="req" options="${years}" /></td>
+<content:browser html5="true">
+ <td class="data"><el:date name="date" idx="*" size="11" required="true" min="${backwardDateLimit}" max="${forwardDateLimit}" value="${pirep.date}" /></td>
+</content:browser>
+<content:browser html4="true">
+ <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" required="true" onChange="setDaysInMonth(this)" />
+ <el:combo name="dateD" idx="*" size="1" required="true" options="${emptyList}" />&nbsp;
+ <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" required="true" options="${years}" /></td>
+</content:browser>
 </tr>
 <tr>
  <td class="label">Online Flight</td>
@@ -176,9 +192,14 @@ return cmdPost(f.action);
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="page" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
+<content:browser html4="true">
+ <td class="data"><el:combo name="flightTime" idx="*" size="1"  required="true" firstEntry="[ HOURS ]" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" idx="*" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" idx="*" value="${tmpM}" />
  minutes&nbsp;<el:button ID="CalcButton" label="CALCULATE" onClick="void hoursCalc()" /></td>
+</content:browser>
+<content:browser html5="true">
+ <td class="data"><el:float name="flightTime" idx="*" size="3" max="18.9" min="0" step="0.1" value="${flightTime}" required="true" /> hours</td>
+</content:browser>
 </tr>
 <c:if test="${!isACARS}">
 <tr>
@@ -187,8 +208,7 @@ return cmdPost(f.action);
 </tr>
 </c:if>
 <c:if test="${isACARS}">
-<%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
-</c:if>
+<%@ include file="/jsp/pilot/pirepACARS.jspf" %></c:if>
 <tr>
  <td class="label top">Remarks</td>
  <td class="data"><el:textbox idx="*" name="remarks" width="80%" height="3" resize="true">${pirep.remarks}</el:textbox></td>
@@ -211,19 +231,12 @@ return cmdPost(f.action);
 <content:copyright />
 </content:region>
 </content:page>
+<content:browser html4="true">
 <script type="text/javascript">
 var f = document.forms[0];
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
-
-initDateCombos(f.dateM, f.dateD, ((d == null) ? new Date() : d));
-if (f.airline.selectedIndex != 0) {
-	var aCode = getValue(f.airline);
-	updateAirports(f.airportD, 'airline=' + aCode + '&add=${pirep.airportD.ICAO}', false, '${pirep.airportD.IATA}');
-	updateAirports(f.airportA, 'airline=' + aCode + '&add=${pirep.airportA.ICAO}', false, '${pirep.airportA.IATA}');
-}
-
+initDateCombos(f.dateM, f.dateD, d);
 f.tmpHours.value = Math.round(f.tmpHours.value - 0.5);
-f.airline.focus();
-</script>
+</script></content:browser>
 </body>
 </html>

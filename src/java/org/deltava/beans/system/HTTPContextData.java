@@ -4,7 +4,7 @@ package org.deltava.beans.system;
 /**
  * A bean to store data about the current HTTP request. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 3.7
  */
 
@@ -66,7 +66,7 @@ public class HTTPContextData implements java.io.Serializable {
 	 * Returns whether the client browser has sufficient HTML5 support.
 	 * @return TRUE if full HTML5 support, otherwise FALSE
 	 */
-	public boolean getHTML5() {
+	public boolean isHTML5() {
 		return _html5;
 	}
 	

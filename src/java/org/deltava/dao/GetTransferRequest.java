@@ -1,17 +1,18 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.testing.Test;
+import org.deltava.beans.testing.TestStatus;
 import org.deltava.beans.hr.TransferRequest;
+
 import org.deltava.util.CollectionUtils;
 
 /**
  * A Data Access Object to read Pilot Transfer requests.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -148,8 +149,8 @@ public class GetTransferRequest extends DAO {
 				+ "AND (CR.STATUS<>?) ORDER BY TX.CREATED");
 			_ps.setInt(1, minAge);
 			_ps.setInt(2, TransferRequest.OK);
-			_ps.setInt(3, Test.SUBMITTED);
-			_ps.setInt(4, Test.SCORED);
+			_ps.setInt(3, TestStatus.SUBMITTED.ordinal());
+			_ps.setInt(4, TestStatus.SCORED.ordinal());
 			List<TransferRequest> results = execute();
 			loadCheckRides(results);
 			return results;
@@ -252,7 +253,7 @@ public class GetTransferRequest extends DAO {
 				if (tx != null) {
 					tx.addCheckRideID(rs.getInt(2));
 					if (!tx.getCheckRideSubmitted())
-						tx.setCheckRideSubmitted(rs.getInt(3) == Test.SUBMITTED);
+						tx.setCheckRideSubmitted(rs.getInt(3) == TestStatus.SUBMITTED.ordinal());
 				}
 			}
 		}

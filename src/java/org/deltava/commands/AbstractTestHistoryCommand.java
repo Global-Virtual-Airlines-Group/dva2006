@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -59,7 +59,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 					ex.setSize(1);
 					ex.setScore(1);
 					ex.setPassFail(true);
-					ex.setStatus(Test.SCORED);
+					ex.setStatus(TestStatus.SCORED);
 					ex.setDate(p.getCreatedOn());
 					ex.setScoredOn(p.getCreatedOn());
 					ex.setOwner(SystemData.getApp(SystemData.get("airline.code")));

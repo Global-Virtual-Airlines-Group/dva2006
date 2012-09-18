@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display automatically scored Examinations.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -47,10 +47,8 @@ public class AutoScoredExamsCommand extends AbstractViewCommand {
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Examination> i = exams.iterator(); i.hasNext(); ) {
-				Examination ex = i.next();
-				IDs.add(new Integer(ex.getPilotID()));
-			}
+			for (Examination ex : exams)
+				IDs.add(new Integer(ex.getAuthorID()));
 			
 			// Load the Pilots
 			GetPilot pdao = new GetPilot(con);

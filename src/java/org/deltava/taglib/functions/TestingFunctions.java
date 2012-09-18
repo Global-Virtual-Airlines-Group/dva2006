@@ -6,11 +6,16 @@ import org.deltava.beans.testing.*;
 /**
  * A JSP Function Library to define Testing Center-related functions.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
 public class TestingFunctions {
+	
+	// static class
+	private TestingFunctions() {
+		super();
+	}
 	
 	/**
 	 * Checks if a Test is a CheckRide, not an Examination.
@@ -59,7 +64,7 @@ public class TestingFunctions {
 	 * @throws NullPointerException if t or q are null
 	 */
 	public static boolean incorrect(Test t, Question q) {
-		return ((t.getStatus() == Test.SCORED) && !q.isCorrect());
+		return ((t.getStatus() == TestStatus.SCORED) && !q.isCorrect());
 	}
 	
 	/**
@@ -69,7 +74,7 @@ public class TestingFunctions {
 	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isPass(Test t) {
-		return ((t.getStatus() == Test.SCORED) && t.getPassFail());
+		return ((t.getStatus() == TestStatus.SCORED) && t.getPassFail());
 	}
 	
 	/**
@@ -79,7 +84,7 @@ public class TestingFunctions {
 	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isFail(Test t) {
-		return ((t.getStatus() == Test.SCORED) && !t.getPassFail());
+		return ((t.getStatus() == TestStatus.SCORED) && !t.getPassFail());
 	}
 	
 	/**
@@ -88,7 +93,7 @@ public class TestingFunctions {
 	 * @return TRUE if the Test is Submitted or New
 	 */
 	public static boolean isPending(Test t) {
-	   return (t != null) && ((t.getStatus() == Test.SUBMITTED) || (t.getStatus() == Test.NEW));
+	   return (t != null) && ((t.getStatus() == TestStatus.SUBMITTED) || (t.getStatus() == TestStatus.NEW));
 	}
 	
 	/**
@@ -98,6 +103,6 @@ public class TestingFunctions {
 	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isSubmitted(Test t) {
-	   return (t != null) && (t.getStatus() == Test.SUBMITTED);
+	   return (t != null) && (t.getStatus() == TestStatus.SUBMITTED);
 	}
 }

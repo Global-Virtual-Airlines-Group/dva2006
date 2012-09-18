@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Membership Statistics</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
@@ -57,7 +57,7 @@ return true;
 <tr class="title">
  <td colspan="3" class="left caps">MEMBERSHIP QUANTILES</td>
 </tr>
-<c:set var="qCount" value="${0}" scope="page" />
+<c:set var="qCount" value="0" scope="page" />
 <c:forEach var="qLabel" items="${fn:keys(quantiles)}">
 <c:set var="qJoinDate" value="${quantiles[qLabel]}" scope="page" />
 <c:set var="qCount" value="${qCount + 1}" scope="page" />

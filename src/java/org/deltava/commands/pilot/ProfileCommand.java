@@ -33,7 +33,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -131,7 +131,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(StringUtils.parse(ctx.getParameter("privacyOption"), Person.HIDE_EMAIL));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
-			p.setDistanceType(ctx.getParameter("distanceUnits"));
+			p.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
 			p.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 			p.setMapType(ctx.getParameter("mapType"));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
@@ -485,9 +485,9 @@ public class ProfileCommand extends AbstractFormCommand {
 					dupeResults.addAll(adao.checkUnique(p2, info.getDB(), 21));
 
 					// Remove our entry, or that of our applicant entry
-					dupeResults.remove(new Integer(p.getID()));
+					dupeResults.remove(Integer.valueOf(p.getID()));
 					if (a != null)
-						dupeResults.remove(new Integer(a.getID()));
+						dupeResults.remove(Integer.valueOf(a.getID()));
 				}
 
 				// If we're unique, continue the update
@@ -564,9 +564,9 @@ public class ProfileCommand extends AbstractFormCommand {
 						c.setID(p.getID());
 						c.addChannels(srv);
 						c.setServerID(srv.getID());
-						c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.VOICE)));
-						c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.OPERATOR)));
-						c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.ADMIN)));
+						c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.VOICE)));
+						c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.OPERATOR)));
+						c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.ADMIN)));
 						ts2usrs.add(c);
 					}
 
@@ -666,7 +666,6 @@ public class ProfileCommand extends AbstractFormCommand {
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
 		ctx.setAttribute("mapTypes", ComboUtils.fromArray(Pilot.MAP_TYPES), REQUEST);
 		ctx.setAttribute("acarsRest", ComboUtils.fromArray(Pilot.RESTRICT), REQUEST);
-		ctx.setAttribute("distanceTypes", ComboUtils.fromArray(Person.DISTANCE_NAMES), REQUEST);
 		
 		Pilot p = null;
 		try {

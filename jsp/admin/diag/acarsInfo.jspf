@@ -43,11 +43,11 @@ so.write('flashcontent');
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="10%">ID</td>
- <td width="16%">USER</td>
+ <td style="width:10%">ID</td>
+ <td style="width:16%">USER</td>
  <td>REMOTE ADDRESS</td>
- <td width="14%">MESSAGES</td>
- <td width="14%">DATA</td>
+ <td style="width:14%">MESSAGES</td>
+ <td style="width:14%">DATA</td>
 </tr>
 
 <!-- Table Connection Data -->
@@ -102,9 +102,9 @@ writes / message, <fmt:dec value="${udp.bytesOut / udp.bufferWrites}" fmt="###0.
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="30%">THREAD NAME</td>
- <td width="15%">THREAD STATUS</td>
- <td width="10%">COUNT</td>
+ <td style="width:30%">THREAD NAME</td>
+ <td style="width:15%">THREAD STATUS</td>
+ <td style="width:10%">COUNT</td>
  <td>CURRENTLY EXECUTING</td>
 </tr>
 

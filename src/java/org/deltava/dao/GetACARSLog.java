@@ -137,16 +137,16 @@ public class GetACARSLog extends GetACARSData {
 		// Build the search criteria
 		List<String> terms = new ArrayList<String>();
 		if (criteria.getPilotID() != 0)
-			terms.add("(C.PILOT_ID=?)");
+			terms.add("(F.PILOT_ID=?)");
 		if (criteria.getStartDate() != null)
 			terms.add("(F.CREATED > ?)");
 		if (criteria.getEndDate() != null)
 			terms.add("(F.CREATED < ?)");
 
 		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT F.*, FD.ROUTE_ID, FDR.DISPATCHER_ID FROM "
-			+ "acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) LEFT JOIN "
-			+ "acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID)");
+		StringBuilder buf = new StringBuilder("SELECT F.*, INET_NTOA(F.REMOTE_ADDR), FD.ROUTE_ID, "
+			+	"FDR.DISPATCHER_ID FROM acars.FLIGHTS F LEFT JOIN acars.FLIGHT_DISPATCH FD ON (F.ID=FD.ID) "
+			+ "LEFT JOIN acars.FLIGHT_DISPATCHER FDR ON (F.ID=FDR.ID)");
 		if (!terms.isEmpty()) {
 			buf.append(" WHERE ");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
@@ -178,7 +178,6 @@ public class GetACARSLog extends GetACARSData {
 	 * Helper method to parse Message result sets.
 	 */
 	private List<TextMessage> executeMsg() throws SQLException {
-
 		List<TextMessage> results = new ArrayList<TextMessage>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {

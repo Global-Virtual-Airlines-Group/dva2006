@@ -40,16 +40,14 @@ public class TestEvent extends AbstractBeanTestCase {
         checkProperty("endTime", new Date());
         checkProperty("airportA", new Airport("ATL", "KATL", "Atlanta GA"));
         checkProperty("network", Integer.valueOf(1));
-        assertEquals(Event.COMPLETE, _e.getStatus());
+        assertEquals(Status.COMPLETE, _e.getStatus());
         _e.setNetwork(OnlineNetwork.VATSIM);
         assertEquals(_e.getNetwork(), OnlineNetwork.VATSIM);
-        assertEquals("VATSIM", _e.getNetworkName());
         _e.setNetwork(OnlineNetwork.valueOf("IVAO"));
         assertEquals(_e.getNetwork(), OnlineNetwork.IVAO);
-        assertEquals("IVAO", _e.getNetworkName());
-        _e.setStatus(Event.CANCELED);
-        assertEquals(Event.CANCELED, _e.getStatus());
-        _e.setStatus(Event.OPEN);
+        _e.setStatus(Status.CANCELED);
+        assertEquals(Status.CANCELED, _e.getStatus());
+        _e.setStatus(Status.OPEN);
     }
   
     public void testComboAlias() {
@@ -71,18 +69,14 @@ public class TestEvent extends AbstractBeanTestCase {
         long now = System.currentTimeMillis();
         _e.setStartTime(new Date(now + 1000));
         _e.setSignupDeadline(new Date(now + 1000));
-        assertEquals(Event.OPEN, _e.getStatus());
-        assertEquals(Event.STATUS[_e.getStatus()], _e.getStatusName());
+        assertEquals(Status.OPEN, _e.getStatus());
         _e.setSignupDeadline(new Date(now - 5));
-        assertEquals(Event.CLOSED, _e.getStatus());
-        assertEquals(Event.STATUS[_e.getStatus()], _e.getStatusName());
+        assertEquals(Status.CLOSED, _e.getStatus());
         _e.setStartTime(new Date(now - 4));
         _e.setEndTime(new Date(now + 1000));
-        assertEquals(Event.ACTIVE, _e.getStatus());
-        assertEquals(Event.STATUS[_e.getStatus()], _e.getStatusName());
+        assertEquals(Status.ACTIVE, _e.getStatus());
         _e.setEndTime(new Date(now - 3));
-        assertEquals(Event.COMPLETE, _e.getStatus());
-        assertEquals(Event.STATUS[_e.getStatus()], _e.getStatusName());
+        assertEquals(Status.COMPLETE, _e.getStatus());
     }
     
     public void testValidation() {

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Online User Map</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -30,7 +30,7 @@
 <tr class="title">
  <td class="caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
 <c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
- <td width="15%" class="mid"><el:cmd url="users">VIEW LIST</el:cmd></td>
+ <td style="width:15%" class="mid"><el:cmd url="users">VIEW LIST</el:cmd></td>
 </tr>
 <tr>
  <td colspan="2"><map:div ID="googleMap" x="100%" y="520" /></td>
@@ -57,4 +57,4 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 addMarkers(map, 'positions');
 </script>
 </body>
-</map:xhtml>
+</html>

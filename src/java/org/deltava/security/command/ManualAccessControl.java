@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * An Access Controller for Document Library entries.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -36,6 +36,7 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 	 * @param e the entry
 	 * @throws SecurityException if e is not a manual
 	 */
+	@Override
 	public final void setEntry(LibraryEntry e) {
 		if ((e != null) && (!(e instanceof Manual)))
 			throw new SecurityException("Invalid object - " + e.getClass().getSimpleName());
@@ -46,6 +47,7 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 	/**
 	 * Calculates access rights.
 	 */
+	@Override
 	public void validate() {
 		super.validate();
 		_canCreate |= _ctx.isUserInRole("AcademyAdmin");
@@ -67,7 +69,7 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 		if (!CollectionUtils.isEmpty(_courses)) {
 			for (Iterator<Course> i = _courses.iterator(); i.hasNext();) {
 				Course c = i.next();
-				if (c.getStatus() != Course.ABANDONED) {
+				if (c.getStatus() != Status.ABANDONED) {
 					if (m.getCertifications().contains(c.getCode()))
 						return;
 				}

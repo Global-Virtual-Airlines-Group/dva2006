@@ -3,16 +3,16 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td width="5%">#</td>
- <td width="19%">ENTRY</td>
- <td width="7%">HOURS</td>
- <td width="6%">LEGS</td>
- <td width="9%">ACARS</td>
- <td width="9%">VATSIM</td>
- <td width="8%">IVAO</td>
- <td width="9%">HISTORIC</td>
- <td width="9%">DISPATCH</td>
- <td width="7%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
+ <td style="width:5%">#</td>
+ <td style="width:19%">ENTRY</td>
+ <td style="width:7%">HOURS</td>
+ <td style="width:6%">LEGS</td>
+ <td style="width:9%">ACARS</td>
+ <td style="width:9%">VATSIM</td>
+ <td style="width:8%">IVAO</td>
+ <td style="width:9%">HISTORIC</td>
+ <td style="width:9%">DISPATCH</td>
+ <td style="width:7%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
  <td>AVERAGE</td>
 </tr>
 

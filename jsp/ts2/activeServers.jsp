@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
-<title><content:airline /> TeamSpeak Voice Servers</title>
-<content:css name="main" browserSpecific="true" />
+<title><content:airline /> TeamSpeak 2 Voice Servers</title>
+<content:css name="main" />
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
@@ -24,7 +24,7 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <content:airline /> uses TeamSpeak 2 for our private voice infrastructure. Teamspeak is a high-fidelity 
-<span class="ita">freeware</span> voice client that runs on 32-bit Windows, Apple Macintosh and Linux systems, and 
+<span class="ita">freeware</span> voice client that runs on 32-bit Windows, Macintosh and Linux systems, and 
 <content:airline /> operates several TeamSpeak 2 servers for the use of our members.<br />
 <br />
 <el:table className="view">
@@ -34,10 +34,10 @@
 
 <!-- Table Header Row -->
 <tr class="title caps">
- <td width="30%">SERVER NAME</td>
- <td width="12%">USER ID</td>
- <td width="8%">MAX USERS</td>
- <td width="20%">ATTRIBUTES</td>
+ <td style="width:30%">SERVER NAME</td>
+ <td style="width:12%">USER ID</td>
+ <td style="width:8%">MAX USERS</td>
+ <td style="width:20%">ATTRIBUTES</td>
  <td>DESCRIPTION</td>
 </tr>
 
@@ -74,8 +74,8 @@
 </c:if>
 </el:table>
 <br />
-<div class="mid"><el:link url="http://www.goteamspeak.com/index.php?page=downloads">
-<el:img src="library/teamspeak.png" border="0" caption="Download TeamSpeak 2" x="132" y="46" /></el:link></div>
+<div class="mid"><el:link url="http://www.teamspeak.com/?page=downloads&archive=1">
+<el:img src="library/teamspeak.png" className="noborder" caption="Download TeamSpeak 2" x="132" y="46" /></el:link></div>
 <br />
 <content:copyright />
 </content:region>

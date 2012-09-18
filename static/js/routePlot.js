@@ -153,10 +153,18 @@ xmlreq.onreadystatechange = function() {
 		var wx = wxs[i];
 
 		// Figure out which row to put it in
+		var isTAF = (wx.getAttribute('type') == 'taf');
 		var isDst = (wx.getAttribute('dst') == 'true');
-		displayObject(document.getElementById(isDst ? 'wxAr' : 'wxDr'), true);
-		var metarSpan = document.getElementById(isDst ? 'wxAmetar' : 'wxDmetar');
-		metarSpan.innerHTML = wx.firstChild.data;
+		if (!isTAF) {
+			displayObject(document.getElementById(isDst ? 'wxAr' : 'wxDr'), true);
+			var metarSpan = document.getElementById(isDst ? 'wxAmetar' : 'wxDmetar');
+			metarSpan.innerHTML = wx.firstChild.data;
+		} else {
+			displayObject(document.getElementById(isDst ? 'wxAr' : 'wxDr'), true);
+			var tafSpan = document.getElementById('wxAtaf');
+			displayObject(tafSpan, true);
+			tafSpan.innerHTML = wx.firstChild.data;
+		}
 	}
 
 	return true;

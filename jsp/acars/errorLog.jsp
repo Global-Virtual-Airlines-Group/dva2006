@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Client Error Logs</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -60,11 +60,11 @@ return true;
 
 <!-- View Legend Bar -->
 <tr class="title caps">
- <td width="5%">#</td>
- <td width="14%">DATE/TIME</td>
- <td width="14%">PILOT NAME</td>
- <td width="6%">BUILD</td>
- <td width="5%">FS</td>
+ <td style="width:5%">#</td>
+ <td style="width:14%">DATE/TIME</td>
+ <td style="width:14%">PILOT NAME</td>
+ <td style="width:6%">BUILD</td>
+ <td style="width:5%">FS</td>
  <td class="left">ERROR MESSAGE</td>
 </tr>
 

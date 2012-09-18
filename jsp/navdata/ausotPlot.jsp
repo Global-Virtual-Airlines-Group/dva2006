@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Australian Track Plotter</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -191,14 +191,13 @@ var mapOpts = {center:new google.maps.LatLng(-26.0, 133.0), zoom:4, minZoom:3, s
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
+google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Add clouds
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl('Clouds', new google.maps.weather.CloudLayer()));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl());
-
-map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
-google.maps.event.addListener(map, 'click', function() { map.infoWindow.close(); });
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Create the tracks/waypoints
 var tracks = [];
@@ -209,4 +208,4 @@ resetTracks();
 google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
 </body>
-</map:xhtml>
+</html>

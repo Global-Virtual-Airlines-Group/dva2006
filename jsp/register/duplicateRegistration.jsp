@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title>Duplicate Registration Detected</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
@@ -49,16 +49,16 @@ in <content:airline />!</td>
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" /></td>
+ <td class="data"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${param.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="48" max="64" className="req" value="${param.email}" /></td>
+ <td class="data"><el:addr name="email" required="true" idx="*" size="48" max="64" value="${param.email}" /></td>
 </tr>
 <tr>
  <td class="label top">Other Information</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="90%" className="req" height="4" resize="true"></el:textbox></td>
+ <td class="data"><el:textbox name="msgText" required="true" spellcheck="true" idx="*" width="90%" height="4" resize="true"></el:textbox></td>
 </tr>
 </el:table>
 

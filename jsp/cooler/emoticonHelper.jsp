@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <content:sysdata var="forumName" name="airline.forum" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ${forumName} Emoticons</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <script type="text/javascript">
@@ -52,7 +52,7 @@ return true;
 <c:forEach var="iconName" items="${iconNames}">
 <c:set var="iconCode" value="${iconCodes[iconName]}" scope="page" />
 <tr class="mid">
- <td><a href="javascript:addEmoticon('${iconName}')"><el:img border="0" src="cooler/emoticons/${iconName}.gif" caption="${iconName}" /></a></td>
+ <td><a href="javascript:addEmoticon('${iconName}')"><el:img className="noborder" src="cooler/emoticons/${iconName}.gif" caption="${iconName}" /></a></td>
  <td class="bld">:${iconName}:</td>
  <td class="sec bld">${empty iconCode ? '&nbsp;' : iconCode}</td>
 </tr>

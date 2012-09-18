@@ -224,12 +224,11 @@
 	</jdbc>
 	
 	<html>
+		<v5 type="Boolean">false</v5>
 		<table>
-			<spacing type="Integer">3</spacing>
-			<padding type="Integer">3</padding>
 			<viewSize type="Integer">60</viewSize>
 		</table>
-		
+
 		<list name="schemes" attr="css">
 			<css>legacy</css>
 			<css>Delta 2007</css>
@@ -259,6 +258,19 @@
 	<weather>
 		<tileHost>g%.imwx.com</tileHost>
 		<multiHost type="Boolean">true</multiHost>
+
+		<!-- Radar download bounds -->
+		<radar>
+			<zoom type="Integer">8</zoom>
+			<nw>
+				<lat type="Double">48.65</lat>
+				<lng type="Double">-127.3</lng>
+			</nw>
+			<se>
+				<lat type="Double">21.86</lat>
+				<lng type="Double">-63.4</lng>
+			</se>
+		</radar>
 		
 		<!-- Download locations -->
 		<url>
@@ -545,7 +557,6 @@
 	<!-- PICS content ratings -->
 	<content>
 		<safesurf>SS~~000 3</safesurf>
-		<icra>cz 1 lz 1 nz 1 oz 1 vz 1</icra>
 	</content>
 	
 	<issue_track>
@@ -632,7 +643,7 @@
 
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
-			<minDays type="Integer">45</minDays>
+			<minDays type="Integer">5</minDays>
 			<maxHeld type="Integer">3</maxHeld>
 			<pad_hours type="Double">0.5</pad_hours>
 			<assign_purge type="Integer">14</assign_purge>

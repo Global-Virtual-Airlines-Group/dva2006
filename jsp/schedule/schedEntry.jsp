@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Schedule - ${empty entry ? 'New Entry' : entry.flightCode}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -117,12 +117,12 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="[ AIRLINE ]" /></td>
+ <td class="data"><el:combo name="airline" idx="*" required="true" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="[ AIRLINE ]" /></td>
 </tr>
 <tr>
  <td class="label top">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" value="${entry.flightNumber}" />
- <el:text name="flightLeg" idx="*" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
+ <td class="data"><el:text name="flightNumber" idx="*" required="true" size="3" max="4" value="${entry.flightNumber}" />
+ <el:text name="flightLeg" idx="*" required="true" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
 <c:if test="${empty entry}">
 <hr />
 <span class="small">You can search for an available flight number between 
@@ -133,11 +133,11 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="[ EQUIPMENT ]" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" required="true" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="[ EQUIPMENT ]" /></td>
 </tr>
 <tr>
  <td class="label">Departing From</td>
- <td class="data"><el:combo name="airportD" size="1" options="${airports}" value="${entry.airportD}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportD" size="1" options="${airports}" required="true" value="${entry.airportD}" onChange="void changeAirport(this)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${entry.airportD.ICAO}" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
  at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
@@ -149,7 +149,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </content:hasmsg>
 <tr>
  <td class="label">Arriving At</td>
- <td class="data"><el:combo name="airportA" size="1" options="${airports}" value="${entry.airportA}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportA" size="1" options="${airports}" required="true" value="${entry.airportA}" onChange="void changeAirport(this)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${entry.airportA.ICAO}" onBlur="void setAirport(document.forms[0].airportA, this.value)" />
  at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>

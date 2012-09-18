@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -9,11 +9,16 @@ import org.deltava.beans.event.*;
 /**
  * A JSP Function Library to store Online Event-related functions.
  * @author Luke
- * @version 2.3
+ * @version 5.0
  * @since 1.0
  */
 
 public class OnlineEventFunctions {
+	
+	// static class
+	private OnlineEventFunctions() {
+		super();
+	}
 
 	/**
 	 * Returns whether an Online Event is in progress.
@@ -21,7 +26,7 @@ public class OnlineEventFunctions {
 	 * @return TRUE if the Event is active, otherwise FALSE
 	 */
 	public static boolean isOpen(Event e) {
-		return (e.getStatus() == Event.ACTIVE);
+		return (e.getStatus() == Status.ACTIVE);
 	}
 
 	/**

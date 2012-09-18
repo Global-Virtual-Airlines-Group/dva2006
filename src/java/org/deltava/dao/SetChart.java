@@ -11,7 +11,7 @@ import org.deltava.crypt.MessageDigester;
 /**
  * A Data Access Object to write Approach Charts.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -77,10 +77,11 @@ public class SetChart extends DAO {
 			// Write the URL
 			if (c.getIsExternal()) {
 				ExternalChart ec = (ExternalChart) c;
-				prepareStatementWithoutLimits("REPLACE INTO common.CHARTURLS (ID, SOURCE, URL) VALUES (?, ?, ?)");
+				prepareStatementWithoutLimits("REPLACE INTO common.CHARTURLS (ID, SOURCE, URL, EXTERNAL_ID) VALUES (?, ?, ?, ?)");
 				_ps.setInt(1, ec.getID());
 				_ps.setString(2, ec.getSource());
 				_ps.setString(3, ec.getURL());
+				_ps.setString(4, ec.getExternalID());
 				executeUpdate(1);
 			}
 			

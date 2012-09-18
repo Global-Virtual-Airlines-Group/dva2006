@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -30,6 +30,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Create the messaging context
@@ -49,7 +50,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			// Check for an existing check ride
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(txreq.getLatestCheckRideID());
-			if ((cr != null) && (cr.getStatus() == Test.NEW))
+			if ((cr != null) && (cr.getStatus() == TestStatus.NEW))
 				throw securityException("Check Ride " + txreq.getLatestCheckRideID() + " already exists");
 
 			// Check our access level
@@ -103,9 +104,9 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			cr.setDate(new java.util.Date());
 			cr.setAircraftType(ctx.getParameter("crType"));
 			cr.setEquipmentType(txreq.getEquipmentType());
-			cr.setPilotID(ctx.getID());
+			cr.setAuthorID(ctx.getID());
 			cr.setScorerID(ctx.getUser().getID());
-			cr.setStatus(Test.NEW);
+			cr.setStatus(TestStatus.NEW);
 			cr.setStage(eq.getStage());
 			cr.setComments(comments);
 

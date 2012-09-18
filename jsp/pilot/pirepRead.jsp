@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page buffer="32kb" autoFlush="true" %> 
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -8,10 +8,10 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:sysdata var="airlineURL" name="airline.url" />
 <meta property="og:title" content="<content:airline /> Flight Report - ${pirep.flightCode}" />
@@ -111,7 +111,7 @@ return true;
  <td class="label">VATSIM ID</td>
  <td class="data"><span class="bld">${vatsimID}</span><c:if test="${empty onlineTrack}"> - View flight log at 
  <el:link url="http://www.vataware.com/pilot.cfm?cid=${fn:networkID(pilot,'VATSIM')}" external="true">
-<el:img src="vataware.png" border="0" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
+<el:img src="vataware.png" className="noborder" x="50" y="16" caption="View VATAWARE Flight Log" /></el:link></c:if></td>
 </tr>
 </c:if>
 </c:if>
@@ -119,7 +119,8 @@ return true;
 <tr>
  <td class="label">Status</td>
  <td class="data bld sec">${statusMsg}<c:if test="${!empty pirep.disposedOn}"> on <fmt:date date="${pirep.disposedOn}" t="HH:MM" /></c:if> 
-<c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
+<c:if test="${fn:AssignID(pirep) > 0}"> <span class="ter bld">FLIGHT ASSIGNMENT</span></c:if>
+<c:if test="${fn:isDraft(pirep) && (empty pirep.route)}"> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd></c:if></td>
 </tr>
 <c:if test="${!empty pirep.submittedOn}">
 <tr>
@@ -428,4 +429,4 @@ google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
 </c:if>
 </body>
-</map:xhtml>
+</html>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -8,8 +8,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 import org.deltava.beans.system.*;
-import org.deltava.beans.testing.CheckRide;
-import org.deltava.beans.testing.Test;
+import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Scheduled Task to disable Users who have not logged in within a period of time.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -66,8 +65,8 @@ public class InactivityUpdateTask extends Task {
 			SetInactivity iwdao = new SetInactivity(con);
 			
 			// Load pending flight academy users
-			Collection<Course> pC = cdao.getByStatus(Course.PENDING, null, null);
-			pC.addAll(cdao.getByStatus(Course.STARTED, null, null));
+			Collection<Course> pC = cdao.getByStatus(Status.PENDING, null, null);
+			pC.addAll(cdao.getByStatus(Status.STARTED, null, null));
 			Map<Integer, Course> courses = CollectionUtils.createMap(pC, "pilotID");
 
 			// Get the Message templates
@@ -148,12 +147,12 @@ public class InactivityUpdateTask extends Task {
 						// Delete a check ride if there is one
 						List<CheckRide> rides = exdao.getAcademyCheckRides(c.getID());
 						for (CheckRide cr : rides) {
-							if (cr.getStatus() == Test.NEW)
+							if (cr.getStatus() == TestStatus.NEW)
 								exwdao.delete(cr);
 						}
 						
 						// Mark as abandoned and save comment
-						c.setStatus(Course.ABANDONED);
+						c.setStatus(Status.ABANDONED);
 						cwdao.comment(cc);
 						cwdao.write(c);
 					}
@@ -235,7 +234,6 @@ public class InactivityUpdateTask extends Task {
 			ctx.release();
 		}
 
-		// Log completion
 		log.info("Completed");
 	}
 }

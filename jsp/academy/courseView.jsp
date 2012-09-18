@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title>Flight Academy Course - ${course.name}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -77,14 +77,14 @@ return true;
 </tr>
 <tr>
  <td class="label">Course Status</td>
- <td colspan="6" class="data"><span class="sec bld">${course.statusName}</span>, started on 
+ <td colspan="6" class="data"><span class="sec bld">${course.status.name}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
 <c:if test="${!empty course.checkRide}">
 <c:set var="cr" value="${course.checkRide}" scope="page" />
 <tr>
  <td class="label">Check Ride</td>
- <td colspan="6" class="data"><span class="pri bld caps">${cr.statusName}</span><c:if test="${cr.flightID > 0}"> - <el:cmd url="crview" link="${cr}">VIEW FLIGHT REPORT</el:cmd></c:if></td>
+ <td colspan="6" class="data"><span class="pri bld caps">${cr.status.name}</span><c:if test="${cr.flightID > 0}"> - <el:cmd url="crview" link="${cr}">VIEW FLIGHT REPORT</el:cmd></c:if></td>
 </tr>
 </c:if>
 <c:choose>
@@ -202,7 +202,7 @@ Requires the <span class="pri bld">${progress.examName}</span> examination<c:if 
  <td>DATE</td>
  <td colspan="2">COMMENTS</td>
  <td colspan="2">INSTRUCTOR</td>
- <td width="10%">EQUIPMENT</td>
+ <td style="width:10%">EQUIPMENT</td>
  <td>LENGTH</td>
 </tr>
 <c:forEach var="flight" items="${flights}">

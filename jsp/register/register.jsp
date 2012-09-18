@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Pilot Registration</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -115,6 +115,7 @@ return true;
 <content:sysdata var="schemes" name="html.schemes" />
 <content:sysdata var="airlineDomain" name="airline.domain" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
+<content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -136,15 +137,15 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 <!-- Table Header Bar -->
 <tr class="title caps mid">
  <td>&nbsp;</td>
- <td width="23%">TITLE</td>
- <td width="12%">SIZE</td>
+ <td style="width:23%">TITLE</td>
+ <td style="width:12%">SIZE</td>
  <td class="left">DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="doc" items="${manuals}">
 <view:row entry="${doc}">
- <td class="mid"><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
+ <td class="mid"><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" className="noborder" caption="Download PDF manual" x="32" y="32" /></el:link></td>
  <td class="pri bld mid"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
  <td class="sec bld mid"><fmt:int value="${doc.size}" /> bytes</td>
  <td class="small"><fmt:text value="${doc.description}" /></td>
@@ -156,8 +157,8 @@ This is also a good time to review <content:airline />'s <el:cmd url="privacy" c
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data" colspan="${cspan}"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${param.firstName}" onBlur="void checkUnique()" />
-&nbsp;<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" onBlur="void checkUnique()" /></td>
+ <td class="data" colspan="${cspan}"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${param.firstName}" onBlur="void checkUnique()" />
+&nbsp;<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${param.lastName}" onBlur="void checkUnique()" /></td>
 </tr>
 <tr class="dupeFound" style="display:none;">
  <td colspan="${cspan + 1}" class="mid"><span class="error bld">Another person with the same name has already registered at <content:airline />. If you have
@@ -200,7 +201,7 @@ you can simply reactivate your old user account. This is a much faster and simpl
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data" colspan="${cspan}"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" onBlur="void checkUnique()" /> 
+ <td class="data" colspan="${cspan}"><el:addr name="email" required="true" idx="*" size="48" max="64" value="${param.email}" onBlur="void checkUnique()" /> 
 <span class="small ita">Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</span></td>
 </tr>
 <tr>

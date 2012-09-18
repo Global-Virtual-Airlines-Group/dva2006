@@ -229,7 +229,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 
 			// Get the applicant home airport
 			ctx.setAttribute("homeAirport", SystemData.getAirport(a.getHomeAirport()), REQUEST);
-			ctx.setAttribute("statusName", Applicant.STATUS[a.getStatus()], REQUEST);
 
 			// Save the applicant and the access controller
 			ctx.setAttribute("applicant", a, REQUEST);

@@ -1,23 +1,31 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Airport Weather Finder</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" libraries="weather" />
+<content:js name="googleMapsWX" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}">
-<content:js name="acarsMapWX" />
-<map:wxList layers="radar,sat,temp,windspeed" /></c:if>
+<script type="text/javascript">
+var gsLoader;
+gsLoader = new golgotha.maps.GinsuLoader(2);
+gsLoader.setData('radar', 0.45, 'wxRadar');
+gsLoader.setData('eurorad', 0.45, 'wxRadar');
+gsLoader.setData('temp', 0.275, 'wxTemp');
+gsLoader.setData('windspeed', 0.325, 'wxTemp');
+</script>
+<map:wxList layers="radar,eurorad,temp,windspeed" function="gsLoader.load" max="2" /></c:if>
 <script type="text/javascript">
 function filterTypes(combo)
 {
@@ -58,7 +66,8 @@ return true;
  <map:legend color="purple" legend="CATIIIb" /> <map:legend color="red" legend="CATIIIc" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel"></div>
+<div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
 </el:form>
@@ -68,8 +77,8 @@ return true;
 </content:page>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:4, minZoom:2, maxZoom:9, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, zoom:4, minZoom:2, maxZoom:9, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -77,6 +86,9 @@ var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function () { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
 
 // Add airports -- don't use the standard TAG so we can add some info to the tags
 var wxAirports = [];
@@ -86,29 +98,18 @@ mrk.ILS = ${ap.ILS.ordinal()};
 wxAirports.push(mrk);
 </c:forEach>
 addMarkers(map, 'wxAirports');
-
 <c:if test="${!empty tileHost}">
-// Load the tile overlays
-getTileOverlay('radar', 0.45);
-getTileOverlay('eurorad', 0.45);
-getTileOverlay('sat', 0.35);
-getTileOverlay('temp', 0.25);
-getTileOverlay('windspeed', 0.35);
-
 // Build the layer controls
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Wind Speed', 'windspeed'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
-
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById('copyright');
-cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
+</c:if>
+// Build the standard weather layers 
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
 // Update text color
-google.maps.event.trigger(map, 'maptypeid_changed');</c:if>
+google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
 </body>
-</map:xhtml>
+</html>

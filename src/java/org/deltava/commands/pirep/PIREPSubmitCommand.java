@@ -7,7 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.academy.Course;
+import org.deltava.beans.academy.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.schedule.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Fligt Report submissions.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -123,8 +123,10 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				Collection<Course> courses = crsdao.getByPilot(p.getID());
 				for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
 					Course c = i.next();
-					if (c.getStatus() == Course.STARTED)
+					if (c.getStatus() == Status.STARTED) {
 						pirep.setAttribute(FlightReport.ATTR_ACADEMY, true);
+						break;
+					}
 				}
 			}
 			

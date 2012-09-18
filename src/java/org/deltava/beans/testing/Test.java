@@ -9,36 +9,18 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * An class to implement commonalities between user examinations and flight videos.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public abstract class Test extends DatabaseBean implements ViewEntry {
+public abstract class Test extends DatabaseBean implements AuthoredBean, ViewEntry {
 
-    public static final int EXAM = 0;
-    public static final int VIDEO = 1;
-    public static final int CHECKRIDE = 2;
-    
-    /**
-     * Examination type names.
-     */
-    public static final String[] EXAMTYPES = {"Examination", "Flight Video", "Check Ride"};
-    
-    public static final int NEW = 0;
-    public static final int SUBMITTED = 1;
-    public static final int SCORED = 2;
-    
-    /**
-     * Examination status names.
-     */
-    public static final String[] EXAMSTATUS = {"New", "Submitted", "OK"};
-    
     private final String _name;
-    private int _status;
+    private TestStatus _status;
     private int _pilotID;
     private int _scorerID;
     
-    private Date _createdOn;
+    private Date _createdOn = new Date();
     private Date _submittedOn;
     private Date _scoredOn;
     
@@ -55,13 +37,6 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
     private String _comments;
     
     /**
-     * Returns the type of examination.
-     * @return the examination type
-     * @see Test#EXAMTYPES
-     */
-    public abstract int getType();
-
-    /**
      * Create a new examination/video with a particular name.
      * @param name the name of the exam/video
      * @throws NullPointerException if name is null
@@ -70,7 +45,6 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
     protected Test(String name) {
         super();
         _name = name.trim();
-        _createdOn = new Date();
     }
     
     /**
@@ -104,28 +78,22 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
      * @return the database ID
      * @see Test#setPilotID(int)
      */
+    @Deprecated
     public int getPilotID() {
         return _pilotID;
     }
     
-    /**
-     * Returns the status of this examination.
-     * @return the status code
-     * @see Test#setStatus(int)
-     * @see Test#setStatus(String)
-     * @see Test#getStatusName()
-     */
-    public int getStatus() {
-        return _status;
+    public int getAuthorID() {
+    	return _pilotID;
     }
     
     /**
-     * Returns the status description for this examination.
-     * @return the status description
-     * @see Test#getStatus()
+     * Returns the status of this examination.
+     * @return the Status
+     * @see Test#setStatus(TestStatus)
      */
-    public String getStatusName() {
-    	return EXAMSTATUS[_status]; 
+    public TestStatus getStatus() {
+        return _status;
     }
     
     /**
@@ -250,7 +218,13 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
      * @see Test#getPilotID()
      * @see DatabaseBean#validateID(int, int)
      */
+    @Deprecated
     public void setPilotID(int id) {
+        validateID(_pilotID, id);
+        _pilotID = id;
+    }
+    
+    public void setAuthorID(int id) {
         validateID(_pilotID, id);
         _pilotID = id;
     }
@@ -291,37 +265,14 @@ public abstract class Test extends DatabaseBean implements ViewEntry {
     }
     
     /**
-     * Sets the status for this Examination.
-     * @param status the status code
-     * @throws IllegalArgumentException if status is negative or invalid
-     * @see Test#setStatus(String)
+     * Sets the status for this Test.
+     * @param s the Status
      * @see Test#getStatus()
      */
-    public void setStatus(int status) {
-        if ((status < 0) || (status > Test.EXAMSTATUS.length))
-            throw new IllegalArgumentException("Invalid Status code - " + status);
-        
-        _status = status;
+    public void setStatus(TestStatus s) {
+        _status = s;
     }
 
-    /**
-     * Sets the status for this Examination.
-     * @param statusName the status name
-     * @throws IllegalArgumentException if status name is invalid
-     * @see Test#setStatus(int)
-     * @see Test#getStatus()
-     */
-    public void setStatus(String statusName) {
-        for (int x = 0; x < Test.EXAMSTATUS.length; x++) {
-            if (Test.EXAMSTATUS[x].equalsIgnoreCase(statusName)) {
-                _status = x;
-                return;
-            }
-        }
-        
-        throw new IllegalArgumentException("Invalid Status name - " + statusName);
-    }
-    
     /**
      * Sets the stage level for this Examination.
      * @param stage the stage

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store information about written examinations.
  * @author Luke
- * @version 2.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -72,9 +72,7 @@ public class Examination extends Test {
 		if (_questions.isEmpty())
 			return _empty;
 
-		// Check the question answers
-		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext();) {
-			Question q = i.next();
+		for (Question q : _questions.values()) {
 			if (!StringUtils.isEmpty(q.getAnswer()))
 				return false;
 		}
@@ -88,8 +86,7 @@ public class Examination extends Test {
 	 * @see RoutePlot
 	 */
 	public boolean getRoutePlot() {
-		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
-			Question q = i.next();
+		for (Question q : _questions.values()) {
 			if (q instanceof RoutePlot)
 				return true;
 		}
@@ -115,15 +112,6 @@ public class Examination extends Test {
 		return _autoScored;
 	}
 
-	/**
-	 * Returns the test type.
-	 * @return always Text.EXAM
-	 * @see Test#getType()
-	 */
-	public int getType() {
-		return Test.EXAM;
-	}
-	
 	/**
 	 * Returns if the Examination has any multiple-choice questions.
 	 * @return TRUE if there is at least one multiple-choice question, otherwise FALSE
@@ -216,9 +204,9 @@ public class Examination extends Test {
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
-		if (getEmpty() && (getStatus() == Test.SCORED))
+		if (getEmpty() && (getStatus() == TestStatus.SCORED))
 			return "warn";
 
-		return CLASS_NAMES[getStatus()];
+		return CLASS_NAMES[getStatus().ordinal()];
 	}
 }

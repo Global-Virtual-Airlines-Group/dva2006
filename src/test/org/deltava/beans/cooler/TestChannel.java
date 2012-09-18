@@ -6,6 +6,7 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
+import org.deltava.beans.cooler.Channel.InfoType;
 
 public class TestChannel extends AbstractBeanTestCase {
     
@@ -58,19 +59,19 @@ public class TestChannel extends AbstractBeanTestCase {
         assertEquals(1, _c.getWriteRoles().size());
         assertTrue(_c.getWriteRoles().contains("*"));
         
-        _c.addRole(Channel.INFOTYPE_RROLE, "Role1");
+        _c.addRole(InfoType.READ, "Role1");
         assertEquals(1, _c.getReadRoles().size());
         assertTrue(_c.getReadRoles().contains("Role1"));
-        _c.addRole(Channel.INFOTYPE_RROLE, "Role2");
+        _c.addRole(InfoType.READ, "Role2");
         assertEquals(2, _c.getReadRoles().size());
         assertTrue(_c.getReadRoles().contains("Role2"));
-        _c.addRole(Channel.INFOTYPE_RROLE, "Role1");
+        _c.addRole(InfoType.READ, "Role1");
         assertEquals(1, _c.getReadRoles().size());
         
         Set<String> rNames = new HashSet<String>();
         rNames.add("Role3");
         rNames.add("Role4");
-        _c.setRoles(Channel.INFOTYPE_WROLE, rNames);
+        _c.setRoles(InfoType.WRITE, rNames);
         
         assertEquals(2, _c.getWriteRoles().size());
         assertTrue(_c.getWriteRoles().contains("Role3"));

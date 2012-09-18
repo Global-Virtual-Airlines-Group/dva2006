@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update TeamSpeak 2 virtual server data.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -26,14 +26,15 @@ public class ServerCommand extends AbstractFormCommand {
 	
 	private static final Logger log = Logger.getLogger(ServerCommand.class);
 	
-	private static final Collection<String> HR_ROLES = Arrays.asList(new String[] {"HR"});
-	private static final Collection<String> PILOT_ROLES = Arrays.asList(new String[] {"Pilot"});
+	private static final Collection<String> HR_ROLES = Arrays.asList("HR");
+	private static final Collection<String> PILOT_ROLES = Arrays.asList("Pilot");
 
 	/**
 	 * Callback method called when saving the profile.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 		
 		// Check if we're creating a new server
@@ -87,10 +88,10 @@ public class ServerCommand extends AbstractFormCommand {
 			srv.setPort(Integer.parseInt(ctx.getParameter("port")));
 			srv.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			srv.setACARSOnly(Boolean.valueOf(ctx.getParameter("isACARS")).booleanValue());
-			srv.setRoles(Server.ACCESS, CollectionUtils.loadList(ctx.getRequest().getParameterValues("accessRoles"), PILOT_ROLES));
-			srv.setRoles(Server.VOICE, CollectionUtils.loadList(ctx.getRequest().getParameterValues("voxRoles"), PILOT_ROLES));
-			srv.setRoles(Server.ADMIN, CollectionUtils.loadList(ctx.getRequest().getParameterValues("adminRoles"), HR_ROLES));
-			srv.setRoles(Server.OPERATOR, CollectionUtils.loadList(ctx.getRequest().getParameterValues("opRoles"), HR_ROLES));
+			srv.setRoles(ServerAccess.ACCESS, CollectionUtils.loadList(ctx.getRequest().getParameterValues("accessRoles"), PILOT_ROLES));
+			srv.setRoles(ServerAccess.VOICE, CollectionUtils.loadList(ctx.getRequest().getParameterValues("voxRoles"), PILOT_ROLES));
+			srv.setRoles(ServerAccess.ADMIN, CollectionUtils.loadList(ctx.getRequest().getParameterValues("adminRoles"), HR_ROLES));
+			srv.setRoles(ServerAccess.OPERATOR, CollectionUtils.loadList(ctx.getRequest().getParameterValues("opRoles"), HR_ROLES));
 			
 			// Build messages collection
 			Collection<String> msgs = new ArrayList<String>();
@@ -103,7 +104,7 @@ public class ServerCommand extends AbstractFormCommand {
 			wdao.write(srv);
 			
 			// Get the access roles
-			Collection<String> accessRoles = srv.getRoles().get(Server.ACCESS);
+			Collection<String> accessRoles = srv.getRoles().get(ServerAccess.ACCESS);
 			
 			// Determine what users to remove from the server
 			Collection<Integer> removeIDs = new HashSet<Integer>();
@@ -134,9 +135,9 @@ public class ServerCommand extends AbstractFormCommand {
 					c.setPassword((usr == null) ? "dummy" : usr.getPassword());
 					c.addChannels(srv);
 					c.setServerID(srv.getID());
-					c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.VOICE)));
-					c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.OPERATOR)));
-					c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.ADMIN)));
+					c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.VOICE)));
+					c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.OPERATOR)));
+					c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(ServerAccess.ADMIN)));
 					addUsrs.add(c);
 				}
 			}
@@ -170,6 +171,7 @@ public class ServerCommand extends AbstractFormCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
 			// Get the server
@@ -204,9 +206,9 @@ public class ServerCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading the server profile. <i>NOT IMPLEMENTED</i>
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }

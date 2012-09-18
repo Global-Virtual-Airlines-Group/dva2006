@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,7 +27,7 @@ public class GetGallery extends DAO {
 	}
 
 	/**
-	 * Returns the metadata associated with a particular Gallery image in the current database. <i>No vote data is returned </i>.
+	 * Returns the metadata associated with a particular Gallery image in the current database.
 	 * @param id the Image id
 	 * @return an Image, or null if the id was not found
 	 * @throws DAOException if a JDBC error occurs
@@ -37,7 +37,7 @@ public class GetGallery extends DAO {
 	}
 	
 	/**
-	 * Returns the metadata associated with a particular Gallery image. <i>No vote data is returned </i>.
+	 * Returns the metadata associated with a particular Gallery image.
 	 * @param id the Image id
 	 * @param dbName the database name
 	 * @return an Image, or null if the id was not found
@@ -78,14 +78,14 @@ public class GetGallery extends DAO {
 				return null;
 
 			// Load gallery image votes
-			sqlBuf = new StringBuilder("SELECT * FROM ");
+			sqlBuf = new StringBuilder("SELECT PILOT_ID FROM ");
 			sqlBuf.append(dbName);
 			sqlBuf.append(".GALLERYSCORE WHERE (IMG_ID=?)");
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-				img.addVote(new Vote(rs.getInt(2), rs.getInt(3), rs.getInt(1)));	
+					img.addLike(rs.getInt(1));
 			}
 
 			_ps.close();
@@ -102,12 +102,10 @@ public class GetGallery extends DAO {
 	 */
 	public List<Image> getFleetGallery() throws DAOException {
 		try {
-			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, " +
-					"COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON " +
-					"(I.ID=V.IMG_ID) WHERE (I.FLEET=?) GROUP BY I.ID ORDER BY I.NAME");
+			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, "
+				+ "(SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I WHERE "
+				+"(I.FLEET=?) ORDER BY I.NAME");
 			_ps.setBoolean(1, true);
-
-			// Execute the query
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -123,8 +121,8 @@ public class GetGallery extends DAO {
 	public List<Image> getPictureGallery(java.util.Date dt) throws DAOException {
 		try {
 			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
-				+ "I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON "
-				+ "(I.ID=V.IMG_ID) WHERE (DATE(I.DATE)=DATE(?)) GROUP BY I.ID ORDER BY I.DATE");
+				+ "I.Y, I.SIZE, (SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM "
+				+ "GALLERY I WHERE (DATE(I.DATE)=DATE(?)) ORDER BY I.DATE");
 			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
@@ -143,14 +141,13 @@ public class GetGallery extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
-				+ "I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON "
-				+ "(I.ID=V.IMG_ID) ");
+			+ "I.Y, I.SIZE, (SELECT COUNT(PILOT_ID) FROM GALLERYSCORE WHERE (IMG_ID=I.ID)) AS LC FROM GALLERY I ");
 
 		// Append the month query if present
 		if (month != null)
 			sqlBuf.append("WHERE (MONTHNAME(I.DATE)=?) AND (YEAR(I.DATE)=?) ");
 
-		sqlBuf.append("GROUP BY I.ID ORDER BY ");
+		sqlBuf.append("ORDER BY ");
 		sqlBuf.append(orderBy);
 
 		try {
@@ -195,8 +192,8 @@ public class GetGallery extends DAO {
 	private List<Image> execute() throws SQLException {
 		List<Image> results = new ArrayList<Image>();
 		try (ResultSet rs = _ps.executeQuery()) {
-			boolean hasVotes = (rs.getMetaData().getColumnCount() > 11);
-			boolean hasThreadInfo = (rs.getMetaData().getColumnCount() > 12); 
+			boolean hasLikes = (rs.getMetaData().getColumnCount() > 10);
+			boolean hasThreadInfo = (rs.getMetaData().getColumnCount() > 11); 
 			while (rs.next()) {
 				Image img = new Image(rs.getString(1), rs.getString(2));
 				img.setID(rs.getInt(3));
@@ -207,13 +204,10 @@ public class GetGallery extends DAO {
 				img.setWidth(rs.getInt(8));
 				img.setHeight(rs.getInt(9));
 				img.setSize(rs.getInt(10));
-				if (hasVotes) {
-					img.setVoteCount(rs.getInt(11));
-					img.setScore(rs.getDouble(12));
-				}
-			
+				if (hasLikes)
+					img.setLikeCount(rs.getInt(11));
 				if (hasThreadInfo)
-					img.setThreadID(rs.getInt(13));
+					img.setThreadID(rs.getInt(12));
 
 				results.add(img);
 			}

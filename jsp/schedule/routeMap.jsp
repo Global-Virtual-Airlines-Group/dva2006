@@ -1,15 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Interactive Route Map</title>
-<content:sysdata var="imgPath" name="path.img" />
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -31,7 +30,7 @@
 <el:form action="routemap.do" method="post" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> INTERACTIVE ROUTE MAP <span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> INTERACTIVE ROUTE MAP <span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
@@ -70,4 +69,4 @@ var aps = [];
 updateAirports(document.forms[0].airlineCode);
 </script>
 </body>
-</map:xhtml>
+</html>

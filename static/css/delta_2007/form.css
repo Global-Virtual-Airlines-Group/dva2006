@@ -20,12 +20,17 @@ table.bar td {
 	background-color: #1a4876;
 	text-align: center;
 	vertical-align: middle;
+	padding: 3px 3px 3px 3px;
 }
 
 table.form tr {
 	font-family: verdana, tahoma, sans-serif;
 	vertical-align: middle;
 	background-color: #f8f8f8;
+}
+
+table.form td {
+	padding: 3px 3px 3px 3px;
 }
 
 table.form td.label {
@@ -74,7 +79,7 @@ input, textarea {
 	background: #f0f0f0;
 }
 
-input.radio, input.check {
+input.radio, input.check, input[type="checkbox"] {
 	border: none;
 	font-size: 8pt;
 }

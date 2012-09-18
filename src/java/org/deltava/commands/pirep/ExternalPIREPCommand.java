@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.0
  */
 
@@ -48,10 +48,10 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			// Load the pilot object
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			UserData ud = uddao.get(cr.getPilotID());
+			UserData ud = uddao.get(cr.getAuthorID());
 			Pilot p = pdao.get(ud);
 			if (p == null)
-				throw notFoundException("Unknown Pilot ID - " + cr.getPilotID());
+				throw notFoundException("Unknown Pilot ID - " + cr.getAuthorID());
 			
 			// Validate our access
 			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr, ud);

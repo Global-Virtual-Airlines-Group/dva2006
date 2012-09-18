@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 /**
  * A Web Site Command to delete Water Cooler message threads.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -23,7 +23,10 @@ public class ThreadDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		CommandResult result = ctx.getResult();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -45,8 +48,21 @@ public class ThreadDeleteCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanDelete())
 				throw securityException("Cannot delete Thread");
+			
+			// Save the thread in the request
+			ctx.setAttribute("thread", mt, REQUEST);
+			
+			// If we're not forcing a delete, redirect
+			boolean isOK = Boolean.valueOf("force".equals(ctx.getCmdParameter(OPERATION, null))).booleanValue();
+			if (!isOK) {
+				ctx.release();
+				
+				result.setURL("/jsp/cooler/threadDeleteConfirm.jsp");
+				result.setSuccess(true);
+				return;
+			}
 
-			// Start a JDBC transaction
+			// Start transaction
 			ctx.startTX();
 
 			// If there's an image, nuke the image
@@ -65,9 +81,6 @@ public class ThreadDeleteCommand extends AbstractCommand {
 			
 			// Commit the transaction
 			ctx.commitTX();
-			
-			// Save the thread in the request
-			ctx.setAttribute("thread", mt, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
@@ -79,7 +92,6 @@ public class ThreadDeleteCommand extends AbstractCommand {
 		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/cooler/threadUpdate.jsp");
 		result.setSuccess(true);
 	}

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Equipment Type Programs</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
@@ -27,13 +27,13 @@
 <view:table className="view" cmd="eqTypes">
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td width="10%">PROGRAM NAME</td>
- <td width="5%">STAGE</td>
- <td width="12%">CHIEF PILOT</td>
- <td width="23%">RANKS</td>
- <td width="6%">PILOTS</td>
+ <td style="width:10%">PROGRAM NAME</td>
+ <td style="width:5%">STAGE</td>
+ <td style="width:12%">CHIEF PILOT</td>
+ <td style="width:23%">RANKS</td>
+ <td style="width:6%">PILOTS</td>
 <c:if test="${isHR}">
- <td width="15%"><el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></td>
+ <td style="width:15%"><el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></td>
 </c:if>
  <td>RATINGS</td>
 </tr>

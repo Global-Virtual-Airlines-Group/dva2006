@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -31,6 +31,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Create the messaging context
@@ -55,7 +56,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			Collection<CheckRide> cRides = exdao.getCheckRides(p.getID());
 			for (Iterator<CheckRide> i = cRides.iterator(); i.hasNext() && !hasRide;) {
 				CheckRide cr = i.next();
-				if (cr.getStatus() != Test.SCORED) {
+				if (cr.getStatus() != TestStatus.SCORED) {
 					hasRide = true;
 					ctx.setAttribute("checkRide", cr, REQUEST);
 				}
@@ -155,9 +156,9 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			CheckRide cr = new CheckRide(acType + " Check Ride");
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setDate(new java.util.Date());
-			cr.setPilotID(ctx.getID());
+			cr.setAuthorID(ctx.getID());
 			cr.setScorerID(ctx.getUser().getID());
-			cr.setStatus(Test.NEW);
+			cr.setStatus(TestStatus.NEW);
 			cr.setStage(eqType.getStage());
 			cr.setAircraftType(acType);
 			cr.setEquipmentType(eqType.getName());

@@ -840,10 +840,6 @@ public class ImageInfo {
 	 */
 	public String getMimeType() {
 		if (format >= 0 && format < MIME_TYPE_STRINGS.length) {
-			if (format == FORMAT_JPEG && progressive)
-			{
-				return "image/pjpeg";
-			}
 			return MIME_TYPE_STRINGS[format];
 		} 
 			

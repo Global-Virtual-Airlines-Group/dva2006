@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -9,24 +9,17 @@ import org.deltava.beans.testing.CheckRide;
 /**
  * A bean to store Flight Academy Course information.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
 public class Course extends DatabaseBean implements ViewEntry {
 	
-	public static final int STARTED = 0;
-	public static final int ABANDONED = 1;
-	public static final int COMPLETE = 2;
-	public static final int PENDING = 3;
-	
-	public static final String[] STATUS_NAMES = {"In Progress", "Abandoned", "Complete", "Pending"};
-	
 	private String _certName;
 	private String _code;
 	private int _pilotID;
 	private int _instructorID;
-	private int _status;
+	private Status _status;
 	private int _stage;
 	
 	private Date _startDate;
@@ -92,10 +85,9 @@ public class Course extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the status of this Course.
 	 * @return the status code
-	 * @see Course#setStatus(int)
-	 * @see Course#getStatusName()
+	 * @see Course#setStatus(Status)
 	 */
-	public int getStatus() { 
+	public Status getStatus() { 
 		return _status;
 	}
 	
@@ -106,16 +98,6 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 */
 	public int getStage() {
 		return _stage;
-	}
-	
-	/**
-	 * Returns the status of this Course.
-	 * @return the status name
-	 * @see Course#getStatus()
-	 * @see Course#setStatus(int)
-	 */
-	public String getStatusName() {
-		return STATUS_NAMES[_status];
 	}
 	
 	/**
@@ -262,16 +244,11 @@ public class Course extends DatabaseBean implements ViewEntry {
 	
 	/**
 	 * Updates this Course's completion status.
-	 * @param code the status code
-	 * @throws IllegalArgumentException if code is negative or invalid
+	 * @param s the Status
 	 * @see Course#getStatus()
-	 * @see Course#getStatusName()
 	 */
-	public void setStatus(int code) {
-		if ((code < 0) || (code >= STATUS_NAMES.length))
-			throw new IllegalArgumentException("Invalid Status - " + code);
-		
-		_status = code;
+	public void setStatus(Status s) {
+		_status = s;
 	}
 	
 	/**
@@ -329,7 +306,7 @@ public class Course extends DatabaseBean implements ViewEntry {
 	 */
 	public String getRowClassName() {
 		final String[] CLASS_NAMES = {"opt1", "warn", null, "opt2"};
-		return CLASS_NAMES[_status];
+		return CLASS_NAMES[_status.ordinal()];
 	}
 
 	/**

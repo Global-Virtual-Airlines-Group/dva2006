@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Route History Map - ${pilot.name}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -53,7 +53,6 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 // Create the routes
 var routes = [];
 <c:forEach var="route" items="${routes}">
-// ${route}
 <c:set var="opacity" value="${(route.flights * 0.75 / maxFlights * 0.4) + 0.3}" scope="page" />
 <map:points var="rtPoints" items="${route.points}" />
 var route = new google.maps.Polyline({path:rtPoints, strokeColor:'#4080af', strokeWeight:1.25, strokeOpacity:${opacity}, geodesic:false, clickable:false, zIndex:golgotha.maps.z.POLYLINE});
@@ -62,7 +61,6 @@ route.dstA = '${route.airportA.ICAO}';
 route.setMap(map);
 routes.push(route);
 </c:forEach>
-
 // Add the airports
 <map:markers var="airports" items="${airports}" color="blue" marker="true" />
 addMarkers(map, 'airports');
@@ -73,4 +71,4 @@ airportH.setMap(map);
 </script>
 <content:googleAnalytics />
 </body>
-</map:xhtml>
+</html>

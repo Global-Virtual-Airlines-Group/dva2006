@@ -55,9 +55,13 @@ public class GetWUImagery extends DAO {
 			init(urlBuf.toString());
 			SuperTile st = new SuperTile(addr);
 			try (InputStream is = getIn()) {
-				st.setImage(ImageIO.read(is));
-				return st;
+				if (getResponseCode() == 200) {
+					st.setImage(ImageIO.read(is));
+					return st;
+				}
 			}
+			
+			return null;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}

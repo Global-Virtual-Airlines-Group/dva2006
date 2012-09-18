@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class containing Water Cooler channel data.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -18,12 +18,14 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     public static final Channel ALL = new AllChannel("All Discussions", "ALL", true);
     public static final Channel SHOTS = new AllChannel("Screen Shots", "SSHOTS", false);
     
-    public static final int INFOTYPE_AIRLINE = 0;
-    public static final int INFOTYPE_RROLE = 1;
-    public static final int INFOTYPE_WROLE = 2;
-    public static final int INFOTYPE_NROLE = 3;
+    /**
+     * Subdata enumeration.
+     */
+    public enum InfoType {
+    	AIRLINE, READ, WRITE, NOTIFY
+    }
     
-    private String _name;
+    private final String _name;
     private String _desc;
     private boolean _active = true;
     private boolean _allowNewPosts = true;
@@ -43,8 +45,8 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     	
     	private static final Collection<String> RROLES = Arrays.asList("*");
     	
-    	private String _myName;
-    	private boolean _topOfList;
+    	private final String _myName;
+    	private final boolean _topOfList;
     
     	AllChannel(String name, String alias, boolean isTopOfList) {
     		super(alias);
@@ -119,7 +121,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     /**
      * Returns the roles authorized to access this Channel.
      * @return a Collection of roles authorized to view this Channel
-     * @see Channel#addRole(int, String)
+     * @see Channel#addRole(InfoType, String)
      */
     public Collection<String> getReadRoles() {
         return _rRoles;
@@ -128,7 +130,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     /**
      * Returns the roles authorized to post in this Channel.
      * @return a Collection of roles authorized to view this Channel
-     * @see Channel#addRole(int, String)
+     * @see Channel#addRole(InfoType, String)
      */
     public Collection<String> getWriteRoles() {
         return _wRoles;
@@ -137,7 +139,7 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
     /**
      * Returns the roles notified when a new post is created in this Channel.
      * @return a Collection of roles
-     * @see Channel#addRole(int, String)
+     * @see Channel#addRole(InfoType, String)
      */
     public Collection<String> getNotifyRoles() {
     	return _nRoles;
@@ -255,22 +257,26 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * Add a security role to this Channel.
      * @param type the role type
      * @param roleName the name of the role to add to this Channel's access list
-     * @see Channel#setRoles(int, Collection)
+     * @see Channel#setRoles(InfoType, Collection)
      * @see Channel#getReadRoles()
      * @see Channel#getWriteRoles()
+     * @see Channel#getNotifyRoles()
      */
-    public void addRole(int type, String roleName) {
+    public void addRole(InfoType type, String roleName) {
     	switch (type) {
-    		case Channel.INFOTYPE_RROLE:
+    		case READ:
     			_rRoles.add(roleName);
     			break;
     			
-    		case Channel.INFOTYPE_WROLE:
+    		case WRITE:
     			_wRoles.add(roleName);
     			break;
     			
-    		case Channel.INFOTYPE_NROLE:
+    		case NOTIFY:
     			_nRoles.add(roleName);
+    			break;
+    			
+    		default:
     			break;
     	}
     }
@@ -281,28 +287,30 @@ public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, View
      * @param roles the roles to add to this Channel's access list
      * @see Channel#getReadRoles()
      * @see Channel#getWriteRoles()
-     * @see Channel#addRole(int, String)
+     * @see Channel#addRole(InfoType, String)
      */
-    public void setRoles(int type, Collection<String> roles) {
-    	if ((type != Channel.INFOTYPE_NROLE) && ((roles == null) || roles.isEmpty()))
+    public void setRoles(InfoType type, Collection<String> roles) {
+    	if ((type != InfoType.NOTIFY) && ((roles == null) || roles.isEmpty()))
     		roles = Arrays.asList("*");
     	
     	switch (type) {
-			case Channel.INFOTYPE_RROLE:
+			case READ:
 				_rRoles.clear();
 				_rRoles.addAll(roles);
 				break;
 			
-			case Channel.INFOTYPE_WROLE:
+			case WRITE:
 				_wRoles.clear();
 				_wRoles.addAll(roles);
 				break;
 			
-			case Channel.INFOTYPE_NROLE:
+			case NOTIFY:
 				_nRoles.clear();
 				if (roles != null)
 					_nRoles.addAll(roles);
+				break;
 				
+			default:
 				break;
     	}
     }

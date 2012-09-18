@@ -20,7 +20,6 @@ public class TestImageTag extends AbstractTagTestCase {
 
     public void testImage() throws Exception {
         _tag.setSrc("image.gif");
-        _tag.setBorder(0);
         _tag.setX(400);
         _tag.setY(300);
         _tag.setCaption("Caption");
@@ -34,7 +33,6 @@ public class TestImageTag extends AbstractTagTestCase {
         
         assertAttr("400", "width");
         assertAttr("300", "height");
-        assertAttr("0", "border");
         assertAttr("/imgs/image.gif", "src");
         assertAttr("Caption", "alt");
         

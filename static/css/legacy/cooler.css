@@ -32,37 +32,37 @@ tr {
 	font-size: 9pt;
 }
 
-TD.postInfo {
+td.postInfo {
 	text-align: left;
 	vertical-align: top;
 	width: 195px;
 }
 
-TD.postDate {
+td.postDate {
 	font-size: 8pt;
 	background-color: #F7F7FF;
 	height: 19px;
 }
 
-TD.unread_postDate {
+td.unread_postDate {
 	font-size: 8pt;
 	background-color: #F2FFF2;
 	height: 19px;
 }
 
-TD.postBody {
+td.postBody {
 	text-align: left;
 	vertical-align: top;
 }
 
-TD.postEdit {
+td.postEdit {
 	width: 180px;
 	text-align: center;
 	background-color: #F7F7FF;
 	height: 19px;
 }
 
-INPUT, TEXTAREA {
+input, textarea {
 	font-family: Tahoma, Verdana;
 	font-size: 9pt;
 	color: #000000;

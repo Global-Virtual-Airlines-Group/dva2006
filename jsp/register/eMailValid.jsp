@@ -1,12 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title>E-Mail Address Validated</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -20,7 +19,7 @@
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
 ${applicant.firstName}, thank you for successfully verifying your e-mail address. 
-This is an important step in the registration process here at <content:airline />.<br />
+This is an important step in the registration process at <content:airline />.<br />
 <br />
 <content:copyright />
 </content:region>

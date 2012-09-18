@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009, 2010, 2011 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2010, 2011, 2012 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -8,13 +8,13 @@ import org.deltava.util.StringUtils;
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
 public class XMLRenderer {
 	
-	private String _name;
+	private final String _name;
 	private final Map<String, String> _attrs = new LinkedHashMap<String, String>();
 
 	/**
@@ -40,7 +40,7 @@ public class XMLRenderer {
 	 * @param name the attribute name
 	 * @return TRUE if the attribute exists, otherwise FALSE
 	 */
-	public boolean hasAttribute(String name) {
+	public boolean has(String name) {
 		return _attrs.containsKey(name.toLowerCase());
 	}
 	
@@ -51,6 +51,14 @@ public class XMLRenderer {
 		_attrs.clear();
 	}
 
+	/**
+	 * Removes an attribute from the element.
+	 * @param name the attribute name
+	 */
+	public void remove(String name) {
+		_attrs.remove(name.toLowerCase());
+	}
+	
 	/**
 	 * Sets an element attribute.
 	 * @param name the attribute name
@@ -66,7 +74,7 @@ public class XMLRenderer {
 	 * @param name the attribute name
 	 * @return the attribute value, or null if none
 	 */
-	public String getAttribute(String name) {
+	public String get(String name) {
 		return _attrs.get(name.toLowerCase());
 	}
 	
@@ -77,8 +85,7 @@ public class XMLRenderer {
 	 * @return the element rendered to XML
 	 */
 	public String open(boolean completeTag, boolean finishTag) {
-		StringBuilder buf = new StringBuilder("<");
-		buf.append(_name);
+		StringBuilder buf = new StringBuilder("<").append(_name);
 
 		// Append a space if we have attributes
 		if (_attrs.size() > 0)
@@ -113,7 +120,6 @@ public class XMLRenderer {
 			buf.append('>');
 		}
 
-		// Return the HTML
 		return buf.toString();
 	}
 	
@@ -131,9 +137,7 @@ public class XMLRenderer {
 	 * @return the close tag
 	 */
 	public String close() {
-		StringBuilder buf = new StringBuilder("</");
-		buf.append(_name);
-		buf.append('>');
-		return buf.toString();
+		StringBuilder buf = new StringBuilder("</").append(_name);
+		return buf.append('>').toString();
 	}
 }

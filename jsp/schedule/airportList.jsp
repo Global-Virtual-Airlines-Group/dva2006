@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Flight Schedule - Airports</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -50,12 +50,12 @@ return true;
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="11%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" /></td>
- <td width="11%">AIRPORT NAME</td>
- <td width="6%">IATA</td>
- <td width="6%">ICAO</td>
- <td width="14%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" /> <el:button ID="EditButton" type="submit" label="GO" /></td>
- <td width="9%">TIME ZONE</td>
+ <td style="width:11%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" /></td>
+ <td style="width:11%">AIRPORT NAME</td>
+ <td style="width:6%">IATA</td>
+ <td style="width:6%">ICAO</td>
+ <td style="width:14%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" /> <el:button ID="EditButton" type="submit" label="GO" /></td>
+ <td style="width:9%">TIME ZONE</td>
  <td colspan="3" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /> 
  AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void updateSort()" /></td>
 </tr>

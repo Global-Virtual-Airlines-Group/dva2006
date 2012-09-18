@@ -14,23 +14,12 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store Online Event information.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
 public class Event extends ImageBean implements ComboAlias, TimeSpan {
-
-    public static final int OPEN = 0;
-    public static final int CANCELED = 1;
-    public static final int CLOSED = 2;
-    public static final int ACTIVE = 3;
-    public static final int COMPLETE = 4;
-    
-    /**
-     * Event status names.
-     */
-    public static final String[] STATUS = {"Open", "Canceled", "Closed", "Active", "Complete"};
-    
+	
     private String _name;
     private String _briefing;
     private Date _startTime;
@@ -38,7 +27,7 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     private Date _signupDeadline;
     private String _bannerExt;
     
-    private int _status;
+    private Status _status;
     private OnlineNetwork _network = OnlineNetwork.VATSIM;
     
     private boolean _canSignup;
@@ -102,23 +91,22 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     
     /**
      * Returns the status of this Online Event.
-     * @return the status code
-     * @see Event#setStatus(int)
-     * @see Event#getStatusName()
+     * @return the Status
+     * @see Event#setStatus(Status)
      */
-    public int getStatus() {
+    public Status getStatus() {
         // If the event was canceled, then return that, otherwise calculate the status
-        if (_status == Event.CANCELED)
-            return _status;
+        if (_status == Status.CANCELED)
+            return Status.CANCELED;
         
         if (before(_signupDeadline))
-            return Event.OPEN;
+            return Status.OPEN;
         else if (before(_startTime))
-            return Event.CLOSED;
+            return Status.CLOSED;
         else if (before(_endTime))
-            return Event.ACTIVE;
+            return Status.ACTIVE;
         else
-            return Event.COMPLETE;
+            return Status.COMPLETE;
     }
     
     /**
@@ -141,33 +129,12 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     }
     
     /**
-     * Returns the status of this Online Event.
-     * @return the status name
-     * @see Event#getStatus()
-     * @see Event#setStatus(int)
-     */
-    public String getStatusName() {
-    	return STATUS[getStatus()];
-    }
-    
-    /**
      * Returns the Online Network for this Event.
      * @return the network code
-     * @see Event#getNetworkName()
      * @see Event#setNetwork(OnlineNetwork)
      */
     public OnlineNetwork getNetwork() {
         return _network;
-    }
-    
-    /**
-     * Returns the Online Network name for this Event.
-     * @return the network name
-     * @see Event#getNetwork()
-     * @see Event#setNetwork(OnlineNetwork)
-     */
-    public String getNetworkName() {
-    	return _network.toString();
     }
     
     /**
@@ -501,7 +468,6 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
      * @param net the network
      * @throws IllegalArgumentException if id is negative or invalid
      * @see Event#getNetwork()
-     * @see Event#getNetworkName()
      */
     public void setNetwork(OnlineNetwork net) {
         _network = net;
@@ -509,14 +475,11 @@ public class Event extends ImageBean implements ComboAlias, TimeSpan {
     
     /**
      * Updates the status of this Online Event.
-     * @param status the status code, if not CANCELED then OPEN
+     * @param status the Status, if not CANCELED then OPEN
      * @see Event#getStatus()
-     * @see Event#getStatusName()
-     * @see Event#OPEN
-     * @see Event#CANCELED
      */
-    public void setStatus(int status) {
-        _status = (status == Event.CANCELED) ? Event.CANCELED : Event.OPEN;
+    public void setStatus(Status status) {
+        _status = (status == Status.CANCELED) ? Status.CANCELED : Status.OPEN;
     }
     
     /**
