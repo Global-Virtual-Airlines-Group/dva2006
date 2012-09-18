@@ -34,16 +34,16 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
       
       assertFalse(_ac.getCanEdit());
-      assertTrue(_ac.getCanVote());
+      assertTrue(_ac.getCanLike());
       assertTrue(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
       
-      _img.addVote(new Vote(_user, 10, _img.getID()));
-      assertTrue(_img.hasVoted(_user));
+      _img.addLike(_user.getID());
+      assertTrue(_img.hasLiked(_user));
       _ac.validate();
       
       assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertTrue(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
       
@@ -51,7 +51,7 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
       
       assertTrue(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
@@ -59,7 +59,7 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
 
       assertTrue(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertTrue(_ac.getCanCreate());
       assertTrue(_ac.getCanDelete());
    }
@@ -69,7 +69,7 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
       
       assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
    }
@@ -79,7 +79,7 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
       
       assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
@@ -87,7 +87,7 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
       
       assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertTrue(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
@@ -95,7 +95,7 @@ public class TestGalleryAccessControl extends AccessControlTestCase {
       _ac.validate();
 
       assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanVote());
+      assertFalse(_ac.getCanLike());
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
    }

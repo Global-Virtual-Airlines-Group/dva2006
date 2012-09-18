@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Applicant - ${applicant.name}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -55,6 +55,7 @@ return cmdPost(f.action);
 <content:sysdata var="schemes" name="html.schemes" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
+<content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -65,17 +66,17 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
+ <td class="data"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" className="req" value="${applicant.homeAirport}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" required="true" value="${applicant.homeAirport}" onChange="void changeAirport(this)" />
  <el:text name="homeAirportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].homeAirport, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
- <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" className="req" value="${applicant.location}" /></td>
+ <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" required="true" value="${applicant.location}" /></td>
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
@@ -102,7 +103,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="48" max="64" className="req" value="${applicant.email}" /></td>
+ <td class="data"><el:addr name="email" required="true" idx="*" size="48" max="64" value="${applicant.email}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -128,16 +129,16 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" value="${applicant.TZ}" /></td>
+ <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" required="true" value="${applicant.TZ}" /></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
- <td class="data"><el:text name="df" idx="*" value="${applicant.dateFormat}" className="req" size="12" max="25" />&nbsp;
+ <td class="data"><el:text name="df" idx="*" value="${applicant.dateFormat}" required="true" size="12" max="25" />&nbsp;
 <el:text name="tf" idx="*" value="${applicant.timeFormat}" className="req" size="6" max="9" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
- <td class="data"><el:text name="nf" idx="*" value="${applicant.numberFormat}" className="req" size="9" max="15" /></td>
+ <td class="data"><el:text name="nf" idx="*" value="${applicant.numberFormat}" required="true" size="9" max="15" /></td>
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
@@ -145,7 +146,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Distance Units</td>
- <td class="data"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="${applicant.distanceTypeName}" /></td>
+ <td class="data"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="${applicant.distanceType.name}" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
@@ -209,11 +210,11 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" className="req" firstEntry="-" value="${applicant.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" required="true" firstEntry="-" value="${applicant.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" className="req" firstEntry="-" value="${applicant.rank.name}" /></td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" required="true" firstEntry="-" value="${applicant.rank.name}" /></td>
 </tr>
 <tr>
  <td class="label top">Equipment Program Sizes</td>

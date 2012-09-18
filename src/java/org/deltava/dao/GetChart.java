@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Approach Charts.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -81,8 +81,8 @@ public class GetChart extends DAO {
 	 */
 	public List<Chart> getCharts(Airport a) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL FROM common.CHARTS C LEFT JOIN common.CHARTURLS CU "
-				+ "ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME");
+			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN "
+				+ "common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ICAO=?) ORDER BY C.NAME");
 			_ps.setString(1, a.getICAO());
 			return execute();
 		} catch (SQLException se) {
@@ -98,8 +98,8 @@ public class GetChart extends DAO {
 	 */
 	public List<Chart> getChartsByEvent(int eventID) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL FROM events.EVENT_CHARTS EC, common.CHARTS C LEFT JOIN "
-				+ "common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
+			prepareStatement("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM events.EVENT_CHARTS EC, common.CHARTS C "
+				+ "LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
 			_ps.setInt(1, eventID);
 			return execute();
 		} catch (SQLException se) {
@@ -115,7 +115,7 @@ public class GetChart extends DAO {
 	 */
 	public Chart get(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.*, CU.SOURCE, CU.URL FROM common.CHARTS C LEFT JOIN "
+			prepareStatementWithoutLimits("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C LEFT JOIN "
 				+ "common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			List<Chart> results = execute();
@@ -134,8 +134,8 @@ public class GetChart extends DAO {
 	public Collection<Chart> getByIDs(Collection<Integer> IDs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CU.SOURCE, CU.URL FROM common.CHARTS C LEFT JOIN "
-			+ "common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CU.SOURCE, CU.URL, CU.EXTERNAL_ID FROM common.CHARTS C "
+			+ "LEFT JOIN common.CHARTURLS CU ON (C.ID=CU.ID) WHERE (C.ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(String.valueOf(id));
@@ -149,6 +149,32 @@ public class GetChart extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the database IDs for a set of external Chart IDs.
+	 * @param externalIDs a Collection of external chart IDs
+	 * @return a Map of database IDs, keyed by external ID
+	 * @throws DAOException
+	 * @see ExternalChart#getExternalID()
+	 */
+	public Map<String, Integer> getChartIDs(Collection<String> externalIDs) throws DAOException {
+		try {
+			Map<String, Integer> results = new HashMap<String, Integer>();
+			prepareStatement("SELECT ID FROM common.CHARTURLS WHERE (EXTERNAL_ID=?)");
+			for (String id : externalIDs) {
+				_ps.setString(1, id);
+				try (ResultSet rs = _ps.executeQuery()) {
+					if (rs.next())
+						results.put(id, Integer.valueOf(rs.getInt(1)));
+				}
+			}
+
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -167,6 +193,7 @@ public class GetChart extends DAO {
 				if (url != null) {
 					ExternalChart ec = new ExternalChart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
 					ec.setSource(rs.getString(10));
+					ec.setExternalID(rs.getString(12));
 					ec.setURL(url);
 					c = ec;
 				} else

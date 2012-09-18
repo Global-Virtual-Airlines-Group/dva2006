@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Installer Log</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -72,12 +72,12 @@ return true;
 <view:table className="view" cmd="fleetlog">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">DATE</td>
- <td width="10%">INSTALLER</td>
- <td width="10%">OS</td>
- <td width="25%">CPU</td>
- <td width="25%">GPU</td> 
- <td width="10%">RAM</td>
+ <td style="width:10%">DATE</td>
+ <td style="width:10%">INSTALLER</td>
+ <td style="width:10%">OS</td>
+ <td style="width:25%">CPU</td>
+ <td style="width:25%">GPU</td> 
+ <td style="width:10%">RAM</td>
  <td>DIRECTX</td>
 </tr>
 

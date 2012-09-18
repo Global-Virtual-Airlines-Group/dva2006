@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to generate HTML text field elements.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class InputTag extends FormElementTag {
      * @throws JspException if an error occurs
      * @see Object#toString()
      */
+    @Override
     public int doEndTag() throws JspException {
         try {
             validateState();
@@ -41,7 +42,6 @@ public class InputTag extends FormElementTag {
                 _out.print('\"');
             }
                 
-            // Close the tag
             _out.print(" />");
         } catch (Exception e) {
             throw new JspException(e);
@@ -55,6 +55,7 @@ public class InputTag extends FormElementTag {
     /**
      * Resets state variables for this tag.
      */
+    @Override
     public void release() {
         super.release();
         _data.setAttribute("type", "text");
@@ -100,8 +101,7 @@ public class InputTag extends FormElementTag {
      * @param readOnly TRUE if read-only, otherwise FALSE
      */
     public void setReadOnly(boolean readOnly) {
-        if (readOnly)
-        	_data.setAttribute("readonly", "readonly");
+    	_data.setAttribute("readonly", String.valueOf(readOnly));
     }
     
     /**
@@ -109,8 +109,23 @@ public class InputTag extends FormElementTag {
      * @param disabled TRUE if disabled, otherwise FALSE
      */
     public void setDisabled(boolean disabled) {
-        if (disabled)
-            _data.setAttribute("disabled", "disabled");
+    	_data.setAttribute("disabled", String.valueOf(disabled));
+    }
+    
+    /**
+     * Marks this field as spellcheckable.
+     * @param sc TRUE if spellcheck enabled, otherwise FALSE
+     */
+    public void setSpellcheck(boolean sc) {
+    	_data.setAttribute("spellcheck", String.valueOf(sc));
+    }
+    
+    /**
+     * Sets the placeholder for this field.
+     * @param ph the placeholder string
+     */
+    public void setPlaceholder(String ph) {
+    	_data.setAttribute("placeholder", ph);
     }
     
     /**

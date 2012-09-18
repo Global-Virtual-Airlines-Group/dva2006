@@ -1,8 +1,7 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
-import java.sql.Connection;
 
 import org.deltava.beans.Staff;
 import org.deltava.comparators.StaffComparator;
@@ -15,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display the Staff Roster.
  * @author Luke
- * @version 2.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,6 +26,7 @@ public class StaffRosterCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occurs
      */
 	@SuppressWarnings("unchecked")
+	@Override
     public void execute(CommandContext ctx) throws CommandException {
 		
     	// Build the comparator
@@ -34,15 +34,8 @@ public class StaffRosterCommand extends AbstractCommand {
     	cmp.setAreas((Collection<String>) SystemData.getObject("staff.departments"));
     	Collection<Staff> results = new TreeSet<Staff>(cmp);
         try {
-            Connection con = ctx.getConnection();
-            
-            // Get the roster and stuff in the request
-            GetStaff dao = new GetStaff(con);
+            GetStaff dao = new GetStaff(ctx.getConnection());
             results.addAll(dao.getStaff());
-            
-            // Load staff members with blogs
-            GetBlog bdao = new GetBlog(con);
-            ctx.setAttribute("blogIDs", bdao.getAuthors(ctx.isUserInRole("HR")), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

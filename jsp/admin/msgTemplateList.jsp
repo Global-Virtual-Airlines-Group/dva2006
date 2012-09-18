@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Message Templates</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
@@ -24,10 +24,10 @@
 <view:table className="view" cmd="msgtemplates">
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td width="20%">TEMPLATE NAME</td>
- <td width="5%">&nbsp;</td>
- <td width="30%">MESSAGE SUBJECT</td>
- <td width="30%">DESCRIPTION</td>
+ <td style="width:20%">TEMPLATE NAME</td>
+ <td style="width:5%">&nbsp;</td>
+ <td style="width:30%">MESSAGE SUBJECT</td>
+ <td style="width:30%">DESCRIPTION</td>
  <td><c:if test="${access.canCreate}">
 <el:cmdbutton url="msgtemplate" op="edit" label="NEW MESSAGE TEMPLATE" /> 
 </c:if>&nbsp;</td>

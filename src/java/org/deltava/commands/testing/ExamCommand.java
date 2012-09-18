@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.ExamAccessControl;
 /**
  * A Web Site Command to view/take/score Pilot Examinations.
  * @author Luke
- * @version 2.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -43,7 +43,7 @@ public class ExamCommand extends AbstractCommand {
          
          // Get the Pilot taking the exam
          GetUserData uddao = new GetUserData(con);
-         UserData ud = uddao.get(ex.getPilotID());
+         UserData ud = uddao.get(ex.getAuthorID());
          
          // Load the examination profile
          GetExamProfiles epdao = new GetExamProfiles(con);
@@ -59,7 +59,7 @@ public class ExamCommand extends AbstractCommand {
              
          // Load the Pilots
          GetPilot pdao = new GetPilot(con);
-         ctx.setAttribute("pilot", pdao.get(uddao.get(ex.getPilotID())), REQUEST);
+         ctx.setAttribute("pilot", pdao.get(uddao.get(ex.getAuthorID())), REQUEST);
          if (ex.getScorerID() != 0)
         	 ctx.setAttribute("scorer", pdao.get(uddao.get(ex.getScorerID())), REQUEST);
        	 
@@ -74,7 +74,7 @@ public class ExamCommand extends AbstractCommand {
          
          // Display answers only if we have the necessary role
          int activeExamID = dao.getActiveExam(ctx.getUser().getID());
-         if (ex.getPilotID() == ctx.getUser().getID())
+         if (ex.getAuthorID() == ctx.getUser().getID())
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers() && (activeExamID == 0)), REQUEST);
          else
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers()), REQUEST);
@@ -123,7 +123,7 @@ public class ExamCommand extends AbstractCommand {
         	 ctx.setAttribute("cRoutes", cRoutes, REQUEST);
         	 
              // Determine if we are scoring or viewing
-             boolean isScore = ((ex.getStatus() != Test.SCORED) && access.getCanScore());
+             boolean isScore = ((ex.getStatus() != TestStatus.SCORED) && access.getCanScore());
              isScore |= (("edit".equals(opName)) && (access.getCanEdit()));
         	 
         	 // Forward to the JSP

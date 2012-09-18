@@ -30,13 +30,6 @@
 	</tag>
 
 	<tag>
-		<description>Insert XHMTL Tag, to add IE-compliant Google Maps XHTML headers</description>
-		<name>xhtml</name>
-		<tag-class>org.deltava.taglib.googlemap.InsertXHTMLTag</tag-class>
-		<body-content>JSP</body-content>
-	</tag>
-
-	<tag>
 		<description>IE VML Style Tag, for inserting a custom behavior for VML in IE</description>
 		<name>vml-ie</name>
 		<tag-class>org.deltava.taglib.googlemap.IEVMLStyleTag</tag-class>
@@ -52,6 +45,12 @@
 			<name>function</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>max</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>layers</name>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to write Applicant Questionnaires.
  * @author Luke
- * @version 3.5
+ * @version 5.0
  * @since 1.0
  */
 
@@ -55,8 +55,8 @@ public class SetQuestionnaire extends DAO {
 			}
 
 			// Add the prepared statement arguments
-			_ps.setInt(1, e.getPilotID());
-			_ps.setInt(2, e.getStatus());
+			_ps.setInt(1, e.getAuthorID());
+			_ps.setInt(2, e.getStatus().ordinal());
 			_ps.setTimestamp(3, createTimestamp(e.getDate()));
 			_ps.setTimestamp(4, createTimestamp(e.getExpiryDate()));
 			_ps.setTimestamp(5, createTimestamp(e.getSubmittedOn()));
@@ -167,7 +167,7 @@ public class SetQuestionnaire extends DAO {
 					+ "GRADED_ON, GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, e.getName());
 			_ps.setInt(2, pilotID);
-			_ps.setInt(3, e.getStatus());
+			_ps.setInt(3, e.getStatus().ordinal());
 			_ps.setTimestamp(4, createTimestamp(e.getDate()));
 			_ps.setTimestamp(5, createTimestamp(e.getSubmittedOn()));
 			_ps.setTimestamp(6, createTimestamp(e.getScoredOn()));

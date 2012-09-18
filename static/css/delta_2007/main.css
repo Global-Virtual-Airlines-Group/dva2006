@@ -1,21 +1,22 @@
-/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. */
+/* DVA2007 Main Cascading Style Sheet (C) 2005, 2006, 2007, 2009, 2010, 2012 Global Virtual Airlines Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
 div#header {
 	height: 104px;
-	left: 0px;
-	margin: 0;
+	right: 0px;
+	margin: 0px;
+	border: 1px solid #ffffff;
 }
 
 /* Formatting for header title caption */
 h1.header {
 	font-family: Trebuchet MS, verdana, tahoma, sans-serif;
-	font-size: 26px;
+	font-size: 20pt;
 	color: #1a4876;
 	text-align: center;
 	vertical-align: middle;
-	margin-top: 10px;
+	margin-top: 8px;
 }
 
 /* Formatting for header image */
@@ -32,124 +33,99 @@ div.navside div#navmenu {
 }
 
 div.navbar div#navmenu {
-	position: absolute;
 	width: 100%;
-	height: 20px;
+	height: 19px;
 	margin: 0px;
 	background-color: #1a4876;
-	z-index: 20;
 }
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of navigation bar elements      */
 
 ul.menu, ul.menuitem {
 	text-align: center;
+	text-decoration: none;
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
 	float: left;
-	z-index: 20;
 }
 
 ul.menuitem li {
-	height: 20px;
-	font: 12px tahoma, verdana, helvetica, sans-serif;
+	height: 15px;
+	font: 11px verdana, tahoma, helvetica, sans-serif;
 	background-color: #c01933;
 	color: #ffffff;
-	text-decoration: none;
+	margin: 1px;
+	padding: 1px;
 	display: block;
 }
 
-ul.menuitem li span {
-	position: relative;	
-	top: 2px;
-}
-
 ul.menu ul.submenu {
+	position: absolute;
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
-	position: relative;
 }
 
 ul.menu li.submenuTitle {
-	height: 18px;
-	font: bold 12px tahoma, verdana, helvetica, sans-serif;
+	height: 17px;
+	font: bold 12px verdana, tahoma, helvetica, sans-serif;
 	color: #ffffff;
-	text-decoration: none;
 	background-color: #1a4876;
 	margin: 0px;
 	padding: 1px;
 	display: block;
 }
 
-ul.menu li.submenuTitle span {
-	position: relative;
-	top: 1px;
-}
-
 ul.menuitem li:hover {
 	background-color: #e02840;
 }
 
-ul.menu li.submenu li {
-	display:none;
+ul.menu li:hover {
+	background-color: #003366;
+	color: #efffff;
 }
 
-ul.menu:hover li.submenuTitle {
-	background-color: #205098;
-	color: #cfefff;
+ul.menu ul.submenu li {
+	display:none;
 }
 
 ul.menu:hover ul.submenu li {
 	display: block;
-	border-top: 1px solid #9f9f9f;
+	opacity: .935;
 }
 
 ul.menu ul.submenu li a {
-	font: normal 11px tahoma, verdana, helvetica, sans-serif;
-	color: #dfffff;
+	font: normal 11px verdana, helvetica, sans-serif;
+	color: #cfefff;
+	text-decoration: none;
 	background-color: #1a4876;
 	text-transform: uppercase;
-	text-decoration: none;
 	display: block;
-	margin: 0px;
-	padding: 0px;
-	height: 16px;
+	margin: 1px;
+	padding: 2px;
 }
 
 ul.menu ul.submenu li a:hover {
-	background-color: #205098;
+	background-color: #003366;
 	font-weight: bold;
-	color: #efffff;
+	color: #ffffff;
 }
 
-/* ul.menu ul.submenu li ul */
 ul.menu li ul {
 	position: fixed;
 	z-index: 500;
 }
 
 /* ------------------------------------------------------------------ */
-/* Controls the sizing and formatting of the main IE formatting table */
-.navbar div#main {
-	margin: 4px;
-	padding: 8px;
-	position: relative;
-	top: 18px;
-}
+/* Controls the sizing and formatting of side navigation elements     */
 
-.navside div#main {
-	position: absolute;
-	top: 108px;
-	left: 156px;
-	padding: 8px;
-}
-
-/* Formatting for the side menu table */
-table.nav {
+table#nav {
 	table-layout: fixed;
 	width: 154px;
 	border-collapse: separate;
-	text-align: center;
+	vertical-align: middle;
 	color: #000000;
 	border-width: 2px 2px 2px 2px;
 	padding: 4px 4px 4px 4px;
@@ -158,55 +134,93 @@ table.nav {
 /* Formatting for side menu section headers */
 table.nav tr.submenuTitle {
 	font-family: verdana, tahoma, sans-serif;
+	text-align: center;
 	background-color: #1a4876;
 	color: #ffffff;
-	text-transform: uppercase;
 	font-weight: bold;
-	font: 9pt;
+	font-size: 9pt;
 }
 
 /* Formatting for side menu items */
 table.nav tr.submenu, table.nav tr.menuitem {
 	font-family: tahoma, verdana, sans-serif;
+	text-align: center;
 	background-color: #f8f8f8;
 	text-decoration: none;
-	font-size: 11px;
+	font-size: 7pt;
+}
+ 
+table.nav td {
 	text-transform: uppercase;
+	padding: 2px;	
 }
 
 /* Side menu hyperlinks */
 table.nav *.submenu :link, table.nav *.submenu :visited {
 	text-decoration: none;
-	font-size: 11px;
+	font-size: 7pt;
 	color: #000000;
 }
 
 /* Side menu hyperlinks */
 table.nav *.submenu :link:hover, table.nav *.submenu :hover {
 	text-decoration: none;
-	font-size: 11px;
+	font-size: 7pt;
 	color: #c01933;
 }
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main display section     */
 
+.navbar div#main {
+	margin: 4px;
+	padding: 8px;
+}
+
+.navside div#main {
+	position: absolute;
+	top: 107px;
+	left: 156px;
+	right: 1px;
+	padding: 8px;
+	padding-top: 5px;
+}
+
 /* Result page Header */
 .updateHdr {
 	font-family: verdana, tahoma, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
-	background-color: #1A4876;
+	background-color: #1a4876;
 	width: 100%;
+	padding: 2px;
 	color: #ffffff;
 	text-transform: uppercase;
+}
+
+/* Map layer controls */
+div.layerSelect, div.layerClear {
+	background-color: white;
+	color: #303030;
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 9px;
+	border: 1px solid black;
+	padding: 2px;
+	margin-bottom: 3px;
+	text-align: center;
+	cursor: pointer;
+}
+
+div.layerSelect.displayed {
+	background-color: #082858;
+	color: #b8c8c8;
 }
 
 /* Default table formatting */
 table {
 	table-layout: auto;
 	border-collapse: separate;
-	border-spacing: 3px 3px;
+	border-spacing: 3px;
 	font-family: verdana, tahoma, sans-serif;
 	color: #000000;
 	border-width: 4px 4px 4px 4px;
@@ -215,18 +229,26 @@ table {
 body {
 	color: #1a4876;
 	margin: 1px;
-	font-family: verdana, tahoma, sans-serif;
-	font-size: 11px;
+	font: 11px verdana, tahoma, sans-serif;
+}
+
+img.noborder {
+	border: none;
 }
 
 .cmdButton, .button {
 	background-color: #003366;
 	color: #ffffff;
 	font-family: verdana, tahoma, sans-serif;
-	font-size: 8pt;
+	font-size: 10px;
 	text-transform: uppercase;
 	border: 2px outset #cfcfff;
 	font-weight: normal;
+}
+
+.cmdButton:disabled, .button:disabled {
+	background-color: #002256;
+	color: #a0a0a0;
 }
 
 a, a:visited {
@@ -238,10 +260,15 @@ a, a:visited {
 a:hover {
 	color: #c01933;
 	text-decoration: underline;
-	font-size: 11px;
 }
 
-.bld, a.bld {
+.mapInfoBox {
+	white-space: nowrap;
+	font-family: verdana, tahoma, sans-serif;
+	font-size: 8pt;
+}
+
+.bld {
 	font-weight: bold;
 }
 
@@ -277,7 +304,7 @@ a:hover {
 	color: #ff8040;
 }
 
-.small, *.small a, a.small {
+.small {
 	font-size: 10px;
 }
 
@@ -309,13 +336,11 @@ div.mid, span.mid {
 	visibility: visible;
 }
 
+*.small a {
+	font-size: 10px;
+}
+
 a.plain {
 	color: inherit;
 	text-decoration: none;
-}
-
-/* Google Maps infobox font */
-.mapInfoBox {
-	font-family: verdana, tahoma, sans-serif;
-	font-size: 8pt;
 }

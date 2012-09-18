@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Flight Academy Instructor Busy Time Calendar</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
@@ -52,12 +52,12 @@ return true;
 <el:form action="insbusysave.do" method="post" validate="return validate(this)">
 <el:table className="form">
 <tr class="title">
- <td width="60%" class="caps"><content:airline /> INSTRUCTOR BUSY TIME CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" /></td>
+ <td style="width:60%" class="caps"><content:airline /> INSTRUCTOR BUSY TIME CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" /></td>
 <c:if test="${isMine}">
- <td width="20%" class="mid"><el:cmd url="busycalendar" op="7" startDate="${startDate}">ALL INSTRUCTORS</el:cmd></td>
+ <td style="width:20%" class="mid"><el:cmd url="busycalendar" op="7" startDate="${startDate}">ALL INSTRUCTORS</el:cmd></td>
 </c:if>
 <c:if test="${!isMine && !empty user}">
- <td width="20%" class="mid"><el:cmd url="busycalendar" op="7" link="${user}" startDate="${startDate}">MY BUSY TIME</el:cmd></td>
+ <td style="width:20%" class="mid"><el:cmd url="busycalendar" op="7" link="${user}" startDate="${startDate}">MY BUSY TIME</el:cmd></td>
 </c:if>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void switchType(this)" /></td>
 </tr>

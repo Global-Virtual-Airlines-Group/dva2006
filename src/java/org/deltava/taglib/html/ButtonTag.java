@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -7,7 +7,7 @@ import javax.servlet.jsp.JspException;
  * A JSP tag to generate an XHTML button. Buttons will have a CSS class name of
  * BUTTON unless it is explicitly overridden.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -22,15 +22,22 @@ public class ButtonTag extends ElementTag {
 	}
 
 	/**
-	 * Generates the XHTML for this button.
+	 * Ensures that the button contains the CSS <b>button</b> class.
+	 * @return SKIP_BODY always
+	 * @throws JspException if an error occurs
+	 */
+	@Override
+	public int doStartTag() throws JspException {
+		_classes.add("button");
+		return super.doStartTag();
+	}
+	
+	/**
+	 * Generates the HTML for this button.
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
-		
-		// Set class name
-		if (!_data.hasAttribute("class"))
-			_data.setAttribute("class", "button");
-		
 		try {
 			_out.print(_data.open(true, true));
 		} catch (Exception e) {
@@ -45,6 +52,7 @@ public class ButtonTag extends ElementTag {
 	/**
 	 * Releases state and readies the tag for another invocation.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_data.setAttribute("type", "button");

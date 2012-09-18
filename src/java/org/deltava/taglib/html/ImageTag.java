@@ -8,7 +8,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An JSP Tag to generate an IMG element.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -57,22 +57,12 @@ public class ImageTag extends ElementTag {
     }
     
     /**
-     * Sets the border of ths image. This does nothing if a negative or non-numeric value is passed.
-     * @param border the border of the image in pixels
-     * @see ElementTag#setNumericAttr(String, int, int)
-     */
-    public void setBorder(int border) {
-    	setNumericAttr("border", border, 0);
-    }
-    
-    /**
      * Sets the source of this image.
      * @param url the location of the image
      */
     public void setSrc(String url) {
         StringBuilder buf = new StringBuilder(SystemData.get("path.img"));
-        buf.append('/');
-        buf.append(url);
+        buf.append('/').append(url);
         _data.setAttribute("src", buf.toString());
     }
     

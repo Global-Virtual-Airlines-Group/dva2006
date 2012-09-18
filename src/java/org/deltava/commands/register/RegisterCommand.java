@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to register a new Applicant.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -45,10 +45,8 @@ public class RegisterCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the command result
-		CommandResult result = ctx.getResult();
-
 		// If we're authenticated, redirect to the home page
+		CommandResult result = ctx.getResult();
 		if (ctx.isAuthenticated()) {
 			result.setURL("home.do");
 			result.setType(ResultType.REDIRECT);
@@ -66,7 +64,6 @@ public class RegisterCommand extends AbstractCommand {
 
 		// Save the notification options
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
-		ctx.setAttribute("distanceUnits", ComboUtils.fromArray(Person.DISTANCE_NAMES), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
 		// Sort and save the airports
@@ -154,7 +151,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setLegacyURL(ctx.getParameter("legacyURL"));
 		a.setHomeAirport(ctx.getParameter("homeAirport"));
 		a.setEmailAccess(Person.AUTH_EMAIL);
-		a.setDistanceType(ctx.getParameter("distanceUnits"));
+		a.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
 		a.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
@@ -378,9 +375,9 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Create the examination
 			ex = new Examination(examName);
-			ex.setPilotID(a.getID());
+			ex.setAuthorID(a.getID());
 			ex.setStage(1);
-			ex.setStatus(Test.NEW);
+			ex.setStatus(TestStatus.NEW);
 			mctxt.addData("questionnaire", ex);
 
 			// Set the creation/expiration date/times

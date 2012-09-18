@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to view Check Ride records.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -32,6 +32,7 @@ public class CheckRideCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the command result
@@ -50,7 +51,7 @@ public class CheckRideCommand extends AbstractCommand {
 
 			// Get the pilot taking the checkride
 			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(cr.getPilotID());
+			UserData ud = uddao.get(cr.getAuthorID());
 
 			// Check our access
 			ExamAccessControl access = new ExamAccessControl(ctx, cr, ud);
@@ -90,7 +91,7 @@ public class CheckRideCommand extends AbstractCommand {
 			ctx.setAttribute("passFail", PASS_FAIL, REQUEST);
 
 			// Check if we can score/edit or not
-			if (cr.getStatus() == Test.SCORED)
+			if (cr.getStatus() == TestStatus.SCORED)
 				result.setURL(isRescore && access.getCanEdit() ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
 			else
 				result.setURL(access.getCanScore() ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");

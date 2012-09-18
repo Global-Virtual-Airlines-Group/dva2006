@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Offline Flight Report Submission</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -44,15 +44,15 @@ return true;
 <tr class="title caps">
  <td colspan="2"><content:airline /> ACARS OFFLINE FLIGHT REPORT SUBMISSION</td>
 </tr>
-<tr>
+<tr class="fileXML">
  <td class="label">XML File</td>
  <td class="data"><el:file name="xml" className="small" idx="*" size="96" max="144" /></td>
 </tr>
-<tr>
+<tr class="fileSHA">
  <td class="label">SHA File</td>
  <td class="data"><el:file name="hashCode" className="small" idx="*" size="96" max="144" /></td>
 </tr>
-<tr>
+<tr class="fileZIP">
  <td class="label top">ZIP File</td>
  <td class="data"><el:file name="zip" className="small" size="96" max="144" /><br />
 <span class="small">You can submit the XML and SHA files in a ZIP archive to reduce upload times.</span></td>
@@ -63,6 +63,10 @@ return true;
  <td class="data"><el:box name="noValidate" idx="*" className="small" value="true" label="Don't validate SHA-256 signature" /></td>
 </tr>
 </c:if>
+<tr>
+ <td colspan="2" class="data"><div id="dropbox" class="mid" style="width:600px; height:110px; border:1px solid; border-radius:14px;">
+<span class="pri bld" style="position:relative; top:50%">DROP ZIP FILE HERE</span></div></td>
+</tr>
 <c:if test="${hashFailure}">
 <tr>
  <td class="label">&nbsp;</td>
@@ -105,5 +109,54 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
+<script type="text/javascript">
+var payload = [];
+payload.isComplete = function()
+{
+return ((this['XML'] && this['SHA']) || (this['ZIP']));
+}
+
+function fileLoad(e)
+{
+var ab = e.target.result;
+var s = '';
+var bytes = new Uint8Array(ab);
+for (var i = 0; i < bytes.byteLength; i++)
+	s += String.fromCharCode(bytes[i]);
+
+payload[e.target.ext] = window.btoa(s);
+if (payload.isComplete())
+	alert('ready to submit!');
+
+return true;
+}
+
+var dropbox = document.getElementById("dropbox");
+dropbox.addEventListener("dragenter", golgotha.event.stop, false);
+dropbox.addEventListener("dragexit", golgotha.event.stop, false);
+dropbox.addEventListener("dragover", golgotha.event.stop, false);
+dropbox.addEventListener("drop", function(e) {
+	golgotha.event.stop(e);
+	var files = e.dataTransfer.files;
+	for (var x = 0; x < files.length; x++) {
+		var f = files[x]; var name = f.name;
+		if (name.lastIndexOf('.') == -1)
+			continue;
+
+		var ext = name.substring(name.lastIndexOf('.') + 1).toUpperCase();
+		var es = getElementsByClass('file' + ext);
+		for (var x = 0; x < es.length; x++)
+			displayObject(es[x], false);
+
+		var fr = new FileReader();
+		fr.ext = ext;
+		fr.onload = fileLoad; 
+		fr.readAsArrayBuffer(f);
+	}
+
+	return false;
+}, false);
+</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -22,34 +22,36 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to change a Flight Academy Course's status.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
 public class CourseDisposalCommand extends AbstractCommand {
 	
-	// Operation constants
 	private static final String[] OPNAMES = {"start", "abandon", "complete", "restart"};
-	private static final int RESTARTED = 3;
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the operation
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
-		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
-		if (opCode < 0)
+		Status op = Status.COMPLETE;
+		try {
+			op = Status.values()[StringUtils.arrayIndexOf(OPNAMES, opName, -1)];
+		} catch (Exception e) {
 			throw new CommandException("Invalid Operation - " + opName, false);
+		}
 
 		// Initialize the Message Context
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
 
-		Collection<Person> usrs = new HashSet<Person>();
+		Collection<EMailAddress> usrs = new HashSet<EMailAddress>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -81,27 +83,27 @@ public class CourseDisposalCommand extends AbstractCommand {
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
 			boolean canExec = false;
-			switch (opCode) {
-				case Course.STARTED :
+			switch (op) {
+				case STARTED :
 					upd.setDescription("Enrolled in " + c.getName());
 					canExec = access.getCanStart();
 					break;
 					
-				case RESTARTED:
+				case PENDING:
 					upd.setDescription("Requested return to " + c.getName());
 					ctx.setAttribute("isRestarted", Boolean.TRUE, REQUEST);
 					c.setStartDate(new Date());
 					canExec = access.getCanRestart();
 					break;
 					
-				case Course.ABANDONED :
+				case ABANDONED :
 					upd.setDescription("Withdrew from " + c.getName());
 					canExec = access.getCanCancel();
 					mctx.setTemplate(mtdao.get("COURSECANCEL"));
 					ctx.setAttribute("isAbandoned", Boolean.TRUE, REQUEST);
 					break;
 					
-				case Course.COMPLETE :
+				case COMPLETE :
 					upd.setType(StatusUpdate.CERT_ADD);
 					upd.setDescription("Obtained " + c.getName() + " Flight Academy certification");
 					
@@ -132,10 +134,10 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// Get the DAO and update the course 
 			SetAcademy wdao = new SetAcademy(con);
-			wdao.setStatus(c.getID(), opCode, c.getStartDate());
+			wdao.setStatus(c.getID(), op, c.getStartDate());
 			
 			// If we're canceling, cancel all Instruction Sessions
-			if (opCode == Course.ABANDONED) {
+			if (op == Status.ABANDONED) {
 				GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 				SetAcademyCalendar cwdao = new SetAcademyCalendar(con);
 				
@@ -152,7 +154,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 				// Delete any unflown check rides
 				SetExam exwdao = new SetExam(con);
 				for (CheckRide cr : rides) {
-					if (cr.getStatus() == Test.NEW)
+					if (cr.getStatus() == TestStatus.NEW)
 						exwdao.delete(cr);
 				}
 				
@@ -166,7 +168,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			uwdao.write(ud.getDB(), upd);
 			
 			// Write Facebook update
-			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (opCode == Course.COMPLETE)) {
+			if (!StringUtils.isEmpty(SystemData.get("users.facebook.id")) && (op == Status.COMPLETE)) {
 				MessageContext fbctxt = new MessageContext();
 				fbctxt.addData("user", usr);
 				fbctxt.addData("course", c);

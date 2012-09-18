@@ -359,7 +359,7 @@ public class GetACARSData extends DAO {
 				info.setAirportD(SystemData.getAirport(rs.getString(8)));
 				info.setAirportA(SystemData.getAirport(rs.getString(9)));
 				info.setAirportL(SystemData.getAirport(rs.getString(10)));
-				// skip 11 - decode in 23
+				// skip 11 - decode in 25
 				info.setRemoteHost(rs.getString(12));
 				info.setRoute(rs.getString(13));
 				info.setRemarks(rs.getString(14));

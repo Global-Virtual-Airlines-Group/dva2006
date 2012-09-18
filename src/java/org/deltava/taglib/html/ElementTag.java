@@ -1,20 +1,24 @@
-// Copyright 2005, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
+
+import java.util.*;
 
 import javax.servlet.jsp.*;
 
 import org.deltava.taglib.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A class for supporting JSP Tags that render HTML elements.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
 public abstract class ElementTag extends BrowserInfoTag {
 
-	protected XMLRenderer _data;
+	protected final XMLRenderer _data;
+	protected final Collection<String> _classes = new LinkedHashSet<String>();
 	protected JspWriter _out;
 
 	/**
@@ -29,12 +33,15 @@ public abstract class ElementTag extends BrowserInfoTag {
 	/**
 	 * Resets this tag's data when its lifecycle is complete.
 	 */
+	@Override
 	public void release() {
+		super.release();
+		_classes.clear();
 		_data.clear();
 	}
 
 	/**
-	 * Returns the type of HTML element this tag generated. (eg. FORM, IMG, INPUT)
+	 * Returns the type of HTML element this tag generated.
 	 * @return the HTML element type
 	 */
 	protected String getName() {
@@ -54,7 +61,7 @@ public abstract class ElementTag extends BrowserInfoTag {
 	 * @param cName the class name as refered to in a CSS file.
 	 */
 	public void setClassName(String cName) {
-		_data.setAttribute("class", cName);
+		_classes.addAll(StringUtils.split(cName, " "));
 	}
 	
     /**
@@ -64,16 +71,7 @@ public abstract class ElementTag extends BrowserInfoTag {
     public void setStyle(String style) {
     	_data.setAttribute("style", style);
     }
-
-	/**
-	 * Updates this tag's page context and its JSP output writer.
-	 * @param ctxt the new JSP page context
-	 */
-	public final void setPageContext(PageContext ctxt) {
-		super.setPageContext(ctxt);
-		_out = ctxt.getOut();
-	}
-
+    
 	/**
 	 * Sets a numeric attribute.
 	 * @param attrName the attribute name
@@ -83,5 +81,27 @@ public abstract class ElementTag extends BrowserInfoTag {
 	protected void setNumericAttr(String attrName, int value, int minValue) {
 		if (value >= minValue)
 			_data.setAttribute(attrName, String.valueOf(value));
+	}
+
+	/**
+	 * Updates this tag's page context and its JSP output writer.
+	 * @param ctxt the new JSP page context
+	 */
+	@Override
+	public void setPageContext(PageContext ctxt) {
+		super.setPageContext(ctxt);
+		_out = ctxt.getOut();
+	}
+
+	/**
+	 * Executed post tag setup. Concatenates CSS classes into a single string.
+	 * @returns EVAL_BODY_INCLUDE always
+	 * @throws JspException if an error occurs
+	 */
+	@Override
+	public int doStartTag() throws JspException {
+		super.doStartTag();
+		_data.setAttribute("class", StringUtils.listConcat(_classes, " "));
+		return EVAL_BODY_INCLUDE;
 	}
 }

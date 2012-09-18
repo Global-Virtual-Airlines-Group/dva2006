@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -10,31 +10,25 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store TeamSpeak 2 server information.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
-public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
-
-	public static final String ACCESS = "access";
-	public static final String ADMIN = "admin";
-	public static final String OPERATOR = "op";
-	public static final String VOICE = "voice";
-
+public class Server extends TSObject implements ComboAlias, ViewEntry {
+	
 	private String _name;
 	private String _msg;
 	private String _desc;
 	private String _pwd;
 	private int _maxUsers;
 	private int _port;
-	private Date _createdOn;
 
 	private boolean _active;
 	private boolean _acarsOnly;
 	private boolean _autoVoice;
 
-	private Map<String, Collection<String>> _roles = new HashMap<String, Collection<String>>();
-	private Collection<Channel> _channels = new TreeSet<Channel>();
+	private final Map<ServerAccess, Collection<String>> _roles = new HashMap<ServerAccess, Collection<String>>();
+	private final Collection<Channel> _channels = new TreeSet<Channel>();
 
 	/**
 	 * Creates a new server bean.
@@ -44,13 +38,8 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	public Server(String name) {
 		super();
 		setName(name);
-		_createdOn = new Date();
-
-		// Build the role collections
-		_roles.put(ACCESS, new TreeSet<String>());
-		_roles.put(ADMIN, new TreeSet<String>());
-		_roles.put(OPERATOR, new TreeSet<String>());
-		_roles.put(VOICE, new TreeSet<String>());
+		for (ServerAccess sa : ServerAccess.values())
+			_roles.put(sa, new TreeSet<String>());	
 	}
 
 	public String getComboName() {
@@ -143,22 +132,13 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	}
 
 	/**
-	 * Returns the date this Server entry was created on.
-	 * @return the date/time the server was created
-	 * @see Server#setCreatedOn(Date)
-	 */
-	public Date getCreatedOn() {
-		return _createdOn;
-	}
-
-	/**
 	 * Returns the security roles authorized to access this virtual server.
 	 * @return a Map of role types and role names
-	 * @see Server#addRole(String, String)
-	 * @see Server#setRoles(String, Collection)
+	 * @see Server#addRole(ServerAccess, String)
+	 * @see Server#setRoles(ServerAccess, Collection)
 	 */
-	public Map<String, Collection<String>> getRoles() {
-		return new LinkedHashMap<String, Collection<String>>(_roles);
+	public Map<ServerAccess, Collection<String>> getRoles() {
+		return new LinkedHashMap<ServerAccess, Collection<String>>(_roles);
 	}
 	
 	/**
@@ -184,20 +164,16 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	 * @param type the role type
 	 * @param role the role name
 	 * @throws NullPointerException if role or type are null
-	 * @throws IllegalArgumentException if type is invalid
-	 * @see Server#setRoles(String, Collection)
+	 * @see Server#setRoles(ServerAccess, Collection)
 	 * @see Server#getRoles()
 	 */
-	public void addRole(String type, String role) {
+	public void addRole(ServerAccess type, String role) {
 		Collection<String> roles = _roles.get(type);
-		if (roles == null)
-			throw new IllegalArgumentException("Invalid role type - " + type);
-
 		roles.add(role);
 
 		// Add role to access list
-		if (!ACCESS.equals(type))
-			addRole(ACCESS, role);
+		if (ServerAccess.ACCESS != type)
+			addRole(ServerAccess.ACCESS, role);
 	}
 
 	/**
@@ -205,24 +181,18 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 	 * @param type the role type
 	 * @param newRoles a Collection of role names
 	 * @throws NullPointerException if type is null
-	 * @throws IllegalArgumentException if type is invalid
-	 * @see Server#addRole(String, String)
+	 * @see Server#addRole(ServerAccess, String)
 	 * @see Server#getRoles()
 	 */
-	public void setRoles(String type, Collection<String> newRoles) {
+	public void setRoles(ServerAccess type, Collection<String> newRoles) {
 		Collection<String> roles = _roles.get(type);
-		if (roles == null)
-			throw new IllegalArgumentException("Invalid role type - " + type);
-
 		roles.clear();
 		roles.addAll(newRoles);
 
 		// Add role to access list
-		if (!ACCESS.equals(type)) {
-			for (Iterator<String> i = newRoles.iterator(); i.hasNext();) {
-				String role = i.next();
-				addRole(ACCESS, role);
-			}
+		if (ServerAccess.ACCESS != type) {
+			for (Iterator<String> i = newRoles.iterator(); i.hasNext();)
+				addRole(ServerAccess.ACCESS, i.next());
 		}
 	}
 
@@ -286,15 +256,6 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 			throw new IllegalArgumentException("Invalid Port - " + port);
 
 		_port = port;
-	}
-
-	/**
-	 * Updates the creation date of this Server record.
-	 * @param dt the date/time the server record was created
-	 * @see Server#getCreatedOn()
-	 */
-	public void setCreatedOn(Date dt) {
-		_createdOn = dt;
 	}
 
 	/**

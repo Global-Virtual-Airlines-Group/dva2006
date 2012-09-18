@@ -1,4 +1,4 @@
-// Copyright 2006, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.deltava.security.command.TransferAccessControl;
 /**
  * A Web Site Command to delete Equipment Transfer Requests.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -26,6 +26,7 @@ public class TransferDeleteCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {
@@ -57,7 +58,7 @@ public class TransferDeleteCommand extends AbstractCommand {
 			ctx.startTX();
 
 			// If the Check Ride has not been scored or submitted, delete it
-			if ((cr != null) && (cr.getStatus() == Test.NEW)) {
+			if ((cr != null) && (cr.getStatus() == TestStatus.NEW)) {
 			   SetExam exwdao = new SetExam(con);
 			   exwdao.delete(cr);
 			   

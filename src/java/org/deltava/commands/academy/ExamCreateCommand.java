@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create new Flight Academy Examinations.
  * @author Luke
- * @version 3.5
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,6 +27,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the exam name
@@ -61,7 +62,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			int activeExamID = exdao.getActiveExam(ctx.getUser().getID());
 			if (activeExamID != 0) {
 				ex = exdao.getExam(activeExamID);
-				if ((ex != null) && (ex.getStatus() == Test.NEW)) {
+				if ((ex != null) && (ex.getStatus() == TestStatus.NEW)) {
 					result.setURL("exam", null, ex.getID());
 					result.setSuccess(true);
 					return;
@@ -84,9 +85,9 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			// Create the examination
 			ex = new Examination(examName);
 			ex.setOwner(ep.getOwner());
-			ex.setPilotID(ctx.getUser().getID());
+			ex.setAuthorID(ctx.getUser().getID());
 			ex.setStage(ep.getStage());
-			ex.setStatus(Test.NEW);
+			ex.setStatus(TestStatus.NEW);
 			ex.setAcademy(true);
 			
 			// Set the creation/expiration date/times
@@ -97,7 +98,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 
 			// Load the question pool for this examination
 			GetExamQuestions eqdao = new GetExamQuestions(con);
-			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true, ex.getPilotID());
+			Collection<QuestionProfile> qPool = eqdao.getQuestionPool(ep, true, ex.getAuthorID());
 			if (qPool.isEmpty())
 				throw new CommandException("Empty Question Pool for " + examName, false);
 

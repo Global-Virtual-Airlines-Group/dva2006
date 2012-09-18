@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -48,8 +48,6 @@ public class SetEvent extends DAO {
 			writeCharts(e);
 			writeEQTypes(e);
 			writeContactAddrs(e);
-
-			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -261,7 +259,7 @@ public class SetEvent extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Writes participating airlines to the database.
 	 */
 	private void writeAirlines(Event e) throws SQLException {
@@ -285,7 +283,7 @@ public class SetEvent extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Writes equipment types to the database.
 	 */
 	private void writeEQTypes(Event e) throws SQLException {
@@ -308,7 +306,7 @@ public class SetEvent extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Writes ATC contact addresses to the database.
 	 */
 	private void writeContactAddrs(Event e) throws SQLException {
@@ -331,7 +329,7 @@ public class SetEvent extends DAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Adds a new Online Event to the database.
 	 */
 	private void insert(Event e) throws SQLException {
@@ -339,7 +337,7 @@ public class SetEvent extends DAO {
 				+ "BRIEFING, CAN_SIGNUP, SIGNUP_URL, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork().getValue());
-		_ps.setInt(3, e.getStatus());
+		_ps.setInt(3, e.getStatus().ordinal());
 		_ps.setTimestamp(4, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(5, createTimestamp(e.getEndTime()));
 		_ps.setTimestamp(6, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
@@ -353,7 +351,7 @@ public class SetEvent extends DAO {
 		e.setID(getNewID());
 	}
 
-	/**
+	/*
 	 * Updates an existing Online Event in the database.
 	 */
 	private void update(Event e) throws SQLException {
@@ -367,7 +365,7 @@ public class SetEvent extends DAO {
 		_ps.setString(6, e.getBriefing());
 		_ps.setBoolean(7, e.getCanSignup());
 		_ps.setString(8, e.getSignupURL());
-		_ps.setInt(9, e.getStatus());
+		_ps.setInt(9, e.getStatus().ordinal());
 		_ps.setString(10, e.getOwner().getCode());
 		_ps.setInt(11, e.getID());
 		executeUpdate(1);

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,17 +6,17 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Flight Assignment Updated</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@include file="/jsp/main/header.jspf" %> 
-<%@include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -30,7 +30,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 our database.<br />
 <br />
 <c:forEach var="pirep" items="${assign.flights}">
-<el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd> - <el:cmd url="routeplot" link="${pirep}">Plot Route </el:cmd><br />
+<el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd> - <el:cmd url="routeplot" link="${pirep}">Plot Route</el:cmd><br />
 </c:forEach>
 </c:when>
 <c:when test="${isDelete}">

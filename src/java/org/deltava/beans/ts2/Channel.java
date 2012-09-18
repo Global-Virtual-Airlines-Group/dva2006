@@ -1,34 +1,24 @@
 // Copyright 2006, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
-import java.util.*;
-
 import org.deltava.beans.*;
-
-import org.deltava.util.ComboUtils;
 
 /**
  * A bean to store TeamSpeak 2 voice channel information.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
-public class Channel extends DatabaseBean implements ViewEntry {
+public class Channel extends TSObject implements ViewEntry {
 	
-	public static final Collection<ComboAlias> CODECS = ComboUtils.fromArray(new String[] { "CELP 5.1 kbit",
-			"CELP 6.3 kbit", "GSM 14.8 kbit", "GSM 16.4 kbit", "CELP Windows 5.2 kbit", "Speex 3.4 kbit", "Speex 5.2 kbit",
-			"Speex 7.2 kbit", "Speex 9.3 kbit", "Speex 12.3 kbit", "Speex 16.3 kbit", "Speex 19.5 kbit", "Speex 25.9 kbit"},
-			new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"});
-
 	private String _name;
 	private String _topic;
 	private String _desc;
 	private String _pwd;
-	private Date _createdOn;
 	
 	private int _serverID;
-	private int _codec;
+	private Codec _codec;
 	private int _maxUsers;
 	
 	private boolean _isModerated;
@@ -44,7 +34,6 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	public Channel(String name) {
 		super();
 		setName(name);
-		_createdOn = new Date();
 	}
 	
 	/**
@@ -84,20 +73,11 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Returns the date the Channel was created.
-	 * @return the creation date/time
-	 * @see Channel#setCreatedOn(Date)
+	 * Returns the Channel codec.
+	 * @return the Codec
+	 * @see Channel#setCodec(Codec)
 	 */
-	public Date getCreatedOn() {
-		return _createdOn;
-	}
-	
-	/**
-	 * Returns the Channel codec ID.
-	 * @return the codec ID
-	 * @see Channel#setCodec(int)
-	 */
-	public int getCodec() {
+	public Codec getCodec() {
 		return _codec;
 	}
 	
@@ -186,15 +166,6 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Updates the Channel creation date.
-	 * @param dt the creation date/time
-	 * @see Channel#getCreatedOn()
-	 */
-	public void setCreatedOn(Date dt) {
-		_createdOn = dt;
-	}
-	
-	/**
 	 * Updates the TeamSpeak server's database ID.
 	 * @param id the database ID
 	 * @throws IllegalArgumentException if id is negative 
@@ -222,12 +193,12 @@ public class Channel extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
-	 * Updates the Channel's codec ID.
-	 * @param id the codec ID
+	 * Updates the Channel's codec.
+	 * @param c the Codec
 	 * @see Channel#getCodec()
 	 */
-	public void setCodec(int id) {
-		_codec = id;
+	public void setCodec(Codec c) {
+		_codec = c;
 	}
 	
 	/**

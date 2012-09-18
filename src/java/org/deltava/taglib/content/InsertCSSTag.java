@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -8,7 +8,6 @@ import javax.servlet.jsp.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.Person;
-import org.deltava.beans.system.*;
 
 import org.deltava.taglib.ContentHelper;
 
@@ -17,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A JSP tag to insert a Cascading Style Sheet.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -28,20 +27,8 @@ public class InsertCSSTag extends InsertContentTag {
 	 */
 	static final String DEFAULT_SCHEME = "legacy";
 	
-	private static final String DEFAULT_SUFFIX = "ff";
-
 	private String _host;
 	private String _scheme;
-	private boolean _browserSpecific;
-	private String _defaultSuffix = DEFAULT_SUFFIX;
-
-	/**
-	 * Sets whether to include a brower-specific Cascading Style Sheet.
-	 * @param isSpecific TRUE if the CSS is browser-specific, otherwise FALSE
-	 */
-	public void setBrowserSpecific(boolean isSpecific) {
-		_browserSpecific = isSpecific;
-	}
 
 	/**
 	 * Specifies that the Style Sheet is located on a different web server.
@@ -61,14 +48,6 @@ public class InsertCSSTag extends InsertContentTag {
 	}
 	
 	/**
-	 * Overrideds the file suffix to use for unknown browsers.
-	 * @param suffix
-	 */
-	public void setDefaultSuffix(String suffix) {
-		_defaultSuffix = suffix;
-	}
-	
-	/**
 	 * Gets the scheme in use, or DEFAULT_SCHEME if none specified
 	 * @return the scheme name
 	 * @see InsertCSSTag#setScheme(String)
@@ -81,6 +60,7 @@ public class InsertCSSTag extends InsertContentTag {
 	 * Loads the UI scheme name from the user object, if present.
 	 * @param ctxt the JSP page context
 	 */
+	@Override
 	public final void setPageContext(PageContext ctxt) {
 		super.setPageContext(ctxt);
 		HttpServletRequest req = (HttpServletRequest) ctxt.getRequest();
@@ -96,6 +76,7 @@ public class InsertCSSTag extends InsertContentTag {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		
 		// Build the path to the CSS file
@@ -105,19 +86,6 @@ public class InsertCSSTag extends InsertContentTag {
 		buf.append(getScheme());
 		buf.append('/');
 		buf.append(_resourceName);
-
-		// Append browser-specific extension
-		if (_browserSpecific) {
-			HTTPContextData bctxt = ContentHelper.getBrowserContext(pageContext);
-			buf.append('_');
-			if ((bctxt.getBrowserType() == BrowserType.FIREFOX) || (bctxt.getBrowserType() == BrowserType.CHROME) || (bctxt.getBrowserType() == BrowserType.WEBKIT))
-				buf.append("ff");
-			else if ((bctxt.getBrowserType() == BrowserType.IE) && (bctxt.getMajor() < 8))
-				buf.append("ie");
-			else
-				buf.append(_defaultSuffix);
-		}
-
 		buf.append(".css");
 		
 		try {
@@ -153,10 +121,10 @@ public class InsertCSSTag extends InsertContentTag {
 	/**
 	 * Releases the tag's state.
 	 */
+	@Override
 	public void release() {
 		super.release();
 		_scheme = null;
 		_host = null;
-		_defaultSuffix = DEFAULT_SUFFIX;
 	}
 }

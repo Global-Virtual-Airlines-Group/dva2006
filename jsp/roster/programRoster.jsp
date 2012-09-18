@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Program Roster - ${eqType.name}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
@@ -42,12 +42,12 @@
 
 <!-- Table Header Bar -->
 <tr class="title caps prgRoster">
- <td width="10%">PILOT CODE</td>
- <td width="18%">PILOT NAME</td>
- <td width="12%">RANK</td>
- <td width="15%">TOTAL</td>
- <td width="15%">ACARS</td>
- <td width="15%">ONLINE</td>
+ <td style="width:10%">PILOT CODE</td>
+ <td style="width:18%">PILOT NAME</td>
+ <td style="width:12%">RANK</td>
+ <td style="width:15%">TOTAL</td>
+ <td style="width:15%">ACARS</td>
+ <td style="width:15%">ONLINE</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -77,17 +77,17 @@
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgExamQueue">
- <td width="25%">EXAMINATION NAME</td>
- <td width="20%">PILOT NAME</td>
- <td width="20%">RANK / EQUIPMENT</td>
- <td width="15%">CREATED ON</td>
- <td width="10%">QUESTIONS</td>
+ <td style="width:25%">EXAMINATION NAME</td>
+ <td style="width:20%">PILOT NAME</td>
+ <td style="width:20%">RANK / EQUIPMENT</td>
+ <td style="width:15%">CREATED ON</td>
+ <td style="width:10%">QUESTIONS</td>
  <td>STAGE</td>
 </tr>
 
 <!-- Table Data -->
 <c:forEach var="exam" items="${examQueue}">
-<c:set var="pilot" value="${pilots[exam.pilotID]}" scope="page" />
+<c:set var="pilot" value="${pilots[exam.authorID]}" scope="page" />
 <tr class="prgExamQueue">
  <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
@@ -107,16 +107,16 @@
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgRideQueue">
- <td width="8%">DATE</td>
- <td width="7%">&nbsp;</td>
- <td width="20%">PILOT NAME</td>
- <td width="10%">AIRCRAFT</td>
+ <td style="width:8%">DATE</td>
+ <td style="width:7%">&nbsp;</td>
+ <td style="width:20%">PILOT NAME</td>
+ <td style="width:10%">AIRCRAFT</td>
  <td class="left">COMMENTS</td>
 </tr>
 
 <!-- Table View data -->
 <c:forEach var="ride" items="${crQueue}">
-<c:set var="pilot" value="${pilots[ride.pilotID]}" scope="page" />
+<c:set var="pilot" value="${pilots[ride.authorID]}" scope="page" />
 <tr class="prgRideQueue">
  <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
 <c:if test="${ride.flightID > 0}">
@@ -141,10 +141,10 @@
 
 <!-- Table Header Bar-->
 <tr class="title caps prgTxQueue">
- <td width="35%"><el:cmd url="txrequests" className="title" sort="P.LASTNAME">PILOT NAME</el:cmd></td>
- <td width="10%">PILOT ID</td>
- <td width="20%">CURRENT RANK</td>
- <td width="15%">CURRENT PROGRAM</td>
+ <td style="width:35%"><el:cmd url="txrequests" className="title" sort="P.LASTNAME">PILOT NAME</el:cmd></td>
+ <td style="width:10%">PILOT ID</td>
+ <td style="width:20%">CURRENT RANK</td>
+ <td style="width:15%">CURRENT PROGRAM</td>
  <td>REQUESTED ON</td>
 </tr>
 
@@ -174,12 +174,12 @@
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps prgPromoQueue">
- <td width="15%">&nbsp;</td>
- <td width="10%">PILOT CODE</td>
- <td width="30%">PILOT NAME</td>
- <td width="10%">TOTAL</td>
- <td width="10%">ACARS</td>
- <td width="10%">ONLINE</td>
+ <td style="width:15%">&nbsp;</td>
+ <td style="width:10%">PILOT CODE</td>
+ <td style="width:30%">PILOT NAME</td>
+ <td style="width:10%">TOTAL</td>
+ <td style="width:10%">ACARS</td>
+ <td style="width:10%">ONLINE</td>
  <td>LAST FLIGHT</td>
 </tr>
 
@@ -212,12 +212,12 @@
 
 <!-- Table Header Bar -->
 <tr class="title caps crStats">
- <td width="20%">MONTH</td>
- <td width="20%">SCORER</td>
- <td width="10%">PASSED</td>
- <td width="10%">TOTAL</td>
- <td width="15%">PASS RATE</td>
- <td width="10%">PILOTS</td>
+ <td style="width:20%">MONTH</td>
+ <td style="width:20%">SCORER</td>
+ <td style="width:10%">PASSED</td>
+ <td style="width:10%">TOTAL</td>
+ <td style="width:15%">PASS RATE</td>
+ <td style="width:10%">PILOTS</td>
  <td>AVG. TRIES</td>
 </tr>
 
@@ -243,15 +243,15 @@
 </tr>
 <!-- Table Header Bar-->
 <tr class="title caps frStats">
- <td width="5%">#</td>
- <td width="20%">ENTRY</td>
- <td width="8%">HOURS</td>
- <td width="7%">LEGS</td>
- <td width="10%">ACARS</td>
- <td width="9%">ONLINE</td>
- <td width="9%">HISTORIC</td>
- <td width="9%">DISPATCH</td>
- <td width="9%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
+ <td style="width:5%">#</td>
+ <td style="width:20%">ENTRY</td>
+ <td style="width:8%">HOURS</td>
+ <td style="width:7%">LEGS</td>
+ <td style="width:10%">ACARS</td>
+ <td style="width:9%">ONLINE</td>
+ <td style="width:9%">HISTORIC</td>
+ <td style="width:9%">DISPATCH</td>
+ <td style="width:9%">${hasPilotID ? 'PILOTS' : 'DISTANCE'}</td>
  <td>AVERAGE</td>
 </tr>
 

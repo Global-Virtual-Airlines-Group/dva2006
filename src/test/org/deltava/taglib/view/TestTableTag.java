@@ -21,8 +21,6 @@ public class TestTableTag extends AbstractTagTestCase {
     public void testAttributes() throws Exception {
         _tag.setID("TableID");
         _tag.setClassName("tableClass");
-        _tag.setSpace(2);
-        _tag.setPad(5);
         _tag.setCmd("commandName");
         _tag.setSize(60);
         
@@ -30,7 +28,7 @@ public class TestTableTag extends AbstractTagTestCase {
         assertEquals(60, _tag.size());
         
         assertEvalBody(_tag.doStartTag());
-        assertEquals("<table id=\"TableID\" class=\"tableClass\" cellspacing=\"2\" cellpadding=\"5\">", _jspOut.toString());
+        assertEquals("<table id=\"TableID\" class=\"tableClass\">", _jspOut.toString());
 
         _jspOut.clearBuffer();
         assertEvalPage(_tag.doEndTag());
@@ -40,7 +38,7 @@ public class TestTableTag extends AbstractTagTestCase {
     public void testDefaults() throws Exception {
         assertEquals(SystemData.getInt("html.table.viewSize"), _tag.size());
         assertEvalBody(_tag.doStartTag());
-        assertEquals("<table cellspacing=\"3\" cellpadding=\"4\">", _jspOut.toString());
+        assertEquals("<table>", _jspOut.toString());
 
         _jspOut.clearBuffer();
         assertEvalPage(_tag.doEndTag());
@@ -49,7 +47,6 @@ public class TestTableTag extends AbstractTagTestCase {
     
     public void testValidation() throws Exception {
         _tag.setID("idTable");
-        _tag.setSpace(-1);
         
         assertEquals(SystemData.getInt("html.table.viewSize"), _tag.size());
         assertEvalBody(_tag.doStartTag());

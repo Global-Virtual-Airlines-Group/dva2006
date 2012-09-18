@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Date;
@@ -12,15 +12,15 @@ import org.deltava.util.system.SystemData;
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
 public class ExamAccessControl extends AccessControl {
 
-	private ExamProfile _ep;
-    private Test _t;
-    private UserData _user;
+	private final ExamProfile _ep;
+    private final Test _t;
+    private final UserData _user;
     
     private boolean _canRead;
     private boolean _canSubmit;
@@ -70,7 +70,7 @@ public class ExamAccessControl extends AccessControl {
 
         // Set access variables
         boolean isHR = _ctx.isUserInRole("HR");
-        boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
+        boolean isOurs = (_ctx.getUser().getID() == _t.getAuthorID());
         boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAudit") || _ctx.isUserInRole("AcademyAdmin");
         boolean isExam = isHR;
         if (_t.getAcademy())
@@ -80,11 +80,11 @@ public class ExamAccessControl extends AccessControl {
         
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);
-        boolean isSubmitted = (_t.getStatus() == Test.SUBMITTED);
-        boolean isScored = (_t.getStatus() == Test.SCORED);
+        boolean isSubmitted = (_t.getStatus() == TestStatus.SUBMITTED);
+        boolean isScored = (_t.getStatus() == TestStatus.SCORED);
         if (!isCR) {
         	Examination ex = (Examination) _t;
-        	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().before(new Date())));
+        	isSubmitted = isSubmitted || ((_t.getStatus() == TestStatus.NEW) && (ex.getExpiryDate().before(new Date())));
         }
         
         // Check if we're able to score - everyone can score a check ride

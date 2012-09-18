@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Dispatcher Service Calendar</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
@@ -50,7 +50,7 @@ return true;
 <el:form action="dspentry.do" op="save" method="post" validate="return validate(this)">
 <el:table className="form">
 <tr class="title">
- <td width="80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
+ <td style="width:80%" class="caps"><content:airline /> ACARS DISPATCHER SERVICE CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" tzName="local" /></td>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
 </tr>
 </el:table>
@@ -81,8 +81,7 @@ return true;
 </calendar:month>
 </div>
 <c:if test="${access.canCreate}">
-<%@ include file="/jsp/dispatch/addServiceTime.jspf" %>
-</c:if>
+<%@ include file="/jsp/dispatch/addServiceTime.jspf" %></c:if>
 </el:form>
 <br />
 <content:copyright />

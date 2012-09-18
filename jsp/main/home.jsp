@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /></title>
 <content:sysdata var="forumName" name="airline.forum" />
@@ -14,7 +14,7 @@
 <content:sysdata var="airlineURL" name="airline.url" />
 <content:sysdata var="desc" name="airline.meta.desc" />
 <content:sysdata var="keywords" name="airline.meta.keywords" />
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
@@ -78,7 +78,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:forEach var="notam" items="${notams}">
 <tr>
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
- <td width="10%" class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
+ <td style="width:10%;" class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
  <td><el:cmd url="notamedit" link="${notam}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </tr>
 <c:if test="${notam.isHTML}">
@@ -176,7 +176,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:set var="eRoute" value="${fn:first(event.routes)}" scope="page" />
 <tr>
  <td class="pri bld"><el:cmd url="event" link="${event}"><fmt:text value="${event.name}" /></el:cmd></td>
- <td class="sec bld">${event.networkName}</td>
+ <td class="sec bld">${event.network}</td>
  <td class="small bld"><fmt:date t="HH:mm" date="${event.startTime}" /> - <fmt:date t="HH:mm" date="${event.endTime}" /></td>
 <c:if test="${empty eRoute}">
  <td class="small caps">NO AVAILABLE ROUTES</td>
@@ -232,13 +232,13 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <br />
 <c:choose>
 <c:when test="${empty fbClientID}">
-<div class="mid"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" border="0" /></a></div>
+<div class="mid"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 </c:when>
 <c:otherwise>
 <div style="float:right; margin-right:70px;">
 <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fapps%2Fapplication.php%3Fid%3D${fbClientID}&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=tahoma&amp;height=62&amp;appId=${fbClientID}" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
 </div>
-<div style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" border="0" /></a></div>
+<div style="float:left; margin-left:70px;"><a rel="nofollow" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" className="noborder" /></a></div>
 <div style="clear:both;"></div>
 </c:otherwise>
 </c:choose>

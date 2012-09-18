@@ -22,7 +22,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.0
  */
 
@@ -55,7 +55,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			// Get the Pilot
 			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			UserData ud = uddao.get(cr.getPilotID());
+			UserData ud = uddao.get(cr.getAuthorID());
 			p = pdao.get(ud);
 			
 			// Get the Flight Report
@@ -95,7 +95,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(DatabaseID.ACARS));
-			cr.setStatus(Test.SCORED);
+			cr.setStatus(TestStatus.SCORED);
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
 			

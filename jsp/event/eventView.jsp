@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,11 +7,11 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Online Event - ${event.name}</title>
 <content:sysdata var="airlineName" name="airline.name" />
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -75,7 +75,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Online Network</td>
- <td colspan="5" class="data pri bld">${event.networkName}</td>
+ <td colspan="5" class="data pri bld">${event.network}</td>
 </tr>
 <c:if test="${fn:sizeof(event.airlines) > 1}">
 <tr>
@@ -198,10 +198,10 @@ return true;
 <c:if test="${!empty signupPredict}"> (EXPECTED TURNOUT - <fmt:int value="${signupPredict}" /> PILOTS)</c:if></td>
 </tr>
 <tr class="title caps mid">
- <td width="10%">ID</td>
- <td width="30%">PILOT NAME</td>
- <td width="10%">EQUIPMENT</td>
- <td width="10%">${event.networkName} ID</td>
+ <td style="width:10%">ID</td>
+ <td style="width:30%">PILOT NAME</td>
+ <td style="width:10%">EQUIPMENT</td>
+ <td style="width:10%">${event.network} ID</td>
 <c:if test="${showStats}">
  <td>STATISTICS</td>
  <td>FLIGHT ROUTE</td>
@@ -228,7 +228,7 @@ return true;
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
 <c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim="," /></span></c:if></td>
  <td class="sec bld">${signup.equipmentType}</td>
- <td class="pri bld">${fn:networkID(pilot, event.networkName)}</td>
+ <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
 <c:if test="${showPilotStats}">
  <td class="small"><fmt:int value="${pilot.eventSignups}" /> signups, <fmt:int value="${pilot.eventLegs}" /> legs
  (<fmt:dec value="${(pilot.eventLegs * 100.0) / pilot.eventSignups}" fmt="##0.0" />%)</td>

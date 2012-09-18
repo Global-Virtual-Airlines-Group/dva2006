@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP Tag to display a User profile across applications.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,8 +27,6 @@ public class UserProfileTag extends ElementTag {
 	 * @param ud the UserData bean
 	 */
 	public void setLocation(UserData ud) {
-
-		// Check for null
 		_usrData = ud;
 		if (ud == null)
 			return;
@@ -49,7 +47,9 @@ public class UserProfileTag extends ElementTag {
 	 * Opens this link element by writing an &gt;A&lt; tag.
 	 * @throws JspException if an error occurs;
 	 */
+	@Override
 	public int doStartTag() throws JspException {
+		super.doStartTag();
 		if (_usrData == null)
 			return EVAL_BODY_INCLUDE;
 
@@ -66,6 +66,7 @@ public class UserProfileTag extends ElementTag {
 	 * Closes this link element by writing an &gt;/A&lt; tag.
 	 * @throws JspException if an I/O error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 		if (_usrData != null) {
 			try {

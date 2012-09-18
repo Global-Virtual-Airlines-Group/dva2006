@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,21 +6,29 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> Weather Center</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" libraries="weather" />
+<content:js name="progressBar" />
+<content:js name="googleMapsWX" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <c:if test="${!empty tileHost}">
-<content:js name="acarsMapWX" />
-<content:js name="acarsMapFF" />
-<content:js name="progressBar" />
-</c:if>
+<script type="text/javascript">
+var gsLoader;
+gsLoader = new golgotha.maps.GinsuLoader(2);
+gsLoader.setData('radar', 0.45, 'wxRadar');
+gsLoader.setData('eurorad', 0.45, 'wxRadar');
+gsLoader.setData('temp', 0.275, 'wxTemp');
+gsLoader.setData('windspeed', 0.325, 'wxTemp');
+gsLoader.setData('future_radar_ff', 0.45, 'wxRadar');
+</script>
+<map:wxList layers="radar,eurorad,temp,windspeed,future_radar_ff" function="gsLoader.load" max="8" /></c:if>
 <script type="text/javascript">
 <c:if test="${!empty jetStreamImgs}">
 function setJSMapType(combo)
@@ -204,7 +212,6 @@ this.isOpen = true;
 return true;
 }
 </script>
-<map:wxList layers="radar,eurorad,sat,temp,windspeed,future_radar_ff" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -222,7 +229,8 @@ return true;
  <td colspan="2" class="left"><content:airline /> WEATHER CENTER</td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel" style="bottom:17px; right:2px; visibility:hidden;"></div></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="480" /><div id="copyright" class="small mapTextLabel"></div>
+<div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 <tr>
  <td class="label">Airport Code</td>
@@ -264,59 +272,34 @@ return true;
 <script type="text/javascript">
 <map:point var="mapC" point="${homeAirport}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapOpts = {center:mapC, zoom:5, minZoom:3, maxZoom:14, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Map marker codes
 var wxMarkers = [];
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.getOptions = function() { return mapOpts; }; 
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map, 'click', function () { map.infoWindow.close(); });
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
 <c:if test="${!empty tileHost}">
-// Load the tile overlays
-getTileOverlay('radar', 0.45);
-getTileOverlay('eurorad', 0.45);
-getTileOverlay('sat', 0.35);
-getTileOverlay('temp', 0.25);
-getTileOverlay('windspeed', 0.35);
-
-// Load the ff tile overlays
-var ffLayers = ['future_radar_ff'];
-for (var i = 0; i < ffLayers.length; i++) {
-	var layerName = ffLayers[i];
-	var dates = getFFSlices(layerName);
-	document.ffSlices[layerName] = dates;
-	document.ffOptions[layerName] = getFFComboOptions(dates);
-	for (var x = 0; x < dates.length; x++)
-		getFFOverlay(layerName, 0.45, dates[x]);
-}
+// Load the layer slices
+var radarFF = gsLoader.getLayers('future_radar_ff');
 
 // Build the layer controls
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new FFOverlayControl('Future Radar', 'future_radar_ff'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
-google.maps.event.addListener(map, 'maptypeid_changed', hideAllSlices);
-
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById('copyright');
-cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-
-// Initialize FastForward elements
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
-	addOverlay(map, 'ffSlices'); 
-	addOverlay(map, 'copyright'); 
-	google.maps.event.trigger(this, 'maptypeid_changed');
-});
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Wind Speed', gsLoader.getLatest('windspeed')));
+</c:if>
+// Add standard layers
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
 // Update text color
-google.maps.event.trigger(map, 'maptypeid_changed');</c:if>
+google.maps.event.trigger(map, 'maptypeid_changed');
 
 // Load METAR for home airport
 loadWX('${homeAirport.ICAO}');
@@ -324,8 +307,7 @@ loadWX('${homeAirport.ICAO}');
 // Load Jet Stream map types
 var jsMapTypes = [];
 <c:forEach var="mapType" items="${fn:keys(jetStreamImgs)}">
-var mapOptions = [];
-mapOptions.push(new Option('-'));
+var mapOptions = [new Option('-')];
 <c:forEach var="mapURL" items="${jetStreamImgs[mapType]}">
 mapOptions.push(new Option('${mapURL.comboName}', '${mapURL.comboAlias}'));</c:forEach>
 jsMapTypes['${mapType}'] = mapOptions;
@@ -333,4 +315,4 @@ jsMapTypes['${mapType}'] = mapOptions;
 </c:if>
 </script>
 </body>
-</map:xhtml>
+</html>

@@ -9,7 +9,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.academy.Course;
+import org.deltava.beans.academy.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.econ.*;
 import org.deltava.beans.event.Event;
@@ -31,7 +31,7 @@ import org.gvagroup.acars.*;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.4
  */
 
@@ -303,7 +303,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 				Collection<Course> courses = crsdao.getByPilot(ctx.getUser().getID());
 				for (Iterator<Course> i = courses.iterator(); (c == null) && i.hasNext(); ) {
 					Course crs = i.next();
-					if (crs.getStatus() == Course.STARTED)
+					if (crs.getStatus() == Status.STARTED)
 						c = crs;
 				}
 				
@@ -453,18 +453,18 @@ public class OfflineFlightCommand extends AbstractCommand {
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = null;
 			if (c != null) {
-				List<CheckRide> cRides = exdao.getAcademyCheckRides(c.getID(), Test.NEW);
+				List<CheckRide> cRides = exdao.getAcademyCheckRides(c.getID(), TestStatus.NEW);
 				if (!cRides.isEmpty())
 					cr = cRides.get(0);
 			}
 			
 			if (cr == null)
-				cr = exdao.getCheckRide(p.getID(), afr.getEquipmentType(), Test.NEW);
+				cr = exdao.getCheckRide(p.getID(), afr.getEquipmentType(), TestStatus.NEW);
 			
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
 				cr.setSubmittedOn(new Date());
-				cr.setStatus(Test.SUBMITTED);
+				cr.setStatus(TestStatus.SUBMITTED);
 
 				// Update the checkride
 				SetExam wdao = new SetExam(con);

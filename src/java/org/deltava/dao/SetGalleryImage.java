@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.gallery.*;
 /**
  * A Data Access Object to write Picture Gallery images.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -45,8 +45,6 @@ public class SetGalleryImage extends DAO {
 			_ps.setInt(8, img.getSize());
 			_ps.setBinaryStream(9, img.getInputStream(), img.getSize());
 			_ps.setBoolean(10, img.getFleet());
-
-			// Update the database
 			executeUpdate(1);
 
 			// Get the new image ID
@@ -77,18 +75,16 @@ public class SetGalleryImage extends DAO {
 	}
 
 	/**
-	 * Writes a new Image Vote to the database. 
-	 * @param v the Vote bean
+	 * Writes a new Image Like to the database.
+	 * @param userID the database ID of the Person liking the Image 
+	 * @param imgID the image database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(Vote v) throws DAOException {
+	public void like(int userID, int imgID) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO GALLERYSCORE (IMG_ID, PILOT_ID, SCORE) VALUES (?, ?, ?)");
-			_ps.setInt(1, v.getImageID());
-			_ps.setInt(2, v.getAuthorID());
-			_ps.setInt(3, v.getScore());
-
-			// Add the vote
+			prepareStatement("INSERT INTO GALLERYSCORE (IMG_ID, PILOT_ID) VALUES (?, ?)");
+			_ps.setInt(1, imgID);
+			_ps.setInt(2, userID);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -107,8 +103,6 @@ public class SetGalleryImage extends DAO {
 			// Delete the Image
 			prepareStatement("DELETE FROM GALLERY WHERE (ID=?)");
 			_ps.setInt(1, id);
-
-			// Remove the image
 			executeUpdate(0);
 			
 			// Update any Water Cooler threads that link to this.
@@ -134,8 +128,6 @@ public class SetGalleryImage extends DAO {
 			prepareStatement("DELETE FROM GALLERYSCORE WHERE (IMG_ID=?) AND (PILOT_ID=?)");
 			_ps.setInt(1, imgID);
 			_ps.setInt(2, pilotID);
-
-			// Remove the vote
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

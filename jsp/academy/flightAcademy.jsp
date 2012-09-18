@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Flight Academy - ${pilot.name}</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -69,11 +69,11 @@ return true;
 <el:table className="view">
 <!-- Course History Title Bar -->
 <tr class="title caps">
- <td width="40%">COURSE NAME</td>
- <td width="15%">INSTRUCTOR</td>
- <td width="8%">STAGE</td>
- <td width="14%">STATUS</td>
- <td width="14%">STARTED ON</td>
+ <td style="width:40%">COURSE NAME</td>
+ <td style="width:15%">INSTRUCTOR</td>
+ <td style="width:8%">STAGE</td>
+ <td style="width:14%">STATUS</td>
+ <td style="width:14%">STARTED ON</td>
  <td>COMPLETED ON</td>
 </tr>
 
@@ -85,7 +85,7 @@ return true;
  <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="sec bld">${(empty ins) ? 'Self-Directed' : ins.name}</td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>
- <td class="pri bld">${course.statusName}</td>
+ <td class="pri bld">${course.status.name}</td>
  <td><fmt:date fmt="d" date="${course.startDate}" /></td>
 <c:if test="${!empty course.endDate}">
  <td><fmt:date fmt="d" date="${course.endDate}" /></td>

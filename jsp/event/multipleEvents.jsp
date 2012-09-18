@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,10 +7,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Online Events</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="view" />
 <content:pics />
 </head>
@@ -34,10 +34,10 @@ Online Event profiles to learn more about this <content:airline /> Event.</td>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">DATE</td>
- <td width="25%">EVENT NAME</td>
- <td width="8%">NETWORK</td>
- <td width="8%">STATUS</td>
+ <td style="width:10%">DATE</td>
+ <td style="width:25%">EVENT NAME</td>
+ <td style="width:8%">NETWORK</td>
+ <td style="width:8%">STATUS</td>
  <td>AVAILABLE ROUTES</td>
 </tr>
 
@@ -46,8 +46,8 @@ Online Event profiles to learn more about this <content:airline /> Event.</td>
 <view:row entry="${event}">
  <td class="pri bld"><fmt:date fmt="d" date="${event.startTime}" /></td>
  <td><el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
- <td class="pri bld">${event.networkName}</td>
- <td class="sec">${event.statusName}</td>
+ <td class="pri bld">${event.network}</td>
+ <td class="sec">${event.status.name}</td>
  <td class="small"><c:forEach var="route" items="${event.routes}">
 ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>

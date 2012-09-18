@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -76,8 +76,7 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the Pilot's equipment program. This method is useful when we use this class and do not wish to call the
-	 * {@link org.deltava.dao.GetEquipmentType} DAO a second time.
+	 * Returns the Pilot's equipment program.
 	 * @return the EquipmentType bean
 	 */
 	public EquipmentType getEquipmentType() {
@@ -85,8 +84,7 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the Pilot's examinations. This method is useful when we use this class and do not wish to call the
-	 * {@link org.deltava.dao.GetExam} DAO a second time.
+	 * Returns the Pilot's examinations.
 	 * @return a Collection of Test beans
 	 */
 	public Collection<Test> getExams() {
@@ -131,7 +129,7 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the highest stage Examination this user has passed. This will return 4 if the user
+	 * Returns the highest stage Examination this user has passed. This will return 5 if the user
 	 * is a Chief Pilot or an Assistant Chief Pilot.
 	 * @return the stage number of the highest examination, or 1 if none passed
 	 * @see Test#getStage()
@@ -256,11 +254,12 @@ public final class TestingHistoryHelper {
 			throw new PromotionIneligibilityException(eq.getName() + " is a " + eq.getOwner().getName() + " program");
 
 		// Check if we've passed the FO exam for that program
-		if (!hasPassed(eq.getExamNames(Rank.FO)))
+		boolean initialHire = hasCheckRide(eq, true); 
+		if (!initialHire && !hasPassed(eq.getExamNames(Rank.FO)))
 			throw new PromotionIneligibilityException("Haven't passed " + eq.getExamNames(Rank.FO));
 
 		// Check if we have a checkride in that equipment
-		if (!hasCheckRide(eq))
+		if (!initialHire && !hasCheckRide(eq))
 			throw new PromotionIneligibilityException("Haven't passed " + eq.getName() + " check ride");
 	}
 
@@ -285,7 +284,8 @@ public final class TestingHistoryHelper {
 			throw new PromotionIneligibilityException("Must be Captain in Stage " + (eq.getStage() - 1));
 
 		// Check if we've passed the FO/CAPT exam for that program
-		if (!hasPassed(eq.getExamNames(Rank.FO)) && !hasPassed(eq.getExamNames(Rank.C)))
+		boolean initialHire = hasCheckRide(eq, true); 
+		if (!initialHire && !hasPassed(eq.getExamNames(Rank.FO)) && !hasPassed(eq.getExamNames(Rank.C)))
 			throw new PromotionIneligibilityException("Has not passed FO/Captain Examination");
 
 		// Make sure we're not already in that program
@@ -293,7 +293,7 @@ public final class TestingHistoryHelper {
 			throw new PromotionIneligibilityException("Already in " + eq.getName() + " program");
 
 		// Check if we don't have a checkride in that equipment program
-		if (hasCheckRide(eq))
+		if (initialHire || hasCheckRide(eq))
 			throw new PromotionIneligibilityException("Has already passed Check Ride");
 
 		// If we require a checkride, ensure we have a minimum number of legs
@@ -368,7 +368,7 @@ public final class TestingHistoryHelper {
 	 */
 	public boolean hasSubmitted(String examName) {
 		for (Test t : _tests) {
-			if ((t.getStatus() == Test.SUBMITTED) && (t.getName().equals(examName)))
+			if ((t.getStatus() == TestStatus.SUBMITTED) && (t.getName().equals(examName)))
 				return true;
 		}
 
@@ -376,16 +376,26 @@ public final class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if a user has passed a checkride for a particular equipment type.
+	 * Returns if a user has passed a check ride for a particular equipment type.
 	 * @param eq the Equipment Type bean
 	 * @return TRUE if the user passed the check ride, otherwise FALSE
 	 */
 	public boolean hasCheckRide(EquipmentType eq) {
+		return hasCheckRide(eq, false);
+	}
+
+	/**
+	 * Returns if a user has passed a check ride for a particular equipment type.
+	 * @param eq the Equipment Type bean
+	 * @param isInitialHire TRUE if checking for initial hire, otherwise FALSE
+	 * @return TRUE if the user passed the check ride, otherwise FALSE
+	 */
+	public boolean hasCheckRide(EquipmentType eq, boolean isInitialHire) {
 		for (Test t : _tests) {
 			if ((t instanceof CheckRide) && (t.getPassFail())) {
 				CheckRide cr = (CheckRide) t;
 				if (cr.getEquipmentType().equals(eq.getName()))
-					return true;
+					return !isInitialHire || cr.isInitialHire();
 			}
 		}
 
@@ -409,7 +419,7 @@ public final class TestingHistoryHelper {
 			return false;
 
 		// If the test is not scored and failed, then forget
-		if (t.getStatus() != Test.SCORED)
+		if (t.getStatus() != TestStatus.SCORED)
 			return false;
 		else if (t.getPassFail())
 			return false;

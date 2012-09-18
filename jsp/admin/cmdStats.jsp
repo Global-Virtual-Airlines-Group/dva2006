@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Command Statistics</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -50,13 +50,13 @@ return true;
 
 <!-- Table Legend Bar -->
 <tr class="title caps">
- <td width="15%">COMMAND NAME</td>
- <td width="10%">INVOKED</td>
- <td width="10%">SUCCESSFUL</td>
- <td width="10%">PERCENT</td>
- <td width="10%">AVG. TIME</td> 
- <td width="14%">AVG. BACK END</td>
- <td width="12%">MAX TIME</td>
+ <td style="width:15%">COMMAND NAME</td>
+ <td style="width:10%">INVOKED</td>
+ <td style="width:10%">SUCCESSFUL</td>
+ <td style="width:10%">PERCENT</td>
+ <td style="width:10%">AVG. TIME</td> 
+ <td style="width:14%">AVG. BACK END</td>
+ <td style="width:12%">MAX TIME</td>
  <td>MAX BACK END</td>
 </tr>
 

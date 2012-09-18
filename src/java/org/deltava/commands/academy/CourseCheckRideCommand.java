@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to assign Check Rides linked to Flight Academy courses.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
@@ -71,9 +71,8 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// Make sure a check ride isn't already assigned
 			boolean hasRide = false;
 			exams = exdao.getCheckRides(c.getPilotID());
-			for (Iterator<CheckRide> i = exams.iterator(); i.hasNext(); ) {
-				CheckRide t = i.next();
-				if (t.getStatus() != Test.SCORED) {
+			for (CheckRide t : exams) {
+				if (t.getStatus() != TestStatus.SCORED) {
 					hasRide = true;
 					ctx.setAttribute("checkRide", t, REQUEST);
 				}
@@ -120,9 +119,9 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setDate(new Date());
 			cr.setAcademy(true);
-			cr.setPilotID(p.getID());
+			cr.setAuthorID(p.getID());
 			cr.setScorerID(ctx.getUser().getID());
-			cr.setStatus(Test.NEW);
+			cr.setStatus(TestStatus.NEW);
 			cr.setComments(isOurs && (sc != null) ? sc.getDescription() : ctx.getParameter("comments"));
 			cr.setStage(c.getStage());
 			cr.setEquipmentType(SystemData.get("academy.eqType"));

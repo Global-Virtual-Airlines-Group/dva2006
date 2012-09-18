@@ -26,6 +26,10 @@ table.view tr {
 	text-align: center;
 }
 
+table.view td {
+	padding: 3px 3px 3px 3px;
+}
+
 td.priB {
 	background-color: #0000a1;
 	color: #ffffff;

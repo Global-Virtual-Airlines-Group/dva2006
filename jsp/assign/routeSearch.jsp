@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Route Search</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -100,14 +100,14 @@ return true;
 </tr>
 <!-- Schedule Entry Header Bar -->
 <tr class="caps title">
- <td width="5%">&nbsp;</td>
- <td width="20%">FLIGHT NUMBER</td>
- <td width="15%">EQUIPMENT</td>
- <td width="15%">DEPARTS</td>
- <td width="15%">ARRIVES</td>
+ <td style="width:5%">&nbsp;</td>
+ <td style="width:20%">FLIGHT NUMBER</td>
+ <td style="width:15%">EQUIPMENT</td>
+ <td style="width:15%">DEPARTS</td>
+ <td style="width:15%">ARRIVES</td>
  <td>DISPATCH ROUTES</td>
- <td width="10%">LENGTH</td>
- <td width="10%">DISTANCE</td>
+ <td style="width:10%">LENGTH</td>
+ <td style="width:10%">DISTANCE</td>
 </tr>
 
 <c:set var="lastAirport" value="${rp.airportD}" scope="page" />

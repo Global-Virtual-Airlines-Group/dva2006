@@ -1,21 +1,20 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
 
-import org.deltava.beans.testing.Test;
-import org.deltava.beans.testing.Examination;
+import org.deltava.beans.testing.*;
 
 /**
  * An Access Controller for Applicant Questionnaires.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
 public class QuestionnaireAccessControl extends AccessControl {
 
-	private Examination _ex;
+	private final Examination _ex;
 
 	private boolean _canRead;
 	private boolean _canSubmit;
@@ -42,8 +41,8 @@ public class QuestionnaireAccessControl extends AccessControl {
 		boolean isHR = _ctx.isUserInRole("HR");
 
 		// Set status values
-		_canSubmit = ((_ex.getStatus() == Test.NEW) && (isAnonymous || isHR));
-		_canScore = (_ex.getStatus() == Test.SUBMITTED) && (isExam || isHR);
+		_canSubmit = ((_ex.getStatus() == TestStatus.NEW) && (isAnonymous || isHR));
+		_canScore = (_ex.getStatus() == TestStatus.SUBMITTED) && (isExam || isHR);
 		_canRead = _canSubmit || _canScore || isHR;
 	}
 

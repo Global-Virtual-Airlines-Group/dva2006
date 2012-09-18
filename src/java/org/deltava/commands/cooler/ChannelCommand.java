@@ -1,7 +1,6 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.util.Iterator;
 import java.sql.Connection;
 
 import org.deltava.beans.cooler.Channel;
@@ -16,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to maintain Discussion Forum channel profiles.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,6 +26,7 @@ public class ChannelCommand extends AbstractFormCommand {
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
+	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new channel
@@ -49,12 +49,12 @@ public class ChannelCommand extends AbstractFormCommand {
 			
 			// Load roles and airlines - make sure write access can read
 			c.setAirlines(ctx.getParameters("airline"));
-			c.setRoles(Channel.INFOTYPE_RROLE, ctx.getParameters("readRoles"));
-			c.setRoles(Channel.INFOTYPE_WROLE, ctx.getParameters("writeRoles"));
-			c.setRoles(Channel.INFOTYPE_NROLE, ctx.getParameters("notifyRoles"));
+			c.setRoles(Channel.InfoType.READ, ctx.getParameters("readRoles"));
+			c.setRoles(Channel.InfoType.WRITE, ctx.getParameters("writeRoles"));
+			c.setRoles(Channel.InfoType.NOTIFY, ctx.getParameters("notifyRoles"));
 			if (!c.getWriteRoles().contains("*")) {
-				for (Iterator<String> i = c.getReadRoles().iterator(); i.hasNext(); )
-					c.addRole(Channel.INFOTYPE_RROLE, i.next());
+				for (String r : c.getReadRoles())
+					c.addRole(Channel.InfoType.READ, r);
 			}
 			
 			// Check our access
@@ -104,6 +104,7 @@ public class ChannelCommand extends AbstractFormCommand {
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
+	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Check if we're creating a new channel
@@ -148,6 +149,7 @@ public class ChannelCommand extends AbstractFormCommand {
      * Callback method called when reading the Channel.
      * @param ctx the Command context
      */
+	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
 		execEdit(ctx);
 	}

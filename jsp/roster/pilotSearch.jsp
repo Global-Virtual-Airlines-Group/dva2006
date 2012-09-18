@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,10 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Pilot Search</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
@@ -62,7 +62,7 @@ return false;
 <content:filter roles="HR,Examination,PIREP">
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="eMail" idx="*" size="24" max="64" value="${param.eMail}" /></td>
+ <td class="data"><el:addr name="eMail" idx="*" size="24" max="64" value="${param.eMail}" /></td>
 </tr>
 </content:filter>
 <tr>
@@ -102,11 +102,11 @@ return false;
 <!-- Table Header Bar-->
 <tr class="title">
  <td colspan="2" width="25%">&nbsp;</td>
- <td width="20%">PILOT NAME</td>
- <td width="10%">PILOT ID</td>
- <td width="10%">JOINED ON</td>
- <td width="10%">LAST FLIGHT</td>
- <td width="10%">FLIGHTS</td>
+ <td style="width:20%">PILOT NAME</td>
+ <td style="width:10%">PILOT ID</td>
+ <td style="width:10%">JOINED ON</td>
+ <td style="width:10%">LAST FLIGHT</td>
+ <td style="width:10%">FLIGHTS</td>
  <td>HOURS</td>
 </tr>
 
@@ -114,11 +114,11 @@ return false;
 <c:forEach var="pilot" items="${results}">
 <c:set var="access" value="${accessMap[pilot.ID]}" scope="page" />
 <view:row entry="${pilot}">
-<c:set var="cspan" value="${2}" scope="page" />
+<c:set var="cspan" value="2" scope="page" />
 <content:filter roles="HR">
 <c:if test="${access.canActivate || access.canChangeSignature}">
  <td><el:cmdbutton url="cmdlog" link="${pilot}" label="VIEW LOG" /></td>
-<c:set var="cspan" value="${1}" scope="page" />
+<c:set var="cspan" value="1" scope="page" />
 </c:if>
 </content:filter>
 <c:choose>

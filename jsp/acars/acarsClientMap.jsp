@@ -1,25 +1,34 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<map:xhtml>
+<html lang="en">
 <head>
 <title><content:airline /> ACARS Live Map</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<map:api version="3" />
+<map:api version="3" libraries="weather" />
 <content:js name="acarsMap" />
+<content:js name="progressBar" />
+<content:js name="googleMapsWX" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
-<content:sysdata var="multiHost" name="weather.multiHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <c:if test="${!empty tileHost}">
-<content:js name="acarsMapWX" /></c:if>
+<script type="text/javascript">
+var gsLoader;
+gsLoader = new golgotha.maps.GinsuLoader(2);
+gsLoader.setData('radar', 0.4, 'wxRadar');
+gsLoader.setData('eurorad', 0.4, 'wxRadar');
+gsLoader.setData('temp', 0.275, 'wxTemp');
+gsLoader.setData('future_radar_ff', 0.375, 'ffRadar');
+</script>
+<map:wxList layers="radar,eurorad,temp,future_radar_ff" function="gsLoader.load" max="8" /></c:if>
 <script type="text/javascript">
 function reloadData(isAuto)
 {
@@ -40,7 +49,6 @@ if (doRefresh && isAuto)
 return true;
 }
 </script>
-<map:wxList layers="radar,eurorad,sat,temp" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -65,46 +73,38 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="510" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="510" /><div id="copyright" class="small mapTextLabel"></div>
+<div id="mapStatus" class="small mapTextLabel"></div></td>
 </tr>
 </el:table>
-<div id="ffSlices" style="visibility:hidden;"><span id="ffLabel" class="small mapTextLabel">Select Time</span>
- <el:combo name="ffSlice" size="1" className="small" options="${emptyList}" onChange="void updateFF(this)" /></div>
 </el:form>
 <content:copyright />
-<div id="copyright" class="small mapTextLabel" style="bottom:20px; right:2px; visibility:hidden;"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:2, zoom:${zoomLevel}, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds:golgotha.maps.DEFAULT_TYPES};
+var mapOpts = {center:mapC, minZoom:2, zoom:${zoomLevel}, maxZoom:17, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-map.getOptions = function() { return mapOpts; };
-<c:if test="${!empty tileHost}">
-// Load the tile overlays
-getTileOverlay('radar', 0.45);
-getTileOverlay('eurorad', 0.45);
-getTileOverlay('sat', 0.35);
-getTileOverlay('temp', 0.25);
-
-// Build the layer controls
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Radar', ['radar', 'eurorad']));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Infrared', 'sat'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXOverlayControl('Temperature', 'temp'));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new WXClearControl());
-
-// Display the copyright notice
-var d = new Date();
-var cp = document.getElementById('copyright');
-cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
-</c:if>
-// Add map controls
 <map:type map="map" type="${gMapType}" default="TERRAIN" />
-google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 map.infoWindow = new google.maps.InfoWindow({content:'', zIndex:golgotha.maps.z.INFOWINDOW});
 google.maps.event.addListener(map.infoWindow, 'closeclick', infoClose);
 google.maps.event.addListener(map, 'click', infoClose);
+google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
+map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('copyright'));
+map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('mapStatus'));
+<c:if test="${!empty tileHost}">
+// Build the layer controls
+var ff = gsLoader.combine(8, 'radar', 'future_radar_ff');
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Radar', [gsLoader.getLatest('radar'), gsLoader.getLatest('eurorad')]));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Temperature', gsLoader.getLatest('temp')));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerAnimateControl(map, 'Radar Loop', ff, 333));
+map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
+</c:if>
+// Build the standard weather layers
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+google.maps.event.trigger(this, 'maptypeid_changed');
 
 // Placeholder for route
 var routeData;
@@ -117,4 +117,4 @@ document.doRefresh = true;
 reloadData(true);
 </script>
 </body>
-</map:xhtml>
+</html>

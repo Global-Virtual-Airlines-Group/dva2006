@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -6,7 +6,7 @@ import javax.servlet.jsp.JspException;
 /**
  * A JSP tag to generate an HTML link.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -23,7 +23,9 @@ public class LinkTag extends ElementTag {
      * Opens this link element by writing an &gt;A&lt; tag.
      * @throws JspException if an error occurs; 
      */
+    @Override
     public int doStartTag() throws JspException {
+    	super.doStartTag();
         try {
             validateLink();
             _out.print(_data.open(true));
@@ -38,6 +40,7 @@ public class LinkTag extends ElementTag {
      * Closes this link element by writing an &gt;/A&lt; tag.
      * @throws JspException if an I/O error occurs
      */
+    @Override
     public int doEndTag() throws JspException {
         try {
             _out.print(_data.close());
@@ -98,7 +101,7 @@ public class LinkTag extends ElementTag {
      * @throws IllegalStateException if neither a URL nor onClick are present
      */
     protected void validateLink() throws IllegalStateException {
-        boolean isOK = (_data.hasAttribute("href") || _data.hasAttribute("onclick"));
+        boolean isOK = (_data.has("href") || _data.has("onclick"));
         if (!isOK)
             throw new IllegalStateException("href or onClick must be set");
     }

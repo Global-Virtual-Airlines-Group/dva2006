@@ -1,14 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Aircraft<c:if test="${!empty aircraft}"> - ${aircraft.name}</c:if></title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -57,31 +56,31 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft</td>
- <td class="data"><el:text name="name" idx="*" className="pri bld req" size="15" max="15" value="${aircraft.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld" required="true" size="15" max="15" value="${aircraft.name}" /></td>
 </tr>
 <tr>
  <td class="label">Full Aircraft Name</td>
- <td class="data"><el:text name="fullName" idx="*" className="req" size="32" max="48" value="${aircraft.fullName}" /></td>
+ <td class="data"><el:text name="fullName" idx="*" required="true" size="32" max="48" value="${aircraft.fullName}" /></td>
 </tr>
 <tr>
  <td class="label">Aircraft Family Code</td>
- <td class="data"><el:text name="family" idx="*" className="req" size="8" max="8" value="${aircraft.family}" /></td>
+ <td class="data"><el:text name="family" idx="*" required="true" size="8" max="8" value="${aircraft.family}" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Range</td>
- <td class="data"><el:text name="range" idx="*" className="req" size="4" max="5" value="${aircraft.range}" /> miles</td>
+ <td class="data"><el:text name="range" idx="*" required="true" size="4" max="5" value="${aircraft.range}" /> miles</td>
 </tr>
 <tr>
  <td class="label">Minimum Takeoff Runway Length</td>
- <td class="data"><el:text name="toRunwayLength" idx="*" className="req" size="4" max="5" value="${aircraft.takeoffRunwayLength}" /> feet</td>
+ <td class="data"><el:text name="toRunwayLength" idx="*" required="true" size="4" max="5" value="${aircraft.takeoffRunwayLength}" /> feet</td>
 </tr>
 <tr>
  <td class="label">Minimum Landing Runway Length</td>
- <td class="data"><el:text name="lndRunwayLength" idx="*" className="req" size="4" max="5" value="${aircraft.landingRunwayLength}" /> feet</td>
+ <td class="data"><el:text name="lndRunwayLength" idx="*" required="true" size="4" max="5" value="${aircraft.landingRunwayLength}" /> feet</td>
 </tr>
 <tr>
  <td class="label">Passenger Capacity</td>
- <td class="data"><el:text name="seats" idx="*" className="req" size="3" max="3" value="${aircraft.seats}" /> seats</td>
+ <td class="data"><el:text name="seats" idx="*" required="true" size="3" max="3" value="${aircraft.seats}" /> seats</td>
 </tr>
 <tr>
  <td class="label top">IATA Equipment Code(s)</td>
@@ -101,40 +100,40 @@ return true;
 </tr>
 <tr>
  <td class="label">Maximum Weight</td>
- <td class="data"><el:text name="maxWeight" idx="*" size="6" max="7" value="${aircraft.maxWeight}" className="req" /> pounds</td>
+ <td class="data"><el:text name="maxWeight" idx="*" size="6" max="7" value="${aircraft.maxWeight}" required="true" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Maximum Takeoff Weight</td>
- <td class="data"><el:text name="maxTWeight" idx="*" size="6" max="7" value="${aircraft.maxTakeoffWeight}" className="req" /> pounds</td>
+ <td class="data"><el:text name="maxTWeight" idx="*" size="6" max="7" value="${aircraft.maxTakeoffWeight}" required="true" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Maximum Landing Weight</td>
- <td class="data"><el:text name="maxLWeight" idx="*" size="6" max="7" value="${aircraft.maxLandingWeight}" className="req" /> pounds</td>
+ <td class="data"><el:text name="maxLWeight" idx="*" size="6" max="7" value="${aircraft.maxLandingWeight}" required="true" /> pounds</td>
 </tr>
 <tr class="title caps">
  <td colspan="2">ACARS FUEL PROFILE</td>
 </tr>
 <tr>
  <td class="label">Engine Information</td>
- <td class="data"><el:text name="engineCount" idx="*" size="1" max="1" value="${aircraft.engines}" className="bld req" />
- x <el:text name="engineType" idx="*" size="16" max="32" value="${aircraft.engineType}" className="req" /></td>
+ <td class="data"><el:text name="engineCount" idx="*" size="1" max="1" value="${aircraft.engines}" className="bld" required="true" />
+ x <el:text name="engineType" idx="*" size="16" max="32" value="${aircraft.engineType}" required="true" /></td>
 </tr>
 <tr>
  <td class="label">Cruise Speed</td>
- <td class="data"><el:text name="cruiseSpeed" idx="*" size="3" max="4" value="${aircraft.cruiseSpeed}" className="req" /> knots</td>
+ <td class="data"><el:text name="cruiseSpeed" idx="*" size="3" max="4" value="${aircraft.cruiseSpeed}" required="true" /> knots</td>
 </tr>
 <tr>
  <td class="label">Fuel Flow</td>
- <td class="data"><el:text name="fuelFlow" idx="*" size="3" max="5" value="${aircraft.fuelFlow}" className="req" />
+ <td class="data"><el:text name="fuelFlow" idx="*" size="3" max="5" value="${aircraft.fuelFlow}" required="true" />
  pounds per engine per hour</td>
 </tr>
 <tr>
  <td class="label">Base Fuel</td>
- <td class="data"><el:text name="baseFuel" idx="*" size="3" max="5" value="${aircraft.baseFuel}" className="req" /> pounds</td>
+ <td class="data"><el:text name="baseFuel" idx="*" size="3" max="5" value="${aircraft.baseFuel}" required="true" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Taxi Fuel</td>
- <td class="data"><el:text name="taxiFuel" idx="*" size="3" max="5" value="${aircraft.taxiFuel}" className="req" /> pounds</td>
+ <td class="data"><el:text name="taxiFuel" idx="*" size="3" max="5" value="${aircraft.taxiFuel}" required="true" /> pounds</td>
 </tr>
 <tr>
  <td class="label top">Primary Tanks</td>
@@ -142,7 +141,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Primary Percentage</td>
- <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Primary']}" className="req" />
+ <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Primary']}" required="true" />
  percent before filling Secondary tanks</td>
 </tr>
 <tr>
@@ -151,7 +150,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Secondary Percentage</td>
- <td class="data">Fill to <el:text name="sPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Secondary']}" className="req" />
+ <td class="data">Fill to <el:text name="sPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Secondary']}" required="true" />
  percent before filling Other tanks</td>
 </tr>
 <tr>

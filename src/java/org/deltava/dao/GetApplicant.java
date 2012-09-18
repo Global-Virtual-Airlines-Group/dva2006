@@ -15,7 +15,7 @@ import org.deltava.util.*;
 /**
  * A Data Access Object to read Applicant data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -463,7 +463,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 				a.setTimeFormat(rs.getString(24));
 				a.setNumberFormat(rs.getString(25));
 				a.setAirportCodeType(Airport.Code.values()[rs.getInt(26)]);
-				a.setDistanceType(rs.getInt(27));
+				a.setDistanceType(DistanceUnit.values()[rs.getInt(27)]);
 				a.setSimVersion(rs.getInt(28));
 				a.setTZ(TZInfo.get(rs.getString(29)));
 				a.setUIScheme(rs.getString(30));

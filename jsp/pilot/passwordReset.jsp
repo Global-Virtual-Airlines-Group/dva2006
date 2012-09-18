@@ -1,17 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title><content:airline /> Password Reset</title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:attr roles="HR" attr="isHR" value="true" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -35,6 +36,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 
+
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form method="post" action="pwdreset.do" validate="return validate(this)">
@@ -44,12 +46,12 @@ return true;
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="fName" idx="1" size="10" max="16" className="req" value="${param.fName}" />
- <el:text name="lName" idx="2" size="16" max="14" className="req" value="${param.lName}" /></td>
+ <td class="data"><el:text name="fName" required="true" idx="*" size="10" max="16" value="${param.fName}" />
+ <el:text name="lName" required="true" idx="*" size="16" max="14" value="${param.lName}" /></td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="eMail" idx="3" size="32" max="80" /><br />
+ <td class="data"><el:addr name="eMail" required="${isHR}" idx="*" size="32" max="80" /><br />
  <span class="small">(We need your e-mail address to verify it's really you.)</span></td>
 </tr>
 <c:if test="${!empty dupeUsers}">
@@ -68,7 +70,7 @@ return true;
 </c:if>
 <content:hasmsg>
 <tr>
- <td colspan="2" class="error bld">PASSWORD RESET FAILURE - <content:sysmsg /></td>
+ <td colspan="2" class="error bld caps">PASSWORD RESET FAILURE - <content:sysmsg /></td>
 </tr>
 </content:hasmsg>
 </el:table>

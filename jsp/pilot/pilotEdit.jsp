@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
 <title>Edit Profile - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
-<content:css name="main" browserSpecific="true" />
+<content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
@@ -105,6 +105,7 @@ return true;
 <content:sysdata var="db" name="airline.db" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
+<content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />
@@ -126,8 +127,8 @@ return true;
 <c:if test="${access.canChangeStatus || access.canChangeRoles}">
 <tr>
  <td class="label">First / Last Name</td>
- <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld" required="true" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld" required="true" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">Pilot Status</td>
@@ -220,7 +221,7 @@ return true;
 <c:when test="${isHR && (user.ID != pilot.ID)}">
 <tr>
  <td class="label">E-Mail Address</td>
- <td colspan="${cspan}" class="data"><el:text name="email" value="${pilot.email}" idx="*" size="48" max="64" className="req" /></td>
+ <td colspan="${cspan}" class="data"><el:addr name="email" required="true" value="${pilot.email}" idx="*" size="48" max="64" /></td>
 </tr>
 </c:when>
 <c:otherwise>
@@ -280,21 +281,21 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td colspan="${cspan}" class="data"><el:combo name="tz" size="1" options="${timeZones}" className="req" value="${pilot.TZ}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="tz" size="1" options="${timeZones}" required="true" value="${pilot.TZ}" /></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
- <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}" className="req" size="15" max="25" />
- <el:text name="tf" value="${pilot.timeFormat}" className="req" size="9" max="9" />
+ <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}"  required="true" size="15" max="25" />
+ <el:text name="tf" value="${pilot.timeFormat}" required="true" size="9" max="9" />
  <el:button ID="DTDefaultButton" onClick="void setDefaultFormats()" label="RESET" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
- <td colspan="${cspan}" class="data"><el:text name="nf" value="${pilot.numberFormat}" className="req" size="12" max="15" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="nf" value="${pilot.numberFormat}" required="true" size="12" max="15" /></td>
 </tr>
 <tr>
  <td class="label">View Size</td>
- <td colspan="${cspan}" class="data"><el:text name="viewCount" value="${pilot.viewCount}" className="req" size="3" max="3" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="viewCount" value="${pilot.viewCount}" required="true" size="3" max="3" /></td>
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
@@ -302,14 +303,14 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Distance Units</td>
- <td colspan="${cspan}" class="data"><el:check name="distanceUnits" type="radio" cols="3" options="${distanceTypes}" value="${pilot.distanceTypeName}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="distanceUnits" type="radio" cols="3" options="${distanceUnits}" value="${pilot.distanceType.unitName}" /></td>
 </tr>
 <tr>
  <td class="label">Route Map Type</td>
  <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapTypeName}" /></td>
 </tr>
 <tr>
- <td class="label top">User Interface</td>
+ <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
 <c:if test="${screenXSize > 1024}"> 
 <el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />

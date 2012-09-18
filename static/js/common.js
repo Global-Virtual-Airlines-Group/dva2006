@@ -1,3 +1,9 @@
+var golgotha = { event: {}};
+golgotha.event.stop = function(e) {
+	e.stopPropagation();
+	e.preventDefault();
+} 
+
 function getElementsById(id, eName)
 {
 var elements = [];
@@ -16,15 +22,39 @@ if (parent == null) parent = document;
 var elements = [];
 var all = parent.getElementsByTagName((eName == null) ? '*' : eName);
 for (var x = 0; x < all.length; x++) {
-	var c = all[x].className;
-	if (c.indexOf) {
-		if ((c.indexOf(' ' + cName) > -1) || (c.indexOf(cName + ' ') > -1) || (c == cName)) {
-			elements.push(all[x]);
-		}
-	}
+	var cl = all[x].className;
+	if (cl.split && (cl.split(' ').indexOf(cName) > -1))
+		elements.push(all[x]);
 }
 
 return elements;
+}
+
+document.addClass = function(e, cl)
+{
+if (!e) return false;
+var c = e.className.split(' ');
+if (c.indexOf(cl) < 0)
+	c.push(cl);
+
+e.className = c.join(' ');	
+return true;
+}
+
+document.containsClass = function(e, cl)
+{
+if (!e) return false;	
+var c = e.className.split(' ');
+return (c.indexOf(cl) > -1);
+}
+
+document.removeClass = function(e, cl)
+{
+if (!e) return false;
+var c = e.className.split(' ');
+var hasClass = c.remove(cl);
+e.className = c.join(' ');
+return hasClass;
 }
 
 function enableObject(e, isEnabled)
@@ -120,7 +150,7 @@ while ((child != null) && (child.nodeType != 4))
 	child = child.nextSibling;
 
 return child;
-};
+}
 
 if (window.Element != undefined)
 	Element.prototype.getCDATA = function() { return getCDATA(this); };
@@ -135,7 +165,16 @@ for (var x = 0; x < this.length; x++) {
 }
 
 return false;
-};
+}
+
+Array.prototype.clone = function()
+{
+var result = [];	
+for (var x = 0; x < this.length; x++)
+	result.push(this[x]);
+
+return result;
+}
 
 Array.prototype.indexOf = function(obj)
 {
