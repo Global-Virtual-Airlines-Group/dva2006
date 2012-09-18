@@ -277,7 +277,7 @@
 	</task>
 
 	<!-- External Chart loader -->
-	<task id="extchartload" enabled="true">
+	<task id="extchartload" enabled="false">
 		<class>org.deltava.tasks.ExternalChartLoadTask</class>
 		<time>
 			<min>30</min>
