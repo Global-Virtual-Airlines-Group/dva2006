@@ -44,7 +44,7 @@ public class WeatherTileServlet extends TileServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 		
 		// Parse the URL and get the tile address
-		TileAddress5D addr = getTileAddress(req.getRequestURI());
+		TileAddress5D addr = getTileAddress(req.getRequestURI(), true);
 		byte[] data = EMPTY;
 		
 		// Get the data

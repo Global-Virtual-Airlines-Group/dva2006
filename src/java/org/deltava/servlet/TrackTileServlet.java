@@ -46,7 +46,7 @@ public class TrackTileServlet extends TileServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException {
 		
 		// Parse the URL and get the tile address
-		TileAddress addr = getTileAddress(req.getRequestURI());
+		TileAddress addr = getTileAddress(req.getRequestURI(), false);
 		byte[] data = EMPTY;
 		if (addr.getLevel() < 13) {
 		
