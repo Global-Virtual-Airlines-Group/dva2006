@@ -94,6 +94,7 @@ ul.menu ul.submenu li {
 ul.menu:hover ul.submenu li {
 	display: block;
 	opacity: .935;
+	filter: alpha(opacity=93);
 }
 
 ul.menu ul.submenu li a {
