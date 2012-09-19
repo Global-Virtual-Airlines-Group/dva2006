@@ -77,16 +77,17 @@ abstract class TileServlet extends GenericServlet {
 	/**
 	 * Parses a URI to get the five-dimensional tile address.
 	 * @param uri the URI
+	 * @param getDate TRUE if a data should be fetched, otherwise use current Date
 	 * @return a TileAddress5D
 	 */
-	protected TileAddress5D getTileAddress(String uri) {
+	protected TileAddress5D getTileAddress(String uri, boolean getDate) {
 		
 		// Parse the URL and get the path parts
 		URLParser url = new URLParser(uri);
 		LinkedList<String> pathParts = url.getPath();
 		Collections.reverse(pathParts);
 		
-		long rawDate = Long.parseLong(pathParts.poll());
+		long rawDate = getDate? Long.parseLong(pathParts.poll()) : System.currentTimeMillis();
 		return new TileAddress5D(pathParts.poll(), new Date(rawDate), url.getName());
 	}
 }
