@@ -4,7 +4,7 @@ package org.deltava.tasks;
 import static java.net.HttpURLConnection.*;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -16,8 +16,7 @@ import org.deltava.dao.http.*;
 
 import org.deltava.taskman.*;
 
-import org.deltava.util.StringUtils;
-import org.deltava.util.ThreadUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -35,85 +34,112 @@ public class ExternalChartLoadTask extends Task {
 	protected static final Collection<Integer> NONFATAL_CODES = Arrays.asList(Integer.valueOf(HTTP_BAD_METHOD), Integer.valueOf(HTTP_BAD_REQUEST),
 		Integer.valueOf(HTTP_FORBIDDEN), Integer.valueOf(HTTP_MOVED_TEMP), Integer.valueOf(HTTP_MOVED_PERM));
 	
-	private class ChartInfoWorker extends Thread {
-		private final Logger tLog;
-		private final Queue<ExternalChart> _work;
-		private final Queue<ExternalChart> _results;
+	private abstract class ChartWork implements Runnable {
+		protected Logger tLog;
 		
-		ChartInfoWorker(int id, Queue<ExternalChart> work, Queue<ExternalChart> results) {
-			super("ChartInfo-" + String.valueOf(id));
-			setDaemon(true);
-			tLog = Logger.getLogger(ExternalChartLoadTask.class.getPackage().getName() + "." + getName());
-			_work = work;
-			_results = results;
+		protected ChartWork() {
+			super();
+		}
+		
+		protected void initLogger() {
+			String tName = Thread.currentThread().getName();
+			String workerID = tName.substring(tName.lastIndexOf('-') + 1);
+			tLog = Logger.getLogger(ExternalChartLoadTask.class.getPackage().getName() + ".Worker-" + workerID);
+		}
+	}
+	
+	private class CountryAirportWork extends ChartWork {
+		private final Country _c;
+		private final GetAirCharts _acdao = new GetAirCharts();
+		private final Collection<Airport> _results = new ArrayList<Airport>();
+		
+		CountryAirportWork(Country c) {
+			super();
+			_c = c;
+		}
+		
+		public Collection<Airport> getResults() {
+			return _results;
 		}
 		
 		@Override
 		public void run() {
+			initLogger();
+			try {
+				_results.addAll(_acdao.getAirports(_c));
+				tLog.info("Loaded " + _results.size() + " Airports for " + _c);
+			} catch (DAOException de) {
+				tLog.error("Cannot load Airports for " + _c, de);
+			}
+		}
+	}
+	
+	private class ChartInfoWork extends ChartWork {
+		private final ExternalChart _ec;
+		
+		ChartInfoWork(ExternalChart ec) {
+			super();
+			_ec = ec;
+		}
+		
+		public ExternalChart getChart() {
+			return _ec;
+		}
+		
+		@Override
+		public void run() {
+			initLogger();
+			
 			GetExternalCharts ecdao = new GetExternalCharts();
 			ecdao.setConnectTimeout(5000);
 			ecdao.setReadTimeout(7500);
 			
-			ExternalChart ec = _work.poll();
-			while (ec != null) {
-				String icao = ec.getAirport().getICAO();
-				try {
-					ecdao.populate(ec);
-					tLog.info("Populated " + icao + " " + ec.getName());
-					_results.add(ec);
-				} catch (HTTPDAOException hde) {
-					Integer rc = Integer.valueOf(hde.getStatusCode());
-					if (NONFATAL_CODES.contains(rc)) {
-						try {
-							ecdao.load(ec);
-							_results.add(ec);
-						} catch (DAOException de) {
-							tLog.warn("Error loading " + icao + " " + ec.getName() + " - " + de.getMessage());	
-						}
-					} else
-						tLog.warn("Error populating " + icao + " " + ec.getName() + " - " + hde.getMessage());
-				} catch (DAOException de) {
-					tLog.warn("Error populating " + icao + " " + ec.getName() + " - " + de.getMessage());
-				}
-				
-				ec = isInterrupted() ? null : _work.poll();
+			String icao = _ec.getAirport().getICAO();			
+			try {
+				ecdao.populate(_ec);
+				tLog.info("Populated " + icao + " " + _ec.getName());
+			} catch (HTTPDAOException hde) {
+				Integer rc = Integer.valueOf(hde.getStatusCode());
+				if (NONFATAL_CODES.contains(rc)) {
+					try {
+						ecdao.load(_ec);
+					} catch (DAOException de) {
+						tLog.warn("Error loading " + icao + " " + _ec.getName() + " - " + de.getMessage());	
+					}
+				} else
+					tLog.warn("Error populating " + icao + " " + _ec.getName() + " - " + hde.getMessage());
+			} catch (DAOException de) {
+				tLog.warn("Error populating " + icao + " " + _ec.getName() + " - " + de.getMessage());
 			}
 		}
 	}
-
-	private class AirportChartWorker extends Thread {
-		private final Logger tLog;
-		private final Queue<Airport> _work;
-		private final Queue<Airport> _loaded;
-		private final Queue<ExternalChart> _results;
+	
+	private class AirportChartWork extends ChartWork {
+		private final Airport _a;
+		private final Collection<ExternalChart> _results = new ArrayList<ExternalChart>();
 		
-		AirportChartWorker(int id, Queue<Airport> work, Queue<Airport> loaded, Queue<ExternalChart> results) {
-			super("AirportChart-" + String.valueOf(id));
-			setDaemon(true);
-			tLog = Logger.getLogger(ExternalChartLoadTask.class.getPackage().getName() + "." + getName());
-			_work = work;
-			_loaded = loaded;
-			_results = results;
+		AirportChartWork(Airport a) {
+			super();
+			_a = a;
+		}
+		
+		public Collection<ExternalChart> getResults() {
+			return _results;
 		}
 		
 		@Override
 		public void run() {
+			initLogger();
+			
 			GetAirCharts ecdao = new GetAirCharts();
 			ecdao.setConnectTimeout(5000);
 			ecdao.setReadTimeout(7500);
 			
-			Airport a = _work.poll();
-			while (a != null) {
-				try {
-					Collection<ExternalChart> exC = ecdao.getCharts(a);
-					_results.addAll(exC);
-					_loaded.add(a);
-					tLog.info("Loaded " + exC.size() + " charts for " + a);
-				} catch (DAOException de) {
-					tLog.error("Error loading charts for " + a + " - " + de.getMessage());
-				}
-				
-				a = isInterrupted() ? null : _work.poll();
+			try {
+				_results.addAll(ecdao.getCharts(_a));
+				tLog.info("Loaded " + _results.size() + " charts for " + _a);
+			} catch (DAOException de) {
+				tLog.error("Error loading charts for " + _a + " - " + de.getMessage());
 			}
 		}
 	}
@@ -142,79 +168,84 @@ public class ExternalChartLoadTask extends Task {
 			
 			// Load AirCharts countries
 			GetAirCharts acdao = new GetAirCharts();
-			Collection<Country> countries = acdao.getCountries();
-			for (Iterator<Country> i = countries.iterator(); i.hasNext(); ) {
-				Country c = i.next();
+			Collection<CountryAirportWork> work = new ArrayList<CountryAirportWork>();
+			for (Country c : acdao.getCountries()) {
 				String src = (String) chartCountries.get(c.getCode().toLowerCase());
 				if (src == null)
 					src = defaultSource;
-				
-				if (!"AirCharts".equals(src))
-					i.remove();
+				if ("AirCharts".equals(src))
+					work.add(new CountryAirportWork(c));
 			}
 			
-			// Get the airports for each country
-			Queue<ExternalChart> extCharts = new LinkedBlockingQueue<ExternalChart>();
-			Queue<Airport> loadedAirports = new LinkedBlockingQueue<Airport>();
-			for (Iterator<Country> i = countries.iterator(); i.hasNext(); ) {
-				Country c = i.next();
-				Queue<Airport> ecAirports = new LinkedBlockingQueue<Airport>(acdao.getAirports(c));
-				log.info("Loaded " + ecAirports.size() + " Airports for " + c);
-				
-				// Go through each airport, and check the max age
-				Connection con = ctx.getConnection();
-				GetChart cdao = new GetChart(con);
-				for (Iterator<Airport> ai = ecAirports.iterator(); ai.hasNext(); ) {
-					Airport a = ai.next();
+			// Run the thread pool
+			int maxThreads = SystemData.getInt("schedule.chart.threads", 12);
+			ThreadPoolExecutor exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+			exec.allowCoreThreadTimeOut(true);
+			for (CountryAirportWork cw : work)
+				exec.execute(cw);
+			
+			// Await shutdown
+			exec.shutdown();
+			exec.awaitTermination(3, TimeUnit.MINUTES);
+			
+			// Reset thread pool
+			exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+			exec.allowCoreThreadTimeOut(true);
+			
+			// Go through each airport, and check the max age
+			Connection con = ctx.getConnection();
+			GetChart cdao = new GetChart(con);
+			Collection<AirportChartWork> apWork = new ArrayList<AirportChartWork>();
+			for (CountryAirportWork cw : work) {
+				for (Airport a : cw.getResults()) {
 					int maxChartAge = cdao.getMaxAge(a);
-					if ((maxChartAge != -1) && (maxChartAge < maxAge))
-						ai.remove();
+					if ((maxChartAge == -1) || (maxChartAge >= maxAge)) {
+						AirportChartWork ap = new AirportChartWork(a);
+						apWork.add(ap);
+						exec.execute(ap);
+					}
 				}
+			}
 
-				// Release connection
-				ctx.release();
-				
-				// Load the Charts for the airports
-				int tpSize = Math.min(4, (ecAirports.size() / 4));
-				Collection<Thread> workers = new ArrayList<Thread>();
-				for (int x = 1; x <= tpSize; x++) {
-					AirportChartWorker wrk = new AirportChartWorker(x, ecAirports, loadedAirports, extCharts);
-					wrk.setUncaughtExceptionHandler(this);
-					workers.add(wrk);
-					wrk.start();
+			// Release connection
+			ctx.release();
+			
+			// Await shutdown
+			exec.shutdown();
+			exec.awaitTermination(5, TimeUnit.MINUTES);
+			
+			// Reset thread pool
+			exec = new ThreadPoolExecutor(maxThreads, maxThreads, 150, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+			exec.allowCoreThreadTimeOut(true);
+			
+			// Load the chart data for each airport
+			Collection<ChartInfoWork> cWork = new ArrayList<ChartInfoWork>();
+			for (AirportChartWork aw: apWork) {
+				for (ExternalChart ec : aw.getResults()) {
+					ChartInfoWork cw = new ChartInfoWork(ec);
+					cWork.add(cw);
+					exec.execute(cw);
 				}
-				
-				// Wait for the workers to finish
-				ThreadUtils.waitOnPool(workers);
 			}
-			
-			// Populate the charts for each airport, using a thread pool
-			Queue<ExternalChart> results = new LinkedBlockingQueue<ExternalChart>();
-			int tpSize = Math.min(12, (extCharts.size() / 16));
-			Collection<Thread> workers = new ArrayList<Thread>();
-			for (int x = 1; x <= tpSize; x++) {
-				ChartInfoWorker wrk = new ChartInfoWorker(x, extCharts, results);
-				wrk.setUncaughtExceptionHandler(this);
-				workers.add(wrk);
-				wrk.start();
-			}
-			
-			// Wait for the workers to finish
-			ThreadUtils.waitOnPool(workers);
 			
 			// Get the external chart IDs
 			Map<String, ExternalChart> charts = new HashMap<String, ExternalChart>();
-			for (ExternalChart ec : results) {
+			for (ChartInfoWork cw : cWork) {
+				ExternalChart ec = cw.getChart();
 				if (!StringUtils.isEmpty(ec.getExternalID()))
 					charts.put(ec.getExternalID(), ec);
 			}
 			
+			// Await shutdown
+			exec.shutdown();
+			exec.awaitTermination(5, TimeUnit.MINUTES);
+			
 			// Get a connection and start a transaction
-			Connection con = ctx.getConnection();
+			con = ctx.getConnection();
 			ctx.startTX();
 			
 			// Determine the external-internal ID mappings
-			GetChart cdao = new GetChart(con);
+			cdao = new GetChart(con);
 			Map<String, Integer> idMap = cdao.getChartIDs(charts.keySet());
 			for (Map.Entry<String, Integer> me : idMap.entrySet()) {
 				ExternalChart exc = charts.get(me.getKey());
@@ -226,10 +257,12 @@ public class ExternalChartLoadTask extends Task {
 			
 			// Write the charts
 			SetChart cwdao = new SetChart(con);
-			for (ExternalChart exc : results)
+			for (ExternalChart exc : charts.values())
 				cwdao.write(exc);
 			
 			ctx.commitTX();
+		} catch (InterruptedException ie) {
+			log.error("Thread pool timeout!");
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
