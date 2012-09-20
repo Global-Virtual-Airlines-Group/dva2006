@@ -63,10 +63,12 @@ return true;
  <td class="data"><el:box name="noValidate" idx="*" className="small" value="true" label="Don't validate SHA-256 signature" /></td>
 </tr>
 </c:if>
+<content:filter roles="Developer">
 <tr>
  <td colspan="2" class="data"><div id="dropbox" class="mid" style="width:600px; height:110px; border:1px solid; border-radius:14px;">
 <span class="pri bld" style="position:relative; top:50%">DROP ZIP FILE HERE</span></div></td>
 </tr>
+</content:filter>
 <c:if test="${hashFailure}">
 <tr>
  <td class="label">&nbsp;</td>
@@ -110,6 +112,7 @@ return true;
 </content:region>
 </content:page>
 <content:googleAnalytics />
+<content:filter roles="Developer">
 <script type="text/javascript">
 var payload = [];
 payload.isComplete = function()
@@ -140,11 +143,11 @@ dropbox.addEventListener("drop", function(e) {
 	golgotha.event.stop(e);
 	var files = e.dataTransfer.files;
 	for (var x = 0; x < files.length; x++) {
-		var f = files[x]; var name = f.name;
-		if (name.lastIndexOf('.') == -1)
+		var f = files[x]; var pos = f.name.lastIndexOf('.');
+		if (pos == -1)
 			continue;
 
-		var ext = name.substring(name.lastIndexOf('.') + 1).toUpperCase();
+		var ext = f.name.substring(pos + 1).toUpperCase();
 		var es = getElementsByClass('file' + ext);
 		for (var x = 0; x < es.length; x++)
 			displayObject(es[x], false);
@@ -157,6 +160,6 @@ dropbox.addEventListener("drop", function(e) {
 
 	return false;
 }, false);
-</script>
+</script></content:filter>
 </body>
 </html>
