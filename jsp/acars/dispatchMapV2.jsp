@@ -11,8 +11,8 @@
 <meta http-equiv="cache-control" content="no-cache" />
 <content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
-<map:api version="2" />
 <content:js name="common" />
+<map:api version="2" />
 <content:googleAnalytics eventSupport="true" />
 <content:sysdata var="imgPath" name="path.img" />
 <map:vml-ie />
@@ -21,7 +21,9 @@ document.imgPath = '${imgPath}';
 function updateZoomLevel(oldZoom, newZoom)
 {
 var level = document.getElementById('zoomLevel');
-level.innerHTML = 'Zoom Level ' + newZoom;
+if (level)
+	level.innerHTML = 'Zoom Level ' + newZoom;
+
 return true;
 }
 
@@ -77,9 +79,7 @@ return true;
 </script></c:if>
 </head>
 <body onunload="GUnload()">
-<el:form action="dispatchMap.do" method="post" validate="return false">
-<map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="small"></div><div id="zoomLevel" class="small"></div>
-</el:form>
+<map:div ID="googleMap" x="100%" y="625" />
 <script type="text/javascript">
 // Load the map
 map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -95,7 +95,6 @@ map.enableDoubleClickZoom();
 
 // Initialize event listeners
 GEvent.addListener(map, 'maptypechanged', updateMapText);
-GEvent.addListener(map, 'zoomend', updateZoomLevel);
 <c:if test="${isDispatch}">
 GEvent.addListener(map, "moveend", mapZoom);
 GEvent.trigger(map, "moveend");</c:if>
