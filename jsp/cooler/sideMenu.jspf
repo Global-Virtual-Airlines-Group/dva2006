@@ -105,7 +105,6 @@
 </content:filter>
  <content:subitem><el:cmd url="simversionstats">Simulator Versions</el:cmd></content:subitem>
  <content:subitem><el:cmd url="landingstats">Landing Statistics</el:cmd></content:subitem>
- <content:subitem><el:cmd url="landings">Greased Landings</el:cmd></content:subitem>
 <content:filter roles="Fleet,HR"> 
  <content:subitem><el:cmd url="fleetstats">Fleet Totals</el:cmd></content:subitem>
 </content:filter>
