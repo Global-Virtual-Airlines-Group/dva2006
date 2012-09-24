@@ -50,6 +50,7 @@ public class DistanceFormatTag extends IntegerFormatTag {
 	/**
 	 * Releases the tag's state variables.
 	 */
+	@Override
 	public void release() {
 		_unit = DistanceUnit.NM;
 		_longUnits = false;
@@ -75,6 +76,8 @@ public class DistanceFormatTag extends IntegerFormatTag {
 			out.print(_nF.format(_value.doubleValue() * _unit.getFactor()));
 			out.print(' ');
 			out.print(_longUnits ? _unit.getUnitName() : _unit.name().toLowerCase());
+			if (_longUnits)
+				out.print('s');
 			if (_className != null)
                 out.print("</span>");
 		} catch (Exception e) {
