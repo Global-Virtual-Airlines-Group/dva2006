@@ -75,7 +75,7 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
+ <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <el:text name="op" type="hidden" value="edit" />
