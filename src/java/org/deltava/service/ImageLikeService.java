@@ -64,6 +64,8 @@ public class ImageLikeService extends WebService {
 			re.setAttribute("likes", String.valueOf(img.getLikeCount()));
 			re.setAttribute("mine", String.valueOf(img.hasLiked(ctx.getUser())));
 			re.setAttribute("canLike", String.valueOf(!isVoting && ac.getCanLike()));
+		} catch (NullPointerException npe) {
+			return SC_BAD_REQUEST;
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
