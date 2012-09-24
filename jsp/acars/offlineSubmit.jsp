@@ -63,12 +63,6 @@ return true;
  <td class="data"><el:box name="noValidate" idx="*" className="small" value="true" label="Don't validate SHA-256 signature" /></td>
 </tr>
 </c:if>
-<content:filter roles="Developer">
-<tr>
- <td colspan="2" class="data"><div id="dropbox" class="mid" style="width:600px; height:110px; border:1px solid; border-radius:14px;">
-<span class="pri bld" style="position:relative; top:50%">DROP ZIP FILE HERE</span></div></td>
-</tr>
-</content:filter>
 <c:if test="${hashFailure}">
 <tr>
  <td class="label">&nbsp;</td>
@@ -112,54 +106,5 @@ return true;
 </content:region>
 </content:page>
 <content:googleAnalytics />
-<content:filter roles="Developer">
-<script type="text/javascript">
-var payload = [];
-payload.isComplete = function()
-{
-return ((this['XML'] && this['SHA']) || (this['ZIP']));
-}
-
-function fileLoad(e)
-{
-var ab = e.target.result;
-var s = '';
-var bytes = new Uint8Array(ab);
-for (var i = 0; i < bytes.byteLength; i++)
-	s += String.fromCharCode(bytes[i]);
-
-payload[e.target.ext] = window.btoa(s);
-if (payload.isComplete())
-	alert('ready to submit!');
-
-return true;
-}
-
-var dropbox = document.getElementById("dropbox");
-dropbox.addEventListener("dragenter", golgotha.event.stop, false);
-dropbox.addEventListener("dragexit", golgotha.event.stop, false);
-dropbox.addEventListener("dragover", golgotha.event.stop, false);
-dropbox.addEventListener("drop", function(e) {
-	golgotha.event.stop(e);
-	var files = e.dataTransfer.files;
-	for (var x = 0; x < files.length; x++) {
-		var f = files[x]; var pos = f.name.lastIndexOf('.');
-		if (pos == -1)
-			continue;
-
-		var ext = f.name.substring(pos + 1).toUpperCase();
-		var es = getElementsByClass('file' + ext);
-		for (var x = 0; x < es.length; x++)
-			displayObject(es[x], false);
-
-		var fr = new FileReader();
-		fr.ext = ext;
-		fr.onload = fileLoad; 
-		fr.readAsArrayBuffer(f);
-	}
-
-	return false;
-}, false);
-</script></content:filter>
 </body>
 </html>
