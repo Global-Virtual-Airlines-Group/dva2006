@@ -121,7 +121,7 @@
 	</task>
 
 	<!-- Purge/Archive orphaned ACARS position entries -->
-	<task id="acarspospurge" enabled="false">
+	<task id="acarspospurge" enabled="true">
 		<class>org.deltava.tasks.ACARSPositionPurgeTask</class>
 		<time>
 			<min>40</min>
