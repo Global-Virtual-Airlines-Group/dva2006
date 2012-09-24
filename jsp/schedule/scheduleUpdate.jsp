@@ -16,6 +16,7 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jspf" %> 
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
+<content:sysdata var="airlines" name="airlines" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -72,7 +73,13 @@ To view flights between ${scheduleEntry.airportD.name} (<fmt:airport airport="${
 </c:choose>
 <c:if test="${isAirport}">
 <br />
-To return to the list of airports, <el:cmd url="airports" className="sec bld">click here</el:cmd>.<br />
+To return to the list of airports, <el:cmd url="airports" className="sec bld">Click Here</el:cmd>.<br />
+<br />
+This airport is serviced by <fmt:int value="${fn:sizeof(airport.airlineCodes)}" /> airlines:<br />
+<br />
+<c:forEach var="aCode" items="${airport.airlineCodes}">
+<c:set var="al" value="${airlines[aCode]}" scope="page" />
+To view the list of airports serviced by ${al.name}, <el:link url="/airports.do?airline=${aCode}" className="bld">Click Here</el:link>.<br /></c:forEach>
 </c:if>
 <br />
 <content:copyright />
