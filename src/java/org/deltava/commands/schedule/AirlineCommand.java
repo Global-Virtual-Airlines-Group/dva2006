@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to update Airline profiles.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -108,6 +108,11 @@ public class AirlineCommand extends AbstractFormCommand {
 				if (a != null) {
 					ctx.setAttribute("airline", a, REQUEST);
 					ctx.setAttribute("altCodes", StringUtils.listConcat(a.getCodes(), "\n"), REQUEST);
+					
+					// Get airports
+					GetAirport apdao = new GetAirport(con);
+					Integer apCount = apdao.getAirportCounts().get(a);
+					ctx.setAttribute("airportCount", (apCount == null) ? Integer.valueOf(0) : apCount, REQUEST);
 				}
 			} catch (DAOException de) {
 				throw new CommandException(de);
