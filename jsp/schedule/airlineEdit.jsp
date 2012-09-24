@@ -3,6 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html lang="en">
 <head>
 <title><content:airline /> Schedule - ${airline.code}</title>
@@ -54,6 +55,12 @@ return true;
  <td class="label top">Web Applications</td>
  <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
 </tr>
+<c:if test="${airportCount > 0}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><fmt:int value="${airportCount}" /> Airports served by this Airline</td>
+</tr>
+</c:if>
 <tr>
  <td class="label top">Alternate Codes</td>
  <td class="data"><el:textbox name="altCodes" idx="*" width="50" height="3">${altCodes}</el:textbox></td>
