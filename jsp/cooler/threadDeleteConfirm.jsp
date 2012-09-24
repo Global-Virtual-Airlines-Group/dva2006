@@ -23,9 +23,9 @@
 This <content:airline /> ${forumName} discussion thread is about to be deleted. Are you sure you want to do this? This
 operation <span class="bld">cannot be undone</span>.<br />
 <br />
-To return to the discussion thread, <el:cmd url="thread" link="${mt}" className="sec bld">Click Here</el:cmd>.<br />
+To return to the discussion thread, <el:cmd url="thread" link="${thread}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-<span class="pri bld">To delete the discussion thread,</span> <el:cmd url="threadkill" link="${pirep}" op="force" className="sec bld">Click Here</el:cmd>.<br />
+<span class="pri bld">To delete the discussion thread,</span> <el:cmd url="threadkill" link="${thread}" op="force" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
