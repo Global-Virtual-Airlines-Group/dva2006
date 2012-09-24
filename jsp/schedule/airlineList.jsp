@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
@@ -30,12 +31,14 @@
  <td style="width:5%">&nbsp;</td>
  <td style="width:25%">AIRLINE NAME</td>
  <td style="width:20%">WEB APPLICATIONS</td>
- <td style="width:15%">AIRLINE CODE</td>
+ <td style="width:10%">AIRLINE CODE</td>
+ <td style="width:10%">AIRPORTS</td>
  <td><el:cmdbutton url="airline" op="edit" label="NEW AIRLINE" /></td>
 </tr>
 
 <!-- Table Airline Data -->
 <c:forEach var="airline" items="${airlines}">
+<c:set var="airportCount" value="${apCount[airline]}" scope="page" />
 <view:row entry="${airline}">
  <td><map:legend color="${airline.color}" legend="" /></td>
  <td class="pri bld"><el:cmd url="airline" linkID="${airline.code}" op="edit">${airline.name}</el:cmd></td>
@@ -43,6 +46,7 @@
 <c:set var="appName" value="${apps[appCode]}" scope="page" />
 ${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
  <td class="bld">${airline.code}</td>
+ <td class="sec bld"><fmt:int value="${airportCount}" /></td>
 <c:if test="${airline.active}">
  <td class="ter bld">Airline is currently Active</td>
 </c:if>
@@ -54,7 +58,7 @@ ${appName.name}<c:if test="${!aStatus.last}"><br /></c:if></c:forEach></td>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="6">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />

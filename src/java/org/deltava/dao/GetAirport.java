@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -310,6 +310,31 @@ public class GetAirport extends DAO {
 			
 			_ps.close();
 			return code;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of Airports served by each Airline.
+	 * @return a Map of counts, keyed by Airline
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Airline, Integer> getAirportCounts() throws DAOException {
+		try {
+			Map<Airline, Integer> results = new LinkedHashMap<Airline, Integer>();
+			prepareStatementWithoutLimits("SELECT CODE, COUNT(DISTINCT IATA) AS CNT FROM common.AIRPORT_AIRLINE "
+				+ "GROUP BY CODE ORDER BY CNT DESC");
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					Airline al = SystemData.getAirline(rs.getString(1));
+					if (al != null)
+						results.put(al, Integer.valueOf(rs.getInt(2)));
+				}
+			}
+
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
