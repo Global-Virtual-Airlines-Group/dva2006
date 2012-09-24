@@ -206,7 +206,6 @@ public final class SystemData implements Serializable {
 	 * Returns an Airline object.
 	 * @param airlineCode the Airline code
 	 * @return the Airline bean, or null if not found
-	 * @throws NullPointerException if airlineCode is null
 	 * @throws IllegalStateException if the &quot;airlines&quot; property has not been added
 	 */
 	public static Airline getAirline(String airlineCode) {
