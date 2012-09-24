@@ -155,8 +155,7 @@ return child;
 if (window.Element != undefined)
 	Element.prototype.getCDATA = function() { return getCDATA(this); };
 
-Array.prototype.remove = function(obj)
-{
+Array.prototype.remove = function(obj) {
 for (var x = 0; x < this.length; x++) {
 	if (this[x] == obj) {
 		this.splice(x, 1);
@@ -167,23 +166,28 @@ for (var x = 0; x < this.length; x++) {
 return false;
 }
 
-Array.prototype.clone = function()
+if (!Array.prototype.indexOf)
 {
+	Array.prototype.indexOf = function(obj) {
+		for (var x = 0; x < this.length; x++) {	
+			if (this[x] == obj)
+				return x;
+		}
+
+		return -1;
+	}
+}
+
+Array.prototype.contains = function(obj) {
+	return (this.indexOf(obj) != -1);
+}
+
+Array.prototype.clone = function() {
 var result = [];	
 for (var x = 0; x < this.length; x++)
 	result.push(this[x]);
 
 return result;
-}
-
-Array.prototype.indexOf = function(obj)
-{
-for (var x = 0; x < this.length; x++) {	
-	if (this[x] == obj)
-		return x;
-}
-
-return -1;
 }
 
 function checkSubmit()
