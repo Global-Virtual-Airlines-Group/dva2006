@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 /**
  * A Data Access Object to write cross-applicaton User data.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -72,33 +72,14 @@ public class SetUserData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		GetUserData.invalidate(id);
 		try {
 			prepareStatement("DELETE FROM common.USERDATA WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Adds Airline Information to the database.
-	 * @param info the Airline Information bean
-	 * @throws DAOException if a JDBC error occurs
-	 * @see SetUserData#update(AirlineInformation)
-	 */
-	public void write(AirlineInformation info) throws DAOException {
-		try {
-			prepareStatement("INSERT INFO common.AIRLINEINFO (CODE, NAME, DBNAME, DOMAIN, CAN_TX) VALUES (?, ?, ?, ?, ?)");
-			_ps.setString(1, info.getCode());
-			_ps.setString(2, info.getName());
-			_ps.setString(3, info.getDB());
-			_ps.setString(4, info.getDomain());
-			_ps.setBoolean(5, info.getCanTransfer());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
+		} finally {
+			GetUserData.invalidate(id);
 		}
 	}
 
@@ -106,19 +87,20 @@ public class SetUserData extends DAO {
 	 * Updates Airline Information in the database. <i>This cannot update the airline code or domain name.</i>
 	 * @param info the Airline Information bean
 	 * @throws DAOException if a JDBC error occurs
-	 * @see SetUserData#write(AirlineInformation)
 	 */
 	public void update(AirlineInformation info) throws DAOException {
-		GetUserData.invalidate(info.getCode());
 		try {
-			prepareStatement("UPDATE common.AIRLINEINFO SET NAME=?, DOMAIN=?, CAN_TX=? WHERE (CODE=?)");
+			prepareStatement("UPDATE common.AIRLINEINFO SET NAME=?, DOMAIN=?, CAN_TX=?, HIST_RESTRICT=? WHERE (CODE=?)");
 			_ps.setString(1, info.getName());
 			_ps.setString(2, info.getDomain());
 			_ps.setBoolean(3, info.getCanTransfer());
-			_ps.setString(4, info.getCode());
+			_ps.setBoolean(4, info.getHistoricRestricted());
+			_ps.setString(5, info.getCode());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			GetUserData.invalidate(info.getCode());
 		}
 	}
 }

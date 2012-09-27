@@ -35,7 +35,7 @@
 	<command id="landings">
 		<name>Greased Landings</name>
 		<class>org.deltava.commands.stats.GreasedLandingCommand</class>
-		<roles>*</roles>
+		<roles>HR,Operations,PIREP</roles>
 	</command>
 
 	<command id="landingstats">
@@ -757,6 +757,17 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="ainfolist">
+		<name>Airline Information List</name>
+		<class>org.deltava.commands.system.AirlineInformationListCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="ainfo">
+		<name>Airline Information</name>
+		<class>org.deltava.commands.system.AirlineInformationCommand</class>
+		<roles>HR</roles>
+	</command>
 
 	<!-- Online Event Commands -->
 	<command id="flightboard">
