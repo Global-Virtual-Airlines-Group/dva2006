@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.ComboAlias;
@@ -7,17 +7,18 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store information about other virtual airline databases.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
 public class AirlineInformation implements java.io.Serializable, Comparable<AirlineInformation>, ComboAlias, Cacheable {
    
-   private String _code;
-   private String _name;
+   private final String _code;
+   private final String _name;
    private String _dbName;
    private String _domain;
    private boolean _canTransfer;
+   private boolean _histRestricted;
 
    /**
     * Creates a new Airline Information bean.
@@ -77,6 +78,15 @@ public class AirlineInformation implements java.io.Serializable, Comparable<Airl
    }
    
    /**
+    * Returns whether historic routes are restricted to historic requirement.
+    * @return TRUE if routes restricted, otherwise FALSE
+    * @see AirlineInformation#setHistoricRestricted(boolean)
+    */
+   public boolean getHistoricRestricted() {
+	   return _histRestricted;
+   }
+   
+   /**
     * Updates the Airline domain name. The domain will be converted to lowercase.
     * @param domain the domain name
     * @throws NullPointerException if domain is null
@@ -103,6 +113,15 @@ public class AirlineInformation implements java.io.Serializable, Comparable<Airl
     */
    public void setCanTransfer(boolean doTransfer) {
       _canTransfer = doTransfer;
+   }
+   
+   /**
+    * Updates whether historic routes are restricted to historic requirement.
+    * @param isRestricted TRUE if routes restricted, otherwise FALSE
+    * @see AirlineInformation#getHistoricRestricted()
+    */
+   public void setHistoricRestricted(boolean isRestricted) {
+	   _histRestricted = isRestricted;
    }
    
    public String getComboName() {

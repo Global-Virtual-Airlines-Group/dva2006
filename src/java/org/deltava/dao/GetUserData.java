@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load cross-application User data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -55,7 +55,7 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * @throws NullPointerException if id is null
 	 */
 	static void invalidate(String id) {
-		_appCache.remove(id.toUpperCase());
+		_appCache.remove(id);
 	}
 
 	/**
@@ -67,6 +67,7 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * @see GetUserData#getAirlines(boolean)
 	 */
 	public AirlineInformation get(String code) throws DAOException {
+		if (code == null) return null;
 
 		// Check if we're in the cache
 		AirlineInformation result = _appCache.get(code.toUpperCase());
@@ -74,12 +75,8 @@ public class GetUserData extends DAO implements CachingDAO {
 			return result;
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?)");
+			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?) LIMIT 1");
 			_ps.setString(1, code.toUpperCase());
-
-			// Get the results, if empty return null
-			setQueryMax(0);
 			List<AirlineInformation> results = executeAirlineInfo();
 			result = results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -118,7 +115,6 @@ public class GetUserData extends DAO implements CachingDAO {
 			}
 		}
 
-		// Convert to a map
 		return CollectionUtils.createMap(results, "code");
 	}
 
@@ -136,16 +132,13 @@ public class GetUserData extends DAO implements CachingDAO {
 			return ud;
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) "
-					+ "AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON "
-					+ "((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY UD.ID");
+			prepareStatementWithoutLimits("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) "
+				+ "AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON "
+				+ "((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY "
+				+ "UD.ID LIMIT 1");
 			_ps.setString(1, ",");
 			_ps.setInt(2, id);
-
-			// Get the results, if empty return null
 			List<UserData> results = execute();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -249,11 +242,10 @@ public class GetUserData extends DAO implements CachingDAO {
 		return result;
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through the result set.
 	 */
 	private List<UserData> execute() throws SQLException {
-		
 		List<UserData> results = new ArrayList<UserData>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -284,11 +276,10 @@ public class GetUserData extends DAO implements CachingDAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to iterate through AirlineInformation result sets.
 	 */
 	private List<AirlineInformation> executeAirlineInfo() throws SQLException {
-		
 		List<AirlineInformation> results = new ArrayList<AirlineInformation>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -296,6 +287,7 @@ public class GetUserData extends DAO implements CachingDAO {
 				info.setDB(rs.getString(3));
 				info.setDomain(rs.getString(4));
 				info.setCanTransfer(rs.getBoolean(5));
+				info.setHistoricRestricted(rs.getBoolean(6));
 				results.add(info);
 			}
 		}
