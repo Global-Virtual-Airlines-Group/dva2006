@@ -80,6 +80,8 @@ public class AirportCommand extends AbstractFormCommand {
 			a.setAirlines(ctx.getParameters("airline"));
 			a.setCountry(Country.get(ctx.getParameter("country")));
 			a.setADSE(Boolean.valueOf(ctx.getParameter("hasADSE")).booleanValue());
+			Airport oldA = SystemData.getAirport(ctx.getParameter("oldAirport"));
+			a.setSupercededAirport(((oldA == null) || oldA.getIATA().equals(a.getIATA())) ? null : oldA.getIATA());
 
 			// Build the airport latitude/longitude
 			try {

@@ -8,20 +8,17 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
-<c:if test="${!empty airport}">
-<title><content:airline /> Schedule - ${airport.IATA}</title>
-</c:if>
-<c:if test="${empty airport}">
-<title><content:airline /> Schedule - New Airport</title>
-</c:if>
+<title><content:airline /> Schedule - ${!empty airport ? airport.IATA : 'New Airport'}</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
 <c:set var="googleMap" value="${isNew && (!empty airport)}" scope="page" />
 <c:if test="${googleMap}">
-<map:api version="3" />
-</c:if>
+<map:api version="3" /></c:if>
+<content:googleAnalytics eventSupport="true" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -40,15 +37,17 @@ if (!validateNumber(form.lonS, 0, 'Longitude Seconds')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void updateOldAirports()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:empty var="emptyList" />
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->
@@ -60,7 +59,7 @@ return true;
 </tr>
 <tr>
  <td class="label top" rowspan="2">Airport Name</td>
- <td class="data"><el:text name="name" idx="*" className="pri bld req" size="36" max="36" value="${airport.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld" required="true" size="36" max="36" value="${airport.name}" /></td>
 </tr>
 <tr>
  <td class="data small">The airport name should be in the following formats:<br />
@@ -73,15 +72,15 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </tr>
 <tr>
  <td class="label">Country</td>
- <td class="data"><el:combo name="country" idx="*" className="req" options="${countries}" firstEntry="-" value="${airport.country}" /></td>
+ <td class="data"><el:combo name="country" idx="*" required="true" options="${countries}" firstEntry="-" value="${airport.country}" onChange="void updateOldAirports()" /></td>
 </tr>
 <tr>
  <td class="label">IATA Code</td>
- <td class="data"><el:text name="iata" idx="*" className="bld req" size="2" max="3" value="${airport.IATA}" /></td>
+ <td class="data"><el:text name="iata" idx="*" className="bld" required="true" size="2" max="3" value="${airport.IATA}" /></td>
 </tr>
 <tr>
  <td class="label">ICAO Code</td>
- <td class="data"><el:text name="icao" idx="*" size="4" max="4" className="req" value="${airport.ICAO}" /></td>
+ <td class="data"><el:text name="icao" idx="*" size="4" max="4" required="true" value="${airport.ICAO}" /></td>
 </tr>
 <tr>
  <td class="label">Latitude</td>
@@ -105,12 +104,18 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
 </c:if>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" className="req" firstEntry="-" value="${airport.TZ}" /></td>
+ <td class="data"><el:combo name="tz" size="1" idx="*" required="true" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /></td>
 </tr>
 <tr>
  <td class="label top">Airlines</td>
  <td class="data"><el:check name="airline" idx="*" width="195" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
+<tr>
+ <td class="label top">Prior Airport</td>
+ <td class="data"><el:combo name="oldAirport" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void changeAirport(this)" />&nbsp;
+<el:text ID="oldAirportCode" name="oldAirportCode" size="4" max="4" value="${airport.supercededAirport}" onBlur="void setAirport(document.forms[0].oldAirport, this.value, true)" /><br />
+<span class="small ita">Prior airports exist in older simulator versions and can be substitued for this Airport despite the
+lack of scheduled flights in the <content:airline /> Flight Schedule.</span></td>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="hasADSE" idx="*" className="small" value="true" checked="${airport.ADSE}" label="This Airport has ADSE-X Ground Radar" /></td>
@@ -142,7 +147,7 @@ Airports outside the United States or Canada with multiple airports, use &lt;Cit
  <td colspan="2">AIRPORT INFORMATION</td>
 </tr>
 <tr>
- <td colspan="2" class="mid"><iframe id="airportLookup" width="97%" height="280" scrolling="auto" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
+ <td colspan="2" class="mid"><iframe id="airportLookup" style="width:97%; height:280px; scrolling:auto;" src="http://www.theairdb.com/airport/${apCode}.html"></iframe></td>
 </tr>
 </c:if>
 </c:if>
@@ -173,8 +178,15 @@ var mapOpts = {center:mapC, zoom:6, scrollwheel:false, streetViewControl:false, 
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
 map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
 addMarkers(map, 'apMarker');
+</script></c:if>
+<script type="text/javascript">
+function updateOldAirports()
+{
+var f = document.forms[0];
+var cmd = (f.country.selectedIndex > 0) ? ('country=' + getValue(f.country)) : 'airline=all';
+updateAirports(f.oldAirport, cmd, ${useICAO}, f.oldAirportCode.value);
+return true;
+}
 </script>
-</c:if>
-<content:googleAnalytics />
 </body>
 </html>

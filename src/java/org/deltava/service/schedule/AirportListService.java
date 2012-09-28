@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class AirportListService extends WebService {
 	}
 
 	private class AirlineFilter implements AirportFilter {
-		private Airline _a;
+		private final Airline _a;
 
 		AirlineFilter(Airline a) {
 			super();
@@ -67,6 +67,19 @@ public class AirportListService extends WebService {
 		}
 	}
 
+	private class CountryFilter implements AirportFilter {
+		private final Country _c;
+		
+		protected CountryFilter(Country c) {
+			super();
+			_c = c;
+		}
+		
+		public boolean accept(Airport a) {
+			return (a == null) ? false : (a.getCountry() == _c);
+		}
+	}
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
@@ -110,6 +123,12 @@ public class AirportListService extends WebService {
 				// Get the airports from the schedule database
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
+			} else if (ctx.getParameter("country") != null) {
+				Country c = Country.get(ctx.getParameter("country"));
+				if (c == null)
+					throw error(SC_BAD_REQUEST, "Invalid Airport", false);
+				
+				filter = new CountryFilter(c);
 			} else if (useSched) {
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
@@ -125,10 +144,12 @@ public class AirportListService extends WebService {
 			
 			// Generate the destination list
 			Map<String, Airport> allAirports = adao.getAll();
-			for (Iterator<Airport> i = allAirports.values().iterator(); i.hasNext();) {
-				Airport a = i.next();
-				if (filter.accept(a))
+			for (Airport a : allAirports.values()) {
+				if (filter.accept(a)) {
 					airports.add(a);
+					if ((a.getSupercededAirport() != null) && allAirports.containsKey(a.getSupercededAirport()))
+						airports.add(allAirports.get(a.getSupercededAirport()));
+				}
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
@@ -140,8 +161,7 @@ public class AirportListService extends WebService {
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
-		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
-			Airport a = i.next();
+		for (Airport a : airports) {
 			Element e = new Element("airport");
 			e.setAttribute("iata", a.getIATA());
 			e.setAttribute("icao", a.getICAO());
@@ -153,8 +173,7 @@ public class AirportListService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.getResponse().setDateHeader("Expires", System.currentTimeMillis() + 360000);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
@@ -162,7 +181,6 @@ public class AirportListService extends WebService {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 

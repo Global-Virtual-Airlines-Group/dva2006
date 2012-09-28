@@ -58,22 +58,23 @@ public class GetAirport extends DAO {
 
 			Airport a = null;
 			try (ResultSet rs = _ps.executeQuery()) {
-				if (!rs.next())
-					return null;
-
-				// Create the airport object
-				a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-				a.setCountry(Country.get(rs.getString(5)));
-				a.setTZ(rs.getString(3));
-				a.setLocation(rs.getDouble(6), rs.getDouble(7));
-				a.setADSE(rs.getBoolean(8));
-				a.setAltitude(rs.getInt(9));
-				a.setRegion(rs.getString(10));
-				a.setMagVar(rs.getDouble(11));
-				a.setMaximumRunwayLength(rs.getInt(12));
+				if (rs.next()) {
+					a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+					a.setCountry(Country.get(rs.getString(5)));
+					a.setTZ(rs.getString(3));
+					a.setLocation(rs.getDouble(6), rs.getDouble(7));
+					a.setADSE(rs.getBoolean(8));
+					a.setSupercededAirport(rs.getString(9));
+					a.setAltitude(rs.getInt(10));
+					a.setRegion(rs.getString(11));
+					a.setMagVar(rs.getDouble(12));
+					a.setMaximumRunwayLength(rs.getInt(13));
+				}
 			}
 
 			_ps.close();
+			if (a == null)
+				return null;
 
 			// Init the prepared statement to pull in the airline data
 			prepareStatementWithoutLimits("SELECT CODE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
@@ -132,10 +133,11 @@ public class GetAirport extends DAO {
 					a.setTZ(rs.getString(3));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
 					a.setADSE(rs.getBoolean(8));
-					a.setAltitude(rs.getInt(9));
-					a.setRegion(rs.getString(10));
-					a.setMagVar(rs.getDouble(12));
-					a.setMaximumRunwayLength(rs.getInt(13));
+					a.setSupercededAirport(rs.getString(9));
+					a.setAltitude(rs.getInt(10));
+					a.setRegion(rs.getString(11));
+					a.setMagVar(rs.getDouble(13));
+					a.setMaximumRunwayLength(rs.getInt(14));
 					results.add(a);
 				}
 			}
@@ -250,10 +252,11 @@ public class GetAirport extends DAO {
 					a.setCountry(Country.get(rs.getString(5)));
 					a.setLocation(rs.getDouble(6), rs.getDouble(7));
 					a.setADSE(rs.getBoolean(8));
-					a.setAltitude(rs.getInt(9));
-					a.setRegion(rs.getString(10));
-					a.setMagVar(rs.getDouble(11));
-					a.setMaximumRunwayLength(rs.getInt(12));
+					a.setSupercededAirport(rs.getString(9));
+					a.setAltitude(rs.getInt(10));
+					a.setRegion(rs.getString(11));
+					a.setMagVar(rs.getDouble(12));
+					a.setMaximumRunwayLength(rs.getInt(13));
 					
 					// Save in the map
 					results.put(a.getIATA(), a);
@@ -295,7 +298,7 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public String getICAO(String iata) throws DAOException {
-		if ((iata == null) || (iata.length() == 4))
+		if ((iata == null) || (iata.length() != 3))
 			return iata;
 		
 		try {
