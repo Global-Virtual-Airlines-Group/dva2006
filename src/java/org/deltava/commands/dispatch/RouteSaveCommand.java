@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.2
  */
 
@@ -42,6 +42,12 @@ public class RouteSaveCommand extends AbstractCommand {
 		rp.setAirline(SystemData.getAirline(ctx.getParameter("airline")));
 		if (rp.getAirline() == null)
 			rp.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
+		
+		// Check airports
+		if (rp.getAirportD() == null)
+			throw notFoundException("Invalid Airport - " + ctx.getParameter("airportD"));
+		else if (rp.getAirportA() == null)
+			throw notFoundException("Invalid Airport - " + ctx.getParameter("airportA"));
 		
 		// Update the route ID
 		int routeID = StringUtils.parse(ctx.getParameter("routeID"), 0);
