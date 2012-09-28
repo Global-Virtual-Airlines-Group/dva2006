@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010, 2011 Globa Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2011, 2012 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -25,7 +25,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	}
 	
 	/**
-	 * Special airport object for "All Airports"
+	 * Special airport object for "All Airports".
 	 */
 	public static final Airport ALL = new Airport("$AL", "$ALL", "All Airports") {
 		public String getComboName() {
@@ -40,6 +40,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	private int _maxRunwayLength;
 	private double _magVar;
 	private String _region;
+	private String _supercededAirport;
 	private boolean _adseX;
 	
 	private final GeoPosition _position = new GeoPosition(0d, 0d);
@@ -56,7 +57,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public Airport(String iata, String icao, String name) {
 		this(name);
-		_iata = iata.toUpperCase();
+		setIATA(iata);
 		setICAO(icao);
 	}
 
@@ -178,6 +179,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	}
 	
 	/**
+	 * Updates the superceded airport code for this airport.
+	 * @param iata the airport IATA code
+	 * @see Airport#getSupercededAirport()
+	 */
+	public void setSupercededAirport(String iata) {
+		_supercededAirport = (iata == null) ? null : iata.toUpperCase();
+	}
+	
+	/**
 	 * Return this airprort's IATA Code.
 	 * @return The IATA code
 	 */
@@ -248,6 +258,15 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public int getMaximumRunwayLength() {
 		return _maxRunwayLength; 
+	}
+	
+	/**
+	 * Returns the IATA code of any former Airports replaced by this Airport.
+	 * @return the IATA code, or null if none
+	 * @see Airport#setSupercededAirport(String)
+	 */
+	public String getSupercededAirport() {
+		return _supercededAirport;
 	}
 
 	/**
@@ -448,9 +467,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 */
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_name);
-		buf.append(" (");
-		buf.append(_iata);
-		buf.append(')');
+		buf.append(" (").append(_iata).append(')');
 		return buf.toString();
 	}
 	
@@ -462,6 +479,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 		a2._alt = _alt;
 		a2._magVar = _magVar;
 		a2._region = _region;
+		a2._supercededAirport = _supercededAirport;
 		a2._adseX = _adseX;
 		a2._tz = _tz;
 		a2._maxRunwayLength = _maxRunwayLength;

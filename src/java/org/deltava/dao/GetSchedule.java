@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to search the Flight Schedule.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -120,25 +120,26 @@ public class GetSchedule extends DAO {
 	
 	/**
 	 * Returns the Airlines that provide service on a particular route.
-	 * @param airportD the origin Airport
-	 * @param airportA the destination Airport
+	 * @param rp the RoutePair
 	 * @return a Collection of Airline beans
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
-	public Collection<Airline> getAirlines(Airport airportD, Airport airportA) throws DAOException {
+	public Collection<Airline> getAirlines(RoutePair rp) throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT AIRLINE FROM SCHEDULE WHERE (AIRPORT_D=?) AND "
-					+ "(AIRPORT_A=?) AND (ACADEMY=?)");
-			_ps.setString(1, airportD.getIATA());
-			_ps.setString(2, airportA.getIATA());
-			_ps.setBoolean(3, false);
+			prepareStatement("SELECT DISTINCT AIRLINE FROM SCHEDULE WHERE ((AIRPORT_D=?) OR "
+				+ "(AIRPORT_D=?)) AND ((AIRPORT_A=?) OR (AIRPORT_A=?)) AND (ACADEMY=?)");
+			_ps.setString(1, rp.getAirportD().getIATA());
+			_ps.setString(2, rp.getAirportD().getSupercededAirport());
+			_ps.setString(3, rp.getAirportA().getIATA());
+			_ps.setString(4, rp.getAirportA().getSupercededAirport());
+			_ps.setBoolean(5, false);
 			
 			// Execute the query
 			Collection<Airline> results = new TreeSet<Airline>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-				results.add(SystemData.getAirline(rs.getString(1)));	
+					results.add(SystemData.getAirline(rs.getString(1)));	
 			}
 			
 			_ps.close();
@@ -161,7 +162,7 @@ public class GetSchedule extends DAO {
 			prepareStatementWithoutLimits("SELECT AIRPORT_D, SUM(1) AS CNT, SUM(ACADEMY) AS FACNT FROM SCHEDULE GROUP BY AIRPORT_D HAVING (CNT=FACNT)");
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
-				results.add(SystemData.getAirport(rs.getString(1)));	
+					results.add(SystemData.getAirport(rs.getString(1)));	
 			}
 			
 			_ps.close();
@@ -189,22 +190,27 @@ public class GetSchedule extends DAO {
 	public FlightTime getFlightTime(RoutePair rp, String dbName) throws DAOException {
 
 		// Build the prepared statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0), SUM(1) AS CNT, "
-			+ "SUM(HISTORIC) AS HST FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT AIRPORT_D, AIRPORT_A, IFNULL(ROUND(AVG(FLIGHT_TIME)), 0), "
+			+ "SUM(1) AS CNT, SUM(HISTORIC) AS HST FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".SCHEDULE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) AND (ACADEMY=?)");
+		sqlBuf.append(".SCHEDULE WHERE ((AIRPORT_D=?) OR (AIRPORT_D=?)) AND ((AIRPORT_A=?) OR (AIRPORT_A=?)) "
+			+ "AND (ACADEMY=?) GROUP BY AIRPORT_D, AIRPORT_A ORDER BY IF(AIRPORT_D=?, 0, 1), IF (AIRPORT_A=?, 0, 1)");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, rp.getAirportD().getIATA());
-			_ps.setString(2, rp.getAirportA().getIATA());
-			_ps.setBoolean(3, false);
+			_ps.setString(2, rp.getAirportD().getSupercededAirport());
+			_ps.setString(3, rp.getAirportA().getIATA());
+			_ps.setString(4, rp.getAirportA().getSupercededAirport());
+			_ps.setBoolean(5, false);
+			_ps.setString(6, rp.getAirportD().getIATA());
+			_ps.setString(7, rp.getAirportA().getIATA());
 
 			// Execute the Query
 			FlightTime result = null;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
-					result = new FlightTime(rs.getInt(1), (rs.getInt(3) > 0), (rs.getInt(2) > rs.getInt(3)));
+					result = new FlightTime(rs.getInt(3), (rs.getInt(5) > 0), (rs.getInt(4) > rs.getInt(5)));
 				else
 					result = new FlightTime(0, false, false);
 			}
@@ -228,28 +234,32 @@ public class GetSchedule extends DAO {
 	
 	/**
 	 * Returns the lowest flight/leg number between two airports. 
-	 * @param airportD the origin Airport
-	 * @param airportA the destination Airport
+	 * @param rp the RoutePair
 	 * @param dbName the database name
 	 * @return a ScheduleEntry bean with the Airline, Flight and Leg number or null if none found
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
-	public ScheduleEntry getFlightNumber(Airport airportD, Airport airportA, String dbName) throws DAOException {
+	public ScheduleEntry getFlightNumber(RoutePair rp, String dbName) throws DAOException {
 		
 		// Build the SQL Statement
 		String db = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT S.AIRLINE, S.FLIGHT, S.LEG, S.EQTYPE, AI.CODE FROM ");
 		sqlBuf.append(db);
-		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND (S.AIRPORT_D=?) "
-			+ "AND (S.AIRPORT_A=?) AND (S.ACADEMY=?) ORDER BY IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
+		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND ((S.AIRPORT_D=?) OR "
+			+ "(S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) ORDER BY "
+			+ "IF(S.AIRORT_D=?, 0, 1), IF(S.AIRPORT_A=?, 0, 1), IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, db);
-			_ps.setString(2, airportD.getIATA());
-			_ps.setString(3, airportA.getIATA());
-			_ps.setBoolean(4, false);
+			_ps.setString(2, rp.getAirportD().getIATA());
+			_ps.setString(3, rp.getAirportD().getSupercededAirport());
+			_ps.setString(4, rp.getAirportA().getIATA());
+			_ps.setString(5, rp.getAirportA().getSupercededAirport());
+			_ps.setBoolean(6, false);
+			_ps.setString(7, rp.getAirportD().getIATA());
+			_ps.setString(8, rp.getAirportA().getIATA());
 			
 			// Execute the query
 			ScheduleEntry f = null;
@@ -257,8 +267,8 @@ public class GetSchedule extends DAO {
 				if (rs.next()) {
 					f = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
 					f.setEquipmentType(rs.getString(4));
-					f.setAirportD(airportD);
-					f.setAirportA(airportA);
+					f.setAirportD(rp.getAirportD());
+					f.setAirportA(rp.getAirportA());
 				}
 			}
 			
@@ -269,18 +279,6 @@ public class GetSchedule extends DAO {
 		}
 	}
 	
-	/**
-	 * Returns the lowest flight/leg number between two airports. 
-	 * @param airportD the origin Airport
-	 * @param airportA the destination Airport
-	 * @return a Flight bean with the Airline, Flight and Leg number
-	 * @throws DAOException if a JDBC error occurs
-	 * @throws NullPointerException if airportD or airportA are null
-	 */
-	public Flight getFlightNumber(Airport airportD, Airport airportA) throws DAOException {
-		return getFlightNumber(airportD, airportA, SystemData.get("airline.db"));
-	}
-
 	/**
 	 * Exports the entire Flight Schedule.
 	 * @return a Collection of ScheduleEntry beans
