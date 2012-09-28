@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to plot a Dispatch route.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.2
  */
 
@@ -47,7 +47,7 @@ public class RoutePlotCommand extends AbstractCommand {
 			ctx.setAttribute("airportsA", Collections.singleton(aA), REQUEST);
 			try {
 				GetSchedule sdao = new GetSchedule(ctx.getConnection());
-				ctx.setAttribute("airlines", sdao.getAirlines(aD, aA), REQUEST);
+				ctx.setAttribute("airlines", sdao.getAirlines(new ScheduleRoute(aD, aA)), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {

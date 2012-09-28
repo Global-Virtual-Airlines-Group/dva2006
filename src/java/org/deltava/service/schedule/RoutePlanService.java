@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.2
  */
 
@@ -132,7 +132,7 @@ public class RoutePlanService extends WebService {
 				AssignmentInfo ai = null;
 				FlightReport dfr = dFlights.isEmpty() ? null : dFlights.get(0);
 				if (dfr == null) {
-					ScheduleEntry schedInfo = sdao.getFlightNumber(aD, aA, SystemData.get("airline.db"));
+					ScheduleEntry schedInfo = sdao.getFlightNumber(new ScheduleRoute(aD, aA), SystemData.get("airline.db"));
 					if (schedInfo == null) {
 						dfr = new DraftFlightReport(SystemData.getAirline(SystemData.get("airline.code")), ctx.getUser().getPilotNumber(), 1);
 						dfr.setAirportD(aD);
