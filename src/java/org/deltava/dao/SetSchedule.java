@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to update the Flight Schedule.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -109,8 +109,7 @@ public class SetSchedule extends DAO {
 			// Write the alternate codes
 			prepareStatement("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)");
 			_ps.setString(1, al.getCode());
-			for (Iterator<String> i = al.getCodes().iterator(); i.hasNext(); ) {
-				String code = i.next();
+			for (String code : al.getCodes()) {
 				if (!code.equals(al.getCode())) {
 					_ps.setString(2, code);
 					_ps.addBatch();
@@ -150,7 +149,7 @@ public class SetSchedule extends DAO {
 
 			// Write the airport data
 			prepareStatement("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, COUNTRY, LATITUDE, "
-				+ "LONGITUDE, ADSE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "LONGITUDE, ADSE, OLDICAO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getIATA());
 			_ps.setString(2, a.getICAO());
 			_ps.setString(3, a.getTZ().getID());
@@ -159,7 +158,16 @@ public class SetSchedule extends DAO {
 			_ps.setDouble(6, a.getLatitude());
 			_ps.setDouble(7, a.getLongitude());
 			_ps.setBoolean(8, a.getADSE());
+			_ps.setString(9, a.getSupercededAirport());
 			executeUpdate(1);
+			
+			// Write superceded airport
+			if (a.getSupercededAirport() != null) {
+				prepareStatement("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)");
+				_ps.setString(1, a.getIATA());
+				_ps.setString(2, a.getSupercededAirport());
+				executeUpdate(1);
+			}
 
 			// Write the airline data
 			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
@@ -196,7 +204,7 @@ public class SetSchedule extends DAO {
 
 			// Update the airport data
 			prepareStatement("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=?, "
-					+ "IATA=?, ADSE=?, COUNTRY=? WHERE (IATA=?)");
+					+ "IATA=?, ADSE=?, COUNTRY=?, OLDCODE=? WHERE (IATA=?)");
 			_ps.setString(1, a.getICAO());
 			_ps.setString(2, a.getTZ().getID());
 			_ps.setString(3, a.getName());
@@ -205,9 +213,20 @@ public class SetSchedule extends DAO {
 			_ps.setString(6, a.getIATA());
 			_ps.setBoolean(7, a.getADSE());
 			_ps.setString(8, a.getCountry().getCode());
-			_ps.setString(9, oldCode);
+			_ps.setString(9, a.getSupercededAirport());
+			_ps.setString(10, oldCode);
 			executeUpdate(1);
+			
+			// Ensure the superceded airports are interchangeable
+			if (a.getSupercededAirport() != null) {
+				prepareStatement("UPDATE common.AIRPORTS SET OLDCODE=? WHERE (IATA=?)");
+				_ps.setString(2, a.getSupercededAirport());
+			} else
+				prepareStatement("UPDATE common.AIRPORTS SET OLDCODE=NULL WHERE (OLDCODE=?)");
 
+			_ps.setString(1, a.getIATA());
+			executeUpdate(0);
+			
 			// Clear out the airlines
 			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
 			_ps.setString(1, oldCode);
