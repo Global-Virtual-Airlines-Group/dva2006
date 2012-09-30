@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -7,34 +8,27 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title>New <content:airline /> ${forumName} Thread</title>
+<title>New <content:airline /> ${forumName} Disucssion Thread</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:js name="json2" />
 <content:js name="common" />
 <content:js name="datePicker" />
 <script type="text/javascript">
+var imgData = {URLs: [], descs: [], maxSeq:0, seq:[]};
+imgData.add = function(url, desc) { this.URLs.push(url); this.descs.push(desc); this.maxSeq++; this.seq.push(this.maxSeq); }
+imgData.contains = function(url) { return (this.URLs.indexOf(url) > -1); }
+imgData.getIndex = function(seq) { return this.seq.indexOf(seq); }
+imgData.size = function() { return this.URLs.length; }
+imgData.remove = function(idx) { this.URLs.splice(idx, 1); this.descs.splice(idx, 1); this.seq.splice(idx, 1); }
+
 function validate(form)
 {
 if ((!form) || (!checkSubmit())) return false;
-document.linkImage |= ((form.imgURL) && (form.imgURL.value.length > 1));
-
-if (!document.linkImage) {
-	if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
-	if (!validateText(form.msgText, 5, 'text of your Message')) return false;
-	if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
-} else {
-	if (!validateText(form.imgURL, 12, 'URL of your Linked Image')) return false;
-	if (!validateText(form.desc, 8, 'Description of your Linked Image')) return false;
-	form.addImage.value = 'true';
-}
-
-// Check for multiple image posting methods
-if (document.linkImage && (form.img) && (form.img.value.length > 0)) {
-	alert('You cannot Link an Image and Upload an Image at the same time.');
-	form.img.focus();
-	return false;
-}
+if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
+if (!validateText(form.msgText, 5, 'text of your Message')) return false;
+if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
 
 setSubmit();
 disableButton('EmoticonButton');
@@ -58,14 +52,81 @@ f.pollOptions.disabled = !f.hasPoll.checked;
 return true;
 }
 
+function removeLink(seq)
+{
+var idx = imgData.getIndex(seq);
+imgData.remove(idx);
+document.forms[0].imgData.value = JSON.stringify(imgData);
+var r = document.getElementById('linkImg' + seq);
+r.parentNode.removeChild(r);
+return true;
+}
+
 function submitImage()
 {
 var f = document.forms[0];
-if (validate(f)) {
-	document.linkImage = true;
-	f.submit();
+if (!validateText(f.imgURL, 12, 'URL of your Linked Image')) return false;
+if (!validateText(f.imgDesc, 6, 'Description of your Linked Image')) return false;
+
+// Check extensions
+var imgURL = f.imgURL.value;
+var allowedExts = ['gif', 'jpg', 'jpeg', 'png'];
+var ext = imgURL.substring(imgURL.lastIndexOf('.') + 1).toLowerCase();
+
+// Clear message
+var msgSpan = document.getElementById('imgLinkMsg');
+msgSpan.innerHTML = '';
+
+// Check the image has been added already
+if (imgData.contains(imgURL)) {
+	alert('This image has already been linked.');
+	return false;
+} else if (!allowedExts.contains(ext)) {
+	alert('This does not appear to be an image.');
+	return false;
 }
 
+// Check the image itself
+var img = new Image();
+img.onload = function() {
+	imgData.add(imgURL, f.imgDesc. value);
+	var imgIdx = imgData.maxSeq;
+
+	// Add the image
+	var r = document.createElement('tr');
+	r.setAttribute('id', 'linkImg' + imgIdx);
+	var ld = document.createElement('td');
+	ld.setAttribute('colspan', '2');
+	ld.setAttribute('class', 'mid');
+	var img = document.createElement('img');
+	img.setAttribute('alt', f.imgDesc.value);
+	img.setAttribute('title', f.imgDesc.value);
+	img.setAttribute('src', imgURL);
+	ld.appendChild(img);
+	ld.appendChild(document.createElement('br'));
+	ld.appendChild(document.createTextNode(f.imgDesc.value + ' - '));
+	var rmvLink = document.createElement('a');
+	rmvLink.setAttribute('class', 'small caps');
+	rmvLink.setAttribute('onclick', 'javascript:void removeLink(' + imgIdx + ')');
+	rmvLink.appendChild(document.createTextNode('Remove Linked Image'));
+	ld.appendChild(rmvLink);
+	r.appendChild(ld);
+
+	// Add to the DOM
+	var ref = document.getElementById('imgLink');
+	ref.parentNode.insertBefore(r, ref);
+
+	// Convert to JSON
+	f.imgData.value = JSON.stringify(imgData);
+
+	// Clear the fields
+	f.imgURL.value = '';
+	f.imgDesc.value = '';
+	return true;	
+}
+
+img.onerror = function() { msgSpan.innerHTML = 'Canot load image!'; return false; }
+img.src = imgURL;
 return true;
 }
 </script>
@@ -94,7 +155,7 @@ return true;
  <td class="label">${forumName} Channel</td>
  <td class="data"><el:combo name="id" idx="*" size="1" options="${channels}" value="${empty param.id ? 'General Aviation Discussion' : param.id}" /></td>
 </tr>
-<content:filter roles="Moderator,PIREP,HR,Examination">
+<content:filter roles="Moderator,Operations,PIREP,HR,Examination">
 <tr>
  <td class="label">Sticky Until</td>
  <td class="data"><el:text name="stickyDate" idx="*" size="10" max="11" value="${param.stickyDate}" />
@@ -107,8 +168,7 @@ return true;
  <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="true" />&nbsp;
 <el:button ID="EmoticonButton" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
-<c:if test="${empty sessionScope.imageURLs}">
-<tr>
+<tr id="imgUpload">
  <td class="label">Upload Image</td>
  <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void toggleImgOptions(this)" />
 <c:if test="${imgBadSize}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgSize}" /> bytes).</div></c:if>
@@ -116,33 +176,20 @@ return true;
  by <fmt:int value="${imgY}" /> pixels).</div></c:if>
 <c:if test="${imgInvalid}"><div class="error bld">Your attached image is in an unknown format.</div></c:if></td>
 </tr>
-</c:if>
 <tr class="title caps">
  <td colspan="2">LINKED IMAGES</td>
 </tr>
-<content:hasmsg>
-<c:set var="imgURL" value="${param.imgURL}" scope="page" />
-<c:set var="imgDesc" value="${param.desc}" scope="page" />
-</content:hasmsg>
-<tr>
- <td class="label top">New Image URL</td>
- <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="${imgURL}" />
-<content:hasmsg><span class="small error bld"><content:sysmsg /></span></content:hasmsg></td>
+<tr id="imgLink">
+ <td class="label">New Image URL</td>
+ <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="" />
+&nbsp;<span id="imgLinkMsg" class="small error bld"></span></td>
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="${imgDesc}" /> 
+ <td class="data"><el:text name="imgDesc" idx="*" size="64" max="192" value="" /> 
 <el:button ID="LinkButton" label="LINK IMAGE" onClick="void submitImage()" /></td>
 </tr>
-<c:if test="${!empty sessionScope.imageURLs}">
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data"><c:forEach var="imgLink" items="${sessionScope.imageURLs}">
-<el:link target="_new" url="${imgLink.URL}">${imgLink.URL}</el:link> - ${imgLink.description}<br />
-</c:forEach></td>
-</tr>
-</c:if>
-<content:filter roles="PIREP,HR,Moderator">
+<content:filter roles="PIREP,HR,Instructor,Operations,Moderator">
 <!-- Pilot Poll -->
 <tr class="title caps">
  <td colspan="2">PILOT POLL</td>
@@ -174,7 +221,7 @@ return true;
  </td>
 </tr>
 </el:table>
-<el:text name="addImage" type="hidden" value="" />
+<el:text name="imgData" type="hidden" value="" />
 </el:form>
 <content:copyright />
 </content:region>
