@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.wsdl;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * Loads route data from FlightAware via SOAP. 
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.2
  */
 
@@ -69,6 +69,9 @@ public class GetFARoutes extends FlightAwareDAO {
 
             return results;
 		} catch (Exception e) {
+			if (e.getMessage().equals("no results"))
+				return results;
+			
 			throw new DAOException(e);
 		}
 	}
