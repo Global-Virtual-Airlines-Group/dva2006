@@ -165,7 +165,7 @@
 		<echo message="Pre-compiling JSP files" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.7" compilerSourceVM="1.7" trimSpaces="false"
+	    	compilerTargetVM="1.7" compilerSourceVM="1.7" trimSpaces="true"
 			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
