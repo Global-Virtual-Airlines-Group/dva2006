@@ -1,7 +1,7 @@
 // Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
-import org.deltava.servlet.ControllerException;
+import org.deltava.util.ControllerException;
 
 /**
  * An exception thrown by a Web Site Command.
