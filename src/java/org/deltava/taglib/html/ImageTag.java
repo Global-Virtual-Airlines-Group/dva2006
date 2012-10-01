@@ -13,6 +13,9 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ImageTag extends ElementTag {
+	
+	private int _w;
+	private int _h;
 
     /**
      * Creates a new Image element tag.
@@ -41,19 +44,17 @@ public class ImageTag extends ElementTag {
     /**
      * Sets the width of ths image. This does nothing if a negative, zero or non-numeric value is passed.
      * @param width the width of the image in pixels
-     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setX(int width) {
-        setNumericAttr("width", width, 1);
+    	_w = Math.max(0, width);
     }
     
     /**
      * Sets the height of ths image. This does nothing if a negative, zero or non-numeric value is passed.
      * @param height the height of the image in pixels
-     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setY(int height) {
-        setNumericAttr("height", height, 1);
+    	_h = Math.max(0, height);
     }
     
     /**
@@ -72,5 +73,52 @@ public class ImageTag extends ElementTag {
      */
     public void setCaption(String caption) {
         _data.setAttribute("title", caption);
+    }
+    
+    /**
+     * Resets the tag's state variables.
+     */
+    @Override
+    public void release() {
+    	super.release();
+    	_h = 0;
+    	_w = 0;
+    }
+    
+	/**
+	 * Executed post tag setup. Creates a STYLE element if dimensions specified.
+	 * @returns SKIP_BODY  always
+	 * @throws JspException if an error occurs
+	 */
+    @Override
+    public int doStartTag() throws JspException {
+    	super.doStartTag();
+    	
+    	// Set style if image size defined
+    	if ((_w > 0) || (_h > 0)) {
+    		StringBuilder buf = new StringBuilder();
+    		if (_data.has("style")) {
+    			String s = _data.get("style");
+    			buf.append(s);
+    			if (!s.endsWith(";"))
+    				buf.append(';');
+    		}
+    		
+    		if (_w > 0) {
+    			buf.append("width:");
+    			buf.append(_w);
+    			buf.append("px;");
+    		}
+    		
+    		if (_h > 0) {
+    			buf.append("height:");
+    			buf.append(_h);
+    			buf.append("px;");
+    		}
+    		
+    		_data.setAttribute("style", buf.toString());
+    	}
+    	
+    	return SKIP_BODY;
     }
 }
