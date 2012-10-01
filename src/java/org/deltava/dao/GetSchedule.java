@@ -248,7 +248,7 @@ public class GetSchedule extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".SCHEDULE S, common.AIRLINEINFO AI WHERE (AI.DBNAME=?) AND ((S.AIRPORT_D=?) OR "
 			+ "(S.AIRPORT_D=?)) AND ((S.AIRPORT_A=?) OR (S.AIRPORT_A=?)) AND (S.ACADEMY=?) ORDER BY "
-			+ "IF(S.AIRORT_D=?, 0, 1), IF(S.AIRPORT_A=?, 0, 1), IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
+			+ "IF(S.AIRPORT_D=?, 0, 1), IF(S.AIRPORT_A=?, 0, 1), IF (S.AIRLINE=AI.CODE, 0, 1), FLIGHT LIMIT 1");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
