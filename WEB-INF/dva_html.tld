@@ -128,12 +128,6 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
-			<name>border</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Integer</type>
-		</attribute>
-		<attribute>
 			<name>caption</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
