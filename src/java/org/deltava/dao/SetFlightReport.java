@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -203,6 +203,29 @@ public class SetFlightReport extends DAO {
 	public void writeComments(FlightReport fr) throws DAOException {
 		try {
 			writeComments(fr, SystemData.get("airline.db"));
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates passenger count based on load factor.
+	 * @param id the Flight Report database ID
+	 * @param dbName the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean updatePaxCount(int id, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("UPDATE ");
+		buf.append(formatDBName(dbName));
+		buf.append(".PIREPS P, common.AIRCRAFT A SET P.PAX=ROUND(A.SEATS*P.LOADFACTOR, 0) WHERE "
+			+ "(P.ID=?) AND (P.EQTYPE=A.NAME) AND (ABS(P.PAX-(A.SEATS*P.LOADFACTOR))>1)");
+		
+		try {
+			prepareStatementWithoutLimits(buf.toString());
+			_ps.setInt(1, id);
+			return (executeUpdate(0) > 0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
