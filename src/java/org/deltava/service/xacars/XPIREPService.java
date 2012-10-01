@@ -281,10 +281,12 @@ public class XPIREPService extends XAService {
 			xwdao.archive(flightID, fi.getID());
 			
 			// Write the PIREP and nuke the temp data
+			xwdao.delete(flightID);
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(xfr);
 			fwdao.writeACARS(xfr, SystemData.get("airline.db"));
-			xwdao.delete(flightID);
+			if (fwdao.updatePaxCount(xfr.getID(), SystemData.get("airline.db")))
+				log.warn("Update Passnger count for PIREP #" + xfr.getID());
 			
 			// Write the check ride if necessary
 			if ((cr != null) && xfr.hasAttribute(FlightReport.ATTR_CHECKRIDE)) {

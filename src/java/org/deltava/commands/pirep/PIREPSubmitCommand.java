@@ -204,6 +204,8 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Get the DAO and write the PIREP to the database
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(pirep);
+			if (fwdao.updatePaxCount(pirep.getID(), SystemData.get("airline.db")))
+				log.warn("Update Passnger count for PIREP #" + pirep.getID());
 			
 			// Save the pirep in the request
 			ctx.setAttribute("pirep", pirep, REQUEST);
