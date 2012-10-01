@@ -13,6 +13,7 @@ import org.deltava.beans.servlet.ServletScoreboard;
 import org.gvagroup.jdbc.ConnectionPool;
 import org.deltava.security.SecurityContext;
 
+import org.deltava.util.ControllerException;
 import org.deltava.util.system.SystemData;
 
 /**

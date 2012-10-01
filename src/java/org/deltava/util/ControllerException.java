@@ -1,11 +1,11 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.servlet;
+// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.util;
 
 /**
  * An exception class to define a common singure for exceptions handled by the Command
  * Controller servlet.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
