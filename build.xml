@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2005, 2006, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved. -->
+<!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
@@ -47,7 +47,7 @@
 
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="15000" failonerror="no" port="${javadoc.ssh.port}"
+    		host="${javadoc.ssh.server}" timeout="25000" failonerror="no" port="${javadoc.ssh.port}"
     		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
 
     	<!-- Upload the JavaDoc archive -->
@@ -56,10 +56,10 @@
 
     	<!-- Explode the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="17500" failonerror="no" port="${javadoc.ssh.port}"
+    		host="${javadoc.ssh.server}" timeout="27500" failonerror="no" port="${javadoc.ssh.port}"
     		command="cd ${javadoc.ssh.path.javadoc} ; tar xvfj /tmp/golgotha_javadoc.tar.bz2" />
 		<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    	    host="${javadoc.ssh.server}" timeout="5000" failonerror="no" port="${javadoc.ssh.port}"
+    	    host="${javadoc.ssh.server}" timeout="15000" failonerror="no" port="${javadoc.ssh.port}"
     	    command="rm /tmp/golgotha_javadoc.tar.bz2" />
 
     	<!-- Clean out the temp folder -->
@@ -136,9 +136,27 @@
 	    	</classpath>
 		</javac>
 		
-		<!-- Compress the Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true"
-		 destfile="${java.io.tmpdir}/build/golgotha.jar" />
+		<!-- Compress the base Java classes into a single JAR file -->
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${java.io.tmpdir}/build/golgotha.jar">
+			<exclude name="org/deltava/commands/**/*.class" />
+			<exclude name="org/deltava/security/command/*.class" />
+			<exclude name="org/deltava/service/**/*.class" />
+			<exclude name="org/deltava/servlet/**/*.class" />
+			<exclude name="org/deltava/taglib/**/*.class" />
+			<exclude name="org/deltava/taskman/*.class" />
+			<exclude name="org/deltava/tasks/*.class" />
+		</jar>
+		
+		<!-- Compress the web-specific classes into another JAR file -->
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true" destfile="${java.io.tmpdir}/build/golgotha_web.jar">
+			<include name="org/deltava/commands/**/*.class" />
+			<include name="org/deltava/security/command/*.class" />
+			<include name="org/deltava/service/**/*.class" />
+			<include name="org/deltava/servlet/**/*.class" />
+			<include name="org/deltava/taglib/**/*.class" />
+			<include name="org/deltava/taskman/*.class" />
+			<include name="org/deltava/tasks/*.class" />
+		</jar>
 		
 		<!-- Restore the old VersionInfo.java -->
 		<!-- <move file="${java.io.tmpdir}/VersionInfo.java" todir="${vInfo.path}" /> -->
@@ -165,7 +183,7 @@
 		<echo message="Pre-compiling JSP files" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.7" compilerSourceVM="1.7" trimSpaces="true"
+	    	compilerTargetVM="1.7" compilerSourceVM="1.7" trimSpaces="false"
 			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
@@ -229,6 +247,7 @@
 			port="${webapp.dev.port}" verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 	 		<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
+	 			<include name="golgotha_web.jar" />
 				<include name="golgotha_jsp.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -366,6 +385,7 @@
 			port="${webapp.ssh.port}" verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
+				<include name="golgotha_web.jar" />
 				<include name="golgotha_jsp.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
