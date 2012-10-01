@@ -12,6 +12,7 @@ import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.GetImage;
 
+import org.deltava.util.ControllerException;
 import org.deltava.util.tile.*;
 
 import org.gvagroup.jdbc.*;
