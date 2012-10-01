@@ -101,7 +101,9 @@ public abstract class ElementTag extends BrowserInfoTag {
 	@Override
 	public int doStartTag() throws JspException {
 		super.doStartTag();
-		_data.setAttribute("class", StringUtils.listConcat(_classes, " "));
+		if (!_classes.isEmpty())
+			_data.setAttribute("class", StringUtils.listConcat(_classes, " "));
+		
 		return EVAL_BODY_INCLUDE;
 	}
 }
