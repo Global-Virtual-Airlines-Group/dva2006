@@ -1,20 +1,30 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 /**
  * A JSP tag to display a national flag image.
  * @author Luke
- * @version 2.5
+ * @version 5.0
  * @since 2.5
  */
 
 public class FlagTag extends ImageTag {
 
 	/**
-	 * Creates a new Image element tag.
+	 * Creates a new Flag Image element tag.
 	 */
 	public FlagTag() {
 		super();
+		setX(16);
+		setY(11);
+	}
+	
+	/**
+	 * Resets the tag's state variables.
+	 */
+	@Override
+	public void release() {
+		super.release();
 		setX(16);
 		setY(11);
 	}
