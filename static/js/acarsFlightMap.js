@@ -17,7 +17,7 @@ xmlreq.onreadystatechange = function() {
 	var ac = xmlDoc.documentElement.getElementsByTagName('pos');
 	for (var x = 0; x < ac.length; x++) {
 		var a = ac[x]; var mrk;
-		var label = a.getCDATA ? a.getCDATA() : getCDATA(a);
+		var label = a.getCDATA ? a.getCDATA() : golgotha.getCDATA(a);
 		var p = new google.maps.LatLng(parseFloat(a.getAttribute('lat')), parseFloat(a.getAttribute('lng')));
 		routePoints.push(p);
 		if (a.getAttribute('icon')) {
@@ -29,7 +29,7 @@ xmlreq.onreadystatechange = function() {
 		}	
 
 		// Add ATC data
-		var ace = a.getChild ? a.getChild('atc') : getChild(a, 'atc');
+		var ace = a.getChild ? a.getChild('atc') : golgotha.getChild(a, 'atc');
 		if ((ace != null) && (mrk != null)) {
 			var type = ace.getAttribute('type');
 			if ((type != 'CTR') && (type != 'FSS')) {
