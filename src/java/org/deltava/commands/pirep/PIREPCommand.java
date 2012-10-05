@@ -156,6 +156,15 @@ public class PIREPCommand extends AbstractFormCommand {
 					else if (afr.hasAttribute(FlightReport.ATTR_WEIGHTWARN))
 						afr.setAttribute(FlightReport.ATTR_WEIGHTWARN, false);
 				}
+				
+				// If the passengers are non-zero, update the count
+				if (fr.getPassengers() != 0) {
+					int newPax = (int) Math.round(aInfo.getSeats() * fr.getLoadFactor());
+					if (newPax != fr.getPassengers()) {
+						log.warn("Updated passengers for PIREP #" + fr.getID() + " from " + fr.getPassengers() + " to " + newPax);
+						fr.setPassengers(newPax);
+					}
+				}
 			}
 
 			// Figure out what network the flight was flown on and ensure we have an ID
