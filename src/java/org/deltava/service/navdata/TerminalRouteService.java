@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.navdata;
 
 import java.io.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS dispatch clients.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 2.0
  */
 
@@ -29,6 +29,7 @@ public class TerminalRouteService extends DispatchDataService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Ensure we are a dispatcher
@@ -38,9 +39,9 @@ public class TerminalRouteService extends DispatchDataService {
 		// Check the cache
 		File f = _dataCache.get("SIDSTAR");
 		if (f != null) {
-			ctx.getResponse().setContentType("text/plain");
+			ctx.setContentType("text/plain", "UTF-8");
+			ctx.setExpires(600);
 			ctx.getResponse().setHeader("Cache-Control", "private");
-			ctx.getResponse().setIntHeader("max-age", 600);
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
 		}
@@ -89,15 +90,14 @@ public class TerminalRouteService extends DispatchDataService {
 			addCacheEntry("SIDSTAR", f);
 		
 			// Format and write
-			ctx.getResponse().setContentType("text/plain");
+			ctx.setContentType("text/plain", "UTF-8");
+			ctx.setExpires(600);
 			ctx.getResponse().setHeader("Cache-Control", "private");
-			ctx.getResponse().setIntHeader("max-age", 600);
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Write success code
 		return SC_OK;
 	}
 	

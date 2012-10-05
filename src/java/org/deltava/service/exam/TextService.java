@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.exam;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to dynamically save examination answers.
  * @author Luke
- * @version 2.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -33,6 +33,7 @@ public class TextService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// If this isn't a post, just return a 200
@@ -95,12 +96,12 @@ public class TextService extends WebService {
 		long timeRemaining = (ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000;
 		try {
 			ctx.print(String.valueOf(timeRemaining));
-			ctx.getResponse().flushBuffer();
+			ctx.setExpires(1);
+			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 
-		// Return success code
 		return SC_OK;
 	}
 	

@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -12,7 +12,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download the ACARS incremental installer.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 4.1
  */
 
@@ -39,7 +39,7 @@ public class UpdateDownloadService extends DownloadService {
 		// Download the file
 		ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + fName);
 		ctx.getResponse().setContentType("application/octet-stream");
-		ctx.getResponse().setIntHeader("max-age", 3600);
+		ctx.setExpires(3600);
 		sendFile(f, ctx.getResponse());
 		return SC_OK;
 	}

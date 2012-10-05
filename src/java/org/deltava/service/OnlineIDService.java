@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download network IDs.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -66,10 +66,9 @@ public class OnlineIDService extends WebService {
 			re = new Element("pilots");
 			doc.setRootElement(re);
 		} else
-			ctx.getResponse().setContentType("text/plain");
+			ctx.setContentType("text/plain", "UTF-8");
 		
 		// Write out the pilot list
-		ctx.getResponse().setCharacterEncoding("UTF-8");
 		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
 			Pilot p = i.next();
 			if (isXML) {
@@ -86,11 +85,12 @@ public class OnlineIDService extends WebService {
 		
 		// If we're writing using XML, dump out the document
 		if (isXML) {
-			ctx.getResponse().setContentType("text/xml");
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 		}
 		
 		try {
+			ctx.setExpires(3600);
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);

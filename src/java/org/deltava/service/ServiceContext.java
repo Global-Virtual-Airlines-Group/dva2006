@@ -8,7 +8,7 @@ import javax.servlet.http.*;
 /**
  * An invocation/security context object for Web Services.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 
 	protected class OutputBuffer {
 
-		private final StringBuilder _buffer = new StringBuilder(256);
+		private final StringBuilder _buffer = new StringBuilder(512);
 
 		public void print(CharSequence value) {
 			_buffer.append(value);
@@ -92,5 +92,14 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 		HttpServletResponse rsp = getResponse();
 		rsp.setContentType(contentType);
 		rsp.setCharacterEncoding(encoding);
+	}
+	
+	/**
+	 * Sets the expiry of the response.
+	 * @param seconds the expiry time in seconds
+	 */
+	public void setExpires(int seconds) {
+		HttpServletResponse rsp = getResponse();
+		rsp.setDateHeader("Expires", System.currentTimeMillis() + (seconds*1000));
 	}
 }
