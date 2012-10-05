@@ -183,7 +183,10 @@ addMarkers(map, 'apMarker');
 function updateOldAirports()
 {
 var f = document.forms[0];
-var cmd = (f.country.selectedIndex > 0) ? ('country=' + getValue(f.country)) : 'airline=all';
+<c:if test="${empty airport}">
+var cmd = (f.country.selectedIndex > 0) ? ('country=' + getValue(f.country)) : 'airline=all';</c:if>
+<c:if test="${!empty airport}">
+var cmd ='airport=${airport.ICAO}&dist=50';</c:if>
 updateAirports(f.oldAirport, cmd, ${useICAO}, f.oldAirportCode.value);
 return true;
 }

@@ -9,6 +9,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
@@ -64,6 +65,21 @@ public class AirportListService extends WebService {
 
 		public boolean accept(Airport a) {
 			return (a == null) ? false : _airportCodes.contains(a.getIATA());
+		}
+	}
+	
+	private class GeoLocationFilter implements AirportFilter {
+		private final GeoPosition _loc;
+		private final int _distance;
+		
+		GeoLocationFilter(GeoLocation loc, int distance) {
+			super();
+			_loc = new GeoPosition(loc);
+			_distance = Math.max(0, distance);
+		}
+		
+		public boolean accept(Airport a) {
+			return (a == null) ? false : (_loc.distanceTo(a) < _distance);
 		}
 	}
 
@@ -129,6 +145,10 @@ public class AirportListService extends WebService {
 					throw error(SC_BAD_REQUEST, "Invalid Airport", false);
 				
 				filter = new CountryFilter(c);
+			} else if (ctx.getParameter("airport") != null) {
+				Airport a = SystemData.getAirport(ctx.getParameter("airport"));
+				if (a != null)
+					filter = new GeoLocationFilter(a, StringUtils.parse(ctx.getParameter("dist"), 5));
 			} else if (useSched) {
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
@@ -174,7 +194,7 @@ public class AirportListService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "UTF-8");
-			ctx.getResponse().setDateHeader("Expires", System.currentTimeMillis() + 360000);
+			ctx.setExpires(3600);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
