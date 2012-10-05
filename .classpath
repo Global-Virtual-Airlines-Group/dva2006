@@ -15,22 +15,21 @@
 	<classpathentry kind="lib" path="lib/deploy/jaxrpc-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/standard.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/axis-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/jtar-2.5.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/json-1.00.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.5.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.1.20-bin.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.2.jar" sourcepath="lib/src/jdom-2.0.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/spymemcached-2.8.2.jar" sourcepath="lib/src/spymemcached-2.8.2-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/DVA2006/lib/src/spymemcached-2.8.2-javadocs.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.63.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.3.jar" sourcepath="lib/src/jdom-2.0.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/lucene-core-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.7.jar" sourcepath="lib/src/commons-codec-1.7-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
