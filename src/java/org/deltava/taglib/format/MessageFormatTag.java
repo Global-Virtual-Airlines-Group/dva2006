@@ -44,16 +44,18 @@ public class MessageFormatTag extends TagSupport {
 		_msg = msg;
 	}
 
-	/**
+	/*
 	 * Helper method to generate an emotion IMG tag.
 	 */
-	private static String emoticonURL(String name) {
+	private static String emoticonURL(Emoticons ei) {
 		StringBuilder imgbuf = new StringBuilder("<img src=\"");
 		imgbuf.append(SystemData.get("path.img"));
 		imgbuf.append("/cooler/emoticons/");
-		imgbuf.append(name);
+		imgbuf.append(ei.getName());
 		imgbuf.append(".gif\" class=\"noborder\" alt=\"");
-		imgbuf.append(name);
+		imgbuf.append(ei.getName());
+		imgbuf.append("\" title=\"");
+		imgbuf.append(ei.getName());
 		imgbuf.append("\" />");
 		return imgbuf.toString();
 	}
@@ -116,20 +118,17 @@ public class MessageFormatTag extends TagSupport {
 				}
 			} else if ((token.charAt(0) == ':') && (token.length() > 2) && (token.indexOf(':', 2) > 0)) {
 				int endPos = token.indexOf(':', 2);
-				String emIcon = token.substring(1, endPos); 
-				int iCode = StringUtils.arrayIndexOf(Emoticons.ICON_NAMES, emIcon);
-				if (iCode != -1) {
-					buf.append(emoticonURL(Emoticons.ICON_NAMES[iCode]));
+				String emIcon = token.substring(1, endPos);
+				Emoticons ei = Emoticons.find(emIcon);
+				if (ei != null) {
+					buf.append(emoticonURL(ei));
 					buf.append(token.substring(endPos + 1));
 				} else
 					buf.append(StringUtils.stripInlineHTML(token));
 			} else if (((token.charAt(0) == ':') || (token.charAt(0) == ';')) && (token.length() == 2)) {
-				for (int x = 0; x < Emoticons.ICON_CODES.length; x++) {
-					if (token.equals(Emoticons.ICON_CODES[x])) {
-						buf.append(emoticonURL(Emoticons.ICON_NAMES[x]));
-						break;
-					}
-				}
+				Emoticons ei = Emoticons.find(token);
+				if (ei != null)
+					buf.append(emoticonURL(ei));
 			} else {
 				if (token.length() > 1)
 					buf.append(StringUtils.stripInlineHTML(token));
