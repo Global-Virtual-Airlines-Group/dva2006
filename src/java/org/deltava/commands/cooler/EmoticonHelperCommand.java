@@ -1,16 +1,16 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 
 import org.deltava.beans.cooler.Emoticons;
-import org.deltava.commands.*;
 
+import org.deltava.commands.*;
 
 /**
  * A Web Site Command to display Water Cooler emoticons.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -19,18 +19,15 @@ public class EmoticonHelperCommand extends AbstractCommand {
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
-	 * @throws CommandException if an unhandled error occurs
 	 */
-   public void execute(CommandContext ctx) throws CommandException {
-
-      // Save Cooler image names in the request
-      ctx.setAttribute("iconNames", Arrays.asList(Emoticons.ICON_NAMES), REQUEST);
+	@Override
+   public void execute(CommandContext ctx) {
 
       // Convert smiley codes into a map
-      Map<String, String> codes = new HashMap<String, String>();
-      for (int x = 0; x < Emoticons.ICON_NAMES.length; x++) {
-         if (Emoticons.ICON_CODES[x] != null)
-            codes.put(Emoticons.ICON_NAMES[x], Emoticons.ICON_CODES[x]);
+      Map<String, String> codes = new LinkedHashMap<String, String>();
+      for (Emoticons ei : Emoticons.values()) {
+         if (ei.getCode() != null)
+            codes.put(ei.getName(), ei.getCode());
       }
       
       // Save the smiley codes
