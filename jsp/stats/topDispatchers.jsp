@@ -40,7 +40,8 @@ return true;
 <el:form action="dspstats.do" method="post" validate="return validate(this)">
 <el:table className="view">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> TOP DISPATCHERS - <fmt:date date="${range.startDate}" fmt="d" /> - <fmt:date date="${range.endDate}" fmt="d" /></td>
+ <td colspan="4" class="left caps"><content:airline /> TOP DISPATCHERS - <fmt:date date="${range.startDate}" tz="${utc}" fmt="d" /> - 
+ <fmt:date date="${range.endDate}" tz="${utc}" fmt="d" /></td>
  <td colspan="2" class="right">SELECT <el:combo name="range" idx="*" size="1" firstEntry="[ SELECT ]" value="${range}" options="${ranges}" onChange="void update()" /></td>
 </tr>
 

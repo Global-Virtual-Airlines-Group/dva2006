@@ -10,7 +10,7 @@ import org.deltava.beans.stats.DispatchStatistics;
 /**
  * A Data Access Object to load Dispatcher Activity statistics. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 3.2
  */
 
@@ -118,21 +118,22 @@ public class GetACARSDispatchStats extends DAO {
 			Calendar cld = Calendar.getInstance();
 			cld.set(Calendar.DAY_OF_MONTH, 1);
 			
-			Collection<DateRange> years = new LinkedHashSet<DateRange>();
+			Collection<DateRange> years = new TreeSet<DateRange>(Collections.reverseOrder());
 			List<DateRange> results = new ArrayList<DateRange>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					cld.set(Calendar.MONTH, rs.getInt(1) - 1);
 					cld.set(Calendar.YEAR, rs.getInt(2));
-					java.util.Date dt = cld.getTime();
-					results.add(DateRange.createMonth(dt));
-					years.add(DateRange.createYear(dt));
+					results.add(DateRange.createMonth(cld.getTime()));
+					cld.set(Calendar.MONTH, 0);
+					years.add(DateRange.createYear(cld.getTime()));
 				}
 			}
 			
 			// Clean up and merge
 			_ps.close();
-			results.addAll(0, years);
+			Collections.reverse(results);
+			results.addAll(years);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -145,8 +146,7 @@ public class GetACARSDispatchStats extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getDispatchTotals(Map<Integer, Pilot> pilots) throws DAOException {
-		for (Iterator<Map.Entry<Integer, Pilot>> i = pilots.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry<Integer, Pilot> me = i.next();
+		for (Map.Entry<Integer, Pilot> me : pilots.entrySet()) {
 			Pilot p = me.getValue();
 			if (p.getDispatchFlights() < 0)
 				getDispatchTotals(p);

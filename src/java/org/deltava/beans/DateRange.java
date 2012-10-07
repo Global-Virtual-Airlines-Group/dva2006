@@ -89,7 +89,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 	 * @param endDate the end date/time
 	 */
 	public DateRange(Date startDate, Date endDate) {
-		this(startDate, endDate, startDate.toString());
+		this(startDate, endDate, null);
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class DateRange implements java.io.Serializable, Comparable<DateRange>, C
 		super();
 		_startDate = startDate;
 		_endDate = endDate;
-		_label = _startDate.toString();
+		_label = (label == null) ? _startDate.toString() : label;
 	}
 
 	/**
