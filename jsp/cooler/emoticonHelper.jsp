@@ -11,6 +11,7 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
+<content:enum var="icons" className="org.deltava.beans.cooler.Emoticons" />
 <script type="text/javascript">
 function addEmoticon(name)
 {
@@ -24,12 +25,10 @@ if (!parent) {
 
 // Get the form
 var f = parent.document.forms[0];
-if (!f) return false;
-var msgText = f.msgText;
-if (!msgText) return false;
+if ((!f) || (!f.msgText)) return false;
 
 // Append the emoticon
-msgText.value = msgText.value + ' :' + name + ':';
+f.msgText.value = msgText.value + ' :' + name + ':';
 self.close();
 return true;
 }
@@ -49,11 +48,11 @@ return true;
 </tr>
 
 <!-- Table Emoticons -->
-<c:forEach var="iconName" items="${iconNames}">
-<c:set var="iconCode" value="${iconCodes[iconName]}" scope="page" />
+<c:forEach var="icon" items="${icons}">
+<c:set var="iconCode" value="${iconCodes[icon.name]}" scope="page" />
 <tr class="mid">
- <td><a href="javascript:addEmoticon('${iconName}')"><el:img className="noborder" src="cooler/emoticons/${iconName}.gif" caption="${iconName}" /></a></td>
- <td class="bld">:${iconName}:</td>
+ <td><a href="javascript:void addEmoticon('${icon.name}')"><el:img className="noborder" src="cooler/emoticons/${icon.name}.gif" caption="${icon.name}" /></a></td>
+ <td class="bld">:${icon.name}:</td>
  <td class="sec bld">${empty iconCode ? '&nbsp;' : iconCode}</td>
 </tr>
 </c:forEach>
