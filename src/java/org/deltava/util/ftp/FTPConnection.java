@@ -8,7 +8,7 @@ import com.enterprisedt.net.ftp.*;
 /**
  * A utility class to encapsulate FTP operations.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -151,7 +151,7 @@ public class FTPConnection implements Closeable {
 		try {
 			String curPath = _client.pwd();
 			_client.chdir(dirName);
-			boolean hasFile = _client.exists(fName);
+			boolean hasFile = _client.existsFile(fName);
 			_client.chdir(curPath);
 			return hasFile;
 		} catch (Exception e) {
