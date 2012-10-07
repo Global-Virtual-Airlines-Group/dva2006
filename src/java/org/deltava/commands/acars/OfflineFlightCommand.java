@@ -164,7 +164,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Check that the build isn't deprecated
 			GetACARSBuilds abdao = new GetACARSBuilds(con);
-			boolean isBuildOK = abdao.isValid(cInfo, GetACARSBuilds.AccessRole.UPLOAD);
+			boolean isBuildOK = abdao.isValid(cInfo, AccessRole.UPLOAD);
 			if (!isBuildOK) {
 				ClientInfo latestBuild = null;
 				if (cInfo.isBeta())
