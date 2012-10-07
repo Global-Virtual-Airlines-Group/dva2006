@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -8,6 +8,7 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.filter.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
@@ -15,46 +16,18 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to detect airports no longer serviced by an Airline.
  * @author Luke
- * @version 2.4
+ * @version 5.0
  * @since 1.0
  */
 
 public class UnservicedAirportsCommand extends AbstractCommand {
-	
-	private class AirlineFilter implements AirportFilter {
-
-		private Airline _a;
-
-		AirlineFilter(Airline a) {
-			super();
-			_a = (a == null) ? SystemData.getAirline(SystemData.get("airline.code")) : a;
-		}
-
-		public boolean accept(Airport a) {
-			return (a == null) ? false : a.getAirlineCodes().contains(_a.getCode());
-		}
-	}
-
-	/**
-	 * Helper method to return airports for a particular airline.
-	 */
-	private Collection<Airport> getAirports(Airline a) {
-		AirlineFilter filter = new AirlineFilter(a);
-		Collection<Airport> allAirports = new LinkedHashSet<Airport>(SystemData.getAirports().values());
-		for (Iterator<Airport> i = allAirports.iterator(); i.hasNext(); ) {
-			Airport ap = i.next();
-			if (!filter.accept(ap))
-				i.remove();
-		}
-		
-		return allAirports;
-	}
 	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the airline list
@@ -71,16 +44,16 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 			
 			// Loop through the airlines
 			GetScheduleAirport dao = new GetScheduleAirport(con);
-			for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
-				Airline a = i.next();
+			for (Airline a : airlines) {
+				AirlineFilter filter = new AirlineFilter(a);
+				Collection<Airport> aa = filter.filter(SystemData.getAirports().values());
 				
 				// Detrmine which airports we do not have schedule entries for
-				Collection<Airport> extraAirports = CollectionUtils.getDelta(getAirports(a), dao.getOriginAirports(a));
+				Collection<Airport> extraAirports = CollectionUtils.getDelta(aa, dao.getOriginAirports(a));
 				if (!extraAirports.isEmpty()) {
 					results.put(a, extraAirports);
 					totalResults += extraAirports.size();
-					for (Iterator<Airport> ai = extraAirports.iterator(); ai.hasNext(); ) {
-						Airport ap = ai.next();
+					for (Airport ap : extraAirports) {
 						ap.removeAirlineCode(a.getCode());
 						updateAirports.add(ap);
 					}
@@ -93,12 +66,9 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 				
 				// Get the DAO and update the airports
 				SetSchedule wdao = new SetSchedule(con);
-				for (Iterator<Airport> i = updateAirports.iterator(); i.hasNext(); ) {
-					Airport ap = i.next();
+				for (Airport ap : updateAirports)
 					wdao.update(ap, ap.getIATA());
-				}
 				
-				// Commit the transaction
 				ctx.commitTX();
 				
 				// Reload the database
@@ -114,7 +84,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 		
 		// Save the airports
 		ctx.setAttribute("results", results, REQUEST);
-		ctx.setAttribute("totalResults", new Integer(totalResults), REQUEST);
+		ctx.setAttribute("totalResults", Integer.valueOf(totalResults), REQUEST);
 		ctx.setAttribute("updateDB", Boolean.valueOf(updateDB), REQUEST);
 		
 		// Forward to the JSP
