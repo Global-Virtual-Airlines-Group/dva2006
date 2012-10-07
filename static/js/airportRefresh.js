@@ -50,9 +50,8 @@ return true;
 function updateOrigin(combo)
 {
 var f = document.forms[0];
-if (combo.selectedIndex != 0)
-	updateAirports(f.airportA, 'code=' + getValue(combo), false, getValue(f.airportA));
-	
+var code = (combo.selectedIndex > 0) ? ('code=' + getValue(combo)) : ('useSched=true&airline=' + getValue(f.airline));
+updateAirports(f.airportA, code, false, getValue(f.airportA));
 return true;
 }
 
@@ -72,14 +71,18 @@ return combo.options[combo.selectedIndex].value;
 function setAirport(combo, code, fireEvent)
 {
 if (code == null) return false;
+if (code.length < 2) {
+	combo.selectedIndex = 0;
+	if (fireEvent && combo.onchange) combo.onchange();
+	return true;
+}
+
 code = code.toUpperCase();
 for (var x = 0; x < combo.options.length; x++) {
 	var opt = combo.options[x];
 	if ((code == opt.value) || (code == opt.icao) || (code == opt.iata)) {
 		combo.selectedIndex = x;
-		if (fireEvent && combo.onchange)
-			combo.onchange();
-
+		if (fireEvent && combo.onchange) combo.onchange();
 		return true;
 	}
 }
@@ -90,11 +93,11 @@ return false;
 function updateSIDSTAR(combo, code, type)
 {
 if (combo == null) return false;
-var oldValue = combo.options[combo.selectedIndex].value;
+var oldValue = getValue(combo);
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'troutes.ws?airportD=' + code + '&airportA=' + code, true);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	var xmlDoc = xmlreq.responseXML;
 	var trs = xmlDoc.documentElement.getElementsByTagName(type.toLowerCase());	
 	combo.options.length = trs.length + 1;
@@ -102,8 +105,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < trs.length; i++) {
 		var tr = trs[i];
 		var trCode = tr.getAttribute('code')
-		var opt = new Option(trCode, trCode);
-		combo.options[i+1] = opt;		
+		combo.options[i+1] = new Option(trCode, trCode);		
 	}
 
 	combo.disabled = false;
