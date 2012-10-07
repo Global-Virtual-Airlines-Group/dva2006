@@ -11,17 +11,12 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load ACARS build data. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 4.1
  */
 
 public class GetACARSBuilds extends DAO {
 	
-	// Enumeration to store access roles
-	public enum AccessRole {
-		CONNECT, UPLOAD;
-	}
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -131,10 +126,8 @@ public class GetACARSBuilds extends DAO {
 						_ps.setString(1, "minATC");
 						break;
 				
-					case PILOT:
 					default:
 						_ps.setString(1, "minBuild");
-						break;
 				}
 			} else
 				_ps.setString(1, "minUpload");
