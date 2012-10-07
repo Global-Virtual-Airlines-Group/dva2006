@@ -9,12 +9,11 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.*;
-
+import org.deltava.filter.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -28,74 +27,6 @@ import org.deltava.util.system.SystemData;
 
 public class AirportListService extends WebService {
 
-	private class NonFilter implements AirportFilter {
-
-		protected NonFilter() {
-			super();
-		}
-
-		public boolean accept(Airport a) {
-			return true;
-		}
-	}
-
-	private class AirlineFilter implements AirportFilter {
-		private final Airline _a;
-
-		AirlineFilter(Airline a) {
-			super();
-			_a = (a == null) ? SystemData.getAirline(SystemData.get("airline.code")) : a;
-		}
-
-		public boolean accept(Airport a) {
-			return ((a == null) || (_a == null)) ? false : a.getAirlineCodes().contains(_a.getCode());
-		}
-	}
-
-	private class AirportListFilter implements AirportFilter {
-		private final Collection<String> _airportCodes = new HashSet<String>();
-
-		AirportListFilter(Collection<Airport> airports) {
-			super();
-			for (Iterator<Airport> i = airports.iterator(); i.hasNext();) {
-				Airport a = i.next();
-				_airportCodes.add(a.getIATA());
-			}
-		}
-
-		public boolean accept(Airport a) {
-			return (a == null) ? false : _airportCodes.contains(a.getIATA());
-		}
-	}
-	
-	private class GeoLocationFilter implements AirportFilter {
-		private final GeoPosition _loc;
-		private final int _distance;
-		
-		GeoLocationFilter(GeoLocation loc, int distance) {
-			super();
-			_loc = new GeoPosition(loc);
-			_distance = Math.max(0, distance);
-		}
-		
-		public boolean accept(Airport a) {
-			return (a == null) ? false : (_loc.distanceTo(a) < _distance);
-		}
-	}
-
-	private class CountryFilter implements AirportFilter {
-		private final Country _c;
-		
-		protected CountryFilter(Country c) {
-			super();
-			_c = c;
-		}
-		
-		public boolean accept(Airport a) {
-			return (a == null) ? false : (a.getCountry() == _c);
-		}
-	}
-	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service Context
@@ -104,11 +35,13 @@ public class AirportListService extends WebService {
 	 */
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
+		MultiFilter filter = new ANDFilter();
+		filter.add(new NonFilter());
 
 		// Figure out what kind of search we are doing
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+		Map<String, Airport> allAirports = new HashMap<String, Airport>();
 		try {
-			AirportFilter filter = new NonFilter();
 			Connection con = ctx.getConnection();
 
 			String al = ctx.getParameter("airline");
@@ -119,15 +52,13 @@ public class AirportListService extends WebService {
 				// Either search the schedule or return the SystemData list
 				if (useSched) {
 					GetScheduleAirport dao = new GetScheduleAirport(con);
-					filter = new AirportListFilter(dao.getOriginAirports(a));
+					filter.add(new IATAFilter(dao.getOriginAirports(a)));
 				} else {
-					if ("all".equalsIgnoreCase(al))
-						filter = new NonFilter();
-					else if ("charts".equalsIgnoreCase(al)) {
+					if ("charts".equalsIgnoreCase(al)) {
 						GetChart dao = new GetChart(con);
-						filter = new AirportListFilter(dao.getAirports());
-					} else
-						filter = new AirlineFilter(a);
+						filter.add(new IATAFilter(dao.getAirports()));
+					} else if (a != null)
+						filter.add(new AirlineFilter(a));
 				}
 			} else if (ctx.getParameter("code") != null) {
 				// Check if we are searching origin/departure
@@ -138,43 +69,49 @@ public class AirportListService extends WebService {
 
 				// Get the airports from the schedule database
 				GetScheduleAirport dao = new GetScheduleAirport(con);
-				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
-			} else if (ctx.getParameter("country") != null) {
-				Country c = Country.get(ctx.getParameter("country"));
-				if (c == null)
-					throw error(SC_BAD_REQUEST, "Invalid Airport", false);
-				
-				filter = new CountryFilter(c);
-			} else if (ctx.getParameter("airport") != null) {
-				Airport a = SystemData.getAirport(ctx.getParameter("airport"));
-				if (a != null)
-					filter = new GeoLocationFilter(a, StringUtils.parse(ctx.getParameter("dist"), 5));
+				filter.add(new IATAFilter(dao.getConnectingAirports(a, !isDest, null)));
 			} else if (useSched) {
 				GetScheduleAirport dao = new GetScheduleAirport(con);
 				Collection<Airport> schedAirports = new LinkedHashSet<Airport>();
 				schedAirports.addAll(dao.getOriginAirports(null));
 				schedAirports.addAll(dao.getDestinationAirports(null));
-				filter = new AirportListFilter(schedAirports);
+				filter.add(new IATAFilter(schedAirports));
+			}
+			
+			// Add supplementary country filter
+			if (ctx.getParameter("country") != null) {
+				Country c = Country.get(ctx.getParameter("country"));
+				if (c == null)
+					throw error(SC_BAD_REQUEST, "Invalid Country", false);
+			
+				filter.add(new CountryFilter(c));
+			}
+			
+			// Add suplementary range filter
+			if (ctx.getParameter("airport") != null) {
+				Airport a = SystemData.getAirport(ctx.getParameter("airport"));
+				if (a != null)
+					filter.add(new GeoLocationFilter(a, StringUtils.parse(ctx.getParameter("dist"), 5)));
 			}
 			
 			// Add forced airport
 			GetAirport adao = new GetAirport(con);
+			allAirports.putAll(adao.getAll());
 			if (!StringUtils.isEmpty(ctx.getParameter("add")))
 				airports.add(adao.get(ctx.getParameter("add")));
-			
-			// Generate the destination list
-			Map<String, Airport> allAirports = adao.getAll();
-			for (Airport a : allAirports.values()) {
-				if (filter.accept(a)) {
-					airports.add(a);
-					if ((a.getSupercededAirport() != null) && allAirports.containsKey(a.getSupercededAirport()))
-						airports.add(allAirports.get(a.getSupercededAirport()));
-				}
-			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
+		}
+		
+		// Do the filtering
+		for (Airport a : allAirports.values()) {
+			if (filter.accept(a)) {
+				airports.add(a);
+				if ((a.getSupercededAirport() != null) && allAirports.containsKey(a.getSupercededAirport()))
+					airports.add(allAirports.get(a.getSupercededAirport()));
+			}
 		}
 
 		// Generate the XML document
@@ -193,8 +130,8 @@ public class AirportListService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
 			ctx.setExpires(3600);
+			ctx.setContentType("text/xml", "UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
