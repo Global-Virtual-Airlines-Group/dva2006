@@ -330,8 +330,8 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, FAMILY, ACRANGE, IATA, HISTORIC, ETOPS, SEATS, "
 				+ "ENGINES, ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
-				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, TO_RWLENGTH, LN_RWLENGTH) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				+ "SEC_PCT, OTHER_TANKS, MAX_WEIGHT, MAX_TWEIGHT, MAX_LWEIGHT, MAX_ZFW, TO_RWLENGTH, LN_RWLENGTH) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
 			_ps.setString(3, a.getFamily());
@@ -354,8 +354,9 @@ public class SetSchedule extends DAO {
 			_ps.setInt(20, a.getMaxWeight());
 			_ps.setInt(21, a.getMaxTakeoffWeight());
 			_ps.setInt(22, a.getMaxLandingWeight());
-			_ps.setInt(23, a.getTakeoffRunwayLength());
-			_ps.setInt(24, a.getLandingRunwayLength());
+			_ps.setInt(23, a.getMaxZeroFuelWeight());
+			_ps.setInt(24, a.getTakeoffRunwayLength());
+			_ps.setInt(25, a.getLandingRunwayLength());
 			executeUpdate(1);
 			
 			// Add the webapps
@@ -387,8 +388,8 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("UPDATE common.AIRCRAFT SET ACRANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 				+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
-				+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, SEATS=?, "
-				+ "TO_RWLENGTH=?, LN_RWLENGTH=?, FULLNAME=?, FAMILY=?, NAME=? WHERE (NAME=?)");
+				+ "SEC_PCT=?, OTHER_TANKS=?, ETOPS=?, MAX_WEIGHT=?, MAX_TWEIGHT=?, MAX_LWEIGHT=?, MAX_ZFW=?, "
+				+ "SEATS=?, TO_RWLENGTH=?, LN_RWLENGTH=?, FULLNAME=?, FAMILY=?, NAME=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
@@ -407,13 +408,14 @@ public class SetSchedule extends DAO {
 			_ps.setInt(16, a.getMaxWeight());
 			_ps.setInt(17, a.getMaxTakeoffWeight());
 			_ps.setInt(18, a.getMaxLandingWeight());
-			_ps.setInt(19, a.getSeats());
-			_ps.setInt(20, a.getTakeoffRunwayLength());
-			_ps.setInt(21, a.getLandingRunwayLength());
-			_ps.setString(22, a.getFullName());
-			_ps.setString(23, a.getFamily());
-			_ps.setString(24, a.getName());
-			_ps.setString(25, oldName);
+			_ps.setInt(19, a.getMaxZeroFuelWeight());
+			_ps.setInt(20, a.getSeats());
+			_ps.setInt(21, a.getTakeoffRunwayLength());
+			_ps.setInt(22, a.getLandingRunwayLength());
+			_ps.setString(23, a.getFullName());
+			_ps.setString(24, a.getFamily());
+			_ps.setString(25, a.getName());
+			_ps.setString(26, oldName);
 			executeUpdate(1);
 
 			// Clean out the webapps

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.cache.Cacheable;
  * secondary and other tanks, and each Microsoft Flight Simulator fuel tank can be assigned to one of these three tank
  * types.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -24,20 +24,14 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 * Enumeration for fuel tank types.
 	 */
 	public enum TankType {
-		PRIMARY("Primary"), SECONDARY("Secondary"), OTHER("Other");
-		
-		private final String _desc;
-		
-		TankType(String desc) {
-			_desc = desc;
-		}
+		PRIMARY, SECONDARY, OTHER;
 		
 		public String getDescription() {
-			return _desc;
+			return toString();
 		}
 		
 		public String toString() {
-			return _desc;
+			return name().substring(0, 1) + name().substring(1);
 		}
 	}
 
@@ -57,6 +51,7 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	private int _taxiFuel;
 	
 	private int _maxWeight;
+	private int _maxZFW;
 	private int _maxTakeoffWeight;
 	private int _maxLandingWeight;
 	
@@ -321,6 +316,15 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	}
 	
 	/**
+	 * Returns the maximum zero fuel weight of the Aircraft.
+	 * @return the weight in pounds
+	 * @see Aircraft#setMaxZeroFuelWeight(int)
+	 */
+	public int getMaxZeroFuelWeight() {
+		return _maxZFW;
+	}
+	
+	/**
 	 * Returns the maximum takeoff weight of the Aircraft.
 	 * @return the weight in pounds
 	 * @see Aircraft#setMaxTakeoffWeight(int)
@@ -419,6 +423,15 @@ public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 	 */
 	public void setMaxWeight(int weight) {
 		_maxWeight = Math.max(0, weight);
+	}
+	
+	/**
+	 * Updates the maximum zero fuel weight of the Aircraft.
+	 * @param weight the weight in pounds
+	 * @see Aircraft#getMaxZeroFuelWeight()
+	 */
+	public void setMaxZeroFuelWeight(int weight) {
+		_maxZFW = Math.max(0, weight);
 	}
 
 	/**
