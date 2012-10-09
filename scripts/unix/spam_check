@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Spam auto-learn script
-# (c) 2009 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 #
 
 mail_root='/home/mail'
@@ -36,4 +36,8 @@ done
 
 # Resync the spamd database
 sa-learn --sync --dbpath $spamd_db
+
+# Ensure permissions are correct
+chown postfix:postfix $spamd_db/*
+chmod 660 $spamd_db/*
 exit 0
