@@ -74,7 +74,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Transfer Status</td>
- <td class="data"><span class="sec bld">${txReq.statusName}</span> (Created on <fmt:date fmt="d" date="${txReq.date}" />)</td>
+ <td class="data"><span class="sec bld">${txReq.statusName}</span> (Created on <fmt:date t="HH:mm" date="${txReq.date}" />)</td>
 </tr>
 <c:if test="${txReq.ratingOnly}">
 <tr>
