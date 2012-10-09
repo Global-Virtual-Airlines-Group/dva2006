@@ -21,6 +21,7 @@ if (!validateText(form.family, 2, 'Aircraft Family Code')) return false;
 if (!validateNumber(form.range, 1, 'Aircraft Range')) return false;
 if (!validateNumber(form.seats, 0, 'Passenger Capacity')) return false;
 if (!validateNumber(form.maxWeight, 1, 'Maximum Weight')) return false;
+if (!validateNumber(form.maxZFW, 1, 'Maximum Zero Fuel Weight')) return false;
 if (!validateNumber(form.maxTWeight, 1, 'Maximum Takeoff Weight')) return false;
 if (!validateNumber(form.maxLWeight, 1, 'Maximum Landing Weight')) return false;
 if (!validateNumber(form.toRunwayLength, 0, 'Minimum Takeoff Runway Length')) return false;
@@ -101,6 +102,10 @@ return true;
 <tr>
  <td class="label">Maximum Weight</td>
  <td class="data"><el:text name="maxWeight" idx="*" size="6" max="7" value="${aircraft.maxWeight}" required="true" /> pounds</td>
+</tr>
+<tr>
+  <td class="label">Maximum Zero Fuel Weight</td>
+  <td class="data"><el:text name="maxZFW" idx="*" size="6" max="7" value="${aircraft.maxZeroFuelWeight}" required="true" /> pounds</td>
 </tr>
 <tr>
  <td class="label">Maximum Takeoff Weight</td>

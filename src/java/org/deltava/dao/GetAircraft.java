@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Aircraft data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -124,8 +124,9 @@ public class GetAircraft extends DAO implements CachingDAO {
 				a.setMaxWeight(rs.getInt(20));
 				a.setMaxTakeoffWeight(rs.getInt(21));
 				a.setMaxLandingWeight(rs.getInt(22));
-				a.setTakeoffRunwayLength(rs.getInt(23));
-				a.setLandingRunwayLength(rs.getInt(24));
+				a.setMaxZeroFuelWeight(rs.getInt(23));
+				a.setTakeoffRunwayLength(rs.getInt(24));
+				a.setLandingRunwayLength(rs.getInt(25));
 				results.put(a.getName(), a);
 			}
 		}
