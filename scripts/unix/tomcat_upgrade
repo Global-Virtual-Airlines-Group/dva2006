@@ -48,6 +48,9 @@ echo "Copying Tomcat configuration"
 cp /usr/local/tomcat/conf/* conf
 chgrp www conf/*
 chmod 640 conf/*
+mkdir conf/Catalina
+chown root:www conf/Catalina
+chmod 775 conf/Catalina
 
 # Change permissions
 echo "Changing file permissions"
