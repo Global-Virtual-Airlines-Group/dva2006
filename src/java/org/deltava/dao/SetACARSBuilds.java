@@ -2,8 +2,11 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.acars.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to write ACARS client version data.
@@ -94,14 +97,20 @@ public class SetACARSBuilds extends DAO {
 	/**
 	 * Sets the builds that cannot request Dispatch service.
 	 * @param ver a ClientVersion
+	 * @param builds a Collection of build numbers
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void setNoDispatch(ClientVersion ver) throws DAOException {
+	public void setNoDispatch(ClientVersion ver, Collection<Integer> builds) throws DAOException {
+		Collection<String> blds = new TreeSet<String>();
+		blds.add(String.valueOf(ver.getClientBuild()));
+		for (Integer b : builds)
+			blds.add(b.toString());
+		
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO acars.VERSION_INFO (NAME, VER, DATA) VALUES (?, ?, ?)");
 			_ps.setString(1, "noDispatch");
 			_ps.setInt(2, ver.getVersion());
-			_ps.setString(3, String.valueOf(ver.getClientBuild()));
+			_ps.setString(3, StringUtils.listConcat(blds, ","));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
