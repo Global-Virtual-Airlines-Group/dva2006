@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava;
 
 import java.io.*;
@@ -16,11 +16,11 @@ import org.deltava.util.system.SystemData;
 
 public class UsageTracker implements Runnable {
 
-	private Logger log;
+	private final Logger log;
 	private static final String JDBC_URL = "jdbc:mysql://localhost/vatsim?dontTrackOpenResources=true&continueBatchOnError=true&user=luke&password=test";
 
-	private String _dataFile;
-	private int _interval;
+	private final String _dataFile;
+	private final int _interval;
 	
 	private long _lastUpdateDate = 1;
 	
@@ -41,8 +41,7 @@ public class UsageTracker implements Runnable {
 				NetworkInfo info = sidao.getInfo(OnlineNetwork.VATSIM);
 				
 				// Get the pilots
-				Collection<ConnectedUser> users = new ArrayList<ConnectedUser>();
-				users.addAll(info.getPilots());
+				Collection<ConnectedUser> users = new ArrayList<ConnectedUser>(info.getPilots());
 				users.addAll(info.getControllers());
 				
 				// Check if we've loaded it
@@ -51,23 +50,23 @@ public class UsageTracker implements Runnable {
 					_lastUpdateDate = validTime;
 					
 					// Connect to the database
-					Connection c = DriverManager.getConnection(JDBC_URL);
-					PreparedStatement ps = c.prepareStatement("INSERT INTO USERSTATS (ID, DATE, CALLSIGN, USETIME, RATING) VALUES "
-							+ "(?, CURDATE(), ?, ?, ?) ON DUPLICATE KEY UPDATE USETIME=USETIME+?");
-					for (Iterator<ConnectedUser> i = users.iterator(); i.hasNext(); ) {
-						ConnectedUser usr = i.next();
-						ps.setInt(1, usr.getID());
-						ps.setString(2, usr.getCallsign());
-						ps.setInt(3, _interval);
-						ps.setInt(4, (usr.getType() == NetworkUser.Type.PILOT) ? 0 : usr.getRating().ordinal());
-						ps.setInt(5, _interval);
-						ps.addBatch();
+					try (Connection c = DriverManager.getConnection(JDBC_URL)) {
+						try (PreparedStatement ps = c.prepareStatement("INSERT INTO USERSTATS (ID, DATE, CALLSIGN, USETIME, RATING) VALUES "
+								+ "(?, CURDATE(), ?, ?, ?) ON DUPLICATE KEY UPDATE USETIME=USETIME+?")) {
+							for (Iterator<ConnectedUser> i = users.iterator(); i.hasNext(); ) {
+								ConnectedUser usr = i.next();
+								ps.setInt(1, usr.getID());
+								ps.setString(2, usr.getCallsign());
+								ps.setInt(3, _interval);
+								ps.setInt(4, (usr.getType() == NetworkUser.Type.PILOT) ? 0 : usr.getRating().ordinal());
+								ps.setInt(5, _interval);
+								ps.addBatch();
+							}
+						
+							ps.executeBatch();
+						}
 					}
 					
-					// Write and clean up
-					ps.executeBatch();
-					ps.close();
-					c.close();
 					log.info("Wrote " + users.size() + " records");
 				} else {
 					log.info("Servinfo feed not updated, waiting 30s");
@@ -103,17 +102,15 @@ public class UsageTracker implements Runnable {
 			p.load(UsageTracker.class.getClassLoader().getResourceAsStream("log4j.properties"));
 			PropertyConfigurator.configure(p);
 			
-			// Load the SQL driver
-			Class.forName("com.mysql.jdbc.Driver");
-			
 			// Load the airports
-			Connection c = DriverManager.getConnection(JDBC_URL);
-			GetTimeZone tzdao = new GetTimeZone(c);
-			tzdao.initAll();
-			SystemData.add("airline.code", "DVA");
-			GetAirport adao = new GetAirport(c);
-			SystemData.add("airports", adao.getAll());
-			c.close();
+			Class.forName("com.mysql.jdbc.Driver");
+			try (Connection c = DriverManager.getConnection(JDBC_URL)) {
+				GetTimeZone tzdao = new GetTimeZone(c);
+				tzdao.initAll();
+				SystemData.add("airline.code", "DVA");
+				GetAirport adao = new GetAirport(c);
+				SystemData.add("airports", adao.getAll());
+			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			System.exit(2);
@@ -125,7 +122,7 @@ public class UsageTracker implements Runnable {
 		t.start();
 		while (t.isAlive()) {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(2500);
 			} catch (InterruptedException ie) {
 				t.interrupt();
 			}
