@@ -4,7 +4,7 @@
 		<!-- Compile the code -->
 		<mkdir dir="${java.io.tmpdir}/usageTracker/classes" />
 		<javac srcdir="src" destdir="${java.io.tmpdir}/usageTracker/classes" debug="true"
-		 debuglevel="lines,vars,source" source="1.6" target="1.6" compiler="modern">
+		 debuglevel="lines,vars,source" source="1.7" target="1.7" compiler="modern">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath id="javac.classpath">
 				<pathelement path="${classpath}" />
@@ -21,13 +21,14 @@
 			<include name="java/org/deltava/beans/system/AirlineInformation.java" />
 			<include name="java/org/deltava/comparators/GeoComparator.java" />
 	    	<include name="java/org/deltava/dao/DAO.java" />
+			<include name="java/org/deltava/dao/CachingDAO.java" />
 	    	<include name="java/org/deltava/dao/GetAirport.java" />
 	    	<include name="java/org/deltava/dao/GetTimeZone.java" />
 	    	<include name="java/org/deltava/dao/DAOException.java" />
 			<include name="java/org/deltava/dao/file/DAO.java" />
 	    	<include name="java/org/deltava/dao/file/GetServInfo.java" />
 	    	<include name="java/org/deltava/dao/file/GetVATSIMData.java" />
-			<include name="java/org/deltava/servlet/ControllerException.java" />
+			<include name="java/org/deltava/util/ControllerException.java" />
 			<include name="java/org/deltava/util/CalendarUtils.java" />
 			<include name="java/org/deltava/util/CollectionUtils.java" />
 			<include name="java/org/deltava/util/ComboUtils.java" />
@@ -50,7 +51,7 @@
 		<jar compress="true" index="true" destfile="${java.io.tmpdir}/build/usageTracker.jar"
 			manifest="${java.io.tmpdir}/usageTracker/classes/MANIFEST.MF">
 		 	<fileset dir="${java.io.tmpdir}/usageTracker/classes" />
-		 	<fileset dir="etc" includes="log4j.properties" />
+		 	<fileset dir="etc/prod" includes="log4j.properties" />
 		</jar>
 	</target>
 	
@@ -64,7 +65,7 @@
 	    	<fileset dir="lib/deploy">
 				<include name="log4j-*.jar"/>
 				<include name="jdom-*.jar"/>
-				<include name="mysql-connector-java-5.1.10-bin.jar" />
+				<include name="mysql-connector-java-5.1.22-bin.jar" />
 				<modified seldirs="false" algorithm="digest" update="true" delayupdate="false">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/usageTrack.txt" />
