@@ -26,13 +26,13 @@ if [ -f "/var/run/mysql.pid" ]
 then
   if [ -d "/proc/`cat /var/run/mysql.pid`" ]
   then
-   echo "mySQL 5 (Database Server) is alive"
+   echo "mySQL (Database Server) is alive"
   else
-   echo "mySQL 5 (Database Server) is DOWN"
+   echo "mySQL (Database Server) is DOWN"
    /etc/init.d/mysql start
   fi
 else
- echo "mySQL 5 (Database Server) is DOWN - no pid"
+ echo "mySQL (Database Server) is DOWN - no pid"
  /etc/init.d/mysql start
 fi
 
@@ -99,25 +99,25 @@ then
    echo "IMAP Authentication Server is alive"
   else
    echo "IMAP Authentication Server is DOWN"
-   /etc/init.d/authdaemond start
+   /etc/init.d/courier-authdaemond start
   fi
 else
  echo "IMAP Authentication Server is DOWN - no pid"
- /etc/init.d/authdaemond start
+ /etc/init.d/courier-authdaemond start
 fi
 
 if [ -f "/var/run/imapd.pid" ]
 then
   if [ -d "/proc/`cat /var/run/imapd.pid`" ]
   then
-   echo "Courier (IMAP Server) is alive"
+   echo "Dovecot (IMAP Server) is alive"
   else
-   echo "Courier (IMAP Server) is DOWN"
-   /etc/init.d/imapd start
+   echo "Dovecot (IMAP Server) is DOWN"
+   /etc/init.d/dovecot start
   fi
 else
- echo "Courier (IMAP Server) is DOWN - no pid"
- /etc/init.d/imapd start
+ echo "Dovecot (IMAP Server) is DOWN - no pid"
+ /etc/init.d/dovecot start
 fi
 
 if [ -f "/var/run/ts2.pid" ]
@@ -181,14 +181,16 @@ fi
 # Check HTTP health check
 if [ -f "/var/run/tomcat60.pid" ]
 then
-	wget -nv -O /tmp/healthcheck.log -o /dev/null --timeout=6 --tries=1 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
+	wget -nv -O /tmp/healthcheck.log -o /dev/null --timeout=12 --tries=3 --no-cache --user-agent=IsAlive/1.0 http://www.deltava.org/healthcheck.ws
 	errorLines=`grep "is OK" /tmp/healthcheck.log | wc -l`
 	rm /tmp/healthcheck.log
 	if [ $errorLines -ne "1" ]
 	then
 		echo "Site appears DOWN - Health Check failed"
-		killall -9 java
-		sleep 1.5
+		kill -3 `cat /var/run/tomcat60.pid`
+		sleep 10
+		kill -9 `cat /var/run/tomcat60.pid`
+		sleep 2
 		echo "Archiving Tomcat log"
 		/usr/local/sbin/www/tomcat_log_reset
 		/etc/init.d/tomcat start
