@@ -7,7 +7,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html lang="en">
 <head>
-<title><content:airline /> ${forumName} Emoticons</title>
+<title>Emoticons</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -28,7 +28,7 @@ var f = parent.document.forms[0];
 if ((!f) || (!f.msgText)) return false;
 
 // Append the emoticon
-f.msgText.value = msgText.value + ' :' + name + ':';
+f.msgText.value = f.msgText.value + ' :' + name + ':';
 self.close();
 return true;
 }
