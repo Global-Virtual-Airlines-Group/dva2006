@@ -5,50 +5,42 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import java.util.*;
 
-import org.jdom2.*;
+import org.json.*;
 
 import org.deltava.beans.acars.Bandwidth;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-import org.deltava.util.*;
+
+import org.deltava.util.StringUtils;
 
 /**
- * A Web Service to display ACARS bandwidth statistics to an Amline Flash chart.
+ * A Web Service to display ACARS bandwidth statistics to a Google chart.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.1
  */
 
 public class BandwidthInfoService extends WebService {
 	
-	private static final String[] TITLES = {"Connections", "Messages In (1000)", "Messages Out (1000)", 
-		"Bytes In (MB)", "Bytes Out (MB)", "Max Connections", "Max Messages (1000)", "Max Bytes (MB)"};
-	private static final String[] UNITS = {" connections", " messages", " messages", " bytes", " bytes",
-		" connections", " messages", " bytes"	};
-
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get hourly or daily
 		boolean isDaily = Boolean.valueOf(ctx.getParameter("daily")).booleanValue();
-		boolean isRaw = Boolean.valueOf(ctx.getParameter("raw")).booleanValue();
-		int maxCols = isRaw ? 5 : 8;
 		
 		// Get stats
 		List<Bandwidth> stats = new ArrayList<Bandwidth>();
 		try {
 			GetACARSBandwidth bwdao = new GetACARSBandwidth(ctx.getConnection());
-			if (!isRaw) {
-				bwdao.setQueryMax(isDaily ? 30 : 24);
-				stats.addAll(isDaily ? bwdao.getDaily() : bwdao.getHourly());
-			} else
-				stats.addAll(bwdao.getRaw());
+			bwdao.setQueryMax(isDaily ? 30 : 24);
+			stats.addAll(isDaily ? bwdao.getDaily() : bwdao.getHourly());
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -58,94 +50,30 @@ public class BandwidthInfoService extends WebService {
 		// Sort backwards
 		Collections.reverse(stats);
 		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("chart");
-		doc.setRootElement(re);
-
-		// Generate X-axis
-		Element xae = new Element("xaxis");
-		re.addContent(xae);
-		
-		// Generate Y- axes
-		Element[] axes = new Element[8];
-		Element ae = new Element("graphs");
-		re.addContent(ae);
-		for (int x = 1; x <= maxCols; x++) {
-			Element e = new Element("graph");
-			e.setAttribute("gid", String.valueOf(x));
-			e.setAttribute("title", TITLES[x - 1]);
-			e.setAttribute("unit", UNITS[x - 1]);
-			axes[x - 1] = e;
-			ae.addContent(e);
-		}
-		
-		// Create the entries
-		int xid = 1;
+		// Generate the JSON document
+		JSONArray ja = new JSONArray();
 		for (Bandwidth bw : stats) {
-			Element xe = new Element("value");
-			xe.setAttribute("xid", String.valueOf(xid));
-			xae.addContent(xe);
+			JSONArray ea = new JSONArray();
 			if (isDaily)
-				xe.setText(StringUtils.format(bw.getDate(), "MMMM dd yyyy"));
-			else if (!isRaw)
-				xe.setText(StringUtils.format(bw.getDate(), "MMMM dd yyyy HH") + ":00");
+				ea.put(StringUtils.format(bw.getDate(), "MMMM dd yyyy"));
 			else
-				xe.setText(StringUtils.format(bw.getDate(), "MMMM dd yyyy HH:MM"));
+				ea.put(StringUtils.format(bw.getDate(), "MMMM dd yyyy HH") + ":00");
 			
-			// Add the Y-axis
-			Element ve = new Element("value");
-			ve.setAttribute("xid", String.valueOf(xid));
-			
-			// Add Connections
-			Element ve2 = ve.clone();
-			ve2.setText(String.valueOf(bw.getConnections()));
-			axes[0].addContent(ve2);
-			
-			// Add Messages In
-			Element ve3 = ve.clone();
-			ve3.setText(String.valueOf(bw.getMsgsIn() / 1000));
-			axes[1].addContent(ve3);
-			
-			// Add Messages Out
-			Element ve4 = ve.clone();
-			ve4.setText(String.valueOf(bw.getMsgsOut() / 1000));
-			axes[2].addContent(ve4);
-			
-			// Add Bytes In
-			Element ve5 = ve.clone();
-			ve5.setText(String.valueOf(bw.getBytesIn() / 1000000));
-			axes[3].addContent(ve5);
-
-			// Add Bytes Out
-			Element ve6 = ve.clone();
-			ve6.setText(String.valueOf(bw.getBytesOut() / 1000000));
-			axes[4].addContent(ve6);
-			
-			if (!isRaw) {
-				// Add Max Connections
-				Element ve7 = ve.clone();
-				ve7.setText(String.valueOf(bw.getMaxConnections()));
-				axes[5].addContent(ve7);
-
-				// Add Max Messages
-				Element ve8 = ve.clone();
-				ve8.setText(String.valueOf(bw.getMaxMsgs() / 1000));
-				axes[6].addContent(ve8);
-
-				// Add Max Bytes
-				Element ve9 = ve.clone();
-				ve9.setText(String.valueOf(bw.getMaxBytes() / 1000000));
-				axes[7].addContent(ve9);
-			}
-			
-			xid++;
+			// Add Data
+			ea.put(bw.getConnections());
+			ea.put(bw.getMsgsIn() / 1000);
+			ea.put(bw.getMsgsOut() / 1000);
+			ea.put(bw.getBytesIn() / 1000000);
+			ea.put(bw.getBytesOut() / 1000000);
+			ea.put(bw.getMaxConnections());
+			ea.put(bw.getMaxMsgs() / 1000);
+			ea.put(bw.getMaxBytes() / 1000000);
 		}
 		
-		// Dump the XML to the output stream
+		// Dump to the output stream
 		try {
-			ctx.setContentType("text/xml", "UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			ctx.setContentType("text/javascript", "UTF-8");
+			ctx.println(ja.toString());
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
@@ -158,15 +86,8 @@ public class BandwidthInfoService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
-	}
-	
-	/**
-	 * Tells the Web Service Servlet to secure this Service.
-	 * @return TRUE
-	 */
-	public final boolean isSecure() {
-		return true;
 	}
 }
