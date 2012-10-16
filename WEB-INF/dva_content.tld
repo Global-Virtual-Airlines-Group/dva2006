@@ -425,27 +425,25 @@
 	</tag>
 
 	<tag>
+		<description>Google JSAPI Tag, for inserting Google JSAPI library</description>
+		<name>googleJS</name>
+		<tag-class>org.deltava.taglib.content.GoogleJSTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+
+	<tag>
 		<description>Google Analytics Tag, for inserting Google Analytics calls</description>
 		<name>googleAnalytics</name>
 		<tag-class>org.deltava.taglib.content.GoogleAnalyticsTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
-			<name>url</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>var</name>
+			<name>eventSupport</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
-			<name>custom</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>eventSupport</name>
+			<name>async</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
