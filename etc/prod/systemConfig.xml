@@ -530,7 +530,6 @@
 		<css>css</css>
 		<js>js</js>
 		<img>img</img>
-		<swf>swf</swf>
 		<library>/home/www/library</library>
 		<files>/home/www/userfiles</files>
 		<httplog>/var/log/www</httplog>
