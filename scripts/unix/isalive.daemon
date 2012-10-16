@@ -69,6 +69,7 @@ do
 			logger -p $LOGGER.err "Tomcat (Application Server) is DOWN - no pid"
 			echo `date +%H:%M:%S`" Tomcat (Application Server) is DOWN - no pid" >> /var/cache/isalive.txt
 			/etc/init.d/tomcat start
+			sleep 10
 		fi
 
 		# Check Apache HTTPD
@@ -238,6 +239,7 @@ do
 				kill -9 `cat /var/run/tomcat60.pid`
 				sleep 2
 				/etc/init.d/tomcat start
+				sleep 10
 			fi
 
 			rm /tmp/healthcheck.out
