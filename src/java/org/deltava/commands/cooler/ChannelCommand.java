@@ -1,6 +1,7 @@
 // Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.cooler.Channel;
@@ -113,12 +114,9 @@ public class ChannelCommand extends AbstractFormCommand {
 		String forumName = SystemData.get("airline.forum");
 
 		try {
-			Connection con = ctx.getConnection();
-			
 			Channel c = null;
 			if (!isNew) {
-				// Get the DAO and the channel
-				GetCoolerChannels dao = new GetCoolerChannels(con);
+				GetCoolerChannels dao = new GetCoolerChannels(ctx.getConnection());
 				c = dao.get(channel);
 				if (c == null)
 					throw notFoundException("Invalid " + forumName + " Channel - " + channel);
@@ -138,6 +136,11 @@ public class ChannelCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Get security roles
+		Collection<Object> allRoles = new TreeSet<Object>((Collection<?>) SystemData.getObject("security.roles"));
+		allRoles.add("Pilot");
+		ctx.setAttribute("roles", allRoles, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
