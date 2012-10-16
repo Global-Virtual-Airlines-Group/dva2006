@@ -11,7 +11,9 @@
 <content:css name="main" />
 <content:css name="form" />
 <content:css name="view" />
-<content:js name="swfobject" />
+<content:js name="common" />
+<content:js name="json2" />
+<content:googleJS />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -19,7 +21,6 @@
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="swfPath" name="path.swf" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -79,7 +80,7 @@
 </tr>
 <tr>
  <td class="label top">Flight Totals Graph</td>
- <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
+ <td class="data"><div id="flightStats" style="height:325px;"></div></td>
 </tr>
 <tr class="title caps mid">
  <td colspan="2"><content:airline /> STATISTICS COMMENCE <fmt:int value="${totals.age}" /> DAYS AGO</td>
@@ -117,15 +118,32 @@
 </content:region>
 </content:page>
 <script type="text/javascript">
-var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 275, '8', '#ffffff', 'high');
-so.addVariable('preloader_color', '#999999');
-so.addVariable('path', '/');
-so.addVariable('chart_id', 'linechart');
-so.addVariable('settings_file', escape('/${swfPath}/xml/allstats_settings.xml'));
-so.addVariable('data_file', escape('/allstats.ws'));
-so.write('flashcontent');
-</script>
+google.load('visualization','1.0',{'packages':['corechart']});
+google.setOnLoadCallback(function() {
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'allstats.ws', true);
+xmlreq.onreadystatechange = function() {
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var statsData = JSON.parse(xmlreq.responseText);
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
+	// Display the chart
+	var chart = new google.visualization.LineChart(document.getElementById('flightStats'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('string','Date');
+	data.addColumn('number','Total Flights');
+	data.addColumn('number','Online Flights');
+	data.addColumn('number','ACARS Flights');
+	data.addColumn('number','Historic Flights');
+	data.addRows(statsData);
+	chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
+	return true;
+}
+
+xmlreq.send(true);
+return true;	
+});
+</script>
 <content:googleAnalytics />
 </body>
 </html>

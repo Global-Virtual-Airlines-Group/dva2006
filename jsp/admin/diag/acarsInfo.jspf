@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${!empty acarsBW}">
-<content:sysdata var="swfPath" name="path.swf" />
 <el:table className="form">
 <tr class="title caps">
  <td colspan="2">ACARS SERVER BANDWIDTH USAGE</td>
@@ -21,20 +20,40 @@
 </tr>
 <tr>
  <td class="label top">Bandwidth Graph</td>
- <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
+ <td class="data"><div id="bwChart" style="height:350px;"></div></td>
 </tr>
 </el:table>
 <script type="text/javascript">
-var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 225, '8', '#ffffff', 'high');
-so.addVariable('preloader_color', '#999999');
-so.addVariable('path', '/');
-so.addVariable('chart_id', 'linechart');
-so.addVariable('settings_file', escape('/${swfPath}/xml/bwstats_settings.xml'));
-so.addVariable('data_file', escape('/bwstats.ws'));
-so.write('flashcontent');
-</script>
+google.load('visualization','1.0',{'packages':['corechart']});
+google.setOnLoadCallback(function() {
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'bwstats.ws', true);
+xmlreq.onreadystatechange = function() {
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var statsData = JSON.parse(xmlreq.responseText);
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 
-</c:if>
+	// Display the chart
+	var chart = new google.visualization.LineChart(document.getElementById('bwChart'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('string','Date/Time');
+	data.addColumn('number','Connections');
+	data.addColumn('number','Messages In (1000)');
+	data.addColumn('number','Messages Out (1000)');
+	data.addColumn('number','Bytes In (MB)');
+	data.addColumn('number','Bytes Out (MB)');
+	data.addColumn('number','Max Connections');
+	data.addColumn('number','Max Messages (1000)');
+	data.addColumn('number','Max Bytes (MB)');
+	data.addRows(statsData);
+	chart.draw(data,{hAxis:{textStyle:lgStyle},legend:{textStyle:lgStyle}});
+	return true;
+}
+
+xmlreq.send(true);
+return true;	
+});
+</script></c:if>
 <c:if test="${!empty acarsPool}">
 <el:table className="view">
 <tr class="title">

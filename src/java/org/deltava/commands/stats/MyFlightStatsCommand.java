@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display statistics about a Pilot's landings.
  * @author Luke
- * @version 3.0
+ * @version 5.0
  * @since 2.1
  */
 
@@ -29,6 +29,7 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the view context
@@ -71,20 +72,8 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			
 			// Get the DAO and the landing statistics
 			stdao.setDayFilter(daysBack);
-			Map<Integer, Integer> vsStats = stdao.getLandingCounts(userID, 50);
-			ctx.setAttribute("landingStats", vsStats, REQUEST);
 			ctx.setAttribute("eqLandingStats", stdao.getLandings(userID), REQUEST);
-			
-			// Calculate the maximum values for landing range
-			int maxLandCount = 0;
-			for (Iterator<Integer> i = vsStats.values().iterator(); i.hasNext(); ) {
-				Integer totals = i.next();
-				maxLandCount = Math.max(maxLandCount, totals.intValue());
-			}
-			
-			// Save maximum count and user
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("maxCount", Integer.valueOf(maxLandCount), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
