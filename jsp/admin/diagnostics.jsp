@@ -17,7 +17,8 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<c:if test="${acarsEnabled}"><content:js name="swfobject" /></c:if>
+<content:js name="json2" />
+<content:googleJS />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -113,7 +114,6 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
  <td class="data"><fmt:int value="${mapsAPIUsage}" /> times since application start</td>
 </tr>
 </el:table>
-
 <%@ include file="/jsp/admin/diag/jdbcPool.jspf" %>
 <%@ include file="/jsp/admin/diag/daoCache.jspf" %>
 <%@ include file="/jsp/admin/diag/scoreBoard.jspf" %>
