@@ -41,21 +41,6 @@ public class GetACARSBandwidth extends DAO {
 	}
 	
 	/**
-	 * Retrieves bandwidth stats that have not yet been aggregated.
-	 * @return a Collection of Bandwidth beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<Bandwidth> getRaw() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) ORDER BY PERIOD DESC");
-			_ps.setInt(1, 1);
-			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Retrieves hourly bandwidth stats.
 	 * @return a Collection of Bandwidth beans
 	 * @throws DAOException if a JDBC error occurs
