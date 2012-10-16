@@ -14,7 +14,8 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<content:js name="swfobject" />
+<content:js name="json2" />
+<content:googleJS />
 <content:pics />
 <script type="text/javascript">
 function validate(form)
@@ -37,7 +38,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="swfPath" name="path.swf" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -45,8 +45,8 @@ return true;
 <!-- All Flight Report statistics -->
 <view:table className="view" cmd="mystats">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
- <td colspan="7" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void update()" />
+ <td colspan="6" class="left caps"><content:airline /> FLIGHT STATISTICS FOR ${pilot.name}</td>
+ <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void update()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void update()" /></td>
 </tr>
 <%@ include file="/jsp/stats/pirepStats.jspf" %>
@@ -57,24 +57,6 @@ return true;
 <tr class="title">
  <td colspan="8" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${pilot.ACARSLegs}" /> LANDINGS USING ACARS</td>
 </tr>
-<c:set var="hasBar" value="false" scope="page" />
-<c:forEach var="vs" items="${fn:keys(landingStats)}">
-<c:set var="vsCount" value="${landingStats[vs]}" scope="page" />
-<c:set var="hasBar" value="${hasBar || (vsCount > 0)}" scope="page" />
-<c:choose>
-<c:when test="${vs < -600}"><c:set var="barColor" value="red" scope="page" /></c:when>
-<c:when test="${vs < -300}"><c:set var="barColor" value="orange" scope="page" /></c:when>
-<c:when test="${vs < -50}"><c:set var="barColor" value="green" scope="page" /></c:when>
-<c:otherwise><c:set var="barColor" value="blue" scope="page" /></c:otherwise>
-</c:choose>
-<c:if test="${hasBar}">
-<tr>
- <td class="label"><fmt:int value="${vs}" /> ft/min</td>
- <td class="data" colspan="7"><span style="float:left; width:90px;"><fmt:int value="${vsCount}" /> landings</span><c:if test="${vsCount > 0}">
- <el:img y="11" x="${(vsCount * 550) / maxCount}" src="cooler/bar_${barColor}.png" caption="${vsCount} Landings" /></c:if></td>
-</tr>
-</c:if>
-</c:forEach>
 
 <!-- Table Header Bar-->
 <tr class="title mid caps">
@@ -110,16 +92,25 @@ return true;
 </c:choose>
 </tr>
 </c:forEach>
+</el:table>
 
-<!-- Flash Graph -->
+<!-- Charts -->
+<el:table className="form">
+<tr class="title">
+ <td colspan="2" class="left">FLIGHT DATA VISUALIZATION</td>
+</tr>
 <tr>
- <td class="label top">Pie Chart</td>
- <td class="data" colspan="7"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
+ <td style="width:50%"><div id="qualBreakdown" style="width:100%; height:350px;"></div></td>
+ <td style="width:50%"><div id="landingChart" style="width:100%; height:350px;"></div></td>
+</tr>
+<tr id="landingCharts" class="mid">
+ <td><div id="landingSpd" style="width:100%; height:350px;"></div></td>
+ <td><div id="landingSct" style="width:100%; height:350px;"></div></td>
 </tr>
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="8">&nbsp;</td>
+ <td colspan="2">&nbsp;</td>
 </tr>
 </el:table>
 </el:form>
@@ -128,12 +119,59 @@ return true;
 </content:region>
 </content:page>
 <script type="text/javascript">
-var so = new SWFObject('/${swfPath}/ampie.swf', 'piechart', '100%', 500, '8', '#ffffff', 'high');
-so.addVariable('preloader_color', '#999999');
-so.addVariable('path', '/');
-so.addVariable('chart_id', 'piechart');
-so.addVariable('data_file', escape('/mystats.ws?id=${pilot.hexID}'));
-so.write('flashcontent');
+google.load('visualization','1.0',{'packages':['corechart']});
+google.setOnLoadCallback(function() {
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'mystats.ws?id=${pilot.hexID}', true);
+xmlreq.onreadystatechange = function() {
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
+	var statsData = JSON.parse(xmlreq.responseText);
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:9};
+
+	// Display the eqtypes chart
+	var chart = new google.visualization.PieChart(document.getElementById('landingChart'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('string','Equipment');
+	data.addColumn('number','Flight Legs');
+	data.addRows(statsData.eqCount);
+	chart.draw(data,{title:'Flights by Equipment Type',is3D:true,legend:'none',theme:'maximized'});
+	
+	// Display the vertical speed chart
+	var chart = new google.visualization.BarChart(document.getElementById('landingSpd'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('string','Landing Speed');
+	data.addColumn('number','Damaging');
+	data.addColumn('number','Firm');
+	data.addColumn('number','Optimal');
+	data.addColumn('number','Too Soft');
+	data.addRows(statsData.landingSpd);
+	chart.draw(data,{title:'Touchdown Speeds',isStacked:true,colors:['red','orange','green','blue'],legend:'none',vAxis:lgStyle});
+	
+	// Display the vertical speed/runway distance chart
+	var chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('number','Touchown Distance');
+	data.addColumn('number','Damaging');
+	data.addColumn('number','Firm');
+	data.addColumn('number','Optimal');
+	data.addColumn('number','Too Soft');
+	data.addRows(statsData.landingSct);
+	var hX = {title:'Distance from Threshold (feet)',textStyle:lgStyle};
+	chart.draw(data,{title:'Landing Speed vs. Runway Distance',colors:['red','orange','green','blue'],legend:{textStyle:lgStyle},hAxis:hX});
+	
+	// Display quality breakdown chart
+	var chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('string','Landing Quality');
+	data.addColumn('number','Flight Legs');	
+	data.addRows(statsData.landingQuality);
+	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['red','orange','green'],theme:'maximized'});	
+	return true;
+}
+
+xmlreq.send(true);
+return true;
+});
 </script>
 <content:googleAnalytics />
 </body>
