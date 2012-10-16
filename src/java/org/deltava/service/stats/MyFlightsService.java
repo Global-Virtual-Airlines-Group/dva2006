@@ -4,26 +4,27 @@ package org.deltava.service.stats;
 import java.util.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
-import static org.deltava.commands.stats.AbstractStatsCommand.*;
 
-import org.jdom2.*;
+import org.json.*;
 
-import org.deltava.beans.stats.FlightStatsEntry;
+import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-import org.deltava.util.*;
+
+import org.deltava.util.StringUtils;
 
 /**
- * A Web Service to display a Pilot's Flight Report statistics to an Ampie Flash chart.
+ * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.1
  */
 
 public class MyFlightsService extends WebService {
 	
-	private static final int MAX_ENTRIES = 8;
+	private static final int MAX_ENTRIES = 12;
+	private static final String[] QUALITY = {"Dangerous", "Acceptable", "Good"};
 
 	/**
 	 * Executes the Web Service.
@@ -33,18 +34,7 @@ public class MyFlightsService extends WebService {
 	 */
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
-		
-		// Get sorting type
-		int sortCode = StringUtils.arrayIndexOf(SORT_CODE, ctx.getParameter("sortType"), 0);
-		String sortType = SORT_CODE[sortCode];
-		
-		// Get grouping type
-		String labelType = ctx.getParameter("groupType");
-		if (StringUtils.arrayIndexOf(GROUP_CODE, labelType) == -1)
-			labelType = GROUP_CODE[2];
-		else if (GROUP_CODE[6].equals(labelType))
-			labelType = MONTH_SQL;
-		
+
 		// Get the user ID
 		int userID = ctx.getUser().getID();
 		int id = StringUtils.parse(ctx.getParameter("id"), 0);
@@ -52,119 +42,119 @@ public class MyFlightsService extends WebService {
 			userID = id;
 
 		// Get the Flight Report statistics
-		Collection<FlightStatsEntry> results = null;
+		Collection<FlightStatsEntry> results = null; 
+		Collection<LandingStatistics> landings = null;
+		Map<Integer, Integer> vsStats = null;
 		try {
 			GetFlightReportStatistics stdao = new GetFlightReportStatistics(ctx.getConnection());
-			results = stdao.getPIREPStatistics(userID, labelType, sortType, true, false);
+			results = stdao.getPIREPStatistics(userID, "EQTYPE", "LEGS", true, false);
+			vsStats = stdao.getLandingCounts(userID, 50);
+			landings = stdao.getLandingData(userID);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
-		
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("pie");
-		doc.setRootElement(re);
-		
-		// Create element for "everything else"
-		Element ee = new Element("slice");
-		ee.setAttribute("title", "All Others");
-		ee.setAttribute("alpha", "75");
-		
+
+		// Create the equipment stats
+		JSONArray ja = new JSONArray();
+		JSONArray ee = new JSONArray();
+		ee.put("All Others");
+
 		// Create the entries
-		int entryCount = 0; double eeValue = 0;
+		int entryCount = 0; int eeValue = 0;
 		for (FlightStatsEntry entry : results) {
 			entryCount++;
-			Element e = new Element("slice");
-			e.setAttribute("title", entry.getLabel());
-			e.setAttribute("alpha", "75");
 			
-			// Set value
-			switch (sortCode) {
-				case 1:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(String.valueOf(entry.getMiles()));
-					else
-						eeValue += entry.getMiles();
-					break;
-					
-				case 2:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(StringUtils.format(entry.getHours(), "##0.0"));
-					else
-						eeValue += entry.getHours();
-					break;
-					
-				case 3:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(StringUtils.format(entry.getAvgHours(), "##0.0"));
-					else
-						eeValue += entry.getAvgHours();
-					break;
-					
-				case 4:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(StringUtils.format(entry.getAvgMiles(), "##0.0"));
-					else
-						eeValue += entry.getAvgMiles();
-					break;
-					
-				case 6:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(String.valueOf(entry.getACARSLegs()));
-					else
-						eeValue += entry.getACARSLegs();
-					break;
-					
-				case 7:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(String.valueOf(entry.getOnlineLegs()));
-					else
-						eeValue += entry.getOnlineLegs();
-					break;
-					
-				case 8:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(String.valueOf(entry.getHistoricLegs()));
-					else
-						eeValue += entry.getHistoricLegs();
-					break;
-
-				default:
-					if (entryCount <= MAX_ENTRIES)
-						e.setText(String.valueOf(entry.getLegs()));
-					else
-						eeValue += entry.getLegs();
+			// Add value
+			if (entryCount <= MAX_ENTRIES) {
+				JSONArray ea = new JSONArray();
+				ea.put(entry.getLabel());
+				ea.put(entry.getLegs());
+				ja.put(ea);
 			}
+			else
+				eeValue += entry.getLegs();
+		}
 
-			if (entryCount <= MAX_ENTRIES)
-				re.addContent(e);
+		// Add the "everything else" entry
+		ee.put(eeValue);
+		ja.put(ee);
+		
+		// Create landing rate groups - this will be a stacked bar chart
+		JSONArray lja = new JSONArray();
+		for (Map.Entry<Integer, Integer> me : vsStats.entrySet()) {
+			int fpm = me.getKey().intValue();
+			JSONArray ea = new JSONArray();  
+			ea.put(me.getKey().toString() + " ft/min");
+			ea.put((fpm < -600) ? me.getValue().intValue() : 0);
+			ea.put((fpm < -300) && (fpm >= -600) ? me.getValue().intValue() : 0);
+			ea.put((fpm < -50) && (fpm >= -300) ? me.getValue().intValue() : 0);
+			ea.put((fpm <= 0) && (fpm >= -50) ? me.getValue().intValue() : 0);
+			lja.put(ea);
 		}
 		
-		// Add the "everything else" entry
-		ee.setText(String.valueOf(eeValue));
-		re.addContent(ee);
-
+		// Go through landing statistics
+		JSONArray sja = new JSONArray();
+		int[] qualCount = new int[] {0, 0, 0};
+		for (LandingStatistics ls : landings) {
+			JSONArray ea = new JSONArray();
+			if ((ls.getAverageDistance() == 0) || (ls.getAverageSpeed() == 0))
+				continue;
+			
+			int fpm = (int) ls.getAverageSpeed();
+			double rwyPct = ls.getAverageDistance() / ls.getDistanceStdDeviation();
+			
+			// Save touchdown speeds
+			ea.put((int) ls.getAverageDistance());
+			ea.put((fpm < -600) ? Integer.valueOf(fpm) : null);
+			ea.put((fpm < -300) && (fpm >= -600) ? Integer.valueOf(fpm) : null);
+			ea.put((fpm < -50) && (fpm >= -300) ? Integer.valueOf(fpm) : null);
+			ea.put((fpm < 0) && (fpm >= -50) ? Integer.valueOf(fpm) : null);
+			sja.put(ea);
+			
+			// Save quality counter
+			if ((fpm < -600) || (rwyPct > 0.45))
+				qualCount[0]++;
+			else if ((fpm < -300) || (fpm > -100) || (rwyPct > 0.35) || (rwyPct < 0.075))
+				qualCount[1]++;
+			else
+				qualCount[2]++;
+		}
+		
+		// Convert qualitative info into an array
+		JSONArray qja = new JSONArray();
+		for (int x = 0; x < qualCount.length; x++) {
+			JSONArray ea = new JSONArray();
+			ea.put(QUALITY[x]);
+			ea.put(qualCount[x]);
+			qja.put(ea);
+		}
+		
 		// Dump the XML to the output stream
 		try {
-			ctx.getResponse().setContentType("text/xml");
-			ctx.getResponse().setCharacterEncoding("UTF-8");
-			ctx.println(XMLUtils.format(doc, "UTF-8"));
+			JSONObject jo = new JSONObject();
+			jo.put("eqCount", ja);
+			jo.put("landingSpd", lja);
+			jo.put("landingSct", sja);
+			jo.put("landingQuality", qja);
+			ctx.setContentType("text/javascript", "UTF-8");
+			ctx.setExpires(360);
+			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
-		
-		// Return success code
+
 		return SC_OK;
 	}
-	
-	   /**
-	    * Returns whether this web service requires authentication.
-	    * @return TRUE always
-	    */
-	   public final boolean isSecure() {
-	      return true;
-	   }
+
+	/**
+	 * Returns whether this web service requires authentication.
+	 * @return TRUE always
+	 */
+	@Override
+	public final boolean isSecure() {
+		return true;
+	}
 }

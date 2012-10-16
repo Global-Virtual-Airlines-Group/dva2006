@@ -15,11 +15,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve Flight Report statistics.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.1
  */
 
 public class GetFlightReportStatistics extends DAO implements CachingDAO {
+	
+	private static final int MAX_VSPEED = -2500;
 	
 	private static final Cache<CacheableCollection<LandingStatistics>> _cache =
 		new ExpiringCache<CacheableCollection<LandingStatistics>>(64, 1800);
@@ -29,7 +31,6 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	private int _dayFilter;
 
 	public class DispatchScheduleRoute extends ScheduleRoute {
-		
 		private int _inactiveRoutes;
 		
 		protected DispatchScheduleRoute(Airline a, Airport ad, Airport aa) {
@@ -46,8 +47,8 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	}
 	
 	private class StatsCacheKey {
-		private String _eqType;
-		private int _minCount;
+		private final String _eqType;
+		private final int _minCount;
 		
 		StatsCacheKey(String eqType, int minCount) {
 			super();
@@ -225,6 +226,52 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	}
 	
 	/**
+	 * Returns touchdown speed and runway distance data for all of a Pilot's flights. 
+	 * @param pilotID the Pilot's database ID
+	 * @return a Collection of LandingStats beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<LandingStatistics> getLandingData(int pilotID) throws DAOException {
+
+		// Check the cache
+		StatsCacheKey key = new StatsCacheKey("$PILOTIND", pilotID);
+		CacheableCollection<LandingStatistics> results = _cache.get(key);
+		if (results != null)
+			return results.clone();
+
+		try {
+			prepareStatement("SELECT PR.EQTYPE, APR.LANDING_VSPEED, RD.DISTANCE, RD.LENGTH FROM PIREPS PR, "
+				+ "ACARS_PIREPS APR, acars.RWYDATA RD WHERE (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) AND "
+				+ "(APR.CLIENT_BUILD>?) AND (RD.DISTANCE<RD.LENGTH) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED<0) "
+				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ORDER BY APR.LANDING_VSPEED");
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, FlightReport.MIN_ACARS_CLIENT);
+			_ps.setInt(3, pilotID);
+			_ps.setInt(4, FlightReport.OK);
+
+			// Execute the query
+			results = new CacheableList<LandingStatistics>(key);
+			try (ResultSet rs = _ps.executeQuery()) {
+				while (rs.next()) {
+					LandingStatistics ls = new LandingStatistics(null, rs.getString(1));
+					ls.setID(pilotID);
+					ls.setLegs(1);
+					ls.setAverageSpeed(rs.getInt(2));
+					ls.setAverageDistance(rs.getInt(3));
+					ls.setDistanceStdDeviation(rs.getInt(4));
+					results.add(ls);
+				}
+			}
+			
+			_ps.close();
+			_cache.add(results);
+			return results.clone();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns statistical information about a pilot's landing speeds and variations between them.
 	 * @param pilotID the Pilot's database ID
 	 * @return a Collection of LandingStatistics beans
@@ -245,7 +292,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				+ "STDDEV_POP(RD.DISTANCE) AS DSD, (ABS(AVG(APR.LANDING_VSPEED)*3)+"
 				+ "STDDEV_POP(APR.LANDING_VSPEED)*2) AS FACT FROM PIREPS PR, ACARS_PIREPS APR "
 				+ "LEFT JOIN acars.RWYDATA RD ON (APR.ACARS_ID=RD.ID) AND (RD.ISTAKEOFF=?) "
-				+ "WHERE (APR.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED < 0) "
+				+ "WHERE (APR.CLIENT_BUILD>?) AND (APR.ID=PR.ID) AND (APR.LANDING_VSPEED<0) "
 				+ "AND (PR.PILOT_ID=?) AND (PR.STATUS=?) ");
 		if (_dayFilter > 0)
 			sqlBuf.append("AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY)) ");
@@ -298,32 +345,40 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	public Map<Integer, Integer> getLandingCounts(int pilotID, int range) throws DAOException {
 		
 		// Init the Map
+		final Integer ZERO = Integer.valueOf(0);
 		Map<Integer, Integer> results = new TreeMap<Integer, Integer>();
-		for (int x = -1200; x <= 0; x += range)
-			results.put(Integer.valueOf(x), Integer.valueOf(0));
+		for (int x = MAX_VSPEED; x <= 0; x += range)
+			results.put(Integer.valueOf(x), ZERO);
 		
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT ROUND(APR.LANDING_VSPEED / ?) * ? AS RNG, "
-					+ "COUNT(APR.ACARS_ID) FROM ACARS_PIREPS APR, PIREPS PR WHERE (APR.ID=PR.ID) AND "
-					+ "(PR.STATUS=?) AND (PR.PILOT_ID=?) GROUP BY RNG");
+				+ "COUNT(APR.ACARS_ID) FROM ACARS_PIREPS APR, PIREPS PR WHERE (APR.ID=PR.ID) AND "
+				+ "(PR.STATUS=?) AND (PR.PILOT_ID=?) AND (APR.LANDING_VSPEED>?) GROUP BY RNG");
 			_ps.setInt(1, range);
 			_ps.setInt(2, range);
 			_ps.setInt(3, FlightReport.OK);
 			_ps.setInt(4, pilotID);
-			
-			// Execute the query
+			_ps.setInt(5, MAX_VSPEED);
 			try (ResultSet rs = _ps.executeQuery()) {
-				while (rs.next()) {
-					int vs = Math.max(-1200, rs.getInt(1));
-					results.put(Integer.valueOf(vs), Integer.valueOf(rs.getInt(2)));
-				}
+				while (rs.next())
+					results.put(Integer.valueOf(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
 			}
 			
 			_ps.close();
-			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Trim out any without a value
+		for (Iterator<Map.Entry<Integer, Integer>> i = results.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<Integer, Integer> me = i.next();
+			if (me.getValue() == ZERO)
+				i.remove();
+			else
+				return results;
+		}
+		
+		return results;
 	}
 
 	/**
@@ -536,8 +591,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 	public int getCharterCount(int pilotID, int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) "
-			+ "AND ((ATTR & ?) > 0)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?) AND ((ATTR & ?) > 0)");
 		if (days > 0)
 			sqlBuf.append(" AND (DATE >= DATE_SUB(CURDATE(), INTERVAL ? DAY))");
 		
