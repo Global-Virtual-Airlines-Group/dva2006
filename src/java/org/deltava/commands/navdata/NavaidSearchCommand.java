@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.ComboUtils;
 /**
  * A Web Site Command to search Naivgation Data.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -25,6 +25,7 @@ public class NavaidSearchCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check for POST
@@ -56,10 +57,9 @@ public class NavaidSearchCommand extends AbstractCommand {
 
 		// Translate the names
 		Collection<ComboAlias> options = new ArrayList<ComboAlias>();
-		for (Iterator<NavigationDataBean> i = results.iterator(); i.hasNext();) {
-			NavigationDataBean nd = i.next();
+		for (NavigationDataBean nd : results) {
 			StringBuilder buf = new StringBuilder();
-			if (nd.getType() == NavigationDataBean.INT)
+			if (nd.getType() == Navaid.INT)
 				buf.append(nd.getCode());
 			else {
 				buf.append(nd.getName());
@@ -69,7 +69,7 @@ public class NavaidSearchCommand extends AbstractCommand {
 			}
 
 			buf.append(" [");
-			buf.append(nd.getTypeName());
+			buf.append(nd.getType().getName());
 			buf.append(']');
 			options.add(ComboUtils.fromString(buf.toString(), nd.toString()));
 		}

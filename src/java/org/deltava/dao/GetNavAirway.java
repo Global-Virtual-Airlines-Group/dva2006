@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -378,7 +378,8 @@ public class GetNavAirway extends GetNavData {
 						results.add(a);
 					}
 				
-					NavigationDataBean nd = NavigationDataBean.create(rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
+					Navaid nt = Navaid.values()[rs.getInt(3)];
+					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
 					nd.setCode(rs.getString(2));
 					nd.setRegion(rs.getString(6));
 					a.addWaypoint(nd);
@@ -420,7 +421,8 @@ public class GetNavAirway extends GetNavData {
 						results.add(a);
 					}
 				
-					NavigationDataBean nd = NavigationDataBean.create(rs.getInt(5), rs.getDouble(6), rs.getDouble(7));
+					Navaid nt = Navaid.values()[rs.getInt(5)];
+					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(6), rs.getDouble(7));
 					nd.setCode(rs.getString(4));
 					nd.setRegion(rs.getString(8));
 					a.addWaypoint(nd);
@@ -455,7 +457,8 @@ public class GetNavAirway extends GetNavData {
 				
 				// Add the waypoint if present
 				if (columnCount > 10) {
-					NavigationDataBean nd = NavigationDataBean.create(rs.getInt(8), rs.getDouble(9), rs.getDouble(10));
+					Navaid nt = Navaid.values()[rs.getInt(8)];
+					NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(9), rs.getDouble(10));
 					nd.setCode(rs.getString(7));
 					nd.setRegion(rs.getString(11));
 					tr.addWaypoint(nd);

@@ -1,18 +1,17 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.io.*;
 import java.util.*;
 
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 
-import org.deltava.util.GeoUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2004.
  * @author Luke
- * @version 3.2
+ * @version 5.0
  * @since 2.4
  */
 
@@ -64,11 +63,11 @@ public class FS9Generator extends FlightPlanGenerator {
 			ctx.print(", , ");
 			ctx.print(nd.getCode());
 			switch (nd.getType()) {
-				case NavigationDataBean.AIRPORT:
-				case NavigationDataBean.NDB:
-				case NavigationDataBean.VOR:
+				case AIRPORT:
+				case NDB:
+				case VOR:
 					ctx.print(", ");
-					ctx.print(nd.getTypeName().charAt(0));
+					ctx.print(nd.getType().getName().charAt(0));
 					ctx.print(", ");
 					break;
 

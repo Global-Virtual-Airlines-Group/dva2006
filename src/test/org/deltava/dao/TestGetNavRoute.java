@@ -31,7 +31,7 @@ public class TestGetNavRoute extends AbstractDAOTestCase {
 			NavigationDataBean ndb = ndmap.get(wp);
 			assertNotNull(ndb);
 			assertEquals(wp, ndb.getCode());
-			System.out.println("Loaded " + ndb.getTypeName() + " " + wp);
+			System.out.println("Loaded " + ndb.getType().getName() + " " + wp);
 		}
 		
 		// Load the entire route
@@ -66,7 +66,7 @@ public class TestGetNavRoute extends AbstractDAOTestCase {
 			} else {
 				assertNotNull(ndb);
 				assertEquals(wp, ndb.getCode());
-				System.out.println("Loaded " + ndb.getTypeName() + " " + wp);
+				System.out.println("Loaded " + ndb.getType().getName() + " " + wp);
 			}
 		}
 		

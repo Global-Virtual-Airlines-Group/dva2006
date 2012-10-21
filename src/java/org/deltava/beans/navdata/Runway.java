@@ -7,7 +7,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store runway information.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -22,7 +22,7 @@ public class Runway extends NavigationFrequencyBean implements ComboAlias {
 	 * @param lon the longitude of the start of the runway
 	 */
 	public Runway(double lat, double lon) {
-		super(RUNWAY, lat, lon);
+		super(Navaid.RUNWAY, lat, lon);
 	}
 
 	/**

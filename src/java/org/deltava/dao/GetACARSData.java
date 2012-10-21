@@ -18,7 +18,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -224,7 +224,7 @@ public class GetACARSData extends DAO {
 				prepareStatementWithoutLimits("SELECT R.*, IFNULL(ND.HDG, 0), ND.FREQ FROM acars.RWYDATA R LEFT JOIN "
 						+ "common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (R.RUNWAY=ND.NAME) AND (ND.ITEMTYPE=?) "
 						+ "WHERE (ID=?) LIMIT 2");
-				_ps.setInt(1, NavigationDataBean.RUNWAY);
+				_ps.setInt(1, Navaid.RUNWAY.ordinal());
 				_ps.setInt(2, flightID);
 				
 				// Execute the query
@@ -326,7 +326,8 @@ public class GetACARSData extends DAO {
 				while (rs.next()) {
 					TerminalRoute tr = results.get(Integer.valueOf(rs.getInt(1)));
 					if (tr != null) {
-						NavigationDataBean nd = NavigationDataBean.create(rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
+						Navaid nt = Navaid.values()[rs.getInt(3)];
+						NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
 						nd.setCode(rs.getString(2));
 						nd.setRegion(rs.getString(6));
 						tr.addWaypoint(nd);

@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -35,29 +35,29 @@ public class SetNavData extends DAO {
 				prepareStatement("INSERT INTO common.NAVDATA (ITEMTYPE, CODE, LATITUDE, LONGITUDE, FREQ, ALTITUDE, NAME, HDG) "
 						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-			_ps.setInt(1, ndata.getType());
+			_ps.setInt(1, ndata.getType().ordinal());
 			_ps.setString(2, ndata.getCode());
 			_ps.setDouble(3, ndata.getLatitude());
 			_ps.setDouble(4, ndata.getLongitude());
-			if (ndata.getType() == NavigationDataBean.VOR) {
+			if (ndata.getType() == Navaid.VOR) {
 				VOR vor = (VOR) ndata;
 				_ps.setString(5, vor.getFrequency());
 				_ps.setInt(6, 0);
 				_ps.setString(7, vor.getName());
 				_ps.setInt(8, 0);
-			} else if (ndata.getType() == NavigationDataBean.NDB) {
+			} else if (ndata.getType() == Navaid.NDB) {
 				NDB ndb = (NDB) ndata;
 				_ps.setString(5, ndb.getFrequency());
 				_ps.setInt(6, 0);
 				_ps.setString(7, ndb.getName());
 				_ps.setInt(8, 0);
-			} else if (ndata.getType() == NavigationDataBean.AIRPORT) {
+			} else if (ndata.getType() == Navaid.AIRPORT) {
 				AirportLocation al = (AirportLocation) ndata;
 				_ps.setString(5, "-");
 				_ps.setInt(6, al.getAltitude());
 				_ps.setString(7, al.getName());
 				_ps.setInt(8, 0);
-			} else if (ndata.getType() == NavigationDataBean.RUNWAY) {
+			} else if (ndata.getType() == Navaid.RUNWAY) {
 				Runway rwy = (Runway) ndata;
 				_ps.setString(5, rwy.getFrequency());
 				_ps.setInt(6, rwy.getLength());
@@ -97,7 +97,7 @@ public class SetNavData extends DAO {
 	      for (NavigationDataBean ai : a.getWaypoints()) {
 	    	  _ps.setInt(3, x + 1);
 	    	  _ps.setString(4, ai.getCode());
-	    	  _ps.setInt(5, ai.getType());
+	    	  _ps.setInt(5, ai.getType().ordinal());
 	    	  _ps.setDouble(6, ai.getLatitude());
 	    	  _ps.setDouble(7, ai.getLongitude());
 	    	  _ps.addBatch();
@@ -134,7 +134,7 @@ public class SetNavData extends DAO {
 	    	  NavigationDataBean ai = wps.get(x);
 	    	  _ps.setInt(6, x + 1);
 	    	  _ps.setString(7, ai.getCode());
-	    	  _ps.setInt(8, ai.getType());
+	    	  _ps.setInt(8, ai.getType().ordinal());
 	    	  _ps.setDouble(9, ai.getLatitude());
 	    	  _ps.setDouble(10, ai.getLongitude());
 	    	  _ps.addBatch();
@@ -188,12 +188,12 @@ public class SetNavData extends DAO {
 	 * @return the nuber of entries updated
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int updateRegions(int navaidType) throws DAOException {
+	public int updateRegions(Navaid navaidType) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.NAVDATA ND, common.NAVREGIONS NR SET ND.REGION=NR.REGION WHERE "
 					+ "(ROUND(ND.LATITUDE,0)=NR.LATITUDE) AND (ROUND(ND.LONGITUDE,0)=NR.LONGITUDE) AND (ND.REGION IS NULL) "
 					+ "AND (ND.ITEMTYPE=?)");
-			_ps.setInt(1, navaidType);
+			_ps.setInt(1, navaidType.ordinal());
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -227,10 +227,10 @@ public class SetNavData extends DAO {
 	 * @return the number of records deleted
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purge(int navaidType) throws DAOException {
+	public int purge(Navaid navaidType) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.NAVDATA WHERE (ITEMTYPE=?)");
-			_ps.setInt(1, navaidType);
+			_ps.setInt(1, navaidType.ordinal());
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

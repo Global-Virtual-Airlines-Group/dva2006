@@ -1,18 +1,14 @@
 // Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
-import static org.deltava.beans.navdata.NavigationDataBean.*;
-
 import java.util.*;
 
 import org.jdom2.*;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.navdata.NavigationDataBean;
-
-import org.deltava.service.WebService;
 
 import org.deltava.util.*;
 import org.deltava.util.color.GoogleEarthColor;
@@ -22,11 +18,11 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
-public abstract class GoogleEarthService extends WebService {
+public abstract class GoogleEarthService extends org.deltava.service.WebService {
 
 	protected static final GoogleEarthColor[] COLORS = {new GoogleEarthColor(208, 184, 0), new GoogleEarthColor(0, 205, 0),
 		new GoogleEarthColor(240, 48, 48), new GoogleEarthColor(80, 192, 240), new GoogleEarthColor(240, 16, 240),
@@ -228,14 +224,14 @@ public abstract class GoogleEarthService extends WebService {
 		for (Iterator<NavigationDataBean> i = waypoints.iterator(); i.hasNext(); ) {
 			NavigationDataBean wp = i.next();
 			routeText.add(wp.getCode());
-			if ((wp.getType() != NDB) && (wp.getType() != VOR) && (wp.getType() != INT))
+			if ((wp.getType() != Navaid.NDB) && (wp.getType() != Navaid.VOR) && (wp.getType() != Navaid.INT))
 				continue;
 			
 			Element pe = new Element("Placemark");
-			pe.addContent(XMLUtils.createElement("name", (wp.getType() != AIRPORT) ? wp.getCode() : wp.getName()));
+			pe.addContent(XMLUtils.createElement("name", (wp.getType() != Navaid.AIRPORT) ? wp.getCode() : wp.getName()));
 			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 			pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
-			pe.addContent(XMLUtils.createElement("Snippet", wp.getTypeName()));
+			pe.addContent(XMLUtils.createElement("Snippet", wp.getType().getName()));
 			pe.addContent(KMLUtils.createLookAt(new GeoPosition(wp), 4500, rnd.nextInt(360), 10));
 			Element pp = new Element("Point");
 			pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
@@ -251,19 +247,22 @@ public abstract class GoogleEarthService extends WebService {
 			Element pis = new Element("IconStyle");
 			ps.addContent(pis);
 			switch (wp.getType()) {
-				case NavigationDataBean.NDB: // 4,57
+				case NDB: // 4,57
 					pis.addContent(XMLUtils.createElement("scale", "0.60"));
 					pis.addContent(KMLUtils.createIcon(4, 57));
 					break;
 					
-				case NavigationDataBean.VOR: //4,48
+				case VOR: //4,48
 					pis.addContent(XMLUtils.createElement("scale", "0.60"));
 					pis.addContent(KMLUtils.createIcon(4, 48));
 					break;
 					
-				case NavigationDataBean.INT: // 4,60
+				case INT: // 4,60
 					pis.addContent(XMLUtils.createElement("scale", "0.50"));
 					pis.addContent(KMLUtils.createIcon(4, 60));
+					break;
+					
+				default:
 					break;
 			}
 

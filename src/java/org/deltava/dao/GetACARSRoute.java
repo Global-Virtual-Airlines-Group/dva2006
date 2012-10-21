@@ -1,12 +1,11 @@
-// Copyright 2007, 2008, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.acars.DispatchRoute;
-
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.CollectionUtils;
@@ -15,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.0
  */
 
@@ -279,12 +278,12 @@ public class GetACARSRoute extends DAO {
 		Map<Integer, DispatchRoute> data = CollectionUtils.createMap(routes, "ID");
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
-				DispatchRoute rp = data.get(new Integer(rs.getInt(1)));
+				DispatchRoute rp = data.get(Integer.valueOf(rs.getInt(1)));
 				if (rp != null) {
 					double lat = rs.getDouble(5);
 					double lng = rs.getDouble(6);
-					String type = NavigationDataBean.NAVTYPE_NAMES[rs.getInt(4)];
-					NavigationDataBean nd = NavigationDataBean.create(type, lat, lng);
+					Navaid nt = Navaid.values()[rs.getInt(4)];
+					NavigationDataBean nd = NavigationDataBean.create(nt, lat, lng);
 					nd.setCode(rs.getString(3));
 					nd.setRegion(rs.getString(8));
 					rp.addWaypoint(nd, rs.getString(7));

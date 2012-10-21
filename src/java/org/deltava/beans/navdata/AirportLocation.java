@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class to store airport location data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -23,7 +23,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * @param lon the longitude in degrees
 	 */
 	public AirportLocation(double lat, double lon) {
-		super(AIRPORT, lat, lon);
+		super(Navaid.AIRPORT, lat, lon);
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class AirportLocation extends NavigationDataBean implements ICAOAirport {
 	 * @param a the Airport bean
 	 */
 	public AirportLocation(Airport a) {
-		super(AIRPORT, a.getLatitude(), a.getLongitude());
+		super(Navaid.AIRPORT, a.getLatitude(), a.getLongitude());
 		_altitude = a.getAltitude();
 		setCode(a.getICAO());
 		setName(a.getName());

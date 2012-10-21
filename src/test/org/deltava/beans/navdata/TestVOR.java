@@ -28,8 +28,7 @@ public class TestVOR extends AbstractBeanTestCase {
    public void testProperties() {
       assertEquals(12.345, _vor.getLatitude(), 0.0001);
       assertEquals(-23.456, _vor.getLongitude(), 0.0001);
-      assertEquals(NavigationDataBean.VOR, _vor.getType());
-      assertEquals(NavigationDataBean.NAVTYPE_NAMES[NavigationDataBean.VOR], _vor.getTypeName());
+      assertEquals(Navaid.VOR, _vor.getType());
       
       assertNotNull(_vor.getPosition());
       assertEquals(_vor.getLatitude(), _vor.getPosition().getLatitude(), 0.0001);

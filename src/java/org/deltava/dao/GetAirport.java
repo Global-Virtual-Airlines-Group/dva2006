@@ -4,8 +4,8 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.navdata.NavigationDataBean;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -52,7 +52,7 @@ public class GetAirport extends DAO {
 				+ "FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND "
 				+ "(ND.ITEMTYPE=?) LEFT JOIN common.MAGVAR MV ON (A.ICAO=MV.ICAO) LEFT JOIN "
 				+ "common.RUNWAYS R ON (A.ICAO=R.ICAO) WHERE ((A.ICAO=?) OR (A.IATA=?)) LIMIT 1");
-			_ps.setInt(1, NavigationDataBean.AIRPORT);
+			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, code.toUpperCase());
 			_ps.setString(3, code.toUpperCase());
 
@@ -120,7 +120,7 @@ public class GetAirport extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, _appCode);
-			_ps.setInt(2, NavigationDataBean.AIRPORT);
+			_ps.setInt(2, Navaid.AIRPORT.ordinal());
 			if (al != null)
 				_ps.setString(3, al.getCode());
 
@@ -243,7 +243,7 @@ public class GetAirport extends DAO {
 				+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) "
 				+ "LEFT JOIN common.MAGVAR MV ON (MV.ICAO=A.ICAO) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) "
 				+ "GROUP BY A.IATA");
-			_ps.setInt(1, NavigationDataBean.AIRPORT);
+			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {

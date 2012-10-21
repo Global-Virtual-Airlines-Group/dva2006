@@ -1,10 +1,10 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store VOR information.
  * @author Luke
- * @version 2.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -16,7 +16,7 @@ public class VOR extends NavigationFrequencyBean {
     * @param lon the longitude in degrees
     */
    public VOR(double lat, double lon) {
-      super(VOR, lat, lon);
+      super(Navaid.VOR, lat, lon);
    }
    
    /**

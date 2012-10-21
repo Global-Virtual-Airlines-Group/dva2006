@@ -28,8 +28,7 @@ public class TestRunway extends AbstractBeanTestCase {
    public void testProperties() {
       assertEquals(12.345, _rwy.getLatitude(), 0.0001);
       assertEquals(-23.456, _rwy.getLongitude(), 0.0001);
-      assertEquals(NavigationDataBean.RUNWAY, _rwy.getType());
-      assertEquals(NavigationDataBean.NAVTYPE_NAMES[NavigationDataBean.RUNWAY], _rwy.getTypeName());
+      assertEquals(Navaid.RUNWAY, _rwy.getType());
       
       assertNotNull(_rwy.getPosition());
       assertEquals(_rwy.getLatitude(), _rwy.getPosition().getLatitude(), 0.0001);

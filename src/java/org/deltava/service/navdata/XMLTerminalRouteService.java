@@ -110,7 +110,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 							we.setAttribute("idx", String.valueOf(++mrkID));
 							we.setAttribute("lat", df.format(ai.getLatitude()));
 							we.setAttribute("lon", df.format(ai.getLongitude()));
-							we.setAttribute("type", ai.getTypeName());
+							we.setAttribute("type", ai.getType().getName());
 							if (ai.getRegion() != null)
 								we.setAttribute("region", ai.getRegion());
 							tre.addContent(we);
