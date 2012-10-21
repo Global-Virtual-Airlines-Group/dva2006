@@ -8,7 +8,7 @@ import java.sql.Connection;
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
 
-import static org.deltava.beans.navdata.NavigationDataBean.*;
+import static org.deltava.beans.navdata.Navaid.*;
 import org.deltava.service.navdata.DispatchDataService;
 
 import org.deltava.commands.*;
@@ -21,20 +21,21 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
 public class AIRACImportCommand extends AbstractCommand {
 
 	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat" };
-	private static final int[] NAVAID_TYPES = { AIRPORT, NDB, RUNWAY, VOR, INT };
+	private static final Navaid[] NAVAID_TYPES = { AIRPORT, NDB, RUNWAY, VOR, INT };
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the Command result

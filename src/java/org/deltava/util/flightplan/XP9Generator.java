@@ -1,16 +1,17 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.flightplan;
 
 import java.io.*;
 import java.util.*;
 
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
+
 import org.deltava.util.StringUtils;
 
 /**
  * A Flight Plan Generator for X-Plane 9.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 2.8
  */
 
@@ -37,15 +38,15 @@ public class XP9Generator extends FlightPlanGenerator {
 		for (Iterator<NavigationDataBean> i = waypoints.iterator(); i.hasNext(); ) {
 			NavigationDataBean nd = i.next();
 			switch (nd.getType()) {
-				case NavigationDataBean.NDB:
+				case NDB:
 					ctx.print("2 ");
 					break;
 					
-				case NavigationDataBean.AIRPORT:
+				case AIRPORT:
 					ctx.print("1 ");
 					break;
 					
-				case NavigationDataBean.VOR:
+				case VOR:
 					ctx.print("3 ");
 					break;
 					

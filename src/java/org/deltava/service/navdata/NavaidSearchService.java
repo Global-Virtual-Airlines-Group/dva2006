@@ -10,7 +10,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom2.*;
 
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to search for navigation aids in a particular area.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.1
  */
 
@@ -62,9 +62,8 @@ public class NavaidSearchService extends WebService {
 		
 		// Format navaids
 		final NumberFormat df = new DecimalFormat("#0.000000");
-		for (Iterator<NavigationDataBean> i = results.values().iterator(); i.hasNext(); ) {
-			NavigationDataBean nd = i.next();
-			if (includeAirports || (nd.getType() != NavigationDataBean.AIRPORT)) {
+		for (NavigationDataBean nd : results.values()) {
+			if (includeAirports || (nd.getType() != Navaid.AIRPORT)) {
 				Element we = new Element("waypoint");
 				we.setAttribute("lat", df.format(nd.getLatitude()));
 				we.setAttribute("lng", df.format(nd.getLongitude()));
@@ -72,7 +71,7 @@ public class NavaidSearchService extends WebService {
 				we.setAttribute("color", nd.getIconColor());
 				we.setAttribute("pal", String.valueOf(nd.getPaletteCode()));
 				we.setAttribute("icon", String.valueOf(nd.getIconCode()));
-				we.setAttribute("type", nd.getTypeName());
+				we.setAttribute("type", nd.getType().getName());
 				we.addContent(new CDATA(nd.getInfoBox()));
 				re.addContent(we);
 			}
@@ -81,6 +80,7 @@ public class NavaidSearchService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setExpiry(3600);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

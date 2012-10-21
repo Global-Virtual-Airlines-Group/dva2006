@@ -1,4 +1,4 @@
-// Copyright 2005, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.Cacheable;
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -132,14 +132,14 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * Filters out navigation aids based on their type.
     * @param types a Collection of Integers with navigation aid type codes
     * @see NavigationDataBean#getType()
-    * @see NavigationDataMap#filter(int)
+    * @see NavigationDataMap#filter(Navaid)
     */
-   public void filter(Collection<Integer> types) {
+   public void filter(Collection<Navaid> types) {
 	   for (Iterator<? extends Set<NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); ) {
 		   Set<NavigationDataBean> subEntries = i.next();
 		   for (Iterator<NavigationDataBean> i2 = subEntries.iterator(); i2.hasNext(); ) {
 			   NavigationDataBean nd = i2.next();
-			   if (!types.contains(Integer.valueOf(nd.getType())))
+			   if (!types.contains(nd.getType()))
 				   i2.remove();
 		   }
 		   
@@ -155,8 +155,8 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataMap#filter(Collection)
     * @see NavigationDataBean#getType()
     */
-   public void filter(int navaidType) {
-	   filter(Collections.singleton(Integer.valueOf(navaidType)));
+   public void filter(Navaid navaidType) {
+	   filter(Collections.singleton(navaidType));
    }
    
    /**

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.navdata.NavigationDataBean;
 /**
  * A Data Access Object to write ACARS Dispatcher routes.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 2.2
  */
 
@@ -73,7 +73,7 @@ public class SetACARSRoute extends DAO {
 				NavigationDataBean nd = i.next();
 				_ps.setInt(2, ++seq);
 				_ps.setString(3, nd.getCode());
-				_ps.setInt(4, nd.getType());
+				_ps.setInt(4, nd.getType().ordinal());
 				_ps.setDouble(5, nd.getLatitude());
 				_ps.setDouble(6, nd.getLongitude());
 				_ps.setString(7, nd.isInTerminalRoute() ? null : nd.getAirway());

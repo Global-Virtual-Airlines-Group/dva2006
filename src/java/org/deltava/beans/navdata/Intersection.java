@@ -1,10 +1,10 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -17,7 +17,7 @@ public class Intersection extends NavigationDataBean {
 	 * @param lon the longitude in degrees
 	 */
 	public Intersection(String code, double lat, double lon) {
-		super(INT, lat, lon);
+		super(Navaid.INT, lat, lon);
 		setCode(code);
 	}
 

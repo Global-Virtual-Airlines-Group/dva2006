@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load popular runways for takeoff and landing.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.6
  */
 
@@ -21,7 +21,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 	private static final Cache<CacheableList<Runway>> _cache = new AgingCache<CacheableList<Runway>>(256);
 
 	private static class RunwayCacheKey {
-		private String _key;
+		private final String _key;
 		
 		RunwayCacheKey(Airport aD, Airport aA, boolean isTakeoff) {
 			super();
@@ -119,7 +119,7 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, "-");
-			_ps.setInt(2, NavigationDataBean.RUNWAY);
+			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			_ps.setBoolean(3, isTakeoff);
 			_ps.setString(4, aD.getIATA());
 			if (aA != null)

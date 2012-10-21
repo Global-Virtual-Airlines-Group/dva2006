@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -165,14 +165,14 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	
 	/**
 	 * Returns all navaids of a particular type in the database.
-	 * @param type the Navigation aid code
+	 * @param type the Navaid
 	 * @return a Collection of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<NavigationDataBean> getAll(int type) throws DAOException {
+	public Collection<NavigationDataBean> getAll(Navaid type) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?)");
-			_ps.setInt(1, type);
+			_ps.setInt(1, type.ordinal());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -192,7 +192,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?) AND (NAME=?)");
-			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setInt(1, Navaid.RUNWAY.ordinal());
 			_ps.setString(2, airportCode.toUpperCase());
 			_ps.setString(3, rwyCode.toUpperCase());
 
@@ -213,7 +213,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 	public Collection<Runway> getRunways(String airportCode) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
-			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setInt(1, Navaid.RUNWAY.ordinal());
 			_ps.setString(2, airportCode.toUpperCase());
 
 			// Execute the query
@@ -262,12 +262,12 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 			}
 			
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
-			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setInt(1, Navaid.RUNWAY.ordinal());
 			_ps.setString(2, a.getICAO());
 			Collection<NavigationDataBean> r2 = execute();
 			for (Iterator<NavigationDataBean> i = r2.iterator(); i.hasNext(); ) {
 				NavigationDataBean nd = i.next();
-				if (nd.getType() == NavigationDataBean.RUNWAY)
+				if (nd.getType() == Navaid.RUNWAY)
 					results.add((Runway) nd);
 			}
 		} catch (SQLException se) { 
@@ -319,7 +319,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND ((LATITUDE > ?) AND (LATITUDE < ?)) "
 					+ "AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");
-			_ps.setInt(1, NavigationDataBean.INT);
+			_ps.setInt(1, Navaid.INT.ordinal());
 			_ps.setDouble(2, loc.getLatitude() - height);
 			_ps.setDouble(3, loc.getLatitude() + height);
 			_ps.setDouble(4, loc.getLongitude() - width);
@@ -354,8 +354,8 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE <> ?) AND (ITEMTYPE <> ?) AND "
 					+ "((LATITUDE > ?) AND (LATITUDE < ?)) AND ((LONGITUDE > ?) AND (LONGITUDE < ?)) ORDER BY ITEMTYPE");
-			_ps.setInt(1, NavigationDataBean.INT);
-			_ps.setInt(2, NavigationDataBean.RUNWAY);
+			_ps.setInt(1, Navaid.INT.ordinal());
+			_ps.setInt(2, Navaid.RUNWAY.ordinal());
 			_ps.setDouble(3, loc.getLatitude() - height);
 			_ps.setDouble(4, loc.getLatitude() + height);
 			_ps.setDouble(5, loc.getLongitude() - width);
@@ -378,8 +378,9 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
 				NavigationDataBean obj = null;
-				switch (rs.getInt(1)) {
-				case NavigationDataBean.AIRPORT:
+				Navaid nt = Navaid.values()[rs.getInt(1)];
+				switch (nt) {
+				case AIRPORT:
 						AirportLocation a = new AirportLocation(rs.getDouble(3), rs.getDouble(4));
 						a.setCode(rs.getString(2));
 						a.setAltitude(rs.getInt(6));
@@ -392,12 +393,12 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 						obj = a;
 						break;
 
-					case NavigationDataBean.INT:
+					case INT:
 						obj = new Intersection(rs.getString(2), rs.getDouble(3), rs.getDouble(4));
 						obj.setRegion(rs.getString(9));
 						break;
 
-					case NavigationDataBean.VOR:
+					case VOR:
 						VOR vor = new VOR(rs.getDouble(3), rs.getDouble(4));
 						vor.setCode(rs.getString(2));
 						vor.setFrequency(rs.getString(5));
@@ -406,7 +407,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 						obj = vor;
 						break;
 
-					case NavigationDataBean.NDB:
+					case NDB:
 						NDB ndb = new NDB(rs.getDouble(3), rs.getDouble(4));
 						ndb.setCode(rs.getString(2));
 						ndb.setFrequency(rs.getString(5));
@@ -415,7 +416,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 						obj = ndb;
 						break;
 
-					case NavigationDataBean.RUNWAY:
+					case RUNWAY:
 						Runway rwy = new Runway(rs.getDouble(3), rs.getDouble(4));
 						rwy.setCode(rs.getString(2));
 						rwy.setFrequency(rs.getString(5));
@@ -437,7 +438,7 @@ public class GetNavData extends DAO implements ClearableCachingDAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to filter objects based on distance from a certain point.
 	 */
 	private static void distanceFilter(Collection<NavigationDataBean> entries, GeoLocation loc, int distance) {

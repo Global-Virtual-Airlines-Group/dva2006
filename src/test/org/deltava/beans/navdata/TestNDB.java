@@ -28,8 +28,7 @@ public class TestNDB extends AbstractBeanTestCase {
    public void testProperties() {
       assertEquals(12.345, _ndb.getLatitude(), 0.0001);
       assertEquals(-23.456, _ndb.getLongitude(), 0.0001);
-      assertEquals(NavigationDataBean.NDB, _ndb.getType());
-      assertEquals(NavigationDataBean.NAVTYPE_NAMES[NavigationDataBean.NDB], _ndb.getTypeName());
+      assertEquals(Navaid.NDB, _ndb.getType());
       
       assertNotNull(_ndb.getPosition());
       assertEquals(_ndb.getLatitude(), _ndb.getPosition().getLatitude(), 0.0001);

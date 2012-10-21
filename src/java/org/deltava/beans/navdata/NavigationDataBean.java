@@ -11,28 +11,17 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
 public abstract class NavigationDataBean implements java.io.Serializable, Cloneable, Comparable<NavigationDataBean>, 
 	MarkerMapEntry, IconMapEntry {
 
-	/**
-	 * Object type names.
-	 */
-	public static final String[] NAVTYPE_NAMES = { "Airport", "VOR", "NDB", "Intersection", "Runway" };
-
-	public static final int AIRPORT = 0;
-	public static final int VOR = 1;
-	public static final int NDB = 2;
-	public static final int INT = 3;
-	public static final int RUNWAY = 4;
-
 	private String _code;
 	private String _name;
 	private String _region;
-	private int _type;
+	private Navaid _type;
 	private String _airway;
 
 	private GeoPosition _gp;
@@ -45,7 +34,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	 * @see NavigationDataBean#getLatitude()
 	 * @see NavigationDataBean#getLongitude()
 	 */
-	public NavigationDataBean(int type, double lat, double lon) {
+	public NavigationDataBean(Navaid type, double lat, double lon) {
 		super();
 		setType(type);
 		_gp = new GeoPosition(lat, lon);
@@ -111,23 +100,12 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	/**
 	 * Returns the object's type.
 	 * @return the object type code
-	 * @see NavigationDataBean#getTypeName()
-	 * @see NavigationDataBean#setType(int)
+	 * @see NavigationDataBean#setType(Navaid)
 	 */
-	public final int getType() {
+	public final Navaid getType() {
 		return _type;
 	}
 
-	/**
-	 * Returns the object's type name.
-	 * @return the object type name
-	 * @see NavigationDataBean#getType()
-	 * @see NavigationDataBean#setType(int)
-	 */
-	public final String getTypeName() {
-		return NAVTYPE_NAMES[getType()];
-	}
-	
 	/**
 	 * Returns the ICAO region code for this entry.
 	 * @return the region code
@@ -192,15 +170,10 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 
 	/**
 	 * Updates the object's type.
-	 * @param type the object type code
-	 * @throws IllegalArgumentException if type is negative or invalid
+	 * @param type the Navaid type
 	 * @see NavigationDataBean#getType()
-	 * @see NavigationDataBean#getTypeName()
 	 */
-	public final void setType(int type) {
-		if ((type < 0) || (type >= NAVTYPE_NAMES.length))
-			throw new IllegalArgumentException("Invalid object type - " + type);
-
+	public final void setType(Navaid type) {
 		_type = type;
 	}
 
@@ -210,7 +183,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	 */
 	public int compareTo(NavigationDataBean nb2) {
 		int tmpResult = _code.compareTo(nb2._code);
-		if (tmpResult == 0) tmpResult = Integer.valueOf(_type).compareTo(Integer.valueOf(nb2._type));
+		if (tmpResult == 0) tmpResult = _type.compareTo(nb2._type);
 		if (tmpResult == 0) {
 			GeoPosition gp = new GeoPosition(0, 0);
 			int d1 = gp.distanceTo(this);
@@ -230,13 +203,13 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 		StringBuilder buf = new StringBuilder("<span class=\"bld\">");
 		buf.append(getCode());
 		buf.append("</span>");
-		if ((_type != INT) && (!StringUtils.isEmpty(_name))) {
+		if ((_type != Navaid.INT) && (!StringUtils.isEmpty(_name))) {
 			buf.append(' ');
 			buf.append(_name);
 		}
 			
 		buf.append(" (");
-		buf.append(getTypeName());
+		buf.append(_type.getName());
 		buf.append(")<br />");
 		if (_region != null) {
 			buf.append("Region: ");
@@ -316,25 +289,12 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 
 	/**
 	 * Creates a bean from a type, latitude and longitude.
-	 * @param typeName the navigation aid type
-	 * @param lat the latitude in degrees
-	 * @param lng the longitude in degrees
-	 * @return a NavigationDataBean, or null if the type is unknown
-	 * @see NavigationDataBean#create(int, double, double)
-	 */
-	public static NavigationDataBean create(String typeName, double lat, double lng) {
-		return create(StringUtils.arrayIndexOf(NAVTYPE_NAMES, typeName), lat, lng);
-	}
-	
-	/**
-	 * Creates a bean from a type, latitude and longitude.
 	 * @param type the navigation aid type
 	 * @param lat the latitude in degrees
 	 * @param lng the longitude in degrees
 	 * @return a NavigationDataBean, or null if the type is unknown
-	 * @see NavigationDataBean#create(String, double, double)
 	 */
-	public static NavigationDataBean create(int type, double lat, double lng) {
+	public static NavigationDataBean create(Navaid type, double lat, double lng) {
 		switch (type) {
 		case VOR:
 			return new VOR(lat, lng);
@@ -364,7 +324,8 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	public static NavigationDataBean create(String id) {
 		StringTokenizer tkns = new StringTokenizer(id, "!");
 		String code = tkns.nextToken();
-		NavigationDataBean nd = create(StringUtils.parse(tkns.nextToken(), INT), StringUtils.parse(tkns.nextToken(), 0.0), StringUtils.parse(tkns.nextToken(), 0.0));
+		Navaid nt = Navaid.values()[StringUtils.parse(tkns.nextToken(), Navaid.INT.ordinal())];
+		NavigationDataBean nd = create(nt, StringUtils.parse(tkns.nextToken(), 0.0), StringUtils.parse(tkns.nextToken(), 0.0));
 		nd.setCode(code);
 		if (tkns.hasMoreTokens())
 			nd.setRegion(tkns.nextToken());
