@@ -140,7 +140,7 @@ xmlreq.onreadystatechange = function() {
 	return true;
 }
 
-xmlreq.send(true);
+xmlreq.send(null);
 return true;	
 });
 </script>
