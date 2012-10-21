@@ -28,8 +28,7 @@ public class TestIntersection extends AbstractBeanTestCase {
    public void testProperties() {
       assertEquals(12.345, _int.getLatitude(), 0.0001);
       assertEquals(-23.456, _int.getLongitude(), 0.0001);
-      assertEquals(NavigationDataBean.INT, _int.getType());
-      assertEquals(NavigationDataBean.NAVTYPE_NAMES[NavigationDataBean.INT], _int.getTypeName());
+      assertEquals(Navaid.INT, _int.getType());
       
       assertNotNull(_int.getPosition());
       assertEquals(_int.getLatitude(), _int.getPosition().getLatitude(), 0.0001);
@@ -66,31 +65,31 @@ public class TestIntersection extends AbstractBeanTestCase {
    public void testParse() {
 	   Intersection i = Intersection.parse("5250N");
 	   assertNotNull(i);
-	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(52.0, i.getLatitude(), 0.001);
 	   assertEquals(-50.0, i.getLongitude(), 0.001);
 	   
 	   Intersection i2 = Intersection.parse("52/50");
 	   assertNotNull(i2);
-	   assertEquals(NavigationDataBean.INT, i2.getType());
+	   assertEquals(Navaid.INT, i2.getType());
 	   assertEquals(52.0, i2.getLatitude(), 0.001);
 	   assertEquals(-50.0, i2.getLongitude(), 0.001);
 
 	   i = Intersection.parse("5250S");
 	   assertNotNull(i);
-	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(-52.0, i.getLatitude(), 0.001);
 	   assertEquals(50.0, i.getLongitude(), 0.001);
 	   
 	   i = Intersection.parse("35160E");
 	   assertNotNull(i);
-	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(35.0, i.getLatitude(), 0.001);
 	   assertEquals(160.0, i.getLongitude(), 0.001);
 	   
 	   i = Intersection.parse("35N160E");
 	   assertNotNull(i);
-	   assertEquals(NavigationDataBean.INT, i.getType());
+	   assertEquals(Navaid.INT, i.getType());
 	   assertEquals(35.0, i.getLatitude(), 0.001);
 	   assertEquals(160.0, i.getLongitude(), 0.001);
    }

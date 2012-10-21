@@ -28,8 +28,7 @@ public class TestAirportLocation extends AbstractBeanTestCase {
    public void testProperties() {
       assertEquals(12.345, _a.getLatitude(), 0.0001);
       assertEquals(-23.456, _a.getLongitude(), 0.0001);
-      assertEquals(NavigationDataBean.AIRPORT, _a.getType());
-      assertEquals(NavigationDataBean.NAVTYPE_NAMES[NavigationDataBean.AIRPORT], _a.getTypeName());
+      assertEquals(Navaid.AIRPORT, _a.getType());
       
       assertNotNull(_a.getPosition());
       assertEquals(_a.getLatitude(), _a.getPosition().getLatitude(), 0.0001);

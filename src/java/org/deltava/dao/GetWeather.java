@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load weather data from the database.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.7
  */
 
@@ -63,7 +63,7 @@ public class GetWeather extends WeatherDAO {
 			prepareStatementWithoutLimits("SELECT M.DATE, M.DATA, M.ILS, ND.LATITUDE, ND.LONGITUDE, ND.ALTITUDE FROM "
 				+ "common.METARS M LEFT JOIN common.NAVDATA ND ON (M.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) WHERE "
 				+ "(M.AIRPORT=?) LIMIT 1");
-			_ps.setInt(1, NavigationDataBean.AIRPORT);
+			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, code);
 			
 			// Load the METAR
@@ -105,7 +105,7 @@ public class GetWeather extends WeatherDAO {
 		try {
 			prepareStatementWithoutLimits("SELECT T.DATE, T.AMENDED, T.DATA, ND.LATITUDE, ND.LONGITUDE FROM common.TAFS T "
 				+ "LEFT JOIN common.NAVDATA ND ON (T.AIRPORT=ND.CODE) AND (ND.ITEMTYPE=?) WHERE (T.AIRPORT=?) LIMIT 1");
-			_ps.setInt(1, NavigationDataBean.AIRPORT);
+			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, code);
 
 			// Load the TAF

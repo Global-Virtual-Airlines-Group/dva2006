@@ -113,7 +113,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		// Load ICAO codes
 		Collection<String> codes = new HashSet<String>();
 		PreparedStatement ps = _c.prepareStatement("SELECT DISTINCT CODE FROM common.NAVDATA WHERE (ITEMTYPE=?)");
-		ps.setInt(1, NavigationDataBean.RUNWAY);
+		ps.setInt(1, Navaid.RUNWAY.ordinal());
 		ps.setFetchSize(1000);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
