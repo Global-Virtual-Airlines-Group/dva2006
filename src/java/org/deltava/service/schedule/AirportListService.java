@@ -130,8 +130,8 @@ public class AirportListService extends WebService {
 		
 		// Dump the XML to the output stream
 		try {
-			ctx.setExpires(3600);
 			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setExpiry(3600);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

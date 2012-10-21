@@ -39,7 +39,7 @@ public class UpdateDownloadService extends DownloadService {
 		// Download the file
 		ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + fName);
 		ctx.getResponse().setContentType("application/octet-stream");
-		ctx.setExpires(3600);
+		ctx.setExpiry(3600);
 		sendFile(f, ctx.getResponse());
 		return SC_OK;
 	}

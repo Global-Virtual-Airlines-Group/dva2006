@@ -93,13 +93,4 @@ public class ServiceContext extends org.deltava.commands.HTTPContext {
 		rsp.setContentType(contentType);
 		rsp.setCharacterEncoding(encoding);
 	}
-	
-	/**
-	 * Sets the expiry of the response.
-	 * @param seconds the expiry time in seconds
-	 */
-	public void setExpires(int seconds) {
-		HttpServletResponse rsp = getResponse();
-		rsp.setDateHeader("Expires", System.currentTimeMillis() + (seconds*1000));
-	}
 }

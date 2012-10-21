@@ -40,7 +40,7 @@ public class TerminalRouteService extends DispatchDataService {
 		File f = _dataCache.get("SIDSTAR");
 		if (f != null) {
 			ctx.setContentType("text/plain", "UTF-8");
-			ctx.setExpires(600);
+			ctx.setExpiry(600);
 			ctx.getResponse().setHeader("Cache-Control", "private");
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
@@ -91,7 +91,7 @@ public class TerminalRouteService extends DispatchDataService {
 		
 			// Format and write
 			ctx.setContentType("text/plain", "UTF-8");
-			ctx.setExpires(600);
+			ctx.setExpiry(600);
 			ctx.getResponse().setHeader("Cache-Control", "private");
 			sendFile(f, ctx.getResponse());
 		} catch (Exception e) {

@@ -95,8 +95,9 @@ public class TextService extends WebService {
 		// Return the number of seconds left
 		long timeRemaining = (ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000;
 		try {
+			ctx.setContentType("text/plain", "UTF-8");
 			ctx.print(String.valueOf(timeRemaining));
-			ctx.setExpires(1);
+			ctx.setExpiry(1);
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);

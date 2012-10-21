@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display ACARS Flight Report data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -102,6 +102,7 @@ public class MapFlightDataService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "UTF-8");
+			ctx.setExpiry(3600);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {

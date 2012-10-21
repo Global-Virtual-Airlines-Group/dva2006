@@ -14,7 +14,7 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to download network IDs.
+ * A Web Service to download Online Network IDs.
  * @author Luke
  * @version 5.0
  * @since 1.0
@@ -90,7 +90,7 @@ public class OnlineIDService extends WebService {
 		}
 		
 		try {
-			ctx.setExpires(3600);
+			ctx.setExpiry(3600);
 			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);

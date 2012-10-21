@@ -127,7 +127,7 @@ public class AirportWeatherService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.setContentType("text/xml", "UTF-8");
-			ctx.setExpires(600);
+			ctx.setExpiry(600);
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (Exception ex) {
