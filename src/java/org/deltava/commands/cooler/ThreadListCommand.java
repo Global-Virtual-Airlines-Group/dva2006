@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command to display Message Threads in a Water Cooler channel.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -29,6 +29,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the user for the channel list
@@ -66,7 +67,7 @@ public class ThreadListCommand extends AbstractViewCommand {
 			// Get the Message Threads for this channel - add by 10% for filtering
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			tdao.setQueryStart(vc.getStart());
-			tdao.setQueryMax(Math.round(vc.getCount() * 1.275f));
+			tdao.setQueryMax(Math.round(vc.getCount() * 1.5f));
 
 			// Figure out what message threads to display
 			List<MessageThread> threads = null;
@@ -95,12 +96,11 @@ public class ThreadListCommand extends AbstractViewCommand {
 				ac.validate();
 
 				// If we cannot read the thread, remove it from the results, otherwise load the pilot profiles
-				if (!ac.getCanRead()) {
+				if (ac.getCanRead()) {
+					pilotIDs.add(Integer.valueOf(thread.getAuthorID()));
+					pilotIDs.add(Integer.valueOf(thread.getLastUpdateID()));
+				} else
 					i.remove();
-				} else {
-					pilotIDs.add(new Integer(thread.getAuthorID()));
-					pilotIDs.add(new Integer(thread.getLastUpdateID()));
-				}
 			}
 
 			// Get the location of all the Pilots
@@ -113,11 +113,11 @@ public class ThreadListCommand extends AbstractViewCommand {
 			GetApplicant adao = new GetApplicant(con);
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
 				String tableName = i.next();
-				if (tableName.endsWith("APPLICANTS")) {
-					authors.putAll(adao.getByID(udm.getByTable(tableName), tableName));
-				} else {
-					authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-				}
+				Collection<UserData> udd = udm.getByTable(tableName);
+				if (tableName.endsWith("APPLICANTS"))
+					authors.putAll(adao.getByID(udd, tableName));
+				else
+					authors.putAll(pdao.getByID(udd, tableName));
 			}
 
 			// Get the pilot IDs in the returned threads
