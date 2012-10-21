@@ -139,7 +139,7 @@ public class MyFlightsService extends WebService {
 			jo.put("landingSct", sja);
 			jo.put("landingQuality", qja);
 			ctx.setContentType("text/javascript", "UTF-8");
-			ctx.setExpires(360);
+			ctx.setExpiry(360);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
