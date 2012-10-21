@@ -44,6 +44,7 @@
 	<service id="mylogbook" class="org.deltava.service.stats.LogbookService" />
 	<service id="allstats" class="org.deltava.service.stats.AllFlightsService" />
 	<service id="bwstats" class="org.deltava.service.stats.BandwidthInfoService" />
+	<service id="pirepstats" class="org.deltava.service.stats.FlightStatsService" />
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />

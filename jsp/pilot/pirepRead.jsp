@@ -44,6 +44,8 @@ return true;
 }
 </script></c:if>
 <c:if test="${isACARS}">
+<content:googleJS />
+<content:js name="json2" />
 <content:js name="acarsFlightMap" />
 <script type="text/javascript">
 function zoomTo(lat, lng)
@@ -423,7 +425,43 @@ addMarkers(map, 'filedMarkers');
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
 </c:if>
+<content:filter roles="Pilot"><c:if test="${isACARS}">
+google.load('visualization','1.0',{'packages':['corechart']});
+google.setOnLoadCallback(function() {
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('get', 'pirepstats.ws?id=${pirep.hexID}', true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	if (xmlreq.status != 200) {
+		displayObject(document.getElementById('flightDataChart'),false);
+		return false;
+	}
 
+	var lgStyle = {color:'black',fontName:'Tahoma',fontSize:8};
+	var statsData = JSON.parse(xmlreq.responseText); var sd = statsData.data;
+	for (var x = 0; x < sd.length; x++)
+		sd[x][0] = new Date(sd[x][0]);
+
+	var chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
+	var data = new google.visualization.DataTable();
+	data.addColumn('datetime', 'Date/Time');
+	data.addColumn('number', 'Ground Speed');
+	data.addColumn('number', 'Altitude');
+	data.addColumn('number', 'Ground Elevation');
+	data.addRows(sd);
+	
+	var ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
+	var va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
+	var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
+	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.8}];
+	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:['#0000a1','green','#b0b0d0']});
+	return true;
+}
+
+xmlreq.send(null);
+return true;
+});
+</c:if></content:filter>
 // Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
