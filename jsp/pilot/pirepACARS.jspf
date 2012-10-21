@@ -257,3 +257,9 @@
 </tr>
 </c:if>
 </c:if>
+<content:filter roles="Pilot">
+<tr id="flightDataChart">
+ <td class="label top">Altitude / Speed Charts</td>
+ <td class="data" colspan="${cspan}"><div id="flightChart" style="height:275px"></div></td>
+</tr>
+</content:filter>
