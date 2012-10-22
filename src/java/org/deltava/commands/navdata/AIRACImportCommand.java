@@ -8,7 +8,6 @@ import java.sql.Connection;
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
 
-import static org.deltava.beans.navdata.Navaid.*;
 import org.deltava.service.navdata.DispatchDataService;
 
 import org.deltava.commands.*;
@@ -28,7 +27,6 @@ import org.deltava.util.StringUtils;
 public class AIRACImportCommand extends AbstractCommand {
 
 	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat" };
-	private static final Navaid[] NAVAID_TYPES = { AIRPORT, NDB, RUNWAY, VOR, INT };
 
 	/**
 	 * Executes the command.
@@ -62,20 +60,20 @@ public class AIRACImportCommand extends AbstractCommand {
 
 		// Get the navaid type
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
-		if (navaidType == -1)
+		if ((navaidType == -1) || (navaidType >= Navaid.values().length))
 			throw notFoundException("Unknown Data File - " + navData.getName());
-
+		
+		Navaid nt = Navaid.values()[navaidType];
 		List<String> errors = new ArrayList<String>();
-		int entryCount = 0;
-		int regionCount = 0;
+		int entryCount = 0; int regionCount = 0;
 		try {
 			Connection con = ctx.getConnection();
 			ctx.startTX();
 
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
-			int purgeCount = dao.purge(NAVAID_TYPES[navaidType]);
-			ctx.setAttribute("purgeCount", new Integer(purgeCount), REQUEST);
+			ctx.setAttribute("purgeCount", Integer.valueOf(dao.purge(nt)), REQUEST);
+			dao.updateLegacy();
 
 			// Get the file - skipping the first line
 			InputStream is = navData.getInputStream();
@@ -186,7 +184,7 @@ public class AIRACImportCommand extends AbstractCommand {
 			}
 
 			// Update the regions
-			regionCount = dao.updateRegions(NAVAID_TYPES[navaidType]);
+			regionCount = dao.updateRegions(nt);
 
 			// Commit and close down the stream
 			ctx.commitTX();
@@ -206,8 +204,8 @@ public class AIRACImportCommand extends AbstractCommand {
 		DispatchDataService.invalidate();
 
 		// Set status attributes
-		ctx.setAttribute("entryCount", new Integer(entryCount), REQUEST);
-		ctx.setAttribute("regionCount", new Integer(regionCount), REQUEST);
+		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
+		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
 

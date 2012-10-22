@@ -201,6 +201,20 @@ public class SetNavData extends DAO {
 	}
 	
 	/**
+	 * Copies navigation data from legacy airports.
+	 * @return the nuber of entries updated
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int updateLegacy() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("REPLACE INTO common.NAVDATA (SELECT * FROM common.NAVLEGACY)");
+			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Deletes a Terminal Route from the database.
 	 * @param tr the TerminalRoute bean
 	 * @throws DAOException if a JDBC error occurs
