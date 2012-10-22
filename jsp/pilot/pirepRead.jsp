@@ -437,7 +437,7 @@ xmlreq.onreadystatechange = function() {
 		return false;
 	}
 
-	var lgStyle = {color:'black',fontName:'Tahoma',fontSize:8};
+	var lgStyle = {color:'black',fontName:'Verdana',fontSize:8};
 	var statsData = JSON.parse(xmlreq.responseText); var sd = statsData.data;
 	for (var x = 0; x < sd.length; x++)
 		sd[x][0] = new Date(sd[x][0]);
@@ -453,8 +453,8 @@ xmlreq.onreadystatechange = function() {
 	var ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
 	var va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
 	var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
-	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.8}];
-	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:['#0000a1','green','#b0b0d0']});
+	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
+	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:['#0000a1','#008080','#b0b0d0']});
 	return true;
 }
 
