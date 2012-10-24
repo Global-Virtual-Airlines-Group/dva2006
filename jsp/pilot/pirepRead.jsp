@@ -286,6 +286,7 @@ return true;
 <c:set var="cspan" value="1" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %>
 </c:if>
+<content:browser human="true">
 <c:if test="${googleMap}">
 <tr>
  <td class="label">Route Map Data</td>
@@ -310,6 +311,7 @@ return true;
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </tr>
 </c:if>
+</content:browser>
 <c:if test="${!scoreCR && (access.canDispose || (access.canViewComments && (!empty pirep.comments)))}">
 <tr>
  <td class="label top">Reviewer Comments</td>
@@ -373,6 +375,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <content:copyright />
 </content:region>
 </content:page>
+<content:browser human="true">
 <c:if test="${googleMap}">
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
@@ -425,7 +428,7 @@ addMarkers(map, 'filedMarkers');
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
 </c:if>
-<content:filter roles="Pilot"><c:if test="${isACARS}">
+<c:if test="${isACARS}">
 google.load('visualization','1.0',{'packages':['corechart']});
 google.setOnLoadCallback(function() {
 var xmlreq = getXMLHttpRequest();
@@ -442,6 +445,7 @@ xmlreq.onreadystatechange = function() {
 	for (var x = 0; x < sd.length; x++)
 		sd[x][0] = new Date(sd[x][0]);
 
+	// Build the chart
 	var chart = new google.visualization.ComboChart(document.getElementById('flightChart'));
 	var data = new google.visualization.DataTable();
 	data.addColumn('datetime', 'Date/Time');
@@ -450,21 +454,39 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('number', 'Ground Elevation');
 	data.addRows(sd);
 	
+	// Read CSS selectors for graph lines
+	var pr = '#0000a1'; var sc = '#008080';
+	var classes = [];
+	for (var x = 0; x < document.styleSheets.length; x++) {
+		var ss = document.styleSheets[x];
+		if ((ss.href == null) || (ss.href.indexOf('main.css') == -1)) continue;
+		for (var y = 0; y < ss.cssRules.length; y++) {
+			var cs = ss.cssRules[y];
+			if (cs.selectorText) {
+				if (cs.selectorText.indexOf('.pri') > -1)
+					pr = cs.style.color;
+				else if (cs.selectorText.indexOf('.sec') > -1)
+					sc = cs.style.color;
+			}
+		}
+	}
+	
+	// Create formatting options
 	var ha = {gridlines:{count:10},minorGridlines:{count:5},title:'Date/Time',textStyle:lgStyle};
 	var va0 = {maxValue:statsData.maxAlt,title:'Altitude',textStyle:lgStyle};
 	var va1 = {maxValue:statsData.maxSpeed,gridlines:{count:5},title:'Speed',textStyle:lgStyle};
 	var s = [{},{targetAxisIndex:1},{targetAxisIndex:1,type:'area',areaOpacity:0.7}];
-	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:['#0000a1','#008080','#b0b0d0']});
+	chart.draw(data,{series:s,vAxes:[va1,va0],hAxis:ha,fontName:'Tahoma',fontSize:10,colors:[pr,sc,'#b8b8d8']});
 	return true;
 }
 
 xmlreq.send(null);
 return true;
 });
-</c:if></content:filter>
+</c:if>
 // Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
 </script>
-</c:if>
+</c:if></content:browser>
 </body>
 </html>
