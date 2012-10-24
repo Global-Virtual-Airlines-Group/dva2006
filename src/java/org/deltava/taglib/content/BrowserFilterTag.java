@@ -20,35 +20,14 @@ public class BrowserFilterTag extends BrowserInfoTag {
 	
 	private final boolean _html5Enabled = SystemData.getBoolean("html.v5");
 
-	private boolean _showIE7;
 	private boolean _showIE8;
 	private boolean _showIE9;
 	private boolean _showMoz;
 	private boolean _showWebKit;
 	private boolean _showOpera;
+	private boolean _showHuman;
 	private boolean _showHTML4;
 	private boolean _showHTML5;
-	
-	/**
-	 * Marks this content as visible to all Internet Explorer users.
-	 * @param showIE TRUE if the content should be shown to IE users, otherwise FALSE
-	 * @see BrowserFilterTag#setIe7(boolean)
-	 * 	@see BrowserFilterTag#setIe8(boolean)
-	 * @see BrowserFilterTag#setIe9(boolean)
-	 */
-	public void setIe(boolean showIE) {
-		_showIE7 = showIE;
-		_showIE8 = showIE;
-		_showIE9 = showIE;
-	}
-	
-	/**
-	 * Marks this content as visible to Internet Explorer 7 users.
-	 * @param showIE TRUE if the content should be shown to IE7 users, otherwise FALSE
-	 */
-	public void setIe7(boolean showIE) {
-		_showIE7 = showIE;
-	}
 	
 	/**
 	 * Marks this content as visible to Internet Explorer 8 users.
@@ -107,6 +86,14 @@ public class BrowserFilterTag extends BrowserInfoTag {
 	}
 	
 	/**
+	 * Marks this content as only visible to humans.
+	 * @param showHuman TRUE if not visible to bots, otherwise FALSE
+	 */
+	public void setHuman(boolean showHuman) {
+		_showHuman = showHuman;
+	}
+	
+	/**
 	 * Determines whether the enclosed content should be rendered to the JSP output stream.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
@@ -120,11 +107,11 @@ public class BrowserFilterTag extends BrowserInfoTag {
 			return EVAL_BODY_INCLUDE;
 		if (!isBrowserHTML5 && _showHTML4)
 			return EVAL_BODY_INCLUDE;
+		if ((bctxt.getBrowserType() != BrowserType.SPIDER) && _showHuman)
+			return EVAL_BODY_INCLUDE;
 		
 		BrowserType bt = bctxt.getBrowserType();
 		if (bt == BrowserType.IE) {
-			if (_showIE7 && (bctxt.getMajor() == 7))
-				return EVAL_BODY_INCLUDE;
 			if (_showIE8 && (bctxt.getMajor() == 8))
 				return EVAL_BODY_INCLUDE;
 			if (_showIE9 && (bctxt.getMajor() == 9))
@@ -156,7 +143,6 @@ public class BrowserFilterTag extends BrowserInfoTag {
 	@Override
 	public void release() {
 		super.release();
-		_showIE7 = false;
 		_showIE8 = false;
 		_showIE9 = false;
 		_showMoz = false;
@@ -164,5 +150,6 @@ public class BrowserFilterTag extends BrowserInfoTag {
 		_showOpera = false;
 		_showHTML4 = false;
 		_showHTML5 = false;
+		_showHuman = false;
 	}
 }
