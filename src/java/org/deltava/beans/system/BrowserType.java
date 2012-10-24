@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -6,26 +6,27 @@ import java.util.*;
 /**
  * An enumeration to store browser family data.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 3.7
  */
 
 public enum BrowserType {
 	
-	IE("MSIE"), CHROME("Chrome"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), OPERA("Opera"), UNKNOWN;
+	IE("MSIE"), CHROME("Chrome"), FIREFOX("Firefox"), WEBKIT("WebKit", "Safari"), OPERA("Opera"), 
+	SPIDER("Googlebot", "bingbot", "YandexBot", "ezooms.bot", "msnbot", "MJ12bot", "Baiduspider", 
+		"Yahoo! Slurp"), UNKNOWN;
 	
 	private final Collection<String> _detectStrings = new ArrayList<String>(4);
 	
 	public static class BrowserVersion {
-		private BrowserType _browser;
-		private String _version;
+		private final BrowserType _browser;
+		private final String _version;
 		
 		BrowserVersion() {
 			this(UNKNOWN, "0.0");
 		}
 		
 		BrowserVersion(BrowserType bt, String version) {
-			super();
 			_browser = bt;
 			_version = version;
 		}
@@ -52,7 +53,7 @@ public enum BrowserType {
 		if (userAgent == null)
 			return new BrowserVersion();
 		
-		for (int x = 0; x < BrowserType.values().length - 1; x++) {
+		for (int x = 0; x < values().length - 1; x++) {
 			BrowserType bType = BrowserType.values()[x];
 			for (String keyword : bType._detectStrings) {
 				int pos = userAgent.indexOf(keyword);
