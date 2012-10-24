@@ -76,7 +76,7 @@ var f = document.forms[0];
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'quote.ws?id=${thread.hexID}&post=' + postID);
 xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 
 	// Parse the XML
 	var xml = xmlreq.responseXML;
@@ -124,6 +124,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
+<content:browser human="true"><c:set var="isHuman" value="true" scope="page" /></content:browser>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="page" />
 <content:sysdata var="imgPath" name="path.img" />
 <c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="page" />
