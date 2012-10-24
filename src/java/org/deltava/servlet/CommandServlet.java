@@ -10,10 +10,10 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.MultipartConfig;
 
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
 
 import org.deltava.beans.servlet.*;
-import org.deltava.beans.system.VersionInfo;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -22,8 +22,7 @@ import org.deltava.util.*;
 import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
 
-import org.gvagroup.jdbc.ConnectionPool;
-import org.gvagroup.jdbc.ConnectionPoolException;
+import org.gvagroup.jdbc.*;
 
 /**
  * The main command controller. This is the application's brain stem.
@@ -72,7 +71,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			tlog.info("Started");
 			while (!isInterrupted()) {
 				try {
-					sleep(2000);
+					sleep(5000);
 				} catch (InterruptedException ie) {
 					interrupt();
 					tlog.warn("Interrupted");
@@ -189,6 +188,10 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
 		TaskTimer tt = new TaskTimer();
+		
+		// Check for spiders
+		HTTPContextData httpctx = (HTTPContextData) req.getAttribute(HTTPContext.HTTPCTXT_ATTR_NAME);
+		boolean isSpider = ((httpctx != null) && (httpctx.getBrowserType() == BrowserType.SPIDER));
 
 		// Get the command
 		Command cmd = getCommand(req.getRequestURI());
@@ -244,42 +247,43 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			}
 
 			// Redirect/forward/send status code
-			ResultType rt = result.getType();
-			if (rt == ResultType.REQREDIRECT) {
-				if (log.isDebugEnabled())
-					log.debug("Preserving servlet request state");
-
-				RequestStateHelper.save(req, result.getURL());
-				rsp.sendRedirect("$redirect.do");
-			} else if (rt == ResultType.REDIRECT) {
-				if (log.isDebugEnabled())
-					log.debug("Redirecting to " + result.getURL());
-
-				rsp.sendRedirect(result.getURL());
-			} else if (rt == ResultType.HTTPCODE) {
-				if (log.isDebugEnabled())
-					log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
-
-				rsp.setStatus(result.getHttpCode());
-			} else {
-				if (log.isDebugEnabled())
-					log.debug("Forwarding to " + result.getURL());
-
-				RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
-				rd.forward(req, rsp);
+			switch (result.getType()) {
+				case REQREDIRECT:
+					if (log.isDebugEnabled()) log.debug("Preserving servlet request state");
+					RequestStateHelper.save(req, result.getURL());
+					rsp.sendRedirect("$redirect.do");
+					break;
+					
+				case REDIRECT:
+					if (log.isDebugEnabled()) log.debug("Redirecting to " + result.getURL());
+					rsp.sendRedirect(result.getURL());
+					break;
+					
+				case HTTPCODE:
+					if (log.isDebugEnabled()) log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
+					rsp.setStatus(result.getHttpCode());
+					break;
+					
+				default:
+					if (log.isDebugEnabled()) log.debug("Forwarding to " + result.getURL());
+					RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
+					rd.forward(req, rsp);
 			}
 		} catch (Exception e) {
 			String errPage = ERR_PAGE;
-			boolean logWarning = false;
-			boolean logStackDump = true;
+			Level logLevel = Level.ERROR; boolean logStackDump = true;
 			if (e instanceof CommandException) {
 				CommandException ce = (CommandException) e;
 				if (ce.getForwardURL() != null)
 					errPage = ce.getForwardURL();
 
-				logWarning = ce.isWarning();
 				logStackDump = ce.getLogStackDump();
+				if (ce.isWarning())
+					logLevel = Level.WARN;
 			}
+			
+			// Don't log bot notfound/SecurityErrors
+			if (!logStackDump && isSpider) logLevel = Level.INFO;
 
 			// Log the error
 			String usrName = null;
@@ -288,13 +292,10 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			else
 				usrName = req.getUserPrincipal().getName();
 
-			if (logWarning)
-				log.warn(usrName + " executing " + cmd.getName() + " - " + e.getMessage());
-			else
-				log.error(usrName + " executing " + cmd.getName() + " - " + e.getMessage(), logStackDump ? e : null);
+			log.log(logLevel, usrName + " executing " + cmd.getName() + " - " + e.getMessage(), logStackDump ? e : null);
 
+			// Redirect to the error page
 			try {
-				// Redirect to the error page
 				RequestDispatcher rd = req.getRequestDispatcher(errPage);
 				req.setAttribute("servlet_error", e.getMessage());
 				req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
@@ -309,10 +310,9 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			}
 		} finally {
 			long execTime = tt.stop();
-			if (execTime < MAX_EXEC_TIME) {
-				if (log.isDebugEnabled())
-					log.debug("Completed in " + String.valueOf(execTime) + " ms");
-			} else
+			if (execTime < MAX_EXEC_TIME)
+				if (log.isDebugEnabled()) log.debug("Completed in " + String.valueOf(execTime) + " ms");
+			else
 				log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
 
 			// Create the command result statistics entry
