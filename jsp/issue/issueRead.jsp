@@ -139,12 +139,12 @@ Attached File: <span class="pri bld">${comment.name}</span> (<fmt:int value="${c
 <!-- Button Bar -->
 <el:table className="bar">
 <tr>
- <td>
+ <td>&nbsp;
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" link="${issue}" />
+ <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" key="E" link="${issue}" />
 </c:if>
 <c:if test="${access.canComment}">
- <el:button ID="CommentButton" type="submit" label="SAVE NEW COMMENT" />
+ <el:button ID="CommentButton" type="submit" key="S" label="SAVE NEW COMMENT" />
 </c:if>
 <c:if test="${access.canResolve}">
  <el:cmdbutton ID="ConvertButton" label="CONVERT TO HELP DESK ISSUE" url="issueconvert" link="${issue}" />
