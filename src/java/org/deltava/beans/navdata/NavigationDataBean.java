@@ -268,7 +268,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	public final String toString() {
 		StringBuilder buf = new StringBuilder(_code);
 		buf.append('!');
-		buf.append(_type);
+		buf.append(_type.ordinal());
 		buf.append('!');
 		buf.append(_gp.getLatitude());
 		buf.append('!');
