@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.zip.CRC32;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A helper class to calculate hash code values for e-mail address validation.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -33,11 +33,8 @@ public final class AddressValidationHelper {
     */
    public static String calculateHashCode(String addr) {
       
-      // Build the digester and salt it
       MessageDigester md = new MessageDigester(SystemData.get("security.hash.algorithm"));
       md.salt(SystemData.get("security.hash.salt"));
-      
-      // Calculate the hash
       return Base64.encode(md.digest(addr.getBytes()));
    }
    
@@ -66,6 +63,10 @@ public final class AddressValidationHelper {
    public static String formatHash(CharSequence rawHash) {
 	   if (rawHash == null)
 		   return null;
+	   
+	   // Trim trailing space if necessary
+	   if (rawHash.charAt(rawHash.length() - 1) == ' ')
+		   rawHash = rawHash.subSequence(0, rawHash.length() - 1);
 	   
 	   StringBuilder buf = new StringBuilder();
 	   for (int x = 0; x < rawHash.length(); x++) {
