@@ -1,4 +1,4 @@
-// Copyright 2007, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -7,12 +7,14 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.servinfo.Rating;
+
 import org.deltava.util.*;
 
 /**
  * An Authenticator to read/write from FSD certificate files.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -23,24 +25,23 @@ public class FSDAuthenticator implements Authenticator {
 	private final Properties _props = new Properties();
 	private File _certFile;
 	private final Map<Integer, FSDCert> _certs = Collections.synchronizedMap(new LinkedHashMap<Integer, FSDCert>());
-	private final Map<String, Integer> _roleLevels = new HashMap<String, Integer>();
+	private final Map<String, Rating> _roleLevels = new HashMap<String, Rating>();
 
-	private static final int MAX_CERT_LEVEL = 12;
 	private static final String[] LEVEL_NAMES = { "Disabled", "Pilot", "Student 1", "Student 2", "Student 3",
 			"Controller 1", "Controller 2", "Controller 3", "Instructor 1", "Instructor 2", "Instructor 3",
 			"Supervisor", "Administrator" };
 
 	private class FSDCert extends DatabaseBean {
 
-		private String _userID;
+		private final String _userID;
 		private String _pwd;
-		private int _level;
+		private final Rating _level;
 
-		FSDCert(String userID, String pwd, int level) {
+		FSDCert(String userID, String pwd, Rating level) {
 			super();
 			_userID = userID.toUpperCase();
 			_pwd = pwd;
-			_level = Math.min(Math.max(1, level), MAX_CERT_LEVEL);
+			_level = level;
 		}
 
 		public String getUserID() {
@@ -51,7 +52,7 @@ public class FSDAuthenticator implements Authenticator {
 			return _pwd;
 		}
 
-		public int getLevel() {
+		public Rating getLevel() {
 			return _level;
 		}
 
@@ -95,11 +96,12 @@ public class FSDAuthenticator implements Authenticator {
 		}
 
 		// Load the role mappings
-		for (int x = 1; x <= MAX_CERT_LEVEL; x++) {
-			String roleNames = _props.getProperty("fsd.level." + String.valueOf(x), "");
+		for (Rating r : Rating.values()) {
+			if (r == Rating.DISABLED) continue;
+			String roleNames = _props.getProperty("fsd.level." + String.valueOf(r.ordinal()), "");
 			Collection<String> roles = StringUtils.split(roleNames, ",");
 			for (Iterator<String> i = roles.iterator(); i.hasNext();)
-				_roleLevels.put(i.next(), new Integer(x));
+				_roleLevels.put(i.next(), r);
 		}
 
 		// Check for the certificate file
@@ -110,8 +112,7 @@ public class FSDAuthenticator implements Authenticator {
 		}
 
 		// Load the certificates
-		try {
-			LineNumberReader br = new LineNumberReader(new FileReader(_certFile));
+		try (LineNumberReader br = new LineNumberReader(new FileReader(_certFile))) {
 			while (br.ready()) {
 				String data = br.readLine();
 				if (!data.startsWith(";")) {
@@ -121,18 +122,17 @@ public class FSDAuthenticator implements Authenticator {
 					else {
 						String userID = tkns.nextToken();
 						try {
-							FSDCert cert = new FSDCert(userID, tkns.nextToken(), StringUtils.parse(tkns.nextToken(), 1));
+							Rating rt = Rating.values()[StringUtils.parse(tkns.nextToken(), 1)];
+							FSDCert cert = new FSDCert(userID, tkns.nextToken(), rt);
 							String dbID = tkns.nextToken().substring(1);
 							cert.setID(StringUtils.parse(dbID, 0));
-							_certs.put(new Integer(cert.getID()), cert);
+							_certs.put(Integer.valueOf(cert.getID()), cert);
 						} catch (IllegalArgumentException iae) {
 							log.warn("Invalid database ID for " + userID + " - " + iae.getMessage());
 						}
 					}
 				}
 			}
-
-			br.close();
 		} catch (IOException ie) {
 			log.warn("Error loading " + _props.getProperty("fsd.cert") + " - " + ie.getMessage());
 		}
@@ -151,12 +151,12 @@ public class FSDAuthenticator implements Authenticator {
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 
 		// Validate the roles
-		int level = getUserLevel(usr);
-		if (level == 0)
+		Rating level = getUserLevel(usr);
+		if (level == Rating.DISABLED)
 			throw new SecurityException(usr.getName() + " not authorized to access FSD");
 
 		// Get the user
-		FSDCert cert = _certs.get(new Integer(usr.getID()));
+		FSDCert cert = _certs.get(Integer.valueOf(usr.getID()));
 		if (cert == null)
 			throw new SecurityException(usr.getName() + " not found!");
 
@@ -171,7 +171,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @return TRUE if the User is a member of a Role mapping to at least Level 1, otherwise FALSE
 	 */
 	public boolean accepts(Person usr) {
-		return (getUserLevel(usr) > 0) && (usr.getStatus() == Pilot.ACTIVE);
+		return (getUserLevel(usr) != Rating.DISABLED) && (usr.getStatus() == Pilot.ACTIVE);
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @return TRUE if the user exists, otherwise FALSE
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		return _certs.containsKey(new Integer(usr.getID()));
+		return _certs.containsKey(Integer.valueOf(usr.getID()));
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-		FSDCert cert = _certs.get(new Integer(usr.getID()));
+		FSDCert cert = _certs.get(Integer.valueOf(usr.getID()));
 		if (cert == null)
 			throw new SecurityException(usr.getName() + " not found!");
 
@@ -208,15 +208,15 @@ public class FSDAuthenticator implements Authenticator {
 	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Get the user's level; abort if they do not have access
-		int level = getUserLevel(usr);
-		if ((level == 0) || (!(usr instanceof Pilot)))
+		Rating level = getUserLevel(usr);
+		if ((level == Rating.DISABLED) || (!(usr instanceof Pilot)))
 			return;
 
 		// Add the user
 		Pilot p = (Pilot) usr;
 		FSDCert cert = new FSDCert(p.getPilotCode(), pwd, level);
 		cert.setID(usr.getID());
-		_certs.put(new Integer(cert.getID()), cert);
+		_certs.put(Integer.valueOf(cert.getID()), cert);
 		save();
 	}
 
@@ -238,12 +238,8 @@ public class FSDAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void remove(Person usr) throws SecurityException {
-		if (!contains(usr))
-			return;
-
-		// Remove the user
-		_certs.remove(new Integer(usr.getID()));
-		save();
+		if (_certs.remove(Integer.valueOf(usr.getID())) != null)
+			save();
 	}
 	
 	/**
@@ -255,33 +251,28 @@ public class FSDAuthenticator implements Authenticator {
 		remove(usr);
 	}
 
-	/**
+	/*
 	 * Helper method to return the user's access level based on their security roles.
 	 */
-	private int getUserLevel(Person usr) {
-		if (usr == null)
-			return 0;
-
-		int result = 0;
+	private Rating getUserLevel(Person usr) {
+		if (usr == null) return Rating.DISABLED;
+		Rating result = Rating.DISABLED;
 		for (Iterator<String> i = usr.getRoles().iterator(); i.hasNext();) {
 			String role = i.next();
-			Integer roleLevel = _roleLevels.get(role);
-			if (roleLevel != null)
-				result = Math.max(result, roleLevel.intValue());
+			Rating roleLevel = _roleLevels.get(role);
+			if ((roleLevel != null) && (roleLevel.ordinal() > result.ordinal()))
+				result = roleLevel;
 		}
 
 		return result;
 	}
 
-	/**
+	/*
 	 * Helper method to save the certs to disk.
 	 */
 	private synchronized void save() throws SecurityException {
 		Collection<FSDCert> certs = new LinkedHashSet<FSDCert>(_certs.values());
-		try {
-			PrintWriter pw = new PrintWriter(_certFile);
-
-			// Write file header
+		try (PrintWriter pw = new PrintWriter(_certFile)) {
 			pw.println("; Auto-Generated FSD certs on " + new Date().toString());
 			pw.println(',');
 			pw.println("; User levels");
