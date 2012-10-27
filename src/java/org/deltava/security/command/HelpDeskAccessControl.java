@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
@@ -9,13 +9,13 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Help Desk Issues.
  * @author Luke
- * @version 3.2
+ * @version 5.0
  * @since 1.0
  */
 
 public class HelpDeskAccessControl extends AccessControl {
 	
-	private Issue _i;
+	private final Issue _i;
 	
 	private boolean _canCreate;
 	private boolean _canClose;
@@ -52,7 +52,8 @@ public class HelpDeskAccessControl extends AccessControl {
 		boolean isHR = _ctx.isUserInRole("HR");
 		boolean isHelpDesk = _ctx.isUserInRole("HelpDesk");
 		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
-		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Signature");
+		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") 
+			|| _ctx.isUserInRole("Signature") || _ctx.isUserInRole("Operations");
 		
 		// Calculate template rights
 		_canUpdateTemplate = isHR;
@@ -60,8 +61,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		
 		// Calculate creation rights
 		_canCreate = true;
-		if (_i == null)
-			return;
+		if (_i == null) return;
 
 		// Calculate access rights
 		boolean isMine = (_i.getAuthorID() == p.getID());
