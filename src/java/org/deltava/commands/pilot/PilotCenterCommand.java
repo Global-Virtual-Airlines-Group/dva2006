@@ -140,7 +140,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get the PIREP disposal queue sizes
 			if (ctx.isUserInRole("PIREP")) {
-				ctx.setAttribute("pirepQueueSize", Integer.valueOf(prdao.getDisposalQueueSize()), REQUEST);
+				GetFlightReportQueue frqdao = new GetFlightReportQueue(con);
+				ctx.setAttribute("pirepQueueStats", frqdao.getDisposalQueueStats(), REQUEST);
 				String eqType = ctx.isUserInRole("HR") ? null : p.getEquipmentType();
 				ctx.setAttribute("checkRideQueueSize", Integer.valueOf(prdao.getCheckRideQueueSize(eqType)), REQUEST);
 			}

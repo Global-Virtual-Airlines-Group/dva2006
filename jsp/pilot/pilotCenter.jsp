@@ -258,17 +258,26 @@ To view airports you have yet to visit, <el:cmd className="sec bld" url="mynewai
 </tr>
 </c:if>
 <content:filter roles="PIREP">
-<c:if test="${pirepQueueSize > 15}">
+<c:choose>
+<c:when test="${pirepQueueStats.size > 75}">
+<c:set var="queueClass" value="error bld" scope="page" />
+</c:when>
+<c:when test="${pirepQueueStats.size > 15}">
 <c:set var="queueClass" value="sec bld" scope="page" />
-</c:if>
-<c:if test="${pirepQueueSize <= 15}">
+</c:when>
+<c:otherwise>
 <c:set var="queueClass" value="sec" scope="page" />
-</c:if>
+</c:otherwise>
+</c:choose>
 <!-- Flight Report Admin Section -->
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
- <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here. <c:if test="${pirepQueueSize > 0}"><span class="${queueClass}">There 
- are currently <fmt:quantity value="${pirepQueueSize}" single="Flight Report" /> awaiting review.</span></c:if>
+ <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.<c:if test="${pirepQueueStats.size > 0}"><span class="${queueClass}"><br />
+There are currently <fmt:quantity value="${pirepQueueStats.size}" single="Flight Report" /> awaiting review.<content:filter roles="Operations,HR"> The average
+ age of eaching pending flight report is <fmt:dec value="${pirepQueueStats.averageAge}" /> hours.</content:filter></span></c:if>
+<c:set var="myPirepQueueSize" value="${pirepQueueStats.counts[pilot.equipmentType]}" scope="page" />
+<c:if test="${myPirepQueueSize > 0}"><br /><span class="${queueClass}">There are currently <fmt:quantity value="${myPirepQueueSize}" single="Flight Report" /> awaiting 
+review flown using equipment in the ${pilot.equipmentType} program.</span></c:if>
 <c:if test="${checkRideQueueSize > 0}"><br />
 <span class="pri bld">There are <fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
