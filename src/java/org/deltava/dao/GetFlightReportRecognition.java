@@ -4,7 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.EquipmentType;
 import org.deltava.beans.flight.FlightReport;
 
 import org.deltava.util.cache.*;
@@ -12,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to get Flight Reports for Pilot recognition.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -239,35 +238,6 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 					results = rs.getInt(1);
 			}
 
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Returns the size of the pending Flight Report queue for an Equipment program. 
-	 * @param eqType the equipment program name 
-	 * @return the number of pending or held PIREPs
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getDisposalQueueSize(String eqType) throws DAOException {
-		try {
-			prepareStatement("SELECT COUNT(PR.ID) FROM PIREPS PR, EQRATINGS ER WHERE ((PR.STATUS=?) OR (PR.STATUS=?)) "
-				+ "AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) AND (ER.EQTYPE=?)");
-			_ps.setInt(1, FlightReport.HOLD);
-			_ps.setInt(2, FlightReport.SUBMITTED);
-			_ps.setInt(3, EquipmentType.PRIMARY_RATING);
-			_ps.setString(4, eqType);
-			
-			// Execute the query
-			int results = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					results = rs.getInt(1);
-			}
-			
 			_ps.close();
 			return results;
 		} catch (SQLException se) {
