@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -8,13 +8,13 @@ import org.deltava.beans.system.Issue;
 /**
  * An Access Controller for Issue Tracking.
  * @author Luke
- * @version 2.7
+ * @version 5.0
  * @since 1.0
  */
 
 public final class IssueAccessControl extends AccessControl {
 
-	private Issue _i;
+	private final Issue _i;
 
 	private boolean _canCreate;
 	private boolean _canRead;
@@ -40,7 +40,10 @@ public final class IssueAccessControl extends AccessControl {
 		validateContext();
 
 		// Set issue creation access
-		_canCreate = _ctx.isUserInRole("Pilot");
+		boolean isDev = _ctx.isUserInRole("Developer");
+		boolean isStaff = isDev || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Operations") || _ctx.isUserInRole("HR") ||
+			_ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor");
+		_canCreate = isStaff;
 		if (!_ctx.isAuthenticated()) {
 			_canRead = (_i == null) ? true : (_i.getSecurity() == Issue.SECURITY_PUBLIC);
 			return;
@@ -50,7 +53,6 @@ public final class IssueAccessControl extends AccessControl {
 		if (_i == null) {
 			_canRead = true;
 			_canEdit = _canCreate;
-			_canReassign = _ctx.isUserInRole("Developer");
 			return;
 		}
 
@@ -58,8 +60,6 @@ public final class IssueAccessControl extends AccessControl {
 		int userID = _ctx.getUser().getID();
 		boolean isOpen = (_i.getStatus() == Issue.STATUS_OPEN);
 		boolean isMine = ((_i.getAuthorID() == userID) || (_i.getAssignedTo() == userID));
-		boolean isDev = _ctx.isUserInRole("Developer");
-		boolean isStaff = _ctx.isUserInRole("HR") || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination");
 		
 		// Check read access
 		_canRead = (_i.getSecurity() == Issue.SECURITY_STAFF) ? isStaff || isDev : true;
