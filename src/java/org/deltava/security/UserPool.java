@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -10,10 +10,11 @@ import org.deltava.beans.system.IPAddressInfo;
 /**
  * A singleton class for tracking connected and blocked users.
  * @author Luke
- * @version 2.5
+ * @version 5.0
  * @since 1.0
  */
 
+@Helper(Pilot.class)
 public class UserPool {
 
 	private static final ConcurrentMap<Integer, UserSession> _users = new ConcurrentHashMap<Integer, UserSession>();
@@ -38,7 +39,7 @@ public class UserPool {
 	public static void add(Pilot p, String sessionID, IPAddressInfo addrInfo, String userAgent) {
 		if ((p != null) && (!isBlocked(p))) {
 			UserSession uw = new UserSession(p, sessionID, addrInfo, userAgent);
-			_users.put(new Integer(p.getID()), uw);
+			_users.put(Integer.valueOf(p.getID()), uw);
 			if (_users.size() >= _maxSize) {
 				_maxSize = _users.size();
 				_maxSizeDate = new Date();
@@ -52,7 +53,7 @@ public class UserPool {
 	 * @see UserPool#isBlocked(Person)
 	 */
 	public static void block(Person p) {
-		_blockedUsers.add(new Integer(p.getID()));
+		_blockedUsers.add(Integer.valueOf(p.getID()));
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public class UserPool {
 	 * @param p the Person to block
 	 */
 	public static void unblock(Person p) {
-		_blockedUsers.remove(new Integer(p.getID()));
+		_blockedUsers.remove(Integer.valueOf(p.getID()));
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class UserPool {
 	 * @see UserPool#isBlocked(Person)
 	 */
 	public static boolean contains(int userID) {
-		return _users.containsKey(new Integer(userID));
+		return _users.containsKey(Integer.valueOf(userID));
 	}
 	
 	/**
@@ -98,7 +99,7 @@ public class UserPool {
 	 * @see UserPool#block(Person)
 	 */
 	public static boolean isBlocked(Person usr) {
-		return (usr != null) ? _blockedUsers.contains(new Integer(usr.getID())) : false;
+		return (usr != null) ? _blockedUsers.contains(Integer.valueOf(usr.getID())) : false;
 	}
 
 	/**
