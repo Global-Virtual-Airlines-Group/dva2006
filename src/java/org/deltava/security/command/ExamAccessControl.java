@@ -89,14 +89,14 @@ public class ExamAccessControl extends AccessControl {
         
         // Check if we're able to score - everyone can score a check ride
         boolean inScoreList = isExam && (_ep != null) && (_ep.getScorerIDs().isEmpty() ||
-        		_ep.getScorerIDs().contains(new Integer(_ctx.getUser().getID())));
+        		_ep.getScorerIDs().contains(Integer.valueOf(_ctx.getUser().getID())));
         inScoreList |= (isCR && isExam);
 
         // Set access
         _canRead = isOurs || isExam || isHR;
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && isOurAirline && !isOurs;
-        _canDelete = _ctx.isUserInRole("Admin") && (isOurAirline || isOurUser);
+        _canDelete = _ctx.isUserInRole("Admin") && (isAcademy || isOurAirline || isOurUser);
         _canScore = _canEdit || (isSubmitted && (inScoreList || (isHR && isOurAirline)));
         _canViewAnswers = isScored && (isExam || isHR);
         
