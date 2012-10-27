@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -169,30 +169,6 @@ public class GetFlightReports extends DAO {
 		}
 	}
 
-	/**
-	 * Returns the number of Flight Reports awaiting disposition.
-	 * @return the number Flight Reports in SUBMITTED status
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getDisposalQueueSize() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?)");
-			_ps.setInt(1, FlightReport.SUBMITTED);
-
-			// Execute the query
-			int results = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					results = rs.getInt(1);
-			}
-
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
 	/**
 	 * Returns the number of Flight Reports awaiting disposition.
 	 * @param eqType the equipment type, or null if all
