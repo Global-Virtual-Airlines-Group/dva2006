@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.flight.FlightReport;
@@ -7,7 +7,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A comparator to sort Flight Reports.
  * @author Luke
- * @version 2.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -19,11 +19,10 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
     public static final int EQUIPMENT = 3;
     public static final int ORIGIN = 4;
     public static final int DESTINATION = 5;
-    public static final int PROCESSING_TIME = 6;
-    public static final int FLIGHTCODE = 7;
+    public static final int FLIGHTCODE = 6;
 
     private static final String[] TYPES = { "Date", "Length", "Distance", "Equipment Type", "Origin", "Destination",
-            "Processing Time", "Flight Code" };
+            "Flight Code" };
 
     /**
      * Creates a new FlightReport comparator with a particular comparison type code.
@@ -68,10 +67,10 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
                 }
 
             case LENGTH:
-                return new Integer(f1.getLength()).compareTo(new Integer(f2.getLength()));
+                return Integer.valueOf(f1.getLength()).compareTo(Integer.valueOf(f2.getLength()));
 
             case DISTANCE:
-                return new Integer(f1.getDistance()).compareTo(new Integer(f2.getDistance()));
+                return Integer.valueOf(f1.getDistance()).compareTo(Integer.valueOf(f2.getDistance()));
 
             case EQUIPMENT:
                 return f1.getEquipmentType().compareTo(f2.getEquipmentType());
@@ -96,9 +95,6 @@ public class FlightReportComparator extends AbstractComparator<FlightReport> {
                 aO = f1.getAirportD();
                 return (aO == null) ? -1 : aO.compareTo(f2.getAirportD());
                 
-            case PROCESSING_TIME:
-                throw new UnsupportedOperationException();
-
             case FLIGHTCODE:
             default:
                 return f1.compareTo(f2);

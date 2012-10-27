@@ -1,4 +1,4 @@
-// Copyright 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display aggregated ACARS chat logs.
  * @author Luke
- * @version 2.3
+ * @version 5.0
  * @since 2.2
  */
 
@@ -30,6 +30,7 @@ public class ChatLogService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Check our access
@@ -54,10 +55,9 @@ public class ChatLogService extends WebService {
 			
 			// Get the author/recipient IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<TextMessage> i = msgs.iterator(); i.hasNext(); ) {
-				TextMessage msg = i.next();
-				IDs.add(new Integer(msg.getAuthorID()));
-				IDs.add(new Integer(msg.getRecipientID()));
+			for (TextMessage msg : msgs) {
+				IDs.add(Integer.valueOf(msg.getAuthorID()));
+				IDs.add(Integer.valueOf(msg.getRecipientID()));
 			}
 			
 			// Load the Users
@@ -76,11 +76,11 @@ public class ChatLogService extends WebService {
 			TextMessage msg = i.next();
 			ctx.print(StringUtils.format(msg.getDate(), "MM/dd/yyyy HH:mm:ss"));
 			ctx.print(",");
-			Pilot author = pilots.get(new Integer(msg.getAuthorID()));
+			Pilot author = pilots.get(Integer.valueOf(msg.getAuthorID()));
 			ctx.print((author == null) ? "???" : author.getName());
 			ctx.print(",");
 			if (msg.getRecipientID() != 0) {
-				Pilot recipient = pilots.get(new Integer(msg.getRecipientID()));
+				Pilot recipient = pilots.get(Integer.valueOf(msg.getRecipientID()));
 				ctx.print((recipient == null) ? "???" : recipient.getName());
 			}
 			
@@ -90,14 +90,13 @@ public class ChatLogService extends WebService {
 		
 		// Write the response
 		try {
-			ctx.getResponse().setContentType("text/csv");
+			ctx.setContentType("text/csv", "UTF-8");
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsChatLog.csv");
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
 		
-		// Write success code
 		return SC_OK;
 	}
 

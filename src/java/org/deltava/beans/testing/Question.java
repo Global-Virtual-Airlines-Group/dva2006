@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.ImageBean;
@@ -6,7 +6,7 @@ import org.deltava.beans.ImageBean;
 /**
  * A class to store examination question information.
  * @author Luke
- * @version 2.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -131,6 +131,6 @@ public class Question extends ImageBean {
      */
     public int compareTo(Object o2) {
         Question q2 = (Question) o2;
-        return new Integer(_number).compareTo(new Integer(q2.getNumber()));
+        return Integer.valueOf(_number).compareTo(Integer.valueOf(q2._number));
     }
 }

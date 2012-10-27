@@ -1,4 +1,4 @@
-// Copyright 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.util.*;
@@ -6,16 +6,16 @@ import org.deltava.util.*;
 /**
  * A bean to store CIDR address blocks.
  * @author Luke
- * @version 2.5
+ * @version 5.0
  * @since 2.5
  */
 
 public class IPBlock implements java.io.Serializable, Comparable<IPBlock> {
 	
-	private String _baseAddr;
-	private long _rawAddr;
-	private long _endAddr;
-	private int _bits;
+	private final String _baseAddr;
+	private final long _rawAddr;
+	private final long _endAddr;
+	private final int _bits;
 
 	/**
 	 * Initializes the bean.
@@ -55,7 +55,7 @@ public class IPBlock implements java.io.Serializable, Comparable<IPBlock> {
 	}
 	
 	/**
-	 * Returns the size of the block
+	 * Returns the size of the block.
 	 * @return the number of addresses in the block
 	 */
 	public int getSize() {
@@ -78,15 +78,14 @@ public class IPBlock implements java.io.Serializable, Comparable<IPBlock> {
 	public int compareTo(IPBlock ib2) {
 		int tmpResult = new Long(_rawAddr).compareTo(new Long(ib2._rawAddr));
 		if (tmpResult == 0)
-			tmpResult = new Integer(_bits).compareTo(new Integer(ib2._bits));
+			tmpResult = Integer.valueOf(_bits).compareTo(Integer.valueOf(ib2._bits));
 		
 		return tmpResult;
 	}
 
 	public String toString() {
 		StringBuilder buf = new StringBuilder(_baseAddr);
-		buf.append('/');
-		buf.append(_bits);
+		buf.append('/').append(_bits);
 		return buf.toString();
 	}
 	
