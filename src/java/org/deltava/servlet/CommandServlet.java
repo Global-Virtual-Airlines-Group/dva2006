@@ -310,9 +310,9 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			}
 		} finally {
 			long execTime = tt.stop();
-			if (execTime < MAX_EXEC_TIME)
+			if (execTime < MAX_EXEC_TIME) {
 				if (log.isDebugEnabled()) log.debug("Completed in " + String.valueOf(execTime) + " ms");
-			else
+			} else
 				log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
 
 			// Create the command result statistics entry
