@@ -26,56 +26,33 @@ public class GetFlightReportQueue extends DAO {
 	}
 
 	/**
-	 * Returns the number of Flight Reports awaiting disposition.
-	 * @return the number Flight Reports in SUBMITTED status
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getDisposalQueueSize() throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?)");
-			_ps.setInt(1, SUBMITTED);
-
-			int results = 0;
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					results = rs.getInt(1);
-			}
-
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Returns the size of the pending Flight Report queue for an Equipment program. 
-	 * @param eqType the equipment program name 
+	 * Returns the size of the pending Flight Report queue for an Equipment program.
+	 * @param eqType the equipment program name
 	 * @return the number of pending or held PIREPs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int getDisposalQueueSize(String eqType) throws DAOException {
+	public DisposalQueueStats getDisposalQueueStats(String eqType) throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(PR.ID) FROM PIREPS PR, EQRATINGS ER WHERE ((PR.STATUS=?) OR (PR.STATUS=?)) "
-				+ "AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) AND (ER.EQTYPE=?)");
-			_ps.setInt(1, HOLD);
-			_ps.setInt(2, SUBMITTED);
-			_ps.setInt(3, PRIMARY_RATING);
-			_ps.setString(4, eqType);
-			
-			int results = 0;
+			prepareStatementWithoutLimits("SELECT COUNT(PR.ID) AS CNT, AVG(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) FROM PIREPS PR, "
+					+ "EQRATINGS ER WHERE (PR.STATUS=?) AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) AND (ER.EQTYPE=?)");
+			_ps.setInt(1, SUBMITTED);
+			_ps.setInt(2, PRIMARY_RATING);
+
+			DisposalQueueStats dq = new DisposalQueueStats(new java.util.Date(), 0, 0);
 			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next())
-					results = rs.getInt(1);
+				if (rs.next()) {
+					dq = new DisposalQueueStats(new java.util.Date(), rs.getInt(1), rs.getDouble(2));
+					dq.addCount(eqType, dq.getSize());
+				}
 			}
-			
+
 			_ps.close();
-			return results;
+			return dq;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns statistics about the pending Flight Report queue.
 	 * @return a DisposalQueueStats bean
@@ -83,25 +60,25 @@ public class GetFlightReportQueue extends DAO {
 	 */
 	public DisposalQueueStats getDisposalQueueStats() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT COUNT(ID), AVG(TIMESTAMPDIFF(HOUR,,SUBMITTED,NOW())) FROM PIREPS WHERE (STATUS=?)");
+			prepareStatementWithoutLimits("SELECT COUNT(ID), AVG(TIMESTAMPDIFF(HOUR,SUBMITTED,NOW())) FROM PIREPS WHERE (STATUS=?)");
 			_ps.setInt(1, SUBMITTED);
-			
+
 			DisposalQueueStats dq = new DisposalQueueStats(new java.util.Date(), 0, 0);
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next())
 					dq = new DisposalQueueStats(new java.util.Date(), rs.getInt(1), rs.getDouble(2));
 			}
-			
+
 			_ps.close();
 			prepareStatementWithoutLimits("SELECT ER.EQTYPE, COUNT(PR.ID) AS CNT FROM PIREPS PR, EQRATINGS ER WHERE (PR.STATUS=?) "
-				+ "AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) GROUP BY ER.EQTYPE ORDER BY CNT DESC, ER.EQTYPE");
+					+ "AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) GROUP BY ER.EQTYPE ORDER BY CNT DESC, ER.EQTYPE");
 			_ps.setInt(1, SUBMITTED);
 			_ps.setInt(2, PRIMARY_RATING);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					dq.addCount(rs.getString(1), rs.getInt(2));
 			}
-			
+
 			_ps.close();
 			return dq;
 		} catch (SQLException se) {
