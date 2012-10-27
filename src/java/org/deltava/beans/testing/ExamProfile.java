@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store Examination profile information.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -214,14 +214,10 @@ public class ExamProfile implements Comparable<ExamProfile>, java.io.Serializabl
     /**
      * Sets the number of questions in this Examination.
      * @param size the number of questions
-     * @throws IllegalArgumentException if size is negative
      * @see ExamProfile#getSize()
      */
     public void setSize(int size) {
-        if (size < 1)
-            throw new IllegalArgumentException("Size cannot be zero or negative");
-        
-        _questions = size;
+        _questions = Math.max(0, size);
     }
     
     /**
@@ -302,15 +298,15 @@ public class ExamProfile implements Comparable<ExamProfile>, java.io.Serializabl
      */
     public void addScorerID(int id) {
     	if (id > 0)
-    		_graderIDs.add(new Integer(id));
+    		_graderIDs.add(Integer.valueOf(id));
     }
 
     /**
      * Compares two examinations by comparing their stage and name.
      */
     public int compareTo(ExamProfile e2) {
-        int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(e2.getStage()));
-        return (tmpResult != 0) ? tmpResult : _name.compareTo(e2.getName()); 
+        int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(e2._stage));
+        return (tmpResult != 0) ? tmpResult : _name.compareTo(e2._name); 
     }
     
     /**

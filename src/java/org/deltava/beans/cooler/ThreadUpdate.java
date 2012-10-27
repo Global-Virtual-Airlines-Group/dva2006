@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A bean to store Water Cooler thread history entries.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -93,6 +93,6 @@ public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
 	public int compareTo(Object o) {
 		ThreadUpdate tu2 = (ThreadUpdate) o;
 		int tmpResult = _date.compareTo(tu2._date);
-		return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(tu2.getID())) : tmpResult;
+		return (tmpResult == 0) ? super.compareTo(tu2) : tmpResult;
 	}
 }

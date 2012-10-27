@@ -7,7 +7,7 @@ import java.util.*;
  * A class to store cross-Airline User data. This is used to track locations of users in parts of the application (Water
  * Cooler, Online Events) that allow users from other airlines to write database entries.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public class UserData extends DatabaseBean {
 	 * @return TRUE if this User has this ID in an application, otherwise FALSE
 	 */
 	public boolean hasID(int id) {
-		return _xAirlineIDs.contains(new Integer(id));
+		return _xAirlineIDs.contains(Integer.valueOf(id));
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class UserData extends DatabaseBean {
 	 */
 	public void setID(int id) {
 		super.setID(id);
-		_xAirlineIDs.add(new Integer(id));
+		_xAirlineIDs.add(Integer.valueOf(id));
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class UserData extends DatabaseBean {
 		if (id < 1)
 			throw new IllegalArgumentException("Invalid Cross-Airline ID - " + id);
 		
-		_xAirlineIDs.add(new Integer(id));
+		_xAirlineIDs.add(Integer.valueOf(id));
 	}
 	
 	/**
@@ -189,13 +189,13 @@ public class UserData extends DatabaseBean {
 	 * Returns the hashcode of the database ID.
 	 */
 	public int hashCode() {
-		return cacheKey().hashCode();
+		return getID();
 	}
 
 	/**
 	 * Returns the database ID.
 	 */
 	public Object cacheKey() {
-		return new Integer(getID());
+		return Integer.valueOf(getID());
 	}
 }

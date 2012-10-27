@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to track ServInfo data locations and their reliability.
  * @author Luke
- * @version 2.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -14,12 +14,12 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	
 	private static final int MAX_LAST_USES = 8;
 
-	private String _url;
+	private final String _url;
 	private Date _lastUse;
 	private int _totalUses;
 	private int _success;
 	
-	private List<Boolean> _lastUses = new ArrayList<Boolean>();
+	private final List<Boolean> _lastUses = new ArrayList<Boolean>();
 	
 	/**
 	 * Creates the URL location bean.
@@ -92,13 +92,11 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 		
 		// Calculate the percentage
 		int successCount = 0;
-		for (Iterator<Boolean> i = _lastUses.iterator(); i.hasNext(); ) {
-			Boolean b = i.next();
+		for (Boolean b : _lastUses) {
 			if (b.booleanValue())
 				successCount++;
 		}
 		
-		// Return percentage
 		return (successCount * 100) / _lastUses.size();
 	}
 	
@@ -127,9 +125,9 @@ public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	 * @see NetworkDataURL#getSuccessPercentage()
 	 */
 	public int compareTo(NetworkDataURL nd2) {
-		int tmpResult = new Integer(getRecentSuccessPercentage()).compareTo(new Integer(nd2.getRecentSuccessPercentage()));
+		int tmpResult = Integer.valueOf(getRecentSuccessPercentage()).compareTo(Integer.valueOf(nd2.getRecentSuccessPercentage()));
 		if (tmpResult == 0)
-			tmpResult = new Integer(_success).compareTo(new Integer(nd2._success)) * -1;
+			tmpResult = Integer.valueOf(_success).compareTo(Integer.valueOf(nd2._success)) * -1;
 		
 		return tmpResult;
 	}

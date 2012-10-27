@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Water Cooler Threads.
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -102,7 +102,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canUnlock = channelAccess && isClosed && isModerator;
         _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
         _canDelete = _ctx.isUserInRole("Admin");
-        _canReport = _canReply && (!isClosed) && (!_mt.getReportIDs().contains(new Integer(_ctx.getUser().getID())));
+        _canReport = _canReply && (!isClosed) && (!_mt.getReportIDs().contains(Integer.valueOf(_ctx.getUser().getID())));
         _canAddImage = (isOurs && _canReply) || (isModerator && _canRead);
         _canUnlinkImage = _canAddImage && !_mt.getImageURLs().isEmpty();
         
