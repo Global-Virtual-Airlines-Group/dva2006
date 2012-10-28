@@ -78,6 +78,14 @@ google.maps.Map.prototype.addLayer = function(l) {
 	return true;
 }
 
+// Closes map infoWindow
+google.maps.Map.prototype.closeWindow = function() {
+	if (this.infoWindow)
+		this.infoWindow.close();
+
+	return true;
+}
+
 // Clears all map overlay layers
 google.maps.Map.prototype.clearLayers = function() {
 	if (map.animator) {
