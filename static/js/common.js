@@ -370,8 +370,7 @@ var req;
 try {
 	req = new XMLHttpRequest();
 } catch (e) {
-	var MSXML_XMLHTTP_PROGIDS = ['MSXML2.XMLHTTP.5.0','MSXML2.XMLHTTP.4.0','MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP'];
-	var success = false;
+	var MSXML_XMLHTTP_PROGIDS = ['MSXML2.XMLHTTP.6.0','MSXML2.XMLHTTP.4.0','MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP'];
 	for (var i = 0; i < MSXML_XMLHTTP_PROGIDS.length && (!req); i++) {
 		try {
 			req = new ActiveXObject(MSXML_XMLHTTP_PROGIDS[i]);
