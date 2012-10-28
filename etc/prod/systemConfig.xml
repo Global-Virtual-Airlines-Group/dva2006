@@ -666,6 +666,12 @@
 			<draft_purge type="Integer">30</draft_purge>
 			<assign_purge type="Integer">14</assign_purge>
 			<acars_only type="Boolean">false</acars_only>
+
+			<!-- PIREP queue warning thresholds -->
+			<warn>
+				<minSize type="Integer">75</minSize>
+				<minAge type="Integer">18</minAge>
+			</warn>
 		</pirep>
 
 		<!-- Senior Captain settings -->
