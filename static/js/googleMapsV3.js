@@ -11,6 +11,7 @@ golgotha.maps.ovLayers = [];
 golgotha.maps.util = {};
 golgotha.maps.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
 golgotha.maps.util.oldIE = (golgotha.maps.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));  
+golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
 
 // Calculate GMT offset in seconds from local
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
