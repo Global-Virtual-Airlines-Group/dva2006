@@ -7,8 +7,10 @@ div.style.width = '256px';
 div.style.height = '256px';
 var img = doc.createElement('img');
 img.src = this.getTileUrl(pnt, zoom);
-img.setAttribute('class', 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date'));
-var tx = this.tempZeroOpacity ? 0 : this.getOpacity();
+var c = 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + this.get('date');
+img.setAttribute('class', c);
+if (golgotha.maps.util.oldIE) img.IE8 = c;
+var tx = (this.tempZeroOpacity==true) ? 0 : this.getOpacity();
 if (golgotha.maps.util.isIE)
 	img.style.filter = 'alpha(opacity=' + (tx*100) + ')';
 else
@@ -16,6 +18,22 @@ else
 
 div.appendChild(img);
 return div;	
+}
+
+// Tile selection function
+golgotha.maps.util.getTileImgs = function(cName, eName, parent)
+{
+if (parent == null) parent = document;	
+var elements = [];
+var all = parent.getElementsByTagName((eName == null) ? '*' : eName);
+for (var x = 0; x < all.length; x++) {
+	var e = all[x];
+	var cl = (e.IE8) ? e.IE8 : e.className;
+	if (cl.split && (cl.split(' ').indexOf(cName) > -1))
+		elements.push(e);
+}
+
+return elements;
 }
 
 // Make cloud layer behave like our layers
@@ -86,20 +104,27 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 			return true;
 		}
 		
-		var imgs = getElementsByClass(this.get('imgClass') + '-' + this.get('date'), 'img');
+		var imgs = golgotha.maps.util.getTileImgs(this.get('imgClass') + '-' + this.get('date'), 'img');
 		for (var x = 0; x < imgs.length; x++) {
 			var img = imgs[x];
-			img.style.opacity = isVisible ? this.getOpacity() : 0;
+			var o = isVisible ? this.getOpacity() : 0;
+			if (golgotha.maps.util.isIE)
+				img.style.filter = 'alpha(opacity=' + (o*100) + ')';
+			else
+				img.style.opacity = o;
 		}
 		
 		return true;
 	}
 
 	ov.hideAll = function() {
-		var imgs = getElementsByClass(this.get('imgClass'));
+		var imgs = golgotha.maps.util.getTileImgs(this.get('imgClass'));
 		for (var x = 0; x < imgs.length; x++) {
 			var img = imgs[x];
-			img.style.opacity = 0;
+			if (golgotha.maps.util.isIE)
+				img.style.filter = 'alpha(opacity=0)';
+			else
+				img.style.opacity = 0;
 		}
 
 		return true;
@@ -115,7 +140,7 @@ golgotha.maps.WeatherLayer = function(opts, name, timestamp) {
 			img.loadCount = 1;
 			img.onload = function(e) {
 				imgsToLoad.remove(this.src);
-				delete this.loadCount;
+				try { delete this.loadCount; } catch (err) { this.loadCount = null; }
 				if (tileLoadHandler != null)
 					tileLoadHandler.call();
 				if (imgsToLoad.length == 0) {
