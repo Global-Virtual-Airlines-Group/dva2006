@@ -168,7 +168,7 @@ return true;
 <tr id="post${msg.createdOn.time}">
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
-<el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
+<c:if test="${isHuman}"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br /></c:if>
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld caps">${pilot.pilotCode}</span></c:if>
 <c:if test="${empty pilot.pilotCode}"><span class="bld caps">NEW ${pilot.airlineCode} PILOT</span></c:if>
 <br />
@@ -398,7 +398,7 @@ notification each time a reply is posted in this Thread.
 <c:if test="${!empty firstUnreadTime}">
 <script type="text/javascript">
 var postRow = document.getElementById('post${firstUnreadTime.time}');
-postRow.scrollIntoView();
+if (postRow) postRow.scrollIntoView();
 </script></c:if>
 <content:googleAnalytics />
 </body>
