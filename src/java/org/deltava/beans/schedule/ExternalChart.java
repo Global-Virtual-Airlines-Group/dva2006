@@ -25,7 +25,7 @@ public class ExternalChart extends Chart {
 	}
 	
 	/**
-	 * Returns whther this is an external chart.
+	 * Returns whether this is an external chart.
 	 * @return TRUE
 	 */
 	@Override
