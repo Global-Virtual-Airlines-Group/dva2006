@@ -66,7 +66,7 @@ public final class IssueAccessControl extends AccessControl {
 		boolean canReopen = (!isOpen && isMine) || isDev;
 
 		// Set access control variables
-		_canComment = _canCreate && _canRead && (isOpen || canReopen);
+		_canComment = _ctx.isUserInRole("Pilot") && _canRead && (isOpen || canReopen);
 		_canEdit = _canRead && ((isMine && isOpen) || isDev);
 		_canResolve = isDev;
 		_canReassign = isDev && isOpen;
