@@ -6,13 +6,15 @@ import java.net.*;
 
 import javax.net.ssl.*;
 
+import org.deltava.beans.system.VersionInfo;
+
 /**
  * An abstract class to supports Data Access Objects that read from an HTTP
  * URL. This differs from a stream-based Data Access Object only that HTTP
  * DAOs create their own stream to a URL. This is used in situations where
  * request-specific data is encoded into the URL. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.4
  */
 
@@ -83,6 +85,16 @@ public abstract class DAO {
 		_urlcon.setRequestMethod(_method);
 		_urlcon.setDefaultUseCaches(false);
 		_urlcon.setInstanceFollowRedirects(true);
+		setRequestHeader("User-Agent", VersionInfo.USERAGENT);
+    }
+    
+    /**
+     * Sets a request header.
+     * @param name the header name
+     * @param value the header value
+     */
+    protected void setRequestHeader(String name, String value) {
+    	_urlcon.setRequestProperty(name, value);
     }
     
     /**
@@ -123,7 +135,7 @@ public abstract class DAO {
     		throw new IllegalStateException("Not Initialized");
     	
     	_urlcon.setDoOutput(true);
-    	_urlcon.setRequestProperty ("Content-Type", "application/x-www-form-urlencoded");
+    	setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		return _urlcon.getOutputStream();
     }
   
