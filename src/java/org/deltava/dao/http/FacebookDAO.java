@@ -1,16 +1,16 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.deltava.util.StringUtils;
 
 /**
  * An abstract class for Facebook HTTP APIs. 
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 3.4
  */
 
@@ -26,7 +26,7 @@ public abstract class FacebookDAO extends DAO {
 	 * A helper class to build POST bodies.
 	 */
 	protected class POSTBuilder extends LinkedHashMap<String, String> {
-
+		
 		/**
 		 * Adds a value to the Map provided it is not null or empty.
 		 * @param key the key
@@ -42,13 +42,17 @@ public abstract class FacebookDAO extends DAO {
 		 */
 		public String getBody() {
 			StringBuilder dataBuf = new StringBuilder();
-			for (Iterator<Map.Entry<String, String>> i = entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, String> me = i.next();
-				dataBuf.append(me.getKey());
-				dataBuf.append('=');
-				dataBuf.append(me.getValue());
-				if (i.hasNext())
-					dataBuf.append('&');
+			try {
+				for (Iterator<Map.Entry<String, String>> i = entrySet().iterator(); i.hasNext(); ) {
+					Map.Entry<String, String> me = i.next();
+					dataBuf.append(URLEncoder.encode(me.getKey(), "UTF-8"));
+					dataBuf.append('=');
+					dataBuf.append(URLEncoder.encode(me.getValue(), "UTF-8"));
+					if (i.hasNext())
+						dataBuf.append('&');
+				}
+			} catch (UnsupportedEncodingException ue) {
+				// swallow
 			}
 			
 			return dataBuf.toString();
