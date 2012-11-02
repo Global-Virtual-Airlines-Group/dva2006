@@ -86,10 +86,11 @@ public class GetFAACharts extends DAO {
 					c.setType(Chart.Type.SID);
 				else if ((c.getType() == Chart.Type.UNKNOWN) && ("MIN".equals(typeCode)))
 					c.setType(Chart.Type.MIN);
-				else if (c.getType() == Chart.Type.UNKNOWN)
+				
+				if (c.getType() == Chart.Type.UNKNOWN)
 					log.warn("Unknown chart type - " + typeCode);
-
-				charts.add(c);
+				else
+					charts.add(c);
 			}
 			
 			results.add(charts);
