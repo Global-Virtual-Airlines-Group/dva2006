@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Flight Route that has its waypoints populated.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.6
  */
 
@@ -62,6 +62,15 @@ public class PopulatedRoute extends FlightRoute implements Route {
 	 */
 	public void addWaypoint(NavigationDataBean nd) {
 		addWaypoint(nd, null);
+	}
+	
+	/**
+	 * Adds multiple waypoints to the route.
+	 * @param nds a Collection of NavigationDataBeans
+	 */
+	public void addWaypoints(Collection<NavigationDataBean> nds) {
+		for (NavigationDataBean nd: nds)
+			addWaypoint(nd, null);
 	}
 	
 	/**

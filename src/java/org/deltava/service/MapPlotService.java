@@ -7,15 +7,13 @@ import org.jdom2.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
-import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * An abstract Web Service to store common map plotting code. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.3
  */
 
@@ -27,7 +25,7 @@ public abstract class MapPlotService extends WebService {
 	 * @param doIcons render markers as icons if supported
 	 * @return a JDOM XML document
 	 */
-	protected Document formatPoints(List<NavigationDataBean> points, boolean doIcons) {
+	protected static Document formatPoints(List<NavigationDataBean> points, boolean doIcons) {
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -55,8 +53,7 @@ public abstract class MapPlotService extends WebService {
 
 		// Write the entries
 		GeoLocation start = points.isEmpty() ? null : points.get(0); distance = 0;
-		for (Iterator<NavigationDataBean> i = points.iterator(); i.hasNext();) {
-			NavigationDataBean entry = i.next();
+		for (NavigationDataBean entry : points) {
 			distance += entry.distanceTo(start);
 			Element e = XMLUtils.createElement("pos", entry.getInfoBox(), true);
 			e.setAttribute("code", entry.getCode());
@@ -72,24 +69,8 @@ public abstract class MapPlotService extends WebService {
 			re.addContent(e);
 		}
 
-		// Return the document
 		re.setAttribute("distance", StringUtils.format(distance, "###0"));
 		return doc;
-	}
-	
-	/**
-	 * Translates IATA to ICAO codes.
-	 * @param code the IATA code
-	 * @return the ICAO code
-	 */
-	protected String txIATA(String code) {
-		if ((code != null) && (code.length() == 3)) {
-			Airport aD = SystemData.getAirport(code);
-			if (aD != null)
-				return aD.getICAO();
-		}
-		
-		return code;
 	}
 	
 	/**
