@@ -91,7 +91,7 @@ return true;
 <c:choose>
 <c:when test="${hasPDF}">
  <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
- <td class="sec">${chart.type}</td>
+ <td class="sec">${chart.type.description}</td>
 <c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
  <td colspan="${cspan}">Adobe PDF document<c:if test="${chart.size > 0}">, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K</c:if>
@@ -99,7 +99,7 @@ return true;
 </c:when>
 <c:otherwise>
  <td colspan="2"><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
- <td class="sec">${chart.type}</td>
+ <td class="sec">${chart.type.description}</td>
 <c:if test="${access.canEdit}"><td><el:cmd url="chart" link="${chart}" op="edit" className="small bld">EDIT</el:cmd></td></c:if>
  <td class="small" width="10%"><fmt:date date="${chart.lastModified}" fmt="d" /></td>
  <td colspan="${cspan}">${chart.imgType} image, <fmt:int fmt="#,##0" value="${chart.size / 1024}" />K
