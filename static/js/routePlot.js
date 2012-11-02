@@ -134,6 +134,32 @@ xmlreq.onreadystatechange = function() {
 	updateRoutes(f.star, xdoc.getElementsByTagName('star'));
 	displayObject(document.getElementById('stars'), (f.star.options.length > 1));
 
+	// Check for ETOPS warning
+	var ete = golgotha.getChild(xdoc, 'etops');
+	if (ete != null) {
+		var etopsWarn = ete.getAttribute('warning');
+		if (etopsWarn == 'true') {
+			var wpt = golgotha.getChild(ete, 'warnPoint');
+			var wll = new google.maps.LatLng(parseFloat(wpt.getAttribute('lat')), parseFloat(wpt.getAttribute('lng')));
+			var wmrk = googleIconMarker(parseInt(wpt.getAttribute('pal')), parseInt(wpt.getAttribute('icon')), wll, wpt.firstChild.data);
+			wmrk.setMap(map);
+			
+			var pts = ete.getElementsByTagName('airport');
+			for (var x = 0; x < pts.length; x++) {
+				var cll = new google.maps.LatLng(parseFloat(pts[x].getAttribute('lat')), parseFloat(pts[x].getAttribute('lng')));
+				var apmrk = googleIconMarker(parseInt(pts[x].getAttribute('pal')), parseInt(pts[x].getAttribute('icon')), cll, pts[x].firstChild.data);
+				apmrk.setMap(map);
+				
+				// Draw the circle and line
+				var crng = parseInt(ete.getAttribute('range')) * 1609.344;
+				var c = new google.maps.Circle({center:cll,radius:crng,fillColor:'#601010',fillOpacity:0.15,strokeColor:'darkred',strokeOpacity:0.4,strokeWeight:1,zIndex:golgotha.maps.z.POLYLINE});
+				c.setMap(map);
+				var wl = new google.maps.Polyline({path:[cll,wll],strokeColor:'red',strokeOpacity:0.55,strokeWeight:1.15,zIndex:golgotha.maps.z.POLYLINE+1})
+				wl.setMap(map);
+			}
+		}
+	}
+
 	// Load the alternate list
 	var alts = xdoc.getElementsByTagName('alt');
 	if (alts.length > 0) {
@@ -257,7 +283,7 @@ try {
 	var opt = combo.options[combo.selectedIndex];
 	f.cruiseAlt.value = opt.altitude;
 	f.route.value = opt.value;
-	f.comments.value = opt.comments;
+	f.comments.value = opt.comments ? opt.comments : '';
 	setCombo(f.sid, opt.SID);
 	setCombo(f.star, opt.STAR);
 	if (f.routeID)
