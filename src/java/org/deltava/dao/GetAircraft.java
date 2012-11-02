@@ -60,7 +60,7 @@ public class GetAircraft extends DAO implements CachingDAO {
 	 * @return a Collection of Aircraft beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Aircraft> getAll() throws DAOException {
+	public List<Aircraft> getAll() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.AIRCRAFT");
 			return execute();
