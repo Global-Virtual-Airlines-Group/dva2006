@@ -9,6 +9,7 @@
 <content:sysdata var="academyFlights" name="academy.minFlights" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
+<content:sysdata var="faaChartURL" name="schedule.chart.url.faa" />
 <!-- Top Menu Frame -->
 <content:region id="navmenu">
 <content:menu attr="isSideMenu">
@@ -34,6 +35,9 @@
  <content:subitem><el:cmd url="aInfoList">Virtual Airlines</el:cmd></content:subitem>
 </content:filter>
  <content:subitem><el:cmd url="charts">Approach Charts</el:cmd></content:subitem>
+<c:if test="${!empty faaChartURL}"><content:filter roles="Operations,Schedule">
+ <content:subitem><el:cmd url="faachartdl">FAA Chart Download</el:cmd></content:subitem>
+</content:filter></c:if>
  <content:subitem><el:cmd url="routes" op="oceanic">Oceanic Tracks</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedimport">Schedule Import</el:cmd></content:subitem>
  <content:subitem><el:cmd url="schedexport">Schedule Export</el:cmd></content:subitem>
