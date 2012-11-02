@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -19,7 +19,8 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	 */
 	public enum Type implements ComboAlias {
 		UNKNOWN("???"), ILS("ILS Approach"), APR("Approach"), STAR("Standard Terminal Arrival"), 
-		SID("Standard Instrument Departure"), GROUND("Facility"), PACKAGE("Combined Package");
+		SID("Standard Instrument Departure"), GROUND("Facility"), PACKAGE("Combined Package"),
+		MIN("Minimums");
 		
 		private final String _desc;
 		
@@ -205,9 +206,7 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, ViewEntry {
 	}
 
 	/**
-	 * Compare two Charts by comparing their IATA codes, then their names
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 * @throws ClassCastException if o2 is not a Chart
+	 * Compares two Charts by comparing their Airports, then their names.
 	 */
 	public int compareTo(Object o2) {
 		Chart c2 = (Chart) o2;

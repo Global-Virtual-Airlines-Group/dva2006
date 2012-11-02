@@ -475,13 +475,18 @@
 				<il>AirCharts</il>
 				<nz>AirCharts</nz>
 				<uk>AirCharts</uk>
-				<us>AirCharts</us>
+				<us>internal</us>
 				<za>internal</za>
 			</map>
+
+			<url>
+				<faa>http://155.178.201.160/d-tpp/${YY}${MM}</faa>
+			</url>
 
 			<default>AirCharts</default>
 			<maxAge type="Integer">14</maxAge>
 			<threads type="Integer">16</threads>
+			<download type="Boolean">false</download>
 		</chart>
 
 		<!-- Charter calculations -->

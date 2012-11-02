@@ -565,6 +565,12 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="faachartdl">
+		<name>FAA Chart Download</name>
+		<class>org.deltava.commands.schedule.FAAChartDownloadCommand</class>
+		<roles>Schedule,Operations</roles>
+	</command>
+
 	<command id="routemap">
 		<name>Schedule Route Map</name>
 		<class>org.deltava.commands.schedule.RouteMapCommand</class>

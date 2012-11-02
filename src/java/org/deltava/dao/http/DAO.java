@@ -26,7 +26,7 @@ public abstract class DAO {
 	private int _readTimeout = 4500;
 	private int _connectTimeout = 2500;
 	
-	private HttpURLConnection _urlcon;
+	private URLConnection _urlcon;
 	
     /**
      * Overrides the context used to generate SSL context.
@@ -73,7 +73,7 @@ public abstract class DAO {
     			throw new InterruptedIOException("Already connected to " + _urlcon.getURL().toExternalForm());
     	}
     	
-    	_urlcon = (HttpURLConnection) u.openConnection();
+    	_urlcon = u.openConnection();
     	if ("https".equals(u.getProtocol()) && (_sslCtxt != null)) {
     		HttpsURLConnection sslcon = (HttpsURLConnection) _urlcon;
     		sslcon.setSSLSocketFactory(_sslCtxt.getSocketFactory());
@@ -82,9 +82,13 @@ public abstract class DAO {
     	// Set timeouts and other stuff
 		_urlcon.setConnectTimeout(_connectTimeout);
 		_urlcon.setReadTimeout(_readTimeout);
-		_urlcon.setRequestMethod(_method);
 		_urlcon.setDefaultUseCaches(false);
-		_urlcon.setInstanceFollowRedirects(true);
+		if (_urlcon instanceof HttpURLConnection) {
+			HttpURLConnection urlcon = (HttpURLConnection) _urlcon;
+			urlcon.setRequestMethod(_method);
+			urlcon.setInstanceFollowRedirects(true);
+		}
+		
 		setRequestHeader("User-Agent", VersionInfo.USERAGENT);
     }
     
@@ -106,7 +110,20 @@ public abstract class DAO {
     	if (_urlcon == null)
     		throw new IllegalStateException("Not Initialized");
     	
-    	return _urlcon.getResponseCode();
+    	return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection)_urlcon).getResponseCode() : 0;
+    }
+    
+    /**
+     * Returns an HTTP response header.
+     * @param name the header name
+     * @return the header value
+     * @throws IOException if an error occured
+     */
+    protected String getHeaderField(String name) throws IOException {
+    	if (_urlcon == null)
+    		throw new IllegalStateException("Not Initialized");
+    	
+    	return _urlcon.getHeaderField(name);
     }
 
     /**
@@ -121,7 +138,7 @@ public abstract class DAO {
     	try {
     		return _urlcon.getInputStream();
     	} catch (IOException ie) {
-    		return _urlcon.getErrorStream();
+    		return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection)_urlcon).getErrorStream() : null;
     	}
     }
     
@@ -146,7 +163,9 @@ public abstract class DAO {
     	if (_urlcon == null)
     		return;
     	
-   		_urlcon.disconnect();
+    	if (_urlcon instanceof HttpURLConnection)
+    		((HttpURLConnection)_urlcon).disconnect();
+    	
    		_urlcon = null;
     }
 }

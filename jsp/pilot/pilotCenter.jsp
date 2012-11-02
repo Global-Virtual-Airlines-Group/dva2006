@@ -46,6 +46,7 @@
 <content:sysdata var="fbAuthURL" name="users.facebook.url.authorize" />
 <content:sysdata var="fbClientID" name="users.facebook.id" />
 <content:sysdata var="fbPageID" name="users.facebook.pageID" />
+<content:sysdata var="faaChartURL" name="schedule.chart.url.faa" />
 <content:attr attr="hasDispatchAccess" value="true" roles="HR,Route,Dispatch" />
 
 <!-- Main Body Frame -->
@@ -789,6 +790,12 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 
 data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
 </tr>
+<c:if test="${!empty faaChartURL}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="faachartdl">FAA Approach Chart Download</el:cmd></td>
+ <td class="data">You can import Approach Charts from the FAA web site.</td>
+</tr>
+</c:if>
 <c:if test="${innovataEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="ivimport">Innovata Schedule Download</el:cmd></td>

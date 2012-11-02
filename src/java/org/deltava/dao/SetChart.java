@@ -45,7 +45,7 @@ public class SetChart extends DAO {
 
 			// Write the metadata
 			if (c.getID() == 0)
-				prepareStatementWithoutLimits("REPLACE INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, LASTMODIFIED, HASH) "
+				prepareStatementWithoutLimits("INSERT INTO common.CHARTS (ICAO, TYPE, IMGFORMAT, NAME, SIZE, LASTMODIFIED, HASH) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
 			else
 				prepareStatementWithoutLimits("UPDATE common.CHARTS SET ICAO=?, TYPE=?, IMGFORMAT=?, NAME=?, SIZE=?, LASTMODIFIED=?, "
@@ -114,6 +114,36 @@ public class SetChart extends DAO {
 	}
 	
 	/**
+	 * Saves an approach chart image.
+	 * @param c the Chart
+	 * @throws IllegalStateException if the Chart is not loaded
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void save(Chart c) throws DAOException {
+		if (!c.isLoaded()) throw new IllegalStateException("Chart not populated");
+		try {
+			MessageDigester md = new MessageDigester("MD5");
+			byte[] md5data = md.digest(c.getInputStream());
+			String md5 = MessageDigester.convert(md5data);
+			
+			startTransaction();
+			prepareStatementWithoutLimits("UPDATE common.CHARTS SET LASTMODIFIED=NOW(), SIZE=?, HASH=? WHERE (ID=?)");
+			_ps.setInt(1, c.getSize());
+			_ps.setString(2, md5);
+			_ps.setInt(3, c.getID());
+			executeUpdate(1);
+			prepareStatementWithoutLimits("REPLACE INTO common.CHARTIMGS (ID, IMG) VALUES (?, ?)");
+			_ps.setInt(1, c.getID());
+			_ps.setBinaryStream(2, c.getInputStream(), c.getSize());
+			executeUpdate(1);
+			commitTransaction();
+		} catch (IOException | SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Updates an Approach Chart's usage counter.
 	 * @param c the Approach Chart
 	 * @throws DAOException if a JDBC error occurs
@@ -122,22 +152,6 @@ public class SetChart extends DAO {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.CHARTS SET USECOUNT=USECOUNT+1 WHERE (ID=?)");
 			_ps.setInt(1, c.getID());
-			executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Purges all Approach Charts for a given Airport.
-	 * @param a the Airport
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	@Deprecated
-	public void purge(Airport a) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("DELETE FROM common.CHARTS WHERE (ICAO=?)");
-			_ps.setString(1, a.getICAO());
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
