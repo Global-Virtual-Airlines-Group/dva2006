@@ -36,7 +36,7 @@
 </tr>
 
 <!-- Table Aircraft Data -->
-<c:forEach var="aircraft" items="${aircraftInfo}">
+<c:forEach var="aircraft" items="${viewContext.results}">
 <view:row entry="${aircraft}">
  <td><el:cmd url="aircraft" linkID="${aircraft.name}" op="edit" className="pri bld">${aircraft.name}</el:cmd></td>
  <td><fmt:list value="${aircraft.IATA}" delim=", " /></td>
@@ -54,7 +54,8 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:legend width="100" labels="Historic,Current" classes="opt1, " /></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br/></view:scrollbar>
+<view:legend width="110" labels="Historic,Current,No Fuel Profile" classes="opt1, ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />
