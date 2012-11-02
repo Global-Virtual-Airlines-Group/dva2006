@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.flight.ILSCategory;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
 
 import org.deltava.util.system.SystemData;
@@ -44,6 +44,16 @@ public class GetWeather extends WeatherDAO {
 			default:
 				return null;
 		}
+	}
+	
+	/**
+	 * Retrieves the METAR for a particular Airport.
+	 * @param a the ICAOAirport
+	 * @return a METAR object, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public METAR getMETAR(ICAOAirport a) throws DAOException {
+		return (a == null) ? null : getMETAR(a.getICAO());
 	}
 	
 	/**
