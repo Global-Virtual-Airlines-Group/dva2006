@@ -9,6 +9,8 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 
+import org.deltava.beans.acars.DispatchRoute;
+import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
@@ -19,6 +21,7 @@ import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
+import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -46,49 +49,51 @@ public class RoutePlotMapService extends MapPlotService {
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
 		Collection<WeatherDataBean> wxs = new ArrayList<WeatherDataBean>();
 		List<Airport> alternates = new ArrayList<Airport>();
+		DispatchRoute dr = new DispatchRoute();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
-		AirportLocation aD = null;
+		Aircraft a = null;
 		try {
 			Connection con = ctx.getConnection();
+			GetAircraft acdao = new GetAircraft(con);
 			GetNavRoute dao = new GetNavRoute(con);
 			GetWeather wxdao = new GetWeather(con);
 			
-			// Translate IATA to ICAO codes
-			String airportDCode = txIATA(ctx.getParameter("airportD"));
-			String airportACode = txIATA(ctx.getParameter("airportA"));
-			String airportLCode = txIATA(ctx.getParameter("airportL"));
-			
 			// Get the departure/arrival airports
-			aD = dao.getAirport(airportDCode);
-			AirportLocation aA = dao.getAirport(airportACode);
-			AirportLocation aL = dao.getAirport(airportLCode);
+			dr.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+			dr.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+			dr.setAirportL(SystemData.getAirport(ctx.getParameter("airportL")));
 			String route = ctx.getParameter("route");
 			
+			// Load Aircraft
+			a = acdao.get(ctx.getParameter("eqType"));
+			
 			// Get the weather
-			METAR wxD = wxdao.getMETAR(airportDCode);
+			METAR wxD = wxdao.getMETAR(dr.getAirportD());
 			if (wxD != null)
 				wxs.add(wxD);
-			WeatherDataBean wx = wxdao.getMETAR(airportACode);
-			if (wx != null)
-				wxs.add(wx);
-			wx = wxdao.getTAF(airportACode);
-			if (wx != null)
-				wxs.add(wx);
+			if (dr.getAirportA() != null) {
+				WeatherDataBean wx = wxdao.getMETAR(dr.getAirportA());
+				if (wx != null)
+					wxs.add(wx);
+				wx = wxdao.getTAF(dr.getAirportA().getICAO());
+				if (wx != null)
+					wxs.add(wx);
+			}
 
 			// Add the departure airport
-			if (aD != null) {
-				routePoints.add(aD);
-				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
+			if (dr.getAirportD() != null) {
+				routePoints.add(new AirportLocation(dr.getAirportD()));
+				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD().getICAO(), TerminalRoute.SID));
 				tRoutes.addAll(sids);
 				
 				// Add popular departure runways
 				if (doRunways) {
 					GetACARSRunways rwdao = new GetACARSRunways(con);
-					Collection<Runway> popRunways = rwdao.getPopularRunways(SystemData.getAirport(airportDCode), SystemData.getAirport(airportACode), true);
+					Collection<Runway> popRunways = rwdao.getPopularRunways(dr.getAirportD(), dr.getAirportA(), true);
 					if (popRunways.isEmpty())
-						popRunways.addAll(rwdao.getPopularRunways(SystemData.getAirport(airportDCode), null, true));
+						popRunways.addAll(rwdao.getPopularRunways(dr.getAirportD(), null, true));
 					
-					Collection<String> sidRunways = dao.getSIDRunways(aD.getCode());
+					Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD().getICAO());
 					for (Runway r : popRunways) {
 						String code = "RW" + r.getName();
 						if (sidRunways.contains(code))
@@ -103,7 +108,7 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Check if we have a SID
 			List<String> wps = StringUtils.split(route, " ");
-			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.SID, ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.SID, ctx.getParameter("sid"));
 			if (sid != null) {
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(sid.getWaypoints(wps.get(0)));
@@ -113,12 +118,12 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the route waypoints
 			if (!StringUtils.isEmpty(route)) {
-				List<NavigationDataBean> points = dao.getRouteWaypoints(route, aD);
+				List<NavigationDataBean> points = dao.getRouteWaypoints(route, dr.getAirportD());
 				routePoints.addAll(points);
 			}
 
 			// Check if we have a STAR - ensure aD is passed in
-			TerminalRoute star = dao.getRoute(aA, TerminalRoute.STAR, ctx.getParameter("star"));
+			TerminalRoute star = dao.getRoute(dr.getAirportA(), TerminalRoute.STAR, ctx.getParameter("star"));
 			if (star != null) {
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
@@ -127,50 +132,75 @@ public class RoutePlotMapService extends MapPlotService {
 			}
 
 			// Add the arrival airport
-			if (aA != null) {
-				routePoints.add(aA);
-				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
+			if (dr.getAirportA() != null) {
+				routePoints.add(new AirportLocation(dr.getAirportA()));
+				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA().getICAO(), TerminalRoute.STAR));
 				tRoutes.addAll(stars);
 				
-				// Calculate alternates
-				GetAircraft acdao = new GetAircraft(con);
-				Aircraft a = acdao.get(ctx.getParameter("eqType"));
 				if (a != null) {
-					alternates.addAll(AlternateAirportHelper.calculateAlternates(a, aA));
+					alternates.addAll(AlternateAirportHelper.calculateAlternates(a, dr.getAirportA()));
 					if (alternates.size() > 10)
 						alternates.subList(10, alternates.size()).clear();
 				}
 				
 				// If the selected alternate isn't in the list, clear it
-				if (aL != null) {
+				if (dr.getAirportL() != null) {
 					boolean noAlt = true;
 					for (Iterator<Airport> i = alternates.iterator(); noAlt && i.hasNext(); ) {
 						Airport ap = i.next();
-						if (ap.getICAO().equals(aL.getICAO()))
+						if (ap.getICAO().equals(dr.getAirportL().getICAO()))
 							noAlt = false;
 					}
 				
 					if (noAlt)
-						aL = null;
+						dr.setAirportL(null);
 				}
 			}
 			
 			// Add the alternate
-			if (aL != null)
-				routePoints.add(aL);
+			if (dr.getAirportL() != null)
+				routePoints.add(new AirportLocation(dr.getAirportL()));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
 			ctx.release();
 		}
 
-		// Convert the points into a List
+		// Convert the points into a List and get ETOPS rating
 		List<NavigationDataBean> points = GeoUtils.stripDetours(routePoints, 60);
+		dr.addWaypoints(points);
+		ETOPSResult er = ETOPSHelper.classify(dr);
 
 		// Convert points to an XML document
 		Document doc = formatPoints(points, true);
 		Element re = doc.getRootElement();
-
+		
+		// Add ETOPS rating
+		Element ee = new Element("etops");
+		re.addContent(ee);
+		ee.setAttribute("rating", er.getResult().toString());
+		if (ETOPSHelper.validate(a, er.getResult())) {
+			ETOPS erng = (a != null) && (a.getName().startsWith("B727-")) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
+			ee.setAttribute("range", String.valueOf(erng.getRange()));
+			ee.setAttribute("warning", "true");
+			for (NavigationDataBean ap : er.getClosestAirports()) {
+				Element eae = XMLUtils.createElement("airport", ap.getInfoBox(), true);
+				eae.setAttribute("lat", StringUtils.format(ap.getLatitude(), "##0.00000"));
+				eae.setAttribute("lng", StringUtils.format(ap.getLongitude(), "##0.00000"));
+				eae.setAttribute("pal", String.valueOf(ap.getPaletteCode()));
+				eae.setAttribute("icon", String.valueOf(ap.getIconCode()));
+				ee.addContent(eae);
+			}
+			
+			NavigationDataBean wp = (NavigationDataBean) er.getWarningPoint();
+			Element eae = XMLUtils.createElement("warnPoint", wp.getInfoBox(), true);
+			eae.setAttribute("lat", StringUtils.format(wp.getLatitude(), "##0.00000"));
+			eae.setAttribute("lng", StringUtils.format(wp.getLongitude(), "##0.00000"));
+			eae.setAttribute("pal", String.valueOf(wp.getPaletteCode()));
+			eae.setAttribute("icon", String.valueOf(wp.getIconCode()));
+			ee.addContent(eae);
+		}
+		
 		// Add SID/STAR names to XML document
 		for (TerminalRoute tr : tRoutes) {
 			Element e = new Element(tr.getTypeName().toLowerCase());
@@ -183,6 +213,7 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Add runways
 		for (Runway r : runways) {
+			if  ((a != null) && (a.getTakeoffRunwayLength() > r.getLength())) continue;
 			Element e = new Element("runway");
 			e.setAttribute("code", "RW" + r.getName());
 			
@@ -203,8 +234,8 @@ public class RoutePlotMapService extends MapPlotService {
 			Element e = XMLUtils.createElement("wx", wx.getData(), true);
 			e.setAttribute("type", wx.getType().name().toLowerCase());
 			e.setAttribute("icao", wx.getCode());
-			if (aD != null)
-				e.setAttribute("dst", String.valueOf(!wx.getCode().equals(aD.getCode())));
+			if (dr.getAirportD() != null)
+				e.setAttribute("dst", String.valueOf(!wx.getCode().equals(dr.getAirportD().getICAO())));
 			re.addContent(e);
 		}
 		
