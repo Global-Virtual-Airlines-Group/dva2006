@@ -742,13 +742,13 @@
 	<command id="aircraftlist">
 		<name>Aircraft List</name>
 		<class>org.deltava.commands.schedule.AircraftListCommand</class>
-		<roles>Schedule,Operations</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="aircraft">
 		<name>Aircraft Profile</name>
 		<class>org.deltava.commands.schedule.AircraftCommand</class>
-		<roles>Schedule,Operations</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="tzones">

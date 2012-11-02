@@ -444,6 +444,13 @@ departing today.</td>
  <td class="mid"><el:cmd className="bld" url="wxfinder">Airport Weather Finder</el:cmd></td>
  <td class="data">You can search for airports served by <content:airline /> that are experiencing unusual or severe weather.</td>
 </tr>
+<content:filter roles="!Schedule,!Operations">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="aircraftlist">Aircraft Profiles</el:cmd></td>
+ <td class="data">You can view Aircraft profiles contained within the <content:airline /> Flight Schedule. This lists operational
+ maximum weights, minimum runway distances and ACARS fuel load profiles.</td>
+</tr>
+</content:filter>
 <tr>
  <td class="mid"><el:cmd className="bld" url="navsearch">Navigation Aids</el:cmd></td>
  <td class="data">You can search the DAFIF database for a particular Airport, VOR, NDB or Intersection.</td>
