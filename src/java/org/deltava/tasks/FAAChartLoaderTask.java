@@ -223,8 +223,8 @@ public class FAAChartLoaderTask extends Task {
 			exec.allowCoreThreadTimeOut(true);
 
 			// Queue the charts
-			for (Iterator<ExternalChart> eci = chartsToLoad.iterator(); eci.hasNext(); ) {
-				ExternalChart ec = eci.next();
+			TaskTimer tt = new TaskTimer(); 
+			for (ExternalChart ec : chartsToLoad) {
 				ec.setURL(baseURL + "/" + ec.getExternalID());
 				Runnable wrk = noDL ? new ChartSizer(work, ec) : new ChartLoader(work, ec); 
 				exec.execute(wrk);
@@ -234,6 +234,8 @@ public class FAAChartLoaderTask extends Task {
 			exec.shutdown();
 			exec.awaitTermination(10, TimeUnit.MINUTES);
 			ctx.commitTX();
+			long ms = tt.stop();
+			log.info(chartsToLoad + " charts updated in " + StringUtils.format(ms/1000.0, "#0.00") + "s");
 		} catch (InterruptedException | DAOException de) {
 			ctx.rollbackTX();
 			log.error(de.getMessage(), (de instanceof InterruptedException) ? null : de);
