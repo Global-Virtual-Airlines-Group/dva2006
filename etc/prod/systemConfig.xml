@@ -499,7 +499,7 @@
 
 			<default>AirCharts</default>
 			<maxAge type="Integer">14</maxAge>
-			<threads type="Integer">16</threads>
+			<threads type="Integer">24</threads>
 			<noDownload type="Boolean">false</noDownload>
 		</chart>
 
