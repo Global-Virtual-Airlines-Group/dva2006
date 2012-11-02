@@ -299,4 +299,15 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<task id="faachartdl" enabled="false">
+		<class>org.deltava.tasks.FAAChartLoaderTask</class>
+		<time>
+			<min>0</min>
+			<hour>8</hour>
+			<mday>20</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>

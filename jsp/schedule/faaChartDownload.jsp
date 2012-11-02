@@ -28,7 +28,7 @@ return true;
 <%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <c:set var="noDL" value="${param.noDownload}" scope="page" />
 <c:if test="${empty param.year}">
-<content:sysdata var="noDL" name="schedule.chart.download" /></c:if>
+<content:sysdata var="noDL" name="schedule.chart.noDownload" /></c:if>
 
 <!-- Main Body Frame -->
 <content:region id="main">

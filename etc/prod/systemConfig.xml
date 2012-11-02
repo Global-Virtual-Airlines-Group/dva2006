@@ -500,7 +500,7 @@
 			<default>AirCharts</default>
 			<maxAge type="Integer">14</maxAge>
 			<threads type="Integer">16</threads>
-			<download type="Boolean">false</download>
+			<noDownload type="Boolean">false</noDownload>
 		</chart>
 
 		<!-- Charter calculations -->
