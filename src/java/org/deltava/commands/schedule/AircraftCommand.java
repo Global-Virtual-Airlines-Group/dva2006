@@ -10,6 +10,8 @@ import org.deltava.beans.system.AirlineInformation;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.AircraftAccessControl;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -48,6 +50,13 @@ public class AircraftCommand extends AbstractFormCommand {
 				a.setName(ctx.getParameter("name"));
 			} else
 				a = new Aircraft(ctx.getParameter("name"));
+			
+			// Check access control
+			AircraftAccessControl ac = new AircraftAccessControl(ctx, isNew ? null : a);
+			ac.validate();
+			boolean acRole = isNew ? ac.getCanCreate() : ac.getCanEdit();
+			if (!acRole)
+				throw securityException("Cannot create/edit Aircraft profile");
 
 			// Update the aircraft from the request
 			a.setFullName(ctx.getParameter("fullName"));
@@ -147,9 +156,35 @@ public class AircraftCommand extends AbstractFormCommand {
 	/**
 	 * Callback method called when reading the Aircraft profile.
 	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
 	 */
 	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		execEdit(ctx);
+		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		try {
+			GetAircraft dao = new GetAircraft(ctx.getConnection());
+			Aircraft a = dao.get(aCode);
+			if (a == null)
+				throw notFoundException("Unknown Aircraft - " + aCode);
+			
+			// Check access control
+			AircraftAccessControl ac = new AircraftAccessControl(ctx, a);
+			ac.validate();
+			if (!ac.getCanRead())
+				throw securityException("Cannot read Aircraft profile");
+
+			// Save request variables
+			ctx.setAttribute("aircraft", a, REQUEST);
+			ctx.setAttribute("access", ac, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/schedule/aircraftView.jsp");
+		result.setSuccess(true);
 	}
 }
