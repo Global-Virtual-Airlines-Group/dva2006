@@ -151,7 +151,7 @@ xmlreq.onreadystatechange = function() {
 				apmrk.setMap(map);
 				
 				// Draw the circle and line
-				var crng = parseInt(ete.getAttribute('range')) * 1609.344;
+				var crng = golgotha.maps.miles2Meter(parseInt(ete.getAttribute('range')));
 				var c = new google.maps.Circle({center:cll,radius:crng,fillColor:'#601010',fillOpacity:0.15,strokeColor:'darkred',strokeOpacity:0.4,strokeWeight:1,zIndex:golgotha.maps.z.POLYLINE});
 				c.setMap(map);
 				var wl = new google.maps.Polyline({path:[cll,wll],strokeColor:'red',strokeOpacity:0.55,strokeWeight:1.15,zIndex:golgotha.maps.z.POLYLINE+1})
