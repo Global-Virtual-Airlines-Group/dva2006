@@ -7,8 +7,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.acars.ACARSError;
-import org.deltava.beans.acars.ClientType;
+import org.deltava.beans.acars.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -17,7 +16,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -58,6 +57,10 @@ public class ErrorLogService extends WebService {
 			 err.setVersion(2);
 		 else
 			 err.setVersion(3);
+		
+		// Sanitfy check the message
+		if (StringUtils.isEmpty(err.getMessage()))
+			return SC_BAD_REQUEST;
 		
 		try {
 			SetACARSLog dao = new SetACARSLog(ctx.getConnection());
