@@ -287,7 +287,7 @@ function getServiceRange(marker, range)
 var bC = marker.isBusy ? '#c02020' : '#20c060';
 var fC = marker.isBusy ? '#802020' : '#208040';
 var fOp = marker.isBusy ? 0.1 : 0.2;
-return new google.maps.Circle({center:marker.getPosition(), radius:(range*1609.344), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
+return new google.maps.Circle({center:marker.getPosition(), radius:golgotha.maps.miles2Meter(range), strokeColor:bC, strokeWeight:1, strokeOpacity:0.65, fillColor:fC, fillOpacity:fOp, zIndex:golgotha.maps.z.POLYGON});
 }
 
 function zoomTo(combo)
