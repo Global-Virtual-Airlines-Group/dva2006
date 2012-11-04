@@ -16,6 +16,9 @@ golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 
 // Calculate GMT offset in seconds from local
 golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 
+// Convert miles to meters
+golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
+
 // Set best text color for map types
 golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef'};
 golgotha.maps.updateMapText = function () {
