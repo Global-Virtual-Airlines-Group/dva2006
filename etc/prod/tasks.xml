@@ -293,7 +293,7 @@
 		<class>org.deltava.tasks.PIREPQueueWarningTask</class>
 		<time>
 			<min>0</min>
-			<hour>1,11,20</hour>
+			<hour>11,20</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
