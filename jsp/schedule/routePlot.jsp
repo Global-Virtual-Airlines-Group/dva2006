@@ -63,7 +63,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft</td>
- <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="${flight.equipmentType}" onChange="void updateRoute(true)" /></td>
+ <td class="data"><el:combo name="eqType" className="req" size="1" idx="*" options="${eqTypes}" firstEntry="[ AIRCRAFT ]" value="${flight.equipmentType}" onChange="void updateRoute(false)" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
