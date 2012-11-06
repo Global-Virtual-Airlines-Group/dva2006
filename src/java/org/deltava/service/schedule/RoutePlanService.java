@@ -60,10 +60,13 @@ public class RoutePlanService extends WebService {
 			case "XP9":
 				fpgen = new XP9Generator();
 				break;
+				
+			case "P3D":
+				fpgen = new P3DGenerator();
+				break;
 		
 			case "FS9":
 			case "FSX":
-			case "P3D":
 			default:
 				fpgen = new FS9Generator();
 		}
@@ -179,8 +182,8 @@ public class RoutePlanService extends WebService {
 		try {
 			ctx.setContentType(fpgen.getMimeType(), "UTF-8");
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=" + aD.getICAO() + "-" + aA.getICAO() + "." + fpgen.getExtension());
-			ctx.getResponse().getOutputStream().write(fpgen.generate(routePoints));
-			ctx.getResponse().getOutputStream().flush();
+			ctx.println(fpgen.generate(routePoints));
+			ctx.commit();
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
 		}
