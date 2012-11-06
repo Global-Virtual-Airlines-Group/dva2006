@@ -12,11 +12,7 @@
 <content:pics />
 </head>
 <content:copyright visible="false" />
-<body>
-<content:page>
-
-<!-- Main Body Frame -->
-<content:region id="main">
+<body style="margin:8px">
 <div class="updateHdr">Runway Choices for ${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />)</div>
 <br />
 Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Variation at Airport: 
@@ -42,8 +38,6 @@ ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" /
 <el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br />
 <br />
 <content:copyright />
-</content:region>
-</content:page>
 <content:googleAnalytics />
 </body>
 </html>
