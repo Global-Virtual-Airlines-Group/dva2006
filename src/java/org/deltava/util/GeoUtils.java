@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -96,7 +96,7 @@ public class GeoUtils {
 	 * @return a formatted location
 	 */
 	public static String formatFS9(GeoLocation loc) {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder buf = new StringBuilder(48);
 		buf.append((loc.getLatitude() >= 0) ? 'N' : 'S');
 		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLatitude())), "#0"));
 		buf.append("* ");
@@ -113,13 +113,13 @@ public class GeoUtils {
 	}
 
 	/**
-	 * Formats a location into a format suitable for inclusion in a Microsoft Flight Simulator X flight plan. Since this
-	 * has a Windows-specific character in it, the resulting string should be formatted as CP1252.
+	 * Formats a location into a format suitable for inclusion in a Microsoft Flight Simulator X or Lockheed-Martin
+	 * Prepar3D flight plan.
 	 * @param loc the location
 	 * @return a formatted location
 	 */
 	public static String formatFSX(GeoLocation loc) {
-		StringBuilder buf = new StringBuilder();
+		StringBuilder buf = new StringBuilder(48);
 		buf.append((loc.getLatitude() >= 0) ? 'N' : 'S');
 		buf.append(StringUtils.format(Math.abs(GeoPosition.getDegrees(loc.getLatitude())), "#0"));
 		buf.append(DEGREE); // Win32 degree character
@@ -136,6 +136,18 @@ public class GeoUtils {
 		buf.append("' ");
 		buf.append(StringUtils.format(GeoPosition.getSeconds(loc.getLongitude()), "#.00"));
 		buf.append('\"');
+		return buf.toString();
+	}
+	
+	/**
+	 * Formats an elevation for Flight Simulator flight plans
+	 * @param elevation the elevation in feet
+	 * @return the formatted elevation
+	 */
+	public static String formatFSElevation(int elevation) {
+		StringBuilder buf = new StringBuilder();
+		buf.append((elevation < 0) ? '-' : '+');
+		buf.append(StringUtils.format(Math.abs(elevation), "000000.00"));
 		return buf.toString();
 	}
 
