@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to load VATSIM track data from VRoute.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.4
  */
 
@@ -27,46 +27,53 @@ public class GetVRouteData extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetVRouteData.class);
 	private final DateFormat _df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+
+	/**
+	 * Initializes the Data Access Object.
+	 */
+	public GetVRouteData() {
+		super();
+		setReturnErrorStream(false);
+	}
+
 	/**
 	 * Retrieves a Pilot's flight data from VRoute.
-	 * @param usr the Pilot 
+	 * @param usr the Pilot
 	 * @param aD the departure Airport
 	 * @param aA the arrival Airport
 	 * @return a Collection of PositionData beans
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public Collection<PositionData> getPositions(Pilot usr, Airport aD, Airport aA) throws DAOException {
-		
+
 		// Build the URL
 		String id = usr.getNetworkID(OnlineNetwork.VATSIM);
 		if (id == null)
 			return Collections.emptyList();
-		
+
 		String url = "http://data.vroute.net/services/flthistory.php?pid=" + id;
 		try {
 			init(url);
-			LineNumberReader lr = new LineNumberReader(new InputStreamReader(getIn()));
 			Collection<PositionData> results = new ArrayList<PositionData>();
-			while (lr.ready()) {
-				String data = lr.readLine();
-				List<String> tkns = StringUtils.split(data, "\t");
-				if ((tkns.size() == 10) && (tkns.get(8).equals(aD.getICAO())) && (tkns.get(9).equals(aA.getICAO()))) {
-					try {
-						PositionData pd = new PositionData(_df.parse(tkns.get(0)));
-						pd.setPilotID(usr.getID());
-						pd.setPosition(StringUtils.parse(tkns.get(3), 0.0d), StringUtils.parse(tkns.get(4), 0.0d), 
-								StringUtils.parse(tkns.get(7), 0));
-						pd.setAirSpeed(StringUtils.parse(tkns.get(5), 0));
-						pd.setHeading(StringUtils.parse(tkns.get(6), 0));
-						results.add(pd);
-					} catch (ParseException pe) {
-						log.warn("Error parsing " + data + " - " + pe.getMessage());
+			try (LineNumberReader lr = new LineNumberReader(new InputStreamReader(getIn()))) {
+				while (lr.ready()) {
+					String data = lr.readLine();
+					List<String> tkns = StringUtils.split(data, "\t");
+					if ((tkns.size() == 10) && (tkns.get(8).equals(aD.getICAO())) && (tkns.get(9).equals(aA.getICAO()))) {
+						try {
+							PositionData pd = new PositionData(_df.parse(tkns.get(0)));
+							pd.setPilotID(usr.getID());
+							pd.setPosition(StringUtils.parse(tkns.get(3), 0.0d), StringUtils.parse(tkns.get(4), 0.0d), StringUtils.parse(tkns.get(7), 0));
+							pd.setAirSpeed(StringUtils.parse(tkns.get(5), 0));
+							pd.setHeading(StringUtils.parse(tkns.get(6), 0));
+							results.add(pd);
+						} catch (ParseException pe) {
+							log.warn("Error parsing " + data + " - " + pe.getMessage());
+						}
 					}
 				}
 			}
-			
-			lr.close();
+
 			return results;
 		} catch (SocketTimeoutException ste) {
 			log.warn("Socket Timeout - " + url);
