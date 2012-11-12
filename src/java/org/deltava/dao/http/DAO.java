@@ -27,6 +27,7 @@ public abstract class DAO {
 	private int _connectTimeout = 2500;
 	
 	private URLConnection _urlcon;
+	private boolean _getErrorStream;
 	
     /**
      * Overrides the context used to generate SSL context.
@@ -59,6 +60,15 @@ public abstract class DAO {
      */
     public void setReadTimeout(int timeout) {
     	_readTimeout = Math.max(0, timeout);
+    }
+    
+    /**
+     * Sets whether the error stream should be returned when connecting and an error occurs.
+     * @param returnErrStream TRUE if the error stream should be returned, otherwise FALSE
+     * @see DAO#getIn()
+     */
+    public void setReturnErrorStream(boolean returnErrStream) {
+    	_getErrorStream = returnErrStream;
     }
     
     /**
@@ -117,9 +127,8 @@ public abstract class DAO {
      * Returns an HTTP response header.
      * @param name the header name
      * @return the header value
-     * @throws IOException if an error occured
      */
-    protected String getHeaderField(String name) throws IOException {
+    protected String getHeaderField(String name) {
     	if (_urlcon == null)
     		throw new IllegalStateException("Not Initialized");
     	
@@ -138,7 +147,10 @@ public abstract class DAO {
     	try {
     		return _urlcon.getInputStream();
     	} catch (IOException ie) {
-    		return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection)_urlcon).getErrorStream() : null;
+    		if (_getErrorStream)
+    			return (_urlcon instanceof HttpURLConnection) ? ((HttpURLConnection)_urlcon).getErrorStream() : null;
+    			
+    		throw ie;
     	}
     }
     
