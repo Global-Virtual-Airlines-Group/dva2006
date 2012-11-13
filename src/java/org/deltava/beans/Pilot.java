@@ -2,8 +2,8 @@
 package org.deltava.beans;
 
 import java.util.*;
-import java.text.DecimalFormat;
 
+import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.stats.DatedAccomplishmentID;
 
 import org.deltava.util.StringUtils;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -31,29 +31,6 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * Valid pilot statuses.
 	 */
 	public static final String[] STATUS = { "Active", "Inactive", "Retired", "Transferred", "Suspended", "On Leave" };
-
-	/**
-	 * ACARS restriction codes.
-	 */
-	public static final int ACARS_ONLY = 4;
-	public static final int ACARS_BLOCK = 3;
-	public static final int ACARS_NOMSGS = 2;
-	public static final int ACARS_RESTRICT = 1;
-	public static final int ACARS_OK = 0;
-
-	/**
-	 * Valid ACARS restrictions.
-	 */
-	public static final String[] RESTRICT = { "Unlimited Usage", "Restricted Messaging", "Flight Reports Only",
-			"Blocked", "No Manual Flight Reports" };
-
-	/**
-	 * Valid route mapping types.
-	 */
-	public static final String[] MAP_TYPES = {"Google Maps", "Falling Rain"};
-
-	public static final int MAP_GOOGLE = 0;
-	public static final int MAP_FALLINGRAIN = 1;
 
 	private static final String[] ROW_CLASSES = { null, "opt2", "opt3", "opt1", "err", "warn" };
 
@@ -94,13 +71,12 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	private boolean _noVoice;
 	private boolean _noCooler;
 
-	private int _ACARSRestrict;
-	private int _mapType;
+	private Restriction _ACARSRestrict;
+	private MapType _mapType;
 	
 	private String _sigExt;
 	private Date _sigModified;
 
-	private final DecimalFormat _df = new DecimalFormat("##000");
 	private boolean _showNavBar;
 
 	/**
@@ -137,7 +113,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 	 * @see Pilot#setPilotCode(CharSequence)
 	 */
 	public String getPilotCode() {
-		return (_pCodeId == 0) ? "" : _pCodePrefix + String.valueOf(_df.format(_pCodeId));
+		return (_pCodeId == 0) ? "" : _pCodePrefix + StringUtils.format(_pCodeId, "##000");
 	}
 
 	/**
@@ -195,22 +171,11 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 
 	/**
 	 * Returns the Pilot's ACARS restrictions.
-	 * @return an ACARS restriction code
-	 * @see Pilot#getACARSRestrictionName()
-	 * @see Pilot#setACARSRestriction(int)
+	 * @return an ACARS Restriction
+	 * @see Pilot#setACARSRestriction(Restriction)
 	 */
-	public int getACARSRestriction() {
+	public Restriction getACARSRestriction() {
 		return _ACARSRestrict;
-	}
-
-	/**
-	 * Returns the Pilot's ACARS restriction name.
-	 * @return an ACARS restriction name
-	 * @see Pilot#getACARSRestriction()
-	 * @see Pilot#setACARSRestriction(int)
-	 */
-	public String getACARSRestrictionName() {
-		return RESTRICT[_ACARSRestrict];
 	}
 
 	/**
@@ -262,24 +227,11 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 
 	/**
 	 * Returns the Pilot's preferred route map type.
-	 * @return the map type code.
-	 * @see Pilot#getMapTypeName()
-	 * @see Pilot#setMapType(int)
-	 * @see Pilot#setMapType(String)
+	 * @return the MapType
+	 * @see Pilot#setMapType(MapType)
 	 */
-	public int getMapType() {
+	public MapType getMapType() {
 		return _mapType;
-	}
-
-	/**
-	 * Returns the Pilot's preferred route map type name.
-	 * @return the map type name
-	 * @see Pilot#getMapType()
-	 * @see Pilot#setMapType(int)
-	 * @see Pilot#setMapType(String)
-	 */
-	public String getMapTypeName() {
-		return Pilot.MAP_TYPES[getMapType()];
 	}
 
 	/**
@@ -568,16 +520,11 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 
 	/**
 	 * Updates whether the Pilot is locked out of the ACARS server.
-	 * @param code a valid ACARS restriction code
-	 * @throws IllegalArgumentException if code is negative or invalid
+	 * @param r an ACARS Restriction
 	 * @see Pilot#getACARSRestriction()
-	 * @see Pilot#getACARSRestrictionName()
 	 */
-	public void setACARSRestriction(int code) {
-		if ((code < 0) || (code >= RESTRICT.length))
-			throw new IllegalArgumentException("Invalid ACARS Restriction code - " + code);
-
-		_ACARSRestrict = code;
+	public void setACARSRestriction(Restriction r) {
+		_ACARSRestrict = r;
 	}
 
 	/**
@@ -662,29 +609,11 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 
 	/**
 	 * Sets the Pilot's preferred Map type.
-	 * @param mapType the Map Type code
-	 * @throws IllegalArgumentException if mapType is negative or invalid
-	 * @see Pilot#setMapType(String)
+	 * @param mt the MapType
 	 * @see Pilot#getMapType()
-	 * @see Pilot#getMapTypeName()
 	 */
-	public void setMapType(int mapType) {
-		if ((mapType < 0) || (mapType >= MAP_TYPES.length))
-			throw new IllegalArgumentException("Invalid Map Type - " + mapType);
-
-		_mapType = mapType;
-	}
-
-	/**
-	 * Sets the Pilot's preferred Map type.
-	 * @param mapType the map Type name
-	 * @throws IllegalArgumentException if mapType is invalid
-	 * @see Pilot#setMapType(int)
-	 * @see Pilot#getMapType()
-	 * @see Pilot#getMapTypeName()
-	 */
-	public void setMapType(String mapType) {
-		setMapType(StringUtils.arrayIndexOf(Pilot.MAP_TYPES, mapType, 0));
+	public void setMapType(MapType mt) {
+		_mapType = mt;
 	}
 	
 	/**
@@ -988,13 +917,12 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 
 	/**
 	 * Set the pilot code for this Pilot.
-	 * @param code the pilot code eg. DVA043.
+	 * @param code the pilot code eg. DVA043
 	 * @throws NullPointerException if code is null
 	 * @throws IllegalArgumentException if the code does not start with the prefix, or the remainder of the code cannot
 	 *             be parsed to a number via DecimalFormat.parse("##000");
 	 * @see Pilot#getPilotCode()
 	 * @see Pilot#getPilotNumber()
-	 * @see DecimalFormat#parse(java.lang.String)
 	 */
 	public void setPilotCode(CharSequence code) {
 		if (code == null)
@@ -1004,11 +932,10 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		StringBuilder cBuf = new StringBuilder();
 		for (int x = 0; x < code.length(); x++) {
 			char c = Character.toUpperCase(code.charAt(x));
-			if (Character.isDigit(c)) {
+			if (Character.isDigit(c))
 				cBuf.append(c);
-			} else if (Character.isLetter(c)) {
+			else if (Character.isLetter(c))
 				pBuf.append(c);
-			}
 		}
 
 		// Save the prefix and the code
@@ -1037,6 +964,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		Pilot p2 = new Pilot(getFirstName(), getLastName());
 		p2.setDN(getDN());
 		p2.setAirportCodeType(getAirportCodeType());
+		p2.setDistanceType(getDistanceType());
 		p2.setCreatedOn(getCreatedOn());
 		p2.setDateFormat(getDateFormat());
 		p2.setEmail(getEmail());
@@ -1062,25 +990,23 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		p2.setHours(getHours());
 		p2.setLastFlight(getLastFlight());
 		p2.setLegs(getLegs());
-		p2.setMapType(getMapType());
-		p2.setMiles(getMiles());
+		p2._mapType = _mapType;
+		p2._miles = _miles;
 		p2.setOnlineHours(getOnlineHours());
 		p2.setOnlineLegs(getOnlineLegs());
 		p2.setACARSHours(getACARSHours());
 		p2._acarsLegs = _acarsLegs;
-		p2.setTotalHours(getTotalHours());
+		p2._totalHours = _totalHours;
 		p2._totalLegs = _totalLegs;
-		p2.setShowSignatures(getShowSignatures());
-		p2.setShowSSThreads(getShowSSThreads());
+		p2._showSigs = _showSigs;
+		p2._showSSThreads = _showSSThreads;
 		p2._networkIDs.putAll(_networkIDs);
 		if (!StringUtils.isEmpty(getPilotCode()))
 			p2.setPilotCode(getPilotCode());
 
 		p2._notifyOptions.addAll(_notifyOptions);
-		for (Iterator<Map.Entry<IMAddress, String>> i = getIMHandle().entrySet().iterator(); i.hasNext();) {
-			Map.Entry<IMAddress, String> me = i.next();
+		for (Map.Entry<IMAddress, String> me : getIMHandle().entrySet())
 			p2.setIMHandle(me.getKey(), me.getValue());
-		}
 
 		return p2;
 	}

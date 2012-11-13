@@ -103,9 +103,13 @@ return true;
 <content:attr attr="isHR" value="true" roles="HR" />
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
+<content:tz var="timeZones" />
 <content:enum var="ranks" className="org.deltava.beans.Rank" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
+<content:enum var="mapTypes" className="org.deltava.beans.MapType" />
+<content:enum var="acarsRest" className="org.deltava.beans.acars.Restriction" />
+<content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />
@@ -142,7 +146,7 @@ return true;
 </tr>
 <tr>
  <td class="label">ACARS Capabilities</td>
- <td colspan="${cspan}" class="data"><el:combo name="ACARSrestrict" size="1" idx="*" options="${acarsRest}" value="${pilot.ACARSRestrictionName}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="ACARSrestrict" size="1" idx="*" options="${acarsRest}" value="${pilot.ACARSRestriction.name}" /></td>
 </tr>
 </c:if>
 <c:if test="${pilot.ID == pageContext.request.userPrincipal.ID}">
@@ -307,12 +311,12 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Route Map Type</td>
- <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapTypeName}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="mapType" size="1" options="${mapTypes}" value="${pilot.mapType.name}" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
-<c:if test="${screenXSize > 1024}"> 
+<c:if test="${screenXSize < 1280}"> 
 <el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />
  <span class="small">(Navigation Bar is not displayed at screen widths below 1280 pixels.)</span></c:if></td>
 </tr>
