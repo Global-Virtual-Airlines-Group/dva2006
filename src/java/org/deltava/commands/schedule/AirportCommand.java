@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -45,7 +45,6 @@ public class AirportCommand extends AbstractFormCommand {
 				ctx.setMessage("Airport already exists - " + a.getName());
 
 				// Save directions and time zones in request
-				ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 				ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
 				ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
 
@@ -206,7 +205,6 @@ public class AirportCommand extends AbstractFormCommand {
 		}
 
 		// Save directions and time zones in request
-		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 		ctx.setAttribute("countries", new TreeSet<Country>(Country.getAll()), REQUEST);
 		ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
 		ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);

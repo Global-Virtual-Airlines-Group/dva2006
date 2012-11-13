@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.DatedAccomplishmentID;
@@ -17,8 +18,7 @@ import org.deltava.util.system.SystemData;
 
 /**
  * A DAO to support reading Pilot object(s) from the database. This class contains methods to read an individual Pilot
- * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular
- * crtieria.
+ * from the database; implementing subclasses typically add methods to retrieve Lists of pilots based on particular criteria.
  * @author Luke
  * @version 5.0
  * @since 1.0
@@ -68,7 +68,6 @@ abstract class PilotReadDAO extends PilotDAO {
 			throw new DAOException(se);
 		}
 
-		// Add to the cache and return
 		_cache.add(p);
 		return p;
 	}
@@ -298,11 +297,11 @@ abstract class PilotReadDAO extends PilotDAO {
 				p.setNumberFormat(rs.getString(32));
 				p.setAirportCodeType(Airport.Code.values()[rs.getInt(33)]);
 				p.setDistanceType(DistanceUnit.values()[rs.getInt(34)]);
-				p.setMapType(rs.getInt(35));
+				p.setMapType(MapType.values()[rs.getInt(35)]);
 				p.setNoExams(rs.getBoolean(36));
 				p.setNoVoice(rs.getBoolean(37));
 				p.setNoCooler(rs.getBoolean(38));
-				p.setACARSRestriction(rs.getInt(39));
+				p.setACARSRestriction(Restriction.values()[rs.getInt(39)]);
 				p.setLDAPName(rs.getString(40));
 				p.setMotto(rs.getString(41));
 

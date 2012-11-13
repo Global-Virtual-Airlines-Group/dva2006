@@ -62,9 +62,6 @@ public class RegisterCommand extends AbstractCommand {
 			return;
 		}
 
-		// Save the notification options
-		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
-
 		// Sort and save the airports
 		Collection<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		apSet.addAll(SystemData.getAirports().values());
