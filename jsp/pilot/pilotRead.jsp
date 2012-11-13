@@ -64,7 +64,7 @@ return true;
 <c:if test="${access.canChangeStatus}">
 <tr>
  <td class="label">ACARS Capabilities</td>
- <td colspan="${cspan}" class="data">${pilot.ACARSRestrictionName}</td>
+ <td colspan="${cspan}" class="data">${pilot.ACARSRestriction.name}</td>
 </tr>
 </c:if>
 <c:if test="${empty pilot.pilotCode}">
