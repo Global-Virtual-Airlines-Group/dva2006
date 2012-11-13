@@ -90,14 +90,14 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(19, p.getNumberFormat());
 			_ps.setInt(20, p.getAirportCodeType().ordinal());
 			_ps.setInt(21, p.getDistanceType().ordinal());
-			_ps.setInt(22, p.getMapType());
+			_ps.setInt(22, p.getMapType().ordinal());
 			_ps.setString(23, p.getRank().getName());
 			_ps.setString(24, p.getEquipmentType());
 			_ps.setInt(25, p.getStatus());
 			_ps.setBoolean(26, p.getNoExams());
 			_ps.setBoolean(27, p.getNoVoice());
 			_ps.setBoolean(28, p.getNoCooler());
-			_ps.setInt(29, p.getACARSRestriction());
+			_ps.setInt(29, p.getACARSRestriction().ordinal());
 			_ps.setString(30, p.getLDAPName());
 			_ps.setString(31, p.getMotto());
 			_ps.setString(32, p.getFirstName());

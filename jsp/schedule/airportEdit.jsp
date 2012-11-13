@@ -48,6 +48,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:empty var="emptyList" />
+<content:tz var="timeZones" />
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->

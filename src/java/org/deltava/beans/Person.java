@@ -289,7 +289,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	/**
 	 * Retuns if this Person is a memebr of an online network.
 	 * @return the network user IDs
-	 * @see Person#setNetworkID(OnlineNetwork, String)
+	 * @see Person#setNetworkID(OnlineNetwork, CharSequence)
 	 */
 	public boolean hasNetworkID(OnlineNetwork net) {
 		return _networkIDs.containsKey(net);
@@ -299,7 +299,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Returns this Person's online network ID
 	 * @param net the OnlineNetwork
 	 * @return the network ID
-	 * @see Person#setNetworkID(OnlineNetwork, String)
+	 * @see Person#setNetworkID(OnlineNetwork, CharSequence)
 	 */
 	public String getNetworkID(OnlineNetwork net) {
 		return _networkIDs.get(net);
@@ -484,7 +484,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @see Person#getNetworks()
 	 * @see Person#getNetworkID(OnlineNetwork)
 	 */
-	public void setNetworkID(OnlineNetwork network, String id) {
+	public void setNetworkID(OnlineNetwork network, CharSequence id) {
 		if (!StringUtils.isEmpty(id)) {
 			StringBuilder buf = new StringBuilder();
 			for (int x = 0; x < id.length(); x++) {
@@ -501,19 +501,16 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Update this Person's notification option for a given notificaiton type.
-	 * @param option the notification type. Use constants if possible.
+	 * @param option the notification type
 	 * @param notify TRUE if this person should be notified
-	 * @throws NullPointerException if option is null
 	 * @see Person#hasNotifyOption(Notification)
 	 * @see Person#getNotifyOptions()
 	 */
 	public void setNotifyOption(Notification option, boolean notify) {
-		if (option == null)
-			throw new NullPointerException("Notify Option cannot be null");
-		else if (!notify)
-			_notifyOptions.remove(option);
-		else
+		if (notify)
 			_notifyOptions.add(option);
+		else
+			_notifyOptions.remove(option);
 	}
 	
 	/**

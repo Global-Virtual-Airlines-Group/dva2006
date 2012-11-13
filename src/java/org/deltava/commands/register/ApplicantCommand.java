@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -118,9 +118,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 */
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-
-		// Save the notification options
-		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
 		// Sort and save the airports
 		Map<String, Airport> airports = SystemData.getAirports();

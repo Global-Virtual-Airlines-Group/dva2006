@@ -287,7 +287,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (isNew) {
 				ac = new PIREPAccessControl(ctx, null);
 				ac.validate();
-				if (!ac.getCanCreate() || (usr.getACARSRestriction() == Pilot.ACARS_ONLY))
+				if (!ac.getCanCreate() || (usr.getACARSRestriction() == Restriction.NOMANUAL))
 					throw securityException("Cannot create new PIREP");
 
 				// Save the user object
@@ -308,7 +308,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Check our access
 				ac = new PIREPAccessControl(ctx, fr);
 				ac.validate();
-				if (!ac.getCanEdit() || (usr.getACARSRestriction() == Pilot.ACARS_ONLY))
+				if (!ac.getCanEdit() || (usr.getACARSRestriction() == Restriction.NOMANUAL))
 					throw securityException("Not Authorized");
 
 				// Save the pilot info/PIREP in the request
@@ -386,7 +386,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	protected void execRead(CommandContext ctx) throws CommandException {
 
 		// Calculate what map type to use
-		int mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : Pilot.MAP_GOOGLE;
+		MapType mapType = ctx.isAuthenticated() ? ctx.getUser().getMapType() : MapType.GOOGLE;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -452,7 +452,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			boolean isACARS = (fr instanceof FDRFlightReport);
 			if (isACARS) {
-				mapType = Pilot.MAP_GOOGLE;
+				mapType = MapType.GOOGLE;
 				ctx.setAttribute("isACARS", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("isXACARS", Boolean.valueOf(fr.hasAttribute(FlightReport.ATTR_XACARS)), REQUEST);
 				FDRFlightReport afr = (FDRFlightReport) fr;
@@ -635,7 +635,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("onlineTime", Integer.valueOf(OnlineTime.calculate(pd, SystemData.getInt("online.track_gap", 20))), REQUEST);
 				
 				// Write the positions
-				if (mapType == Pilot.MAP_GOOGLE)
+				if (mapType == MapType.GOOGLE)
 					ctx.setAttribute("onlineTrack", pd, REQUEST);
 			}
 			
@@ -679,11 +679,11 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				route.add(fr.getAirportA());
 				ctx.setAttribute("filedRoute", GeoUtils.stripDetours(route, 65), REQUEST);				
-			} else if (!isACARS && (mapType != Pilot.MAP_FALLINGRAIN))
+			} else if (!isACARS && (mapType != MapType.FALLINGRAIN))
 				ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST);
 
 			// If we're set to use Google Maps, calculate the route
-			if (mapType == Pilot.MAP_GOOGLE) {
+			if (mapType == MapType.GOOGLE) {
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 			}

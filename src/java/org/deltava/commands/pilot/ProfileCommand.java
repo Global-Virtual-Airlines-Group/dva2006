@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
+import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.cooler.SignatureImage;
 import org.deltava.beans.servinfo.Certificate;
 import org.deltava.beans.schedule.Airport;
@@ -133,7 +134,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setDistanceType(DistanceUnit.valueOf(ctx.getParameter("distanceUnits")));
 			p.setAirportCodeType(Airport.Code.valueOf(ctx.getParameter("airportCodeType")));
-			p.setMapType(ctx.getParameter("mapType"));
+			p.setMapType(MapType.valueOf(ctx.getParameter("mapType")));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
 			p.setViewCount(StringUtils.parse(ctx.getParameter("viewCount"), SystemData.getInt("html.table.viewSize")));
 			p.setDateFormat(ctx.getParameter("df"));
@@ -210,14 +211,14 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Check ACARS server access
-				int newACARSRest = StringUtils.arrayIndexOf(Pilot.RESTRICT, ctx.getParameter("ACARSrestrict"));
+				Restriction newACARSRest = Restriction.valueOf(ctx.getParameter("ACARSrestrict"));
 				if (newACARSRest != p.getACARSRestriction()) {
 					p.setACARSRestriction(newACARSRest);
 
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("ACARS restrictions set to " + p.getACARSRestrictionName());
+					upd.setDescription("ACARS restrictions set to " + p.getACARSRestriction().getName());
 					updates.add(upd);
 					log.warn(p.getName() + " " + upd.getDescription());
 				}
@@ -660,12 +661,8 @@ public class ProfileCommand extends AbstractFormCommand {
 	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
-		// Save time zones and notification/privacy options
-		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
+		// Save privacy options
 		ctx.setAttribute("privacyOptions", ComboUtils.fromArray(PRIVACY_NAMES, PRIVACY_ALIASES), REQUEST);
-		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
-		ctx.setAttribute("mapTypes", ComboUtils.fromArray(Pilot.MAP_TYPES), REQUEST);
-		ctx.setAttribute("acarsRest", ComboUtils.fromArray(Pilot.RESTRICT), REQUEST);
 		
 		Pilot p = null;
 		try {

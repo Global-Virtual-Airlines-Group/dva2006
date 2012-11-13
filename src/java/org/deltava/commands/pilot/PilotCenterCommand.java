@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.*;
+import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.hr.TransferRequest;
 import org.deltava.beans.schedule.ScheduleSearchCriteria;
@@ -91,7 +92,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Check for manual PIREP ability
 			GetFlightReports frdao = new GetFlightReports(con);
 			int heldPIREPs = frdao.getHeld(p.getID(), SystemData.get("airline.db"));
-			boolean manualPIREP = (p.getACARSRestriction() != Pilot.ACARS_ONLY);
+			boolean manualPIREP = (p.getACARSRestriction() != Restriction.NOMANUAL);
 			manualPIREP &= (heldPIREPs < SystemData.getInt("users.pirep.maxHeld", 5));
 			ctx.setAttribute("manualPIREP", Boolean.valueOf(manualPIREP), REQUEST);
 			ctx.setAttribute("heldPIREPCount", Integer.valueOf(heldPIREPs), REQUEST);

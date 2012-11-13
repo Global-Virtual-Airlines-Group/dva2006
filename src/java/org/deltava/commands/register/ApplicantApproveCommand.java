@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.acars.Restriction;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -183,7 +184,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(a.getPilotID());
 			if (SystemData.getBoolean("users.pirep.acars_only")) {
-				p.setACARSRestriction(Pilot.ACARS_ONLY);
+				p.setACARSRestriction(Restriction.NOMANUAL);
 				pwdao.write(p);
 			}
 
