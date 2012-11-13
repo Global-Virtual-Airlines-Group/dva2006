@@ -87,7 +87,7 @@ public class ImageTag extends ElementTag {
     
 	/**
 	 * Executed post tag setup. Creates a STYLE element if dimensions specified.
-	 * @returns SKIP_BODY  always
+	 * @return SKIP_BODY  always
 	 * @throws JspException if an error occurs
 	 */
     @Override
