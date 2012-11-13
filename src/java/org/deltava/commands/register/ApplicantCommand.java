@@ -120,7 +120,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Save the notification options
-		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.Code.values()), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
 		// Sort and save the airports
