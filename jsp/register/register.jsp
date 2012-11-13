@@ -116,6 +116,7 @@ return true;
 <content:sysdata var="airlineDomain" name="airline.domain" />
 <content:enum var="notifyOptions" className="org.deltava.beans.Notification" />
 <content:enum var="distanceUnits" className="org.deltava.beans.DistanceUnit" />
+<content:enum var="acTypes" className="org.deltava.beans.schedule.Airport$Code" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
