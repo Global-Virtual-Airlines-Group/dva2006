@@ -95,7 +95,7 @@ public abstract class ElementTag extends BrowserInfoTag {
 
 	/**
 	 * Executed post tag setup. Concatenates CSS classes into a single string.
-	 * @returns EVAL_BODY_INCLUDE always
+	 * @return EVAL_BODY_INCLUDE always
 	 * @throws JspException if an error occurs
 	 */
 	@Override
