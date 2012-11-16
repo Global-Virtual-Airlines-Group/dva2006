@@ -26,7 +26,7 @@ import org.deltava.util.StringUtils;
 
 public class AIRACImportCommand extends AbstractCommand {
 
-	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat" };
+	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssvor.dat", "pssndb.dat", "psswpt.dat", "pssrwy.dat" };
 
 	/**
 	 * Executes the command.
@@ -206,6 +206,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
 		ctx.setAttribute("regionCount", Integer.valueOf(regionCount), REQUEST);
+		ctx.setAttribute("navaidType", nt, REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
 
