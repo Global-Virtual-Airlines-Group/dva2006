@@ -42,9 +42,8 @@ return true;
  <td class="data"><el:combo name="month" required="true" options="${months}" value="${m}" /> <el:combo name="year" required="true" options="${years}" value="${y}" /></td>
 </tr>
 <tr>
- <td class="label top">Import Options</td>
- <td class="data">Load <el:text name="maxCharts" size="4" max="5" className="bld" value="${param.maxCharts}" /> charts before stopping<br />
-<el:box name="noDownload" value="true" label="Do not download Chart images" checked="${noDL}" /></td> 
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="noDownload" value="true" label="Do not download Chart images" checked="${noDL}" /></td> 
 </tr>
 <c:if test="${doImport}">
 <tr>
