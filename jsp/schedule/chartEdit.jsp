@@ -14,6 +14,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:googleAnalytics eventSupport="true" />
+<fmt:aptype var="useICAO" />
 <script type="text/javascript">
 function validate(form)
 {
@@ -25,13 +26,14 @@ if (!validateFile(form.img, 'gif,jpg,png,pdf', 'Chart Image')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 
 function loadAirports()
 {
 var f = document.forms[0];
-updateAirports(f.airport, 'airline=all', ${doICAO}, getValue(f.airport));
+updateAirports(f.airport, 'airline=all', ${useICAO}, '${chart.airport.ICAO}');
 return true;
 }
 </script>
@@ -62,16 +64,20 @@ return true;
 </tr>
 <tr>
  <td class="label">Chart Name</td>
- <td class="data"><el:text className="pri bld req" name="name" idx="*" size="32" max="64" value="${chart.name}" /></td>
+ <td class="data"><el:text className="pri bld req" name="name" idx="*" size="40" max="64" value="${chart.name}" /></td>
 </tr>
 <tr>
  <td class="label">Chart Type</td>
- <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" className="req" firstEntry="[ SELECT TYPE ]" value="${chart.typeName}" /></td>
+ <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" className="req" firstEntry="[ SELECT TYPE ]" value="${chart.type}" /></td>
 </tr>
 <c:if test="${!empty chart}">
 <tr>
  <td class="label">Image Properties</td>
- <td class="data sec">${chart.imgTypeName} image, <fmt:int value="${chart.size}" /> bytes</td>
+ <td class="data sec">${chart.imgType} image, <fmt:int value="${chart.size}" /> bytes</td>
+</tr>
+<tr>
+ <td class="label">Last Modified</td>
+ <td class="data"><fmt:date date="${chart.lastModified}" t="HH:mm" /></td>
 </tr>
 </c:if>
 <tr>
