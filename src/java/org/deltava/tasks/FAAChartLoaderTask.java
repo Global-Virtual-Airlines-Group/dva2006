@@ -4,7 +4,6 @@ package org.deltava.tasks;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
-import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
 
@@ -71,39 +70,6 @@ public class FAAChartLoaderTask extends Task {
 		}
 	}
 	
-	private class ChartWriter extends Thread {
-		private final BlockingQueue<ExternalChart> _in;		
-		private final SetChart _wdao;
-		
-		ChartWriter(BlockingQueue<ExternalChart> cq, SetChart wdao) {
-			super("FAAChartWriter");
-			setDaemon(true);
-			_in = cq;
-			_wdao = wdao;
-		}
-		
-		@Override
-		@SuppressWarnings("synthetic-access")
-		public void run() {
-			while (!isInterrupted()) {
-				try {
-					ExternalChart ec = _in.take();
-					if ((ec != null) && (ec.getID() != 0) && ec.isLoaded()) {
-						_wdao.save(ec);
-						ec.clear();
-					} else if (ec != null) {
-						_wdao.write(ec);
-						ec.clear();
-					}
-				} catch (DAOException de) {
-					log.error(de.getMessage(), de);
-				} catch (InterruptedException ie) {
-					interrupt();
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Initializes the Task.
 	 */
@@ -119,7 +85,7 @@ public class FAAChartLoaderTask extends Task {
 		
 		// Fetch the chart URL with month in it
 		Calendar cld = Calendar.getInstance();
-		int month = cld.get(Calendar.MONTH) + ((cld.get(Calendar.DAY_OF_MONTH) > 18) ? 2 : 1);
+		int month = cld.get(Calendar.MONTH) + ((cld.get(Calendar.DAY_OF_MONTH) > 15) ? 2 : 1);
 		int year = cld.get(Calendar.YEAR);
 		if (month - cld.get(Calendar.MONTH) > 2) {
 			month -= 12;
@@ -204,21 +170,17 @@ public class FAAChartLoaderTask extends Task {
 		
 		log.info("Added " + addCnt + ", updated " + updCnt + ", deleted " + delCnt + " charts");
 		
-		ChartWriter cw = null;
 		try {
-			Connection con = ctx.getConnection();
-			ctx.startTX();
-			SetChart cwdao = new SetChart(con);
+			SetChart cwdao = new SetChart(ctx.getConnection()); ctx.startTX();
 			for (Integer id : chartsToDelete)
 				cwdao.delete(id.intValue());
 			
-			// Start the writer thread
-			BlockingQueue<ExternalChart> work = new LinkedBlockingQueue<ExternalChart>();
-			cw = new ChartWriter(work, cwdao);
-			cw.start();
+			// Commit and release
+			ctx.commitTX(); ctx.release();
 			
 			// Create the thread pool
 			int maxSize = SystemData.getInt("schedule.chart.threads", 8);
+			BlockingQueue<ExternalChart> work = new LinkedBlockingQueue<ExternalChart>();
 			ThreadPoolExecutor exec = new ThreadPoolExecutor(maxSize, maxSize, 250, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 			exec.allowCoreThreadTimeOut(true);
 
@@ -230,10 +192,30 @@ public class FAAChartLoaderTask extends Task {
 				exec.execute(wrk);
 			}
 			
+			// Start looping and writing charts
+			exec.shutdown(); int totalTime = 0; boolean keepRunning = true;
+			while (keepRunning && (totalTime < 600_000)) {
+				Thread.sleep(1000); totalTime += 1000; int charts = 0;
+				cwdao = new SetChart(ctx.getConnection()); ctx.startTX();
+				ExternalChart ec = work.poll(50, TimeUnit.MILLISECONDS);
+				while (ec != null) {
+					if ((ec.getID() != 0) && ec.isLoaded())
+						cwdao.save(ec);
+					else
+						cwdao.write(ec);
+					
+					ec.clear(); charts++;
+					totalTime += 35;
+					ec = work.poll(25, TimeUnit.MILLISECONDS);
+				}
+				
+				keepRunning = !exec.isTerminated() || !work.isEmpty();
+				ctx.commitTX(); ctx.release();
+				log.info(charts + " charts saved to Database");
+			}
+			
 			// Wait for timeout
-			exec.shutdown();
-			exec.awaitTermination(10, TimeUnit.MINUTES);
-			ctx.commitTX();
+			exec.awaitTermination(5, TimeUnit.SECONDS);
 			long ms = tt.stop();
 			log.info(chartsToLoad + " charts updated in " + StringUtils.format(ms/1000.0, "#0.00") + "s");
 		} catch (InterruptedException | DAOException de) {
