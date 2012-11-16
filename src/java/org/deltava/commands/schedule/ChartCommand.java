@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle Approach Charts.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -34,7 +34,6 @@ public class ChartCommand extends AbstractFormCommand {
 
 		// Check if we're creating a new Chart
 		boolean isNew = (ctx.getID() == 0);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -68,7 +67,6 @@ public class ChartCommand extends AbstractFormCommand {
 			} catch (Exception e) {
 				c.setType(Chart.Type.UNKNOWN);
 			}
-				
 			
 			// Load the image data
 			FileUpload imgData = ctx.getFile("img");
@@ -142,23 +140,16 @@ public class ChartCommand extends AbstractFormCommand {
 		// Get chart types (and remove Unknown)
 		List<ComboAlias> cTypes = ComboUtils.fromArray(Chart.Type.values());
 		cTypes.remove(0);
-
-		// Save chart types and ICAO
 		ctx.setAttribute("chartTypes", cTypes, REQUEST);
-		ctx.setAttribute("doICAO", Boolean.valueOf(ctx.getUser().getAirportCodeType() == Airport.Code.ICAO), REQUEST);
 
 		// Load the chart if not new
 		if (!isNew) {
 			try {
-				Connection con = ctx.getConnection();
-
-				// Get the DAO and the chart
-				GetChart dao = new GetChart(con);
+				GetChart dao = new GetChart(ctx.getConnection());
 				Chart c = dao.get(ctx.getID());
 				if (c == null)
 					throw notFoundException("Invalid Approach Chart - " + ctx.getID());
 
-				// Save the chart in the request
 				ctx.setAttribute("chart", c, REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
@@ -191,10 +182,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 		Chart c = null;
 		try {
-			Connection con = ctx.getConnection();
-
-			// Get the DAO and the chart
-			GetChart dao = new GetChart(con);
+			GetChart dao = new GetChart(ctx.getConnection());
 			c = dao.get(ctx.getID());
 			if (c == null)
 				throw notFoundException("Invalid Approach Chart - " + ctx.getID());
