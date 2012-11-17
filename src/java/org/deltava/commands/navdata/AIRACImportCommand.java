@@ -88,8 +88,8 @@ public class AIRACImportCommand extends AbstractCommand {
 
 					// Parse each line differently depending on the filename
 					try {
-						switch (navaidType) {
-						case 0: // Airport
+						switch (nt) {
+						case AIRPORT:
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
 
@@ -100,7 +100,7 @@ public class AIRACImportCommand extends AbstractCommand {
 							nd = al;
 							break;
 
-						case 1: // NDB
+						case NDB:
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
 
@@ -111,7 +111,7 @@ public class AIRACImportCommand extends AbstractCommand {
 							nd = ndb;
 							break;
 
-						case 2: // Runway
+						case RUNWAY:
 							lat = Double.parseDouble(txtData.substring(9, 19).trim());
 							lon = Double.parseDouble(txtData.substring(19, 30).trim());
 
@@ -130,7 +130,7 @@ public class AIRACImportCommand extends AbstractCommand {
 							nd = rwy;
 							break;
 
-						case 3: // VOR
+						case VOR:
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
 
@@ -141,7 +141,7 @@ public class AIRACImportCommand extends AbstractCommand {
 							nd = vor;
 							break;
 
-						case 4: // Intersection
+						case INT:
 							StringTokenizer tkns = new StringTokenizer(txtData, " ");
 							int cnt = tkns.countTokens();
 							if (cnt == 3) {
@@ -163,13 +163,10 @@ public class AIRACImportCommand extends AbstractCommand {
 							}
 							break;
 						}
-					} catch (NumberFormatException nfe) {
+					} catch (IllegalArgumentException | StringIndexOutOfBoundsException nfe) {
 						errors.add("Error at line " + br.getLineNumber() + ": " + nfe.getMessage());
 						errors.add(txtData);
-					} catch (IllegalArgumentException iae) {
-						errors.add("Error at line " + br.getLineNumber() + ": " + iae.getMessage());
-						errors.add(txtData);
-					}
+					} 
 
 					// Write the bean, and log any errors
 					if (nd != null) {
