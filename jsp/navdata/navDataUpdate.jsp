@@ -22,8 +22,8 @@
 <c:if test="${isImport}">
 <div class="updateHdr">Navigation Data Imported</div>
 <br />
-<c:if test="${purgeCount > 0}"><fmt:int value="${purgeCount}" /> ${navaidType} records purged. </c:if><fmt:int value="${entryCount}" /> 
-${navaidType} records loaded. <fmt:int value="${regionCount}" /> records have had the proper ICAO region code set after import.<br />
+<c:if test="${purgeCount > 0}"><fmt:int value="${purgeCount}" /> ${navaidType.name} records purged. </c:if><fmt:int value="${entryCount}" /> 
+${navaidType.name} records loaded. <fmt:int value="${regionCount}" /> records have had the proper ICAO region code set after import.<br />
 <br />
 <c:choose>
 <c:when test="${navData}">
