@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2005, 2006, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved. -->
 <project default="deploy">
-	<!-- Buld the JavaDoc -->
-    <target name="javadoc">
+    <target name="javadoc" description="Build the Golgotha JavaDoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
         <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.7" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
@@ -25,7 +24,7 @@
    	    	</classpath>
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004-2011 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004-2012 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
 		<!-- TAR up the JavaDoc -->
@@ -67,8 +66,7 @@
     	<delete file="${java.io.tmpdir}/javadoc.tar.bz2" />
     </target>
 	
-	<target name="junit">
-		<!-- Execute the JUnit tests -->
+	<target name="junit" description="Execute the JUnit tests">
 		<mkdir dir="${java.io.tmpdir}/junit" />
 		<junit fork="on" forkmode="perBatch" dir="${basedir}" printsummary="yes" showoutput="yes">
 		    <classpath>
@@ -111,8 +109,7 @@
 		<delete dir="${java.io.tmpdir}/junit_report" />
 	</target>
 
-	<!-- Compile the Java classes -->
-	<target name="compile">
+	<target name="compile" description="Compile the Java classes">
 		<!-- Set build date/time -->
 		<tstamp>
 			<format property="build_utc" timezone="Etc/Greenwich" pattern="yyyyMMdd HHmmss" />
@@ -162,14 +159,13 @@
 		<!-- <move file="${java.io.tmpdir}/VersionInfo.java" todir="${vInfo.path}" /> -->
 	</target>
 
-	<!-- Precompile the JSP pages -->
-	<target name="jspc" depends="compile">
+	<target name="jspc" depends="compile" description="Precompile the JSP pages">
 		<property name="jspc.webXMLInc" value="${java.io.tmpdir}/src/jsp/include.xml" />
 		<taskdef classname="org.apache.jasper.JspC" name="jasper2">
 			<classpath id="jspc.classpath"> 
 				<pathelement path="${classpath}" />
 				<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
-				<fileset dir="./lib" includes="**/*.jar" /> 
+				<fileset dir="./lib" includes="**/*.jar" />
 			</classpath> 
 		</taskdef>
 		
@@ -211,8 +207,57 @@
 		<copy file="WEB-INF/web_core.xml" tofile="${java.io.tmpdir}/build/web.xml" />
 		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
 	</target>
-	
-	<target name="deploy" depends="jspc">
+
+	<target name="minify" description="Minify JS and CSS">
+		<available file="lib/YUIAnt.jar" property="YUIANT_AVAILABLE" />
+		<fail unless="YUIANT_AVAILABLE" message="Run jar target to generate the required task" />
+		<taskdef name="yuicompress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
+			<classpath>
+				<fileset dir="./lib" includes="yuicompressor-*.jar" />
+				<pathelement path="lib/YUIAnt.jar" />
+			</classpath>
+		</taskdef>
+
+		<!-- Minify JS -->
+		<mkdir dir="${java.io.tmpdir}/build/min/js" />
+		<yuicompress linebreak="300" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${java.io.tmpdir}/build/min/js">
+			<fileset dir="static/js" >
+				<include name="*.js" />
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/min.cache.txt" />
+				</modified>
+			</fileset>
+		</yuicompress>
+		<move todir="${java.io.tmpdir}/build/min/js" includeemptydirs="false">
+			<fileset dir="${java.io.tmpdir}/build/min/js">
+				<include name="*.js" />
+				<exclude name="*-min.js" />
+			</fileset>
+			<mapper type="glob" from="*.js" to="*-min.js"/>
+		</move>
+		
+		<!-- Minify CSS -->
+		<mkdir dir="${java.io.tmpdir}/build/min/css" />
+		<yuicompress linebreak="300" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${java.io.tmpdir}/build/min/css">
+			<fileset dir="static/css" >
+				<include name="**/*.css" />
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/min.cache.txt" />
+				</modified>
+			</fileset>
+		</yuicompress>
+		<move todir="${java.io.tmpdir}/build/min/css" includeemptydirs="false">
+			<fileset dir="${java.io.tmpdir}/build/min/css">
+				<include name="**/*.css" />
+				<exclude name="**/*-min.css" />
+			</fileset>
+			<mapper type="glob" from="*.css" to="*-min.css"/>
+		</move>
+	</target>
+
+	<target name="deploy" depends="jspc,minify" description="Deploy to development environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.dev.port" value="22" />
 		<property name="http.dev.port" value="22" />
@@ -285,11 +330,17 @@
 					<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
 				</modified>
 			</fileset>
+			<fileset dir="${java.io.tmpdir}/build/min">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
+				</modified>
+			</fileset>
 		</scp>
 	</target>
 	
 	<!-- Generate classes based on FlightAware WSDL -->
-	<target name="fa_wsdl">
+	<target name="fa_wsdl" description="Compile FlightXML2 WSDL">
 		<taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
 			<classpath id="wsdl.classpath"> 
 				<fileset dir="lib">
@@ -325,14 +376,14 @@
 	</target>
 	
 	<!-- Clean out compiled data -->
-	<target name="clean">
+	<target name="clean" description="Clean build paths">
 		<delete dir="${java.io.tmpdir}/build" />
 		<delete dir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${java.io.tmpdir}/build/web.xml" />
 	</target>
 	
 	<!-- Upload scripts to the app server -->
-	<target name="put_scripts">
+	<target name="put_scripts" description="Deploy bash scripts to production">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
 		<mkdir dir="../.local_data" />
@@ -350,7 +401,7 @@
 	</target>
 	
 	<!-- Production Deployment via SSH -->
-	<target name="prod_deploy" depends="jspc">
+	<target name="prod_deploy" depends="jspc,minify" description="Deploy to Production environment">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<property name="webapp.ssh.port" value="22" />
 		<property name="http.ssh.port" value="22" />
@@ -426,9 +477,14 @@
 		</scp>
 		
 		<!-- Upload static content to the HTTP server -->
-		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}"
-			port="${http.ssh.port}" verbose="yes" trust="yes" password="${http.ssh.pwd}">
+		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}" port="${http.ssh.port}" verbose="yes" trust="yes" password="${http.ssh.pwd}">
 			<fileset dir="static">
+				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
+				</modified>
+			</fileset>
+			<fileset dir="${java.io.tmpdir}/build/min">
 				<modified seldirs="true" algorithm="digest" update="true" delayupdate="false">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
@@ -438,7 +494,7 @@
 	</target>
 
 	<!-- Package source code -->
-	<target name="put_source">
+	<target name="put_source" description="Upload source code archive">
 		<mkdir dir="${java.io.tmpdir}/src" />
 		<tar destfile="${java.io.tmpdir}/src/golgotha.tar" longfile="fail">
 			<tarfileset uid="500" group="gva" dir="${basedir}">

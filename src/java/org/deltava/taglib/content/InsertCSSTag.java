@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class InsertCSSTag extends InsertContentTag {
+public class InsertCSSTag extends InsertMinifiedContentTag {
 
 	/**
 	 * Default CSS scheme name.
@@ -85,7 +85,7 @@ public class InsertCSSTag extends InsertContentTag {
 		buf.append('/');
 		buf.append(getScheme());
 		buf.append('/');
-		buf.append(_resourceName);
+		buf.append(getFileName());
 		buf.append(".css");
 		
 		try {
@@ -104,7 +104,7 @@ public class InsertCSSTag extends InsertContentTag {
 
 			// Write the tag
 			JspWriter out = pageContext.getOut();			
-			out.print("<link rel=\"stylesheet\" type=\"text/css\" href=\"");
+			out.print("<link rel=\"stylesheet\" href=\"");
 			out.print(buf.toString());
 			out.print("\" />");
 		} catch (Exception e) {
