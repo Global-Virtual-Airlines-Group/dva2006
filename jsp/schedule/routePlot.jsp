@@ -82,7 +82,7 @@ return true;
 </tr>
 <tr id="wxAr" style="display:none;">
  <td class="label">Destination Weather</td>
- <td class="data"><span id="wxAmetar"></span><div id="wxAtaf" style="visibility:hidden;"></div></td>
+ <td class="data"><span id="wxAmetar"></span><div id="wxAtaf" style="display:none;"></div></td>
 </tr>
 <tr id="airportL" style="display:none;">
  <td class="label">Alternate</td>
