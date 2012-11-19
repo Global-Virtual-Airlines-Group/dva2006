@@ -10,7 +10,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @since 1.0
  */
 
-public abstract class InsertContentTag extends TagSupport {
+abstract class InsertContentTag extends TagSupport {
 	
     /**
      * The name of the resource to display, <i>without extension</i>.
