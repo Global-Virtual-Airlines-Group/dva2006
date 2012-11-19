@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <map:api version="3" libraries="weather" />
+<content:js name="googleMapsWX" />
 <content:googleAnalytics eventSupport="true" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script type="text/javascript">
@@ -44,11 +45,9 @@ for (var x = 0; x < f.showTracks.length; x++)
 	f.showTracks[x].checked = true;
 
 // Reset track data label
-var label = document.getElementById("trackLabel");
-var data = document.getElementById("trackData");
-if ((!label) || (!data))
-	return false;
-
+var label = document.getElementById('trackLabel');
+var data = document.getElementById('trackData');
+if ((!label) || (!data)) return false;
 label.innerHTML = 'Track Data';
 data.innerHTML = 'N/A';
 return true;
@@ -80,37 +79,42 @@ if (f.date.selectedIndex == 0)
 	return;
 
 // Set map as loading
-var isLoading = document.getElementById("isLoading");
+var isLoading = document.getElementById('isLoading');
 if (isLoading)
-	isLoading.innerHTML = " - LOADING...";
+	isLoading.innerHTML = ' - LOADING...';
 
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'otrackinfo.ws?type=PACOT&date=' + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
+	if (xmlreq.status != 200) {
+		isLoading.innerHTML = ' - ERROR ' + xmlreq.statusText;		
+		return false;
+	}
+
 	removeMarkers('allPoints');
 	removeMarkers('allTracks');
 	resetTracks();
 
 	// Get the XML document
 	var xdoc = xmlreq.responseXML.documentElement;
-	var xtracks = xdoc.getElementsByTagName("track");
+	var xtracks = xdoc.getElementsByTagName('track');
 	for (var i = 0; i < xtracks.length; i++) {
 		var trackPos = [];
 		var track = xtracks[i];
-		var trackType = track.getAttribute("type");
-		var waypoints = track.getElementsByTagName("waypoint");
+		var trackType = track.getAttribute('type');
+		var waypoints = track.getElementsByTagName('waypoint');
 		for (var j = 0; j < waypoints.length; j++) {
 			var wp = waypoints[j];
 			var label = wp.firstChild;
-			var p = new google.maps.LatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
+			var p = new google.maps.LatLng(parseFloat(wp.getAttribute('lat')), parseFloat(wp.getAttribute('lng')));
 			trackPos.push(p);
 
 			// Create the map marker
 			var mrk = googleMarker(wp.getAttribute('color'), p, label.data);
-			mrk.title = track.getAttribute("code");
-			mrk.trackPoints = track.getAttribute("track");
+			mrk.title = track.getAttribute('code');
+			mrk.trackPoints = track.getAttribute('track');
 			mrk.showTrack = showTrackInfo;
 			google.maps.event.addListener(mrk, 'click', function() { mrk.showTrack(this); });
 			mrk.setMap(map);
@@ -119,7 +123,7 @@ xmlreq.onreadystatechange = function() {
 		}
 
 		// Draw the route
-		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute("color"), strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
+		var trackLine = new google.maps.Polyline({path:trackPos, strokeColor:track.getAttribute('color'), strokeWeight:2, strokeOpacity:0.7, geodesic:true, zIndex:golgotha.maps.z.POLYLINE});
 		trackLine.setMap(map);
 		
 		// Save the route/points
@@ -150,7 +154,7 @@ return true;
 <el:form action="pacotplot.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> PACIFIC ROUTE PLOTTER<span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> PACIFIC ROUTE PLOTTER<span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label">Date</td>
@@ -181,7 +185,7 @@ return true;
 <script type="text/javascript">
 // Create map options
 var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN]};
-var mapOpts = {center:new google.maps.LatLng(42.0, -165.0), zoom:4, minZoom:2, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:new google.maps.LatLng(42.0, -165.0), zoom:4, minZoom:2, maxZoom:8, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -191,8 +195,8 @@ google.maps.event.addListener(map, 'click', function() { map.infoWindow.close();
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 
 // Add clouds
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl('Clouds', new google.maps.weather.CloudLayer()));
-map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl());
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 
 // Create the tracks/waypoints
 var tracks = [];
