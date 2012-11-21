@@ -10,7 +10,8 @@ golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:1
 golgotha.maps.ovLayers = [];
 golgotha.maps.util = {};
 golgotha.maps.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
-golgotha.maps.util.oldIE = (golgotha.maps.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));  
+golgotha.maps.util.oldIE = (golgotha.maps.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
+golgotha.maps.util.isIE10 = (golgotha.maps.util.isIE && (navigator.appVersion.indexOf('IE 10.0') > 0));
 golgotha.maps.util.isIOS = (!golgotha.maps.util.isIE && ((navigator.platform == 'iPad') || (navigator.platform == 'iPhone')));
 
 // Calculate GMT offset in seconds from local
