@@ -11,7 +11,7 @@ var c = 'wxTile ' + this.get('imgClass') + ' ' + this.get('imgClass') + '-' + th
 img.setAttribute('class', c);
 if (golgotha.maps.util.oldIE) img.IE8 = c;
 var tx = (this.tempZeroOpacity==true) ? 0 : this.getOpacity();
-if (golgotha.maps.util.isIE)
+if (golgotha.maps.util.isIE && (!golgotha.maps.util.isIE10))
 	img.style.filter = 'alpha(opacity=' + (tx*100) + ')';
 else
 	img.style.opacity = tx;
