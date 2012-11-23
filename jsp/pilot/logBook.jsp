@@ -39,7 +39,7 @@
 </tr>
 
 <!-- Sort/Filter Options -->
-<c:if test="${!empty viewContext.results}">
+<c:if test="${!empty viewContext.results || !empty airports}">
 <tr class="title">
  <td colspan="2">AIRCRAFT <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></td>
  <td colspan="4" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO

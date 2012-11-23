@@ -166,12 +166,10 @@ return true;
  <td class="data">${flightInfo.airportL.name} (<fmt:airport airport="${flightInfo.airportL}" />)</td>
 </tr>
 </c:if>
+<c:if test="${pirep.FSVersion != 0}">
 <tr>
  <td class="label">Flight Simulator</td>
 <c:choose>
-<c:when test="${pirep.FSVersion == 0}">
- <td class="data sec bld">UNKNOWN</td>
-</c:when>
 <c:when test="${pirep.FSVersion == 2006}">
  <td class="data sec bld">Microsoft Flight Simulator X</td>
 </c:when>
@@ -186,6 +184,7 @@ return true;
 </c:otherwise>
 </c:choose>
 </tr>
+</c:if>
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
 <tr>
  <td class="label">Online Flight</td>
