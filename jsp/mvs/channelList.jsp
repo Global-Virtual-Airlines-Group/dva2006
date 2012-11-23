@@ -32,7 +32,7 @@
  <td style="width:20%">CHANNEL NAME</td>
  <td style="width:15%">SAMPLE RATE</td>
  <td style="width:10%">RANGE</td>
- <td style="width:10%">USERS</td>
+ <td style="width:10%">MAX USERS</td>
  <td style="width:15%"><el:cmdbutton url="mvschannel" op="edit" label="NEW CHANNEL" /></td>
  <td class="left">DESCRIPTION</td>
 </tr>

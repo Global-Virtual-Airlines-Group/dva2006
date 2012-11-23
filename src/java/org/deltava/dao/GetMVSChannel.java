@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load permanent voice channel data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 4.0
  */
 
@@ -103,6 +103,8 @@ public class GetMVSChannel extends DAO {
 				c.setDescription(rs.getString(3));
 				c.setSampleRate(SampleRate.getRate(rs.getInt(4)));
 				c.setRange(rs.getInt(5));
+				c.setIsDefault(rs.getBoolean(6));
+				c.setMaxUsers(rs.getInt(7));
 				results.add(c);
 			}
 		}
