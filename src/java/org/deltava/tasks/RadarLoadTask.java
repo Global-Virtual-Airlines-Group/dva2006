@@ -61,7 +61,7 @@ public class RadarLoadTask extends Task {
 				}
 					
 				_gt.add(st);
-				tLog.info("Loaded " + _addr);
+				tLog.debug("Loaded " + _addr);
 			} catch (DAOException de) {
 				tLog.error("Cannot load SuperTile at " + _addr, de);
 			}
