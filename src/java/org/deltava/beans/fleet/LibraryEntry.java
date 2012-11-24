@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.io.*;
@@ -9,11 +9,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * An abstract bean to store information about Library entries.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
-public abstract class LibraryEntry implements Serializable, Comparable<LibraryEntry>, Cacheable, ViewEntry {
+public abstract class LibraryEntry implements Comparable<LibraryEntry>, Cacheable, ViewEntry {
 
 	public static final int PUBLIC = 0;
 	public static final int AUTH_ONLY = 1;
@@ -24,12 +24,8 @@ public abstract class LibraryEntry implements Serializable, Comparable<LibraryEn
 	 */
 	public static final String[] SECURITY_LEVELS = {"Public Resource", "Authorized Users", "Staff Only"};
 
-   /**
-    * The resource this FleetEntry points to on the filesystem.
-    */
-   private File _file;
+   private final File _file;
    private long _fileSize;
-
    private String _name;
    private String _description;
    private int _downloadCount;
@@ -112,11 +108,9 @@ public abstract class LibraryEntry implements Serializable, Comparable<LibraryEn
    /**
     * Updates the number of times this resource has been downloaded.
     * @param count the download count
-    * @throws IllegalArgumentException if count is negative
     */
    public void setDownloadCount(int count) {
-       validateParameter(count, "Download Count");        
-       _downloadCount = count;
+       _downloadCount = Math.max(0, count);
    }
    
    /**
@@ -161,17 +155,6 @@ public abstract class LibraryEntry implements Serializable, Comparable<LibraryEn
        _securityLevel = level;
    }
 
-   /**
-    * Helper method to validate numeric parameters.
-    * @param pValue the parameter value
-    * @param pName the parameter name
-    * @throws IllegalArgumentException if pValue is negative
-    */
-   protected void validateParameter(int pValue, String pName) {
-       if (pValue < 0)
-           throw new IllegalArgumentException(pName + " cannot be negative");
-   }
-   
    /**
     * Returns the underlying filesystem entry.
     * @return the filesystem entry

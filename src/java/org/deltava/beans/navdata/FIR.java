@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -10,13 +10,13 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store data about a Flight Information Region or ARTCC.
  * @author Luke
- * @version 3.2
+ * @version 5.0
  * @since 3.2
  */
 
-public class FIR implements java.io.Serializable, Comparable<FIR>, Cacheable {
+public class FIR implements Comparable<FIR>, Cacheable {
 	
-	private String _id;
+	private final String _id;
 	private boolean _oceanic;
 	private String _name;
 	

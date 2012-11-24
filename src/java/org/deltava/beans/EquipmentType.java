@@ -1,8 +1,7 @@
-// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
-import java.io.Serializable;
 
 import org.deltava.beans.system.AirlineInformation;
 
@@ -11,11 +10,15 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
-public class EquipmentType implements Serializable, Cacheable, Comparable<EquipmentType>, ComboAlias, ViewEntry {
+public class EquipmentType implements Cacheable, Comparable<EquipmentType>, ComboAlias, ViewEntry {
+	
+	public enum Rating {
+		SECONDARY, PRIMARY,
+	}
 	
 	// Database constants
 	public static final int SECONDARY_RATING = 0;

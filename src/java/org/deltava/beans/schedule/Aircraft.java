@@ -18,7 +18,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry, java.io.Serializable {
+public class Aircraft implements Comparable<Aircraft>, Cacheable, ViewEntry {
 
 	/**
 	 * Enumeration for fuel tank types.

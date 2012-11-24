@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.hr;
 
 import java.util.Date;
@@ -17,12 +17,13 @@ import org.deltava.mail.MessageContext;
 import org.deltava.security.command.NominationAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to approve or reject Senior Captain nominations.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 3.3
  */
 
@@ -83,7 +84,6 @@ public class NominationDisposeCommand extends AbstractCommand {
 				p.setRank(Rank.SC);
 				SetPilot pwdao = new SetPilot(con);
 				pwdao.write(p);
-				SetPilot.invalidate(p.getID());
 				
 				// Write Facebook update
 				if (!StringUtils.isEmpty(SystemData.get("users.facebook.id"))) {
@@ -113,10 +113,9 @@ public class NominationDisposeCommand extends AbstractCommand {
 				suwdao.write(upd);
 			}
 			
-			// Clear recognition cache
+			// Clear caches and commit
 			GetPilotRecognition.invalidate(null);
-			
-			// Commit
+			CacheManager.invalidate("Pilots", p.cacheKey());
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();

@@ -16,7 +16,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class NavigationDataMap implements java.io.Serializable, Cacheable {
+public class NavigationDataMap implements Cacheable {
    
    private final Map<String, SortedSet<NavigationDataBean>> _entries = new HashMap<String, SortedSet<NavigationDataBean>>();
    private Object _key;
@@ -33,7 +33,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @param entries the navigation aid beans to add
     */
    public NavigationDataMap(Collection<NavigationDataBean> entries) {
-	   this();
+	   super();
 	   addAll(entries);
    }
    

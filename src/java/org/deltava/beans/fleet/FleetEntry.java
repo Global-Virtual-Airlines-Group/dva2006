@@ -1,4 +1,4 @@
-// Copyright 2005, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.util.Date;
@@ -6,14 +6,13 @@ import java.util.Date;
 /**
  * A bean to store information about Fleet Library entries.
  * @author Luke
- * @version 2.4
+ * @version 5.0
  * @since 1.0
  */
 
 public abstract class FleetEntry extends LibraryEntry {
 	
 	private Date _lastModified;
-	
     private int _majorVersion;
     private int _minorVersion;
     private int _minorSubVersion;
@@ -69,18 +68,14 @@ public abstract class FleetEntry extends LibraryEntry {
      * @param major the major version number
      * @param minor the minor version number
      * @param subMinor the sub-minor version number
-     * @throws IllegalArgumentException if major, minor or subMinor are negative
      * @see FleetEntry#getMajorVersion()
      * @see FleetEntry#getMinorVersion()
      * @see FleetEntry#getSubVersion()
      */
     public void setVersion(int major, int minor, int subMinor) {
-        validateParameter(major, "Major Version");
-        validateParameter(minor, "Minor Version");
-        validateParameter(subMinor, "Minor Sub-Version");
-        _majorVersion = major;
-        _minorVersion = minor;
-        _minorSubVersion = subMinor;
+        _majorVersion = Math.max(1, major);
+        _minorVersion = Math.max(0, minor);
+        _minorSubVersion = Math.max(0, subMinor);
     }
     
     /**
