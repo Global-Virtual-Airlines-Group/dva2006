@@ -12,11 +12,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Airline information.
  * @author Luke
- * @version 2.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class Airline implements java.io.Serializable, ComboAlias, Comparable<Airline>, Cacheable {
+public class Airline implements ComboAlias, Comparable<Airline>, Cacheable {
 
 	private String _code;
 	private String _name;
@@ -230,10 +230,6 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable<Air
 		return _code;
 	}
 	
-	/**
-	 * Cache key.
-	 * @return the Airline code
-	 */
 	public Object cacheKey() {
 	    return _code;
 	}

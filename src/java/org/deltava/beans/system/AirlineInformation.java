@@ -11,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class AirlineInformation implements java.io.Serializable, Comparable<AirlineInformation>, ComboAlias, Cacheable {
+public class AirlineInformation implements Comparable<AirlineInformation>, ComboAlias, Cacheable {
    
    private final String _code;
    private final String _name;

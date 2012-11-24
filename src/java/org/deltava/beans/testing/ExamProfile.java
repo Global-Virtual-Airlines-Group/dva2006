@@ -15,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class ExamProfile implements Comparable<ExamProfile>, java.io.Serializable, Cacheable, ViewEntry {
+public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntry {
 
     private String _name;
     private int _stage;

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import org.deltava.beans.GeoLocation;
@@ -8,20 +8,18 @@ import org.deltava.util.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store IP address geo-location data. 
+ * A bean to store IP address geolocation data. 
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.5
  */
 
-public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocation {
+public class IPAddressInfo implements Cacheable, GeoLocation {
 	
 	private final GeoPosition _loc = new GeoPosition(0, 0);
-	
-	private String _addr;
+	private final String _addr;
 	
 	private IPBlock _cidr;
-	
 	private Country _country;
 	private String _region;
 	private String _city;
@@ -96,15 +94,11 @@ public class IPAddressInfo implements java.io.Serializable, Cacheable, GeoLocati
 	 * @return the location
 	 */
 	public String getLocation() {
-		StringBuilder buf = new StringBuilder(24);
-		if (!StringUtils.isEmpty(_city)) {
-			buf.append(_city);
-			buf.append(", ");
-		}
-		if (!StringUtils.isEmpty(_region)) {
-			buf.append(_region);
-			buf.append(' ');
-		}
+		StringBuilder buf = new StringBuilder(32);
+		if (!StringUtils.isEmpty(_city))
+			buf.append(_city).append(", ");
+		if (!StringUtils.isEmpty(_region))
+			buf.append(_region).append(' ');
 		if (_country != null)
 			buf.append(_country.getCode());
 		

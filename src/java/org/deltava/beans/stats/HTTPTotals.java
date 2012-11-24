@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.util.cache.Cacheable;
@@ -6,15 +6,15 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class to store HTTP aggregate statistics.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
-public class HTTPTotals implements java.io.Serializable, Cacheable {
+public class HTTPTotals implements Cacheable {
 	
-	private int _totalHits;
-	private int _homeHits;
-	private long _totalBytes;
+	private final int _totalHits;
+	private final int _homeHits;
+	private final long _totalBytes;
 
 	/**
 	 * Creates a new HTTP totals bean.
