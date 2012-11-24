@@ -1,7 +1,6 @@
-// Copyright 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.wx;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.deltava.beans.*;
@@ -13,16 +12,15 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store weather data for a particular location.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.2
  */
 
-public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comparable<WeatherDataBean>, Serializable {
+public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comparable<WeatherDataBean> {
 
 	private AirportLocation _pos;
 	private Date _createdOn;
 	private Date _obsDate;
-
 	private String _wxData;
 	
 	/**
@@ -40,8 +38,7 @@ public abstract class WeatherDataBean implements MarkerMapEntry, Cacheable, Comp
 	public static WeatherDataBean create(Type t) {
 		try {
 			Class<?> c = Class.forName(WeatherDataBean.class.getPackage().getName() + "." + t.toString());
-			WeatherDataBean wx = (WeatherDataBean) c.newInstance();
-			return wx;
+			return (WeatherDataBean) c.newInstance();
 		} catch (Exception e) {
 			return null;
 		}
