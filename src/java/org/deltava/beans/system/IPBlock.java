@@ -2,6 +2,7 @@
 package org.deltava.beans.system;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store CIDR address blocks.
@@ -10,7 +11,7 @@ import org.deltava.util.*;
  * @since 2.5
  */
 
-public class IPBlock implements java.io.Serializable, Comparable<IPBlock> {
+public class IPBlock implements Cacheable, Comparable<IPBlock> {
 	
 	private final String _baseAddr;
 	private final long _rawAddr;
@@ -81,6 +82,10 @@ public class IPBlock implements java.io.Serializable, Comparable<IPBlock> {
 			tmpResult = Integer.valueOf(_bits).compareTo(Integer.valueOf(ib2._bits));
 		
 		return tmpResult;
+	}
+	
+	public Object cacheKey() {
+		return toString();
 	}
 
 	public String toString() {
