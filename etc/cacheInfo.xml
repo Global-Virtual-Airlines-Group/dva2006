@@ -35,6 +35,7 @@
 	<cache id="TAF" max="256" expires="1800" />
 	<cache id="FlightAwareMETAR" max="256" expires="1800" />
 	<cache id="FlightAwareTAF" max="256" expires="1800" />
+	<cahe id="WXImages" max="8" expires="7200" />
 
 	<!-- ServInfo caches -->
 	<cache id="ServInfoStatus" max="3" expires="43200" />
@@ -51,4 +52,5 @@
 	<cache id="IPInfo" max="512" expires="86400" />
 	<cache id="HTTPTotals" max="2" expires="7200" />
 	<cache id="TS2Data" max="16" expires="1200" />
+	<cache id="TableStats" max="12" expires="1800" />
 </caches>
