@@ -98,8 +98,8 @@ return true;
  <td class="data"><el:check name="examFO" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examFO(eqType)}" /></td>
 </tr>
 <tr>
- <td class="label">Flight Legs for Promotion</td>
- <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty eqType ? 10 : eqType.promotionLegs}" /></td>
+ <td class="label">Flights for Promotion</td>
+ <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty eqType ? 10 : eqType.promotionLegs}" /> legs</td>
 </tr>
 <tr>
  <td class="label">Flight Distance for Promotion</td>
