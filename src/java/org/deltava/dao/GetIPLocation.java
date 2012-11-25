@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,13 +12,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to geo-locate IP addresses.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.5
  */
 
-public class GetIPLocation extends DAO implements CachingDAO {
+public class GetIPLocation extends DAO {
 	
-	private static final Cache<IPAddressInfo> _cache = new ExpiringCache<IPAddressInfo>(1024, 86400);
+	private static final Cache<IPAddressInfo> _cache = CacheManager.get(IPAddressInfo.class, "IPInfo");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -28,10 +28,6 @@ public class GetIPLocation extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
-	}
-	
 	/**
 	 * Retrieves Geolocation data for a particular IP address.
 	 * @param addr the IP address
@@ -39,13 +35,11 @@ public class GetIPLocation extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public IPAddressInfo get(String addr) throws DAOException {
-		if (StringUtils.isEmpty(addr) || !addr.contains("."))
-			return null;
+		if (StringUtils.isEmpty(addr) || !addr.contains(".")) return null;
 		
 		// Check the cache
 		IPAddressInfo result = _cache.get(addr);
-		if (result != null)
-			return result;
+		if (result != null) return result;
 		
 		try {
 			prepareStatementWithoutLimits("SELECT (SELECT ip_cidr FROM geoip.ip_group_country WHERE (ip_start <= INET_ATON(?)) "

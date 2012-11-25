@@ -14,6 +14,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Web Site Command to import airway data in PSS format.
@@ -127,8 +128,9 @@ public class AirwayImportCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Purge the cache
-		new GetNavRoute(null).clear();
+		// Purge the caches
+		CacheManager.invalidate("NavAirway");
+		CacheManager.invalidate("NavRoute");
 		
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);

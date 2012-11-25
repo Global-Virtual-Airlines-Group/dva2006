@@ -19,14 +19,11 @@ import org.deltava.util.system.SystemData;
  * @since 2.1
  */
 
-public class GetFlightReportStatistics extends DAO implements CachingDAO {
+public class GetFlightReportStatistics extends DAO {
 	
 	private static final int MAX_VSPEED = -2500;
-	
-	private static final Cache<CacheableCollection<LandingStatistics>> _cache =
-		new ExpiringCache<CacheableCollection<LandingStatistics>>(64, 1800);
-	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache =
-		new ExpiringCache<CacheableCollection<FlightStatsEntry>>(16, 600);
+	private static final Cache<CacheableCollection<LandingStatistics>> _cache = CacheManager.getCollection(LandingStatistics.class, "LandingStats");
+	private static final Cache<CacheableCollection<FlightStatsEntry>> _statCache = CacheManager.getCollection(FlightStatsEntry.class, "FlightStats");
 	
 	private int _dayFilter;
 
@@ -86,12 +83,6 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		_dayFilter = Math.max(0, days);
 	}
 
-	public CacheInfo getCacheInfo() {
-		CacheInfo result = new CacheInfo(_cache);
-		result.add(_statCache);
-		return result;
-	}
-	
 	/*
 	 * Helper method to extract a cache key from a prepared statment.
 	 */
@@ -487,7 +478,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			_ps.setInt(4, FlightReport.ATTR_DISPATCH);
 			_ps.setInt(5, FlightReport.OK);
 			_ps.setString(6, eqType);
-			_ps.setInt(7, EquipmentType.PRIMARY_RATING);
+			_ps.setInt(7, EquipmentType.Rating.PRIMARY.ordinal());
 			if (_dayFilter > 0)
 				_ps.setInt(8, _dayFilter);
 			
@@ -690,7 +681,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to parse stats entry result sets.
 	 */
 	private List<FlightStatsEntry> execute() throws SQLException {
@@ -715,7 +706,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 		return results;
 	}
 	
-	/**
+	/*
 	 * Private helper method to return SQL statement that doesn't involve joins on the <i>PILOTS</i> table.
 	 */
 	private static String getSQL() {
@@ -726,7 +717,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				+ "COUNT(DISTINCT F.PILOT_ID) AS PIDS FROM PIREPS F WHERE (F.STATUS=?) ";
 	}
 	
-	/**
+	/*
 	 * Private helper method to return SQL statement that involves a join on the <i>PILOTS</i> table.
 	 */
 	private static String getPilotJoinSQL() {
@@ -738,7 +729,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 			+ "AND (F.STATUS=?) ";
 	}
 	
-	/**
+	/*
 	 * Private helper method to return SQL statement that involves a join on the <i>AIRLINES</i> table.
 	 */
 	private static String getAirlineJoinSQL() {
@@ -750,7 +741,7 @@ public class GetFlightReportStatistics extends DAO implements CachingDAO {
 				+ "PIREPS F WHERE (AL.CODE=F.AIRLINE) AND (F.STATUS=?) ";
 	}
 
-	/**
+	/*
 	 * Private helper method to return SQL statement that involves a join on the <i>AIRPORTS</i> table.
 	 */
 	private static String getAirportJoinSQL(String apColumn) {

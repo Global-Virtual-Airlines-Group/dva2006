@@ -19,9 +19,9 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetCoolerChannels extends DAO implements CachingDAO {
+public class GetCoolerChannels extends DAO {
 
-	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(24, 1800);
+	private static final Cache<Channel> _cache = CacheManager.get(Channel.class, "CoolerChannels");
 
 	/**
 	 * Create this DAO using a JDBC connection.
@@ -29,10 +29,6 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 	 */
 	public GetCoolerChannels(Connection c) {
 		super(c);
-	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
 	}
 	
 	/**
@@ -55,14 +51,6 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 		}
 	}
 	
-	/**
-	 * Invalidates a cached Channel.
-	 * @param channelName the Channel name
-	 */
-	static void invalidate(String channelName) {
-		_cache.remove(channelName);
-	}
-
 	/**
 	 * Retrieves a specific Channel profile. This populate the roles and airlines.
 	 * @param channelName the Channel name

@@ -15,12 +15,11 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetFlightReportRecognition extends GetFlightReports implements CachingDAO {
+public class GetFlightReportRecognition extends GetFlightReports {
 	
-	private static final Cache<CacheableList<FlightReport>> _cache = 
-		new ExpiringCache<CacheableList<FlightReport>>(16, 1800);
+	private static final Cache<CacheableList<FlightReport>> _cache = CacheManager.getCollection(FlightReport.class, "GreasedLandings"); 
 	
-	private static final double RUNWAY_LDG_ZONE_RATIO = 0.375;
+	private static final double RUNWAY_LDG_ZONE_RATIO = 0.35;
 	private static final int TD_ZONE = 1500;
 	
 	private int _dayFilter;
@@ -31,11 +30,6 @@ public class GetFlightReportRecognition extends GetFlightReports implements Cach
 	 */
 	public GetFlightReportRecognition(Connection c) {
 		super(c);
-	}
-	
-	@Override
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
 	}
 	
 	/**

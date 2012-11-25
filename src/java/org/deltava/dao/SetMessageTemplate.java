@@ -1,14 +1,15 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.system.MessageTemplate;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write e-mail Message Templates.
  * @author Luke
- * @version 1.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -29,22 +30,18 @@ public class SetMessageTemplate extends DAO {
 	 */
 	public void write(MessageTemplate mt) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, BODY, ISHTML) "
-					+ "VALUES (?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, BODY, ISHTML) VALUES (?, ?, ?, ?, ?)");
 			_ps.setString(1, mt.getName());
 			_ps.setString(2, mt.getSubject());
 			_ps.setString(3, mt.getDescription());
 			_ps.setString(4, mt.getBody());
 			_ps.setBoolean(5, mt.getIsHTML());
-			
-			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("MsgTemplates", mt.cacheKey());
 		}
-		
-		// Invalidate the cache entry
-		GetMessageTemplate._cache.remove(mt.cacheKey());
 	}
 	
 	/**
@@ -59,9 +56,8 @@ public class SetMessageTemplate extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("MsgTemplates", name);
 		}
-		
-		// Invalidate the cache entry
-		GetMessageTemplate._cache.remove(name);
 	}
 }

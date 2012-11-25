@@ -43,16 +43,6 @@ public class GetPilotRecognition extends GetPilot {
 	}
 	
 	/**
-	 * Returns cache information.
-	 */
-	public CacheInfo getCacheInfo() {
-		CacheInfo info = super.getCacheInfo();
-		info.add(_promoCache);
-		info.add(_scNomCache);
-		return info;
-	}
-
-	/**
 	 * Loads all pilots having achieved a particular Accomplishment.
 	 * @param id the Accomplishment database ID
 	 * @return a Collection of Pilots
@@ -114,11 +104,11 @@ public class GetPilotRecognition extends GetPilot {
        try {
     	   prepareStatement(buf.toString());
           _ps.setInt(1, FlightReport.OK);
-          _ps.setInt(2, EquipmentType.EXAM_CAPT);
+          _ps.setInt(2, Rank.C.ordinal());
           _ps.setBoolean(3, true);
           _ps.setInt(4, Pilot.ACTIVE);
           _ps.setString(5, Rank.FO.getName());
-          _ps.setInt(6, EquipmentType.EXAM_CAPT);
+          _ps.setInt(6, Rank.C.ordinal());
           if (eqType != null)
         	  _ps.setString(7, eqType);
           return executeIDs();

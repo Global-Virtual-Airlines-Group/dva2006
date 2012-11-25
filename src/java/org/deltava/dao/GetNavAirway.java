@@ -22,10 +22,9 @@ import com.enterprisedt.util.debug.Logger;
 public class GetNavAirway extends GetNavData {
 	
 	private static final Logger log = Logger.getLogger(GetNavAirway.class);
-	
-	private static final Cache<TerminalRoute> _rCache = new AgingCache<TerminalRoute>(640);
-	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(1024);
-	private static final Cache<CacheableSet<String>> _rwCache = new AgingCache<CacheableSet<String>>(256);
+	private static final Cache<TerminalRoute> _rCache = CacheManager.get(TerminalRoute.class, "NavSIDSTAR");
+	private static final Cache<CacheableList<Airway>> _aCache = CacheManager.getCollection(Airway.class, "NavAirway"); 
+	private static final Cache<CacheableSet<String>> _rwCache = CacheManager.getCollection(String.class, "NavRunway");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -33,28 +32,6 @@ public class GetNavAirway extends GetNavData {
 	 */
 	public GetNavAirway(Connection c) {
 		super(c);
-	}
-	
-	/**
-	 * Returns information about the caches.
-	 */
-	@Override
-	public CacheInfo getCacheInfo() {
-		CacheInfo info = new CacheInfo(_rCache);
-		info.add(_aCache);
-		info.add(_rwCache);
-		return info;
-	}
-	
-	/**
-	 * Clears the caches.
-	 */
-	@Override
-	public void clear() {
-		_rCache.clear();
-		_aCache.clear();
-		_rwCache.clear();
-		super.clear();
 	}
 	
 	/**

@@ -5,6 +5,7 @@ import java.sql.*;
 
 import org.deltava.beans.stats.Accomplishment;
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to save Accomplishment profiles.
@@ -30,7 +31,6 @@ public class SetAccomplishment extends DAO {
 	 */
 	public void write(Accomplishment a) throws DAOException {
 		try {
-			GetAccomplishment.invalidate();
 			if (a.getID() != 0) {
 				prepareStatementWithoutLimits("UPDATE ACCOMPLISHMENTS SET NAME=?, UNIT=?, VAL=?, COLOR=?, "
 						+ "CHOICES=?, ACTIVE=? WHERE (ID=?)");
@@ -50,6 +50,8 @@ public class SetAccomplishment extends DAO {
 				a.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Accomplishments");
 		}
 	}
 	
@@ -111,6 +113,8 @@ public class SetAccomplishment extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Accomplishments");
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -14,13 +14,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetLibrary extends DAO implements CachingDAO {
+public class GetLibrary extends DAO {
 	
-	private static final Cache<CacheableLong> _dlCache = new ExpiringCache<CacheableLong>(128, 3600);
+	private static final Cache<CacheableLong> _dlCache = CacheManager.get(CacheableLong.class, "LibraryDLCount");
 
 	/**
 	 * Initialze the Data Access Object.
@@ -28,10 +28,6 @@ public class GetLibrary extends DAO implements CachingDAO {
 	 */
 	public GetLibrary(Connection c) {
 		super(c);
-	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_dlCache);
 	}
 	
 	/**

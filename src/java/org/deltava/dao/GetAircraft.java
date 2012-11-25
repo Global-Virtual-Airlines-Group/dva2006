@@ -18,9 +18,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetAircraft extends DAO implements CachingDAO {
+public class GetAircraft extends DAO {
 	
-	private static final Cache<Aircraft> _cache = new ExpiringCache<Aircraft>(32, 1800);
+	private static final Cache<Aircraft> _cache = CacheManager.get(Aircraft.class, "AircraftInfo");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -30,10 +30,6 @@ public class GetAircraft extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
-	}
-
 	/**
 	 * Loads a particular aircraft profile.
 	 * @param name the aircraft name

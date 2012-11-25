@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.UserData;
 import org.deltava.beans.system.AirlineInformation;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write cross-applicaton User data.
@@ -44,7 +45,7 @@ public class SetUserData extends DAO {
 			for (Iterator<Integer> i = usr.getIDs().iterator(); i.hasNext(); ) {
 				int id = i.next().intValue();
 				if (id != usr.getID()) {
-					GetUserData.invalidate(id);
+					CacheManager.invalidate("UserData", Integer.valueOf(id));
 					_ps.setInt(1, usr.getID());
 					_ps.setInt(2, id);
 					_ps.addBatch();
@@ -79,7 +80,7 @@ public class SetUserData extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
-			GetUserData.invalidate(id);
+			CacheManager.invalidate("UserData", Integer.valueOf(id));
 		}
 	}
 
@@ -100,7 +101,7 @@ public class SetUserData extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} finally {
-			GetUserData.invalidate(info.getCode());
+			CacheManager.invalidate("AirlineInfo", info.cacheKey());
 		}
 	}
 }

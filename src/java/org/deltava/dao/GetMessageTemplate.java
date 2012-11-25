@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,14 +14,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to retrieve e-Mail message templates.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetMessageTemplate extends DAO implements CachingDAO {
+public class GetMessageTemplate extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
-	static Cache<MessageTemplate> _cache = new AgingCache<MessageTemplate>(16);
+	private static final Cache<MessageTemplate> _cache = CacheManager.get(MessageTemplate.class, "MsgTemplate");
 
 	/**
 	 * Initialize the Data Access Object.
@@ -29,10 +29,6 @@ public class GetMessageTemplate extends DAO implements CachingDAO {
 	 */
 	public GetMessageTemplate(Connection c) {
 		super(c);
-	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
 	}
 	
 	/**
@@ -98,7 +94,7 @@ public class GetMessageTemplate extends DAO implements CachingDAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse the result set.
 	 */
 	private List<MessageTemplate> execute() throws SQLException {

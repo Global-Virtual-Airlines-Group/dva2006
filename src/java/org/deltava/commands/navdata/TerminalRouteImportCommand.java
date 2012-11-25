@@ -17,6 +17,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -166,8 +167,9 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Purge the cache
-		new GetNavRoute(null).clear();
+		// Purge the caches
+		CacheManager.invalidate("NavSIDSTAR");
+		CacheManager.invalidate("NavRoute");
 		
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);
