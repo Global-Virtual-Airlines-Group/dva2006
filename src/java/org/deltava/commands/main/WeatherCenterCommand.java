@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.net.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.ComboAlias;
+
 import org.deltava.commands.*;
 
 import org.deltava.util.ComboUtils;
@@ -16,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to centralize weather information. 
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 2.2
  */
 
@@ -25,12 +26,9 @@ public class WeatherCenterCommand extends AbstractCommand {
 	private static Logger log = Logger.getLogger(WeatherCenterCommand.class);
 	
 	private final Collection<ComboAlias> _mapTypes = new ArrayList<ComboAlias>();
-	private static final Cache<CacheableList<ComboAlias>> _imgCache = 
-		new ExpiringCache<CacheableList<ComboAlias>>(8, 7200);
+	private static final Cache<CacheableList<ComboAlias>> _imgCache = CacheManager.getCollection(ComboAlias.class, "WXImages");
 
-	/**
-	 * Initializes the Command.
-	 */
+	@Override
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 		
@@ -47,6 +45,7 @@ public class WeatherCenterCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an error occurs
      */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check the img cache

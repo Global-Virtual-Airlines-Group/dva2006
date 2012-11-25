@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 
 public class GetTableStatus extends DAO {
 	
-	private static final Cache<CacheableCollection<TableInfo>> _cache = new ExpiringCache<CacheableCollection<TableInfo>>(16, 1800);
+	private static final Cache<CacheableCollection<TableInfo>> _cache = CacheManager.getCollection(TableInfo.class, "TableStats");
 	
 	/**
      * Initializes the Data Access Object.
@@ -36,17 +36,17 @@ public class GetTableStatus extends DAO {
     public Collection<TableInfo> getStatus(String dbName) throws DAOException {
     	
     	// Check the cache
-    	dbName = formatDBName(dbName);
-    	CacheableCollection<TableInfo> results = _cache.get(dbName);
+    	String db = formatDBName(dbName);
+    	CacheableCollection<TableInfo> results = _cache.get(db);
     	if (results != null)
     		return results.clone();
     	
         try {
-            prepareStatementWithoutLimits("SHOW TABLE STATUS FROM " + dbName);
-            results = new CacheableList<TableInfo>(dbName);
+            prepareStatementWithoutLimits("SHOW TABLE STATUS FROM " + db);
+            results = new CacheableList<TableInfo>(db);
             try (ResultSet rs = _ps.executeQuery()) {
             	while (rs.next()) {
-            		TableInfo info = new TableInfo(dbName + "." + rs.getString(1));
+            		TableInfo info = new TableInfo(db + "." + rs.getString(1));
             		info.setRows(rs.getLong(5));
             		info.setSize(rs.getLong(7));
             		info.setIndexSize(rs.getLong(9));
