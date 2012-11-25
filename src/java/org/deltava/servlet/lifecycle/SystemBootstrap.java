@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -24,6 +24,7 @@ import org.deltava.security.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheLoader;
 import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.system.SystemData;
 
@@ -33,7 +34,7 @@ import org.gvagroup.jdbc.*;
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -73,6 +74,13 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		
 		// Set start date
 		AirlineTotals.BIRTHDATE.setTime(StringUtils.parseDate(SystemData.get("airline.birthdate"), "MM/dd/yyyy"));
+		
+		// Initialize caches
+		try (InputStream is = ConfigLoader.getStream("/etc/cacheInfo.xml")) {
+			CacheLoader.load(is);
+		} catch(IOException ie) {
+			log.warn("Cannot configure caches from code");
+		}
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
@@ -294,6 +302,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 * @param t the daemon thred
 	 * @param e the uncaught exception
 	 */
+	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		Runnable sd = _daemons.get(t);
 		if (sd == null) {

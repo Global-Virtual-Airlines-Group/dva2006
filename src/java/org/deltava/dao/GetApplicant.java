@@ -19,7 +19,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
+public class GetApplicant extends DAO implements PersonUniquenessDAO {
 
 	private static final Logger log = Logger.getLogger(GetApplicant.class);
 	

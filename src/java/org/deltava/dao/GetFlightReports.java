@@ -162,7 +162,7 @@ public class GetFlightReports extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, EquipmentType.PRIMARY_RATING);
+			_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -185,7 +185,7 @@ public class GetFlightReports extends DAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, EquipmentType.PRIMARY_RATING);
+			_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 			_ps.setInt(2, FlightReport.SUBMITTED);
 			_ps.setInt(3, FlightReport.ATTR_CHECKRIDE);
 			if (eqType != null)

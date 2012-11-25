@@ -6,16 +6,17 @@ import java.util.*;
 
 import org.deltava.beans.IMAddress;
 
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to support writing Pilot object(s) to the database.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 1.0
  */
 
-public abstract class PilotWriteDAO extends PilotDAO {
+public abstract class PilotWriteDAO extends DAO {
 
 	/**
 	 * Initializes the Data Access Object.
@@ -133,7 +134,6 @@ public abstract class PilotWriteDAO extends PilotDAO {
 			return;
 		
 		// Write the alias
-		invalidate(id);
 		prepareStatementWithoutLimits((uid == null) ? "DELETE FROM common.AUTH_ALIAS WHERE (ID=?)" :
 			"REPLACE INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)");
 		_ps.setInt(1, id);
@@ -141,6 +141,7 @@ public abstract class PilotWriteDAO extends PilotDAO {
 			_ps.setString(2, uid);
 		
 		executeUpdate(0);
+		CacheManager.invalidate("Pilots", Integer.valueOf(id));
 	}
 	
 	/**
@@ -149,7 +150,6 @@ public abstract class PilotWriteDAO extends PilotDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void setStatus(int id, int status) throws DAOException {
-		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
 			_ps.setInt(1, status);
@@ -157,6 +157,8 @@ public abstract class PilotWriteDAO extends PilotDAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(id));
 		}
 	}
 }

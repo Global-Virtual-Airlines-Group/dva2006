@@ -1,6 +1,8 @@
 // Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
+import org.deltava.beans.ViewEntry;
+
 /**
  * A bean to store information about a cache.
  * @author Luke
@@ -8,58 +10,30 @@ package org.deltava.util.cache;
  * @since 2.6
  */
 
-public class CacheInfo implements java.io.Serializable {
+public class CacheInfo implements java.io.Serializable, ViewEntry, Comparable<CacheInfo> {
 
 	private final String _id;
 	private final String _type;
-	
-	private int _instances;
-	private long _hits;
-	private long _reqs;
-	private long _size;
-	private long _capacity;
+	private final long _hits;
+	private final long _reqs;
+	private final long _size;
+	private final long _capacity;
 
-	/**
-	 * Initializes the information bean from a Cache.
-	 * @param c the Cache
-	 */
-	public CacheInfo(Cache<?> c) {
-		this(null, c);
-	}
-	
 	/**
 	 * Initializes the information bean from a Cache.
 	 * @param id the Cache ID
 	 * @param c the Cache
 	 */
-	public CacheInfo(String id, Cache<?> c) {
+	CacheInfo(String id, Cache<?> c) {
 		super();
 		_id = id;
 		_type = c.getClass().getSimpleName();
-		add(c);
+		_hits = c.getHits();
+		_reqs = c.getRequests();
+		_size = c.size();
+		_capacity = c.getMaxSize();
 	}
 
-	/**
-	 * Adds another Cache's statistics to this bean.
-	 * @param c the Cache
-	 */
-	public void add(Cache<?> c) {
-		if (c == null) return;
-		_instances++;
-		_hits += c.getHits();
-		_reqs += c.getRequests();
-		_size += c.size();
-		_capacity += c.getMaxSize();
-	}
-
-	/**
-	 * Returns the number of cache instances used to generate these statistics.
-	 * @return the number of caches;
-	 */
-	public int getInstances() {
-		return _instances;
-	}
-	
 	/**
 	 * Returns the cache type.
 	 * @return the type
@@ -74,6 +48,14 @@ public class CacheInfo implements java.io.Serializable {
 	 */
 	public long getHits() {
 		return _hits;
+	}
+	
+	/**
+	 * Returns the cache ID.
+	 * @return the ID
+	 */
+	public String getID() {
+		return _id;
 	}
 
 	/**
@@ -100,24 +82,29 @@ public class CacheInfo implements java.io.Serializable {
 		return _capacity;
 	}
 	
+	@Override
 	public int hashCode() {
 		return (_id != null) ? _id.hashCode() : super.hashCode();
 	}
+	
+	public int compareTo(CacheInfo ci2) {
+		int tmpResult = _id.compareTo(ci2._id);
+		return (tmpResult == 0) ? Integer.valueOf(hashCode()).compareTo(Integer.valueOf(ci2.hashCode())) : tmpResult;
+	}
 
-	/**
-	 * Dumps information about the CacheInfo bean.
-	 */
+	@Override
 	public String toString() {
-		StringBuilder buf = new StringBuilder("cnt=");
-		buf.append(_instances);
-		buf.append(",hits=");
-		buf.append(_hits);
-		buf.append(",reqs=");
-		buf.append(_reqs);
-		buf.append(",size=");
-		buf.append(_size);
-		buf.append(",max=");
-		buf.append(_capacity);
+		StringBuilder buf = new StringBuilder("id=");
+		buf.append(_id);
+		buf.append(",hits=").append(_hits);
+		buf.append(",reqs=").append(_reqs);
+		buf.append(",size=").append(_size);
+		buf.append(",max=").append(_capacity);
 		return buf.toString();
+	}
+
+	@Override
+	public String getRowClassName() {
+		return ("NullCache".equals(_type)) ? "warn" : null;
 	}
 }

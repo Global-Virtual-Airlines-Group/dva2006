@@ -8,6 +8,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -438,6 +439,8 @@ public class SetSchedule extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("AircraftInfo", oldName);
 		}
 	}
 	
@@ -493,7 +496,6 @@ public class SetSchedule extends DAO {
 	 */
 	public void purge(boolean force) throws DAOException {
 
-		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM SCHEDULE");
 		if (!force)
 			sqlBuf.append(" WHERE (CAN_PURGE=?)");

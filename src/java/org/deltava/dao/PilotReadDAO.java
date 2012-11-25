@@ -13,6 +13,7 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.stats.DatedAccomplishmentID;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
@@ -24,9 +25,10 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-abstract class PilotReadDAO extends PilotDAO {
+abstract class PilotReadDAO extends DAO {
 
 	private static final Logger log = Logger.getLogger(PilotReadDAO.class);
+	protected static final Cache<Pilot> _cache = CacheManager.get(Pilot.class, "Pilots");
 
 	/**
 	 * Creates the DAO from a JDBC connection.

@@ -5,8 +5,6 @@ import java.util.*;
 
 import org.deltava.beans.acars.ACARSMapEntry;
 
-import org.deltava.dao.CachingDAO;
-
 import org.deltava.util.IPCUtils;
 import org.deltava.util.cache.*;
 
@@ -16,29 +14,14 @@ import org.gvagroup.common.SharedData;
 /**
  * A Data Access Object to cache IPC calls for ACARS Connection Pool data. 
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 2.3
  */
 
-public class GetACARSPool implements CachingDAO {
+public class GetACARSPool {
 	
-	private static final Cache<CacheableCollection<ACARSMapEntry>> _cache = 
-		new ExpiringCache<CacheableCollection<ACARSMapEntry>>(1, 3);
-	private static final Cache<CacheableCollection<Integer>> _idCache =
-		new ExpiringCache<CacheableCollection<Integer>>(1, 3);
-
-	/**
-	 * Initializes the Data Access Object. 
-	 */
-	public GetACARSPool() {
-		super();
-	}
-	
-	public CacheInfo getCacheInfo() {
-		CacheInfo info = new CacheInfo(_cache);
-		info.add(_idCache);
-		return info;
-	}
+	private static final Cache<CacheableCollection<ACARSMapEntry>> _cache = CacheManager.getCollection(ACARSMapEntry.class, "ACARSMap");
+	private static final Cache<CacheableCollection<Integer>> _idCache = CacheManager.getCollection(Integer.class, "ACARSFlightID");
 
 	/**
 	 * Returns ACARS Map entries.
@@ -49,7 +32,6 @@ public class GetACARSPool implements CachingDAO {
 		if (entries != null)
 			return entries;
 		
-		// Reload the caches
 		try {
 			reload();
 			return _cache.get(GetACARSPool.class);
@@ -64,21 +46,17 @@ public class GetACARSPool implements CachingDAO {
 	 */
 	public Collection<Integer> getFlightIDs() {
 		CacheableCollection<Integer> ids = _idCache.get(GetACARSPool.class);
-		if (ids != null)
-			return ids;
+		if (ids != null) return ids;
 		
-		// Reload the caches
 		try {
 			reload();
 			return _idCache.get(GetACARSPool.class).clone();
-		} catch (NullPointerException npe) { 
-			return Collections.emptyList();
-		} catch (IllegalStateException ise) {
+		} catch (NullPointerException | IllegalStateException e) { 
 			return Collections.emptyList();
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to reload the caches.
 	 */
 	@SuppressWarnings("unchecked")

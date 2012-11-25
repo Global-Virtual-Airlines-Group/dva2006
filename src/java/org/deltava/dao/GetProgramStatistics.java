@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,13 +11,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load equipment program metrics.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.1
  */
 
-public class GetProgramStatistics extends DAO implements CachingDAO {
+public class GetProgramStatistics extends DAO {
 	
-	private static final Cache<ProgramMetrics> _cache = new ExpiringCache<ProgramMetrics>(8, 7200);
+	private static final Cache<ProgramMetrics> _cache = CacheManager.get(ProgramMetrics.class, "ProgramStats");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -27,11 +27,6 @@ public class GetProgramStatistics extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	@Override
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
-	}
-
 	/**
 	 * Loads statistics about an equipment program.
 	 * @param eqType the equipment program bean
@@ -47,7 +42,6 @@ public class GetProgramStatistics extends DAO implements CachingDAO {
 		
 		pm = new ProgramMetrics(eqType);
 		try {
-			// Load pilot data
 			prepareStatementWithoutLimits("SELECT ID, RANK, STATUS, CREATED FROM PILOTS WHERE (EQTYPE=?)");
 			_ps.setString(1, eqType.getName());
 			try (ResultSet rs = _ps.executeQuery()) {

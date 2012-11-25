@@ -17,14 +17,8 @@ import org.deltava.util.cache.Cacheable;
 public class EquipmentType implements Cacheable, Comparable<EquipmentType>, ComboAlias, ViewEntry {
 	
 	public enum Rating {
-		SECONDARY, PRIMARY,
+		SECONDARY, PRIMARY
 	}
-	
-	// Database constants
-	public static final int SECONDARY_RATING = 0;
-	public static final int PRIMARY_RATING = 1;
-	public static final int EXAM_FO = 0;
-	public static final int EXAM_CAPT = 1;
 	
     private String _name;
     private int _stage = 1;
