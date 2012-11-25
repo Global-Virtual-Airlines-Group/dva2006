@@ -86,7 +86,7 @@ public abstract class Cache<T extends Cacheable> {
 	 * Returns the maximum size of the cache.
 	 * @return the maximum number of entries in the cache
 	 */
-	public final int getMaxSize() {
+	public int getMaxSize() {
 		return _maxSize;
 	}
 
