@@ -248,8 +248,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 				Event e = evdao.get(afr.getDatabaseID(DatabaseID.EVENT));
 				if (e != null) {
 					long timeSinceEnd = (System.currentTimeMillis() - e.getEndTime().getTime()) / 1000;
-					if (timeSinceEnd > 86400) {
-						log.warn("Flight logged over 24 hours after Event completion");
+					if (timeSinceEnd > 21600) {
+						log.warn("Flight logged over 6 hours after Event completion");
 						afr.setDatabaseID(DatabaseID.EVENT, 0);
 					}
 				} else
@@ -317,7 +317,9 @@ public class OfflineFlightCommand extends AbstractCommand {
 
 			// Check the schedule database and check the route pair
 			FlightTime avgHours = sdao.getFlightTime(afr);
-			if ((avgHours.getFlightTime() == 0) && !inf.isScheduleValidated())
+			boolean isAssignment = (afr.getDatabaseID(DatabaseID.ASSIGN) != 0);
+			boolean isEvent = (afr.getDatabaseID(DatabaseID.EVENT) != 0);
+			if ((avgHours.getFlightTime() == 0) && !inf.isScheduleValidated() && !isAssignment && !isEvent)
 				afr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 			else if (avgHours.getFlightTime() > 0) {
 				int minHours = (int) ((avgHours.getFlightTime() * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
