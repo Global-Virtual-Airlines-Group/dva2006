@@ -9,6 +9,7 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -18,7 +19,10 @@ import org.deltava.util.system.SystemData;
  * @since 2.7
  */
 
-public class GetWeather extends WeatherDAO {
+public class GetWeather extends DAO {
+	
+	private static final Cache<METAR> _wxCache = CacheManager.get(METAR.class, "METAR");
+	private static final Cache<TAF> _tafCache = CacheManager.get(TAF.class, "TAF");
 
 	/**
 	 * Initializes the Data Access Object.

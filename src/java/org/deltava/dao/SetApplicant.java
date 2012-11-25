@@ -31,7 +31,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void reject(Applicant a) throws DAOException {
-		invalidate(a.getID());
 		try {
 			prepareStatement("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.REJECTED);
@@ -48,7 +47,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Applicant a) throws DAOException {
-		invalidate(a.getID());
 		try {
 			startTransaction();
 
@@ -129,8 +127,6 @@ public class SetApplicant extends PilotWriteDAO {
 			// Write
 			_ps.executeBatch();
 			_ps.close();
-			
-			// Commit
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -144,7 +140,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void hire(Applicant a) throws DAOException {
-		invalidate(a.getID());
 		try {
 			// Update the applicant status
 			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANK=?, EQTYPE=? WHERE (ID=?)");
@@ -166,7 +161,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		invalidate(id);
 		try {
 			prepareStatement("DELETE FROM APPLICANTS WHERE (ID=?)");
 			_ps.setInt(1, id);

@@ -3,16 +3,18 @@ package org.deltava.dao;
 
 import java.sql.*;
 
-import org.deltava.util.cache.CacheableLong;
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to retrieve image data from the database.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetImage extends PilotSignatureDAO {
+public class GetImage extends DAO {
+	
+	private static final Cache<CacheableLong> _sigCache = CacheManager.get(CacheableLong.class,  "Signature");
 
     /**
      * Initializes the DAO from a JDBC connection.
@@ -31,23 +33,16 @@ public class GetImage extends PilotSignatureDAO {
      */
     private byte[] execute(int id, String sql) throws DAOException {
         try {
-            // Prepare the statement
             prepareStatementWithoutLimits(sql);
             _ps.setInt(1, id);
-
-            // Execute the query, if not found return null
             byte[] imgBuffer = null;
             try (ResultSet rs = _ps.executeQuery()) {
-            	if (!rs.next()) {
-            		_ps.close();
-            		return null;
-            	}
-            
-            	// Get the image data
-            	imgBuffer = rs.getBytes(1);
-            	if (rs.getMetaData().getColumnCount() > 1) {
-            		Timestamp lastMod = rs.getTimestamp(2);
-            		_sigCache.add(new CacheableLong(Integer.valueOf(id), lastMod.getTime()));
+            	if (rs.next()) {
+            		imgBuffer = rs.getBytes(1);
+            		if (rs.getMetaData().getColumnCount() > 1) {
+            			Timestamp lastMod = rs.getTimestamp(2);
+            			_sigCache.add(new CacheableLong(Integer.valueOf(id), lastMod.getTime()));
+            		}
             	}
             }
             
@@ -80,7 +75,7 @@ public class GetImage extends PilotSignatureDAO {
      * @throws DAOException if a JDBC error occurs
      */
     public java.util.Date getSigModified(int id, String dbName) throws DAOException {
-    	CacheableLong lastMod = _sigCache.get(new Integer(id));
+    	CacheableLong lastMod = _sigCache.get(Integer.valueOf(id));
     	if (lastMod != null)
     		return new Date(lastMod.getValue());
     	

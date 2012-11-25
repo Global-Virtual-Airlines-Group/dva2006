@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,10 +27,6 @@ public class GetPilotOnline extends PilotReadDAO {
 		super(c);
 	}
 	
-	public final CacheInfo getCacheInfo() {
-		return new CacheInfo(_idCache);
-	}
-
 	/**
 	 * Returns the network IDs for all Active/On leave pilots. This will return a Map with the network ID as the key, and
 	 * the <i>database ID</i> of the Pilot as the value, allowing easy lookups of Pilots based on network ID.

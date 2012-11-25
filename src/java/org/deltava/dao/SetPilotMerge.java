@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,10 +7,12 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 
+import org.deltava.util.cache.CacheManager;
+
 /**
  * A Data Access Object to merge a Pilot's data into another.
  * @author Luke
- * @version 4.0
+ * @version 5.0
  * @since 1.0
  */
 
@@ -34,8 +36,6 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeFlights(Pilot oldUser, Pilot newUser) throws DAOException {
-	   invalidate(oldUser.getID());
-	   invalidate(newUser.getID());
 	   try {
 		   prepareStatementWithoutLimits("UPDATE PIREPS SET PILOT_ID=? WHERE (PILOT_ID=?)");
 		   _ps.setInt(1, newUser.getID());
@@ -47,6 +47,9 @@ public class SetPilotMerge extends PilotWriteDAO {
 		   return rowsUpdated;
 	   } catch (SQLException se) {
 		   throw new DAOException(se);
+	   } finally {
+		   CacheManager.invalidate("Pilots", Integer.valueOf(oldUser.getID()));
+		   CacheManager.invalidate("Pilots", Integer.valueOf(newUser.getID()));
 	   }
    }
    
@@ -58,8 +61,6 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeExams(Pilot oldUser, Pilot newUser) throws DAOException {
-	   invalidate(oldUser.getID());
-	   invalidate(newUser.getID());
 	   try {
 		   prepareStatementWithoutLimits("UPDATE exams.EXAMS SET PILOT_ID=? WHERE (PILOT_ID=?)");
 		   _ps.setInt(1, newUser.getID());
@@ -71,6 +72,9 @@ public class SetPilotMerge extends PilotWriteDAO {
 	       return rowsUpdated;
 	   } catch (SQLException se) {
 	       throw new DAOException(se);
+	   } finally {
+		   CacheManager.invalidate("Pilots", Integer.valueOf(oldUser.getID()));
+		   CacheManager.invalidate("Pilots", Integer.valueOf(newUser.getID()));
 	   }
    }
    
@@ -82,8 +86,6 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeCheckRides(Pilot oldUser, Pilot newUser) throws DAOException {
-	   invalidate(oldUser.getID());
-	   invalidate(newUser.getID());
 	   try {
 	       prepareStatementWithoutLimits("UPDATE exams.CHECKRIDES SET PILOT_ID=? WHERE (PILOT_ID=?)");
 	       _ps.setInt(1, newUser.getID());
@@ -95,6 +97,9 @@ public class SetPilotMerge extends PilotWriteDAO {
 	       return rowsUpdated;
 	   } catch (SQLException se) {
 		   throw new DAOException(se);
+	   } finally {
+		   CacheManager.invalidate("Pilots", Integer.valueOf(oldUser.getID()));
+		   CacheManager.invalidate("Pilots", Integer.valueOf(newUser.getID()));
 	   }
    }
    
@@ -106,8 +111,6 @@ public class SetPilotMerge extends PilotWriteDAO {
     * @throws DAOException if a JDBC error occurs
     */
    public int mergeCourses(Pilot oldUser, Pilot newUser) throws DAOException {
-	   invalidate(oldUser.getID());
-	   invalidate(newUser.getID());
 	   try {
 		   prepareStatementWithoutLimits("UPDATE exams.COURSES SET PILOT_ID=? WHERE (PILOT_ID=?)");
 	       _ps.setInt(1, newUser.getID());
@@ -119,6 +122,9 @@ public class SetPilotMerge extends PilotWriteDAO {
 	       return rowsUpdated;
 	   } catch (SQLException se) {
 		   throw new DAOException(se);
+	   } finally {
+		   CacheManager.invalidate("Pilots", Integer.valueOf(oldUser.getID()));
+		   CacheManager.invalidate("Pilots", Integer.valueOf(newUser.getID()));
 	   }
    }
 }

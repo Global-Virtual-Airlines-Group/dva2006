@@ -30,16 +30,16 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetServInfo extends DAO implements CachingDAO {
+public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static final Cache<NetworkStatus> _netCache = new ExpiringCache<NetworkStatus>(3, 43200); // 12 hours
-	private static final ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 60); // 1 minute
+	private static final Cache<NetworkStatus> _netCache = CacheManager.get(NetworkStatus.class, "ServInfoStatus");
+	private static final Cache<NetworkInfo> _infoCache = CacheManager.get(NetworkInfo.class, "ServInfoData");
 	
 	/**
 	 * Initializes the DAO with a particular stream.
@@ -47,10 +47,6 @@ public class GetServInfo extends DAO implements CachingDAO {
 	 */
 	public GetServInfo(InputStream is) {
 		super(is);
-	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_infoCache);
 	}
 	
 	/**

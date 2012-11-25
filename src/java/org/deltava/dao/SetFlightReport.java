@@ -8,6 +8,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.flight.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -86,10 +87,9 @@ public class SetFlightReport extends DAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(pirep.getDatabaseID(DatabaseID.PILOT)));
 		}
-
-		// Invalidate the entry in the Pilot cache
-		PilotDAO.invalidate(pirep.getDatabaseID(DatabaseID.PILOT));
 	}
 
 	/**

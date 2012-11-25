@@ -13,11 +13,11 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-import org.deltava.dao.wsdl.*;
 
 import org.deltava.taskman.TaskScheduler;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.ACARSAdminInfo;
@@ -28,7 +28,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
@@ -52,7 +52,7 @@ public class DiagnosticCommand extends AbstractCommand {
 				int osRunTime = procdao.getUptime();
 				cld.add(Calendar.SECOND, osRunTime * -1);
 				ctx.setAttribute("osStart", cld.getTime(), REQUEST);
-				ctx.setAttribute("osExecTime", new Integer(osRunTime), REQUEST);
+				ctx.setAttribute("osExecTime", Integer.valueOf(osRunTime), REQUEST);
 				ctx.setAttribute("loadAvg", procdao.getLoad(), REQUEST);
 				ctx.setAttribute("osMemInfo", procdao.getMemory(), REQUEST);
 			} catch (DAOException de) {
@@ -108,37 +108,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		}
 		
 		// Get DAO cache properties
-		Collection<CachingDAO> daoCaches = new ArrayList<CachingDAO>();
-		daoCaches.add(new GetCoolerChannels(null));
-		daoCaches.add(new GetCoolerThreads(null));
-		daoCaches.add(new GetEquipmentType(null));
-		daoCaches.add(new GetAircraft(null));
-		daoCaches.add(new GetProgramStatistics(null));
-		daoCaches.add(new GetExamStatistics(null));
-		daoCaches.add(new GetMessageTemplate(null));
-		daoCaches.add(new GetImage(null));
-		daoCaches.add(new GetNavData(null));
-		daoCaches.add(new GetNavAirway(null));
-		daoCaches.add(new GetNavRoute(null));
-		daoCaches.add(new GetFIR(null));
-		daoCaches.add(new GetFlightReportStatistics(null));
-		daoCaches.add(new GetFlightReportRecognition(null));
-		daoCaches.add(new GetScheduleInfo(null));
-		daoCaches.add(new GetStatistics(null));
-		daoCaches.add(new GetAccomplishment(null));
-		daoCaches.add(new GetTableStatus(null));
-		daoCaches.add(new GetSystemData(null));
-		daoCaches.add(new GetUserData(null));
-		daoCaches.add(new GetPilotRecognition(null));
-		daoCaches.add(new GetPilotOnline(null));
-		daoCaches.add(new GetLibrary(null));
-		daoCaches.add(new GetACARSRunways(null));
-		daoCaches.add(new GetIPLocation(null));
-		daoCaches.add(new GetServInfo(null));
-		daoCaches.add(new GetWeather(null));
-		daoCaches.add(new GetFAWeather());
-		daoCaches.add(new org.deltava.dao.ipc.GetACARSPool());
-		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
+		ctx.setAttribute("daoCaches", CacheManager.getCacheInfo(), REQUEST);
 		
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();

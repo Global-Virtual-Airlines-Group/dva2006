@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,17 +6,20 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetEquipmentType extends EquipmentTypeDAO {
+public class GetEquipmentType extends DAO {
+	
+	private static final Cache<EquipmentType> _cache = CacheManager.get(EquipmentType.class, "EquipmentTypes");
 
 	/**
 	 * Initializes the DAO with a given JDBC connection.
@@ -274,7 +277,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, EquipmentType.PRIMARY_RATING);
+			_ps.setInt(1, EquipmentType.Rating.PRIMARY.ordinal());
 			_ps.setString(2, eqType);
 
 			// Execute the query
@@ -320,7 +323,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to load type ratings for each equipment type program.
 	 */
 	private void loadRatings(Collection<EquipmentType> eTypes, String db) throws SQLException {
@@ -330,15 +333,14 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			while (rs.next()) {
 				EquipmentType eq = types.get(rs.getString(1));
 				if (eq != null) {
-					switch (rs.getInt(2)) {
-					case EquipmentType.PRIMARY_RATING:
+					EquipmentType.Rating rt = EquipmentType.Rating.values()[rs.getInt(2)];
+					switch (rt) {
+					case PRIMARY:
 						eq.addPrimaryRating(rs.getString(3));
 						break;
 
 					default:
-					case EquipmentType.SECONDARY_RATING:
 						eq.addSecondaryRating(rs.getString(3));
-						break;
 					}
 				}
 			}
@@ -347,7 +349,7 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to load examinations for each equipment type program.
 	 */
 	private void loadExams(Collection<EquipmentType> eTypes, String db) throws SQLException {
@@ -357,16 +359,9 @@ public class GetEquipmentType extends EquipmentTypeDAO {
 			while (rs.next()) {
 				EquipmentType eq = types.get(rs.getString(1));
 				if (eq != null) {
-					switch (rs.getInt(2)) {
-					default:
-					case EquipmentType.EXAM_FO:
-							eq.addExam(Rank.FO, rs.getString(3));
-							break;
-						
-						case EquipmentType.EXAM_CAPT:
-							eq.addExam(Rank.C, rs.getString(3));
-							break;
-					}
+					Rank rnk = Rank.values()[rs.getInt(2)];
+					if (rnk.ordinal() <= Rank.C.ordinal())
+						eq.addExam(rnk, rs.getString(3));
 				}
 			}
 		}

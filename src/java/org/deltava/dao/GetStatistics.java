@@ -14,11 +14,11 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to retrieve Airline statistics.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetStatistics extends DAO implements CachingDAO {
+public class GetStatistics extends DAO  {
 
 	private static final Cache<CacheableLong> _coolerStatsCache = new ExpiringCache<CacheableLong>(100, 1800);
 	private static final Cache<CacheableLong> _cache = new ExpiringCache<CacheableLong>(2, 1800);
@@ -30,17 +30,6 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 */
 	public GetStatistics(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Returns the cache status.
-	 */
-	@Override
-	public CacheInfo getCacheInfo() {
-		CacheInfo info = new CacheInfo(_cache);
-		info.add(_aCache);
-		info.add(_coolerStatsCache);
-		return info;
 	}
 
 	/**

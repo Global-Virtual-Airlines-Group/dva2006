@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,19 +17,18 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 2.6
  */
 
 public class GetNavRoute extends GetOceanicRoute {
 	
-	private static final Cache<Route> _rCache = new AgingCache<Route>(1024);
+	private static final Cache<Route> _rCache = CacheManager.get(Route.class, "NavRoute");
 	
 	private java.util.Date _effectiveDate;
 
 	private class CacheableRoute implements Route {
-
-		private String _route;
+		private final String _route;
 		private final LinkedList<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
 
 		CacheableRoute(String route, Collection<NavigationDataBean> waypoints) {
@@ -104,18 +103,6 @@ public class GetNavRoute extends GetOceanicRoute {
 		_effectiveDate = dt;
 	}
 	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_rCache);
-	}
-	
-	/**
-	 * Clears the cache.
-	 */
-	public void clear() {
-		_rCache.clear();
-		super.clear();
-	}
-
 	/**
 	 * Returns all waypoints for a route, expanding Airways but <i>NOT</i> SID/STARs.
 	 * @param route the space-delimited route

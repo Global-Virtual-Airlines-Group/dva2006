@@ -1,18 +1,19 @@
-// Copyright 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.wx.*;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to save weather data in the database.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 2.7
  */
 
-public class SetWeather extends WeatherDAO {
+public class SetWeather extends DAO {
 
 	/**
 	 * Initializes the Data Access Object.
@@ -35,9 +36,10 @@ public class SetWeather extends WeatherDAO {
 			_ps.setInt(3, m.getILS().ordinal());
 			_ps.setString(4, m.getData());
 			executeUpdate(1);
-			_wxCache.remove(m.getCode());
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("METAR", m.cacheKey());
 		}
 	}
 	
@@ -54,9 +56,10 @@ public class SetWeather extends WeatherDAO {
 			_ps.setBoolean(3, t.getAmended());
 			_ps.setString(4, t.getData());
 			executeUpdate(1);
-			_tafCache.remove(t.getCode());
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("TAF", t.cacheKey());
 		}
 	}
 	
@@ -70,9 +73,10 @@ public class SetWeather extends WeatherDAO {
 			prepareStatementWithoutLimits("DELETE FROM common.METARS WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? MINUTE))");
 			_ps.setInt(1, age);
 			executeUpdate(0);
-			_wxCache.clear();
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("METAR");
 		}
 	}
 	
@@ -86,9 +90,10 @@ public class SetWeather extends WeatherDAO {
 			prepareStatementWithoutLimits("DELETE FROM common.TAFS WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? MINUTE))");
 			_ps.setInt(1, age);
 			executeUpdate(0);
-			_tafCache.clear();
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("TAF");
 		}
 	}
 }

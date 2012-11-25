@@ -16,6 +16,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Web Site Command to import Navigation data in PSS format.
@@ -197,8 +198,12 @@ public class AIRACImportCommand extends AbstractCommand {
 		}
 
 		// Purge the dispatch web service file cache and navdata cache
-		new GetNavRoute(null).clear();
 		DispatchDataService.invalidate();
+		CacheManager.invalidate("NavData");
+		CacheManager.invalidate("NavAirway");
+		CacheManager.invalidate("NavRunway");
+		CacheManager.invalidate("NavSIDSTAR");
+		CacheManager.invalidate("NavRoute");
 
 		// Set status attributes
 		ctx.setAttribute("entryCount", Integer.valueOf(entryCount), REQUEST);

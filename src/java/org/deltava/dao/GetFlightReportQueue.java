@@ -3,10 +3,9 @@ package org.deltava.dao;
 
 import java.sql.*;
 
+import org.deltava.beans.EquipmentType;
+import org.deltava.beans.flight.FlightReport;
 import org.deltava.beans.stats.DisposalQueueStats;
-
-import static org.deltava.beans.EquipmentType.*;
-import static org.deltava.beans.flight.FlightReport.*;
 
 /**
  * A Data Access Object to return Flight Report disposal queue information.
@@ -35,8 +34,8 @@ public class GetFlightReportQueue extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT COUNT(PR.ID) AS CNT, AVG(TIMESTAMPDIFF(HOUR,PR.SUBMITTED,NOW())) FROM PIREPS PR, "
 					+ "EQRATINGS ER WHERE (PR.STATUS=?) AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) AND (ER.EQTYPE=?)");
-			_ps.setInt(1, SUBMITTED);
-			_ps.setInt(2, PRIMARY_RATING);
+			_ps.setInt(1, FlightReport.SUBMITTED);
+			_ps.setInt(2, EquipmentType.Rating.PRIMARY.ordinal());
 
 			DisposalQueueStats dq = new DisposalQueueStats(new java.util.Date(), 0, 0);
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -61,7 +60,7 @@ public class GetFlightReportQueue extends DAO {
 	public DisposalQueueStats getDisposalQueueStats() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT COUNT(ID), AVG(TIMESTAMPDIFF(HOUR,SUBMITTED,NOW())) FROM PIREPS WHERE (STATUS=?)");
-			_ps.setInt(1, SUBMITTED);
+			_ps.setInt(1, FlightReport.SUBMITTED);
 
 			DisposalQueueStats dq = new DisposalQueueStats(new java.util.Date(), 0, 0);
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -72,8 +71,8 @@ public class GetFlightReportQueue extends DAO {
 			_ps.close();
 			prepareStatementWithoutLimits("SELECT ER.EQTYPE, COUNT(PR.ID) AS CNT FROM PIREPS PR, EQRATINGS ER WHERE (PR.STATUS=?) "
 					+ "AND (PR.EQTYPE=ER.RATED_EQ) AND (ER.RATING_TYPE=?) GROUP BY ER.EQTYPE ORDER BY CNT DESC, ER.EQTYPE");
-			_ps.setInt(1, SUBMITTED);
-			_ps.setInt(2, PRIMARY_RATING);
+			_ps.setInt(1, FlightReport.SUBMITTED);
+			_ps.setInt(2, EquipmentType.Rating.PRIMARY.ordinal());
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					dq.addCount(rs.getString(1), rs.getInt(2));

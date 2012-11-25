@@ -1,18 +1,20 @@
-// Copyright 2005, 2006, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.Pilot;
 
+import org.deltava.util.cache.CacheManager;
+
 /**
  * A Data Access Object to write Signature Images.
  * @author Luke
- * @version 2.6
+ * @version 5.0
  * @since 1.0
  */
 
-public class SetSignatureImage extends PilotSignatureDAO {
+public class SetSignatureImage extends DAO {
 
 	/**
 	 * Initialize the Data Access Object.
@@ -33,7 +35,6 @@ public class SetSignatureImage extends PilotSignatureDAO {
 	 * @see Pilot#getHasSignature()
 	 */
 	public void write(Pilot p, int x, int y, String ext, boolean isApproved) throws DAOException {
-		invalidate(p.getID());
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG, X, Y, EXT, ISAPPROVED, "
 					+ "MODIFIED) VALUES (?, ?, ?, ?, LCASE(?), ?, NOW())");
@@ -46,6 +47,8 @@ public class SetSignatureImage extends PilotSignatureDAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Signature", p.cacheKey());
 		}
 	}
 
@@ -55,13 +58,14 @@ public class SetSignatureImage extends PilotSignatureDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int pilotID) throws DAOException {
-		invalidate(pilotID);
 		try {
 			prepareStatementWithoutLimits("DELETE FROM SIGNATURES WHERE (ID=?)");
 			_ps.setInt(1, pilotID);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Signature", Integer.valueOf(pilotID));
 		}
 	}
 }

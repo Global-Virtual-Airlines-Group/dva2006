@@ -19,12 +19,12 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class GetTS2Data extends DAO implements CachingDAO {
+public class GetTS2Data extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetTS2Data.class);
 
 	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
-	private static final Cache<TSObject> _cache = new ExpiringCache<TSObject>(16, 600);
+	private static final Cache<TSObject> _cache = CacheManager.get(TSObject.class, "TS2Data");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -34,11 +34,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
-	}
-
-	/**
+	/*
 	 * Helper method to convert a date from the godawful TS2 format.
 	 */
 	private java.util.Date getDate(String dt) {

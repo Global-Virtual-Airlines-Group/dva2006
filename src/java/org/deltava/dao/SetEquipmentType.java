@@ -8,16 +8,17 @@ import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to write Equipment Profiles.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
-public class SetEquipmentType extends EquipmentTypeDAO {
+public class SetEquipmentType extends DAO {
 
 	/**
 	 * Initialze the Data Access Object.
@@ -65,7 +66,6 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 			writeRatings(eq);
 			writeAirlines(eq);
 			commitTransaction();
-			_cache.add(eq);
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -80,7 +80,7 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 	 */
 	public void update(EquipmentType eq, String newName) throws DAOException {
 		try {
-			String oldName = eq.getName();
+			Object oldCacheKey = eq.cacheKey();
 			startTransaction();
 			
 			// Update the name if necessary in common table
@@ -118,8 +118,8 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 			writeExams(eq);
 			writeRatings(eq);
 			writeAirlines(eq);
-			invalidate(oldName);
 			commitTransaction();
+			CacheManager.invalidate("EquipmentTypes", oldCacheKey);
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -138,14 +138,14 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 		_ps.setString(1, eq.getName());
 		
 		// Write the FO exams
-		_ps.setInt(3, EquipmentType.EXAM_FO);
+		_ps.setInt(3, Rank.FO.ordinal());
 		for (Iterator<String> i = eq.getExamNames(Rank.FO).iterator(); i.hasNext(); ) {
 			_ps.setString(2, i.next());
 			_ps.addBatch();
 		}
 		
 		// Write the Captain exams
-		_ps.setInt(3, EquipmentType.EXAM_CAPT);
+		_ps.setInt(3, Rank.C.ordinal());
 		for (Iterator<String> i = eq.getExamNames(Rank.C).iterator(); i.hasNext(); ) {
 			_ps.setString(2, i.next());
 			_ps.addBatch();
@@ -171,14 +171,14 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 		_ps.setString(1, eq.getName());
 		
 		// Add the primary ratings
-		_ps.setInt(2, EquipmentType.PRIMARY_RATING);
+		_ps.setInt(2, EquipmentType.Rating.PRIMARY.ordinal());
 		for (Iterator<String> i = eq.getPrimaryRatings().iterator(); i.hasNext(); ) {
 			_ps.setString(3, i.next());
 			_ps.addBatch();
 		}
 		
 		// Add the secondary ratings
-		_ps.setInt(2, EquipmentType.SECONDARY_RATING);
+		_ps.setInt(2, EquipmentType.Rating.SECONDARY.ordinal());
 		for (Iterator<String> i = eq.getSecondaryRatings().iterator(); i.hasNext(); ) {
 			_ps.setString(3, i.next());
 			_ps.addBatch();
@@ -204,8 +204,7 @@ public class SetEquipmentType extends EquipmentTypeDAO {
 		prepareStatementWithoutLimits("INSERT INTO common.EQAIRLINES (EQTYPE, OWNER, AIRLINE) VALUES (?, ?, ?)");
 		_ps.setString(1, eq.getName());
 		_ps.setString(2, SystemData.get("airline.code"));
-		for (Iterator<AirlineInformation> i = eq.getAirlines().iterator(); i.hasNext(); ) {
-			AirlineInformation ai = i.next();
+		for (AirlineInformation ai : eq.getAirlines()) {
 			_ps.setString(3, ai.getCode());
 			_ps.addBatch();
 		}

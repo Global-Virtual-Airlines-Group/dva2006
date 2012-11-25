@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,13 +16,13 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Accomplishment profiles.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 3.2
  */
 
-public class GetAccomplishment extends DAO implements CachingDAO {
+public class GetAccomplishment extends DAO {
 	
-	private static final Cache<Accomplishment> _cache = new ExpiringCache<Accomplishment>(32, 3600);
+	private static final Cache<Accomplishment> _cache = CacheManager.get(Accomplishment.class, "Accomplishments");
 
 	/**
 	 * Intiailizes the Data Access Object.
@@ -32,18 +32,6 @@ public class GetAccomplishment extends DAO implements CachingDAO {
 		super(c);
 	}
 
-	@Override
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
-	}
-	
-	/**
-	 * Helper method to allow the write DAO to invalidate the cache.
-	 */
-	static void invalidate() {
-		_cache.clear();
-	}
-	
 	/**
 	 * Returns an Accomplishment profile in the current airline.
 	 * @param id the database ID

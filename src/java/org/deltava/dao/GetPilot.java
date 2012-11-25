@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,10 +7,12 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
 
+import org.deltava.util.cache.CacheManager;
+
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
  * @author Luke
- * @version 3.3
+ * @version 5.0
  * @since 1.0
  */
 
@@ -27,10 +29,9 @@ public class GetPilot extends PilotReadDAO {
 	/**
 	 * Removes a Pilot from the cache to ensure a fresh read from the database.
 	 * @param id the Pilot's database ID
-	 * @see PilotDAO#invalidate(int)
 	 */
 	public static void invalidateID(int id) {
-		invalidate(id);
+		CacheManager.invalidate("Pilots", Integer.valueOf(id));
 	}
 
 	/**
@@ -298,7 +299,6 @@ public class GetPilot extends PilotReadDAO {
 			if (eMail != null)
 				_ps.setString(++idx, eMail);
 
-			// Execute the Query and return
 			results = execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

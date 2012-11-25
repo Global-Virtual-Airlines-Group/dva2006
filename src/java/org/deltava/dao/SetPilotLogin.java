@@ -1,16 +1,17 @@
-// Copyright 2005, 2007, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 
 import org.deltava.beans.Pilot;
 
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to track user logins and logouts.
  * @author Luke
- * @version 2.7
+ * @version 5.0
  * @since 1.0
  */
 
@@ -47,7 +48,6 @@ public class SetPilotLogin extends PilotWriteDAO {
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS SET LAST_LOGIN=NOW(), LOGINHOSTNAME=?, LOGINS=LOGINS+1, STATUS=? WHERE (ID=?) LIMIT 1");
-		invalidate(id);
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, hostName);
@@ -56,6 +56,8 @@ public class SetPilotLogin extends PilotWriteDAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(id));
 		}
 	}
 	
@@ -65,13 +67,14 @@ public class SetPilotLogin extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logout(int id) throws DAOException {
-		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=NOW() WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(id));
 		}
 	}
 }

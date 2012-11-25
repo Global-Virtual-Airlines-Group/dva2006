@@ -8,6 +8,8 @@ import org.deltava.beans.event.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.cache.CacheManager;
+
 /**
  * A Data Access Object to write Online Event data.
  * @author Luke
@@ -61,7 +63,6 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void signup(Signup s) throws DAOException {
-		PilotDAO.invalidate(s.getPilotID());
 		try {
 			prepareStatement("REPLACE INTO events.EVENT_SIGNUPS (ID, ROUTE_ID, PILOT_ID, EQTYPE, REMARKS) "
 					+ "VALUES (?, ?, ?, ?, ?)");
@@ -73,6 +74,8 @@ public class SetEvent extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(s.getPilotID()));
 		}
 	}
 
@@ -126,7 +129,6 @@ public class SetEvent extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(Signup s) throws DAOException {
-		PilotDAO.invalidate(s.getPilotID());
 		try {
 			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
 			_ps.setInt(1, s.getID());
@@ -134,6 +136,8 @@ public class SetEvent extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(s.getPilotID()));
 		}
 	}
 

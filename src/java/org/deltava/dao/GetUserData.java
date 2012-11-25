@@ -20,12 +20,12 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetUserData extends DAO implements CachingDAO {
+public class GetUserData extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
-	private static final Cache<AirlineInformation> _appCache = new AgingCache<AirlineInformation>(2);
-	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(2048);
+	private static final Cache<AirlineInformation> _appCache = CacheManager.get(AirlineInformation.class, "AirlineInfo");
+	private static final Cache<UserData> _usrCache = CacheManager.get(UserData.class, "UserData");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -33,29 +33,6 @@ public class GetUserData extends DAO implements CachingDAO {
 	 */
 	public GetUserData(Connection c) {
 		super(c);
-	}
-
-	public CacheInfo getCacheInfo() {
-		CacheInfo info = new CacheInfo(_appCache);
-		info.add(_usrCache);
-		return info;
-	}
-
-	/**
-	 * Removes an entry from the user cache.
-	 * @param id the database ID
-	 */
-	static void invalidate(int id) {
-		_usrCache.remove(Integer.valueOf(id));
-	}
-
-	/**
-	 * Removes an entry from the web application cache.
-	 * @param id the airline code
-	 * @throws NullPointerException if id is null
-	 */
-	static void invalidate(String id) {
-		_appCache.remove(id);
 	}
 
 	/**

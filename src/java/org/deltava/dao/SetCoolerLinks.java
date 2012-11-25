@@ -1,19 +1,19 @@
-// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.*;
 
 import org.deltava.beans.cooler.*;
+import org.deltava.util.cache.CacheManager;
 
 /**
  * A Data Access Object to write and update Water Cooler image URLs.
  * @author Luke
- * @version 2.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class SetCoolerLinks extends CoolerThreadDAO {
+public class SetCoolerLinks extends DAO {
 
 	/**
 	 * Initializes the Data Access Object.
@@ -32,12 +32,10 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 		if ((t == null) || (t.getImageURLs().isEmpty()))
 			return;
 		
-		invalidate(t.getID());
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, t.getID());
-			for (Iterator<LinkedImage> i = t.getImageURLs().iterator(); i.hasNext(); ) {
-				LinkedImage img = i.next();
+			for (LinkedImage img : t.getImageURLs()) {
 				_ps.setInt(2, img.getID());
 				_ps.setString(3, img.getURL());
 				_ps.setString(4, img.getDescription());
@@ -49,6 +47,8 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("CoolerThreads", t.cacheKey());
 		}
 	}
 	
@@ -59,7 +59,6 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void add(int threadID, LinkedImage img) throws DAOException {
-		invalidate(threadID);
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, threadID);
@@ -67,6 +66,7 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 			_ps.setString(3, img.getURL());
 			_ps.setString(4, img.getDescription());
 			executeUpdate(1);
+			CacheManager.invalidate("CoolerThreads", Integer.valueOf(threadID));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -74,13 +74,12 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 	
 	/**
 	 * Deletes an image URL associated with a particular Message Thread.
-	 * @param id the Message Thread database ID 
+	 * @param threadID the Message Thread database ID 
 	 * @param url the Image URL to delete
 	 * @throws DAOException if a JDBC error occurs
 	 * @see SetCoolerLinks#delete(int, int)
 	 */
-	public void delete(int id, String url) throws DAOException {
-		invalidate(id);
+	public void delete(int threadID, String url) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?)");
@@ -89,11 +88,12 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, id);
+			_ps.setInt(1, threadID);
 			if (url != null)
 				_ps.setString(2, url);
 			
 			executeUpdate(0);
+			CacheManager.invalidate("CoolerThreads", Integer.valueOf(threadID));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -101,18 +101,18 @@ public class SetCoolerLinks extends CoolerThreadDAO {
 	
 	/**
 	 * Deletes an image URL associated with a particular Message Thread.
-	 * @param id the Message Thread database ID
+	 * @param threadID the Message Thread database ID
 	 * @param seq the Image URL sequence ID
 	 * @throws DAOException if a JDBC error occurs
 	 * @see SetCoolerLinks#delete(int, String)
 	 */
-	public void delete(int id, int seq) throws DAOException {
-		invalidate(id);
+	public void delete(int threadID, int seq) throws DAOException {
 		try {
 			prepareStatement("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?) AND (SEQ=?)");
-			_ps.setInt(1, id);
+			_ps.setInt(1, threadID);
 			_ps.setInt(2, seq);
 			executeUpdate(1);
+			CacheManager.invalidate("CoolerThreads", Integer.valueOf(threadID));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

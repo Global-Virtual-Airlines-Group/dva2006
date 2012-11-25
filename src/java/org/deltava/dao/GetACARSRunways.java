@@ -16,9 +16,9 @@ import org.deltava.util.cache.*;
  * @since 2.6
  */
 
-public class GetACARSRunways extends DAO implements CachingDAO {
+public class GetACARSRunways extends DAO {
 	
-	private static final Cache<CacheableList<Runway>> _cache = new AgingCache<CacheableList<Runway>>(256);
+	private static final Cache<CacheableList<Runway>> _cache = CacheManager.getCollection(Runway.class, "ACARSRunways");
 
 	private static class RunwayCacheKey {
 		private final String _key;
@@ -76,10 +76,6 @@ public class GetACARSRunways extends DAO implements CachingDAO {
 			
 			return (tmpResult == 0) ? getCode().compareTo(sr2.getCode()) : tmpResult;
 		}
-	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
 	}
 	
 	/**

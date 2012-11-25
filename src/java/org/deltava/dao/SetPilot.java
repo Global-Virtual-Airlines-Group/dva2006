@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.deltava.beans.stats.GeocodeResult;
 
 import org.deltava.beans.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -26,15 +27,6 @@ public class SetPilot extends PilotWriteDAO {
 		super(c);
 	}
 	
-	/**
-	 * Public method to expose cache invalidation.
-	 * @param userID the Plot's database ID
-	 * @see PilotDAO#invalidate(int)
-	 */
-	public static void invalidate(int userID) {
-		PilotDAO.invalidate(userID);
-	}
-
 	/**
 	 * Updates an existing Pilot profile in the current database.
 	 * @param p the Pilot profile to update
@@ -61,9 +53,6 @@ public class SetPilot extends PilotWriteDAO {
 			+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, DISTANCEUNITS=?, MAPTYPE=?, RANK=?, EQTYPE=?, "
 			+ "STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, "
 			+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
-
-		// Invalidate the cache entry
-		PilotDAO.invalidate(p.getID());
 
 		try {
 			// This involves a lot of reads and writes, so its written as a single transaction
@@ -116,6 +105,8 @@ public class SetPilot extends PilotWriteDAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", p.cacheKey());
 		}
 	}
 
@@ -127,7 +118,6 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void setLocation(int pilotID, GeoLocation loc) throws DAOException {
 		try {
-			invalidate(pilotID);
 			prepareStatementWithoutLimits("REPLACE INTO PILOT_MAP (ID, LAT, LNG) VALUES (?, ?, ?)");
 			_ps.setInt(1, pilotID);
 			_ps.setDouble(2, loc.getLatitude());
@@ -135,6 +125,8 @@ public class SetPilot extends PilotWriteDAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(pilotID));
 		}
 	}
 	
@@ -146,13 +138,14 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void setHomeTown(int pilotID, GeocodeResult gr) throws DAOException {
 		try {
-			invalidate(pilotID);
 			prepareStatementWithoutLimits("UPDATE PILOTS SET LOCATION=? WHERE (ID=?)");
 			_ps.setString(1, gr.getCityState());
 			_ps.setInt(2, pilotID);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", Integer.valueOf(pilotID));
 		}
 	}
 
@@ -178,7 +171,6 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void assignID(Pilot p, String db) throws DAOException {
-		PilotDAO.invalidate(p.getID());
 		try {
 			startTransaction();
 			
@@ -199,6 +191,8 @@ public class SetPilot extends PilotWriteDAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", p.cacheKey());
 		}
 	}
 	
@@ -209,11 +203,12 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void addRatings(Pilot p, Collection<String> ratings) throws DAOException {
-		PilotDAO.invalidate(p.getID());
 		try {
 			writeRatings(p.getID(), ratings, SystemData.get("airline.db"), false);
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} finally {
+			CacheManager.invalidate("Pilots", p.cacheKey());
 		}
 	}
 }

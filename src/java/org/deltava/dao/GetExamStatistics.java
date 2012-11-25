@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,11 +12,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Examination and Check Ride statistics.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 3.0
  */
 
-public class GetExamStatistics extends DAO implements CachingDAO {
+public class GetExamStatistics extends DAO {
 	
 	private static final Cache<CacheableCollection<Integer>> _cache = new ExpiringCache<CacheableCollection<Integer>>(3, 3600);
 	
@@ -26,10 +26,6 @@ public class GetExamStatistics extends DAO implements CachingDAO {
 	 */
 	public GetExamStatistics(Connection c) {
 		super(c);
-	}
-	
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_cache);
 	}
 	
 	/**

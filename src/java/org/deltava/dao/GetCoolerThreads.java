@@ -4,18 +4,27 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.cooler.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.comparators.ArbitraryComparator;
+
+import org.deltava.util.*;
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetCoolerThreads extends CoolerThreadDAO {
+public class GetCoolerThreads extends DAO {
+	
+	private static final Logger log = Logger.getLogger(GetCoolerThreads.class);
+	private static final Cache<MessageThread> _tCache = CacheManager.get(MessageThread.class, "CoolerThreads"); 
 	
 	/**
 	 * Initializes the Data Access Object.
@@ -180,8 +189,6 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 					+ "REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) "
 					+ "ORDER BY CREATED");
 			_ps.setInt(1, id);
-
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Message msg = new Message(rs.getInt(2));
@@ -199,11 +206,8 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			_ps.close();
 			
 			// Fetch the thread updates
-			prepareStatementWithoutLimits("SELECT CREATED, AUTHOR, MESSAGE FROM common.COOLER_THREADHISTORY "
-					+ "WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT CREATED, AUTHOR, MESSAGE FROM common.COOLER_THREADHISTORY WHERE (ID=?)");
 			_ps.setInt(1, id);
-			
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					ThreadUpdate upd = new ThreadUpdate(id);
@@ -219,8 +223,6 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			// Fetch the thread reports
 			prepareStatementWithoutLimits("SELECT AUTHOR_ID FROM common.COOLER_REPORTS WHERE (THREAD_ID=?)");
 			_ps.setInt(1, id);
-
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					mt.addReportID(rs.getInt(1));
@@ -244,8 +246,6 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 		try {
 			prepareStatementWithoutLimits("SELECT USER_ID FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)");
 			_ps.setInt(1, id);
-
-			// Execute the query
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next())
 					result.addUser(rs.getInt(1));
@@ -303,10 +303,122 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			if (criteria.getMinimumDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getMinimumDate()));
 			
-			// Get the thread IDs
 			return getByID(executeIDs());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Loads a number of message threads based on their ID.
+	 * @param IDs a Collection of database IDs
+	 * @return a List of MessageThread beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	protected List<MessageThread> getByID(Collection<Integer> IDs) throws DAOException {
+		if (CollectionUtils.isEmpty(IDs))
+			return Collections.emptyList();
+		
+		// Build the comparator
+		int size = IDs.size();
+		Comparator<DatabaseBean> cmp = new ArbitraryComparator(IDs);
+		if (log.isDebugEnabled())
+			log.debug("Raw set size = " + IDs.size());
+		
+		// Check the cache
+		List<MessageThread> results = new ArrayList<MessageThread>(IDs.size());
+		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			MessageThread mt = _tCache.get(id);
+			if (mt != null) {
+				results.add(mt);
+				i.remove();
+			}
+		}
+		
+		// Check if we got everything from the cache - if so, sort and return
+		if (CollectionUtils.isEmpty(IDs)) {
+			Collections.sort(results, cmp);
+			return results;
+		}
+		
+		// Build the SQL query
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(T.STICKY < NOW(), "
+				+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
+				+ "IFNULL(I.SEQ, T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T "
+				+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I "
+				+ "ON (T.ID=I.ID) AND (I.SEQ=1) WHERE T.ID IN (");
+		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append(") GROUP BY T.ID");
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			results.addAll(execute());
+			
+			// Sort and return
+			Collections.sort(results, cmp);
+			if (results.size() != size)
+				log.info("Raw = " + size + ", IDs = " + IDs.size() + ", threads = " + results.size());
+				
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/*
+	 * Helper method to load thread IDs.
+	 */
+	private Collection<Integer> executeIDs() throws SQLException {
+		Collection<Integer> IDs = new LinkedHashSet<Integer>();
+		try (ResultSet rs = _ps.executeQuery()) {
+			while (rs.next())
+				IDs.add(Integer.valueOf(rs.getInt(1)));
+		}
+		
+		_ps.close();
+		return IDs;
+	}
+	
+	/*
+	 * Helper method to load result rows.
+	 */
+	private List<MessageThread> execute() throws SQLException {
+		List<MessageThread> results = new ArrayList<MessageThread>();
+		try (ResultSet rs = _ps.executeQuery()) {
+			boolean hasImgCount = (rs.getMetaData().getColumnCount() > 17);
+			while (rs.next()) {
+				MessageThread t = new MessageThread(rs.getString(2));
+				t.setID(rs.getInt(1));
+				t.setChannel(rs.getString(3));
+				t.setImage(rs.getInt(hasImgCount ? 18 : 4));
+				t.setStickyUntil(rs.getTimestamp(5));
+				t.setHidden(rs.getBoolean(6));
+				t.setLocked(rs.getBoolean(7));
+				t.setStickyInChannelOnly(rs.getBoolean(8));
+				t.setViews(rs.getInt(9));
+				t.setPostCount(rs.getInt(10));
+				t.setAuthorID(rs.getInt(11));
+				t.setLastUpdatedOn(rs.getTimestamp(12));
+				t.setLastUpdateID(rs.getInt(13));
+				t.setReportCount(rs.getInt(15));
+				t.setPoll(rs.getInt(17) > 0);
+
+				// Clean out sticky if less than SD column
+				if ((t.getStickyUntil() != null) && (t.getLastUpdatedOn().after(t.getStickyUntil())))
+					t.setStickyUntil(null);
+
+				results.add(t);
+				_tCache.add(t);
+			}
+		}
+
+		_ps.close();
+		return results;
 	}
 }

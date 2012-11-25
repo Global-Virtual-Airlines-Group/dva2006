@@ -1,4 +1,4 @@
-// Copyright 2006, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,11 +12,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
-public class GetScheduleInfo extends DAO implements CachingDAO {
+public class GetScheduleInfo extends DAO {
 	
 	private static final Cache<CacheableLong> _schedSizeCache = new ExpiringCache<CacheableLong>(2, 1800);
 
@@ -28,11 +28,6 @@ public class GetScheduleInfo extends DAO implements CachingDAO {
 		super(c);
 	}
 	
-	@Override
-	public CacheInfo getCacheInfo() {
-		return new CacheInfo(_schedSizeCache);
-	}
-
 	/**
 	 * Returns all flight numbers in a particular range.
 	 * @param a the Airline bean

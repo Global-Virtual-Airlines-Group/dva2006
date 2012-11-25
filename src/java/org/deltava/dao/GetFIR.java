@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,14 +11,14 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load FIR data.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 3.2
  */
 
-public class GetFIR extends DAO implements CachingDAO {
+public class GetFIR extends DAO {
 	
-	private static final Cache<FIR> _cache = new AgingCache<FIR>(64);
-	private static final Cache<CacheableString> _idCache = new AgingCache<CacheableString>(128);
+	private static final Cache<FIR> _cache = CacheManager.get(FIR.class, "FIRs");
+	private static final Cache<CacheableString> _idCache = CacheManager.get(CacheableString.class, "FIRIDs");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -26,13 +26,6 @@ public class GetFIR extends DAO implements CachingDAO {
 	 */
 	public GetFIR(Connection c) {
 		super(c);
-	}
-
-	@Override
-	public CacheInfo getCacheInfo() {
-		CacheInfo info = new CacheInfo(_cache);
-		info.add(_idCache);
-		return info;
 	}
 
 	/**
