@@ -35,7 +35,7 @@
 	<cache id="TAF" max="256" expires="1800" />
 	<cache id="FlightAwareMETAR" max="256" expires="1800" />
 	<cache id="FlightAwareTAF" max="256" expires="1800" />
-	<cahe id="WXImages" max="8" expires="7200" />
+	<cache id="WXImages" max="8" expires="7200" />
 
 	<!-- ServInfo caches -->
 	<cache id="ServInfoStatus" max="3" expires="43200" />
