@@ -180,8 +180,10 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.Lay
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerAnimateControl(map, 'Radar Loop', ff, 333));
 map.controls[google.maps.ControlPosition.TOP_CENTER].push(golgotha.maps.util.progress.getDiv());
 </c:if>
-// Build the standard weather layers
+// Add other layers
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
+var k = new google.maps.KmlLayer(self.location.protocol + '//' + self.location.host + '/servinfo/firs.kmz', {preserveViewport:true, clickable:false});
+map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'FIRs', k));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
 google.maps.event.trigger(this, 'maptypeid_changed');
 google.maps.event.trigger(map, 'zoom_changed');
