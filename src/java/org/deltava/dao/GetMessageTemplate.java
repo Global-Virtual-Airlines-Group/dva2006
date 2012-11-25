@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 public class GetMessageTemplate extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
-	private static final Cache<MessageTemplate> _cache = CacheManager.get(MessageTemplate.class, "MsgTemplate");
+	private static final Cache<MessageTemplate> _cache = CacheManager.get(MessageTemplate.class, "MessageTemplate");
 
 	/**
 	 * Initialize the Data Access Object.
