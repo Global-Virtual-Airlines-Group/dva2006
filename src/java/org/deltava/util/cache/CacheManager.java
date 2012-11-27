@@ -2,7 +2,7 @@
 package org.deltava.util.cache;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 
 import org.apache.log4j.*;
 
@@ -16,7 +16,12 @@ import org.apache.log4j.*;
 public class CacheManager {
 
 	private static final Logger log = Logger.getLogger(CacheManager.class);
-	private static final ConcurrentMap<String, Cache<?>> _caches = new ConcurrentHashMap<String, Cache<?>>(24);
+	
+	private static final ReentrantReadWriteLock _rw = new ReentrantReadWriteLock(true);
+	private static final ReentrantReadWriteLock.ReadLock _r = _rw.readLock();
+	private static final ReentrantReadWriteLock.WriteLock _w = _rw.writeLock();
+	
+	private static final Map<String, Cache<?>> _caches = new LinkedHashMap<String, Cache<?>>(24);
 	
 	// singleton
 	private CacheManager() {
@@ -28,17 +33,27 @@ public class CacheManager {
 	 * @return a Collection of CacheInfo objects
 	 */
 	public static Collection<CacheInfo> getCacheInfo() {
-		Collection<Map.Entry<String, Cache<?>>> entries = new ArrayList<>(_caches.entrySet());
-		Collection<CacheInfo> results = new ArrayList<CacheInfo>();
-		for (Map.Entry<String, Cache<?>> me : entries)
-			results.add(new CacheInfo(me.getKey(), me.getValue()));
+		try {
+			_r.lock();
+			Collection<Map.Entry<String, Cache<?>>> entries = new ArrayList<>(_caches.entrySet());
+			Collection<CacheInfo> results = new ArrayList<CacheInfo>();
+			for (Map.Entry<String, Cache<?>> me : entries)
+				results.add(new CacheInfo(me.getKey(), me.getValue()));
 
-		return results;
+			return results;
+		} finally {
+			_r.unlock();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	private static <T extends Cacheable> Cache<T> get(String id) {
-		return (Cache<T>) _caches.get(id);
+		try {
+			_r.lock();
+			return (Cache<T>) _caches.get(id);
+		} finally { 
+			_r.unlock();
+		}
 	}
 	
 	/**
@@ -46,7 +61,7 @@ public class CacheManager {
 	 * @param id the cache ID
 	 */
 	public static void invalidate(String id) {
-		Cache<?> cache = _caches.get(id);
+		Cache<?> cache = get(id);
 		if (cache != null) cache.clear();
 	}
 	
@@ -56,7 +71,7 @@ public class CacheManager {
 	 * @param key the cache key
 	 */
 	public static void invalidate(String id, Object key) {
-		Cache<?> cache = _caches.get(id);
+		Cache<?> cache = get(id);
 		if (cache != null) cache.remove(key);
 	}
 	
@@ -90,8 +105,13 @@ public class CacheManager {
 		}
 		
 		// Register and return
-		_caches.put(id, cache);
-		return cache;
+		try {
+			_w.lock();
+			_caches.put(id, cache);
+			return cache;
+		} finally {
+			_w.unlock();
+		}
 	}
 	
 	/**
@@ -117,7 +137,12 @@ public class CacheManager {
 
 		// Register a null cache
 		cache = new NullCache<T>();
-		_caches.put(id, cache);
-		return cache;
+		try {
+			_w.lock();
+			_caches.put(id, cache);
+			return cache;
+		} finally {
+			_w.unlock();
+		}
 	}
 }
