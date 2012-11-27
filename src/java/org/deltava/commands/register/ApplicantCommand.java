@@ -248,7 +248,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		
 		// Get the user's netblock
 		GetIPLocation ipdao = new GetIPLocation(c);
-		IPAddressInfo addrInfo = ipdao.get(a.getRegisterAddress());
+		IPBlock addrInfo = ipdao.get(a.getRegisterAddress());
 		ctx.setAttribute("addrInfo", addrInfo, REQUEST);
 		
 		// Initialize the DAO
@@ -259,7 +259,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		Collection<?> airlines = ((Map<?, ?>) SystemData.getObject("apps")).values();
 		for (Iterator<?> i = airlines.iterator(); i.hasNext() && (addrInfo != null); ) {
 			AirlineInformation info = (AirlineInformation) i.next();
-			netmaskIDs.addAll(dao.checkAddress(addrInfo.getBlock(), info.getDB()));
+			netmaskIDs.addAll(dao.checkAddress(addrInfo, info.getDB()));
 		}
 		
 		// Load the locations of all these matches

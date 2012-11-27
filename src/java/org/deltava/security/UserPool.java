@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.IPAddressInfo;
+import org.deltava.beans.system.IPBlock;
 
 /**
  * A singleton class for tracking connected and blocked users.
@@ -36,7 +36,7 @@ public class UserPool {
 	 * @param userAgent the User-Agent header
 	 * @see UserPool#remove(Person, String)
 	 */
-	public static void add(Pilot p, String sessionID, IPAddressInfo addrInfo, String userAgent) {
+	public static void add(Pilot p, String sessionID, IPBlock addrInfo, String userAgent) {
 		if ((p != null) && (!isBlocked(p))) {
 			UserSession uw = new UserSession(p, sessionID, addrInfo, userAgent);
 			_users.put(Integer.valueOf(p.getID()), uw);
@@ -71,7 +71,7 @@ public class UserPool {
 	 * remove the user from the pool.
 	 * @param p the Person to remove
 	 * @param sessionID the session ID to match
-	 * @see UserPool#add(Pilot, String, IPAddressInfo, String)
+	 * @see UserPool#add(Pilot, String, IPBlock, String)
 	 */
 	public static void remove(Person p, String sessionID) {
 		UserSession uw = _users.get(p.cacheKey());

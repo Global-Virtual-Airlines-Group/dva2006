@@ -4,18 +4,18 @@ package org.deltava.beans.acars;
 import java.util.Date;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.IPAddressInfo;
+import org.deltava.beans.system.IPBlock;
 
 /**
  * An abstract class for common ACRS log entry functions.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  */
 
 public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersion, AuthoredBean {
 
-	private IPAddressInfo _addrInfo;
+	private IPBlock _addrInfo;
 
 	private int _clientVersion;
 	private int _clientBuild;
@@ -53,9 +53,9 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 	/**
 	 * Returns information about this IP address.
 	 * @return the IP address Info
-	 * @see ConnectionEntry#setAddressInfo(IPAddressInfo)
+	 * @see ConnectionEntry#setAddressInfo(IPBlock)
 	 */
-	public IPAddressInfo getAddressInfo() {
+	public IPBlock getAddressInfo() {
 		return _addrInfo;
 	}
 
@@ -106,13 +106,13 @@ public abstract class ACARSLogEntry extends DatabaseBean implements ClientVersio
 	public void setBeta(int beta) {
 		_beta = Math.max(0, beta);
 	}
-	
-	   /**
-	    * Updates information about this IP address.
-	    * @param info the IP address Info
-	    * @see ConnectionEntry#getAddressInfo()
-	    */
-	   public void setAddressInfo(IPAddressInfo info) {
-		   _addrInfo = info;
-	   }
+
+	/**
+	 * Updates information about this IP address.
+	 * @param info the IP address Info
+	 * @see ConnectionEntry#getAddressInfo()
+	 */
+	public void setAddressInfo(IPBlock info) {
+		_addrInfo = info;
+	}
 }

@@ -189,7 +189,7 @@ public class LoginCommand extends AbstractCommand {
 			// Get IP address info
 			String remoteAddr = ctx.getRequest().getRemoteAddr();
 			GetIPLocation ipdao = new GetIPLocation(con);
-			IPAddressInfo addrInfo = ipdao.get(remoteAddr);
+			IPBlock addrInfo = ipdao.get(remoteAddr);
 
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getHexID());

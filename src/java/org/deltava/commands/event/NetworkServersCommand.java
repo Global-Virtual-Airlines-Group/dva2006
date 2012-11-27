@@ -1,4 +1,4 @@
-// Copyright 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.io.*;
@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.servinfo.*;
-import org.deltava.beans.system.IPAddressInfo;
+import org.deltava.beans.system.IPBlock;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display VATSIM/IVAO FSD server information.
  * @author Luke
- * @version 3.4
+ * @version 5.0
  * @since 3.4
  */
 
@@ -47,7 +47,7 @@ public class NetworkServersCommand extends AbstractCommand {
 			ctx.setAttribute("netInfo", info, REQUEST);
 			
 			// Get IP location
-			Map<Server, IPAddressInfo> addrInfo = new HashMap<Server, IPAddressInfo>();
+			Map<Server, IPBlock> addrInfo = new HashMap<Server, IPBlock>();
 			GetIPLocation dao = new GetIPLocation(ctx.getConnection());
 			for (Server srv : info.getServers())
 				addrInfo.put(srv, dao.get(srv.getAddress()));
@@ -59,9 +59,6 @@ public class NetworkServersCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Load the network names and save in the request
-		ctx.setAttribute("networks", SystemData.getObject("online.networks"), REQUEST);
-
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/event/networkServers.jsp");
