@@ -49,7 +49,7 @@
 	<cache id="MessageTemplate" max="16" />
 	<cache id="LibraryDLCount" max="64" expires="1800" />
 
-	<cache id="IPInfo" max="512" expires="86400" />
+	<cache id="IPInfo" max="512" expires="345600" />
 	<cache id="HTTPTotals" max="2" expires="7200" />
 	<cache id="TS2Data" max="16" expires="1200" />
 	<cache id="TableStats" max="12" expires="1800" />

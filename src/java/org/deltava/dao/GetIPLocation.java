@@ -18,7 +18,7 @@ import org.deltava.util.cache.*;
 
 public class GetIPLocation extends DAO {
 	
-	private static final Cache<IPAddressInfo> _cache = CacheManager.get(IPAddressInfo.class, "IPInfo");
+	private static final Cache<IPBlock> _cache = CacheManager.get(IPBlock.class, "IPInfo");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -34,46 +34,26 @@ public class GetIPLocation extends DAO {
 	 * @return information about this IP address, or null if none found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public IPAddressInfo get(String addr) throws DAOException {
+	public IPBlock get(String addr) throws DAOException {
 		if (StringUtils.isEmpty(addr) || !addr.contains(".")) return null;
 		
 		// Check the cache
-		IPAddressInfo result = _cache.get(addr);
-		if (result != null) return result;
+		IPBlock result = _cache.get(addr);
+		if (result != null)
+			return result;
 		
 		try {
-			prepareStatementWithoutLimits("SELECT (SELECT ip_cidr FROM geoip.ip_group_country WHERE (ip_start <= INET_ATON(?)) "
-				+ "ORDER BY ip_start DESC LIMIT 1) AS cidr, (SELECT ip_start FROM geoip.ip_group_city where (ip_start <= INET_ATON(?)) "
-				+ "ORDER BY ip_start DESC LIMIT 1) AS ipblock");
+			prepareStatementWithoutLimits("SELECT L.*, INET_NTOA(B.BLOCK_START), INET_NTOA(B.BLOCK_END), 32-LOG2(B.BLOCK_END-B.BLOCK_START) "
+				+ "FROM geoip.BLOCKS B LEFT JOIN geoip.LOCATIONS L ON (L.ID=B.ID) WHERE (B.BLOCK_START <= INET_ATON(?)) ORDER BY "
+				+ "B.BLOCK_START DESC LIMIT 1");
 			_ps.setString(1, addr);
-			_ps.setString(2, addr);
-			
-			// Do the range start query
-			long ip_start = -1;
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
-					String cidr = rs.getString(1);
-					if (cidr != null) {
-						result = new IPAddressInfo(addr);
-						result.setBlock(new IPBlock(cidr));
-						ip_start = rs.getLong(2);
-					}
-				}
-			}
-			
-			_ps.close();
-			
-			// Load the IP info
-			prepareStatementWithoutLimits("SELECT l.country_code, l.city, r.name, l.latitude, l.longitude FROM geoip.ip_group_city ic, "
-				+ "geoip.locations l LEFT JOIN geoip.fips_regions r ON (l.region_code=r.code) AND (l.country_code=r.country_code) "
-				+ "WHERE (ic.location=l.id) AND (ic.ip_start >= ?) ORDER BY ic.ip_start LIMIT 1");
-			_ps.setLong(1, ip_start);
-			try (ResultSet rs = _ps.executeQuery()) {
-				if (rs.next() && (result != null)) {
-					result.setCountry(Country.get(rs.getString(1)));
-					result.setCity(rs.getString(2));
+					result = new IPBlock(rs.getInt(1), rs.getString(8), rs.getString(9), rs.getInt(10));
+					result.setCountry(Country.get(rs.getString(2)));
 					result.setRegion(rs.getString(3));
-					result.setLocation(rs.getDouble(4), rs.getDouble(5));
+					result.setCity(rs.getString(4));
+					result.setLocation(rs.getDouble(6), rs.getDouble(7));
 				}
 			}
 			
