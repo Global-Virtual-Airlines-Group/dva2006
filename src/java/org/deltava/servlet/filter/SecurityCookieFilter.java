@@ -10,7 +10,7 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.IPAddressInfo;
+import org.deltava.beans.system.IPBlock;
 
 import org.deltava.crypt.*;
 import org.deltava.security.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet filter to handle persistent authentication cookies.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 1.0
  * @see SecurityCookieData
  * @see SecurityCookieGenerator
@@ -43,6 +43,7 @@ public class SecurityCookieFilter implements Filter {
 	 * Called by the servlet container when the filter is started. Logs a message and saves the servlet context.
 	 * @param cfg the Filter Configuration
 	 */
+	@Override
 	public void init(FilterConfig cfg) throws ServletException {
 		try {
 			SecretKeyEncryptor enc = new DESEncryptor(SystemData.get("security.desKey"));
@@ -58,14 +59,12 @@ public class SecurityCookieFilter implements Filter {
 		log.info("Started");
 	}
 
-	/**
+	/*
 	 * Helper method to return the value of a particular cookie.
 	 */
 	private static String getCookie(HttpServletRequest req, String name) {
 		Cookie[] cookies = req.getCookies();
-		if (cookies == null)
-			return null;
-
+		if (cookies == null) return null;
 		for (int x = 0; x < cookies.length; x++) {
 			Cookie c = cookies[x];
 			if (c.getName().equals(name))
@@ -83,6 +82,7 @@ public class SecurityCookieFilter implements Filter {
 	 * @throws IOException if an I/O error occurs
 	 * @throws ServletException if a general error occurs
 	 */
+	@Override
 	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
 		// Cast the request/response since we are doing stuff with them
@@ -161,7 +161,7 @@ public class SecurityCookieFilter implements Filter {
 		if ((p == null) && (cData != null)) {
 			s.setAttribute(SCREENX_ATTR_NAME, Integer.valueOf(cData.getScreenX()));
 			s.setAttribute(SCREENY_ATTR_NAME, Integer.valueOf(cData.getScreenY()));
-			IPAddressInfo addrInfo = null;
+			IPBlock addrInfo = null;
 			
 			// Load the person and the IP Address data
 			Connection con = null;
@@ -219,6 +219,7 @@ public class SecurityCookieFilter implements Filter {
 	/**
 	 * Called by the servlet container when the filter is stopped. Logs a message.
 	 */
+	@Override
 	public void destroy() {
 		log.info("Stopped");
 	}

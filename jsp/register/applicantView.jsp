@@ -251,7 +251,7 @@ ${dupe.rank.name} <el:cmd url="profile" link="${dupe}">${dupe.name}</el:cmd><c:i
 <c:if test="${!empty addrInfo}">
 <tr>
  <td class="label">IP Address Info</td>
- <td class="data">${addrInfo.block} <el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" /> ${addrInfo.location}</td>
+ <td class="data">${addrInfo} <el:flag countryCode="${addrInfo.country.code}" caption="${addrInfo.country.name}" /> ${addrInfo.location}</td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant.comments}">

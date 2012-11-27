@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008, 2009, 2010, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.net.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display all the users logging in via a particular IP address or host name.
  * @author Luke
- * @version 2.8
+ * @version 5.0
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class LoginAddressCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the command result
@@ -55,13 +56,13 @@ public class LoginAddressCommand extends AbstractCommand {
 			
 			// Get the network block
 			GetIPLocation ipdao = new GetIPLocation(con);
-			IPAddressInfo addrInfo = ipdao.get(addr);
+			IPBlock addrInfo = ipdao.get(addr);
 			searchNet &= (addrInfo != null);
 			ctx.setAttribute("addrInfo", addrInfo, REQUEST);
 			
 			// Get the Addresses
 			GetLoginData sysdao = new GetLoginData(con);
-			Collection<LoginAddress> addrs = searchNet ? sysdao.getLoginUsers(addr, addrInfo.getBlock()) : sysdao.getLoginUsers(addr);
+			Collection<LoginAddress> addrs = searchNet ? sysdao.getLoginUsers(addr, addrInfo) : sysdao.getLoginUsers(addr);
 			ctx.setAttribute("addrs", addrs, REQUEST);
 			
 			// Load the users

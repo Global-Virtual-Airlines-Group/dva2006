@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 3.6
+ * @version 5.0
  * @since 1.0
  */
 
@@ -38,6 +38,7 @@ public class ThreadCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Determine if we are editing the last post
@@ -226,10 +227,10 @@ public class ThreadCommand extends AbstractCommand {
 				
 				// Load poster IP addreses
 				GetIPLocation ipdao = new GetIPLocation(con);
-				Map<String, IPAddressInfo> addrInfo = new HashMap<String, IPAddressInfo>();
+				Map<String, IPBlock> addrInfo = new HashMap<String, IPBlock>();
 				for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
 					Message msg = i.next();
-					IPAddressInfo info = ipdao.get(msg.getRemoteAddr());
+					IPBlock info = ipdao.get(msg.getRemoteAddr());
 					if (info != null)
 						addrInfo.put(msg.getRemoteAddr(), info);
 				}
