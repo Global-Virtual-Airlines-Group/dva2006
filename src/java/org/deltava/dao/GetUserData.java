@@ -24,7 +24,6 @@ public class GetUserData extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
-	private static final Cache<AirlineInformation> _appCache = CacheManager.get(AirlineInformation.class, "AirlineInfo");
 	private static final Cache<UserData> _usrCache = CacheManager.get(UserData.class, "UserData");
 
 	/**
@@ -45,26 +44,14 @@ public class GetUserData extends DAO {
 	 */
 	public AirlineInformation get(String code) throws DAOException {
 		if (code == null) return null;
-
-		// Check if we're in the cache
-		AirlineInformation result = _appCache.get(code.toUpperCase());
-		if (result != null)
-			return result;
-
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?) LIMIT 1");
 			_ps.setString(1, code.toUpperCase());
 			List<AirlineInformation> results = executeAirlineInfo();
-			result = results.isEmpty() ? null : results.get(0);
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Add to the cache
-		if (result != null)
-			_appCache.add(result);
-
-		return result;
 	}
 
 	/**
@@ -78,7 +65,6 @@ public class GetUserData extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
 			results = executeAirlineInfo();
-			_appCache.addAll(results);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
