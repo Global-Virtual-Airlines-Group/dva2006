@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.ts2.*;
 
-import org.deltava.util.cache.*;
 import org.deltava.util.StringUtils;
 
 /**
@@ -22,9 +21,7 @@ import org.deltava.util.StringUtils;
 public class GetTS2Data extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetTS2Data.class);
-
 	private final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
-	private static final Cache<TSObject> _cache = CacheManager.get(TSObject.class, "TS2Data");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -217,7 +214,7 @@ public class GetTS2Data extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to parse Channel result sets.
 	 */
 	private List<Channel> executeChannels() throws SQLException {
@@ -236,7 +233,6 @@ public class GetTS2Data extends DAO {
 				c.setDescription(rs.getString(12));
 				c.setPassword(rs.getString(13));
 				c.setCreatedOn(getDate(rs.getString(14)));
-				_cache.add(c);
 				results.add(c);
 			}
 		}
@@ -245,7 +241,7 @@ public class GetTS2Data extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to parse User result sets.
 	 */
 	private List<Client> executeUsers() throws SQLException {
@@ -263,9 +259,6 @@ public class GetTS2Data extends DAO {
 				usr.setCreatedOn(getDate(rs.getString(6)));
 				usr.setLastOnline(getDate(rs.getString(7)));
 				usr.setIsACARS(rs.getBoolean(8));
-
-				// Add to cache and results
-				_cache.add(usr);
 				userIDs.add(Integer.valueOf(usr.getID()));
 				results.put(usr.cacheKey().toString(), usr);
 			}
@@ -360,7 +353,6 @@ public class GetTS2Data extends DAO {
 				srv.addChannel(c);
 		}
 
-		// Return
 		return new ArrayList<Server>(results.values());
 	}
 }
