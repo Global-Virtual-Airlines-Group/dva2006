@@ -34,9 +34,7 @@ public class BandwidthInfoService extends WebService {
 		
 		// Get hourly or daily
 		boolean isDaily = Boolean.valueOf(ctx.getParameter("daily")).booleanValue();
-		
-		// Get stats
-		List<Bandwidth> stats = new ArrayList<Bandwidth>();
+		Collection<Bandwidth> stats = new TreeSet<Bandwidth>();
 		try {
 			GetACARSBandwidth bwdao = new GetACARSBandwidth(ctx.getConnection());
 			bwdao.setQueryMax(isDaily ? 30 : 24);
@@ -46,9 +44,6 @@ public class BandwidthInfoService extends WebService {
 		} finally {
 			ctx.release();
 		}
-		
-		// Sort backwards
-		Collections.reverse(stats);
 		
 		// Generate the JSON document
 		JSONArray ja = new JSONArray();
@@ -68,6 +63,7 @@ public class BandwidthInfoService extends WebService {
 			ea.put(bw.getMaxConnections());
 			ea.put(bw.getMaxMsgs() / 1000);
 			ea.put(bw.getMaxBytes() / 1000000);
+			ja.put(ea);
 		}
 		
 		// Dump to the output stream
