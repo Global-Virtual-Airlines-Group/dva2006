@@ -6,7 +6,7 @@
 <!-- DAO Cache Data Table -->
 <el:table className="view">
 <tr class="title caps">
- <td colspan="8" class="left">DATA CACHE INFORMATION</td>
+ <td colspan="8" class="left">DATA CACHE INFORMATION - <span class="und" onclick="void toggleExpand(this, 'daoCacheEntry')">COLLAPSE</span></td>
 </tr>
 
 <!-- DAO Cache Title Bar -->
@@ -23,7 +23,7 @@
 
 <!-- DAO Cache Data -->
 <c:forEach var="cacheInfo" items="${daoCaches}">
-<view:row entry="${cacheInfo}">
+<view:row entry="${cacheInfo}" className="daoCacheEntry">
  <td class="pri bld">${cacheInfo.ID}</td>
  <td>${cacheInfo.type}</td>
  <td><fmt:int value="${cacheInfo.size}" /></td>
