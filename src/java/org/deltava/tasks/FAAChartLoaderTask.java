@@ -141,9 +141,10 @@ public class FAAChartLoaderTask extends Task {
 			log.info("Processing " + ac.getAirport());
 			AirportCharts<Chart> oc = oldCharts.get(ac.getAirport());
 			for (ExternalChart ec : ac.getCharts()) {
+				ec.setURL(baseURL + "/" + ec.getExternalID());
 				Chart oec = oc.get(ec.getName());
 				if (oec != null) {
-					boolean isSame = (oec.getIsExternal() && (((ExternalChart)oec).getExternalID().equals(ec.getExternalID())));
+					boolean isSame = oec.getIsExternal() && ((ExternalChart)oec).getURL().equals(ec.getURL());
 					if (!isSame) {
 						ec.setID(oec.getID());
 						log.info("Updating chart " + oec.getName());
@@ -187,7 +188,6 @@ public class FAAChartLoaderTask extends Task {
 			// Queue the charts
 			TaskTimer tt = new TaskTimer(); 
 			for (ExternalChart ec : chartsToLoad) {
-				ec.setURL(baseURL + "/" + ec.getExternalID());
 				Runnable wrk = noDL ? new ChartSizer(work, ec) : new ChartLoader(work, ec); 
 				exec.execute(wrk);
 			}
