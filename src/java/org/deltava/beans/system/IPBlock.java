@@ -61,6 +61,14 @@ public class IPBlock implements Cacheable, GeoLocation, Comparable<IPBlock> {
 	}
 	
 	/**
+	 * Returns the block database ID.
+	 * @return the ID
+	 */
+	public int getID() {
+		return _id;
+	}
+	
+	/**
 	 * Returns the size of the block.
 	 * @return the number of addresses in the block
 	 */
