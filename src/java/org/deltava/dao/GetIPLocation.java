@@ -19,6 +19,7 @@ import org.deltava.util.cache.*;
 public class GetIPLocation extends DAO {
 	
 	private static final Cache<IPBlock> _cache = CacheManager.get(IPBlock.class, "IPInfo");
+	private static final Cache<CacheableLong> _blockCache = CacheManager.get(CacheableLong.class, "IPBlock"); 
 
 	/**
 	 * Initializes the Data Access Object.
@@ -38,9 +39,13 @@ public class GetIPLocation extends DAO {
 		if (StringUtils.isEmpty(addr) || !addr.contains(".")) return null;
 		
 		// Check the cache
-		IPBlock result = _cache.get(addr);
-		if (result != null)
-			return result;
+		IPBlock result = null;
+		CacheableLong id = _blockCache.get(addr);
+		if (id != null) {
+			result = _cache.get(Integer.valueOf((int) id.getValue()));
+			if (result != null)
+				return result;
+		}
 		
 		try {
 			prepareStatementWithoutLimits("SELECT L.*, INET_NTOA(B.BLOCK_START), INET_NTOA(B.BLOCK_END), 32-LOG2(B.BLOCK_END-B.BLOCK_START) "
@@ -54,12 +59,14 @@ public class GetIPLocation extends DAO {
 					result.setRegion(rs.getString(3));
 					result.setCity(rs.getString(4));
 					result.setLocation(rs.getDouble(6), rs.getDouble(7));
+					
+					// Add to cache
+					_cache.add(result);
+					_blockCache.add(new CacheableLong(addr, result.getID()));
 				}
 			}
 			
-			// Add to cache and return
 			_ps.close();
-			_cache.add(result);
 			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
