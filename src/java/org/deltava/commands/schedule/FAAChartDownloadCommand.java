@@ -193,15 +193,16 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 		int addCnt = 0; int updCnt = 0; int delCnt = 0;
 		for (AirportCharts<ExternalChart> ac : newCharts.values()) {
 			msgs.add(new LogMessage("pri bld", "Processing " + ac.getAirport()));
-			AirportCharts<Chart> oc = oldCharts.get(ac.getAirport());
+			AirportCharts<Chart> occ = oldCharts.get(ac.getAirport());
 			for (ExternalChart ec : ac.getCharts()) {
-				Chart oec = oc.get(ec.getName());
-				if (oec != null) {
-					boolean isSame = (oec.getIsExternal() && (((ExternalChart)oec).getExternalID().equals(ec.getExternalID())));
+				ec.setURL(baseURL + "/" + ec.getExternalID());
+				Chart oc = occ.get(ec.getName());
+				if (oc != null) {
+					boolean isSame = oc.getIsExternal() && ((ExternalChart)oc).getURL().equals(ec.getURL());
 					if (!isSame) {
-						ec.setID(oec.getID());
-						msgs.add(new LogMessage("Updating chart " + oec.getName()));
-						oc.getCharts().remove(oec);
+						ec.setID(oc.getID());
+						msgs.add(new LogMessage("Updating chart " + oc.getName()));
+						occ.getCharts().remove(oc);
 						chartsToLoad.add(ec);
 						updCnt++;
 					}
@@ -213,7 +214,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			}
 			
 			// Find charts that are no longer in the new charts
-			for (Chart oec : oc.getCharts()) {
+			for (Chart oec : occ.getCharts()) {
 				if (ac.get(oec.getName()) == null) {
 					msgs.add(new LogMessage("sec", "Deleting chart " + oec.getName()));
 					chartsToDelete.add(Integer.valueOf(oec.getID()));
@@ -239,9 +240,7 @@ public class FAAChartDownloadCommand extends AbstractCommand {
 			
 			// Queue the charts
 			int queueSize = 0; TaskTimer tt = new TaskTimer(); 
-			for (Iterator<ExternalChart> eci = chartsToLoad.iterator(); eci.hasNext(); ) {
-				ExternalChart ec = eci.next();
-				ec.setURL(baseURL + "/" + ec.getExternalID());
+			for (ExternalChart ec : chartsToLoad) {
 				Runnable wrk = noDL ? new ChartSizer(work, ec) : new ChartLoader(work, ec); 
 				exec.execute(wrk);
 				queueSize++;
