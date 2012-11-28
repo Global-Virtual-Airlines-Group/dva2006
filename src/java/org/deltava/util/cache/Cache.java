@@ -15,13 +15,6 @@ import java.util.concurrent.atomic.*;
 
 public abstract class Cache<T extends Cacheable> {
 	
-	/**
-	 * Cache type enumeration.
-	 */
-	public enum CacheType {
-		LOCAL, MEMCACHED
-	}
-
 	protected final ConcurrentMap<Object, CacheEntry<T>> _cache;
 	private final Semaphore _ovLock = new Semaphore(1, true);
 	private int _maxSize;
