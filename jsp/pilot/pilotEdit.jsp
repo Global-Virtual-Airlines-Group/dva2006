@@ -307,7 +307,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Distance Units</td>
- <td colspan="${cspan}" class="data"><el:check name="distanceUnits" type="radio" cols="3" options="${distanceUnits}" value="${pilot.distanceType.unitName}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="distanceUnits" type="radio" cols="3" options="${distanceUnits}" value="${pilot.distanceType}" /></td>
 </tr>
 <tr>
  <td class="label">Route Map Type</td>

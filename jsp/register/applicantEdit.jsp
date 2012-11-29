@@ -148,7 +148,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Distance Units</td>
- <td class="data"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="${applicant.distanceType.name}" /></td>
+ <td class="data"><el:check name="distanceUnits" idx="*" type="radio" cols="3" options="${distanceUnits}" value="${applicant.distanceType}" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
