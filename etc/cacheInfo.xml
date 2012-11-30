@@ -37,7 +37,6 @@
 	<cache id="WXImages" max="8" expires="7200" />
 
 	<!-- ServInfo caches -->
-	<cache id="ServInfoStatus" max="3" expires="43200" />
 	<cache id="ServInfoData" max="3" expires="30" />
 
 	<!-- System caches -->

@@ -38,7 +38,6 @@ public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static final Cache<NetworkStatus> _netCache = CacheManager.get(NetworkStatus.class, "ServInfoStatus");
 	private static final Cache<NetworkInfo> _infoCache = CacheManager.get(NetworkInfo.class, "ServInfoData");
 	
 	/**
@@ -122,44 +121,6 @@ public class GetServInfo extends DAO {
 	}
 	
 	/**
-	 * Loads network data URLs.
-	 * @param net the network
-	 * @return a Network Status bean
-	 * @throws DAOException if an HTTP error occurs
-	 */
-	public NetworkStatus getStatus(OnlineNetwork net) throws DAOException {
-
-		// Get from the cache if possible
-		NetworkStatus status = _netCache.get(net);
-		if (status != null)
-			return status;
-
-		try {
-			BufferedReader br = getReader();
-			status = new NetworkStatus(net, SystemData.get("online." + net.toString().toLowerCase() + ".local.info"));
-			String sData = br.readLine();
-			while ((sData != null) && (!Thread.currentThread().isInterrupted())) {
-				StringTokenizer tk = new StringTokenizer(sData, "=");
-				if (tk.countTokens() > 1) {
-					String param = tk.nextToken();
-					if (("url0".equals(param)) && (tk.countTokens() > 0))
-						status.addURL(tk.nextToken());
-					else if (("msg0".equals(param)) && (tk.countTokens() > 0))
-						status.setMessage(tk.nextToken());
-				}
-
-				// Read next line
-				sData = br.readLine();
-			}
-
-			_netCache.add(status);
-			return status;
-		} catch (IOException ie) {
-			throw new DAOException(ie);
-		}
-	}
-
-	/**
 	 * Loads network data.
 	 * @param network the network
 	 * @return a NetworkInfo bean
@@ -169,17 +130,13 @@ public class GetServInfo extends DAO {
 
 		// Get from the cache if possible
 		NetworkInfo info = _infoCache.get(network);
-		if (info != null)
-			return info;
-		
-		try {
-			LineNumberReader br = getReader();
+		if (info != null) return info;
+		try (LineNumberReader br = getReader()) {
 			info = new NetworkInfo(network);
 
 			// Initialize date formatter
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 			Map<String, MutableInteger> serverCons = new HashMap<String, MutableInteger>();
-
 			String iData = br.readLine();
 			while ((iData != null) && (!Thread.currentThread().isInterrupted())) {
 				if ((iData.length() > 7) && (iData.charAt(0) == '!')) {
@@ -348,7 +305,6 @@ public class GetServInfo extends DAO {
 					iData = br.readLine();
 			}
 
-			// Return result
 			_infoCache.add(info);
 			return info;
 		} catch (IOException ie) {
