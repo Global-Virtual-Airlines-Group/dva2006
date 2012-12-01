@@ -1,18 +1,21 @@
-// Copyright 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fb;
 
 /**
  * A bean to store Facebook authentication tokens across airlines. 
  * @author Luke
- * @version 3.7
+ * @version 5.0
  * @since 3.4
  */
 
 public class FacebookCredentials implements java.io.Serializable {
 	
-	private String _appID;
+	private static final long serialVersionUID = 8257889140857191508L;
+	
+	private final String _appID;
 	private String _pageID;
 	private String _pageToken;
+	private String _iconURL;
 
 	/**
 	 * Creates a new credentials object.
@@ -48,6 +51,14 @@ public class FacebookCredentials implements java.io.Serializable {
 	}
 	
 	/**
+	 * Returns the posting icon image URL.
+	 * @return the URL
+	 */
+	public String getIconURL() {
+		return _iconURL;
+	}
+	
+	/**
 	 * Updates the Facebook page ID for this application.
 	 * @param id the page ID
 	 */
@@ -63,10 +74,20 @@ public class FacebookCredentials implements java.io.Serializable {
 		_pageToken = token;
 	}
 	
+	/**
+	 * Updates the URL to the posting icon image.
+	 * @param url the icon URL
+	 */
+	public void setIconURL(String url) {
+		_iconURL = url;
+	}
+	
+	@Override
 	public int hashCode() {
 		return _appID.hashCode();
 	}
 	
+	@Override
 	public String toString() {
 		return "FB-" + _appID;
 	}
