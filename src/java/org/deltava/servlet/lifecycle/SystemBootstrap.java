@@ -200,6 +200,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 				FacebookCredentials creds = new FacebookCredentials(SystemData.get("users.facebook.id"));
 				creds.setPageID(SystemData.get("users.facebook.pageID"));
 				creds.setPageToken(pageToken);
+				creds.setIconURL("http://" + SystemData.get("airline.url") + "/" + SystemData.get("path.img") + "/fbIcon.png");
 				SharedData.addData(SharedData.FB_CREDS + SystemData.get("airline.code"), creds);
 				log.info("Loaded Facebook application credentials");
 			}
