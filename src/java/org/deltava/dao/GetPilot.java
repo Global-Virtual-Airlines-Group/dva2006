@@ -6,8 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
-
-import org.deltava.util.cache.CacheManager;
+import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
@@ -26,14 +26,6 @@ public class GetPilot extends PilotReadDAO {
 		super(c);
 	}
 	
-	/**
-	 * Removes a Pilot from the cache to ensure a fresh read from the database.
-	 * @param id the Pilot's database ID
-	 */
-	public static void invalidateID(int id) {
-		CacheManager.invalidate("Pilots", Integer.valueOf(id));
-	}
-
 	/**
 	 * Gets the newest pilots (with the highest pilot IDs).
 	 * @return a List of Pilots
@@ -75,12 +67,11 @@ public class GetPilot extends PilotReadDAO {
 
 			// Execute the query and get the result
 			List<Pilot> results = execute();
-			if (results.isEmpty())
-				return null;
+			if (results.isEmpty()) return null;
 			
 			// Update airline code
 			Pilot result = results.get(0);
-			result.setPilotCode(dbName.toUpperCase() + String.valueOf(result.getPilotNumber()));
+			result.setPilotCode(SystemData.get("airline.code") + String.valueOf(result.getPilotNumber()));
 
 			// Add roles/ratings
 			loadChildRows(result, dbName);
@@ -192,7 +183,7 @@ public class GetPilot extends PilotReadDAO {
 	public List<Pilot> getPilotsByLetter(String letter) throws DAOException {
 
 		// Check the letter
-		if (!Character.isLetter(letter.charAt(0)))
+		if (StringUtils.isEmpty(letter) || !Character.isLetter(letter.charAt(0)))
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
 		try {
