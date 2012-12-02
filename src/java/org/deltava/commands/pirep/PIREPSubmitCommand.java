@@ -19,6 +19,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -56,7 +57,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Get the Pilot profile of the individual who flew this flight
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidateID(pirep.getDatabaseID(DatabaseID.PILOT));
+			CacheManager.invalidate("Pilots", Integer.valueOf(pirep.getDatabaseID(DatabaseID.PILOT)));
 			Pilot p = pdao.get(pirep.getDatabaseID(DatabaseID.PILOT));
 			
 			// Create comments field
@@ -121,8 +122,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			if (isAcademy) {
 				GetAcademyCourses crsdao = new GetAcademyCourses(con);
 				Collection<Course> courses = crsdao.getByPilot(p.getID());
-				for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
-					Course c = i.next();
+				for (Course c : courses) {
 					if (c.getStatus() == Status.STARTED) {
 						pirep.setAttribute(FlightReport.ATTR_ACADEMY, true);
 						break;

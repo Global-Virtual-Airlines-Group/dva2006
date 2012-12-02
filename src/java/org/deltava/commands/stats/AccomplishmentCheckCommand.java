@@ -15,12 +15,13 @@ import org.deltava.dao.*;
 import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to recalculate what Accomplishments a Pilot has achieved.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 3.2
  */
 
@@ -97,7 +98,7 @@ public class AccomplishmentCheckCommand extends AbstractCommand {
 			
 			// Commit and clear cache
 			ctx.commitTX();
-			GetPilot.invalidateID(p.getID());
+			CacheManager.invalidate("Pilots", p.cacheKey());
 			
 			// Write status variable
 			ctx.setAttribute("pilot", p, REQUEST);
