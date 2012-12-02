@@ -21,6 +21,7 @@ import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -51,9 +52,10 @@ public class XPIREPService extends XAService {
 		if (f.getAirline() == null)
 			f.setAirline(SystemData.getAirline(SystemData.get("airline.code")));
 		
+		Pilot usr = null;
 		try {
-			Pilot usr = authenticate(ctx, data.get(0), data.get(1));
-			GetPilot.invalidateID(usr.getID());
+			usr = authenticate(ctx, data.get(0), data.get(1));
+			CacheManager.invalidate("Pilots", usr.cacheKey());
 			Connection con = ctx.getConnection();
 			
 			// Load flight
@@ -111,10 +113,8 @@ public class XPIREPService extends XAService {
 					comments.add(fr.getComments());
 			}
 			
-			// FIXME: Remove when we have flight times fixed
 			long timeS = (inf.getEndTime().getTime() - inf.getStartTime().getTime()) / 1000;
 			xfr.setLength((int)(timeS / 360));
-			log.warn("Actual time = " + StringUtils.format(timeS / 3600.0,  "#0.0") + "hrs, PIREP = " + xfr.getLength());
 			
 			// Check for a check ride
 			GetExam exdao = new GetExam(con);
@@ -299,7 +299,7 @@ public class XPIREPService extends XAService {
 			ctx.commitTX();
 			ctx.print("1|Flight Report Saved");
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			log.error(usr.getName() + " - " + e.getMessage(), e);
 			ctx.rollbackTX();
 			ctx.print("0|" + e.getMessage());
 		} finally {
@@ -312,7 +312,7 @@ public class XPIREPService extends XAService {
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_INTERNAL_SERVER_ERROR, "I/O Error", false);
-		} 
+		}
 		
 		return SC_OK;
 	}
