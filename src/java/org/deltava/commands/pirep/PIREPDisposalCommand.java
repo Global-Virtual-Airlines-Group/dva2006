@@ -21,12 +21,13 @@ import org.deltava.mail.*;
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Flight Report status changes.
  * @author Luke
- * @version 4.1
+ * @version 5.0
  * @since 1.0
  */
 
@@ -106,7 +107,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidateID(fr.getDatabaseID(DatabaseID.PILOT));
+			CacheManager.invalidate("Pilots", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));
 			p = pdao.get(fr.getDatabaseID(DatabaseID.PILOT));
 			if (p == null)
 			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(DatabaseID.PILOT));
@@ -291,7 +292,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Invalidate the pilot again to reflect the new totals
 			if (opCode == FlightReport.OK)
-				GetPilot.invalidateID(fr.getDatabaseID(DatabaseID.PILOT));
+				CacheManager.invalidate("Pilots", Integer.valueOf(fr.getDatabaseID(DatabaseID.PILOT)));				
 			
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);

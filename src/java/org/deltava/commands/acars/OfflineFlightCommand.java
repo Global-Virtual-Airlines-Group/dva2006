@@ -24,6 +24,7 @@ import org.deltava.dao.*;
 import org.deltava.crypt.MessageDigester;
 
 import org.deltava.util.*;
+import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.*;
@@ -184,7 +185,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Get the user information
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidateID(ctx.getUser().getID());
+			CacheManager.invalidate("Pilots", ctx.getUser().cacheKey());
 			Pilot p = pdao.get(ctx.getUser().getID());
 			
 			// Get the SID/STAR data
