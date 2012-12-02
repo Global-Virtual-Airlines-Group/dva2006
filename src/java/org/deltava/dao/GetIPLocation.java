@@ -48,19 +48,18 @@ public class GetIPLocation extends DAO {
 		}
 		
 		try {
-			prepareStatementWithoutLimits("SELECT L.*, INET_NTOA(B.BLOCK_START), INET_NTOA(B.BLOCK_END), 32-LOG2(B.BLOCK_END-B.BLOCK_START) "
-				+ "FROM geoip.BLOCKS B LEFT JOIN geoip.LOCATIONS L ON (L.ID=B.ID) WHERE (B.BLOCK_START <= INET_ATON(?)) ORDER BY "
-				+ "B.BLOCK_START DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT L.*, R.NAME, INET_NTOA(B.BLOCK_START), INET_NTOA(B.BLOCK_END), "
+				+ "32-LOG2(B.BLOCK_END-B.BLOCK_START) FROM geoip.BLOCKS B LEFT JOIN geoip.LOCATIONS L ON (L.ID=B.ID) "
+				+ "LEFT JOIN geoip.FIPS_REGIONS R ON ((L.COUNTRY=R.COUNTRY) AND (L.REGION=R.REGION)) WHERE "
+				+ "(B.BLOCK_START <= INET_ATON(?)) ORDER BY B.BLOCK_START DESC LIMIT 1");
 			_ps.setString(1, addr);
 			try (ResultSet rs = _ps.executeQuery()) {
 				if (rs.next()) {
-					result = new IPBlock(rs.getInt(1), rs.getString(8), rs.getString(9), rs.getInt(10));
+					result = new IPBlock(rs.getInt(1), rs.getString(9), rs.getString(10), rs.getInt(11));
 					result.setCountry(Country.get(rs.getString(2)));
-					result.setRegion(rs.getString(3));
+					result.setRegion(rs.getString(8));
 					result.setCity(rs.getString(4));
 					result.setLocation(rs.getDouble(6), rs.getDouble(7));
-					
-					// Add to cache
 					_cache.add(result);
 					_blockCache.add(new CacheableLong(addr, result.getID()));
 				}
