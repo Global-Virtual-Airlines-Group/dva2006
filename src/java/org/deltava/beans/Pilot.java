@@ -939,7 +939,7 @@ public class Pilot extends Person implements ComboAlias, Cloneable {
 		}
 
 		// Save the prefix and the code
-		_pCodePrefix = pBuf.toString();
+		_pCodePrefix = pBuf.toString().toUpperCase();
 		try {
 			_pCodeId = Integer.parseInt(cBuf.toString());
 		} catch (NumberFormatException nfe) {
