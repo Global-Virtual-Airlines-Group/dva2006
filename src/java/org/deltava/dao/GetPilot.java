@@ -6,8 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.flight.FlightReport;
+
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to get Pilots from the database, for use in roster operations.
@@ -71,7 +71,7 @@ public class GetPilot extends PilotReadDAO {
 			
 			// Update airline code
 			Pilot result = results.get(0);
-			result.setPilotCode(SystemData.get("airline.code") + String.valueOf(result.getPilotNumber()));
+			result.setPilotCode(dbName + String.valueOf(result.getPilotNumber()));
 
 			// Add roles/ratings
 			loadChildRows(result, dbName);
