@@ -9,7 +9,7 @@ import org.deltava.beans.flight.*;
 /**
  * A utility class to convert XACARS Flight Information records into Flight Reports.
  * @author Luke
- * @version 4.2
+ * @version 5.0
  * @since 4.1
  */
 
@@ -37,6 +37,7 @@ public final class XACARSFlightHelper {
 		fi.setStartTime(inf.getStartTime());
 		fi.setEndTime(inf.getEndTime());
 		fi.setRoute(inf.getRoute());
+		fi.setAuthorID(inf.getAuthorID());
 		fi.setXACARS(true);
 		
 		// Basic PIREP fields
