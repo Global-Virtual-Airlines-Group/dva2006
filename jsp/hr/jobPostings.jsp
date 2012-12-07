@@ -76,7 +76,7 @@ regularly as new volunteer opportunities are posted on a regular basis.</td>
 <tr class="title">
  <td colspan="${cspan}"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>
 <c:if test="${access.canEdit}"> <el:cmd url="job" op="edit">CREATE NEW JOB POSTING</el:cmd></c:if>
-<content:filter roles="HR"><view:legend width="90" labels="Open,Staff Only,Closed,Shortlised,Selected,Complete" classes=" ,warn,opt2,opt3,opt4,opt1" /></content:filter></td>
+<content:filter roles="HR"><view:legend width="90" labels="Open,Staff Only,Closed,Shortlisted,Selected,Complete" classes=" ,warn,opt2,opt3,opt4,opt1" /></content:filter></td>
 </tr>
 </c:if>
 </view:table>
