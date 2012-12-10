@@ -62,12 +62,6 @@ if (text) text.value = combo.options[combo.selectedIndex].value.toUpperCase();
 return true;
 }
 
-function getValue(combo)
-{
-if (combo.selectedIndex == -1) return null;
-return combo.options[combo.selectedIndex].value;
-}
-
 function setAirport(combo, code, fireEvent)
 {
 if (code == null) return false;
