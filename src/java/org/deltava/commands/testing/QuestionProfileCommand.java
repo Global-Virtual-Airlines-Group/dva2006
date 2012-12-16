@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -197,8 +197,8 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				ctx.setAttribute("mapCenter", rp.getMidPoint(), REQUEST);
 				
 				GetNavRoute trdao = new GetNavRoute(con);
-				ctx.setAttribute("sids", trdao.getRoutes(rp.getAirportD().getICAO(), TerminalRoute.SID), REQUEST);
-				ctx.setAttribute("stars", trdao.getRoutes(rp.getAirportA().getICAO(), TerminalRoute.STAR), REQUEST);
+				ctx.setAttribute("sids", trdao.getRoutes(rp.getAirportD(), TerminalRoute.Type.SID), REQUEST);
+				ctx.setAttribute("stars", trdao.getRoutes(rp.getAirportA(), TerminalRoute.Type.STAR), REQUEST);
 			}
 
 			// Save the profile in the request
@@ -258,7 +258,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				Collection<NavigationDataBean> rt = new LinkedHashSet<NavigationDataBean>();
 				rt.add(new AirportLocation(rp.getAirportD()));
 				if ((wps.size() > 1) && (wps.get(0).indexOf('.') != -1)) {
-					TerminalRoute sid = rtdao.getRoute(rp.getAirportD(), TerminalRoute.SID, wps.get(0));
+					TerminalRoute sid = rtdao.getRoute(rp.getAirportD(), TerminalRoute.Type.SID, wps.get(0));
 					if (sid != null) {
 						rt.addAll(sid.getWaypoints());
 						wps.remove(0);
@@ -267,7 +267,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				
 				rt.addAll(rtdao.getRouteWaypoints(StringUtils.listConcat(wps, " "), rp.getAirportD()));
 				if ((wps.size() > 1) && (wps.get(wps.size() - 1).indexOf('.') != -1)) {
-					TerminalRoute star = rtdao.getRoute(rp.getAirportA(), TerminalRoute.STAR, wps.get(wps.size() - 1));
+					TerminalRoute star = rtdao.getRoute(rp.getAirportA(), TerminalRoute.Type.STAR, wps.get(wps.size() - 1));
 					if (star != null)
 						rt.addAll(star.getWaypoints());
 				}

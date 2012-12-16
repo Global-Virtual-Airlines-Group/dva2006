@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
@@ -15,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -171,22 +172,20 @@ public class GetNavData extends DAO {
 
 	/**
 	 * Returns information about a particular airport Runway.
-	 * @param airportCode the airport ICAO code
+	 * @param a the ICAOAirport
 	 * @param rwyCode the runway name/number
 	 * @return a Runway bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Runway getRunway(String airportCode, String rwyCode) throws DAOException {
+	public Runway getRunway(ICAOAirport a, String rwyCode) throws DAOException {
 		if ((rwyCode != null) && rwyCode.startsWith("RW"))
 			rwyCode = rwyCode.substring(2);
 		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?) AND (NAME=?)");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setString(2, airportCode.toUpperCase());
+			_ps.setString(2, a.getICAO());
 			_ps.setString(3, rwyCode.toUpperCase());
-
-			// Execute the query
 			List<NavigationDataBean> results = execute();
 			return results.isEmpty() ? null : (Runway) results.get(0);
 		} catch (SQLException se) {
@@ -196,17 +195,15 @@ public class GetNavData extends DAO {
 	
 	/**
 	 * Returns all Runways for a particular Airport.
-	 * @param airportCode the airport ICAO code
+	 * @param a the ICAOAirport
 	 * @return a Collection Runway beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Runway> getRunways(String airportCode) throws DAOException {
+	public Collection<Runway> getRunways(ICAOAirport a) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (CODE=?)");
 			_ps.setInt(1, Navaid.RUNWAY.ordinal());
-			_ps.setString(2, airportCode.toUpperCase());
-
-			// Execute the query
+			_ps.setString(2, a.getICAO());
 			List<NavigationDataBean> results = execute();
 			List<Runway> runways = new ArrayList<Runway>();
 			for (NavigationDataBean nd : results) {
@@ -223,19 +220,19 @@ public class GetNavData extends DAO {
 	/**
 	 * Returns the likeliest runway for a takeoff or landing. 
 	 * @param a the Airport
-	 * @param simVersion the Flight Simulator Version
+	 * @param sim the Simulator
 	 * @param loc the takeoff/landing location
 	 * @param hdg the takeoff/landing heading in degrees 
 	 * @return a Runway, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public LandingRunways getBestRunway(ICAOAirport a, int simVersion, GeoLocation loc, int hdg) throws DAOException {
+	public LandingRunways getBestRunway(ICAOAirport a, Simulator sim, GeoLocation loc, int hdg) throws DAOException {
 		Collection<Runway> results = new HashSet<Runway>();
 		try {
-			if (simVersion > 0) {
+			if (sim != Simulator.UNKNOWN) {
 				prepareStatement("SELECT * FROM common.RUNWAYS WHERE (ICAO=?) AND (SIMVERSION=?)");	
 				_ps.setString(1, a.getICAO());
-				_ps.setInt(2, Math.max(2004, simVersion));
+				_ps.setInt(2, Math.max(2004, sim.getCode()));
 				
 				try (ResultSet rs = _ps.executeQuery()) {
 					while (rs.next()) {
