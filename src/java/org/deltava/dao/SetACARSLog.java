@@ -8,7 +8,7 @@ import org.deltava.beans.acars.ACARSError;
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -69,14 +69,12 @@ public class SetACARSLog extends DAO {
 			_ps.setString(4, err.getRemoteHost());
 			_ps.setInt(5, err.getClientBuild());
 			_ps.setInt(6, err.getBeta());
-			_ps.setInt(7, err.getFSVersion());
+			_ps.setInt(7, err.getSimulator().getCode());
 			_ps.setString(8, err.getFSUIPCVersion());
 			_ps.setString(9, err.getMessage());
 			_ps.setString(10, err.getStackDump());
 			_ps.setString(11, err.getStateData());
 			executeUpdate(1);
-			
-			// Get the new ID
 			err.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
