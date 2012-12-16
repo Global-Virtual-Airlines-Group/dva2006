@@ -247,26 +247,25 @@ public class GetNavAirway extends GetNavData {
 	
 	/**
 	 * Returns the available SID runways for a particular Airport.
-	 * @param code the Airport ICAO code
+	 * @param a an ICAOAirport
 	 * @return a Collection of Runway codes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<String> getSIDRunways(String code) throws DAOException {
+	public Collection<String> getSIDRunways(ICAOAirport a) throws DAOException {
 		
 		// Check the cache
-		code = code.toUpperCase();
-		CacheableSet<String> results = _rwCache.get(code);
+		CacheableSet<String> results = _rwCache.get(a.getICAO());
 		if (results != null)
 			return results;
 		
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SID_STAR WHERE (ICAO=?) AND "
 					+ "(TYPE=?) ORDER BY RUNWAY");
-			_ps.setString(1, code.toUpperCase());
+			_ps.setString(1, a.getICAO());
 			_ps.setInt(2, TerminalRoute.Type.SID.ordinal());
 			
 			// Execute the query
-			results = new CacheableSet<String>(code);
+			results = new CacheableSet<String>(a.getICAO());
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					String rwy = rs.getString(1);
@@ -300,16 +299,16 @@ public class GetNavAirway extends GetNavData {
 	
 	/**
 	 * Loads all SIDs/STARs for a particular Airport.
-	 * @param code the Airport ICAO code
+	 * @param a the ICAOAirport
 	 * @param t the SID/STAR type
 	 * @return a List of TerminalRoutes
 	 * @throws DAOException
 	 */
-	public Collection<TerminalRoute> getRoutes(String code, TerminalRoute.Type t) throws DAOException {
+	public Collection<TerminalRoute> getRoutes(ICAOAirport a, TerminalRoute.Type t) throws DAOException {
 		List<TerminalRoute> results = null;
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY, SEQ");
-			_ps.setString(1, code.toUpperCase());
+			_ps.setString(1, a.getICAO());
 			_ps.setInt(2, t.ordinal());
 			results = executeSIDSTAR();
 		} catch (SQLException se) {
