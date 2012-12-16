@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS dispatch clients.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.0
  */
 
@@ -31,11 +31,11 @@ public class TerminalRouteService extends DispatchDataService {
 	 */
 	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
-		
+
 		// Ensure we are a dispatcher
 		if (!ctx.isUserInRole("Dispatch"))
 			throw error(SC_UNAUTHORIZED, "Not in Dispatch role", false);
-		
+
 		// Check the cache
 		File f = _dataCache.get("SIDSTAR");
 		if (f != null) {
@@ -45,7 +45,7 @@ public class TerminalRouteService extends DispatchDataService {
 			sendFile(f, ctx.getResponse());
 			return SC_OK;
 		}
-		
+
 		// Get the DAO and the SIDs/STARs
 		Collection<TerminalRoute> routes = null;
 		try {
@@ -56,40 +56,36 @@ public class TerminalRouteService extends DispatchDataService {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Write to a temp file
 		File cacheDir = new File(SystemData.get("schedule.cache"));
 		f = new File(cacheDir, "sidstar.txt");
-		
+
 		// Format routes
 		try {
-			PrintWriter pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(f), 65536));
-			final NumberFormat df = new DecimalFormat("#0.000000"); 
-			for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext(); ) {
-				TerminalRoute tr = i.next();
-				pw.println("[" + tr.toString() + "-" + tr.getTypeName() + "]");
-				for (Iterator<NavigationDataBean> ii = tr.getWaypoints().iterator(); ii.hasNext(); ) {
-					NavigationDataBean ai = ii.next();
-					pw.print(ai.getCode());
-					pw.print(',');
-					pw.print(df.format(ai.getLatitude()));
-					pw.print(',');
-					pw.print(df.format(ai.getLongitude()));
-					pw.print(',');
-					pw.print(String.valueOf(ai.getType()));
-					pw.print(',');
-					pw.println((ai.getRegion() == null) ? "" : ai.getRegion());
+			final NumberFormat df = new DecimalFormat("#0.000000");
+			try (PrintWriter pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(f), 65536))) {
+				for (TerminalRoute tr : routes) {
+					pw.println("[" + tr.toString() + "-" + tr.getType().name() + "]");
+					for (Iterator<NavigationDataBean> ii = tr.getWaypoints().iterator(); ii.hasNext();) {
+						NavigationDataBean ai = ii.next();
+						pw.print(ai.getCode());
+						pw.print(',');
+						pw.print(df.format(ai.getLatitude()));
+						pw.print(',');
+						pw.print(df.format(ai.getLongitude()));
+						pw.print(',');
+						pw.print(String.valueOf(ai.getType()));
+						pw.print(',');
+						pw.println((ai.getRegion() == null) ? "" : ai.getRegion());
+					}
+
+					pw.println("");
 				}
-			
-				pw.println("");
-				i.remove();
 			}
-			
-			// Close the file and add to the cache
-			pw.close();
-			addCacheEntry("SIDSTAR", f);
-		
+
 			// Format and write
+			addCacheEntry("SIDSTAR", f);
 			ctx.setContentType("text/plain", "UTF-8");
 			ctx.setExpiry(600);
 			ctx.getResponse().setHeader("Cache-Control", "private");
@@ -97,10 +93,10 @@ public class TerminalRouteService extends DispatchDataService {
 		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error", false);
 		}
-		
+
 		return SC_OK;
 	}
-	
+
 	/**
 	 * Returns whether this web service requires authentication.
 	 * @return TRUE always

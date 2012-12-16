@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.0
  */
 
@@ -69,11 +69,10 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
 		List<String> errors = new ArrayList<String>();
+		TerminalRoute.Type rt = TerminalRoute.Type.values()[routeType];
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		int entryCount = 0; LineNumberReader br = null;
-		try {
-			// Get the file
-			InputStream is = navData.getInputStream();
+		try (InputStream is = navData.getInputStream()) {
 			br = new LineNumberReader(new InputStreamReader(is));
 			
 			// Iterate through the file
@@ -89,7 +88,7 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 					List<String> idParts = StringUtils.split(id, "/");
 					Airport a = SystemData.getAirport(idParts.get(0));
 					if (a != null) {
-						tr = new TerminalRoute(a, idParts.get(1), routeType);
+						tr = new TerminalRoute(a, idParts.get(1), rt);
 						tr.setRunway(idParts.get(2));
 						tr.setCanPurge(true);
 						if (idParts.size() > 3)
@@ -100,7 +99,7 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 						if (trIDs.add(routeID))
 							results.add(tr);
 						else {
-							log.warn("Duplicate " + tr.getTypeName() + " - " + routeID);
+							log.warn("Duplicate " + tr.getType().name() + " - " + routeID);
 							tr = null;
 						}
 					} else
@@ -126,9 +125,6 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 					}
 				}
 			}
-			
-			// Close the stream
-			is.close();
 			
 			// Get a connection
 			Connection con = ctx.getConnection();

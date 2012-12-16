@@ -11,19 +11,21 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
 public class TerminalRoute extends Airway implements ComboAlias {
    
-   public static final int SID = 0;
-   public static final int STAR = 1;
-   
-   public static final String[] TYPES = {"SID", "STAR"};
-   
+	/**
+	 * Terminal Route types.
+	 */
+	public enum Type {
+		SID, STAR
+	}
+	
    private final String _airport;
-   private int _type;
+   private final Type _type;
    private boolean _canPurge;
    
    private String _name;
@@ -69,14 +71,12 @@ public class TerminalRoute extends Airway implements ComboAlias {
     * @param name the route name
     * @param type the SID/STAR type
     * @throws NullPointerException if icao, name or transition are null
-    * @throws IllegalArgumentException if type is invalid
-    * @see TerminalRoute#setType(int)
     */
-   public TerminalRoute(String icao, String name, int type) {
+   public TerminalRoute(String icao, String name, Type type) {
       super(name, 0);
       _airport = icao.trim().toUpperCase();
+      _type = type;
       setName(name);
-      setType(type);
    }
    
    /**
@@ -85,7 +85,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
     * @param name the route name
     * @param type the type
     */
-   public TerminalRoute(Airport a, String name, int type) {
+   public TerminalRoute(Airport a, String name, Type type) {
 	   this(a.getICAO(), name, type);
    }
    
@@ -133,16 +133,8 @@ public class TerminalRoute extends Airway implements ComboAlias {
     * Returns the route type (SID/STAR).
     * @return the route type
     */
-   public int getType() {
+   public Type getType() {
       return _type;
-   }
-   
-   /**
-    * Returns the route type name.
-    * @return the route type name
-    */
-   public String getTypeName() {
-      return TYPES[_type];
    }
    
    public String getComboName() {
@@ -159,7 +151,7 @@ public class TerminalRoute extends Airway implements ComboAlias {
     * @return a Collection of NavigationDataBeans
     */
    public Collection<NavigationDataBean> getWaypoints(String transition) {
-	   if (_type == SID)
+	   if (_type == Type.SID)
 		   return getWaypoints(null, transition);
 	   
 	   return getWaypoints(transition, null);
@@ -213,18 +205,6 @@ public class TerminalRoute extends Airway implements ComboAlias {
     */
    public void setTransition(String waypoint) {
 	   _transition = waypoint.trim().toUpperCase();
-   }
-   
-   /**
-    * Updates the Terminal Route type.
-    * @param type the route type code
-    * @throws IllegalArgumentException if type is negative or invalid
-    */
-   public void setType(int type) {
-      if ((type < 0) || (type >= TYPES.length))
-         throw new IllegalArgumentException("Invalid Terminal Route type - " + type);
-      
-      _type = type;
    }
    
    /**
