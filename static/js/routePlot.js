@@ -3,39 +3,50 @@ function getAJAXParams()
 var f = document.forms[0];
 var params = [];
 if (comboSet(f.airportD)) {
-	params['airportD'] = f.airportD.options[f.airportD.selectedIndex].value;
-	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
+	params['airportD'] = getValue(f.airportD);
+	f.airportDCode.value = getValue(f.airportD);
 }
 if (comboSet(f.airportA)) {
-	params['airportA'] = f.airportA.options[f.airportA.selectedIndex].value;
-	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
+	params['airportA'] = getValue(f.airportA);
+	f.airportACode.value = getValue(f.airportA);
 }
 if (comboSet(f.airportL)) {
-	params['airportL'] = f.airportL.options[f.airportL.selectedIndex].value;
-	f.airportLCode.value = f.airportL.options[f.airportL.selectedIndex].value;
+	params['airportL'] = getValue(f.airportL);
+	f.airportLCode.value = getValue(f.airportL);
 }
 
+if (comboSet(f.gateD))
+	params['gateD'] = getValue(f.gateD);
+if (comboSet(f.gateA))
+	params['gateA'] = getValue(f.gateA);
 if (comboSet(f.eqType))
-	params['eqType'] = f.eqType.options[f.eqType.selectedIndex].value;
+	params['eqType'] = getValue(f.eqType);
 if (comboSet(f.sid))
-	params['sid'] = f.sid.options[f.sid.selectedIndex].value;
+	params['sid'] = getValue(f.sid);
 if (comboSet(f.star))
-	params['star'] = f.star.options[f.star.selectedIndex].value;
+	params['star'] = getValue(f.star);
 if ((f.route) && (f.route.value.length > 0))
 	params['route'] = f.route.value;
 if (getInactive)
 	params['getInactive'] = 'true';
+for (var j = 0; j < f.simVersion.length; j++) {
+	if (f.simVersion[j].checked)
+		params['simVersion'] = f.simVersion[j].value;
+}
 
 params['runways'] = 'true';
-params['runway'] = f.runway.options[f.runway.selectedIndex].value;
+params['runway'] = getValue(f.runway);
 return params;
 }
 
 function formatAJAXParams(params, sep)
 {
 var results = [];
-for (k in params)
-	results.push(k + '=' + params[k]);
+for (k in params) {
+	var v = params[k]; 
+	if (Object.prototype.toString.call(v) != '[object Function]')
+		results.push(k + '=' + escape(v));
+}
 	
 return results.join(sep);
 }
@@ -56,9 +67,31 @@ for (var i = 0; i < elements.length; i++) {
 	combo.options[i+1] = new Option(rLabel, rCode);
 	if ((oldCode == rCode) || (oldCode == rLabel))
 		combo.selectedIndex = (i+1);
-} // for
+}
 
 gaEvent('Route Plotter', 'Update Routes');
+return true;
+}
+
+function updateGates(combo, elements)
+{
+// Save the old value
+if (!combo) return false;
+var oldCode = getValue(combo);
+
+// Update the combobox choices
+combo.options.length = elements.length + 1;
+combo.options[0] = new Option('-', '');
+for (var i = 0; i < elements.length; i++) {
+	var e = elements[i];
+	var gCode = e.getAttribute('name');
+	var o = new Option(gCode);
+	o.ll = new google.maps.LatLng(parseFloat(e.getAttribute('lat')), parseFloat(e.getAttribute('lng')));
+	combo.options[i+1] = o; 
+	if (oldCode == gCode)
+		combo.selectedIndex = (i+1);
+}
+
 return true;
 }
 
@@ -68,8 +101,6 @@ function plotMap(myParams)
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('post', 'routeplot.ws', true);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-// Build the update handler	
 xmlreq.onreadystatechange = function() {
 	if ((xmlreq.readyState != 4) || (xmlreq.status != 200)) return false;
 	map.clearOverlays();
@@ -106,16 +137,23 @@ xmlreq.onreadystatechange = function() {
 	// Get the midpoint and center the map
 	var reCenter = (!f.noRecenter.checked);
 	var mps = xdoc.getElementsByTagName('midpoint');
+	var dst = xdoc.getAttribute('distance');
 	var mpp = mps[0];
-	if (mpp && reCenter) {
+	if (mpp && dst && reCenter) {
 		var mp = new google.maps.LatLng(parseFloat(mpp.getAttribute('lat')), parseFloat(mpp.getAttribute('lng')));
 		map.setCenter(mp);
-		map.setZoom(getDefaultZoom(parseInt(mpp.getAttribute('distance'))));
+		map.setZoom(getDefaultZoom(parseInt(dst)));
+	}
+	
+	// Set departure location
+	var ade = golgotha.getChild(xdoc, 'airportD');
+	if (ade != null) {
+		var adp = new google.maps.LatLng(parseFloat(ade.getAttribute('lat')), parseFloat(ade.getAttribute('lng')));
+		dGates.mapCenter = adp;
 	}
 
 	// Set the distance
 	var dstE = document.getElementById('rtDistance');
-	var dst = xdoc.getAttribute('distance');
 	if (dst) {
 		if(dst > 0)
 			dstE.innerHTML = ' - ' + dst + ' miles';
@@ -171,6 +209,24 @@ xmlreq.onreadystatechange = function() {
 	} else
 		displayObject(document.getElementById('airportL'), false);
 
+	// Load the gates
+	var dGts = xdoc.getElementsByTagName('gateD');
+	var aGts = xdoc.getElementsByTagName('gateA');
+	displayObject(document.getElementById('gatesD'), (dGts.length > 0));
+	displayObject(document.getElementById('gatesA'), (aGts.length > 0));
+	updateGates(f.gateD, dGts);
+	updateGates(f.gateA, aGts);
+	dGates.clearMarkers();
+	dGates.hide();
+	for (var i = 0; i < dGts.length; i++) {
+		var gt = dGts[i];
+		var p = new google.maps.LatLng(parseFloat(gt.getAttribute('lat')), parseFloat(gt.getAttribute('lng')));
+		var gmrk = googleIconMarker(2, 56, p);
+		gmrk.gate = gt.getAttribute('name');
+		google.maps.event.addListener(gmrk, 'dblclick', function(e) { setCombo(f.gateD, this.gate); alert('Departure Gate set to ' + this.gate); plotMap(); });
+		dGates.addMarker(gmrk, 10);
+	}
+
 	// Get weather
 	displayObject(document.getElementById('wxDr'), false);
 	displayObject(document.getElementById('wxAr'), false);
@@ -192,13 +248,15 @@ xmlreq.onreadystatechange = function() {
 			tafSpan.innerHTML = golgotha.getCDATA(wx).data;
 		}
 	}
+	
+	// Show departure gates if required
+	if (f.showGates.checked)
+		toggleGates(dGates);
 
 	return true;
 }
 
-if (myParams == null)
-	myParams = getAJAXParams();
-
+if (myParams == null) myParams = getAJAXParams();
 xmlreq.send(formatAJAXParams(myParams, '&'));
 gaEvent('Route Plotter', 'Plot', formatAJAXParams(myParams, ' '));
 return true;
@@ -217,8 +275,6 @@ var faReload = (f.forceFAReload) ? f.forceFAReload.checked : false;
 // Generate an XMLHTTP request
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('get', 'dsproutes.ws?airportD=' + aD + '&airportA=' + aA + '&external=' + ext + '&runway=' + rwy + '&faReload=' + faReload, true);
-
-// Build the update handler	
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	enableElement('SearchButton', true);
@@ -318,5 +374,17 @@ if (airportsChanged) {
 
 enableElement('SearchButton', (f.airportD.selectedIndex > 0) && (f.airportA.selectedIndex > 0));
 enableElement('RouteSaveButton', (f.route.value.length > 2));
+return true;
+}
+
+function toggleGates(gts)
+{
+gts.toggle();
+if (gts.visible() && map.getZoom() < 14)
+	map.setZoom(14);
+
+if (gts.mapCenter)
+	map.setCenter(gts.mapCenter);
+	
 return true;
 }

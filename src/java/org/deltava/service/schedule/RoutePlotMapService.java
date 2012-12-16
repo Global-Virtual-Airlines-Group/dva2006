@@ -9,30 +9,29 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.DispatchRoute;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.wx.*;
 
-import org.deltava.comparators.RunwayComparator;
-
+import org.deltava.comparators.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
-import org.deltava.util.XMLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
 public class RoutePlotMapService extends MapPlotService {
-
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -44,18 +43,23 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Check if we download runways
 		boolean doRunways = Boolean.valueOf(ctx.getParameter("runways")).booleanValue();
+		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"));
+		if (sim == Simulator.UNKNOWN)
+			sim = Simulator.FSX;
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
 		Collection<WeatherDataBean> wxs = new ArrayList<WeatherDataBean>();
 		List<Airport> alternates = new ArrayList<Airport>();
 		DispatchRoute dr = new DispatchRoute();
+		Collection<Gate> gates = new TreeSet<Gate>(new GateComparator(GateComparator.TYPENUMBER)); 
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		Aircraft a = null;
 		try {
 			Connection con = ctx.getConnection();
 			GetAircraft acdao = new GetAircraft(con);
 			GetNavRoute dao = new GetNavRoute(con);
+			GetGates gdao = new GetGates(con);
 			GetWeather wxdao = new GetWeather(con);
 			
 			// Get the departure/arrival airports
@@ -82,9 +86,16 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Add the departure airport
 			if (dr.getAirportD() != null) {
-				routePoints.add(new AirportLocation(dr.getAirportD()));
-				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD().getICAO(), TerminalRoute.SID));
+				gates.addAll(gdao.getPopularGates(dr, sim, true));
+				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportD(), TerminalRoute.Type.SID));
 				tRoutes.addAll(sids);
+				
+				// Get the departure gate
+				Gate gateD = gdao.getGate(dr.getAirportD(), sim, ctx.getParameter("gateD"));
+				if (gateD != null)
+					routePoints.add(gateD);
+				else
+					routePoints.add(new AirportLocation(dr.getAirportD()));
 				
 				// Add popular departure runways
 				if (doRunways) {
@@ -93,7 +104,7 @@ public class RoutePlotMapService extends MapPlotService {
 					if (popRunways.isEmpty())
 						popRunways.addAll(rwdao.getPopularRunways(dr.getAirportD(), null, true));
 					
-					Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD().getICAO());
+					Collection<String> sidRunways = dao.getSIDRunways(dr.getAirportD());
 					for (Runway r : popRunways) {
 						String code = "RW" + r.getName();
 						if (sidRunways.contains(code))
@@ -108,12 +119,19 @@ public class RoutePlotMapService extends MapPlotService {
 
 			// Check if we have a SID
 			List<String> wps = StringUtils.split(route, " ");
-			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.SID, ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(dr.getAirportD(), TerminalRoute.Type.SID, ctx.getParameter("sid"));
 			if (sid != null) {
+				Runway r = dao.getRunway(dr.getAirportD(), sid.getRunway());
+				if (r != null)
+					routePoints.add(r);
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(sid.getWaypoints(wps.get(0)));
 				else
 					routePoints.addAll(sid.getWaypoints());
+			} else {
+				Runway r = dao.getRunway(dr.getAirportD(), ctx.getParameter("runway"));
+				if (r != null)
+					routePoints.add(r);
 			}
 
 			// Add the route waypoints
@@ -122,19 +140,24 @@ public class RoutePlotMapService extends MapPlotService {
 				routePoints.addAll(points);
 			}
 
-			// Check if we have a STAR - ensure aD is passed in
-			TerminalRoute star = dao.getRoute(dr.getAirportA(), TerminalRoute.STAR, ctx.getParameter("star"));
+			// Check if we have a STAR
+			TerminalRoute star = dao.getRoute(dr.getAirportA(), TerminalRoute.Type.STAR, ctx.getParameter("star"));
 			if (star != null) {
 				if (!CollectionUtils.isEmpty(wps))
 					routePoints.addAll(star.getWaypoints(wps.get(wps.size() - 1)));
 				else
 					routePoints.addAll(star.getWaypoints());
+				
+				Runway r = dao.getRunway(dr.getAirportA(), star.getRunway());
+				if (r != null)
+					routePoints.add(r);
 			}
 
 			// Add the arrival airport
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
-				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA().getICAO(), TerminalRoute.STAR));
+				gates.addAll(gdao.getPopularGates(dr, sim, false));
+				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);
 				
 				if (a != null) {
@@ -174,13 +197,19 @@ public class RoutePlotMapService extends MapPlotService {
 		// Convert points to an XML document
 		Document doc = formatPoints(points, true);
 		Element re = doc.getRootElement();
+		if (dr.getAirportD() != null) {
+			Element ade = new Element("airportD");
+			ade.setAttribute("lat", StringUtils.format(dr.getAirportD().getLatitude(), "#0.00000"));
+			ade.setAttribute("lng", StringUtils.format(dr.getAirportD().getLongitude(), "##0.00000"));
+			re.addContent(ade);
+		}
 		
 		// Add ETOPS rating
 		Element ee = new Element("etops");
 		re.addContent(ee);
 		ee.setAttribute("rating", er.getResult().toString());
 		if (ETOPSHelper.validate(a, er.getResult())) {
-			ETOPS erng = (a != null) && (a.getName().startsWith("B727-")) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
+			ETOPS erng = (a != null) && (a.getEngines() == 3) ? ETOPS.ETOPS120 : ETOPS.ETOPS90;
 			ee.setAttribute("range", String.valueOf(erng.getRange()));
 			ee.setAttribute("warning", "true");
 			for (NavigationDataBean ap : er.getClosestAirports()) {
@@ -201,9 +230,21 @@ public class RoutePlotMapService extends MapPlotService {
 			ee.addContent(eae);
 		}
 		
+		// Add gates to XML document
+		for (Gate g : gates) {
+			boolean isDeparture = (dr.getAirportD() != null) && (g.getCode().equals(dr.getAirportD().getICAO()));
+			Element e = XMLUtils.createElement(isDeparture ? "gateD" : "gateA", g.getInfoBox(), true) ;
+			e.setAttribute("name", g.getName());
+			e.setAttribute("lat", StringUtils.format(g.getLatitude(), "##0.00000"));
+			e.setAttribute("lng", StringUtils.format(g.getLongitude(), "##0.00000"));
+			e.setAttribute("pal", String.valueOf(g.getPaletteCode()));
+			e.setAttribute("icon", String.valueOf(g.getIconCode()));
+			re.addContent(e);
+		}
+		
 		// Add SID/STAR names to XML document
 		for (TerminalRoute tr : tRoutes) {
-			Element e = new Element(tr.getTypeName().toLowerCase());
+			Element e = new Element(tr.getType().name().toLowerCase());
 			e.setAttribute("name", tr.getName());
 			e.setAttribute("transition", tr.getTransition());
 			e.setAttribute("label", tr.getCode());
