@@ -1,6 +1,6 @@
 /**
  * @name MarkerManager v3
- * @version 1.0
+ * @version 1.1
  * @copyright (c) 2007 Google Inc.
  * @author Doug Ricket, Bjorn Brala (port to v3), others,
  *
@@ -95,7 +95,8 @@ MarkerManager.prototype.initialize = function (map, opt_opts) {
   // Find max zoom level
   var mapMaxZoom = 1;
   for (var sType in mapTypes ) {
-    if (typeof map.mapTypes.get(sType) === 'object' && typeof map.mapTypes.get(sType).maxZoom === 'number') {
+    if (mapTypes.hasOwnProperty(sType) &&
+        mapTypes.get(sType) && mapTypes.get(sType).maxZoom === 'number') {
       var mapTypeMaxZoom = map.mapTypes.get(sType).maxZoom;
       if (mapTypeMaxZoom > mapMaxZoom) {
         mapMaxZoom = mapTypeMaxZoom;
@@ -130,6 +131,11 @@ MarkerManager.prototype.initialize = function (map, opt_opts) {
   google.maps.event.addListener(map, 'dragend', function () {
     me.onMapMoveEnd_();
   });
+  
+  google.maps.event.addListener(map, 'idle', function () {
+    me.onMapMoveEnd_();
+  });
+  
   google.maps.event.addListener(map, 'zoom_changed', function () {
     me.onMapMoveEnd_();
   });
@@ -448,7 +454,7 @@ MarkerManager.prototype.getMarker = function (lat, lng, zoom) {
   if (cellArray !== undefined) {
     for (var i = 0; i < cellArray.length; i++) 
     { 
-      if (lat === cellArray[i].getLatLng().lat() && lng === cellArray[i].getLatLng().lng()) {
+      if (lat === cellArray[i].getPosition().lat() && lng === cellArray[i].getPosition().lng()) {
         marker = cellArray[i]; 
       } 
     } 
@@ -896,6 +902,11 @@ MarkerManager.prototype.removeFromArray_ = function (array, value, opt_notype) {
   }
   return shift;
 };
+
+
+
+
+
 
 
 /**
