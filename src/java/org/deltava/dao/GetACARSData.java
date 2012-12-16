@@ -5,6 +5,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
@@ -18,7 +19,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -215,9 +216,9 @@ public class GetACARSData extends DAO {
 				return null;
 
 			// Get the terminal routes
-			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());
-			info.setSID(routes.get(Integer.valueOf(TerminalRoute.SID)));
-			info.setSTAR(routes.get(Integer.valueOf(TerminalRoute.STAR)));
+			Map<TerminalRoute.Type, TerminalRoute> routes = getTerminalRoutes(info.getID());
+			info.setSID(routes.get(TerminalRoute.Type.SID));
+			info.setSTAR(routes.get(TerminalRoute.Type.STAR));
 			
 			// Fetch the takeoff and landing runways
 			if (info.getHasPIREP()) {
@@ -298,21 +299,22 @@ public class GetACARSData extends DAO {
 	 * @return a Map of TerminalRoutes, keyed by route type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	protected Map<Integer, TerminalRoute> getTerminalRoutes(int id) throws DAOException {
+	protected Map<TerminalRoute.Type, TerminalRoute> getTerminalRoutes(int id) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, "
 					+ "acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)");
-			_ps.setInt(1, TerminalRoute.SID);
+			_ps.setInt(1, TerminalRoute.Type.SID.ordinal());
 			_ps.setInt(2, id);
 
 			// Execute the query
-			Map<Integer, TerminalRoute> results = new HashMap<Integer, TerminalRoute>();
+			Map<TerminalRoute.Type, TerminalRoute> results = new HashMap<TerminalRoute.Type, TerminalRoute>();
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					TerminalRoute tr = new TerminalRoute(SystemData.getAirport(rs.getString(1)), rs.getString(4), rs.getInt(3));
+					TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(3)];
+					TerminalRoute tr = new TerminalRoute(SystemData.getAirport(rs.getString(1)), rs.getString(4), rt);
 					tr.setTransition(rs.getString(5));
 					tr.setRunway(rs.getString(6));
-					results.put(Integer.valueOf(tr.getType()), tr);
+					results.put(tr.getType(), tr);
 				}
 			}
 
@@ -324,7 +326,8 @@ public class GetACARSData extends DAO {
 			_ps.setInt(1, id);
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
-					TerminalRoute tr = results.get(Integer.valueOf(rs.getInt(1)));
+					TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(1)];
+					TerminalRoute tr = results.get(rt);
 					if (tr != null) {
 						Navaid nt = Navaid.values()[rs.getInt(3)];
 						NavigationDataBean nd = NavigationDataBean.create(nt, rs.getDouble(4), rs.getDouble(5));
@@ -346,7 +349,6 @@ public class GetACARSData extends DAO {
 	 * Helper method to parse Flight Info result sets.
 	 */
 	protected List<FlightInfo> executeFlightInfo() throws SQLException {
-
 		List<FlightInfo> results = new ArrayList<FlightInfo>();
 		try (ResultSet rs = _ps.executeQuery()) {
 			while (rs.next()) {
@@ -364,7 +366,7 @@ public class GetACARSData extends DAO {
 				info.setRemoteHost(rs.getString(12));
 				info.setRoute(rs.getString(13));
 				info.setRemarks(rs.getString(14));
-				info.setFSVersion(rs.getInt(15));
+				info.setFSVersion(Simulator.fromVersion(rs.getInt(15)));
 				info.setOffline(rs.getBoolean(16));
 				info.setHasPIREP(rs.getBoolean(17));
 				info.setArchived(rs.getBoolean(18));
@@ -385,7 +387,7 @@ public class GetACARSData extends DAO {
 		return results;
 	}
 
-	/*
+	/**
 	 * Helper method to parse Connection result sets.
 	 */
 	protected List<ConnectionEntry> executeConnectionInfo() throws SQLException {

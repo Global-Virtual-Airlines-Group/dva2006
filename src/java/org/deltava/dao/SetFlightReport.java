@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access object to write Flight Reports to the database.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -92,7 +92,7 @@ public class SetFlightReport extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Private helper method to prepare an INSERT statement for a new Flight Report.
 	 */
 	private void insert(FlightReport fr, String db) throws SQLException {
@@ -116,7 +116,7 @@ public class SetFlightReport extends DAO {
 		_ps.setString(8, fr.getAirportD().getIATA());
 		_ps.setString(9, fr.getAirportA().getIATA());
 		_ps.setString(10, fr.getEquipmentType());
-		_ps.setInt(11, fr.getFSVersion());
+		_ps.setInt(11, fr.getFSVersion().getCode());
 		_ps.setInt(12, fr.getAttributes());
 		_ps.setInt(13, fr.getDistance());
 		_ps.setDouble(14, (fr.getLength() / 10.0));
@@ -127,7 +127,7 @@ public class SetFlightReport extends DAO {
 		_ps.setDouble(19, fr.getLoadFactor());
 	}
 
-	/**
+	/*
 	 * Private helper method to prepare an UPDATE statement for an existing Flight Report.
 	 */
 	private void update(FlightReport fr, String db) throws SQLException {
@@ -149,7 +149,7 @@ public class SetFlightReport extends DAO {
 		_ps.setString(6, fr.getAirportD().getIATA());
 		_ps.setString(7, fr.getAirportA().getIATA());
 		_ps.setString(8, fr.getEquipmentType());
-		_ps.setInt(9, fr.getFSVersion());
+		_ps.setInt(9, fr.getFSVersion().getCode());
 		_ps.setInt(10, fr.getAttributes());
 		_ps.setInt(11, fr.getDistance());
 		_ps.setDouble(12, (fr.getLength() / 10.0));
@@ -231,7 +231,7 @@ public class SetFlightReport extends DAO {
 		}
 	}
 	
-	/**
+	/*
 	 * Helper method to write promotion equipment types.
 	 */
 	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes) throws SQLException {
@@ -249,12 +249,11 @@ public class SetFlightReport extends DAO {
 			_ps.addBatch();
 		}
 
-		// Write the entries
 		_ps.executeBatch();
 		_ps.close();
 	}
 
-	/**
+	/*
 	 * Helper method to write a Flight Report's core data to the database.
 	 */
 	private void writeCore(FlightReport fr, String dbName) throws SQLException {

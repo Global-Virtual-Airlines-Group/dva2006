@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Flight Reports.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -592,7 +592,7 @@ public class GetFlightReports extends DAO {
 				p.setAirportD(SystemData.getAirport(rs.getString(9)));
 				p.setAirportA(SystemData.getAirport(rs.getString(10)));
 				p.setEquipmentType(rs.getString(11));
-				p.setFSVersion(rs.getInt(12));
+				p.setFSVersion(Simulator.fromVersion(rs.getInt(12)));
 				p.setAttributes(attr);
 				// Skip column #14 - we calculate this in the flight report
 				p.setLength(Math.round(rs.getFloat(15) * 10));
