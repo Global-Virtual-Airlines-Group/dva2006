@@ -5,16 +5,18 @@ import java.io.File;
 import java.util.*;
 import java.sql.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.fleet.*;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load metadata from the Fleet/Document Libraries.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -180,8 +182,6 @@ public class GetLibrary extends DAO {
 			prepareStatementWithoutLimits("SELECT V.*, COUNT(L.FILENAME) FROM exams.VIDEOS V LEFT JOIN DOWNLOADS L "
 					+ "ON (V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME LIMIT 1");
 			_ps.setString(1, fName);
-			
-			// Get results - if empty return null
 			List<FileEntry> results = loadFiles(true);
 			return (results.isEmpty()) ? null : (Video) results.get(0); 
 		} catch (SQLException se) {
@@ -214,7 +214,7 @@ public class GetLibrary extends DAO {
 		}
 	}
 
-	/**
+	/*
 	 * Helper method to load from the File/Video Library tables.
 	 */
 	private List<FileEntry> loadFiles(boolean isVideo) throws SQLException {
@@ -222,8 +222,6 @@ public class GetLibrary extends DAO {
 		// Determine the path
 		String path = SystemData.get(isVideo ? "path.video" : "path.userfiles");
 		List<FileEntry> results = new ArrayList<FileEntry>();
-
-		// Execute the query
 		try (ResultSet rs = _ps.executeQuery()) {
 			boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 			while (rs.next()) {
@@ -245,7 +243,7 @@ public class GetLibrary extends DAO {
 		return results;
 	}
 
-	/**
+	/*
 	 * Helper method to load from the Fleet Library table.
 	 */
 	private List<Installer> loadInstallers() throws SQLException {
@@ -260,12 +258,17 @@ public class GetLibrary extends DAO {
 				entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));
 				entry.setSecurity(rs.getInt(8));
 				entry.setCode(rs.getString(9));
-				entry.setFSVersions(rs.getString(10));
 				entry.setDescription(rs.getString(11));
 				if (f.exists())
 					entry.setLastModified(new java.util.Date(f.lastModified()));
 				if (hasTotals)
 					entry.setDownloadCount(rs.getInt(12));
+				
+				String fsCodes = rs.getString(10);
+				if (fsCodes != null) {
+					for (String sim : StringUtils.split(fsCodes, ","))
+						entry.addFSVersion(Simulator.fromName(sim));
+				}
 
 				results.add(entry);
 			}
