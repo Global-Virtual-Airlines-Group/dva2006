@@ -19,7 +19,7 @@ import org.gvagroup.common.*;
 /**
  * A Web Site Command to modify Airport data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -112,7 +112,7 @@ public class AirportCommand extends AbstractFormCommand {
 			
 			// Load maximum runway length
 			GetNavData navdao = new GetNavData(con);
-			for (Runway r : navdao.getRunways(a.getICAO()))
+			for (Runway r : navdao.getRunways(a))
 				a.setMaximumRunwayLength(r.getLength());
 
 			// Get the DAO and write the airport
