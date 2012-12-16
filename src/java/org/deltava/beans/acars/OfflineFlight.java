@@ -5,29 +5,24 @@ import java.util.*;
 
 import org.deltava.beans.flight.FDRFlightReport;
 
+import org.deltava.comparators.CalendarEntryComparator;
+
 /**
  * A bean to store data about a submitted offline ACARS Flight Report.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 2.4
  */
 
 public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 
 	private FlightInfo _flight;
-	private final Collection<P> _positions = new TreeSet<P>(new PositionComparator());
+	private final SortedSet<P> _positions = new TreeSet<P>(new CalendarEntryComparator());
 	
 	private String _sid;
 	private String _star;
 
 	private T _pirep;
-	
-	static class PositionComparator implements Comparator<RouteEntry> {
-		
-		public int compare(RouteEntry re1, RouteEntry re2) {
-			return re1.getDate().compareTo(re2.getDate());
-		}
-	}
 	
 	/**
 	 * Returns the Flight Information.
@@ -39,10 +34,10 @@ public class OfflineFlight<T extends FDRFlightReport, P extends RouteEntry> {
 	
 	/**
 	 * Returns the position entries.
-	 * @return a Collection of RouteEntry beans
+	 * @return a SortedSet of RouteEntry beans
 	 * @see OfflineFlight#addPosition(RouteEntry)
 	 */
-	public Collection<P> getPositions() {
+	public SortedSet<P> getPositions() {
 		return _positions;
 	}
 	
