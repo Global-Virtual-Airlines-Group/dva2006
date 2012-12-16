@@ -7,6 +7,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.json.*;
 
+import org.deltava.beans.flight.*;
 import org.deltava.beans.stats.*;
 
 import org.deltava.dao.*;
@@ -17,14 +18,13 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to display a Pilot's Flight Report statistics to a Google chart.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.1
  */
 
 public class MyFlightsService extends WebService {
 	
 	private static final int MAX_ENTRIES = 12;
-	private static final String[] QUALITY = {"Dangerous", "Acceptable", "Good"};
 
 	/**
 	 * Executes the Web Service.
@@ -99,39 +99,32 @@ public class MyFlightsService extends WebService {
 		int[] qualCount = new int[] {0, 0, 0};
 		for (LandingStatistics ls : landings) {
 			JSONArray ea = new JSONArray();
-			if ((ls.getAverageDistance() == 0) || (ls.getAverageSpeed() == 0))
-				continue;
+			FlightScore score = FlightScorer.score(ls);
+			if (score == FlightScore.INCOMPLETE) continue;
+			qualCount[score.ordinal()]++;
 			
 			int fpm = (int) ls.getAverageSpeed();
-			double rwyPct = ls.getAverageDistance() / ls.getDistanceStdDeviation();
+			boolean tooSoft = (fpm > -74);
 			
-			// Save touchdown speeds
+			// Save touchdown scatter chart
 			ea.put((int) ls.getAverageDistance());
-			ea.put((fpm < -600) ? Integer.valueOf(fpm) : null);
-			ea.put((fpm < -300) && (fpm >= -600) ? Integer.valueOf(fpm) : null);
-			ea.put((fpm < -50) && (fpm >= -300) ? Integer.valueOf(fpm) : null);
-			ea.put((fpm < 0) && (fpm >= -50) ? Integer.valueOf(fpm) : null);
+			ea.put((score == FlightScore.DANGEROUS) ? Integer.valueOf(fpm) : null);
+			ea.put(!tooSoft && (score == FlightScore.ACCEPTABLE) ? Integer.valueOf(fpm) : null);
+			ea.put((score == FlightScore.OPTIMAL) ? Integer.valueOf(fpm) : null);
+			ea.put(tooSoft ? Integer.valueOf(fpm) : null);
 			sja.put(ea);
-			
-			// Save quality counter
-			if ((fpm < -600) || (rwyPct > 0.45))
-				qualCount[0]++;
-			else if ((fpm < -300) || (fpm > -100) || (rwyPct > 0.35) || (rwyPct < 0.075))
-				qualCount[1]++;
-			else
-				qualCount[2]++;
 		}
 		
 		// Convert qualitative info into an array
 		JSONArray qja = new JSONArray();
 		for (int x = 0; x < qualCount.length; x++) {
 			JSONArray ea = new JSONArray();
-			ea.put(QUALITY[x]);
+			ea.put(FlightScore.values()[x].getName());
 			ea.put(qualCount[x]);
 			qja.put(ea);
 		}
 		
-		// Dump the XML to the output stream
+		// Dump the JSON to the output stream
 		try {
 			JSONObject jo = new JSONObject();
 			jo.put("eqCount", ja);
@@ -139,7 +132,7 @@ public class MyFlightsService extends WebService {
 			jo.put("landingSct", sja);
 			jo.put("landingQuality", qja);
 			ctx.setContentType("text/javascript", "UTF-8");
-			ctx.setExpiry(360);
+			ctx.setExpiry(600);
 			ctx.println(jo.toString());
 			ctx.commit();
 		} catch (Exception e) {
