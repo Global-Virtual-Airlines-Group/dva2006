@@ -57,7 +57,8 @@
 </c:if>
 <tr>
  <td class="label">Start Time</td>
- <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.startTime}" /></td>
+ <td class="data" colspan="${cspan}"><c:if test="${!empty flightInfo.gateD}"><span class="sec bld">${flightInfo.gateD.name}</span>, </c:if>
+<fmt:date className="bld" date="${pirep.startTime}" /></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
@@ -171,7 +172,8 @@
 <c:if test="${pirep.gateFuel > 0}">
 <tr>
  <td class="label">Arrival Information</td>
- <td class="data" colspan="${cspan}"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" /> lbs fuel</td>
+ <td class="data" colspan="${cspan}"><c:if test="${!empty flightInfo.gateA}"><span class="sec bld">${flightInfo.gateA.name}</span>, </c:if>
+<fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" /> lbs fuel</td>
 </tr>
 </c:if>
 <c:if test="${pirep.totalFuel > 0}">
@@ -215,7 +217,13 @@
 <c:if test="${pirep.averageFrameRate > 0}">
 <tr>
  <td class="label">Average Frame Rate</td>
- <td class="data"><fmt:dec value="${pirep.averageFrameRate}" /> frames per second</td>
+ <td class="data" colspan="${cspan}"><fmt:dec value="${pirep.averageFrameRate}" /> frames per second</td>
+</tr>
+</c:if>
+<c:if test="${!empty flightScore}">
+<tr>
+ <td class="label">Flight Score</td>
+ <td class="data caps bld" colspan="${cspan}"><span style="color:${flightScore.color}">${flightScore}</span></td>
 </tr>
 </c:if>
 <c:if test="${!empty flightInfo.route}">
