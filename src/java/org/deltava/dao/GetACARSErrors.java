@@ -1,15 +1,16 @@
-// Copyright 2006, 2007, 2009, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2009, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.ACARSError;
 
 /**
  * A Data Access Object to load ACARS client error logs.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -75,8 +76,6 @@ public class GetACARSErrors extends DAO {
 		try {
 			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
-			
-			// Execute the query, get the first result
 			List<ACARSError> results = execute();
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
@@ -144,7 +143,7 @@ public class GetACARSErrors extends DAO {
 				err.setRemoteHost(rs.getString(5));
 				err.setClientBuild(rs.getInt(6));
 				err.setBeta(rs.getInt(7));
-				err.setFSVersion(rs.getInt(8));
+				err.setSimulator(Simulator.fromVersion(rs.getInt(8)));
 				err.setFSUIPCVersion(rs.getString(9));
 				err.setStackDump(rs.getString(11));
 				err.setStateData(rs.getString(12));
@@ -153,7 +152,6 @@ public class GetACARSErrors extends DAO {
 			}
 		}
 		
-		// Clean up and return
 		_ps.close();
 		return results;
 	}
