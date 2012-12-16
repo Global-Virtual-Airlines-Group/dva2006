@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load routes. 
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.6
  */
 
@@ -166,9 +166,9 @@ public class GetNavRoute extends GetOceanicRoute {
 			if ((wp.indexOf('.') != -1) && ((x == 0) || (x == (tkns.size() - 1)))) {
 				TerminalRoute tr = getRoute(wp);
 				if (tr != null) {
-					if ((tr.getType() == TerminalRoute.SID) && (x < (tkns.size() - 1)))
+					if ((tr.getType() == TerminalRoute.Type.SID) && (x < (tkns.size() - 1)))
 						routePoints.addAll(tr.getWaypoints(tkns.get(x + 1)));
-					else if ((tr.getType() == TerminalRoute.STAR) && (x > 0))
+					else if ((tr.getType() == TerminalRoute.Type.STAR) && (x > 0))
 						routePoints.addAll(tr.getWaypoints(tkns.get(x - 1)));
 					else
 						routePoints.addAll(tr.getWaypoints());
