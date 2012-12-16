@@ -9,6 +9,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom2.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.fleet.Installer;
 import org.deltava.beans.system.AirlineInformation;
 
@@ -20,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Fleet Library Information.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -87,8 +88,8 @@ public class InstallerInfoService extends WebService {
 		le.setAttribute("version", i.getVersion());
 		le.setAttribute("dl", StringUtils.format(i.getDownloadCount(), nFmt));
 		le.addContent(XMLUtils.createElement("desc", i.getDescription(), true));
-		for (String version : i.getFSVersionNames())
-			le.addContent(XMLUtils.createElement("version", version));
+		for (Simulator sim : i.getFSVersions())
+			le.addContent(XMLUtils.createElement("version", sim.getName()));
 		
 		// Dump the XML to the output stream
 		try {
@@ -104,7 +105,6 @@ public class InstallerInfoService extends WebService {
 			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
 
-		// Write result code
 		return SC_OK;
 	}
 
@@ -112,6 +112,7 @@ public class InstallerInfoService extends WebService {
 	 * Tells the Web Service Servlet not to log invocations of this service.
 	 * @return FALSE
 	 */
+	@Override
 	public final boolean isLogged() {
 		return false;
 	}
@@ -120,6 +121,7 @@ public class InstallerInfoService extends WebService {
 	 * Marks the Web Service as secure.
 	 * @return TRUE always
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}
