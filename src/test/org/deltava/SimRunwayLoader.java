@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.navdata.*;
 import org.deltava.util.StringUtils;
 
@@ -18,11 +19,11 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	private static final String JDBC_URL ="jdbc:mysql://polaris.sce.net/common";
 	private Connection _c;
 
-	private static final String SCENERY_ROOT = "D:\\Program Files\\Prepar3D\\Scenery";
-	private static final String XML_PATH = "E:\\temp\\bgxml_p3d";
+	private static final String SCENERY_ROOT = "D:\\Program Files\\FS9\\Scenery";
+	private static final String XML_PATH = "E:\\temp\\bgxml_fs9";
 	
 	private static final String BGLXML = "data/bglxml/bglxml.exe";
-	private static final int SIM_VERSION = 2008;
+	private static final Simulator SIM = Simulator.FS9;
 	
 	private static final String[] NAMES = {"NORTH", "SOUTH", "EAST", "WEST", "NORTHWEST", "SOUTHEAST", "NORTHEAST", "SOUTHWEST"};
 	private static final String[] CODES = {"N", "S", "E", "W", "NW", "SE", "NE", "SW"};
@@ -81,12 +82,13 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 				Process p = pb.start();
 				int result = p.waitFor();
 				if (result != 0) {
-					InputStream is = new BufferedInputStream(p.getInputStream(), 512);
-					BufferedReader br = new BufferedReader(new InputStreamReader(is));
-					while (br.ready())
-						log.info(br.readLine());
+					try (InputStream is = new BufferedInputStream(p.getInputStream(), 512)) {
+						try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+							while (br.ready())
+								log.info(br.readLine());
+						}
+					}
 				
-					is.close();
 					fail("Cannot convert to XML");
 				}
 				
@@ -106,7 +108,7 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 	}
 	
 	public void testLoadXML() throws Exception {
-		//File rt = new File("C:\\temp");
+
 		File rt = new File(XML_PATH);
 		assertTrue(rt.isDirectory());
 		
@@ -124,14 +126,14 @@ public class SimRunwayLoader extends SceneryLoaderTestCase {
 		
 		// Clear the table
 		ps = _c.prepareStatement("DELETE FROM common.RUNWAYS WHERE (SIMVERSION=?)");
-		ps.setInt(1, SIM_VERSION);
+		ps.setInt(1, SIM.getCode());
 		ps.executeUpdate();
 		ps.close();
 		
 		// Init the prepared statement
 		ps = _c.prepareStatement("REPLACE INTO common.RUNWAYS (ICAO, NAME, SIMVERSION, LATITUDE, LONGITUDE, HDG, "
 				+ "LENGTH, MAGVAR) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-		ps.setInt(3, SIM_VERSION);
+		ps.setInt(3, SIM.getCode());
 
 		// Load the XML files
 		File[] xmls = rt.listFiles(new XMLFilter());
