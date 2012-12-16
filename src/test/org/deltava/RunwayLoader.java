@@ -81,7 +81,7 @@ public class RunwayLoader extends TestCase {
 		GetNavRoute navdao = new GetNavRoute(_c2);
 		GetACARSData addao = new GetACARSData(_c);
 		GetFlightReports frdao = new GetFlightReports(_c); 
-		SetACARSData awdao = new SetACARSData(_c);
+		SetACARSRunway awdao = new SetACARSRunway(_c);
 		log.info("Processing " + IDs.size() + " flights");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 			int id = i.next().intValue();

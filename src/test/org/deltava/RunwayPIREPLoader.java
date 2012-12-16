@@ -8,6 +8,9 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.*;
 
+import org.deltava.beans.acars.*;
+import org.deltava.beans.schedule.GeoPosition;
+
 import org.deltava.dao.*;
 
 import org.deltava.util.system.SystemData;
@@ -16,9 +19,8 @@ public class RunwayPIREPLoader extends TestCase {
 	
 	private static Logger log;
 
-	private static final String db = "afv";
-	private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/" + db;
-	//private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/" + db;
+	//private static final String JDBC_URL = "jdbc:mysql://pollux.gvagroup.org/dva";
+	private static final String JDBC_URL = "jdbc:mysql://polaris.sce.net/afv";
 	
 	private Connection _c;
 
@@ -58,49 +60,93 @@ public class RunwayPIREPLoader extends TestCase {
 	public void testSetRunways() throws Exception {
 		
 		// Load the PIREPs
-		Collection<Integer> IDs = new LinkedHashSet<Integer>();
+		Map<Integer, Integer> IDs = new LinkedHashMap<Integer, Integer>();
 		try (Statement s = _c.createStatement()) {
 			s.setFetchSize(2000);
-			try (ResultSet rs = s.executeQuery("SELECT ACARS_ID FROM ACARS_PIREPS WHERE (TAKEOFF_HDG=-1)")) {
+			try (ResultSet rs = s.executeQuery("SELECT ID, ACARS_ID FROM IDS WHERE (DONE=0)")) {
 				while (rs.next())
-					IDs.add(Integer.valueOf(rs.getInt(1)));
+					IDs.put(Integer.valueOf(rs.getInt(1)), Integer.valueOf(rs.getInt(2)));
 			}
 		}
 		
 		// Build the update statements
-		PreparedStatement tps = _c.prepareStatement("UPDATE ACARS_PIREPS SET TAKEOFF_LAT=?, TAKEOFF_LNG=?,"
-			+ "TAKEOFF_ALT=? WHERE (ACARS_ID=?)");
-		PreparedStatement lps = _c.prepareStatement("UPDATE ACARS_PIREPS SET LANDING_LAT=?, LANDING_LNG=?, "
-			+ "LANDING_ALT=? WHERE (ACARS_ID=?)");
-
-		PreparedStatement rps = _c.prepareStatement("SELECT R.ID, C.PILOT_ID, UD.AIRLINE, R.ISTAKEOFF, R.LATITUDE, R.LONGITUDE, "
-				+ "IFNULL(ND.ALTITUDE, 0) FROM common.USERDATA UD, acars.FLIGHTS F, acars.CONS C, acars.RWYDATA R "
-				+ "LEFT JOIN common.NAVDATA ND ON (R.ICAO=ND.CODE) AND (ND.ITEMTYPE=0) WHERE (R.ID=F.ID) AND "
-				+ "(F.CON_ID=C.ID) AND (UD.ID=C.PILOT_ID) AND (UD.AIRLINE=?) AND (F.ID=?)");
-		rps.setString(1, db);
-		
 		int flightsDone = 0;
-		for (Integer id : IDs) {
-			rps.setInt(2, id.intValue());
-			try (ResultSet rs = rps.executeQuery()) {
-				while (rs.next()) {
-					boolean isTakeoff = rs.getBoolean(4);
-					PreparedStatement ps = isTakeoff ? tps : lps;
-					ps.setDouble(1, rs.getDouble(5));
-					ps.setDouble(2, rs.getDouble(6));
-					ps.setInt(3, rs.getInt(7));
-					ps.setInt(4, rs.getInt(1));
+		GetACARSData fddao = new GetACARSData(_c);
+		GetFlightReportACARS frdao = new GetFlightReportACARS(_c);
+		try (PreparedStatement ps = _c.prepareStatement("UPDATE ACARS_PIREPS SET TAKEOFF_LAT=?, TAKEOFF_LNG=?,"
+			+ "TAKEOFF_ALT=?, TAKEOFF_HDG=?, LANDING_LAT=?, LANDING_LNG=?, LANDING_ALT=?, LANDING_HDG=? WHERE (ID=?)")) {
+			for (Map.Entry<Integer, Integer> me : IDs.entrySet()) {
+				FlightInfo info = fddao.getInfo(me.getValue().intValue());
+				if (info == null) {
+					log.warn("Flight " + me.getValue() + " not found!");
+					continue;
+				}
+				
+				List<? extends RouteEntry> tdEntries = fddao.getTakeoffLanding(info.getID(), info.getArchived());
+				if (tdEntries.size() > 2) {
+					int ofs = 0;
+					ACARSRouteEntry entry = (ACARSRouteEntry) tdEntries.get(0);
+					GeoPosition adPos = new GeoPosition(info.getAirportD());
+					while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
+						ofs++;
+						entry = (ACARSRouteEntry) tdEntries.get(ofs);
+					}
+
+					// Trim out spurious takeoff entries
+					if (ofs > 0)
+						tdEntries.subList(0, ofs - 1).clear();
+					if (tdEntries.size() > 2)
+						tdEntries.subList(1, tdEntries.size() - 1).clear();
+				}
+				
+				// Save the entry points
+				if (tdEntries.size() > 0) {
+					RouteEntry re = tdEntries.get(0);
+					if (re.getAltitude() > 21000) {
+						log.warn("Takeoff altitude = " + re.getAltitude());
+						continue;
+					}
+					
+					ps.setDouble(1, re.getLatitude());
+					ps.setDouble(2, re.getLongitude());
+					ps.setInt(3, re.getAltitude());
+					ps.setInt(4, re.getHeading());
+					
+					if (tdEntries.size() > 1) {
+						re = tdEntries.get(1);
+						if (re.getAltitude() > 21000) {
+							log.warn("Landing altitude = " + re.getAltitude());
+							continue;
+						}
+						
+						ps.setDouble(5, re.getLatitude());
+						ps.setDouble(6, re.getLongitude());
+						ps.setInt(7, re.getAltitude());
+						ps.setInt(8, re.getHeading());
+					} else {
+						ps.setDouble(5, 0);
+						ps.setDouble(6, 0);
+						ps.setInt(7, 0);
+						ps.setInt(8, -1);
+					}
+					
+					ps.setInt(9, me.getKey().intValue());
 					ps.executeUpdate();
-					flightsDone++;
-					if ((flightsDone % 100) == 0)
-						log.info(flightsDone + " flights updated");
+					try (PreparedStatement ps2 = _c.prepareStatement("UPDATE IDS SET DONE=1 WHERE (ID=?)")) {
+						ps2.setInt(1, me.getKey().intValue());
+						ps2.executeUpdate();
+					}
+				} else
+					log.debug("Cannot update takeoff/touchdown - " + tdEntries.size() + " touchdown points");
+
+				flightsDone++;
+				if ((flightsDone % 100) == 0) {
+					log.info(flightsDone + " flights updated");
+					_c.commit();
 				}
 			}
 		}
 		
-		rps.close();
-		tps.close();
-		lps.close();
 		_c.commit();
 	}
 }
