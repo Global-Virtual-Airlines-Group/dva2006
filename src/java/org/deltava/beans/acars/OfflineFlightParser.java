@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to parse XML-format offline Flight Reports.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 2.4
  */
 
@@ -87,6 +87,7 @@ public final class OfflineFlightParser {
 		FlightInfo inf = new FlightInfo(flightID);
 		inf.setVersion(clientVersion);
 		inf.setClientBuild(clientBuild);
+		inf.setOffline(true);
 		inf.setBeta(StringUtils.parse(re.getAttributeValue("beta"), 0));
 		inf.setEquipmentType(ie.getChildTextTrim("equipment"));
 		inf.setStartTime(StringUtils.parseDate(ie.getChildTextTrim("startTime"), "MM/dd/yyyy HH:mm:ss"));
@@ -96,13 +97,7 @@ public final class OfflineFlightParser {
 		inf.setAltitude(ie.getChildTextTrim("altitude"));
 		inf.setRoute(ie.getChildTextTrim("route"));
 		inf.setRemarks(ie.getChildTextTrim("remarks"));
-		String fsVersion = ie.getChildTextTrim("fs_ver");
-		if ("FSX".equals(fsVersion))
-			fsVersion = "2006";
-		else if ("P3D".equals(fsVersion))
-			fsVersion = "2008";
-		inf.setFSVersion(StringUtils.parse(fsVersion, 2004));
-		inf.setOffline(Boolean.valueOf(ie.getChildTextTrim("offline")).booleanValue());
+		inf.setFSVersion(Simulator.fromName(ie.getChildTextTrim("fs_ver")));
 		inf.setScheduleValidated(Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue());
 		inf.setDispatchPlan(Boolean.valueOf(ie.getChildTextTrim("dispatchRoute")).booleanValue());
 		inf.setDispatcherID(StringUtils.parse(ie.getChildTextTrim("dispatcherID"), 0));
