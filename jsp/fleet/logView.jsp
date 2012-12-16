@@ -84,7 +84,7 @@ return true;
 <!-- Table Log Data -->
 <c:forEach var="entry" items="${viewContext.results}">
 <view:row entry="${entry}">
- <td class="sec bld"><fmt:date date="${entry.date}" /></td>
+ <td class="sec bld"><fmt:date date="${entry.date}" fmt="d" /></td>
  <td class="pri bld">${entry.code}</td>
  <td>${entry.OS}</td>
  <td class="small">${entry.CPU}</td>
@@ -96,7 +96,7 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </c:if>
