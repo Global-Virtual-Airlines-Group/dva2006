@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to download ServInfo route data for Google Maps.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -97,7 +97,7 @@ public class MapRouteService extends WebService {
 				// Load the SID
 				if (wps.size() > 2) {
 					String name = wps.get(0);
-					TerminalRoute sid = navdao.getBestRoute(p.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
+					TerminalRoute sid = navdao.getBestRoute(p.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
 					if (sid != null) {
 						wps.remove(0);
 						if (!CollectionUtils.isEmpty(wps))
@@ -112,7 +112,7 @@ public class MapRouteService extends WebService {
 				// Load the STAR
 				if (wps.size() > 2) {
 					String name = wps.get(wps.size() - 1);
-					TerminalRoute star = navdao.getBestRoute(p.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
+					TerminalRoute star = navdao.getBestRoute(p.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
 					if (star != null) {
 						wps.remove(wps.size() - 1);
 						if (!CollectionUtils.isEmpty(wps))
