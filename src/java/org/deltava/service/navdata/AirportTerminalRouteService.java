@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display all Terminal Routes for an Airport.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 2.1
  */
 
@@ -45,8 +45,8 @@ public class AirportTerminalRouteService extends WebService {
 		Collection<TerminalRoute> routes = new ArrayList<TerminalRoute>();
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
-			routes.addAll(dao.getRoutes(a.getICAO(), TerminalRoute.SID));
-			routes.addAll(dao.getRoutes(a.getICAO(), TerminalRoute.STAR));
+			routes.addAll(dao.getRoutes(a.getICAO(), TerminalRoute.Type.SID));
+			routes.addAll(dao.getRoutes(a.getICAO(), TerminalRoute.Type.STAR));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -75,7 +75,7 @@ public class AirportTerminalRouteService extends WebService {
 		for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext();) {
 			TerminalRoute tr = i.next();
 			Element te = new Element("route");
-			te.setAttribute("type", tr.getTypeName());
+			te.setAttribute("type", tr.getType().name());
 			
 			// Build the ID
 			String id = tr.getName() + "." + tr.getTransition();
