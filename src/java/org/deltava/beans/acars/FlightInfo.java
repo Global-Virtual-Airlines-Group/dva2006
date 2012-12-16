@@ -12,7 +12,7 @@ import org.deltava.util.*;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -32,16 +32,18 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private Airport _airportA;
 	private Airport _airportL;
 
+	private Gate _gateD;
 	private Runway _rwyD;
-	private Runway _rwyA;
-
 	private TerminalRoute _sid;
+	
+	private Gate _gateA;
+	private Runway _rwyA;
 	private TerminalRoute _star;
 
 	private String _route;
 	private String _remarks;
 
-	private int _fsVersion;
+	private Simulator _fsVersion;
 	private boolean _offline;
 	private boolean _scheduleValidated;
 	private boolean _dispatchPlan;
@@ -56,8 +58,6 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	private RouteEntry _lastPosition;
 	private SortedSet<RouteEntry> _routeData;
 	private Collection<NavigationDataBean> _planData;
-
-	private static final int[] FSUIPC_FS_VERSIONS = { 95, 98, 2000, 1002, 1001, 2002, 2004, 2006 };
 
 	/**
 	 * Creates a new Flight Information record.
@@ -139,6 +139,16 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public Airport getAirportA() {
 		return _airportA;
 	}
+	
+	/**
+	 * Returns the arrival gate for this flight.
+	 * @return the arrival Gate bean, or null if unknown
+	 * @see FlightInfo#setGateA(Gate)
+	 * @see FlightInfo#getGateD()
+	 */
+	public Gate getGateA() {
+		return _gateA;
+	}
 
 	/**
 	 * Returns the arrival Runway for this flight.
@@ -160,6 +170,16 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 		return _airportD;
 	}
 
+	/**
+	 * Returns the departure gate for this flight.
+	 * @return the origin Gate bean, or null if unknown
+	 * @see FlightInfo#setGateD(Gate)
+	 * @see FlightInfo#getGateA()
+	 */
+	public Gate getGateD() {
+		return _gateD;
+	}
+	
 	/**
 	 * Returns the departure Runway for this flight.
 	 * @return the departure Runway, or null if unknown
@@ -225,11 +245,11 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
-	 * Returns the version of Flight Simulator used in this flight.
-	 * @return the flight simulator version code
-	 * @see FlightInfo#setFSVersion(int)
+	 * Returns the version of the Simulator used in this flight.
+	 * @return the Simulator
+	 * @see FlightInfo#setFSVersion(Simulator)
 	 */
-	public int getFSVersion() {
+	public Simulator getFSVersion() {
 		return _fsVersion;
 	}
 
@@ -470,6 +490,16 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	public void setAirportA(Airport a) {
 		_airportA = a;
 	}
+	
+	/**
+	 * Updates the arrival Gate for this flight.
+	 * @param g a Gate bean
+	 * @see FlightInfo#getGateA()
+	 * @see FlightInfo#setGateD(Gate)
+	 */
+	public void setGateA(Gate g) {
+		_gateA = g;
+	}
 
 	/**
 	 * Updates the arrival Runway for this flight.
@@ -489,6 +519,16 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	 */
 	public void setAirportD(Airport a) {
 		_airportD = a;
+	}
+	
+	/**
+	 * Updates the departure Gate for this flight.
+	 * @param g a Gate bean
+	 * @see FlightInfo#getGateD()
+	 * @see FlightInfo#setGateA(Gate)
+	 */
+	public void setGateD(Gate g) {
+		_gateD = g;
 	}
 
 	/**
@@ -549,22 +589,13 @@ public class FlightInfo extends ACARSLogEntry implements TimeSpan, RoutePair, Vi
 	}
 
 	/**
-	 * Updates the Flight Simulator version used in this flight.
-	 * @param ver the Flight Simulator version
-	 * @throws IllegalArgumentException if ver is negative or > 2006
+	 * Updates the Simulator version used in this flight.
+	 * @param sim the Simulator
 	 * @see FlightInfo#getFSVersion()
 	 */
-	public void setFSVersion(int ver) {
-		if ((ver < 0) || (ver > 2008))
-			throw new IllegalArgumentException("Invalid FS Version - " + ver);
-		else if (ver > 20)
-			_fsVersion = ver;
-		else if ((ver > 0) && (ver < FSUIPC_FS_VERSIONS.length))
-			_fsVersion = FSUIPC_FS_VERSIONS[ver - 1];
-		else
-			_fsVersion = 2004;
-
-		_isXACARS |= (_fsVersion == 100);
+	public void setFSVersion(Simulator sim) {
+		_fsVersion = sim;
+		_isXACARS |= ((sim == Simulator.XP9) || (sim == Simulator.XP10));
 	}
 
 	/**

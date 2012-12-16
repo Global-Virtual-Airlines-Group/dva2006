@@ -37,11 +37,9 @@
  <td class="label">Client Build</td>
  <td class="data">Build <fmt:int value="${err.clientBuild}" /><c:if test="${err.beta > 0}"> Beta <fmt:int value="${err.beta}" /></c:if></td>
 </tr>
-<c:if test="${err.FSVersion > 0}">
-<c:set var="fsVersion" value="${(err.FSVersion == 2006) ? 'X' : err.FSVersion}" scope="page" />
 <tr>
- <td class="label">Flight Simulator</td>
- <td class="data bld">Flight Simulator ${fsVersion}</td>
+ <td class="label">Simulator</td>
+ <td class="data bld">${err.simulator.name}</td>
 </tr>
 <c:if test="${!empty err.FSUIPCVersion}">
 <tr>
@@ -49,16 +47,10 @@
  <td class="data">${err.FSUIPCVersion}</td>
 </tr>
 </c:if>
-</c:if>
-<c:if test="${err.FSVersion == 0}">
-<tr>
- <td class="label">Flight Simulator</td>
- <td class="data bld">NOT RUNNING AT TIME OF ERROR</td>
-</tr>
-</c:if>
 <tr>
  <td class="label">Reported from</td>
- <td class="data">${err.remoteAddr} (${err.remoteHost})</td>
+ <td class="data">${err.remoteAddr} (${err.remoteHost}) <c:if test="${!empty ipInfo}"> <el:flag countryCode="${ipInfo.country.code}" caption="${ipInfo.location}" />
+ ${ipInfo.location}</c:if></td>
 </tr>
 <c:if test="${!empty err.stackDump}">
 <tr>

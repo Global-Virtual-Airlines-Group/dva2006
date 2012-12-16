@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ page session="false" %>
-<%@ page buffer="32kb" autoFlush="true" %> 
+<%@ page buffer="40kb" autoFlush="true" %> 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -166,25 +166,10 @@ return true;
  <td class="data">${flightInfo.airportL.name} (<fmt:airport airport="${flightInfo.airportL}" />)</td>
 </tr>
 </c:if>
-<c:if test="${pirep.FSVersion != 0}">
 <tr>
- <td class="label">Flight Simulator</td>
-<c:choose>
-<c:when test="${pirep.FSVersion == 2006}">
- <td class="data sec bld">Microsoft Flight Simulator X</td>
-</c:when>
-<c:when test="${pirep.FSVersion == 2008}">
- <td class="data sec bld">Lockheed-Martin Prepar3D</td>
-</c:when>
-<c:when test="${fn:isMSFS(pirep)}">
- <td class="data sec bld">Microsoft Flight Simulator ${pirep.FSVersion}</td>
-</c:when>
-<c:otherwise>
- <td class="data sec bld">Laminar Research X-Plane</td>
-</c:otherwise>
-</c:choose>
+ <td class="label">Simulator</td>
+ <td class="data sec bld">${pirep.FSVersion.name}</td>
 </tr>
-</c:if>
 <c:if test="${access.canDispose && fn:isOnline(pirep)}">
 <tr>
  <td class="label">Online Flight</td>
@@ -370,9 +355,10 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <content:filter roles="PIREP,HR,Developer,Operations">
 <c:if test="${isACARS}">
  <el:button label="RUNWAY CHOICES" key="R" onClick="void showRunwayChoices()" />
+ <el:cmdbutton url="gaterecalc" link="${pirep}" label="LOAD GATES" />
 </c:if>
 </content:filter>
-<c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && (assignAccess.canRelease)}">
+<c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && assignAccess.canRelease}">
  <el:cmdbutton url="assignrelease" link="${assignmentInfo}" label="RELEASE ASSIGNMENT" />
 </c:if>
  <el:cmdbutton url="profile" link="${pilot}" key="V" label="VIEW PROFILE" />

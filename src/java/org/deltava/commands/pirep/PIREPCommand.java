@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -39,7 +39,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final Logger log = Logger.getLogger(PIREPCommand.class);
 
 	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
-	private static final Collection<ComboAlias> _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
+	private final Collection<Simulator> _fsVersions = new LinkedHashSet<Simulator>();
 
 	// Month combolist values
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
@@ -60,6 +60,9 @@ public class PIREPCommand extends AbstractFormCommand {
 		super.init(id, cmdName);
 		for (int x = 2; x < 189; x++)
 			_flightTimes.add(String.valueOf(x / 10.0f));
+		
+		List<Simulator> sims = Arrays.asList(Simulator.values());
+		_fsVersions.addAll(sims.subList(2, sims.size()));
 	}
 
 	/**
@@ -136,7 +139,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setAirportA(aa);
 			fr.setEquipmentType(ctx.getParameter("eq"));
 			fr.setRemarks(ctx.getParameter("remarks"));
-			fr.setFSVersion(ctx.getParameter("fsVersion"));
+			fr.setFSVersion(Simulator.fromName(ctx.getParameter("fsVersion")));
 			fr.setRoute(ctx.getParameter("route"));
 
 			// Check for historic aircraft
@@ -464,6 +467,11 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					
+					// Get the flight score
+					FlightScore score = FlightScorer.score(afr, info.getRunwayD(), info.getRunwayA());
+					if (score != FlightScore.INCOMPLETE)
+						ctx.setAttribute("flightScore", score, REQUEST);
+					
 					// Get the IP address
 					if (ctx.isUserInRole("HR")) {
 						GetIPLocation ipdao = new GetIPLocation(con);
@@ -484,6 +492,16 @@ public class PIREPCommand extends AbstractFormCommand {
 					if ((acInfo != null) && (acInfo.getMaxWeight() > 0))
 						ctx.setAttribute("acInfo", acInfo, REQUEST);
 					
+					// Load the gates
+					GetGates gdao = new GetGates(con);
+					List<Gate> gates = gdao.get(info.getID());
+					for (Gate g : gates) {
+						if (g.getCode().equals(info.getAirportD().getICAO()))
+							info.setGateD(g);
+						else
+							info.setGateA(g);
+					}
+					
 					// Split the route
 					List<String> wps = StringUtils.nullTrim(StringUtils.split(info.getRoute(), " "));
 					wps.remove(info.getAirportD().getICAO());
@@ -493,7 +511,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					SetACARSData awdao = new SetACARSData(con);
 					if ((info.getSID() == null) && (wps.size() > 2)) {
 						String name = wps.get(0);
-						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), info.getRunwayD());
+						TerminalRoute sid = navdao.getBestRoute(info.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(name), wps.get(1), info.getRunwayD());
 						if (sid != null) {
 							wps.remove(0);
 							info.setSID(sid);
@@ -504,7 +522,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					// Check the STAR
 					if ((info.getSTAR() == null) && (wps.size() > 2)) {
 						String name = wps.get(wps.size() - 1);
-						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), info.getRunwayA());
+						TerminalRoute star = navdao.getBestRoute(info.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), info.getRunwayA());
 						if (star != null) {
 							wps.remove(wps.size() - 1);
 							info.setSTAR(star);
@@ -514,7 +532,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Build the route
 					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
-					route.add(info.getAirportD());
+					route.add((info.getGateD() != null) ? info.getGateD() : info.getAirportD());
 					if (info.getRunwayD() != null)
 						route.add(info.getRunwayD());
 					
@@ -535,15 +553,15 @@ public class PIREPCommand extends AbstractFormCommand {
 
 					if (info.getRunwayA() != null)
 						route.add(info.getRunwayA());
-					route.add(info.getAirportA());
+					route.add((info.getGateA() != null) ? info.getGateA() : info.getAirportA());
 					
 					// Load departure and arrival runways
 					if (ac.getCanDispose()) {
-						Collection<Runway> dRwys = navdao.getRunways(info.getAirportD().getICAO());
+						Collection<Runway> dRwys = navdao.getRunways(info.getAirportD());
 						if (info.getRunwayD() != null)
 							dRwys = CollectionUtils.sort(dRwys, new RunwayComparator(info.getRunwayD().getHeading()).reverse());	
 					
-						Collection<Runway> aRwys = navdao.getRunways(info.getAirportA().getICAO());
+						Collection<Runway> aRwys = navdao.getRunways(info.getAirportA());
 						if (info.getRunwayA() != null)
 							aRwys = CollectionUtils.sort(aRwys, new RunwayComparator(info.getRunwayA().getHeading()).reverse());	
 					
@@ -652,7 +670,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Load the SID
 				if (wps.size() > 2) {
 					String name = wps.get(0);
-					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
+					TerminalRoute sid = navdao.getBestRoute(fr.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(name), wps.get(1), (String) null);
 					if (sid != null) {
 						wps.remove(0);
 						if (!CollectionUtils.isEmpty(wps))
@@ -667,7 +685,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Load the STAR
 				if (wps.size() > 2) {
 					String name = wps.get(wps.size() - 1);
-					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
+					TerminalRoute star = navdao.getBestRoute(fr.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), (String) null);
 					if (star != null) {
 						wps.remove(wps.size() - 1);
 						if (!CollectionUtils.isEmpty(wps))

@@ -3,12 +3,12 @@ package org.deltava.beans.acars;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store ACARS error dumps.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -21,7 +21,8 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	private int _version;
 	private int _clientBuild;
 	private int _beta;
-	private int _fsVersion;
+	
+	private Simulator _sim;
 	private String _fsuipcVersion;
 	
 	private ClientType _type;
@@ -115,12 +116,12 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	}
 	
 	/**
-	 * Returns the version of Flight Simulator used by the client.
-	 * @return the FS version code
-	 * @see ACARSError#setFSVersion(int)
+	 * Returns the Simulator used by the client.
+	 * @return the Simulator
+	 * @see ACARSError#setSimulator(Simulator)
 	 */
-	public int getFSVersion() {
-		return _fsVersion;
+	public Simulator getSimulator() {
+		return _sim;
 	}
 	
 	/**
@@ -216,12 +217,12 @@ public class ACARSError extends DatabaseBean implements ClientVersion {
 	}
 	
 	/**
-	 * Updates the version of Flight Simulator used by the client.
-	 * @param ver the FS version code
-	 * @see ACARSError#getFSVersion()
+	 * Updates the Simulator used by the client.
+	 * @param sim the Simulator
+	 * @see ACARSError#getSimulator()
 	 */
-	public void setFSVersion(int ver) {
-		_fsVersion = ver;
+	public void setSimulator(Simulator sim) {
+		_sim = sim;
 	}
 	
 	/**
