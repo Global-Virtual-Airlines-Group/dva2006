@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -19,11 +19,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update Fleet Library entries.
  * @author Luke
- * @version 3.6
+ * @version 5.1
  * @since 1.0
  */
 
 public class InstallerCommand extends LibraryEditCommand {
+	
+	private static final List<Simulator> SIMS = Arrays.asList(Simulator.FS2002, Simulator.FS9, Simulator.FSX, Simulator.P3D, 
+			Simulator.XP9, Simulator.XP10);
 
 	/**
 	 * Method called when editing the form.
@@ -31,7 +34,7 @@ public class InstallerCommand extends LibraryEditCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		ctx.setAttribute("fsVersions", ComboUtils.fromArray(Installer.FS_NAMES, Installer.FS_CODES), REQUEST);
+		ctx.setAttribute("fsVersions", SIMS, REQUEST);
 		super.execEdit(ctx, "fleet");
 	}
 
@@ -88,10 +91,13 @@ public class InstallerCommand extends LibraryEditCommand {
 			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx
 					.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
 			
-			// Add FS Codes
+			// Add Simulator Codes
 			Collection<String> fsCodes = ctx.getParameters("fsVersion");
-			if (fsCodes != null)
-				entry.setFSVersions(StringUtils.listConcat(fsCodes, ","));
+			if (fsCodes != null) {
+				entry.getFSVersions().clear();
+				for (String sim : fsCodes)
+					entry.addFSVersion(Simulator.fromName(sim));
+			}
 
 			// Add airline codes
 			Collection<String> appCodes = ctx.getParameters("airlines");
