@@ -12,11 +12,11 @@ import org.deltava.util.*;
 /**
  * A Flight Plan Generator for Lockheed-Martin Prepar3D.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 5.0
  */
 
-public class P3DGenerator extends FlightPlanGenerator {
+public class P3DGenerator extends MSFSGenerator {
 
 	/**
 	 * Generates a Prepar3D flight plan between two airports.
