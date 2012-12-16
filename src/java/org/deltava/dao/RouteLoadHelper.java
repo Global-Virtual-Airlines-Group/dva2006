@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A utility class to load flight routes from the database.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 3.4
  */
 
@@ -198,9 +198,9 @@ public final class RouteLoadHelper {
 				log.info("Searching for best SID for " + rt.getSID() + " runway " + dRwy);
 				List<String> tkns = StringUtils.split(rt.getSID(), ".");
 				String sidName = TerminalRoute.makeGeneric(tkns.get(0));
-				TerminalRoute sid = navdao.getBestRoute(_aD, TerminalRoute.SID, sidName, tkns.get(1), _preferredRunway);
+				TerminalRoute sid = navdao.getBestRoute(_aD, TerminalRoute.Type.SID, sidName, tkns.get(1), _preferredRunway);
 				if (sid == null)
-					sid = navdao.getBestRoute(_aD, TerminalRoute.SID, sidName, tkns.get(1), dRwy);
+					sid = navdao.getBestRoute(_aD, TerminalRoute.Type.SID, sidName, tkns.get(1), dRwy);
 				if (sid != null) {
 					log.info("Found " + sid.getCode());
 					rt.setSID(sid.getCode());
@@ -215,9 +215,9 @@ public final class RouteLoadHelper {
 
 				// Load the STAR - if we can't find based on the runway, try the most popular
 				String starName = TerminalRoute.makeGeneric(tkns.get(0));
-				TerminalRoute star = navdao.getBestRoute(_aA, TerminalRoute.STAR, starName, tkns.get(1), arrRwy);
+				TerminalRoute star = navdao.getBestRoute(_aA, TerminalRoute.Type.STAR, starName, tkns.get(1), arrRwy);
 				if (star == null)
-					star = navdao.getBestRoute(_aA, TerminalRoute.STAR, starName, tkns.get(1), aRwy);
+					star = navdao.getBestRoute(_aA, TerminalRoute.Type.STAR, starName, tkns.get(1), aRwy);
 				if (star != null) {
 					log.info("Found " + star.getCode()); 
 					rt.setSTAR(star.getCode());
