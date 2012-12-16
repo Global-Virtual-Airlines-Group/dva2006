@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to ensure Dispatch Routes have the latest Terminal Route waypoints.
  * @author Luke
- * @version 3.6
+ * @version 5.1
  * @since 2.6
  */
 
@@ -48,15 +48,15 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				List<String> wps = StringUtils.split(rt.getRoute(), " ");
 				
 				// Load and validate the SID
-				TerminalRoute sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, rt.getSID());
+				TerminalRoute sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.Type.SID, rt.getSID());
 				if ((sid == null) && (rt.getSID() != null)) {
 					int pos = rt.getSID().indexOf('.');
 					String name = rt.getSID().substring(0, pos);
-					sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, rt.getSID(), true);
+					sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.Type.SID, rt.getSID(), true);
 					
 					// If we still can't find a SID, find one that uses this transition and runway
 					if (sid == null)
-						sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.SID, "%" + rt.getSID().substring(pos), true);
+						sid = navdao.getRoute(rt.getAirportD(), TerminalRoute.Type.SID, "%" + rt.getSID().substring(pos), true);
 					
 					// If we found a better SID, update what is in the route with this one
 					if (sid != null) {
@@ -84,15 +84,15 @@ public class DispatchRouteUpdateCommand extends AbstractCommand {
 				}
 				
 				// Load and validate the STAR
-				TerminalRoute star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, rt.getSTAR());
+				TerminalRoute star = navdao.getRoute(rt.getAirportA(), TerminalRoute.Type.STAR, rt.getSTAR());
 				if ((star == null) && (rt.getSTAR() != null)) {
 					int pos = rt.getSTAR().indexOf('.');
 					String name = rt.getSTAR().substring(0, pos);
-					star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, rt.getSTAR(), true);
+					star = navdao.getRoute(rt.getAirportA(), TerminalRoute.Type.STAR, rt.getSTAR(), true);
 					
 					// If we still can't find a STAR, find one that uses this transition and runway
 					if (star == null)
-						star = navdao.getRoute(rt.getAirportA(), TerminalRoute.STAR, "%" + rt.getSTAR().substring(pos), true);
+						star = navdao.getRoute(rt.getAirportA(), TerminalRoute.Type.STAR, "%" + rt.getSTAR().substring(pos), true);
 					
 					// If we found a better STAR, update what is in the route with this one
 					if (star != null) {

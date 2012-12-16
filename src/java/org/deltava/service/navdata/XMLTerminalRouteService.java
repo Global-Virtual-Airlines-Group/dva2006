@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display Terminal Route data to ACARS clients.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.4
  */
 
@@ -94,7 +94,7 @@ public class XMLTerminalRouteService extends DispatchDataService {
 						}
 
 						// Create the SID/STAR element
-						Element tre = new Element(tr.getTypeName().toLowerCase());
+						Element tre = new Element(tr.getType().name().toLowerCase());
 						tre.setAttribute("name", tr.getName());
 						tre.setAttribute("id", tr.getCode());
 						tre.setAttribute("transition", tr.getTransition());

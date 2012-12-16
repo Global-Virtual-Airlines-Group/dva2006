@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle AJAX updates of Terminal Routes.
  * @author Luke
- * @version 2.3
+ * @version 5.1
  * @since 2.1
  */
 
@@ -41,9 +41,11 @@ public class TerminalRouteUpdateService extends WebService {
 		if (a == null)
 			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"), false);
 		
+		// Get the type
+		TerminalRoute.Type rt = TerminalRoute.Type.valueOf(ctx.getParameter("type").toUpperCase());
+		
 		// Build the Terminal Route
-		int type = "sid".equalsIgnoreCase(ctx.getParameter("type")) ? TerminalRoute.SID : TerminalRoute.STAR;
-		TerminalRoute tr = new TerminalRoute(a.getICAO(), ctx.getParameter("name"), type);
+		TerminalRoute tr = new TerminalRoute(a.getICAO(), ctx.getParameter("name"), rt);
 		tr.setTransition(ctx.getParameter("transition"));
 		tr.setRunway(ctx.getParameter("runway"));
 		tr.setCanPurge(Boolean.valueOf(ctx.getParameter("canPurge")).booleanValue());
@@ -53,12 +55,12 @@ public class TerminalRouteUpdateService extends WebService {
 			
 			// Get the existing SID
 			GetNavRoute dao = new GetNavRoute(con);
-			TerminalRoute otr = dao.getRoute(a, type, tr.getName());
+			TerminalRoute otr = dao.getRoute(a, rt, tr.getName());
 			
 			// Get the transition
 			NavigationDataBean tx = dao.get(tr.getTransition()).get(tr.getTransition(), a);
-			GeoLocation start = (tr.getType() == TerminalRoute.SID) ? a : tx;
-			if (tr.getType() == TerminalRoute.STAR)
+			GeoLocation start = (tr.getType() == TerminalRoute.Type.SID) ? a : tx;
+			if (tr.getType() == TerminalRoute.Type.STAR)
 				tr.addWaypoint(tx);
 			
 			// Add the waypoints
@@ -67,7 +69,7 @@ public class TerminalRouteUpdateService extends WebService {
 				tr.addWaypoint(wp);
 			
 			// Add the transition if a SID
-			if (tr.getType() == TerminalRoute.SID)
+			if (tr.getType() == TerminalRoute.Type.SID)
 				tr.addWaypoint(tx);
 			
 			// Start a transaction
@@ -77,8 +79,6 @@ public class TerminalRouteUpdateService extends WebService {
 			SetNavData wdao = new SetNavData(con);
 			wdao.delete(otr);
 			wdao.writeRoute(tr);
-			
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
@@ -87,7 +87,6 @@ public class TerminalRouteUpdateService extends WebService {
 			ctx.release();
 		}
 		
-		// Return success code
 		return SC_OK;
 	}
 
