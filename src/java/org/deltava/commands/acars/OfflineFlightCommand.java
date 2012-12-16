@@ -22,12 +22,11 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.crypt.MessageDigester;
+import org.deltava.comparators.GeoComparator;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.CacheManager;
 import org.deltava.util.system.SystemData;
-
-import org.gvagroup.acars.*;
 
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
@@ -176,8 +175,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 				
 				// Set message
 				String msg = "ACARS Build " + cInfo.toString() + " not supported.";
-				if (latestBuild != null)
-					msg += " Minimum ACARS " + cInfo.getVersion() + ".x build is Build " + latestBuild.getClientBuild() + "-release.";
+				if (latestBuild != null) {
+					msg += " Minimum ACARS " + cInfo.getVersion() + ".x build is Build " + latestBuild.getClientBuild() + "-";
+					msg += (cInfo.getBeta() == 0) ? "-release" : ("b" + cInfo.getBeta());
+				}
 				
 				ctx.setMessage(msg);
 				return;
@@ -342,42 +343,6 @@ public class OfflineFlightCommand extends AbstractCommand {
 			if (!comments.isEmpty())
 				afr.setComments(StringUtils.listConcat(comments, "\r\n"));
 			
-			// If we don't have takeoff/touchdown points from Build 97+, derive them
-			if (afr.getTakeoffHeading() == -1) {
-				List<ACARSRouteEntry> tdEntries = new ArrayList<ACARSRouteEntry>();
-				for (Iterator<ACARSRouteEntry> i = flight.getPositions().iterator(); i.hasNext(); ) {
-					ACARSRouteEntry re = i.next();
-					if (re.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN))
-						tdEntries.add(re);
-				}
-					
-				if (tdEntries.size() > 2) {
-					int ofs = 0;
-					ACARSRouteEntry entry = tdEntries.get(0);
-					GeoPosition adPos = new GeoPosition(inf.getAirportD());
-					while ((ofs < (tdEntries.size() - 1)) && (adPos.distanceTo(entry) < 15) && (entry.getVerticalSpeed() > 0)) {
-						ofs++;
-						entry = tdEntries.get(ofs);
-					}
-
-					// Trim out spurious takeoff entries
-					if (ofs > 0)
-						tdEntries.subList(0, ofs - 1).clear();
-					if (tdEntries.size() > 2)
-						tdEntries.subList(1, tdEntries.size() - 1).clear();
-				}
-				
-				// Save the entry points
-				if (tdEntries.size() > 0) {
-					afr.setTakeoffLocation(tdEntries.get(0));
-					afr.setTakeoffHeading(tdEntries.get(0).getHeading());
-					if (tdEntries.size() > 1) {
-						afr.setLandingLocation(tdEntries.get(1));
-						afr.setLandingHeading(tdEntries.get(1).getHeading());
-					}
-				}
-			}
-			
 			// Load the departure runway
 			GetNavAirway navdao = new GetNavAirway(con);
 			Runway rD = null;
@@ -403,6 +368,24 @@ public class OfflineFlightCommand extends AbstractCommand {
 					if (r.getLength() < a.getLandingRunwayLength())
 						afr.setAttribute(FlightReport.ATTR_RWYWARN, true);
 				}
+			}
+			
+			// Calculate gates
+			Gate gD = null; Gate gA = null;
+			if (flight.getPositions().size() > 1) {
+				GeoComparator dgc = new GeoComparator(flight.getPositions().first(), true);
+				GeoComparator agc = new GeoComparator(flight.getPositions().last(), true);
+			
+				// Get the closest departure gate
+				GetGates gdao = new GetGates(con);
+				SortedSet<Gate> dGates = new TreeSet<Gate>(dgc);
+				dGates.addAll(gdao.getAllGates(afr.getAirportD(), inf.getFSVersion()));
+				gD = dGates.isEmpty() ? null : dGates.first();
+				
+				// Get the closest arrival gate
+				SortedSet<Gate> aGates = new TreeSet<Gate>(agc);
+				aGates.addAll(gdao.getAllGates(afr.getAirportA(), inf.getFSVersion()));
+				gA = aGates.isEmpty() ? null : aGates.first();
 			}
 			
 			// Validate the flight ID, otherwise set it to zero
@@ -445,11 +428,10 @@ public class OfflineFlightCommand extends AbstractCommand {
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSTAR());
 			awdao.writeRunways(inf.getID(), rD, rA);
+			awdao.writeGates(inf.getID(), gD, gA);
 			if (inf.isDispatchPlan())
 				awdao.writeDispatch(inf.getID(), inf.getDispatcherID(), inf.getRouteID());
-			
-			// Dump the positions
-			if (!CollectionUtils.isEmpty(flight.getPositions()))
+			if (!flight.getPositions().isEmpty())
 				awdao.writePositions(inf.getID(), flight.getPositions());
 			
 			// Update the checkride record (don't assume pilots check the box, because they don't)
