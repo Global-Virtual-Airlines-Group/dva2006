@@ -151,13 +151,14 @@ xmlreq.onreadystatechange = function() {
 	var chart = new google.visualization.ScatterChart(document.getElementById('landingSct'));
 	var data = new google.visualization.DataTable();
 	data.addColumn('number','Touchown Distance');
-	data.addColumn('number','Damaging');
-	data.addColumn('number','Firm');
+	data.addColumn('number','Dangerous');
+	data.addColumn('number','Acceptable');
 	data.addColumn('number','Optimal');
 	data.addColumn('number','Too Soft');
 	data.addRows(statsData.landingSct);
 	var hX = {title:'Distance from Threshold (feet)',textStyle:lgStyle};
-	chart.draw(data,{title:'Landing Speed vs. Runway Distance',colors:['red','orange','green','blue'],legend:{textStyle:lgStyle},hAxis:hX});
+	var yX = {title:'Landing Speed (feet/min)',textStyle:lgStyle};
+	chart.draw(data,{title:'Flight Quality vs. Landing Data',colors:['red','orange','green','blue'],legend:{textStyle:lgStyle},hAxis:hX,vAxis:yX});
 	
 	// Display quality breakdown chart
 	var chart = new google.visualization.PieChart(document.getElementById('qualBreakdown'));
@@ -165,7 +166,7 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('string','Landing Quality');
 	data.addColumn('number','Flight Legs');	
 	data.addRows(statsData.landingQuality);
-	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['red','orange','green'],theme:'maximized'});	
+	chart.draw(data,{title:'Landing Assessments',is3D:true,colors:['green','orange','red'],theme:'maximized'});	
 	return true;
 }
 
