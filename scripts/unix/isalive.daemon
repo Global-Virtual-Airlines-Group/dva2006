@@ -207,6 +207,21 @@ do
 			/etc/init.d/blacklist start
 		fi
 
+		# Check bandwidth monitoring daemon
+		if [ -f "/var/run/bandwidthd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/bandwidthd.pid`" ]
+  			then
+  				logger -p $LOGGER.err "Bandwidth monitor is DOWN"
+				echo `date +%H:%M:%S`" Bandwidth monitor is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/bandwidthd start
+			fi
+		else
+			logger -p $LOGGER.err "Bandwidth monitor is DOWN - no pid"
+			echo `date +%H:%M:%S`" Bandwidth monitor is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/bandwidthd start
+		fi
+
 		# Check VATSIM statistics daemon
 		if [ -f "/var/run/usageTrack.pid" ]
 		then

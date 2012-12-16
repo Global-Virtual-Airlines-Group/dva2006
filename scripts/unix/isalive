@@ -124,9 +124,9 @@ if [ -f "/var/run/ts2.pid" ]
 then
   if [ -d "/proc/`cat /var/run/ts2.pid`" ]
   then
-    echo "TeamSpeak (Voice Server) is alive"
+    echo "TeamSpeak2 (Voice Server) is alive"
   else
-    echo "TeamSpeak (Voice Server) is DOWN"
+    echo "TeamSpeak2 (Voice Server) is DOWN"
     /etc/init.d/ts2 start
   fi
 else
@@ -161,6 +161,21 @@ then
 else
   echo "Blacklist (SSH blacklist daemon) is DOWN - no pid"
   /etc/init.d/blacklist start
+fi
+
+# Check bandwidth monitoring daemon
+if [ -f "/var/run/bandwidthd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/bandwidthd.pid`" ]
+  then
+    echo "Bandwidthd (Bandwidth monitor) is alive"
+  else
+    echo "Bandwidthd (Bandwidth monitor) is DOWN "
+    /etc/init.d/bandwidthd start
+  fi
+else
+  echo "Bandwidthd (Bandwidth monitor) is DOWN - no pid"
+  /etc/init.d/bandwidthd start
 fi
 
 # Check VATSIM statistics daemon
