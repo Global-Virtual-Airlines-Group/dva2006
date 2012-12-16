@@ -11,11 +11,11 @@ import org.deltava.util.*;
 /**
  * A Flight Plan Generator for Microsoft Flight Simulator 2004.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.4
  */
 
-public class FS9Generator extends FlightPlanGenerator {
+public class FS9Generator extends MSFSGenerator {
 
 	/**
 	 * Generates an FS9 flight plan between two airports.
@@ -35,7 +35,13 @@ public class FS9Generator extends FlightPlanGenerator {
 			ctx.println("cruising_altitude=" + _altitude);
 			ctx.println("departure_id=" + _aD.getICAO() + ", " + GeoUtils.formatFS9(_aD) + ", +000000.00,");
 			ctx.println("departure_name=" + _aD.getName());
-			ctx.println("departure_position=GATE ?");
+			if (_gateD != null) {
+				ctx.println("departure_position=" + _gateD.getName());
+				ctx.print("departure_lat=" + StringUtils.format(_gateD.getLatitude(), "#0.00000"));
+				ctx.print("departure_lng=" + StringUtils.format(_gateD.getLongitude(), "##0.00000"));
+			} else
+				ctx.println("departure_position=GATE ?");
+			
 			ctx.println("destination_id=" + _aA.getICAO() + ", " + GeoUtils.formatFS9(_aA) + ", +000000.00,");
 			ctx.println("destination_name=" + _aA.getName());
 			if (_sid != null)
