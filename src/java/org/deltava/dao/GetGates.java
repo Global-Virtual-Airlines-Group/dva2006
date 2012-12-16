@@ -62,10 +62,10 @@ public class GetGates extends DAO {
 			+ "AND (G.NAME=GD.GATE) AND (G.SIMVERSION=?) AND (F.AIRPORT_D=?) ");
 		if (rp.getAirportA() != null)
 			sqlBuf.append("AND (F.AIRPORT_A=?) ");
-		sqlBuf.append("GROUP BY G.NAME ORDER BY CNT DESC LIMIT 25");
+		sqlBuf.append("GROUP BY G.NAME ORDER BY CNT DESC");
 		
 		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			_ps.setString(2, (isDeparture ? rp.getAirportD() : rp.getAirportA()).getICAO());
 			_ps.setBoolean(3, isDeparture);
