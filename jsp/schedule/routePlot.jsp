@@ -15,6 +15,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <map:api version="3" libraries="weather" />
+<content:js name="markermanager" />
 <content:js name="progressBar" />
 <content:js name="googleMapsWX" />
 <content:js name="routePlot" />
@@ -71,6 +72,10 @@ return true;
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportD, this.value); updateRoute(true)" />
 <span id="runways" style="visibility:hidden;"> departing <el:combo name="runway" idx="*" size="1" options="${emptyList}" firstEntry="-" onChange="void updateRoute(true, false)" /></span></td>
 </tr>
+<tr id="gatesD" style="display:none;">
+ <td class="label">Departure Gate</td>
+ <td class="data"><el:combo name="gateD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="plotMap()" /></td>
+</tr>
 <tr id="wxDr" style="display:none;">
  <td class="label">Origin Weather</td>
  <td class="data"><span id="wxDmetar"></span></td>
@@ -80,8 +85,12 @@ return true;
  <td class="data"><el:combo name="airportA" className="req" size="1" idx="*" options="${airportsA}" firstEntry="-" value="${flight.airportA}" onChange="void updateRoute(true)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onChange="setAirport(document.forms[0].airportA, this.value); updateRoute(true)" /></td>
 </tr>
+<tr id="gatesA" style="display:none;">
+ <td class="label">Arrival Gate</td>
+ <td class="data"><el:combo name="gateA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="updateRoute(); plotMap()" /></td>
+</tr>
 <tr id="wxAr" style="display:none;">
- <td class="label">Destination Weather</td>
+ <td class="label top">Destination Weather</td>
  <td class="data"><span id="wxAmetar"></span><div id="wxAtaf" style="display:none;"></div></td>
 </tr>
 <tr id="airportL" style="display:none;">
@@ -103,7 +112,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /></td>
+ <td class="data"><el:box name="noRecenter" value="true" label="Do not move Map center on Route updates" /><br />
+<el:box name="showGates" value="true" label="Show Departure Gates" onChange="void toggleGates(dGates)" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2" class="left">ROUTE SEARCH</td>
@@ -131,7 +141,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Simulator Version</td>
- <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" /></td>
+ <td class="data"><el:check type="radio" name="simVersion" idx="*" options="${simVersions}" value="${sim}" /></td>
 </tr>
 <tr>
  <td class="label">Cruising Altitude</td>
@@ -175,7 +185,7 @@ updateRoute(true, false);
 </c:choose>
 // Create map options
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, minZoom:2, maxZoom:10, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
+var mapOpts = {center:new google.maps.LatLng(38.88, -93.25), zoom:4, minZoom:2, maxZoom:16, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
@@ -194,6 +204,9 @@ map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.Lay
 // Build the standard weather layers 
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerSelectControl(map, 'Clouds', new google.maps.weather.CloudLayer()));
 map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(new golgotha.maps.LayerClearControl(map));
+
+// Build departure gates
+var dGates = new MarkerManager(map, {maxZoom:18});
 
 // Update text color
 google.maps.event.trigger(map, 'maptypeid_changed');
