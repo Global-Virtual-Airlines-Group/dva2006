@@ -15,7 +15,7 @@ import com.enterprisedt.util.debug.Logger;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -97,30 +97,30 @@ public class GetNavAirway extends GetNavData {
 	/**
 	 * Retrieves a specifc SID/STAR.
 	 * @param a the Airport
-	 * @param type the route type
+	 * @param t the route type
 	 * @param name the name of the Terminal Route, as NAME.TRANSITION.RWY
 	 * @return a TerminalRoute bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public TerminalRoute getRoute(ICAOAirport a, int type, String name) throws DAOException {
-		return getRoute(a, type, name, false);
+	public TerminalRoute getRoute(ICAOAirport a, TerminalRoute.Type t, String name) throws DAOException {
+		return getRoute(a, t, name, false);
 	}
 	
 	/**
 	 * Retrieves a specifc SID/STAR.
 	 * @param a the Airport
-	 * @param type the route type
+	 * @param t the route type
 	 * @param name the name of the Terminal Route, as NAME.TRANSITION.RWY
 	 * @param ignoreVersion TRUE if the sequence number should be ignored in favor of a newer or older version, otherwise FALSE 
 	 * @return a TerminalRoute bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public TerminalRoute getRoute(ICAOAirport a, int type, String name, boolean ignoreVersion) throws DAOException {
+	public TerminalRoute getRoute(ICAOAirport a, TerminalRoute.Type t, String name, boolean ignoreVersion) throws DAOException {
 
 		// Check the cache
 		TerminalRoute tr = _rCache.get(name);
 		if (tr != null) {
-			if ((tr.getType() == type) && (tr.getICAO().equals(a.getICAO())))
+			if ((tr.getType() == t) && (tr.getICAO().equals(a.getICAO())))
 				return tr;
 		} else if (name == null)
 			return null;
@@ -182,27 +182,27 @@ public class GetNavAirway extends GetNavData {
 	/**
 	 * Returns the most likely Terminal Route used based on the Airport, Name, last waypoint and runway.
 	 * @param a the Airport
-	 * @param type the TerminalRoute type
+	 * @param t the TerminalRoute type
 	 * @param name the name
 	 * @param wp the waypoint
 	 * @param rwy the runway name, or null
 	 * @return the TerminalRoute, or null if none found
-	 * @see GetNavAirway#getBestRoute(ICAOAirport, int, String, String, Runway)
+	 * @see GetNavAirway#getBestRoute(ICAOAirport, TerminalRoute.Type, String, String, Runway)
 	 */
-	public TerminalRoute getBestRoute(ICAOAirport a, int type, String name, String wp, Runway rwy) throws DAOException {
-		return getBestRoute(a, type, name, wp, (rwy == null) ? "ALL" : "RW" + rwy.getName());
+	public TerminalRoute getBestRoute(ICAOAirport a, TerminalRoute.Type t, String name, String wp, Runway rwy) throws DAOException {
+		return getBestRoute(a, t, name, wp, (rwy == null) ? "ALL" : "RW" + rwy.getName());
 	}
 	
 	/**
 	 * Returns the most likely Terminal Route used based on the Airport, Name, last waypoint and runway.
 	 * @param a the Airport
-	 * @param type the TerminalRoute type
+	 * @param t the TerminalRoute type
 	 * @param name the name
 	 * @param wp the waypoint
 	 * @param rwy the Runway bean, or null
 	 * @return the TerminalRoute, or null if none found
 	 */
-	public TerminalRoute getBestRoute(ICAOAirport a, int type, String name, String wp, String rwy) throws DAOException {
+	public TerminalRoute getBestRoute(ICAOAirport a, TerminalRoute.Type t, String name, String wp, String rwy) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT DISTINCT CONCAT_WS('.', NAME, TRANSITION, RUNWAY), IF(RUNWAY=?, 0, 1) "
@@ -219,7 +219,7 @@ public class GetNavAirway extends GetNavData {
 			prepareStatementWithoutLimits(buf.toString());
 			_ps.setString(++pos, "ALL");
 			_ps.setString(++pos, a.getICAO());
-			_ps.setInt(++pos, type);
+			_ps.setInt(++pos, t.ordinal());
 			_ps.setString(++pos, name);
 			if (wp != null)
 				_ps.setString(++pos, wp);
@@ -239,7 +239,7 @@ public class GetNavAirway extends GetNavData {
 			
 			// Fetch the route itself
 			log.info("Found " + code);
-			return getRoute(a, type, code);
+			return getRoute(a, t, code);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -263,7 +263,7 @@ public class GetNavAirway extends GetNavData {
 			prepareStatementWithoutLimits("SELECT DISTINCT RUNWAY FROM common.SID_STAR WHERE (ICAO=?) AND "
 					+ "(TYPE=?) ORDER BY RUNWAY");
 			_ps.setString(1, code.toUpperCase());
-			_ps.setInt(2, TerminalRoute.SID);
+			_ps.setInt(2, TerminalRoute.Type.SID.ordinal());
 			
 			// Execute the query
 			results = new CacheableSet<String>(code);
@@ -301,18 +301,16 @@ public class GetNavAirway extends GetNavData {
 	/**
 	 * Loads all SIDs/STARs for a particular Airport.
 	 * @param code the Airport ICAO code
-	 * @param type the SID/STAR type
+	 * @param t the SID/STAR type
 	 * @return a List of TerminalRoutes
 	 * @throws DAOException
-	 * @see TerminalRoute#SID
-	 * @see TerminalRoute#STAR
 	 */
-	public Collection<TerminalRoute> getRoutes(String code, int type) throws DAOException {
+	public Collection<TerminalRoute> getRoutes(String code, TerminalRoute.Type t) throws DAOException {
 		List<TerminalRoute> results = null;
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY, SEQ");
 			_ps.setString(1, code.toUpperCase());
-			_ps.setInt(2, type);
+			_ps.setInt(2, t.ordinal());
 			results = executeSIDSTAR();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -422,7 +420,8 @@ public class GetNavAirway extends GetNavData {
 			int columnCount = rs.getMetaData().getColumnCount();
 			TerminalRoute tr = null;
 			while (rs.next()) {
-				TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
+				TerminalRoute.Type rt = TerminalRoute.Type.values()[rs.getInt(2)];
+				TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rt);
 				tr2.setTransition(rs.getString(4));
 				tr2.setRunway(rs.getString(5));
 				if (columnCount > 10)
