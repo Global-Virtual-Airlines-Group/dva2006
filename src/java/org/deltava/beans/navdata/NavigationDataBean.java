@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -21,8 +21,8 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	private String _code;
 	private String _name;
 	private String _region;
-	private Navaid _type;
 	private String _airway;
+	private final Navaid _type;
 
 	private GeoPosition _gp;
 
@@ -36,7 +36,7 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	 */
 	public NavigationDataBean(Navaid type, double lat, double lon) {
 		super();
-		setType(type);
+		_type = type;
 		_gp = new GeoPosition(lat, lon);
 	}
 
@@ -100,7 +100,6 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	/**
 	 * Returns the object's type.
 	 * @return the object type code
-	 * @see NavigationDataBean#setType(Navaid)
 	 */
 	public final Navaid getType() {
 		return _type;
@@ -166,15 +165,6 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 	 */
 	public void setAirway(String code) {
 		_airway = (code == null) ? null : code.toUpperCase();
-	}
-
-	/**
-	 * Updates the object's type.
-	 * @param type the Navaid type
-	 * @see NavigationDataBean#getType()
-	 */
-	public final void setType(Navaid type) {
-		_type = type;
 	}
 
 	/**
@@ -310,6 +300,9 @@ public abstract class NavigationDataBean implements java.io.Serializable, Clonea
 			
 		case AIRPORT:
 			return new AirportLocation(lat, lng);
+			
+		case GATE:
+			return new Gate(lat, lng);
 
 		default:
 			return null;
