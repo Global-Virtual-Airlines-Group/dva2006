@@ -787,11 +787,6 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <span class="small ita">This information is shared between all web applications.</span></td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="trouteplot">Plot SID/STAR</el:cmd></td>
- <td class="data">You can display and/or plot Standard Instrument Departures and Standard Terminal Arrival
- Routes. <span class="small ita">This information is shared between all web applications.</span></td>
-</tr>
-<tr>
  <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />
 <el:cmd className="bld" url="schedexport">Export Flight Schedule</el:cmd></td>
  <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 
