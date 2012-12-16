@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.flight.*;
 import org.deltava.beans.navdata.*;
@@ -21,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to create flight plans.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.2
  */
 
@@ -46,27 +47,27 @@ public class RoutePlanService extends WebService {
 			alt = "35000";
 
 		// Validate the airports
-		String simVersion = ctx.getParameter("simVersion");
+		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"));
 		if (aD == null)
 			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), false);
 		else if (aA == null)
 			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), false);
-		else if (StringUtils.isEmpty(simVersion))
+		else if (sim == Simulator.UNKNOWN)
 			throw error(SC_BAD_REQUEST, "Invalid Simulator", false);
 
 		// Get the Flight Plan generator
 		FlightPlanGenerator fpgen = null;
-		switch (simVersion.toUpperCase()) {
-			case "XP9":
+		switch (sim) {
+			case XP9:
 				fpgen = new XP9Generator();
 				break;
 				
-			case "P3D":
+			case P3D:
 				fpgen = new P3DGenerator();
 				break;
 		
-			case "FS9":
-			case "FSX":
+			case FS9:
+			case FSX:
 			default:
 				fpgen = new FS9Generator();
 		}
@@ -84,9 +85,17 @@ public class RoutePlanService extends WebService {
 		try {
 			Connection con = ctx.getConnection();
 			GetNavRoute dao = new GetNavRoute(con);
+			GetGates gdao = new GetGates(con);
+			
+			// Load the departure gate
+			if (fpgen instanceof MSFSGenerator) {
+				MSFSGenerator fsgen = (MSFSGenerator) fpgen;
+				Gate gD = gdao.getGate(aD, sim, ctx.getParameter("gateD"));
+				fsgen.setGateD(gD);
+			}
 
 			// Load the SID
-			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.SID, ctx.getParameter("sid"));
+			TerminalRoute sid = dao.getRoute(aD, TerminalRoute.Type.SID, ctx.getParameter("sid"));
 			if (sid != null) {
 				routePoints.addAll(sid.getWaypoints());
 				fpgen.setSID(sid);
@@ -104,7 +113,7 @@ public class RoutePlanService extends WebService {
 			}
 
 			// Load the STAR
-			TerminalRoute star = dao.getRoute(aA, TerminalRoute.STAR, ctx.getParameter("star"));
+			TerminalRoute star = dao.getRoute(aA, TerminalRoute.Type.STAR, ctx.getParameter("star"));
 			if (star != null) {
 				fpgen.setSTAR(star);
 				routePoints.addAll(star.getWaypoints());
@@ -155,6 +164,7 @@ public class RoutePlanService extends WebService {
 						ai.addFlight(dfr);
 					}
 					
+					dfr.setFSVersion(sim);
 					dfr.setRank(ctx.getUser().getRank());
 					dfr.setDate(new Date());
 				}
