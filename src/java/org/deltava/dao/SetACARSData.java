@@ -13,7 +13,7 @@ import org.deltava.util.CalendarUtils;
  * A Data Access Object to write ACARS data. This is used outside of the ACARS server by classes that need to simulate
  * ACARS server writes without having access to the ACARS server message bean code.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class SetACARSData extends DAO {
 			_ps.setString(8, (info.getAirportL() == null) ? null : info.getAirportL().getIATA());
 			_ps.setString(9, info.getRoute());
 			_ps.setString(10, info.getRemarks());
-			_ps.setInt(11, info.getFSVersion());
+			_ps.setInt(11, info.getFSVersion().getCode());
 			_ps.setBoolean(12, info.getOffline());
 			_ps.setBoolean(13, true);
 			_ps.setBoolean(14, info.isXACARS());
@@ -114,51 +114,6 @@ public class SetACARSData extends DAO {
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Writes the runways used on a Flight to the database.
-	 * @param flightID the Flight ID
-	 * @param rwyD the departure Runway
-	 * @param rwyA the arrival Runway
-	 * @throws DAOException if a JDBC error occured
-	 */
-	public void writeRunways(int flightID, Runway rwyD, Runway rwyA) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO acars.RWYDATA (ID, ICAO, RUNWAY, LATITUDE, LONGITUDE, LENGTH, DISTANCE, "
-				+ "ISTAKEOFF) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, flightID);
-			if (rwyD != null) {
-				int dist = (rwyD instanceof RunwayDistance) ? ((RunwayDistance) rwyD).getDistance() : 0;
-				_ps.setString(2, rwyD.getCode());
-				_ps.setString(3, rwyD.getName());
-				_ps.setDouble(4, rwyD.getLatitude());
-				_ps.setDouble(5, rwyD.getLongitude());
-				_ps.setInt(6, rwyD.getLength());
-				_ps.setInt(7, dist);
-				_ps.setBoolean(8, true);
-				if (dist < 65200)
-					_ps.addBatch();
-			}
-			
-			if (rwyA != null) {
-				int dist = (rwyA instanceof RunwayDistance) ? ((RunwayDistance) rwyA).getDistance() : 0;
-				_ps.setString(2, rwyA.getCode());
-				_ps.setString(3, rwyA.getName());
-				_ps.setDouble(4, rwyA.getLatitude());
-				_ps.setDouble(5, rwyA.getLongitude());
-				_ps.setInt(6, rwyA.getLength());
-				_ps.setInt(7, dist);
-				_ps.setBoolean(8, false);
-				if (dist < 65200)
-					_ps.addBatch();
-			}
-			
-			_ps.executeBatch();
-			_ps.close();
-		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
@@ -226,7 +181,7 @@ public class SetACARSData extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHT_SIDSTAR WHERE (ID=?) AND (TYPE=?)");
 			_ps.setInt(1, id);
-			_ps.setInt(2, TerminalRoute.SID);
+			_ps.setInt(2, TerminalRoute.Type.SID.ordinal());
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -242,7 +197,7 @@ public class SetACARSData extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHT_SIDSTAR WHERE (ID=?) AND (TYPE=?)");
 			_ps.setInt(1, id);
-			_ps.setInt(2, TerminalRoute.STAR);
+			_ps.setInt(2, TerminalRoute.Type.STAR.ordinal());
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -266,7 +221,7 @@ public class SetACARSData extends DAO {
 			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR (ID, TYPE, NAME, TRANSITION, "
 				+ "RUNWAY) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
-			_ps.setInt(2, tr.getType());
+			_ps.setInt(2, tr.getType().ordinal());
 			_ps.setString(3, tr.getName());
 			_ps.setString(4, tr.getTransition());
 			_ps.setString(5, tr.getRunway());
@@ -276,7 +231,7 @@ public class SetACARSData extends DAO {
 			prepareStatementWithoutLimits("REPLACE INTO acars.FLIGHT_SIDSTAR_WP (ID, TYPE, SEQ, CODE, WPTYPE, "
 				+ "LATITUDE, LONGITUDE, REGION) VALUES (?, ? ,?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, id);
-			_ps.setInt(2, tr.getType());
+			_ps.setInt(2, tr.getType().ordinal());
 			LinkedList<NavigationDataBean> wps = tr.getWaypoints();
 			for (int x = 0; x < wps.size(); x++) {
 				NavigationDataBean ai = wps.get(x);
