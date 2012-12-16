@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -26,16 +26,6 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	 */
 	public static final String STATUS[] = { "Draft", "Submitted", "Hold", "OK", "Rejected" };
 	private static final String[] ROW_CLASSES = { "opt2", "opt1", "warn", null, "err" };
-
-	/**
-	 * Valid Flight Simulator version strings.
-	 */
-	public static final String FSVERSION[] = { "Unknown", "X-Plane", "FS98", "FS2000", "FS2002", "FS2004", "FSX", "Prepar3D" };
-
-	/**
-	 * Valid Flight Simulator version values.
-	 */
-	public static final int FSVERSION_CODE[] = { 0, 100, 98, 2000, 2002, 2004, 2006, 2008 };
 
 	/**
 	 * Flight flown without Equipment Type Rating.
@@ -147,7 +137,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	private Date _disposedOn;
 	private int _length;
 	private int _status = FlightReport.DRAFT;
-	private int _fsVersion;
+	private Simulator _fsVersion;
 	private int _attr;
 	private int _pax;
 	private double _load;
@@ -290,30 +280,12 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	}
 
 	/**
-	 * The Flight Simulator version used for this Flight.
+	 * The Simulator version used for this Flight.
 	 * @return the version number
-	 * @see FlightReport#getFSVersionCode()
-	 * @see FlightReport#setFSVersion(int)
-	 * @see FlightReport#setFSVersion(String)
+	 * @see FlightReport#setFSVersion(Simulator)
 	 */
-	public int getFSVersion() {
+	public Simulator getFSVersion() {
 		return _fsVersion;
-	}
-
-	/**
-	 * The Flight Simulator version code used for this Flight.
-	 * @return the version code
-	 * @see FlightReport#getFSVersion()
-	 * @see FlightReport#setFSVersion(String)
-	 * @see FlightReport#setFSVersion(int)
-	 */
-	public String getFSVersionCode() {
-		for (int x = 0; x < FSVERSION_CODE.length; x++) {
-			if (_fsVersion == FSVERSION_CODE[x])
-				return FSVERSION[x];
-		}
-
-		return FSVERSION[0];
 	}
 
 	/**
@@ -540,39 +512,11 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 
 	/**
 	 * Set the Flight Simulator version used for this flight.
-	 * @param version the Flight Simulator version code as found in FlightConstants.FSVERSION_CODE[]
-	 * @throws IllegalArgumentException if the version code cannot be found
-	 * @see FlightReport#setFSVersion(String)
-	 * @see FlightReport#getFSVersion()
-	 * @see FlightReport#FSVERSION_CODE
-	 */
-	public void setFSVersion(int version) {
-		for (int x = 0; x < FlightReport.FSVERSION_CODE.length; x++) {
-			if (version == FlightReport.FSVERSION_CODE[x]) {
-				_fsVersion = version;
-				return;
-			}
-		}
-
-		throw new IllegalArgumentException("Invalid Flight Simulator version - " + version);
-	}
-
-	/**
-	 * Set the Flight Simulator version used for this flight.
-	 * @param version the Flight Simulator version as found in FlightReport.FSVERSION[]
-	 * @throws IllegalArgumentException if the version cannot be found
-	 * @see FlightReport#setFSVersion(int)
+	 * @param sim the Simulator
 	 * @see FlightReport#getFSVersion()
 	 */
-	public void setFSVersion(String version) {
-		for (int x = 0; x < FlightReport.FSVERSION.length; x++) {
-			if (FlightReport.FSVERSION[x].equals(version)) {
-				_fsVersion = FlightReport.FSVERSION_CODE[x];
-				return;
-			}
-		}
-
-		throw new IllegalArgumentException("Invalid Flight Simulator version - " + version);
+	public void setFSVersion(Simulator sim) {
+		_fsVersion = sim;
 	}
 
 	/**
