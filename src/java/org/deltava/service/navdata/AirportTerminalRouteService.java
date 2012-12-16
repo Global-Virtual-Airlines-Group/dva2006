@@ -45,8 +45,8 @@ public class AirportTerminalRouteService extends WebService {
 		Collection<TerminalRoute> routes = new ArrayList<TerminalRoute>();
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
-			routes.addAll(dao.getRoutes(a.getICAO(), TerminalRoute.Type.SID));
-			routes.addAll(dao.getRoutes(a.getICAO(), TerminalRoute.Type.STAR));
+			routes.addAll(dao.getRoutes(a, TerminalRoute.Type.SID));
+			routes.addAll(dao.getRoutes(a, TerminalRoute.Type.STAR));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
