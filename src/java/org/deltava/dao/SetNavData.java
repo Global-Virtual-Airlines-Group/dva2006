@@ -9,7 +9,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -122,7 +122,7 @@ public class SetNavData extends DAO {
 	      prepareStatement("INSERT INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, SEQ, WAYPOINT, "
 	    		  + "WPTYPE, LATITUDE, LONGITUDE, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setString(1, tr.getICAO());
-	      _ps.setInt(2, tr.getType());
+	      _ps.setInt(2, tr.getType().ordinal());
 	      _ps.setString(3, tr.getName());
 	      _ps.setString(4, tr.getTransition());
 	      _ps.setString(5, tr.getRunway());
@@ -224,7 +224,7 @@ public class SetNavData extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.SID_STAR WHERE (ITEMTYPE=?) AND (ICAO=?) "
 					+ "AND (NAME=?) AND (TRANSITION=?) AND (RUNWAY=?)");
-			_ps.setInt(1, tr.getType());
+			_ps.setInt(1, tr.getType().ordinal());
 			_ps.setString(2, tr.getICAO());
 			_ps.setString(3, tr.getName());
 			_ps.setString(4, tr.getTransition());
