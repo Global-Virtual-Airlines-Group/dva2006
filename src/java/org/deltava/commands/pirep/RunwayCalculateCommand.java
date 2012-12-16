@@ -17,7 +17,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A Web Site Command to recalculate the runways used.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 4.0
  */
 
@@ -48,7 +48,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 				throw securityException("Cannot modify runways");
 			
 			// Convert the flight report
-			ACARSFlightReport afr = (ACARSFlightReport) fr;
+			FDRFlightReport afr = (FDRFlightReport) fr;
 
 			// Load the flight data
 			GetACARSData acdao = new GetACARSData(con);
@@ -86,7 +86,7 @@ public class RunwayCalculateCommand extends AbstractCommand {
 
 			// Save the runways
 			if (isUpdated) {
-				SetACARSData awdao = new SetACARSData(con);
+				SetACARSRunway awdao = new SetACARSRunway(con);
 				awdao.writeRunways(info.getID(), rD, rA);
 			}
 		} catch (DAOException de) {

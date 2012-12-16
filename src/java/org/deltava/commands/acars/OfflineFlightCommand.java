@@ -32,7 +32,7 @@ import org.gvagroup.acars.*;
 /**
  * A Web Site Command to allow users to submit Offline Flight Reports.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.4
  */
 
@@ -190,8 +190,8 @@ public class OfflineFlightCommand extends AbstractCommand {
 			
 			// Get the SID/STAR data
 			GetNavRoute nvdao = new GetNavRoute(con);
-			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.SID, flight.getSID(), true));
-			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.STAR, flight.getSTAR(), true));
+			inf.setSID(nvdao.getRoute(afr.getAirportD(), TerminalRoute.Type.SID, flight.getSID(), true));
+			inf.setSTAR(nvdao.getRoute(afr.getAirportA(), TerminalRoute.Type.STAR, flight.getSTAR(), true));
 			
 			// Create comments field
 			Collection<String> comments = new LinkedHashSet<String>();
@@ -439,7 +439,7 @@ public class OfflineFlightCommand extends AbstractCommand {
 			ctx.startTX();
 
 			// Write the connection/info records
-			SetACARSData awdao = new SetACARSData(con);
+			SetACARSRunway awdao = new SetACARSRunway(con);
 			awdao.createFlight(inf);
 			afr.setDatabaseID(DatabaseID.ACARS, inf.getID());
 			awdao.writeSIDSTAR(inf.getID(), inf.getSID());
