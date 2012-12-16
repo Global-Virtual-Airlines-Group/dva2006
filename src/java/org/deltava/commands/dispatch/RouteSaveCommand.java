@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to create a new ACARS Dispatcher route.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 2.2
  */
 
@@ -62,7 +62,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			GetNavRoute dao = new GetNavRoute(con);
 			
 			// Check if we have a SID - fix wonkiness if terminating the SID early 
-			TerminalRoute sid = dao.getRoute(rp.getAirportD(), TerminalRoute.SID, ctx.getParameter("sid"), true);
+			TerminalRoute sid = dao.getRoute(rp.getAirportD(), TerminalRoute.Type.SID, ctx.getParameter("sid"), true);
 			if (sid != null) {
 				rp.setSID(sid.getCode());
 				String transition = wpCodes.isEmpty() ? sid.getTransition() : wpCodes.get(0);
@@ -78,7 +78,7 @@ public class RouteSaveCommand extends AbstractCommand {
 			}
 			
 			// Check if we have a STAR - fix wonkiness if joining the STAR late
-			TerminalRoute star = dao.getRoute(rp.getAirportA(), TerminalRoute.STAR, ctx.getParameter("star"), true);
+			TerminalRoute star = dao.getRoute(rp.getAirportA(), TerminalRoute.Type.STAR, ctx.getParameter("star"), true);
 			if (star != null) {
 				rp.setSTAR(star.getCode());
 				String transition = wpCodes.isEmpty() ? star.getTransition() : wpCodes.get(wpCodes.size() - 1);
