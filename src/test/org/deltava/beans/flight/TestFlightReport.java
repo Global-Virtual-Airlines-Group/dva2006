@@ -7,6 +7,7 @@ import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
 import org.deltava.beans.Flight;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.Airport;
 
@@ -55,8 +56,8 @@ public class TestFlightReport extends AbstractBeanTestCase {
         checkProperty("status", Integer.valueOf(2));
         assertEquals(FlightReport.STATUS[_fr.getStatus()], _fr.getStatusName());
         checkProperty("FSVersion", Integer.valueOf(2002));
-        _fr.setFSVersion("FS2000");
-        assertEquals(2000, _fr.getFSVersion());
+        _fr.setFSVersion(Simulator.FS9);
+        assertEquals(Simulator.FS9, _fr.getFSVersion());
         _fr.setStatus("Hold");
         assertEquals(FlightReport.HOLD, _fr.getStatus());
     }
