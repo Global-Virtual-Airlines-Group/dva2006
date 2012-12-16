@@ -4,25 +4,25 @@ package org.deltava.commands.schedule;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.flight.FlightReport;
+import org.deltava.beans.Simulator;
+import org.deltava.beans.flight.*;
+import org.deltava.beans.schedule.ScheduleSearchCriteria;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.ComboUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to plot a flight route.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
 public class RoutePlotCommand extends AbstractCommand {
 	
-	private static final List<?> SIM_VERSIONS = ComboUtils.fromArray(new String[] {"Flight Simulator X", 
-			"Flight Simulator 2004", "X-Plane 9", "Prepar3D"}, new String[] {"FSX", "FS9", "XP9", "P3D"}); 
+	private static final List<Simulator> SIM_VERSIONS = Arrays.asList(Simulator.FS9, Simulator.FSX, Simulator.P3D, Simulator.XP9);
 
 	/**
 	 * Executes the command.
@@ -37,15 +37,27 @@ public class RoutePlotCommand extends AbstractCommand {
 			// Look for a draft PIREP
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport dfr = frdao.get(ctx.getID());
-			if (dfr != null) {
+			if ((dfr != null) && (dfr.getDatabaseID(DatabaseID.PILOT) == ctx.getUser().getID())) {
 				ctx.setAttribute("flight", dfr, REQUEST);
 				ctx.setAttribute("airlines", Collections.singleton(dfr.getAirline()), REQUEST);
 				ctx.setAttribute("airportsD", Collections.singleton(dfr.getAirportD()), REQUEST);
 				ctx.setAttribute("airportsA", Collections.singleton(dfr.getAirportA()), REQUEST);
+				if (dfr.getFSVersion() != Simulator.UNKNOWN)
+					ctx.setAttribute("sim", dfr.getFSVersion(), REQUEST);
 			} else {
 				ctx.setAttribute("airlines", SystemData.getAirlines().values(), REQUEST);
 				ctx.setAttribute("airportsD", Collections.emptyList(), REQUEST);
 				ctx.setAttribute("airportsA", Collections.emptyList(), REQUEST);
+				
+				// Load the previous approved/submitted flight report
+				frdao.setQueryMax(10);
+				List<FlightReport> results = frdao.getByPilot(ctx.getUser().getID(), new ScheduleSearchCriteria("SUBMITTED DESC"));
+				for (FlightReport fr : results) {
+					if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
+						ctx.setAttribute("sim", fr.getFSVersion(), REQUEST);
+						break;
+					}
+				}
 			}
 			
 			// Load aircraft types
