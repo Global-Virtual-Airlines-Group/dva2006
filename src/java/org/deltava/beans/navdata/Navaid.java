@@ -4,12 +4,12 @@ package org.deltava.beans.navdata;
 /**
  * An enumeration for Navigation Data element types.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 5.0
  */
 
 public enum Navaid {
-	AIRPORT("Airport"), VOR("VOR"), NDB("NDB"), INT("Intersection"), RUNWAY("Runway");
+	AIRPORT("Airport"), VOR("VOR"), NDB("NDB"), INT("Intersection"), RUNWAY("Runway"), GATE("Gate");
 
 	private final String _name;
 	
