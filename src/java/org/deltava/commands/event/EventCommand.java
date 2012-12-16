@@ -19,7 +19,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A Web Site Command to display an Online Event.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -131,7 +131,7 @@ public class EventCommand extends AbstractCommand {
 				Map<Integer, Pilot> evPilots = pdao.getByID(ids, tableName);
 				
 				// Load pilots who may have logged the flight but not signed up
-				if (e.getStatus() == Status.COMPLETE) {
+				if ((e.getStatus() == Status.COMPLETE) || (e.getStatus() == Status.CLOSED)) {
 					Collection<Integer> newIDs = new HashSet<Integer>();
 					for (Iterator<FlightReport> fi =flights.iterator(); fi.hasNext(); ) {
 						FlightReport fr = fi.next();
