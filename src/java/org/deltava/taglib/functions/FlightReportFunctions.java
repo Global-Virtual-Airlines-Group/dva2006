@@ -8,7 +8,7 @@ import org.deltava.beans.flight.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -71,24 +71,6 @@ public class FlightReportFunctions {
      */
     public static boolean isXACARS(FlightReport fr) {
         return (fr instanceof XACARSFlightReport) || (fr.hasAttribute(FlightReport.ATTR_XACARS));
-    }
-    
-    /**
-     * Returns if this Flight was logged using Microsoft Flight Simulator.
-     * @param fr the Flight Report
-     * @return TRUE if the Flight was logged using a version of MSFS
-     */
-    public static boolean isMSFS(FlightReport fr) {
-    	return (fr != null) && (fr.getFSVersion() != 100) && (fr.getFSVersion() != 0);
-    }
-    
-    /**
-     * Returns if this Flight was logged using Laminar Research X-Plane.
-     * @param fr the Flight Report
-     * @return TRUE if the Flight was logged using X-Plane
-     */
-    public static boolean isXPlane(FlightReport fr) {
-    	return (fr != null) && (fr.getFSVersion() == 100);
     }
     
     /**

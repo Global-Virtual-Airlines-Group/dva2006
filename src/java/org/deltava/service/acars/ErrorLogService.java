@@ -7,6 +7,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 
 import org.deltava.dao.*;
@@ -16,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to log ACARS client errors.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -30,6 +31,7 @@ public class ErrorLogService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@Override
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// If this isn't a post, just return a 200
@@ -42,7 +44,7 @@ public class ErrorLogService extends WebService {
 		err.setStackDump(ctx.getParameter("stackDump"));
 		err.setClientBuild(StringUtils.parse(ctx.getParameter("clientBuild"), 1));
 		err.setBeta(StringUtils.parse(ctx.getParameter("beta"), 0));
-		err.setFSVersion(StringUtils.parse(ctx.getParameter("fsVersion"), 2004));
+		err.setSimulator(Simulator.fromVersion(StringUtils.parse(ctx.getParameter("fsVersion"), 2004)));
 		err.setFSUIPCVersion(ctx.getParameter("fsuipcVersion"));
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
@@ -79,6 +81,7 @@ public class ErrorLogService extends WebService {
 	 * Tells the Web Service Servlet to secure this Service.
 	 * @return TRUE
 	 */
+	@Override
 	public final boolean isSecure() {
 		return true;
 	}

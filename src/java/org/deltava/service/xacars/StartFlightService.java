@@ -1,4 +1,4 @@
-// Copyright 2011 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.xacars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
 
@@ -18,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Start Flight service.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 4.1
  */
 
@@ -71,9 +72,9 @@ public class StartFlightService extends XAService {
 		// Get the simulator version
 		String sim = getSimulator(ctx);
 		if (sim.contains("MSFS"))
-			info.setFSVersion(2004);
+			info.setFSVersion(Simulator.FS9);
 		else
-			info.setFSVersion(100);
+			info.setFSVersion(Simulator.XP9);
 		
 		// Parse the position data
 		XARouteEntry pos = new XARouteEntry(GeoUtils.parseXACARS(data.get(6)), new Date());

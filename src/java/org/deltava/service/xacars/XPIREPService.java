@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 /**
  * The XACARS Flight Report Web Service. 
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 4.1
  */
 
@@ -251,7 +251,7 @@ public class XPIREPService extends XAService {
 			// Get the SID
 			if (wps.size() > 2) {
 				String name = wps.get(0);
-				TerminalRoute sid = navdao.getBestRoute(inf.getAirportD(), TerminalRoute.SID, TerminalRoute.makeGeneric(name), wps.get(1), fi.getRunwayD());
+				TerminalRoute sid = navdao.getBestRoute(inf.getAirportD(), TerminalRoute.Type.SID, TerminalRoute.makeGeneric(name), wps.get(1), fi.getRunwayD());
 				if (sid != null) {
 					wps.remove(0);
 					fi.setSID(sid);
@@ -261,7 +261,7 @@ public class XPIREPService extends XAService {
 			// Get the STAR
 			if (wps.size() > 2) {
 				String name = wps.get(wps.size() - 1);
-				TerminalRoute star = navdao.getBestRoute(inf.getAirportA(), TerminalRoute.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), fi.getRunwayA());
+				TerminalRoute star = navdao.getBestRoute(inf.getAirportA(), TerminalRoute.Type.STAR, TerminalRoute.makeGeneric(name), wps.get(wps.size() - 2), fi.getRunwayA());
 				if (star != null) {
 					wps.remove(wps.size() - 1);
 					fi.setSTAR(star);
@@ -272,7 +272,7 @@ public class XPIREPService extends XAService {
 			ctx.startTX();
 			
 			// Write the ACARS data
-			SetACARSData awdao = new SetACARSData(con);
+			SetACARSRunway awdao = new SetACARSRunway(con);
 			awdao.createFlight(fi);
 			awdao.writeSIDSTAR(fi.getID(), fi.getSID());
 			awdao.writeSIDSTAR(fi.getID(), fi.getSTAR());
