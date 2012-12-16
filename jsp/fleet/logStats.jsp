@@ -40,11 +40,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Sort Options</td>
- <td clas="data"><el:combo name="orderBy" idx="*" size="1" options="${sortOptions}" value="${param.orderBy}" /></td>
+ <td class="data"><el:combo name="orderBy" idx="*" size="1" options="${sortOptions}" value="${param.orderBy}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td clas="data"><el:box name="sortLabel" idx="*" className="sec small" value="1" label="Sort Labels instead of Totals" checked="${param.sortLabel == '1'}" /></td>
+ <td class="data"><el:box name="sortLabel" idx="*" className="sec small" value="1" label="Sort Labels instead of Totals" checked="${param.sortLabel == '1'}" /></td>
 </tr>
 </el:table>
 
