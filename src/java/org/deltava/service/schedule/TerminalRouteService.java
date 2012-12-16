@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display the SIDs and STARs for a particular Airport pair.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 2.2
  */
 
@@ -43,9 +43,9 @@ public class TerminalRouteService extends WebService {
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
 			if (aD != null)
-				tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aD.getICAO(), TerminalRoute.SID)));
+				tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aD, TerminalRoute.Type.SID)));
 			if (aA != null)
-				tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aA.getICAO(), TerminalRoute.STAR)));			
+				tRoutes.addAll(new TreeSet<TerminalRoute>(dao.getRoutes(aA, TerminalRoute.Type.STAR)));			
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 		} finally {
@@ -58,9 +58,8 @@ public class TerminalRouteService extends WebService {
 		doc.setRootElement(re);
 		
 		// Add SID/STAR names to XML document
-		for (Iterator<TerminalRoute> i = tRoutes.iterator(); i.hasNext();) {
-			TerminalRoute tr = i.next();
-			Element e = new Element(tr.getTypeName().toLowerCase());
+		for (TerminalRoute tr : tRoutes) {
+			Element e = new Element(tr.getType().name().toLowerCase());
 			e.setAttribute("name", tr.getName());
 			e.setAttribute("transition", tr.getTransition());
 			e.setAttribute("code", tr.getCode());
