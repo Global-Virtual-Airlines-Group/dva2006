@@ -3,30 +3,23 @@ package org.deltava.beans.fleet;
 
 import java.util.*;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
 import org.deltava.beans.system.AirlineInformation;
-
-import org.deltava.util.StringUtils;
 
 /**
  * A bean to store information about Fleet Library installers.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
 public class Installer extends FleetEntry implements ComboAlias {
 	
-	public static final String[] FS_NAMES = new String[] {"Microsoft Flight Simulator 2002", "Microsoft Flight Simulator 2004", 
-		"Microsoft Flight Simulator X", "Lockheed-Martin Prepar3D"};
-	public static final String[] FS_CODES = new String[] {"FS2002", "FS2004", "FSX", "P3D"};
-
 	private final Collection<AirlineInformation> _apps = new TreeSet<AirlineInformation>();
+	private final Collection<Simulator> _fsVersions = new LinkedHashSet<Simulator>();
 	
 	private String _imgName;
     private String _code;
-    
-    private final Collection<String> _fsVersions = new LinkedHashSet<String>();
     
     /**
      * Creates a new Fleet Installer entry for a given file.
@@ -68,10 +61,8 @@ public class Installer extends FleetEntry implements ComboAlias {
      * @return a version string
      */
     public String getVersion() {
-        StringBuilder buf = new StringBuilder(String.valueOf(getMajorVersion()));
-        buf.append('.');
-        buf.append(String.valueOf(getMinorVersion()));
-        buf.append('.');
+        StringBuilder buf = new StringBuilder(String.valueOf(getMajorVersion())).append('.');
+        buf.append(String.valueOf(getMinorVersion())).append('.');
         buf.append(String.valueOf(getSubVersion()));
         return buf.toString();
     }
@@ -98,57 +89,20 @@ public class Installer extends FleetEntry implements ComboAlias {
     }
     
     /**
-     * Adds a Flight Simulator version compatible with this Fleet Installer.
-     * @param fsCode a Flight Simulator version code
+     * Adds a Simulator version compatible with this Fleet Installer.
+     * @param sim a Simulator
      * @see Installer#getFSVersions()
-     * @see Installer#getFSVersionNames()
      */
-    public void addFSVersion(String fsCode) {
-    	if (fsCode == null)
-    		return;
-    	
-    	fsCode = fsCode.toUpperCase();
-    	if (StringUtils.arrayIndexOf(FS_CODES, fsCode) != -1)
-    		_fsVersions.add(fsCode);
+    public void addFSVersion(Simulator sim) {
+    	_fsVersions.add(sim);
     }
     
     /**
-     * Sets the Flight Simulator versions compatible with this Fleet Installer.
-     * @param fsCodes a comma-delimited list of Flight Simulator version codes
-     * @see Installer#getFSVersions()
-     * @see Installer#getFSVersionNames()
+     * Returns the Simulator versions compatible with this Installer.
+     * @return a Collection of Simulators
      */
-    public void setFSVersions(String fsCodes) {
-    	_fsVersions.clear();
-    	for (Iterator<String> i = StringUtils.split(fsCodes, ",").iterator(); i.hasNext(); )
-    		addFSVersion(i.next());
-    }
-    
-    /**
-     * Returns the Flight Simulator versions compatible with this Installer.
-     * @return a Collection of version codes
-     * @see Installer#getFSVersionNames()
-     * @see Installer#setFSVersions(String)
-     */
-    public Collection<String> getFSVersions() {
+    public Collection<Simulator> getFSVersions() {
     	return _fsVersions;
-    }
-    
-    /**
-     * Returns the Flight Simulator versions compatible with this Installer.
-     * @return a Collection of version names
-     * @see Installer#getFSVersions()
-     * @see Installer#setFSVersions(String)
-     */
-    public Collection<String> getFSVersionNames() {
-    	Collection<String> results = new LinkedHashSet<String>();
-    	for (Iterator<String> i = _fsVersions.iterator(); i.hasNext(); ) {
-    		int ofs = StringUtils.arrayIndexOf(FS_CODES, i.next());
-    		if (ofs != -1)
-    			results.add(FS_NAMES[ofs]);
-    	}
-    	
-    	return results;
     }
     
     /**
