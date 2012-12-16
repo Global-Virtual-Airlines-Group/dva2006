@@ -31,7 +31,7 @@ if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
 if (!validateCombo(form.eq, 'Equipment Type')) return false;
 if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
 if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
-if (!validateCheckBox(form.fsVersion, 1, 'Flight Simulator Version')) return false;
+if (!validateCombo(form.fsVersion, 1, 'Simulator Version')) return false;
 <c:if test="${!isAssign}">
 if (!validateCombo(form.airline, 'Airline')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
@@ -185,8 +185,8 @@ return true;
  <td class="data"><el:check type="radio" name="network" idx="*" width="70" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
 </tr>
 <tr>
- <td class="label">Flight Simulator</td>
- <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="${pirep.FSVersionCode}" /></td>
+ <td class="label">Simulator</td>
+ <td class="data"><el:combo name="fsVersion" idx="*" size="1" required="true" options="${fsVersions}" firstEntry="[ SIMULATOR ]" value="${pirep.FSVersion}" /></td>
 </tr>
 <c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 10}" scope="page" />
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="page" />
