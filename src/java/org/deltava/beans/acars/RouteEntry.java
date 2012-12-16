@@ -12,11 +12,11 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 1.0
  */
 
-public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation {
+public abstract class RouteEntry extends ACARSMapEntry implements GeospaceLocation, CalendarEntry {
 
 	private Date _date;
 	private FlightPhase _phase;
