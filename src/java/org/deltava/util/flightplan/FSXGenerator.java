@@ -37,8 +37,8 @@ public class FSXGenerator extends MSFSGenerator {
 			ctx.println("departure_name=" + _aD.getName());
 			if (_gateD != null) {
 				ctx.println("departure_position=" + _gateD.getName());
-				ctx.print("departure_lat=" + StringUtils.format(_gateD.getLatitude(), "#0.00000"));
-				ctx.print("departure_lng=" + StringUtils.format(_gateD.getLongitude(), "##0.00000"));
+				ctx.println("departure_lat=" + StringUtils.format(_gateD.getLatitude(), "#0.00000"));
+				ctx.println("departure_lng=" + StringUtils.format(_gateD.getLongitude(), "##0.00000"));
 			} else
 				ctx.println("departure_position=GATE ?");
 			
