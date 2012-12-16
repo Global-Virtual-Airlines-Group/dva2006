@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to display an ACARS client error report.
  * @author Luke
- * @version 1.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -23,6 +23,7 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -39,6 +40,10 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			UserData ud = uddao.get(err.getUserID());
 			ctx.setAttribute("author", pdao.get(ud), REQUEST);
 			
+			// Load the address data
+			GetIPLocation ipdao = new GetIPLocation(con);
+			ctx.setAttribute("ipInfo", ipdao.get(err.getRemoteAddr()), REQUEST);
+			
 			// Save the error report
 			ctx.setAttribute("err", err, REQUEST);
 		} catch (DAOException de) {
@@ -47,7 +52,7 @@ public class ErrorLogEntryCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Forward to the error list
+		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/acars/errorReport.jsp");
 		result.setSuccess(true);
