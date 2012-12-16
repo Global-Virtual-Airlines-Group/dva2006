@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
  * A helper class to calculate diversion airports. Airports are given a score based on maximum
  * runway length in excess of minimums and distance from the destination.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 4.2
  */
 
@@ -54,24 +54,30 @@ public class AlternateAirportHelper {
 	 */
 	public static List<Airport> calculateAlternates(Aircraft ac, GeoLocation dst) {
 		
-		int maxDistance = ac.getCruiseSpeed() / 2;
+		int maxDistance = Math.round(ac.getCruiseSpeed() / 0.75f);
 		Map<Score, Airport> results = new TreeMap<Score, Airport>(Collections.reverseOrder());
 		Collection<Airport> airports = new HashSet<Airport>(SystemData.getAirports().values());
 		String dstCode = (dst instanceof ICAOAirport) ? ((ICAOAirport) dst).getICAO() : null;
 		
 		// Filter airports
 		for (Airport ap : airports) {
+			int airlines = ap.getAirlineCodes().size();
 			int distance = ap.getPosition().distanceTo(dst);
 			int rwyDelta = (ap.getMaximumRunwayLength() - ac.getTakeoffRunwayLength());
 			if ((rwyDelta < 0) || (distance > maxDistance) || (ap.getICAO().equals(dstCode)))
 				continue;
 			
+			// Adjust distance based on airlines served
+			if (airlines == 0)
+				distance = Math.min(maxDistance, distance+120);
+			else if (airlines > 3)
+				distance -= 125;
+			
 			// Calculate the score
-			Score s = new Score(rwyDelta, distance, maxDistance);
+			Score s = new Score(rwyDelta, Math.max(10, distance), maxDistance);
 			results.put(s, ap);
 		}
 		
-		// Sort based on distance to destination
 		return new ArrayList<Airport>(results.values());
 	}
 }
