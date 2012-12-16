@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Flight;
+import org.deltava.beans.Simulator;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 
@@ -13,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for reading XACARS data from the database.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 4.1
  */
 
@@ -170,7 +171,7 @@ public class GetXACARS extends DAO {
 				inf.setClimbPhase(XAFlightInfo.ClimbPhase.values()[rs.getInt(35)]);
 				inf.setZeroFuelWeight(rs.getInt(36));
 				inf.setRoute(rs.getString(37));
-				inf.setFSVersion(rs.getInt(38));
+				inf.setFSVersion(Simulator.fromVersion(rs.getInt(38)));
 				results.add(inf);
 			}
 		}
