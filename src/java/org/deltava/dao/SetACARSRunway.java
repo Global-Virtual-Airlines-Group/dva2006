@@ -76,6 +76,7 @@ public class SetACARSRunway extends SetACARSData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeGates(int flightID, Gate gD, Gate gA) throws DAOException {
+		if ((gD == null) && (gA == null)) return;
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO acars.GATEDATA (ID, ICAO, GATE, ISDEPARTURE) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, flightID);

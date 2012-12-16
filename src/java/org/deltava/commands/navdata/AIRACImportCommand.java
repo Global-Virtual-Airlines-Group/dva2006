@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2012 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.cache.CacheManager;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -162,6 +162,9 @@ public class AIRACImportCommand extends AbstractCommand {
 								lon = Double.parseDouble(txtData.substring(16).trim());
 								nd = new Intersection(txtData.substring(0, 5), lat, lon);
 							}
+							break;
+							
+						default:
 							break;
 						}
 					} catch (IllegalArgumentException | StringIndexOutOfBoundsException nfe) {

@@ -649,12 +649,6 @@
 		<roles>Schedule,Operations</roles>
 	</command>
 
-	<command id="trouteplot">
-		<name>SID/STAR Plot</name>
-		<class>org.deltava.commands.navdata.TerminalRoutePlotCommand</class>
-		<roles>Schedule,Operations</roles>
-	</command>
-
 	<command id="navsearch">
 		<name>Navigation Data Search</name>
 		<class>org.deltava.commands.navdata.NavaidSearchCommand</class>
@@ -1155,6 +1149,12 @@
 	<command id="updtd">
 		<name>PIREP Update Touchdown</name>
 		<class>org.deltava.commands.pirep.UpdateTouchdownCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
+	<command id="gaterecalc">
+		<name>Recalculate Gates</name>
+		<class>org.deltava.commands.pirep.GateCalculateCommand</class>
 		<roles>PIREP</roles>
 	</command>
 
