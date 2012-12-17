@@ -71,6 +71,7 @@ public enum Simulator implements ComboAlias {
 	 */
 	public static Simulator fromName(String name) {
 		try {
+			if ("FS2K4".equals(name)) return Simulator.FS9;
 			return Simulator.valueOf(name.toUpperCase());
 		} catch (Exception e) {
 			return UNKNOWN;
