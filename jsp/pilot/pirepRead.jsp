@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ page session="false" %>
-<%@ page buffer="40kb" autoFlush="true" %> 
+<%@ page buffer="32kb" autoFlush="true" %> 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -48,16 +48,16 @@ return true;
 <content:js name="json2" />
 <content:js name="acarsFlightMap" />
 <script type="text/javascript">
-function zoomTo(lat, lng)
+function zoomTo(lat, lng, zoom)
 {
-map.setZoom(12);
+map.setZoom((zoom == null) ? 12 : zoom);
 map.panTo(new google.maps.LatLng(lat, lng));
 return true;
 }
 <content:filter roles="PIREP,HR,Developer,Operations">
 function showRunwayChoices()
 {
-var URLflags = 'height=310,width=680,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no';
+var URLflags = 'height=330,width=690,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=no';
 window.open('/rwychoices.do?id=${pirep.hexID}', 'rwyChoices', URLflags);
 return true;
 }
