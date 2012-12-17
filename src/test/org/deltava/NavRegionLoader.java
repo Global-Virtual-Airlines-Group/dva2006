@@ -31,7 +31,7 @@ public class NavRegionLoader extends BGLLoaderTestCase {
 		
 		// Connect to the database
 		Class.forName("com.mysql.jdbc.Driver");
-		_c = DriverManager.getConnection(JDBC_URL, "luke", "14072");
+		_c = DriverManager.getConnection(JDBC_URL, "luke", "test");
 		assertNotNull(_c);
 		_c.setAutoCommit(false);
 	}
