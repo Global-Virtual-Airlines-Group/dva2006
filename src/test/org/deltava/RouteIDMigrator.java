@@ -8,7 +8,7 @@ public class RouteIDMigrator {
 	public static void main(String[] args) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection c = DriverManager.getConnection("jdbc:mysql://127.0.0.1/events", "luke", "14072");
+			Connection c = DriverManager.getConnection("jdbc:mysql://127.0.0.1/events", "luke", "test");
 			
 			// Get max route_ID
 			Map<Integer, Integer> maxIDs = new HashMap<Integer, Integer>();

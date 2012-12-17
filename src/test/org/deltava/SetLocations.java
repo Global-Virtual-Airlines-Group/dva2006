@@ -45,7 +45,7 @@ public class SetLocations extends TestCase {
 		_c.setAutoCommit(false);
 		assertFalse(_c.getAutoCommit());
 		
-		_c2 = DriverManager.getConnection(JDBC2_URL, "luke", "14072");
+		_c2 = DriverManager.getConnection(JDBC2_URL, "luke", "test");
 		assertNotNull(_c2);
 		_c2.setAutoCommit(false);
 		assertFalse(_c2.getAutoCommit());

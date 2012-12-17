@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 
 public class TestETOPSFull extends TestCase {
 	
-	private static final String URL = "jdbc:mysql://polaris.sce.net/dva?user=luke&password=14072";
+	private static final String URL = "jdbc:mysql://polaris.sce.net/dva?user=luke&password=test";
 	
 	private Connection _c;
 
