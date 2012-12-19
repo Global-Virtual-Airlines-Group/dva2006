@@ -1133,6 +1133,12 @@
 		<class>org.deltava.commands.pirep.RunwayCalculateCommand</class>
 		<roles>PIREP</roles>
 	</command>
+	
+	<command id="rejectedpireps">
+		<name>Rejected Flight Reports</name>
+		<class>org.deltava.commands.pirep.RejectedFlightsCommand</class>
+		<roles>HR,Operations</roles>
+	</command>
 
 	<command id="rwychoices">
 		<name>Runway Choices</name>

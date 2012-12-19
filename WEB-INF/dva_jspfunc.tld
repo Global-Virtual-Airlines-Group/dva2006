@@ -132,6 +132,13 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>int assignID(org.deltava.beans.flight.FlightReport)</function-signature>
 	</function>
+
+	<!-- Get the Disposal Pilot Database ID -->
+	<function>
+		<name>DisposalID</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>int disposalID(org.deltava.beans.flight.FlightReport)</function-signature>
+	</function>
 	
 	<!-- Get the Pilot Database ID -->
 	<function>

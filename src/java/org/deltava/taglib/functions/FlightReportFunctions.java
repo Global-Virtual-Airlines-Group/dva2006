@@ -47,6 +47,15 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns the Disposal ID for this Flight Report.
+     * @param fr the FlightReport
+     * @return the Disposal database ID
+     */
+    public static int disposalID(FlightReport fr) {
+    	return (fr == null) ? 0 : fr.getDatabaseID(DatabaseID.DISPOSAL);
+    }
+    
+    /**
      * Returns the Pilot ID for this Flight Report.
      * @param fr the Flight Report 
      * @return the Pilot database ID
