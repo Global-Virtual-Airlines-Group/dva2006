@@ -31,7 +31,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="rejectedpireps.do" method="post" validate="return false">
-<view:table className="view" cmd="pirepqueue">
+<view:table className="view" cmd="rejectedpireps">
 <!-- Table Header Bar-->
 <tr class="title">
  <td colspan="4" class="left caps"><content:airline /> REJECTED FLIGHT REPORTS</td>
@@ -64,7 +64,7 @@ return true;
  <td class="small">${pilot.name}</td>
  <td class="small"><fmt:text value="${pirep.airportD.name} - ${pirep.airportA.name}" /></td>
  <td class="sec">${pirep.equipmentType}</td>
- <td class="sec">${disposedBy.name}</td>
+ <td class="pri">${disposedBy.name}</td>
 </tr>
 </c:forEach>
 

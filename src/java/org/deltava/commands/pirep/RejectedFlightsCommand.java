@@ -20,8 +20,8 @@ import org.deltava.util.*;
 
 public class RejectedFlightsCommand extends AbstractViewCommand {
 	
-	private static final String[] SORT_CODES = {"PR.DATE, PR.SUBMITTED, PR.ID", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED", 
-		"PR.EQTYPE, PR.DATE, PR.SUBMITTED"};
+	private static final String[] SORT_CODES = {"PR.DATE DESC, PR.SUBMITTED DESC", "P.LASTNAME, P.FIRSTNAME, PR.SUBMITTED DESC", 
+		"PR.EQTYPE, PR.DATE DESC, PR.SUBMITTED DESC"};
 	private static final String[] SORT_NAMES = {"Submission Date", "Pilot Name", "Equipment Type"};
 	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
