@@ -39,6 +39,7 @@ public class FS9Generator extends MSFSGenerator {
 				ctx.println("departure_position=" + _gateD.getName());
 				ctx.println("departure_lat=" + StringUtils.format(_gateD.getLatitude(), "#0.00000"));
 				ctx.println("departure_lng=" + StringUtils.format(_gateD.getLongitude(), "##0.00000"));
+				ctx.println("departure_hdg=" + _gateD.getHeading());
 			} else
 				ctx.println("departure_position=GATE ?");
 			
