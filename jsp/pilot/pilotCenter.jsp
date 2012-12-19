@@ -935,6 +935,10 @@ scoring delays, discussion forum participation rates and Flight Report logging.<
  <td class="data">You can view statistics about the <content:airline /> membership and how long they
  have been members of the Airline.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="rejectedpireps">Rejected Flight Reports</el:cmd></td>
+ <td class="data">You can view rejected <content:airline /> Flight Reports.</td>
+</tr>
 </content:filter>
 <content:filter roles="Admin">
 <tr>
