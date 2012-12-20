@@ -128,7 +128,7 @@ public class RoutePlotMapService extends MapPlotService {
 					routePoints.addAll(sid.getWaypoints(wps.get(0)));
 				else
 					routePoints.addAll(sid.getWaypoints());
-			} else {
+			} else if (dr.getAirportD() != null) {
 				Runway r = dao.getRunway(dr.getAirportD(), ctx.getParameter("runway"));
 				if (r != null)
 					routePoints.add(r);
