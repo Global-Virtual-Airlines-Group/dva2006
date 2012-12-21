@@ -137,7 +137,7 @@ public class FlightReport extends Flight implements AuthoredBean, CalendarEntry,
 	private Date _disposedOn;
 	private int _length;
 	private int _status = FlightReport.DRAFT;
-	private Simulator _fsVersion;
+	private Simulator _fsVersion = Simulator.UNKNOWN;
 	private int _attr;
 	private int _pax;
 	private double _load;
