@@ -336,7 +336,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canReject && (!fn:isCheckFlight(pirep) || !fn:pending(checkRide))}">
  <el:cmdbutton url="dispose" link="${pirep}" op="reject" post="true" label="REJECT" />
-<c:if test="${isACARS && (!empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
+<c:if test="${isACARS && (empty checkRide)}"><content:filter roles="HR,PIREP,Operations">
  <el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" />
 </content:filter></c:if>
 </c:if>
