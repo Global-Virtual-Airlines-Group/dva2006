@@ -223,12 +223,14 @@
  <td class="data" colspan="${cspan}"><fmt:dec value="${pirep.averageFrameRate}" /> frames per second</td>
 </tr>
 </c:if>
+<content:filter roles="PIREP,Operations,Instructor,Examiner,HR">
 <c:if test="${!empty flightScore}">
 <tr>
  <td class="label">Flight Score</td>
  <td class="data caps bld" colspan="${cspan}"><span style="color:${flightScore.color}">${flightScore}</span></td>
 </tr>
 </c:if>
+</content:filter>
 <c:if test="${!empty flightInfo.route}">
 <tr>
  <td class="label top">Flight Route</td>
