@@ -14,10 +14,14 @@
 				</fileset>
 	    	</classpath>
 	    	<include name="java/org/deltava/beans/*.java" />
+			<include name="java/org/deltava/beans/flight/*.java" />
 			<include name="java/org/deltava/beans/navdata/*.java" />
 	    	<include name="java/org/deltava/beans/servinfo/*.java" />
 	    	<include name="java/org/deltava/beans/schedule/*.java" />
+			<include name="java/org/deltava/beans/acars/Restriction.java" />
+			<include name="java/org/deltava/beans/acars/RunwayDistance.java" />
 			<include name="java/org/deltava/beans/stats/DatedAccomplishmentID.java" />
+			<include name="java/org/deltava/beans/stats/LandingStatistics.java" />
 			<include name="java/org/deltava/beans/system/AirlineInformation.java" />
 			<include name="java/org/deltava/comparators/GeoComparator.java" />
 	    	<include name="java/org/deltava/dao/DAO.java" />
