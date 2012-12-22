@@ -27,9 +27,9 @@ import org.deltava.util.system.SystemData;
 public class FAAChartDownloadCommand extends AbstractCommand {
 	
 	private static final String[] MONTH_NAMES = {"January", "February", "March", "April", "May", "June", "July", "August",
-		"September", "October", "November", "December" };
+		"September", "October", "November", "December", "Extra Cycle" };
 	private static final List<ComboAlias> MONTHS = ComboUtils.fromArray(MONTH_NAMES, new String[] {"01", "02", "03", "04",
-		"05", "06", "07", "08", "09", "10", "11", "12"});
+		"05", "06", "07", "08", "09", "10", "11", "12", "13"});
 	
 	private class ChartLoader implements Runnable {
 		protected final Logger log = Logger.getLogger(ChartLoader.class);
