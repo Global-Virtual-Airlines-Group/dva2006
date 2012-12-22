@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 public class UsageTracker implements Runnable {
 
 	private final Logger log;
-	private static final String JDBC_URL = "jdbc:mysql://localhost/vatsim?dontTrackOpenResources=true&continueBatchOnError=true&user=luke&password=test";
+	private static final String JDBC_URL = "jdbc:mysql://localhost/vatsim?dontTrackOpenResources=true&continueBatchOnError=true&user=dva&password=***REMOVED***";
 
 	private final String _dataFile;
 	private final int _interval;
