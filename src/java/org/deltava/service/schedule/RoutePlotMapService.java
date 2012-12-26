@@ -157,7 +157,8 @@ public class RoutePlotMapService extends MapPlotService {
 			if (dr.getAirportA() != null) {
 				routePoints.add(new AirportLocation(dr.getAirportA()));
 				gdao.setQueryMax(25);
-				gates.addAll(gdao.getPopularGates(dr, sim, false));
+				if (dr.getAirportD() != null)
+					gates.addAll(gdao.getPopularGates(dr, sim, false));
 				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(dr.getAirportA(), TerminalRoute.Type.STAR));
 				tRoutes.addAll(stars);
 				
