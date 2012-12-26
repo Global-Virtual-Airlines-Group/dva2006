@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page session="false" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -316,9 +317,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" />
-<c:if test="${screenXSize < 1280}"> 
 <el:box name="showNavBar" value="true" label="Show Horizontal Navigation Menu" checked="${pilot.showNavBar}" />
- <span class="small">(Navigation Bar is not displayed at screen widths below 1280 pixels.)</span></c:if></td>
+ <span class="small">(Navigation Bar is not displayed at screen widths below 1280 pixels.)</span></td>
 </tr>
 <%@ include file="/jsp/pilot/staffEdit.jspf" %>
 <%@ include file="/jsp/pilot/eMailEdit.jspf" %>
