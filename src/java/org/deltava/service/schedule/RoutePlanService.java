@@ -47,13 +47,11 @@ public class RoutePlanService extends WebService {
 			alt = "35000";
 
 		// Validate the airports
-		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"));
+		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FS9);
 		if (aD == null)
 			throw error(SC_BAD_REQUEST, "Invalid Departure Airport - " + ctx.getParameter("airportD"), true);
 		else if (aA == null)
 			throw error(SC_BAD_REQUEST, "Invalid Arrival Airport - " + ctx.getParameter("airportA"), true);
-		else if (sim == Simulator.UNKNOWN)
-			throw error(SC_BAD_REQUEST, "Invalid Simulator - " + ctx.getParameter("simVersion"), true);
 
 		// Get the Flight Plan generator
 		FlightPlanGenerator fpgen = null;
