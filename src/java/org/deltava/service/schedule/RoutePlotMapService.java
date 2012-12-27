@@ -43,9 +43,7 @@ public class RoutePlotMapService extends MapPlotService {
 		
 		// Check if we download runways
 		boolean doRunways = Boolean.valueOf(ctx.getParameter("runways")).booleanValue();
-		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"));
-		if (sim == Simulator.UNKNOWN)
-			sim = Simulator.FSX;
+		Simulator sim = Simulator.fromName(ctx.getParameter("simVersion"), Simulator.FSX);
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<Runway> runways = new LinkedHashSet<Runway>();
