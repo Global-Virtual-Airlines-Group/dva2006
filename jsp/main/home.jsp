@@ -202,11 +202,11 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
  <td class="secB" style="width:145px;">${info.equipmentType}</td>
 <c:if test="${tl.isTakeoff}">
  <td class="left">Departed from ${info.airportD.name} (<fmt:airport airport="${info.airportD}" />)
- at <fmt:date date="${tl.date}" /></td>
+ at <fmt:date date="${tl.date}" t="HH:mm" /></td>
 </c:if>
 <c:if test="${!tl.isTakeoff}">
  <td class="left">Arrived at ${info.airportA.name} (<fmt:airport airport="${info.airportA}" />)
- at <fmt:date date="${tl.date}" /></td>
+ at <fmt:date date="${tl.date}" t="HH:mm" /></td>
 </c:if>
 </tr>
 </c:forEach>
