@@ -14,12 +14,12 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.http.GetGoogleGeocode;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version 4.1
+ * @version54.1
  * @since 1.0
  */
 
@@ -85,7 +85,7 @@ public class PilotLocationCommand extends AbstractCommand {
 
 				// Update the pilot location
 				GeocodeResult geoCode = null;
-				if ((loc.getLatitude() != 0.0) && (loc.getLongitude() != 0.0)) {
+				if (GeoUtils.isValid(loc)) {
 					try {
 						GetGoogleGeocode gcdao = new GetGoogleGeocode();
 						geoCode = gcdao.getGeoData(loc);
