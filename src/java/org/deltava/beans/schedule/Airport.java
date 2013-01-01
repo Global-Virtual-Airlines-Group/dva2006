@@ -5,12 +5,12 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A class for storing airport information.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -386,7 +386,7 @@ public class Airport implements java.io.Serializable, Comparable<Airport>, Combo
 	 * @return TRUE if the position has been set, otherwise FALSE
 	 */
 	public boolean hasPosition() {
-		return (_position != null) && (_position.getLatitude() != 0.0d) && (_position.getLongitude() != 0.0d);
+		return GeoUtils.isValid(_position);
 	}
 	
    /**

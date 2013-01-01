@@ -259,13 +259,13 @@ public class MessageService extends XAService {
 			}
 			
 			// Write the position entry
+			writePosition &= GeoUtils.isValid(re);
 			if (writePosition) {
 				log.info("IAS = " +  re.getAirSpeed() + " TAS = " + re.getGroundSpeed() + " MACH = " + re.getMach() + " GS = " + gs);
 				re.setPhase(inf.getPhase().ordinal());
 				xwdao.write(re);
 			}
 			
-			// Commit
 			ctx.commitTX();
 		} catch (DAOException de) {
 			ctx.rollbackTX();
