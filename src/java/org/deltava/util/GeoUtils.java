@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 /**
  * A utility class for performing geocoding operations.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -424,5 +424,21 @@ public class GeoUtils {
 		double lng = (StringUtils.parse(parts.get(3), 0.0d) / 60.0d + lngD) * lnh.getLongitudeFactor();
 		
 		return new GeoPosition(lat, lng);
+	}
+
+	/**
+	 * Returns whether a location is valid (ie. not 0/0/0)
+	 * @param loc a GeoLocation
+	 * @return TRUE if valid, otherwise FALSE
+	 */
+	public static boolean isValid(GeoLocation loc) {
+		if (loc == null) return false;
+		boolean isOK = ((loc.getLatitude() != 0.00) || (loc.getLongitude() != 0.00));
+		if (loc instanceof GeospaceLocation) {
+			GeospaceLocation gsl = (GeospaceLocation) loc;
+			isOK |= (gsl.getAltitude() != 0);
+		}
+		
+		return isOK;
 	}
 }
