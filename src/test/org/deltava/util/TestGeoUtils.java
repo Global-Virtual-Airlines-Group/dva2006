@@ -92,8 +92,13 @@ public class TestGeoUtils extends TestCase {
 	}
 	
 	public void testXACARS() {
-		
 		GeoLocation loc = GeoUtils.parseXACARS("N40 37.3453 W73 47.117");
 		assertNotNull(loc);
+	}
+	
+	public void testIsValid() {
+		assertTrue(GeoUtils.isValid(new GeoPosition(1, 1)));
+		assertFalse(GeoUtils.isValid(new GeoPosition(0, 0)));
+		assertTrue(GeoUtils.isValid(new GeoPosition(0, 0, 1)));
 	}
 }
