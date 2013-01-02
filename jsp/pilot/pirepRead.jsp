@@ -445,7 +445,9 @@ xmlreq.onreadystatechange = function() {
 	data.addColumn('datetime', 'Date/Time');
 	data.addColumn('number', 'Ground Speed');
 	data.addColumn('number', 'Altitude');
+	<c:if test="${!isXACARS}">
 	data.addColumn('number', 'Ground Elevation');
+	</c:if>
 	data.addRows(sd);
 	
 	// Read CSS selectors for graph lines
