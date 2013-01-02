@@ -83,8 +83,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
        	 
        	 // Update scorers
        	Collection<String> scorerIDs = ctx.getParameters("scorerIDs");
+   		ep.getScorerIDs().clear();
        	if (scorerIDs != null) {
-       		ep.getScorerIDs().clear();
        		for (Iterator<String> i = scorerIDs.iterator(); i.hasNext(); ) {
        			int id = StringUtils.parseHex(i.next());
        			ep.addScorerID(id);
