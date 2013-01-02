@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to set a user's geolocation.
  * @author Luke
- * @version54.1
+ * @version 5.1
  * @since 1.0
  */
 
