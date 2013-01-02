@@ -53,9 +53,40 @@ public class IssueCommand extends AbstractFormCommand {
 				i.setCreatedOn(new Date());
 				i.setSecurity(StringUtils.arrayIndexOf(Issue.SECURITY, ctx.getParameter("security"), Issue.SECURITY_USERS));
 
-				// Assign to default user
+				// Assign to default user for that issue type.
 				GetPilot dao2 = new GetPilot(con);
-				Pilot p = dao2.getPilotByCode(SystemData.getInt("issue_track.assignto"), SystemData.get("airline.db"));
+				String assignee;
+				switch (StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area")))
+				{
+					case Issue.AREA_ACARS:
+						assignee = "issue_track.assignto.acars";
+						break;
+					case Issue.AREA_DISPATCH:
+						assignee = "issue_track.assignto.dispatch";
+						break;
+					case Issue.AREA_EXAMS:
+						assignee = "issue_track.assignto.examinations";
+						break;
+					case Issue.AREA_FLEET:
+						assignee = "issue_track.assignto.fleet";
+						break;
+					case Issue.AREA_MANUAL:
+						assignee = "issue_track.assignto.manuals";
+						break;
+					case Issue.AREA_SCHEDULE:
+						assignee = "issue_track.assignto.schedule";
+						break;
+					case Issue.AREA_SERVER:
+						assignee = "issue_track.assignto.server";
+						break;
+					case Issue.AREA_WEBSITE:
+						assignee = "issue_track.assignto.website";
+						break;
+					default:
+						assignee = "issue_track.assignto.website";
+					break;
+				}
+				Pilot p = dao2.getPilotByCode(SystemData.getInt(assignee), SystemData.get("airline.db"));
 				i.setAssignedTo(p.getID());
 			} else {
 				GetIssue dao = new GetIssue(con);
