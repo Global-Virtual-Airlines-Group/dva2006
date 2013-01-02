@@ -45,7 +45,7 @@ public class NullCache<T extends Cacheable> extends Cache<T> {
 
 	/**
 	 * Retrieves an entry from the cache - not implemented.
-	 * @returns null
+	 * @return null
 	 */
 	@Override
 	public T get(Object key) {
