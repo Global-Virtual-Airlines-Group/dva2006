@@ -590,7 +590,16 @@
 			<version>4.1</version>
 		</list>
 		
-		<assignto type="Integer">043</assignto>
+		<assignto>
+			<website type="Integer">8083</website>
+			<server type="Integer">8083</server>
+			<fleet type="Integer">8083</fleet>
+			<manuals type="Integer">8083</manuals>
+			<examinations type="Integer">8083</examinations>
+			<acars type="Integer">8083</acars>
+			<schedule type="Integer">8083</schedule>
+			<dispatch type="Integer">8083</dispatch>
+		</assignto>
 	</issue_track>
 	
 	<cooler>
