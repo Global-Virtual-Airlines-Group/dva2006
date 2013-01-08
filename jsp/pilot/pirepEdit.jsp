@@ -31,7 +31,7 @@ if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
 if (!validateCombo(form.eq, 'Equipment Type')) return false;
 if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
 if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
-if (!validateCombo(form.fsVersion, 1, 'Simulator Version')) return false;
+if (!validateCombo(form.fsVersion, 'Simulator Version')) return false;
 <c:if test="${!isAssign}">
 if (!validateCombo(form.airline, 'Airline')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
