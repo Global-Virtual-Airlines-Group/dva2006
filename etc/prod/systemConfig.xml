@@ -321,7 +321,7 @@
 			<!-- <keystore>/etc/jcs.notams.cer</keystore> -->
 		</pacot>
 		<ausot>
-			<url>http://www.airservicesaustralia.com/customer/ausots/html.asp?/flextracks/text.asp?ver=1</url>
+			<url>http://www.airservicesaustralia.com/ausots/html.asp?/flextracks/text.asp?ver=1</url>
 		</ausot>
 	</config>
 
