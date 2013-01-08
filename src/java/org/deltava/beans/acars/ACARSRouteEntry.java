@@ -13,7 +13,8 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
  * @author Luke
- * @version 4.1
+ * @author Rahul
+ * @version 5.1
  * @since 1.0
  */
 
@@ -502,6 +503,10 @@ public class ACARSRouteEntry extends RouteEntry {
 			buf.append(warn);
 			buf.append("</span>");
 		}
+		
+		// Add Thrust Reverser flags if set.
+		if (isFlagSet(FLAG_REVERSETHRUST))
+			buf.append("<span class=\"ita\">THRUST REVERSERS ENABLED.</span><br />");
 		
 		// Add ATC info
 		if (_atc != null) {
