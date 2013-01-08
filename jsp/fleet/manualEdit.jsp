@@ -133,7 +133,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /><br />
+ <td class="data"><el:box name="noNotify" idx="*" value="true" checked="true" label="Don't send notification e-mail" /><br />
 <el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void updateSecurity(this)" label="Show Manual on Pilot Registration page" /><br />
 <el:box name="ignoreCerts" idx="*" value="true" checked="${entry.ignoreCertifications}" label="Make visible to Pilots not enrolled in Flight Academy" /></td>
 </tr>
