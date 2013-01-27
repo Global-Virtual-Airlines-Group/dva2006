@@ -1,4 +1,4 @@
-// Copyright 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Service to determine whether a new ACARS client is available.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 4.1
  */
 
@@ -40,10 +40,14 @@ public class UpdateAvailableService extends WebService {
 		ClientInfo latest = null;
 		try {
 			GetACARSBuilds abdao = new GetACARSBuilds(ctx.getConnection());
-			if (cInfo.isBeta())
-				latest = abdao.getLatestBeta(cInfo);
-			else
-				latest = abdao.getLatestBuild(cInfo);
+			latest = abdao.getLatestBuild(cInfo);
+			
+			// If we're a beta, check the beta release
+			if (cInfo.isBeta()) {
+				ClientInfo beta = abdao.getLatestBeta(cInfo);
+				if ((beta != null) && (beta.compareTo(latest) > 0))
+					latest = beta;
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());			
 		} finally {
@@ -51,9 +55,6 @@ public class UpdateAvailableService extends WebService {
 		}
 		
 		// See if anything is available
-		if ((latest == null) || (latest.compareTo(cInfo) < 1))
-			return SC_NOT_MODIFIED;
-		
-		return SC_OK;
+		return ((latest == null) || (latest.compareTo(cInfo) < 1)) ? SC_NOT_MODIFIED : SC_OK;
 	}
 }
