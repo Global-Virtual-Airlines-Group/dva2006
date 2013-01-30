@@ -45,7 +45,7 @@ public class UpdateAvailableService extends WebService {
 			// If we're a beta, check the beta release
 			if (cInfo.isBeta()) {
 				ClientInfo beta = abdao.getLatestBeta(cInfo);
-				if ((beta != null) && (beta.compareTo(latest) > 0))
+				if ((beta != null) && (beta.getClientBuild() == cInfo.getClientBuild()) && (beta.compareTo(latest) > 0))
 					latest = beta;
 			}
 		} catch (DAOException de) {
