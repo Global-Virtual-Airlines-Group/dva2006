@@ -57,6 +57,7 @@ public class NewAirportListCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	@Override
+	//TODO : Convert logic for getting visited airports into service.
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the default airline

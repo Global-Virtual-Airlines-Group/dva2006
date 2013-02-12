@@ -21,9 +21,11 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to process Airport List AJAX requests.
  * @author Luke
- * @version 5.0
+ * @author Rahul
+ * @version 5.2
  * @since 1.0
  */
+
 
 public class AirportListService extends WebService {
 
@@ -34,6 +36,7 @@ public class AirportListService extends WebService {
 	 * @throws ServiceException if an error occurs
 	 */
 	@Override
+	//TODO : Use WebService to pull visited airports.
 	public int execute(ServiceContext ctx) throws ServiceException {
 		MultiFilter filter = new ANDFilter();
 		filter.add(new NonFilter());
@@ -46,9 +49,9 @@ public class AirportListService extends WebService {
 
 			String al = ctx.getParameter("airline");
 			boolean useSched = Boolean.valueOf(ctx.getParameter("useSched")).booleanValue();
+			boolean notVisited = Boolean.valueOf(ctx.getParameter("notVisited")).booleanValue();
 			if (al != null) {
 				Airline a = SystemData.getAirline(al);
-
 				// Either search the schedule or return the SystemData list
 				if (useSched) {
 					GetScheduleAirport dao = new GetScheduleAirport(con);

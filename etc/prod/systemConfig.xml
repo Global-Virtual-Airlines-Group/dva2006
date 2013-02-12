@@ -157,9 +157,9 @@
 	<list name="staff.departments" attr="dept" unqiue="true">
 		<dept>Senior Staff</dept>
 		<dept>Administration Services</dept>
+		<dept>Information Technology</dept>
 		<dept>Chief Pilots</dept>
 		<dept>Online Events</dept>
-		<dept>Information Technology</dept>
 		<dept>Flight Academy</dept>
 	</list>
 

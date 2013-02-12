@@ -161,7 +161,7 @@ return true;
  <fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours<br />
 Joined <content:airline /> on <fmt:date fmt="d" date="${pilot.createdOn}" />
 <a href="javascript:void toggleBody(${pilot.ID})">Click to <span id="toggle${pilot.ID}">View</span> Application</a>
-<a href="/profile.do?id=${fn:hex(pilot.ID)}">Click to view pilot profile.</a>
+<el:cmd url="profile" link="${pilot}">Click to view pilot profile.</el:cmd>
 <c:choose>
 <c:when test="${access.canShortlist}">
 <hr />
