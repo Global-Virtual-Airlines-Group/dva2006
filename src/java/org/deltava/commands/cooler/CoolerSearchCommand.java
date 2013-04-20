@@ -1,7 +1,8 @@
-// Copyright 2005, 2007, 2008, 2009 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -18,19 +19,23 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 2.6
+ * @version 5.1
  * @since 1.0
  */
 
 public class CoolerSearchCommand extends AbstractViewCommand {
 	
 	private static final Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
+	
+	private static final Semaphore _usrLock = new Semaphore(3, true);
+	private static final Semaphore _anonLock = new Semaphore(1, false);
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@Override
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Save days option
@@ -39,13 +44,13 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 		// Get the command result and view context
 		CommandResult result = ctx.getResult();
 		ViewContext vc = initView(ctx);
+		Semaphore s = ctx.isAuthenticated() ? _usrLock : _anonLock; boolean hasLock = false;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the channel names
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")),
-					ctx.getRoles()), REQUEST);
+			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")), ctx.getRoles()), REQUEST);
 
 			// Check if we're doing a GET, and redirect to the results JSP
 			if (ctx.getParameter("searchStr") == null) {
@@ -53,6 +58,19 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 				result.setURL("/jsp/cooler/threadSearch.jsp");
 				result.setSuccess(true);
 				return;
+			}
+			
+			// Check if we can get the lock
+			try {
+				if (!s.tryAcquire(250, TimeUnit.MILLISECONDS)) {
+					ctx.release();
+					result.setURL("/jsp/error/tooBusy.jsp");
+					return;
+				}
+				
+				hasLock = true;
+			} catch (InterruptedException ie) {
+				throw new CommandException(ie);
 			}
 			
 			// Get last update date
@@ -68,13 +86,10 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			criteria.setMinimumDate(lud);
 			
 			// Get the DAO and search
-			Collection<MessageThread> threads = null;
-			synchronized (CoolerSearchCommand.class) {
-				GetCoolerThreads dao = new GetCoolerThreads(con);
-				dao.setQueryStart(vc.getStart());
-				dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
-				threads = dao.search(criteria);
-			}
+			GetCoolerThreads dao = new GetCoolerThreads(con);
+			dao.setQueryStart(vc.getStart());
+			dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
+			Collection<MessageThread> 	threads = dao.search(criteria);
 			
 			// Filter out the threads based on our access
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
@@ -87,8 +102,8 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 
 				// Remove the thread if we cannot access it
 				if (access.getCanRead()) {
-					pilotIDs.add(new Integer(mt.getAuthorID()));
-					pilotIDs.add(new Integer(mt.getLastUpdateID()));
+					pilotIDs.add(Integer.valueOf(mt.getAuthorID()));
+					pilotIDs.add(Integer.valueOf(mt.getLastUpdateID()));
 				} else
 					i.remove();
 			}
@@ -111,6 +126,9 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
+			if (hasLock)
+				s.release();
+
 			ctx.release();
 		}
 
