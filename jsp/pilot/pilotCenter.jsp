@@ -274,13 +274,13 @@ To view airports you have yet to visit, <el:cmd className="sec bld" url="mynewai
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
  <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.<c:if test="${pirepQueueStats.size > 0}"><span class="${queueClass}"><br />
-There are currently <fmt:quantity value="${pirepQueueStats.size}" single="Flight Report" /> awaiting review.<content:filter roles="Operations,HR"> The average
- age of eaching pending flight report is <fmt:dec value="${pirepQueueStats.averageAge}" /> hours.</content:filter></span></c:if>
+There <fmt:is value="${pirepQueueStats.size}" />  currently <fmt:quantity value="${pirepQueueStats.size}" single="Flight Report" /> awaiting review.
+<content:filter roles="Operations,HR"> The average age of eaching pending flight report is <fmt:dec value="${pirepQueueStats.averageAge}" /> hours.</content:filter></span></c:if>
 <c:set var="myPirepQueueSize" value="${pirepQueueStats.counts[pilot.equipmentType]}" scope="page" />
 <c:if test="${myPirepQueueSize > 0}"><br /><span class="${queueClass}">There are currently <fmt:quantity value="${myPirepQueueSize}" single="Flight Report" /> awaiting 
 review flown using equipment in the ${pilot.equipmentType} program.</span></c:if>
 <c:if test="${checkRideQueueSize > 0}"><br />
-<span class="pri bld">There are <fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
+<span class="pri bld">There <fmt:is value="${checkRideQueueSize}" /> <fmt:quantity value="${checkRideQueueSize}" single="Check Ride" />
 <content:filter roles="!HR"> in the ${pilot.equipmentType} program</content:filter> awaiting review.</span></c:if></td>
 </tr>
 </content:filter>
@@ -295,21 +295,21 @@ review flown using equipment in the ${pilot.equipmentType} program.</span></c:if
 they have met the necessary requirements for a new Equipment Program. You can view these transfer 
 requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
 <br />
-<span class="ita">There are <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
+<span class="ita">There <fmt:is value="${txQueueSize}" /> <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</span></c:if></td>
 </tr>
 <tr>
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
  <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements
 for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
 <br />
-<b>There are <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</b></c:if></td>
+<b>There <fmt:is value="${promoQueueSize}" /> <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</b></c:if></td>
 </tr>
 <content:filter roles="HR,Examination">
 <tr>
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
  <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
 <br />
-<b>There are <fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
+<b>There <fmt:is value="${examQueueSize}" /> <fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
 </tr>
 </content:filter>
 </content:filter>
