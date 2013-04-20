@@ -3,9 +3,10 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:if test="${thread.poll}">
+<c:set var="totalVotes" value="${fn:sizeof(thread.votes)}" scope="page" />
 <!-- Pilot Poll -->
 <tr>
- <td class="label top">Poll Results<br />(${fn:sizeof(thread.votes)} VOTES)</td>
+ <td class="label top caps">Poll Results<br />(<fmt:int value="${totalVotes}" /> vote<c:if test="${totalVotes != 1}">s</c:if>)</td>
  <td class="data" colspan="2"><c:forEach var="opt" items="${thread.options}">
 <span style="width:250px;"><c:if test="${opt.votes > 0}"><el:img y="12" x="${(opt.votes / maxVotes) * 250}" caption="${opt.name}" src="cooler/bar_blue.png" /></c:if></span>
 ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.votes}" /> vote)</c:when>
