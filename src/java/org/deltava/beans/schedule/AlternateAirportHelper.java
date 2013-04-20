@@ -70,8 +70,8 @@ public class AlternateAirportHelper {
 			// Adjust distance based on airlines served
 			if (airlines == 0)
 				distance = Math.min(maxDistance, distance+120);
-			else if (airlines > 3)
-				distance -= 125;
+			else if (airlines > 1)
+				distance -= (airlines * 50);
 			
 			// Calculate the score
 			Score s = new Score(rwyDelta, Math.max(10, distance), maxDistance);
