@@ -70,6 +70,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 </c:otherwise>
 </c:choose>
 <c:if test="${isPreApprove}">
+<br />
 <span class="bld">This Flight Assignment for ${assignPilot.name} contains a pre-approved flight leg outside the regular 
 <content:airline /> Flight Schedule.</span><br />
 </c:if>

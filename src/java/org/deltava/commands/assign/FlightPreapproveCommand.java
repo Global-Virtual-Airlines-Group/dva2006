@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to allow staff members to pre-approve non-standard flight routes.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 2.1
  */
 
@@ -36,12 +36,12 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 		// Get command result
 		CommandResult result = ctx.getResult();
-		
+
 		// Check our access
-        PIREPAccessControl ac = new PIREPAccessControl(ctx, null);
-        ac.validate();
-        if (!ac.getCanPreApprove())
-        	throw securityException("Cannot Pre-Approve Flight");
+		PIREPAccessControl ac = new PIREPAccessControl(ctx, null);
+		ac.validate();
+		if (!ac.getCanPreApprove())
+			throw securityException("Cannot Pre-Approve Flight");
 
 		// Check for a GET and redirect
 		if (ctx.getParameter("airportD") == null) {
@@ -68,7 +68,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 				// Get the equipment types
 				GetAircraft adao = new GetAircraft(con);
 				ctx.setAttribute("eqTypes", adao.getAircraftTypes(), REQUEST);
-				
+
 				// Get the number of charter flights
 				int interval = SystemData.getInt("schedule.charter.count_days", 90);
 				GetFlightReportStatistics stdao = new GetFlightReportStatistics(con);
@@ -99,15 +99,15 @@ public class FlightPreapproveCommand extends AbstractCommand {
 			aD = SystemData.getAirport(ctx.getParameter("airportDCode"));
 		if (aA == null)
 			aA = SystemData.getAirport(ctx.getParameter("airportACode"));
-		
+
 		// Get the airline
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 		if (a == null)
 			a = SystemData.getAirline(SystemData.get("airline.code"));
 
 		// Build the leg
-		AssignmentLeg leg = new AssignmentLeg(a, StringUtils.parse(ctx.getParameter("flight"), 1), 
-				StringUtils.parse(ctx.getParameter("leg"), 1));
+		AssignmentLeg leg = new AssignmentLeg(a, StringUtils.parse(ctx.getParameter("flight"), 1), StringUtils.parse(
+				ctx.getParameter("leg"), 1));
 		leg.setEquipmentType(info.getEquipmentType());
 		leg.setAirportD(aD);
 		leg.setAirportA(aA);
@@ -142,6 +142,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 
 			// Write the Flight leg
 			fr.setDatabaseID(DatabaseID.ASSIGN, info.getID());
+			info.addFlight(fr);
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(fr);
 
@@ -160,6 +161,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
 		// Set status attributes
 		ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("isPreApprove", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("assign", info, REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/assign/assignUpdate.jsp");
