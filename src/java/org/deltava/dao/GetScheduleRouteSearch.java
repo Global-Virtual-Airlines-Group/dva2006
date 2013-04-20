@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to create multi-leg routes between airports.
  * @author Luke
- * @version 4.1
+ * @version 5.1
  * @since 4.1
  */
 
@@ -44,6 +44,18 @@ public class GetScheduleRouteSearch extends GetSchedule {
 	 */
 	private List<Airport> findRoute(RoutePair rp, int level) throws DAOException {
 		try {
+			prepareStatement("SELECT COUNT(*) FROM SCHEDULE WHERE (AIRPORT_A=?)");
+			_ps.setString(1, rp.getAirportA().getIATA());
+			boolean validDest = false;
+			try (ResultSet rs = _ps.executeQuery()) {
+				if (rs.next())
+					validDest = (rs.getInt(1) > 0);
+			}
+			
+			_ps.close();
+			if (!validDest)
+				return Collections.emptyList();
+			
 			prepareStatement("SELECT S.AIRPORT_A, COUNT(S.FLIGHT) AS CNT, (SELECT COUNT(FLIGHT) FROM "
 				+ "SCHEDULE SS WHERE (SS.AIRPORT_A=?) AND (SS.AIRPORT_D=S.AIRPORT_A)) AS LEG2, "
 				+ "IF(AIRPORT_A=?,0,1) AS ISDST FROM SCHEDULE S WHERE (AIRPORT_D=?) GROUP BY S.AIRPORT_A "
