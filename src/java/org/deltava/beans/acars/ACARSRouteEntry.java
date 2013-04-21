@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -501,16 +501,16 @@ public class ACARSRouteEntry extends RouteEntry {
 		if (warn != null) {
 			buf.append("<span class=\"error bld\">");
 			buf.append(warn);
-			buf.append("</span>");
+			buf.append("</span><br />");
 		}
 		
 		// Add Thrust Reverser flags if set.
 		if (isFlagSet(FLAG_REVERSETHRUST))
-			buf.append("<span class=\"ita\">THRUST REVERSERS ENABLED.</span><br />");
+			buf.append("<span class=\"ita\">THRUST REVERSERS</span><br />");
 		
 		// Add ATC info
 		if (_atc != null) {
-			buf.append("<br />COM1: ");
+			buf.append("COM1: ");
 			buf.append(_com1);
 			buf.append(" (");
 			buf.append(_atc.getCallsign());
