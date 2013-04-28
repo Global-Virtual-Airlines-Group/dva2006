@@ -1,4 +1,4 @@
-// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -239,10 +239,10 @@ public class GetAirport extends DAO {
 	public Map<String, Airport> getAll() throws DAOException {
 		Map<String, Airport> results = new HashMap<String, Airport>();
 		try {
-			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR, MAX(R.LENGTH) FROM "
-				+ "common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON (ND.CODE=A.ICAO) AND (ND.ITEMTYPE=?) "
-				+ "LEFT JOIN common.MAGVAR MV ON (MV.ICAO=A.ICAO) LEFT JOIN common.RUNWAYS R ON (A.ICAO=R.ICAO) "
-				+ "GROUP BY A.IATA");
+			prepareStatementWithoutLimits("SELECT A.*, ND.ALTITUDE, ND.REGION, MV.MAGVAR, IFNULL(MAX(R.LENGTH), "
+				+ "MAX(ND.ALTITUDE)) FROM common.AIRPORTS A LEFT JOIN common.NAVDATA ND ON ((ND.CODE=A.ICAO) "
+				+ "AND (ND.ITEMTYPE=?)) LEFT JOIN common.MAGVAR MV ON (MV.ICAO=A.ICAO) LEFT JOIN common.RUNWAYS R "
+				+ "ON (A.ICAO=R.ICAO) GROUP BY A.IATA");
 			_ps.setInt(1, Navaid.AIRPORT.ordinal());
 			
 			try (ResultSet rs = _ps.executeQuery()) {
@@ -256,7 +256,8 @@ public class GetAirport extends DAO {
 					a.setAltitude(rs.getInt(10));
 					a.setRegion(rs.getString(11));
 					a.setMagVar(rs.getDouble(12));
-					a.setMaximumRunwayLength(rs.getInt(13));
+					int maxRunway = rs.getInt(13);
+					a.setMaximumRunwayLength((maxRunway == 0) ? 2500 : maxRunway);
 					
 					// Save in the map
 					results.put(a.getIATA(), a);
