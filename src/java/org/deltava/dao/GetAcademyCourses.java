@@ -1,17 +1,19 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.UserData;
 import org.deltava.beans.academy.*;
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
- * @version 5.0
+ * @version 5.1
  * @since 1.0
  */
 
@@ -236,12 +238,24 @@ public class GetAcademyCourses extends DAO {
 			return Collections.emptyMap();
 		
 		// Build the SQL statement
+		Map<Integer, Integer> xdbIDs = new HashMap<Integer, Integer>();
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.PILOT_ID, CR.ABBR FROM exams.COURSES C, exams.CERTS CR WHERE "
 				+ "(CR.NAME=C.CERTNAME) AND (C.STATUS=?) AND (C.PILOT_ID IN (");
 		for (Iterator<?> i = ids.iterator(); i.hasNext(); ) {
 			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
-			sqlBuf.append(id.toString());
+			if (rawID instanceof Integer)
+				sqlBuf.append(rawID.toString());
+			else if (rawID instanceof UserData) {
+				UserData ud = (UserData) rawID;
+				sqlBuf.append(ud.getID());
+				for (Integer id : ud.getIDs()) {
+					xdbIDs.put(id, Integer.valueOf(ud.getID()));
+					sqlBuf.append(',');
+					sqlBuf.append(id.toString());
+				}
+			} else
+				sqlBuf.append(((DatabaseBean) rawID).getID());	
+			
 			if (i.hasNext())
 				sqlBuf.append(',');
 		}
@@ -255,13 +269,12 @@ public class GetAcademyCourses extends DAO {
 			try (ResultSet rs = _ps.executeQuery()) {
 				while (rs.next()) {
 					Integer id = Integer.valueOf(rs.getInt(1));
-					Collection<String> certs = results.get(id);
-					if (certs == null) {
-						certs = new LinkedHashSet<String>();
-						results.put(id, certs);
-					}
-				
-					certs.add(rs.getString(2));
+					String cert = rs.getString(2);
+					CollectionUtils.addMapCollection(results, id, cert);
+					
+					Integer xdbID = xdbIDs.get(id);
+					if (xdbID != null)
+						CollectionUtils.addMapCollection(results, xdbID, cert);
 				}
 			}
 			
@@ -320,16 +333,14 @@ public class GetAcademyCourses extends DAO {
 			}
 		}
 		
-		// Clean up and return
 		_ps.close();
 		return results;
 	}
 	
-	/**
+	/*
 	 * Helper method to load comments for a Course.
 	 */
 	private void loadComments(Course c) throws SQLException {
-		
 		prepareStatementWithoutLimits("SELECT * FROM exams.COURSECHAT WHERE (COURSE_ID=?)");
 		_ps.setInt(1, c.getID());
 
@@ -342,15 +353,13 @@ public class GetAcademyCourses extends DAO {
 			}
 		}
 		
-		// Clean up after ourselves
 		_ps.close();
 	}
 	
-	/**
+	/*
 	 * Helper method to load progress for a Course.
 	 */
 	private void loadProgress(Course c) throws SQLException {
-
 		prepareStatementWithoutLimits("SELECT * FROM exams.COURSEPROGRESS WHERE (ID=?) ORDER BY SEQ");
 		_ps.setInt(1, c.getID());
 		
@@ -366,7 +375,6 @@ public class GetAcademyCourses extends DAO {
 			}
 		}
 		
-		// Clean up after ourselves
 		_ps.close();
 	}
 }
