@@ -1,4 +1,4 @@
-// Copyright 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.GeoUtils;
 /**
  * A bean to store runway selection results. 
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 4.2
  */
 
@@ -28,6 +28,7 @@ public class LandingRunways {
 		private final Runway _r;
 		private final double _hdgDiff;
 		private final double _brgDiff;
+		private final double _xBrgDiff;
 		private final double _brg;
 		
 		PossibleRunway(Runway r, double hdgDiff, double brgDiff, double brg) {
@@ -35,6 +36,7 @@ public class LandingRunways {
 			_r = r;
 			_hdgDiff = hdgDiff;
 			_brgDiff = brgDiff;
+			_xBrgDiff = Math.abs(Math.sin(Math.toRadians(brgDiff)));
 			_brg = brg;
 		}
 		
@@ -54,12 +56,18 @@ public class LandingRunways {
 			return _brgDiff;
 		}
 		
+		public double getCrossBearingDelta() {
+			return _xBrgDiff;
+		}
+		
 		public String toString() {
 			StringBuilder buf = new StringBuilder(_r.getName());
 			buf.append(",hD=");
 			buf.append(_hdgDiff);
 			buf.append(",bD=");
 			buf.append(_brgDiff);
+			buf.append(",xbD=");
+			buf.append(_xBrgDiff);
 			return buf.toString();
 		}
 		
@@ -69,6 +77,8 @@ public class LandingRunways {
 		
 		public int compareTo(PossibleRunway pr) {
 			int tmpResult = Integer.valueOf((int) _hdgDiff / 45).compareTo(Integer.valueOf((int) pr._hdgDiff / 45));
+			if (tmpResult == 0)
+				tmpResult = Double.valueOf(_xBrgDiff).compareTo(Double.valueOf(pr._xBrgDiff));
 			return (tmpResult == 0) ? Double.valueOf(_brgDiff).compareTo(Double.valueOf(pr._brgDiff)) : tmpResult;
 		}
 	}
