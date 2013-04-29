@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 /**
  * A utility class for dealing with Collections.
  * @author Luke
- * @version 3.1
+ * @version 5.1
  * @since 1.0
  */
 
@@ -177,5 +177,21 @@ public class CollectionUtils {
 		List<T> results = new ArrayList<T>(c1);
 		results.removeAll(values);
 		return results;
+	}
+	
+	/**
+	 * Adds an entry to a Collection contained as a Map value.
+	 * @param m the Map
+	 * @param key the key
+	 * @param entry the value
+	 */
+	public static <K, V> void addMapCollection(Map<K, Collection<V>> m, K key, V entry) {
+		Collection<V> c = m.get(key);
+		if (c == null) {
+			c = new LinkedHashSet<V>();
+			m.put(key, c);
+		}
+		
+		c.add(entry);
 	}
 }
