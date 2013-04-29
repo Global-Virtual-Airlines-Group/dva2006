@@ -21,7 +21,8 @@ Takeoff Heading = <fmt:int value="${pirep.takeoffHeading}" />&deg;, Magnetic Var
 <c:forEach var="rc" items="${rwysD.runways}">
 <span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading =
 ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
-<fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg;<br />  
+<fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg; - 
+<fmt:dec value="${rc.crossBearingDelta}" fmt="0.000" /><br />  
 </c:forEach>
 <br />
 <div class="updateHdr">Runway Choices for ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</div>
@@ -32,7 +33,8 @@ Landing Heading = <fmt:int value="${pirep.landingHeading}" />&deg;, Magnetic Var
 <c:forEach var="rc" items="${rwysA.runways}">
 <span class="pri bld">Runway ${rc.runway.name}</span> (<fmt:int value="${rc.runway.length}" /> feet) - Heading =
 ${rc.runway.heading}&deg; &Delta;Heading = <fmt:dec value="${rc.headingDelta}" />&deg;, Bearing = 
-<fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg;<br />  
+<fmt:dec value="${rc.bearing}" />&deg;, &Delta;Bearing = <fmt:dec value="${rc.bearingDelta}" />&deg; - 
+<fmt:dec value="${rc.crossBearingDelta}" fmt="0.000" /><br />  
 </c:forEach>
 <br />
 <el:link url="javascript:void window.close()" className="sec bld">Click Here</el:link> to close this window.<br />
