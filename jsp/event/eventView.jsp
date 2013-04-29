@@ -226,7 +226,7 @@ return true;
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
  <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
-<c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim="," /></span></c:if></td>
+<c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim=", " /></span></c:if></td>
  <td class="sec bld">${signup.equipmentType}</td>
  <td class="pri bld">${fn:networkID(pilot, event.network)}</td>
 <c:if test="${showPilotStats}">
