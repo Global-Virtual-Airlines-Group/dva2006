@@ -297,8 +297,7 @@ return 10;
 
 function toggleMarkers(map, arrayName, check)
 {
-if (map.infoWindow)
-	map.infoWindow.close();
+if (map.infoWindow) map.infoWindow.close();
 
 // Figure out if we add or remove the markers
 if (!check.checked)
@@ -309,18 +308,15 @@ else
 return true;
 }
 
-function addOverlay(map, id)
+function toggleObject(map, obj, check)
 {
-var div = (id.style == undefined) ? document.getElementById(id) : id;
-if (!div || !map) return false;
-
-// Set z-index
-div.style.zIndex = 20;
-div.style.position = 'absolute';
+if (map.infoWindow) map.infoWindow.close();	
+if (!check.checked)
+	obj.setMap(null);
+else
+	obj.setMap(map);
 	
-// Add to div
-map.getDiv().firstChild.appendChild(div);
-return true;	
+return true;
 }
 
 function updateTab(mrk, ofs, size)
