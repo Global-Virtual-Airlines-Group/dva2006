@@ -65,7 +65,7 @@ return true;
 <el:form action="pilotboard.do" method="get" validate="return false">
 <el:table className="form">
 <tr class="title caps">
- <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading"></span></td>
 </tr>
 <tr>
  <td class="label">Map Type</td>
@@ -118,7 +118,7 @@ pBar.getDiv().style.right = '4px';
 pBar.getDiv().style.top = '30px';
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
 	hq.setMap(map);
-	addOverlay(map, pBar.getDiv());
+	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(pBar.getDiv());
 	reloadMap();
 });
 </script>
