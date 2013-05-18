@@ -280,7 +280,8 @@ return true;
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" />
 <c:if test="${!empty onlineTrack}"> <el:box name="showOTrack" idx="*" onChange="void toggleMarkers(map, 'otRoute', this)" label="Online Track" checked="false" />
- <el:box name="showOMarkers" idx="*" onChange="void toggleMarkers(map, 'otMarkers', this)" label="Online Data" checked="false" /></c:if>
+ <el:box name="showOMarkers" idx="*" onChange="void toggleMarkers(map, 'otMarkers', this)" label="Online Data" checked="false" />
+ <el:box name="showFIRs" idx="*" onChange="void toggleObject(map, firKML, this)" label="FIR Boundaries" checked="false" /></c:if>
 </span></td>
 </tr>
 <tr>
@@ -406,6 +407,7 @@ google.maps.event.addListener(map.infoWindow, 'closeclick', function() { removeM
 <map:points var="onlinePoints" items="${onlineTrack}" />
 <map:markers var="otMarkers" items="${onlineTrack}" />
 <map:line var="otRoute" src="onlinePoints" color="#f06f4f" width="3" transparency="0.55" geodesic="true" />
+var firKML = new google.maps.KmlLayer(self.location.protocol + '//' + self.location.host + '/servinfo/firs.kmz', {preserveViewport:true, clickable:false});
 </c:if>
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
