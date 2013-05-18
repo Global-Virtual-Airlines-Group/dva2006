@@ -58,7 +58,7 @@ return new google.maps.ImageMapType(layerOpts);
 <content:copyright />
 </content:region>
 </content:page>
-<div id="zoomLevel" class="small bld mapTextLabel" style="bottom:9px; left:72px;"></div>
+<div id="zoomLevel" class="small bld mapTextLabel"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
@@ -71,8 +71,8 @@ google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapT
 var trkLayer = new golgotha.maps.ShapeLayer(0.45, 3, 12);
 map.overlayMapTypes.insertAt(0, trkLayer);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
-google.maps.event.addListenerOnce(map, 'tilesloaded', function() { 
-	addOverlay(map, 'zoomLevel');
+google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('zoomLevel'));
 	google.maps.event.trigger(this, 'maptypeid_changed');
 	google.maps.event.trigger(this, 'zoom_changed');
 });
