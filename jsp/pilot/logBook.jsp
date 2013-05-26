@@ -42,7 +42,8 @@
 <c:if test="${!empty viewContext.results || !empty airports}">
 <tr class="title">
  <td colspan="2">AIRCRAFT <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></td>
- <td colspan="4" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
+ <td><el:cmd url="logcalendar" link="${pilot}">CALENDAR</el:cmd></td>
+ <td colspan="3" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
  <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" /> SORT BY
  <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
  <el:button type="submit" label="FILTER" /></td>
