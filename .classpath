@@ -28,7 +28,7 @@
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/commons-codec-1.7.jar" sourcepath="lib/src/commons-codec-1.7-sources.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-2.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.4.jar" sourcepath="lib/src/jdom-2.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/jdom-2.0.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
