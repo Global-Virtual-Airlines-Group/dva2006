@@ -18,17 +18,17 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 	private static final String JDBC_URL ="jdbc:mysql://polaris/common";
 	private Connection _c;
 
-	private static final String SCENERY_ROOT = "D:\\Program Files\\FS9\\Scenery";
-	private static final String XML_PATH = "E:\\temp\\bgxml_katl";
+	private static final String SCENERY_ROOT = "D:\\Program Files\\FSX\\Addon Scenery\\VHHX\\scenery";
+	private static final String XML_PATH = "E:\\temp\\bgxml_vhhx-x";
 	
 	private static final String BGLXML = "data/bglxml/bglxml.exe";
-	private static final Simulator SIM = Simulator.FS9;
+	private static final Simulator SIM = Simulator.FSX;
 	
 	final class SceneryFilter implements FileFilter {
 		private final String _prefix;
 		
 		SceneryFilter() {
-			this("ap");
+			this("");
 		}
 		
 		SceneryFilter(String prefix) {
@@ -63,7 +63,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 	}
 
 	public void testConvertBGLs() throws Exception {
-		assertFalse(true);
+		//assertFalse(true);
 		
 		// Check that we're running Windows and the file exists
 		assertTrue(System.getProperty("os.name").contains("Windows"));
@@ -73,7 +73,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 		File rt = new File(SCENERY_ROOT);
 		assertTrue(rt.isDirectory());
 		
-		Collection<File> bglFiles = getFiles(rt, new SceneryFilter());
+		Collection<File> bglFiles = getSingleFiles(rt, new SceneryFilter());
 		assertNotNull(bglFiles);
 		
 		// Process the BGLs
@@ -102,14 +102,16 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 				
 				// Load the XML
 				Document doc = null;
-				try {
-					filterAmpersands(xml);
-					doc = loadXML(new FileReader(xml));
-				} catch (Exception e) {
+				if (xml.exists()) {
+					try {
+						filterAmpersands(xml);
+						doc = loadXML(new FileReader(xml));
+					} catch (Exception e) {
 					log.error(e.getMessage(), e);
+					}
 				}
 
-				assertNotNull(doc);
+				assertTrue(!xml.exists() || (doc != null));
 			}
 		}
 	}
@@ -145,6 +147,7 @@ public class SimGateLoader extends SceneryLoaderTestCase {
 		File[] xmls = rt.listFiles(new XMLFilter());
 		assertNotNull(xmls);
 		for (int x = 0; x < xmls.length; x++) {
+			log.info("Loading " + xmls[x]);
 			Document doc = loadXML(new FileReader(xmls[x]));
 			assertNotNull(doc);
 			
