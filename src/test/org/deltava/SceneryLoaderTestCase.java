@@ -44,6 +44,15 @@ public abstract class SceneryLoaderTestCase extends TestCase {
 		return files;
 	}
 	
+	protected Collection<File> getSingleFiles(File root, FileFilter filter) {
+		Collection<File> files = new ArrayList<File>();
+		File[] bgls = root.listFiles(filter);
+		if (bgls != null)
+			files.addAll(Arrays.asList(bgls));
+		
+		return files;
+	}
+	
 	protected Document loadXML(Reader r) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
 		return builder.build(r);
