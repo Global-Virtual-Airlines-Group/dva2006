@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011, 2012 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2011, 2012, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract Command class to support Calendar views.
  * @author Luke
- * @version 4.2
+ * @version 5.1
  * @since 1.0
  */
 
@@ -20,10 +20,10 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	private static final List<ComboAlias> TYPE_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week"}, 
 			new String[] { "31", "7"});
 	
-	protected final class CalendarContext {
+	protected static final class CalendarContext {
 		
-		private DateRange _dr;
-		private int _days;
+		private final DateRange _dr;
+		private final int _days;
 		
 		CalendarContext(DateRange dr, int days) {
 			super();
@@ -67,7 +67,7 @@ public abstract class AbstractCalendarCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @return a CalendarContext bean
 	 */
-	protected CalendarContext initCalendar(CommandContext ctx) {
+	protected static CalendarContext initCalendar(CommandContext ctx) {
 		
 		// Get the number of days and start date
 		int days = StringUtils.parse((String) ctx.getCmdParameter(OPERATION, null), 31);
