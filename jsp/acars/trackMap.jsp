@@ -62,14 +62,14 @@ return new google.maps.ImageMapType(layerOpts);
 <div id="zoomLevel" class="small bld mapTextLabel"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, 'acars_trackmap']};
+var mapTypes = {mapTypeIds: ['acars_trackmap', google.maps.MapTypeId.SATELLITE]};
 var mapOpts = {center:mapC, minZoom:3, maxZoom:12, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-var tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Map'});
+var tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Track Map'});
 map.mapTypes.set('acars_trackmap', tmStyledMap);
-<map:type map="map" type="acars_trackmap" />
+map.setMapTypeId('acars_trackmap');
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
 var trkLayer = new golgotha.maps.ShapeLayer(0.425, 3, 12);
 map.overlayMapTypes.insertAt(0, trkLayer);
