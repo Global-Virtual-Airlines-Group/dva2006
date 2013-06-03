@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2008, 2009, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008, 2009, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.JspException;
@@ -14,11 +14,11 @@ import org.deltava.util.system.SystemData;
 /**
  * An abstract class to support Google Maps JSP tags.
  * @author Luke
- * @version 3.4
+ * @version 5.1
  * @since 1.0
  */
 
-public abstract class GoogleMapEntryTag extends JSTag {
+abstract class GoogleMapEntryTag extends JSTag {
 
 	/**
 	 * Internal name used to check for Google Maps API inclusion.
@@ -42,7 +42,7 @@ public abstract class GoogleMapEntryTag extends JSTag {
 		
 		// Get the API version
 		Integer rawVersion = (Integer) pageContext.getAttribute(InsertGoogleAPITag.API_VER_ATTR_NAME, PageContext.REQUEST_SCOPE);
-		_apiVersion = (rawVersion == null) ? 0 : rawVersion.intValue();
+		_apiVersion = (rawVersion == null) ? 3 : rawVersion.intValue();
 
 		// Check for Google Maps support JavaScript
 		String jsFileName = (_apiVersion == 3) ? "googleMapsV3" : "googleMapsV2"; 
