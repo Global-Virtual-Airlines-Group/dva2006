@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html lang="en">
 <head>
-<title><content:airline /> ACARS Saved Tracks Map</title>
+<title><content:airline /> ACARS Track Map</title>
 <content:css name="main" />
 <content:css name="form" />
 <content:pics />
@@ -14,6 +14,7 @@
 <content:js name="acarsMap" />
 <content:googleAnalytics eventSupport="true" />
 <map:api version="3" />
+<content:js name="googleMapsStyles" />
 <script type="text/javascript">
 golgotha.maps.ShapeLayer = function(tx, minZ, maxZ)
 {
@@ -48,10 +49,10 @@ return new google.maps.ImageMapType(layerOpts);
 <content:region id="main">
 <el:table className="form">
 <tr class="title">
- <td class="caps"><content:airline /> ACARS SAVED TRACKS MAP</td>
+ <td class="caps"><content:airline /> ACARS TRACK MAP</td>
 </tr>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="675" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="620" /></td>
 </tr>
 </el:table>
 <br />
@@ -61,14 +62,16 @@ return new google.maps.ImageMapType(layerOpts);
 <div id="zoomLevel" class="small bld mapTextLabel"></div>
 <script type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
-var mapTypes = {mapTypeIds: golgotha.maps.DEFAULT_TYPES};
-var mapOpts = {center:mapC, minZoom:3, maxZoom:12, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions: mapTypes};
+var mapTypes = {mapTypeIds: [google.maps.MapTypeId.SATELLITE, 'acars_trackmap']};
+var mapOpts = {center:mapC, minZoom:3, maxZoom:12, zoom:6, scrollwheel:false, streetViewControl:false, mapTypeControlOptions:mapTypes};
 
 // Create the map
 var map = new google.maps.Map(document.getElementById('googleMap'), mapOpts);
-<map:type map="map" type="SATELLITE" />
+var tmStyledMap = new google.maps.StyledMapType(golgotha.maps.styles.TRACKMAP, {name:'Map'});
+map.mapTypes.set('acars_trackmap', tmStyledMap);
+<map:type map="map" type="acars_trackmap" />
 google.maps.event.addListener(map, 'maptypeid_changed', golgotha.maps.updateMapText);
-var trkLayer = new golgotha.maps.ShapeLayer(0.45, 3, 12);
+var trkLayer = new golgotha.maps.ShapeLayer(0.425, 3, 12);
 map.overlayMapTypes.insertAt(0, trkLayer);
 google.maps.event.addListener(map, 'zoom_changed', golgotha.maps.updateZoom);
 google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
