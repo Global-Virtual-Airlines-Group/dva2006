@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2010, 2013 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -8,7 +8,7 @@ import org.deltava.util.StringUtils;
 /**
  * A JSP tag to set the base layer on a  Google Map.
  * @author Luke
- * @version 3.4
+ * @version 5.1
  * @since 2.1
  */
 
@@ -18,11 +18,12 @@ public class MapTypeTag extends GoogleMapEntryTag {
 	private static final String[] V2_MAP_OPTS = {"G_NORMAL_MAP", "G_SATELLITE_MAP", "G_PHYSICAL_MAP"};
 	private static final String[] V3_MAP_OPTS = {"ROADMAP", "SATELLITE", "TERRAIN"};
 	
-	private static final String DEFAULT_TYPE = "G_SATELLITE_MAP";
+	private static final String V2_DEFAULT = "G_SATELLITE_MAP";
+	private static final String V3_DEFAULT = "SATELLITE";
 	
 	private String _mapVar;
 	private String _mapType;
-	private String _default = DEFAULT_TYPE;
+	private String _default;
 
 	/**
 	 * Sets the name of the Google Map JavaScript object.
@@ -70,10 +71,20 @@ public class MapTypeTag extends GoogleMapEntryTag {
 	/**
 	 * Resets the tag's state variables.
 	 */
+	@Override
 	public void release() {
-		_default = DEFAULT_TYPE;
+		_default = null;
 		_mapType = null;
 		super.release();
+	}
+	
+	@Override
+	public int doStartTag() throws JspException {
+		super.doStartTag();
+		if (_default == null)
+			_default = (getAPIVersion() == 3) ? V3_DEFAULT : V2_DEFAULT;
+			
+		return SKIP_BODY;
 	}
 	
 	/**
@@ -81,6 +92,7 @@ public class MapTypeTag extends GoogleMapEntryTag {
 	 * @return TagSupport.EVAL_PAGE always
 	 * @throws JspException if a network error occurs
 	 */
+	@Override
 	public int doEndTag() throws JspException {
 	
 		JspWriter out = pageContext.getOut();
