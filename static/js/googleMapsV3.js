@@ -8,6 +8,7 @@ golgotha.maps.ICON_ANCHOR = new google.maps.Point(12, 12);
 golgotha.maps.DEFAULT_TYPES = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.TERRAIN];
 golgotha.maps.z = {INFOWINDOW:100, POLYLINE:25, POLYGON:35, MARKER:50, OVERLAY:10};
 golgotha.maps.ovLayers = [];
+golgotha.maps.styles = {};
 golgotha.maps.util = {};
 golgotha.maps.util.isIE = (navigator.appName == 'Microsoft Internet Explorer');
 golgotha.maps.util.oldIE = (golgotha.maps.util.isIE && ((navigator.appVersion.indexOf('IE 7.0') > 0) || (navigator.appVersion.indexOf('IE 8.0') > 0)));
@@ -21,7 +22,7 @@ golgotha.maps.GMTOffset = new Date().getTimezoneOffset() * 60000;
 golgotha.maps.miles2Meter = function(mi) { return mi * 1609.344 };
 
 // Set best text color for map types
-golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef'};
+golgotha.maps.TEXT_COLOR = {roadmap:'#002010', satellite:'#efefef', terrain:'#002010', hybrid:'#efefef', acars_trackmap:'#efefef'};
 golgotha.maps.updateMapText = function () {
 	var newColor = golgotha.maps.TEXT_COLOR[this.getMapTypeId()];
 	var elements = getElementsByClass('mapTextLabel');
