@@ -1,9 +1,9 @@
 #!/bin/bash
 # Chart backup script
-# (c) 2011 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2011, 2013 Global Virtual Airlines Group. All Rights Reserved.
 
 # Set archiving/mysqldump options
-arc_util="pbzip2 -p2 -3 -b20 -c"
+arc_util="pbzip2 -p3 -3 -b20 -c"
 dump_opt="--single-transaction -e -K -n -q"
 
 # Log Starting
@@ -18,7 +18,7 @@ mysqldump="/usr/local/mysql/bin/mysqldump --socket=/var/run/mysql/mysql.sock"
 
 # Dump Charts
 echo `date +%H:%M:%S`' Writing Approach Chart data'
-$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` common CHARTS CHARTIMGS | $arc_util > charts.sql.bz2
+$mysqldump $dump_opt `cat /usr/local/etc/sqlbackup` common CHARTS CHARTIMGS CHARTURLS | $arc_util > charts.sql.bz2
 
 # Change file permissions
 echo `date +%H:%M:%S`' Setting file permissions'
